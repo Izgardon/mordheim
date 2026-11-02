@@ -1,3 +1,5 @@
+import { useNavigate, useParams } from "react-router-dom";
+
 import { Button } from "@/components/ui/button";
 import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import { MoreMenu, type MoreMenuEntry } from "@/components/ui/more-menu";
@@ -9,6 +11,8 @@ type WarbandHeaderProps = {
   name: string;
   stashCount: number;
   showLocations: boolean;
+  /** The ⋯ menu's Encampment: the phone's way to that page (the rail has it on the web). */
+  showEncampment: boolean;
   onOpen: (panel: WarbandPanel) => void;
   menu: MoreMenuEntry[];
 };
@@ -21,6 +25,15 @@ const PANEL_BUTTONS: { panel: WarbandPanel; label: string; icon: GameIconName }[
 
 /** The warband's name and kicker, the Store, Stash and Locations buttons, and the ⋯ menu. */
 export default function WarbandHeader(props: WarbandHeaderProps) {
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const menu = props.showEncampment
+    ? [
+        ...props.menu,
+        { label: "Encampment", onSelect: () => navigate(`/campaigns/${id}/encampments`) },
+      ]
+    : props.menu;
+
   return (
     <header className="flex flex-wrap items-end justify-between gap-5">
       <div className="flex min-w-0 flex-col gap-1.5">
@@ -49,7 +62,7 @@ export default function WarbandHeader(props: WarbandHeaderProps) {
             </Button>
           )
         )}
-        <MoreMenu label="More warband actions" entries={props.menu} />
+        <MoreMenu label="More warband actions" entries={menu} />
       </div>
     </header>
   );

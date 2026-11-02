@@ -6,6 +6,7 @@ import {
   GiBowArrow,
   GiBreastplate,
   GiBroadsword,
+  GiCheckedShield,
   GiChest,
   GiCrossedSwords,
   GiCrystalGrowth,
@@ -14,6 +15,7 @@ import {
   GiHorseHead,
   GiKnapsack,
   GiKnot,
+  GiLaurels,
   GiLightBackpack,
   GiPocketBow,
   GiPotionBall,
@@ -23,8 +25,11 @@ import {
   GiSpellBook,
   GiSunbeams,
   GiSwapBag,
+  GiThreeFriends,
+  GiTombstone,
   GiTrade,
   GiTreasureMap,
+  GiTrophyCup,
   GiTwoCoins,
   GiUpgrade,
   GiWingfoot,
@@ -52,6 +57,13 @@ export const GAME_ICONS = {
   specials: GiYinYang, // Boons & Banes: good and bad
   spells: GiSpellBook,
   injuries: GiBleedingWound,
+  // the info lines: the warband's (Rating, Gold, Units, Record) and the overview's stats
+  rating: GiLaurels,
+  units: GiThreeFriends,
+  record: GiTrophyCup,
+  battles: GiCrossedSwords,
+  warbands: GiCheckedShield,
+  lost: GiTombstone,
 } satisfies Record<string, IconType>;
 
 export type GameIconName = keyof typeof GAME_ICONS;
