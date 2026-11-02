@@ -233,6 +233,7 @@ export default function Warband() {
       {heroBounties.dialog}
       <AdvanceDialog
         entry={advancing}
+        campaignId={campaignId}
         warbandId={warbandId}
         heroes={sheet.heroes}
         maxHeroes={campaign?.max_heroes ?? null}

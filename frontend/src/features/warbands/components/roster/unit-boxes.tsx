@@ -9,7 +9,9 @@ import {
   type SpecialKind,
 } from "@/components/ui/game-icons";
 import { skillList } from "@/features/skills/skill-list";
+import type { Spell } from "@/features/spells/types/spell-types";
 
+import { spellDifficulty } from "./advance/advance-table";
 import type { BoxDetail } from "./RulesPanel";
 import { pendingPicks, type PendingList, type RosterUnit } from "./unit-view";
 
@@ -22,7 +24,9 @@ type Entry = {
   type?: string | null;
   kind?: SpecialKind;
   description?: string | null;
-  dc?: unknown;
+  dc?: Spell["dc"];
+  /** A spell's: how much easier it is for him. */
+  dc_change?: number;
 };
 
 const NOUN: Record<PendingList, string> = {
@@ -53,7 +57,8 @@ const PENDING_ICON: Record<PendingList, ReactNode> = {
 
 /**
  * One list's boxes on an open card: each entry with its second line (a skill's list, a spell's
- * lore and difficulty), then the picks an advance left for later, each picked from its box.
+ * lore and his difficulty, "Difficulty 7 → 6" once he rolled it again), then the picks an
+ * advance left for later, each picked from its box.
  */
 export function entryBoxes(
   unit: RosterUnit,
@@ -62,8 +67,8 @@ export function entryBoxes(
 ): Box[] {
   return [
     ...entries.map((entry) => {
-      const difficulty = entry.dc !== null && entry.dc !== undefined && entry.dc !== "";
-      const line = [entry.type, difficulty && `Difficulty ${String(entry.dc)}`]
+      const difficulty = spellDifficulty(entry.dc, entry.dc_change);
+      const line = [entry.type, difficulty && `Difficulty ${difficulty}`]
         .filter(Boolean)
         .join(" · ");
       return {

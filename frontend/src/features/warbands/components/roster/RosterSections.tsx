@@ -17,7 +17,7 @@ import RecruitForm from "./RecruitForm";
 import RosterSection from "./RosterSection";
 import UnitCard from "./UnitCard";
 import UnitDetails from "./UnitDetails";
-import { pickPayload, unitKey, type RosterUnit } from "./unit-view";
+import { unitKey, type RosterUnit } from "./unit-view";
 import { useRosterCards } from "./useRosterCards";
 
 type RosterSectionsProps = {
@@ -111,7 +111,7 @@ export default function RosterSections(props: RosterSectionsProps) {
             onAdvance={() => props.onAdvance(entry)}
             campaignId={campaign?.id ?? 0}
             warbandId={warbandId}
-            onPick={(list, entryId) => actions.patchUnit(entry, pickPayload(entry, list, entryId))}
+            onPick={(pick) => actions.pickLater(entry, pick)}
           />
         ) : null}
       </UnitCard>

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
@@ -11,166 +10,156 @@ import {
   DialogKicker,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { rollDie } from "@/lib/dice";
-import { getErrorMessage } from "@/lib/get-error-message";
+import { useCatalogue } from "@/lib/catalogue-queries";
 
-import { useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
-import { unitApi } from "../../units/unit-api";
 import {
   HENCHMEN_SELECTABLE_STATS,
   HERO_SELECTABLE_STATS,
   OTHER_OPTIONS,
-  buildLevelUpPayload,
-  needsHero1d6Followup,
   resolveAdvanceLabel,
-  resolveHenchmen2d6Stat,
-  resolveHero1d6Stat,
-  resolveHero2d6Stat,
 } from "../../utils/levelup-utils";
 import type { WarbandHero } from "../../types/warband-types";
+import AdvanceGain, { gainLine } from "./advance/AdvanceGain";
+import DiceTable from "./advance/DiceTable";
+import RollField from "./advance/RollField";
+import { useAdvanceFlow } from "./advance/useAdvanceFlow";
 import LadsGotTalent from "./LadsGotTalent";
-import { LIST_KEY, unitName, type RosterUnit } from "./unit-view";
+import { unitName, type RosterUnit } from "./unit-view";
 
-const d6 = () => rollDie(6);
 const LGT = "LGT";
+const LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
+const span = (from: number, to: number) => (from === to ? String(from) : `${from}–${to}`);
 
 /**
- * An advance (the existing level-up, restyled): roll 2D6 (and the 1D6 that follows) on the
- * advance table, or pick the advance by hand, then the server applies it. A henchmen roll of
- * 10–12 (or picking it) is the lad's got talent: one of them joins the heroes.
+ * An advance, step by step in one dialog (William): roll 2D6 (or type the roll) on the unit's
+ * advance table, shown with the row it lands on; the D6 or the WS/BS choice the row asks for; the
+ * stat against his race's maximum, or the new skill or spell picked here (a caster may take a
+ * spell for a skill), or "Choose later"; then what he gains and Confirm. A henchmen 10–12 is the
+ * lad's got talent. An advance can also be chosen by hand.
  */
 export default function AdvanceDialog({
   entry,
+  campaignId,
   warbandId,
   heroes,
   maxHeroes,
   onClose,
 }: {
   entry: RosterUnit | null;
+  campaignId: number;
   warbandId: number;
   heroes: WarbandHero[];
   maxHeroes: number | null;
   onClose: () => void;
 }) {
-  const updateCache = useWarbandCacheUpdate();
-  const [roll2, setRoll2] = useState<number | null>(null);
-  const [roll1, setRoll1] = useState<number | null>(null);
-  const [picked, setPicked] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
+  const flow = useAdvanceFlow(entry, warbandId, onClose);
+  const races = useCatalogue("races", campaignId, { enabled: entry !== null }).data;
+  const [showHand, setShowHand] = useState(false);
   const isGroup = entry?.kind === "henchmen_group";
-  const stats = isGroup ? HENCHMEN_SELECTABLE_STATS : HERO_SELECTABLE_STATS;
-  const options = [...stats, ...(isGroup ? [LGT] : OTHER_OPTIONS.map((option) => option.id))];
-  const talent = isGroup && picked === LGT;
-
-  const reset = () => {
-    setRoll2(null);
-    setRoll1(null);
-    setPicked(null);
+  const race = races?.find((candidate) => candidate.id === entry?.unit.race_id);
+  const hand = [
+    ...(isGroup ? HENCHMEN_SELECTABLE_STATS : HERO_SELECTABLE_STATS),
+    ...(isGroup ? [LGT] : OTHER_OPTIONS.map((option) => option.id)),
+  ];
+  const outcome = flow.row?.outcome;
+  const close = () => {
+    flow.reset();
+    setShowHand(false);
+    onClose();
   };
-  const rollTable = () => {
-    const total = d6() + d6();
-    setRoll2(total);
-    setRoll1(null);
-    if (isGroup) {
-      const result = resolveHenchmen2d6Stat(total);
-      setPicked(result.ladsGotTalent ? LGT : result.stat);
-    } else {
-      setPicked(resolveHero2d6Stat(total));
-    }
-  };
-  const followUp = () => {
-    if (roll2 === null) return;
-    const total = d6();
-    setRoll1(total);
-    setPicked(resolveHero1d6Stat(roll2, total));
-  };
-
-  const confirm = async () => {
-    if (!entry || !picked) return;
-    setSaving(true);
-    try {
-      const unit = await unitApi(entry.kind).levelUp(
-        warbandId,
-        entry.unit.id,
-        buildLevelUpPayload({
-          unitName: unitName(entry.unit),
-          selectedStat: picked,
-          roll2d6Total: roll2,
-          roll1d6Total: roll1,
-          nameKey: isGroup ? "group" : "hero",
-        })
-      );
-      updateCache(warbandId, { [LIST_KEY[entry.kind]]: [unit] } as WarbandUpdate);
-      reset();
-      onClose();
-    } catch (error) {
-      toast.error("The advance didn't save.", { description: getErrorMessage(error) });
-    } finally {
-      setSaving(false);
-    }
-  };
+  const gain = entry ? gainLine(flow, entry, race) : "";
 
   return (
-    <Dialog
-      open={entry !== null}
-      onOpenChange={(open) => {
-        if (!open) {
-          reset();
-          onClose();
-        }
-      }}
-    >
-      <DialogContent className="max-w-[560px]">
+    <Dialog open={entry !== null} onOpenChange={(open) => (open ? null : close())}>
+      <DialogContent className="max-w-[620px]">
         <DialogHeader>
           <DialogKicker>Advance</DialogKicker>
           <DialogTitle>{entry ? unitName(entry.unit) : ""}</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <Button variant="secondary" onClick={rollTable}>
-              Roll 2D6
-            </Button>
-            {roll2 !== null ? (
-              <span className="font-mono text-xl font-bold text-head">{roll2}</span>
-            ) : null}
-            {!isGroup && roll2 !== null && needsHero1d6Followup(roll2) ? (
-              <>
-                <Button variant="secondary" onClick={followUp}>
-                  Roll D6
-                </Button>
-                {roll1 !== null ? (
-                  <span className="font-mono text-xl font-bold text-head">{roll1}</span>
-                ) : null}
-              </>
-            ) : null}
-          </div>
-          <div role="group" aria-label="Advance" className="flex flex-wrap gap-1.5">
-            {options.map((option) => (
-              <Chip key={option} pressed={picked === option} onClick={() => setPicked(option)}>
-                {option === LGT ? "The lad's got talent" : resolveAdvanceLabel(option)}
+        <div className="flex flex-col gap-3.5">
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <RollField dice={2} value={flow.roll2} onChange={flow.setRoll2} />
+              <Chip pressed={showHand} onClick={() => setShowHand(!showHand)}>
+                By hand
               </Chip>
-            ))}
+            </div>
+            {showHand ? (
+              <div role="group" aria-label="Advance by hand" className="flex flex-wrap gap-1.5">
+                {hand.map((code) => (
+                  <Chip
+                    key={code}
+                    pressed={flow.byHand === code}
+                    onClick={() => flow.setByHand(flow.byHand === code ? null : code)}
+                  >
+                    {code === LGT ? "The lad's got talent" : resolveAdvanceLabel(code)}
+                  </Chip>
+                ))}
+              </div>
+            ) : null}
+            <DiceTable
+              label={isGroup ? "Henchmen advance table" : "Hero advance table"}
+              current={flow.row ? String(flow.row.from) : undefined}
+              rows={flow.table.map((row) => ({
+                key: String(row.from),
+                roll: span(row.from, row.to),
+                result: row.label,
+              }))}
+            />
           </div>
-          {talent && entry?.kind === "henchmen_group" ? (
+          {outcome?.kind === "d6" ? (
+            <div className="flex flex-col gap-1.5">
+              <span className={LABEL}>
+                D6: 1–3 {resolveAdvanceLabel(outcome.low)}, 4–6 {resolveAdvanceLabel(outcome.high)}
+              </span>
+              <RollField dice={1} value={flow.roll1} onChange={flow.setRoll1} />
+            </div>
+          ) : null}
+          {outcome?.kind === "choose" ? (
+            <div role="group" aria-label="Weapon Skill or Ballistic Skill" className="flex gap-1.5">
+              {outcome.stats.map((stat) => (
+                <Chip
+                  key={stat}
+                  pressed={flow.chosen === stat}
+                  onClick={() => flow.setChosen(stat)}
+                >
+                  +1 {resolveAdvanceLabel(stat)}
+                </Chip>
+              ))}
+            </div>
+          ) : null}
+          {flow.advance === LGT && entry?.kind === "henchmen_group" ? (
             <LadsGotTalent
               group={entry.unit}
               warbandId={warbandId}
               heroes={heroes}
               maxHeroes={maxHeroes}
-              onDone={() => {
-                reset();
-                onClose();
-              }}
+              onDone={close}
+            />
+          ) : null}
+          {entry ? (
+            <AdvanceGain
+              flow={flow}
+              entry={entry}
+              race={race}
+              campaignId={campaignId}
+              warbandId={warbandId}
             />
           ) : null}
         </div>
-        <DialogFooter>
-          <Button variant="ghost" onClick={onClose}>
+        <DialogFooter className="flex-wrap items-center">
+          {gain ? (
+            <span className="mr-auto flex items-baseline gap-2 text-sm font-semibold text-head">
+              <span className={LABEL}>Gains</span>
+              {gain}
+            </span>
+          ) : null}
+          <Button variant="ghost" onClick={close}>
             Cancel
           </Button>
-          {talent ? null : (
-            <Button disabled={!picked || saving} onClick={() => void confirm()}>
-              {picked ? `Take ${resolveAdvanceLabel(picked)}` : "Pick an advance"}
+          {flow.advance === LGT ? null : (
+            <Button disabled={!flow.ready || flow.saving} onClick={() => void flow.confirm()}>
+              Confirm
             </Button>
           )}
         </DialogFooter>

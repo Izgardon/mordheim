@@ -38,6 +38,11 @@ export type UnitBatchResult<K extends UnitKindKey> = {
   warnings?: PurchaseWarning[];
 };
 
+/** A skill, spell or boon or bane an advance gives: the entry, or for a spell a lore and the D6 roll on its table. */
+export type AdvancePick =
+  | { list: "skills" | "spells" | "specials"; id: number }
+  | { list: "spells"; lore: string; roll: number };
+
 export type UnitApi<K extends UnitKindKey> = {
   list(warbandId: number): Promise<Unit<K>[]>;
   listDetails(warbandId: number): Promise<Unit<K>[]>;
@@ -46,7 +51,15 @@ export type UnitApi<K extends UnitKindKey> = {
   create(warbandId: number, payload: UnitPayload<K>): Promise<Unit<K>>;
   update(warbandId: number, unitId: number, payload: Partial<UnitPayload<K>>): Promise<Unit<K>>;
   remove(warbandId: number, unitId: number): Promise<void>;
-  levelUp(warbandId: number, unitId: number, payload: Record<string, unknown>): Promise<Unit<K>>;
+  /** Spends a level-up on the payload's advance; `pick` makes a Skill, Spell or Special advance's pick now. */
+  levelUp(
+    warbandId: number,
+    unitId: number,
+    payload: Record<string, unknown>,
+    pick?: AdvancePick
+  ): Promise<Unit<K>>;
+  /** Makes a pick an advance left for later ("Skill to choose"). */
+  pick(warbandId: number, unitId: number, pick: AdvancePick): Promise<Unit<K>>;
   batch(warbandId: number, body: UnitBatch<K>): Promise<UnitBatchResult<K>>;
 };
 
@@ -69,11 +82,17 @@ function createUnitApi<K extends UnitKindKey>(kind: K): UnitApi<K> {
         body: payload,
       }),
     remove: (warbandId, unitId) => apiRequest<void>(one(warbandId, unitId), { method: "DELETE" }),
-    levelUp: (warbandId, unitId, payload) =>
+    levelUp: (warbandId, unitId, payload, pick) =>
       apiRequest<Unit<K>>(`${one(warbandId, unitId)}level-up/`, {
         method: "POST",
         headers: socketIdHeaders(),
-        body: { payload },
+        body: pick ? { payload, pick } : { payload },
+      }),
+    pick: (warbandId, unitId, pick) =>
+      apiRequest<Unit<K>>(`${one(warbandId, unitId)}pick/`, {
+        method: "POST",
+        headers: socketIdHeaders(),
+        body: pick,
       }),
     batch: (warbandId, body) =>
       apiRequest<UnitBatchResult<K>>(`${base(warbandId)}batch/`, {

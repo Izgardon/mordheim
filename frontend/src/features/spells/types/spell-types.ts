@@ -8,4 +8,6 @@ export type Spell = CatalogueBadgeFields & {
   dc?: string | number | null;
   roll?: number | null;
   campaign_id?: number | null;
+  /** A unit's spell only: how much easier it is for him (-1 each time he rolled it again). */
+  dc_change?: number;
 };

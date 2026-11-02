@@ -7,6 +7,7 @@ import { itemKind, itemStatsLine } from "@/features/items/item-kind";
 import type { Item } from "@/features/items/types/item-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
+import type { AdvancePick } from "../../units/unit-api";
 import { loadoutLine } from "../../units/loadout";
 import GroupMembers from "./GroupMembers";
 import PendingPick from "./PendingPick";
@@ -14,14 +15,7 @@ import RulesPanel from "./RulesPanel";
 import UnitSectionLabel from "./UnitSectionLabel";
 import UnitXp from "./UnitXp";
 import { entryBoxes, type Row } from "./unit-boxes";
-import {
-  boxRows,
-  isCreature,
-  isGroup,
-  itemBoxKind,
-  type PendingList,
-  type RosterUnit,
-} from "./unit-view";
+import { boxRows, isCreature, isGroup, itemBoxKind, type RosterUnit } from "./unit-view";
 
 type UnitDetailsProps = {
   entry: RosterUnit;
@@ -39,14 +33,14 @@ type UnitDetailsProps = {
   onAdvance?: () => void;
   campaignId: number;
   warbandId: number;
-  /** Makes a pick an advance left for later: the entry joins `list`, one pick fewer. */
-  onPick: (list: PendingList, entryId: number) => void;
+  /** Makes a pick an advance left for later: the entry joins its list, one pick fewer. */
+  onPick: (pick: AdvancePick) => void;
 };
 
 /** An open card's body (design E's columns on the web): experience, items, skills and the rest. */
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
-  const { unit, kind } = entry;
+  const { kind } = entry;
   const [open, setOpen] = useState<{ row: string; index: number } | null>(null);
   const lists = boxRows(entry);
 
@@ -170,12 +164,11 @@ export default function UnitDetails(props: UnitDetailsProps) {
           campaignId={props.campaignId}
           warbandId={props.warbandId}
           list={selected.pending}
-          access={"available_skills" in unit ? unit.available_skills : undefined}
-          large={unit.large}
+          entry={entry}
           onClose={() => setOpen(null)}
-          onPick={(entryId) => {
+          onPick={(pick) => {
             setOpen(null);
-            props.onPick(selected.pending!, entryId);
+            props.onPick(pick);
           }}
         />
       ) : selected ? (

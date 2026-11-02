@@ -7,7 +7,7 @@ import { switchCompanion } from "../../api/beasts-api";
 import { useItemMove, useItemSale, itemMutationUpdate } from "../../api/economy-queries";
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
 import { LIST_KEY, type RosterUnit } from "../../components/roster/unit-view";
-import { unitApi } from "../../units/unit-api";
+import { unitApi, type AdvancePick } from "../../units/unit-api";
 import { toastServerWarnings } from "../../utils/server-warnings";
 import type { UnitKindKey, UnitPayload } from "../../types/units";
 import type { WarbandUnitDetail } from "../../types/warband-types";
@@ -18,8 +18,8 @@ type PatchVars = { entry: RosterUnit; patch: Partial<UnitPayload<UnitKindKey>> }
 export type ItemPlace = { type: UnitKindKey | "stash"; id?: number | null };
 
 /**
- * The warband page's one-click unit actions: a field patch (XP, the trading action), switching a
- * mount on or off, and moving or selling an item. Each answer goes straight into the cached sheet.
+ * The warband page's one-click unit actions: a field patch (XP, the trading action), a pick an
+ * advance left for later, switching a mount on or off, and moving or selling an item. Each answer goes straight into the cached sheet.
  */
 export function useUnitActions(warbandId: number) {
   const updateCache = useWarbandCacheUpdate();
@@ -34,6 +34,14 @@ export function useUnitActions(warbandId: number) {
     onSuccess: (unit, { entry }) =>
       updateCache(warbandId, { [LIST_KEY[entry.kind]]: [unit] } as WarbandUpdate),
     onError: fail("That change didn't save."),
+  });
+
+  const pick = useMutation({
+    mutationFn: ({ entry, pick: chosen }: { entry: RosterUnit; pick: AdvancePick }) =>
+      unitApi(entry.kind).pick(warbandId, entry.unit.id, chosen),
+    onSuccess: (unit, { entry }) =>
+      updateCache(warbandId, { [LIST_KEY[entry.kind]]: [unit] } as WarbandUpdate),
+    onError: fail("That pick didn't save."),
   });
 
   const ride = useMutation({
@@ -95,6 +103,8 @@ export function useUnitActions(warbandId: number) {
   return {
     patchUnit: (entry: RosterUnit, body: PatchVars["patch"]) =>
       patch.mutate({ entry, patch: body }),
+    /** A pick an advance left for later ("Skill to choose"). */
+    pickLater: (entry: RosterUnit, chosen: AdvancePick) => pick.mutate({ entry, pick: chosen }),
     rideMount: (entry: RosterUnit, rowId: number, on: boolean) => ride.mutate({ entry, rowId, on }),
     moveItem,
     sellItem,

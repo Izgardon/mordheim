@@ -1,64 +1,60 @@
+import { useState } from "react";
 import { X } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { SearchCombobox } from "@/components/ui/search-select";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import {
-  skillOptions,
-  specialOption,
-  spellOption,
-  warnedLast,
-} from "@/features/catalogue/search-options";
-import { useWhoCan } from "@/features/items/api/who-can-queries";
+import { specialOption, warnedLast } from "@/features/catalogue/search-options";
+import type { Skill } from "@/features/skills/types/skill-types";
+import type { Spell } from "@/features/spells/types/spell-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
-import { buildAvailableSkillsPayload, parseAvailableSkills } from "../../utils/warband-utils";
-import type { PendingList } from "./unit-view";
+import type { AdvancePick } from "../../units/unit-api";
+import SkillPicker from "./advance/SkillPicker";
+import SpellPicker, { type SpellChoice } from "./advance/SpellPicker";
+import type { PendingList, RosterUnit } from "./unit-view";
 
 const NOUN = { skills: "skill", spells: "spell", specials: "boon or bane" } as const;
-const PLURAL = { skills: "skills", spells: "spells", specials: "boons and banes" } as const;
+
+/** The pick a spell choice makes: rolled on a lore, or picked by hand. */
+const spellPick = (choice: SpellChoice): AdvancePick =>
+  choice.mode === "roll"
+    ? { list: "spells", lore: choice.lore, roll: choice.roll }
+    : { list: "spells", id: choice.spell.id };
 
 /**
- * A pick an advance left for later ("Skill to choose", or a spell, a boon or bane), made from the card
- * on the searchable select. The warband type's special skills come first (the server's who-can/);
- * skills outside the unit's skill lists and entries outside the campaign's settings carry a
- * warning and can still be picked.
+ * A pick an advance left for later ("Skill to choose"), made from the card with the advance's
+ * guided pickers: a skill from his lists (the rest behind "Show all", with a warning), a spell
+ * rolled on one of his lores (one he knows gets 1 easier) or picked by hand, a boon or bane from
+ * the search. The server makes the pick (`pick/`).
  */
 export default function PendingPick({
   campaignId,
   warbandId,
   list,
-  access,
-  large,
+  entry,
   onPick,
   onClose,
 }: {
   campaignId: number;
   warbandId: number;
   list: PendingList;
-  /** The unit's `available_skills`, for skills. */
-  access?: unknown;
-  /** Whether the unit is Large: a Large unit's skill warns for any other. */
-  large?: boolean | null;
-  onPick: (entryId: number) => void;
+  entry: RosterUnit;
+  onPick: (pick: AdvancePick) => void;
   onClose: () => void;
 }) {
-  const skills = useCatalogue("skills", campaignId, { enabled: list === "skills" }).data;
-  const spells = useCatalogue("spells", campaignId, { enabled: list === "spells" }).data;
+  const { unit } = entry;
   const specials = useCatalogue("specials", campaignId, { enabled: list === "specials" }).data;
   const settings = useSettingsById();
-  const warbandSkills = useWhoCan(campaignId, list === "skills" ? warbandId : null).specialSkillIds;
-  const options =
-    list === "skills"
-      ? skillOptions(skills ?? [], {
-          settings,
-          large,
-          access: buildAvailableSkillsPayload(parseAvailableSkills(access)),
-          specials: warbandSkills,
-        })
-      : list === "spells"
-        ? warnedLast((spells ?? []).map((spell) => spellOption(spell, settings)))
-        : warnedLast((specials ?? []).map((special) => specialOption(special, settings)));
+  const [skill, setSkill] = useState<Skill | null>(null);
+  const [spell, setSpell] = useState<SpellChoice | null>(null);
+  const pick =
+    list === "skills" && skill
+      ? ({ list, id: skill.id } as const)
+      : list === "spells" && spell
+        ? spellPick(spell)
+        : null;
 
   return (
     <div className="flex flex-col gap-2.5 border border-accent-line bg-panel p-3">
@@ -70,16 +66,48 @@ export default function PendingPick({
           <X aria-hidden="true" />
         </IconButton>
       </div>
-      <SearchCombobox
-        inline
-        autoFocus
-        label={`Search ${PLURAL[list]}`}
-        placeholder={`Search ${PLURAL[list]}`}
-        emptyText={`No ${NOUN[list]} matches.`}
-        options={options}
-        onPick={(option) => onPick(Number(option.id))}
-        onDismiss={onClose}
-      />
+      {list === "skills" ? (
+        <SkillPicker
+          campaignId={campaignId}
+          warbandId={warbandId}
+          access={"available_skills" in unit ? unit.available_skills : undefined}
+          large={unit.large}
+          value={skill}
+          onChange={setSkill}
+        />
+      ) : list === "spells" ? (
+        <SpellPicker
+          campaignId={campaignId}
+          known={("spells" in unit ? (unit.spells ?? []) : []) as Spell[]}
+          value={spell}
+          onChange={setSpell}
+        />
+      ) : (
+        <SearchCombobox
+          inline
+          autoFocus
+          label="Search boons and banes"
+          placeholder="Search boons and banes"
+          emptyText="No boon or bane matches."
+          options={warnedLast((specials ?? []).map((special) => specialOption(special, settings)))}
+          onPick={(option) => onPick({ list: "specials", id: Number(option.id) })}
+          onDismiss={onClose}
+        />
+      )}
+      {list === "specials" ? null : (
+        <div className="flex flex-wrap items-center gap-2">
+          {spell ? (
+            <span className="text-sm font-semibold text-head">
+              {spell.mode === "roll" && spell.known
+                ? `${spell.spell.name} gets easier: Difficulty ${spell.difficulty}`
+                : `New spell: ${spell.spell.name}`}
+            </span>
+          ) : null}
+          <Button className="ml-auto" disabled={!pick} onClick={() => pick && onPick(pick)}>
+            Confirm
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
