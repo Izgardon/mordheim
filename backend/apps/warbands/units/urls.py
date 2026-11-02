@@ -12,6 +12,7 @@ from .views import (
     UnitKillHistoryView,
     UnitLevelUpView,
     UnitListCreateView,
+    UnitPickView,
     UnitPromoteView,
     UnitTakeKitView,
 )
@@ -39,6 +40,7 @@ def unit_urlpatterns(kind: UnitKindSpec) -> list[URLPattern]:
             name=f"warbands-{segment}-kill-history",
         ),
         path(f"{base}{unit}/level-up/", UnitLevelUpView.for_kind(kind), name=f"warbands-{segment}-level-up"),
+        path(f"{base}{unit}/pick/", UnitPickView.for_kind(kind), name=f"warbands-{segment}-pick"),
         path(
             f"{base}{unit}/items/<int:item_row_id>/companion/",
             UnitItemCompanionView.for_kind(kind),

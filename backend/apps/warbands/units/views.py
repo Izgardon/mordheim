@@ -20,6 +20,7 @@ from apps.warbands.views.beasts import back_to_item_answer
 from .errors import validation_error
 from .kinds import HERO, UnitKindSpec
 from .serializers import (
+    AdvancePickSerializer,
     CompanionSwitchSerializer,
     GapActionSerializer,
     HenchmanPromoteSerializer,
@@ -28,6 +29,7 @@ from .serializers import (
     UnitLevelUpSerializer,
     UnitSerializers,
 )
+from .services.advance_picks import advance_with_pick, pick_later
 from .services.back_to_item import back_to_item
 from .services.batch import apply_batch, plan_batch
 from .services.companions import loaded_unit_warnings, switch_companion
@@ -122,8 +124,29 @@ class UnitLevelUpView(UnitView):
             return Response(NOT_FOUND, status=404)
         serializer = UnitLevelUpSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        payload, pick = serializer.validated_data.get("payload") or {}, serializer.validated_data.get("pick")
         try:
-            apply_advance(self.kind, self.warband, unit, serializer.validated_data.get("payload") or {})
+            if pick:
+                advance_with_pick(self.kind, self.warband, unit, payload, pick)
+            else:
+                apply_advance(self.kind, self.warband, unit, payload)
+        except LevelUpRejected as rejected:
+            return Response({"detail": rejected.detail}, status=400)
+        return self.detail_response(unit.id)
+
+
+class UnitPickView(UnitView):
+    """POST .../pick/: a pick an advance left for later ("Skill to choose"), made from the card's guided picker."""
+
+    def post(self, request: Request, warband_id: int, **kwargs: Any) -> Response:
+        unit = self.kept_unit(kwargs)
+        if unit is None:
+            return Response(NOT_FOUND, status=404)
+        serializer = AdvancePickSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            with transaction.atomic():
+                pick_later(self.kind, self.warband, unit, dict(serializer.validated_data))
         except LevelUpRejected as rejected:
             return Response({"detail": rejected.detail}, status=400)
         return self.detail_response(unit.id)

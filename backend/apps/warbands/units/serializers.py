@@ -109,10 +109,14 @@ class UnitReadSerializer(serializers.ModelSerializer):
         serializer = self.catalogue_serializers[link.target]
         folded = getattr(unit, entries_attr(link.relation), None)
         if folded is not None:  # read with the unit's row (UnitKindSpec.with_loadout): the serializer's fields
-            columns = serializer.Meta.fields
+            columns = (*serializer.Meta.fields, *link.kept)
             return [{column: entry[column] for column in columns} for entry in folded]
         rows = self._entries(unit, link)
-        return [serializer(getattr(row, link.target)).data for row in rows if getattr(row, f"{link.target}_id")]
+        return [
+            {**serializer(getattr(row, link.target)).data, **{name: getattr(row, name) for name in link.kept}}
+            for row in rows
+            if getattr(row, f"{link.target}_id")
+        ]
 
     def get_skills(self, unit: RosterUnit) -> list[Any]:
         return self._catalogue(unit, self.kind.skills)
@@ -271,10 +275,28 @@ class UnitSerializers:
     update: type[UnitWriteSerializer]
 
 
+class AdvancePickSerializer(serializers.Serializer):
+    """A skill, spell or boon or bane an advance gives (services/advance_picks.py): the entry by `id`, or for a spell
+    a `lore` and the D6 `roll` on its table."""
+
+    list = serializers.ChoiceField(choices=("skills", "spells", "specials"))
+    id = serializers.IntegerField(min_value=1, required=False)
+    lore = serializers.CharField(max_length=80, required=False)
+    roll = serializers.IntegerField(min_value=1, max_value=6, required=False)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        rolled = "lore" in attrs and "roll" in attrs
+        if "id" not in attrs and not (attrs["list"] == "spells" and rolled):
+            raise serializers.ValidationError("Name the entry, or for a spell its lore and the roll.")
+        return attrs
+
+
 class UnitLevelUpSerializer(serializers.Serializer):
-    """POST .../level-up/: the advance arrives as `payload.advance` and the payload is logged as sent."""
+    """POST .../level-up/: the advance arrives as `payload.advance` and the payload is logged as sent; a Skill, Spell
+    or Special advance may make its pick now (`pick`) instead of leaving one to make later."""
 
     payload = serializers.DictField(required=False)  # a non-object payload is a 400, not a 500 (BUG-89)
+    pick = AdvancePickSerializer(required=False)
 
 
 class HenchmanPromoteSerializer(serializers.Serializer):

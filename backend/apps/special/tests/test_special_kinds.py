@@ -5,6 +5,7 @@ grant are banes unless the classification says otherwise; a custom special picks
 """
 
 import json
+from io import StringIO
 
 from django.core.management import call_command
 from django.test import TestCase
@@ -32,7 +33,7 @@ class SpecialKindTests(TestCase):
         self.assertEqual(book_kind("Not in the book", BANE), BANE)
 
     def test_seeding_the_book_sets_each_kind(self):
-        call_command("seed_spells_and_special", verbosity=0)
+        call_command("seed_spells_and_special", stdout=StringIO())
         kinds = dict(Special.objects.filter(campaign=None, name__in=("Fear", "Stupid", "Large")).values_list("name", "kind"))  # fmt: skip
         self.assertEqual(kinds, {"Fear": BOON, "Stupid": BANE, "Large": TRAIT})
 
