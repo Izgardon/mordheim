@@ -17,12 +17,10 @@ type HenchmenAdvancePayload = {
   roll1?: LogRoll;
 };
 
-// The object's label, else the stored value itself, else "Advance". Primitives have no `label`,
-// so this matches the untyped `advance?.label || advance || "Advance"` read for every input.
+// An object's label, else its id; a stored string itself; else "Advance". Never the object itself, which
+// React can't render (an entry saved with an empty label crashed the Log tab).
 const getAdvanceLabel = (advance: LogAdvance | undefined): string =>
-  (typeof advance === "object" ? advance?.label : undefined) ||
-  (advance as string | undefined) ||
-  "Advance";
+  (typeof advance === "object" ? advance?.label || advance?.id : advance) || "Advance";
 
 /** A hero's or hired sword's level-up, with up to two rolls; `unknownName` names a missing unit. */
 const unitAdvance =
