@@ -1,10 +1,13 @@
 /**
- * The phone's bottom nav on the real routes over the fake API server: the Me sheet (the
- * campaign's settings and your account, nothing of the warband's).
+ * The phone's bottom nav on the real routes over the fake API server: Battle (back to your battle,
+ * else Start a battle where you are) and the Me sheet (the campaign's settings and your account,
+ * nothing of the warband's).
  */
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { BattleState } from "@/features/battles/types/battle-types";
+import type { CampaignPlayer } from "@/features/campaigns/types/campaign-types";
 import { RAIDER, storeSession } from "@/test/auth-fixtures";
 import { cleanupApps, renderApp } from "@/test/app-routes";
 import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
@@ -71,5 +74,63 @@ describe("the Me sheet", () => {
       "aria-current",
       "page"
     );
+  });
+});
+
+const player = (id: number, name: string, warband: string): CampaignPlayer => ({
+  id,
+  name,
+  warband: { id: id + 100, name: warband, type_name: "Reiklanders", wins: 0, losses: 0 },
+});
+const PLAYERS = [player(RAIDER.id, "Raider", "Iron Vultures"), player(9, "Mira", "Night Razors")];
+
+/** A battle you are in and have not finished: one to go back to. */
+const OPEN_BATTLE = {
+  battle: { id: 31, campaign_id: CAMPAIGN_ID, status: "prebattle", flow_type: "normal" },
+  participants: [{ user: { id: RAIDER.id }, status: "accepted" }],
+} as unknown as BattleState;
+
+const battleButton = async () => within(await bottomNav()).getByRole("button", { name: "Battle" });
+
+describe("Battle", () => {
+  beforeEach(() => {
+    fakeApi.on(`GET ${BASE}/`, campaignSummary());
+    fakeApi.on(`GET ${BASE}/players/`, PLAYERS);
+  });
+
+  it("goes back to your battle when you have one", async () => {
+    fakeApi.on(`GET ${BASE}/battles/?open=1`, [OPEN_BATTLE]);
+    const user = setupUser();
+    const app = renderApp(`${BASE}/house-rules`);
+    // until the open battles answer, there is none to go back to
+    await waitFor(async () => expect(await battleButton()).not.toHaveAttribute("aria-haspopup"));
+
+    await user.click(await battleButton());
+
+    expect(app.location().pathname).toBe(`${BASE}/battles/31`);
+    expect(screen.queryByRole("dialog", { name: "Start a battle" })).toBeNull();
+  });
+
+  it("opens Start a battle on the page you are on when you have none", async () => {
+    fakeApi.on(`GET ${BASE}/battles/?open=1`, []);
+    const user = setupUser();
+    const app = renderApp(`${BASE}/house-rules`);
+    await waitFor(() => expect(fakeApi.calls()).toContain(`GET ${BASE}/battles/?open=1`));
+
+    await user.click(await battleButton());
+
+    const dialog = await screen.findByRole("dialog", { name: "Start a battle" });
+    expect(await within(dialog).findByText("Mira · Night Razors")).toBeInTheDocument();
+    expect(app.location().pathname).toBe(`${BASE}/house-rules`);
+  });
+
+  it("goes to the Battles page in an archived campaign, which takes no new battles", async () => {
+    fakeApi.on(`GET ${BASE}/`, campaignSummary({ archived_at: "2026-10-30T18:00:00Z" }));
+    fakeApi.on(`GET ${BASE}/battles/?open=1`, []);
+    renderApp(`${BASE}/house-rules`);
+
+    const battle = within(await bottomNav()).getByRole("link", { name: "Battle" });
+
+    expect(battle).toHaveAttribute("href", `${BASE}/battles`);
   });
 });

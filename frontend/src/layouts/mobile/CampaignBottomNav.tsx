@@ -12,8 +12,14 @@ import { SheetLinkRow, SheetRows } from "./SheetRows";
 type CampaignBottomNavProps = {
   campaign: CampaignSummary;
   userName: string;
-  /** A battle you can go back to: Battle goes there instead of the Battles page. */
+  /** A battle you can go back to: Battle goes there. */
   onRejoinBattle?: () => void;
+  /**
+   * With none to go back to, Battle opens Start a battle where you are (William: "battle in
+   * bottom nav on mobile should just open the start a battle modal if not in one"). Left out (an
+   * archived campaign), it goes to the Battles page.
+   */
+  onStartBattle?: () => void;
 };
 
 /**
@@ -26,6 +32,7 @@ export default function CampaignBottomNav({
   campaign,
   userName,
   onRejoinBattle,
+  onStartBattle,
 }: CampaignBottomNavProps) {
   const { pathname } = useLocation();
   const [sheet, setSheet] = useState<"reference" | "me" | null>(null);
@@ -47,6 +54,14 @@ export default function CampaignBottomNav({
         />
         {onRejoinBattle ? (
           <BottomBarButton label="Battle" icon={Swords} onClick={onRejoinBattle} />
+        ) : onStartBattle ? (
+          <BottomBarButton
+            label="Battle"
+            icon={Swords}
+            current={active === "battle"}
+            aria-haspopup="dialog"
+            onClick={onStartBattle}
+          />
         ) : (
           <BottomBarLink
             to={`${base}/battles`}

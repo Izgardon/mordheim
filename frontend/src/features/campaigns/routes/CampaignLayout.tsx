@@ -17,6 +17,7 @@ import { campaignSectionTitle, isBattlePath } from "@/layouts/shell/campaign-nav
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import { isArchived } from "../capabilities";
 import ArchivedBanner from "../components/layout/ArchivedBanner";
 import CampaignBattleDialog from "../components/layout/CampaignBattleDialog";
 import CampaignLoadError from "../components/layout/CampaignLoadError";
@@ -155,6 +156,9 @@ export default function CampaignLayout() {
               campaign={campaign}
               userName={userName}
               onRejoinBattle={onRejoinBattle}
+              onStartBattle={
+                isArchived(campaign) ? undefined : () => setBattleDialog("start_battle")
+              }
             />
           ),
         };
