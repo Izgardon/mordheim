@@ -16,6 +16,7 @@ from apps.skills.models import Skill
 from apps.special.kinds import book_kind
 from apps.special.models import Special
 from apps.spells.models import Spell
+from apps.spells.rolls import book_roll_taken
 
 SKILL_NAME_ALIASES = {  # the Ninja's and the Knight of the White Wolf's skills under their book names (BUG-54)
     "lightning speed": "lightning reflexes",
@@ -167,6 +168,11 @@ class BookLookups:
         spell = self.spells.get(lookup_key(name))
         if spell is None:  # his own spell (the Dark Mage's six), as specials and skills are (BUG-54)
             spell_type = self.own_type_of(owner)
+            if book_roll_taken(spell_type, fields["roll"]):  # his lore keeps the first on each roll (spells/rolls.py)
+                self.warnings.append(
+                    f"  Spell '{name}' ({spell_type}): roll {fields['roll']} is taken, saved with none"
+                )
+                fields["roll"] = None
             spell = Spell.objects.create(name=name, type=spell_type, **fields)
             self.spells[lookup_key(name)] = spell
             self.warnings.append(f"  Created spell '{name}' ({spell_type}) for '{owner}'")

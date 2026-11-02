@@ -70,10 +70,12 @@ class CatalogueScopedView(CampaignScopedView):
             serializer.validated_data.update(updated_by=self.request.user, updated_at=timezone.now())
 
     def answer(self, entry: Model) -> Any:
-        """A write's answer: the entry as its detail reads it."""
+        """A write's answer: the entry as its detail reads it, with the write's `warnings` when it has any (hooks.py)."""
         kind = self.kind
         row = kind.hooks.detail_rows(kind).get(pk=entry.pk) if kind.reread else entry
-        return kind.entry_serializer(row).data
+        data = kind.entry_serializer(row).data
+        warnings = getattr(entry, "write_warnings", None)
+        return {**data, "warnings": warnings} if warnings else data
 
 
 class CatalogueCollectionView(CatalogueScopedView):

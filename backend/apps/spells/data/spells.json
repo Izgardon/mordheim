@@ -159,7 +159,7 @@
   {"name": "Spell of Doom", "type": "Necromancy (Restless Dead)", "dc": "9", "roll": 4, "description": "Target enemy within 12\" must roll equal to or less than their Strength on D6 or suffer an injury."},
   {"name": "Call of Vanhel", "type": "Necromancy (Restless Dead)", "dc": "6", "roll": 5, "description": "One undead model within 6\" gains an additional movement phase and automatically passes Initiative tests."},
   {"name": "Deathly Visage", "type": "Necromancy (Restless Dead)", "dc": "6", "roll": 6, "description": "Necromancers only. Causes fear in enemies and grants immunity to fear for the battle."},
-  {"name": "Living Horror", "type": "Necromancy (Restless Dead)", "dc": "8", "roll": 6, "description": "Liche only. Targets model within 8\"; roll D6+3 vs Leadership; if successful, inflicts a wound and prevents actions next turn."},
+  {"name": "Living Horror", "type": "Necromancy (Restless Dead)", "dc": "8", "roll": null, "description": "Liche only. Targets model within 8\"; roll D6+3 vs Leadership; if successful, inflicts a wound and prevents actions next turn."},
 
   {"name": "Howl of the North", "type": "Norse Runes", "dc": "9", "roll": 1, "description": "Icy winds sweep before the Shaman knocking missiles from their path. Grants missile immunity; winds dissipate on 1-2."},
   {"name": "Angvar's Fury", "type": "Norse Runes", "dc": "7", "roll": 2, "description": "The Shaman's howls rouse the anger of the warriors around him. Grants +1 to hit in melee within 8\" until next turn."},

@@ -42,7 +42,16 @@ from apps.warbands.models import HenchmenGroup, WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
 from apps.warbands.units.kinds import UnitKindKey
 
-from .hooks import BestiaryHooks, CatalogueHooks, HirelingProfileHooks, ItemHooks, ItemRuleHooks, RaceHooks, SkillHooks
+from .hooks import (
+    BestiaryHooks,
+    CatalogueHooks,
+    HirelingProfileHooks,
+    ItemHooks,
+    ItemRuleHooks,
+    RaceHooks,
+    SkillHooks,
+    SpellHooks,
+)
 from .rows import (
     BestiaryEntryDetailRowSerializer,
     BestiaryEntryRowSerializer,
@@ -255,6 +264,7 @@ SPELLS = CatalogueKindSpec(
     named=True,
     versioned=True,
     filters=NAME_AND_TYPE,
+    hooks=SpellHooks(),
     holders=_copies("spells", _linked_by(BestiaryEntrySpell, "spell"), *_listed_by_hirelings("spell_links", "spell")),
 )
 SPECIALS = CatalogueKindSpec(
