@@ -1,7 +1,5 @@
-import type { ReactNode } from "react";
-import { Archive, Map, ShoppingBag } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
+import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import { MoreMenu, type MoreMenuEntry } from "@/components/ui/more-menu";
 
 export type WarbandPanel = "store" | "stash" | "locations" | "loadout";
@@ -15,10 +13,10 @@ type WarbandHeaderProps = {
   menu: MoreMenuEntry[];
 };
 
-const PANEL_BUTTONS: { panel: WarbandPanel; label: string; icon: ReactNode }[] = [
-  { panel: "store", label: "Store", icon: <ShoppingBag aria-hidden="true" /> },
-  { panel: "stash", label: "Stash", icon: <Archive aria-hidden="true" /> },
-  { panel: "locations", label: "Locations", icon: <Map aria-hidden="true" /> },
+const PANEL_BUTTONS: { panel: WarbandPanel; label: string; icon: GameIconName }[] = [
+  { panel: "store", label: "Store", icon: "store" },
+  { panel: "stash", label: "Stash", icon: "stash" },
+  { panel: "locations", label: "Locations", icon: "locations" },
 ];
 
 /** The warband's name and kicker, the Store, Stash and Locations buttons, and the ⋯ menu. */
@@ -43,7 +41,7 @@ export default function WarbandHeader(props: WarbandHeaderProps) {
               className="w-[140px] max-[960px]:w-auto max-[960px]:flex-1"
               onClick={() => props.onOpen(button.panel)}
             >
-              {button.icon}
+              <GameIcon name={button.icon} className="h-5 w-5 text-accent-text" />
               {button.label}
               {button.panel === "stash" && props.stashCount ? (
                 <span className="font-mono text-xs text-accent-text">{props.stashCount}</span>

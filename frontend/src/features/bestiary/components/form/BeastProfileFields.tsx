@@ -1,5 +1,5 @@
+import { NumberInput } from "@/components/ui/number-input";
 import { FieldError } from "@/components/ui/field-error";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { StatsField } from "./bestiary-core-fields";
@@ -39,9 +39,8 @@ export default function BeastProfileFields({ form }: { form: BestiaryEntryFormSt
       {values.kind === "mount" ? (
         <div className="flex max-w-xs flex-col gap-1.5">
           <Label htmlFor="bestiary-rating-bonus">Rating bonus for the rider</Label>
-          <Input
+          <NumberInput
             id="bestiary-rating-bonus"
-            type="number"
             min={0}
             step={1}
             value={values.rating_bonus}

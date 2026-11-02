@@ -89,6 +89,11 @@ module.exports = {
   				bg: 'var(--color-danger-bg)',
   				line: 'var(--color-danger-line)'
   			},
+  			kind: {
+  				skill: 'var(--color-kind-skill)',
+  				special: 'var(--color-kind-special)',
+  				spell: 'var(--color-kind-spell)'
+  			},
   			good: {
   				DEFAULT: 'var(--color-good)',
   				bg: 'var(--color-good-bg)',

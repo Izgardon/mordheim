@@ -1,3 +1,4 @@
+import { GameIconsCredit } from "@/components/ui/game-icons";
 import type { ReactNode } from "react";
 
 import { cn } from "@/lib/utils";
@@ -49,7 +50,9 @@ export default function AuthShell({ children, video, credit }: AuthShellProps) {
           {children}
           {/* A phone has no picture half: the caption closes the column instead. */}
           {isMobile ? (
-            <AuthCaption className="mt-auto border-x-0 border-b-0 bg-transparent px-0 pb-0 pt-6" />
+            <AuthCaption className="mt-auto border-x-0 border-b-0 bg-transparent px-0 pb-0 pt-6">
+              <GameIconsCredit className="border-t border-line pt-3" />
+            </AuthCaption>
           ) : null}
         </div>
       </section>

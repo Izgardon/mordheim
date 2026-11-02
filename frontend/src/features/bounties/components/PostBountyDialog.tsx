@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -142,8 +142,7 @@ export default function PostBountyDialog({
         )}
         <label className={FIELD_LABEL}>
           Reward (gc)
-          <Input
-            inputMode="numeric"
+          <NumberInput
             value={amount}
             onChange={(event) => setAmount(event.target.value.replace(/[^0-9]/g, ""))}
           />

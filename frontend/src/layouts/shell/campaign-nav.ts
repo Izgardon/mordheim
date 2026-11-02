@@ -62,6 +62,13 @@ const section = (pathname: string) => parts(pathname)[2] ?? "";
 const isBattlesPage = (pathname: string) =>
   section(pathname) === "battles" && parts(pathname).length === 3;
 
+/**
+ * One battle's screens (`battles/:id/...`), which bring the battle bar and tools on a phone; the
+ * Battles page itself keeps the campaign's nav.
+ */
+export const isBattlePath = (pathname: string) =>
+  section(pathname) === "battles" && parts(pathname).length > 3;
+
 /** A battle's Aftermath (`battles/:id/postbattle`): part of your warband's post-game. */
 export const isAftermathPath = (pathname: string) => /\/battles\/\d+\/postbattle/.test(pathname);
 

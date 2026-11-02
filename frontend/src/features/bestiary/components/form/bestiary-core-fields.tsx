@@ -1,3 +1,4 @@
+import { NumberInput } from "@/components/ui/number-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -93,8 +94,7 @@ export function StatsField({ values, onChange }: CoreFieldProps) {
         {STAT_FIELDS.map((field) => (
           <div key={field.key} className="flex flex-col items-center gap-0.5">
             <span className="text-xs font-medium text-muted-foreground">{field.label}</span>
-            <Input
-              type="number"
+            <NumberInput
               min={0}
               max={10}
               value={values.stats[field.key]}

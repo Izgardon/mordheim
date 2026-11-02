@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
+import { NumberInput } from "@/components/ui/number-input";
 import type { CampaignLocation } from "@/features/campaigns/types/campaign-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -66,13 +67,16 @@ export default function LocationVisit({
   const field = (label: string, value: string, set: (next: string) => void, numeric = false) => (
     <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
       {label}
-      <Input
-        inputSize="sm"
-        inputMode={numeric ? "numeric" : undefined}
-        placeholder={numeric ? undefined : "None"}
-        value={value}
-        onChange={(event) => set(event.target.value)}
-      />
+      {numeric ? (
+        <NumberInput inputSize="sm" value={value} onChange={(event) => set(event.target.value)} />
+      ) : (
+        <Input
+          inputSize="sm"
+          placeholder="None"
+          value={value}
+          onChange={(event) => set(event.target.value)}
+        />
+      )}
     </label>
   );
 

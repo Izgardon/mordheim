@@ -1,3 +1,4 @@
+import { GameIcon } from "@/components/ui/game-icons";
 import {
   Dialog,
   DialogContent,
@@ -55,7 +56,10 @@ export default function WarbandStats(props: WarbandStatsProps) {
           );
           return (
             <div key={total.label} className="flex flex-col gap-0.5 py-3.5 pr-3">
-              <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+              <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+                {total.label === "Gold" ? (
+                  <GameIcon name="gold" className="h-3.5 w-3.5 text-accent-text" />
+                ) : null}
                 {total.label}
               </dt>
               {total.onClick ? (

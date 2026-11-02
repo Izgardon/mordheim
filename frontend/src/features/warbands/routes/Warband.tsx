@@ -23,13 +23,11 @@ import PostgameSlot from "../components/camp/PostgameSlot";
 import LocationsPanel from "../components/panels/LocationsPanel";
 import AdvanceDialog from "../components/roster/AdvanceDialog";
 import EditUnitForm from "../components/roster/EditUnitForm";
-import RecruitDialog from "../components/roster/RecruitDialog";
 import RosterSections from "../components/roster/RosterSections";
 import WarbandTrade from "../components/trade/WarbandTrade";
 import type { RosterUnit } from "../components/roster/unit-view";
 import { useUnitActions } from "../hooks/units/useUnitActions";
 import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
-import type { UnitKindKey } from "../types/units";
 
 /** The warband page (design E): your own warband, or someone else's to look at. */
 export default function Warband() {
@@ -48,7 +46,6 @@ export default function Warband() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const panel = searchParams.get("panel") as WarbandPanel | null;
   const [loadoutFor, setLoadoutFor] = useState<RosterUnit | null>(null);
-  const [recruiting, setRecruiting] = useState<UnitKindKey | null>(null);
   const [advancing, setAdvancing] = useState<RosterUnit | null>(null);
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [tradeInviteOpen, setTradeInviteOpen] = useState(false);
@@ -101,6 +98,8 @@ export default function Warband() {
     ...sheet.henchmenGroups.map((unit) => ({ kind: "henchmen_group" as const, unit })),
     ...sheet.hirelings.map((unit) => ({ kind: "hireling" as const, unit })),
   ];
+  // the hire picker (the catalogue, with the custom hire), as the roster's Hire
+  const hire = () => navigate(`/campaigns/${campaignId}/hired-swords?warband=${warbandId}`);
   const postgame = {
     campaignId,
     campaign,
@@ -108,8 +107,7 @@ export default function Warband() {
     userId: user?.id,
     enabled: mine && canEdit,
     isMobile,
-    // the hire picker (the catalogue, with the custom hire), as the roster's Hire
-    onHire: () => navigate(`/campaigns/${campaignId}/hired-swords?warband=${warbandId}`),
+    onHire: hire,
     onStore: () => openStore({}),
   } as const;
 
@@ -170,14 +168,11 @@ export default function Warband() {
                     hero_count: warband?.hero_count,
                     hireling_count: warband?.hireling_count,
                   }}
+                  resources={warband.resources ?? []}
                   canEdit={canEdit}
+                  canCreateRace={capabilities.edit_catalogue}
                   onLoadout={setLoadoutFor}
-                  onRecruit={(kind) =>
-                    // hired swords come from the hire picker (the catalogue), which has the custom hire too
-                    kind === "hireling"
-                      ? navigate(`/campaigns/${campaignId}/hired-swords?warband=${warbandId}`)
-                      : setRecruiting(kind)
-                  }
+                  onHire={hire}
                   onAdvance={setAdvancing}
                   heroExtra={heroBounties.extraFor}
                   onBuyAgain={(entry, item) =>
@@ -235,7 +230,6 @@ export default function Warband() {
         actions={actions}
         placeSearch={searchParams.get("place") ?? undefined}
       />
-      <RecruitDialog kind={recruiting} warbandId={warbandId} onClose={() => setRecruiting(null)} />
       {heroBounties.dialog}
       <AdvanceDialog
         entry={advancing}

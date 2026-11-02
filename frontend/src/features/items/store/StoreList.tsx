@@ -2,12 +2,14 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
 import { Chip } from "@/components/ui/chip";
+import { ItemKindIcon } from "@/components/ui/game-icons";
 import { Switch } from "@/components/ui/switch";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { cn } from "@/lib/utils";
 
 import { useWhoCan } from "../api/who-can-queries";
+import { itemKind } from "../item-kind";
 import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
 import { isSold } from "../utils/item-listing";
 import AcquireForm from "./AcquireForm";
@@ -116,6 +118,7 @@ export default function StoreList(props: StoreListProps) {
           return (
             <li key={item.id} className="flex flex-col gap-2.5 border-b border-line py-2.5">
               <div className="flex items-center gap-3">
+                <ItemKindIcon kind={itemKind(item)} className="h-5 w-5 text-accent-text" />
                 <div className="flex min-w-0 flex-1 flex-col gap-px">
                   <span className="font-bold text-ink">{itemName(item)}</span>
                   <span className="text-xs text-muted-foreground">

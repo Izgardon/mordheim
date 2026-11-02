@@ -46,7 +46,20 @@ export type Named = { id: number; name: string; type?: string | null };
 export type EditLists = { skills: Named[]; specials: Named[]; spells: Named[] };
 type Draft = Record<string, unknown>;
 
-const numberOrNull = (value: unknown) => (value === "" || value === null ? null : Number(value));
+/**
+ * The profile a save sends: an empty box is 0 (the server keeps every stat but the save as a
+ * number), and an empty save is none.
+ */
+export function statsPayload(draft: Record<string, unknown>) {
+  return Object.fromEntries(
+    Object.values(STAT_FIELDS).map((field) => {
+      const value = draft[field];
+      const empty = value === "" || value === null || value === undefined;
+      if (field === "armour_save") return [field, empty ? null : Number(value) || null];
+      return [field, empty ? 0 : Number(value) || 0];
+    })
+  );
+}
 
 function initialDraft(entry: RosterUnit): Draft {
   const { unit } = entry;
@@ -109,9 +122,7 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
       price: Number(draft.price) || 0,
       xp: Number(draft.xp) || 0,
       missing_games: Number(draft.missing_games) || 0,
-      ...Object.fromEntries(
-        Object.values(STAT_FIELDS).map((field) => [field, numberOrNull(draft[field])])
-      ),
+      ...statsPayload(draft),
       ...(access
         ? { available_skills: buildAvailableSkillsPayload(access as Record<string, boolean>) }
         : {}),

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -62,9 +63,8 @@ export default function TreasuryTab({ campaignId, warbandId, canEdit }: Treasury
             value={form.formDescription}
             onChange={(event) => form.setFormDescription(event.target.value)}
           />
-          <Input
+          <NumberInput
             aria-label="Gold"
-            inputMode="numeric"
             placeholder="gc"
             value={form.formPrice}
             onChange={(event) => form.setFormPrice(event.target.value)}

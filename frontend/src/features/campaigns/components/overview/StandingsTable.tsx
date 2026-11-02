@@ -6,12 +6,15 @@ import { cn } from "@/lib/utils";
 import type { Standing } from "./overview-data";
 
 const TH =
-  "border-b border-border px-3 py-2.5 text-left text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
-const TD = "border-b border-line px-3 py-[11px]";
+  "whitespace-nowrap border-b border-border px-2.5 py-2.5 text-left text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
+const TD = "border-b border-line px-2.5 py-[11px]";
+/** The Type column shows on a wide screen; narrower, the type sits under the warband's name. */
+const WIDE = "hidden min-[1600px]:table-cell";
 
 /**
  * The standings (design E), by warband rating: each warband links to its warband page (yours
- * opens your own), and your row is picked out. A table on the web, a list on a phone.
+ * opens your own), and your row is picked out. A table on the web that fits its column (a long
+ * name wraps, and below 1600 px the type moves under the name), a list on a phone.
  */
 export default function StandingsTable({
   rows,
@@ -69,7 +72,7 @@ export default function StandingsTable({
 
   return (
     <div className="overflow-x-auto border border-border bg-surface">
-      <table className="w-full min-w-[720px] border-collapse text-sm">
+      <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="bg-raised">
             <th scope="col" className={cn(TH, "w-9 pl-4 pr-2")}>
@@ -81,7 +84,7 @@ export default function StandingsTable({
             <th scope="col" className={TH}>
               Player
             </th>
-            <th scope="col" className={TH}>
+            <th scope="col" className={cn(TH, WIDE)}>
               Type
             </th>
             <th scope="col" className={cn(TH, "text-right")}>
@@ -103,7 +106,7 @@ export default function StandingsTable({
                 className={cn(you && "bg-raised shadow-[inset_2px_0_0_var(--color-accent)]")}
               >
                 <td className={cn(TD, "pl-4 pr-2 font-mono text-muted-foreground")}>{row.rank}</td>
-                <td className={TD}>
+                <td className={cn(TD, "break-words")}>
                   <Link
                     to={href(row)}
                     className="font-display text-base font-semibold text-head hover:text-accent-hi"
@@ -111,15 +114,22 @@ export default function StandingsTable({
                     {row.warband}
                   </Link>
                   {you ? (
-                    <span className="ml-2 border border-accent-line px-1.5 py-px text-[11px] font-bold text-accent-hi">
+                    <span className="ml-2 whitespace-nowrap border border-accent-line px-1.5 py-px text-[11px] font-bold text-accent-hi">
                       You
                     </span>
                   ) : null}
+                  <span className="block text-xs text-muted-foreground min-[1600px]:hidden">
+                    {row.warbandType}
+                  </span>
                 </td>
                 <td className={cn(TD, "text-text2")}>{row.player}</td>
-                <td className={cn(TD, "text-text2")}>{row.warbandType}</td>
-                <td className={cn(TD, "text-right font-mono font-bold text-ink")}>{row.rating}</td>
-                <td className={cn(TD, "pr-4 text-right font-mono text-text2")}>{row.record}</td>
+                <td className={cn(TD, WIDE, "text-text2")}>{row.warbandType}</td>
+                <td className={cn(TD, "whitespace-nowrap text-right font-mono font-bold text-ink")}>
+                  {row.rating}
+                </td>
+                <td className={cn(TD, "whitespace-nowrap pr-4 text-right font-mono text-text2")}>
+                  {row.record}
+                </td>
               </tr>
             );
           })}

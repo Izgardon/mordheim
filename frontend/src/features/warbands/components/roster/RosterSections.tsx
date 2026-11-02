@@ -1,23 +1,24 @@
-import { useEffect, useState, type ReactNode } from "react";
-import { useSearchParams } from "react-router-dom";
-import { Plus } from "lucide-react";
+import type { ReactNode } from "react";
 
-import { SectionTitle } from "@/components/ui/section-title";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import type { Item } from "@/features/items/types/item-types";
-import { cn } from "@/lib/utils";
 
 import { useUnitActions } from "../../hooks/units/useUnitActions";
+import type { UnitKindKey } from "../../types/units";
 import type {
   HenchmenGroup,
   WarbandHero,
   WarbandHireling,
+  WarbandResource,
   WarbandRosterCounts,
 } from "../../types/warband-types";
-import { ROSTER_DIVIDED, ROSTER_HEROES, ROSTER_SECTIONS } from "../page/warband-layout";
+import { ROSTER_HEROES, ROSTER_SECTIONS } from "../page/warband-layout";
+import RecruitForm from "./RecruitForm";
+import RosterSection from "./RosterSection";
 import UnitCard from "./UnitCard";
 import UnitDetails from "./UnitDetails";
 import { pickPayload, unitKey, type RosterUnit } from "./unit-view";
+import { useRosterCards } from "./useRosterCards";
 
 type RosterSectionsProps = {
   warbandId: number;
@@ -25,11 +26,15 @@ type RosterSectionsProps = {
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
   hirelings: WarbandHireling[];
+  /** The warband's resources, which a hire fee pays from. */
+  resources: WarbandResource[];
   /** The server's cap counts: one in a hero's place is a hero, a dramatis persona no hired sword. */
   counts?: Pick<WarbandRosterCounts, "hero_count" | "hireling_count">;
   canEdit: boolean;
+  canCreateRace: boolean;
   onLoadout: (entry: RosterUnit) => void;
-  onRecruit: (kind: RosterUnit["kind"]) => void;
+  /** Hire: the hire picker (the catalogue), whose "someone not in the list" comes back here. */
+  onHire: () => void;
   /** The edit form for the unit being edited, rendered inside its open card. */
   renderEdit: (entry: RosterUnit, close: () => void) => ReactNode;
   /** Opens the level-up for a unit with an advance waiting. */
@@ -40,61 +45,11 @@ type RosterSectionsProps = {
   heroExtra?: (hero: WarbandHero) => ReactNode;
 };
 
-function Section({
-  title,
-  meta,
-  add,
-  onAdd,
-  divided = false,
-  children,
-}: {
-  title: string;
-  meta: string;
-  add?: string;
-  onAdd: () => void;
-  /** Under a hairline: every section after the first. */
-  divided?: boolean;
-  children: ReactNode;
-}) {
-  return (
-    <section aria-label={title} className={cn("flex flex-col gap-3", divided && ROSTER_DIVIDED)}>
-      <div className="flex items-baseline justify-between gap-3">
-        <div className="flex items-baseline gap-2.5">
-          <SectionTitle>{title}</SectionTitle>
-          <span className="text-[13px] text-faint">{meta}</span>
-        </div>
-        {add ? (
-          <button
-            type="button"
-            onClick={onAdd}
-            className="flex min-h-9 items-center gap-1.5 border border-border px-3 text-[13px] font-bold text-accent-text hover:bg-raised"
-          >
-            <Plus className="h-3.5 w-3.5" aria-hidden="true" />
-            {add}
-          </button>
-        ) : null}
-      </div>
-      {children}
-    </section>
-  );
-}
-
 /** The roster tab: heroes as cards in a grid, henchmen and hired swords as rows (design E). */
 export default function RosterSections(props: RosterSectionsProps) {
   const { warbandId, campaign, canEdit } = props;
   const actions = useUnitActions(warbandId);
-  // A link to a unit (Search everything, `?unit=hero-12`) opens its card and scrolls to it.
-  const [searchParams] = useSearchParams();
-  const linked = searchParams.get("unit");
-  const [openKey, setOpenKey] = useState<string | null>(linked);
-  useEffect(() => {
-    if (!linked) return;
-    setOpenKey(linked);
-    requestAnimationFrame(() =>
-      document.getElementById(`unit-${linked}`)?.scrollIntoView({ block: "start" })
-    );
-  }, [linked]);
-  const [editKey, setEditKey] = useState<string | null>(null);
+  const cards = useRosterCards();
 
   const heroes: RosterUnit[] = props.heroes.map((unit) => ({ kind: "hero", unit }));
   const groups: RosterUnit[] = props.henchmenGroups.map((unit) => ({
@@ -104,29 +59,44 @@ export default function RosterSections(props: RosterSectionsProps) {
   const hired: RosterUnit[] = props.hirelings.map((unit) => ({ kind: "hireling", unit }));
   const everyone = [...heroes, ...groups, ...hired];
 
+  const recruitForm = (kind: UnitKindKey, list: RosterUnit[]) =>
+    canEdit && cards.recruiting === kind ? (
+      <RecruitForm
+        kind={kind}
+        campaignId={campaign?.id ?? 0}
+        warbandId={warbandId}
+        resources={props.resources}
+        existingIds={list.map((entry) => entry.unit.id)}
+        canCreateRace={props.canCreateRace}
+        onCancel={() => cards.setRecruiting(null)}
+        onCreated={cards.recruited}
+      />
+    ) : null;
+
   const card = (entry: RosterUnit, layout: "hero" | "row") => {
     const key = unitKey(entry);
-    const open = openKey === key;
-    const editing = open && editKey === key;
+    const open = cards.openKey === key;
+    const editing = open && cards.editKey === key;
     return (
       <UnitCard
         key={key}
         entry={entry}
         campaign={campaign}
+        warbandId={warbandId}
         layout={layout}
         open={open}
-        canEdit={canEdit && !editing}
-        onToggle={() => {
-          setOpenKey(open ? null : key);
-          setEditKey(null);
-        }}
-        onEdit={() => setEditKey(key)}
+        editing={editing}
+        canEdit={canEdit}
+        onToggle={() => cards.toggle(key)}
+        onEdit={() => cards.startEdit(key)}
         onLoadout={() => props.onLoadout(entry)}
         onRide={(rowId, on) => actions.rideMount(entry, rowId, on)}
+        onAdvance={() => props.onAdvance(entry)}
+        onTradingAction={(on) => actions.patchUnit(entry, { trading_action: on })}
         extra={entry.kind === "hero" ? props.heroExtra?.(entry.unit) : null}
       >
         {editing ? (
-          props.renderEdit(entry, () => setEditKey(null))
+          props.renderEdit(entry, cards.stopEdit)
         ) : open ? (
           <UnitDetails
             entry={entry}
@@ -134,10 +104,10 @@ export default function RosterSections(props: RosterSectionsProps) {
             canEdit={canEdit}
             others={everyone.filter((other) => unitKey(other) !== key)}
             onXp={(xp) => actions.patchUnit(entry, { xp })}
-            onTradingAction={(on) => actions.patchUnit(entry, { trading_action: on })}
             onMoveItem={(itemId, to) => actions.moveItem(entry, itemId, to)}
             onSellItem={(itemId, price) => actions.sellItem(entry, itemId, price)}
             onBuyAgain={(item) => props.onBuyAgain(entry, item)}
+            onLoadout={() => props.onLoadout(entry)}
             onAdvance={() => props.onAdvance(entry)}
             campaignId={campaign?.id ?? 0}
             warbandId={warbandId}
@@ -154,32 +124,35 @@ export default function RosterSections(props: RosterSectionsProps) {
 
   return (
     <div className={ROSTER_SECTIONS}>
-      <Section
+      <RosterSection
         title="Heroes"
         meta={`${props.counts?.hero_count ?? heroes.length}${maxHeroes ? ` of ${maxHeroes}` : ""}`}
         add={canEdit ? "Add hero" : undefined}
-        onAdd={() => props.onRecruit("hero")}
+        onAdd={() => cards.setRecruiting("hero")}
+        form={recruitForm("hero", heroes)}
       >
         <div className={ROSTER_HEROES}>{heroes.map((entry) => card(entry, "hero"))}</div>
-      </Section>
-      <Section
+      </RosterSection>
+      <RosterSection
         title="Henchmen"
         meta={`${groups.length} ${groups.length === 1 ? "group" : "groups"} · ${models} models`}
         add={canEdit ? "Add group" : undefined}
         divided
-        onAdd={() => props.onRecruit("henchmen_group")}
+        onAdd={() => cards.setRecruiting("henchmen_group")}
+        form={recruitForm("henchmen_group", groups)}
       >
         <div className="flex flex-col gap-2.5">{groups.map((entry) => card(entry, "row"))}</div>
-      </Section>
-      <Section
+      </RosterSection>
+      <RosterSection
         title="Hired swords"
         meta={`${props.counts?.hireling_count ?? hired.length}${maxHired ? ` of ${maxHired}` : ""}`}
         add={canEdit ? "Hire" : undefined}
         divided
-        onAdd={() => props.onRecruit("hireling")}
+        onAdd={props.onHire}
+        form={recruitForm("hireling", hired)}
       >
         <div className="flex flex-col gap-2.5">{hired.map((entry) => card(entry, "row"))}</div>
-      </Section>
+      </RosterSection>
     </div>
   );
 }

@@ -50,17 +50,18 @@ describe("WarbandTypePicker", () => {
     const onPick = vi.fn();
     render(<WarbandTypePicker id="type" campaignId={4} value={null} onPick={onPick} />);
     const user = userEvent.setup();
-    await user.type(screen.getByRole("textbox"), "skav");
+    await user.type(screen.getByRole("combobox", { name: "Warband type" }), "skav");
 
-    const inPlay = screen.getByRole("list", { name: "Warband types in this campaign" });
-    expect(
-      within(inPlay)
-        .getAllByRole("button")
-        .map((button) => button.textContent)
-    ).toEqual(["Skaven1aMordheim · Mordheim Rulebook"]);
-    const outside = screen.getByRole("list", { name: "Warband types outside this campaign" });
-    expect(within(outside).getByText("Mousillon isn't in this campaign")).toBeInTheDocument();
-    await user.click(within(outside).getByRole("button"));
+    const options = screen.getAllByRole("option");
+    expect(options.map((option) => option.textContent)).toEqual([
+      "Skaven1aMordheim · Mordheim Rulebook",
+      "Skaven of Clan Pestilens2bMousillonMousillon isn't in this campaign",
+      "Add “skav” as a custom warband type",
+    ]);
+    const list = screen.getByRole("listbox");
+    expect(within(list).getByText("In this campaign")).toBeInTheDocument();
+    expect(within(list).getByText("Outside this campaign")).toBeInTheDocument();
+    await user.click(options[1]);
     expect(onPick).toHaveBeenCalledWith(TYPES[1]);
   });
 
@@ -69,18 +70,21 @@ describe("WarbandTypePicker", () => {
     const added = row(9, "Gutter Kings", { campaign_id: 4, setting: null, source: "" });
     mutateAsync.mockResolvedValue(added);
     render(<WarbandTypePicker id="type" campaignId={4} value={null} onPick={onPick} />);
-    await userEvent.type(screen.getByRole("textbox"), "Gutter Kings");
+    await userEvent.type(screen.getByRole("combobox"), "Gutter Kings");
     await userEvent.click(
-      screen.getByRole("button", { name: "Add “Gutter Kings” as a custom warband type" })
+      screen.getByRole("option", { name: "Add “Gutter Kings” as a custom warband type" })
     );
     expect(mutateAsync).toHaveBeenCalledWith({ name: "Gutter Kings" });
     expect(onPick).toHaveBeenCalledWith(added);
   });
 
-  it("shows the type picked with Change", async () => {
+  it("shows the type picked with its subtitle and warning, and pressing it searches again", async () => {
     render(<WarbandTypePicker id="type" campaignId={4} value={TYPES[1]} onPick={vi.fn()} />);
     expect(screen.getByText("Mousillon isn't in this campaign")).toBeInTheDocument();
-    await userEvent.click(screen.getByRole("button", { name: "Change" }));
-    expect(screen.getByRole("textbox")).toHaveFocus();
+    expect(screen.getByText("Mousillon")).toBeInTheDocument();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Warband type: Skaven of Clan Pestilens" })
+    );
+    expect(screen.getByRole("combobox")).toHaveFocus();
   });
 });

@@ -113,7 +113,12 @@ export function useResourceSale(warbandId: number) {
 export function useResourceCreate(warbandId: number) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (name: string) => createWarbandResource(warbandId, { name }),
+    // a new resource starts at 0 on the server; an amount given is set straight after
+    mutationFn: async (input: string | { name: string; amount?: number }) => {
+      const { name, amount } = typeof input === "string" ? { name: input, amount: 0 } : input;
+      const created = await createWarbandResource(warbandId, { name });
+      return amount ? updateWarbandResource(warbandId, created.id, { amount }) : created;
+    },
     onSuccess: (created) =>
       patchSheetResources(queryClient, warbandId, (resources) => [...resources, created]),
   });

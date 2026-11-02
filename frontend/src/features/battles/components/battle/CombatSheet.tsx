@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Chip } from "@/components/ui/chip";
-import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import type { UnitStats } from "@/features/battles/components/prebattle/prebattle-types";
 import {
@@ -47,9 +47,9 @@ function Field({
   return (
     <label className="flex flex-col items-center gap-1 text-[10px] font-bold text-faint">
       {label}
-      <Input
+      <NumberInput
+        compact
         inputSize="sm"
-        inputMode="numeric"
         aria-label={label}
         value={value}
         onChange={(event) => onChange(event.target.value.replace(/[^\d]/g, "").slice(0, 2))}

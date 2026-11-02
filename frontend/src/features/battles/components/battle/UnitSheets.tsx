@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
@@ -126,9 +127,8 @@ export function EditStatsSheet({
             className="flex flex-col items-center gap-1 text-[10px] font-bold text-faint"
           >
             {field.key === "armour_save" ? "Sv" : field.label}
-            <Input
+            <NumberInput
               inputSize="sm"
-              inputMode="numeric"
               aria-label={field.label}
               value={values[field.key] ?? ""}
               onChange={(event) =>
@@ -379,8 +379,7 @@ export function AddNeutralGroupSheet({
         </label>
         <label className="flex flex-col gap-1 text-xs font-bold text-text2">
           How many
-          <Input
-            inputMode="numeric"
+          <NumberInput
             value={count}
             onChange={(event) => setCount(event.target.value.replace(/[^\d]/g, "").slice(0, 2))}
           />

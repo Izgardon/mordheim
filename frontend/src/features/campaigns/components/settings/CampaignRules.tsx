@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useQueryClient, type Query } from "@tanstack/react-query";
 
+import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Chip } from "@/components/ui/chip";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Input } from "@/components/ui/input";
 
 import { useWarbandRulesForm } from "../../hooks/settings/useWarbandRulesForm";
 import type { CampaignHeroDeathRoll, CampaignSummary } from "../../types/campaign-types";
@@ -65,8 +65,7 @@ function StartingGold({ campaign }: { campaign: CampaignSummary }) {
 
   return (
     <SettingRow label="Starting gold" error={confirming ? "" : error}>
-      <Input
-        type="number"
+      <NumberInput
         min={0}
         aria-label="Starting gold"
         value={value}
@@ -158,8 +157,8 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
       <SettingRow label="Warband limits" error={limits.error}>
         <label className="flex items-center gap-2 text-sm text-text2">
           Heroes
-          <Input
-            type="number"
+          <NumberInput
+            compact
             min={0}
             aria-label="Most heroes"
             value={limits.maxHeroes}
@@ -169,8 +168,8 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
         </label>
         <label className="flex items-center gap-2 text-sm text-text2">
           Hired swords
-          <Input
-            type="number"
+          <NumberInput
+            compact
             min={0}
             aria-label="Most hired swords"
             value={limits.maxHiredSwords}

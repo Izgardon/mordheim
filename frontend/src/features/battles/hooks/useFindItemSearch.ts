@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 
 import { resolveFindItemCost } from "@/features/battles/components/postbattle/find-items";
 import {
@@ -9,12 +9,11 @@ import {
 import type { PostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
 import type { Item } from "@/features/items/types/item-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 /**
- * Postbattle finds: gold crowns and found items. The picker filters the campaign's cached item
- * catalogue (loaded when it first opens, shared with the warband pages): no request per
- * keystroke (PERF-40).
+ * Postbattle finds: gold crowns and found items. The picker (the searchable select) filters the
+ * campaign's cached item catalogue (loaded when it first opens, shared with the warband pages):
+ * no request per keystroke (PERF-40).
  */
 export function useFindItemSearch({
   campaignId,
@@ -25,12 +24,7 @@ export function useFindItemSearch({
 }) {
   const { draft, persistDraft, setDraftError } = drafting;
   const [isOpen, setIsOpen] = useState(false);
-  const [search, setSearch] = useState("");
   const catalogue = useCatalogue("items", campaignId, { enabled: isOpen });
-  const results = useMemo(
-    () => catalogue.data.filter((item) => matchesSearchQuery(search, item.name)),
-    [catalogue.data, search]
-  );
 
   const addItem = useCallback(
     (item: Item) => {
@@ -50,8 +44,6 @@ export function useFindItemSearch({
           cost: baseCost,
         })
       );
-      setSearch("");
-      setIsOpen(false);
     },
     [draft, persistDraft, setDraftError]
   );
@@ -77,10 +69,7 @@ export function useFindItemSearch({
   return {
     isOpen,
     setIsOpen,
-    search,
-    setSearch,
     catalogue,
-    results,
     addItem,
     removeItem,
     commitGold,
