@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 
+import type { SpecialKind } from "@/components/ui/game-icons";
 import { createSpecial } from "@/features/special/api/special-api";
 import { useCampaignItems } from "@/features/warbands/hooks/campaign/useCampaignItems";
 import { useCampaignSkills } from "@/features/warbands/hooks/campaign/useCampaignSkills";
@@ -56,6 +57,7 @@ export function useBestiaryLinks({
   const [isCreatingSpecial, setIsCreatingSpecial] = useState(false);
   const [newSpecialName, setNewSpecialName] = useState("");
   const [newSpecialDescription, setNewSpecialDescription] = useState("");
+  const [newSpecialKind, setNewSpecialKind] = useState<SpecialKind>("trait");
   const [isSavingSpecial, setIsSavingSpecial] = useState(false);
   /** Why the special created on the spot was refused (the form stays open to retry). */
   const [specialError, setSpecialError] = useState("");
@@ -79,6 +81,7 @@ export function useBestiaryLinks({
     setIsCreatingSpecial(false);
     setNewSpecialName("");
     setNewSpecialDescription("");
+    setNewSpecialKind("trait");
     setSpecialError("");
   }, []);
 
@@ -106,6 +109,7 @@ export function useBestiaryLinks({
         campaign_id: campaignId,
         name,
         type: specialType,
+        kind: newSpecialKind,
         description: newSpecialDescription.trim(),
       });
       catalogueCache.upsert("specials", campaignId, created);
@@ -158,6 +162,8 @@ export function useBestiaryLinks({
     setNewSpecialName,
     newSpecialDescription,
     setNewSpecialDescription,
+    newSpecialKind,
+    setNewSpecialKind,
     isSavingSpecial,
     specialError,
     createNewSpecial,

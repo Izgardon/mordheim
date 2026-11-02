@@ -87,10 +87,25 @@ def build_item_rows(
     return rows
 
 
-def _catalogue_rows(kind: "UnitKindSpec", link: "LinkSpec", unit: RosterUnit, ids: Iterable[int]) -> list[Any]:
+def _catalogue_rows(
+    kind: "UnitKindSpec", link: "LinkSpec", unit: RosterUnit, ids: Iterable[int], kept: Mapping[int, dict[str, Any]]
+) -> list[Any]:
+    """The list's new join rows, each entry he had before keeping its own fields (`kept`: a spell's dc_change)."""
     ids = list(ids)
     entries = {entry.id: entry for entry in link.catalogue._default_manager.filter(id__in=ids)}
-    return [link.model(**{kind.parent_field: unit, link.target: entries[pk]}) for pk in ids if pk in entries]
+    return [
+        link.model(**{kind.parent_field: unit, link.target: entries[pk], **kept.get(pk, {})})
+        for pk in ids
+        if pk in entries
+    ]
+
+
+def _kept_fields(link: "LinkSpec", relation: Any) -> dict[int, dict[str, Any]]:
+    """Entry id -> the join row's `kept` fields before a list is replaced (one query, only for a list that has some)."""
+    if not link.kept:
+        return {}
+    rows = relation.values(f"{link.target}_id", *link.kept)
+    return {row.pop(f"{link.target}_id"): row for row in rows}
 
 
 def replace_loadout(kind: "UnitKindSpec", unit: RosterUnit, lists: Mapping[str, Any], *, fresh: bool = False) -> None:
@@ -105,7 +120,7 @@ def replace_loadout(kind: "UnitKindSpec", unit: RosterUnit, lists: Mapping[str, 
             kept = Counter() if fresh else Counter(relation.filter(companion=True).values_list("item_id", flat=True))
             rows = build_item_rows(kind, unit, values, kept)
         else:
-            rows = _catalogue_rows(kind, link, unit, values)
+            rows = _catalogue_rows(kind, link, unit, values, {} if fresh else _kept_fields(link, relation))
         if not fresh:
             relation.all().delete()
         link.model._default_manager.bulk_create(rows)

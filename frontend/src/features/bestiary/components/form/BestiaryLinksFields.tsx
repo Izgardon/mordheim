@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
+import { SpecialKindIcon, type SpecialKind } from "@/components/ui/game-icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NumberInput } from "@/components/ui/number-input";
@@ -9,11 +11,27 @@ import type { BestiaryLinks, SelectedItem } from "../../hooks/useBestiaryLinks";
 const TEXTAREA_CLASS =
   "min-h-[120px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
 
-type Linked = { id: number; name: string; type?: string | null; description?: string | null };
+const SPECIAL_KINDS: [SpecialKind, string][] = [
+  ["boon", "Boon"],
+  ["bane", "Bane"],
+  ["trait", "Trait"],
+];
+
+type Linked = {
+  id: number;
+  name: string;
+  type?: string | null;
+  description?: string | null;
+  /** A special's: boon, bane or trait. */
+  kind?: SpecialKind;
+};
 
 const linkOption = (entry: Linked): SearchOption => ({
   id: entry.id,
   title: entry.name,
+  icon: entry.kind ? (
+    <SpecialKindIcon kind={entry.kind} className="text-kind-special" />
+  ) : undefined,
   subtitle: entry.type || entry.description?.slice(0, 80) || undefined,
 });
 
@@ -66,11 +84,11 @@ function LinkPicker<T extends Linked>({
   );
 }
 
-/** A special rule created on the spot, in place of the special picker. */
+/** A boon, bane or trait created on the spot, in place of the picker (a trait unless picked). */
 function NewSpecialRule({ links }: { links: BestiaryLinks }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>Special Rules</Label>
+      <Label>Boons & Banes</Label>
       <div className="flex flex-col gap-2 border border-border bg-surface p-3">
         <Input
           value={links.newSpecialName}
@@ -85,6 +103,18 @@ function NewSpecialRule({ links }: { links: BestiaryLinks }) {
           rows={2}
           className={TEXTAREA_CLASS}
         />
+        <div role="group" aria-label="Kind" className="flex flex-wrap gap-1.5">
+          {SPECIAL_KINDS.map(([kind, label]) => (
+            <Chip
+              key={kind}
+              pressed={links.newSpecialKind === kind}
+              onClick={() => links.setNewSpecialKind(kind)}
+            >
+              <SpecialKindIcon kind={kind} />
+              {label}
+            </Chip>
+          ))}
+        </div>
         {links.specialError ? (
           <p role="alert" className="text-xs text-danger">
             {links.specialError}
@@ -108,7 +138,7 @@ function NewSpecialRule({ links }: { links: BestiaryLinks }) {
   );
 }
 
-/** An entry's special rules, skills, spells and equipment (with quantities). */
+/** An entry's boons and banes, skills, spells and equipment (with quantities). */
 export default function BestiaryLinksFields({ links }: { links: BestiaryLinks }) {
   return (
     <>
@@ -116,8 +146,8 @@ export default function BestiaryLinksFields({ links }: { links: BestiaryLinks })
         <NewSpecialRule links={links} />
       ) : (
         <LinkPicker
-          label="Special Rules"
-          noun="special rule"
+          label="Boons & Banes"
+          noun="boon or bane"
           items={links.available.specials}
           selected={links.specials}
           onSelect={links.addSpecial}

@@ -15,6 +15,7 @@ from apps.warbands.units.serializers import (
     COMPANION_FIELDS,
     MISSING_FIELDS,
     STAT_FIELDS,
+    XP_CHANGE_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
     UnitWriteSerializer,
@@ -266,4 +267,4 @@ class HenchmenGroupUpdateSerializer(UnitWriteSerializer):
 
     class Meta:
         model = HenchmenGroup
-        fields = (*WRITE_FIELDS, *MISSING_FIELDS)
+        fields = (*WRITE_FIELDS, *MISSING_FIELDS, *XP_CHANGE_FIELDS)

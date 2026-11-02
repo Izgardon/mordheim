@@ -1,27 +1,21 @@
 import { useState, type ReactNode } from "react";
 
-import { BoxTile, type BoxTileKind } from "@/components/ui/box-tile";
-import { ItemKindIcon, GameIcon, type GameIconName } from "@/components/ui/game-icons";
+import { BoxTile } from "@/components/ui/box-tile";
+import { ItemKindIcon } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { itemKind, itemStatsLine } from "@/features/items/item-kind";
 import type { Item } from "@/features/items/types/item-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
+import type { AdvancePick } from "../../units/unit-api";
 import { loadoutLine } from "../../units/loadout";
 import GroupMembers from "./GroupMembers";
 import PendingPick from "./PendingPick";
-import RulesPanel, { type BoxDetail } from "./RulesPanel";
+import RulesPanel from "./RulesPanel";
 import UnitSectionLabel from "./UnitSectionLabel";
 import UnitXp from "./UnitXp";
-import {
-  boxRows,
-  isCreature,
-  isGroup,
-  itemBoxKind,
-  pendingPicks,
-  type PendingList,
-  type RosterUnit,
-} from "./unit-view";
+import { entryBoxes, type Row } from "./unit-boxes";
+import { boxRows, isCreature, isGroup, itemBoxKind, type RosterUnit } from "./unit-view";
 
 type UnitDetailsProps = {
   entry: RosterUnit;
@@ -29,7 +23,8 @@ type UnitDetailsProps = {
   canEdit: boolean;
   /** The other units an item can move to. */
   others: RosterUnit[];
-  onXp: (xp: number) => void;
+  /** − and +: XP added or taken away (the server counts it half at half rate). */
+  onXp: (change: number) => void;
   onMoveItem: (itemId: number, to: ItemPlace) => void;
   onSellItem: (itemId: number, price: number) => void;
   onBuyAgain: (item: Item) => void;
@@ -38,56 +33,16 @@ type UnitDetailsProps = {
   onAdvance?: () => void;
   campaignId: number;
   warbandId: number;
-  /** Makes a pick an advance left for later: the entry joins `list`, one pick fewer. */
-  onPick: (list: PendingList, entryId: number) => void;
+  /** Makes a pick an advance left for later: the entry joins its list, one pick fewer. */
+  onPick: (pick: AdvancePick) => void;
 };
 
-type Box = BoxDetail & { boxKind: BoxTileKind; icon: ReactNode; pending?: PendingList };
-type Row = { key: string; label: string; icon: GameIconName; boxes: Box[] };
-
-const NOUN: Record<PendingList, string> = {
-  skills: "Skill",
-  spells: "Spell",
-  specials: "Special",
-};
-
-/** An open card's body (design E's columns on the web): experience, items, skills and the rest. */
+/** An open card's body: experience across the top, then design E's columns on the web (items, skills and the rest). */
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
-  const { unit, kind } = entry;
+  const { kind } = entry;
   const [open, setOpen] = useState<{ row: string; index: number } | null>(null);
   const lists = boxRows(entry);
-
-  const entryBoxes = (
-    list: PendingList | "injuries",
-    entries: { name: string; type?: string | null; description?: string | null; dc?: unknown }[],
-    icon: GameIconName,
-    boxKind: BoxTileKind
-  ): Box[] => [
-    ...entries.map((entry) => {
-      const difficulty = entry.dc !== null && entry.dc !== undefined && entry.dc !== "";
-      const line = [entry.type, difficulty && `Difficulty ${String(entry.dc)}`]
-        .filter(Boolean)
-        .join(" · ");
-      return {
-        name: entry.name,
-        kind: line,
-        text: entry.description,
-        boxKind,
-        icon: <GameIcon name={icon} />,
-      };
-    }),
-    // the picks an advance left for later, each picked from its box
-    ...(list === "injuries"
-      ? []
-      : Array.from({ length: pendingPicks(entry, list) }, () => ({
-          name: `${NOUN[list]} to choose`,
-          kind: "Pick one",
-          boxKind: "pending" as BoxTileKind,
-          icon: <GameIcon name={icon} />,
-          pending: list,
-        }))),
-  ];
 
   const itemsRow: Row = {
     key: "items",
@@ -108,26 +63,26 @@ export default function UnitDetails(props: UnitDetailsProps) {
       key: "skills",
       label: "Skills",
       icon: "skills" as const,
-      boxes: entryBoxes("skills", lists.skills, "skills", "skill"),
+      boxes: entryBoxes(entry, "skills", lists.skills),
     },
     {
       key: "specials",
-      label: "Specials",
+      label: "Boons & Banes",
       icon: "specials" as const,
-      boxes: entryBoxes("specials", lists.specials, "specials", "special"),
+      boxes: entryBoxes(entry, "specials", lists.specials),
     },
     {
       key: "spells",
       label: "Spells",
       icon: "spells" as const,
-      boxes: entryBoxes("spells", lists.spells, "spells", "spell"),
+      boxes: entryBoxes(entry, "spells", lists.spells),
     },
   ].filter((row) => row.boxes.length > 0);
   const injuries: Row = {
     key: "injuries",
     label: "Injuries",
     icon: "injuries",
-    boxes: entryBoxes("injuries", lists.injuries, "injuries", "injury"),
+    boxes: entryBoxes(entry, "injuries", lists.injuries),
   };
   const all = [itemsRow, ...skillRows, injuries];
   const selectedRow = all.find((row) => row.key === open?.row);
@@ -158,14 +113,14 @@ export default function UnitDetails(props: UnitDetailsProps) {
 
   return (
     <div className="flex flex-col gap-3 border-t border-line pt-3">
+      <UnitXp
+        entry={entry}
+        campaign={campaign}
+        canEdit={canEdit}
+        onXp={props.onXp}
+        onAdvance={props.onAdvance}
+      />
       <div className="grid gap-x-6 gap-y-4 min-[960px]:[grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
-        <UnitXp
-          entry={entry}
-          campaign={campaign}
-          canEdit={canEdit}
-          onXp={props.onXp}
-          onAdvance={props.onAdvance}
-        />
         {showItems ? (
           <div className="flex flex-col gap-2">
             {row(
@@ -209,12 +164,11 @@ export default function UnitDetails(props: UnitDetailsProps) {
           campaignId={props.campaignId}
           warbandId={props.warbandId}
           list={selected.pending}
-          access={"available_skills" in unit ? unit.available_skills : undefined}
-          large={unit.large}
+          entry={entry}
           onClose={() => setOpen(null)}
-          onPick={(entryId) => {
+          onPick={(pick) => {
             setOpen(null);
-            props.onPick(selected.pending!, entryId);
+            props.onPick(pick);
           }}
         />
       ) : selected ? (

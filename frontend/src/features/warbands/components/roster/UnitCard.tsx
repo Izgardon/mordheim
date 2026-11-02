@@ -33,7 +33,7 @@ type UnitCardProps = {
   /** "hero": a card in the grid; "row": a henchmen group or hired sword across the row. */
   layout: "hero" | "row";
   open: boolean;
-  /** Its Edit form is open: the header keeps only the name and the badges. */
+  /** Its Edit form is open: the card is only the form (no head). */
   editing?: boolean;
   canEdit: boolean;
   onToggle: () => void;
@@ -57,8 +57,24 @@ const CONTROLS = "button, a, input, select, textarea, label, [role=switch], [rol
  * The whole head (name, badges, profile, gear line) opens and closes it, not just the arrow.
  */
 export default function UnitCard(props: UnitCardProps) {
-  const { entry, campaign, layout, open, editing = false } = props;
-  const canEdit = props.canEdit && !editing;
+  const { entry, campaign, layout, open, canEdit } = props;
+  // editing: no head (name, type, profile), straight into the form (William); on a phone the form
+  // is a sheet, which portals out of the card
+  if (props.editing) {
+    return (
+      <Card
+        as="article"
+        id={unitDomId(entry)}
+        expanded
+        className={cn(
+          "flex min-w-0 scroll-mt-24 flex-col p-3.5 pl-[18px] max-[960px]:hidden",
+          layout === "hero" && "col-span-full"
+        )}
+      >
+        {props.children}
+      </Card>
+    );
+  }
   const { unit } = entry;
   const xp = xpInfo(entry, campaign);
   const stats = statValues(entry);
@@ -68,10 +84,10 @@ export default function UnitCard(props: UnitCardProps) {
     ? `×${members.length}${open && entry.unit.max_size ? `/${entry.unit.max_size}` : ""}`
     : null;
   const headClick = (event: MouseEvent<HTMLElement>) => {
-    if (editing || (event.target as HTMLElement).closest(CONTROLS)) return;
+    if ((event.target as HTMLElement).closest(CONTROLS)) return;
     props.onToggle();
   };
-  const head = cn("flex flex-col gap-3", !editing && "cursor-pointer");
+  const head = "flex cursor-pointer flex-col gap-3";
 
   const badges = (
     <UnitBadges
@@ -87,7 +103,7 @@ export default function UnitCard(props: UnitCardProps) {
     />
   );
 
-  const buttons = editing ? null : (
+  const buttons = (
     <div className="flex shrink-0 items-center gap-1.5">
       {open && canEdit ? (
         <Button size="sm" variant="secondary" className="h-9" onClick={props.onEdit}>
@@ -122,9 +138,8 @@ export default function UnitCard(props: UnitCardProps) {
     <button
       type="button"
       aria-expanded={open}
-      disabled={editing}
       onClick={props.onToggle}
-      className="flex min-w-0 flex-col gap-0.5 text-left disabled:cursor-default"
+      className="flex min-w-0 flex-col gap-0.5 text-left"
     >
       <span className="flex flex-wrap items-center gap-2 font-display text-[19px] font-semibold text-head">
         {unitName(unit)}

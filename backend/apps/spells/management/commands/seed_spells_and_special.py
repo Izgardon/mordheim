@@ -11,6 +11,7 @@ from django.db import transaction
 
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import read_json_list, upsert_global
+from apps.special.kinds import book_kind
 from apps.special.models import Special
 from apps.spells.models import Spell
 
@@ -39,7 +40,7 @@ class Command(BaseCommand):
     def _seed(
         self, model: type[Spell] | type[Special], path: Path, label: str, texts: tuple[str, ...]
     ) -> tuple[int, int]:
-        """Upsert each named, typed row of the file: its stripped texts and, for a spell, its roll."""
+        """Upsert each named, typed row of the file: its stripped texts, a spell's roll and a special's kind."""
         if not path.exists():
             self.stdout.write(self.style.WARNING(f"{label} JSON not found at {path}"))
             return 0, 0
@@ -51,6 +52,8 @@ class Command(BaseCommand):
             defaults = {field: entry.get(field, "").strip() for field in texts}
             if model is Spell:
                 defaults["roll"] = entry.get("roll")
+            else:  # Boons & Banes (special/kinds.py)
+                defaults["kind"] = book_kind(name)
             _, was_created = upsert_global(model, {"name": name, "type": entry_type}, defaults)
             if was_created:
                 created += 1

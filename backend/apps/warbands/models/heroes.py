@@ -98,6 +98,8 @@ class HeroSpecial(models.Model):
 class HeroSpell(models.Model):
     hero = models.ForeignKey(Hero, related_name="hero_spells", on_delete=models.CASCADE)
     spell = models.ForeignKey("spells.Spell", related_name="hero_spells", on_delete=models.RESTRICT)
+    # the advance flow: a spell rolled again that he knows already gets 1 easier for him (-1 each time)
+    dc_change = models.SmallIntegerField(default=0)
 
     class Meta:
         db_table = "hero_spell"

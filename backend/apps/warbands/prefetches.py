@@ -46,10 +46,11 @@ def entries_attr(relation: str) -> str:
     return f"{relation}_entries"
 
 
-def entries_array(join_model: type[Model], parent_field: str, target: str) -> Any:
-    """A unit's skills (or specials, spells) as one ordered array of JSON objects, read with the unit's row."""
+def entries_array(join_model: type[Model], parent_field: str, target: str, kept: tuple[str, ...] = ()) -> Any:
+    """A unit's skills (or specials, spells) as one ordered array of JSON objects, read with the unit's row, with the
+    join row's own `kept` fields (a spell's `dc_change`)."""
     rows = join_model._default_manager.filter(**{parent_field: OuterRef("pk")}).order_by("id")
-    columns = {column: f"{target}__{column}" for column in ENTRY_COLUMNS[target]}
+    columns = {column: f"{target}__{column}" for column in ENTRY_COLUMNS[target]} | {name: name for name in kept}
     return ArraySubquery(rows.values(entry=JSONObject(**columns)))
 
 

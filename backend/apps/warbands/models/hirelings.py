@@ -117,6 +117,8 @@ class HirelingSpecial(models.Model):
 class HirelingSpell(models.Model):
     hireling = models.ForeignKey(Hireling, related_name="hireling_spells", on_delete=models.CASCADE)
     spell = models.ForeignKey("spells.Spell", related_name="hireling_spells", on_delete=models.RESTRICT)
+    # the advance flow: a spell rolled again that he knows already gets 1 easier for him (-1 each time)
+    dc_change = models.SmallIntegerField(default=0)
 
     class Meta:
         db_table = "hireling_spell"

@@ -5,7 +5,7 @@ applies; everything else is shared. A Skill, Spell or Special advance leaves a p
 it raises the unit's `pending_skills` (`pending_spells`, `pending_specials`), and the pick lowers it again.
 """
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Any
 
 from django.db import transaction
@@ -94,10 +94,18 @@ def valid_advance_id(kind: "UnitKindSpec", payload: Mapping[str, Any]) -> str:
 
 
 def apply_advance(
-    kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, payload: dict[str, Any], *, savepoint: bool = True
+    kind: "UnitKindSpec",
+    warband: Warband,
+    unit: RosterUnit,
+    payload: dict[str, Any],
+    *,
+    savepoint: bool = True,
+    pick: Callable[[], dict[str, Any]] | None = None,
 ) -> None:
     """Spend one of `unit`'s level-ups on `payload["advance"]` and log the payload as sent, in one transaction.
 
+    A Skill, Spell or Special advance raises the pick to make later, unless `pick` makes it now (advance_picks.py):
+    it runs after the spend, in the same transaction, and what it returns is logged with the payload as `pick`.
     Raises LevelUpRejected when the unit has none to spend (or the kind's `no_level_ups` flag is set) and when
     the advance isn't one the kind may take.
     """
@@ -106,7 +114,8 @@ def apply_advance(
     advance_id = valid_advance_id(kind, payload)
     record = advance_record(payload["advance"], STAT_LABELS)
     with transaction.atomic(savepoint=savepoint):  # a caller already in a transaction may skip the savepoint
-        stat_field, pick_field = kind.stat_advances.get(advance_id), PICKS.get(advance_id)
+        stat_field, pick_field = kind.stat_advances.get(advance_id), None if pick else PICKS.get(advance_id)
         if not spend_level_up(unit, stat_field=stat_field, record=record, pick_field=pick_field):
             raise LevelUpRejected("No level ups available")  # spent by another request meanwhile
-        log_warband_event(warband.id, "advance", kind.advance_log_type, payload)
+        logged = {**payload, "pick": pick()} if pick else payload
+        log_warband_event(warband.id, "advance", kind.advance_log_type, logged)

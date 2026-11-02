@@ -118,7 +118,11 @@ export default function HirelingDetail(props: HirelingDetailProps) {
       {rules.length ? (
         <div className="flex flex-col gap-2.5">
           {rules.map((rule) => (
-            <RuleBlock key={rule.key} name={rule.name}>
+            <RuleBlock
+              key={rule.key}
+              name={rule.name}
+              kind={"kind" in rule ? rule.kind : undefined}
+            >
               {rule.description}
             </RuleBlock>
           ))}

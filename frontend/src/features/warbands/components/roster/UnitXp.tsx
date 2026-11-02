@@ -7,10 +7,12 @@ import { formatFee } from "@/features/hirelings/fees";
 
 import UnitSectionLabel from "./UnitSectionLabel";
 import { xpInfo, type RosterUnit } from "./unit-view";
+import XpTrack from "./XpTrack";
 
 /**
- * An open card's experience column: the bar against the next advance with − and +, Advance
- * when one waits, and a hired sword's upkeep.
+ * An open card's experience, across its full width: the XP track with − and + (a point
+ * each, which the server counts half at half rate), Advance when one waits, and a hired
+ * sword's upkeep.
  */
 export default function UnitXp({
   entry,
@@ -22,7 +24,8 @@ export default function UnitXp({
   entry: RosterUnit;
   campaign: CampaignSummary | null;
   canEdit: boolean;
-  onXp: (xp: number) => void;
+  /** XP added (negative: taken away). */
+  onXp: (change: number) => void;
   onAdvance?: () => void;
 }) {
   const xp = xpInfo(entry, campaign);
@@ -35,23 +38,18 @@ export default function UnitXp({
             <IconButton
               aria-label="One XP less"
               className="h-9 w-9"
-              onClick={() => onXp(Math.max(0, xp.xp - 1))}
+              disabled={xp.xp <= 0}
+              onClick={() => onXp(-1)}
             >
               <Minus aria-hidden="true" />
             </IconButton>
           ) : null}
-          <div className="flex min-w-24 flex-1 flex-col gap-1">
-            <div className="h-1.5 bg-line" aria-hidden="true">
-              <div className="h-1.5 bg-primary" style={{ width: `${xp.share * 100}%` }} />
-            </div>
+          <div className="flex min-w-40 flex-1 flex-col gap-1">
+            <XpTrack xp={xp.xp} thresholds={xp.thresholds} />
             <span className="font-mono text-xs text-muted-foreground">{xp.text}</span>
           </div>
           {canEdit ? (
-            <IconButton
-              aria-label="One XP more"
-              className="h-9 w-9"
-              onClick={() => onXp(xp.xp + 1)}
-            >
+            <IconButton aria-label="One XP more" className="h-9 w-9" onClick={() => onXp(1)}>
               <Plus aria-hidden="true" />
             </IconButton>
           ) : null}

@@ -187,6 +187,7 @@ export default function Warband() {
                   renderEdit={(entry, close) => (
                     <EditUnitForm
                       entry={entry}
+                      campaign={campaign}
                       campaignId={campaignId}
                       warbandId={warbandId}
                       canCreateRace={capabilities.edit_catalogue}
@@ -233,6 +234,7 @@ export default function Warband() {
       {heroBounties.dialog}
       <AdvanceDialog
         entry={advancing}
+        campaignId={campaignId}
         warbandId={warbandId}
         heroes={sheet.heroes}
         maxHeroes={campaign?.max_heroes ?? null}

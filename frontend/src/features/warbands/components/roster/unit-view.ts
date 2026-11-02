@@ -7,6 +7,7 @@ import { getHeroLevelInfo } from "../heroes/utils/hero-level";
 import {
   DEFAULT_HENCHMEN_LEVEL_THRESHOLDS,
   DEFAULT_HERO_LEVEL_THRESHOLDS,
+  normalizeThresholdList,
 } from "../../utils/level-thresholds";
 import { isCreatureGroup } from "../../utils/companions";
 import type { Unit, UnitKindKey, UnitListKey } from "../../types/units";
@@ -91,33 +92,49 @@ export function statValues({ unit }: RosterUnit) {
 export const gearSummary = (items: Item[]) =>
   items.length ? items.map((item) => item.name).join(", ") : "No gear";
 
-const thresholdsFor = (kind: UnitKindKey, campaign: CampaignSummary | null) =>
-  kind === "henchmen_group"
-    ? (campaign?.henchmen_level_thresholds ?? DEFAULT_HENCHMEN_LEVEL_THRESHOLDS)
-    : kind === "hireling"
-      ? (campaign?.hired_sword_level_thresholds ?? DEFAULT_HERO_LEVEL_THRESHOLDS)
-      : (campaign?.hero_level_thresholds ?? DEFAULT_HERO_LEVEL_THRESHOLDS);
+/** The kind's XP table in the campaign (the XP each advance comes at), cleaned as the level info reads it. */
+export const xpTable = (kind: UnitKindKey, campaign: CampaignSummary | null) => {
+  const fallback =
+    kind === "henchmen_group" ? DEFAULT_HENCHMEN_LEVEL_THRESHOLDS : DEFAULT_HERO_LEVEL_THRESHOLDS;
+  const table =
+    kind === "henchmen_group"
+      ? campaign?.henchmen_level_thresholds
+      : kind === "hireling"
+        ? campaign?.hired_sword_level_thresholds
+        : campaign?.hero_level_thresholds;
+  return normalizeThresholdList(table, fallback);
+};
+
+/** XP as the card shows it: half a point is "½" (a half-rate unit keeps fractions), "12½". */
+export function formatXp(xp: number) {
+  const whole = Math.floor(xp);
+  const half = xp - whole >= 0.5;
+  return half ? `${whole || ""}½` : String(whole);
+}
 
 /** XP against the next threshold: "XP 24 / 28", the bar's share, and whether an advance waits. */
 export function xpInfo(entry: RosterUnit, campaign: CampaignSummary | null) {
   if (isCreature(entry)) return null;
-  const xp = entry.unit.xp ?? 0;
-  const info = getHeroLevelInfo(xp, thresholdsFor(entry.kind, campaign));
+  const xp = Number(entry.unit.xp ?? 0);
+  const thresholds = xpTable(entry.kind, campaign);
+  const info = getHeroLevelInfo(xp, thresholds);
   const next = info.nextLevelAt;
   const span = next === null ? 1 : next - info.currentLevelAt;
   return {
     xp,
     next,
-    text: next === null ? `XP ${xp}` : `XP ${xp} / ${next}`,
+    text: next === null ? `XP ${formatXp(xp)}` : `XP ${formatXp(xp)} / ${next}`,
     share: next === null ? 1 : Math.min(1, (xp - info.currentLevelAt) / span),
     advanceReady: (entry.unit.level_up ?? 0) > 0,
+    thresholds,
   };
 }
 
 export const itemBoxKind = (item: Item): BoxTileKind =>
   item.beast_kind === "mount" ? "mount" : "item";
 
-const isInjury = (special: { type?: string | null }) => /injur/i.test(special.type ?? "");
+/** A special that is a lasting injury (its type says so: the injury tables make them "Injury"). */
+export const isInjury = (special: { type?: string | null }) => /injur/i.test(special.type ?? "");
 
 /**
  * One line of a unit's Kills list: "Magister Halvard · Street Fight · round 2 · melee", with the
@@ -160,20 +177,10 @@ const PENDING_FIELD = {
   spells: "pending_spells",
   specials: "pending_specials",
 } as const;
-const ID_FIELD = { skills: "skill_ids", spells: "spell_ids", specials: "special_ids" } as const;
 
 /** How many picks an advance left to make later on the unit's `list` (heroes and hired swords). */
 export function pendingPicks({ unit }: RosterUnit, list: PendingList) {
   return (
     (unit as Partial<Record<(typeof PENDING_FIELD)[PendingList], number>>)[PENDING_FIELD[list]] ?? 0
   );
-}
-
-/** The save that makes one pick: the chosen entry joins the list, and one pick fewer is left. */
-export function pickPayload(entry: RosterUnit, list: PendingList, entryId: number) {
-  const unit = entry.unit as Partial<Record<PendingList, { id: number }[]>>;
-  return {
-    [ID_FIELD[list]]: [...(unit[list] ?? []).map(({ id }) => id), entryId],
-    [PENDING_FIELD[list]]: Math.max(0, pendingPicks(entry, list) - 1),
-  };
 }

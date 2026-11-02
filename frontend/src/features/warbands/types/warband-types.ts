@@ -313,6 +313,8 @@ export type WarbandHeroPayload = {
   race: number | null;
   price: number | null;
   xp: number | null;
+  /** Updates only: XP added (negative: taken away) by hand; a half-rate unit gains half. */
+  xp_change?: number;
   level_up?: number | null;
   deeds?: string | null;
   is_leader?: boolean | null;
@@ -350,6 +352,8 @@ export type WarbandHirelingPayload = {
   upkeep_fee?: Fee;
   rating?: number | null;
   xp: number | null;
+  /** Updates only: XP added (negative: taken away) by hand; a half-rate unit gains half. */
+  xp_change?: number;
   level_up?: number | null;
   deeds?: string | null;
   /** An integer field server-side; the edit form sends the raw input string ("5"), which DRF also accepts. */
@@ -551,6 +555,8 @@ export type HenchmenGroupPayload = {
   race: number | null;
   price: number | null;
   xp: number | null;
+  /** Updates only: XP added (negative: taken away) by hand; a half-rate unit gains half. */
+  xp_change?: number;
   level_up?: number | null;
   max_size?: number | null;
   deeds?: string | null;

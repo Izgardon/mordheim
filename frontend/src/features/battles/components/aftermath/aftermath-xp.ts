@@ -141,7 +141,8 @@ export function xpBlock(row: XpRow) {
 /** How an advance reads: "+1 Toughness", "New skill", "The lad's got talent". */
 export function advanceLabel(id: string) {
   if (id === "LGT") return "The lad's got talent";
-  if (id === "Skill" || id === "Spell" || id === "Special") return `New ${id.toLowerCase()}`;
+  if (id === "Special") return "New boon or bane";
+  if (id === "Skill" || id === "Spell") return `New ${id.toLowerCase()}`;
   return `+1 ${resolveAdvanceLabel(id)}`;
 }
 

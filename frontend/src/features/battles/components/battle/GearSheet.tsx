@@ -107,7 +107,7 @@ export default function GearSheet({
               return {
                 key: `special:${owned.id}`,
                 name: owned.name,
-                kind: special?.type || "Special",
+                kind: special?.type || "Boon or bane",
                 rules: special?.description
                   ? [{ name: owned.name, text: special.description }]
                   : [],

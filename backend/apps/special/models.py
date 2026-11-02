@@ -2,6 +2,8 @@ from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
 
+from .kinds import KIND_CHOICES, TRAIT
+
 
 class Special(CatalogueEntry):
     campaign = models.ForeignKey(
@@ -19,6 +21,9 @@ class Special(CatalogueEntry):
     name = models.CharField(max_length=160)
     type = models.CharField(max_length=80, db_index=True)
     description = models.TextField(max_length=4000, blank=True, default="")
+    # Boons & Banes: whether it helps the unit (boon), holds it back (bane) or is neither (trait), set for the book's
+    # from data/special-kinds.json (kinds.py)
+    kind = models.CharField(max_length=5, choices=KIND_CHOICES, default=TRAIT)
 
     class Meta:
         db_table = "special"

@@ -71,6 +71,7 @@ class LinkSpec:
     target: str  # catalogue foreign key on the join model, e.g. "skill"
     write_field: str  # the list's key in create and PATCH payloads, e.g. "skill_ids"
     log_entry: str | None = None  # loadout log entry type for entries a PATCH adds; None: not logged
+    kept: tuple[str, ...] = ()  # the join row's own fields, in the payload and kept when a write resends the list
 
     @property
     def catalogue(self) -> Any:
@@ -153,7 +154,7 @@ class UnitKindSpec:
         with their properties and availabilities for the detail payload; henchmen groups' living members too.
         """
         entries = {
-            entries_attr(link.relation): entries_array(link.model, self.parent_field, link.target)
+            entries_attr(link.relation): entries_array(link.model, self.parent_field, link.target, link.kept)
             for link in self.links()
             if link is not self.items
         }
@@ -204,7 +205,7 @@ HERO = UnitKindSpec(
     items=LinkSpec("hero_items", HeroItem, "item", "items"),
     skills=LinkSpec("hero_skills", HeroSkill, "skill", "skill_ids", log_entry="hero_skill"),
     specials=LinkSpec("hero_specials", HeroSpecial, "special", "special_ids", log_entry="hero_special"),
-    spells=LinkSpec("hero_spells", HeroSpell, "spell", "spell_ids", log_entry="hero_spell"),
+    spells=LinkSpec("hero_spells", HeroSpell, "spell", "spell_ids", log_entry="hero_spell", kept=("dc_change",)),
     has_members=False,
     thresholds_setting="hero_level_thresholds",
     count_level_ups=count_new_level_ups,
@@ -260,7 +261,9 @@ HIRELING = UnitKindSpec(
     items=LinkSpec("hireling_items", HirelingItem, "item", "items"),
     skills=LinkSpec("hireling_skills", HirelingSkill, "skill", "skill_ids", log_entry="hireling_skill"),
     specials=LinkSpec("hireling_specials", HirelingSpecial, "special", "special_ids", log_entry="hireling_special"),
-    spells=LinkSpec("hireling_spells", HirelingSpell, "spell", "spell_ids", log_entry="hireling_spell"),
+    spells=LinkSpec(
+        "hireling_spells", HirelingSpell, "spell", "spell_ids", log_entry="hireling_spell", kept=("dc_change",)
+    ),
     has_members=False,
     thresholds_setting="hero_level_thresholds",  # hired swords advance like heroes (decision 8)
     count_level_ups=count_new_level_ups,
