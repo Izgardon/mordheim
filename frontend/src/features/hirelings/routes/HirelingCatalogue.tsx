@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
@@ -16,7 +16,6 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
-import CustomHireDialog from "../components/CustomHireDialog";
 import HireDialog from "../components/HireDialog";
 import HirelingDetail from "../components/HirelingDetail";
 import HirelingProfileFormDialog from "../components/HirelingProfileFormDialog";
@@ -57,7 +56,10 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   const capabilities = campaignCapabilities(campaign);
   const [editing, setEditing] = useState<{ id: number | null } | null>(null);
   const [hiring, setHiring] = useState<HirelingProfile | null>(null);
-  const [hiringOther, setHiringOther] = useState(false);
+  const navigate = useNavigate();
+  // a hire lands on the warband page with the new card in Edit; someone not in the list is hired
+  // from the inline form at the top of its Hired swords
+  const warbandPage = `/campaigns/${campaignId}/warband`;
   const whoCan = useWhoCan(campaignId, warband?.id);
   const access = kind === "hired-swords" ? whoCan.hiredSwords : whoCan.dramatisPersonae;
   const [onlyMine, setOnlyMine] = useState(true);
@@ -107,7 +109,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
             <Button
               variant="ghost"
               className={isMobile ? "min-h-10" : undefined}
-              onClick={() => setHiringOther(true)}
+              onClick={() => navigate(`${warbandPage}?recruit=hireling`)}
             >
               Hire someone not in the list
             </Button>
@@ -200,14 +202,6 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         onEditMatch={(match) => setEditing({ id: match.id })}
       />
       {warband ? (
-        <CustomHireDialog
-          campaignId={campaignId}
-          warband={warband}
-          open={hiringOther}
-          onClose={() => setHiringOther(false)}
-        />
-      ) : null}
-      {warband ? (
         <HireDialog
           config={config}
           campaignId={campaignId}
@@ -215,6 +209,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
           heroes={sheet.heroes}
           entry={hiring}
           onClose={() => setHiring(null)}
+          onHired={(unitId) => navigate(`${warbandPage}?unit=hireling-${unitId}&edit=1`)}
         />
       ) : null}
     </ReferencePage>

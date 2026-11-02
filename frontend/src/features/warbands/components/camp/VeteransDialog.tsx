@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Minus, Plus, X } from "lucide-react";
 import { toast } from "sonner";
 
@@ -22,7 +23,8 @@ const fieldLabel = "flex flex-col gap-1 text-xs font-bold text-muted-foreground"
  * The recruit helper (design E): recruits for a new group (name and type) or an existing one,
  * their experience shared out of the veterans' pool (a group's members share one XP, so a new
  * group's recruits take the same XP each and an existing group's join at its XP), at a cost per
- * model. Going over the pool or the group's size warns; it doesn't stop you.
+ * model. Going over the pool or the group's size warns; it doesn't stop you. Once recruited, the
+ * group's card opens in Edit (`?unit=…&edit=1`), as a recruit from the roster does.
  */
 export default function VeteransDialog({
   camp,
@@ -34,6 +36,7 @@ export default function VeteransDialog({
   onClose: () => void;
 }) {
   const updateCache = useWarbandCacheUpdate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const groups = camp.groups.filter((group) => !isCreatureGroup(group));
   const [into, setInto] = useState<string>(NEW);
   const [name, setName] = useState("");
@@ -99,6 +102,14 @@ export default function VeteransDialog({
         },
       });
       onClose();
+      const known = new Set(camp.groups.map((entry) => entry.id));
+      const landed = group ?? result.units.find((entry) => !known.has(entry.id));
+      if (landed) {
+        const params = new URLSearchParams(searchParams);
+        params.set("unit", `henchmen_group-${landed.id}`);
+        params.set("edit", "1");
+        setSearchParams(params, { replace: true });
+      }
     } catch (error) {
       toast.error("Couldn't recruit.", { description: getErrorMessage(error) });
     } finally {

@@ -28,6 +28,8 @@ type HireDialogProps = {
   /** The entry being hired; null when closed. */
   entry: HirelingProfile | null;
   onClose: () => void;
+  /** After the hire: the new hireling's id (his card opens in Edit). */
+  onHired?: (unitId: number) => void;
 };
 
 /**
@@ -71,6 +73,7 @@ export default function HireDialog(props: HireDialogProps) {
       });
       setName("");
       onClose();
+      props.onHired?.(answer.id);
     } catch (error) {
       toast.error("Couldn't hire.", { description: getErrorMessage(error) });
     } finally {
