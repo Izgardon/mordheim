@@ -2,15 +2,50 @@ import { useState } from "react";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import EditUnitFields from "./edit/EditUnitFields";
-import { useUnitEditDraft } from "./edit/useUnitEditDraft";
+import { useUnitEditDraft, type UnitEditDraft } from "./edit/useUnitEditDraft";
 import { isGroup, unitName, type RosterUnit } from "./unit-view";
+
+const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
+
+/** Missing games, opened from its button: how many games and why, kept with the draft. */
+function MissingGames({ form, onDone }: { form: UnitEditDraft; onDone: () => void }) {
+  const { draft, set } = form;
+  return (
+    <div className="flex flex-wrap items-end gap-2 border border-border bg-raised p-2.5">
+      <label className={LABEL}>
+        Missing games
+        <Input
+          inputSize="sm"
+          inputMode="numeric"
+          className="w-24 font-mono"
+          value={String(draft.missing_games ?? "")}
+          onChange={(event) => set("missing_games", event.target.value)}
+        />
+      </label>
+      <label className={`${LABEL} min-w-40 flex-1`}>
+        Why
+        <Input
+          inputSize="sm"
+          value={String(draft.missing_reason ?? "")}
+          onChange={(event) => set("missing_reason", event.target.value)}
+        />
+      </label>
+      <Button size="sm" variant="secondary" onClick={onDone}>
+        Done
+      </Button>
+    </div>
+  );
+}
 
 /**
  * One unit's edit form (design E): inline in its open card on the web, a bottom sheet on a
- * phone. Saved alone through the batch save; Duplicate and Dismiss go the same way.
+ * phone. Saved alone through the batch save; Duplicate and Dismiss go the same way. Every action
+ * sits at the bottom: Save, Cancel and Duplicate on the left, Missing games and Dismiss on the
+ * right.
  */
 export default function EditUnitForm({
   entry,
@@ -30,6 +65,7 @@ export default function EditUnitForm({
   const isMobile = useMediaQuery("(max-width: 960px)");
   const form = useUnitEditDraft(entry, campaignId, warbandId);
   const [confirmDismiss, setConfirmDismiss] = useState(false);
+  const [missingOpen, setMissingOpen] = useState(false);
   const { saving } = form;
   const dismissLabel = isGroup(entry)
     ? "Disband group"
@@ -37,25 +73,17 @@ export default function EditUnitForm({
       ? "Let go"
       : "Dismiss hero";
   const done = (saved: boolean) => (saved ? onClose() : undefined);
+  const missing = Number(form.draft.missing_games) || 0;
 
-  const fields = (
-    <EditUnitFields
-      entry={entry}
-      campaignId={campaignId}
-      warbandId={warbandId}
-      form={form}
-      canCreateRace={canCreateRace}
-      onAddItem={onAddItem}
-    />
+  const duplicate = (
+    <Button variant="secondary" disabled={saving} onClick={() => void form.duplicate().then(done)}>
+      Duplicate
+    </Button>
   );
-  const extras = (
-    <div className="flex flex-wrap gap-2">
-      <Button
-        variant="secondary"
-        disabled={saving}
-        onClick={() => void form.duplicate().then(done)}
-      >
-        Duplicate
+  const right = (
+    <div className="ml-auto flex flex-wrap items-center gap-2">
+      <Button variant="ghost" aria-expanded={missingOpen} onClick={() => setMissingOpen((o) => !o)}>
+        {missing ? `Missing · ${missing} ${missing === 1 ? "game" : "games"}` : "Missing games"}
       </Button>
       {confirmDismiss ? (
         <Button variant="danger" disabled={saving} onClick={() => void form.dismiss().then(done)}>
@@ -67,6 +95,19 @@ export default function EditUnitForm({
         </Button>
       )}
     </div>
+  );
+  const body = (
+    <>
+      <EditUnitFields
+        entry={entry}
+        campaignId={campaignId}
+        warbandId={warbandId}
+        form={form}
+        canCreateRace={canCreateRace}
+        onAddItem={onAddItem}
+      />
+      {missingOpen ? <MissingGames form={form} onDone={() => setMissingOpen(false)} /> : null}
+    </>
   );
 
   if (isMobile) {
@@ -87,15 +128,18 @@ export default function EditUnitForm({
           </div>
         }
       >
-        {fields}
-        {extras}
+        {body}
+        <div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
+          {duplicate}
+          {right}
+        </div>
       </BottomSheet>
     );
   }
 
   return (
-    <div className="flex flex-col gap-4 border-t border-line pt-3">
-      {fields}
+    <div className="flex flex-col gap-3.5 border-t border-line pt-3">
+      {body}
       <div className="flex flex-wrap items-center gap-2 border-t border-line pt-3">
         <Button disabled={saving} onClick={() => void form.save().then(done)}>
           Save
@@ -103,7 +147,8 @@ export default function EditUnitForm({
         <Button variant="ghost" onClick={onClose}>
           Cancel
         </Button>
-        <div className="ml-auto">{extras}</div>
+        {duplicate}
+        {right}
       </div>
     </div>
   );

@@ -31,6 +31,8 @@ type UnitCardProps = {
   /** "hero": a card in the grid; "row": a henchmen group or hired sword across the row. */
   layout: "hero" | "row";
   open: boolean;
+  /** Its Edit form is open: the header keeps only the name and the badges. */
+  editing?: boolean;
   canEdit: boolean;
   onToggle: () => void;
   onLoadout: () => void;
@@ -44,7 +46,8 @@ type UnitCardProps = {
 
 /** One unit of the roster (design E): closed it shows the profile and its gear, open its boxes. */
 export default function UnitCard(props: UnitCardProps) {
-  const { entry, campaign, layout, open, canEdit } = props;
+  const { entry, campaign, layout, open, editing = false } = props;
+  const canEdit = props.canEdit && !editing;
   const { unit } = entry;
   const xp = xpInfo(entry, campaign);
   const stats = statValues(entry);
@@ -80,7 +83,7 @@ export default function UnitCard(props: UnitCardProps) {
     </>
   );
 
-  const buttons = (
+  const buttons = editing ? null : (
     <div className="flex shrink-0 items-center gap-1.5">
       {open && canEdit ? (
         <Button size="sm" variant="secondary" className="h-9" onClick={props.onEdit}>
@@ -115,8 +118,9 @@ export default function UnitCard(props: UnitCardProps) {
     <button
       type="button"
       aria-expanded={open}
+      disabled={editing}
       onClick={props.onToggle}
-      className="flex min-w-0 flex-col gap-0.5 text-left"
+      className="flex min-w-0 flex-col gap-0.5 text-left disabled:cursor-default"
     >
       <span className="flex flex-wrap items-center gap-2 font-display text-[19px] font-semibold text-head">
         {unitName(unit)}
