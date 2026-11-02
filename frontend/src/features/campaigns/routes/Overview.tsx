@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { Link, useOutletContext, useParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 
+import { GameIcon } from "@/components/ui/game-icons";
 import { SectionHead } from "@/components/ui/section-title";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import OpenBounties from "@/features/bounties/components/OpenBounties";
@@ -121,7 +122,8 @@ export default function Overview() {
             key={stat.k}
             className={cn("flex flex-col gap-0.5", isMobile ? "py-2.5" : "py-3.5 pr-4")}
           >
-            <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint max-[960px]:text-[10px] max-[960px]:tracking-[0.1em]">
+            <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint max-[960px]:text-[10px] max-[960px]:tracking-[0.1em]">
+              <GameIcon name={stat.icon} className="h-3.5 w-3.5 text-accent-text" />
               {isMobile ? stat.short : stat.k}
             </dt>
             <dd

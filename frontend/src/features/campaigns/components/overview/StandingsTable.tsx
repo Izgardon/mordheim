@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 
+import { GameIcon } from "@/components/ui/game-icons";
 import { cn } from "@/lib/utils";
 
 import type { Standing } from "./overview-data";
@@ -10,6 +11,9 @@ const TH =
 const TD = "border-b border-line px-2.5 py-[11px]";
 /** The Warband (type) column shows on a wide screen; narrower, the type sits under the warband's name. */
 const WIDE = "hidden min-[1600px]:table-cell";
+/** A header with the info lines' small icon in front. */
+const HEAD_WITH_ICON = "inline-flex items-center gap-1.5";
+const ICON = "h-3.5 w-3.5 text-accent-text";
 
 /**
  * The standings (design E), by warband rating: each warband links to its warband page (yours
@@ -60,7 +64,10 @@ export default function StandingsTable({
                     {row.player} · {row.warbandType} · {row.record}
                   </span>
                 </span>
-                <span className="font-mono text-sm font-bold text-ink">{row.rating}</span>
+                <span className="flex items-center gap-1 font-mono text-sm font-bold text-ink">
+                  <GameIcon name="rating" className={ICON} />
+                  {row.rating}
+                </span>
                 <ChevronRight className="h-4 w-4 text-faint" aria-hidden="true" />
               </Link>
             </li>
@@ -88,12 +95,18 @@ export default function StandingsTable({
               Warband
             </th>
             <th scope="col" className={cn(TH, "text-right")}>
-              Rating
+              <span className={HEAD_WITH_ICON}>
+                <GameIcon name="rating" className={ICON} />
+                Rating
+              </span>
             </th>
             <th scope="col" className={cn(TH, "pr-4 text-right")}>
-              <abbr title="Won, drawn, lost" className="no-underline">
-                W/D/L
-              </abbr>
+              <span className={HEAD_WITH_ICON}>
+                <GameIcon name="record" className={ICON} />
+                <abbr title="Won, drawn, lost" className="no-underline">
+                  W/D/L
+                </abbr>
+              </span>
             </th>
           </tr>
         </thead>

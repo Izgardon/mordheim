@@ -1,3 +1,5 @@
+import type { GameIconName } from "@/components/ui/game-icons";
+
 import type {
   CampaignBattleHistoryEntry,
   CampaignBattleMoment,
@@ -72,17 +74,23 @@ export function buildStandings(
     .map((row, index) => ({ ...row, rank: index + 1 }));
 }
 
-/** The stats line: battles, warbands, kills, shards found, heroes lost (`short`: a phone's label, "" to leave out). */
-export function buildStats(players: CampaignPlayer[], history: CampaignBattleHistoryEntry[]) {
+/**
+ * The stats line: battles, warbands, kills, shards found, heroes lost (`short`: a phone's label, ""
+ * to leave out), each with its small icon, as the warband's info line has.
+ */
+export function buildStats(
+  players: CampaignPlayer[],
+  history: CampaignBattleHistoryEntry[]
+): { k: string; short: string; v: number; icon: GameIconName }[] {
   const rows = history.flatMap((battle) => battle.participants);
   const sum = (value: (row: (typeof rows)[number]) => number | null | undefined) =>
     rows.reduce((total, row) => total + (value(row) ?? 0), 0);
   return [
-    { k: "Battles", short: "Battles", v: history.length },
-    { k: "Warbands", short: "", v: withWarbands(players).length },
-    { k: "Kills", short: "Kills", v: sum((row) => row.kills) },
-    { k: "Shards found", short: "Shards", v: sum((row) => row.shards) },
-    { k: "Heroes lost", short: "Lost", v: sum((row) => row.heroes_lost) },
+    { k: "Battles", short: "Battles", v: history.length, icon: "battles" },
+    { k: "Warbands", short: "", v: withWarbands(players).length, icon: "warbands" },
+    { k: "Kills", short: "Kills", v: sum((row) => row.kills), icon: "kills" },
+    { k: "Shards found", short: "Shards", v: sum((row) => row.shards), icon: "wyrdstone" },
+    { k: "Heroes lost", short: "Lost", v: sum((row) => row.heroes_lost), icon: "lost" },
   ];
 }
 
