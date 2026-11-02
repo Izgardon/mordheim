@@ -79,6 +79,15 @@ The bar shows only the current block, from the last threshold reached to the nex
 5. **Remove the "Your warband's" option from the skill picker.** The unit's own skill access lists are the tabs. "Show all" stays for the rest of the campaign's skills.
 6. **No fluff text** anywhere in the dialog.
 
+## 7. Bounties from the Bounties section only (added during the work)
+
+> "only allow bounties to be posted from the bounties section, not from a warband"
+
+- Remove the bounty button (the crosshair) from hero cards on the warband page, and any other place a warband page posts a bounty.
+- Posting stays in the overview's Open bounties panel on the web and the Bounties tab on a phone. That form picks the target warband and hero itself.
+- A hero's open bounties keep showing on his card, read-only. Only the post action goes.
+- Delete any code this leaves unused. Commit it on its own.
+
 ## Rules
 
 - **Gate:** typecheck, lint, format, build, vitest and the backend gate.
