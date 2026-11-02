@@ -8,6 +8,7 @@ import {
   d6Stat,
   rowFor,
   spellDifficulty,
+  spellResult,
   spellRollResult,
   statChange,
 } from "./advance-table";
@@ -58,5 +59,11 @@ describe("spells", () => {
       difficulty: "Auto",
     });
     expect(spellRollResult(lore, [], 5)).toBeNull();
+  });
+
+  it("never land a roll on a spell with none", () => {
+    const lore = [spell({ id: 1, roll: 6, dc: "6" }), spell({ id: 2, roll: null, dc: "8" })];
+    expect(spellRollResult(lore, [], 6)?.spell.id).toBe(1);
+    expect(spellResult(lore[1], [])).toMatchObject({ known: false, difficulty: "8" });
   });
 });

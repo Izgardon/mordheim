@@ -41,7 +41,7 @@ type RosterSectionsProps = {
   onAdvance: (entry: RosterUnit) => void;
   /** Buy again on a carried item: the store for that unit with the item open. */
   onBuyAgain: (entry: RosterUnit, item: Item) => void;
-  /** More for a hero card's header (its bounties, Post a bounty). */
+  /** More for a hero card's header: its bounties. */
   heroExtra?: (hero: WarbandHero) => ReactNode;
 };
 

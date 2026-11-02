@@ -9,7 +9,7 @@ class SpecialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Special
-        fields = ("id", "campaign_id", "setting_id", "name", "type", "kind", "description")
+        fields = ("id", "campaign_id", "setting_id", "name", "type", "kind", "owner_kind", "description")
 
 
 class SpecialCreateSerializer(serializers.ModelSerializer):

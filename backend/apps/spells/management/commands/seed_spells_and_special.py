@@ -1,7 +1,8 @@
 """Seed the book's spells and specials from JSON (`apps/spells/data/spells.json`, `apps/special/data/special.json`).
 
 Rows are matched by name and type in the book only (BUG-17); the run is all or nothing; there is no --truncate
-(BUG-16: it deleted campaign rows and every copy of them).
+(BUG-16: it deleted campaign rows and every copy of them). A lore keeps the first spell on each roll: a later one on
+a taken roll is saved with none, and the run says so (spells/rolls.py).
 """
 
 from pathlib import Path
@@ -14,6 +15,7 @@ from apps.core.seeding import read_json_list, upsert_global
 from apps.special.kinds import book_kind
 from apps.special.models import Special
 from apps.spells.models import Spell
+from apps.spells.rolls import first_on_each_roll
 
 SPELLS_JSON_PATH = Path("apps/spells/data/spells.json")
 SPECIAL_JSON_PATH = Path("apps/special/data/special.json")
@@ -45,7 +47,12 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING(f"{label} JSON not found at {path}"))
             return 0, 0
         created = updated = 0
-        for entry in read_json_list(path):
+        entries = read_json_list(path)
+        if model is Spell:
+            entries, cleared = first_on_each_roll(entries)
+            for line in cleared:
+                self.stdout.write(self.style.WARNING(line))
+        for entry in entries:
             name, entry_type = entry.get("name", "").strip(), entry.get("type", "").strip()
             if not name or not entry_type:
                 continue

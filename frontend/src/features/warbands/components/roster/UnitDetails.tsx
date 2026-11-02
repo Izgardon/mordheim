@@ -161,8 +161,8 @@ export default function UnitDetails(props: UnitDetailsProps) {
       </div>
       {selected?.pending && canEdit ? (
         <PendingPick
+          key={`${open?.row}-${open?.index}`}
           campaignId={props.campaignId}
-          warbandId={props.warbandId}
           list={selected.pending}
           entry={entry}
           onClose={() => setOpen(null)}

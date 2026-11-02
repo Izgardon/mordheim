@@ -1,6 +1,7 @@
 /**
- * Post a bounty from a hero's card: what it sends, and the "can't afford it right now" warning,
- * which waits for a reward (a warband below 0 read "would come to 0 gc" before one was typed).
+ * Post a bounty from the Bounties section: the warband and hero picked in it, what it sends, and
+ * the "can't afford it right now" warning, which waits for a reward (a warband below 0 read "would
+ * come to 0 gc" before one was typed).
  */
 import { screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -20,14 +21,23 @@ vi.mock("@/stores/app-store", () => ({
   useAppStore: () => ({ removeBountyClaimNotification: vi.fn() }),
 }));
 
-const target = { heroId: 12, name: "Grey Seer", warbandName: "Rats" };
-
 beforeEach(() => {
   fakeApi.reset();
   fakeApi.on("GET /campaigns/7/bounties/", {
     bounties: [],
     my_warband: { id: 30, name: "Crows", gold: -10 },
   });
+  fakeApi.on("GET /campaigns/7/bounties/targets/", [
+    {
+      warband_id: 20,
+      warband_name: "Rats",
+      user_name: "Bo",
+      heroes: [
+        { id: 11, name: "Clawleader", unit_type: "Assassin", is_leader: false },
+        { id: 12, name: "Grey Seer", unit_type: "Seer", is_leader: true },
+      ],
+    },
+  ]);
 });
 
 describe("Post a bounty", () => {
@@ -56,7 +66,7 @@ describe("Post a bounty", () => {
     }));
     const user = setupUser();
     const { queryClient } = renderWithQueryClient(
-      <PostBountyDialog open onClose={onClose} campaignId={7} target={target} />
+      <PostBountyDialog open onClose={onClose} campaignId={7} />
     );
 
     // once the list (and your warband's gold, -10 gc) is in: still no warning without a reward
@@ -64,6 +74,7 @@ describe("Post a bounty", () => {
       expect(queryClient.getQueryData(queryKeys.campaign.bounties(7))).toBeTruthy()
     );
     expect(screen.queryByText(/Your open bounties would come to/)).not.toBeInTheDocument();
+    await user.selectOptions(await screen.findByLabelText("Hero"), "12");
     await user.type(screen.getByLabelText("Reward (gc)"), "25");
     expect(screen.getByRole("status")).toHaveTextContent(
       "Your open bounties would come to 25 gc and Crows holds -10 gc."

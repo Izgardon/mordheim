@@ -57,7 +57,7 @@ export default function Warband() {
     enabled: Boolean(warband),
   });
   const stashCount = (stash.data ?? []).reduce((sum, item) => sum + (item.quantity ?? 1), 0);
-  const heroBounties = useHeroBounties(campaignId, warband ?? null, warband?.user_id === user?.id);
+  const heroBounties = useHeroBounties(campaignId, warband?.user_id === user?.id);
 
   const setPanel = (next: WarbandPanel | null) => {
     const params = new URLSearchParams(searchParams);
@@ -174,7 +174,7 @@ export default function Warband() {
                   onLoadout={setLoadoutFor}
                   onHire={hire}
                   onAdvance={setAdvancing}
-                  heroExtra={heroBounties.extraFor}
+                  heroExtra={heroBounties}
                   onBuyAgain={(entry, item) =>
                     openStore(
                       storeFor(entry, {
@@ -231,7 +231,6 @@ export default function Warband() {
         actions={actions}
         placeSearch={searchParams.get("place") ?? undefined}
       />
-      {heroBounties.dialog}
       <AdvanceDialog
         entry={advancing}
         campaignId={campaignId}

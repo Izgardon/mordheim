@@ -1,8 +1,9 @@
 """The differences between catalogue kinds that are behaviour rather than data (IMP-79), as pass 1 did for units.
 
-The generic views (views.py) call these hooks. `CatalogueHooks` is what spells and specials need (skills add who
-may learn them): every row of the model with what its badges read, the list rule (merge.py), a create that saves the serializer
-in the campaign, an edit that saves it, a delete of the entry. Items refuse deleting or reverting a house rule's
+The generic views (views.py) call these hooks. `CatalogueHooks` is what specials need (skills add who may learn them,
+spells a roll their lore doesn't hold yet): every row of the model with what its badges read, the list rule (merge.py),
+a create that saves the serializer in the campaign, an edit that saves it, a delete of the entry. A create or an edit
+may leave `write_warnings` on the entry it saved, which the answer carries (`warnings`). Items refuse deleting or reverting a house rule's
 clone and any write of a beast's Animal item, and write through `items/writes.py`; bestiary entries write through
 `bestiary/writes.py` (their Animal item too) and read their rows and details through `bestiary/selectors.py`, hired
 swords and dramatis personae through `hirelings/writes.py` and `hirelings/selectors.py`; a race edit naming another
@@ -25,6 +26,7 @@ from apps.hirelings.models import HirelingProfile
 from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
 from apps.skills.selectors import skill_learners
+from apps.spells import rolls as spell_rolls
 
 from . import merge
 from .payloads import badge_joins
@@ -178,6 +180,31 @@ class HirelingProfileHooks(CatalogueHooks):
 
     def update(self, entry: Any, serializer: Serializer) -> None:
         hireling_writes.update_profile(entry, serializer.validated_data)
+
+
+class SpellHooks(CatalogueHooks):
+    """A roll another spell of its lore holds in the campaign is saved as none, and the answer says so: a lore has one
+    spell on each roll (spells/rolls.py)."""
+
+    def create(self, serializer: Serializer, campaign_id: int) -> Model:
+        warnings = self._free_roll(serializer, campaign_id, None)
+        entry = super().create(serializer, campaign_id)
+        entry.write_warnings = warnings  # type: ignore[attr-defined]  # the answer's (views.answer)
+        return entry
+
+    def update(self, entry: Any, serializer: Serializer) -> None:
+        entry.write_warnings = self._free_roll(serializer, entry.campaign_id, entry)
+        super().update(entry, serializer)
+
+    def _free_roll(self, serializer: Serializer, campaign_id: int, editing: Any) -> list[str]:
+        data = serializer.validated_data
+        lore = data.get("type", getattr(editing, "type", ""))
+        roll = data.get("roll", getattr(editing, "roll", None))
+        holder = spell_rolls.campaign_roll_taken(campaign_id, lore, roll, editing)
+        if holder is None:
+            return []
+        data["roll"] = None
+        return [spell_rolls.taken_warning(holder, roll)]
 
 
 class SkillHooks(CatalogueHooks):

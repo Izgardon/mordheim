@@ -8,21 +8,23 @@ import { spellOption, warnedLast } from "@/features/catalogue/search-options";
 import type { Spell } from "@/features/spells/types/spell-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
-import { spellRollResult } from "./advance-table";
+import { spellResult, spellRollResult } from "./advance-table";
 import DiceTable from "./DiceTable";
 import RollField from "./RollField";
 
-/** A spell an advance gives: rolled on a lore's table, or picked by hand. */
-export type SpellChoice =
-  | { mode: "roll"; lore: string; roll: number; spell: Spell; known: boolean; difficulty: string }
-  | { mode: "pick"; spell: Spell };
+/** What a spell gives him: whether he knows it (it gets 1 easier) and its difficulty for him. */
+type Gives = { spell: Spell; known: boolean; difficulty: string };
+
+/** A spell an advance gives: rolled on a lore's table, or picked (a row with no roll, or by hand). */
+export type SpellChoice = ({ mode: "roll"; lore: string; roll: number } | { mode: "pick" }) & Gives;
 
 const fold = (text?: string | null) => (text ?? "").trim().toLowerCase();
 
 /**
  * A new spell, guided (William): pick one of the lores he already has a spell from and roll a D6
- * on its table; a spell he knows gets 1 easier for him ("Difficulty 7 → 6"). With no spells yet
- * any lore will do, with a warning. "Pick instead" chooses any spell by hand, with a warning.
+ * on its table, or click a row; a spell he knows gets 1 easier for him ("Difficulty 7 → 6"). A
+ * spell with no roll ("–") is never rolled, only clicked. With no spells yet any lore will do, with
+ * a warning. "Pick instead" chooses any spell by hand, with a warning.
  */
 export default function SpellPicker({
   campaignId,
@@ -44,8 +46,8 @@ export default function SpellPicker({
   const [lore, setLore] = useState<string | null>(lores.length === 1 ? lores[0] : null);
   const [picking, setPicking] = useState(value?.mode === "pick");
   const table = spells
-    .filter((spell) => lore && fold(spell.type) === fold(lore) && spell.roll)
-    .sort((a, b) => (a.roll ?? 0) - (b.roll ?? 0));
+    .filter((spell) => lore && fold(spell.type) === fold(lore))
+    .sort((a, b) => (a.roll ?? 99) - (b.roll ?? 99) || a.name.localeCompare(b.name));
   const roll = value?.mode === "roll" ? value.roll : null;
 
   const rolled = (next: number | null) => {
@@ -71,7 +73,7 @@ export default function SpellPicker({
             options={warnedLast(spells.map((spell) => spellOption(spell, settings)))}
             onPick={(option) => {
               const spell = spells.find((entry) => entry.id === Number(option.id));
-              onChange(spell ? { mode: "pick", spell } : null);
+              onChange(spell ? { mode: "pick", ...spellResult(spell, known) } : null);
             }}
           />
         )}
@@ -114,16 +116,17 @@ export default function SpellPicker({
           <RollField dice={1} value={roll} onChange={rolled} />
           <DiceTable
             label={`${lore} spells`}
-            current={value?.mode === "roll" ? String(value.spell.id) : undefined}
+            current={value ? String(value.spell.id) : undefined}
             onPick={(key) => {
               const spell = table.find((entry) => String(entry.id) === key);
               if (spell?.roll) rolled(spell.roll);
+              else if (spell) onChange({ mode: "pick", ...spellResult(spell, known) });
             }}
             rows={table.map((spell) => ({
               key: String(spell.id),
-              roll: String(spell.roll),
+              roll: spell.roll ? String(spell.roll) : "–",
               result: spell.name,
-              aside: spellRollResult(table, known, spell.roll ?? 0)?.difficulty,
+              aside: spellResult(spell, known).difficulty,
             }))}
           />
         </>

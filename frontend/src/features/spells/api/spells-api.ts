@@ -41,8 +41,11 @@ export function listSpells(options: ListSpellsOptions = {}) {
   return apiRequest<Spell[]>(path, { signal: options.signal });
 }
 
+/** A save's answer: the spell, and what the server changed and says (a roll its lore already holds). */
+export type SpellSaved = Spell & { warnings?: string[] };
+
 export function createSpell(payload: SpellCreatePayload) {
-  return apiRequest<Spell>("/spells/", {
+  return apiRequest<SpellSaved>("/spells/", {
     method: "POST",
     headers: socketIdHeaders(),
     body: payload,
@@ -53,7 +56,7 @@ export function createSpell(payload: SpellCreatePayload) {
 export type SpellUpdatePayload = Partial<SpellCreatePayload>;
 
 export function updateSpell(spellId: number, payload: SpellUpdatePayload) {
-  return apiRequest<Spell>(`/spells/${spellId}/`, {
+  return apiRequest<SpellSaved>(`/spells/${spellId}/`, {
     method: "PATCH",
     headers: socketIdHeaders(),
     body: payload,

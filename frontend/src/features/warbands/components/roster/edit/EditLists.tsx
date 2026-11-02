@@ -11,10 +11,12 @@ import {
 } from "@/features/catalogue/search-options";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
 import { itemKind } from "@/features/items/item-kind";
+import { inPlayOnly } from "@/features/reference/in-play";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { HeroCaster } from "../../../types/warband-types";
 import { buildAvailableSkillsPayload } from "../../../utils/warband-utils";
+import { boonBaneOptions } from "../boon-bane-options";
 import UnitSectionLabel from "../UnitSectionLabel";
 import { isInjury, type RosterUnit } from "../unit-view";
 import EditPickList from "./EditPickList";
@@ -50,19 +52,18 @@ export default function EditLists({
   const settings = useSettingsById();
   const warbandSkills = useWhoCan(campaignId, warbandId).specialSkillIds;
   const access = draft.available_skills as Record<string, boolean> | undefined;
-  const skillRows = skillOptions(skills, {
+  const skillContext = {
     settings,
     large: Boolean(draft.large),
     access: access ? buildAvailableSkillsPayload(access) : [],
     specials: warbandSkills,
-  });
+  };
+  // only the campaign's skills are offered; one he has from outside it still shows as his
+  const skillRows = skillOptions(inPlayOnly(skills), skillContext);
+  const heldSkills = skillOptions(skills, skillContext);
   const spellRows = warnedLast(spells.map((spell) => spellOption(spell, settings)));
-  const specialRows = (injuries: boolean) =>
-    warnedLast(
-      specials
-        .filter((special) => isInjury(special) === injuries)
-        .map((special) => specialOption(special, settings))
-    );
+  // a hired sword's or dramatis persona's own rule isn't offered; one he has keeps its chip
+  const heldSpecials = specials.map((special) => specialOption(special, settings));
   const rules = lists.specials.filter((special) => !isInjury(special));
   const injuries = lists.specials.filter(isInjury);
   // a new pick keeps its type, which says whether it is an injury
@@ -92,9 +93,14 @@ export default function EditLists({
       {heading(kind === "henchmen_group" ? "Items · each" : "Items", "items")}
       <div className="flex flex-wrap items-center gap-1.5">
         {unit.items.map((item, index) => (
-          <ChipLabel key={`${item.id}-${index}`} className="min-h-[34px] text-[13px] text-ink">
-            <ItemKindIcon kind={itemKind(item)} className="text-accent-text" />
-            {item.name}
+          <ChipLabel
+            key={`${item.id}-${index}`}
+            className="min-h-[34px] max-w-[200px] text-[13px] text-ink"
+          >
+            <ItemKindIcon kind={itemKind(item)} className="shrink-0 text-accent-text" />
+            <span title={item.name} className="truncate">
+              {item.name}
+            </span>
           </ChipLabel>
         ))}
         <button
@@ -116,6 +122,7 @@ export default function EditLists({
         noun="skill"
         entries={lists.skills}
         options={skillRows}
+        known={heldSkills}
         onChange={(next) => setLists((c) => ({ ...c, skills: next }))}
         {...picks("pending_skills")}
       />
@@ -124,7 +131,8 @@ export default function EditLists({
         noun="boon or bane"
         plural="boons and banes"
         entries={rules}
-        options={specialRows(false)}
+        options={boonBaneOptions(specials, settings)}
+        known={heldSpecials}
         onChange={(next) => setSpecials(next, false)}
         {...picks("pending_specials")}
       />
@@ -144,7 +152,8 @@ export default function EditLists({
           noun="injury"
           plural="injuries"
           entries={injuries}
-          options={specialRows(true)}
+          options={boonBaneOptions(specials, settings, true)}
+          known={heldSpecials}
           onChange={(next) => setSpecials(next, true)}
         />
       ) : null}

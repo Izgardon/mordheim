@@ -1,8 +1,9 @@
 /**
  * The advance guides the player (William: "no information about what will be received or why, and
- * it doesnt allow things to be chosen within that modal which is the entire point"): the rolled
- * row of the table, the follow-up it asks for, the stat against his race maximum, and a skill
- * picked in the dialog, all saved as one level-up.
+ * it doesnt allow things to be chosen within that modal which is the entire point"), and has no "by
+ * hand" mode ("just let the table always be clickable"): a row clicked is taken as if the dice had
+ * shown it, a row with two outcomes picks one from a dropdown that its D6 presets, a new skill row
+ * gives a skill, a spell or a boon or bane, and the Gains line alone says what he gets.
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -20,7 +21,15 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 }));
 vi.mock("../../api/warband-cache", () => ({ useWarbandCacheUpdate: () => () => undefined }));
 
-const hero = makeHero({ id: 5, name: "Aldric Voss", level_up: 1, weapon_skill: 3 });
+const LEVEL_UP = "POST /warbands/9/heroes/5/level-up/";
+const hero = makeHero({
+  id: 5,
+  name: "Aldric Voss",
+  level_up: 1,
+  weapon_skill: 3,
+  race_id: 2,
+  available_skills: ["Combat"],
+});
 
 const open = () =>
   renderWithQueryClient(
@@ -34,22 +43,32 @@ const open = () =>
     />
   );
 
-describe("The advance dialog", () => {
-  beforeEach(() => fakeApi.reset());
+const advanceTable = () => screen.getByRole("table", { name: "Hero advance table" });
 
-  it("shows the rolled row, asks WS or BS on a 7 and saves the choice with the roll", async () => {
-    fakeApi.on("POST /warbands/9/heroes/5/level-up/", hero);
+describe("The advance dialog", () => {
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on(LEVEL_UP, hero);
+    fakeApi.on("GET /races/?campaign_id=1", [{ id: 2, name: "Human", weapon_skill: 3 }]);
+    fakeApi.on("GET /skills/?campaign_id=1", [
+      { id: 3, name: "Strike to Injure", type: "Combat", description: "Wounds harder." },
+      { id: 4, name: "Sprint", type: "Speed", description: "Runs further." },
+    ]);
+  });
+
+  it("has no by-hand mode; a 7 asks WS or BS in a dropdown and the Gains line alone shows it", async () => {
     open();
     const user = setupUser();
+    expect(screen.queryByRole("button", { name: "By hand" })).not.toBeInTheDocument();
     await user.type(screen.getByLabelText("2D6 rolled"), "7");
-    const table = screen.getByRole("table", { name: "Hero advance table" });
-    expect(within(table).getByRole("row", { current: true })).toHaveTextContent(
+    expect(within(advanceTable()).getByRole("row", { current: true })).toHaveTextContent(
       "+1 Weapon Skill or +1 Ballistic Skill"
     );
-    await user.click(screen.getByRole("button", { name: "+1 Weapon Skill" }));
-    expect(screen.getAllByText("WS 3 → 4").length).toBeGreaterThan(0);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Characteristic" }), "WS");
+    expect(screen.getAllByText(/WS 3 → 4/)).toHaveLength(1);
+    expect(await screen.findByText("Above his race maximum")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Confirm" }));
-    expect(fakeApi.bodyOf("POST /warbands/9/heroes/5/level-up/")).toEqual({
+    expect(fakeApi.bodyOf(LEVEL_UP)).toEqual({
       payload: {
         hero: "Aldric Voss",
         advance: { id: "WS", label: "Weapon Skill" },
@@ -58,21 +77,66 @@ describe("The advance dialog", () => {
     });
   });
 
-  it("picks a new skill from his list inside the dialog", async () => {
-    fakeApi.on("GET /skills/?campaign_id=1", [
-      { id: 3, name: "Strike to Injure", type: "Combat", description: "Wounds harder." },
-      { id: 4, name: "Sprint", type: "Speed", description: "Runs further." },
-    ]);
-    fakeApi.on("POST /warbands/9/heroes/5/level-up/", hero);
+  it("takes a clicked row as if the dice had shown it, a range row with no roll", async () => {
     open();
     const user = setupUser();
-    await user.type(screen.getByLabelText("2D6 rolled"), "4");
+    await user.click(within(advanceTable()).getByRole("button", { name: /Weapon Skill or/ }));
+    expect(screen.getByLabelText("2D6 rolled")).toHaveValue(7);
+    await user.click(within(advanceTable()).getAllByRole("button", { name: "New skill" })[0]);
+    expect(screen.getByLabelText("2D6 rolled")).toHaveValue(null);
+    expect(within(advanceTable()).getByRole("row", { current: true })).toHaveTextContent("2–5");
     await user.click(await screen.findByRole("option", { name: /Strike to Injure/ }));
     expect(screen.getByText("New skill: Strike to Injure")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Confirm" }));
-    expect(fakeApi.bodyOf("POST /warbands/9/heroes/5/level-up/")).toMatchObject({
-      payload: { advance: { id: "Skill" } },
+    expect(fakeApi.bodyOf(LEVEL_UP)).toEqual({
+      payload: { hero: "Aldric Voss", advance: { id: "Skill", label: "Skill" } },
       pick: { list: "skills", id: 3 },
+    });
+  });
+
+  it("presets a D6 row's stat from the die, which can still be changed", async () => {
+    open();
+    const user = setupUser();
+    await user.type(screen.getByLabelText("2D6 rolled"), "6");
+    const stat = screen.getByRole("combobox", { name: "Characteristic" });
+    await user.type(screen.getByLabelText("D6 rolled"), "5");
+    expect(stat).toHaveValue("A");
+    await user.selectOptions(stat, "S");
+    expect(screen.getByText(/^S \d+ → \d+/)).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(fakeApi.bodyOf(LEVEL_UP)).toMatchObject({
+      payload: {
+        advance: { id: "S" },
+        roll1: { dice: "2d6", result: { total: 6 } },
+        roll2: { dice: "1d6", result: { total: 5 } },
+      },
+    });
+  });
+
+  it("offers a skill, a spell or a general boon or bane for a new skill, each with its picker", async () => {
+    fakeApi.on("GET /special/?campaign_id=1", [
+      { id: 80, name: "Hatred", type: "Psychology", kind: "boon", description: "Hates." },
+      { id: 82, name: "Spy", type: "Hired Sword - Freelance Knight", owner_kind: "hired_sword" },
+    ]);
+    open();
+    const user = setupUser();
+    await user.type(screen.getByLabelText("2D6 rolled"), "3");
+    const kind = screen.getByRole("combobox", { name: "New" });
+    expect(kind).toHaveValue("Skill");
+    expect(await screen.findByRole("option", { name: /Strike to Injure/ })).toBeInTheDocument();
+
+    await user.selectOptions(kind, "Spell");
+    expect(screen.getByText("Not a Wizard or Priest")).toBeInTheDocument();
+
+    await user.selectOptions(kind, "Special");
+    await screen.findByRole("option", { name: /Hatred/ });
+    expect(screen.queryByRole("option", { name: /Spy/ })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("option", { name: /Hatred/ }));
+    expect(screen.getByText("New boon: Hatred")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(fakeApi.bodyOf(LEVEL_UP)).toMatchObject({
+      payload: { advance: { id: "Special" } },
+      pick: { list: "specials", id: 80 },
     });
   });
 });

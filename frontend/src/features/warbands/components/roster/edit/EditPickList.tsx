@@ -17,6 +17,7 @@ export default function EditPickList({
   plural = `${noun}s`,
   entries,
   options,
+  known = [],
   onChange,
   pending = 0,
   onPendingChange,
@@ -28,13 +29,16 @@ export default function EditPickList({
   /** "injuries": when adding "s" won't do. */
   plural?: string;
   entries: Named[];
+  /** What Add offers. */
   options: SearchOption[];
+  /** Rows for the chips of entries Add doesn't offer (one from outside the campaign he has). */
+  known?: SearchOption[];
   onChange: (next: Named[]) => void;
   /** Picks left to make on this list; only heroes and hired swords have them. */
   pending?: number;
   onPendingChange?: (next: number) => void;
 }) {
-  const byId = new Map(options.map((option) => [option.id, option]));
+  const byId = new Map([...known, ...options].map((option) => [option.id, option]));
   const values = entries.map(
     (entry): SearchOption =>
       byId.get(entry.id) ?? { id: entry.id, title: entry.name, subtitle: entry.type ?? undefined }

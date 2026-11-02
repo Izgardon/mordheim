@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { SearchCombobox } from "@/components/ui/search-select";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import { specialOption, warnedLast } from "@/features/catalogue/search-options";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { AdvancePick } from "../../units/unit-api";
 import SkillPicker from "./advance/SkillPicker";
+import { boonBaneOptions } from "./boon-bane-options";
 import SpellPicker, { type SpellChoice } from "./advance/SpellPicker";
 import type { PendingList, RosterUnit } from "./unit-view";
 
@@ -27,18 +27,17 @@ const spellPick = (choice: SpellChoice): AdvancePick =>
  * A pick an advance left for later ("Skill to choose"), made from the card with the advance's
  * guided pickers: a skill from his lists (the rest behind "Show all", with a warning), a spell
  * rolled on one of his lores (one he knows gets 1 easier) or picked by hand, a boon or bane from
- * the search. The server makes the pick (`pick/`).
+ * the search. The line above Confirm says only what this pick gives. The server makes the pick
+ * (`pick/`).
  */
 export default function PendingPick({
   campaignId,
-  warbandId,
   list,
   entry,
   onPick,
   onClose,
 }: {
   campaignId: number;
-  warbandId: number;
   list: PendingList;
   entry: RosterUnit;
   onPick: (pick: AdvancePick) => void;
@@ -69,7 +68,6 @@ export default function PendingPick({
       {list === "skills" ? (
         <SkillPicker
           campaignId={campaignId}
-          warbandId={warbandId}
           access={"available_skills" in unit ? unit.available_skills : undefined}
           large={unit.large}
           value={skill}
@@ -89,16 +87,16 @@ export default function PendingPick({
           label="Search boons and banes"
           placeholder="Search boons and banes"
           emptyText="No boon or bane matches."
-          options={warnedLast((specials ?? []).map((special) => specialOption(special, settings)))}
+          options={boonBaneOptions(specials ?? [], settings)}
           onPick={(option) => onPick({ list: "specials", id: Number(option.id) })}
           onDismiss={onClose}
         />
       )}
       {list === "specials" ? null : (
         <div className="flex flex-wrap items-center gap-2">
-          {spell ? (
+          {list === "spells" && spell ? (
             <span className="text-sm font-semibold text-head">
-              {spell.mode === "roll" && spell.known
+              {spell.known
                 ? `${spell.spell.name} gets easier: Difficulty ${spell.difficulty}`
                 : `New spell: ${spell.spell.name}`}
             </span>
