@@ -82,7 +82,10 @@ type BoxTileProps = {
   className?: string;
 };
 
-/** An item, skill, special, spell or injury box in a unit's rows, told apart by icon and accent. */
+/**
+ * An item, skill, special, spell or injury box in a unit's rows, told apart by icon and accent. At
+ * most 200 px wide (William): a long name or second line ends in "…", the full text in its title.
+ */
 export function BoxTile({
   name,
   type,
@@ -95,7 +98,7 @@ export function BoxTile({
   const styles = KIND_STYLES[kind];
   const accented = kind === "skill" || kind === "special" || kind === "spell";
   const classes = cn(
-    "flex min-h-12 min-w-[118px] items-center gap-2 border px-[11px] py-1.5 text-left",
+    "flex min-h-12 min-w-[118px] max-w-[200px] items-center gap-2 border px-[11px] py-1.5 text-left",
     accented && "border-l-[3px] pl-[9px]",
     styles.box,
     pressed && "border-primary",
@@ -112,8 +115,14 @@ export function BoxTile({
         </span>
       ) : null}
       <span className="flex min-w-0 flex-col gap-px">
-        <span className={cn("text-[13px] font-bold", styles.name)}>{name}</span>
-        {type ? <span className={cn("text-[11px]", styles.type)}>{type}</span> : null}
+        <span title={name} className={cn("truncate text-[13px] font-bold", styles.name)}>
+          {name}
+        </span>
+        {type ? (
+          <span title={type} className={cn("truncate text-[11px]", styles.type)}>
+            {type}
+          </span>
+        ) : null}
       </span>
     </>
   );

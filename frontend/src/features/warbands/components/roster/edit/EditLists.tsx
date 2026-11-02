@@ -92,9 +92,14 @@ export default function EditLists({
       {heading(kind === "henchmen_group" ? "Items · each" : "Items", "items")}
       <div className="flex flex-wrap items-center gap-1.5">
         {unit.items.map((item, index) => (
-          <ChipLabel key={`${item.id}-${index}`} className="min-h-[34px] text-[13px] text-ink">
-            <ItemKindIcon kind={itemKind(item)} className="text-accent-text" />
-            {item.name}
+          <ChipLabel
+            key={`${item.id}-${index}`}
+            className="min-h-[34px] max-w-[200px] text-[13px] text-ink"
+          >
+            <ItemKindIcon kind={itemKind(item)} className="shrink-0 text-accent-text" />
+            <span title={item.name} className="truncate">
+              {item.name}
+            </span>
           </ChipLabel>
         ))}
         <button

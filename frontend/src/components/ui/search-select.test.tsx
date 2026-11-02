@@ -168,4 +168,14 @@ describe("SearchMultiSelect", () => {
     await userEvent.click(screen.getByRole("button", { name: "Remove Mighty Blow" }));
     expect(screen.queryByText("Mighty Blow")).not.toBeInTheDocument();
   });
+
+  it("keeps a chip within 200 px, its lines ending in … with the full text in their titles", () => {
+    render(<Multi initial={[SKILLS[3]]} />);
+    const chip = screen.getByText("Dodge").closest("span.inline-flex");
+    expect(chip).toHaveClass("max-w-[200px]");
+    for (const text of ["Dodge", "Speed", "Not in his skill lists"]) {
+      expect(screen.getByText(text)).toHaveAttribute("title", text);
+      expect(screen.getByText(text)).toHaveClass("truncate");
+    }
+  });
 });
