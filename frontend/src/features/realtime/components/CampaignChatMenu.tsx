@@ -42,11 +42,49 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
         kicker="Campaign"
         title="Chat"
         description="Messages to everyone in this campaign."
+        footer={
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <label htmlFor="campaign-chat-message" className="sr-only">
+                Message the campaign
+              </label>
+              <input
+                id="campaign-chat-message"
+                type="text"
+                className="h-11 min-w-0 flex-1 border border-strong bg-page px-3 text-base text-ink outline-none placeholder:text-faint focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:text-sm"
+                placeholder="Message"
+                value={chat.draft}
+                onChange={(e) => chat.updateDraft(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    void chat.handleSend();
+                  }
+                }}
+                maxLength={2000}
+              />
+              <button
+                type="button"
+                onClick={() => void chat.handleSend()}
+                disabled={!chat.draft.trim() || chat.isSending}
+                className="flex h-11 w-11 shrink-0 items-center justify-center border border-primary bg-primary text-on-accent transition-colors hover:border-accent-hi hover:bg-accent-hi disabled:opacity-40"
+                aria-label="Send message"
+              >
+                <Send className="h-4 w-4" />
+              </button>
+            </div>
+            {chat.sendError ? (
+              <p role="alert" className="text-xs text-danger">
+                {chat.sendError}
+              </p>
+            ) : null}
+          </div>
+        }
       >
         {/* Messages list */}
         <div
           ref={chat.listRef}
-          className="max-h-[380px] min-h-[200px] overflow-y-auto space-y-3 py-1"
+          className="min-h-0 flex-1 space-y-3 overflow-y-auto py-1"
           onScroll={chat.handleScroll}
         >
           {isLoading && messages.length > 0 ? (
@@ -80,44 +118,6 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
               onRemove={chat.removeMessage}
             />
           ))}
-        </div>
-
-        {/* Input bar */}
-        <div className="flex flex-col gap-2 border-t border-line pt-3">
-          <div className="flex items-center gap-2">
-            <label htmlFor="campaign-chat-message" className="sr-only">
-              Message the campaign
-            </label>
-            <input
-              id="campaign-chat-message"
-              type="text"
-              className="h-11 min-w-0 flex-1 border border-strong bg-page px-3 text-base text-ink outline-none placeholder:text-faint focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring md:text-sm"
-              placeholder="Message"
-              value={chat.draft}
-              onChange={(e) => chat.updateDraft(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  void chat.handleSend();
-                }
-              }}
-              maxLength={2000}
-            />
-            <button
-              type="button"
-              onClick={() => void chat.handleSend()}
-              disabled={!chat.draft.trim() || chat.isSending}
-              className="flex h-11 w-11 shrink-0 items-center justify-center border border-primary bg-primary text-on-accent transition-colors hover:border-accent-hi hover:bg-accent-hi disabled:opacity-40"
-              aria-label="Send message"
-            >
-              <Send className="h-4 w-4" />
-            </button>
-          </div>
-          {chat.sendError ? (
-            <p role="alert" className="text-xs text-danger">
-              {chat.sendError}
-            </p>
-          ) : null}
         </div>
       </SidePanel>
     </>
