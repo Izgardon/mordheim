@@ -115,6 +115,10 @@ export default function SpellPicker({
           <DiceTable
             label={`${lore} spells`}
             current={value?.mode === "roll" ? String(value.spell.id) : undefined}
+            onPick={(key) => {
+              const spell = table.find((entry) => String(entry.id) === key);
+              if (spell?.roll) rolled(spell.roll);
+            }}
             rows={table.map((spell) => ({
               key: String(spell.id),
               roll: String(spell.roll),
