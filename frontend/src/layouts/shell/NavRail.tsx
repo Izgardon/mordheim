@@ -1,11 +1,9 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
-import { Moon, Sun } from "lucide-react";
+import { Settings, UserRound } from "lucide-react";
 
-import { IconButton } from "@/components/ui/icon-button";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
-import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 
 import {
@@ -70,7 +68,6 @@ type NavRailProps = {
 /** The web shell's left rail (232 px, design E): campaign, tools, sections, you. */
 export default function NavRail({ campaign, userName, tools, onRejoinBattle }: NavRailProps) {
   const { pathname } = useLocation();
-  const { theme, toggleTheme } = useTheme();
   const base = `/campaigns/${campaign.id}`;
   const to = (link: NavLink) => (link.path ? `${base}/${link.path}` : base);
   const isCurrent = (path: string) =>
@@ -87,9 +84,13 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
         <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-text">
           Mordheim
         </span>
-        <span className="font-display text-[19px] font-semibold leading-tight text-head">
+        <Link
+          to="/campaigns"
+          title="All campaigns"
+          className="font-display text-[19px] font-semibold leading-tight text-head hover:text-accent-hi"
+        >
           {campaign.name}
-        </span>
+        </Link>
         <span className="text-xs text-faint">
           {campaign.player_count} {campaign.player_count === 1 ? "player" : "players"}
         </span>
@@ -155,36 +156,14 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
         ))}
       </RailSection>
 
-      <div className="mt-auto flex flex-col gap-2 border-t border-line px-2.5 pt-3.5">
-        <div className="flex items-center justify-between gap-2">
-          <Link
-            to="/account"
-            className="flex min-w-0 items-center gap-2.5 text-[13px] text-text2 hover:text-head"
-          >
-            <span
-              aria-hidden="true"
-              className="flex h-[30px] w-[30px] shrink-0 items-center justify-center bg-raised text-xs font-bold text-accent-text"
-            >
-              {userName.charAt(0).toUpperCase() || "?"}
-            </span>
-            <span className="truncate">{userName}</span>
-          </Link>
-          <IconButton
-            aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-            onClick={toggleTheme}
-            className="h-9 w-9"
-          >
-            {theme === "light" ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}
-          </IconButton>
-        </div>
-        <div className="flex items-center justify-between text-xs">
-          <Link to={`${base}/settings`} className="py-1.5 text-faint hover:text-head">
-            Settings
-          </Link>
-          <Link to="/campaigns" className="py-1.5 text-faint hover:text-head">
-            All campaigns
-          </Link>
-        </div>
+      <div className="mt-auto flex flex-col gap-0.5 border-t border-line pt-3.5">
+        <RailLink to="/account" label={userName || "Account"} icon={UserRound} current={false} />
+        <RailLink
+          to={`${base}/settings`}
+          label="Settings"
+          icon={Settings}
+          current={isCurrent("settings")}
+        />
       </div>
     </nav>
   );

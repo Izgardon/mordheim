@@ -3,9 +3,7 @@ import { useLocation } from "react-router-dom";
 import { Flag, Search, Shield, Swords, UserRound } from "lucide-react";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
-import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
-import { useTheme } from "@/lib/theme";
 
 import {
   REFERENCE_LINKS,
@@ -26,7 +24,7 @@ type CampaignBottomNavProps = {
 /**
  * The phone's bottom nav (design E): Campaign, Warband, Battle, Reference, Me. Flat; the current
  * item takes the accent and an inset top line. Reference and Me open sheets: the reference pages,
- * and you (the theme, settings, your account, the campaign list).
+ * and you (settings and your account).
  */
 export default function CampaignBottomNav({
   campaign,
@@ -34,7 +32,6 @@ export default function CampaignBottomNav({
   onRejoinBattle,
 }: CampaignBottomNavProps) {
   const { pathname } = useLocation();
-  const { theme, setTheme } = useTheme();
   const [sheet, setSheet] = useState<"reference" | "me" | null>(null);
   const active = mobileNavActiveId(pathname);
   const base = `/campaigns/${campaign.id}`;
@@ -108,13 +105,6 @@ export default function CampaignBottomNav({
         kicker={userName}
         title="Me"
       >
-        <Switch
-          checked={theme === "light"}
-          onCheckedChange={(light) => setTheme(light ? "light" : "dark")}
-          className="self-start"
-        >
-          Light mode
-        </Switch>
         {camp.length > 0 ? (
           <SheetRows label="My warband">
             {camp.map((link) => (
@@ -130,7 +120,6 @@ export default function CampaignBottomNav({
         <SheetRows label="You">
           <SheetLinkRow to={`${base}/settings`} label="Settings" onNavigate={close} />
           <SheetLinkRow to="/account" label="Account" onNavigate={close} />
-          <SheetLinkRow to="/campaigns" label="All campaigns" onNavigate={close} />
         </SheetRows>
       </BottomSheet>
     </>

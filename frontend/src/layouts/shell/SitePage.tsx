@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutList, LogOut, Moon, Sun, UserRound } from "lucide-react";
+import { LayoutList, LogOut, UserRound } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { useTheme } from "@/lib/theme";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +29,6 @@ export default function SitePage({
   width?: keyof typeof WIDTH;
 }) {
   const { signOut } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const { pathname } = useLocation();
   const isMobile = useMediaQuery("(max-width: 960px)");
 
@@ -81,14 +79,6 @@ export default function SitePage({
               </Link>
             );
           })}
-          <IconButton
-            look="plain"
-            aria-label={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
-            onClick={toggleTheme}
-            className={isMobile ? undefined : "ml-2"}
-          >
-            {theme === "light" ? <Moon aria-hidden="true" /> : <Sun aria-hidden="true" />}
-          </IconButton>
           {isMobile ? (
             <IconButton look="plain" aria-label="Log out" onClick={signOut}>
               <LogOut aria-hidden="true" />

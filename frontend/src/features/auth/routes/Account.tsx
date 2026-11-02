@@ -1,6 +1,7 @@
 // components
 import { GameIconsCredit } from "@/components/ui/game-icons";
 import SitePage from "@/layouts/shell/SitePage";
+import { AppearanceSection } from "../components/account/AppearanceSection";
 import { DeleteAccountSection } from "../components/account/DeleteAccountSection";
 import { DisplayNameSection } from "../components/account/DisplayNameSection";
 import { PasswordSection } from "../components/account/PasswordSection";
@@ -10,8 +11,8 @@ import { SignOutOthersSection } from "../components/account/SignOutOthersSection
 import { useAuth } from "../hooks/use-auth";
 
 /**
- * Your account (AUTH-NEW-01, decision 1; design E): the display name others see, your password,
- * signing out everywhere else, and deleting the account. Reached from the bar of the campaigns
+ * Your account (AUTH-NEW-01, decision 1; design E): the display name others see, light or dark,
+ * your password, signing out everywhere else, and deleting the account. Reached from the bar of the campaigns
  * page, the rail's footer and the phone's Me sheet.
  */
 export default function Account() {
@@ -29,6 +30,7 @@ export default function Account() {
       </header>
       <div className="grid gap-4">
         {user ? <DisplayNameSection key={user.id} user={user} /> : null}
+        <AppearanceSection />
         <PasswordSection />
         <SignOutOthersSection />
         <DeleteAccountSection />
