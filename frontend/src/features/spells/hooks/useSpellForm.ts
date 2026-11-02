@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
@@ -126,9 +127,11 @@ export function useSpellForm({
     };
     try {
       // A book spell's first edit makes the campaign's version of it (CAT-TWEAK-01).
-      const saved = spell
+      const { warnings, ...saved } = spell
         ? await updateSpell(spell.id, { ...payload, ...bookCampaign(spell, campaignId) })
         : await createSpell({ ...payload, campaign_id: campaignId });
+      // a roll another spell of its lore holds is saved as none (a lore has one spell on each roll)
+      warnings?.forEach((warning) => toast.warning(warning));
       catalogueCache.write("spells", campaignId, saved, spell?.id);
       if (spell) {
         // The copies now point at the version, or show the edited entry: sheets read them again.

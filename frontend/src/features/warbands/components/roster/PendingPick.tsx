@@ -98,7 +98,7 @@ export default function PendingPick({
         <div className="flex flex-wrap items-center gap-2">
           {spell ? (
             <span className="text-sm font-semibold text-head">
-              {spell.mode === "roll" && spell.known
+              {spell.known
                 ? `${spell.spell.name} gets easier: Difficulty ${spell.difficulty}`
                 : `New spell: ${spell.spell.name}`}
             </span>

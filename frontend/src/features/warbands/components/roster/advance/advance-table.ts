@@ -94,12 +94,19 @@ export function spellDifficulty(dc: Spell["dc"], change = 0) {
 }
 
 /**
- * What a D6 on a lore gives him: the spell on that roll and its difficulty, or, for one he knows,
- * that it gets 1 easier for him ("7 → 6"; a spell cast automatically stays as it is).
+ * What a D6 on a lore gives him: the spell on that roll (a spell with no roll is never landed on)
+ * and what it gives (`spellResult`), or null when no spell has the roll.
  */
 export function spellRollResult(lore: Spell[], known: Spell[], roll: number) {
   const spell = lore.find((entry) => entry.roll === roll);
-  if (!spell) return null;
+  return spell ? spellResult(spell, known) : null;
+}
+
+/**
+ * What a spell gives him: the spell and its difficulty, or, for one he knows, that it gets 1 easier
+ * for him ("7 → 6"; a spell cast automatically stays as it is).
+ */
+export function spellResult(spell: Spell, known: Spell[]) {
   const fold = (text?: string | null) => (text ?? "").trim().toLowerCase();
   const same = known.find(
     (entry) =>

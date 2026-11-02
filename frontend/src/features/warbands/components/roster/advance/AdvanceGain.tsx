@@ -24,8 +24,7 @@ export function gainLine(flow: AdvanceFlow, entry: RosterUnit, race: Race | unde
   if (flow.skill && flow.list === "skills") return `New skill: ${flow.skill.name}`;
   const spell = flow.spell;
   if (!spell || flow.list !== "spells") return "";
-  if (spell.mode === "roll" && spell.known)
-    return `${spell.spell.name} gets easier: Difficulty ${spell.difficulty}`;
+  if (spell.known) return `${spell.spell.name} gets easier: Difficulty ${spell.difficulty}`;
   return `New spell: ${spell.spell.name}`;
 }
 
