@@ -5,6 +5,25 @@ import type { UnitKindKey } from "../../types/units";
 
 const RECRUITS: UnitKindKey[] = ["hero", "henchmen_group", "hireling"];
 
+/**
+ * Opens a unit's card in Edit from outside the roster (the camp's Recruit): the link the roster
+ * reads, `?unit=<kind>-<id>&edit=1`. With no id (the unit wasn't found) it does nothing.
+ */
+export function useOpenInEdit() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  return (kind: UnitKindKey, id: number | undefined) => {
+    if (id === undefined) return;
+    const params = new URLSearchParams(searchParams);
+    params.set("unit", `${kind}-${id}`);
+    params.set("edit", "1");
+    setSearchParams(params, { replace: true });
+  };
+}
+
+/** The id of the unit in `after` that `before` didn't have (a batch answers every unit of a kind). */
+export const newUnitId = (before: { id: number }[], after: { id: number }[]) =>
+  after.find((unit) => !before.some((known) => known.id === unit.id))?.id;
+
 const scrollTo = (key: string) =>
   requestAnimationFrame(() =>
     document.getElementById(`unit-${key}`)?.scrollIntoView?.({ block: "start" })

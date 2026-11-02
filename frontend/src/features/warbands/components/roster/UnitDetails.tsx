@@ -3,7 +3,7 @@ import { useState, type ReactNode } from "react";
 import { BoxTile, type BoxTileKind } from "@/components/ui/box-tile";
 import { ItemKindIcon, GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
-import { itemKind, itemKindLine } from "@/features/items/item-kind";
+import { itemKind, itemStatsLine } from "@/features/items/item-kind";
 import type { Item } from "@/features/items/types/item-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
@@ -51,16 +51,6 @@ const NOUN: Record<PendingList, string> = {
   specials: "Special",
 };
 
-const itemStats = (item: Item) =>
-  [
-    itemKindLine(item),
-    item.strength && `S ${item.strength}`,
-    item.range,
-    item.save && `Save ${item.save}`,
-  ]
-    .filter(Boolean)
-    .join(" · ");
-
 /** An open card's body (design E's columns on the web): experience, items, skills and the rest. */
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
@@ -105,7 +95,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
     icon: "items",
     boxes: lists.items.map((item) => ({
       name: item.name,
-      kind: itemStats(item),
+      kind: itemStatsLine(item),
       text: item.flavour ?? "",
       rules: item.rules?.map((rule) => rule.name).filter(Boolean),
       item,

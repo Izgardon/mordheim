@@ -36,3 +36,16 @@ export function itemKindLine(item: Pick<Item, "type" | "subtype" | "beast_kind">
   if (kind === "misc" || kind === "animal") return subtype || ITEM_KIND_LABEL[kind];
   return ITEM_KIND_LABEL[kind];
 }
+
+/** An item box's second line: its kind and its stats ("Melee weapon · S As user · Close Combat"). */
+export const itemStatsLine = (
+  item: Pick<Item, "type" | "subtype" | "beast_kind" | "strength" | "range" | "save">
+) =>
+  [
+    itemKindLine(item),
+    item.strength && `S ${item.strength}`,
+    item.range,
+    item.save && `Save ${item.save}`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
