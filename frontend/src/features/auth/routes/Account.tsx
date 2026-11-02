@@ -1,4 +1,5 @@
 // components
+import { GameIconsCredit } from "@/components/ui/game-icons";
 import SitePage from "@/layouts/shell/SitePage";
 import { DeleteAccountSection } from "../components/account/DeleteAccountSection";
 import { DisplayNameSection } from "../components/account/DisplayNameSection";
@@ -32,6 +33,7 @@ export default function Account() {
         <SignOutOthersSection />
         <DeleteAccountSection />
       </div>
+      <GameIconsCredit />
     </SitePage>
   );
 }

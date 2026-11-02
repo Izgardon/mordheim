@@ -1,7 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
+import { ItemKindIcon } from "@/components/ui/game-icons";
 import { SidePanel } from "@/components/ui/side-panel";
+
+import { itemKind } from "@/features/items/item-kind";
+import { useCatalogue } from "@/lib/catalogue-queries";
 
 import { warbandStashQuery } from "../../api/economy-queries";
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
@@ -42,12 +46,19 @@ export function StashList({
 }: Omit<StashPanelProps, "open" | "onOpenChange">) {
   const stash = useQuery(warbandStashQuery(campaignId, warbandId));
   const items = stash.data ?? [];
+  // a stash row names only the item: its kind (for the icon) comes from the cached catalogue
+  const catalogue = useCatalogue("items", campaignId).data ?? [];
+  const kindOf = (item: WarbandItemSummary) =>
+    itemKind(
+      catalogue.find((entry) => entry.id === item.id) ?? { type: "", beast_kind: item.beast_kind }
+    );
   if (stash.isPending) return <p className="text-sm text-muted-foreground">Opening the stash…</p>;
   if (!items.length) return <p className="text-sm text-text2">The stash is empty.</p>;
   return (
     <ul className="m-0 flex list-none flex-col border-t border-line p-0">
       {items.map((item) => (
         <li key={item.id} className="flex flex-wrap items-center gap-3 border-b border-line py-2.5">
+          <ItemKindIcon kind={kindOf(item)} className="h-5 w-5 text-accent-text" />
           <div className="flex min-w-0 flex-1 flex-col">
             <span className="font-bold text-ink">
               {item.name}

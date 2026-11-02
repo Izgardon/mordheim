@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
+import { ItemKindIcon } from "@/components/ui/game-icons";
 import { SidePanel } from "@/components/ui/side-panel";
+import { itemKind } from "@/features/items/item-kind";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { groupItemsById } from "../../utils/warband-utils";
@@ -59,6 +61,7 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
                 key={line.key}
                 className="flex flex-wrap items-center gap-3 border-t border-line py-2.5"
               >
+                <ItemKindIcon kind={itemKind(line.item)} className="h-5 w-5 text-accent-text" />
                 <span className="min-w-0 flex-1 font-bold text-ink">
                   {line.item.name}
                   {line.count > 1 ? (

@@ -82,6 +82,7 @@ export default function RosterSections(props: RosterSectionsProps) {
         key={key}
         entry={entry}
         campaign={campaign}
+        warbandId={warbandId}
         layout={layout}
         open={open}
         editing={editing}
@@ -90,6 +91,8 @@ export default function RosterSections(props: RosterSectionsProps) {
         onEdit={() => cards.startEdit(key)}
         onLoadout={() => props.onLoadout(entry)}
         onRide={(rowId, on) => actions.rideMount(entry, rowId, on)}
+        onAdvance={() => props.onAdvance(entry)}
+        onTradingAction={(on) => actions.patchUnit(entry, { trading_action: on })}
         extra={entry.kind === "hero" ? props.heroExtra?.(entry.unit) : null}
       >
         {editing ? (
@@ -101,10 +104,10 @@ export default function RosterSections(props: RosterSectionsProps) {
             canEdit={canEdit}
             others={everyone.filter((other) => unitKey(other) !== key)}
             onXp={(xp) => actions.patchUnit(entry, { xp })}
-            onTradingAction={(on) => actions.patchUnit(entry, { trading_action: on })}
             onMoveItem={(itemId, to) => actions.moveItem(entry, itemId, to)}
             onSellItem={(itemId, price) => actions.sellItem(entry, itemId, price)}
             onBuyAgain={(item) => props.onBuyAgain(entry, item)}
+            onLoadout={() => props.onLoadout(entry)}
             onAdvance={() => props.onAdvance(entry)}
             campaignId={campaign?.id ?? 0}
             warbandId={warbandId}

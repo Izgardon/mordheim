@@ -352,6 +352,10 @@ table thead th {
     --color-good: #a9e3b0;
     --color-good-bg: rgba(143, 227, 154, 0.12);
     --color-good-line: #4f8a57;
+    /* a unit's entries by kind: the accent on a skill, special or spell box and its icon */
+    --color-kind-skill: #8fb8e0;
+    --color-kind-special: #d9c27e;
+    --color-kind-spell: #c0a6ea;
     --color-scrim: rgba(8, 5, 3, 0.72);
     --color-shadow: rgba(0, 0, 0, 0.5);
 
@@ -409,6 +413,9 @@ table thead th {
     --color-good: #2e6b3a;
     --color-good-bg: #e3efe2;
     --color-good-line: #9cc29f;
+    --color-kind-skill: #2f5f8f;
+    --color-kind-special: #7a5c12;
+    --color-kind-spell: #6a4a9e;
     --color-scrim: rgba(43, 33, 26, 0.45);
     --color-shadow: rgba(43, 33, 26, 0.18);
 
