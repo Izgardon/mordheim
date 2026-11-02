@@ -187,6 +187,7 @@ export default function Warband() {
                   renderEdit={(entry, close) => (
                     <EditUnitForm
                       entry={entry}
+                      campaign={campaign}
                       campaignId={campaignId}
                       warbandId={warbandId}
                       canCreateRace={capabilities.edit_catalogue}

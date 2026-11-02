@@ -37,7 +37,7 @@ type UnitDetailsProps = {
   onPick: (pick: AdvancePick) => void;
 };
 
-/** An open card's body (design E's columns on the web): experience, items, skills and the rest. */
+/** An open card's body: experience across the top, then design E's columns on the web (items, skills and the rest). */
 export default function UnitDetails(props: UnitDetailsProps) {
   const { entry, campaign, canEdit, others } = props;
   const { kind } = entry;
@@ -113,14 +113,14 @@ export default function UnitDetails(props: UnitDetailsProps) {
 
   return (
     <div className="flex flex-col gap-3 border-t border-line pt-3">
+      <UnitXp
+        entry={entry}
+        campaign={campaign}
+        canEdit={canEdit}
+        onXp={props.onXp}
+        onAdvance={props.onAdvance}
+      />
       <div className="grid gap-x-6 gap-y-4 min-[960px]:[grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
-        <UnitXp
-          entry={entry}
-          campaign={campaign}
-          canEdit={canEdit}
-          onXp={props.onXp}
-          onAdvance={props.onAdvance}
-        />
         {showItems ? (
           <div className="flex flex-col gap-2">
             {row(

@@ -2,9 +2,11 @@ import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
 import { Switch } from "@/components/ui/switch";
+import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
 import type { HeroCaster } from "../../../types/warband-types";
-import { isGroup, unitName, type RosterUnit } from "../unit-view";
+import { isCreature, isGroup, unitName, xpTable, type RosterUnit } from "../unit-view";
+import XpTrack from "../XpTrack";
 import EditGroupModels from "./EditGroupModels";
 import EditLists from "./EditLists";
 import EditProfile, { EditXpField } from "./EditProfile";
@@ -21,11 +23,13 @@ const CASTERS: [HeroCaster, string][] = [
 /**
  * The edit form's fields (design E, compact), shared by the web's inline form and the phone's
  * sheet (William's layout): the traits as plain toggles; name, type, race, cost and experience on
- * one row, each as tall as the race; the profile and skill access side by side; then the lists
+ * one row, each as tall as the race, and the XP track under it; the profile and skill access side
+ * by side; then the lists
  * as a 2 × 2 grid, and a group's models.
  */
 export default function EditUnitFields({
   entry,
+  campaign,
   campaignId,
   warbandId,
   form,
@@ -33,6 +37,7 @@ export default function EditUnitFields({
   onAddItem,
 }: {
   entry: RosterUnit;
+  campaign: CampaignSummary | null;
   campaignId: number;
   warbandId: number;
   form: UnitEditDraft;
@@ -117,6 +122,9 @@ export default function EditUnitFields({
         {field(kind === "hireling" ? "Hire fee (gc)" : "Cost (gc)", "price", true)}
         <EditXpField form={form} />
       </div>
+      {isCreature(entry) ? null : (
+        <XpTrack xp={Number(draft.xp) || 0} thresholds={xpTable(kind, campaign)} />
+      )}
       <div className="grid gap-3.5 min-[720px]:grid-cols-2">
         <EditProfile form={form} unitLabel={unitName(unit)} />
         {"available_skills" in draft ? (

@@ -7,6 +7,7 @@ import { getHeroLevelInfo } from "../heroes/utils/hero-level";
 import {
   DEFAULT_HENCHMEN_LEVEL_THRESHOLDS,
   DEFAULT_HERO_LEVEL_THRESHOLDS,
+  normalizeThresholdList,
 } from "../../utils/level-thresholds";
 import { isCreatureGroup } from "../../utils/companions";
 import type { Unit, UnitKindKey, UnitListKey } from "../../types/units";
@@ -91,12 +92,18 @@ export function statValues({ unit }: RosterUnit) {
 export const gearSummary = (items: Item[]) =>
   items.length ? items.map((item) => item.name).join(", ") : "No gear";
 
-const thresholdsFor = (kind: UnitKindKey, campaign: CampaignSummary | null) =>
-  kind === "henchmen_group"
-    ? (campaign?.henchmen_level_thresholds ?? DEFAULT_HENCHMEN_LEVEL_THRESHOLDS)
-    : kind === "hireling"
-      ? (campaign?.hired_sword_level_thresholds ?? DEFAULT_HERO_LEVEL_THRESHOLDS)
-      : (campaign?.hero_level_thresholds ?? DEFAULT_HERO_LEVEL_THRESHOLDS);
+/** The kind's XP table in the campaign (the XP each advance comes at), cleaned as the level info reads it. */
+export const xpTable = (kind: UnitKindKey, campaign: CampaignSummary | null) => {
+  const fallback =
+    kind === "henchmen_group" ? DEFAULT_HENCHMEN_LEVEL_THRESHOLDS : DEFAULT_HERO_LEVEL_THRESHOLDS;
+  const table =
+    kind === "henchmen_group"
+      ? campaign?.henchmen_level_thresholds
+      : kind === "hireling"
+        ? campaign?.hired_sword_level_thresholds
+        : campaign?.hero_level_thresholds;
+  return normalizeThresholdList(table, fallback);
+};
 
 /** XP as the card shows it: half a point is "½" (a half-rate unit keeps fractions), "12½". */
 export function formatXp(xp: number) {
@@ -109,7 +116,8 @@ export function formatXp(xp: number) {
 export function xpInfo(entry: RosterUnit, campaign: CampaignSummary | null) {
   if (isCreature(entry)) return null;
   const xp = Number(entry.unit.xp ?? 0);
-  const info = getHeroLevelInfo(xp, thresholdsFor(entry.kind, campaign));
+  const thresholds = xpTable(entry.kind, campaign);
+  const info = getHeroLevelInfo(xp, thresholds);
   const next = info.nextLevelAt;
   const span = next === null ? 1 : next - info.currentLevelAt;
   return {
@@ -118,6 +126,7 @@ export function xpInfo(entry: RosterUnit, campaign: CampaignSummary | null) {
     text: next === null ? `XP ${formatXp(xp)}` : `XP ${formatXp(xp)} / ${next}`,
     share: next === null ? 1 : Math.min(1, (xp - info.currentLevelAt) / span),
     advanceReady: (entry.unit.level_up ?? 0) > 0,
+    thresholds,
   };
 }
 

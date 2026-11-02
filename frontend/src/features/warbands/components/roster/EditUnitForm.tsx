@@ -4,6 +4,7 @@ import { NumberInput } from "@/components/ui/number-input";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import EditUnitFields from "./edit/EditUnitFields";
@@ -50,6 +51,7 @@ function MissingGames({ form, onDone }: { form: UnitEditDraft; onDone: () => voi
  */
 export default function EditUnitForm({
   entry,
+  campaign,
   campaignId,
   warbandId,
   canCreateRace,
@@ -57,6 +59,7 @@ export default function EditUnitForm({
   onClose,
 }: {
   entry: RosterUnit;
+  campaign: CampaignSummary | null;
   campaignId: number;
   warbandId: number;
   canCreateRace: boolean;
@@ -101,6 +104,7 @@ export default function EditUnitForm({
     <>
       <EditUnitFields
         entry={entry}
+        campaign={campaign}
         campaignId={campaignId}
         warbandId={warbandId}
         form={form}
