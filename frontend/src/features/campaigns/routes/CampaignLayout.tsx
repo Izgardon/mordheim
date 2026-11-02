@@ -13,7 +13,7 @@ import CampaignPageSkeleton from "@/layouts/shell/CampaignPageSkeleton";
 import CampaignTools, { type CampaignTool } from "@/layouts/shell/CampaignTools";
 import NavRail from "@/layouts/shell/NavRail";
 import ShellSkeleton from "@/layouts/shell/ShellSkeleton";
-import { campaignSectionTitle } from "@/layouts/shell/campaign-nav";
+import { campaignSectionTitle, isBattlePath } from "@/layouts/shell/campaign-nav";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -49,7 +49,7 @@ export default function CampaignLayout() {
   const campaignQuery = useCampaignQuery(campaignId);
   const campaign = campaignQuery.data ?? null;
   const segments = pathname.split("/").filter(Boolean);
-  const isBattleRoute = segments[2] === "battles";
+  const isBattleRoute = isBattlePath(pathname);
   // The Aftermath and the battle screen bring their own header and
   // footer on a phone.
   const ownChrome = isBattleRoute && (segments[4] === "postbattle" || segments[4] === "active");
