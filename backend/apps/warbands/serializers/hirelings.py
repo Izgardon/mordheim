@@ -13,6 +13,7 @@ from apps.warbands.units.serializers import (
     MISSING_FIELDS,
     PICK_FIELDS,
     STAT_FIELDS,
+    XP_CHANGE_FIELDS,
     UnitDetailSerializer,
     UnitSummarySerializer,
     UnitWriteSerializer,
@@ -157,4 +158,4 @@ class HirelingUpdateSerializer(UnitWriteSerializer):
 
     class Meta:
         model = Hireling
-        fields = (*WRITE_FIELDS, *MISSING_FIELDS, *PICK_FIELDS)
+        fields = (*WRITE_FIELDS, *MISSING_FIELDS, *PICK_FIELDS, *XP_CHANGE_FIELDS)

@@ -5,7 +5,8 @@ One counting path for the unit PATCH and for postbattle: heroes and hired swords
 
 Level-ups are awarded only for thresholds above the unit's XP high-water mark (decision 5, BUG-27):
 lowering XP never takes level-ups away and raising it again never awards them twice. Thresholds count
-whole XP only, so half a point never reaches one (decision 6).
+whole XP only, so half a point never reaches one (decision 6). A half-rate unit gains half of every point, from a
+battle and from a manual change alike (`changed_xp`); an `xp` a PATCH sets is taken as sent.
 """
 
 from decimal import Decimal, InvalidOperation
@@ -53,6 +54,13 @@ def record_xp_change(
 
 def _battle_gain(unit: RosterUnit, xp_earned: int) -> Decimal:
     return Decimal(xp_earned) * HALF_RATE if unit.half_rate else Decimal(xp_earned)
+
+
+def changed_xp(current: Any, change: Any, *, half_rate: bool) -> Decimal:
+    """The XP after a manual change (the card's − and +, a PATCH's `xp_change`): at half rate each point added or
+    taken away counts half (William: "all XP, including + and −"), and XP never goes below 0."""
+    step = _as_decimal(change) * HALF_RATE if half_rate else _as_decimal(change)
+    return max(Decimal(0), _as_decimal(current) + step)
 
 
 def predicted_level_ups(unit: RosterUnit, xp_earned: int, settings: CampaignSettings | None) -> int:

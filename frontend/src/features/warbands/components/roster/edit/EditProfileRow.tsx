@@ -42,6 +42,7 @@ export default function EditProfileRow({
           id={xpId}
           inputSize="sm"
           min={0}
+          step={draft.half_rate ? 0.5 : 1}
           value={String(draft.xp ?? "")}
           onChange={(event) => set("xp", event.target.value)}
         />

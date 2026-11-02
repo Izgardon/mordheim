@@ -11,7 +11,7 @@ from apps.warbands.utils.leaders import lock_warband
 
 from .loadout import finish_update_traits, linked_ids, pop_loadout_lists, prepare_update_traits, replace_loadout
 from .missing import missing_change_log, missing_state, settle_missing
-from .xp import record_xp_change
+from .xp import changed_xp, record_xp_change
 
 if TYPE_CHECKING:
     from apps.warbands.units.hooks import Recruit
@@ -35,6 +35,8 @@ def apply_update(
     """
     for name in DISCARDED_FIELDS:
         data.pop(name, None)
+    if "xp_change" in data:
+        _xp_change_to_xp(unit, data)
     lists = pop_loadout_lists(kind, data)
     members = data.pop("henchmen", None) if kind.has_members else None
     trait_update = prepare_update_traits(kind, data, lists, campaign_id)
@@ -52,6 +54,14 @@ def apply_update(
     replace_loadout(kind, unit, lists)
     finish_update_traits(kind, unit, trait_update, lists)
     return recruits
+
+
+def _xp_change_to_xp(unit: RosterUnit, data: MutableMapping[str, Any]) -> None:
+    """A PATCH's `xp_change` (the card's − and +) becomes the `xp` it lands on, counted from the unit's XP read under
+    a row lock, so two quick presses both count; at half rate (the unit's, or the one the PATCH sets) it counts half."""
+    change = data.pop("xp_change")
+    unit.xp = type(unit)._default_manager.select_for_update().values_list("xp", flat=True).get(pk=unit.pk)
+    data["xp"] = changed_xp(unit.xp, change, half_rate=bool(data.get("half_rate", unit.half_rate)))
 
 
 def _logged_ids_before(kind: "UnitKindSpec", unit: RosterUnit, sent: Any) -> dict[str, set[int]]:

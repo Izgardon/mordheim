@@ -9,8 +9,9 @@ import UnitSectionLabel from "./UnitSectionLabel";
 import { xpInfo, type RosterUnit } from "./unit-view";
 
 /**
- * An open card's experience column: the bar against the next advance with − and +, Advance
- * when one waits, and a hired sword's upkeep.
+ * An open card's experience column: the bar against the next advance with − and + (a point
+ * each, which the server counts half at half rate), Advance when one waits, and a hired
+ * sword's upkeep.
  */
 export default function UnitXp({
   entry,
@@ -22,7 +23,8 @@ export default function UnitXp({
   entry: RosterUnit;
   campaign: CampaignSummary | null;
   canEdit: boolean;
-  onXp: (xp: number) => void;
+  /** XP added (negative: taken away). */
+  onXp: (change: number) => void;
   onAdvance?: () => void;
 }) {
   const xp = xpInfo(entry, campaign);
@@ -35,7 +37,8 @@ export default function UnitXp({
             <IconButton
               aria-label="One XP less"
               className="h-9 w-9"
-              onClick={() => onXp(Math.max(0, xp.xp - 1))}
+              disabled={xp.xp <= 0}
+              onClick={() => onXp(-1)}
             >
               <Minus aria-hidden="true" />
             </IconButton>
@@ -47,11 +50,7 @@ export default function UnitXp({
             <span className="font-mono text-xs text-muted-foreground">{xp.text}</span>
           </div>
           {canEdit ? (
-            <IconButton
-              aria-label="One XP more"
-              className="h-9 w-9"
-              onClick={() => onXp(xp.xp + 1)}
-            >
+            <IconButton aria-label="One XP more" className="h-9 w-9" onClick={() => onXp(1)}>
               <Plus aria-hidden="true" />
             </IconButton>
           ) : null}

@@ -7,6 +7,7 @@ keeps today's payloads key for key, including the differences between kinds.
 
 from collections.abc import Iterable
 from dataclasses import dataclass
+from decimal import Decimal
 from typing import Any, ClassVar
 
 from rest_framework import serializers
@@ -56,6 +57,8 @@ STAT_FIELDS = (
 COMPANION_FIELDS = ("effective_stats", "mount", "pets")  # every read payload, after the stats
 MISSING_FIELDS = ("missing_games", "missing_reason")  # every read payload; only the update serializers write them
 PICK_FIELDS = ("pending_skills", "pending_spells", "pending_specials")  # heroes and hired swords: picks to make later
+XP_CHANGE_FIELDS = ("xp_change",)  # every update serializer: the card's − and + (half rate counts half)
+MAX_XP_CHANGE = Decimal(999)
 
 
 def get_prefetched_or_query(obj: Any, prefetch_key: str, queryset_attr: str) -> list[Any]:
@@ -208,6 +211,16 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
     race = CatalogueEntryField(queryset=Race.objects.all(), allow_null=True, required=False)  # its version, if any
     armour_save = ArmourSaveField(required=False, allow_null=True)  # decision 11, BUG-87
     xp = serializers.DecimalField(max_digits=6, decimal_places=1, required=False, coerce_to_string=False)
+    # Updates only: XP added (or taken away, negative) by hand, which a half-rate unit gains at half (services/xp.py)
+    xp_change = serializers.DecimalField(
+        max_digits=6,
+        decimal_places=1,
+        min_value=-MAX_XP_CHANGE,
+        max_value=MAX_XP_CHANGE,
+        write_only=True,
+        required=False,
+        coerce_to_string=False,
+    )
     items = serializers.ListField(child=UnitItemEntrySerializer(), write_only=True, required=False)
     skill_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
     special_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
@@ -234,6 +247,8 @@ class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializ
                 listed = ", ".join(str(pk) for pk in wrong)
                 message = f"Only a mount or a pet can be a companion (item {listed})."
                 raise serializers.ValidationError({"items": [message]})
+        if "xp" in attrs and "xp_change" in attrs:
+            raise serializers.ValidationError({"xp_change": ["Send xp or xp_change, not both."]})
         if attrs.get("missing_games") and (attrs.get("dead") or getattr(self.instance, "dead", False)):
             raise serializers.ValidationError({"missing_games": ["A dead unit can't miss games."]})
         return attrs

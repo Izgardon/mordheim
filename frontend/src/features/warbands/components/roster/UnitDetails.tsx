@@ -29,7 +29,8 @@ type UnitDetailsProps = {
   canEdit: boolean;
   /** The other units an item can move to. */
   others: RosterUnit[];
-  onXp: (xp: number) => void;
+  /** − and +: XP added or taken away (the server counts it half at half rate). */
+  onXp: (change: number) => void;
   onMoveItem: (itemId: number, to: ItemPlace) => void;
   onSellItem: (itemId: number, price: number) => void;
   onBuyAgain: (item: Item) => void;

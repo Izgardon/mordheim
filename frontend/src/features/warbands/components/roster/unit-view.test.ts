@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { HenchmenGroup, UnitKill } from "../../types/warband-types";
-import { killLine, memberName, unitTypeLine, type RosterUnit } from "./unit-view";
+import { formatXp, killLine, memberName, unitTypeLine, type RosterUnit } from "./unit-view";
 
 const kill = (fields: Partial<UnitKill> = {}): UnitKill => ({
   id: 1,
@@ -73,5 +73,14 @@ describe("memberName", () => {
       "Wardogs 2",
       "Fang",
     ]);
+  });
+});
+
+describe("formatXp", () => {
+  it("shows a half-rate unit's half point as ½", () => {
+    expect(formatXp(12.5)).toBe("12½");
+    expect(formatXp(0.5)).toBe("½");
+    expect(formatXp(14)).toBe("14");
+    expect(formatXp(0)).toBe("0");
   });
 });

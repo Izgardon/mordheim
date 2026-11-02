@@ -98,17 +98,24 @@ const thresholdsFor = (kind: UnitKindKey, campaign: CampaignSummary | null) =>
       ? (campaign?.hired_sword_level_thresholds ?? DEFAULT_HERO_LEVEL_THRESHOLDS)
       : (campaign?.hero_level_thresholds ?? DEFAULT_HERO_LEVEL_THRESHOLDS);
 
+/** XP as the card shows it: half a point is "½" (a half-rate unit keeps fractions), "12½". */
+export function formatXp(xp: number) {
+  const whole = Math.floor(xp);
+  const half = xp - whole >= 0.5;
+  return half ? `${whole || ""}½` : String(whole);
+}
+
 /** XP against the next threshold: "XP 24 / 28", the bar's share, and whether an advance waits. */
 export function xpInfo(entry: RosterUnit, campaign: CampaignSummary | null) {
   if (isCreature(entry)) return null;
-  const xp = entry.unit.xp ?? 0;
+  const xp = Number(entry.unit.xp ?? 0);
   const info = getHeroLevelInfo(xp, thresholdsFor(entry.kind, campaign));
   const next = info.nextLevelAt;
   const span = next === null ? 1 : next - info.currentLevelAt;
   return {
     xp,
     next,
-    text: next === null ? `XP ${xp}` : `XP ${xp} / ${next}`,
+    text: next === null ? `XP ${formatXp(xp)}` : `XP ${formatXp(xp)} / ${next}`,
     share: next === null ? 1 : Math.min(1, (xp - info.currentLevelAt) / span),
     advanceReady: (entry.unit.level_up ?? 0) > 0,
   };
