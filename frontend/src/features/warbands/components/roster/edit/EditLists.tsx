@@ -16,6 +16,7 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { HeroCaster } from "../../../types/warband-types";
 import { buildAvailableSkillsPayload } from "../../../utils/warband-utils";
+import { boonBaneOptions } from "../boon-bane-options";
 import UnitSectionLabel from "../UnitSectionLabel";
 import { isInjury, type RosterUnit } from "../unit-view";
 import EditPickList from "./EditPickList";
@@ -61,12 +62,8 @@ export default function EditLists({
   const skillRows = skillOptions(inPlayOnly(skills), skillContext);
   const heldSkills = skillOptions(skills, skillContext);
   const spellRows = warnedLast(spells.map((spell) => spellOption(spell, settings)));
-  const specialRows = (injuries: boolean) =>
-    warnedLast(
-      specials
-        .filter((special) => isInjury(special) === injuries)
-        .map((special) => specialOption(special, settings))
-    );
+  // a hired sword's or dramatis persona's own rule isn't offered; one he has keeps its chip
+  const heldSpecials = specials.map((special) => specialOption(special, settings));
   const rules = lists.specials.filter((special) => !isInjury(special));
   const injuries = lists.specials.filter(isInjury);
   // a new pick keeps its type, which says whether it is an injury
@@ -134,7 +131,8 @@ export default function EditLists({
         noun="boon or bane"
         plural="boons and banes"
         entries={rules}
-        options={specialRows(false)}
+        options={boonBaneOptions(specials, settings)}
+        known={heldSpecials}
         onChange={(next) => setSpecials(next, false)}
         {...picks("pending_specials")}
       />
@@ -154,7 +152,8 @@ export default function EditLists({
           noun="injury"
           plural="injuries"
           entries={injuries}
-          options={specialRows(true)}
+          options={boonBaneOptions(specials, settings, true)}
+          known={heldSpecials}
           onChange={(next) => setSpecials(next, true)}
         />
       ) : null}

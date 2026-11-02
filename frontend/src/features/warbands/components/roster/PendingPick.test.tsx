@@ -2,7 +2,8 @@
  * A pick an advance left, made from the card (William: "text here stays, should not mention the new
  * spell as i am selecting a skill ... i also shouldnt see skills that arent part of my campaign"):
  * the line above Confirm says only what this pick gives, and the skill picker offers only the
- * campaign's skills, "Show all" included.
+ * campaign's skills, "Show all" included. A boon or bane is a general rule (William: "can we not
+ * show the hired swords/dramatis ones here").
  */
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -75,5 +76,26 @@ describe("A pick left for later", () => {
       "Not in his skill lists"
     );
     expect(screen.queryByRole("option", { name: /Sand Walker/ })).not.toBeInTheDocument();
+  });
+
+  it("offers general boons and banes, not a hired sword's or dramatis persona's own", async () => {
+    fakeApi.on("GET /special/?campaign_id=1", [
+      { id: 80, name: "Hatred", type: "Psychology", kind: "boon", owner_kind: "general" },
+      { id: 81, name: "Stupid", type: "Animal", kind: "bane" },
+      { id: 82, name: "Spy", type: "Hired Sword - Freelance Knight", owner_kind: "hired_sword" },
+      {
+        id: 83,
+        name: "Witch Sense",
+        type: "Dramatis Persona - Bertha",
+        owner_kind: "dramatis_persona",
+      },
+      { id: 84, name: "Old Battle Wound", type: "Injury", kind: "bane", owner_kind: "general" },
+    ]);
+    renderWithQueryClient(pick("specials"));
+    await screen.findByRole("option", { name: /Hatred/ });
+    expect(screen.getAllByRole("option").map((option) => option.textContent)).toEqual([
+      expect.stringContaining("Hatred"),
+      expect.stringContaining("Stupid"),
+    ]);
   });
 });

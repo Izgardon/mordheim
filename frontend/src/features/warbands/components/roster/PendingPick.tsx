@@ -5,13 +5,13 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { SearchCombobox } from "@/components/ui/search-select";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import { specialOption, warnedLast } from "@/features/catalogue/search-options";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import type { AdvancePick } from "../../units/unit-api";
 import SkillPicker from "./advance/SkillPicker";
+import { boonBaneOptions } from "./boon-bane-options";
 import SpellPicker, { type SpellChoice } from "./advance/SpellPicker";
 import type { PendingList, RosterUnit } from "./unit-view";
 
@@ -90,7 +90,7 @@ export default function PendingPick({
           label="Search boons and banes"
           placeholder="Search boons and banes"
           emptyText="No boon or bane matches."
-          options={warnedLast((specials ?? []).map((special) => specialOption(special, settings)))}
+          options={boonBaneOptions(specials ?? [], settings)}
           onPick={(option) => onPick({ list: "specials", id: Number(option.id) })}
           onDismiss={onClose}
         />
