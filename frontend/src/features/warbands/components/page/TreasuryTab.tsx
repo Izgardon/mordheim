@@ -5,11 +5,23 @@ import { toast } from "sonner";
 import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MoreMenu } from "@/components/ui/more-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { warbandTreasuryQuery } from "../../api/economy-queries";
 import { useLedgerRowEdit } from "../../api/ledger-queries";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { ADJUSTMENT, useTreasuryEntryForm } from "../../hooks/warband/useTreasuryEntryForm";
+import {
+  ADJUSTMENT,
+  HAND_ENTERED_ACTIONS,
+  useTreasuryEntryForm,
+} from "../../hooks/warband/useTreasuryEntryForm";
 import { formatTradeDate } from "../../utils/warband-utils";
 
 type TreasuryTabProps = { campaignId: number; warbandId: number; canEdit: boolean };
@@ -51,12 +63,18 @@ export default function TreasuryTab({ campaignId, warbandId, canEdit }: Treasury
             void form.handleSubmit();
           }}
         >
-          <Input
-            aria-label="Action"
-            placeholder="Action"
-            value={form.formAction}
-            onChange={(event) => form.setFormAction(event.target.value)}
-          />
+          <Select value={form.formAction} onValueChange={form.setFormAction}>
+            <SelectTrigger aria-label="Action">
+              <SelectValue placeholder="Action" />
+            </SelectTrigger>
+            <SelectContent>
+              {HAND_ENTERED_ACTIONS.map((action) => (
+                <SelectItem key={action} value={action}>
+                  {action}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Input
             aria-label="Description"
             placeholder={form.isAdjustment ? "Reason" : "What"}
@@ -130,21 +148,29 @@ export default function TreasuryTab({ campaignId, warbandId, canEdit }: Treasury
             )}
             <span className="flex items-center gap-2">
               <span className="font-mono text-sm font-bold text-head">{row.price} gc</span>
-              {canEdit && row.created_by && editing?.id !== row.id ? (
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() =>
-                    setEditing({ id: row.id, description: row.description, notes: row.notes ?? "" })
-                  }
-                >
-                  Edit
-                </Button>
-              ) : null}
-              {canEdit && row.action !== ADJUSTMENT ? (
-                <Button size="sm" variant="ghost" onClick={() => form.startCorrection(row)}>
-                  Correct
-                </Button>
+              {canEdit && editing?.id !== row.id ? (
+                <MoreMenu
+                  label={`More for ${row.description}`}
+                  className="h-8 w-8"
+                  entries={[
+                    ...(row.created_by
+                      ? [
+                          {
+                            label: "Edit",
+                            onSelect: () =>
+                              setEditing({
+                                id: row.id,
+                                description: row.description,
+                                notes: row.notes ?? "",
+                              }),
+                          },
+                        ]
+                      : []),
+                    ...(row.action !== ADJUSTMENT
+                      ? [{ label: "Correct", onSelect: () => form.startCorrection(row) }]
+                      : []),
+                  ]}
+                />
               ) : null}
             </span>
           </li>

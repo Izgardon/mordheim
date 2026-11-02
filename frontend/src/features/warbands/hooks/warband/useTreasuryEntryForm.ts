@@ -10,6 +10,20 @@ const messageOf = (error: unknown) =>
 /** The action whose gold is signed as typed and whose description is its reason (decision 5). */
 export const ADJUSTMENT = "Adjustment";
 
+/** The ledger actions (backend `LedgerAction`) a player may enter by hand; Starting gold, Bounty and Group rows are
+ * written by the app. */
+export const HAND_ENTERED_ACTIONS = [
+  "Buy",
+  "Sell",
+  "Recruit",
+  "Hire",
+  "Upkeep",
+  "Reward",
+  "Exploration",
+  "Trade",
+  ADJUSTMENT,
+] as const;
+
 /**
  * The Treasury's manual entry form: its fields, its checks and the ledger entry it sends. The
  * entry lands on top of the cached ledger (`useLedgerEntry`); the form closes once it is saved.
