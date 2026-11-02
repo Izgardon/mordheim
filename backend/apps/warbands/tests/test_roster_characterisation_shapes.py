@@ -101,7 +101,8 @@ ITEM_DETAIL = {
 }
 NAMED = {"id": "int", "name": "str"}
 SKILL_DETAIL = {"id": "int", "name": "str", "type": "str"}
-SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "description": "str"}
+SPECIAL_SUMMARY = {"id": "int", "name": "str", "kind": "str"}  # kind: Boons & Banes
+SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "kind": "str", "description": "str"}
 SPELL_DETAIL = {"id": "int", "name": "str", "type": "str", "dc": "str", "description": "str"}
 MEMBER = {"id": "int", "name": "str", "kills": "int", "dead": "bool", "gaps": []}  # gaps: the loadout rows he lacks
 MISSING = {"missing_games": "int", "missing_reason": "str"}  # missing games: how many and why (edit mode)
@@ -135,7 +136,7 @@ HERO_SUMMARY = {
     **COMPANIONS,
     "items": [ITEM_SUMMARY],
     "skills": [NAMED],
-    "specials": [NAMED],
+    "specials": [SPECIAL_SUMMARY],
     "spells": [NAMED],
 }
 HERO_DETAIL = {
@@ -169,7 +170,7 @@ HENCHMEN_SUMMARY = {
     "mount_warnings": [],  # a group riding more than one kind of mount (group mounts)
     "items": [{**ITEM_SUMMARY, "carriers": "int"}],  # a row: one copy each for the members who carry it
     "skills": [NAMED],
-    "specials": [NAMED],
+    "specials": [SPECIAL_SUMMARY],
     "henchmen": [MEMBER],
 }
 HENCHMEN_DETAIL = {
@@ -203,7 +204,7 @@ HIRELING_SUMMARY = {
     **COMPANIONS,
     "items": [ITEM_SUMMARY],
     "skills": [NAMED],
-    "specials": [NAMED],
+    "specials": [SPECIAL_SUMMARY],
     "spells": [NAMED],
 }
 HIRELING_DETAIL = {

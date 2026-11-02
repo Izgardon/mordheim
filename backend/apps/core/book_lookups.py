@@ -13,6 +13,7 @@ from django.db.models import Model
 from apps.core.seeding import parse_int
 from apps.items.models import Item
 from apps.skills.models import Skill
+from apps.special.kinds import book_kind
 from apps.special.models import Special
 from apps.spells.models import Spell
 
@@ -140,8 +141,17 @@ class BookLookups:
         return found
 
     def special(self, item: Any, owner: str) -> Special | None:
+        """The book's special of the item's name (made the owner's when the book lacks it), its kind the book's
+        classification gives the name (Boons & Banes, special/kinds.py)."""
         name, description = name_and_description(item)
-        return self._own(Special, self.specials, name, description, owner, "special") if name else None
+        if not name:
+            return None
+        special: Special = self._own(Special, self.specials, name, description, owner, "special")
+        kind = book_kind(special.name, special.kind)
+        if special.kind != kind:
+            special.kind = kind
+            special.save(update_fields=["kind"])
+        return special
 
     def special_skills(self, items: list[Any], owner: str) -> bool:
         """A hired sword's special skills, made sure of in the book; whether he has any."""
