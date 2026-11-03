@@ -158,8 +158,8 @@ export default function WarbandRulesDialog({
               aria-label={rule.title}
               data-opened={rule.id === opening.ruleId || undefined}
               className={cn(
-                "flex flex-col gap-1 border-t border-line py-3 first:border-t-0",
-                rule.id === opening.ruleId && "-mx-3 border-accent-line bg-accent-soft px-3"
+                "flex flex-col gap-1 border-t border-line px-3 py-3 first:border-t-0",
+                rule.id === opening.ruleId && "bg-accent-soft"
               )}
             >
               <div className="flex items-start justify-between gap-3">

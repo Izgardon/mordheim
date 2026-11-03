@@ -59,7 +59,7 @@ export default function Account({ inCampaign = false }: AccountProps) {
   );
 
   return inCampaign ? (
-    <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 pb-14 max-[960px]:gap-5 max-[960px]:pb-6 max-[960px]:pt-3">
+    <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 pb-14 max-[960px]:gap-5 max-[960px]:pb-6">
       {content}
     </div>
   ) : (

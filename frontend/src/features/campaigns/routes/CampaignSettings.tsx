@@ -128,7 +128,7 @@ export default function CampaignSettings() {
   if (isMobile) {
     if (!current) {
       return (
-        <div className="flex flex-col gap-4 pb-6 pt-3">
+        <div className="flex flex-col gap-4 pb-6">
           <div className="border border-border bg-surface p-4">{joinCode}</div>
           <nav aria-label="Settings sections" className="border border-border bg-surface">
             <ul className="m-0 list-none p-0">

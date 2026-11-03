@@ -61,7 +61,7 @@ export default function SettingsSkeleton() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   if (isMobile) {
     return (
-      <SkeletonPage label="Loading the settings" className="flex flex-col gap-4 pb-6 pt-3">
+      <SkeletonPage label="Loading the settings" className="flex flex-col gap-4 pb-6">
         <div className="border border-border bg-surface p-4">
           <JoinCodeBones />
         </div>

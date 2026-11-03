@@ -35,7 +35,7 @@ export default function CreateWarband({
     <div
       className={cn(
         "flex flex-col",
-        isMobile ? "gap-4 pb-6 pt-3" : "mx-auto w-full max-w-[640px] gap-6 pb-14"
+        isMobile ? "gap-4 pb-6" : "mx-auto w-full max-w-[640px] gap-6 pb-14"
       )}
     >
       <header className="flex flex-col gap-1.5">

@@ -41,7 +41,7 @@ export default function Battles() {
     ) : null;
 
   return (
-    <div className="flex flex-col gap-6 pb-14 max-[960px]:gap-3 max-[960px]:pt-3">
+    <div className="flex flex-col gap-6 pb-14 max-[960px]:gap-3">
       {isMobile ? (
         battleButton
       ) : (

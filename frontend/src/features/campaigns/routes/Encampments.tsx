@@ -106,7 +106,7 @@ function EncampmentsPage({ campaign }: { campaign: CampaignSummary }) {
   ) : null;
 
   return (
-    <div className={cn("flex flex-col", isMobile ? "gap-3 pb-6 pt-3" : "gap-6 pb-14")}>
+    <div className={cn("flex flex-col", isMobile ? "gap-3 pb-6" : "gap-6 pb-14")}>
       {isMobile ? null : (
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-1.5">

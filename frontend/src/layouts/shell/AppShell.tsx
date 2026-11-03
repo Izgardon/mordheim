@@ -89,7 +89,10 @@ export default function AppShell({
           <div
             className={
               isMobile
-                ? cn("px-3", pull.isPulling ? "" : "transition-transform duration-200 ease-out")
+                ? cn(
+                    "px-3 pt-4",
+                    pull.isPulling ? "" : "transition-transform duration-200 ease-out"
+                  )
                 : "desktop-shell__content-inner"
             }
             style={
