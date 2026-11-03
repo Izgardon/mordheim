@@ -39,6 +39,7 @@ class FinaliseContext:
     participant: BattleParticipant
     settings: CampaignSettings | None
     warband: Warband
+    resource_id: int | None  # the draft's exploration resource, else the warband's default resource
     resource_found: bool
     resource_name: str | None
     has_missing: bool  # a unit of the warband misses games: finalise counts this battle off (missing.py)
@@ -68,19 +69,23 @@ MISSING_UNITS: dict[str, Any] = {"missing_heroes": Hero, "missing_groups": Hench
 
 
 def _locked_warband(battle_id: int, warband_id: int, resource_id: int | None) -> Warband:
-    """The warband, locked, with the draft's exploration resource (`resource_found`, `resource_name`), whether any of
-    its units misses games (one per kind), so a finalise without them reads none, and its live kills in the battle
-    (`killers`, battle_kill)."""
+    """The warband, locked, with the draft's exploration resource, else its default resource (`resource_pk`,
+    `resource_name`), whether any of its units misses games (one per kind), so a finalise without them reads none, and
+    its live kills in the battle (`killers`, battle_kill)."""
     missing = {
         name: Exists(on_roster(model.objects.filter(warband_id=OuterRef("pk"), missing_games__gt=0)))
         for name, model in MISSING_UNITS.items()
     }
-    warbands = locked(Warband.objects.annotate(**missing, killers=live_killers(battle_id, OuterRef("pk"))))
-    if resource_id is not None:
-        resources = WarbandResource.objects.filter(id=resource_id, warband_id=OuterRef("pk"))
-        warbands = warbands.annotate(
-            resource_found=Exists(resources), resource_name=Subquery(resources.values("name")[:1])
+    resources = WarbandResource.objects.filter(warband_id=OuterRef("pk"))
+    resources = resources.filter(id=resource_id) if resource_id is not None else resources.filter(is_default=True)
+    warbands = locked(
+        Warband.objects.annotate(
+            **missing,
+            killers=live_killers(battle_id, OuterRef("pk")),
+            resource_pk=Subquery(resources.values("id")[:1]),
+            resource_name=Subquery(resources.values("name")[:1]),
         )
+    )
     return warbands.get(id=warband_id)
 
 
@@ -125,7 +130,8 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict) ->
         participant=participant,
         settings=campaign_settings(battle),
         warband=warband,
-        resource_found=bool(getattr(warband, "resource_found", False)),
+        resource_id=getattr(warband, "resource_pk", None),
+        resource_found=getattr(warband, "resource_pk", None) is not None,
         resource_name=getattr(warband, "resource_name", None),
         has_missing=any(getattr(warband, name) for name in MISSING_UNITS),
         heroes=heroes,

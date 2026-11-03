@@ -96,6 +96,8 @@ def apply_player_postbattle(battle: Battle, participant: BattleParticipant, raw_
     be applied, raised inside the transaction so nothing is kept: BUG-124). Returns the warnings."""
     draft = normalize_postbattle(raw_draft)
     context = load_context(battle, participant, draft)
+    if draft["exploration"].get("resource_id") is None:  # none picked: the shards go to the default resource
+        draft["exploration"]["resource_id"] = context.resource_id
     check_draft_against(context, draft)
     warnings = _keep_exploration(participant, draft)
     warnings += _apply(context, draft)
