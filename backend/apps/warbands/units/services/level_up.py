@@ -56,6 +56,25 @@ def advance_record(advance: Mapping[str, Any], labels: Mapping[str, str]) -> dic
     return {"code": code, "label": label, "timestamp": timezone.now().isoformat()}
 
 
+def _appended(record: dict[str, Any]) -> Func:
+    """The history with `record` on its end, appended in the database so concurrent writes keep each other's."""
+    return Func(
+        F("level_up_history"),
+        Value([record], output_field=JSONField()),
+        function="",
+        arg_joiner=" || ",
+        output_field=JSONField(),
+    )
+
+
+def record_without_spending(unit: RosterUnit, record: dict[str, Any]) -> bool:
+    """Append `record` to `unit`'s history and keep its level-up (the lad's got talent, which the rest of the group
+    then rolls again); False if it has none."""
+    return (
+        type(unit)._default_manager.filter(pk=unit.pk, level_up__gt=0).update(level_up_history=_appended(record)) == 1
+    )
+
+
 def spend_level_up(
     unit: RosterUnit, *, stat_field: str | None, record: dict[str, Any], pick_field: str | None = None
 ) -> bool:
@@ -65,16 +84,7 @@ def spend_level_up(
     raises the stat (to at most 10), or adds the pick to make later (`pick_field`, up to MAX_PENDING_PICKS), and
     appends `record` to the history in the database, so concurrent advances can't overwrite each other either.
     """
-    changes: dict[str, Any] = {
-        "level_up": F("level_up") - 1,
-        "level_up_history": Func(
-            F("level_up_history"),
-            Value([record], output_field=JSONField()),
-            function="",
-            arg_joiner=" || ",
-            output_field=JSONField(),
-        ),
-    }
+    changes: dict[str, Any] = {"level_up": F("level_up") - 1, "level_up_history": _appended(record)}
     if stat_field:
         # a written stat without a number ("D6", "-") stays without one: LEAST would read NULL + 1 as 10
         changes[stat_field] = Case(

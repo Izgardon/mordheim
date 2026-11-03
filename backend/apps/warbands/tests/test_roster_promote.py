@@ -1,8 +1,9 @@
 """Lad's Got Talent as one atomic call (decision 9, BUG-28, ROST-TWEAK-04).
 
-POST /api/warbands/<id>/henchmen-groups/<group_id>/promote/ creates the hero exactly as the client's chain
-did (profile, XP, skills, specials, one copy of each item, two level-ups with one spent on the advance),
-dismisses the henchman (and the group once nobody living is left), spends the group's level-up and logs.
+POST /api/warbands/<id>/henchmen-groups/<group_id>/promote/ creates the hero (profile, XP, skills, specials, one
+copy of each item) with one advance to take later and none taken now (William, 3 Nov 2026), dismisses the henchman
+(and the group once nobody living is left) and logs. The group keeps its level-up for the rest of it to roll again:
+the talent is recorded in its history, and can't come up again until that roll is spent (`talent_used`).
 """
 
 from decimal import Decimal
@@ -12,6 +13,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.warbands.models import Henchman, HenchmenGroup, Hero, WarbandLog
+from apps.warbands.units.services.promote import TALENT_USED
 
 from .roster_support import HENCHMEN, HERO, RosterTestCase, cap_error, log_rows, make_unit, trade_rows, unit_url
 
@@ -57,19 +59,17 @@ class PromoteTests(RosterTestCase):
         return self.client.post(url, body, format="json")
 
     def _body(self, **extra: Any) -> dict[str, Any]:
-        return {"henchman_id": self.alpha.id, "advance": {"id": "WS", "label": "Weapon Skill"}, **extra}
+        return {"henchman_id": self.alpha.id, **extra}
 
-    def test_the_hero_is_made_as_the_chain_made_him_and_the_group_pays_its_level_up(self):
-        roll = {"dice": "2d6", "result": {"total": 6}}
-
-        response = self._promote(self._body(roll1=roll))
+    def test_the_hero_is_made_with_an_advance_to_take_and_the_group_keeps_its_level_up(self):
+        response = self._promote(self._body())
 
         self.assertEqual(response.status_code, 201, response.data)
         body = response.json()
         hero = Hero.objects.get(id=body["hero"]["id"])
         expected = {"name": "Alpha", "unit_type": "Warrior", "race_id": self.race.id, "price": 0, "xp": Decimal("7.5")}
         expected |= {"level_up": 1, "deeds": "Held the bridge", "armour_save": 5, "half_rate": True}
-        expected |= {"caster": "Wizard", "large": False, "kills": 0, "is_leader": True, **STATS, "weapon_skill": 4}
+        expected |= {"caster": "Wizard", "large": False, "kills": 0, "is_leader": True, **STATS}
         self.assertEqual({key: getattr(hero, key) for key in expected}, expected)
         self.assertEqual(hero.xp_high_water, Decimal("7.5"))
         self.assertEqual(
@@ -81,10 +81,10 @@ class PromoteTests(RosterTestCase):
             list(hero.hero_specials.order_by("id").values_list("special_id", flat=True)),
             [self.specials[0].id, self.wizard.id],
         )
-        self.assertEqual([entry["code"] for entry in hero.level_up_history], ["WS"])
+        self.assertEqual(hero.level_up_history, [])  # his advance waits on his card
 
         self.group.refresh_from_db()
-        self.assertEqual((self.group.level_up, [entry["code"] for entry in self.group.level_up_history]), (0, ["LGT"]))
+        self.assertEqual((self.group.level_up, [entry["code"] for entry in self.group.level_up_history]), (1, ["LGT"]))
         alpha = Henchman.objects.get(id=self.alpha.id)
         self.assertIsNotNone(alpha.dismissed_at)
         self.assertEqual(alpha.kills, 2)  # his kills stay with the group's records
@@ -94,10 +94,8 @@ class PromoteTests(RosterTestCase):
         self.assertEqual(trade_rows(self.warband), [])
         self.assertEqual(
             [(feature, entry_type) for feature, entry_type, _, _ in log_rows(self.warband)],
-            [("personnel", "new_hero"), ("advance", "hero"), ("advance", "henchmen")],
+            [("personnel", "new_hero"), ("advance", "henchmen")],
         )
-        hero_log = WarbandLog.objects.get(warband=self.warband, entry_type="hero").payload
-        self.assertEqual(hero_log, {"hero": "Alpha", "advance": {"id": "WS", "label": "Weapon Skill"}, "roll1": roll})
         group_log = WarbandLog.objects.get(warband=self.warband, entry_type="henchmen").payload
         self.assertEqual(
             group_log,
@@ -126,13 +124,11 @@ class PromoteTests(RosterTestCase):
         self.assertIsNotNone(self.group.dismissed_at)
         self.assertEqual(log_rows(self.warband)[-1][:2], ("personnel", "remove_henchmen_group"))
 
-    def test_an_unnamed_henchman_is_named_by_his_place_and_a_code_is_a_whole_advance(self):
+    def test_an_unnamed_henchman_is_named_by_his_place(self):
         Henchman.objects.filter(id=self.beta.id).update(name="  ")
-        response = self._promote({"henchman_id": self.beta.id, "advance": "BS"})
+        response = self._promote({"henchman_id": self.beta.id})
         self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual(
-            (response.json()["hero"]["name"], response.json()["hero"]["ballistic_skill"]), ("Henchman 2", 4)
-        )
+        self.assertEqual(response.json()["hero"]["name"], "Henchman 2")
 
     def test_at_the_hero_cap_it_is_refused_unless_a_hero_is_dismissed_to_make_room(self):
         self.campaign_settings.max_heroes = 1
@@ -159,13 +155,10 @@ class PromoteTests(RosterTestCase):
         other_group = make_unit(HENCHMEN, self.warband, members=("Stranger",))
         fallen = Henchman.objects.create(group=self.group, name="Fallen", dead=True)
         cases: list[tuple[dict[str, Any], str]] = [
-            ({"advance": "WS"}, "henchman_id"),
+            ({}, "henchman_id"),
             (self._body(henchman_id=fallen.id), "henchman_id"),
             (self._body(henchman_id=other_group.henchmen.get().id), "henchman_id"),
             (self._body(henchman_id="abc"), "henchman_id"),
-            ({"henchman_id": self.alpha.id}, "advance"),
-            (self._body(advance={"id": "Skillz"}), "advance"),
-            (self._body(advance=5), "advance"),
             (self._body(dismiss_hero_id=make_unit(HERO, self.rival).id), "dismiss_hero_id"),
         ]
         for body, field in cases:
@@ -177,16 +170,31 @@ class PromoteTests(RosterTestCase):
         self.assertEqual((self.group.level_up, Hero.objects.filter(warband=self.warband).count()), (1, 0))
         self.assertEqual(log_rows(self.warband), [])
 
-    def test_without_a_level_up_to_spend_it_is_refused_and_a_repeat_is_not_applied_twice(self):
+    def test_the_talent_comes_up_once_an_advance_until_the_group_rolls_it_again(self):
         self.assertEqual(self._promote(self._body()).status_code, 201)
 
-        repeat = self._promote({**self._body(), "henchman_id": self.beta.id})
+        repeat = self._promote({"henchman_id": self.beta.id})
+        rolled = self.client.post(
+            unit_url(HENCHMEN, self.warband.id, self.group.id, "level-up/"),
+            {"payload": {"advance": {"id": "I"}}},
+            format="json",
+        )
+        spent = self._promote({"henchman_id": self.beta.id})
 
-        expected = {"detail": "No level ups available", "code": "no_level_ups", "fields": {}}
+        expected = {"detail": TALENT_USED, "code": "talent_used", "fields": {}}
         self.assertEqual((repeat.status_code, repeat.json()), (400, expected))
+        self.assertEqual((rolled.status_code, rolled.json()["level_up"]), (200, 0))  # the rest of the group's roll
+        self.assertEqual(spent.json()["code"], "no_level_ups")
         self.assertEqual(Hero.objects.filter(warband=self.warband).count(), 1)
+        HenchmenGroup.objects.filter(id=self.group.id).update(level_up=1)
+        self.assertEqual(self._promote({"henchman_id": self.beta.id}).status_code, 201)  # a later advance may again
+
+    def test_without_a_level_up_or_with_no_level_ups_it_is_refused(self):
+        HenchmenGroup.objects.filter(id=self.group.id).update(level_up=0)
+        self.assertEqual(self._promote(self._body()).json()["code"], "no_level_ups")
         HenchmenGroup.objects.filter(id=self.group.id).update(level_up=1, no_level_ups=True)
-        self.assertEqual(self._promote({**self._body(), "henchman_id": self.beta.id}).json()["code"], "no_level_ups")
+        self.assertEqual(self._promote(self._body()).json()["code"], "no_level_ups")
+        self.assertEqual(Hero.objects.filter(warband=self.warband).count(), 0)
 
     def test_access(self):
         self.client.force_authenticate(user=self.viewer)
@@ -202,7 +210,7 @@ class PromoteTests(RosterTestCase):
         def promote_one() -> int:
             group = make_unit(HENCHMEN, self.warband, level_up=1, members=("A", "B"))
             group.henchmen_group_items.create(item=self.sword, cost=10)
-            body = {"henchman_id": group.henchmen.order_by("id")[0].id, "advance": "WS"}
+            body = {"henchman_id": group.henchmen.order_by("id")[0].id}
             with CaptureQueriesContext(connection) as captured:
                 self.assertEqual(self._promote(body, group=group).status_code, 201)
             return len(captured)

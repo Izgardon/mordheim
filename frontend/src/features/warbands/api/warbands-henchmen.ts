@@ -7,14 +7,9 @@ import type {
   WarbandItemSummary,
   WarbandUnitsSummary,
 } from "../types/warband-types";
-import type { LevelUpRollData } from "../utils/levelup-utils";
-
-/** Lad's Got Talent (decision 9): the member, the hero's advance, and a hero to make room. */
+/** Lad's Got Talent (decision 9): the member who joins the heroes, and a hero to make room. */
 export type PromoteHenchmanBody = {
   henchman_id: number;
-  advance: { id: string; label?: string };
-  roll1?: LevelUpRollData;
-  roll2?: LevelUpRollData;
   dismiss_hero_id?: number;
 };
 
@@ -25,7 +20,10 @@ export type PromoteHenchmanResult = {
   summary: WarbandUnitsSummary;
 };
 
-/** One transaction: the hero, his advance, the group's spent level-up and his departure. */
+/**
+ * One transaction: the hero, with an advance to take later, and his departure; the group keeps its
+ * level-up for the rest of it to roll again, which can't come up the talent (`talent_used`).
+ */
 export const promoteWarbandHenchman = (
   warbandId: number,
   groupId: number,

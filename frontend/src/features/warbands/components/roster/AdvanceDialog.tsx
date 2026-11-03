@@ -28,7 +28,9 @@ const plusOne = (stat: StatCode) => ({ value: stat, label: `+1 ${resolveAdvanceL
  * An advance, step by step in one dialog (William): roll 2D6, type the roll or click a row of the
  * unit's advance table, as if the dice had shown it; a row with two outcomes picks one from a
  * dropdown (its D6 presets it); a new skill row gives a skill, a spell or a boon or bane, picked
- * here, or "Choose later"; then what he gains and Confirm. A henchmen 10–12 is the lad's got talent.
+ * here, or "Choose later"; then what he gains and Confirm. A henchmen 10–12 is the lad's got talent:
+ * a henchman picked and promoted, then the same table again for the rest of the group's roll,
+ * where the talent can't come up a second time (William, 3 Nov 2026).
  */
 export default function AdvanceDialog({
   entry,
@@ -79,10 +81,18 @@ export default function AdvanceDialog({
               rows={flow.table.map((row) => ({
                 key: String(row.from),
                 roll: span(row.from, row.to),
-                result: row.label,
+                result:
+                  row.outcome.kind === "talent" && flow.talentBarred
+                    ? `${row.label}: already came up, roll again`
+                    : row.label,
               }))}
             />
           </div>
+          {flow.row?.outcome.kind === "talent" && flow.talentBarred ? (
+            <p role="alert" className="m-0 text-sm font-semibold text-danger">
+              The lad&apos;s got talent already came up on this advance: roll again.
+            </p>
+          ) : null}
           {stats ? (
             <div className="flex flex-wrap items-center gap-2">
               {outcome?.kind === "d6" ? (
@@ -102,7 +112,7 @@ export default function AdvanceDialog({
               warbandId={warbandId}
               heroes={heroes}
               maxHeroes={maxHeroes}
-              onDone={close}
+              onPromoted={(groupLeft) => (groupLeft ? close() : flow.afterTalent())}
             />
           ) : null}
           {entry ? <AdvanceGain flow={flow} entry={entry} campaignId={campaignId} /> : null}

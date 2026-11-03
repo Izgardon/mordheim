@@ -37,9 +37,8 @@ from .catalogue import (
 from .catalogue_scope import CampaignCatalogueScopeMixin
 from .companions import COMPANION_KINDS, beast_kind, companions, effective_stats, mount_payload, pet_payload
 from .hooks import Recruit
-from .kinds import HERO, LinkSpec, UnitKindSpec
+from .kinds import LinkSpec, UnitKindSpec
 from .services.create import apply_create
-from .services.level_up import LevelUpRejected, valid_advance_id
 from .services.missing import MAX_MISSING_GAMES
 from .services.update import apply_update
 
@@ -302,30 +301,12 @@ class UnitLevelUpSerializer(serializers.Serializer):
 
 
 class HenchmanPromoteSerializer(serializers.Serializer):
-    """POST .../henchmen-groups/<id>/promote/ (Lad's Got Talent, decision 9).
-
-    `advance` is the hero advance the re-roll gave, as the level-up endpoint takes it ({"id": "WS",
-    "label": ...}) or just its code ("WS"); `roll1` / `roll2` are logged with it, as the level-up dialog
-    sends them. `dismiss_hero_id` names a hero to dismiss to make room at the hero cap.
-    """
+    """POST .../henchmen-groups/<id>/promote/ (Lad's Got Talent, decision 9): the henchman who joins the heroes, with
+    an advance to take later (services/promote.py), and `dismiss_hero_id`, a hero to dismiss to make room at the hero
+    cap."""
 
     henchman_id = serializers.IntegerField()
-    advance = serializers.JSONField()
     dismiss_hero_id = serializers.IntegerField(required=False, allow_null=True)
-    roll1 = serializers.DictField(required=False)
-    roll2 = serializers.DictField(required=False)
-
-    def validate_advance(self, value: Any) -> dict[str, Any]:
-        advance = {"id": value} if isinstance(value, str) else value
-        try:
-            valid_advance_id(HERO, {"advance": advance})
-        except LevelUpRejected as rejected:
-            raise serializers.ValidationError(rejected.detail) from None
-        return dict(advance)
-
-    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        attrs["rolls"] = {name: attrs.pop(name) for name in ("roll1", "roll2") if name in attrs}
-        return attrs
 
 
 class UnitBatchSerializer(serializers.Serializer):

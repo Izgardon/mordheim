@@ -1,11 +1,13 @@
 """Lad's Got Talent: promoting a henchman to a hero in one transaction (decision 9, BUG-28, ROST-TWEAK-04).
 
-It does what the client's four-request chain did, with the same field choices, but all or nothing: the new
-hero copies the group's profile, XP, skills and specials and takes one copy of each loadout row he carries
-(his share, less his gaps; the group's rows stay: services/loadouts.py); he starts with two level-ups and spends one on the re-rolled advance. The henchman is
-dismissed from the group (the group too if nobody living is left), the group's level-up is spent (the chain
-left it unspent) and every step is logged. At the hero cap the caller may name a hero to dismiss to make
-room; without one the promotion is refused with `hero_cap_reached`.
+All or nothing: the new hero copies the group's profile, XP, skills and specials and takes one copy of each loadout
+row he carries (his share, less his gaps; the group's rows stay: services/loadouts.py). He joins with one advance to
+take later on his card, none taken now (William, 3 Nov 2026: "we dont then level up that new hero then and there, they
+should just get a pending advance"). The henchman is dismissed from the group (the group too if nobody living is
+left) and every step is logged. The group keeps its level-up: the talent is recorded in its history and the rest of
+the group rolls the advance again ("offer for you to roll again normally for the rest of the group"), which can't come
+up the talent while that record is the last (`talent_used`). At the hero cap the caller may name a hero to dismiss to
+make room; without one the promotion is refused with `hero_cap_reached`.
 """
 
 from dataclasses import dataclass
@@ -24,9 +26,10 @@ from apps.warbands.utils.stats import stat_values
 
 from .create import apply_create, check_cap
 from .dismiss import dismiss
-from .level_up import STAT_LABELS, LevelUpRejected, advance_record, apply_advance, spend_level_up
+from .level_up import STAT_LABELS, advance_record, record_without_spending
 
 LADS_GOT_TALENT = {"id": "LGT", "label": "Lad's Got Talent"}
+TALENT_USED = "The lad's got talent already came up on this advance: roll the group's advance again."
 
 
 @dataclass(frozen=True)
@@ -45,7 +48,7 @@ def _promoted_name(henchman: Henchman, living: list[Henchman]) -> str:
 
 
 def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[HenchmenGroupItem]) -> dict[str, Any]:
-    """The new hero's create body: the group's profile, XP, skills and specials, his items, two level-ups."""
+    """The new hero's create body: the group's profile, XP, skills and specials, his items, one advance to take."""
     specials = list(group.henchmen_group_specials.select_related("special").order_by("id"))
     special_names = {(link.special.name or "").strip().lower() for link in specials}
     caster = "Wizard" if "wizard" in special_names else "Priest" if "priest" in special_names else "No"
@@ -56,7 +59,7 @@ def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[
         "race": group.race,
         "price": 0,
         "xp": group.xp,
-        "level_up": 2,
+        "level_up": 1,
         "deeds": group.deeds,
         "armour_save": group.armour_save,
         "large": group.large or "large" in special_names,
@@ -70,10 +73,15 @@ def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[
     }
 
 
-def _spend_group_level_up(group: HenchmenGroup) -> None:
-    """The group's level-up is the roll that came up Lad's Got Talent: spend it (BUG-28), or refuse."""
+def _take_the_talent(group: HenchmenGroup) -> None:
+    """The group's level-up came up Lad's Got Talent: record it and keep the level-up for the rest of the group's
+    roll, or refuse when there is none or the talent already came up on it (the last record is the talent)."""
+    group.refresh_from_db(fields=["level_up", "no_level_ups", "level_up_history"])  # read under the warband's lock
+    history = group.level_up_history or []
+    if history and isinstance(history[-1], dict) and history[-1].get("code") == LADS_GOT_TALENT["id"]:
+        raise RosterError(TALENT_USED, "talent_used")
     record = advance_record(LADS_GOT_TALENT, STAT_LABELS)
-    if group.no_level_ups or not spend_level_up(group, stat_field=None, record=record):
+    if group.no_level_ups or not record_without_spending(group, record):
         raise RosterError("No level ups available", "no_level_ups")
 
 
@@ -87,7 +95,7 @@ def _make_room(warband: Warband, dismiss_hero_id: int | None) -> None:
 
 
 def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, Any]) -> Promotion:
-    """Promote `request["henchman_id"]`, spending `request["advance"]` (validated for heroes by the caller).
+    """Promote `request["henchman_id"]` to a hero with one advance to take, keeping the group's level-up.
 
     `group` is read with its race. Raises RosterError, with everything rolled back, when refused.
     """
@@ -97,7 +105,7 @@ def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, 
         henchman = next((member for member in living if member.id == request["henchman_id"]), None)
         if henchman is None:
             raise _field_error("henchman_id", "Not a living member of this group.")
-        _spend_group_level_up(group)
+        _take_the_talent(group)
         _make_room(warband, request.get("dismiss_hero_id"))
         name = _promoted_name(henchman, living)
         items = carried_rows(henchman)  # his share: a copy of each row, still riding what he rode
@@ -105,11 +113,6 @@ def promote_henchman(warband: Warband, group: HenchmenGroup, request: dict[str, 
         check_cap(HERO, warband, fields, locked=True)
         hero = cast(Hero, apply_create(HERO, fields))
         HERO.hooks.record_recruit(HERO, warband, hero, {})
-        advance = {"hero": name, "advance": request["advance"], **request.get("rolls", {})}
-        try:
-            apply_advance(HERO, warband, hero, advance, savepoint=False)
-        except LevelUpRejected as rejected:
-            raise _field_error("advance", rejected.detail) from None
         Henchman.objects.filter(id=henchman.id).update(dismissed_at=timezone.now())
         group_name = group.name or group.unit_type or "Henchmen Group"
         log_payload = {"group": group_name, "advance": LADS_GOT_TALENT, "lads_got_talent": True}

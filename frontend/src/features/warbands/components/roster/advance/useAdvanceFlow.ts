@@ -28,13 +28,21 @@ const PICKED: Record<PickKind, AdvancePick["list"]> = {
   Special: "specials",
 };
 
-/** The advance code a table row gives once its choice is made, or null while it waits. */
-function tableAdvance(row: AdvanceRow | undefined, stat: StatCode | null, kind: PickKind) {
+/**
+ * The advance code a table row gives once its choice is made, or null while it waits (and for the
+ * talent when it already came up on this level-up: the group rolls again).
+ */
+function tableAdvance(
+  row: AdvanceRow | undefined,
+  stat: StatCode | null,
+  kind: PickKind,
+  talentBarred: boolean
+) {
   const outcome = row?.outcome;
   if (!outcome) return null;
   if (outcome.kind === "skill") return kind;
   if (outcome.kind === "stat") return outcome.stat;
-  if (outcome.kind === "talent") return "LGT";
+  if (outcome.kind === "talent") return talentBarred ? null : "LGT";
   return stat;
 }
 
@@ -57,11 +65,17 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
   const [special, setSpecial] = useState<Special | null>(null);
   const [later, setLater] = useState(false);
   const [saving, setSaving] = useState(false);
+  /** A henchman was promoted in this dialog: the group's roll again can't be the talent. */
+  const [talentTaken, setTalentTaken] = useState(false);
 
   const isGroup = entry?.kind === "henchmen_group";
   const table = isGroup ? HENCHMEN_TABLE : HERO_TABLE;
   const row = rowFor(table, roll2) ?? table.find((each) => each.from === rowFrom);
-  const advance = tableAdvance(row, stat, kind);
+  // the talent came up on this level-up already (its record is the group's last; William: "bar
+  // another lads got talent"): the rest of the group rolls again
+  const history = isGroup ? (entry.unit.level_up_history ?? []) : [];
+  const talentBarred = isGroup && (talentTaken || history[history.length - 1]?.code === "LGT");
+  const advance = tableAdvance(row, stat, kind, talentBarred);
   const list = advance && advance in PICKED ? PICKED[advance as PickKind] : undefined;
   const pick: AdvancePick | undefined =
     list === "skills" && skill
@@ -90,7 +104,10 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
     setKindRaw("Skill");
     clearPicks();
   };
-  const reset = () => toRow(null, null);
+  const reset = () => {
+    toRow(null, null);
+    setTalentTaken(false);
+  };
 
   const confirm = async () => {
     if (!entry || !advance || !ready) return;
@@ -153,6 +170,12 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
     pick,
     ready,
     saving,
+    talentBarred,
+    /** A henchman promoted: the table again, for the rest of the group's roll without the talent. */
+    afterTalent: () => {
+      toRow(null, null);
+      setTalentTaken(true);
+    },
     reset,
     confirm,
   };

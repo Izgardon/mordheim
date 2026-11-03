@@ -56,7 +56,7 @@ describe("promoteWarbandHenchman", () => {
     mocks.apiRequest.mockReset();
     mocks.apiRequest.mockResolvedValue({ hero: { id: 88 }, group: null, summary: {} });
     const { promoteWarbandHenchman } = await import("../api/warbands-henchmen");
-    const body = { henchman_id: 41, advance: { id: "WS" }, dismiss_hero_id: 7 };
+    const body = { henchman_id: 41, dismiss_hero_id: 7 };
 
     await promoteWarbandHenchman(9, 12, body);
 

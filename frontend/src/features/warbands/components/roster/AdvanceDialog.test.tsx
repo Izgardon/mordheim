@@ -11,7 +11,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
-import { makeHero } from "@/test/warband-fixtures";
+import { makeHenchmenGroup, makeHero } from "@/test/warband-fixtures";
 
 import AdvanceDialog from "./AdvanceDialog";
 
@@ -176,5 +176,76 @@ describe("An advance on a written stat", () => {
     await user.selectOptions(screen.getByRole("combobox", { name: "Characteristic" }), "WS");
     expect(screen.getByText(/WS D6/)).toBeInTheDocument();
     expect(screen.getByText("D6 has no number to add 1 to")).toBeInTheDocument();
+  });
+});
+
+describe("The lad's got talent", () => {
+  const PROMOTE = "POST /warbands/9/henchmen-groups/7/promote/";
+  const GROUP_LEVEL_UP = "POST /warbands/9/henchmen-groups/7/level-up/";
+  const group = makeHenchmenGroup({
+    id: 7,
+    name: "Zealots",
+    level_up: 1,
+    initiative: 3,
+    henchmen: [
+      { id: 71, name: "Alpha", kills: 0, dead: false },
+      { id: 72, name: "Beta", kills: 0, dead: false },
+    ],
+  } as never);
+  const openGroup = (unit = group) =>
+    renderWithQueryClient(
+      <AdvanceDialog
+        entry={{ kind: "henchmen_group", unit }}
+        campaignId={1}
+        warbandId={9}
+        heroes={[]}
+        maxHeroes={6}
+        onClose={vi.fn()}
+      />
+    );
+
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /races/?campaign_id=1", []);
+  });
+
+  it("promotes the henchman picked, then rolls the rest of the group again without the talent", async () => {
+    const user = setupUser();
+    fakeApi.on(PROMOTE, {
+      hero: makeHero({ id: 90, name: "Beta", level_up: 1 }),
+      group: { ...group, henchmen: [group.henchmen[0]] },
+      summary: {},
+    });
+    fakeApi.on(GROUP_LEVEL_UP, group);
+    openGroup();
+
+    await user.type(screen.getByLabelText("2D6 rolled"), "11");
+    const promote = screen.getByRole("button", { name: "Pick who joins the heroes" });
+    expect(promote).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Beta" }));
+    await user.click(screen.getByRole("button", { name: "Promote Beta" }));
+
+    expect(fakeApi.bodyOf(PROMOTE)).toEqual({ henchman_id: 72 });
+    expect(await screen.findByText(/already came up, roll again/)).toBeInTheDocument();
+    expect(screen.getByLabelText("2D6 rolled")).toHaveValue(null);
+    await user.type(screen.getByLabelText("2D6 rolled"), "12");
+    expect(screen.getByRole("alert")).toHaveTextContent("roll again");
+    expect(screen.queryByRole("button", { name: /Promote/ })).toBeNull();
+    expect(screen.getByRole("button", { name: "Confirm" })).toBeDisabled();
+    await user.clear(screen.getByLabelText("2D6 rolled"));
+    await user.type(screen.getByLabelText("2D6 rolled"), "3");
+    await user.click(screen.getByRole("button", { name: "Confirm" }));
+    expect(fakeApi.bodyOf(GROUP_LEVEL_UP)).toMatchObject({ payload: { advance: { id: "I" } } });
+  });
+
+  it("keeps the talent out of a level-up it already came up on", async () => {
+    const user = setupUser();
+    const history = [{ code: "LGT", label: "Lad's Got Talent", timestamp: "2026-11-03T10:00:00Z" }];
+    openGroup({ ...group, level_up_history: history });
+
+    await user.type(screen.getByLabelText("2D6 rolled"), "10");
+
+    expect(screen.getByRole("alert")).toHaveTextContent("already came up on this advance");
+    expect(screen.queryByRole("button", { name: "Pick who joins the heroes" })).toBeNull();
   });
 });
