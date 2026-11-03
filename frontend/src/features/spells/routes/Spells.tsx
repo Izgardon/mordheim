@@ -7,40 +7,24 @@ import type { CampaignLayoutContext } from "@/features/campaigns/routes/Campaign
 import { inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
-import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
-import {
-  ReferenceList,
-  ReferenceRow,
-  ShowMore,
-  useShownRows,
-} from "@/features/reference/ReferenceList";
+import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
-import RulesPanel from "@/features/warbands/components/roster/RulesPanel";
 import { useCatalogue } from "@/lib/catalogue-queries";
-import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import LoreSpells from "../components/LoreSpells";
 import SpellFormDialog from "../components/SpellFormDialog";
-import type { Spell } from "../types/spell-types";
+import { loreOf, loreRowId, spellLores, type SpellLore } from "../spell-lores";
 
-const loreOf = (spell: Spell) => (spell.type ?? "").replace(/_/g, " ") || "No lore";
-
-/** "Difficulty 7", or "Auto" for a spell that needs no roll. */
-export function difficultyLabel(spell: Spell) {
-  const dc = spell.dc === null || spell.dc === undefined ? "" : String(spell.dc).trim();
-  if (!dc) return "";
-  return /^\d+$/.test(dc) ? `Difficulty ${dc}` : dc;
-}
-
-const compareSpells = (a: Spell, b: Spell) =>
-  loreOf(a).localeCompare(loreOf(b)) ||
-  (a.roll ?? 99) - (b.roll ?? 99) ||
-  a.name.localeCompare(b.name);
+const counted = (count: number, noun: string) => `${count} ${noun}${count === 1 ? "" : "s"}`;
 
 /**
- * Spells (design E's reference layout): every spell in play in the campaign by lore, searched by
- * name or rules text, a chip per lore, rows with the lore, the D6 result and the difficulty; a
- * row opens to its rules in the warband page's rules panel. Custom spells are added and edited as today.
+ * Spells (design E's reference layout): a row per lore in play in the campaign, with its spell
+ * count and difficulties, opening to its D6 table; a spell's row opens to its rules. The search
+ * (name, lore or rules) keeps the lores with a match, each with only its matches. `?lore=` opens a
+ * lore, `?open=` a spell in its lore (Search everything's links). Custom spells are added and
+ * edited as before.
  */
 export default function Spells() {
   const { id } = useParams();
@@ -50,40 +34,33 @@ export default function Spells() {
   const spells = useCatalogue("spells", campaignId);
   const params = useReferenceParams(!spells.isLoading);
   const capabilities = campaignCapabilities(campaign);
-  const lore = params.get("lore", "all");
 
-  const sorted = useMemo(() => inPlayOnly(spells.data).sort(compareSpells), [spells.data]);
-  const lores = useMemo(() => [...new Set(sorted.map(loreOf))], [sorted]);
+  const inPlay = useMemo(() => inPlayOnly(spells.data), [spells.data]);
+  const lores = spellLores(inPlay, params.query, params.openId);
   const types = useMemo(
-    () => [...new Set(sorted.map((spell) => spell.type ?? "").filter(Boolean))],
-    [sorted]
+    () => [...new Set(inPlay.map((spell) => spell.type ?? "").filter(Boolean))].sort(),
+    [inPlay]
   );
-  const searched = sorted.filter((spell) =>
-    matchesSearchQuery(params.query, spell.name, spell.type, spell.description)
-  );
-  const rows = sorted.filter(
-    (spell) =>
-      String(spell.id) === params.openId ||
-      (searched.includes(spell) && (lore === "all" || loreOf(spell) === lore))
-  );
-  const shown = useShownRows(
-    rows,
-    rows.findIndex((spell) => String(spell.id) === params.openId)
-  );
-  const chips = [
-    { id: "all", label: lores.length > 8 ? "All lores" : "All", count: searched.length },
-    ...lores.map((name) => ({
-      id: name,
-      label: name,
-      count: searched.filter((spell) => loreOf(spell) === name).length,
-    })),
-  ];
+  const openSpell = inPlay.find((spell) => String(spell.id) === params.openId);
+  const openLore = openSpell ? loreOf(openSpell) : params.get("lore") || null;
+  const searching = Boolean(params.query.trim());
+  const matches = lores.reduce((sum, lore) => sum + lore.matches, 0);
+
+  const toggleLore = (name: string) =>
+    params.set(openLore === name ? { lore: null, open: null } : { lore: name, open: null });
+  // a spell's lore stays open when its rules close
+  const closeSpell = (lore: string) => params.set({ open: null, lore });
+  const pickSpell = (lore: string, spellId: string) =>
+    params.isOpen(spellId) ? closeSpell(lore) : params.set({ open: spellId, lore: null });
+
+  const count = (lore: SpellLore) =>
+    searching ? `${lore.matches} of ${lore.total}` : String(lore.total);
 
   const addButton = capabilities.edit_catalogue ? (
     <SpellFormDialog
       campaignId={campaignId}
       typeOptions={types}
-      onSaved={(spell) => params.set({ open: String(spell.id), q: null })}
+      onSaved={(spell) => params.reveal(String(spell.id), { q: null, lore: null })}
       trigger={
         <Button variant="secondary" className={isMobile ? "min-h-10" : undefined}>
           Add spell
@@ -104,114 +81,89 @@ export default function Spells() {
       }}
       actions={addButton}
       filters={
-        <>
-          <FilterRow isMobile={isMobile}>
-            <ReferenceSearch
-              value={params.query}
-              onChange={params.setQuery}
-              placeholder="Search spells"
-              label="Search spells"
-              isMobile={isMobile}
-            />
-          </FilterRow>
-          <ReferenceChips
-            label="Lore"
-            options={chips}
-            value={lore}
-            onChange={(next) => params.set({ lore: next === "all" ? null : next })}
+        <FilterRow isMobile={isMobile}>
+          <ReferenceSearch
+            value={params.query}
+            onChange={params.setQuery}
+            placeholder="Search spells"
+            label="Search spells"
             isMobile={isMobile}
           />
-        </>
+        </FilterRow>
       }
       summary={
-        isMobile ? undefined : `${rows.length} ${rows.length === 1 ? "spell" : "spells"} shown`
+        isMobile
+          ? undefined
+          : searching
+            ? `${counted(matches, "spell")} in ${counted(lores.length, "lore")}`
+            : `${counted(lores.length, "lore")}, ${counted(matches, "spell")}`
       }
     >
       {spells.error ? <p className="m-0 text-sm text-danger">{spells.error}</p> : null}
       <ReferenceList
-        nameLabel="Spell"
+        nameLabel="Lore"
         columns={
           isMobile
             ? undefined
             : [
-                { label: "Lore", className: "w-[220px] shrink-0" },
-                { label: "D6", className: "w-[48px] shrink-0" },
+                { label: "Spells", className: "w-[96px] shrink-0" },
                 { label: "Difficulty", className: "w-[120px] shrink-0" },
               ]
         }
-        isEmpty={!spells.isLoading && rows.length === 0}
+        isEmpty={!spells.isLoading && lores.length === 0}
         empty="No spells match."
       >
-        {spells.isLoading ? <ReferenceRowBones /> : null}
-        {shown.rows.map((spell) => {
-          const key = String(spell.id);
-          const difficulty = difficultyLabel(spell);
-          return (
-            <ReferenceRow
-              key={key}
-              id={key}
-              open={params.isOpen(key)}
-              onToggle={() => params.toggle(key)}
-              name={spell.name}
-              sub={isMobile ? loreOf(spell) : undefined}
-              aside={
-                difficulty ? (
-                  <>
-                    <span className="font-mono text-[13px] font-bold text-ink">
-                      {difficulty.replace("Difficulty ", "")}
-                    </span>
-                    <span className="text-xs text-muted-foreground">difficulty</span>
-                  </>
-                ) : null
-              }
-              cells={
-                isMobile
-                  ? undefined
-                  : [
-                      loreOf(spell),
-                      <span key="roll" className="font-mono">
-                        {spell.roll ?? "–"}
-                      </span>,
-                      <span key="dc" className="font-mono font-bold text-ink">
-                        {difficulty.replace("Difficulty ", "") || "–"}
-                      </span>,
-                    ]
-              }
-            >
-              <div className={isMobile ? "flex flex-col gap-2" : "flex flex-col gap-2 px-4 pb-4"}>
-                <RulesPanel
-                  detail={{
-                    name: spell.name,
-                    kind: [loreOf(spell), spell.roll ? `D6 ${spell.roll}` : "", difficulty]
-                      .filter(Boolean)
-                      .join(" · "),
-                    text: spell.description,
-                  }}
-                  onClose={params.close}
-                />
-                {capabilities.edit_catalogue ? (
-                  <SpellFormDialog
-                    campaignId={campaignId}
-                    spell={spell}
-                    typeOptions={types}
-                    canDelete={capabilities.delete_catalogue}
-                    onSaved={(saved) => params.set({ open: String(saved.id) })}
-                    onDeleted={() => params.close()}
-                    trigger={
-                      <Button variant="secondary" className="min-h-10 self-start">
-                        Edit spell
-                      </Button>
+        {spells.isLoading ? <ReferenceRowBones cells={2} /> : null}
+        {lores.map((lore) => (
+          <ReferenceRow
+            key={lore.name}
+            id={loreRowId(lore.name)}
+            open={openLore === lore.name}
+            onToggle={() => toggleLore(lore.name)}
+            name={lore.name}
+            sub={isMobile && lore.difficulty ? `Difficulty ${lore.difficulty}` : undefined}
+            aside={
+              <>
+                <span className="font-mono text-[13px] font-bold text-ink">{count(lore)}</span>
+                <span className="text-xs text-muted-foreground">
+                  {lore.total === 1 ? "spell" : "spells"}
+                </span>
+              </>
+            }
+            cells={
+              isMobile
+                ? undefined
+                : [
+                    <span key="count" className="font-mono">
+                      {count(lore)}
+                    </span>,
+                    <span key="dc" className="font-mono">
+                      {lore.difficulty || "–"}
+                    </span>,
+                  ]
+            }
+          >
+            <LoreSpells
+              campaignId={campaignId}
+              lore={lore}
+              openId={params.openId}
+              onPick={(spellId) => pickSpell(lore.name, spellId)}
+              onClose={() => closeSpell(lore.name)}
+              edit={
+                capabilities.edit_catalogue
+                  ? {
+                      typeOptions: types,
+                      canDelete: capabilities.delete_catalogue,
+                      onSaved: (saved) => params.reveal(String(saved.id), { lore: null }),
+                      onDeleted: () => closeSpell(lore.name),
                     }
-                  />
-                ) : null}
-              </div>
-            </ReferenceRow>
-          );
-        })}
+                  : null
+              }
+              isMobile={isMobile}
+            />
+          </ReferenceRow>
+        ))}
       </ReferenceList>
-      {rows.length > 0 ? (
-        <ShowMore shown={shown.rows.length} total={rows.length} onMore={shown.showMore} />
-      ) : null}
     </ReferencePage>
   );
 }
