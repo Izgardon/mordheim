@@ -19,9 +19,7 @@ import {
   saveModifier,
   toWound,
 } from "./combat-helpers";
-
-/** A model the helpers can read a profile from. */
-export type CombatOption = { key: string; name: string; stats: Partial<UnitStats> };
+import CombatPicker, { type CombatOption } from "./CombatPicker";
 
 type CombatSheetProps = {
   kind: "melee" | "ranged" | null;
@@ -55,36 +53,6 @@ function Field({
         onChange={(event) => onChange(event.target.value.replace(/[^\d]/g, "").slice(0, 2))}
         className="w-14 px-1 text-center font-mono"
       />
-    </label>
-  );
-}
-
-function Picker({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string;
-  options: CombatOption[];
-  value: string;
-  onChange: (key: string) => void;
-}) {
-  return (
-    <label className="flex min-w-0 flex-1 flex-col gap-1 text-xs font-bold text-text2">
-      {label}
-      <select
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="h-11 min-w-0 border border-strong bg-page px-2 text-sm text-ink"
-      >
-        <option value="">Type the numbers</option>
-        {options.map((option) => (
-          <option key={option.key} value={option.key}>
-            {option.name}
-          </option>
-        ))}
-      </select>
     </label>
   );
 }
@@ -163,7 +131,7 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
       title={kind === "ranged" ? "Ranged" : "Melee"}
     >
       <div className="flex flex-wrap items-end gap-3">
-        <Picker label="Yours" options={yours} value={mineKey} onChange={pickMine} />
+        <CombatPicker label="Yours" options={yours} value={mineKey} onChange={pickMine} />
         <div className="flex gap-1.5">
           <Field
             label={kind === "ranged" ? "BS" : "WS"}
@@ -178,7 +146,7 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
         </div>
       </div>
       <div className="flex flex-wrap items-end gap-3">
-        <Picker label="Theirs" options={theirs} value={theirKey} onChange={pickTheirs} />
+        <CombatPicker label="Theirs" options={theirs} value={theirKey} onChange={pickTheirs} />
         <div className="flex gap-1.5">
           {kind === "melee" ? (
             <Field

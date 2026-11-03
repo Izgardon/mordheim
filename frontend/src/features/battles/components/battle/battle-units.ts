@@ -161,6 +161,23 @@ export function battleSections(
   };
 }
 
+/** The headings a battle's short unit pickers sort models under, in the cards' order. */
+export const BATTLE_SECTIONS = [
+  { key: "hero", label: "Heroes" },
+  { key: "henchman", label: "Henchmen" },
+  { key: "hireling", label: "Hired swords" },
+  { key: "pet", label: "Animals" },
+  { key: "temporary", label: "Temporary units" },
+];
+
+/** A model's heading key in `BATTLE_SECTIONS`: a custom or bestiary model is a temporary unit. */
+export const battleSectionOf = (unit: Pick<PrebattleUnit, "kind">) =>
+  unit.kind === "custom" || unit.kind === "bestiary" ? "temporary" : unit.kind;
+
+/** A model's heading in `BATTLE_SECTIONS`. */
+export const battleSectionLabel = (unit: Pick<PrebattleUnit, "kind">) =>
+  BATTLE_SECTIONS.find((section) => section.key === battleSectionOf(unit))?.label ?? "";
+
 /** Every model of a participant in the battle (a henchman each). */
 export function allViews(sections: BattleSections) {
   return [
