@@ -40,8 +40,9 @@ export function WebTopBarLink({
  * main content changes depending on page/urgency"), over the page's column beside the rail, in
  * Between battles' style whatever it holds: what the page puts in it, in the page's column; then
  * at its far right, the top right of the page, Campaigns, `links` and Log out, never changing
- * (William: "campaigns and logout should be far right of that main bar"). A phone keeps its own
- * top bars.
+ * (William: "campaigns and logout should be far right of that main bar"). One height whatever it
+ * holds (William: "keep some consistency on the top bar height"): what goes in it keeps to one
+ * line. A phone keeps its own top bars.
  */
 export default function WebTopBar({
   children,
@@ -55,7 +56,7 @@ export default function WebTopBar({
 }) {
   const { signOut } = useAuth();
   return (
-    <header className={cn("flex min-h-14 border-b border-line bg-bar", className)}>
+    <header className={cn("flex h-14 border-b border-line bg-bar", className)}>
       <div className="flex min-w-0 flex-1 items-center py-2 pl-10 pr-6">
         <div className="mx-auto flex w-full min-w-0 max-w-[1520px] items-center">{children}</div>
       </div>

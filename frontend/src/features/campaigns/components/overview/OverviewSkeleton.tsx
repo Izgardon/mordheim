@@ -36,7 +36,7 @@ export function ChronicleBones({ isMobile, rows = 5 }: { isMobile: boolean; rows
 /** A row of chips (the readiness chips, the chronicle's filters). */
 function Chips({ count, className }: { count: number; className: string }) {
   return (
-    <div className="flex flex-wrap gap-1.5 overflow-hidden">
+    <div className="flex gap-1.5 overflow-hidden">
       {Array.from({ length: count }, (_, index) => (
         <Bone key={index} className={cn("shrink-0", className)} />
       ))}
@@ -48,11 +48,8 @@ function Chips({ count, className }: { count: number; className: string }) {
 /** Between battles while the players load: the web bar's on the overview. */
 export function ReadinessBones() {
   return (
-    <div
-      className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2 py-1.5"
-      aria-hidden="true"
-    >
-      <div className="flex min-w-[190px] flex-col gap-2.5 py-0.5">
+    <div className="flex min-w-0 flex-1 items-center gap-x-6 overflow-hidden" aria-hidden="true">
+      <div className="flex shrink-0 items-center gap-3">
         <Bone className="h-2.5 w-28" />
         <Bone className="h-5 w-32" />
       </div>
