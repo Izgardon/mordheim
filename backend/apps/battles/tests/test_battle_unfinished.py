@@ -21,7 +21,7 @@ class UnfinishedBattleTests(BattleTestCase):
     def test_the_page_follows_the_players_own_progress(self):
         battle_id = self.create_battle()
         invited = {"participant_status": "invited", "unfinished": True, "page": "prebattle"}  # the invite gate
-        self.assertEqual(self.open_battles(self.viewer)[battle_id], invited)
+        self.assertEqual(self.open_battles(self.viewer)[battle_id], {**invited, "accepting_clears": []})
 
         self.ok(self.post_as(self.viewer, self.url(battle_id, "join")))
         for user in (self.player, self.viewer):
@@ -29,7 +29,7 @@ class UnfinishedBattleTests(BattleTestCase):
         self.ok(self.post_as(self.player, self.url(battle_id, "start")))
         self.ok(self.finish_mine(self.player, battle_id, "won"))  # decision 4: his postbattle while the other fights
 
-        self.assertEqual(self.open_battles(self.player)[battle_id], {"participant_status": "finished_battle", "unfinished": True, "page": "postbattle"})  # fmt: skip
+        self.assertEqual(self.open_battles(self.player)[battle_id], {"participant_status": "finished_battle", "unfinished": True, "page": "postbattle", "accepting_clears": []})  # fmt: skip
         self.assertEqual(self.viewer_of(self.viewer, battle_id), {"participant_status": "in_battle", "unfinished": True, "page": "active"})  # fmt: skip
 
         self.ok(self.finalize(self.player, battle_id, draft({})))

@@ -1,7 +1,8 @@
 """The order battle writes take their row locks in, so no two of them can wait on each other (BUG-106).
 
 1. the battle row: every battle write takes it first (BattleScopedView, Close postbattle, Active Battles' cancel),
-   so writes to one battle run one at a time;
+   so writes to one battle run one at a time; a write that changes other battles too (accepting or starting one
+   clears a player's other pre-battles, services/one_battle.py) first takes all their rows with its own, in id order;
 2. participant rows: the caller's first, then any others the write changes, and an event the caller undoes;
 3. the warband row (the ledger's balance UPDATE reuses this lock);
 4. the warband's units: heroes, hired swords, henchmen, then their groups (the roster's own order, `lock_warband`
@@ -44,3 +45,9 @@ def locked[RowT: Model](rows: QuerySet[RowT], *, skip_locked: bool = False) -> Q
 def lock_battle(battle_id: int) -> Battle:
     """Step 1, on its own: the battle row (finalise's last step)."""
     return locked(Battle.objects.filter(id=battle_id)).get()
+
+
+def lock_battles(battle_ids: list[int]) -> None:
+    """Step 1 for a write that changes several battles (one battle at a time, services/one_battle.py): their rows
+    in id order, so two such writes never wait on each other."""
+    list(locked(Battle.objects.filter(id__in=battle_ids).order_by("id")).values_list("id", flat=True))

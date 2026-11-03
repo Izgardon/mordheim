@@ -103,7 +103,13 @@ def leave(battle: Battle, participant: BattleParticipant, actor_user) -> list[di
     return settle_after_leaving(battle, actor_user=actor_user, mode="participants_left")
 
 
-def start(battle: Battle, actor_user) -> list[dict]:
+@dataclass
+class Started:
+    events: list[dict]
+    playing: list[int]  # the user ids now fighting it
+
+
+def start(battle: Battle, actor_user) -> Started:
     """Start the battle once everyone still in is ready; each participant keeps his roster as it stands."""
     if not everyone_ready(battle.id):
         raise Refused("All participants must be ready before starting")
@@ -123,4 +129,5 @@ def start(battle: Battle, actor_user) -> list[dict]:
         entry.save(update_fields=["status", "battle_joined_at", "roster_json", "updated_at"])
     playing = [entry.user_id for entry in participants if entry.status == BattleParticipant.STATUS_IN_BATTLE]
     payload = {"participant_user_ids": playing}
-    return [append_event(battle, BattleEvent.TYPE_BATTLE_STARTED, actor_user=actor_user, payload=payload)]
+    event = append_event(battle, BattleEvent.TYPE_BATTLE_STARTED, actor_user=actor_user, payload=payload)
+    return Started([event], playing)
