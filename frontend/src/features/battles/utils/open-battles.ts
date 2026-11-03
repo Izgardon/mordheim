@@ -74,3 +74,26 @@ export function yourOpenBattles(battles: BattleState[], excludeBattleId?: number
     .filter((entry): entry is YourOpenBattle => entry !== null)
     .sort((a, b) => OPEN_BATTLE_PHASES.indexOf(a.phase) - OPEN_BATTLE_PHASES.indexOf(b.phase));
 }
+
+/**
+ * What accepting an invitation clears, from the open battles list (the server's
+ * `accepting_clears`): "Accepting withdraws you from Street Fight, Battle 6 and cancels your
+ * Ambush, Battle 7." Null when it clears nothing.
+ */
+export function acceptClearsNote(battles: BattleState[], battleId: number) {
+  const clears = battles.find((state) => state.battle.id === battleId)?.viewer?.accepting_clears;
+  const titles = (outcome: "cancel" | "withdraw") =>
+    (clears ?? [])
+      .filter((entry) => entry.outcome === outcome)
+      .map(({ battle_id }) => battles.find((state) => state.battle.id === battle_id)?.battle)
+      .filter((battle): battle is BattleState["battle"] => Boolean(battle))
+      .map(openBattleTitle)
+      .join(" and ");
+  const withdraws = titles("withdraw");
+  const cancels = titles("cancel");
+  const parts = [
+    withdraws && `withdraws you from ${withdraws}`,
+    cancels && `cancels your ${cancels}`,
+  ].filter(Boolean);
+  return parts.length ? `Accepting ${parts.join(" and ")}.` : null;
+}

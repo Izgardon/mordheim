@@ -518,6 +518,11 @@ export type BattleViewer = {
   participant_status: BattleParticipantStatus | null;
   unfinished: boolean;
   page: "prebattle" | "active" | "postbattle" | null;
+  /**
+   * The open battles list only: for an invitation, your other pre-battles that accepting it
+   * clears (one battle at a time): your own cancelled, the others left.
+   */
+  accepting_clears?: { battle_id: number; outcome: "cancel" | "withdraw" }[];
 };
 
 /** The battle as the pages cache it. */

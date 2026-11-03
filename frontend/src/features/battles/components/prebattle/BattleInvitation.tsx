@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChipLabel } from "@/components/ui/chip";
+import AcceptClearsNote from "@/features/battles/components/shared/AcceptClearsNote";
 import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 import type { PrebattlePage } from "@/features/battles/hooks/usePrebattlePage";
 import { battleNumberLabel } from "@/features/battles/utils/battle-number";
@@ -79,6 +80,9 @@ export default function BattleInvitation({ page }: { page: PrebattlePage }) {
         {ready.actionError ? <p className="m-0 text-sm text-danger">{ready.actionError}</p> : null}
         {declining.error ? <p className="m-0 text-sm text-danger">{declining.error}</p> : null}
 
+        {flags.canAcceptInvite ? (
+          <AcceptClearsNote campaignId={campaignId} battleId={battleId} />
+        ) : null}
         {flags.canAcceptInvite ? (
           <div className="grid grid-cols-[1fr_2fr] gap-2">
             <Button

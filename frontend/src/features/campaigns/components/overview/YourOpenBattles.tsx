@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { ChipLabel } from "@/components/ui/chip";
+import AcceptClearsNote from "@/features/battles/components/shared/AcceptClearsNote";
 import { useAnswerInvitation } from "@/features/battles/hooks/useAnswerInvitation";
 import {
   PHASE_ACTION,
@@ -13,9 +14,9 @@ type Props = { campaignId: number; battles: YourOpenBattle[] };
 
 /**
  * Your open battles, at the top of the Battles page while you are in more than one (a player can
- * be: busy players are warned, never refused), in the rejoin banner's order: each with where you
- * stand and its way on (Rejoin, Back to pre-battle, To the Aftermath), an invitation with Accept
- * and Decline.
+ * be in several pre-battles and post-games, but fight only one), in the rejoin banner's order:
+ * each with where you stand and its way on (Rejoin, Back to pre-battle, To the Aftermath), an
+ * invitation with Accept and Decline, and what accepting it clears.
  */
 export default function YourOpenBattles(props: Props) {
   return props.battles.length < 2 ? null : <OpenBattleList {...props} />;
@@ -45,6 +46,13 @@ function OpenBattleList({ campaignId, battles }: Props) {
                 <ChipLabel tone={phase === "fight" ? "danger" : "accent"} className="self-start">
                   {PHASE_STATE[phase]}
                 </ChipLabel>
+                {phase === "invitation" ? (
+                  <AcceptClearsNote
+                    campaignId={campaignId}
+                    battleId={battleId}
+                    className="text-xs"
+                  />
+                ) : null}
                 {failure?.battleId === battleId ? (
                   <span role="alert" className="text-xs text-danger">
                     {failure.message}

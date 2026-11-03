@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import type { BattleState, BattleViewer } from "@/features/battles/types/battle-types";
 import { battleState } from "@/test/battle-fixtures";
 
-import { openBattleTitle, yourOpenBattles } from "./open-battles";
+import { acceptClearsNote, openBattleTitle, yourOpenBattles } from "./open-battles";
 
 const open = (id: number, viewer: BattleViewer, battle: Partial<BattleState["battle"]> = {}) => {
   const state = battleState({ id, number: id, ...battle });
@@ -53,6 +53,48 @@ describe("yourOpenBattles", () => {
     expect(
       yourOpenBattles([fighting(41), postgame(42)], 41).map((entry) => entry.state.battle.id)
     ).toEqual([42]);
+  });
+});
+
+describe("acceptClearsNote", () => {
+  /** An invitation whose acceptance clears these battles (the server's `accepting_clears`). */
+  const invitation = (id: number, clears: BattleViewer["accepting_clears"]) =>
+    open(id, { ...invited(id).viewer!, accepting_clears: clears });
+
+  it("names the pre-battles accepting withdraws you from, then your own it cancels", () => {
+    const battles = [
+      invitation(45, [
+        { battle_id: 46, outcome: "cancel" },
+        { battle_id: 6, outcome: "withdraw" },
+      ]),
+      open(46, prebattle(46).viewer!, { scenario: "Ambush" }),
+      invited(6),
+    ];
+
+    expect(acceptClearsNote(battles, 45)).toBe(
+      "Accepting withdraws you from Street Fight, Battle 6 and cancels your Ambush, Battle 46."
+    );
+  });
+
+  it("names every one of a kind, and only what it clears", () => {
+    const battles = [
+      invitation(45, [
+        { battle_id: 7, outcome: "withdraw" },
+        { battle_id: 8, outcome: "withdraw" },
+      ]),
+      invited(7),
+      invited(8),
+    ];
+
+    expect(acceptClearsNote(battles, 45)).toBe(
+      "Accepting withdraws you from Street Fight, Battle 7 and Street Fight, Battle 8."
+    );
+  });
+
+  it("says nothing when accepting clears nothing, or the list has no word on it", () => {
+    expect(acceptClearsNote([invitation(45, []), prebattle(46)], 45)).toBeNull();
+    expect(acceptClearsNote([invited(45), prebattle(46)], 45)).toBeNull(); // an older server
+    expect(acceptClearsNote([], 45)).toBeNull();
   });
 });
 

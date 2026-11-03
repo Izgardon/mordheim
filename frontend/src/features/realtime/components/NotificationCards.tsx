@@ -10,6 +10,7 @@ import type { BountyClaimNotification } from "@/features/bounties/types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/utils";
+import AcceptClearsNote from "@/features/battles/components/shared/AcceptClearsNote";
 import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
 
 type NotificationCardAction = {
@@ -159,6 +160,11 @@ export function BattleInviteCard({
         campaignId={notification.campaignId}
         excludeBattleId={notification.battleId}
         onGo={onNavigate}
+        className="text-xs"
+      />
+      <AcceptClearsNote
+        campaignId={notification.campaignId}
+        battleId={notification.battleId}
         className="text-xs"
       />
     </NotificationCard>

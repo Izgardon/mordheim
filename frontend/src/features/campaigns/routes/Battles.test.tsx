@@ -178,6 +178,42 @@ describe("the Battles page's battle button and open battles", () => {
     expect(fakeApi.countOf(`POST ${BASE}/battles/32/decline/`)).toBe(1);
   });
 
+  it("says what accepting an invitation clears, beside its Accept", async () => {
+    const own = openBattle(33, "Raid", {
+      participant_status: "joined_prebattle",
+      unfinished: true,
+      page: "prebattle",
+    });
+    const asked = openBattle(34, "Ambush", {
+      participant_status: "joined_prebattle",
+      unfinished: true,
+      page: "prebattle",
+    });
+    const invite = {
+      ...INVITE,
+      viewer: {
+        ...INVITE.viewer,
+        accepting_clears: [
+          { battle_id: 33, outcome: "cancel" },
+          { battle_id: 34, outcome: "withdraw" },
+        ],
+      },
+    };
+    fakeApi.on(`GET ${BASE}/battles/?open=1`, [invite, own, asked]);
+    renderApp(`${BASE}/battles`);
+
+    const list = (await screen.findByRole("heading", { name: "Your open battles" })).closest(
+      "section"
+    )!;
+    const row = within(list).getByText("Ambush, Battle 2").closest("li")!;
+    expect(row).toHaveTextContent(
+      "Accepting withdraws you from Ambush, Battle 4 and cancels your Raid, Battle 3."
+    );
+    expect(within(list).getByText("Raid, Battle 3").closest("li")).not.toHaveTextContent(
+      "Accepting"
+    );
+  });
+
   it("accepting an invitation whose pre-battle is open goes there", async () => {
     fakeApi.on(`GET ${BASE}/battles/?open=1`, [INVITE, FIGHT]);
     fakeApi.on(`POST ${BASE}/battles/32/join/`, {
