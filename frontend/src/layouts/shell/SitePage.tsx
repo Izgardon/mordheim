@@ -13,8 +13,11 @@ const PAGES = [
   { to: "/account", label: "Account", icon: UserRound },
 ] as const;
 
-/** The page column's width on the web, centred: the campaigns list wide, Account a reading width. */
-const WIDTH = { wide: "max-w-[1440px]", narrow: "max-w-[880px]" } as const;
+/**
+ * The page column's width on the web, centred: the campaigns list wide, Account the Settings
+ * page's 1120 px column (plus this frame's 40 px gutters).
+ */
+const WIDTH = { wide: "max-w-[1440px]", narrow: "max-w-[1200px]" } as const;
 
 /**
  * The frame of the signed-in pages outside a campaign, the campaigns list and Account (design E):

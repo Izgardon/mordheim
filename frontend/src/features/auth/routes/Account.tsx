@@ -29,7 +29,7 @@ export default function Account({ inCampaign = false }: AccountProps) {
   const { user } = useAuth();
   const content = (
     <>
-      <header className="flex flex-col gap-1.5">
+      <header className="flex flex-col gap-1.5 border-b border-line pb-6 max-[960px]:border-b-0 max-[960px]:pb-0">
         <h1
           className={cn(
             "m-0 font-display text-[40px] font-semibold leading-tight text-head max-[960px]:text-[30px]",
@@ -54,7 +54,7 @@ export default function Account({ inCampaign = false }: AccountProps) {
   );
 
   return inCampaign ? (
-    <div className="flex max-w-[880px] flex-col gap-8 pb-14 max-[960px]:gap-5 max-[960px]:pb-6 max-[960px]:pt-3">
+    <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 pb-14 max-[960px]:gap-5 max-[960px]:pb-6 max-[960px]:pt-3">
       {content}
     </div>
   ) : (
