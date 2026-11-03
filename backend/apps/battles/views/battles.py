@@ -17,6 +17,7 @@ from ..services.capabilities import capabilities
 from ..services.errors import Refused
 from ..services.expiry import expire_overdue
 from ..services.finishing import results_sides
+from ..services.one_battle import accepting_clears
 from ..services.postbattle.suggested import postbattle_guide
 from ..services.presence import mark_participant_seen
 from ..services.rosters import battle_rosters_payload
@@ -47,9 +48,18 @@ class CampaignBattleListCreateView(MethodScopedThrottleMixin, APIView):
             battles = battles.exclude(status__in=(Battle.STATUS_ENDED, Battle.STATUS_CANCELED))
         if expire_overdue(battles):  # settle what is past its deadline (decision 2), then read again
             battles = battles.all()
-        # each with the reader's place in it: his unfinished battle is the first unfinished one (BATL-NEW-01)
+        # each with the reader's place in it: his unfinished battle is the first unfinished one (BATL-NEW-01); an
+        # invitation also says which of his other pre-battles accepting it clears (services/one_battle.py)
+        rows = list(battles)
+        clears = accepting_clears(rows, request.user.id)
         return Response(
-            [{**snapshot_from_battle(battle), "viewer": viewer_in(battle, request.user.id)} for battle in battles]
+            [
+                {
+                    **snapshot_from_battle(battle),
+                    "viewer": {**viewer_in(battle, request.user.id), "accepting_clears": clears.get(battle.id, [])},
+                }
+                for battle in rows
+            ]
         )
 
     def post(self, request, campaign_id):

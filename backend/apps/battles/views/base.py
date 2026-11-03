@@ -30,7 +30,7 @@ from ..services.access import is_member, manages_battles, participant_rows, scop
 from ..services.broadcast import Changed, bump_state_version
 from ..services.errors import BattleError, Refused
 from ..services.expiry import settle_during_write
-from ..services.locks import locked
+from ..services.locks import lock_battles, locked
 from ..services.timing import is_overdue, record_activity
 from ..services.warnings import Warning
 from .responses import broadcast_response, response_with_snapshot, with_capabilities
@@ -105,6 +105,12 @@ class BattleScopedView(APIView):
     in_battle = True  # the caller must be one of the battle's participants
     manages = False  # the caller holds manage_battles (set when the battle is loaded)
     battle_related: tuple[str, ...] = ()  # read with the battle (the campaign's settings: finalise, the guides)
+    also_written: list[int] = []  # the other battles a write locked with this one (`battles_also_written`)
+
+    def battles_also_written(self, request: Request, campaign_id: int, battle_id: int) -> list[int]:
+        """Other battles this write may change (a player's other pre-battles, services/one_battle.py): a write locks
+        them with this one, in id order, before any participant row (services/locks.py). None by default."""
+        return []
 
     def load_scope(self, request: Request, campaign_id: int, battle_id: int, *, lock: str = READ) -> Scope:
         """The battle and the caller's participant: `READ` locks nothing; `LOCK_BATTLE` (a write) locks the battle,
@@ -112,6 +118,9 @@ class BattleScopedView(APIView):
         battle settles it first, under the battle lock (decision 2)."""
         battles = scoped_battles(request.user, campaign_id).filter(id=battle_id)
         if lock == LOCK_BATTLE:
+            self.also_written = self.battles_also_written(request, campaign_id, battle_id)
+            if self.also_written:
+                lock_battles([battle_id, *self.also_written])
             battles = locked(battles)  # FOR UPDATE OF the battle alone, whatever it joins
         if self.battle_related:
             battles = battles.select_related(*self.battle_related)

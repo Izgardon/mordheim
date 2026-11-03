@@ -1,12 +1,14 @@
 """Setting a battle up: create it and invite the players, then join, ready, leave and start.
 
-Busy players (already in an unfinished battle) are warned about, never refused (decision 1, BATL-TWEAK-01). Any
+Busy players (already in an unfinished battle) are warned about, never refused (decision 1, BATL-TWEAK-01), except a
+player fighting a battle: a new battle with him in it is refused (William, 3 Nov 2026: services/one_battle.py). Any
 participant still in starts once everyone is ready (decision 4); `start/` stores each roster as it stands (BUG-73).
 """
 
 import logging
 from dataclasses import dataclass
 
+from django.db.models import BooleanField, ExpressionWrapper
 from django.utils import timezone
 
 from apps.campaigns.models import CampaignMembership
@@ -18,26 +20,29 @@ from ..models import Battle, BattleEvent, BattleParticipant
 from .errors import Refused
 from .events import append_event, notify_user
 from .numbering import battle_number
+from .one_battle import fighting_refusal
 from .timing import invite_deadline
-from .unfinished import BUSY_BATTLE_STATUSES, BUSY_PARTICIPANT_STATUSES, page_for
+from .unfinished import BUSY_BATTLE_STATUSES, BUSY_PARTICIPANT_STATUSES, FIGHTING, page_for
 
 logger = logging.getLogger(__name__)
 
 
 def busy_participations(campaign_id: int, user_ids):
-    """The players' places in the campaign's unfinished battles (decision 1: they warn, never refuse)."""
+    """The players' places in the campaign's unfinished battles (decision 1: they warn), each with `fighting`: he is
+    fighting it, which refuses a new battle with him (services/one_battle.py)."""
     return BattleParticipant.objects.filter(
         user_id__in=user_ids,
         battle__campaign_id=campaign_id,
         battle__flow_type=Battle.FLOW_TYPE_NORMAL,
         battle__status__in=BUSY_BATTLE_STATUSES,
         status__in=BUSY_PARTICIPANT_STATUSES,
-    )
+    ).annotate(fighting=ExpressionWrapper(FIGHTING, output_field=BooleanField()))
 
 
 def busy_player_warnings(campaign_id: int, user_ids: list[int], creator_id: int) -> list[dict]:
     """One warning per player already in an unfinished battle of the campaign (the most recent one): decision 1
-    warns and allows (BATL-TWEAK-01); the creator is told about his own (BATL-NEW-01)."""
+    warns and allows (BATL-TWEAK-01) a pre-battle or a post-game (a fight refuses, services/one_battle.py); the
+    creator is told about his own (BATL-NEW-01)."""
     busy = (
         busy_participations(campaign_id, user_ids)
         .select_related("user", "battle")
@@ -151,6 +156,8 @@ def new_battle(data, campaign_id: int, creator) -> NewBattle:
     scenario = scenario_name(data.get("scenario"))
     user_ids = participant_user_ids(data.get("participant_user_ids"), campaign_id, creator.id)
     warbands = players_warbands(campaign_id, user_ids)
+    if refusal := fighting_refusal(campaign_id, user_ids, you=creator.id):  # one battle at a time (one_battle.py)
+        raise refusal
     warnings = busy_player_warnings(campaign_id, user_ids, creator.id)
     raw_link = data.get("scenario_link")
     scenario_link = (raw_link.strip() if isinstance(raw_link, str) else None) or None

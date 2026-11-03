@@ -63,8 +63,8 @@ function toOpenBattle(state: BattleState): YourOpenBattle | null {
 }
 
 /**
- * Your unfinished battles (the server lets a player be in several: busy players are warned,
- * never refused), the one that needs you most first; newest first within a phase, as the list
+ * Your unfinished battles (the server lets a player be in several pre-battles and post-games, but
+ * fight only one), the one that needs you most first; newest first within a phase, as the list
  * comes. `excludeBattleId` leaves out the battle a page is about already.
  */
 export function yourOpenBattles(battles: BattleState[], excludeBattleId?: number) {
@@ -73,4 +73,27 @@ export function yourOpenBattles(battles: BattleState[], excludeBattleId?: number
     .map(toOpenBattle)
     .filter((entry): entry is YourOpenBattle => entry !== null)
     .sort((a, b) => OPEN_BATTLE_PHASES.indexOf(a.phase) - OPEN_BATTLE_PHASES.indexOf(b.phase));
+}
+
+/**
+ * What accepting an invitation clears, from the open battles list (the server's
+ * `accepting_clears`): "Accepting withdraws you from Street Fight, Battle 6 and cancels your
+ * Ambush, Battle 7." Null when it clears nothing.
+ */
+export function acceptClearsNote(battles: BattleState[], battleId: number) {
+  const clears = battles.find((state) => state.battle.id === battleId)?.viewer?.accepting_clears;
+  const titles = (outcome: "cancel" | "withdraw") =>
+    (clears ?? [])
+      .filter((entry) => entry.outcome === outcome)
+      .map(({ battle_id }) => battles.find((state) => state.battle.id === battle_id)?.battle)
+      .filter((battle): battle is BattleState["battle"] => Boolean(battle))
+      .map(openBattleTitle)
+      .join(" and ");
+  const withdraws = titles("withdraw");
+  const cancels = titles("cancel");
+  const parts = [
+    withdraws && `withdraws you from ${withdraws}`,
+    cancels && `cancels your ${cancels}`,
+  ].filter(Boolean);
+  return parts.length ? `Accepting ${parts.join(" and ")}.` : null;
 }

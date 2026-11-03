@@ -84,8 +84,9 @@ def format_short_date(value: datetime | None) -> str:
 
 
 def _busy_battle_fields(busy: tuple | None) -> dict:
-    battle_id, battle_status, last_activity_at, participant_status, number = busy or (None,) * 5
+    battle_id, battle_status, last_activity_at, participant_status, number, fighting = busy or (None,) * 6
     return {
+        "battle_fighting": bool(fighting),  # can't be put in another battle (Start battle shows him, disabled)
         "battle_busy_status": battle_status,
         "battle_busy_battle_id": battle_id,
         "battle_busy_last_activity_at": last_activity_at,
@@ -122,12 +123,14 @@ def _warbands_by_user(campaign_id: int) -> dict[int, dict[str, Any]]:
 
 
 def _busy_by_user(campaign_id: int, user_ids: list[int]) -> dict[int, tuple]:
-    """Each member's most recent unfinished battle: id, status, last activity (BUG-10), his own status in it and
-    its number."""
+    """Each member's unfinished battle, the one he is fighting else his most recent: id, status, last activity
+    (BUG-10), his own status in it, its number and whether he is fighting it."""
     busy_entries = (
         busy_participations(campaign_id, user_ids)  # the busy rule battles warn with (decision 1)
-        .order_by("-battle__created_at")
-        .values_list("user_id", "battle_id", "battle__status", "battle__last_activity_at", "status", "battle__number")
+        .order_by("-fighting", "-battle__created_at")
+        .values_list(
+            "user_id", "battle_id", "battle__status", "battle__last_activity_at", "status", "battle__number", "fighting"
+        )
     )
     busy_by_user: dict[int, tuple] = {}
     for user_id, *battle in busy_entries:

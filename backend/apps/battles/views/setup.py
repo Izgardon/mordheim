@@ -5,6 +5,14 @@ from rest_framework.response import Response
 from ..models import Battle, BattleParticipant
 from ..services.broadcast import ALL
 from ..services.lifecycle import POSTBATTLE_APPLIED, cancel_battle, someone_finalised
+from ..services.one_battle import (
+    COMMITTED,
+    clear_prebattles,
+    enters,
+    fighting_refusal,
+    other_prebattles,
+    players_still_in,
+)
 from ..services.prebattle import join, leave, set_ready, start
 from ..validation.config import changes_others_see, config_changes
 from .base import BattleWriteView, Scope, Unchanged, Written
@@ -36,15 +44,33 @@ class CampaignBattleConfigView(BattleWriteView):
         return Written([], changed=[participant.id], reason="participant_config_updated")
 
 
+def _not_fighting_elsewhere(scope: Scope) -> Response | None:
+    """One battle at a time: a player fighting another battle can't join this one (services/one_battle.py)."""
+    if not enters(scope.battle, scope.player):
+        return None
+    refusal = fighting_refusal(scope.battle.campaign_id, [scope.user.id], you=scope.user.id, besides=scope.battle.id)
+    return refusal.response() if refusal else None
+
+
 class CampaignBattleJoinView(BattleWriteView):
+    """POST: into the battle's current phase. Accepting an invitation (or coming back to a pre-battle or a fight you
+    left) clears your other pre-battles, and is refused while you fight another battle (services/one_battle.py)."""
+
     rules = (
         normal_flow("Reported results cannot be joined"),
         refuse((Battle.STATUS_CANCELED, Battle.STATUS_ENDED), "Battle is closed"),
         refuse_player((BattleParticipant.STATUS_DECLINED,), "You declined this battle", code="invite_declined"),
+        _not_fighting_elsewhere,
     )
 
+    def battles_also_written(self, request, campaign_id, battle_id):
+        return other_prebattles(campaign_id, [request.user.id], besides=battle_id)
+
     def act(self, scope: Scope):
+        entering = enters(scope.battle, scope.player)
         joined = join(scope.battle, scope.player, scope.user)
+        if entering and scope.player.status in COMMITTED:
+            clear_prebattles(self.also_written, [scope.user.id])
         if not (joined.changed or joined.events):
             return Unchanged()
         opened_for_all = scope.battle.status == Battle.STATUS_PREBATTLE and joined.opened
@@ -55,6 +81,8 @@ class CampaignBattleJoinView(BattleWriteView):
 class CampaignBattleReadyView(BattleWriteView):
     rules = (
         normal_flow("Reported results do not use prebattle ready states"),
+        # a player who left comes back through join/, which keeps to one battle at a time (services/one_battle.py)
+        refuse_player(BattleParticipant.LEFT_STATUSES, "You are no longer in this battle", code="not_in_battle"),
         refuse((Battle.STATUS_INVITING,), WAITING_FOR_ANSWERS),
         refuse(FIGHT_OR_AFTER, "Battle is no longer in prebattle"),
         refuse((Battle.STATUS_CANCELED,), "Battle is canceled"),
@@ -132,5 +160,10 @@ class CampaignBattleStartView(BattleWriteView):
         refuse((Battle.STATUS_CANCELED,), "Battle is canceled"),
     )
 
+    def battles_also_written(self, request, campaign_id, battle_id):
+        return other_prebattles(campaign_id, players_still_in(battle_id), besides=battle_id)
+
     def act(self, scope: Scope):
-        return Written(start(scope.battle, scope.user), changed=ALL)
+        started = start(scope.battle, scope.user)
+        clear_prebattles(self.also_written, started.playing)  # everyone fights now: one battle at a time
+        return Written(started.events, changed=ALL)

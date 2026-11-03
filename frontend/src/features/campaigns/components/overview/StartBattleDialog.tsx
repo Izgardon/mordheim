@@ -2,20 +2,29 @@ import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
+import { numberedOr } from "@/features/battles/utils/battle-number";
 import { cn } from "@/lib/utils";
 
 import { useReadyUpBeforeStart } from "../../hooks/overview/useReadyUpBeforeStart";
 import { useStartBattleForm, type BattleDialogMode } from "../../hooks/overview/useStartBattleForm";
 import type { CampaignPlayer } from "../../types/campaign-types";
-import { READINESS_LABEL, readinessOf } from "./overview-data";
+import { READINESS_LABEL, readinessOf, type Readiness } from "./overview-data";
 
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 
+/** A busy player's state beside him: "In battle 6" while he fights, else Post-game or Pre-battle. */
+function stateLabel(player: CampaignPlayer, state: Readiness) {
+  if (player.battle_fighting)
+    return numberedOr(player.battle_busy_battle_number, "In battle", "In battle");
+  if (state === "ready") return null;
+  return state === "post" ? READINESS_LABEL.post : "Pre-battle";
+}
+
 /**
  * Start battle and Report a result (design E's header buttons): the scenario, who plays (anyone
- * still in a battle or a post-game can be invited, with his state shown; never a block), and for
- * a result the date and the winners or No winner. Starting a battle readies you up: your own open
- * post-game is applied as saved first.
+ * in a pre-battle or a post-game can be invited, with his state shown; a player fighting a battle
+ * can't be, one battle at a time), and for a result the date and the winners or No winner.
+ * Starting a battle readies you up: your own open post-game is applied as saved first.
  */
 export default function StartBattleDialog({
   mode,
@@ -96,18 +105,20 @@ export default function StartBattleDialog({
           {form.eligiblePlayers.map((player) => {
             const state = readinessOf(player);
             const you = player.id === userId;
+            const label = stateLabel(player, state);
             return (
               <label
                 key={player.id}
                 className={cn(
                   "flex min-h-11 items-center gap-3 border px-3",
-                  chosen.has(player.id) ? "border-accent-line bg-accent-soft" : "border-border"
+                  chosen.has(player.id) ? "border-accent-line bg-accent-soft" : "border-border",
+                  form.fighting(player) && "opacity-60"
                 )}
               >
                 <input
                   type="checkbox"
                   checked={chosen.has(player.id)}
-                  disabled={you}
+                  disabled={you || form.fighting(player)}
                   onChange={() => form.toggleUser(player.id)}
                   className="h-4 w-4 accent-[var(--color-accent)]"
                 />
@@ -116,13 +127,13 @@ export default function StartBattleDialog({
                     {you ? "You" : player.name} · {player.warband?.name}
                   </span>
                 </span>
-                {state === "ready" ? null : (
+                {label ? (
                   <span
                     className={cn("text-xs", state === "post" ? "text-accent-text" : "text-danger")}
                   >
-                    {READINESS_LABEL[state]}
+                    {label}
                   </span>
-                )}
+                ) : null}
               </label>
             );
           })}

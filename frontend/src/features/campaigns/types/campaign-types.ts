@@ -91,6 +91,8 @@ export type CampaignPlayer = {
   battle_busy_participant_status?: string | null;
   /** That battle's number ("In battle 6"). */
   battle_busy_battle_number?: number | null;
+  /** He is fighting that battle: he can't be put in another until his fight is over. */
+  battle_fighting?: boolean;
   warband?: {
     id: number;
     name: string;
