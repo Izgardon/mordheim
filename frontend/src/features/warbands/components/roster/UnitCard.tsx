@@ -1,5 +1,5 @@
 import type { MouseEvent, ReactNode } from "react";
-import { ChevronDown, Crown, PawPrint, Pencil } from "lucide-react";
+import { ChevronDown, ChevronsUp, Crown, PawPrint, Pencil } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -30,7 +30,7 @@ type UnitCardProps = {
   entry: RosterUnit;
   campaign: CampaignSummary | null;
   warbandId: number;
-  /** "hero": a card in the grid; "row": a henchmen group or hired sword across the row. */
+  /** "hero": a card in the grid (a hero or hired sword); "row": a henchmen group across the row. */
   layout: "hero" | "row";
   open: boolean;
   /** Its Edit form is open: the card is only the form (no head). */
@@ -49,6 +49,14 @@ type UnitCardProps = {
 
 /** A click in the card's head that lands on none of its controls opens or closes the card. */
 const CONTROLS = "button, a, input, select, textarea, label, [role=switch], [role=dialog]";
+
+/**
+ * Advance ready, centred on the card's top edge, half outside it (William: "on top, 50% or so
+ * inside the card 50% outside centered so it is always top level visible and most prominent"),
+ * open or closed; it pops in when the advance comes.
+ */
+const ADVANCE =
+  "advance-pop absolute left-1/2 top-0 z-10 inline-flex min-h-[28px] -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 whitespace-nowrap border border-primary bg-primary px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-[0_4px_14px_var(--color-shadow)]";
 
 /**
  * One unit of the roster (design E): closed it shows the profile and its gear, open its boxes.
@@ -92,13 +100,25 @@ export default function UnitCard(props: UnitCardProps) {
       entry={entry}
       campaign={campaign}
       warbandId={props.warbandId}
-      open={open}
       canEdit={canEdit}
       onRide={props.onRide}
-      onAdvance={props.onAdvance}
       onTradingAction={props.onTradingAction}
     />
   );
+
+  const advance = xp?.advanceReady ? (
+    canEdit && props.onAdvance ? (
+      <button type="button" className={cn(ADVANCE, "hover:bg-accent-hi")} onClick={props.onAdvance}>
+        <ChevronsUp className="h-3.5 w-3.5" aria-hidden="true" />
+        Advance ready
+      </button>
+    ) : (
+      <span className={ADVANCE}>
+        <ChevronsUp className="h-3.5 w-3.5" aria-hidden="true" />
+        Advance ready
+      </span>
+    )
+  ) : null;
 
   const buttons = (
     <div className="flex shrink-0 items-center gap-1.5">
@@ -168,6 +188,7 @@ export default function UnitCard(props: UnitCardProps) {
           open && "col-span-full"
         )}
       >
+        {advance}
         <div className={head} onClick={headClick}>
           <div className="flex items-start gap-2.5">
             <div className="min-w-28 flex-1">{title}</div>
@@ -198,8 +219,12 @@ export default function UnitCard(props: UnitCardProps) {
       as="article"
       id={unitDomId(entry)}
       expanded={open}
-      className="flex min-w-0 scroll-mt-24 flex-col gap-3 p-3 pl-[18px]"
+      className={cn(
+        "flex min-w-0 scroll-mt-24 flex-col gap-3 p-3 pl-[18px]",
+        advance && "mt-3.5" // room in the list for the badge on its top edge
+      )}
     >
+      {advance}
       <div className={head} onClick={headClick}>
         <div className="grid gap-x-6 gap-y-2.5 min-[720px]:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
           <div className="flex min-w-0 flex-col gap-2">

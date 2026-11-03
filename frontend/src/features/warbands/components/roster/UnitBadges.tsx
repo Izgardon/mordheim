@@ -3,38 +3,30 @@ import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
 import UnitKills from "./UnitKills";
-import { xpInfo, type RosterUnit } from "./unit-view";
-
-const ADVANCE =
-  "inline-flex min-h-[30px] items-center border border-accent-line bg-accent-soft px-2.5 text-xs font-bold text-accent-hi";
+import type { RosterUnit } from "./unit-view";
 
 /**
- * A card's top row of badges: the mount it rides, Missing, Advance ready (a button that starts
- * the advance), the kill count with its breakdown and a hero's trading action as a thin toggle.
- * A hero's bounties show only on the overview (William: "dont need to see the bounty on the
+ * A card's top row of badges: the mount it rides, Missing, the kill count with its breakdown and a
+ * hero's trading action as a thin toggle. Advance ready sits on the card's top edge (UnitCard),
+ * and a hero's bounties show only on the overview (William: "dont need to see the bounty on the
  * warband sheet for a unit").
  */
 export default function UnitBadges({
   entry,
   campaign,
   warbandId,
-  open,
   canEdit,
   onRide,
-  onAdvance,
   onTradingAction,
 }: {
   entry: RosterUnit;
   campaign: CampaignSummary | null;
   warbandId: number;
-  open: boolean;
   canEdit: boolean;
   onRide: (rowId: number, on: boolean) => void;
-  onAdvance?: () => void;
   onTradingAction?: (on: boolean) => void;
 }) {
   const { unit } = entry;
-  const xp = xpInfo(entry, campaign);
   return (
     <>
       {(unit.mounts ?? []).map((mount) => {
@@ -55,15 +47,6 @@ export default function UnitBadges({
         <ChipLabel tone="danger">
           Missing · {unit.missing_games} {unit.missing_games === 1 ? "game" : "games"}
         </ChipLabel>
-      ) : null}
-      {xp?.advanceReady && !open ? (
-        canEdit && onAdvance ? (
-          <button type="button" className={`${ADVANCE} hover:bg-raised`} onClick={onAdvance}>
-            Advance ready
-          </button>
-        ) : (
-          <ChipLabel tone="accent">Advance ready</ChipLabel>
-        )
       ) : null}
       <UnitKills campaignId={campaign?.id ?? 0} warbandId={warbandId} entry={entry} />
       {entry.kind === "hero" ? (
