@@ -4,6 +4,7 @@ import type {
   BattleRosterMissingFields,
 } from "@/features/battles/types/battle-types";
 import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
+import type { WrittenStats } from "@/features/catalogue/utils/statblock";
 import type { Fee } from "@/features/hirelings/fees";
 
 export type NumericStatKey =
@@ -60,6 +61,8 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   /** A henchman: the loadout rows he lacks, which he starts without. */
   gaps?: { rowId: number; itemId: number; name: string; reason: string }[];
   stats: UnitStats;
+  /** Stats written as the book prints them ("1(2)", "D6"), by field: a stat without a number is null in `stats`. */
+  writtenStats?: WrittenStats;
   /** His upkeep (structured fee). */
   upkeepFee?: Fee;
   singleUseItems?: UnitSingleUseItem[];

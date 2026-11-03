@@ -9,12 +9,13 @@ from collections.abc import Callable, Mapping
 from typing import TYPE_CHECKING, Any
 
 from django.db import transaction
-from django.db.models import F, Func, JSONField, Value
+from django.db.models import Case, F, Func, JSONField, Value, When
 from django.db.models.functions import Least
 from django.utils import timezone
 
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import MAX_PENDING_PICKS, RosterUnit, Warband
+from apps.warbands.utils.stats import MAX_STAT
 
 if TYPE_CHECKING:
     from apps.warbands.units.kinds import UnitKindSpec
@@ -36,7 +37,6 @@ STAT_LABELS: Mapping[str, str] = {
     "Spell": "Spell",
     "Special": "Special",
 }
-MAX_STAT = 10
 
 
 class LevelUpRejected(Exception):
@@ -76,7 +76,11 @@ def spend_level_up(
         ),
     }
     if stat_field:
-        changes[stat_field] = Least(F(stat_field) + 1, Value(MAX_STAT))
+        # a written stat without a number ("D6", "-") stays without one: LEAST would read NULL + 1 as 10
+        changes[stat_field] = Case(
+            When(**{f"{stat_field}__isnull": True}, then=Value(None)),
+            default=Least(F(stat_field) + 1, Value(MAX_STAT)),
+        )
     if pick_field:
         changes[pick_field] = Least(F(pick_field) + 1, Value(MAX_PENDING_PICKS))
     return type(unit)._default_manager.filter(pk=unit.pk, level_up__gt=0).update(**changes) == 1

@@ -34,11 +34,22 @@ ITEM_FIELDS = (
     "save_value",
     "listed",
 )
-ENTRY_FIELDS = ("name", "kind", "description", *STAT_FIELDS, "armour_save", "large", "caster", *BEAST_FIELDS)
+ENTRY_FIELDS = (
+    "name",
+    "kind",
+    "description",
+    *STAT_FIELDS,
+    "written_stats",
+    "armour_save",
+    "large",
+    "caster",
+    *BEAST_FIELDS,
+)
 HIRELING_FIELDS = (
     "name",
     "description",
     *STAT_FIELDS,
+    "written_stats",
     "armour_save",
     "large",
     "caster",

@@ -1,3 +1,4 @@
+import type { StatKey as StatField } from "@/features/catalogue/utils/statblock";
 import type { Spell } from "@/features/spells/types/spell-types";
 
 import { STAT_NAME_MAP } from "../../../utils/levelup-utils";
@@ -55,7 +56,7 @@ export const rowFor = (table: AdvanceRow[], roll: number | null) =>
 export const d6Stat = (outcome: { low: StatCode; high: StatCode }, roll: number) =>
   roll <= 3 ? outcome.low : outcome.high;
 
-const UNIT_FIELD: Record<StatCode, string> = {
+export const UNIT_FIELD: Record<StatCode, StatField> = {
   M: "movement",
   WS: "weapon_skill",
   BS: "ballistic_skill",

@@ -26,7 +26,7 @@ def shape(value: Any) -> Any:
     return type(value).__name__
 
 
-STATS = dict.fromkeys(
+STATS: dict[str, Any] = dict.fromkeys(
     (
         "movement",
         "weapon_skill",
@@ -42,6 +42,7 @@ STATS = dict.fromkeys(
     "int",
 )
 RACE = {"name": "str", **{field: "int" for field in STATS if field != "armour_save"}}
+STATS["written_stats"] = {}  # a written stat's text by field ("1(2)", "D6"): none here
 IDENTITY = {
     "id": "int",
     "warband_id": "int",

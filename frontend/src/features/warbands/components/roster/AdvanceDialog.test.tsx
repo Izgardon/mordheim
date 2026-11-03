@@ -140,3 +140,45 @@ describe("The advance dialog", () => {
     });
   });
 });
+
+describe("An advance on a written stat", () => {
+  const openFor = (unit: ReturnType<typeof makeHero>) =>
+    renderWithQueryClient(
+      <AdvanceDialog
+        entry={{ kind: "hero", unit }}
+        campaignId={1}
+        warbandId={9}
+        heroes={[unit]}
+        maxHeroes={6}
+        onClose={vi.fn()}
+      />
+    );
+
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /races/?campaign_id=1", []);
+    fakeApi.on("GET /skills/?campaign_id=1", []);
+  });
+
+  it("adds 1 to its number and warns that its written value needs updating", async () => {
+    openFor({ ...hero, attacks: 1, written_stats: { attacks: "1(2)" } });
+    const user = setupUser();
+    await user.type(screen.getByLabelText("2D6 rolled"), "6");
+    await user.type(screen.getByLabelText("D6 rolled"), "5");
+    expect(screen.getByText(/^A 1 → 2/)).toBeInTheDocument();
+    expect(
+      screen.getByText("Written 1(2): the 1 goes on its number, so update it in Edit")
+    ).toBeInTheDocument();
+  });
+
+  it("warns that a written stat with no number gets nothing", async () => {
+    openFor({ ...hero, weapon_skill: null, written_stats: { weapon_skill: "D6" } });
+    const user = setupUser();
+    await user.type(screen.getByLabelText("2D6 rolled"), "7");
+    await user.selectOptions(screen.getByRole("combobox", { name: "Characteristic" }), "WS");
+    expect(screen.getByText(/WS D6/)).toBeInTheDocument();
+    expect(
+      screen.getByText("Written D6, with no number to add 1 to: update it in Edit")
+    ).toBeInTheDocument();
+  });
+});

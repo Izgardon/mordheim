@@ -15,6 +15,7 @@ import CustomUnitFields from "@/features/battles/components/shared/CustomUnitFie
 import type { CustomUnitDraftState } from "@/features/battles/hooks/useCustomUnitDraft";
 import type { NeutralGroupInput } from "@/features/battles/hooks/useBattleScreen";
 import type { BattleNeutralGroup, BattleUnitStats } from "@/features/battles/types/battle-types";
+import { STAT_FIELDS as PROFILE_FIELDS } from "@/features/catalogue/utils/statblock";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -284,17 +285,12 @@ export function AddNeutralGroupSheet({
     setSaving(true);
     setError("");
     try {
+      // a battle's own creatures hold numbers only: a written stat with none ("2D6", "-") is left out
       const stats: Partial<BattleUnitStats> | undefined = beast?.has_profile
         ? {
-            movement: beast.movement,
-            weapon_skill: beast.weapon_skill,
-            ballistic_skill: beast.ballistic_skill,
-            strength: beast.strength,
-            toughness: beast.toughness,
-            wounds: beast.wounds,
-            initiative: beast.initiative,
-            attacks: beast.attacks,
-            leadership: beast.leadership,
+            ...Object.fromEntries(
+              PROFILE_FIELDS.flatMap(({ key }) => (beast[key] === null ? [] : [[key, beast[key]]]))
+            ),
             armour_save: beast.armour_save,
           }
         : undefined;

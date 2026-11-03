@@ -34,6 +34,7 @@ ROW = [
     "name",
     "description",
     *STATS,
+    "written_stats",  # a written stat's text by field ("D6")
     "armour_save",
     "large",
     "caster",
@@ -140,3 +141,13 @@ class HirelingWriteBoundsTests(CatalogueTestCase):
                     self.assertEqual((response.status_code, list(response.data)), (400, [field]))
         kept = self.create_as(self.owner, HIRED_SWORDS, "Bulky", armour_save=-5, item_entries=[{"item_id": self.book_sword.id, "quantity": MAX_KIT_QUANTITY}])  # fmt: skip
         self.assertEqual((kept.status_code, kept.data["armour_save"]), (201, -5))
+
+    def test_a_stat_may_be_written_as_the_book_prints_it(self):
+        for kind in (HIRED_SWORDS, DRAMATIS_PERSONAE):
+            with self.subTest(kind=kind.key):
+                created = self.create_as(self.owner, kind, "Wild one", weapon_skill="D6", attacks="1(2)", strength=4)
+
+                self.assertEqual(created.status_code, 201, created.data)
+                stats = (created.data["weapon_skill"], created.data["attacks"], created.data["strength"])
+                self.assertEqual(stats, (None, 1, 4))
+                self.assertEqual(created.data["written_stats"], {"weapon_skill": "D6", "attacks": "1(2)"})

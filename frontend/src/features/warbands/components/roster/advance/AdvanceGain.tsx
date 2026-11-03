@@ -4,7 +4,7 @@ import type { Spell } from "@/features/spells/types/spell-types";
 
 import { resolveAdvanceLabel } from "../../../utils/levelup-utils";
 import type { RosterUnit } from "../unit-view";
-import { statChange, statOf, type StatCode } from "./advance-table";
+import { UNIT_FIELD, statChange, statOf, type StatCode } from "./advance-table";
 import BoonBanePicker from "./BoonBanePicker";
 import ChoiceSelect, { type Choice } from "./ChoiceSelect";
 import SkillPicker from "./SkillPicker";
@@ -33,8 +33,21 @@ export function gainLine(
   if (!advance || advance === "LGT") return null;
   if (STATS.has(advance)) {
     const stat = advance as StatCode;
-    const change = statChange(stat, statOf(entry.unit, stat), statOf(race, stat));
-    return { text: change.text, warning: change.overMax ? "Above his race maximum" : undefined };
+    const current = statOf(entry.unit, stat);
+    const written = entry.unit.written_stats?.[UNIT_FIELD[stat]];
+    if (written !== undefined && current === null)
+      return {
+        text: `${stat} ${written}`,
+        warning: `Written ${written}, with no number to add 1 to: update it in Edit`,
+      };
+    const change = statChange(stat, current, statOf(race, stat));
+    const notes = [
+      change.overMax ? "Above his race maximum" : null,
+      written !== undefined
+        ? `Written ${written}: the 1 goes on its number, so update it in Edit`
+        : null,
+    ].filter(Boolean);
+    return { text: change.text, warning: notes.length ? notes.join(". ") : undefined };
   }
   if (flow.later)
     return { text: `A ${resolveAdvanceLabel(advance).toLowerCase()} to choose later` };

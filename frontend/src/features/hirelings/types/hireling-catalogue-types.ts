@@ -1,4 +1,5 @@
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
+import type { WrittenStats } from "@/features/catalogue/utils/statblock";
 import type { AccessLine, AccessLineInput, Item } from "@/features/items/types/item-types";
 import type { Skill } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
@@ -19,15 +20,17 @@ export type HirelingProfile = CatalogueBadgeFields & {
   campaign_id: number | null;
   name: string;
   description: string;
-  movement: number;
-  weapon_skill: number;
-  ballistic_skill: number;
-  strength: number;
-  toughness: number;
-  wounds: number;
-  initiative: number;
-  attacks: number;
-  leadership: number;
+  movement: number | null;
+  weapon_skill: number | null;
+  ballistic_skill: number | null;
+  strength: number | null;
+  toughness: number | null;
+  wounds: number | null;
+  initiative: number | null;
+  attacks: number | null;
+  leadership: number | null;
+  /** Stats written as the book prints them ("2D6", "-"), by field. */
+  written_stats?: WrittenStats;
   armour_save: number | null;
   large: boolean;
   caster: string;
@@ -69,15 +72,16 @@ export type HirelingProfileWrite = {
   campaign_id?: number;
   name: string;
   description: string;
-  movement: number;
-  weapon_skill: number;
-  ballistic_skill: number;
-  strength: number;
-  toughness: number;
-  wounds: number;
-  initiative: number;
-  attacks: number;
-  leadership: number;
+  /** Each stat as a number or as written ("2D6", "-"): the server reads it. */
+  movement: number | string;
+  weapon_skill: number | string;
+  ballistic_skill: number | string;
+  strength: number | string;
+  toughness: number | string;
+  wounds: number | string;
+  initiative: number | string;
+  attacks: number | string;
+  leadership: number | string;
   armour_save: number | null;
   large: boolean;
   caster: string;

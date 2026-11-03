@@ -21,6 +21,7 @@ from apps.warbands.prefetches import entries_attr
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import annotated_current, own_price, sale_price
 from apps.warbands.utils.armour_save import parse_armour_save
+from apps.warbands.utils.stats import WrittenStatsSerializer
 
 from .catalogue import (
     ItemDetailSerializer,
@@ -53,6 +54,7 @@ STAT_FIELDS = (
     "attacks",
     "leadership",
     "armour_save",
+    "written_stats",  # a written stat's text by field (utils/stats.py)
 )
 COMPANION_FIELDS = ("effective_stats", "mount", "pets")  # every read payload, after the stats
 MISSING_FIELDS = ("missing_games", "missing_reason")  # every read payload; only the update serializers write them
@@ -203,7 +205,7 @@ class ArmourSaveField(serializers.Field):
         return value
 
 
-class UnitWriteSerializer(CampaignCatalogueScopeMixin, serializers.ModelSerializer):
+class UnitWriteSerializer(WrittenStatsSerializer, CampaignCatalogueScopeMixin, serializers.ModelSerializer):
     """Create and PATCH bodies: the unit's fields plus its loadout lists, each replacing the whole list.
 
     Saving runs the shared services (units/services/create.py, update.py) with the kind's rules.

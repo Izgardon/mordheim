@@ -165,8 +165,8 @@ def apply_stat_and_special(unit: Any, outcome: InjuryOutcome, campaign_id: int) 
     """Lower the unit's characteristic and grant the named special (a hero or hired sword); returns the changed
     unit fields."""
     fields: list[str] = []
-    if outcome.stat:
-        setattr(unit, outcome.stat, max(0, (getattr(unit, outcome.stat) or 0) - 1))
+    if outcome.stat and getattr(unit, outcome.stat) is not None:  # a written "D6" or "-" has no number to lower
+        setattr(unit, outcome.stat, max(0, getattr(unit, outcome.stat) - 1))
         fields.append(outcome.stat)
     if outcome.special:
         special = injury_special(outcome.special, campaign_id)

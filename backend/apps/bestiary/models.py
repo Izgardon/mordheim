@@ -1,13 +1,13 @@
 from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
-from apps.warbands.models.shared import StatBlock, stat_constraints
+from apps.warbands.models.shared import WrittenStatBlock, stat_constraints
 
 MOUNT, PET, CREATURE = "mount", "pet", "creature"
 BEAST_KINDS = ((MOUNT, "Mount"), (PET, "Pet"), (CREATURE, "Creature"))  # the Animal item's subtype is the label
 
 
-class BestiaryEntry(StatBlock, CatalogueEntry):
+class BestiaryEntry(WrittenStatBlock, CatalogueEntry):
     """A beast: a mount or a pet (a companion: it belongs to the unit carrying its item) or a creature (it becomes
     henchmen). `available_in_shop` decides whether the shop sells it.
 
