@@ -55,15 +55,15 @@ def remove_old() -> int:
     return len(campaigns)
 
 
-def demo_user(email: str, name: str) -> Any:
-    """The demo user with this email, made or brought back to his name and the demo password."""
+def demo_user(email: str, name: str, password: str = PASSWORD) -> Any:
+    """The demo user with this email, made or brought back to his name and the demo password (`--remote`: its own)."""
     user = get_user_model().objects.filter(username=email).first()
     if user is None:
-        return create_account(email, name, PASSWORD)
+        return create_account(email, name, password)
     user.email, user.is_active = email, True  # no service sets these: written on the row
     user.save(update_fields=["email", "is_active"])
     rename(user, name)
-    set_new_password(user, PASSWORD)
+    set_new_password(user, password)
     return user
 
 
@@ -96,11 +96,11 @@ def play_season(api: Api, demo: Demo) -> None:
     extras.chat(api, demo, extras.CHAT[4:])
 
 
-def build(*, with_open_battle: bool = False) -> Built:
+def build(*, with_open_battle: bool = False, password: str = PASSWORD) -> Built:
     api, demo = Api(), Demo()
     with transaction.atomic():
         removed = remove_old()
-        demo.users = {player: demo_user(email, name) for player, (email, name) in PLAYERS.items()}
+        demo.users = {player: demo_user(email, name, password) for player, (email, name) in PLAYERS.items()}
         found_campaign(api, demo)
         extras.setting_the_scene(api, demo)
         for spec in WARBANDS:
