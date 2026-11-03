@@ -1,11 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { Check } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-/** How long the fill takes to move (Tailwind's duration-500), and the pause on a full bar. */
+/** How long the fill takes to move (Tailwind's duration-500), and the full bar's level-up glow. */
 const FILL_MS = 500;
-const HOLD_MS = 250;
+const HOLD_MS = 650;
 
 export type XpBlock = {
   /** The table's index of the advance the block ends at (past the table: its length). */
@@ -35,28 +34,24 @@ export function xpBlock(xp: number, thresholds: readonly number[]): XpBlock {
 }
 
 type Shown = XpBlock & {
-  /** The box at its end: ticked, and whether the tick pops in. */
-  ticked: boolean;
-  pop: boolean;
+  /** An advance was just reached: the full bar glows and a sheen sweeps it (William: "some cool
+   * animation when a unit levels up"). */
+  levelUp: boolean;
   /** Jump without moving (the empty bar of the next block). */
   instant: boolean;
 };
 
-const shownOf = (block: XpBlock, thresholds: readonly number[]): Shown => ({
-  ...block,
-  ticked: block.index >= thresholds.length,
-  pop: false,
-  instant: false,
-});
+const shownOf = (block: XpBlock): Shown => ({ ...block, levelUp: false, instant: false });
 
 const reducedMotion = () =>
   typeof window.matchMedia === "function" &&
   window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /**
- * The XP bar: the current block only, a faint line at each XP point inside it, and the advance's
- * box at its end. Added XP grows the fill; one that reaches the next advance fills the bar and ticks
- * its box, then the bar starts again on the next block. With reduced motion it just changes.
+ * The XP bar: the current block only, with a faint line at each XP point inside it and no box at
+ * its end (William: "remove the tick box on the experience bar everywhere"). Added XP grows the
+ * fill; one that reaches the next advance fills the bar, which glows as a sheen sweeps across it,
+ * then the bar starts again on the next block. With reduced motion it just changes.
  */
 export default function XpTrack({
   xp,
@@ -69,65 +64,51 @@ export default function XpTrack({
   className?: string;
 }) {
   const table = thresholds.join(",");
-  const [shown, setShown] = useState(() => shownOf(xpBlock(xp, thresholds), thresholds));
+  const [shown, setShown] = useState(() => shownOf(xpBlock(xp, thresholds)));
   const before = useRef(xp);
 
   useEffect(() => {
     const steps = table ? table.split(",").map(Number) : [];
     const previous = before.current;
     before.current = xp;
-    const target = shownOf(xpBlock(xp, steps), steps);
+    const target = shownOf(xpBlock(xp, steps));
     const was = xpBlock(previous, steps);
     if (target.index <= was.index || reducedMotion()) {
       setShown(target);
       return;
     }
-    setShown({ ...was, share: 1, ticked: true, pop: true, instant: false });
+    setShown({ ...was, share: 1, levelUp: true, instant: false });
     const timers = [
-      window.setTimeout(
-        () => setShown({ ...target, share: 0, ticked: false, instant: true }),
-        FILL_MS + HOLD_MS
-      ),
+      window.setTimeout(() => setShown({ ...target, share: 0, instant: true }), FILL_MS + HOLD_MS),
       window.setTimeout(() => setShown(target), FILL_MS + HOLD_MS + 30),
     ];
     return () => timers.forEach((timer) => window.clearTimeout(timer));
   }, [xp, table]);
 
   return (
-    <div aria-hidden="true" className={cn("flex w-full items-center gap-1", className)}>
-      <div className="relative h-2 min-w-0 flex-1 bg-line">
-        <div
-          data-xp-fill
-          className={cn(
-            "h-2 bg-primary",
-            !shown.instant &&
-              "transition-[width] duration-500 ease-out motion-reduce:transition-none"
-          )}
-          style={{ width: `${shown.share * 100}%` }}
-        />
-        {shown.points.map((at) => (
-          <span
-            key={at}
-            data-xp-point
-            className="absolute inset-y-0 w-px bg-page opacity-50"
-            style={{ left: `${at * 100}%` }}
-          />
-        ))}
-      </div>
-      <span
+    <div
+      aria-hidden="true"
+      data-xp-level-up={shown.levelUp || undefined}
+      className={cn("relative h-2 w-full bg-line", shown.levelUp && "xp-level-up", className)}
+    >
+      <div
+        data-xp-fill
         className={cn(
-          "flex h-3.5 w-3.5 shrink-0 items-center justify-center border",
-          shown.ticked ? "border-primary bg-primary text-primary-foreground" : "border-strong"
+          "h-2",
+          shown.levelUp ? "bg-accent-hi" : "bg-primary",
+          !shown.instant &&
+            "transition-[width,background-color] duration-500 ease-out motion-reduce:transition-none"
         )}
-      >
-        {shown.ticked ? (
-          <Check
-            key={shown.pop ? `new-${shown.index}` : "kept"}
-            className={cn("h-3 w-3", shown.pop && "xp-tick")}
-            strokeWidth={3}
-          />
-        ) : null}
-      </span>
+        style={{ width: `${shown.share * 100}%` }}
+      />
+      {shown.points.map((at) => (
+        <span
+          key={at}
+          data-xp-point
+          className="absolute inset-y-0 w-px bg-page opacity-50"
+          style={{ left: `${at * 100}%` }}
+        />
+      ))}
     </div>
   );
 }

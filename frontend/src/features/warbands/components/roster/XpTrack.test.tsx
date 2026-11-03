@@ -8,7 +8,7 @@ const fill = (container: HTMLElement) =>
   container.querySelector<HTMLElement>("[data-xp-fill]")?.style.width;
 const points = (container: HTMLElement) =>
   [...container.querySelectorAll<HTMLElement>("[data-xp-point]")].map((line) => line.style.left);
-const ticks = (container: HTMLElement) => container.querySelectorAll("svg").length;
+const levelUp = (container: HTMLElement) => container.querySelectorAll("[data-xp-level-up]").length;
 
 describe("xpBlock", () => {
   it("is the range from the last advance reached to the next", () => {
@@ -39,26 +39,27 @@ describe("XpTrack", () => {
     const { container } = render(<XpTrack xp={9} thresholds={HERO} />);
     expect(fill(container)).toBe(`${(1 / 3) * 100}%`);
     expect(points(container)).toEqual([`${(1 / 3) * 100}%`, `${(2 / 3) * 100}%`]);
-    expect(ticks(container)).toBe(0);
+    expect(container.querySelectorAll("svg")).toHaveLength(0); // no box at its end (William)
+    expect(levelUp(container)).toBe(0);
   });
 
   it("grows the fill inside a block", () => {
     const { container, rerender } = render(<XpTrack xp={8} thresholds={HERO} />);
     rerender(<XpTrack xp={9} thresholds={HERO} />);
     expect(fill(container)).toBe(`${(1 / 3) * 100}%`);
-    expect(container.querySelectorAll(".xp-tick")).toHaveLength(0);
+    expect(levelUp(container)).toBe(0);
   });
 
-  it("fills the bar and ticks its box when an advance is reached, then starts the next block", () => {
+  it("fills the bar and plays its level-up when an advance is reached, then starts the next block", () => {
     vi.useFakeTimers();
     const { container, rerender } = render(<XpTrack xp={7} thresholds={HERO} />);
     rerender(<XpTrack xp={9} thresholds={HERO} />);
     expect(fill(container)).toBe("100%");
-    expect(container.querySelectorAll(".xp-tick")).toHaveLength(1);
+    expect(levelUp(container)).toBe(1);
     expect(points(container)).toEqual(["50%"]);
-    act(() => void vi.advanceTimersByTime(760));
+    act(() => void vi.advanceTimersByTime(1160));
     expect(fill(container)).toBe("0%");
-    expect(ticks(container)).toBe(0);
+    expect(levelUp(container)).toBe(0);
     act(() => void vi.advanceTimersByTime(40));
     expect(fill(container)).toBe(`${(1 / 3) * 100}%`);
     expect(points(container)).toHaveLength(2);
