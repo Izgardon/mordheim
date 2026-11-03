@@ -2,6 +2,11 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import {
+  STAT_FIELDS as CATALOGUE_STAT_FIELDS,
+  statInput,
+  statToSend,
+} from "@/features/catalogue/utils/statblock";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../../api/warband-cache";
@@ -25,6 +30,9 @@ export const STAT_FIELDS = {
   Sv: "armour_save",
 } as const;
 
+/** The nine characteristics' fields (the save aside), which may be written. */
+const STAT_KEY_FIELDS = CATALOGUE_STAT_FIELDS.map(({ key }) => key);
+
 const REMOVED_KEY = {
   hero: "removedHeroIds",
   henchmen_group: "removedHenchmenGroupIds",
@@ -47,8 +55,8 @@ export type EditLists = { skills: Named[]; specials: Named[]; spells: Named[] };
 type Draft = Record<string, unknown>;
 
 /**
- * The profile a save sends: an empty box is 0 (the server keeps every stat but the save as a
- * number), and an empty save is none.
+ * The profile a save sends: a stat as a number, or as written ("1(2)", "D6": the server reads
+ * it), an empty box as 0; an empty save is none.
  */
 export function statsPayload(draft: Record<string, unknown>) {
   return Object.fromEntries(
@@ -56,7 +64,7 @@ export function statsPayload(draft: Record<string, unknown>) {
       const value = draft[field];
       const empty = value === "" || value === null || value === undefined;
       if (field === "armour_save") return [field, empty ? null : Number(value) || null];
-      return [field, empty ? 0 : Number(value) || 0];
+      return [field, statToSend(value)];
     })
   );
 }
@@ -73,7 +81,10 @@ function initialDraft(entry: RosterUnit): Draft {
     missing_games: unit.missing_games ?? 0,
     missing_reason: unit.missing_reason ?? "",
     large: Boolean(unit.large),
-    ...Object.fromEntries(Object.values(STAT_FIELDS).map((field) => [field, unit[field] ?? ""])),
+    armour_save: unit.armour_save ?? "",
+    ...Object.fromEntries(
+      STAT_KEY_FIELDS.map((field) => [field, statInput(unit[field], unit.written_stats?.[field])])
+    ),
     ...("is_leader" in unit
       ? { is_leader: Boolean(unit.is_leader), trading_action: Boolean(unit.trading_action) }
       : {}),
@@ -102,7 +113,8 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
   const { kind, unit } = entry;
   const queryClient = useQueryClient();
   const updateCache = useWarbandCacheUpdate();
-  const [draft, setDraft] = useState<Draft>(() => initialDraft(entry));
+  const [start] = useState<Draft>(() => initialDraft(entry));
+  const [draft, setDraft] = useState<Draft>(start);
   const [lists, setLists] = useState<EditLists>({
     skills: (unit.skills ?? []) as Named[],
     specials: (unit.specials ?? []) as Named[],
@@ -171,7 +183,14 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
     }
   };
 
-  const save = () => run({ update: [{ id: unit.id, updated_at: unit.updated_at, ...payload() }] });
+  /** The update leaves out stats left as they opened: a written one an advance has moved since
+   * keeps its new number until the player rewrites it. */
+  const changedOnly = (body: Record<string, unknown>) => {
+    for (const field of STAT_KEY_FIELDS) if (draft[field] === start[field]) delete body[field];
+    return body;
+  };
+  const save = () =>
+    run({ update: [{ id: unit.id, updated_at: unit.updated_at, ...changedOnly(payload()) }] });
   const duplicate = () =>
     run({
       create: [

@@ -1,4 +1,5 @@
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
+import type { WrittenStats } from "@/features/catalogue/utils/statblock";
 import type {
   AvailabilityPayload,
   Item,
@@ -34,15 +35,17 @@ export type BestiaryEntrySummary = CatalogueBadgeFields & {
   name: string;
   kind: BeastKind;
   description: string;
-  movement: number;
-  weapon_skill: number;
-  ballistic_skill: number;
-  strength: number;
-  toughness: number;
-  wounds: number;
-  initiative: number;
-  attacks: number;
-  leadership: number;
+  movement: number | null;
+  weapon_skill: number | null;
+  ballistic_skill: number | null;
+  strength: number | null;
+  toughness: number | null;
+  wounds: number | null;
+  initiative: number | null;
+  attacks: number | null;
+  leadership: number | null;
+  /** Stats written as the book prints them ("2D6", "-"), by field. */
+  written_stats?: WrittenStats;
   armour_save: number | null;
   large: boolean;
   caster: string;
@@ -78,15 +81,15 @@ export type BestiaryEntryWrite = {
   name: string;
   kind: BeastKind;
   description?: string;
-  movement?: number;
-  weapon_skill?: number;
-  ballistic_skill?: number;
-  strength?: number;
-  toughness?: number;
-  wounds?: number;
-  initiative?: number;
-  attacks?: number;
-  leadership?: number;
+  movement?: number | string;
+  weapon_skill?: number | string;
+  ballistic_skill?: number | string;
+  strength?: number | string;
+  toughness?: number | string;
+  wounds?: number | string;
+  initiative?: number | string;
+  attacks?: number | string;
+  leadership?: number | string;
   armour_save?: number | null;
   large?: boolean;
   caster?: string;

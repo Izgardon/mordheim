@@ -4,7 +4,7 @@ import {
   blankBestiaryCore,
   type BestiaryCoreValues,
 } from "@/features/bestiary/utils/bestiary-form";
-import { statInputs } from "@/features/catalogue/utils/statblock";
+import { profileInputs } from "@/features/catalogue/utils/statblock";
 import {
   draftOf,
   everyone,
@@ -61,17 +61,7 @@ export function hirelingValuesOf(entry: HirelingProfileDetail | null): HirelingP
   return {
     name: entry.name,
     description: entry.description ?? "",
-    stats: statInputs("0", {
-      movement: text(entry.movement),
-      weapon_skill: text(entry.weapon_skill),
-      ballistic_skill: text(entry.ballistic_skill),
-      strength: text(entry.strength),
-      toughness: text(entry.toughness),
-      wounds: text(entry.wounds),
-      initiative: text(entry.initiative),
-      attacks: text(entry.attacks),
-      leadership: text(entry.leadership),
-    }),
+    stats: profileInputs(entry),
     armour_save: text(entry.armour_save),
     large: Boolean(entry.large),
     caster: entry.caster || "No",

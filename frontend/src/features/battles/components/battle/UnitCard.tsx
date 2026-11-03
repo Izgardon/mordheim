@@ -73,7 +73,9 @@ export default function UnitCard({
           />
         ) : null}
       </div>
-      {out ? null : <StatStrip values={statValues(view.stats)} highlighted={view.highlighted} />}
+      {out ? null : (
+        <StatStrip values={statValues(view.stats, view.written)} highlighted={view.highlighted} />
+      )}
       {view.mount ? (
         <div className="flex items-center justify-between gap-2.5">
           <span className="flex items-center gap-2 text-[13px]">

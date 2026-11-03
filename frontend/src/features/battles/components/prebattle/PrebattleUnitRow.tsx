@@ -12,7 +12,7 @@ import {
 import type { PrebattleConfig } from "@/features/battles/hooks/usePrebattleConfig";
 import { cn } from "@/lib/utils";
 
-import { STAT_SHORT, statValues, distinctType } from "../battle/battle-units";
+import { STAT_SHORT, statValues, distinctType, writtenShown } from "../battle/battle-units";
 
 const missingLabel = (unit: { missingGames?: number }) =>
   unit.missingGames
@@ -134,7 +134,10 @@ export default function PrebattleUnitRow({
       {editing && config ? (
         <StatEditor unit={unit} config={config} />
       ) : picked && changed.length ? (
-        <StatStrip values={statValues(stats)} highlighted={changed.map((key) => STAT_SHORT[key])} />
+        <StatStrip
+          values={statValues(stats, writtenShown(unit, changed))}
+          highlighted={changed.map((key) => STAT_SHORT[key])}
+        />
       ) : null}
     </li>
   );

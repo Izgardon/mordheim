@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { NumberInput } from "@/components/ui/number-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,8 +10,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
-import { STAT_FIELDS, type StatKey } from "@/features/catalogue/utils/statblock";
+import {
+  STAT_FIELDS,
+  isWritten,
+  numberOnly,
+  type StatKey,
+} from "@/features/catalogue/utils/statblock";
 
 import { CASTER_OPTIONS, type BestiaryCoreValues } from "../../utils/bestiary-form";
 
@@ -83,25 +91,58 @@ export function DescriptionField({ values, onChange, id }: CoreFieldProps & { id
   );
 }
 
-/** The nine characteristics and the armour save, one small box each. */
+/**
+ * The nine characteristics and the armour save, one small box each. Written values turns the nine
+ * into text boxes, for one the book writes ("2D6", "-"); turning it off keeps each one's number.
+ */
 export function StatsField({ values, onChange }: CoreFieldProps) {
+  const [written, setWritten] = useState(() =>
+    STAT_FIELDS.some((field) => isWritten(values.stats[field.key]))
+  );
   const setStat = (key: StatKey, value: string) =>
     onChange({ stats: { ...values.stats, [key]: value } });
+  const writeNumbers = (on: boolean) => {
+    if (!on) {
+      const numbers = STAT_FIELDS.map(({ key }) => [key, numberOnly(values.stats[key])]);
+      onChange({ stats: Object.fromEntries(numbers) as BestiaryCoreValues["stats"] });
+    }
+    setWritten(on);
+  };
   return (
     <div className="flex flex-col gap-1.5">
-      <Label>Stats</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label>Stats</Label>
+        <Switch
+          look="plain"
+          className="min-h-5 text-xs"
+          checked={written}
+          onCheckedChange={writeNumbers}
+        >
+          Written values
+        </Switch>
+      </div>
       <div className="grid grid-cols-5 gap-2 sm:grid-cols-10">
         {STAT_FIELDS.map((field) => (
           <div key={field.key} className="flex flex-col items-center gap-0.5">
             <span className="text-xs font-medium text-muted-foreground">{field.label}</span>
-            <NumberInput
-              min={0}
-              max={10}
-              value={values.stats[field.key]}
-              onChange={(e) => setStat(field.key, e.target.value)}
-              aria-label={field.label}
-              className="h-8 w-full px-1 text-center text-sm"
-            />
+            {written ? (
+              <Input
+                maxLength={8}
+                value={values.stats[field.key]}
+                onChange={(e) => setStat(field.key, e.target.value)}
+                aria-label={field.label}
+                className="h-8 w-full px-1 text-center font-mono text-sm"
+              />
+            ) : (
+              <NumberInput
+                min={0}
+                max={10}
+                value={values.stats[field.key]}
+                onChange={(e) => setStat(field.key, e.target.value)}
+                aria-label={field.label}
+                className="h-8 w-full px-1 text-center text-sm"
+              />
+            )}
           </div>
         ))}
         <div className="flex flex-col items-center gap-0.5">

@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
 
 import type { HenchmenGroup, UnitKill } from "../../types/warband-types";
-import { formatXp, killLine, memberName, unitTypeLine, type RosterUnit } from "./unit-view";
+import { makeHero } from "@/test/warband-fixtures";
+
+import {
+  formatXp,
+  killLine,
+  memberName,
+  statValues,
+  unitTypeLine,
+  type RosterUnit,
+} from "./unit-view";
 
 const kill = (fields: Partial<UnitKill> = {}): UnitKill => ({
   id: 1,
@@ -82,5 +91,20 @@ describe("formatXp", () => {
     expect(formatXp(0.5)).toBe("½");
     expect(formatXp(14)).toBe("14");
     expect(formatXp(0)).toBe("0");
+  });
+});
+
+describe("statValues", () => {
+  it("shows a written stat as written, none as a dash, and flags one whose number has moved", () => {
+    const hero = makeHero({
+      attacks: 2,
+      weapon_skill: null,
+      strength: 3,
+      toughness: 4,
+      written_stats: { attacks: "1(2)", weapon_skill: "-", toughness: "4*" },
+    });
+    const { values, flags } = statValues({ kind: "hero", unit: hero });
+    expect([values.A, values.WS, values.S, values.T]).toEqual(["1(2)", "-", 3, "4*"]);
+    expect(flags).toEqual({ A: "Written 1(2), now 2: update it in Edit" });
   });
 });

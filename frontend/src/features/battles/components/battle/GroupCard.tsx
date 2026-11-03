@@ -68,7 +68,10 @@ export default function GroupCard({
         />
       </div>
       {first && !allOut ? (
-        <StatStrip values={statValues(first.stats)} highlighted={first.highlighted} />
+        <StatStrip
+          values={statValues(first.stats, first.written)}
+          highlighted={first.highlighted}
+        />
       ) : null}
       {first ? (
         <QuickRow

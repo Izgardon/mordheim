@@ -22,6 +22,65 @@ export const STAT_LABELS: readonly StatLabel[] = STAT_FIELDS.map((field) => fiel
 /** Each characteristic as text, keyed by field: what the race and bestiary forms edit. */
 export type StatInputs = Record<StatKey, string>;
 
+/**
+ * Stats written as the books print them, by field ("1(2)", "5*", "2D6", "-"; William: "allow free
+ * text instead of nums"). The stat's own field holds the number the app does sums with: the one
+ * its text starts with, or null when it has none ("D6", "-": not 0).
+ */
+export type WrittenStats = Partial<Record<StatKey, string>>;
+
+/** The number a written value starts with ("1(2)" is 1, "5*" is 5), or null ("D6", "2D6", "-"). */
+export function writtenNumber(text: string): number | null {
+  const match = /^(\d+)(?![\dDd])/.exec(text);
+  return match ? Number(match[1]) : null;
+}
+
+/** What a stat shows: its written value, else its number (a dash for none). */
+export const statShown = (number: number | null | undefined, written?: string): string | number =>
+  written ?? number ?? "–";
+
+/**
+ * A written stat whose number has moved since it was written: an advance or an injury changes the
+ * number, never the text, so the player updates it (William: "do alternative, but warn").
+ */
+export const writtenStale = (number: number | null | undefined, written?: string) =>
+  written !== undefined && writtenNumber(written) !== (number ?? null);
+
+/** Whether a stat box holds a written value rather than a plain number (or nothing yet). */
+export const isWritten = (value: unknown) => !/^\d*$/.test(String(value ?? "").trim());
+
+/** A stat box's text as a plain number: the one a written value starts with, else empty. */
+export const numberOnly = (value: unknown) => {
+  const text = String(value ?? "").trim();
+  return isWritten(text) ? String(writtenNumber(text) ?? "") : text;
+};
+
+/** A stored profile's stats as its form edits them: a written value as written. */
+export const profileInputs = (
+  profile: Partial<Record<StatKey, number | null>> & { written_stats?: WrittenStats }
+): StatInputs =>
+  Object.fromEntries(
+    STAT_FIELDS.map(({ key }) => [key, statInput(profile[key], profile.written_stats?.[key])])
+  ) as StatInputs;
+
+/** A stat as a form edits it: its written value, else its number. */
+export const statInput = (number: number | null | undefined, written?: string) =>
+  written ?? (number === null || number === undefined ? "" : String(number));
+
+/** A stat as a save sends it: a plain number as a number, a written value as typed, empty as 0. */
+export function statToSend(value: unknown): number | string {
+  const text = String(value ?? "").trim();
+  if (!text) return 0;
+  return /^\d+$/.test(text) ? Number(text) : text;
+}
+
+/** A profile's stats as a save sends them (`statToSend`), keyed by field. */
+export const statsToSend = (stats: StatInputs) =>
+  Object.fromEntries(STAT_FIELDS.map(({ key }) => [key, statToSend(stats[key])])) as Record<
+    StatKey,
+    number | string
+  >;
+
 /** Each characteristic as text, keyed by label: an item's statblock as its forms edit it. */
 export type ItemStatblock = Record<StatLabel, string>;
 

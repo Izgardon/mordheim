@@ -7,6 +7,13 @@ import {
   readItemStatblock,
   statInputs,
   statNumbers,
+  isWritten,
+  numberOnly,
+  profileInputs,
+  statShown,
+  statToSend,
+  writtenNumber,
+  writtenStale,
 } from "./statblock";
 
 describe("stat lines", () => {
@@ -64,5 +71,44 @@ describe("item statblocks", () => {
     expect(readItemStatblock('{"M": 4}')).toEqual({ M: 4 });
     expect(readItemStatblock("{M: 4, 'WS': 3}")).toEqual({ M: 4, WS: 3 });
     expect(readItemStatblock("[[table]] stats")).toBeNull();
+  });
+});
+
+describe("written stats", () => {
+  it("reads the number a written value starts with, and none from a roll or a dash", () => {
+    expect(["1(2)", "5*", "3(6)", "1+1"].map(writtenNumber)).toEqual([1, 5, 3, 1]);
+    expect(["2D6", "D6", "d3", "-"].map(writtenNumber)).toEqual([null, null, null, null]);
+  });
+
+  it("shows a written value as written, a number as itself and nothing as a dash", () => {
+    expect([statShown(1, "1(2)"), statShown(4), statShown(null)]).toEqual(["1(2)", 4, "–"]);
+  });
+
+  it("flags a written value only once its number has moved", () => {
+    expect(writtenStale(1, "1(2)")).toBe(false);
+    expect(writtenStale(2, "1(2)")).toBe(true);
+    expect(writtenStale(null, "D6")).toBe(false);
+    expect(writtenStale(4, "D6")).toBe(true);
+    expect(writtenStale(4)).toBe(false);
+  });
+
+  it("sends a plain number as a number, a written value as typed, an empty box as 0", () => {
+    expect([statToSend("4"), statToSend(" 1(2) "), statToSend("-"), statToSend("")]).toEqual([
+      4,
+      "1(2)",
+      "-",
+      0,
+    ]);
+  });
+
+  it("edits a profile's written values as written, and turns them back into numbers", () => {
+    const inputs = profileInputs({
+      attacks: 1,
+      weapon_skill: null,
+      written_stats: { attacks: "1(2)" },
+    });
+    expect([inputs.attacks, inputs.weapon_skill]).toEqual(["1(2)", ""]);
+    expect([isWritten("1(2)"), isWritten("4"), isWritten("")]).toEqual([true, false, false]);
+    expect([numberOnly("1(2)"), numberOnly("D6"), numberOnly("4")]).toEqual(["1", "", "4"]);
   });
 });

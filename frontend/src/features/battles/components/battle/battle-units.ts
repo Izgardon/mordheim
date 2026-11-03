@@ -17,6 +17,7 @@ import type {
   BattleUnitInformationEntry,
 } from "@/features/battles/types/battle-types";
 import { helperStats } from "@/features/battles/utils/battle-companions";
+import type { WrittenStats } from "@/features/catalogue/utils/statblock";
 
 /** The four states the status button cycles through (design E). */
 export type UnitStatus = BattleCreatureStatus;
@@ -58,18 +59,33 @@ export const STAT_SHORT: Record<keyof UnitStats, StripKey> = {
   armour_save: "Sv",
 };
 
-/** A profile as the stat strip shows it: the save as "4+", none as a dash. */
-export function statValues(stats: Partial<UnitStats>) {
+/**
+ * A profile as the stat strip shows it: a written stat as written ("1(2)", "D6"), the save as
+ * "4+", none as a dash.
+ */
+export function statValues(stats: Partial<UnitStats>, written: WrittenStats = {}) {
   const values: Partial<Record<StripKey, string | number>> = {};
   for (const [key, short] of Object.entries(STAT_SHORT) as [keyof UnitStats, StripKey][]) {
     const value = stats[key];
     if (key === "armour_save") {
       values[short] = typeof value === "number" && value > 0 && value < 7 ? `${value}+` : "–";
+    } else if (written[key] !== undefined) {
+      values[short] = written[key];
     } else if (typeof value === "number") {
       values[short] = value;
     }
   }
   return values;
+}
+
+/** The unit's written stats a battle change hasn't replaced: an override, or the ridden mount's M. */
+export function writtenShown(
+  unit: Pick<PrebattleUnit, "writtenStats">,
+  replaced: Iterable<string>
+): WrittenStats {
+  const shown: WrittenStats = { ...unit.writtenStats };
+  for (const key of replaced) delete shown[key as keyof WrittenStats];
+  return shown;
 }
 
 /** One of your units as its card shows it: its effective stats, wounds, status and the mount. */
@@ -78,6 +94,8 @@ export type BattleUnitView = {
   info: BattleUnitInformationEntry | undefined;
   status: UnitStatus;
   stats: UnitStats;
+  /** The stats shown as the book writes them ("D6"), those no battle change replaced. */
+  written: WrittenStats;
   /** The cells to pick out: M and Sv while mounted, and any battle stat change. */
   highlighted: StripKey[];
   wounds: number;
@@ -107,6 +125,7 @@ export function unitView(
     info,
     status: unitStatus(info),
     stats,
+    written: writtenShown(unit, [...Object.keys(overrides), ...(mounted ? ["movement"] : [])]),
     highlighted: [...highlighted].filter(Boolean),
     wounds: getCurrentUnitWounds(unit, info),
     maxWounds: Math.max(1, Number(stats.wounds ?? 1) || 1),

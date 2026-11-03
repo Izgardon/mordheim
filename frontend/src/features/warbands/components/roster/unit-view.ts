@@ -1,6 +1,7 @@
 import type { BoxTileKind } from "@/components/ui/box-tile";
 import type { StatKey } from "@/components/ui/stat-strip";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import { STAT_FIELDS, statShown, writtenStale } from "@/features/catalogue/utils/statblock";
 import type { Item } from "@/features/items/types/item-types";
 
 import { getHeroLevelInfo } from "../heroes/utils/hero-level";
@@ -69,24 +70,27 @@ export function memberName(group: HenchmenGroup, member: { id: number; name?: st
   return member.name?.trim() || `${group.unit_type?.trim() || "Henchman"} ${number || ""}`.trim();
 }
 
-/** The profile for the stat strip; M and Sv read the ridden mount, which is then highlighted. */
+/**
+ * The profile for the stat strip: a written stat as written, M and Sv as the ridden mount makes
+ * them (then highlighted), and a flag on a written stat whose number has moved since (an advance
+ * or an injury changes only the number).
+ */
 export function statValues({ unit }: RosterUnit) {
   const effective = unit.effective_stats;
   const save = effective?.armour_save ?? unit.armour_save;
-  const values: Partial<Record<StatKey, string | number>> = {
-    M: effective?.movement ?? unit.movement ?? undefined,
-    WS: unit.weapon_skill ?? undefined,
-    BS: unit.ballistic_skill ?? undefined,
-    S: unit.strength ?? undefined,
-    T: unit.toughness ?? undefined,
-    W: unit.wounds ?? undefined,
-    I: unit.initiative ?? undefined,
-    A: unit.attacks ?? undefined,
-    Ld: unit.leadership ?? undefined,
-    Sv: save ? `${save}+` : "–",
-  };
+  const written = unit.written_stats ?? {};
+  const values: Partial<Record<StatKey, string | number>> = { Sv: save ? `${save}+` : "–" };
+  const flags: Partial<Record<StatKey, string>> = {};
+  for (const { key, label } of STAT_FIELDS) {
+    const number = unit[key];
+    values[label] = statShown(number, written[key]);
+    if (writtenStale(number, written[key]))
+      flags[label] = `Written ${written[key]}, now ${number ?? "no number"}: update it in Edit`;
+  }
+  if (effective?.movement !== undefined && effective.movement !== null)
+    values.M = effective.movement;
   const highlighted: StatKey[] = unit.mount ? ["M", "Sv"] : [];
-  return { values, highlighted };
+  return { values, highlighted, flags };
 }
 
 export const gearSummary = (items: Item[]) =>

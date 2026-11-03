@@ -1,4 +1,9 @@
-import { statInputs, statNumbers, type StatInputs } from "@/features/catalogue/utils/statblock";
+import {
+  profileInputs,
+  statInputs,
+  statsToSend,
+  type StatInputs,
+} from "@/features/catalogue/utils/statblock";
 
 import type { BeastKind } from "../bestiary-kinds";
 import type {
@@ -29,13 +34,13 @@ export const blankBestiaryCore = (): BestiaryCoreValues => ({
   caster: "No",
 });
 
-/** The entry's part of a create body: trimmed text, the stats as numbers, a whole-number save. */
+/** The entry's part of a create body: trimmed text, the stats as numbers or as written, a whole-number save. */
 export function bestiaryCorePayload(values: BestiaryCoreValues) {
   const armourSave = values.armour_save.trim();
   return {
     name: values.name.trim(),
     description: values.description.trim(),
-    ...statNumbers(values.stats),
+    ...statsToSend(values.stats),
     armour_save: armourSave ? parseInt(armourSave, 10) || null : null,
     large: values.large,
     caster: values.caster,
@@ -81,17 +86,7 @@ export function bestiaryValuesOf(
     available_in_shop: entry.available_in_shop,
     name: entry.name,
     description: entry.description ?? "",
-    stats: statInputs("0", {
-      movement: text(entry.movement),
-      weapon_skill: text(entry.weapon_skill),
-      ballistic_skill: text(entry.ballistic_skill),
-      strength: text(entry.strength),
-      toughness: text(entry.toughness),
-      wounds: text(entry.wounds),
-      initiative: text(entry.initiative),
-      attacks: text(entry.attacks),
-      leadership: text(entry.leadership),
-    }),
+    stats: profileInputs(entry),
     armour_save: text(entry.armour_save),
     large: Boolean(entry.large),
     caster: entry.caster || "No",

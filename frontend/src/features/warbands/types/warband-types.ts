@@ -5,6 +5,7 @@ import type { Spell } from "../../spells/types/spell-types";
 import type { Special } from "../../special/types/special-types";
 import type { Fee } from "../../hirelings/fees";
 import type { BeastKind } from "../../bestiary/bestiary-kinds";
+import type { WrittenStats } from "../../catalogue/utils/statblock";
 import type { CreatureGroupFields, GroupMountFields, UnitCompanionFields } from "./companion-types";
 
 type RaceStatProfile = {
@@ -222,6 +223,8 @@ export type WarbandHero = UnitCompanionFields &
     initiative: number | null;
     attacks: number | null;
     leadership: number | null;
+    /** Stats written as the books print them ("1(2)", "D6"), by field; each number is the one its text starts with, or null. */
+    written_stats?: WrittenStats;
     created_at: string;
     updated_at: string;
     available_skills?: HeroSkills | string[] | null;
@@ -300,6 +303,8 @@ export type WarbandHireling = UnitCompanionFields &
     initiative: number | null;
     attacks: number | null;
     leadership: number | null;
+    /** Stats written as the books print them ("1(2)", "D6"), by field; each number is the one its text starts with, or null. */
+    written_stats?: WrittenStats;
     created_at: string;
     updated_at: string;
     available_skills?: HeroSkills | string[] | null;
@@ -339,15 +344,15 @@ export type WarbandHeroPayload = {
   caster?: HeroCaster | null;
   half_rate?: boolean | null;
   dead?: boolean | null;
-  movement?: number | null;
-  weapon_skill?: number | null;
-  ballistic_skill?: number | null;
-  strength?: number | null;
-  toughness?: number | null;
-  wounds?: number | null;
-  initiative?: number | null;
-  attacks?: number | null;
-  leadership?: number | null;
+  movement?: number | string | null;
+  weapon_skill?: number | string | null;
+  ballistic_skill?: number | string | null;
+  strength?: number | string | null;
+  toughness?: number | string | null;
+  wounds?: number | string | null;
+  initiative?: number | string | null;
+  attacks?: number | string | null;
+  leadership?: number | string | null;
   available_skills?: HeroSkills | string[] | null;
   items?: { id: number; cost?: number | null }[];
   skill_ids?: number[];
@@ -383,15 +388,15 @@ export type WarbandHirelingPayload = {
   stays?: HirelingStays;
   payment_note?: string;
   dead?: boolean | null;
-  movement?: number | null;
-  weapon_skill?: number | null;
-  ballistic_skill?: number | null;
-  strength?: number | null;
-  toughness?: number | null;
-  wounds?: number | null;
-  initiative?: number | null;
-  attacks?: number | null;
-  leadership?: number | null;
+  movement?: number | string | null;
+  weapon_skill?: number | string | null;
+  ballistic_skill?: number | string | null;
+  strength?: number | string | null;
+  toughness?: number | string | null;
+  wounds?: number | string | null;
+  initiative?: number | string | null;
+  attacks?: number | string | null;
+  leadership?: number | string | null;
   items?: { id: number; cost?: number | null }[];
   skill_ids?: number[];
   special_ids?: number[];
@@ -543,6 +548,8 @@ export type HenchmenGroup = UnitCompanionFields &
     initiative: number | null;
     attacks: number | null;
     leadership: number | null;
+    /** Stats written as the books print them ("1(2)", "D6"), by field; each number is the one its text starts with, or null. */
+    written_stats?: WrittenStats;
     /** The group's version: a roster Save sends it back and is refused if it moved (409). */
     updated_at?: string;
     race?: {
@@ -580,15 +587,15 @@ export type HenchmenGroupPayload = {
   half_rate?: boolean | null;
   no_level_ups?: boolean | null;
   dead?: boolean | null;
-  movement?: number | null;
-  weapon_skill?: number | null;
-  ballistic_skill?: number | null;
-  strength?: number | null;
-  toughness?: number | null;
-  wounds?: number | null;
-  initiative?: number | null;
-  attacks?: number | null;
-  leadership?: number | null;
+  movement?: number | string | null;
+  weapon_skill?: number | string | null;
+  ballistic_skill?: number | string | null;
+  strength?: number | string | null;
+  toughness?: number | string | null;
+  wounds?: number | string | null;
+  initiative?: number | string | null;
+  attacks?: number | string | null;
+  leadership?: number | string | null;
   items?: { id: number; cost?: number | null }[];
   /** Create only: notes written on each recruit trade row. */
   item_notes?: string;
