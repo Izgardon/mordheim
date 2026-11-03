@@ -148,7 +148,9 @@ export default function RosterSections(props: RosterSectionsProps) {
         onAdd={props.onHire}
         form={recruitForm("hireling", hired)}
       >
-        <div className="flex flex-col gap-2.5">{hired.map((entry) => card(entry, "row"))}</div>
+        {/* cards in the heroes' grid (William: "make hired sword cards on web the same as hero
+            cards in terms of shape, rather than full width") */}
+        <div className={ROSTER_HEROES}>{hired.map((entry) => card(entry, "hero"))}</div>
       </RosterSection>
     </div>
   );
