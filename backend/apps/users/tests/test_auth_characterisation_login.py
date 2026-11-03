@@ -71,8 +71,7 @@ class LoginTests(AuthTestCase):
     def test_missing_fields_are_field_errors(self):
         # The fields refuse blanks before any credentials check
         cases = {
-            # TEMPORARY: the password is optional while demo accounts sign in without one (PASSWORDLESS_DOMAIN)
-            "nothing": ({}, {"email": ["This field is required."]}),
+            "nothing": ({}, {"email": ["This field is required."], "password": ["This field is required."]}),
             "blank email": ({"email": "  ", "password": PASSWORD}, {"email": ["This field may not be blank."]}),
         }
         for label, (body, errors) in cases.items():

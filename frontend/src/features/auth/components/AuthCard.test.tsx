@@ -52,24 +52,6 @@ beforeEach(() => {
 });
 
 describe("signing in", () => {
-  // TEMPORARY: a demo account signs in with its email alone (revert with the commit that added it)
-  it("hides the password for a demo account and signs in with its email alone", async () => {
-    const user = setupUser();
-    fakeApi.on("POST /auth/login/", loginAnswer(RAIDER));
-    fakeApi.on("GET /auth/me/", RAIDER);
-    renderCard();
-
-    await user.type(screen.getByLabelText("Email"), "captain@mordheim.test");
-    expect(screen.queryByLabelText("Password")).toBeNull();
-    await user.click(submitButton());
-
-    expect(fakeApi.bodyOf("POST /auth/login/")).toEqual({
-      email: "captain@mordheim.test",
-      password: "",
-    });
-    expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
-  });
-
   it("sends what was typed, says Working... meanwhile, then goes to /campaigns", async () => {
     const user = setupUser();
     const login = deferred<ReturnType<typeof loginAnswer>>();

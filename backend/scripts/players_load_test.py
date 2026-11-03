@@ -298,7 +298,9 @@ def main() -> None:
     parser.add_argument("--think", default="0.5,1.5", help="the pause between a player's pages, in seconds")
     parser.add_argument("--out", default="players_load_test.json")
     args = parser.parse_args()
-    password = os.environ.get("DEMO_PASSWORD", "")  # TEMPORARY: empty while demo accounts sign in by email alone
+    password = os.environ.get("DEMO_PASSWORD", "")
+    if not password:
+        raise SystemExit("Set DEMO_PASSWORD to the demo players' password.")
     low, high = (float(value) for value in args.think.split(","))
     levels = [int(value) for value in args.levels.split(",")]
 
