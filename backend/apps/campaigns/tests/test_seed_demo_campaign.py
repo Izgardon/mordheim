@@ -15,7 +15,7 @@ from django.test import TestCase, override_settings
 from apps.battles.models import Battle, BattleKill
 from apps.bounties.models import Bounty
 from apps.campaigns.demo.cast import CAMPAIGN_NAME, CAPTAIN_EMAIL, EMAIL_DOMAIN, PASSWORD
-from apps.campaigns.demo.guard import check_local
+from apps.campaigns.demo.guard import check_local, remote_password
 from apps.campaigns.models import Campaign, CampaignMembership, PivotalMoment
 from apps.trades.models import TradeRequest
 from apps.warbands.models import Hero, Warband, WarbandLog, WarbandTrade
@@ -120,3 +120,30 @@ class GuardTests(TestCase):
         for host in ("db", "localhost", "127.0.0.1"):
             with mock.patch.dict(connection.settings_dict, {"HOST": host}):
                 check_local()
+
+    def test_remote_needs_a_demo_password_of_its_own(self):
+        for password in ("", "short", PASSWORD):
+            with self.subTest(password=password), mock.patch.dict("os.environ", {"DEMO_PASSWORD": password}):
+                with self.assertRaisesMessage(CommandError, "--remote needs DEMO_PASSWORD"):
+                    call_command("seed_demo_campaign", remote=True, stdout=StringIO())
+        with mock.patch.dict("os.environ", {"DEMO_PASSWORD": "long enough secret"}):
+            self.assertEqual(remote_password(), "long enough secret")
+        self.assertFalse(Campaign.objects.exists())
+
+
+class RemoteSeedTests(TestCase):
+    def test_remote_seeds_any_database_with_the_demo_password_and_never_prints_it(self):
+        output = StringIO()
+        with (
+            mock.patch.dict("os.environ", {"DEMO_PASSWORD": "long enough secret"}),
+            mock.patch.dict(connection.settings_dict, {"HOST": NEON_HOST}),
+            redirect_stdout(output),
+        ):
+            call_command("seed_demo_campaign", remote=True, stdout=output)  # with DEBUG off, as tests run
+
+        captain = get_user_model().objects.get(username=CAPTAIN_EMAIL)
+        self.assertTrue(captain.check_password("long enough secret"))
+        self.assertFalse(captain.check_password(PASSWORD))
+        self.assertIn("with the password in DEMO_PASSWORD", output.getvalue())
+        self.assertNotIn("long enough secret", output.getvalue())
+        self.assertTrue(Campaign.objects.filter(name=CAMPAIGN_NAME).exists())

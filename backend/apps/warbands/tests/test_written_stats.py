@@ -126,7 +126,7 @@ class WrittenStatSumsTests(RosterTestCase):
 
         fields = kept_stats(hero, {"strength": 4, "attacks": 3}, "Kurt", logs)
 
-        self.assertEqual(fields, ["strength", "written_stats", "attacks"])
+        self.assertCountEqual(fields, ["strength", "written_stats", "attacks"])  # the stats come from a set
         self.assertEqual((hero.strength, hero.attacks, hero.written_stats), (4, 3, {"attacks": "(2)"}))
         changes = {"strength": {"before": None, "after": 4}, "attacks": {"before": 1, "after": 3}}
         self.assertEqual(logs, [{"unit_name": "Kurt", "changes": changes}])
