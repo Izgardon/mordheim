@@ -25,7 +25,8 @@ export default function ArchivedBanner({
     <CampaignNotice
       look={look}
       icon={Archive}
-      className={look === "page" ? "gap-y-1 py-3" : "gap-y-1"}
+      kicker="Archived"
+      className={look === "page" ? "gap-y-1 py-3" : undefined}
       action={
         campaignCapabilities(campaign).restore ? (
           <Link
@@ -37,7 +38,9 @@ export default function ArchivedBanner({
         ) : null
       }
     >
-      This campaign is archived: read-only for everyone.
+      {look === "bar"
+        ? "Read-only for everyone"
+        : "This campaign is archived: read-only for everyone."}
     </CampaignNotice>
   );
 }

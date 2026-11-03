@@ -99,7 +99,8 @@ describe("the web bar off the overview", () => {
 
     const header = await bar();
     const battle = await within(header).findByRole("status", { name: "Your battle" });
-    expect(battle).toHaveTextContent("You're in a battle: Street Fight, Battle 6");
+    expect(within(battle).getByText("In battle")).toBeInTheDocument();
+    expect(within(battle).getByText("Street Fight, Battle 6")).toBeInTheDocument();
     expect(within(battle).getByRole("link", { name: "Rejoin" })).toHaveAttribute(
       "href",
       `${BASE}/battles/31/active`
@@ -113,6 +114,7 @@ describe("the web bar off the overview", () => {
     renderApp(`${BASE}/house-rules`);
 
     await within(await bar()).findByRole("status", { name: "Your battle" });
+    expect(screen.queryByText("None in this campaign yet")).toBeNull();
     expect(screen.queryByText("You have no warband in this campaign.")).toBeNull();
   });
 
@@ -121,20 +123,16 @@ describe("the web bar off the overview", () => {
     renderApp(`${BASE}/house-rules`);
 
     const header = await bar();
-    expect(
-      await within(header).findByText("You have no warband in this campaign.")
-    ).toBeInTheDocument();
+    expect(await within(header).findByText("None in this campaign yet")).toBeInTheDocument();
     expect(within(header).getByRole("link", { name: "Raise your warband" })).toBeInTheDocument();
-    expect(screen.getAllByText("You have no warband in this campaign.")).toHaveLength(1);
+    expect(screen.getAllByRole("link", { name: "Raise your warband" })).toHaveLength(1);
   });
 
   it("says an archived campaign is read-only", async () => {
     fakeApi.on(`GET ${BASE}/`, campaignSummary({ archived_at: "2026-10-30T18:00:00Z" }));
     renderApp(`${BASE}/house-rules`);
 
-    expect(
-      await within(await bar()).findByText("This campaign is archived: read-only for everyone.")
-    ).toBeInTheDocument();
+    expect(await within(await bar()).findByText("Read-only for everyone")).toBeInTheDocument();
   });
 
   it("names the campaign and the page with nothing more urgent", async () => {

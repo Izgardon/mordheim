@@ -44,13 +44,14 @@ export default function NoWarbandBanner({
     <CampaignNotice
       look={look}
       icon={Shield}
+      kicker="Your warband"
       action={
         <Button asChild size="sm" className="h-9 text-[13px] max-[960px]:h-10">
           <Link to={`/campaigns/${campaign.id}/warband`}>Raise your warband</Link>
         </Button>
       }
     >
-      You have no warband in this campaign.
+      {look === "bar" ? "None in this campaign yet" : "You have no warband in this campaign."}
     </CampaignNotice>
   );
 }

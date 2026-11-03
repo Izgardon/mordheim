@@ -17,7 +17,7 @@ import RejoinBanner from "./RejoinBanner";
 function BarTitle({ kicker, title }: { kicker: string; title: string }) {
   return (
     <span className="flex min-w-0 flex-col gap-px">
-      <span className="truncate text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+      <span className="truncate text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text">
         {kicker}
       </span>
       <span className="truncate font-display text-xl font-semibold leading-tight text-head">
@@ -57,10 +57,9 @@ export default function CampaignBar({
     raise,
     archived: isArchived(campaign),
   });
-  const tone = content === "readiness" ? "band" : content === "title" ? "plain" : "accent";
 
   return (
-    <WebTopBar tone={tone}>
+    <WebTopBar>
       {content === "readiness" ? (
         players.data ? (
           <ReadinessBar players={players.data} userId={user?.id} isMobile={false} />

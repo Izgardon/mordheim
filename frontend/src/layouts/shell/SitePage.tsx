@@ -69,7 +69,7 @@ function PhoneBar() {
 /**
  * The frame of the signed-in pages outside a campaign, the campaigns list and Account (design E),
  * then the page, which scrolls inside it (the body never does). On the web the bar is the
- * permanent web bar (Campaigns and Log out on its left, the wordmark, Account at its right end);
+ * permanent web bar (the wordmark, then Campaigns, Account and Log out at its right end);
  * a phone keeps its own bar, with the wordmark, the two pages and Log out as icons.
  */
 export default function SitePage({
@@ -88,12 +88,10 @@ export default function SitePage({
       ) : (
         <WebTopBar
           className="shrink-0"
-          end={
-            <nav aria-label="Pages" className="flex items-stretch">
-              <WebTopBarLink to="/account" icon={<UserRound aria-hidden="true" />}>
-                Account
-              </WebTopBarLink>
-            </nav>
+          links={
+            <WebTopBarLink to="/account" icon={<UserRound aria-hidden="true" />}>
+              Account
+            </WebTopBarLink>
           }
         >
           <Wordmark />
