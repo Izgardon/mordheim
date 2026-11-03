@@ -41,8 +41,6 @@ type RosterSectionsProps = {
   onAdvance: (entry: RosterUnit) => void;
   /** Buy again on a carried item: the store for that unit with the item open. */
   onBuyAgain: (entry: RosterUnit, item: Item) => void;
-  /** More for a hero card's header: its bounties. */
-  heroExtra?: (hero: WarbandHero) => ReactNode;
 };
 
 /** The roster tab: heroes as cards in a grid, henchmen and hired swords as rows (design E). */
@@ -93,7 +91,6 @@ export default function RosterSections(props: RosterSectionsProps) {
         onRide={(rowId, on) => actions.rideMount(entry, rowId, on)}
         onAdvance={() => props.onAdvance(entry)}
         onTradingAction={(on) => actions.patchUnit(entry, { trading_action: on })}
-        extra={entry.kind === "hero" ? props.heroExtra?.(entry.unit) : null}
       >
         {editing ? (
           props.renderEdit(entry, cards.stopEdit)

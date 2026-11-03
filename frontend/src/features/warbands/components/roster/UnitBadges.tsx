@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 import { Chip, ChipLabel } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
@@ -12,8 +10,9 @@ const ADVANCE =
 
 /**
  * A card's top row of badges: the mount it rides, Missing, Advance ready (a button that starts
- * the advance), the kill count with its breakdown, a hero's trading action as a thin toggle, and
- * what the page adds (a hero's bounties).
+ * the advance), the kill count with its breakdown and a hero's trading action as a thin toggle.
+ * A hero's bounties show only on the overview (William: "dont need to see the bounty on the
+ * warband sheet for a unit").
  */
 export default function UnitBadges({
   entry,
@@ -24,7 +23,6 @@ export default function UnitBadges({
   onRide,
   onAdvance,
   onTradingAction,
-  extra,
 }: {
   entry: RosterUnit;
   campaign: CampaignSummary | null;
@@ -34,7 +32,6 @@ export default function UnitBadges({
   onRide: (rowId: number, on: boolean) => void;
   onAdvance?: () => void;
   onTradingAction?: (on: boolean) => void;
-  extra?: ReactNode;
 }) {
   const { unit } = entry;
   const xp = xpInfo(entry, campaign);
@@ -80,7 +77,6 @@ export default function UnitBadges({
           Trading action
         </Switch>
       ) : null}
-      {extra}
     </>
   );
 }

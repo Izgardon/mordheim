@@ -3,7 +3,6 @@ import { useNavigate, useOutletContext, useParams, useSearchParams } from "react
 import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
-import { useHeroBounties } from "@/features/bounties/hooks/useHeroBounties";
 import type { StoreOpening } from "@/features/items/store/StorePanel";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -57,7 +56,6 @@ export default function Warband() {
     enabled: Boolean(warband),
   });
   const stashCount = (stash.data ?? []).reduce((sum, item) => sum + (item.quantity ?? 1), 0);
-  const heroBounties = useHeroBounties(campaignId, warband?.user_id === user?.id);
 
   const setPanel = (next: WarbandPanel | null) => {
     const params = new URLSearchParams(searchParams);
@@ -175,7 +173,6 @@ export default function Warband() {
                   onLoadout={setLoadoutFor}
                   onHire={hire}
                   onAdvance={setAdvancing}
-                  heroExtra={heroBounties}
                   onBuyAgain={(entry, item) =>
                     openStore(
                       storeFor(entry, {

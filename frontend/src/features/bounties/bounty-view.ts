@@ -50,14 +50,6 @@ export function claimLine(claim: BountyClaim, readerId: number | null = null) {
   return `${who} it for ${claim.unit_name}${where}`;
 }
 
-/** The live bounties on one hero, and their total. */
-export function bountiesOn(list: BountyList | undefined, heroId: number) {
-  const bounties = (list?.bounties ?? []).filter(
-    (bounty) => isLive(bounty) && bounty.target.hero_id === heroId
-  );
-  return { bounties, total: bounties.reduce((sum, bounty) => sum + bounty.amount, 0) };
-}
-
 /**
  * What the reader's warband would owe if every bounty it has open were paid, with `adding` more:
  * the dialog's "can't afford it right now" warning (the server warns the same when posting).

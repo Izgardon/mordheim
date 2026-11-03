@@ -43,8 +43,6 @@ type UnitCardProps = {
   /** Advance ready's button: the unit's advance. */
   onAdvance?: () => void;
   onTradingAction?: (on: boolean) => void;
-  /** More for the header beside the chips: a hero's bounties. */
-  extra?: ReactNode;
   /** The open body (`UnitDetails`), or the edit form. */
   children?: ReactNode;
 };
@@ -99,7 +97,6 @@ export default function UnitCard(props: UnitCardProps) {
       onRide={props.onRide}
       onAdvance={props.onAdvance}
       onTradingAction={props.onTradingAction}
-      extra={props.extra}
     />
   );
 

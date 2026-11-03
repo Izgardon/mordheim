@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { bountiesOn, bountyRoles, claimLine, goneText, owedWith } from "./bounty-view";
+import { bountyRoles, claimLine, goneText, owedWith } from "./bounty-view";
 import type { Bounty, BountyClaim, BountyList } from "./types";
 
 const claim = (overrides: Partial<BountyClaim> = {}): BountyClaim => ({
@@ -105,11 +105,6 @@ describe("totals", () => {
     ],
     my_warband: { id: 10, name: "Monks", gold: 90 },
   };
-
-  it("adds up the live bounties on a hero", () => {
-    expect(bountiesOn(list, 12).total).toBe(55);
-    expect(bountiesOn(list, 1).bounties).toEqual([]);
-  });
 
   it("warns when the reader's open bounties would come to more than he holds", () => {
     expect(owedWith(list, 0)).toMatchObject({ owed: 95, gold: 90, short: true });
