@@ -24,9 +24,16 @@ type Editing = { kind: "add" } | { kind: "rename" | "sell"; resource: WarbandRes
 const MENU_ITEM =
   "flex min-h-10 cursor-pointer items-center px-3 text-sm text-ink outline-none data-[highlighted]:bg-raised";
 
+/** The campaign's default resource first, the rest as they come. */
+const defaultFirst = (resources: WarbandResource[]) => [
+  ...resources.filter((resource) => resource.is_default),
+  ...resources.filter((resource) => !resource.is_default),
+];
+
 /**
- * The warband's resources (design E): − and + inline, Add resource (its name and amount open in
- * the button's place), and Rename, Delete, Sell.
+ * The warband's resources (design E): the default resource first, with no icon, then the rest; −
+ * and + inline, Add resource (its name and amount open in the button's place), and Rename, Delete,
+ * Sell (the default only sells).
  */
 export default function WarbandResources({
   warbandId,
@@ -67,10 +74,10 @@ export default function WarbandResources({
       aria-label="Resources"
       className="flex flex-wrap items-center gap-x-5 gap-y-2.5 border-y border-line py-3"
     >
-      {resources.map((resource) => (
+      {defaultFirst(resources).map((resource) => (
         <div key={resource.id} className="flex items-center gap-2">
           <span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
-            {/wyrd/i.test(resource.name) ? (
+            {!resource.is_default && /wyrd/i.test(resource.name) ? (
               <GameIcon name="wyrdstone" className="h-3.5 w-3.5 text-good" />
             ) : null}
             {resource.name}
@@ -111,15 +118,17 @@ export default function WarbandResources({
                     align="end"
                     className="z-[70] min-w-[160px] border border-border bg-panel p-1"
                   >
-                    <DropdownMenu.Item
-                      className={MENU_ITEM}
-                      onSelect={() => {
-                        setText(resource.name);
-                        setEditing({ kind: "rename", resource });
-                      }}
-                    >
-                      Rename
-                    </DropdownMenu.Item>
+                    {resource.is_default ? null : (
+                      <DropdownMenu.Item
+                        className={MENU_ITEM}
+                        onSelect={() => {
+                          setText(resource.name);
+                          setEditing({ kind: "rename", resource });
+                        }}
+                      >
+                        Rename
+                      </DropdownMenu.Item>
+                    )}
                     <DropdownMenu.Item
                       className={MENU_ITEM}
                       onSelect={() => {
@@ -130,12 +139,14 @@ export default function WarbandResources({
                     >
                       Sell
                     </DropdownMenu.Item>
-                    <DropdownMenu.Item
-                      className={`${MENU_ITEM} text-danger`}
-                      onSelect={() => remove.mutate(resource.id, { onError })}
-                    >
-                      Delete
-                    </DropdownMenu.Item>
+                    {resource.is_default ? null : (
+                      <DropdownMenu.Item
+                        className={`${MENU_ITEM} text-danger`}
+                        onSelect={() => remove.mutate(resource.id, { onError })}
+                      >
+                        Delete
+                      </DropdownMenu.Item>
+                    )}
                   </DropdownMenu.Content>
                 </DropdownMenu.Portal>
               </DropdownMenu.Root>

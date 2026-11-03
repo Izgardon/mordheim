@@ -1,15 +1,21 @@
 import { feeGold, feeOf, matchCounter, type Fee } from "../../fees";
 
 /** A counter of the warband's (its resources): what pays a fee's resource line. */
-export type Counter = { id: number; name: string; amount: number };
+export type Counter = { id: number; name: string; amount: number; is_default?: boolean };
 
 /**
  * What a fee's resource line is paid from: a counter's id, "none" (Don't pay this), or undefined
- * for the counter of its name (the server's default too).
+ * for the counter of its name, the default resource for Wyrdstone (the server's default too).
  */
 export type LinePick = number | "none" | undefined;
 
-export type PaymentLine = { resource: string; amount: string; names?: string[]; pick: LinePick };
+export type PaymentLine = {
+  resource: string;
+  amount: string;
+  names?: string[];
+  default_resource?: boolean;
+  pick: LinePick;
+};
 
 /** What the player pays, every part prefilled from the fee and editable (the fees step). */
 export type Payment = { gold: string; roll: number | null; lines: PaymentLine[] };
@@ -24,6 +30,7 @@ export function paymentOf(raw: Fee | null | undefined): Payment {
       resource: line.resource,
       amount: String(line.amount),
       names: line.names,
+      default_resource: line.default_resource,
       pick: undefined,
     })),
   };

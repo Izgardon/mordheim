@@ -117,7 +117,7 @@ export default function Overview() {
         isMobile ? "grid-cols-4" : "[grid-template-columns:repeat(auto-fit,minmax(130px,1fr))]"
       )}
     >
-      {buildStats(players, history)
+      {buildStats(players, history, campaign.default_resource_name)
         .filter((stat) => !isMobile || stat.short)
         .map((stat) => (
           <div

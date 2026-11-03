@@ -103,8 +103,8 @@ class ResourceTests(RosterTestCase):
         self.assertEqual(
             response.json(),
             [
-                {"id": gold.id, "warband_id": self.warband.id, "name": "Gold Crowns", "amount": 7},
-                {"id": shards.id, "warband_id": self.warband.id, "name": "Wyrdstone", "amount": 3},
+                {"id": gold.id, "warband_id": self.warband.id, "name": "Gold Crowns", "amount": 7, "is_default": False},
+                {"id": shards.id, "warband_id": self.warband.id, "name": "Wyrdstone", "amount": 3, "is_default": False},
             ],
         )
 
@@ -116,7 +116,8 @@ class ResourceTests(RosterTestCase):
         self.assertEqual(created.status_code, 201)
         resource = WarbandResource.objects.get(warband=self.warband)
         self.assertEqual(
-            created.json(), {"id": resource.id, "warband_id": self.warband.id, "name": "Wyrdstone", "amount": 0}
+            created.json(),
+            {"id": resource.id, "warband_id": self.warband.id, "name": "Wyrdstone", "amount": 0, "is_default": False},
         )
         self.assertEqual((duplicate.status_code, duplicate.json()), (400, {"detail": "Resource already exists"}))
         self.assertEqual((blank.status_code, list(blank.json())), (400, ["name"]))
@@ -151,7 +152,8 @@ class ResourceTests(RosterTestCase):
 
         self.assertEqual((up.status_code, up.json()["amount"]), (200, 7))
         self.assertEqual(
-            down.json(), {"id": resource.id, "warband_id": self.warband.id, "name": "Wyrdstone", "amount": 0}
+            down.json(),
+            {"id": resource.id, "warband_id": self.warband.id, "name": "Wyrdstone", "amount": 0, "is_default": False},
         )
         self.assertEqual((huge.json()["amount"], again.json()["amount"]), (2_147_483_647, 2_147_483_647))
 

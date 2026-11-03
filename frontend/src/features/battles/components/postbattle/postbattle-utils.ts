@@ -96,9 +96,9 @@ function createDefaultUnitResult(
   };
 }
 
-function findTreasureResourceId(resources: WarbandResource[]): number | null {
-  const treasure = resources.find((r) => r.name.toLowerCase() === "treasure");
-  return treasure?.id ?? resources[0]?.id ?? null;
+/** Where exploration's shards go until the player picks: the warband's default resource. */
+export function defaultResourceId(resources: WarbandResource[]): number | null {
+  return (resources.find((resource) => resource.is_default) ?? resources[0])?.id ?? null;
 }
 
 /** The roll saved with the draft, or `suggestion`'s dice (the server's, `suggested_postbattle`). */
@@ -115,7 +115,7 @@ export function buildLocalExplorationState(
   const savedDice = Array.isArray(saved?.dice_values)
     ? saved.dice_values.filter((value): value is number => typeof value === "number")
     : [];
-  const savedResourceId = saved?.resource_id ?? findTreasureResourceId(resources);
+  const savedResourceId = saved?.resource_id ?? defaultResourceId(resources);
   const savedOverride = typeof saved?.amount_override === "number" ? saved.amount_override : null;
   if (savedDice.length > 0) {
     return {
@@ -379,7 +379,7 @@ export function buildPostbattleDraft(
             (value): value is number => typeof value === "number"
           )
         : [],
-      resource_id: existingExploration.resource_id ?? findTreasureResourceId(resources),
+      resource_id: existingExploration.resource_id ?? defaultResourceId(resources),
     },
     finds: getExistingFinds(existing),
     upkeep: {

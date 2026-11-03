@@ -21,6 +21,7 @@ import type {
   CampaignPlayer,
   CampaignPlayerName,
   CampaignSummary,
+  CampaignUpdateAnswer,
   CampaignUpdatePayload,
 } from "../types/campaign-types";
 import type { TradeRequest } from "@/features/warbands/types/trade-request-types";
@@ -48,7 +49,7 @@ export function getCampaign(campaignId: number, { signal }: { signal?: AbortSign
 }
 
 export function updateCampaign(campaignId: number, payload: CampaignUpdatePayload) {
-  return apiRequest<CampaignSummary>(`/campaigns/${campaignId}/`, {
+  return apiRequest<CampaignUpdateAnswer>(`/campaigns/${campaignId}/`, {
     method: "PATCH",
     body: payload,
     headers: socketIdHeaders(),

@@ -31,6 +31,18 @@ class FeeTests(SimpleTestCase):
         self.assertIsNone(match_counter("Treasure", counters("Wyrdstone")))
         self.assertIn("wyrdstone shards", names_of("wyrdstone"))
 
+    def test_wyrdstone_is_paid_by_the_default_resource_whatever_the_campaign_calls_it(self):
+        mine = [
+            SimpleNamespace(id=1, name="Wyrdstone shards", is_default=False),
+            SimpleNamespace(id=2, name="Warpstone", is_default=True),
+            SimpleNamespace(id=3, name="Treasures", is_default=False),
+        ]
+        self.assertEqual(match_counter("Wyrdstone", mine).name, "Warpstone")
+        self.assertEqual(match_counter("Shards", mine).name, "Warpstone")
+        self.assertEqual(match_counter("Treasure", mine).name, "Treasures")  # the rest still by name
+        payload = fee_payload(make_fee(resources=[("Wyrdstone", 1), ("Treasure", 2)]))
+        self.assertEqual([line["default_resource"] for line in payload["resources"]], [True, False])
+
     def test_a_written_fee_is_checked_and_stored_whole(self):
         self.assertEqual(clean_fee({"gold": 20}), make_fee(gold=20))
         cleaned = clean_fee({"kind": "gold", "resources": [{"resource": " Treasure ", "amount": 2}], "note": " * "})

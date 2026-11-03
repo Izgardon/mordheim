@@ -4,7 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.campaigns.models import CampaignSettings
+from apps.campaigns.models import DEFAULT_RESOURCE_NAME, CampaignSettings
 from apps.campaigns.permissions import get_writable_membership, parse_campaign_id
 from apps.warbands.access import check_backstory_change
 from apps.warbands.models import LedgerAction, Warband, WarbandResource
@@ -47,10 +47,13 @@ class WarbandListCreateView(APIView):
 
         counts_as = picked_types(campaign_id, serializer.validated_data) or []  # 400 for a type it may not pick
         with transaction.atomic():
+            # locked: a rename of the default resource renames this warband's too, before or after (one at a time)
+            settings = CampaignSettings.objects.select_for_update().filter(campaign_id=campaign_id).first()
             warband = serializer.save(user=request.user)
             warband.counts_as.set(counts_as)
-            WarbandResource.objects.get_or_create(warband=warband, name="Treasure", defaults={"amount": 0})
-            settings = CampaignSettings.objects.filter(campaign_id=campaign_id).first()
+            # the one everyone starts with (William, 3 Nov 2026), named as the campaign names it
+            name = settings.default_resource_name if settings else DEFAULT_RESOURCE_NAME
+            WarbandResource.objects.create(warband=warband, name=name, amount=0, is_default=True)
             starting_gold = settings.starting_gold if settings else 500
             ledger.record(warband, LedgerAction.STARTING_GOLD, abs(starting_gold), "Starting Gold")
         return Response(WarbandSerializer(warband).data, status=status.HTTP_201_CREATED)

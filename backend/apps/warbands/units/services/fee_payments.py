@@ -1,8 +1,9 @@
 """Paying a fee's resources (the fees and skill lists step): each line of a hire fee or an upkeep ("1 Wyrdstone",
-"5 Campaign points") is paid from one of the warband's counters: the one the player picked, or else the one whose
-name matches (`apps/hirelings/fees.py: match_counter`). A counter never goes below 0, so a short one pays what it
-holds. A shortage, or a line no counter pays, is a warning, never a refusal (a guide, not a gatekeeper); a line the
-player chose not to pay is noted, not warned about. What was paid goes in the note of the ledger row it goes with.
+"5 Campaign points") is paid from one of the warband's counters: the one the player picked, or else its default
+resource for Wyrdstone and the one whose name matches for the rest (`apps/hirelings/fees.py: match_counter`). A
+counter never goes below 0, so a short one pays what it holds. A shortage, or a line no counter pays, is a warning,
+never a refusal (a guide, not a gatekeeper); a line the player chose not to pay is noted, not warned about. What was
+paid goes in the note of the ledger row it goes with.
 
 Callers hold the warband's row (the gold's lock comes first, as everywhere); `locked_counters` then locks its
 counters in one query and `pay` writes their new amounts in one UPDATE, whatever the number of lines.

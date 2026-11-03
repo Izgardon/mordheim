@@ -6,6 +6,7 @@ import {
   suggestedExploration,
 } from "@/features/battles/components/postbattle/postbattle-rules";
 import {
+  defaultResourceId,
   getSelectedExplorationDiceValues,
   setLocalExplorationDiceCount,
   setLocalExplorationResource,
@@ -70,10 +71,10 @@ export function useExploration({
       setExplorationKey(ownerKey);
       return;
     }
-    if (exploration && exploration.resourceId === null && resources.length > 0) {
-      const treasureId =
-        resources.find((r) => r.name.toLowerCase() === "treasure")?.id ?? resources[0].id;
-      setExploration(setLocalExplorationResource(exploration, treasureId));
+    // none picked, or the pick is gone (deleted, or merged into the default by a campaign rename)
+    const gone = !resources.some((resource) => resource.id === exploration?.resourceId);
+    if (exploration && gone && resources.length > 0) {
+      setExploration(setLocalExplorationResource(exploration, defaultResourceId(resources)));
     }
   }, [
     battle,

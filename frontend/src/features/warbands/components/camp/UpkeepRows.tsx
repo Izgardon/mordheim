@@ -20,16 +20,20 @@ const pickOf = (resourceId: number | null | undefined): LinePick =>
 
 /** A line's draft entry as the payment editor shows it, each resource with what pays it. */
 function paymentOfEntry(line: UpkeepLine): Payment {
-  const names = feeOf(line.fee).resources;
+  const fees = feeOf(line.fee).resources;
   return {
     gold: String(line.entry.cost ?? 0),
     roll: null,
-    lines: (line.entry.resources ?? []).map((resource) => ({
-      resource: resource.resource,
-      amount: String(resource.amount),
-      names: names.find((fee) => fee.resource === resource.resource)?.names,
-      pick: pickOf(resource.resource_id),
-    })),
+    lines: (line.entry.resources ?? []).map((resource) => {
+      const fee = fees.find((entry) => entry.resource === resource.resource);
+      return {
+        resource: resource.resource,
+        amount: String(resource.amount),
+        names: fee?.names,
+        default_resource: fee?.default_resource,
+        pick: pickOf(resource.resource_id),
+      };
+    }),
   };
 }
 

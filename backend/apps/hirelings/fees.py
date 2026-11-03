@@ -10,9 +10,11 @@ keep, on the catalogue entry and on the warband's copy, as one small JSON object
   that name and never below 0 (units/services/fee_payments.py);
 - `note`: the rest ("15 gc*", Sigmund's body part).
 
-A resource is named as fees name it. The three the book uses have their usual spellings (`RESOURCE_NAMES`), so a
-warband's "Wyrdstone shards" pays a Wyrdstone fee; payloads list each line's `names` and the pages default the line to
-the warband's counter of one of them (the player may pick another, add one or not pay it).
+A resource is named as fees name it. Wyrdstone is paid from the warband's default resource (`WarbandResource.is_default`)
+whatever the campaign calls it; the three the book uses also have their usual spellings (`RESOURCE_NAMES`), so a
+warband without a default counter pays Wyrdstone from its "Wyrdstone shards". Payloads list each line's `names` and
+whether the default resource pays it (`default_resource`), and the pages default the line to that counter (the player
+may pick another, add one or not pay it).
 """
 
 from collections.abc import Iterable, Mapping
@@ -26,9 +28,10 @@ MAX_DICE = 20
 MAX_RESOURCE_LINES = 6
 MAX_NOTE = 500
 
+WYRDSTONE = "Wyrdstone"  # the resource the warband's default counter pays, whatever the campaign calls it
 # A resource as fees name it -> every name a warband's counter of it may have (lower case).
 RESOURCE_NAMES: Mapping[str, tuple[str, ...]] = {
-    "Wyrdstone": ("wyrdstone", "wyrdstones", "wyrdstone shard", "wyrdstone shards", "shard", "shards"),
+    WYRDSTONE: ("wyrdstone", "wyrdstones", "wyrdstone shard", "wyrdstone shards", "shard", "shards"),
     "Treasure": ("treasure", "treasures"),
     "Campaign points": ("campaign points", "campaign point", "campaign pts", "cp"),
 }
@@ -85,8 +88,19 @@ def names_of(resource: str) -> tuple[str, ...]:
     return (key,)
 
 
+def pays_from_default(resource: str) -> bool:
+    """Whether the warband's default resource pays `resource`: Wyrdstone, by any of its spellings."""
+    return names_of(resource) == RESOURCE_NAMES[WYRDSTONE]
+
+
 def match_counter(resource: str, counters: Iterable[Any]) -> Any:
-    """The warband's counter (anything with a `name`) that pays `resource`, or None."""
+    """The warband's counter (anything with a `name`, and `is_default`) that pays `resource`, or None: the default
+    resource for Wyrdstone, else the counter of one of its names."""
+    counters = list(counters)
+    if pays_from_default(resource):
+        default = next((counter for counter in counters if getattr(counter, "is_default", False)), None)
+        if default is not None:
+            return default
     names = names_of(resource)
     return next((counter for counter in counters if _key(counter.name) in names), None)
 
@@ -168,9 +182,13 @@ def clean_fee(value: Any) -> Fee:
 
 
 def fee_payload(fee: Mapping[str, Any] | None) -> dict[str, Any]:
-    """A stored fee as payloads show it: every key, and each resource line's `names` (what pays it)."""
+    """A stored fee as payloads show it: every key, and what pays each resource line (its `names`, and whether the
+    warband's default resource does: `default_resource`)."""
     stored = {**no_fee(), **(fee or {})}
-    lines = [{**line, "names": list(names_of(line["resource"]))} for line in stored["resources"]]
+    lines = [
+        {**line, "names": list(names_of(line["resource"])), "default_resource": pays_from_default(line["resource"])}
+        for line in stored["resources"]
+    ]
     return {**stored, "resources": lines}
 
 

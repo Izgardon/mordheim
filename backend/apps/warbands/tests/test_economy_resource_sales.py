@@ -32,7 +32,14 @@ class ResourceSaleTests(RosterTestCase):
         body = response.json()
         self.assertEqual(list(body), ["resource", "trade", "summary"])
         self.assertEqual(
-            body["resource"], {"id": self.shards.id, "warband_id": self.warband.id, "name": "Wyrdstone", "amount": 1}
+            body["resource"],
+            {
+                "id": self.shards.id,
+                "warband_id": self.warband.id,
+                "name": "Wyrdstone",
+                "amount": 1,
+                "is_default": False,
+            },
         )
         self.assertEqual(
             (body["trade"]["action"], body["trade"]["description"], body["trade"]["price"]),

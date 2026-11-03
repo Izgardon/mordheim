@@ -75,21 +75,24 @@ export function buildStandings(
 }
 
 /**
- * The stats line: battles, warbands, kills, shards found, heroes lost (`short`: a phone's label, ""
- * to leave out), each with its small icon, as the warband's info line has.
+ * The stats line: battles, warbands, kills, the shards exploration found (named as the campaign
+ * names its default resource), heroes lost (`short`: a phone's label, "" to leave out), each with
+ * its small icon, as the warband's info line has.
  */
 export function buildStats(
   players: CampaignPlayer[],
-  history: CampaignBattleHistoryEntry[]
+  history: CampaignBattleHistoryEntry[],
+  resourceName = "Wyrdstone"
 ): { k: string; short: string; v: number; icon: GameIconName }[] {
   const rows = history.flatMap((battle) => battle.participants);
   const sum = (value: (row: (typeof rows)[number]) => number | null | undefined) =>
     rows.reduce((total, row) => total + (value(row) ?? 0), 0);
+  const shards = sum((row) => row.shards);
   return [
     { k: "Battles", short: "Battles", v: history.length, icon: "battles" },
     { k: "Warbands", short: "", v: withWarbands(players).length, icon: "warbands" },
     { k: "Kills", short: "Kills", v: sum((row) => row.kills), icon: "kills" },
-    { k: "Shards found", short: "Shards", v: sum((row) => row.shards), icon: "wyrdstone" },
+    { k: `${resourceName} found`, short: resourceName, v: shards, icon: "wyrdstone" },
     { k: "Heroes lost", short: "Lost", v: sum((row) => row.heroes_lost), icon: "lost" },
   ];
 }

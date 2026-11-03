@@ -108,8 +108,8 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
 
 /**
  * Settings → Campaign (`edit_settings`, the owner): its name and the pages switched on, the content
- * in play (grade presets and settings), then the warband rules (starting gold, limits, the death
- * roll and the level-ups).
+ * in play (grade presets and settings), then the warband rules (starting gold, the default
+ * resource, limits, the death roll and the level-ups).
  */
 export default function CampaignSection({ campaign }: { campaign: CampaignSummary }) {
   return (

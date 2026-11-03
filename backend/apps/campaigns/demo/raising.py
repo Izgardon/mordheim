@@ -1,6 +1,6 @@
-"""Raising a demo warband as its player would: the warband, its backstory and Wyrdstone counter, each hero and
-henchmen group recruited at its price and kitted out through purchases, a late recruit who joins without part of the
-group's kit (his gap), the hired swords hired at their fee, and the stash's spares bought."""
+"""Raising a demo warband as its player would: the warband (with its default resource, Wyrdstone), its backstory, each
+hero and henchmen group recruited at its price and kitted out through purchases, a late recruit who joins without part
+of the group's kit (his gap), the hired swords hired at their fee, and the stash's spares bought."""
 
 from dataclasses import dataclass, field
 from typing import Any
@@ -50,7 +50,7 @@ class Demo:
     campaign_id: int = 0
     users: dict[str, Any] = field(default_factory=dict)  # player handle -> user
     warbands: dict[str, int] = field(default_factory=dict)  # player handle -> warband id
-    wyrdstone: dict[str, int] = field(default_factory=dict)  # player handle -> its Wyrdstone counter
+    wyrdstone: dict[str, int] = field(default_factory=dict)  # player handle -> its default resource (Wyrdstone)
     units: dict[str, Unit] = field(default_factory=dict)
     groups: dict[str, int] = field(default_factory=dict)  # group handle -> group id
     book: Book = field(default_factory=Book)
@@ -135,7 +135,8 @@ def raise_warband(api: Api, demo: Demo, spec: WarbandSpec) -> None:
     warband_id = api.post(user, "warbands/", body)["id"]
     demo.warbands[spec.player] = warband_id
     api.patch(user, f"warbands/{warband_id}/", {"backstory": spec.backstory, "dice_color": spec.dice_color})
-    demo.wyrdstone[spec.player] = api.post(user, f"warbands/{warband_id}/resources/", {"name": "Wyrdstone"})["id"]
+    resources = api.get(user, f"warbands/{warband_id}/resources/")  # its default resource, made with it: Wyrdstone
+    demo.wyrdstone[spec.player] = next(resource["id"] for resource in resources if resource["is_default"])
     for hero in spec.heroes:
         _recruit_hero(api, demo, hero, spec.player)
     for group in spec.groups:
