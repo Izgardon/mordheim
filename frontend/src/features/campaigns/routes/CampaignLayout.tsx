@@ -22,6 +22,7 @@ import ArchivedBanner from "../components/layout/ArchivedBanner";
 import CampaignBattleDialog from "../components/layout/CampaignBattleDialog";
 import CampaignLoadError from "../components/layout/CampaignLoadError";
 import NoWarbandBanner from "../components/layout/NoWarbandBanner";
+import RejoinBanner from "../components/layout/RejoinBanner";
 import { useArchivedRefusals } from "../hooks/useArchivedRefusals";
 import { useBattleSession } from "../hooks/useBattleSession";
 import { isCampaignId, useCampaignQuery } from "../hooks/useCampaignQuery";
@@ -58,7 +59,7 @@ export default function CampaignLayout() {
   // The Aftermath and the battle screen bring their own header and
   // footer on a phone.
   const ownChrome = isBattleRoute && (segments[4] === "postbattle" || segments[4] === "active");
-  const { canRejoinBattle, rejoinBattle } = useBattleSession(campaignId, {
+  const { yourBattles, canRejoinBattle, rejoinBattle } = useBattleSession(campaignId, {
     isBattleRoute,
     battleId: Number(segments[3] ?? ""),
     stage: segments[4] ?? "",
@@ -179,7 +180,12 @@ export default function CampaignLayout() {
       {...(isMobile ? mobileChrome : {})}
     >
       <ArchivedBanner campaign={campaign} />
-      <NoWarbandBanner campaign={campaign} pathname={pathname} />
+      {/* your battle before raising a warband; not on the battle's own screens */}
+      {!isBattleRoute && yourBattles.length ? (
+        <RejoinBanner campaignId={campaign.id} battles={yourBattles} />
+      ) : (
+        <NoWarbandBanner campaign={campaign} pathname={pathname} />
+      )}
       <Suspense fallback={<CampaignPageSkeleton pathname={pathname} />}>
         <Outlet context={outletContext} />
       </Suspense>

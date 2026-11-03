@@ -3,16 +3,15 @@ import { Link } from "react-router-dom";
 import { useOpenCampaignBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import type { BattleState } from "@/features/battles/types/battle-types";
 import { idleLabel } from "@/features/battles/utils/battle-timing";
+import { yourOpenBattles } from "@/features/battles/utils/open-battles";
 import { cn } from "@/lib/utils";
 
-/** Your first unfinished battle in the list (newest first), other than `excludeBattleId`. */
+/**
+ * Your unfinished battle that needs you most (the rejoin banner's pick), other than
+ * `excludeBattleId`.
+ */
 export function findUnfinishedBattle(battles: BattleState[], excludeBattleId?: number) {
-  return (
-    battles.find(
-      (state) =>
-        state.viewer?.unfinished && state.viewer.page && state.battle.id !== excludeBattleId
-    ) ?? null
-  );
+  return yourOpenBattles(battles, excludeBattleId)[0]?.state ?? null;
 }
 
 /** "invitation", "prebattle", "active" or "postbattle": where you carry on. */
@@ -22,7 +21,8 @@ const phaseOf = ({ battle, viewer }: BattleState) =>
 /**
  * Your unfinished battle, with a way back (BATL-NEW-01): "You have an unfinished battle: #40,
  * postbattle, idle 6 days. Go to it". From the open battles list's `viewer`; the link opens the
- * page where you carry on. Shown when starting a battle, on an invitation and on the overview.
+ * page where you carry on. Shown on an invitation (its page and the bell's card), where the
+ * rejoin banner is not.
  */
 export default function UnfinishedBattleBanner({
   campaignId,

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BattleState } from "@/features/battles/types/battle-types";
 
-import { getResumableBattleForUser, toCurrentBattleSession } from "./battle-session";
+import { toCurrentBattleSession } from "./battle-session";
 
 function createBattleState({
   battleId,
@@ -70,46 +70,6 @@ function createBattleState({
 }
 
 describe("battle-session", () => {
-  it("returns the first resumable battle for the current user", () => {
-    const battle = getResumableBattleForUser(
-      [
-        createBattleState({
-          battleId: 1,
-          status: "ended",
-          participantStatus: "finished_battle",
-        }),
-        createBattleState({
-          battleId: 2,
-          status: "prebattle",
-          participantStatus: "joined_prebattle",
-        }),
-      ],
-      7
-    );
-
-    expect(battle?.battle.id).toBe(2);
-  });
-
-  it("ignores canceled or completed participation", () => {
-    expect(
-      getResumableBattleForUser(
-        [
-          createBattleState({
-            battleId: 2,
-            status: "postbattle",
-            participantStatus: "confirmed_postbattle",
-          }),
-          createBattleState({
-            battleId: 3,
-            status: "prebattle",
-            participantStatus: "canceled_prebattle",
-          }),
-        ],
-        7
-      )
-    ).toBeNull();
-  });
-
   it("converts a battle state into store session data", () => {
     expect(
       toCurrentBattleSession(
