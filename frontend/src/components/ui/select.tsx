@@ -91,7 +91,8 @@ const SelectContent = React.forwardRef<
           <SelectPrimitive.Viewport
             className={cn(
               "w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)] p-1",
-              position === "popper" && "w-full"
+              // a popper's list fills the content, which a caller may make wider than the trigger
+              position === "popper" && "w-full max-w-none"
             )}
           >
             {children}

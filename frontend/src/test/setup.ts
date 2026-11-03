@@ -34,3 +34,8 @@ if (!("ResizeObserver" in window)) {
 if (!Element.prototype.scrollIntoView) {
   Element.prototype.scrollIntoView = () => undefined;
 }
+// Radix's select captures the pointer on its trigger, which jsdom doesn't implement.
+if (!Element.prototype.hasPointerCapture) {
+  Element.prototype.hasPointerCapture = () => false;
+  Element.prototype.releasePointerCapture = () => undefined;
+}
