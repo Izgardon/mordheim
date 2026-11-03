@@ -189,7 +189,7 @@ describe("postbattle-utils", () => {
     const draft = buildPostbattleDraft(
       participant,
       roster,
-      [{ id: 7, warband_id: 10, name: "Shards", amount: 0 }],
+      [{ id: 7, warband_id: 10, name: "Shards", amount: 0, is_default: true }],
       suggestion
     );
 
@@ -520,6 +520,25 @@ describe("postbattle-utils", () => {
     });
   });
 
+  it("sends the shards to the default resource until the player picks, and keeps a pick", () => {
+    const resources = [
+      { id: 5, warband_id: 10, name: "Treasure", amount: 2, is_default: false },
+      { id: 6, warband_id: 10, name: "Warpstone", amount: 0, is_default: true },
+    ];
+    const picked = (resource_id: number | null): BattleParticipant => ({
+      ...participant,
+      postbattle_json: {
+        ...(participant.postbattle_json as BattlePostbattleState),
+        exploration: { dice_values: [], resource_id },
+      },
+    });
+
+    expect(buildLocalExplorationState(picked(null), resources).resourceId).toBe(6);
+    expect(buildPostbattleDraft(picked(null), roster, resources).exploration.resource_id).toBe(6);
+    expect(buildLocalExplorationState(picked(5), resources).resourceId).toBe(5);
+    expect(buildPostbattleDraft(picked(5), roster, resources).exploration.resource_id).toBe(5);
+  });
+
   it("restores a roll saved with the draft, and calls it settled only once every die is set (BUG-71)", () => {
     const saved = buildLocalExplorationState(
       {
@@ -529,7 +548,7 @@ describe("postbattle-utils", () => {
           exploration: { dice_values: [5, 2, 6], resource_id: 8, amount_override: 4 },
         },
       },
-      [{ id: 7, warband_id: 10, name: "Shards", amount: 0 }],
+      [{ id: 7, warband_id: 10, name: "Shards", amount: 0, is_default: true }],
       suggestion.exploration
     );
     expect(saved).toMatchObject({
@@ -550,7 +569,7 @@ describe("postbattle-utils", () => {
   it("builds local exploration defaults and preserves values when count changes", () => {
     const state = buildLocalExplorationState(
       participant,
-      [{ id: 7, warband_id: 10, name: "Shards", amount: 0 }],
+      [{ id: 7, warband_id: 10, name: "Shards", amount: 0, is_default: true }],
       suggestion.exploration
     );
     expect(state.diceCount).toBe(2);

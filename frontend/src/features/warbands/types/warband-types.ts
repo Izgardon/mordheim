@@ -113,6 +113,11 @@ export type WarbandResource = {
   warband_id: number;
   name: string;
   amount: number;
+  /**
+   * The campaign's default resource (Wyrdstone unless the campaign renames it): every warband has
+   * it, first; it is never deleted, and only the campaign's settings rename it.
+   */
+  is_default: boolean;
 };
 
 export type WarbandCreatePayload = {
