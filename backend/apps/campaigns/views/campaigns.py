@@ -88,10 +88,10 @@ class CampaignDetailView(CampaignScopedView):
         self.check_rule(rule_for(request.data))  # admins may start and unstart only (BUG-13)
         serializer = CampaignUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        update_campaign(self.access.campaign, serializer.validated_data)
+        warnings = update_campaign(self.access.campaign, serializer.validated_data)
         data = CampaignSerializer(campaign_for_user(campaign_id, request.user)).data
         send_campaign_updated(campaign_id, data, sender_socket_id(request))  # a start, a toggle, settings
-        return Response(data)
+        return Response({**data, "warnings": warnings} if warnings else data)  # warnings: the caller's own
 
 
 class CampaignJoinCodeView(CampaignScopedView):

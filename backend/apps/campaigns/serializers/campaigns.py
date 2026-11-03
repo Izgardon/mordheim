@@ -44,6 +44,7 @@ class CampaignSerializer(serializers.ModelSerializer):
     )
     enable_encampments = serializers.BooleanField(source="settings.enable_encampments", read_only=True)
     enable_locations = serializers.BooleanField(source="settings.enable_locations", read_only=True)
+    default_resource_name = serializers.CharField(source="settings.default_resource_name", read_only=True)
     setting_ids = serializers.SerializerMethodField()  # the settings in play (grading phase 1)
 
     def get_setting_ids(self, obj) -> list[int]:
@@ -66,6 +67,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "hired_sword_level_thresholds",
             "enable_encampments",
             "enable_locations",
+            "default_resource_name",
             "setting_ids",
             "in_progress",
             "archived_at",
@@ -147,6 +149,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
     )
     setting_ids = setting_ids_field()  # the settings in play, replacing them
     adjust_existing_warbands = serializers.BooleanField(required=False)  # with a new starting_gold (BUG-78)
+    default_resource_name = serializers.CharField(required=False, max_length=120)  # renames every warband's
 
     def validate_hero_level_thresholds(self, value):
         try:

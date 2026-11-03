@@ -8,8 +8,9 @@ from apps.core.catalogue.cache import bump
 
 from ..errors import Refused
 from ..in_play import set_settings
-from ..models import Campaign, CampaignSettings
+from ..models import DEFAULT_RESOURCE_NAME, Campaign, CampaignSettings
 from . import starting_gold
+from .default_resource import rename_default_resources
 
 SETTINGS_FIELDS = (
     "max_heroes",
@@ -21,6 +22,7 @@ SETTINGS_FIELDS = (
     "hero_level_thresholds",
     "henchmen_level_thresholds",
     "hired_sword_level_thresholds",
+    "default_resource_name",
 )
 
 
@@ -35,8 +37,9 @@ def rule_for(data: Any) -> str:
     return "start" if sent <= START_FIELDS else "edit_settings"
 
 
-def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
-    """Apply CampaignUpdateSerializer's data (only the fields sent); all or nothing."""
+def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[str, Any]]:
+    """Apply CampaignUpdateSerializer's data (only the fields sent); all or nothing. Returns what went ahead with a
+    warning (a default resource rename that merged)."""
     if not set(validated) - {starting_gold.ADJUST_FLAG}:
         raise Refused("No updates provided.")
     old_gold = starting_gold.changed_from(campaign, validated)
@@ -53,10 +56,13 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> None:
             set_settings(campaign, [row.pk for row in picked])
             bump(campaign.id)  # no catalogue.changed: the pages read the lists again on campaign.updated
         if not settings_updates:
-            return
+            return []
         settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
+        old_resource = settings.default_resource_name or DEFAULT_RESOURCE_NAME
         for field, value in settings_updates.items():
             setattr(settings, field, value)
         settings.save(update_fields=list(settings_updates))
         if old_gold is not None and validated.get(starting_gold.ADJUST_FLAG):
             starting_gold.adjust_warbands(campaign, old_gold, settings_updates["starting_gold"])
+        renamed = settings_updates.get("default_resource_name", old_resource)
+        return rename_default_resources(campaign, renamed) if renamed != old_resource else []
