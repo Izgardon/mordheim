@@ -80,6 +80,16 @@ class ResourceTests(HireTestCase):
             ],  # fmt: skip
         )
 
+    def test_wyrdstone_is_paid_from_the_default_resource_whatever_the_campaign_calls_it(self):
+        default = WarbandResource.objects.create(warband=self.warband, name="Warpstone", amount=2, is_default=True)
+
+        response = self.hire(name="Pete")
+
+        default.refresh_from_db()
+        self.assertEqual((default.amount, self.amounts(), codes(response)), (1, (1, 5), []))  # the shards untouched
+        notes = "Paid 2 Treasure from Treasures, 1 Wyrdstone from Warpstone."
+        self.assertEqual(trade_rows(self.warband), [("Hire", "Pete the Ogre Bodyguard", -20, notes)])
+
     def test_a_short_counter_pays_what_it_holds_and_never_goes_below_0(self):
         self.treasure.amount = 1
         self.treasure.save()

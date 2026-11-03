@@ -116,7 +116,10 @@ HIRE_FEE: dict[str, Any] = {
     "resources": [],
     "note": "str",
 }
-UPKEEP_FEE = {**HIRE_FEE, "resources": [{"resource": "str", "amount": "int", "names": ["str"]}]}  # with what pays it
+UPKEEP_FEE = {
+    **HIRE_FEE,
+    "resources": [{"resource": "str", "amount": "int", "names": ["str"], "default_resource": "bool"}],
+}  # with what pays it
 COMPANIONS: dict[str, Any] = {
     "effective_stats": None,
     "mount": None,
