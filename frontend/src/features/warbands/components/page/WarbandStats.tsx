@@ -1,4 +1,4 @@
-import { GameIcon } from "@/components/ui/game-icons";
+import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import {
   Dialog,
   DialogContent,
@@ -24,22 +24,32 @@ type WarbandStatsProps = {
   setBreakdownOpen: (open: boolean) => void;
 };
 
-/** The info line (design E): Rating (opens its breakdown), Gold, Units of the maximum, Record. */
+/**
+ * The info line (design E): Rating (opens its breakdown), Gold, Units of the maximum, Record, each
+ * with its small icon (William: "can all of this get small icons too").
+ */
 export default function WarbandStats(props: WarbandStatsProps) {
   const { warband, heroes, hirelings, henchmenGroups, breakdownOpen, setBreakdownOpen } = props;
   const rating = shownWarbandRating(warband, heroes, hirelings, henchmenGroups);
   const units = warband.unit_count ?? getWarbandUnitCount(heroes, hirelings, henchmenGroups);
   const members = henchmenGroups.reduce((sum, group) => sum + (group.henchmen?.length ?? 0), 0);
   const mounts = warband.mounts_rating ?? mountsRating(heroes, hirelings, henchmenGroups);
-  const totals: { label: string; value: string | number; unit?: string; onClick?: () => void }[] = [
-    { label: "Rating", value: rating, onClick: () => setBreakdownOpen(true) },
-    { label: "Gold", value: warband.gold ?? 0, unit: "gc" },
+  const totals: {
+    label: string;
+    icon: GameIconName;
+    value: string | number;
+    unit?: string;
+    onClick?: () => void;
+  }[] = [
+    { label: "Rating", icon: "rating", value: rating, onClick: () => setBreakdownOpen(true) },
+    { label: "Gold", icon: "gold", value: warband.gold ?? 0, unit: "gc" },
     {
       label: "Units",
+      icon: "units",
       value: units,
       unit: warband.max_units ? `of ${warband.max_units}` : undefined,
     },
-    { label: "Record", value: `${warband.wins ?? 0}–${warband.losses ?? 0}` },
+    { label: "Record", icon: "record", value: `${warband.wins ?? 0}–${warband.losses ?? 0}` },
   ];
 
   return (
@@ -57,9 +67,7 @@ export default function WarbandStats(props: WarbandStatsProps) {
           return (
             <div key={total.label} className="flex flex-col gap-0.5 py-3.5 pr-3">
               <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
-                {total.label === "Gold" ? (
-                  <GameIcon name="gold" className="h-3.5 w-3.5 text-accent-text" />
-                ) : null}
+                <GameIcon name={total.icon} className="h-3.5 w-3.5 text-accent-text" />
                 {total.label}
               </dt>
               {total.onClick ? (

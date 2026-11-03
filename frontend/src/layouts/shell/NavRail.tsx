@@ -157,7 +157,12 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
       </RailSection>
 
       <div className="mt-auto flex flex-col gap-0.5 border-t border-line pt-3.5">
-        <RailLink to="/account" label={userName || "Account"} icon={UserRound} current={false} />
+        <RailLink
+          to={`${base}/account`}
+          label={userName || "Account"}
+          icon={UserRound}
+          current={isCurrent("account")}
+        />
         <RailLink
           to={`${base}/settings`}
           label="Settings"
