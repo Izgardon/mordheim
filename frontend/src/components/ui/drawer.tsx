@@ -16,6 +16,8 @@ type DrawerProps = {
   description?: string;
   /** Beside the close button: a gold total, a count. */
   actions?: React.ReactNode;
+  /** Between the body and the footer, outside the scroll: the picked item's details. */
+  dock?: React.ReactNode;
   footer?: React.ReactNode;
   children: React.ReactNode;
   className?: string;
@@ -29,6 +31,7 @@ export function Drawer({
   title,
   description,
   actions,
+  dock,
   footer,
   children,
   className,
@@ -69,6 +72,11 @@ export function Drawer({
           <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 pb-6 pt-[18px]">
             {children}
           </div>
+          {dock ? (
+            <div className="max-h-[45dvh] shrink-0 overflow-y-auto border-t border-accent-line bg-surface px-6 py-4">
+              {dock}
+            </div>
+          ) : null}
           {footer ? <footer className="border-t border-line px-6 py-4">{footer}</footer> : null}
         </DialogPrimitive.Content>
       </DialogPrimitive.Portal>

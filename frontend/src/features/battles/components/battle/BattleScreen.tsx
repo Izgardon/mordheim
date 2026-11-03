@@ -27,7 +27,8 @@ import BattleDiceSheet from "./BattleDiceSheet";
 import BattleFeed from "./BattleFeed";
 import BattleMenuSheet, { type BattleMenuRow } from "./BattleMenuSheet";
 import BattleRulesSheet from "./BattleRulesSheet";
-import CombatSheet, { type CombatOption } from "./CombatSheet";
+import type { CombatOption } from "./CombatPicker";
+import CombatSheet from "./CombatSheet";
 import { EndFightSheet, FinishSheet } from "./FinishSheets";
 import GearSheet from "./GearSheet";
 import GroupCard from "./GroupCard";
@@ -46,6 +47,7 @@ import {
 } from "./UnitSheets";
 import {
   allViews,
+  battleSectionLabel,
   battleSections,
   canScore,
   nextStatus,
@@ -143,24 +145,32 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
 
   const otherSides = sides.filter((entry) => entry.id !== mySide);
   const combatOptions = useMemo(() => {
+    const option = (view: BattleUnitView, side?: string): CombatOption => {
+      const heading = battleSectionLabel(view.unit);
+      return {
+        key: view.unit.key,
+        name: view.unit.displayName,
+        stats: view.stats,
+        section: side ? `${side} · ${heading}` : heading,
+      };
+    };
     const yours: CombatOption[] = sections
       ? allViews(sections)
           .filter((view) => view.status !== "out_of_action")
-          .map((view) => ({ key: view.unit.key, name: view.unit.displayName, stats: view.stats }))
+          .map((view) => option(view))
       : [];
+    // with more than one other side, each heading names whose models they are
+    const several = otherSides.length > 1;
     const theirs: CombatOption[] = otherSides.flatMap((entry): CombatOption[] =>
       entry.kind === "neutral"
         ? entry.group.creatures.map((creature) => ({
             key: creature.key,
-            name: `${creature.name} (neutral)`,
+            name: creature.name,
             stats: entry.group.stats ?? {},
+            section: `${entry.name} (neutral)`,
           }))
         : allViews(battleSections(entry.participant, rosters[entry.participant.user.id])).map(
-            (view) => ({
-              key: view.unit.key,
-              name: `${view.unit.displayName} (${entry.name})`,
-              stats: view.stats,
-            })
+            (view) => option(view, several ? entry.name : undefined)
           )
     );
     return { yours, theirs };

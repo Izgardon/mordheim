@@ -4,6 +4,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { ModalSheet } from "@/components/ui/modal-sheet";
+import { SectionedSelect, sectionsOf } from "@/components/ui/sectioned-select";
+import { UNIT_SECTIONS } from "@/features/warbands/components/roster/unit-sections";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useBountyCandidates } from "../api/bounty-queries";
@@ -48,6 +50,7 @@ export default function ClaimBountyDialog({
     unit || (record?.units[0] ? `${record.units[0].kind}:${record.units[0].id}` : "");
   const battleValue = battle || (candidate ? String(candidate.battle.id) : "");
   const poster = bounty?.posted_by.user_name ?? "The poster";
+  const unitLabel = `Which of your units took ${bounty?.target.name ?? "him"} out`;
 
   // A fresh form each time it opens (not as it closes, which would show while it animates out).
   const [shown, setShown] = useState(open);
@@ -157,21 +160,24 @@ export default function ClaimBountyDialog({
             </p>
           ) : (
             <>
-              <label className={FIELD_LABEL}>
-                Which of your units took {bounty?.target.name} out
-                <select
-                  className={NATIVE_SELECT}
+              <div className={FIELD_LABEL}>
+                {unitLabel}
+                <SectionedSelect
+                  aria-label={unitLabel}
+                  className="min-h-11 pl-2.5"
                   value={unitValue}
-                  onChange={(event) => setUnit(event.target.value)}
-                >
-                  {record?.units.map((entry) => (
-                    <option key={`${entry.kind}:${entry.id}`} value={`${entry.kind}:${entry.id}`}>
-                      {entry.name}
-                      {entry.dead ? " (dead)" : ""}
-                    </option>
-                  ))}
-                </select>
-              </label>
+                  onValueChange={setUnit}
+                  sections={sectionsOf(
+                    record?.units ?? [],
+                    UNIT_SECTIONS,
+                    (entry) => entry.kind,
+                    (entry) => ({
+                      value: `${entry.kind}:${entry.id}`,
+                      label: entry.dead ? `${entry.name} (dead)` : entry.name,
+                    })
+                  )}
+                />
+              </div>
               <label className={FIELD_LABEL}>
                 In which battle (optional)
                 <select

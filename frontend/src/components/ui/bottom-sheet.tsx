@@ -17,6 +17,8 @@ type BottomSheetProps = {
   title: React.ReactNode;
   /** Read to screen readers with the title (sr-only). */
   description?: string;
+  /** Between the body and the footer, outside the scroll: the picked item's details. */
+  dock?: React.ReactNode;
   /** Stays below the scrolling body: the sheet's confirm or cancel. */
   footer?: React.ReactNode;
   children: React.ReactNode;
@@ -56,6 +58,7 @@ export function BottomSheet({
   kicker,
   title,
   description,
+  dock,
   footer,
   children,
   className,
@@ -107,6 +110,11 @@ export function BottomSheet({
           <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-4">
             {children}
           </div>
+          {dock ? (
+            <div className="max-h-[40dvh] shrink-0 overflow-y-auto border-t border-accent-line bg-surface px-4 py-3">
+              {dock}
+            </div>
+          ) : null}
           {footer ? (
             <footer className="border-t border-line px-4 pb-[calc(env(safe-area-inset-bottom,0px)+0.75rem)] pt-3">
               {footer}

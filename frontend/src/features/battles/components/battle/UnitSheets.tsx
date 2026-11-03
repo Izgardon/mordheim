@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
+import { SectionedSelect, sectionsOf } from "@/components/ui/sectioned-select";
 import {
   STAT_FIELDS,
   type UnitOverride,
@@ -17,7 +18,7 @@ import type { BattleNeutralGroup, BattleUnitStats } from "@/features/battles/typ
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-import type { BattleUnitView } from "./battle-units";
+import { BATTLE_SECTIONS, battleSectionOf, type BattleUnitView } from "./battle-units";
 
 /** One unit (or a henchmen group, edited for every member) the Edit stats sheet can change. */
 export type EditableUnit = { key: string; name: string; keys: string[]; view: BattleUnitView };
@@ -106,20 +107,21 @@ export function EditStatsSheet({
         </div>
       }
     >
-      <label className="flex flex-col gap-1 text-xs font-bold text-text2">
+      <div className="flex flex-col gap-1 text-xs font-bold text-text2">
         Unit
-        <select
+        <SectionedSelect
+          aria-label="Unit"
+          className="h-11 pl-2 md:h-11"
           value={unit?.key ?? ""}
-          onChange={(event) => setKey(event.target.value)}
-          className="h-11 border border-strong bg-page px-2 text-sm text-ink"
-        >
-          {units.map((entry) => (
-            <option key={entry.key} value={entry.key}>
-              {entry.name}
-            </option>
-          ))}
-        </select>
-      </label>
+          onValueChange={setKey}
+          sections={sectionsOf(
+            units,
+            BATTLE_SECTIONS,
+            (entry) => battleSectionOf(entry.view.unit),
+            (entry) => ({ value: entry.key, label: entry.name })
+          )}
+        />
+      </div>
       <div className="grid grid-cols-5 gap-1.5">
         {STAT_FIELDS.map((field) => (
           <label

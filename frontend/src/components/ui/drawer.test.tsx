@@ -31,3 +31,26 @@ describe("Drawer", () => {
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });
+
+describe("Drawer's dock", () => {
+  it("sits between the body and the footer, outside the body's scroll", () => {
+    render(
+      <Drawer
+        open
+        onOpenChange={() => undefined}
+        title="Stash"
+        dock={<p>Sword · Parry</p>}
+        footer={<button type="button">Buy all</button>}
+      >
+        <p>Sword, 10 gc</p>
+      </Drawer>
+    );
+
+    const body = screen.getByText("Sword, 10 gc").parentElement;
+    const dock = screen.getByText("Sword · Parry");
+    const footer = screen.getByRole("button", { name: "Buy all" });
+    expect(body).not.toContainElement(dock);
+    expect(body?.compareDocumentPosition(dock)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(dock.compareDocumentPosition(footer)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+});

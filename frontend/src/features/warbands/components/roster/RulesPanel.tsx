@@ -4,10 +4,12 @@ import { X } from "lucide-react";
 import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { ROW_SELECT, SectionedSelect } from "@/components/ui/sectioned-select";
 import type { Item } from "@/features/items/types/item-types";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
-import { isGroup, unitName, type RosterUnit } from "./unit-view";
+import { placeOf, unitSections } from "./unit-sections";
+import { isGroup, type RosterUnit } from "./unit-view";
 
 /** What a box shows when opened: its name, a kind line and its rules text. */
 export type BoxDetail = {
@@ -40,7 +42,6 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
   const copies = itemActions && isGroup(itemActions.owner) ? (detail.item?.carriers ?? 1) : 1;
   const suggested = (detail.item?.suggested_sale_price ?? detail.item?.cost ?? 0) * copies;
   const [price, setPrice] = useState(String(suggested ?? 0));
-  const [target, setTarget] = useState("");
 
   return (
     <div className="flex flex-col gap-2 border border-accent-line bg-panel p-3">
@@ -63,27 +64,18 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
       ) : null}
       {itemActions && detail.item ? (
         <div className="flex flex-wrap items-center gap-2 border-t border-line pt-2">
-          <select
+          <SectionedSelect
             aria-label="Move to"
-            value={target}
-            onChange={(event) => {
-              const value = event.target.value;
-              setTarget("");
-              const [type, id] = value.split(":");
-              if (type) itemActions.onMove({ type: type as ItemPlace["type"], id: Number(id) });
+            placeholder="Move to…"
+            value=""
+            sections={unitSections(itemActions.targets)}
+            className="h-9 w-auto gap-1.5 pl-2.5 pr-2 md:h-9"
+            contentClassName={ROW_SELECT.contentClassName}
+            onValueChange={(value) => {
+              const to = placeOf(value);
+              if (to) itemActions.onMove(to);
             }}
-            className="h-9 border border-strong bg-page px-2 text-sm text-ink"
-          >
-            <option value="">Move to…</option>
-            {itemActions.targets.map((entry) => (
-              <option
-                key={`${entry.kind}-${entry.unit.id}`}
-                value={`${entry.kind}:${entry.unit.id}`}
-              >
-                {unitName(entry.unit)}
-              </option>
-            ))}
-          </select>
+          />
           <Button
             size="sm"
             variant="secondary"
