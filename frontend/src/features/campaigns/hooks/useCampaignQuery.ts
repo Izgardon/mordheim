@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import type { Dispatch, SetStateAction } from "react";
 import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 // api
 import { getCampaign, listCampaignPermissions, updateCampaign } from "../api/campaigns-api";
@@ -82,6 +83,16 @@ export function writeCampaignAnswer(
     void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.warbandTypes(campaignId) });
     void invalidateWhoCan(queryClient, campaignId); // what each warband can usually buy and hire
   }
+  // the default resource renamed: every warband's resources changed (some merged)
+  if (
+    previous &&
+    answer.default_resource_name !== undefined &&
+    previous.default_resource_name !== answer.default_resource_name
+  ) {
+    void queryClient.invalidateQueries({
+      queryKey: [...queryKeys.campaign.all(campaignId), "warband"],
+    });
+  }
   const gatesChanged = CAPABILITY_SETTINGS.some(
     (setting) => Boolean(previous?.[setting]) !== Boolean(answer[setting])
   );
@@ -109,14 +120,18 @@ export function useSetCampaign(campaignId: number) {
 
 /**
  * PATCHes the campaign (a start, a settings card) and writes the answer into the layout's cached
- * campaign, which every page reads; resolves with the answer.
+ * campaign, which every page reads; shows what went ahead with a warning and resolves with the
+ * answer.
  */
 export function useUpdateCampaign(campaignId: number) {
   const setCampaign = useSetCampaign(campaignId);
   return useCallback(
     async (payload: CampaignUpdatePayload) => {
-      const updated = await updateCampaign(campaignId, payload);
+      const { warnings, ...updated } = await updateCampaign(campaignId, payload);
       setCampaign(updated);
+      for (const warning of warnings ?? []) {
+        toast.warning(warning.message, { id: `campaign-${campaignId}-${warning.code}` });
+      }
       return updated;
     },
     [campaignId, setCampaign]

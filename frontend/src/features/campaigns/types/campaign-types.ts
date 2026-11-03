@@ -19,6 +19,8 @@ export type CampaignSummary = {
   hired_sword_level_thresholds?: number[];
   enable_encampments?: boolean;
   enable_locations?: boolean;
+  /** The name of every warband's default resource ("Wyrdstone" unless renamed). */
+  default_resource_name?: string;
   /** The settings in play (grading phase 1): the ones ticked, the always-on Mordheim among them. */
   setting_ids?: number[];
   player_count: number;
@@ -73,6 +75,13 @@ export type CampaignUpdatePayload = {
   hired_sword_level_thresholds?: number[];
   /** Replaces the settings in play (Mordheim stays). */
   setting_ids?: number[];
+  /** Renames every warband's default resource. */
+  default_resource_name?: string;
+};
+
+/** A PATCH's answer: the campaign, and what went ahead with a warning (a rename that merged). */
+export type CampaignUpdateAnswer = CampaignSummary & {
+  warnings?: { code: string; message: string }[];
 };
 
 export type CampaignJoinPayload = {

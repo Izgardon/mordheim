@@ -10,6 +10,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useWarbandRulesForm } from "../../hooks/settings/useWarbandRulesForm";
 import type { CampaignHeroDeathRoll, CampaignSummary } from "../../types/campaign-types";
 import { useCampaignSave } from "./CampaignSection";
+import DefaultResource from "./DefaultResource";
 import { Field, FormError, SettingRow, SettingsCard, TEXTAREA } from "./settings-ui";
 
 /** A warband's sheet, summary or treasury in this campaign: what a gold adjustment changes. */
@@ -145,15 +146,16 @@ function ThresholdField(props: {
 }
 
 /**
- * The warband rules (`edit_settings`): starting gold, the most heroes and hired swords, the table
- * a hero's death is rolled on, and the XP at which heroes and henchmen level up. Each saves on its
- * own; a settings answer resets the drafts.
+ * The warband rules (`edit_settings`): starting gold, the default resource, the most heroes and
+ * hired swords, the table a hero's death is rolled on, and the XP at which heroes and henchmen
+ * level up. Each saves on its own; a settings answer resets the drafts.
  */
 export default function CampaignRules({ campaign }: { campaign: CampaignSummary }) {
   const { limits, deathRoll, levelUps } = useWarbandRulesForm(campaign);
   return (
     <SettingsCard title="Warband rules">
       <StartingGold campaign={campaign} />
+      <DefaultResource campaign={campaign} />
       <SettingRow label="Warband limits" error={limits.error}>
         <label className="flex items-center gap-2 text-sm text-text2">
           Heroes
