@@ -45,6 +45,22 @@ function Chips({ count, className }: { count: number; className: string }) {
 }
 
 /** The phone's overview: who is ready, the two buttons, the stats, the four tabs, the standings. */
+/** Between battles while the players load: the web bar's on the overview. */
+export function ReadinessBones() {
+  return (
+    <div
+      className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2 py-1.5"
+      aria-hidden="true"
+    >
+      <div className="flex min-w-[190px] flex-col gap-2.5 py-0.5">
+        <Bone className="h-2.5 w-28" />
+        <Bone className="h-5 w-32" />
+      </div>
+      <Chips count={4} className="h-[34px] w-32" />
+    </div>
+  );
+}
+
 function PhoneOverview() {
   return (
     <SkeletonPage label="Loading the overview" className="flex flex-col gap-3 pb-6">
@@ -74,22 +90,15 @@ function PhoneOverview() {
 }
 
 /**
- * The overview while it loads (design E): the readiness band, the header with Start battle and
- * Report a result, the stats line, then Standings and Battles beside the Chronicle and Open
- * bounties (web), or the four tabs (phone).
+ * The overview while it loads (design E): the header with Start battle and Report a result (the
+ * web bar holds the readiness strip's bones), the stats line, then Standings and Battles beside
+ * the Chronicle and Open bounties (web), or the four tabs (phone).
  */
 export default function OverviewSkeleton() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   if (isMobile) return <PhoneOverview />;
   return (
     <SkeletonPage label="Loading the overview" className="flex flex-col gap-[26px] pb-14">
-      <div className="page-band flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-line bg-bar py-3.5">
-        <div className="flex min-w-[190px] flex-col gap-2.5 py-0.5">
-          <Bone className="h-2.5 w-28" />
-          <Bone className="h-5 w-32" />
-        </div>
-        <Chips count={4} className="h-[34px] w-32" />
-      </div>
       <SkeletonHeader buttons={2} />
       <SkeletonStats cells={5} />
       <div className={OVERVIEW_BODY}>

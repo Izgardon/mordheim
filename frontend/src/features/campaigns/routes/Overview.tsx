@@ -60,10 +60,10 @@ function Section({
 }
 
 /**
- * The campaign overview (design E): who is ready, Start battle and Report a result, the stats,
- * the standings, the latest battles with their moments, the chronicle and the open bounties;
- * what waits on you (stuck battles, results to answer) above them. While you have a battle,
- * Start battle takes you there. On a phone the sections are tabs, Standings first.
+ * The campaign overview (design E): who is ready (in the web bar), Start battle and Report a
+ * result, the stats, the standings, the latest battles with their moments, the chronicle and the
+ * open bounties; what waits on you (stuck battles, results to answer) above them. While you have
+ * a battle, Start battle takes you there. On a phone the sections are tabs, Standings first.
  */
 export default function Overview() {
   const { id } = useParams();
@@ -143,7 +143,8 @@ export default function Overview() {
 
   return (
     <div className={cn("flex flex-col", isMobile ? "gap-3 pb-6" : "gap-[26px] pb-14")}>
-      <ReadinessBar players={players} userId={user?.id} isMobile={isMobile} />
+      {/* the web's is in the bar (CampaignLayout) */}
+      {isMobile ? <ReadinessBar players={players} userId={user?.id} isMobile /> : null}
       <OverviewHeader
         campaign={campaign}
         isMobile={isMobile}
