@@ -1,4 +1,5 @@
 // components
+import { DataCredit, Disclaimer } from "@/components/ui/disclaimer";
 import { GameIconsCredit } from "@/components/ui/game-icons";
 import SitePage from "@/layouts/shell/SitePage";
 import { cn } from "@/lib/utils";
@@ -49,7 +50,11 @@ export default function Account({ inCampaign = false }: AccountProps) {
         <SignOutOthersSection />
         <DeleteAccountSection />
       </div>
-      <GameIconsCredit />
+      <div className="flex flex-col gap-1.5">
+        <GameIconsCredit />
+        <DataCredit />
+        <Disclaimer />
+      </div>
     </>
   );
 

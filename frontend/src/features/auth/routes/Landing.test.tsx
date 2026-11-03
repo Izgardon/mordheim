@@ -87,6 +87,13 @@ describe("Landing on desktop", () => {
       "href",
       "https://www.youtube.com/@Styggosaurus"
     );
+    expect(
+      screen.getByText(/not affiliated with or endorsed by Games Workshop/)
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "broheim.net" })).toHaveAttribute(
+      "href",
+      "https://broheim.net"
+    );
     expect(fakeApi.calls()).toEqual([]);
   });
 });
@@ -99,6 +106,9 @@ describe("Landing on a phone", () => {
     expect(container.querySelector("iframe")).toBeNull();
     expect(container.querySelector("main")).toHaveClass("auth-page--phone");
     expect(screen.queryByRole("link", { name: "Styggosaurus" })).toBeNull();
+    expect(
+      screen.getByText(/not affiliated with or endorsed by Games Workshop/)
+    ).toBeInTheDocument();
   });
 });
 
