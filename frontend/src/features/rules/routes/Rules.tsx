@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 
+import { Disclaimer } from "@/components/ui/disclaimer";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
@@ -125,6 +126,7 @@ export default function Rules() {
         </a>
         , with thanks to the community keeping Mordheim alive.
       </p>
+      <Disclaimer className="-mt-2" />
     </ReferencePage>
   );
 }

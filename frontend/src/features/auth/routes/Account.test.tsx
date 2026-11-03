@@ -62,6 +62,9 @@ describe("reaching the account page (AUTH-NEW-01)", () => {
       expect(section(name)).toBeInTheDocument();
     }
     expect(screen.getByRole("link", { name: "Campaigns" })).toHaveAttribute("href", "/campaigns");
+    expect(
+      screen.getByText(/not affiliated with or endorsed by Games Workshop/)
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument();
   });
 
