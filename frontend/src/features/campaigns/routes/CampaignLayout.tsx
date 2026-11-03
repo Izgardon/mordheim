@@ -19,7 +19,6 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { isArchived } from "../capabilities";
 import CampaignBar from "../components/layout/CampaignBar";
-import { battleStageTitle } from "../components/layout/campaign-bar";
 import CampaignBattleDialog from "../components/layout/CampaignBattleDialog";
 import CampaignLoadError from "../components/layout/CampaignLoadError";
 import CampaignPageNotices from "../components/layout/CampaignPageNotices";
@@ -179,7 +178,6 @@ export default function CampaignLayout() {
           <CampaignBar
             campaign={campaign}
             pathname={pathname}
-            title={isBattleRoute ? battleStageTitle(segments[4]) : campaignSectionTitle(pathname)}
             battles={isBattleRoute ? [] : yourBattles}
             isOverview={isOverview}
           />

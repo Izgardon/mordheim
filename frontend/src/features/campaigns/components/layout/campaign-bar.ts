@@ -2,10 +2,10 @@
  * What the web bar's main part shows on a campaign page (William: "its main content changes
  * depending on page/urgency"): on the overview Between battles, all players (its Start battle is
  * the way back to your battle); elsewhere the most urgent of your battle to rejoin or answer,
- * Raise your warband and the archived notice; with none of those, the campaign's name and the
- * page's title.
+ * Raise your warband and the archived notice; with none of those, nothing (William: "we dont need
+ * the page title repeated in the top bar"), only its Campaigns and Log out.
  */
-export type CampaignBarContent = "readiness" | "battle" | "raise" | "archived" | "title";
+export type CampaignBarContent = "readiness" | "battle" | "raise" | "archived" | "none";
 
 export function campaignBarContent({
   isOverview,
@@ -23,19 +23,9 @@ export function campaignBarContent({
   raise: boolean;
   archived: boolean;
 }): CampaignBarContent {
-  if (isOverview) return readiness ? "readiness" : "title";
+  if (isOverview) return readiness ? "readiness" : "none";
   if (battle) return "battle";
   if (raise) return "raise";
   if (archived) return "archived";
-  return "title";
+  return "none";
 }
-
-const BATTLE_STAGES: Record<string, string> = {
-  prebattle: "Before the battle",
-  active: "Battle",
-  postbattle: "Aftermath",
-};
-
-/** A battle screen's title in the bar, from its stage (`battles/:id/<stage>`). */
-export const battleStageTitle = (stage: string | undefined) =>
-  BATTLE_STAGES[stage ?? ""] ?? "Battle";

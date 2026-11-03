@@ -13,36 +13,19 @@ import { campaignBarContent } from "./campaign-bar";
 import NoWarbandBanner, { useNeedsWarband } from "./NoWarbandBanner";
 import RejoinBanner from "./RejoinBanner";
 
-/** The campaign's name over the page's title, when nothing more urgent fills the bar. */
-function BarTitle({ kicker, title }: { kicker: string; title: string }) {
-  return (
-    <span className="flex min-w-0 flex-col gap-px">
-      <span className="truncate text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text">
-        {kicker}
-      </span>
-      <span className="truncate font-display text-xl font-semibold leading-tight text-head">
-        {title}
-      </span>
-    </span>
-  );
-}
-
 /**
- * The web bar on a campaign's pages, the battle screens included: Campaigns and Log out, then the
- * main part `campaignBarContent` picks. The overview's players are the overview's own query, read
- * here only there.
+ * The web bar on a campaign's pages, the battle screens included: the main part
+ * `campaignBarContent` picks (or none), then Campaigns and Log out. The overview's players are the
+ * overview's own query, read here only there.
  */
 export default function CampaignBar({
   campaign,
   pathname,
-  title,
   battles,
   isOverview,
 }: {
   campaign: CampaignSummary;
   pathname: string;
-  /** The page's title, for when nothing more urgent fills the bar. */
-  title: string;
   /** Your unfinished battles to show (none on a battle's own screens). */
   battles: YourOpenBattle[];
   isOverview: boolean;
@@ -74,7 +57,6 @@ export default function CampaignBar({
         <NoWarbandBanner campaign={campaign} pathname={pathname} look="bar" />
       ) : null}
       {content === "archived" ? <ArchivedBanner campaign={campaign} look="bar" /> : null}
-      {content === "title" ? <BarTitle kicker={campaign.name} title={title} /> : null}
     </WebTopBar>
   );
 }

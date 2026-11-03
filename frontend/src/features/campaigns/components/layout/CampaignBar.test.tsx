@@ -88,7 +88,7 @@ describe("the web bar's fixed slots", () => {
       "/campaigns"
     );
     expect(within(slots).getByRole("button", { name: "Log out" })).toBeInTheDocument();
-    expect(await bar()).toHaveTextContent("Before the battle");
+    expect(await bar()).not.toHaveTextContent("Before the battle"); // the screen says it
   });
 });
 
@@ -135,14 +135,19 @@ describe("the web bar off the overview", () => {
     expect(await within(await bar()).findByText("Read-only for everyone")).toBeInTheDocument();
   });
 
-  it("names the campaign and the page with nothing more urgent", async () => {
+  it("holds only its links with nothing more urgent, never the page's title again (William)", async () => {
     renderApp(`${BASE}/house-rules`);
     await waitFor(() => expect(fakeApi.calls()).toContain(OPEN));
 
     const header = await bar();
-    await waitFor(() => expect(header).toHaveTextContent(campaignSummary().name));
-    expect(header).toHaveTextContent("House rules");
+    // the page says it, the bar doesn't
+    expect(
+      await screen.findByRole("heading", { level: 1, name: "House rules" })
+    ).toBeInTheDocument();
+    expect(header).not.toHaveTextContent("House rules");
+    expect(header).not.toHaveTextContent(campaignSummary().name);
     expect(within(header).queryByRole("status")).toBeNull();
+    expect(within(header).getByRole("link", { name: "Campaigns" })).toBeInTheDocument();
   });
 });
 
