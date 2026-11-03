@@ -37,6 +37,18 @@ describe("structured fees", () => {
     expect(matchCounter({ resource: "Treasure", names: ["treasure"] }, counters)).toBeNull();
   });
 
+  it("pays a line the server marks default_resource from the default resource, whatever its name", () => {
+    const counters = [
+      { id: 1, name: "Wyrdstone Shards", is_default: false },
+      { id: 2, name: "Warpstone", is_default: true },
+    ];
+    const names = ["wyrdstone", "wyrdstone shards", "shards"];
+    expect(
+      matchCounter({ resource: "Wyrdstone", names, default_resource: true }, counters)?.id
+    ).toBe(2);
+    expect(matchCounter({ resource: "Wyrdstone", names }, counters)?.id).toBe(1);
+  });
+
   it("keeps a form's fee as the server stores it", () => {
     const draft = {
       ...feeDraftOf(null),

@@ -10,6 +10,8 @@ export type FeeResource = {
   amount: number;
   /** Every name of a warband counter that pays it ("Wyrdstone shards" pays Wyrdstone). */
   names?: string[];
+  /** Paid from the warband's default resource whatever the campaign calls it (Wyrdstone). */
+  default_resource?: boolean;
 };
 
 export type Fee = {
@@ -59,11 +61,16 @@ export function formatFee(raw: Fee | null | undefined) {
 
 const key = (name: string) => name.trim().toLowerCase().replace(/\s+/g, " ");
 
-/** The warband's counter that pays a fee's resource line (by the server's `names`), if any. */
-export function matchCounter<T extends { name: string }>(
-  line: Pick<FeeResource, "resource" | "names">,
+/**
+ * The warband's counter that pays a fee's resource line, if any: its default resource for a line
+ * the server marks `default_resource`, else the counter of one of the server's `names`.
+ */
+export function matchCounter<T extends { name: string; is_default?: boolean }>(
+  line: Pick<FeeResource, "resource" | "names" | "default_resource">,
   counters: T[]
 ) {
+  const own = line.default_resource ? counters.find((counter) => counter.is_default) : undefined;
+  if (own) return own;
   const names = line.names?.length ? line.names : [key(line.resource)];
   return counters.find((counter) => names.includes(key(counter.name))) ?? null;
 }
