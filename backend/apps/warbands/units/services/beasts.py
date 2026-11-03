@@ -18,7 +18,6 @@ from apps.bestiary.models import CREATURE, BestiaryEntry, BestiaryEntrySkill, Be
 from apps.items.models import Item
 from apps.logs.utils import log_warband_event
 from apps.warbands.models import Henchman, HenchmenGroup, Warband
-from apps.warbands.models.shared import STAT_FIELDS
 from apps.warbands.serializers import UNIT_SERIALIZERS
 from apps.warbands.services import economy_log
 from apps.warbands.services.prices import CampaignPrices
@@ -30,6 +29,7 @@ from apps.warbands.units.companions import Warning, beast_of
 from apps.warbands.units.errors import RosterError, validation_error
 from apps.warbands.units.kinds import HENCHMEN_GROUP
 from apps.warbands.utils.leaders import lock_warband
+from apps.warbands.utils.stats import stat_inputs
 
 STASH = "stash"
 NOT_A_CREATURE = "Only a creature is recruited into henchmen; switch a mount or a pet on for the unit holding it."
@@ -94,7 +94,7 @@ def _group_body(beast: BestiaryEntry, target: Target, price: int, quantity: int)
         "price": price,
         "no_level_ups": not beast.gains_xp,
         "large": beast.large,
-        **{name: getattr(beast, name) for name in STAT_FIELDS},
+        **stat_inputs(beast),
         "armour_save": beast.armour_save,
         "skill_ids": list(skills),
         "special_ids": list(specials.values_list("special_id", flat=True)),

@@ -23,7 +23,7 @@ ID_LINKS: tuple[tuple[str, type[models.Model], str], ...] = (
     ("spell_ids", BestiaryEntrySpell, "spell_id"),
 )
 LISTS = ("skill_ids", "special_ids", "spell_ids", "item_entries", "item")
-NO_PROFILE: dict[str, Any] = {**{stat: 0 for stat in STAT_FIELDS}, "armour_save": None}
+NO_PROFILE: dict[str, Any] = {**{stat: 0 for stat in STAT_FIELDS}, "written_stats": {}, "armour_save": None}
 
 
 def _entry_fields(data: Mapping[str, Any], has_profile: bool) -> dict[str, Any]:

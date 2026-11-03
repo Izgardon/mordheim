@@ -12,6 +12,7 @@ from apps.special.serializers import SpecialSerializer
 from apps.spells.models import Spell
 from apps.spells.serializers import SpellSerializer
 from apps.warbands.access_lines import refuse_unknown_lines
+from apps.warbands.utils.stats import WrittenStatsSerializer
 
 from .models import BestiaryEntry, BestiaryEntryItem
 
@@ -75,6 +76,7 @@ class BestiaryEntrySerializer(serializers.ModelSerializer):
             "initiative",
             "attacks",
             "leadership",
+            "written_stats",
             "armour_save",
             "large",
             "caster",
@@ -108,6 +110,7 @@ class BestiaryEntrySummarySerializer(serializers.ModelSerializer):
             "initiative",
             "attacks",
             "leadership",
+            "written_stats",
             "armour_save",
             "large",
             "caster",
@@ -125,7 +128,7 @@ class BestiaryEntryBriefSerializer(BestiaryEntrySummarySerializer):
         )
 
 
-class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
+class BestiaryEntryWriteSerializer(WrittenStatsSerializer, serializers.ModelSerializer):
     """A campaign bestiary entry's create or edit, checked whole before anything is written (BUG-53). Linked ids are
     the book's or this campaign's (`context["campaign_id"]`, SEC-07); the campaign itself is never an input."""
 
@@ -151,6 +154,7 @@ class BestiaryEntryWriteSerializer(serializers.ModelSerializer):
             "initiative",
             "attacks",
             "leadership",
+            "written_stats",
             "armour_save",
             "large",
             "caster",

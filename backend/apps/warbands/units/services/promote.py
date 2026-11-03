@@ -18,8 +18,9 @@ from apps.logs.utils import log_warband_event
 from apps.warbands.models import Henchman, HenchmenGroup, HenchmenGroupItem, Hero, Warband, on_roster
 from apps.warbands.services.loadouts import carried_rows
 from apps.warbands.units.errors import RosterError
-from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO, STAT_FIELD_BY_ADVANCE
+from apps.warbands.units.kinds import HENCHMEN_GROUP, HERO
 from apps.warbands.utils.leaders import lock_warband
+from apps.warbands.utils.stats import stat_values
 
 from .create import apply_create, check_cap
 from .dismiss import dismiss
@@ -61,7 +62,7 @@ def _hero_fields(warband: Warband, group: HenchmenGroup, name: str, items: list[
         "large": group.large or "large" in special_names,
         "caster": caster,
         "half_rate": group.half_rate,
-        **{field: getattr(group, field) for field in STAT_FIELD_BY_ADVANCE.values()},
+        **stat_values(group),
         "items": [{"id": row.item_id, "cost": row.cost, "companion": row.companion} for row in items],
         "skill_ids": list(group.henchmen_group_skills.order_by("id").values_list("skill_id", flat=True)),
         "special_ids": [link.special_id for link in specials],

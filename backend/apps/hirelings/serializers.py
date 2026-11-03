@@ -33,6 +33,7 @@ from apps.warbands.access_lines import (
     unique_lines,
 )
 from apps.warbands.utils.armour_save import BEST_ARMOUR_SAVE, WORST_ARMOUR_SAVE
+from apps.warbands.utils.stats import WrittenStatsSerializer
 
 from .fees import FeeField
 from .models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword
@@ -57,7 +58,7 @@ COST_FIELDS = (
     "for_everyone",
     "hire_note",
 )
-PROFILE = ("name", "description", *STAT_FIELDS, "armour_save", "large", "caster")
+PROFILE = ("name", "description", *STAT_FIELDS, "written_stats", "armour_save", "large", "caster")
 ROW_FIELDS = ("id", "campaign_id", "setting_id", *PROFILE, "race_id", "race_name", "race_label", *COST_FIELDS)
 PERSONA_FIELDS = ("stays", "payment_note")
 KIT_FIELDS = ("skills", "specials", "spells", "equipment")
@@ -141,7 +142,7 @@ def _cost() -> serializers.IntegerField:
     return serializers.IntegerField(min_value=0, max_value=MAX_COST, allow_null=True, required=False)
 
 
-class HirelingProfileWriteSerializer(serializers.ModelSerializer):
+class HirelingProfileWriteSerializer(WrittenStatsSerializer, serializers.ModelSerializer):
     """A create or an edit of a campaign's hired sword or dramatis persona. A list it sends (skills, specials, spells,
     equipment, who may hire) replaces that list; a list it leaves out stays. The armour save and the kit's quantities
     are bounded as a warband's copies are, since hiring copies them onto one."""

@@ -7,7 +7,8 @@ from ..unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, parse_ar
 
 
 def apply_stats_override(unit: Any, stats_override: dict[str, int | str]) -> list[str]:
-    """Set the unit's characteristics to the override's; returns the fields that changed."""
+    """Set the unit's characteristics to the override's; returns the fields that changed. A number kept from the
+    battle replaces the stat's written value ("D6" rolled as 4 stays 4)."""
     update_fields: list[str] = []
     for stat_key in NUMERIC_STAT_KEYS:
         if stat_key not in stats_override:
@@ -16,6 +17,11 @@ def apply_stats_override(unit: Any, stats_override: dict[str, int | str]) -> lis
         if getattr(unit, stat_key) != next_value:
             setattr(unit, stat_key, next_value)
             update_fields.append(stat_key)
+            written = unit.written_stats or {}
+            if stat_key in written:
+                unit.written_stats = {field: text for field, text in written.items() if field != stat_key}
+                if "written_stats" not in update_fields:
+                    update_fields.append("written_stats")
     if ARMOUR_SAVE_STAT_KEY in stats_override:
         next_armour_save = parse_armour_save_override(stats_override.get(ARMOUR_SAVE_STAT_KEY))
         if getattr(unit, ARMOUR_SAVE_STAT_KEY) != next_armour_save:
@@ -30,6 +36,8 @@ def kept_stats(unit: Any, stats_override: dict[str, int | str], unit_name: str, 
     before = {key: getattr(unit, key) for key in (*NUMERIC_STAT_KEYS, ARMOUR_SAVE_STAT_KEY)}
     fields = apply_stats_override(unit, stats_override)
     if fields:
-        changes = {field: {"before": before[field], "after": getattr(unit, field)} for field in fields}
+        changes = {
+            field: {"before": before[field], "after": getattr(unit, field)} for field in fields if field in before
+        }
         stat_logs.append({"unit_name": unit_name, "changes": changes})
     return fields

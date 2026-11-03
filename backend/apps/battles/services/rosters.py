@@ -121,6 +121,12 @@ def _stats(unit) -> dict:
     }
 
 
+def _profile(unit) -> dict:
+    """The unit's stats, a stat written as the book prints it ("1(2)", "D6", "-") with no number or its leading one,
+    and the written values by field (apps/warbands/utils/stats.py)."""
+    return {"stats": _stats(unit), "writtenStats": dict(unit.written_stats or {})}
+
+
 def _missing(unit) -> dict:
     """How many more games the unit misses and why: prebattle leaves it out at first, and the player may bring it anyway
     (0 and "" when it isn't missing)."""
@@ -138,7 +144,7 @@ def hero_entry(hero: Hero) -> dict:
         "unitType": hero.unit_type or "Hero",
         "isLeader": bool(hero.is_leader),  # Winning Leader XP (BATL-NEW-09)
         **_missing(hero),
-        "stats": _stats(hero),
+        **_profile(hero),
         **_companions(hero, links, owner="hero"),
         "items": items,
         "singleUseItems": _single_use(items),
@@ -158,7 +164,7 @@ def hireling_entry(hireling: Hireling) -> dict:
         "displayName": hireling.name or f"Hired Sword {hireling.id}",
         "unitType": hireling.unit_type or "Hired Sword",
         **_missing(hireling),
-        "stats": _stats(hireling),
+        **_profile(hireling),
         **_companions(hireling, links, owner="hireling"),
         "upkeepFee": hireling.upkeep_fee,  # a structured fee (apps/hirelings/fees.py): gold, resources, kind
         "noLevelUps": bool(hireling.no_level_ups),
@@ -209,7 +215,7 @@ def henchman_entry(group: HenchmenGroup, member, links: list, number: int = 1) -
         "displayName": member.name or f"{group.unit_type or 'Henchman'} {number}",
         "unitType": group.unit_type or "Henchman",
         **_missing(group),  # the whole group misses games
-        "stats": _stats(group),
+        **_profile(group),
         **_companions(group, carried),
         "noLevelUps": bool(group.no_level_ups),
         "items": items,

@@ -30,6 +30,7 @@ DEFAULT_KEYS = [
     "initiative",
     "attacks",
     "leadership",
+    "written_stats",  # a written stat's text by field ("2D6")
     "armour_save",
     "large",
     "caster",

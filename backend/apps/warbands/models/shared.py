@@ -64,7 +64,31 @@ class StatBlock(models.Model):
         abstract = True
 
 
-class RosterUnit(StatBlock):
+def _stat() -> models.PositiveSmallIntegerField:
+    return models.PositiveSmallIntegerField(validators=STAT_VALIDATORS, default=0, null=True, blank=True)
+
+
+class WrittenStatBlock(StatBlock):
+    """A profile whose stats may be written as the books print them ("1(2)", "2D6", "-"): units, hired swords and
+    bestiary entries (races hold maximums, always numbers). A stat's number is null when its written value has none;
+    `written_stats` holds the text by field (apps/warbands/utils/stats.py)."""
+
+    movement = _stat()
+    weapon_skill = _stat()
+    ballistic_skill = _stat()
+    strength = _stat()
+    toughness = _stat()
+    wounds = _stat()
+    initiative = _stat()
+    attacks = _stat()
+    leadership = _stat()
+    written_stats = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class RosterUnit(WrittenStatBlock):
     """The fields every roster unit shares: heroes, henchmen groups and hired swords (one table per kind).
 
     The `warband` and `race` foreign keys and the loadout links stay on each kind's model because their

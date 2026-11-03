@@ -34,6 +34,7 @@ from apps.items.models import Item
 from apps.warbands.models import Hireling, HirelingItem, Warband, on_roster
 from apps.warbands.units.kinds import HIRELING
 from apps.warbands.utils.leaders import lock_warband
+from apps.warbands.utils.stats import stat_inputs
 
 from .companions import unit_warnings
 from .create import recruit
@@ -44,16 +45,7 @@ SOURCES: Mapping[str, tuple[type[HirelingProfile], str]] = {  # source -> the ca
     "hired_sword": (HiredSword, "hired_swords"),
     "dramatis_persona": (DramatisPersona, "dramatis_personae"),
 }
-COPIED = (
-    "movement",
-    "weapon_skill",
-    "ballistic_skill",
-    "strength",
-    "toughness",
-    "wounds",
-    "initiative",
-    "attacks",
-    "leadership",
+COPIED = (  # with the nine characteristics, written values as written (stat_inputs)
     "armour_save",
     "large",
     "caster",
@@ -122,6 +114,7 @@ def hire_payload(source: str, entry: Any, name: str | None, gold: int) -> dict[s
         "price": gold,  # what this hire cost in gold
         "rating": entry.rating or 0,
         "available_skills": list(entry.available_skill_types or []),
+        **stat_inputs(entry),
         **{column: getattr(entry, column) for column in COPIED},
         "skill_ids": [link.skill_id for link in entry.skill_links.all()],
         "special_ids": [link.special_id for link in entry.special_links.all()],

@@ -19,7 +19,7 @@ from django.db import models
 from apps.core.models import CatalogueEntry, version_constraints
 from apps.hirelings.fees import no_fee
 from apps.warbands.models.hirelings import STAYS
-from apps.warbands.models.shared import StatBlock, stat_constraints
+from apps.warbands.models.shared import WrittenStatBlock, stat_constraints
 from apps.warbands.models.types import WarbandAccess, access_constraints
 
 CASTERS = (("No", "No"), ("Wizard", "Wizard"), ("Priest", "Priest"))
@@ -36,7 +36,7 @@ def _held(model: str, related: str) -> models.ForeignKey:
     return models.ForeignKey(model, related_name=related, on_delete=models.RESTRICT)
 
 
-class HirelingProfile(StatBlock, CatalogueEntry):
+class HirelingProfile(WrittenStatBlock, CatalogueEntry):
     """What a hired sword and a dramatis persona both carry.
 
     `description` is fluff: shown in the catalogue, never copied on hire. `race_label` keeps the source's race text
