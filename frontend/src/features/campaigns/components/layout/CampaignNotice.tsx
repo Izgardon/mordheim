@@ -10,8 +10,8 @@ export type NoticeLook = "page" | "bar";
  * A campaign's notice (your battle, no warband yet, archived): what it is and its way on. It can't
  * be dismissed. In the page it is a banner heading it, an icon and a sentence; in the web bar it
  * fills the bar's main part in Between battles' style (William: "the in battle top bar should be
- * the same style as the between battles one"), its kicker over its heading, then `aside`, its
- * action at the end.
+ * the same style as the between battles one"), its kicker and heading on one line (the bar is one
+ * height everywhere, William), then `aside`, its action at the end.
  */
 export default function CampaignNotice({
   look,
@@ -42,13 +42,10 @@ export default function CampaignNotice({
       <div
         role="status"
         aria-label={label}
-        className={cn(
-          "flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2 py-1.5",
-          className
-        )}
+        className={cn("flex min-w-0 flex-1 items-center gap-x-6", className)}
       >
-        <div className="flex min-w-0 flex-col gap-px">
-          <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text">
+        <div className="flex min-w-0 items-baseline gap-3">
+          <span className="shrink-0 text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text">
             {kicker}
           </span>
           <span className="truncate font-display text-xl font-semibold text-head">{children}</span>
