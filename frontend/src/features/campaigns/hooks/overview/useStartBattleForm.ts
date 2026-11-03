@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
 import { createBattle, reportBattleResult } from "@/features/battles/api/battles-api";
 
 // other
 import { toastBattleWarnings } from "@/features/battles/utils/battle-warnings";
-import { getErrorMessage } from "@/lib/get-error-message";
+import { apiErrorCode, getErrorMessage } from "@/lib/get-error-message";
+import { queryKeys } from "@/lib/query-keys";
 import { normalizeWebUrl } from "@/lib/url-utils";
 
 // types
@@ -64,6 +66,7 @@ export function useStartBattleForm({
   beforeStart,
   onBattleCreated,
 }: UseStartBattleFormParams) {
+  const queryClient = useQueryClient();
   const [mode, setMode] = useState<BattleDialogMode>("start_battle");
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const [selectedWinnerWarbandIds, setSelectedWinnerWarbandIds] = useState<number[]>([]);
@@ -116,9 +119,18 @@ export function useStartBattleForm({
     setBattleDate(getTodayInputValue());
   }, [open, initialMode]);
 
+  /** Fighting a battle: Start battle can't pick him (one battle at a time); a result can. */
+  const fighting = (player: CampaignPlayer | undefined) =>
+    mode === "start_battle" && Boolean(player?.battle_fighting);
+
   useEffect(() => {
-    setSelectedUserIds((prev) => prev.filter((userId) => Boolean(eligiblePlayerById[userId])));
-  }, [creatorUserId, eligiblePlayerById]);
+    setSelectedUserIds((prev) =>
+      prev.filter((userId) => {
+        const player = eligiblePlayerById[userId];
+        return Boolean(player) && !(mode === "start_battle" && player.battle_fighting);
+      })
+    );
+  }, [creatorUserId, eligiblePlayerById, mode]);
 
   useEffect(() => {
     const selectableIds = new Set(selectableWinners.map((warband) => warband.id));
@@ -126,7 +138,7 @@ export function useStartBattleForm({
   }, [selectableWinners]);
 
   const toggleUser = (userId: number) => {
-    if (userId === creatorUserId) {
+    if (userId === creatorUserId || fighting(eligiblePlayerById[userId])) {
       return;
     }
     setSelectedUserIds((prev) =>
@@ -195,6 +207,10 @@ export function useStartBattleForm({
       const fallback =
         mode === "report_result" ? "Unable to report battle result" : "Unable to create battle";
       setError(getErrorMessage(errorResponse, fallback));
+      if (apiErrorCode(errorResponse) === "player_in_battle") {
+        // someone's fight began since the list was read: read it again, so he shows as fighting
+        void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.players(campaignId) });
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -227,6 +243,7 @@ export function useStartBattleForm({
     eligiblePlayers,
     selectedUserIds,
     toggleUser,
+    fighting,
     // Busy players are greyed out but can be invited, with a warning (decision 1).
     busyInvitees: selectedParticipants.filter(
       (player) => player.id !== creatorUserId && player.battle_busy

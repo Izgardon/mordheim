@@ -63,8 +63,8 @@ function toOpenBattle(state: BattleState): YourOpenBattle | null {
 }
 
 /**
- * Your unfinished battles (the server lets a player be in several: busy players are warned,
- * never refused), the one that needs you most first; newest first within a phase, as the list
+ * Your unfinished battles (the server lets a player be in several pre-battles and post-games, but
+ * fight only one), the one that needs you most first; newest first within a phase, as the list
  * comes. `excludeBattleId` leaves out the battle a page is about already.
  */
 export function yourOpenBattles(battles: BattleState[], excludeBattleId?: number) {

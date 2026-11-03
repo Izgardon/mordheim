@@ -75,8 +75,8 @@ function InviteDialog({
  * The overview's header (design E): the campaign's name, Start battle and Report a result (the
  * same size), and the ⋯ menu: Invite a player, Campaign settings, Export, and Start the campaign
  * for those who may while it hasn't begun. While you have a battle, Start battle takes you there
- * (Rejoin and the like) and the menu gains Start another battle. An archived campaign takes no
- * new battles.
+ * (Rejoin and the like) and the menu gains Start another battle, unless you are fighting it. An
+ * archived campaign takes no new battles.
  */
 export default function OverviewHeader(props: OverviewHeaderProps) {
   const { campaign, isMobile } = props;
@@ -86,8 +86,9 @@ export default function OverviewHeader(props: OverviewHeaderProps) {
   const archived = isArchived(campaign);
   const menu: MoreMenuEntry[] = [
     ...(archived ? [] : [{ label: "Invite a player", onSelect: () => setInviteOpen(true) }]),
-    // a player may be in several battles (warned, never refused): Start battle stays in reach
-    ...(props.battle && !archived
+    // a player may be in several pre-battles and post-games (warned), but fight only one: Start
+    // battle stays in reach until he fights (his fight comes first: `yourOpenBattles`)
+    ...(props.battle && props.battle.phase !== "fight" && !archived
       ? [{ label: "Start another battle", onSelect: props.onStartBattle }]
       : []),
     { label: "Campaign settings", onSelect: () => navigate(`/campaigns/${campaign.id}/settings`) },
