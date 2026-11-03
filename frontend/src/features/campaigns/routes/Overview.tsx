@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { GameIcon } from "@/components/ui/game-icons";
 import { SectionHead } from "@/components/ui/section-title";
 import { useAuth } from "@/features/auth/hooks/use-auth";
+import { useYourOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import OpenBounties from "@/features/bounties/components/OpenBounties";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { queryKeys } from "@/lib/query-keys";
@@ -59,10 +60,10 @@ function Section({
 }
 
 /**
- * The campaign overview (design E): who is ready, Start battle and Report a result, the stats,
- * the standings, the latest battles with their moments, the chronicle and the open bounties;
- * what waits on you (an unfinished battle, stuck battles, results to answer) above them. On a
- * phone the sections are tabs, Standings first.
+ * The campaign overview (design E): who is ready (in the web bar), Start battle and Report a
+ * result, the stats, the standings, the latest battles with their moments, the chronicle and the
+ * open bounties; what waits on you (stuck battles, results to answer) above them. While you have
+ * a battle, Start battle takes you there. On a phone the sections are tabs, Standings first.
  */
 export default function Overview() {
   const { id } = useParams();
@@ -73,6 +74,7 @@ export default function Overview() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const playersQuery = useCampaignPlayers(campaignId);
   const historyQuery = useCampaignBattleHistory(campaignId);
+  const yourBattle = useYourOpenBattles(campaignId).battles[0] ?? null;
   const players = playersQuery.data ?? [];
   const history = historyQuery.data ?? [];
   const [tab, setTab] = useState<Tab>("standings");
@@ -141,10 +143,12 @@ export default function Overview() {
 
   return (
     <div className={cn("flex flex-col", isMobile ? "gap-3 pb-6" : "gap-[26px] pb-14")}>
-      <ReadinessBar players={players} userId={user?.id} isMobile={isMobile} />
+      {/* the web's is in the bar (CampaignLayout) */}
+      {isMobile ? <ReadinessBar players={players} userId={user?.id} isMobile /> : null}
       <OverviewHeader
         campaign={campaign}
         isMobile={isMobile}
+        battle={yourBattle}
         onStartBattle={() => openBattleDialog("start_battle")}
         onReportResult={() => openBattleDialog("report_result")}
         onExport={onExport}

@@ -92,17 +92,26 @@ h6 {
   color: var(--color-head);
 }
 
-/* Desktop shell: the 232 px nav rail beside the page, no top bar (design E). */
+/* Desktop shell: the web bar across the top (WebTopBar), then the 232 px nav rail beside the
+   page (design E). */
 .desktop-shell {
   position: fixed;
   inset: 0;
   display: grid;
   grid-template-columns: 232px minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr);
   overflow: hidden;
   background: var(--color-page);
 }
 
+.desktop-shell__bar {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  min-width: 0;
+}
+
 .desktop-shell__rail {
+  grid-row: 2;
   min-height: 0;
   overflow-x: hidden;
   overflow-y: auto;
@@ -113,6 +122,7 @@ h6 {
 }
 
 .desktop-shell__main {
+  grid-row: 2;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
@@ -147,8 +157,9 @@ h6 {
   padding-inline: calc((100cqw - 100%) / 2);
 }
 
-/* A campaign banner (archived, no warband yet) heads every page: the page's band then sits under
-   it in the flow instead of pulling up over it. */
+/* A campaign banner in the page (archived or no warband yet, on the web only on the overview,
+   whose bar holds Between battles) heads it: the page's band then sits under it in the flow
+   instead of pulling up over it. */
 .desktop-shell__content-inner:has(> .campaign-banner) .page-band {
   margin-top: 0;
 }

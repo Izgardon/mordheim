@@ -4,6 +4,8 @@ import { Bone } from "@/components/ui/skeleton";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
+import WebTopBar from "./WebTopBar";
+
 /** The rail's groups while the campaign loads: a caption over its links. */
 const RAIL_GROUPS = [2, 1, 9];
 
@@ -68,15 +70,19 @@ function PhoneBars({ children }: { children: ReactNode }) {
 }
 
 /**
- * The campaign shell before the campaign has loaded (design E): the rail (web) or the top bar and
- * bottom nav (phone) as skeletons, around the page's own skeleton, so a move into a campaign
- * never shows a blank screen or the full-screen loader.
+ * The campaign shell before the campaign has loaded (design E): the web bar (its Campaigns and Log
+ * out already there) and the rail, or the top bar and bottom nav (phone), as skeletons, around
+ * the page's own skeleton, so a move into a campaign never shows a blank screen or the
+ * full-screen loader.
  */
 export default function ShellSkeleton({ children }: { children: ReactNode }) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   if (isMobile) return <PhoneBars>{children}</PhoneBars>;
   return (
     <main className="desktop-shell">
+      <div className="desktop-shell__bar">
+        <WebTopBar />
+      </div>
       <aside className="desktop-shell__rail" aria-hidden="true">
         <RailBones />
       </aside>

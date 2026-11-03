@@ -18,10 +18,11 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { isArchived } from "../capabilities";
-import ArchivedBanner from "../components/layout/ArchivedBanner";
+import CampaignBar from "../components/layout/CampaignBar";
+import { battleStageTitle } from "../components/layout/campaign-bar";
 import CampaignBattleDialog from "../components/layout/CampaignBattleDialog";
 import CampaignLoadError from "../components/layout/CampaignLoadError";
-import NoWarbandBanner from "../components/layout/NoWarbandBanner";
+import CampaignPageNotices from "../components/layout/CampaignPageNotices";
 import { useArchivedRefusals } from "../hooks/useArchivedRefusals";
 import { useBattleSession } from "../hooks/useBattleSession";
 import { isCampaignId, useCampaignQuery } from "../hooks/useCampaignQuery";
@@ -43,7 +44,11 @@ export type CampaignLayoutContext = {
   openBattleDialog: (mode: BattleDialogMode) => void;
 };
 
-/** The campaign shell (design E): the nav rail on the web; top bar and bottom nav on a phone. */
+/**
+ * The campaign shell (design E): the web bar and the nav rail on the web; top bar and bottom nav
+ * on a phone. The campaign's notices (your battle, Raise your warband, archived) sit in the web
+ * bar, or in the page's flow on a phone.
+ */
 export default function CampaignLayout() {
   const { id } = useParams();
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -55,10 +60,11 @@ export default function CampaignLayout() {
   const campaign = campaignQuery.data ?? null;
   const segments = pathname.split("/").filter(Boolean);
   const isBattleRoute = isBattlePath(pathname);
+  const isOverview = segments.length === 2;
   // The Aftermath and the battle screen bring their own header and
   // footer on a phone.
   const ownChrome = isBattleRoute && (segments[4] === "postbattle" || segments[4] === "active");
-  const { canRejoinBattle, rejoinBattle } = useBattleSession(campaignId, {
+  const { yourBattles, canRejoinBattle, rejoinBattle } = useBattleSession(campaignId, {
     isBattleRoute,
     battleId: Number(segments[3] ?? ""),
     stage: segments[4] ?? "",
@@ -168,6 +174,17 @@ export default function CampaignLayout() {
     <AppShell
       variant={isMobile ? "mobile" : "desktop"}
       campaignId={campaignId}
+      webBar={
+        isMobile ? null : (
+          <CampaignBar
+            campaign={campaign}
+            pathname={pathname}
+            title={isBattleRoute ? battleStageTitle(segments[4]) : campaignSectionTitle(pathname)}
+            battles={isBattleRoute ? [] : yourBattles}
+            isOverview={isOverview}
+          />
+        )
+      }
       rail={
         <NavRail
           campaign={campaign}
@@ -178,8 +195,14 @@ export default function CampaignLayout() {
       }
       {...(isMobile ? mobileChrome : {})}
     >
-      <ArchivedBanner campaign={campaign} />
-      <NoWarbandBanner campaign={campaign} pathname={pathname} />
+      <CampaignPageNotices
+        campaign={campaign}
+        pathname={pathname}
+        battles={yourBattles}
+        isMobile={isMobile}
+        isOverview={isOverview}
+        isBattleRoute={isBattleRoute}
+      />
       <Suspense fallback={<CampaignPageSkeleton pathname={pathname} />}>
         <Outlet context={outletContext} />
       </Suspense>

@@ -85,10 +85,19 @@ const player = (id: number, name: string, warband: string): CampaignPlayer => ({
 const PLAYERS = [player(RAIDER.id, "Raider", "Iron Vultures"), player(9, "Mira", "Night Razors")];
 
 /** A battle you are in and have not finished: one to go back to. */
-const OPEN_BATTLE = {
-  battle: { id: 31, campaign_id: CAMPAIGN_ID, status: "prebattle", flow_type: "normal" },
-  participants: [{ user: { id: RAIDER.id }, status: "accepted" }],
-} as unknown as BattleState;
+const openBattle = (id: number, page: "prebattle" | "active", scenario = "Street Fight") =>
+  ({
+    battle: { id, campaign_id: CAMPAIGN_ID, status: page, flow_type: "normal", scenario },
+    participants: [
+      { user: { id: RAIDER.id }, status: page === "active" ? "in_battle" : "accepted" },
+    ],
+    viewer: {
+      participant_status: page === "active" ? "in_battle" : "accepted",
+      unfinished: true,
+      page,
+    },
+  }) as unknown as BattleState;
+const OPEN_BATTLE = openBattle(31, "prebattle");
 
 const battleButton = async () => within(await bottomNav()).getByRole("button", { name: "Battle" });
 
@@ -107,8 +116,33 @@ describe("Battle", () => {
 
     await user.click(await battleButton());
 
-    expect(app.location().pathname).toBe(`${BASE}/battles/31`);
+    expect(app.location().pathname).toBe(`${BASE}/battles/31/prebattle`);
     expect(screen.queryByRole("dialog", { name: "Start a battle" })).toBeNull();
+  });
+
+  it("goes to the battle the banner picks when you have several: your fight before a pre-battle", async () => {
+    // the list comes newest first: the pre-battle is newer than the fight
+    fakeApi.on(`GET ${BASE}/battles/?open=1`, [
+      openBattle(32, "prebattle", "Ambush"),
+      openBattle(31, "active", "Street Fight"),
+    ]);
+    const user = setupUser();
+    const app = renderApp(`${BASE}/house-rules`);
+
+    const banner = await screen.findByRole("status", { name: "Your battle" });
+    expect(banner).toHaveTextContent("You're in a battle: Street Fight");
+    expect(within(banner).getByRole("link", { name: "+1 more" })).toHaveAttribute(
+      "href",
+      `${BASE}/battles`
+    );
+    expect(within(banner).getByRole("link", { name: "Rejoin" })).toHaveAttribute(
+      "href",
+      `${BASE}/battles/31/active`
+    );
+
+    await user.click(await battleButton());
+
+    expect(app.location().pathname).toBe(`${BASE}/battles/31/active`);
   });
 
   it("opens Start a battle on the page you are on when you have none", async () => {

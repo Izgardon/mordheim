@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Hourglass } from "lucide-react";
 
-import UnfinishedBattleBanner from "@/features/battles/components/shared/UnfinishedBattleBanner";
-
 import { useCampaignActiveBattles } from "../../api/campaign-queries";
 import PendingResults from "./PendingResults";
 
@@ -29,8 +27,9 @@ function StuckBattles({ campaignId, enabled }: { campaignId: number; enabled: bo
 }
 
 /**
- * What waits on you, above the overview's sections: your unfinished battle (with the way back),
- * battles stuck for over a day (battle managers) and reported results to answer.
+ * What waits on you, above the overview's sections and the Battles page's: battles stuck for
+ * over a day (battle managers) and reported results to answer. Your own unfinished battle is the
+ * rejoin banner's.
  */
 export default function OverviewNotices({
   campaignId,
@@ -41,7 +40,6 @@ export default function OverviewNotices({
 }) {
   return (
     <div className="flex flex-col gap-2.5 empty:hidden">
-      <UnfinishedBattleBanner campaignId={campaignId} />
       <StuckBattles campaignId={campaignId} enabled={managesBattles} />
       <PendingResults campaignId={campaignId} />
     </div>

@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useQuery, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
 // api
@@ -7,6 +7,7 @@ import { listOpenCampaignBattles } from "../api/battles-api";
 // other
 import { isCampaignId } from "@/features/campaigns/hooks/useCampaignQuery";
 import { queryKeys } from "@/lib/query-keys";
+import { yourOpenBattles } from "../utils/open-battles";
 
 export const OPEN_BATTLES_STALE_TIME_MS = 30_000;
 
@@ -21,6 +22,17 @@ export function useOpenCampaignBattles(campaignId: number, { enabled = true } = 
     staleTime: OPEN_BATTLES_STALE_TIME_MS,
     enabled: enabled && isCampaignId(campaignId),
   });
+}
+
+/**
+ * Your unfinished battles in the campaign, the one that needs you most first (`yourOpenBattles`),
+ * from the same query: the rejoin banner, the rail's Rejoin, the phone's Battle, the overview's
+ * and the Battles page's button all pick the same battle. `loaded` once the list has come in.
+ */
+export function useYourOpenBattles(campaignId: number, { enabled = true } = {}) {
+  const { data } = useOpenCampaignBattles(campaignId, { enabled });
+  const battles = useMemo(() => yourOpenBattles(data ?? []), [data]);
+  return { battles, loaded: data !== undefined };
 }
 
 /**

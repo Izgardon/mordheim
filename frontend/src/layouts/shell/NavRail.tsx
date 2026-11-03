@@ -65,7 +65,10 @@ type NavRailProps = {
   onRejoinBattle?: () => void;
 };
 
-/** The web shell's left rail (232 px, design E): campaign, tools, sections, you. */
+/**
+ * The web shell's left rail (232 px, design E), under the web bar: campaign, tools, sections,
+ * you.
+ */
 export default function NavRail({ campaign, userName, tools, onRejoinBattle }: NavRailProps) {
   const { pathname } = useLocation();
   const base = `/campaigns/${campaign.id}`;
@@ -84,13 +87,10 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
         <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-accent-text">
           Mordheim
         </span>
-        <Link
-          to="/campaigns"
-          title="All campaigns"
-          className="font-display text-[19px] font-semibold leading-tight text-head hover:text-accent-hi"
-        >
+        {/* plain: the web bar's Campaigns leads back to the list */}
+        <span className="font-display text-[19px] font-semibold leading-tight text-head">
           {campaign.name}
-        </Link>
+        </span>
         <span className="text-xs text-faint">
           {campaign.player_count} {campaign.player_count === 1 ? "player" : "players"}
         </span>

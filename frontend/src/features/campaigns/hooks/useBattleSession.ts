@@ -1,15 +1,14 @@
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 
 // api
-import { useOpenCampaignBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
+import { useYourOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 
 // other
 import { isCampaignId } from "./useCampaignQuery";
-import {
-  getResumableBattleForUser,
-  toCurrentBattleSession,
-} from "@/features/battles/utils/battle-session";
+import { toCurrentBattleSession } from "@/features/battles/utils/battle-session";
+import { queryKeys } from "@/lib/query-keys";
 import { useAppStore } from "@/stores/app-store";
 
 /** Where the URL is inside a campaign: a battle page, and which battle and phase it shows. */
@@ -23,12 +22,15 @@ const stageStatus = (stage: string) =>
   stage === "active" ? "active" : stage === "postbattle" ? "postbattle" : "prebattle";
 
 /**
- * The battle you can go back to from anywhere in the campaign (Rejoin Battle): the battle page
- * you are on, or else your resumable open battle, read from the open battles query the overview's
- * battle panel shares (it refetches on focus, on reconnect and on battle events).
+ * Your unfinished battles from anywhere in the campaign, the one that needs you most first: the
+ * rejoin banner shows it, and the rail's Rejoin and the phone's Battle go to it. Read from the
+ * open battles query the overview and the Battles page share (it refetches on focus, on
+ * reconnect, on battle events and as you leave a battle's pages). The store's current battle
+ * follows it, or the battle page you are on.
  */
 export function useBattleSession(campaignId: number, route: BattleRoute) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user, currentBattleSession, setCurrentBattleSession, clearCurrentBattleSession } =
     useAppStore();
   const { isBattleRoute, battleId, stage } = route;
@@ -41,9 +43,23 @@ export function useBattleSession(campaignId: number, route: BattleRoute) {
     setCurrentBattleSession({ battleId, campaignId, status: stageStatus(stage) });
   }, [battleId, campaignId, isBattleRoute, setCurrentBattleSession, stage]);
 
-  const openBattles = useOpenCampaignBattles(campaignId, {
+  // What you did on a battle's pages (got ready, fought, finished) is read again as you leave
+  // them, so the banner's button says where you stand now. A read already under way is kept.
+  const wasBattleRoute = useRef(isBattleRoute);
+  useEffect(() => {
+    if (wasBattleRoute.current && !isBattleRoute && isCampaignId(campaignId)) {
+      void queryClient.invalidateQueries(
+        { queryKey: queryKeys.campaign.openBattles(campaignId) },
+        { cancelRefetch: false }
+      );
+    }
+    wasBattleRoute.current = isBattleRoute;
+  }, [campaignId, isBattleRoute, queryClient]);
+
+  const { battles: yourBattles, loaded } = useYourOpenBattles(campaignId, {
     enabled: !isBattleRoute && Boolean(userId),
-  }).data;
+  });
+  const lead = yourBattles[0] ?? null;
   const sessionCampaignId = currentBattleSession?.campaignId;
 
   useEffect(() => {
@@ -58,10 +74,10 @@ export function useBattleSession(campaignId: number, route: BattleRoute) {
       return;
     }
     // Not loaded yet, or the last load failed: keep the existing store value.
-    if (!openBattles) {
+    if (!loaded) {
       return;
     }
-    const nextSession = toCurrentBattleSession(getResumableBattleForUser(openBattles, userId));
+    const nextSession = toCurrentBattleSession(lead?.state ?? null);
     if (nextSession) {
       setCurrentBattleSession(nextSession);
     } else if (ownsSession) {
@@ -71,24 +87,25 @@ export function useBattleSession(campaignId: number, route: BattleRoute) {
     campaignId,
     clearCurrentBattleSession,
     isBattleRoute,
-    openBattles,
+    lead,
+    loaded,
     sessionCampaignId,
     setCurrentBattleSession,
     userId,
   ]);
 
+  const href = lead?.href;
   const rejoinBattle = useCallback(() => {
-    if (!currentBattleSession) {
-      return;
+    if (href) {
+      navigate(href);
     }
-    // The bare battle URL sends him to the page for his status.
-    const { campaignId: sessionCampaign, battleId: sessionBattle } = currentBattleSession;
-    navigate(`/campaigns/${sessionCampaign}/battles/${sessionBattle}`);
-  }, [currentBattleSession, navigate]);
+  }, [href, navigate]);
 
   return {
-    /** Rejoin Battle shows outside the battle pages while you have a battle to go back to. */
-    canRejoinBattle: Boolean(currentBattleSession) && !isBattleRoute,
+    /** Your unfinished battles, the one that needs you most first. */
+    yourBattles,
+    /** Rejoin shows outside the battle pages while you have a battle to go back to. */
+    canRejoinBattle: Boolean(lead) && !isBattleRoute,
     rejoinBattle,
   };
 }

@@ -4,32 +4,40 @@ import { Archive } from "lucide-react";
 import { campaignCapabilities } from "../../capabilities";
 
 import type { CampaignSummary } from "../../types/campaign-types";
+import CampaignNotice, { type NoticeLook } from "./CampaignNotice";
 
 /**
  * Every page of an archived campaign says it is read-only (decision 5); its owner gets the way to
- * restore it.
+ * restore it. In the web bar (in the overview's page, whose bar holds Between battles); in the
+ * page's flow on a phone.
  */
-export default function ArchivedBanner({ campaign }: { campaign: CampaignSummary }) {
+export default function ArchivedBanner({
+  campaign,
+  look = "page",
+}: {
+  campaign: CampaignSummary;
+  look?: NoticeLook;
+}) {
   if (!campaign.archived_at) {
     return null;
   }
   return (
-    <div
-      role="status"
-      className="campaign-banner mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 border border-accent-line bg-accent-soft px-4 py-3 text-sm text-ink sm:mx-0 max-[960px]:mt-3"
+    <CampaignNotice
+      look={look}
+      icon={Archive}
+      className={look === "page" ? "gap-y-1 py-3" : "gap-y-1"}
+      action={
+        campaignCapabilities(campaign).restore ? (
+          <Link
+            to={`/campaigns/${campaign.id}/settings?section=archive`}
+            className="font-semibold text-accent-hi underline underline-offset-2"
+          >
+            Restore it in Settings
+          </Link>
+        ) : null
+      }
     >
-      <Archive className="h-4 w-4 shrink-0 text-accent-text" aria-hidden="true" />
-      <span className="min-w-0 grow basis-56">
-        This campaign is archived: read-only for everyone.
-      </span>
-      {campaignCapabilities(campaign).restore ? (
-        <Link
-          to={`/campaigns/${campaign.id}/settings?section=archive`}
-          className="font-semibold text-accent-hi underline underline-offset-2"
-        >
-          Restore it in Settings
-        </Link>
-      ) : null}
-    </div>
+      This campaign is archived: read-only for everyone.
+    </CampaignNotice>
   );
 }

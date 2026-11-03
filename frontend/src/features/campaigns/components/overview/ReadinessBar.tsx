@@ -24,8 +24,9 @@ const TEXT: Record<Readiness, string> = {
 
 /**
  * Who is ready for the next battle (design E): each player with a warband and his state (Ready,
- * Post-game, In battle), yours picked out. A bar across the top on the web, a row that scrolls
- * sideways on a phone.
+ * Post-game, In battle), yours picked out. The overview's web bar holds it (William: the
+ * overview's priority stays Between battles, even while you are in a battle); a row that
+ * scrolls sideways at the top of the page on a phone.
  */
 export default function ReadinessBar({
   players,
@@ -83,7 +84,7 @@ export default function ReadinessBar({
   return (
     <section
       aria-label="Who is ready"
-      className="page-band flex flex-wrap items-center gap-x-8 gap-y-3 border-b border-line bg-bar py-3.5"
+      className="flex min-w-0 flex-1 flex-wrap items-center gap-x-8 gap-y-2 py-1.5"
     >
       <div className="flex min-w-[190px] flex-col gap-px">
         <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-accent-text">

@@ -9,6 +9,8 @@ import { usePullToRefresh } from "../mobile/use-pull-to-refresh";
 type AppShellProps = {
   variant: "mobile" | "desktop";
   children: ReactNode;
+  /** Desktop: the web bar across the top (`WebTopBar`). */
+  webBar?: ReactNode;
   /** Desktop: the nav rail. */
   rail?: ReactNode;
   /** Mobile: the bar above the page. */
@@ -20,14 +22,16 @@ type AppShellProps = {
 };
 
 /**
- * The campaign shell for both breakpoints (design E): the rail beside the page on the web; the top
- * bar, the page and the bottom nav stacked on a phone. Only the chrome changes with `variant`: the
- * page sits at the same position in the tree either way, so crossing 960 px restyles the frame
- * instead of unmounting the page and its unsaved state (BUG-23).
+ * The campaign shell for both breakpoints (design E): the web bar across the top, then the rail
+ * beside the page on the web; the top bar, the page and the bottom nav stacked on a phone. Only
+ * the chrome changes with `variant`: the page sits at the same position in the tree either way,
+ * so crossing 960 px restyles the frame instead of unmounting the page and its unsaved state
+ * (BUG-23).
  */
 export default function AppShell({
   variant,
   children,
+  webBar,
   rail,
   topBar,
   bottomNav,
@@ -57,6 +61,7 @@ export default function AppShell({
     <main
       className={isMobile ? "fixed inset-0 flex flex-col overflow-hidden bg-page" : "desktop-shell"}
     >
+      {isMobile || !webBar ? null : <div className="desktop-shell__bar">{webBar}</div>}
       {isMobile ? null : <aside className="desktop-shell__rail">{rail}</aside>}
       {isMobile && topBar ? <div className="shrink-0">{topBar}</div> : null}
       <div className={isMobile ? "flex min-h-0 flex-1 flex-col" : "desktop-shell__main"}>

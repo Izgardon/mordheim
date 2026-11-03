@@ -6,29 +6,6 @@ export type CurrentBattleSession = {
   status: BattleStatus;
 };
 
-export function getResumableBattleForUser(battleStates: BattleState[], userId?: number | null) {
-  if (!userId) {
-    return null;
-  }
-
-  return (
-    battleStates.find((state) => {
-      if (state.battle.flow_type !== "normal") {
-        return false;
-      }
-      if (state.battle.status === "ended" || state.battle.status === "canceled") {
-        return false;
-      }
-      const participant = state.participants.find((entry) => entry.user.id === userId);
-      return (
-        participant?.status !== "confirmed_postbattle" &&
-        participant?.status !== "canceled_prebattle" &&
-        participant?.status !== "declined"
-      );
-    }) ?? null
-  );
-}
-
 export function toCurrentBattleSession(
   battleState: BattleState | null
 ): CurrentBattleSession | null {
