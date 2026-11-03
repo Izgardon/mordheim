@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { ItemKindIcon } from "@/components/ui/game-icons";
+import { ROW_SELECT, SectionedSelect } from "@/components/ui/sectioned-select";
 import { SidePanel } from "@/components/ui/side-panel";
 import { itemKind } from "@/features/items/item-kind";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { groupItemsById } from "../../utils/warband-utils";
+import { placeOf, unitSections } from "../roster/unit-sections";
 import { isGroup, unitName, type RosterUnit } from "../roster/unit-view";
 import type { WarbandItemSummary } from "../../types/warband-types";
 import { StashList } from "./StashPanel";
@@ -40,8 +42,10 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
           count: item.carriers ?? 0,
         }))
       : groupItemsById(entry.unit.items).map((line) => ({ key: line.item.id, ...line }));
-  const others = props.units.filter(
-    (other) => entry && !(other.kind === entry.kind && other.unit.id === entry.unit.id)
+  const sections = unitSections(
+    props.units.filter(
+      (other) => entry && !(other.kind === entry.kind && other.unit.id === entry.unit.id)
+    )
   );
 
   return (
@@ -80,29 +84,17 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
                     >
                       To stash
                     </Button>
-                    <select
+                    <SectionedSelect
+                      {...ROW_SELECT}
                       aria-label={`Give ${line.item.name} to`}
+                      placeholder="Give to…"
                       value=""
-                      onChange={(event) => {
-                        const [type, id] = event.target.value.split(":");
-                        if (type)
-                          props.onMove(entry, line.item.id, {
-                            type: type as ItemPlace["type"],
-                            id: Number(id),
-                          });
+                      sections={sections}
+                      onValueChange={(value) => {
+                        const to = placeOf(value);
+                        if (to) props.onMove(entry, line.item.id, to);
                       }}
-                      className="h-8 border border-strong bg-page px-2 text-xs text-ink"
-                    >
-                      <option value="">Give to…</option>
-                      {others.map((other) => (
-                        <option
-                          key={`${other.kind}-${other.unit.id}`}
-                          value={`${other.kind}:${other.unit.id}`}
-                        >
-                          {unitName(other.unit)}
-                        </option>
-                      ))}
-                    </select>
+                    />
                   </div>
                 ) : null}
               </div>

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { ItemKindIcon } from "@/components/ui/game-icons";
+import { ROW_SELECT, SectionedSelect } from "@/components/ui/sectioned-select";
 import { SidePanel } from "@/components/ui/side-panel";
 
 import { itemKind } from "@/features/items/item-kind";
@@ -10,7 +11,8 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import { warbandStashQuery } from "../../api/economy-queries";
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { copiesForGroup } from "../../units/loadout";
-import { isGroup, unitName, type RosterUnit } from "../roster/unit-view";
+import { placeOf, unitSections } from "../roster/unit-sections";
+import { isGroup, type RosterUnit } from "../roster/unit-view";
 import type { WarbandItemSummary } from "../../types/warband-types";
 
 type StashPanelProps = {
@@ -84,26 +86,17 @@ export function StashList({
                   Equip
                 </Button>
               ) : (
-                <select
+                <SectionedSelect
+                  {...ROW_SELECT}
                   aria-label={`Equip ${item.name}`}
+                  placeholder="Equip…"
                   value=""
-                  onChange={(event) => {
-                    const [type, id] = event.target.value.split(":");
-                    const to = { type: type as ItemPlace["type"], id: Number(id) };
-                    if (type) onMove(item.id, to, copiesFor(units, to, item.quantity ?? 1));
+                  sections={unitSections(units)}
+                  onValueChange={(value) => {
+                    const to = placeOf(value);
+                    if (to) onMove(item.id, to, copiesFor(units, to, item.quantity ?? 1));
                   }}
-                  className="h-8 border border-strong bg-page px-2 text-xs text-ink"
-                >
-                  <option value="">Equip…</option>
-                  {units.map((entry) => (
-                    <option
-                      key={`${entry.kind}-${entry.unit.id}`}
-                      value={`${entry.kind}:${entry.unit.id}`}
-                    >
-                      {unitName(entry.unit)}
-                    </option>
-                  ))}
-                </select>
+                />
               )}
               <Button size="sm" variant="ghost" onClick={() => onSell(item)}>
                 Sell
