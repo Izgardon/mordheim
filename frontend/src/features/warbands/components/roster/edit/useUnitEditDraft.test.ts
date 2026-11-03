@@ -58,21 +58,20 @@ describe("statsPayload with written values", () => {
 describe("useUnitEditDraft's save", () => {
   beforeEach(() => fakeApi.reset());
 
-  it("leaves out the stats it didn't change, so an advanced written stat keeps its number", async () => {
+  it("edits a written stat as it shows, its number then its text, and saves it so", async () => {
     fakeApi.on("POST /warbands/9/heroes/batch/", { units: [], summary: {} });
-    const hero = makeHero({ id: 5, attacks: 2, strength: 3, written_stats: { attacks: "1(2)" } });
+    const hero = makeHero({ id: 5, attacks: 2, strength: 3, written_stats: { attacks: "(2)" } });
     const { result } = renderHook(() => useUnitEditDraft({ kind: "hero", unit: hero }, 1, 9), {
       wrapper: createQueryWrapper(),
     });
 
-    expect(result.current.draft.attacks).toBe("1(2)");
+    expect(result.current.draft.attacks).toBe("2(2)");
     act(() => result.current.set("strength", "4"));
     await act(() => result.current.save());
 
     const body = fakeApi.bodyOf("POST /warbands/9/heroes/batch/") as {
       update: Record<string, unknown>[];
     };
-    expect(body.update[0].strength).toBe(4);
-    expect(body.update[0]).not.toHaveProperty("attacks");
+    expect([body.update[0].strength, body.update[0].attacks]).toEqual([4, "2(2)"]);
   });
 });

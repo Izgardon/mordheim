@@ -1,10 +1,11 @@
 """Characteristics as the books print them (William, 3 Nov 2026: "allow free text instead of nums as a lot of units
 will require them"): a whole number from 0 to 10, or a written value such as "1(2)", "5*", "2D6" or "-".
 
-A written stat keeps its text in `written_stats` (keyed by field) and the number the app does sums with in the field
-itself: the whole number it starts with ("1(2)" is 1, "5*" is 5), or none at all ("D6", "2D6", "-"; "-" is not 0,
-William). Sums use the number and skip a stat that has none: an advance adds 1 to the number and leaves the text, which
-the pages then flag as needing an update (William: "do alternative, but warn").
+The field holds the number the app does sums with: the whole number a written value starts with ("1(2)" is 1, "5*" is
+5), or none at all ("D6", "2D6", "-"; "-" is not 0, William). `written_stats` (keyed by field) holds what the book
+writes after that number ("(2)", "*"), or the whole text when there is no number. A stat shows as its number followed
+by that text, so a change to the number moves the text with it (William: "the text part was just the (2) here"): an
+advance turns "1(2)" into "2(2)". Sums skip a stat without a number.
 """
 
 import re
@@ -32,13 +33,20 @@ _LEADING_NUMBER = re.compile(r"^(\d+)(?![\dDd])")  # "1(2)" and "5*" start with 
 
 class Stat(NamedTuple):
     number: int | None
-    written: str | None  # None: a plain number
+    written: str | None  # what follows the number ("(2)"), or the whole text without one ("D6"); None: plain
 
 
-def written_number(text: str) -> int | None:
-    """The number a written value starts with, or None ("D6", "2D6", "-")."""
+def split_written(text: str) -> Stat:
+    """A written value as its number and what follows it ("1(2)": 1 and "(2)"), or no number and the whole text."""
     match = _LEADING_NUMBER.match(text)
-    return int(match.group(1)) if match else None
+    if match is None:
+        return Stat(None, text)
+    return Stat(int(match.group(1)), text[match.end() :] or None)
+
+
+def shown_stat(number: int | None, written: str | None) -> str:
+    """A stat as the book writes it: its number followed by its written text ("2(2)"), or the text alone ("D6")."""
+    return f"{'' if number is None else number}{written or ''}" or "-"
 
 
 def read_stat(value: Any) -> Stat:
@@ -58,7 +66,7 @@ def read_stat(value: Any) -> Stat:
         elif len(text) > MAX_WRITTEN:
             raise ValueError(WRITTEN_TOO_LONG)
         else:
-            stat = Stat(written_number(text), text)
+            stat = split_written(text)
     else:
         raise ValueError(STAT_ERROR)
     if stat.number is not None and not 0 <= stat.number <= MAX_STAT:
@@ -76,15 +84,13 @@ def stat_values(source: Any) -> dict[str, Any]:
 
 
 def stat_inputs(source: Any) -> dict[str, Any]:
-    """A profile's nine characteristics as a create body sends them (a hire, a promotion, a beast recruited): each
-    written value as written, else its number."""
+    """A profile's nine characteristics as a create body sends them (a hire, a beast recruited): a written stat as
+    the book writes it ("2(2)"), else its number."""
     written = getattr(source, "written_stats", None) or {}
     inputs: dict[str, Any] = {}
     for field in STAT_FIELDS:
-        value = written.get(field)
-        if value is None:
-            value = getattr(source, field)
-        inputs[field] = "-" if value is None else value
+        number = getattr(source, field)
+        inputs[field] = shown_stat(number, written.get(field)) if field in written or number is None else number
     return inputs
 
 

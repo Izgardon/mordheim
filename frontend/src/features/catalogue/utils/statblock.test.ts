@@ -13,7 +13,6 @@ import {
   statShown,
   statToSend,
   writtenNumber,
-  writtenStale,
 } from "./statblock";
 
 describe("stat lines", () => {
@@ -80,16 +79,13 @@ describe("written stats", () => {
     expect(["2D6", "D6", "d3", "-"].map(writtenNumber)).toEqual([null, null, null, null]);
   });
 
-  it("shows a written value as written, a number as itself and nothing as a dash", () => {
-    expect([statShown(1, "1(2)"), statShown(4), statShown(null)]).toEqual(["1(2)", 4, "–"]);
-  });
-
-  it("flags a written value only once its number has moved", () => {
-    expect(writtenStale(1, "1(2)")).toBe(false);
-    expect(writtenStale(2, "1(2)")).toBe(true);
-    expect(writtenStale(null, "D6")).toBe(false);
-    expect(writtenStale(4, "D6")).toBe(true);
-    expect(writtenStale(4)).toBe(false);
+  it("shows a stat as its number then its written text, a roll alone, nothing as a dash", () => {
+    expect([statShown(2, "(2)"), statShown(null, "D6"), statShown(4), statShown(null)]).toEqual([
+      "2(2)",
+      "D6",
+      4,
+      "–",
+    ]);
   });
 
   it("sends a plain number as a number, a written value as typed, an empty box as 0", () => {
@@ -101,13 +97,14 @@ describe("written stats", () => {
     ]);
   });
 
-  it("edits a profile's written values as written, and turns them back into numbers", () => {
+  it("edits a profile's written values as they show, and turns them back into numbers", () => {
     const inputs = profileInputs({
-      attacks: 1,
+      attacks: 2,
       weapon_skill: null,
-      written_stats: { attacks: "1(2)" },
+      strength: null,
+      written_stats: { attacks: "(2)", weapon_skill: "D6" },
     });
-    expect([inputs.attacks, inputs.weapon_skill]).toEqual(["1(2)", ""]);
+    expect([inputs.attacks, inputs.weapon_skill, inputs.strength]).toEqual(["2(2)", "D6", ""]);
     expect([isWritten("1(2)"), isWritten("4"), isWritten("")]).toEqual([true, false, false]);
     expect([numberOnly("1(2)"), numberOnly("D6"), numberOnly("4")]).toEqual(["1", "", "4"]);
   });

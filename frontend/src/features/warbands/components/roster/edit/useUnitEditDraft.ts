@@ -113,8 +113,7 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
   const { kind, unit } = entry;
   const queryClient = useQueryClient();
   const updateCache = useWarbandCacheUpdate();
-  const [start] = useState<Draft>(() => initialDraft(entry));
-  const [draft, setDraft] = useState<Draft>(start);
+  const [draft, setDraft] = useState<Draft>(() => initialDraft(entry));
   const [lists, setLists] = useState<EditLists>({
     skills: (unit.skills ?? []) as Named[],
     specials: (unit.specials ?? []) as Named[],
@@ -183,14 +182,7 @@ export function useUnitEditDraft(entry: RosterUnit, campaignId: number, warbandI
     }
   };
 
-  /** The update leaves out stats left as they opened: a written one an advance has moved since
-   * keeps its new number until the player rewrites it. */
-  const changedOnly = (body: Record<string, unknown>) => {
-    for (const field of STAT_KEY_FIELDS) if (draft[field] === start[field]) delete body[field];
-    return body;
-  };
-  const save = () =>
-    run({ update: [{ id: unit.id, updated_at: unit.updated_at, ...changedOnly(payload()) }] });
+  const save = () => run({ update: [{ id: unit.id, updated_at: unit.updated_at, ...payload() }] });
   const duplicate = () =>
     run({
       create: [

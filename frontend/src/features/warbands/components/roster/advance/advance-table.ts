@@ -1,4 +1,4 @@
-import type { StatKey as StatField } from "@/features/catalogue/utils/statblock";
+import { statShown, type StatKey as StatField } from "@/features/catalogue/utils/statblock";
 import type { Spell } from "@/features/spells/types/spell-types";
 
 import { STAT_NAME_MAP } from "../../../utils/levelup-utils";
@@ -74,12 +74,17 @@ export const statOf = (source: object | null | undefined, stat: StatCode): numbe
   return typeof value === "number" ? value : null;
 };
 
-/** "S 3 → 4 (max 4)", and whether it goes past his race's maximum (a warning: it still applies). */
-export function statChange(stat: StatCode, current: number | null, max: number | null) {
+/** "S 3 → 4 (max 4)", a written stat in full ("A 1(2) → 2(2)"), and whether it goes past his race's maximum (a warning: it still applies). */
+export function statChange(
+  stat: StatCode,
+  current: number | null,
+  max: number | null,
+  written?: string
+) {
   const from = current ?? 0;
   const capped = max === null ? "" : ` (max ${max})`;
   return {
-    text: `${stat} ${from} → ${from + 1}${capped}`,
+    text: `${stat} ${statShown(from, written)} → ${statShown(from + 1, written)}${capped}`,
     overMax: max !== null && from + 1 > max,
   };
 }

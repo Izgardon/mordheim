@@ -7,18 +7,20 @@ from ..unit_information import ARMOUR_SAVE_STAT_KEY, NUMERIC_STAT_KEYS, parse_ar
 
 
 def apply_stats_override(unit: Any, stats_override: dict[str, int | str]) -> list[str]:
-    """Set the unit's characteristics to the override's; returns the fields that changed. A number kept from the
-    battle replaces the stat's written value ("D6" rolled as 4 stays 4)."""
+    """Set the unit's characteristics to the override's; returns the fields that changed. A number kept for a
+    written stat without one replaces its text ("D6" rolled as 4 stays 4); one with a number keeps what follows it
+    ("1(2)" kept as 3 is "3(2)", apps/warbands/utils/stats.py)."""
     update_fields: list[str] = []
     for stat_key in NUMERIC_STAT_KEYS:
         if stat_key not in stats_override:
             continue
         next_value = coerce_int(stats_override.get(stat_key), field_name=stat_key, minimum=0, maximum=10)
-        if getattr(unit, stat_key) != next_value:
+        previous = getattr(unit, stat_key)
+        if previous != next_value:
             setattr(unit, stat_key, next_value)
             update_fields.append(stat_key)
             written = unit.written_stats or {}
-            if stat_key in written:
+            if previous is None and stat_key in written:
                 unit.written_stats = {field: text for field, text in written.items() if field != stat_key}
                 if "written_stats" not in update_fields:
                     update_fields.append("written_stats")

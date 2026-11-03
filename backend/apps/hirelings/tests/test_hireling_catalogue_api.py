@@ -150,4 +150,4 @@ class HirelingWriteBoundsTests(CatalogueTestCase):
                 self.assertEqual(created.status_code, 201, created.data)
                 stats = (created.data["weapon_skill"], created.data["attacks"], created.data["strength"])
                 self.assertEqual(stats, (None, 1, 4))
-                self.assertEqual(created.data["written_stats"], {"weapon_skill": "D6", "attacks": "1(2)"})
+                self.assertEqual(created.data["written_stats"], {"weapon_skill": "D6", "attacks": "(2)"})

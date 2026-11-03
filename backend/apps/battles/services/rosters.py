@@ -122,8 +122,8 @@ def _stats(unit) -> dict:
 
 
 def _profile(unit) -> dict:
-    """The unit's stats, a stat written as the book prints it ("1(2)", "D6", "-") with no number or its leading one,
-    and the written values by field (apps/warbands/utils/stats.py)."""
+    """The unit's stats (a stat written as the book prints it, "1(2)" or "D6", has its leading number or none) and
+    its written text by field: what follows the number ("(2)"), or the whole text ("D6", apps/warbands/utils/stats.py)."""
     return {"stats": _stats(unit), "writtenStats": dict(unit.written_stats or {})}
 
 
