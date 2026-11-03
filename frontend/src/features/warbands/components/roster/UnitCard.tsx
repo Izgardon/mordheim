@@ -197,7 +197,7 @@ export default function UnitCard(props: UnitCardProps) {
               {buttons}
             </div>
           </div>
-          <StatStrip values={stats.values} highlighted={stats.highlighted} flags={stats.flags} />
+          <StatStrip values={stats.values} highlighted={stats.highlighted} />
           {open ? null : (
             <div className="flex items-baseline justify-between gap-3">
               <span className="text-[13px] text-text2">
@@ -253,7 +253,7 @@ export default function UnitCard(props: UnitCardProps) {
               </span>
               {buttons}
             </div>
-            <StatStrip values={stats.values} highlighted={stats.highlighted} flags={stats.flags} />
+            <StatStrip values={stats.values} highlighted={stats.highlighted} />
           </div>
         </div>
         {open ? null : isGroup(entry) && !creature ? (

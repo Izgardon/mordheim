@@ -71,7 +71,8 @@ def _stat() -> models.PositiveSmallIntegerField:
 class WrittenStatBlock(StatBlock):
     """A profile whose stats may be written as the books print them ("1(2)", "2D6", "-"): units, hired swords and
     bestiary entries (races hold maximums, always numbers). A stat's number is null when its written value has none;
-    `written_stats` holds the text by field (apps/warbands/utils/stats.py)."""
+    `written_stats` holds, by field, what follows the number ("(2)") or the whole text without one ("D6")
+    (apps/warbands/utils/stats.py)."""
 
     movement = _stat()
     weapon_skill = _stat()

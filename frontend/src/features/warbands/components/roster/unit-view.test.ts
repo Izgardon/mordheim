@@ -95,16 +95,15 @@ describe("formatXp", () => {
 });
 
 describe("statValues", () => {
-  it("shows a written stat as written, none as a dash, and flags one whose number has moved", () => {
+  it("shows a written stat as its number then its text, and a dash as a dash", () => {
     const hero = makeHero({
       attacks: 2,
       weapon_skill: null,
       strength: 3,
       toughness: 4,
-      written_stats: { attacks: "1(2)", weapon_skill: "-", toughness: "4*" },
+      written_stats: { attacks: "(2)", weapon_skill: "-", toughness: "*" },
     });
-    const { values, flags } = statValues({ kind: "hero", unit: hero });
-    expect([values.A, values.WS, values.S, values.T]).toEqual(["1(2)", "-", 3, "4*"]);
-    expect(flags).toEqual({ A: "Written 1(2), now 2: update it in Edit" });
+    const { values } = statValues({ kind: "hero", unit: hero });
+    expect([values.A, values.WS, values.S, values.T]).toEqual(["2(2)", "-", 3, "4*"]);
   });
 });

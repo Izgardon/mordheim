@@ -17,7 +17,7 @@ import type {
   BattleUnitInformationEntry,
 } from "@/features/battles/types/battle-types";
 import { helperStats } from "@/features/battles/utils/battle-companions";
-import type { WrittenStats } from "@/features/catalogue/utils/statblock";
+import { statShown, type WrittenStats } from "@/features/catalogue/utils/statblock";
 
 /** The four states the status button cycles through (design E). */
 export type UnitStatus = BattleCreatureStatus;
@@ -70,7 +70,7 @@ export function statValues(stats: Partial<UnitStats>, written: WrittenStats = {}
     if (key === "armour_save") {
       values[short] = typeof value === "number" && value > 0 && value < 7 ? `${value}+` : "–";
     } else if (written[key] !== undefined) {
-      values[short] = written[key];
+      values[short] = statShown(typeof value === "number" ? value : null, written[key]);
     } else if (typeof value === "number") {
       values[short] = value;
     }

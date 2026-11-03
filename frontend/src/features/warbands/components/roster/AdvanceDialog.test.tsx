@@ -160,15 +160,13 @@ describe("An advance on a written stat", () => {
     fakeApi.on("GET /skills/?campaign_id=1", []);
   });
 
-  it("adds 1 to its number and warns that its written value needs updating", async () => {
-    openFor({ ...hero, attacks: 1, written_stats: { attacks: "1(2)" } });
+  it("shows the whole written value before and after, and that only its first number goes up", async () => {
+    openFor({ ...hero, attacks: 1, written_stats: { attacks: "(2)" } });
     const user = setupUser();
     await user.type(screen.getByLabelText("2D6 rolled"), "6");
     await user.type(screen.getByLabelText("D6 rolled"), "5");
-    expect(screen.getByText(/^A 1 → 2/)).toBeInTheDocument();
-    expect(
-      screen.getByText("Written 1(2): the 1 goes on its number, so update it in Edit")
-    ).toBeInTheDocument();
+    expect(screen.getByText(/^A 1\(2\) → 2\(2\)/)).toBeInTheDocument();
+    expect(screen.getByText("Only the first number goes up")).toBeInTheDocument();
   });
 
   it("warns that a written stat with no number gets nothing", async () => {
@@ -177,8 +175,6 @@ describe("An advance on a written stat", () => {
     await user.type(screen.getByLabelText("2D6 rolled"), "7");
     await user.selectOptions(screen.getByRole("combobox", { name: "Characteristic" }), "WS");
     expect(screen.getByText(/WS D6/)).toBeInTheDocument();
-    expect(
-      screen.getByText("Written D6, with no number to add 1 to: update it in Edit")
-    ).toBeInTheDocument();
+    expect(screen.getByText("D6 has no number to add 1 to")).toBeInTheDocument();
   });
 });

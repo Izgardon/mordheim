@@ -20,7 +20,7 @@ describe("battleSectionOf", () => {
 describe("statValues", () => {
   it("shows a written stat as written unless a battle change replaced it", () => {
     const stats = { movement: 4, weapon_skill: null, attacks: 1, armour_save: 5 };
-    const unit = { writtenStats: { weapon_skill: "D6", attacks: "1(2)" } };
+    const unit = { writtenStats: { weapon_skill: "D6", attacks: "(2)" } };
     expect(statValues(stats, writtenShown(unit, []))).toMatchObject({
       M: 4,
       WS: "D6",

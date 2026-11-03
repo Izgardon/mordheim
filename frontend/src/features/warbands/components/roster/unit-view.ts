@@ -1,7 +1,7 @@
 import type { BoxTileKind } from "@/components/ui/box-tile";
 import type { StatKey } from "@/components/ui/stat-strip";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
-import { STAT_FIELDS, statShown, writtenStale } from "@/features/catalogue/utils/statblock";
+import { STAT_FIELDS, statShown } from "@/features/catalogue/utils/statblock";
 import type { Item } from "@/features/items/types/item-types";
 
 import { getHeroLevelInfo } from "../heroes/utils/hero-level";
@@ -71,26 +71,19 @@ export function memberName(group: HenchmenGroup, member: { id: number; name?: st
 }
 
 /**
- * The profile for the stat strip: a written stat as written, M and Sv as the ridden mount makes
- * them (then highlighted), and a flag on a written stat whose number has moved since (an advance
- * or an injury changes only the number).
+ * The profile for the stat strip: a written stat as the book writes it ("2(2)", "D6"), and M and
+ * Sv as the ridden mount makes them (then highlighted).
  */
 export function statValues({ unit }: RosterUnit) {
   const effective = unit.effective_stats;
   const save = effective?.armour_save ?? unit.armour_save;
   const written = unit.written_stats ?? {};
   const values: Partial<Record<StatKey, string | number>> = { Sv: save ? `${save}+` : "–" };
-  const flags: Partial<Record<StatKey, string>> = {};
-  for (const { key, label } of STAT_FIELDS) {
-    const number = unit[key];
-    values[label] = statShown(number, written[key]);
-    if (writtenStale(number, written[key]))
-      flags[label] = `Written ${written[key]}, now ${number ?? "no number"}: update it in Edit`;
-  }
+  for (const { key, label } of STAT_FIELDS) values[label] = statShown(unit[key], written[key]);
   if (effective?.movement !== undefined && effective.movement !== null)
     values.M = effective.movement;
   const highlighted: StatKey[] = unit.mount ? ["M", "Sv"] : [];
-  return { values, highlighted, flags };
+  return { values, highlighted };
 }
 
 export const gearSummary = (items: Item[]) =>

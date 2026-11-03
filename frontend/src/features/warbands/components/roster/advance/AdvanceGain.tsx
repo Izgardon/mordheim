@@ -36,16 +36,11 @@ export function gainLine(
     const current = statOf(entry.unit, stat);
     const written = entry.unit.written_stats?.[UNIT_FIELD[stat]];
     if (written !== undefined && current === null)
-      return {
-        text: `${stat} ${written}`,
-        warning: `Written ${written}, with no number to add 1 to: update it in Edit`,
-      };
-    const change = statChange(stat, current, statOf(race, stat));
+      return { text: `${stat} ${written}`, warning: `${written} has no number to add 1 to` };
+    const change = statChange(stat, current, statOf(race, stat), written);
     const notes = [
       change.overMax ? "Above his race maximum" : null,
-      written !== undefined
-        ? `Written ${written}: the 1 goes on its number, so update it in Edit`
-        : null,
+      written !== undefined ? "Only the first number goes up" : null,
     ].filter(Boolean);
     return { text: change.text, warning: notes.length ? notes.join(". ") : undefined };
   }

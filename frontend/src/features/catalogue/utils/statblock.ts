@@ -23,9 +23,10 @@ export const STAT_LABELS: readonly StatLabel[] = STAT_FIELDS.map((field) => fiel
 export type StatInputs = Record<StatKey, string>;
 
 /**
- * Stats written as the books print them, by field ("1(2)", "5*", "2D6", "-"; William: "allow free
- * text instead of nums"). The stat's own field holds the number the app does sums with: the one
- * its text starts with, or null when it has none ("D6", "-": not 0).
+ * Stats written as the books print them ("1(2)", "5*", "2D6", "-"; William: "allow free text
+ * instead of nums"), by field: what follows the number ("(2)", "*"), or the whole text when there
+ * is none ("D6", "-"). The stat's own field holds the number the app does sums with, or null ("-"
+ * is not 0), so a change to it carries the text along: an advance turns "1(2)" into "2(2)".
  */
 export type WrittenStats = Partial<Record<StatKey, string>>;
 
@@ -35,16 +36,11 @@ export function writtenNumber(text: string): number | null {
   return match ? Number(match[1]) : null;
 }
 
-/** What a stat shows: its written value, else its number (a dash for none). */
-export const statShown = (number: number | null | undefined, written?: string): string | number =>
-  written ?? number ?? "–";
-
-/**
- * A written stat whose number has moved since it was written: an advance or an injury changes the
- * number, never the text, so the player updates it (William: "do alternative, but warn").
- */
-export const writtenStale = (number: number | null | undefined, written?: string) =>
-  written !== undefined && writtenNumber(written) !== (number ?? null);
+/** What a stat shows: its number followed by its written text ("2(2)"), the text alone ("D6"), or a dash. */
+export const statShown = (number: number | null | undefined, written?: string): string | number => {
+  if (number === null || number === undefined) return written ?? "–";
+  return written ? `${number}${written}` : number;
+};
 
 /** Whether a stat box holds a written value rather than a plain number (or nothing yet). */
 export const isWritten = (value: unknown) => !/^\d*$/.test(String(value ?? "").trim());
@@ -63,9 +59,11 @@ export const profileInputs = (
     STAT_FIELDS.map(({ key }) => [key, statInput(profile[key], profile.written_stats?.[key])])
   ) as StatInputs;
 
-/** A stat as a form edits it: its written value, else its number. */
-export const statInput = (number: number | null | undefined, written?: string) =>
-  written ?? (number === null || number === undefined ? "" : String(number));
+/** A stat as a form edits it: as it shows ("2(2)", "D6"), empty for none. */
+export const statInput = (number: number | null | undefined, written?: string) => {
+  const shown = statShown(number, written);
+  return shown === "–" ? "" : String(shown);
+};
 
 /** A stat as a save sends it: a plain number as a number, a written value as typed, empty as 0. */
 export function statToSend(value: unknown): number | string {
