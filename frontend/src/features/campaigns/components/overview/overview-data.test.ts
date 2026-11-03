@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { CampaignBattleMoment } from "../../types/campaign-types";
-import { momentGroups, momentParts } from "./overview-data";
+import { buildStats, momentGroups, momentParts } from "./overview-data";
 
 const moment = (fields: Partial<CampaignBattleMoment> = {}): CampaignBattleMoment => ({
   id: 1,
@@ -45,5 +45,25 @@ describe("momentParts", () => {
     expect(momentParts(lone)).toBeNull();
     const elsewhere = moment({ detail: "Somebody else did it." });
     expect(momentParts(elsewhere)).toBeNull();
+  });
+});
+
+describe("buildStats", () => {
+  it("names the shards found as the campaign names its default resource", () => {
+    const row = { warband_id: 3, warband_name: "Grey Order", kills: 1, ooas: 0, deaths: [] };
+    const history = [
+      {
+        id: 1,
+        scenario: "Skirmish",
+        winners: [],
+        date: "2026-11-01",
+        participants: [{ ...row, xp_gain: 2, exploration: [6], shards: 2, heroes_lost: 0 }],
+      },
+    ];
+
+    const found = (name?: string) =>
+      buildStats([], history, name).find((stat) => stat.v === 2 && stat.k.endsWith("found"));
+    expect(found()).toMatchObject({ k: "Wyrdstone found", short: "Wyrdstone" });
+    expect(found("Warpstone")).toMatchObject({ k: "Warpstone found", short: "Warpstone" });
   });
 });
