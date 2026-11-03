@@ -4,6 +4,8 @@ postbattle, and Cancel before postbattle while nobody has applied his postbattle
 
 from typing import Any
 
+from apps.warbands.models import Warband
+
 from .battle_support import BattleTestCase, draft
 
 NO_TOOLS = {"end": False, "confirm_results": False, "close_postbattle": False, "cancel": False}
@@ -15,8 +17,13 @@ class OwnerToolTests(BattleTestCase):
         return {row["battle"]["id"]: row for row in rows}
 
     def test_each_battle_says_which_tools_apply_and_how_long_it_has_been_idle(self):
-        inviting, prebattle, active = self.create_battle(), self.to_prebattle(), self.to_active()
-        postbattle = self.to_postbattle()
+        for user, name in ((self.manager, "Crows"), (self.admin, "Owls"), (self.campaign_owner, "Kites")):
+            Warband.objects.create(campaign=self.campaign, user=user, name=name)
+        # one battle at a time: a fight clears its players' pre-battles, so others fill those
+        inviting = self.create_battle([self.admin], creator=self.manager)
+        prebattle = self.create_battle([self.campaign_owner], creator=self.manager)
+        self.ok(self.post_as(self.campaign_owner, self.url(prebattle, "join")))
+        postbattle, active = self.to_postbattle(), self.to_active()
 
         listing = self.listing()
 

@@ -7,7 +7,18 @@ carries on; with decision 4 that follows his own status, as his postbattle opens
 others fight. The battle's `last_activity_at` is its idle time.
 """
 
+from django.db.models import Q
+
 from ..models import Battle, BattleParticipant
+
+# In a battle for real (William, 3 Nov 2026): a normal battle under way that the player is still fighting. He can't
+# be invited to another battle or start one until he finishes his fight (services/one_battle.py); his pre-battles and
+# post-games only warn (decision 1). A BattleParticipant filter.
+FIGHTING = Q(
+    battle__flow_type=Battle.FLOW_TYPE_NORMAL,
+    battle__status=Battle.STATUS_ACTIVE,
+    status=BattleParticipant.STATUS_IN_BATTLE,
+)
 
 BUSY_BATTLE_STATUSES = (
     Battle.STATUS_INVITING,

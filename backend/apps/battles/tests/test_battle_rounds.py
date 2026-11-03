@@ -80,6 +80,7 @@ class RoundTests(FightCase):
 
     def test_an_admin_in_the_fight_starts_it_anyway(self):
         Warband.objects.create(campaign=self.campaign, user=self.admin, name="Crows")
+        self.finish(self.battle_id, [])  # the player's fight is over: he may fight another (one battle at a time)
         battle_id = self.to_active({self.player: [], self.admin: []})
         forced = self.ok(self.post_as(self.admin, self.url(battle_id, "round"), {"action": "force"})).data
         self.assertEqual((forced["battle"]["round"], forced["capabilities"]["force_round"]), (2, True))

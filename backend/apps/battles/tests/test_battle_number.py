@@ -71,6 +71,7 @@ class BattleNumberTests(BattleTestCase):
         started = self.ok(self.post_as(self.player, self.url(battle_id, "start"))).data
 
         self.assertEqual(started["battle"]["number"], 1)  # the Monks' and the Owls' first
+        self.finish(battle_id, [])  # the Owls may play again once their fight is over (one battle at a time)
         self.played(self.admin, self.viewer)
         self.played(self.admin, self.viewer)
         self.assertEqual((self.number(battle_id), owls.battle_participations.count()), (1, 3))
@@ -83,6 +84,7 @@ class BattleNumberTests(BattleTestCase):
         for user in (self.player, self.viewer):
             self.ok(self.post_as(user, self.url(left, "ready"), {"ready": True}))
         self.ok(self.post_as(self.player, self.url(left, "start")))  # the Monks' and the Rats' first
+        self.finish(left, [])  # the Rats may play again once their fight is over (one battle at a time)
 
         crows = self.create_battle([self.manager], creator=self.viewer)  # the Rats' second; the Crows never played
         self.assertEqual((self.number(left), self.number(crows)), (1, 2))

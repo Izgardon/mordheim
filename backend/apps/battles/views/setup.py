@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from ..models import Battle, BattleParticipant
 from ..services.broadcast import ALL
 from ..services.lifecycle import POSTBATTLE_APPLIED, cancel_battle, someone_finalised
+from ..services.one_battle import enters, fighting_refusal
 from ..services.prebattle import join, leave, set_ready, start
 from ..validation.config import changes_others_see, config_changes
 from .base import BattleWriteView, Scope, Unchanged, Written
@@ -36,11 +37,23 @@ class CampaignBattleConfigView(BattleWriteView):
         return Written([], changed=[participant.id], reason="participant_config_updated")
 
 
+def _not_fighting_elsewhere(scope: Scope) -> Response | None:
+    """One battle at a time: a player fighting another battle can't join this one (services/one_battle.py)."""
+    if not enters(scope.battle, scope.player):
+        return None
+    refusal = fighting_refusal(scope.battle.campaign_id, [scope.user.id], you=scope.user.id, besides=scope.battle.id)
+    return refusal.response() if refusal else None
+
+
 class CampaignBattleJoinView(BattleWriteView):
+    """POST: into the battle's current phase. Accepting an invitation (or coming back to a pre-battle or a fight you
+    left) is refused while you fight another battle (services/one_battle.py)."""
+
     rules = (
         normal_flow("Reported results cannot be joined"),
         refuse((Battle.STATUS_CANCELED, Battle.STATUS_ENDED), "Battle is closed"),
         refuse_player((BattleParticipant.STATUS_DECLINED,), "You declined this battle", code="invite_declined"),
+        _not_fighting_elsewhere,
     )
 
     def act(self, scope: Scope):
@@ -55,6 +68,8 @@ class CampaignBattleJoinView(BattleWriteView):
 class CampaignBattleReadyView(BattleWriteView):
     rules = (
         normal_flow("Reported results do not use prebattle ready states"),
+        # a player who left comes back through join/, which keeps to one battle at a time (services/one_battle.py)
+        refuse_player(BattleParticipant.LEFT_STATUSES, "You are no longer in this battle", code="not_in_battle"),
         refuse((Battle.STATUS_INVITING,), WAITING_FOR_ANSWERS),
         refuse(FIGHT_OR_AFTER, "Battle is no longer in prebattle"),
         refuse((Battle.STATUS_CANCELED,), "Battle is canceled"),

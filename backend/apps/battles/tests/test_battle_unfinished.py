@@ -5,6 +5,8 @@ overview, the Rejoin button and the invite gate read) and the state return says 
 
 from typing import Any
 
+from apps.warbands.models import Warband
+
 from .battle_support import BattleTestCase, draft
 
 
@@ -42,7 +44,9 @@ class UnfinishedBattleTests(BattleTestCase):
     def test_the_creator_is_told_where_to_finish_his_own(self):
         old = self.to_active()
         self.ok(self.finish_mine(self.player, old, "lost"))
-        body = {"participant_user_ids": [self.viewer.id], "scenario": "Ford"}
+        # the viewer still fights, so another player (one battle at a time: test_battle_one_battle.py)
+        Warband.objects.create(campaign=self.campaign, user=self.manager, name="Crows")
+        body = {"participant_user_ids": [self.manager.id], "scenario": "Ford"}
         warnings = self.ok(self.post_as(self.player, self.battles_url(), body), 201).data["warnings"]
         mine = next(warning for warning in warnings if warning["user_id"] == self.player.id)
         self.assertEqual((mine["battle_id"], mine["battle_status"], mine["page"]), (old, "active", "postbattle"))
