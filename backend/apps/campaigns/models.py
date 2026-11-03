@@ -23,6 +23,7 @@ HERO_DEATH_ROLL_CHOICES = [
     ("d66", "D66"),
     ("d100", "D100"),
 ]
+DEFAULT_RESOURCE_NAME = "Wyrdstone"  # every warband's default resource, until the campaign renames it
 
 
 def get_default_hero_level_thresholds():
@@ -112,6 +113,8 @@ class CampaignSettings(models.Model):
         choices=HERO_DEATH_ROLL_CHOICES,
         default="d66",
     )
+    # the name of every warband's default resource (WarbandResource.is_default): a rename renames them all
+    default_resource_name = models.CharField(max_length=120, default=DEFAULT_RESOURCE_NAME)
 
     class Meta:
         db_table = "campaign_settings"

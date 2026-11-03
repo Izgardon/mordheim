@@ -32,6 +32,9 @@ NOT_EDITABLE = {
     "detail": "Only rows entered by hand can be edited. Correct this one with an adjustment.",
     "code": "not_editable",
 }
+# the campaign's default resource: its settings rename it, and every warband keeps it (William, 3 Nov 2026)
+DEFAULT_RENAMED = {"detail": "The campaign's settings rename the default resource.", "code": "default_resource"}
+DEFAULT_DELETED = {"detail": "The default resource can't be deleted.", "code": "default_resource"}
 
 
 class WarbandLogListView(WarbandScopedView):
@@ -60,7 +63,7 @@ class WarbandLogListView(WarbandScopedView):
 
 class WarbandResourceListCreateView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
-        resources = WarbandResource.objects.filter(warband=self.warband).order_by("name")
+        resources = WarbandResource.objects.filter(warband=self.warband).order_by("-is_default", "name")
         return Response(WarbandResourceSerializer(resources, many=True).data)
 
     def post(self, request: Request, warband_id: int) -> Response:
@@ -81,8 +84,10 @@ class WarbandResourceDetailView(WarbandScopedView):
         if name is not None:
             if not name:
                 return Response({"detail": "Resource name is required"}, status=400)
-            others = WarbandResource.objects.filter(warband=self.warband).exclude(id=resource_id)
-            if others.filter(name__iexact=name).exists():
+            rows = WarbandResource.objects.filter(warband=self.warband)
+            if rows.filter(id=resource_id, is_default=True).exclude(name=name).exists():
+                return Response(DEFAULT_RENAMED, status=400)
+            if rows.exclude(id=resource_id).filter(name__iexact=name).exists():
                 return Response({"detail": "Resource already exists"}, status=400)
         resource = change_resource(self.warband, resource_id, **serializer.validated_data)
         if not resource:
@@ -93,7 +98,8 @@ class WarbandResourceDetailView(WarbandScopedView):
         resource = WarbandResource.objects.filter(id=resource_id, warband=self.warband).first()
         if not resource:
             return Response(NOT_FOUND, status=404)
-
+        if resource.is_default:
+            return Response(DEFAULT_DELETED, status=400)
         resource.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
