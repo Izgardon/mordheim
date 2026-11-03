@@ -3,6 +3,7 @@ import type {
   Warband,
   WarbandHero,
   WarbandHireling,
+  WarbandRule,
   WarbandUnitsSummary,
 } from "./warband-types";
 
@@ -38,6 +39,8 @@ export type WarbandSheet = {
   warband: Warband;
   summary: WarbandUnitsSummary;
   capabilities: WarbandCapabilities;
+  /** The warband's own rules, in the order they were added. */
+  rules: WarbandRule[];
   heroes: WarbandHero[];
   henchmen_groups: HenchmenGroup[];
   hirelings: WarbandHireling[];

@@ -170,6 +170,7 @@ const sheetOf = (overrides: Partial<WarbandSheet> = {}): WarbandSheet => ({
   warband: baseWarband,
   summary: summaryWarbandState as unknown as WarbandSheet["summary"],
   capabilities,
+  rules: [],
   heroes: [richHero],
   henchmen_groups: [richGroup],
   hirelings: [richHireling],
