@@ -30,6 +30,8 @@ from typing import Any
 EMAILS = ("captain@mordheim.test", "player2@mordheim.test", "player3@mordheim.test", "player4@mordheim.test")
 GROUPS = ("overview", "warband", "edit", "reference", "battle")
 RULE_TITLE = "Load test"
+MAX_TRIES = 3
+BATTLE_STEP = 0.5  # seconds between a battle's steps: players act a few times a minute, not all at once
 
 
 class Recorder:
@@ -64,29 +66,41 @@ class Site:
     def call(
         self, player: Player | None, method: str, path: str, body: Any = None, *, group: str = "", label: str = ""
     ) -> tuple[int, Any]:
-        """The answer's status and JSON (None for none); recorded under `group` when given."""
+        """The answer's status and JSON (None for none); recorded under `group` when given. A throttled request
+        (429: every simulated player shares this machine's address) waits as the server says, at most 10s, and goes
+        again, up to three times; each try is recorded."""
+        for attempt in range(MAX_TRIES):
+            status, raw, wait = self._once(player, method, path, body, group=group, label=label)
+            if status != 429 or attempt == MAX_TRIES - 1:
+                break
+            time.sleep(wait)
+        try:
+            return status, json.loads(raw) if raw else None
+        except ValueError:
+            return status, None
+
+    def _once(
+        self, player: Player | None, method: str, path: str, body: Any, *, group: str, label: str
+    ) -> tuple[int, bytes, float]:
         data = None if body is None else json.dumps(body).encode()
         request = urllib.request.Request(self.base + path, data=data, method=method)
         request.add_header("Content-Type", "application/json")
         if player and player.token:
             request.add_header("Authorization", f"Bearer {player.token}")
         started = time.perf_counter()
-        status, payload = 0, None
+        status, raw, wait = 0, b"", 2.0
         try:
             with urllib.request.urlopen(request, timeout=30) as response:
                 status, raw = response.status, response.read()
         except urllib.error.HTTPError as error:
             status, raw = error.code, error.read()
+            wait = min(float(error.headers.get("Retry-After") or 2), 10.0)
         except (urllib.error.URLError, TimeoutError, OSError):
-            raw = b""
-        elapsed = (time.perf_counter() - started) * 1000
+            pass
         if group:
+            elapsed = (time.perf_counter() - started) * 1000
             self.recorder.add(self.level, group, label or f"{method} {path}", elapsed, status)
-        try:
-            payload = json.loads(raw) if raw else None
-        except ValueError:
-            payload = None
-        return status, payload
+        return status, raw, wait
 
     def page(self, player: Player, group: str, paths: list[str]) -> None:
         """A page's requests at once, as the browser sends them, and the page's whole time."""
@@ -172,6 +186,7 @@ class Battles:
         self.open_id: int | None = None
 
     def post(self, player: Player, action: str, body: Any = None, label: str = "") -> int:
+        time.sleep(BATTLE_STEP)
         path = f"/api/campaigns/{self.campaign}/battles/{self.open_id}/{action}/"
         status, _ = self.site.call(player, "POST", path, body or {}, group="battle", label=label or f"POST {action}")
         return status
@@ -225,12 +240,19 @@ class Battles:
         stop.wait(2)
 
     def cancel(self) -> None:
-        if self.open_id is not None:
-            self.post(self.players[0], "cancel-battle", label="POST cancel-battle")
+        """Cancel the open battle; kept open (and tried again at the end) if the cancel didn't go through."""
+        if (
+            self.open_id is not None
+            and 200 <= self.post(self.players[0], "cancel-battle", label="POST cancel-battle") < 300
+        ):
             self.open_id = None
 
     def run(self, stop: threading.Event) -> None:
         while not stop.is_set():
+            if self.open_id is not None:  # a cancel that didn't go through: no new battle until it does
+                self.cancel()
+                stop.wait(5)
+                continue
             self.cycle(stop)
 
 
