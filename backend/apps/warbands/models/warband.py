@@ -126,6 +126,29 @@ class WarbandResource(models.Model):
         return f"{self.warband_id}:{self.name}"
 
 
+MAX_RULE_TEXT = 8000  # mordheimer's longest warband rule, the Forest Goblins' Animosity, is 6,720 characters
+
+
+class WarbandRule(models.Model):
+    """One of the warband's own rules (William, 3 Nov 2026: "an area of title+description entries so we can pill-ify
+    them for quick access"): its title is the pill, its description what the pill opens. The warband's editors add,
+    edit and delete them; a template's rules will be copied in when a warband is raised from it (the templates plan),
+    and edited freely after."""
+
+    warband = models.ForeignKey(Warband, related_name="rules", on_delete=models.CASCADE)
+    title = models.CharField(max_length=160)
+    description = models.TextField(max_length=MAX_RULE_TEXT, blank=True, default="")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "warband_rule"
+        ordering = ("id",)
+
+    def __str__(self):
+        return f"{self.warband_id}:{self.title}"
+
+
 class LedgerAction(models.TextChoices):
     """What a ledger row records: one vocabulary for hand-entered and automatic rows (decision 4)."""
 

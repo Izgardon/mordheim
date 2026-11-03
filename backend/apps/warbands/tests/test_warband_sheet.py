@@ -45,7 +45,10 @@ class WarbandSheetTests(RosterTestCase):
 
         sheet = self.client.get(self._url()).json()
 
-        self.assertEqual(list(sheet), ["warband", "summary", "capabilities", "heroes", "henchmen_groups", "hirelings"])
+        self.assertEqual(
+            list(sheet), ["warband", "summary", "capabilities", "rules", "heroes", "henchmen_groups", "hirelings"]
+        )
+        self.assertEqual(sheet["rules"], self.client.get(f"{base}rules/").json())
         self.assertEqual(sheet["warband"], self.client.get(base).json())
         self.assertEqual(sheet["summary"], self.client.get(f"{base}summary/").json())
         for key, segment in (
