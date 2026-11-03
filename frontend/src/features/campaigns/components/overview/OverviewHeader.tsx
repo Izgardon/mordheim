@@ -1,21 +1,25 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Flag, Swords } from "lucide-react";
+import { Flag } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { MoreMenu, type MoreMenuEntry } from "@/components/ui/more-menu";
+import type { YourOpenBattle } from "@/features/battles/utils/open-battles";
 import { cn } from "@/lib/utils";
 
 import { campaignCapabilities, isArchived } from "../../capabilities";
 import { useStartCampaign } from "../../hooks/overview/useStartCampaign";
 import type { CampaignSummary } from "../../types/campaign-types";
+import BattleButton from "./BattleButton";
 
 type OverviewHeaderProps = {
   campaign: CampaignSummary;
   isMobile: boolean;
+  /** Your battle that needs you most: the Start battle button goes there instead. */
+  battle: YourOpenBattle | null;
   onStartBattle: () => void;
   onReportResult: () => void;
   /** Export: the campaign's standings, battles and chronicle as a file. */
@@ -70,7 +74,9 @@ function InviteDialog({
 /**
  * The overview's header (design E): the campaign's name, Start battle and Report a result (the
  * same size), and the ⋯ menu: Invite a player, Campaign settings, Export, and Start the campaign
- * for those who may while it hasn't begun. An archived campaign takes no new battles.
+ * for those who may while it hasn't begun. While you have a battle, Start battle takes you there
+ * (Rejoin and the like) and the menu gains Start another battle. An archived campaign takes no
+ * new battles.
  */
 export default function OverviewHeader(props: OverviewHeaderProps) {
   const { campaign, isMobile } = props;
@@ -80,6 +86,10 @@ export default function OverviewHeader(props: OverviewHeaderProps) {
   const archived = isArchived(campaign);
   const menu: MoreMenuEntry[] = [
     ...(archived ? [] : [{ label: "Invite a player", onSelect: () => setInviteOpen(true) }]),
+    // a player may be in several battles (warned, never refused): Start battle stays in reach
+    ...(props.battle && !archived
+      ? [{ label: "Start another battle", onSelect: props.onStartBattle }]
+      : []),
     { label: "Campaign settings", onSelect: () => navigate(`/campaigns/${campaign.id}/settings`) },
     { label: "Export the campaign", onSelect: props.onExport },
     ...(starting.canStartCampaign && !starting.isUnderway && !archived
@@ -88,18 +98,16 @@ export default function OverviewHeader(props: OverviewHeaderProps) {
   ];
   const buttons = archived ? null : (
     <>
-      <Button
-        size="lg"
-        className={isMobile ? "min-h-12" : "w-[168px]"}
-        onClick={props.onStartBattle}
-      >
-        {isMobile ? null : <Swords aria-hidden="true" />}
-        Start battle
-      </Button>
+      <BattleButton
+        battle={props.battle}
+        onStartBattle={props.onStartBattle}
+        icon={!isMobile}
+        className={isMobile ? "min-h-12 px-3" : "min-w-[168px]"}
+      />
       <Button
         size="lg"
         variant="secondary"
-        className={isMobile ? "min-h-12" : "w-[168px]"}
+        className={isMobile ? "min-h-12" : "min-w-[168px]"}
         onClick={props.onReportResult}
       >
         {isMobile ? null : <Flag aria-hidden="true" />}

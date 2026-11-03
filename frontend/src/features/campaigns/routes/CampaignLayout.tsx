@@ -56,6 +56,7 @@ export default function CampaignLayout() {
   const campaign = campaignQuery.data ?? null;
   const segments = pathname.split("/").filter(Boolean);
   const isBattleRoute = isBattlePath(pathname);
+  const isOverview = segments.length === 2;
   // The Aftermath and the battle screen bring their own header and
   // footer on a phone.
   const ownChrome = isBattleRoute && (segments[4] === "postbattle" || segments[4] === "active");
@@ -180,8 +181,9 @@ export default function CampaignLayout() {
       {...(isMobile ? mobileChrome : {})}
     >
       <ArchivedBanner campaign={campaign} />
-      {/* your battle before raising a warband; not on the battle's own screens */}
-      {!isBattleRoute && yourBattles.length ? (
+      {/* your battle before raising a warband; not on the battle's own screens, nor on the
+          overview, whose Start battle reads Rejoin (William) */}
+      {!isBattleRoute && !isOverview && yourBattles.length ? (
         <RejoinBanner campaignId={campaign.id} battles={yourBattles} />
       ) : (
         <NoWarbandBanner campaign={campaign} pathname={pathname} />

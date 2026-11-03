@@ -1,6 +1,8 @@
 /**
  * The overview's Start battle and Report a result, on the real routes over the fake API server:
  * they open the one dialog the campaign layout holds, with the campaign's players to pick from.
+ * While you are in a battle, Start battle reads Rejoin and goes there (William), and Start a
+ * battle stays in the ⋯ menu.
  */
 import { screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -69,5 +71,50 @@ describe("the overview's battle buttons", () => {
     await user.click(await screen.findByRole("button", { name: "Report a result" }));
 
     expect(await screen.findByRole("dialog", { name: "Report a result" })).toBeInTheDocument();
+  });
+});
+
+/** Battle 31, in its fight, and you in it. */
+const IN_BATTLE = {
+  battle: {
+    id: 31,
+    campaign_id: CAMPAIGN_ID,
+    status: "active",
+    flow_type: "normal",
+    scenario: "Street Fight",
+    number: 6,
+  },
+  participants: [{ user: { id: RAIDER.id }, status: "in_battle" }],
+  viewer: { participant_status: "in_battle", unfinished: true, page: "active" },
+};
+
+describe("the overview's Start battle while you are in a battle", () => {
+  beforeEach(() => {
+    fakeApi.on(`GET ${BASE}/battles/?open=1`, [IN_BATTLE]);
+  });
+
+  it("reads Rejoin and goes to your battle, Report a result unchanged", async () => {
+    const user = setupUser();
+    const app = renderApp(BASE);
+
+    const rejoin = await screen.findByRole("link", { name: "Rejoin" });
+    expect(screen.queryByRole("button", { name: "Start battle" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Report a result" })).toBeInTheDocument();
+    expect(screen.queryByText(/You have an unfinished battle/)).toBeNull();
+
+    await user.click(rejoin);
+
+    expect(app.location().pathname).toBe(`${BASE}/battles/31/active`);
+  });
+
+  it("keeps Start a battle in reach from the ⋯ menu", async () => {
+    const user = setupUser();
+    renderApp(BASE);
+    await screen.findByRole("link", { name: "Rejoin" });
+
+    await user.click(screen.getByRole("button", { name: "More campaign actions" }));
+    await user.click(await screen.findByRole("menuitem", { name: "Start another battle" }));
+
+    expect(await screen.findByRole("dialog", { name: "Start a battle" })).toBeInTheDocument();
   });
 });
