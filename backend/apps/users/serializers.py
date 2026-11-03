@@ -12,6 +12,10 @@ EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84
 EMAIL_TAKEN = "User already exists"
 CURRENT_PASSWORD_WRONG = "That isn't your current password."
 CONTEXT_NAME_MAX_LENGTH = 120  # Campaign.name and Warband.name
+# TEMPORARY (William, 3 Nov 2026: "temporarily disable password protection and input, you just sign in with an email"):
+# a demo account (seed_demo_campaign's players) signs in with its email alone, so the live site can be tested without
+# a password. Every other account still needs its password. Revert the commit that added this to restore it.
+PASSWORDLESS_DOMAIN = "@mordheim.test"
 
 
 def password_problems(password: str, user: Any) -> list[str]:
@@ -74,10 +78,18 @@ class LoginSerializer(serializers.Serializer):
     CharField, so anything at all was just "Invalid credentials"."""
 
     email = serializers.EmailField(write_only=True)
-    password = serializers.CharField(write_only=True, style={"input_type": "password"})
+    # TEMPORARY (William, 3 Nov 2026): optional for PASSWORDLESS_DOMAIN; revert the commit that added this
+    password = serializers.CharField(
+        write_only=True, required=False, allow_blank=True, style={"input_type": "password"}
+    )
 
     def validate(self, attrs):
-        user = authenticate(self.context.get("request"), username=attrs["email"].lower(), password=attrs["password"])
+        email, password = attrs["email"].lower(), attrs.get("password", "")
+        if not password and email.endswith(PASSWORDLESS_DOMAIN):
+            demo = get_user_model().objects.filter(username=email, is_active=True).first()
+            if demo is not None:
+                return {"user": demo}
+        user = authenticate(self.context.get("request"), username=email, password=password)
         if user is None:
             raise serializers.ValidationError("Invalid credentials")
         return {"user": user}
