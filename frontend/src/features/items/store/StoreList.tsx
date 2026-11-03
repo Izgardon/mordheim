@@ -9,6 +9,7 @@ import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { cn } from "@/lib/utils";
 
 import { useWhoCan } from "../api/who-can-queries";
+import { ItemRowButton, type ShownItem } from "../components/ItemInfo";
 import { itemKind } from "../item-kind";
 import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
 import { isSold } from "../utils/item-listing";
@@ -34,13 +35,17 @@ export type StoreListProps = {
   again?: { itemId: number; name: string; price: number | null } | null;
   isMobile: boolean;
   onPick: (line: Omit<BasketLine, "id">) => void;
+  /** Whether a row's item shows its details at the foot of the store. */
+  isShown: (key: string) => boolean;
+  onToggleShown: (next: ShownItem) => void;
 };
 
 /**
  * The store's list (design E, the items rebuild): search, "What I can buy" (on: what the warband
  * can't usually buy is hidden; off: it shows with the server's reason, "Not usually available to
  * Skaven.", and can still be bought), category chips, and a row per item (name, kind, the price
- * row the server picked for the warband, Common or Rare N) whose Get opens its acquire form.
+ * row the server picked for the warband, Common or Rare N) whose Get opens its acquire form and
+ * whose name shows its details at the foot of the store.
  */
 export default function StoreList(props: StoreListProps) {
   const catalogue = useCatalogue("items", props.campaignId);
@@ -115,39 +120,45 @@ export default function StoreList(props: StoreListProps) {
       <ul className="m-0 flex list-none flex-col border-t border-line p-0">
         {rows.map(({ item, availability, rows: options, warning }) => {
           const open = openId === item.id;
+          const key = `store:${item.id}`;
           return (
             <li key={item.id} className="flex flex-col gap-2.5 border-b border-line py-2.5">
               <div className="flex items-center gap-3">
-                <ItemKindIcon kind={itemKind(item)} className="h-5 w-5 text-accent-text" />
-                <div className="flex min-w-0 flex-1 flex-col gap-px">
-                  <span className="font-bold text-ink">{itemName(item)}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {props.isMobile ? `${priceLabel(availability)} · ` : `${kindOf(item)}`}
-                    {props.isMobile ? (
-                      <span className={!isCommon(availability.rarity) ? "text-accent-text" : ""}>
+                <ItemRowButton
+                  shown={props.isShown(key)}
+                  onToggle={() => props.onToggleShown({ key, item, availability })}
+                >
+                  <ItemKindIcon kind={itemKind(item)} className="h-5 w-5 text-accent-text" />
+                  <div className="flex min-w-0 flex-1 flex-col gap-px">
+                    <span className="item-name font-bold text-ink">{itemName(item)}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {props.isMobile ? `${priceLabel(availability)} · ` : `${kindOf(item)}`}
+                      {props.isMobile ? (
+                        <span className={!isCommon(availability.rarity) ? "text-accent-text" : ""}>
+                          {rarityLabel(availability.rarity)}
+                        </span>
+                      ) : null}
+                    </span>
+                    {warning ? (
+                      <span className="text-xs font-semibold text-danger">{warning}</span>
+                    ) : null}
+                  </div>
+                  {props.isMobile ? null : (
+                    <div className="flex w-24 shrink-0 flex-col text-right">
+                      <span className="font-mono text-sm font-bold text-head">
+                        {priceLabel(availability)}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-xs",
+                          !isCommon(availability.rarity) ? "text-accent-text" : "text-faint"
+                        )}
+                      >
                         {rarityLabel(availability.rarity)}
                       </span>
-                    ) : null}
-                  </span>
-                  {warning ? (
-                    <span className="text-xs font-semibold text-danger">{warning}</span>
-                  ) : null}
-                </div>
-                {props.isMobile ? null : (
-                  <div className="flex w-24 shrink-0 flex-col text-right">
-                    <span className="font-mono text-sm font-bold text-head">
-                      {priceLabel(availability)}
-                    </span>
-                    <span
-                      className={cn(
-                        "text-xs",
-                        !isCommon(availability.rarity) ? "text-accent-text" : "text-faint"
-                      )}
-                    >
-                      {rarityLabel(availability.rarity)}
-                    </span>
-                  </div>
-                )}
+                    </div>
+                  )}
+                </ItemRowButton>
                 {props.canBuy ? (
                   <button
                     type="button"

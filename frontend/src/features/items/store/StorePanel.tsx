@@ -9,6 +9,7 @@ import type {
 } from "@/features/warbands/types/warband-types";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import ItemInfo, { useShownItem } from "../components/ItemInfo";
 import StoreBasket from "./StoreBasket";
 import StoreList from "./StoreList";
 import { recipientsFor, useStoreBasket } from "./useStoreBasket";
@@ -36,7 +37,8 @@ type StorePanelProps = {
 
 /**
  * The store (design E): a drawer on the web, a sheet on a phone. The list of what the campaign
- * sells, each row's acquire form putting items in the basket, and the basket with Buy all. Opened
+ * sells, each row's acquire form putting items in the basket, the details of the item whose row
+ * was clicked above the basket, and the basket with Buy all. Opened
  * from a unit, the header says "Buying for <name>" and that unit's button comes first. The basket
  * is the warband's one (Wargear's Get this item shares it), kept for the session until bought.
  */
@@ -55,6 +57,7 @@ export default function StorePanel(props: StorePanelProps) {
     name: hero.name?.trim() || hero.unit_type?.trim() || "Hero",
     spent: hero.trading_action === false,
   }));
+  const details = useShownItem(props.open);
   const gold = warband.gold ?? 0;
   const left = gold - basket.total;
   const buyAll = async () => {
@@ -78,6 +81,15 @@ export default function StorePanel(props: StorePanelProps) {
           {left} <span className="font-sans text-xs font-semibold text-faint">gc</span>
         </span>
       }
+      dock={
+        details.shown ? (
+          <ItemInfo
+            item={details.shown.item}
+            availability={details.shown.availability ?? null}
+            onClose={details.close}
+          />
+        ) : null
+      }
       footer={
         props.canBuy ? (
           <StoreBasket
@@ -100,6 +112,8 @@ export default function StorePanel(props: StorePanelProps) {
         again={opening.again}
         isMobile={isMobile}
         onPick={basket.add}
+        isShown={details.isShown}
+        onToggleShown={details.toggle}
       />
     </SidePanel>
   );
