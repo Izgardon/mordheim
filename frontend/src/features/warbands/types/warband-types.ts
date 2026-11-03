@@ -120,6 +120,15 @@ export type WarbandResource = {
   is_default: boolean;
 };
 
+/** One of the warband's own rules: its title is the pill, its description what the pill opens. */
+export type WarbandRule = {
+  id: number;
+  title: string;
+  description: string;
+};
+
+export type WarbandRulePayload = { title: string; description: string };
+
 export type WarbandCreatePayload = {
   name: string;
   warband_type_id: number;

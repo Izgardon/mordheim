@@ -2,6 +2,7 @@ export * from "./warbands-core";
 export * from "./warbands-items";
 export * from "./warbands-logs";
 export * from "./warbands-resources";
+export * from "./warbands-rules";
 export * from "./warbands-trades";
 export * from "./warbands-henchmen";
 export * from "./warbands-hirelings";

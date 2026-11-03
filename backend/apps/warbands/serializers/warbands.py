@@ -2,7 +2,8 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.warbands.models import Warband, WarbandResource
+from apps.warbands.models import Warband, WarbandResource, WarbandRule
+from apps.warbands.models.warband import MAX_RULE_TEXT
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import sale_price
 from apps.warbands.services.resources import MAX_AMOUNT
@@ -228,6 +229,20 @@ class WarbandResourceUpdateSerializer(serializers.Serializer):
         if "amount" in attrs and "delta" in attrs:
             raise serializers.ValidationError("Send amount or delta, not both.")
         return attrs
+
+
+class WarbandRuleSerializer(serializers.ModelSerializer):
+    """A warband rule (models.WarbandRule): read, and written by POST rules/ and PATCH rules/<id>/ (a PATCH may send
+    either field)."""
+
+    title = serializers.CharField(max_length=160, trim_whitespace=True)
+    description = serializers.CharField(
+        max_length=MAX_RULE_TEXT, allow_blank=True, required=False, trim_whitespace=True
+    )
+
+    class Meta:
+        model = WarbandRule
+        fields = ("id", "title", "description")
 
 
 class WarbandResourceSaleSerializer(serializers.Serializer):

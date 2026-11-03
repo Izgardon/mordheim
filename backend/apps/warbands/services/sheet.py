@@ -1,6 +1,6 @@
 """The whole warband sheet in one payload (PERF-24).
 
-Warband detail, summary, capabilities and the three unit lists in detail shape, the same bodies the
+Warband detail, summary, capabilities, its rules and the three unit lists in detail shape, the same bodies the
 separate endpoints return, in a fixed number of queries however big the roster is: each unit table and
 join table is read once, the item details once for every item on the roster, and the summary's unit
 lists and rating come from the units already loaded.
@@ -12,7 +12,12 @@ from django.db.models import prefetch_related_objects
 
 from apps.warbands.models import Warband
 from apps.warbands.prefetches import item_detail_prefetches
-from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandSerializer, WarbandSummarySerializer
+from apps.warbands.serializers import (
+    UNIT_SERIALIZERS,
+    WarbandRuleSerializer,
+    WarbandSerializer,
+    WarbandSummarySerializer,
+)
 from apps.warbands.services.loadouts import group_mount_rating_of
 from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.companions import mount_bonuses
@@ -84,6 +89,7 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
         "warband": WarbandSerializer(warband).data,
         "summary": WarbandSummarySerializer(warband, context=summary_context).data,
         "capabilities": capabilities,
+        "rules": WarbandRuleSerializer(warband.rules.all(), many=True).data,
         **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},
     }
 

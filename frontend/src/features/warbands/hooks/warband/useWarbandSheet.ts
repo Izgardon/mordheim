@@ -11,7 +11,7 @@ import {
 
 import type { Unit, UnitKindKey } from "../../types/units";
 import { readCapabilities, type WarbandSheet } from "../../types/warband-sheet";
-import type { Warband } from "../../types/warband-types";
+import type { Warband, WarbandRule } from "../../types/warband-types";
 
 type UseWarbandSheetOptions = {
   campaignId: number;
@@ -32,6 +32,7 @@ const COLLECTIONS = {
 const NO_HEROES: Unit<"hero">[] = [];
 const NO_GROUPS: Unit<"henchmen_group">[] = [];
 const NO_HIRELINGS: Unit<"hireling">[] = [];
+const NO_RULES: WarbandRule[] = [];
 
 const LOAD_ERROR = "Unable to load warband";
 const messageOf = (error: unknown) =>
@@ -111,6 +112,7 @@ export function useWarbandSheet({ campaignId, hasCampaignId, warbandId }: UseWar
     heroes: data?.heroes ?? NO_HEROES,
     henchmenGroups: data?.henchmen_groups ?? NO_GROUPS,
     hirelings: data?.hirelings ?? NO_HIRELINGS,
+    rules: data?.rules ?? NO_RULES,
     isLoading,
     error: invalidError || (loadError ? messageOf(loadError) : ""),
     ...writers,

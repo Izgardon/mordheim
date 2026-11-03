@@ -23,6 +23,7 @@ import LocationsPanel from "../components/panels/LocationsPanel";
 import AdvanceDialog from "../components/roster/AdvanceDialog";
 import EditUnitForm from "../components/roster/EditUnitForm";
 import RosterSections from "../components/roster/RosterSections";
+import WarbandRules from "../components/rules/WarbandRules";
 import WarbandTrade from "../components/trade/WarbandTrade";
 import type { RosterUnit } from "../components/roster/unit-view";
 import { useUnitActions } from "../hooks/units/useUnitActions";
@@ -152,6 +153,12 @@ export default function Warband() {
           canEdit={canEdit}
         />
       </div>
+      <WarbandRules
+        warbandId={warbandId}
+        warbandName={warband.name}
+        rules={sheet.rules}
+        canEdit={canEdit}
+      />
       <div className="flex flex-wrap items-start gap-8">
         <div className="flex min-w-0 flex-[999_1_560px] flex-col gap-6">
           <WarbandTabs
