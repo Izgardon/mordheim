@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/utils";
 
-import type { StoreBasket as Basket } from "./useStoreBasket";
+import { lineName, type StoreBasket as Basket } from "./useStoreBasket";
 
 const count = (n: number) => `${n} ${n === 1 ? "item" : "items"}`;
 
@@ -22,7 +22,7 @@ function Lines({ basket, isMobile }: { basket: Basket; isMobile: boolean }) {
           )}
         >
           <span className="min-w-0 flex-1 text-[13px] text-ink">
-            <span className="font-bold">{line.item.name}</span>{" "}
+            <span className="font-bold">{lineName(line)}</span>{" "}
             <span className="text-muted-foreground">
               → {line.recipient.label}
               {line.recipient.count > 1 ? ` ×${line.recipient.count}` : ""}
@@ -36,7 +36,7 @@ function Lines({ basket, isMobile }: { basket: Basket; isMobile: boolean }) {
                 compact
                 inputSize="sm"
                 min={0}
-                aria-label={`Price for ${line.item.name}`}
+                aria-label={`Price for ${lineName(line)}`}
                 value={line.price}
                 onChange={(event) =>
                   basket.setPrice(line.id, Math.max(0, Math.trunc(Number(event.target.value) || 0)))
@@ -47,7 +47,7 @@ function Lines({ basket, isMobile }: { basket: Basket; isMobile: boolean }) {
             </label>
           )}
           <IconButton
-            aria-label={`Remove ${line.item.name}`}
+            aria-label={`Remove ${lineName(line)}`}
             className={isMobile ? "h-10 w-10" : "h-8 w-8"}
             onClick={() => basket.remove(line.id)}
           >

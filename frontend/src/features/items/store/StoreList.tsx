@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import { Chip } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import type { TemplateVariant } from "@/features/warband-templates/types/template-types";
+import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { cn } from "@/lib/utils";
@@ -11,9 +12,10 @@ import { cn } from "@/lib/utils";
 import { useWhoCan } from "../api/who-can-queries";
 import type { ShownItem } from "../components/ItemInfo";
 import { isSold } from "../utils/item-listing";
-import { hisLine, hisRow, rareBonusFor, type HisList } from "./his-list";
+import { hisLine, hisRow, rareBonusFor, type HisList, type HisUpgrades } from "./his-list";
 import { STORE_CATEGORIES, searchWords, storeCategory, type StoreCategory } from "./store-items";
 import StoreRow, { type StoreOffer } from "./StoreRow";
+import StoreUpgrades from "./StoreUpgrades";
 import type { BasketLine, Recipient } from "./useStoreBasket";
 
 export type StoreListProps = {
@@ -32,6 +34,8 @@ export type StoreListProps = {
   variant?: TemplateVariant | null;
   /** The copies of an item the basket holds, for a per-warband limit. */
   inBasket?: (itemId: number) => number;
+  /** A hero from the template: his template's upgrades, put in the basket at their price. */
+  upgrades?: (HisUpgrades & { onGet: (upgrade: TemplateUpgrade, price: number) => void }) | null;
   onPick: (line: Omit<BasketLine, "id">) => void;
   /** Whether a row's item shows its details at the foot of the store. */
   isShown: (key: string) => boolean;
@@ -43,7 +47,7 @@ export type StoreListProps = {
  * can't usually buy is hidden; off: it shows with the server's reason, "Not usually available to
  * Skaven.", and can still be bought), His list when buying for a unit from the template (on: only
  * his lists' items, as they name them, at the store's price; both on: his items the warband can
- * usually buy), category chips, and a row per item.
+ * usually buy), category chips, a hero's Upgrades (his template's), and a row per item.
  */
 export default function StoreList(props: StoreListProps) {
   const catalogue = useCatalogue("items", props.campaignId);
@@ -131,6 +135,18 @@ export default function StoreList(props: StoreListProps) {
         <p className="m-0 text-sm text-danger">{catalogue.error}</p>
       ) : rows.length === 0 ? (
         <p className="m-0 text-sm text-text2">Nothing in the store by that name.</p>
+      ) : null}
+      {props.upgrades && category === "all" ? (
+        <StoreUpgrades
+          upgrades={props.upgrades.upgrades.filter((upgrade) =>
+            matchesSearchQuery(query, upgrade.name, upgrade.group)
+          )}
+          offUpgrades={props.upgrades.offUpgrades}
+          held={props.upgrades.held}
+          canBuy={props.canBuy}
+          isMobile={props.isMobile}
+          onGet={props.upgrades.onGet}
+        />
       ) : null}
       <ul className="m-0 flex list-none flex-col border-t border-line p-0">
         {rows.map(({ offer, view }) => (

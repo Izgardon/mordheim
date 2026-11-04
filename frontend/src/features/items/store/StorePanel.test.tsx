@@ -2,7 +2,7 @@
  * The store: a click on an item's name shows its details above the basket (the price row the
  * warband sees), while Get still opens its acquire form without them.
  */
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { catalogueListKey } from "@/lib/catalogue-queries";
@@ -14,8 +14,9 @@ import {
   makeTemplateAnswer,
   makeTemplateFighter,
   makeTemplateLine,
+  makeTemplateUpgrade,
 } from "@/test/template-fixtures";
-import { makeHero, makeItem } from "@/test/warband-fixtures";
+import { makeHero, makeItem, makeSpecial } from "@/test/warband-fixtures";
 
 import type { WhoCan } from "../types/item-types";
 import StorePanel from "./StorePanel";
@@ -239,5 +240,102 @@ describe("StorePanel, buying for a unit from the template", () => {
     renderHisStore({ key: "heroes:6", name: "Typed" });
     expect(screen.queryByRole("switch", { name: "His list" })).toBeNull();
     expect(names()).toEqual(["Lance", "Dagger", "Sword"]);
+  });
+});
+
+describe("StorePanel, Upgrades for a hero from the template", () => {
+  const upgrades = [
+    makeTemplateUpgrade(1, "Great Claw", 50, {
+      later_double: true,
+      later_cost: 100,
+      at_recruit: true,
+    }),
+    makeTemplateUpgrade(2, "Tentacle", 35, {
+      later_double: true,
+      later_cost: 70,
+      at_recruit: true,
+    }),
+    makeTemplateUpgrade(3, "Mark of Tchar", 0, {
+      group: "Mark of the Dark Gods",
+      max_per_fighter: 1,
+    }),
+    makeTemplateUpgrade(4, "Mark of Arkhar", 0, {
+      group: "Mark of the Dark Gods",
+      max_per_fighter: 1,
+      who_text: "Seers only",
+    }),
+  ];
+  const marked = makeHero({
+    id: 5,
+    name: "Otto",
+    unit_type: "Champion",
+    fighter_key: "champions",
+    specials: [makeSpecial({ id: 200, name: "Tentacle" })],
+  });
+
+  function renderUpgrades() {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [lance]);
+    queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), whoCan);
+    queryClient.setQueryData(queryKeys.campaign.warbandHireTemplate(CAMPAIGN, WARBAND), {
+      ...template,
+      template: {
+        ...template.template!,
+        upgrades,
+        fighters: [makeTemplateFighter("champions", "Champion", { off_upgrades: [4] })],
+      },
+    });
+    renderWithQueryClient(
+      <StorePanel
+        open
+        onOpenChange={vi.fn()}
+        campaignId={CAMPAIGN}
+        warband={{ id: WARBAND, name: "The Silver Hammers", gold: 100 }}
+        heroes={[marked]}
+        henchmenGroups={[]}
+        hirelings={[]}
+        canBuy
+        opening={{ forUnit: { key: "heroes:5", name: "Otto" } }}
+      />,
+      { queryClient }
+    );
+  }
+
+  it("prices each at what it costs him next, with its warnings, and Buy all buys it onto him", async () => {
+    fakeApi.on(`POST /warbands/${WARBAND}/heroes/batch/`, {
+      units: [marked],
+      summary: {},
+      warnings: [],
+    });
+    const user = setupUser();
+    renderUpgrades();
+
+    const mutations = screen.getByRole("list", { name: "Mutations" });
+    const claw = within(mutations).getAllByRole("listitem")[1];
+    expect(claw).toHaveTextContent("Great Claw");
+    expect(claw).toHaveTextContent("100 gc"); // he has a Tentacle: the second costs double
+    expect(claw).toHaveTextContent("Bought only when recruited.");
+    const theMarks = screen.getByRole("list", { name: "Mark of the Dark Gods" });
+    expect(theMarks).toHaveTextContent("Seers only");
+    expect(theMarks).toHaveTextContent("free");
+
+    await user.click(screen.getByRole("button", { name: "Get Mark of Tchar" }));
+    expect(theMarks).toHaveTextContent("At most 1 from Mark of the Dark Gods: he would have 2.");
+    await user.click(screen.getByRole("button", { name: "Get Great Claw" }));
+    await user.clear(screen.getByLabelText("Price for Great Claw"));
+    await user.type(screen.getByLabelText("Price for Great Claw"), "90");
+    await user.click(screen.getByRole("button", { name: "Buy all" }));
+
+    await waitFor(() =>
+      expect(
+        fakeApi
+          .requests()
+          .filter((request) => request.path === `/warbands/${WARBAND}/heroes/batch/`)
+          .map((request) => request.body)
+      ).toEqual([
+        { upgrades: [{ unit_id: 5, upgrade_id: 3, price: 0 }] },
+        { upgrades: [{ unit_id: 5, upgrade_id: 1, price: 90 }] },
+      ])
+    );
   });
 });

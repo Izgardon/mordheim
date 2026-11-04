@@ -11,29 +11,24 @@ import { isWarbandQuery } from "@/features/warbands/api/warband-cache";
 import { isCreatureGroup } from "@/features/warbands/utils/companions";
 import { getErrorMessage } from "@/lib/get-error-message";
 
+import { buyUpgrade } from "../api/buy-upgrade";
 import { purchase } from "../api/purchase";
-import type { PurchaseTarget } from "../types/acquire-types";
-import type { Item } from "../types/item-types";
+import {
+  isUpgradeLine,
+  type AnyBasketLine,
+  type BasketLine,
+  type NewBasketLine,
+  type Recipient,
+} from "./basket-lines";
 
-/** Who a store purchase goes to: the stash or a unit; a group gets one copy per member. */
-export type Recipient = { key: string; label: string; target: PurchaseTarget; count: number };
-
-/** One line of the basket: the item, who gets it and at what price (each), or free with a reason. */
-export type BasketLine = {
-  id: number;
-  item: Item;
-  availabilityId: number | null;
-  /** The availability's cost: what a gift keeps for its resale price. */
-  baseCost: number;
-  recipient: Recipient;
-  price: number;
-  free: boolean;
-  reason: string;
-  /** The total rolled for a price with dice ("25 + 2D6"), sent with its row. */
-  diceRoll?: number | null;
-  /** The price is the row's (with its roll): the server works it out. Off once it is edited. */
-  rowPrice?: boolean;
-};
+export type {
+  AnyBasketLine,
+  BasketLine,
+  NewBasketLine,
+  Recipient,
+  UpgradeBasketLine,
+} from "./basket-lines";
+export { isUpgradeLine, lineName } from "./basket-lines";
 
 const nameOf = (unit: { name?: string | null; unit_type?: string | null }, fallback: string) =>
   unit.name?.trim() || unit.unit_type?.trim() || fallback;
@@ -83,7 +78,7 @@ export const lineTotal = (line: Pick<BasketLine, "free" | "price" | "recipient">
   line.free ? 0 : line.price * line.recipient.count;
 
 /** A warband's basket: its lines and the id the next line takes. */
-type BasketState = { lines: BasketLine[]; nextId: number };
+type BasketState = { lines: AnyBasketLine[]; nextId: number };
 
 const EMPTY_BASKET: BasketState = { lines: [], nextId: 1 };
 const baskets = new Map<number, BasketState>();
@@ -130,18 +125,19 @@ const subscribe = (listener: () => void) => {
 };
 
 /**
- * The store's basket: lines added from the rows, their prices edited or removed, and Buy all,
- * which sends one purchase per line (today's POST purchases/) in order, stops at the first one
- * the server refuses and keeps the lines not bought. Every store panel of a warband shares it.
+ * The store's basket: lines added from the rows (items, and a hero's upgrades), their prices
+ * edited or removed, and Buy all, which sends one purchase per line in order (today's POST
+ * purchases/; an upgrade, the heroes' Save), stops at the first one the server refuses and keeps
+ * the lines not bought. Every store panel of a warband shares it.
  */
 export function useStoreBasket(warbandId: number) {
   const queryClient = useQueryClient();
   const { lines } = useSyncExternalStore(subscribe, () => readBasket(warbandId));
   const [buying, setBuying] = useState(false);
-  const setLines = (update: (current: BasketLine[]) => BasketLine[]) =>
+  const setLines = (update: (current: AnyBasketLine[]) => AnyBasketLine[]) =>
     writeBasket(warbandId, (state) => ({ ...state, lines: update(state.lines) }));
 
-  const add = (line: Omit<BasketLine, "id">) =>
+  const add = (line: NewBasketLine) =>
     writeBasket(warbandId, (state) => ({
       lines: [...state.lines, { ...line, id: state.nextId }],
       nextId: state.nextId + 1,
@@ -149,7 +145,13 @@ export function useStoreBasket(warbandId: number) {
   const remove = (id: number) => setLines((current) => current.filter((line) => line.id !== id));
   const setPrice = (id: number, price: number) =>
     setLines((current) =>
-      current.map((line) => (line.id === id ? { ...line, price, rowPrice: false } : line))
+      current.map((line) =>
+        line.id !== id
+          ? line
+          : isUpgradeLine(line)
+            ? { ...line, price }
+            : { ...line, price, rowPrice: false }
+      )
     );
 
   const buyAll = async () => {
@@ -157,6 +159,18 @@ export function useStoreBasket(warbandId: number) {
     let bought = 0;
     try {
       for (const line of lines) {
+        if (isUpgradeLine(line)) {
+          const target = line.recipient.target;
+          const heroId = target.kind === "heroes" ? target.unit.id : 0;
+          await buyUpgrade(queryClient, warbandId, {
+            heroId,
+            upgradeId: line.upgrade.id,
+            price: line.price,
+          });
+          bought += 1;
+          setLines((current) => current.filter((entry) => entry.id !== line.id));
+          continue;
+        }
         const quantity = line.recipient.count;
         await purchase(
           {

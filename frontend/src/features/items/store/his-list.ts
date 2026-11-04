@@ -4,6 +4,7 @@ import { fighterLines, overWarbandMax } from "@/features/warbands/components/rec
 import type {
   TemplateFighter,
   TemplateLine,
+  TemplateUpgrade,
   WarbandTemplateAnswer,
 } from "@/features/warbands/types/hire-template-types";
 import type { HenchmenGroup, WarbandHero } from "@/features/warbands/types/warband-types";
@@ -61,4 +62,31 @@ export const variantTerms = (answer: WarbandTemplateAnswer | undefined): Templat
 export function rareBonusFor(terms: TemplateVariant | null, item: Pick<Item, "name">) {
   if (!terms?.rare_bonus || terms.rare_bonus_except?.includes(item.name)) return 0;
   return terms.rare_bonus;
+}
+
+/** The store's Upgrades for a hero from the template: his template's, those he isn't meant to take. */
+export type HisUpgrades = {
+  upgrades: TemplateUpgrade[];
+  offUpgrades: number[];
+  /** How many of a group he has: his specials that are its upgrades, and the basket's for him. */
+  held: (group: string) => number;
+};
+
+/** Upgrades for the hero the store is buying for (none for a group, or a template without any). */
+export function hisUpgrades(
+  answer: WarbandTemplateAnswer | undefined,
+  his: HisList | null,
+  hero: WarbandHero | undefined,
+  basket: { group: string }[]
+): HisUpgrades | null {
+  const upgrades = answer?.template?.upgrades ?? [];
+  if (!his || his.fighter.kind !== "hero" || !hero || !upgrades.length) return null;
+  const specials = new Set((hero.specials ?? []).map((special) => special.id));
+  return {
+    upgrades,
+    offUpgrades: his.fighter.off_upgrades,
+    held: (group) =>
+      upgrades.filter((upgrade) => upgrade.group === group && specials.has(upgrade.special_id))
+        .length + basket.filter((line) => line.group === group).length,
+  };
 }

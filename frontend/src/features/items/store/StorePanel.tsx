@@ -2,6 +2,7 @@ import { useMemo } from "react";
 
 import { SidePanel } from "@/components/ui/side-panel";
 import { useWarbandHireTemplate } from "@/features/warbands/api/warband-template-queries";
+import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 import type {
   HenchmenGroup,
   Warband,
@@ -11,10 +12,10 @@ import type {
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import ItemInfo, { useShownItem } from "../components/ItemInfo";
-import { hisListFor, variantTerms } from "./his-list";
+import { hisListFor, hisUpgrades, variantTerms } from "./his-list";
 import StoreBasket from "./StoreBasket";
 import StoreList from "./StoreList";
-import { recipientsFor, useStoreBasket } from "./useStoreBasket";
+import { isUpgradeLine, recipientsFor, useStoreBasket } from "./useStoreBasket";
 
 /** Where the store was opened from: a unit (its loadout, Buy again), maybe with an item to get. */
 export type StoreOpening = {
@@ -65,8 +66,28 @@ export default function StorePanel(props: StorePanelProps) {
   const his = hisListFor(template, { heroes, henchmenGroups }, firstKey);
   const inBasket = (itemId: number) =>
     basket.lines
-      .filter((line) => line.item.id === itemId)
+      .filter((line) => !isUpgradeLine(line) && line.item.id === itemId)
       .reduce((sum, line) => sum + line.recipient.count, 0);
+  const forHero = basket.lines.flatMap((line) =>
+    isUpgradeLine(line) && line.recipient.key === firstKey ? [line.upgrade] : []
+  );
+  const hero = heroes.find((unit) => `heroes:${unit.id}` === firstKey);
+  const upgrades = hisUpgrades(template, his, hero, forHero);
+  const recipient = recipients.find((entry) => entry.key === firstKey);
+  const getUpgrade = (upgrade: TemplateUpgrade, price: number) =>
+    recipient &&
+    basket.add({
+      upgrade: {
+        id: upgrade.id,
+        name: upgrade.name,
+        group: upgrade.group,
+        specialId: upgrade.special_id,
+      },
+      recipient,
+      price,
+      free: false,
+      reason: "",
+    });
   const gold = warband.gold ?? 0;
   const left = gold - basket.total;
   const buyAll = async () => {
@@ -123,6 +144,7 @@ export default function StorePanel(props: StorePanelProps) {
         his={his}
         variant={variantTerms(template)}
         inBasket={inBasket}
+        upgrades={upgrades ? { ...upgrades, onGet: getUpgrade } : null}
         onPick={basket.add}
         isShown={details.isShown}
         onToggleShown={details.toggle}
