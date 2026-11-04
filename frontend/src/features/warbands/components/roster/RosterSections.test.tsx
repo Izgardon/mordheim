@@ -61,8 +61,13 @@ const renderAt = (url = "/campaigns/1/warband") =>
     </MemoryRouter>
   );
 
+const NO_TEMPLATE = { template: null, variant: "", list_prices_open: true };
+
 describe("Recruiting from the roster", () => {
-  beforeEach(() => fakeApi.reset());
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /warbands/9/template/", NO_TEMPLATE);
+  });
 
   it("opens the form in the Heroes section, and the new hero's card opens in Edit", async () => {
     fakeApi.on("POST /warbands/9/heroes/batch/", {
@@ -75,7 +80,7 @@ describe("Recruiting from the roster", () => {
     const heroes = screen.getByRole("region", { name: "Heroes" });
     await user.click(within(heroes).getByRole("button", { name: "Add hero" }));
 
-    const form = within(heroes).getByRole("form", { name: "Recruit" });
+    const form = await within(heroes).findByRole("form", { name: "Recruit" });
     expect(within(form).getByLabelText("Name")).toHaveFocus();
     await user.type(within(form).getByLabelText("Name"), "Ulrich Brandt");
     await user.type(within(form).getByLabelText("Type"), "Champion");
@@ -94,7 +99,7 @@ describe("Recruiting from the roster", () => {
     renderAt();
     const user = setupUser();
     await user.click(screen.getByRole("button", { name: "Add hero" }));
-    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    await user.click(await screen.findByRole("button", { name: "Recruit" }));
     await waitFor(() => expect(fakeApi.countOf("POST /warbands/9/heroes/batch/")).toBe(1));
     expect(screen.getByRole("form", { name: "Recruit" })).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Cancel" }));

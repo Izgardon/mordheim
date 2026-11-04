@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import {
@@ -8,8 +9,9 @@ import {
 } from "@/features/hirelings/components/fees/fee-draft";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-import { useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
+import { isWarbandQuery, useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
 import { hireWarbandHireling } from "../../api/warbands-hirelings";
+import type { TemplateHire } from "../../components/recruit/TemplateRecruit";
 import { LIST_KEY } from "../../components/roster/unit-view";
 import type { UnitKindKey } from "../../types/units";
 import { unitApi } from "../../units/unit-api";
@@ -44,11 +46,13 @@ export const blankRecruit = (): RecruitDraft => ({
 const whole = (value: string) => Math.max(0, Math.trunc(Number(value) || 0));
 
 /**
- * Recruits a hero or a group (one batch create) or hires someone not in the list (`hire/` with
- * `source: custom`, then his race and XP), and answers the new card's key so it can open in Edit.
+ * Recruits a hero or a group (one batch create; from the template, the fighter's key with the
+ * kit's purchases) or hires someone not in the list (`hire/` with `source: custom`, then his race
+ * and XP), and answers the new card's key so it can open in Edit.
  */
 export function useRecruit(kind: UnitKindKey, warbandId: number, existingIds: number[]) {
   const updateCache = useWarbandCacheUpdate();
+  const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
 
   const hire = async (draft: RecruitDraft) => {
@@ -98,11 +102,40 @@ export function useRecruit(kind: UnitKindKey, warbandId: number, existingIds: nu
     return result.units.find((unit) => !existingIds.includes(unit.id))?.id ?? null;
   };
 
+  /** A hire from the template: the fighter's key, the name, a group's members, his cost and the kit (create 0). */
+  const fromTemplate = async (hire: TemplateHire) => {
+    const { fighter } = hire;
+    const body = {
+      fighter_key: fighter.key,
+      // a group not named reads as his plural ("Zombies")
+      name: hire.name.trim() || (kind === "henchmen_group" ? fighter.plural || null : null),
+      price: whole(hire.cost),
+      ...(kind === "henchmen_group"
+        ? {
+            henchmen: Array.from({ length: hire.models }, (_, i) => ({
+              name: `${fighter.name} ${i + 1}`,
+            })),
+          }
+        : {}),
+    };
+    const result = await unitApi(kind).batch(warbandId, {
+      create: [body as never],
+      ...(hire.purchases.length ? { purchases: hire.purchases } : {}),
+    });
+    updateCache(warbandId, {
+      [LIST_KEY[kind]]: result.units,
+      summary: result.summary,
+    } as WarbandUpdate);
+    void queryClient.invalidateQueries({ predicate: isWarbandQuery(warbandId, "template") });
+    toastServerWarnings(result.warnings);
+    return result.units.find((unit) => !existingIds.includes(unit.id))?.id ?? null;
+  };
+
   /** The new unit's card key ("hero-12"), or null when it didn't save. */
-  const recruit = async (draft: RecruitDraft) => {
+  const saved = async (write: () => Promise<number | null>) => {
     setSaving(true);
     try {
-      const id = kind === "hireling" ? await hire(draft) : await create(draft);
+      const id = await write();
       return id === null ? null : `${kind}-${id}`;
     } catch (error) {
       toast.error(kind === "hireling" ? "Couldn't hire." : "Couldn't recruit.", {
@@ -113,6 +146,9 @@ export function useRecruit(kind: UnitKindKey, warbandId: number, existingIds: nu
       setSaving(false);
     }
   };
+  const recruit = (draft: RecruitDraft) =>
+    saved(() => (kind === "hireling" ? hire(draft) : create(draft)));
+  const recruitFromTemplate = (hire: TemplateHire) => saved(() => fromTemplate(hire));
 
-  return { recruit, saving };
+  return { recruit, recruitFromTemplate, saving };
 }

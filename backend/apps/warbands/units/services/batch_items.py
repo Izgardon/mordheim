@@ -38,10 +38,11 @@ class ItemLine:
 class ItemLines:
     purchases: list[ItemLine] = field(default_factory=list)
     stash_takes: list[ItemLine] = field(default_factory=list)
+    free: list[ItemLine] = field(default_factory=list)  # the item each template hire gets free (a Dagger)
 
     @property
     def all(self) -> list[ItemLine]:
-        return self.purchases + self.stash_takes
+        return self.purchases + self.stash_takes + self.free
 
     def unit_ids(self) -> set[int]:
         return {line.data["unit_id"] for line in self.all if line.data.get("unit_id") is not None}
@@ -77,11 +78,30 @@ def _validated(body: Mapping[str, Any], creates: int, unit_ids: set[int], errors
     return lines
 
 
+def _free(free: Mapping[int, int]) -> list[ItemLine]:
+    """The item each template hire gets free, by create index: one copy at 0 gc (a group's for every member)."""
+    return [
+        ItemLine(
+            f"create.{index}.free",
+            {"item_id": item_id, "create_index": index, "quantity": 1, "price": 0, "is_buying": True},
+            price=0,
+        )
+        for index, item_id in free.items()
+    ]
+
+
 def plan_lines(
-    warband: Warband, body: Mapping[str, Any], creates: int, unit_ids: set[int], errors: FieldErrors
+    warband: Warband,
+    body: Mapping[str, Any],
+    creates: int,
+    unit_ids: set[int],
+    errors: FieldErrors,
+    free: Mapping[int, int] | None = None,
 ) -> ItemLines:
-    """Validate the body's `purchases` and `stash_takes`, recording errors; nothing is written."""
+    """Validate the body's `purchases` and `stash_takes`, recording errors, and add the free items (`free`: create
+    index -> item id); nothing is written."""
     lines = _validated(body, creates, unit_ids, errors)
+    lines.free = _free(free or {})
     wanted = {line.data["item_id"] for line in lines.all}
 
     items = current_rows(shop_items(warband.campaign_id), wanted, warband.campaign_id)  # CAT-TWEAK-03
@@ -132,7 +152,7 @@ def apply_lines(
     for line in lines.stash_takes:
         _take_from_stash(kind, warband, line, _unit(line, units, created))
     purchases = []
-    for line in lines.purchases:
+    for line in lines.purchases + lines.free:
         unit = _unit(line, units, created)
         data = for_every_member(unit, line.data) if kind.has_members else line.data  # a group: one loadout row
         if line.item is not None:

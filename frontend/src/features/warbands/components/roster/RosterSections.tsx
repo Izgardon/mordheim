@@ -28,6 +28,9 @@ type RosterSectionsProps = {
   hirelings: WarbandHireling[];
   /** The warband's resources, which a hire fee pays from. */
   resources: WarbandResource[];
+  /** The warband's gold and type: a hire from its template tallies against them. */
+  gold?: number;
+  typeName?: string;
   /** The server's cap counts: one in a hero's place is a hero, a dramatis persona no hired sword. */
   counts?: Pick<WarbandRosterCounts, "hero_count" | "hireling_count">;
   canEdit: boolean;
@@ -63,6 +66,8 @@ export default function RosterSections(props: RosterSectionsProps) {
         kind={kind}
         campaignId={campaign?.id ?? 0}
         warbandId={warbandId}
+        typeName={props.typeName ?? ""}
+        gold={props.gold ?? 0}
         resources={props.resources}
         existingIds={list.map((entry) => entry.unit.id)}
         canCreateRace={props.canCreateRace}

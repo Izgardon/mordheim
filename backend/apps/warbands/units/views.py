@@ -78,6 +78,12 @@ class UnitListCreateView(UnitView):
         return Response(self.serializers.summary(units, many=True).data)
 
     def post(self, request: Request, warband_id: int) -> Response:
+        if isinstance(request.data, dict) and request.data.get("fighter_key"):
+            # from the warband's template: filled from the fighter, with his free item, as a roster Save does
+            body = {"create": [dict(request.data)], "update": [], "dismiss": []}
+            plan = plan_batch(self.kind, self.serializers, self.warband, body)
+            apply_batch(self.kind, self.warband, plan)
+            return self.detail_response(plan.created_ids[0], status=status.HTTP_201_CREATED)
         writer = self.serializers.create(data=request.data, context={"campaign_id": self.warband.campaign_id})
         writer.is_valid(raise_exception=True)
         unit = create_unit(self.kind, self.warband, writer, sent=request.data)

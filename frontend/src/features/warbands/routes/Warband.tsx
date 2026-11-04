@@ -175,6 +175,8 @@ export default function Warband() {
                     hireling_count: warband?.hireling_count,
                   }}
                   resources={warband.resources ?? []}
+                  gold={warband.gold ?? 0}
+                  typeName={warband.warband_type?.name ?? ""}
                   canEdit={canEdit}
                   canCreateRace={capabilities.edit_catalogue}
                   onLoadout={setLoadoutFor}

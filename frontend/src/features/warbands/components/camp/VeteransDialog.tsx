@@ -1,24 +1,25 @@
 import { useState } from "react";
-import { Minus, Plus, X } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
-import { IconButton } from "@/components/ui/icon-button";
-import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { cn } from "@/lib/utils";
 
-import { useWarbandCacheUpdate } from "../../api/warband-cache";
+import { isWarbandQuery, useWarbandCacheUpdate } from "../../api/warband-cache";
+import { useWarbandHireTemplate } from "../../api/warband-template-queries";
 import { unitApi } from "../../units/unit-api";
 import { isCreatureGroup } from "../../utils/companions";
+import HireTally from "../recruit/HireTally";
+import { overCount, overGroup } from "../recruit/hire-draft";
 import { newUnitId, useOpenInEdit } from "../roster/useRosterCards";
+import CampNewGroup from "./CampNewGroup";
+import { RecruitNames, VeteranXp } from "./CampRecruitParts";
 import type { OpenCamp } from "./camp-types";
 
 const NEW = "new";
-const fieldLabel = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 
 /**
  * The recruit helper (design E): recruits for a new group (name and type) or an existing one,
@@ -36,6 +37,7 @@ export default function VeteransDialog({
   onClose: () => void;
 }) {
   const updateCache = useWarbandCacheUpdate();
+  const queryClient = useQueryClient();
   const openInEdit = useOpenInEdit();
   const groups = camp.groups.filter((group) => !isCreatureGroup(group));
   const [into, setInto] = useState<string>(NEW);
@@ -45,6 +47,11 @@ export default function VeteransDialog({
   const [recruits, setRecruits] = useState<string[]>(["", ""]);
   const [cost, setCost] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  // a new group from the warband's template (the templates plan, phase 2): its henchmen to recruit as
+  const [as, setAs] = useState("");
+  const answer = useWarbandHireTemplate(camp.campaignId, camp.warbandId).data;
+  const fighters = (answer?.template?.fighters ?? []).filter((entry) => entry.kind === "henchman");
+  const fighter = into === NEW ? fighters.find((entry) => entry.key === as) : undefined;
   const record = camp.draft.camp ?? {};
   const vet = record.veterans ?? { dice: [0, 0], spent: 0 };
   const total = vet.dice[0] + vet.dice[1];
@@ -52,9 +59,13 @@ export default function VeteransDialog({
   const living = group ? group.henchmen.filter((member) => !member.dead) : [];
   const each = group ? Number(group.xp ?? 0) : xpEach;
   const left = total - vet.spent - each * recruits.length;
-  const price = cost ?? String(group ? (group.hire_cost ?? group.price ?? 0) : 25);
+  const price =
+    cost ?? String(group ? (group.hire_cost ?? group.price ?? 0) : (fighter?.cost ?? 25));
   const label = (index: number) =>
-    recruits[index] || `${group?.unit_type || type || "Recruit"} ${index + 1}`;
+    recruits[index] || `${group?.unit_type || fighter?.name || type || "Recruit"} ${index + 1}`;
+  const warnings = fighter
+    ? [overCount(fighter, recruits.length), overGroup(fighter, recruits.length)].filter(Boolean)
+    : [];
 
   const recruit = async () => {
     setSaving(true);
@@ -77,9 +88,11 @@ export default function VeteransDialog({
         : await unitApi("henchmen_group").batch(camp.warbandId, {
             create: [
               {
-                name: name.trim() || null,
-                unit_type: type.trim() || null,
-                race: null,
+                name: name.trim() || fighter?.plural || null,
+                // from the template, the server fills his type, race, profile and rules
+                ...(fighter
+                  ? { fighter_key: fighter.key }
+                  : { unit_type: type.trim() || null, race: null }),
                 price: gc,
                 xp: xpEach,
                 henchmen: names.map((recruitName) => ({ name: recruitName })),
@@ -87,9 +100,10 @@ export default function VeteransDialog({
             ],
           });
       updateCache(camp.warbandId, { henchmenGroups: result.units, summary: result.summary });
+      void queryClient.invalidateQueries({ predicate: isWarbandQuery(camp.warbandId, "template") });
       const groupName = group
         ? group.name || group.unit_type || "Henchmen"
-        : name.trim() || type.trim() || "Henchmen";
+        : name.trim() || fighter?.plural || type.trim() || "Henchmen";
       await camp.save({
         ...camp.draft,
         camp: {
@@ -124,7 +138,7 @@ export default function VeteransDialog({
           </Button>
           <Button
             className="min-h-12"
-            disabled={saving || !recruits.length}
+            disabled={saving || !recruits.length || (into === NEW && fighters.length > 0 && !as)}
             onClick={() => void recruit()}
           >
             Recruit
@@ -155,76 +169,33 @@ export default function VeteransDialog({
         ))}
       </div>
       {group ? null : (
-        <div className="grid grid-cols-2 gap-2.5">
-          <label className={fieldLabel}>
-            Group name
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
-          </label>
-          <label className={fieldLabel}>
-            Type
-            <Input value={type} onChange={(e) => setType(e.target.value)} />
-          </label>
-        </div>
+        <CampNewGroup
+          typeName={answer?.template?.name ?? ""}
+          fighters={fighters}
+          lists={answer?.template?.lists ?? []}
+          as={as}
+          onAs={(key) => {
+            setAs(key);
+            setCost(null);
+          }}
+          name={name}
+          onName={setName}
+          type={type}
+          onType={setType}
+        />
       )}
-      <div className="flex items-baseline justify-between border-t border-line pt-2.5">
-        <span className="text-xs font-bold text-muted-foreground">Veteran experience to share</span>
-        <span className="font-mono text-sm text-text2">
-          <span className={cn("font-bold", left < 0 ? "text-danger" : "text-head")}>{left}</span> of{" "}
-          {total} left
-        </span>
-      </div>
-      <div className="flex items-center gap-2.5">
-        <span className="flex-1 text-sm font-semibold text-ink">
-          {group ? "Each joins at the group's XP" : "XP each"}
-        </span>
-        {group ? null : (
-          <IconButton
-            aria-label="Less experience each"
-            className="h-9 w-9"
-            disabled={xpEach <= 0}
-            onClick={() => setXpEach(xpEach - 1)}
-          >
-            <Minus aria-hidden="true" />
-          </IconButton>
-        )}
-        <span className="min-w-[54px] text-center font-mono text-sm font-bold text-head">
-          {each} XP
-        </span>
-        {group ? null : (
-          <IconButton
-            aria-label="More experience each"
-            className="h-9 w-9"
-            onClick={() => setXpEach(xpEach + 1)}
-          >
-            <Plus aria-hidden="true" />
-          </IconButton>
-        )}
-      </div>
-      {recruits.map((recruitName, index) => (
-        <div key={index} className="flex items-center gap-2">
-          <Input
-            inputSize="sm"
-            aria-label={`Recruit ${index + 1} name`}
-            placeholder={label(index)}
-            value={recruitName}
-            onChange={(e) =>
-              setRecruits((list) => list.map((n, i) => (i === index ? e.target.value : n)))
-            }
-          />
-          <IconButton
-            aria-label={`Remove recruit ${index + 1}`}
-            className="h-9 w-9"
-            onClick={() => setRecruits((list) => list.filter((_, i) => i !== index))}
-          >
-            <X aria-hidden="true" />
-          </IconButton>
-        </div>
-      ))}
+      <VeteranXp left={left} total={total} each={each} fixed={Boolean(group)} onEach={setXpEach} />
+      <RecruitNames recruits={recruits} placeholder={label} onChange={setRecruits} />
       {group && living.length + recruits.length > (group.max_size ?? 5) ? (
         <p className="m-0 text-xs text-danger">
           That takes the group over its size of {group.max_size ?? 5}.
         </p>
       ) : null}
+      {warnings.map((warning) => (
+        <p key={warning} className="m-0 text-xs text-danger">
+          {warning}
+        </p>
+      ))}
       <div className="flex flex-wrap items-center gap-2.5">
         <button
           type="button"
@@ -233,18 +204,34 @@ export default function VeteransDialog({
         >
           Add another
         </button>
-        <label className="ml-auto flex items-center gap-2 text-xs font-bold text-muted-foreground">
-          Each costs
-          <NumberInput
-            compact
-            inputSize="sm"
-            className="w-[70px] font-mono"
-            value={price}
-            onChange={(e) => setCost(e.target.value)}
-          />
-          gc
-        </label>
+        {fighter ? null : (
+          <label className="ml-auto flex items-center gap-2 text-xs font-bold text-muted-foreground">
+            Each costs
+            <NumberInput
+              compact
+              inputSize="sm"
+              className="w-[70px] font-mono"
+              value={price}
+              onChange={(e) => setCost(e.target.value)}
+            />
+            gc
+          </label>
+        )}
       </div>
+      {fighter ? (
+        <HireTally
+          name={fighter.plural || fighter.name}
+          members={recruits.length}
+          cost={price}
+          onCost={setCost}
+          picks={[]}
+          lines={[]}
+          prices={{}}
+          onPrice={() => undefined}
+          freeItem={fighter.free_item}
+          gold={camp.gold}
+        />
+      ) : null}
     </ModalSheet>
   );
 }

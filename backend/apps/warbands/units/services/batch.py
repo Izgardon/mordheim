@@ -3,7 +3,9 @@
 Everything is validated first and every error is reported at once, keyed by entry ("create.0.name",
 "update.2.xp", "dismiss.1"). Then, in one transaction, the dismissals, updates and creates run through the
 same services as the per-unit endpoints (dismissals first, so they free places under the caps), then the
-stash takes and purchases (batch_items.py). Any refusal on the way (a cap, a unit changed in another tab since
+stash takes and purchases (batch_items.py), and the item a hire from the warband's template gets free. A create
+naming a `fighter_key` is filled from that template fighter first (apps/warband_templates/services/hiring.py). Any
+refusal on the way (a cap, a unit changed in another tab since
 its `updated_at`) rolls the whole batch back: all or nothing, so Cancel never needs a server call.
 """
 
@@ -15,6 +17,7 @@ from typing import TYPE_CHECKING, Any
 from django.db import transaction
 from rest_framework import serializers
 
+from apps.warband_templates.services.hiring import fill_from_template
 from apps.warbands.models import RosterUnit, Warband, not_dismissed
 from apps.warbands.services.purchases import Warning
 from apps.warbands.units.errors import FieldErrors, RosterError, flatten_errors
@@ -38,6 +41,8 @@ class BatchPlan:
     errors: FieldErrors = field(default_factory=dict)
     versions: dict[int, tuple[int, datetime]] = field(default_factory=dict)  # unit id -> (update index, updated_at)
     lines: ItemLines = field(default_factory=ItemLines)
+    free_items: dict[int, int] = field(default_factory=dict)  # create index -> the item a template hire gets free
+    created_ids: list[int] = field(default_factory=list)  # set by apply_batch
 
 
 UNIT_CHANGED = "This unit was changed in another tab; reload it and try again."
@@ -100,15 +105,18 @@ def plan_batch(
             plan.updates.append((writer, sent))
         else:
             plan.errors.update(flatten_errors(writer.errors, f"update.{index}"))
+    # a create naming a fighter of the warband's template is filled from him (the templates plan, phase 2)
+    plan.free_items = fill_from_template(kind, warband, body["create"], plan.errors)
     for index, entry in enumerate(body["create"]):
         writer = serializers.create(data=entry, context=context)
         if writer.is_valid():
             plan.creates.append((writer, entry))
         else:
             plan.errors.update(flatten_errors(writer.errors, f"create.{index}"))
-    if body.get("purchases") or body.get("stash_takes"):
+    if body.get("purchases") or body.get("stash_takes") or plan.free_items:
         roster = set(kind.visible(kind.objects.filter(warband=warband)).values_list("id", flat=True))
-        plan.lines = plan_lines(warband, body, len(body["create"]), roster - set(dismiss_ids), plan.errors)
+        creates, unit_ids = len(body["create"]), roster - set(dismiss_ids)
+        plan.lines = plan_lines(warband, body, creates, unit_ids, plan.errors, free=plan.free_items)
     return plan
 
 
@@ -147,4 +155,5 @@ def apply_batch(kind: "UnitKindSpec", warband: Warband, plan: BatchPlan) -> list
             except RosterError as refused:
                 detail = refused.message
                 raise RosterError(detail, refused.error_code, {f"create.{index}": [detail]}) from None
+        plan.created_ids = [unit.pk for unit in created]
         return apply_lines(kind, warband, plan.lines, created)
