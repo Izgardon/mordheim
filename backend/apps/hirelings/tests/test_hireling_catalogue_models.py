@@ -120,7 +120,7 @@ class HirelingCatalogueHolderTests(CatalogueTestCase):
 
         response = self.delete_as(self.owner, ITEMS.detail_url(charm.id))
 
-        usage = {"units": 0, "warbands": 0, "stashes": 0, "bestiary_entries": 0}
+        usage = {"units": 0, "warbands": 0, "stashes": 0, "bestiary_entries": 0, "warband_templates": 0}
         expected = {"outcome": "archived", "usage": {**usage, "hired_swords": 1, "dramatis_personae": 1}}
         self.assertEqual((response.status_code, response.json()), (200, expected))
         self.assertEqual(persona.item_links.get().item_id, charm.id)

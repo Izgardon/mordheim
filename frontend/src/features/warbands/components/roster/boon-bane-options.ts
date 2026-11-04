@@ -4,7 +4,7 @@ import type { Special } from "@/features/special/types/special-types";
 
 import { isInjury } from "./unit-view";
 
-/** A general rule: not a hired sword's or dramatis persona's own, which stays with them. */
+/** A general rule: not a hired sword's, dramatis persona's or template fighter's own, which stays with them. */
 export const isGeneralRule = (special: Pick<Special, "owner_kind">) =>
   !special.owner_kind || special.owner_kind === "general";
 

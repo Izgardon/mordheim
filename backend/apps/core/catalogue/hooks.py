@@ -27,6 +27,7 @@ from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
 from apps.skills.selectors import skill_learners
 from apps.spells import rolls as spell_rolls
+from apps.warband_templates.selectors import template_rows
 
 from . import merge
 from .payloads import badge_joins
@@ -222,6 +223,19 @@ class RaceHooks(CatalogueHooks):
         sent = request.data.get("campaign_id")
         if sent and str(sent) != str(entry.campaign_id):  # an edit naming another campaign (BUG-147)
             raise NotFound("Not found")
+
+
+class WarbandTemplateHooks(CatalogueHooks):
+    """Warband templates (the templates plan, phase 1b): read only for now. A list row carries the warband types the
+    template serves, each saying whether it is in play in the list's campaign."""
+
+    def listed(
+        self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
+    ) -> QuerySet[Any]:
+        return template_rows(super().listed(kind, rows, campaign_id, params), campaign_id)
+
+    def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
+        return template_rows(self.rows(kind))
 
 
 class ItemRuleHooks(CatalogueHooks):

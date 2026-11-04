@@ -15,7 +15,8 @@ from typing import TYPE_CHECKING, Any
 from django.db.models import Case, Value, When
 
 if TYPE_CHECKING:
-    from .kinds import CatalogueKindSpec, Move
+    from .kinds import CatalogueKindSpec
+    from .specs import Move
 
 IdMap = Mapping[int, int]  # an entry's id -> the id its copies move to
 

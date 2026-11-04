@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     "apps.hirelings.apps.HirelingsConfig",
     "apps.notifications.apps.NotificationsConfig",
     "apps.bounties.apps.BountiesConfig",
+    "apps.warband_templates.apps.WarbandTemplatesConfig",
 ]
 
 MIDDLEWARE = [

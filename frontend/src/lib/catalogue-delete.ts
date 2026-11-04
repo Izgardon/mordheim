@@ -7,6 +7,8 @@ export type CatalogueUsage = {
   /** Hired swords whose kit or links name the entry (or whose race it is). */
   hired_swords?: number;
   dramatis_personae?: number;
+  /** Warband templates whose lists, fighters or upgrades name the entry. */
+  warband_templates?: number;
 };
 
 const counted = (count: number, one: string, many: string) =>
@@ -27,6 +29,7 @@ export function usageSummary({
   bestiary_entries: entries = 0,
   hired_swords: hiredSwords = 0,
   dramatis_personae: personae = 0,
+  warband_templates: templates = 0,
 }: CatalogueUsage): string | null {
   const held = [
     units > 0 ? counted(units, "unit", "units") : "",
@@ -40,6 +43,7 @@ export function usageSummary({
     entries > 0 ? counted(entries, "bestiary entry", "bestiary entries") : "",
     hiredSwords > 0 ? counted(hiredSwords, "hired sword", "hired swords") : "",
     personae > 0 ? counted(personae, "dramatis persona", "dramatis personae") : "",
+    templates > 0 ? counted(templates, "warband template", "warband templates") : "",
   ].filter(Boolean);
   const parts = [inWarbands, holders.length > 0 ? listed(holders) : ""].filter(Boolean);
   return parts.length > 0 ? parts.join(", and by ") : null;

@@ -2,7 +2,8 @@
 what a delete answers when it archives or removes an entry instead.
 
 Units' copies (items, skills, spells, specials), stash rows, the skills, specials, spells and equipment of bestiary
-entries, hired swords and dramatis personae, and the races of units, hired swords and dramatis personae reference
+entries, hired swords and dramatis personae, the races of units, hired swords and dramatis personae, and the items,
+races and specials a warband template's lists, fighters and upgrades name reference
 the catalogue with RESTRICT: a delete never takes them with it. The kinds
 registry names those tables (`holders`, kinds.py). Counted within one campaign: a book entry is held across
 campaigns, a campaign's entry only in its own. What holds an entry's twin counts for the entry: a beast's usage is
@@ -18,8 +19,8 @@ if TYPE_CHECKING:
 
 def count_usage(kind: "CatalogueKindSpec", entry_id: Any, campaign_id: int) -> dict[str, int]:
     """Units holding the entry (any kind, dead and dismissed ones too, or of the race), the warbands they and the
-    stashes belong to, stashes, and the campaign's bestiary entries, hired swords and dramatis personae linking it (or
-    its twin). One query per holding table, and one for the twin."""
+    stashes belong to, stashes, and the campaign's bestiary entries, hired swords, dramatis personae and warband
+    templates linking it (or its twin). One query per holding table, and one for the twin."""
     units: dict[str, set[int]] = defaultdict(set)
     warbands: set[int] = set()
     found: dict[str, set[int]] = defaultdict(set)
@@ -43,4 +44,5 @@ def count_usage(kind: "CatalogueKindSpec", entry_id: Any, campaign_id: int) -> d
         "bestiary_entries": len(found["bestiary_entries"]),
         "hired_swords": len(found["hired_swords"]),
         "dramatis_personae": len(found["dramatis_personae"]),
+        "warband_templates": len(found["warband_templates"]),
     }

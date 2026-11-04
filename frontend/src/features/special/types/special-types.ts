@@ -5,7 +5,7 @@ import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-
  * Whose rule it is: a hired sword's or dramatis persona's own (shown only with them) or a general
  * one, which the Boons & Banes pickers offer.
  */
-export type SpecialOwnerKind = "general" | "hired_sword" | "dramatis_persona";
+export type SpecialOwnerKind = "general" | "hired_sword" | "dramatis_persona" | "warband";
 
 export type Special = CatalogueBadgeFields & {
   id: number;

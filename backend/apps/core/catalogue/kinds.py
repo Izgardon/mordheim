@@ -1,7 +1,7 @@
 """The catalogue kinds registry (design 0.29 for the catalogue, IMP-79): each kind as data.
 
-Items, skills, spells, specials, races, bestiary entries, hired swords and dramatis personae, plus the add-only shared
-item rules. A spec names the kind's model and serializers, how its list is
+Items, skills, spells, specials, races, bestiary entries, hired swords, dramatis personae and warband templates, plus
+the add-only shared item rules. A spec (specs.py) names the kind's model and serializers, how its list is
 filtered, the child rows an entry carries (what a version copies), the tables whose rows hold an entry (`holders`:
 what a delete can't take with it, what `usage/` counts, and what a version's first edit moves onto it and Revert
 moves back), the rows that follow an entry without holding it (`followers`; none since the bestiary favourites went)
@@ -9,12 +9,9 @@ and the entry of another kind that goes everywhere it goes (`twin`: a beast's An
 behaviour are hooks (hooks.py), as pass 1 did for units (`warbands/units/kinds.py`).
 """
 
-from collections.abc import Callable, Mapping
-from dataclasses import dataclass, field
-from typing import Any, Literal
+from collections.abc import Mapping
 
 from django.db.models import Model, Q
-from rest_framework.serializers import BaseSerializer
 
 from apps.bestiary.models import (
     BestiaryEntry,
@@ -38,19 +35,25 @@ from apps.special.models import Special
 from apps.special.serializers import SpecialCreateSerializer
 from apps.spells.models import Spell
 from apps.spells.serializers import SpellCreateSerializer
+from apps.warband_templates.models import (
+    TemplateFighter,
+    TemplateFighterSpecial,
+    TemplateListItem,
+    TemplateUpgrade,
+    WarbandTemplate,
+)
 from apps.warbands.models import HenchmenGroup, WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
-from apps.warbands.units.kinds import UnitKindKey
 
 from .hooks import (
     BestiaryHooks,
-    CatalogueHooks,
     HirelingProfileHooks,
     ItemHooks,
     ItemRuleHooks,
     RaceHooks,
     SkillHooks,
     SpellHooks,
+    WarbandTemplateHooks,
 )
 from .rows import (
     BestiaryEntryDetailRowSerializer,
@@ -64,73 +67,9 @@ from .rows import (
     SkillRowSerializer,
     SpecialRowSerializer,
     SpellRowSerializer,
+    WarbandTemplateRowSerializer,
 )
-
-Filter = Callable[[str], Q]  # a query parameter's stripped value -> the rows it keeps
-UsageKey = Literal["units", "stashes", "bestiary_entries", "hired_swords", "dramatis_personae"]  # usage.py's counts
-
-
-@dataclass(frozen=True)
-class Move:
-    """Rows that point at an entry and move with it when a campaign's copies are remapped (remap.py)."""
-
-    model: type[Model]
-    field: str  # the foreign key to the entry, e.g. "item"
-    campaign: str  # the path from a row to its campaign's id, e.g. "hero__warband__campaign_id"
-    unique: tuple[str, ...] = ()  # the rest of a unique key with `field`: a moved row meeting one merges into it
-    adds: str | None = None  # on a merge, this column is added to the row met (a stash row's quantity)
-
-
-@dataclass(frozen=True)
-class Holder(Move):
-    """A table whose rows hold an entry, with RESTRICT: a unit's copy (or a unit of a race), a stash row, a bestiary
-    entry's, hired sword's or dramatis persona's link (or one of their races)."""
-
-    counts_as: UsageKey = "units"  # the usage key it adds to
-    holder_id: str = "pk"  # the attribute naming who holds it: the unit, the warband (a stash), the catalogue entry
-    warband: str | None = None  # the path to the holder's warband id; None for a catalogue entry's link
-    unit_kind: UnitKindKey | None = None  # for units: their kind
-
-
-@dataclass(frozen=True)
-class Twin:
-    """An entry of another kind held once for each entry (`field`: its one-to-one key to the entry, CASCADE): written
-    by the entry's writes, versioned and reverted with it (versions.py), archived, removed, restored and deleted with
-    it (archive.py), and what holds it is the entry's usage (usage.py). A beast's Animal item."""
-
-    kind: "CatalogueKindSpec"
-    field: str
-
-    def of(self, entry: Any) -> Any:
-        """The entry's twin (`entry`: a row or its id), or None."""
-        return self.kind.model._default_manager.filter(**{self.field: entry}).first()
-
-
-@dataclass(frozen=True)
-class CatalogueKindSpec:
-    key: str  # "skills": the list's cache key and the `catalogue.changed` event's kind
-    noun: str  # "skill": messages
-    model: type[Model]
-    url_kwarg: str  # the detail route's id, e.g. "skill_id"
-    row_serializer: type[BaseSerializer[Any]]  # a list row
-    entry_serializer: type[BaseSerializer[Any]]  # the detail, and a write's answer
-    write_serializer: type[BaseSerializer[Any]] | None = None  # None: nothing writes the kind through the API
-    named: bool = False  # a create's name may not be taken in the campaign or the book (names.py)
-    versioned: bool = False  # book entries get campaign versions, archive and removal (versions.py, archive.py)
-    filters: Mapping[str, Filter] = field(default_factory=dict)  # list query parameter -> filter, before the merge
-    name_field: str = "name"  # what the name rule compares (names.py)
-    order: tuple[str, ...] = ("name", "id")  # each part of a list (the campaign's rows, then the book's)
-    reread: bool = False  # a write's answer is read again with the detail's prefetch (its links)
-    lists: tuple[str, ...] = ()  # the lists a write changes (`catalogue.changed` kinds); default: `(key,)`
-    children: tuple[str, ...] = ()  # rows an entry carries (CASCADE), parents first; what a version copies
-    holders: tuple[Holder, ...] = ()
-    followers: tuple[Move, ...] = ()
-    twin: Twin | None = None
-    hooks: CatalogueHooks = field(default_factory=CatalogueHooks)
-
-    @property
-    def changed_lists(self) -> tuple[str, ...]:
-        return self.lists or (self.key,)
+from .specs import CatalogueKindSpec, Filter, Holder, Twin, UsageKey
 
 
 def _copies(link: str, *others: Holder) -> tuple[Holder, ...]:
@@ -189,6 +128,18 @@ def _listed_by_hirelings(links: str, target: str) -> tuple[Holder, ...]:
     return tuple(holders)
 
 
+def _held_by_templates(model: type[Model], target: str, template: str) -> Holder:
+    """A warband template's child rows holding `target` (a list line's item, a fighter's race or rule, an upgrade's
+    special); `template` is the path from a row to its template."""
+    return Holder(
+        model=model,
+        field=target,
+        campaign=f"{template}__campaign_id",
+        counts_as="warband_templates",
+        holder_id=f"{template}_id",
+    )
+
+
 HIRELING_RACES = tuple(
     Holder(model=model, field="race", campaign="campaign_id", counts_as=counts_as)
     for model, counts_as in HIRELING_CATALOGUES
@@ -235,6 +186,7 @@ ITEMS = CatalogueKindSpec(
         STASH,
         _linked_by(BestiaryEntryItem, "item", unique=("bestiary_entry_id",)),
         *_listed_by_hirelings("item_links", "item"),
+        _held_by_templates(TemplateListItem, "item", "equipment_list__template"),
     ),
     hooks=ItemHooks(),
 )
@@ -279,7 +231,11 @@ SPECIALS = CatalogueKindSpec(
     versioned=True,
     filters=NAME_AND_TYPE,
     holders=_copies(
-        "specials", _linked_by(BestiaryEntrySpecial, "special"), *_listed_by_hirelings("special_links", "special")
+        "specials",
+        _linked_by(BestiaryEntrySpecial, "special"),
+        *_listed_by_hirelings("special_links", "special"),
+        _held_by_templates(TemplateFighterSpecial, "special", "fighter__template"),
+        _held_by_templates(TemplateUpgrade, "special", "template"),
     ),
 )
 RACES = CatalogueKindSpec(
@@ -306,6 +262,7 @@ RACES = CatalogueKindSpec(
             for unit in UNIT_KINDS.values()
         ),
         *HIRELING_RACES,
+        _held_by_templates(TemplateFighter, "race", "template"),
     ),
     hooks=RaceHooks(),
 )
@@ -358,6 +315,28 @@ DRAMATIS_PERSONAE = CatalogueKindSpec(
     children=HIRELING_LINKS,
     hooks=HirelingProfileHooks(DramatisPersona),
 )
+WARBAND_TEMPLATES = CatalogueKindSpec(  # read only until the template editor (the templates plan, phase 4)
+    key="warband_templates",
+    noun="warband template",
+    model=WarbandTemplate,
+    url_kwarg="template_id",
+    row_serializer=WarbandTemplateRowSerializer,
+    entry_serializer=WarbandTemplateRowSerializer,
+    named=True,
+    versioned=True,
+    filters={"search": NAME_AND_TYPE["search"]},
+    children=(  # parents first: a fighter's lists point at the copy's lists (versions.py)
+        "type_links",
+        "rules",
+        "lists",
+        "lists__lines",
+        "fighters",
+        "fighters__special_links",
+        "fighters__list_links",
+        "upgrades",
+    ),
+    hooks=WarbandTemplateHooks(),
+)
 ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or deleted
     key="item_rules",
     noun="item rule",
@@ -372,7 +351,8 @@ ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or dele
 )
 
 CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
-    kind.key: kind for kind in (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
+    kind.key: kind
+    for kind in (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE, WARBAND_TEMPLATES)
 }
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {
     **CATALOGUE_KINDS,

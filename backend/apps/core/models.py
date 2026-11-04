@@ -21,6 +21,7 @@ ENTRY_TABLES = (
     ("bestiary", "Bestiary entry"),
     ("hired_swords", "Hired sword"),
     ("dramatis_personae", "Dramatis persona"),
+    ("warband_templates", "Warband template"),
 )
 
 
@@ -42,7 +43,7 @@ class CatalogueVersion(models.Model):
 
 class CatalogueEntry(models.Model):
     """What every catalogue entry table carries besides its own columns (items, skills, spells, specials, races,
-    bestiary entries, hired swords and dramatis personae).
+    bestiary entries, hired swords, dramatis personae and warband templates).
 
     `replaces`: a campaign's version of a book entry points at the entry it stands in for (decisions 1 and 2): the
     campaign's lists, prices and pickers find it through this reference, never through the name. A house rule's

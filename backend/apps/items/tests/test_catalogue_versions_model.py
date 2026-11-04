@@ -11,6 +11,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import RestrictedError
 
 from apps.campaigns.models import Campaign
+from apps.core.catalogue.kinds import CATALOGUE_KINDS
 from apps.core.models import ENTRY_TABLES, CatalogueRemoval, RevertedVersion
 from apps.items.models import Item
 
@@ -78,4 +79,4 @@ class CampaignRecordTests(CatalogueTestCase):
 
     def test_the_record_kinds_are_the_entry_tables(self):
         kinds = {key for key, _label in ENTRY_TABLES}  # the choices of both records' `kind`
-        self.assertEqual(kinds, {kind.key for kind in KINDS})
+        self.assertEqual(kinds, set(CATALOGUE_KINDS))  # every kind the registry names

@@ -90,11 +90,13 @@ def copy_entry(kind: CatalogueKindSpec, source: Model, campaign_id: int) -> Mode
     _point_at_versions([clone], campaign_id, skip="replaces_id")
     clone.save(force_insert=True)
     copied: dict[str, dict[Any, Any]] = {"": {source.pk: clone.pk}}
+    siblings: dict[Any, dict[Any, Any]] = {}  # child model -> old id -> new, for links between child rows
     for path in kind.children:
         parent, _, name = path.rpartition("__")
         relation = _model_at(kind.model, parent)._meta.get_field(name)
         assert isinstance(relation, ForeignObjectRel)
-        copied[path] = _copy_children(relation, copied[parent], campaign_id)
+        copied[path] = _copy_children(relation, copied[parent], campaign_id, siblings)
+        siblings.setdefault(relation.related_model, {}).update(copied[path])
     return clone
 
 
@@ -104,17 +106,33 @@ def _model_at(model: type[Model], path: str) -> type[Model]:
     return model
 
 
-def _copy_children(relation: ForeignObjectRel, parents: dict[Any, Any], campaign_id: int) -> dict[Any, Any]:
-    """The rows of `relation` under the copied parents, copied under their copies in one INSERT; old id -> new."""
+def _copy_children(
+    relation: ForeignObjectRel, parents: dict[Any, Any], campaign_id: int, siblings: dict[Any, dict[Any, Any]]
+) -> dict[Any, Any]:
+    """The rows of `relation` under the copied parents, copied under their copies in one INSERT; old id -> new. A link
+    to a child row copied before (a template fighter's list) points at that row's copy."""
     model: Any = relation.related_model
     link = relation.field.attname
     rows = list(model._default_manager.filter(**{f"{link}__in": list(parents)}).order_by("pk"))
     if not rows:
         return {}
-    clones = [_copied(row, link, campaign_id, **{link: parents[getattr(row, link)]}) for row in rows]
+    clones = [
+        _copied(row, link, campaign_id, **_to_copies(row, link, siblings), **{link: parents[getattr(row, link)]})
+        for row in rows
+    ]
     _point_at_versions(clones, campaign_id, skip=link)
     made = model._default_manager.bulk_create(clones)
     return {row.pk: copy.pk for row, copy in zip(rows, made, strict=True)}
+
+
+def _to_copies(row: Model, link: str, siblings: dict[Any, dict[Any, Any]]) -> dict[str, Any]:
+    """The row's links (other than to its parent) to child rows already copied, pointed at their copies."""
+    changes = {}
+    for field in row._meta.concrete_fields:
+        copies = siblings.get(getattr(field, "related_model", None))
+        if copies and field.attname != link and getattr(row, field.attname) in copies:
+            changes[field.attname] = copies[getattr(row, field.attname)]
+    return changes
 
 
 def _copied(row: Model, link: str | None, campaign_id: int, **changes: Any) -> Model:

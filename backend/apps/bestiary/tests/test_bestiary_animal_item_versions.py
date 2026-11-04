@@ -18,7 +18,15 @@ from apps.items.tests.catalogue_support import BESTIARY, HIRED_SWORDS, ITEMS, Ca
 from apps.warbands.models import WarbandItem
 from apps.warbands.tests.roster_support import HERO, make_unit
 
-NO_USE = {"units": 0, "warbands": 0, "stashes": 0, "bestiary_entries": 0, "hired_swords": 0, "dramatis_personae": 0}
+NO_USE = {
+    "units": 0,
+    "warbands": 0,
+    "stashes": 0,
+    "bestiary_entries": 0,
+    "hired_swords": 0,
+    "dramatis_personae": 0,
+    "warband_templates": 0,
+}
 
 
 class BeastTestCase(CatalogueTestCase):
