@@ -26,28 +26,19 @@ import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import SkillFormDialog from "../components/SkillFormDialog";
+import { groupsOf, isCore, useSkillGroups } from "../skill-groups";
 import { learningNotes } from "../skill-learning";
-import type { Skill } from "../types/skill-types";
+import type { Skill, SkillGroup } from "../types/skill-types";
 
-/** The five common lists, in the book's order; every other list is "Other lists". */
-const CORE = ["Combat", "Shooting", "Academic", "Strength", "Speed"];
 const OTHER = "other";
 
-const listName = (type: string) => type.replace(/_/g, " ");
-
-/** The core lists first, in order, then the rest by list; by name within a list. */
-const rank = (type: string) => {
-  const index = CORE.indexOf(type);
-  return index === -1 ? CORE.length : index;
-};
-const compareSkills = (a: Skill, b: Skill) =>
-  rank(a.type) - rank(b.type) || a.type.localeCompare(b.type) || a.name.localeCompare(b.name);
+const names = (groups: SkillGroup[]) => groups.map((group) => group.name).join(", ");
 
 /**
- * Skills (design E's reference layout): every skill in play in the campaign by list, searched by
- * name or rules text, with chips for the five common lists and "Other lists" (with a picker for
- * one of them). A row opens to its rules in the warband page's rules panel; custom skills are
- * added and edited as today.
+ * Skills (design E's reference layout): every skill in play in the campaign once, with the groups
+ * holding it, searched by name, group or rules text, with chips for the five core groups and
+ * "Other groups" (with a picker for one of them). A row opens to its rules in the warband page's
+ * rules panel; custom skills are added and edited as today.
  */
 export default function Skills() {
   const { id } = useParams();
@@ -55,22 +46,28 @@ export default function Skills() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const skills = useCatalogue("skills", campaignId);
+  const groups = useSkillGroups(campaignId);
   const params = useReferenceParams(!skills.isLoading);
   const capabilities = campaignCapabilities(campaign);
   const list = params.get("list", "all");
-  const otherList = params.get("other");
+  const otherGroup = params.get("other");
 
-  const sorted = useMemo(() => inPlayOnly(skills.data).sort(compareSkills), [skills.data]);
-  const types = useMemo(() => [...new Set(sorted.map((skill) => skill.type))], [sorted]);
-  const otherTypes = types.filter((type) => !CORE.includes(type));
-  const searched = sorted.filter((skill) =>
-    matchesSearchQuery(params.query, skill.name, skill.type, skill.description)
+  const sorted = useMemo(
+    () => inPlayOnly(skills.data).sort((a, b) => a.name.localeCompare(b.name)),
+    [skills.data]
   );
-  const inList = (skill: Skill) =>
-    list === "all" ||
-    (list === OTHER
-      ? !CORE.includes(skill.type) && (!otherList || skill.type === otherList)
-      : skill.type === list);
+  const held = (skill: Skill) => groupsOf(groups, skill.id);
+  const core = groups.groups.filter(isCore);
+  const others = groups.groups.filter((group) => !isCore(group));
+  const searched = sorted.filter((skill) =>
+    matchesSearchQuery(params.query, skill.name, names(held(skill)), skill.description)
+  );
+  const inList = (skill: Skill) => {
+    if (list === "all") return true;
+    const ids = held(skill).map((group) => String(group.id));
+    if (list !== OTHER) return ids.includes(list);
+    return otherGroup ? ids.includes(otherGroup) : held(skill).some((group) => !isCore(group));
+  };
   const rows = sorted.filter(
     (skill) => String(skill.id) === params.openId || (searched.includes(skill) && inList(skill))
   );
@@ -78,19 +75,17 @@ export default function Skills() {
     rows,
     rows.findIndex((skill) => String(skill.id) === params.openId)
   );
+  const count = (group: SkillGroup) =>
+    searched.filter((skill) => group.skill_ids.includes(skill.id)).length;
   const chips = [
     { id: "all", label: "All", count: searched.length },
-    ...CORE.filter((type) => types.includes(type)).map((type) => ({
-      id: type,
-      label: type,
-      count: searched.filter((skill) => skill.type === type).length,
-    })),
-    ...(otherTypes.length
+    ...core.map((group) => ({ id: String(group.id), label: group.name, count: count(group) })),
+    ...(others.length
       ? [
           {
             id: OTHER,
-            label: "Other lists",
-            count: searched.filter((skill) => !CORE.includes(skill.type)).length,
+            label: "Other groups",
+            count: searched.filter((skill) => held(skill).some((group) => !isCore(group))).length,
           },
         ]
       : []),
@@ -100,7 +95,6 @@ export default function Skills() {
     <SkillFormDialog
       mode="create"
       campaignId={campaignId}
-      typeOptions={types}
       onCreated={(skill) => params.set({ open: String(skill.id), q: null })}
       trigger={
         <Button variant="secondary" className={isMobile ? "min-h-10" : undefined}>
@@ -132,17 +126,17 @@ export default function Skills() {
               isMobile={isMobile}
             />
             {list === OTHER ? (
-              <FilterField label="List" isMobile={isMobile} className="shrink-0">
+              <FilterField label="Group" isMobile={isMobile} className="shrink-0">
                 <select
-                  aria-label="Skill list"
-                  value={otherList}
+                  aria-label="Skill group"
+                  value={otherGroup}
                   onChange={(event) => params.set({ other: event.target.value })}
                   className="min-h-11 border border-strong bg-rail px-2.5 text-sm text-ink"
                 >
-                  <option value="">All other lists</option>
-                  {otherTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {listName(type)}
+                  <option value="">All other groups</option>
+                  {others.map((group) => (
+                    <option key={group.id} value={String(group.id)}>
+                      {group.name}
                     </option>
                   ))}
                 </select>
@@ -150,7 +144,7 @@ export default function Skills() {
             ) : null}
           </FilterRow>
           <ReferenceChips
-            label="List"
+            label="Group"
             options={chips}
             value={list}
             onChange={(next) => params.set({ list: next === "all" ? null : next, other: null })}
@@ -165,13 +159,15 @@ export default function Skills() {
       {skills.error ? <p className="m-0 text-sm text-danger">{skills.error}</p> : null}
       <ReferenceList
         nameLabel="Skill"
-        columns={isMobile ? undefined : [{ label: "List", className: "w-[220px] shrink-0" }]}
+        columns={isMobile ? undefined : [{ label: "Groups", className: "w-[260px] shrink-0" }]}
         isEmpty={!skills.isLoading && rows.length === 0}
         empty="No skills match."
       >
         {skills.isLoading ? <ReferenceRowBones /> : null}
         {shown.rows.map((skill) => {
           const key = String(skill.id);
+          const its = held(skill);
+          const notes = [...new Set(its.flatMap((group) => learningNotes(group)))];
           return (
             <ReferenceRow
               key={key}
@@ -179,14 +175,14 @@ export default function Skills() {
               open={params.isOpen(key)}
               onToggle={() => params.toggle(key)}
               name={skill.name}
-              sub={isMobile ? listName(skill.type) : undefined}
-              cells={isMobile ? undefined : [listName(skill.type)]}
+              sub={isMobile ? names(its) : undefined}
+              cells={isMobile ? undefined : [names(its)]}
             >
               <div className={isMobile ? "flex flex-col gap-2" : "flex flex-col gap-2 px-4 pb-4"}>
                 <RulesPanel
                   detail={{
                     name: skill.name,
-                    kind: [listName(skill.type), ...learningNotes(skill)].join(" · "),
+                    kind: [names(its), ...notes].filter(Boolean).join(" · "),
                     text: skill.description,
                   }}
                   onClose={params.close}
@@ -196,7 +192,6 @@ export default function Skills() {
                     mode="edit"
                     campaignId={campaignId}
                     skill={skill}
-                    typeOptions={types}
                     canDelete={capabilities.delete_catalogue}
                     onUpdated={(saved) => params.set({ open: String(saved.id) })}
                     onDeleted={() => params.close()}

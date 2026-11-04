@@ -99,6 +99,10 @@ export const parseAvailableSkills = (raw: unknown): Record<string, boolean> => {
   return skillFields.reduce((acc, field) => ({ ...acc, [field.key]: false }), {});
 };
 
+/** A unit's `available_skills` as the skill group names it stores ("Combat", "Dwarves"). */
+export const accessNames = (raw: unknown): string[] =>
+  buildAvailableSkillsPayload(parseAvailableSkills(raw));
+
 export const toNumber = (value: number | string | null | undefined) => {
   if (typeof value === "number") {
     return Number.isFinite(value) ? value : 0;

@@ -6,7 +6,7 @@ from collections.abc import Collection
 from pathlib import Path
 from typing import Any
 
-from catalogue_import.assignments import AssignmentLog, build_assignments
+from catalogue_import.assignments import AssignmentLog, assign, build_assignments
 from catalogue_import.availability import Context, Decisions
 from catalogue_import.common import as_list, dump_json, load_json, loose_key, slugify
 from catalogue_import.grading import build_settings, collect_evidence
@@ -14,6 +14,7 @@ from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, mim_item
+from catalogue_import.new_groups import SkillGroups, build_skill_groups
 from catalogue_import.personae import Catalogue, build_personae
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
@@ -164,6 +165,33 @@ def seed_changes(
     return renamed, dropped
 
 
+def _skill_groups(
+    sources: Sources,
+    types: list[dict[str, Any]],
+    groups: list[dict[str, Any]],
+    skill_lists: SkillLists,
+    resolver: Resolver,
+    who_can: dict[str, list[dict[str, Any]]],
+    assignments: dict[str, list[dict[str, Any]]],
+    log: AssignmentLog,
+) -> SkillGroups:
+    """Our skill rows as one skill per name in groups (new_groups.py): who-can.json keeps the hirelings (each group
+    says who learns from it) and setting-assignments.json takes one row per skill."""
+    chosen = sources.overrides.get("setting_assignments", {}).get("skills")
+    grouped = build_skill_groups(
+        sources,
+        types,
+        groups,
+        skill_lists,
+        resolver,
+        who_can.pop("skills"),
+        assignments["skills"],
+        lambda rows: assign("skills", rows, sources.skills, log, chosen),
+    )
+    assignments["skills"] = grouped.settings
+    return grouped
+
+
 def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str]:
     sources = load_sources(package, item_data)
     overrides = sources.overrides
@@ -206,9 +234,9 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     assignments = build_assignments(sources, assignment_log)
     hiring_log = HiringLog()
     who_can = build_who_can(sources, resolver, groups, hiring_log, skill_lists)
+    grouped = _skill_groups(sources, types, groups, skill_lists, resolver, who_can, assignments, assignment_log)
     template_log = TemplateLog()
     templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log)
-    known_groups = {row["type"] for row in sources.our_skills}  # our skill lists, until skill groups land
     counts = {
         "settings": len(settings),
         "warband types": len(types),
@@ -218,6 +246,9 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "items (MiM)": len(mim),
         "items (warband templates)": len(added),
         "price rows": sum(len(item["availabilities"]) for item in everything),
+        "skills": len(grouped.skills),
+        "skill groups": len(grouped.groups),
+        "skill group links": sum(len(group["skills"]) for group in grouped.groups),
     }
     report = ReportData(
         counts,
@@ -241,6 +272,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         who_can,
         hiring_log,
         skill_lists.log,
+        grouped,
     )
     return {
         "settings.json": dump_json(settings),
@@ -250,8 +282,11 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "items.json": dump_json(everything),
         "setting-assignments.json": dump_json(assignments),
         "who-can.json": dump_json(who_can),
-        "skills.json": dump_json(sources.our_skills),
+        "skills.json": dump_json(grouped.skills),
+        "skill-groups.json": dump_json(grouped.groups),
         "dramatis-personae.json": dump_json(sources.our_personae),
         "warband-templates.json": dump_json(templates),
-        "import-report.md": render_report(report) + "\n" + render_templates(templates, template_log, known_groups),
+        "import-report.md": render_report(report)
+        + "\n"
+        + render_templates(templates, template_log, grouped.groups, groups),
     }

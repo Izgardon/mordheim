@@ -11,6 +11,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
+import { skillGroup } from "@/test/catalogue-fixtures";
 import { makeHero } from "@/test/warband-fixtures";
 
 import PendingPick from "./PendingPick";
@@ -47,9 +48,13 @@ describe("A pick left for later", () => {
       { id: 71, name: "Deathly Visage", type: LORE, dc: "6", roll: 6 },
     ]);
     fakeApi.on("GET /skills/?campaign_id=1", [
-      { id: 3, name: "Strike to Injure", type: "Combat", description: "Harder.", in_play: true },
-      { id: 4, name: "Sprint", type: "Speed", description: "Faster.", in_play: true },
-      { id: 5, name: "Sand Walker", type: "Speed", description: "Khemri.", in_play: false },
+      { id: 3, name: "Strike to Injure", description: "Harder.", in_play: true },
+      { id: 4, name: "Sprint", description: "Faster.", in_play: true },
+      { id: 5, name: "Sand Walker", description: "Khemri.", in_play: false },
+    ]);
+    fakeApi.on("GET /skill-groups/?campaign_id=1", [
+      skillGroup({ id: 10, name: "Combat", skill_ids: [3] }),
+      skillGroup({ id: 11, name: "Speed", skill_ids: [4, 5] }),
     ]);
   });
 
@@ -65,14 +70,14 @@ describe("A pick left for later", () => {
     expect(screen.queryByText(/New spell/)).not.toBeInTheDocument();
   });
 
-  it("offers only the campaign's skills, his lists first and the rest behind Show all", async () => {
+  it("offers only the campaign's skills, his groups first and the rest behind Show all", async () => {
     const user = setupUser();
     renderWithQueryClient(pick("skills"));
     expect(await screen.findByRole("option", { name: /Strike to Injure/ })).toBeInTheDocument();
     expect(screen.queryByRole("option", { name: /Sprint/ })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Show all" }));
     expect(screen.getByRole("option", { name: /Sprint/ })).toHaveTextContent(
-      "Not in his skill lists"
+      "Not in his skill groups"
     );
     expect(screen.queryByRole("option", { name: /Sand Walker/ })).not.toBeInTheDocument();
   });

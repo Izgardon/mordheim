@@ -15,6 +15,7 @@ BOOK = 1  # the row's id: there is one
 ENTRY_TABLES = (
     ("items", "Item"),
     ("skills", "Skill"),
+    ("skill_groups", "Skill group"),
     ("spells", "Spell"),
     ("specials", "Special"),
     ("races", "Race"),

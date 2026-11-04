@@ -17,6 +17,7 @@ from .catalogue_support import (
     ITEMS,
     KINDS,
     RACES,
+    SKILL_GROUPS,
     SKILLS,
     SPECIALS,
     SPELLS,
@@ -124,29 +125,32 @@ class CatalogueMergeTests(CatalogueTestCase):
         )
 
     def test_a_version_of_one_infiltration_replaces_that_one_alone(self):
-        # BUG-18 (was pinned: one campaign "Infiltration" hid all six book skills of that name; flipped in PR C)
-        self.assertEqual(self.listed(self.player, SKILLS), ["Infiltration"] * 6 + ["Sprint"])
-        make_entry(SKILLS, "Infiltration", campaign=self.campaign, type="Combat")  # a custom one: hides none
-        make_entry(SKILLS, "Sneaking", campaign=self.campaign, type="Skaven", replaces=self.infiltration[2])
+        # BUG-18 (was pinned: one campaign "Infiltration" hid all six book skills of that name; flipped in PR C). A
+        # skill's name is unique since the skill groups (phase 1a), so the six book skills are named apart here
+        names = [f"Infiltration ({kind})" for kind in INFILTRATION_TYPES]
+        self.assertCountEqual(self.listed(self.player, SKILLS), [*names, "Sprint"])
+        make_entry(SKILLS, "Infiltration", campaign=self.campaign)  # a custom one: hides none
+        make_entry(SKILLS, "Sneaking", campaign=self.campaign, replaces=self.infiltration[2])
 
-        rows = self.get_as(self.player, SKILLS.list_url(self.campaign)).json()
+        listed = [row["name"] for row in self.get_as(self.player, SKILLS.list_url(self.campaign)).json()]
 
-        listed = [(row["name"], row["type"]) for row in rows]
-        self.assertEqual(listed[:2], [("Infiltration", "Combat"), ("Sneaking", "Skaven")])
-        self.assertCountEqual(listed[2:], [("Infiltration", kind) for kind in INFILTRATION_TYPES if kind != "Skaven"] + [("Sprint", "Speed")])  # fmt: skip
+        self.assertEqual(listed[:2], ["Infiltration", "Sneaking"])
+        self.assertCountEqual(listed[2:], [name for name in names if name != "Infiltration (Skaven)"] + ["Sprint"])
 
-    def test_a_skill_says_whether_it_is_a_large_units_and_its_learning_note(self):
-        # the fees and skill lists step: shown when picking (the pages grey a Large unit's skill for any other unit)
-        make_entry(SKILLS, "Brick Wall", type="Large Special", large_only=True)
-        make_entry(SKILLS, "Mist Form", type="Undead Vampires", learn_note="Vampire only")
+    def test_a_skill_group_says_whether_it_is_a_large_units_and_its_learning_note(self):
+        # the fees and skill lists step, moved to the group (skill groups, phase 1a): shown when picking (the pages
+        # grey a Large unit's group's skills for any other unit)
+        make_entry(SKILL_GROUPS, "Large Special", large_only=True)
+        make_entry(SKILL_GROUPS, "Undead Vampires", for_everyone=False, learn_note="Vampire only")
 
-        rows = {row["name"]: row for row in self.get_as(self.player, SKILLS.list_url(self.campaign)).json()}
+        rows = {row["name"]: row for row in self.get_as(self.player, SKILL_GROUPS.list_url(self.campaign)).json()}
 
-        self.assertEqual((rows["Brick Wall"]["large_only"], rows["Brick Wall"]["learn_note"]), (True, ""))
-        self.assertEqual((rows["Mist Form"]["large_only"], rows["Mist Form"]["learn_note"]), (False, "Vampire only"))
-        self.assertEqual((rows["Sprint"]["large_only"], rows["Sprint"]["learn_note"]), (False, ""))
-        body = {**SKILLS.payload, "name": "Stomp", "campaign_id": self.campaign.id, "large_only": True}
-        made = self.post_as(self.owner, SKILLS.list_url(), body)
+        self.assertEqual((rows["Large Special"]["large_only"], rows["Large Special"]["learn_note"]), (True, ""))
+        vampires = rows["Undead Vampires"]
+        self.assertEqual((vampires["large_only"], vampires["learn_note"], vampires["for_everyone"]), (False, "Vampire only", False))  # fmt: skip
+        self.assertEqual((rows["Combat"]["large_only"], rows["Combat"]["learn_note"]), (False, ""))
+        body = {**SKILL_GROUPS.payload, "name": "Stompers", "campaign_id": self.campaign.id, "large_only": True}
+        made = self.post_as(self.owner, SKILL_GROUPS.list_url(), body)
         self.assertEqual((made.status_code, made.json()["large_only"]), (201, True))
 
     def test_every_kind_replaces_a_book_entry_only_by_a_version(self) -> None:

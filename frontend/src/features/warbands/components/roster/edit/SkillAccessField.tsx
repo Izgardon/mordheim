@@ -1,38 +1,49 @@
 import { Chip } from "@/components/ui/chip";
 import { SearchMultiSelect, type SearchOption } from "@/components/ui/search-select";
-import { useCatalogue } from "@/lib/catalogue-queries";
+import { useWhoCan } from "@/features/items/api/who-can-queries";
+import { isCore, useSkillGroups } from "@/features/skills/skill-groups";
+import type { SkillGroup } from "@/features/skills/types/skill-types";
 
 import { skillAbbrevToType } from "../../../utils/warband-utils";
 
 const STANDARD = Object.entries(skillAbbrevToType);
+const isStandard = (key: string) => key in skillAbbrevToType || key === "Spc";
 
 /**
- * Skill access (design E): the five standard lists and Special, which opens the campaign's other
- * skill lists (Necromancy, a warband's own) on the searchable select, each with its count of
- * skills. Holds the form's checkbox record.
+ * Skill access (design E): the five core skill groups and Special, which opens the campaign's
+ * other groups on the searchable select, those open to his warband first, each with its count of
+ * skills. Holds the form's checkbox record; a group is stored by the name a unit's access names it
+ * by (`access_name`), so a campaign's renamed version of a book group still answers to it.
  */
 export default function SkillAccessField({
   campaignId,
+  warbandId,
   value,
   onChange,
 }: {
   campaignId: number;
+  warbandId: number;
   value: Record<string, boolean>;
   onChange: (next: Record<string, boolean>) => void;
 }) {
-  const skills = useCatalogue("skills", campaignId).data ?? [];
-  const standardTypes = new Set(Object.values(skillAbbrevToType));
-  const counts = new Map<string, number>();
-  for (const skill of skills) {
-    const type = skill.type?.trim();
-    if (type && !standardTypes.has(type)) counts.set(type, (counts.get(type) ?? 0) + 1);
-  }
-  const specialTypes = [...counts.keys()].sort();
-  const groupOption = (type: string): SearchOption => ({
-    id: type,
-    title: type,
-    subtitle: `${counts.get(type) ?? 0} skills`,
+  const groups = useSkillGroups(campaignId);
+  const open = useWhoCan(campaignId, warbandId).skillGroupIds;
+  const special = groups.groups.filter((group) => !isCore(group));
+  const ranked = [
+    ...special.filter((group) => open.has(group.id)),
+    ...special.filter((group) => !open.has(group.id)),
+  ];
+  const groupOption = (group: SkillGroup): SearchOption => ({
+    id: group.access_name,
+    title: group.name,
+    subtitle: `${group.skill_ids.length} skills`,
   });
+  const pickedOption = (key: string): SearchOption => {
+    const group = groups.byAccess.get(key.trim().toLowerCase());
+    return group ? groupOption(group) : { id: key, title: key };
+  };
+  const coreName = (name: string) =>
+    groups.groups.find((group) => isCore(group) && group.access_name === name)?.name ?? name;
   const toggle = (key: string) => onChange({ ...value, [key]: !value[key] });
 
   return (
@@ -41,9 +52,9 @@ export default function SkillAccessField({
         Skill access
       </span>
       <div role="group" aria-label="Skill access" className="flex flex-wrap gap-1.5">
-        {STANDARD.map(([key, label]) => (
+        {STANDARD.map(([key, name]) => (
           <Chip key={key} pressed={Boolean(value[key])} onClick={() => toggle(key)}>
-            {label}
+            {coreName(name)}
           </Chip>
         ))}
         <Chip
@@ -51,8 +62,7 @@ export default function SkillAccessField({
           onClick={() => {
             if (!value.Spc) return onChange({ ...value, Spc: true });
             const next: Record<string, boolean> = { ...value, Spc: false };
-            for (const key of Object.keys(next))
-              if (!(key in skillAbbrevToType) && key !== "Spc") delete next[key];
+            for (const key of Object.keys(next)) if (!isStandard(key)) delete next[key];
             onChange(next);
           }}
         >
@@ -64,16 +74,14 @@ export default function SkillAccessField({
           addLabel="Choose a special skill group"
           placeholder="Search skill groups"
           emptyText="No skill group matches."
-          options={specialTypes.map(groupOption)}
+          options={ranked.map(groupOption)}
           values={Object.keys(value)
-            .filter((key) => value[key] && !(key in skillAbbrevToType) && key !== "Spc")
-            .map(groupOption)}
+            .filter((key) => value[key] && !isStandard(key))
+            .map(pickedOption)}
           onChange={(next) => {
-            const picked = new Set(next.map((option) => String(option.id)));
             const record: Record<string, boolean> = {};
-            for (const [key, on] of Object.entries(value))
-              if (key in skillAbbrevToType || key === "Spc") record[key] = on;
-            for (const type of picked) record[type] = true;
+            for (const [key, on] of Object.entries(value)) if (isStandard(key)) record[key] = on;
+            for (const option of next) record[String(option.id)] = true;
             onChange(record);
           }}
         />

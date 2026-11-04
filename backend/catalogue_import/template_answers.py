@@ -134,9 +134,8 @@ LORES: dict[str, str] = {  # magic.json's lore names that differ from our spells
     "Lizardman Magic": "Lizardmen Magic",
     "Necromancy (The Restless Dead)": "Necromancy (Restless Dead)",
 }
-
-# The Special tick names the warband's skill group, per hero where the book splits them (the brief's table). Group
-# names marked (new) come with skill groups; night-goblins-mic's is the skill-groups branch's to name.
+# The Special tick names the warband's skill group (out/skill-groups.json), per hero where the book splits them (the
+# brief's table). The report checks each name is a group whose learners include the template's types.
 CORE_SKILLS = (
     ("combat", "Combat"),
     ("shooting", "Shooting"),
@@ -169,13 +168,13 @@ SPECIAL_GROUPS: dict[str, list[str]] = {
     "horned-hunters": ["Horned Hunters"],
     "lizardmen": ["Skink"],
     "night-goblins-web": ["Night Goblins"],
-    "night-goblins": ["Night Goblins (Mordheim 1c)"],
+    "night-goblins": ["Night Goblins (MIC)"],  # night-goblins-mic's, as skill groups named it
     "ostlander": ["Ostlanders"],
     "pirates": ["Pirates", "Pirates (TBMF)"],
     "shadow-warriors": ["Shadow Warriors"],
     "skaven-eshin": ["Skaven"],
     "skaven-pestilens": ["Skaven Clan Pestilens"],
-    "amazons-lustria": ["Amazons (Lustria)"],
+    "amazons-lustria": ["Amazons"],  # one group for both Amazons types (skill groups, phase 1a)
     "merchant-caravans": ["Merchant Caravans"],
     "cursed-cavalcade": ["Cursed Cavalcade"],
 }

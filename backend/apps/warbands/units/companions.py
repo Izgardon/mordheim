@@ -72,7 +72,7 @@ def _profile(beast: Any) -> dict[str, Any] | None:
 # A beast's entries as a companion lists them: the payload key, the pivot, its catalogue field and the columns the
 # unit's own detail lists show.
 ABILITIES: tuple[tuple[str, type[Model], str, tuple[str, ...]], ...] = (
-    ("skills", BestiaryEntrySkill, "skill", ("id", "name", "type")),
+    ("skills", BestiaryEntrySkill, "skill", ("id", "name")),
     ("specials", BestiaryEntrySpecial, "special", ("id", "name", "type", "description")),
     ("spells", BestiaryEntrySpell, "spell", ("id", "name", "type", "dc", "description")),
 )

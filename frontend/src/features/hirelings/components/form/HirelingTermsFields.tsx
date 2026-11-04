@@ -68,11 +68,11 @@ function PersonaTerms({ form }: { form: HirelingProfileFormState }) {
 
 /**
  * The hire terms: the fee and the upkeep, each a structured fee (gold, dice, resources, a note, or
- * a hero's place, his rules, none), the rating, the skill lists, and a dramatis persona's terms.
+ * a hero's place, his rules, none), the rating, the skill groups, and a dramatis persona's terms.
  */
 export default function HirelingTermsFields({ form }: { form: HirelingProfileFormState }) {
   const { values } = form;
-  // The usual lists, and any the entry already learns from (a hired sword's special skills).
+  // The usual groups, and any the entry already learns from (a hired sword's own group).
   const skillTypes = [
     ...HIRELING_SKILL_TYPES,
     ...values.available_skill_types.filter((type) => !HIRELING_SKILL_TYPES.includes(type)),
@@ -98,7 +98,7 @@ export default function HirelingTermsFields({ form }: { form: HirelingProfileFor
       </div>
       {form.config.hasPersonaTerms ? <PersonaTerms form={form} /> : null}
       <fieldset className="flex flex-col gap-1.5">
-        <legend className="mb-1.5 text-sm font-medium">Skill lists</legend>
+        <legend className="mb-1.5 text-sm font-medium">Skill groups</legend>
         <div className="flex flex-wrap gap-3">
           {skillTypes.map((type) => (
             <label key={type} className="flex items-center gap-1.5 text-sm">

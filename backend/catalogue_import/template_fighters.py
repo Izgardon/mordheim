@@ -46,7 +46,6 @@ class FighterLog:
     unknown_races: list[tuple[str, str, str]] = field(default_factory=list)  # a race we don't have
     creatures: list[tuple[str, str, str]] = field(default_factory=list)
     no_special_group: list[tuple[str, str]] = field(default_factory=list)
-    groups: dict[str, list[str]] = field(default_factory=dict)  # skill group name -> "page: fighter"
     lores: dict[str, str] = field(default_factory=dict)  # magic.json's lore -> ours, where they differ
     unplaced_casters: list[str] = field(default_factory=list)  # magic.json lines no page fighter matches
     casters: list[tuple[str, str, str, list[str]]] = field(default_factory=list)  # page, fighter, caster, lores
@@ -117,8 +116,6 @@ def skill_types(
         table = _table(tables.get(subfaction, {}), specials)
         if table != base:
             changes[key] = {"skill_types": table}
-    for group in {*base, *(group for change in changes.values() for group in change["skill_types"])}:
-        log.groups.setdefault(group, []).append(f"{page}: {name}")
     return base, changes
 
 

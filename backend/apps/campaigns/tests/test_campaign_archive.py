@@ -180,7 +180,7 @@ class ArchivedEverywhereTests(ArchiveTestCase):
             (self.player, "post", self.url("battles/report-result/"), {}),
             (self.player, "post", self.url(f"battles/{battle.id}/decline/"), {}),
             (self.rival, "post", self.url("trade-requests/"), {"target_user_id": self.player.id}),
-            (self.player, "post", "/api/skills/", {"campaign_id": campaign, "name": "Dodge", "type": "Speed"}),
+            (self.player, "post", "/api/skills/", {"campaign_id": campaign, "name": "Dodge"}),
             (self.owner, "patch", f"/api/items/{item.id}/", {"name": "Charm"}),
             (self.owner, "delete", f"/api/items/{item.id}/", None),
             (self.owner, "post", "/api/bestiary/", {"campaign_id": campaign, "name": "Rat Ogre", "kind": "creature"}),

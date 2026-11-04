@@ -23,13 +23,13 @@ class CatalogueScopeTests(RosterTestCase):
         cls.other_campaign = Campaign.objects.get(name="Elsewhere")
         own, other = cls.campaign, cls.other_campaign
         cls.own = {
-            "skill_ids": Skill.objects.create(name="House skill", type="Combat", campaign=own),
+            "skill_ids": Skill.objects.create(name="House skill", campaign=own),
             "special_ids": Special.objects.create(name="House special", type="Ability", campaign=own),
             "spell_ids": Spell.objects.create(name="House spell", type="Magic", campaign=own),
             "items": Item.objects.create(name="House blade", type="Melee", campaign=own),
         }
         cls.foreign = {
-            "skill_ids": Skill.objects.create(name="Their skill", type="Combat", campaign=other),
+            "skill_ids": Skill.objects.create(name="Their skill", campaign=other),
             "special_ids": Special.objects.create(name="Their special", type="Ability", campaign=other),
             "spell_ids": Spell.objects.create(name="Their spell", type="Magic", campaign=other),
             "items": Item.objects.create(name="Their blade", type="Melee", campaign=other),

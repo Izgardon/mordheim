@@ -44,7 +44,8 @@ def _words(text: str) -> set[str]:
 
 
 def _score(ours_type: str, entry: dict[str, Any]) -> int:
-    """How well a mordheimer entry fits our row's type: 2 names its warband list, 1 shares its subtype, 0 neither."""
+    """How well a mordheimer entry fits our row's type: 2 names its warband list (or its caveat names our list:
+    "Lizardmen Skinks only" for the Skink list, skill groups phase 1a), 1 shares its subtype, 0 neither."""
     warbands = entry.get("permittedWarbands")
     names = [warbands] if isinstance(warbands, str) else warbands if isinstance(warbands, list) else []
     wanted = _words(ours_type)
@@ -53,6 +54,8 @@ def _score(ours_type: str, entry: dict[str, Any]) -> int:
             continue
         if wanted and wanted <= _words(name):  # each word of ours is one of theirs: "Dark Elf" in "Dark Elves"
             return 2
+    if wanted and wanted <= _words(str(entry.get("caveat") or "")):
+        return 2
     subtype = norm_name(str(entry.get("subtype") or "")).removesuffix(" skill")
     return 1 if ours_type and subtype == norm_name(ours_type) else 0
 

@@ -1,5 +1,4 @@
-import { CatalogueTypeField } from "@/features/catalogue/components/CatalogueTypeField";
-import { Input } from "@/components/ui/input";
+import { SearchMultiSelect, type SearchOption } from "@/components/ui/search-select";
 import {
   CatalogueDescriptionField,
   CatalogueField,
@@ -9,28 +8,30 @@ import {
   type FormLayout,
 } from "@/features/catalogue/components/form-layout";
 
+import type { SkillGroupIndex } from "../skill-groups";
 import type { SkillFormState } from "../hooks/useSkillForm";
-
-const LIST_COPY = {
-  label: "List",
-  placeholder: "Search or add a list",
-  actionLabel: "Add list",
-  actionAriaLabel: "Add custom list",
-};
 
 type SkillFormFieldsProps = {
   layout: FormLayout;
   form: SkillFormState;
+  /** The campaign's skill groups, to pick the ones holding it. */
+  groups: SkillGroupIndex;
   /** Tells the ids of one edited skill's dialog from another's. */
   idSuffix?: string;
 };
 
-/**
- * A skill's name, list and description, inline on the Skills page or in a dialog, and who learns it:
- * a Large unit's skill (the pages warn for any other unit) and a note shown when learning it.
- */
-export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFormFieldsProps) {
+/** A skill's name, groups and description, inline on the Skills page or in a dialog. */
+export default function SkillFormFields({
+  layout,
+  form,
+  groups,
+  idSuffix = "",
+}: SkillFormFieldsProps) {
   const isDialog = layout === "dialog";
+  const option = (id: number): SearchOption => ({
+    id,
+    title: groups.byId.get(id)?.name ?? "",
+  });
   const fields = (
     <>
       <CatalogueNameField
@@ -43,12 +44,21 @@ export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFo
         placeholder="Skill name"
         required={isDialog}
       />
-      <CatalogueTypeField
+      <CatalogueField
         layout={layout}
-        id={`skill-type${idSuffix}`}
-        copy={LIST_COPY}
-        field={form.typeField}
-      />
+        label="Groups"
+        htmlFor={fieldId(layout, `skill-groups${idSuffix}`)}
+      >
+        <SearchMultiSelect
+          id={fieldId(layout, `skill-groups${idSuffix}`)}
+          addLabel="Add a group"
+          placeholder="Search skill groups"
+          emptyText="No skill group matches."
+          options={groups.groups.map((group) => option(group.id))}
+          values={form.values.groupIds.filter((id) => groups.byId.has(id)).map(option)}
+          onChange={(next) => form.setGroupIds(next.map((picked) => Number(picked.id)))}
+        />
+      </CatalogueField>
       <CatalogueDescriptionField
         layout={layout}
         id={`skill-description${idSuffix}`}
@@ -56,27 +66,6 @@ export default function SkillFormFields({ layout, form, idSuffix = "" }: SkillFo
         onChange={form.setDescription}
         className={isDialog ? undefined : "sm:col-span-2"}
       />
-      <CatalogueField
-        layout={layout}
-        label="Note when learning"
-        htmlFor={fieldId(layout, `skill-learn-note${idSuffix}`)}
-      >
-        <Input
-          id={fieldId(layout, `skill-learn-note${idSuffix}`)}
-          value={form.values.learn_note}
-          maxLength={200}
-          onChange={(event) => form.setLearning({ learn_note: event.target.value })}
-        />
-      </CatalogueField>
-      <label className="flex items-center gap-2 self-end text-sm text-ink">
-        <input
-          type="checkbox"
-          checked={form.values.large_only}
-          onChange={(event) => form.setLearning({ large_only: event.target.checked })}
-          className="h-4 w-4 accent-[var(--color-accent)]"
-        />
-        Large units only
-      </label>
     </>
   );
   return isDialog ? fields : <div className={INLINE_GRID_CLASS}>{fields}</div>;

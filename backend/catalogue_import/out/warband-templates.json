@@ -577,7 +577,7 @@
           "Combat",
           "Academic",
           "Speed",
-          "Amazons (Lustria)"
+          "Amazons"
         ],
         "spell_types": [
           {
@@ -634,7 +634,7 @@
           "Combat",
           "Strength",
           "Speed",
-          "Amazons (Lustria)"
+          "Amazons"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -676,7 +676,7 @@
           "Combat",
           "Shooting",
           "Speed",
-          "Amazons (Lustria)"
+          "Amazons"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -23160,7 +23160,7 @@
           "Shooting",
           "Strength",
           "Speed",
-          "Night Goblins (Mordheim 1c)"
+          "Night Goblins (MIC)"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -23259,7 +23259,7 @@
           "Combat",
           "Shooting",
           "Speed",
-          "Night Goblins (Mordheim 1c)"
+          "Night Goblins (MIC)"
         ],
         "spell_types": [],
         "gains_xp": true,

@@ -72,7 +72,7 @@ class WarbandGroup(models.Model):
 class WarbandAccess(models.Model):
     """One line of a who-can list (the items rebuild): a warband type or a warband group, may (`excluded` off) or may
     not. A price row says who may buy it with these lines, a hired sword or dramatis persona who may hire him, a
-    special skill who may learn it; each owner also says whether it is for everyone (minus the excluded). Read by
+    skill group who may learn from it; each owner also says whether it is for everyone (minus the excluded). Read by
     `warbands/services/who_can.py`."""
 
     warband_type = models.ForeignKey(WarbandType, related_name="+", null=True, blank=True, on_delete=models.CASCADE)

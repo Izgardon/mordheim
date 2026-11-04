@@ -6,6 +6,7 @@ from typing import Any
 
 from catalogue_import.common import GRADE_RANK, normalise_grade
 from catalogue_import.fees import describe
+from catalogue_import.report_skills import skill_groups, skill_lists
 
 
 @dataclass
@@ -31,6 +32,7 @@ class ReportData:
     who_can: dict[str, list[dict[str, Any]]]
     hiring_log: Any
     skill_lists: Any
+    skill_groups: Any  # new_groups.SkillGroups
 
 
 def _cell(value: object) -> str:
@@ -274,9 +276,10 @@ def _hiring(data: ReportData) -> list[str]:
     lines = [
         "## Who can hire and learn",
         "",
-        "`out/who-can.json`: mordheimer's `permittedWarbands` for its hired swords and dramatis personae (by name) and"
-        " for our skills (from the entry each takes its setting from), as warband types or groups. A skill mordheimer"
-        " lacks is for everyone on a general list, else for the warband its list is named after.",
+        "`out/who-can.json`: mordheimer's `permittedWarbands` for its hired swords and dramatis personae (by name),"
+        " as warband types or groups. Our skill rows are read the same way (from the entry each takes its setting"
+        " from; a row mordheimer lacks is for everyone on a general list, else for the warband its list is named"
+        " after), and each skill group's who-can is built from them (below).",
         "",
         *_table(["Kind", "Entries", "Everyone", "Everyone except", "Named warbands"], rows),
         "",
@@ -300,32 +303,6 @@ def _hiring(data: ReportData) -> list[str]:
     if log.fees:
         lines += _fees(log.fees)
     return lines
-
-
-def _learners(data: ReportData, decision: dict[str, Any]) -> str:
-    groups = {group["slug"]: group["name"] for group in data.groups}
-    names = [data.names.get(line["type"], line["type"]) if "type" in line else f"{groups.get(line['group'], line['group'])} (group)" for line in decision.get("warbands", [])]  # fmt: skip
-    learners = ", ".join(names) or "everyone"
-    return learners + (", Large units only" if decision.get("large_only") else "")
-
-
-def _skill_lists(data: ReportData) -> list[str]:
-    log = data.skill_lists
-    rows = [[name, _learners(data, decision), decision.get("note", ""), ", ".join(log.placed.get(name, []))] for name, decision in log.decisions.items()]  # fmt: skip
-    lines = [
-        "## Skill lists (William's decisions)",
-        "",
-        "`overrides.json` (`skill_lists`, `drop_skills`, `extra_skills`, `skill_descriptions`) applied to our skills;"
-        " `out/skills.json` is the result, the rows `seed_skills` reads. A list's decision places its skills mordheimer"
-        " lacks; its note is shown when learning, and a Large unit's skill warns for any other unit, never blocks.",
-        "",
-        *_table(["List", "Learned by", "Note", "Skills it places"], rows),
-        "",
-    ]
-    lines += [f"Left out: {name}, {why}" for name, why in log.dropped]
-    lines += [f"Added: {name}, from {source}." for name, source in log.added]
-    lines += [f"Description put right: {name}." for name in log.reworded]
-    return [*lines, ""]
 
 
 def _mim(data: ReportData) -> list[str]:
@@ -385,7 +362,8 @@ def render_report(data: ReportData) -> str:
         _grade_conflicts,
         _assignments,
         _hiring,
-        _skill_lists,
+        skill_lists,
+        skill_groups,
         _mim,
         _dropped,
     ):

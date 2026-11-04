@@ -73,7 +73,6 @@ export const makeItem = (overrides: Partial<Item> = {}): Item => ({
 export const makeSkill = (overrides: Partial<Skill> = {}): Skill => ({
   id: 1,
   name: "Strongman",
-  type: "Strength",
   description: "",
   ...overrides,
 });
@@ -146,7 +145,7 @@ export const makeVeteranHenchmenGroup = (
   attacks: 1,
   leadership: 7,
   items: [club, club, club, dagger, dagger, dagger],
-  skills: [makeSkill({ id: 202, name: "Resilient", type: "Strength" })],
+  skills: [makeSkill({ id: 202, name: "Resilient" })],
   specials: [makeSpecial({ id: 402, name: "Animosity" })],
   henchmen: [
     { id: 61, name: "Blade One", kills: 2, dead: false },

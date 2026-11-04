@@ -149,7 +149,7 @@ class CampaignScopeOfWriteIdsTests(CatalogueTestCase):
     def test_a_bestiary_entry_cannot_link_another_campaigns_skills_specials_spells_or_items(self):
         # SEC-07, CAT-TEST-16 (was pinned: all four were linked and their text read back; flipped in PR A: a 400 that
         # reads like unknown ids, with nothing written)
-        skill = Skill.objects.create(name="Their skill", type="Combat", description="Secret", campaign=self.elsewhere)
+        skill = Skill.objects.create(name="Their skill", description="Secret", campaign=self.elsewhere)
         special = Special.objects.create(name="Their special", type="Ability", campaign=self.elsewhere)
         spell = Spell.objects.create(name="Their spell", type="Magic", campaign=self.elsewhere)
         item = make_entry(ITEMS, "Their blade", campaign=self.elsewhere)
@@ -247,7 +247,9 @@ class BestiaryWriteTests(CatalogueTestCase):
         edited = self.patch_as(self.owner, url, {"skill_ids": [sprint.id], "large": True})
 
         self.assertEqual(created.status_code, 201, created.data)
-        self.assertEqual([row["name"] for row in created.data["skills"]], ["Infiltration"])  # a repeated id once
+        self.assertEqual(
+            [row["name"] for row in created.data["skills"]], ["Infiltration (Dark Elf)"]
+        )  # a repeated id once
         self.assertEqual(
             [(row["item"]["name"], row["quantity"]) for row in created.data["equipment"]], [("Axe", 1), ("Sword", 2)]
         )

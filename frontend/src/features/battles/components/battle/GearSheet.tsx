@@ -5,6 +5,7 @@ import { ModalSheet } from "@/components/ui/modal-sheet";
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { plainRuleText, ruleName } from "@/features/items/utils/item-rules";
+import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
 import { cn } from "@/lib/utils";
 
 import type { GearTab } from "./UnitCardParts";
@@ -61,10 +62,12 @@ export default function GearSheet({
   const items = useCatalogue("items", campaignId, { enabled: target?.tab === "gear" }).data;
   const skills = useCatalogue("skills", campaignId, { enabled: target?.tab === "skills" }).data;
   const specials = useCatalogue("specials", campaignId, { enabled: target?.tab === "skills" }).data;
+  const groups = useSkillGroups(campaignId);
   const spells = useCatalogue("spells", campaignId, { enabled: target?.tab === "spells" }).data;
   useEffect(() => setOpenKey(null), [target]);
 
   const unit = target?.unit;
+  const his = unitGroups(groups, unit?.skillAccess ?? []);
   const entries: GearEntry[] = !unit
     ? []
     : target.tab === "gear"
@@ -95,10 +98,11 @@ export default function GearSheet({
         ? [
             ...(unit.skills ?? []).map((owned) => {
               const skill = skills.find((entry) => entry.id === owned.id);
+              const via = cameThrough(groups, owned.id, his);
               return {
                 key: `skill:${owned.id}`,
                 name: owned.name,
-                kind: skill?.type ? `Skill · ${skill.type}` : "Skill",
+                kind: via ? `Skill · ${via.name}` : "Skill",
                 rules: skill?.description ? [{ name: owned.name, text: skill.description }] : [],
               };
             }),

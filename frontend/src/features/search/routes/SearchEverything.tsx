@@ -108,6 +108,7 @@ export default function SearchEverything() {
   const settled = useSettled(query);
   const items = useCatalogue("items", campaignId);
   const skills = useCatalogue("skills", campaignId);
+  const skillGroups = useCatalogue("skill-groups", campaignId);
   const spells = useCatalogue("spells", campaignId);
   const beasts = useCatalogue("bestiary", campaignId);
   const hiredSwords = useCatalogue("hired-swords", campaignId);
@@ -127,6 +128,7 @@ export default function SearchEverything() {
             // the reference as its pages show it: only what is in play in the campaign
             items: inPlayOnly(items.data),
             skills: inPlayOnly(skills.data),
+            skillGroups: skillGroups.data,
             spells: inPlayOnly(spells.data),
             beasts: inPlayOnly(beasts.data),
             hiredSwords: inPlayOnly(hiredSwords.data),
@@ -150,6 +152,7 @@ export default function SearchEverything() {
       rules,
       searching,
       server.data,
+      skillGroups.data,
       skills.data,
       spells.data,
       withLocations,

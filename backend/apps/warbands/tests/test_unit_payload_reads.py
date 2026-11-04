@@ -23,7 +23,7 @@ def _rendered(data: Any) -> str:
 
 class FoldedLoadoutReadTests(RosterTestCase):
     def test_folded_entries_render_like_the_join_rows(self):
-        odd_skill = Skill.objects.create(name='Ünïcode "quoted" skill', type="", description="Line\nbreak")
+        odd_skill = Skill.objects.create(name='Ünïcode "quoted" skill', description="Line\nbreak")
         odd_special = Special.objects.create(name="Blank", type="", description="")
         odd_spell = Spell.objects.create(name="Spell ✦", type="Lesser", dc="", description="")
         for test_kind in TEST_KINDS:

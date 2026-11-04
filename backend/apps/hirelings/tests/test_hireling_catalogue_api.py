@@ -79,7 +79,7 @@ class HirelingPayloadTests(CatalogueTestCase):
         self.assertEqual((row["race_id"], row["race_name"], row["race_label"]), (self.human.id, "Human", "Ogre"))
         line = {"warband_type_id": self.mercenaries.id, "warband_group_id": None, "name": "Mercenaries", "excluded": False}  # fmt: skip
         self.assertEqual((row["for_everyone"], row["warbands"]), (True, [line]))
-        self.assertEqual([entry["name"] for entry in detail["skills"]], ["Infiltration"])
+        self.assertEqual([entry["name"] for entry in detail["skills"]], ["Infiltration (Dark Elf)"])
         self.assertEqual(([entry["name"] for entry in detail["specials"]], [entry["name"] for entry in detail["spells"]]), (["Large"], ["Lifestealer"]))  # fmt: skip
         self.assertEqual([(entry["item"]["name"], entry["quantity"]) for entry in detail["equipment"]], [("Sword", 2)])
 

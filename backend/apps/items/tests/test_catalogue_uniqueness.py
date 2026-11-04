@@ -16,7 +16,7 @@ from apps.bestiary.models import BestiaryEntry
 from apps.items.models import Item
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY
 from apps.races.models import Race
-from apps.skills.models import Skill
+from apps.skills.models import Skill, SkillGroup
 from apps.special.models import Special
 from apps.spells.models import Spell
 
@@ -24,10 +24,11 @@ from .catalogue_support import ITEMS, CatalogueTestCase, make_entry
 
 
 class BookUniquenessTests(CatalogueTestCase):
-    def test_the_book_holds_one_row_per_name_and_type(self):
+    def test_the_book_holds_one_row_per_name_and_type(self):  # or per name
         cases: list[tuple[Any, dict[str, Any]]] = [
             (Item, {"name": "Axe", "type": "Weapon"}),
-            (Skill, {"name": "Sprint", "type": "Speed"}),
+            (Skill, {"name": "Sprint"}),  # a skill and a skill group: on name alone (skill groups, phase 1a)
+            (SkillGroup, {"name": "Combat"}),
             (Spell, {"name": "Lifestealer", "type": "Necromancy"}),
             (Special, {"name": "Large", "type": "Trait"}),
             (Race, {"name": "Human"}),

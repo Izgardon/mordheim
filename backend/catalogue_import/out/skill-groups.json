@@ -1,0 +1,967 @@
+[
+  {
+    "name": "Combat",
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Strike to Injure",
+      "Combat Master",
+      "Weapons Training",
+      "Web of Steel",
+      "Expert Swordsman",
+      "Step Aside"
+    ]
+  },
+  {
+    "name": "Shooting",
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Quick Shot",
+      "Pistolier",
+      "Eagle Eyes",
+      "Weapons Expert",
+      "Nimble",
+      "Trick Shooter",
+      "Hunter",
+      "Knife-Fighter"
+    ]
+  },
+  {
+    "name": "Academic",
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Battle Tongue",
+      "Sorcery",
+      "Streetwise",
+      "Haggle",
+      "Arcane Lore",
+      "Wyrdstone Hunter",
+      "Warrior Wizard",
+      "Scribe",
+      "Mind Focus",
+      "Tactician",
+      "Hunch",
+      "Magical Aptitude",
+      "Trap Expert",
+      "Driver",
+      "Strategist",
+      "Scholar"
+    ]
+  },
+  {
+    "name": "Strength",
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Mighty Blow",
+      "Pit Fighter",
+      "Resilient",
+      "Fearsome",
+      "Strongman",
+      "Unstoppable Charge",
+      "Handyman",
+      "Beastmaster"
+    ]
+  },
+  {
+    "name": "Speed",
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Leap",
+      "Sprint",
+      "Acrobat",
+      "Lightning Reflexes",
+      "Jump Up",
+      "Dodge",
+      "Scale Sheer Surfaces"
+    ]
+  },
+  {
+    "name": "Amazons",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "group": "amazons",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Skink Hunter",
+      "Elixir of Life",
+      "Mesmerising Dance",
+      "Savage Fury",
+      "Concealment"
+    ]
+  },
+  {
+    "name": "Animal",
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": false,
+    "note": "",
+    "how": "skill_lists",
+    "skills": [
+      "[Animal] Handler",
+      "Ride [Animal]",
+      "Falconer"
+    ]
+  },
+  {
+    "name": "Battle Monks of Cathay",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "battle-monks-of-cathay",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Heron Strike",
+      "Swallow Kick",
+      "Water Form",
+      "Inch Punch"
+    ]
+  },
+  {
+    "name": "Beastmen Raiders",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "beastmen-raiders",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Shaggy Hide",
+      "Mutant",
+      "Fearless",
+      "Horned One",
+      "Bellowing Roar",
+      "Manhater"
+    ]
+  },
+  {
+    "name": "Black Dwarfs",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "black-dwarfs",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Extra Tough",
+      "Resource Hunter",
+      "True Grit",
+      "Thick Skull",
+      "Chaos Engineer",
+      "Tyrant"
+    ]
+  },
+  {
+    "name": "Bretonnian Chapel Guard",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "bretonnian-chapel-guard",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Renowned Virtue",
+      "Questing Vow",
+      "Shield Bash",
+      "Bulging Muscles",
+      "Untiring"
+    ]
+  },
+  {
+    "name": "Bretonnian Knights",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "bretonnian-knights",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Virtue of Purity",
+      "Virtue of Valor",
+      "Virtue of Discipline",
+      "Virtue of Noble Disdain",
+      "Virtue of the Impetuous",
+      "Virtue of the Squire"
+    ]
+  },
+  {
+    "name": "Cavalry",
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Cavalry Commander",
+      "Trick Riding",
+      "Combat Riding",
+      "Evade",
+      "Running Dismount",
+      "Athletic Mount",
+      "Horse Archer",
+      "Mounted Combat Master"
+    ]
+  },
+  {
+    "name": "Cursed Cavalcade",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "cursed-cavalcade",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Noblesse Obliges",
+      "Torturer",
+      "Duelist"
+    ]
+  },
+  {
+    "name": "Dark Elf",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dark-elves",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Fury of Khaine",
+      "Powerful Build",
+      "Fey Quickness",
+      "Infiltration",
+      "Master of Poisons"
+    ]
+  },
+  {
+    "name": "Dwarf Exiled Engineers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "guild-of-disgraced-engineers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_lists",
+    "skills": [
+      "True Grit",
+      "Thick Skull",
+      "Extra Tough",
+      "Tunneler",
+      "Tinkerer",
+      "Quick Thinker",
+      "Master Inventor"
+    ]
+  },
+  {
+    "name": "Dwarf Rangers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dwarf-rangers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Extra Tough",
+      "Resource Hunter",
+      "True Grit",
+      "Thick Skull"
+    ]
+  },
+  {
+    "name": "Dwarf Troll Slayers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dwarf-treasure-hunters",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Ferocious Charge",
+      "Monster Slayer",
+      "Berserker",
+      "Master of Blades",
+      "Extra Tough",
+      "Resource Hunter",
+      "True Grit",
+      "Thick Skull"
+    ]
+  },
+  {
+    "name": "Dwarves",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dwarf-treasure-hunters",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Master of Blades",
+      "Extra Tough",
+      "Resource Hunter",
+      "True Grit",
+      "Thick Skull"
+    ]
+  },
+  {
+    "name": "Forest Goblins",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "forest-goblins-nc",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Animosity"
+    ]
+  },
+  {
+    "name": "Grave Robber",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "grave-robbers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Darkstalker",
+      "Instinctual Violence",
+      "De-animator",
+      "Hardy Constitution (Grave Robber)",
+      "Body Dealer"
+    ]
+  },
+  {
+    "name": "Halflings",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "halflings",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Crude Belch",
+      "Stealthy",
+      "Tea-leaf",
+      "Flan-eater",
+      "Looter",
+      "Taunt"
+    ]
+  },
+  {
+    "name": "Hochland Bandits",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "hochland-bandits",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Banditry",
+      "Hide in Shadows",
+      "Jump back",
+      "Sniper",
+      "Throw voice"
+    ]
+  },
+  {
+    "name": "Horned Hunters",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "horned-hunters",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Animal Friendship",
+      "Infiltration",
+      "Foul Odour",
+      "Hide in Shadows",
+      "Master Trapper",
+      "Pathfinder (Horned Hunters)"
+    ]
+  },
+  {
+    "name": "Large Special",
+    "for_everyone": true,
+    "warbands": [],
+    "large_only": true,
+    "note": "",
+    "how": "skill_lists",
+    "skills": [
+      "Seismic Toss",
+      "Juggernaut",
+      "Brick Wall",
+      "Frog Splash",
+      "Titanic Grip"
+    ]
+  },
+  {
+    "name": "Low Kings",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "low-kings",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Backstabber",
+      "Pick Locks",
+      "Poisoner",
+      "Slaver",
+      "Stealthy",
+      "Cutpurse"
+    ]
+  },
+  {
+    "name": "Marauders of Chaos",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "marauders-of-chaos",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Chosen of chaos",
+      "Tattooed body",
+      "Sweeping blow",
+      "Mutant (Marauders of Chaos)",
+      "Heart of the warrior"
+    ]
+  },
+  {
+    "name": "Merchant Caravans",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "merchant-caravans",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Bribery",
+      "Dubious Income",
+      "Wholesale",
+      "Deal Breaker",
+      "Connected"
+    ]
+  },
+  {
+    "name": "Night Goblins",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "night-goblins-web",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Hide in Shadows",
+      "Fungus Farmer",
+      "Infiltrate",
+      "Netter",
+      "Ride Squig",
+      "Sneaky Git"
+    ]
+  },
+  {
+    "name": "Night Goblins (MIC)",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "night-goblins-mic",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Infiltration",
+      "Sneaky Git",
+      "Netter",
+      "Ded Shooty"
+    ]
+  },
+  {
+    "name": "Norse",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "norse-explorers-tc13",
+        "excluded": false
+      },
+      {
+        "type": "norse-explorers-btb",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Barbarian courage",
+      "Berserk charge",
+      "Battle Tongue",
+      "Shield master",
+      "Crushing blow"
+    ]
+  },
+  {
+    "name": "Ogres",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "group": "ogres",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Master of arms",
+      "Crude Belch",
+      "Maneater",
+      "Bull charge",
+      "Dog of war",
+      "Bellowing Roar (Ogres)"
+    ]
+  },
+  {
+    "name": "Orcs",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "group": "orcs",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "’ard ’ead",
+      "Waaagh!",
+      "’ere we go!",
+      "Da cunnin’ plan",
+      "Well ’ard",
+      "’eadbasher",
+      "Proven warrior"
+    ]
+  },
+  {
+    "name": "Ostlanders",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "ostlanders",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Bull Rush",
+      "Foul Odour",
+      "Taunt",
+      "Animal Friendship",
+      "Blood Oath"
+    ]
+  },
+  {
+    "name": "Pirates",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "pirates",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Sea Shanty Singer",
+      "Sea Legs",
+      "Cutlass Master",
+      "Booming Voice",
+      "Hardy Constitution",
+      "Swashbuckler"
+    ]
+  },
+  {
+    "name": "Pirates (TBMF)",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "pirates",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_lists",
+    "skills": [
+      "Captain Blood",
+      "Sea Legs (TBMF)",
+      "Cutlass Master",
+      "Treasure Hunter",
+      "Swashbuckler"
+    ]
+  },
+  {
+    "name": "Pit Fighters",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "pit-fighters",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Bulging Biceps",
+      "Force of Will",
+      "Arms master",
+      "Body Slam",
+      "Grizzled Veteran"
+    ]
+  },
+  {
+    "name": "Restless Dead Lich and Necromancer",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "the-restless-dead",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Corpse Bomb",
+      "Deathspeaker",
+      "Wraith Touch",
+      "Forbidden Rite",
+      "Summoner"
+    ]
+  },
+  {
+    "name": "Saurus",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "lizardmen-tc11",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Bellowing Battle Roar",
+      "Toughened Hide"
+    ]
+  },
+  {
+    "name": "Sea Ghosts",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "sea-ghosts",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Infiltration",
+      "Luck",
+      "See in Shadows",
+      "Hide in Shadows",
+      "Powerful Build",
+      "Fey"
+    ]
+  },
+  {
+    "name": "Shadow Warriors",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "shadow-warriors",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "See in Shadows",
+      "Hide in Shadows",
+      "Sniper (Shadow Warriors)",
+      "Powerful Build",
+      "Master of Runes"
+    ]
+  },
+  {
+    "name": "Sisters of Sigmar",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "sisters-of-sigmar",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Sign of Sigmar",
+      "Protection of Sigmar",
+      "Utter Determination",
+      "Righteous Fury",
+      "Absolute Faith"
+    ]
+  },
+  {
+    "name": "Skaven",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "skaven",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Black Hunger",
+      "Tail Fighting",
+      "Wall Runner",
+      "Infiltration",
+      "Art of Silent Death"
+    ]
+  },
+  {
+    "name": "Skaven Clan Pestilens",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "skaven-of-clan-pestilens-tc29",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Black Hunger",
+      "Censer Bearer",
+      "Rotten Body",
+      "Contagious",
+      "Ignore Pain"
+    ]
+  },
+  {
+    "name": "Skaven Metal Mongers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "metal-mongers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_lists",
+    "skills": [
+      "Tail Fighting",
+      "Infiltration",
+      "Unblinking Eye",
+      "Metallic Body",
+      "Respirator",
+      "Tinker-Rat"
+    ]
+  },
+  {
+    "name": "Skink",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "lizardmen-tc11",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Infiltration (Skink)",
+      "Great Hunter"
+    ]
+  },
+  {
+    "name": "Sons of Hashut",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "sons-of-hashut",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Extra Tough",
+      "True Grit",
+      "Thick Skull",
+      "Unlimited Hatred"
+    ]
+  },
+  {
+    "name": "Tomb Robbers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "arabian-tomb-raiders",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "intersection",
+    "skills": [
+      "Sand worm",
+      "Hit and run",
+      "Weather tolerant"
+    ]
+  },
+  {
+    "name": "Undead Vampires",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "undead",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Vampire only",
+    "how": "skill_lists",
+    "skills": [
+      "Transfixing Glare",
+      "Mist Form",
+      "Ratswarm Form",
+      "Bat Form",
+      "Giant Wolf Form"
+    ]
+  }
+]

@@ -9,7 +9,7 @@ from django.test.utils import CaptureQueriesContext
 from apps.campaigns.models import CampaignType
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband
-from apps.skills.models import Skill
+from apps.skills.models import Skill, SkillGroup, SkillGroupSkill, SkillGroupWarband
 from apps.warbands.models import WarbandGroup, WarbandType
 
 from .roster_support import RosterTestCase
@@ -69,6 +69,13 @@ class WhoCanTestCase(RosterTestCase):
         ):
             for target in row.get(key, []):
                 model.objects.create(**{field: owner, column: target, "excluded": excluded})
+
+    def group(self, name: str, *skills: Skill, everyone: bool = False, **row: Any) -> SkillGroup:
+        """A book skill group holding `skills`, open to everyone or to the lines `row` names (as `lines` reads)."""
+        group = SkillGroup.objects.create(name=name, for_everyone=everyone)
+        SkillGroupSkill.objects.bulk_create([SkillGroupSkill(group=group, skill=skill) for skill in skills])
+        self.lines(group, SkillGroupWarband, "group", row)
+        return group
 
     def who_can(self) -> dict[str, Any]:
         response = self.client.get(f"/api/warbands/{self.warband.id}/who-can/")
@@ -194,32 +201,28 @@ class WhoCanHireAndLearnTests(WhoCanTestCase):
         )
         self.assertEqual(body["dramatis_personae"], [{"id": johann.id, "can_hire": True, "reason": ""}])
 
-    def test_the_special_skills_its_types_may_learn(self) -> None:
-        tail = Skill.objects.create(name="Tail Fighting", type="Skaven", for_everyone=False)
-        tail.warband_links.create(warband_group=self.skaven)
-        leap = Skill.objects.create(name="Leap", type="Lizardmen", for_everyone=False)
-        leap.warband_links.create(warband_type=self.lizardmen)
-        Skill.objects.create(name="Sprint", type="Speed")  # for everyone: a general skill, not a special one
-        Skill.objects.create(name="Rally", type="Reiklanders", for_everyone=False).warband_links.create(warband_type=self.reiklanders)  # fmt: skip
+    def test_the_groups_open_to_it_and_the_special_skills_its_types_may_learn(self) -> None:
+        tail, leap, sprint, rally = (Skill.objects.create(name=name) for name in ("Tail", "Leap", "Sprint", "Rally"))
+        skaven = self.group("Skaven", tail, groups=[self.skaven])
+        lizards = self.group("Lizardmen", leap, types=[self.lizardmen])  # a type it counts as
+        speed = self.group("Speed", sprint, everyone=True)  # for everyone: open, but not its special skills
+        self.group("Reiklanders", rally, types=[self.reiklanders])
+        shut = self.group("Shut", leap, everyone=True, not_groups=[self.skaven])
 
-        self.assertEqual(sorted(self.who_can()["special_skill_ids"]), sorted([tail.id, leap.id]))
+        body = self.who_can()
 
-    def test_a_special_skill_several_lists_share_is_offered_once_from_the_list_named_like_its_type(self) -> None:
-        def infiltration(list_name: str) -> Skill:
-            skill = Skill.objects.create(name="Infiltration", type=list_name, for_everyone=False)
-            skill.warband_links.create(warband_type=self.pestilens)
-            return skill
+        # the core groups first (the roster's Combat, then Speed), then by name
+        self.assertEqual(body["skill_group_ids"], [self.combat.id, speed.id, lizards.id, skaven.id])
+        self.assertNotIn(shut.id, body["skill_group_ids"])
+        self.assertEqual(body["special_skill_ids"], sorted([tail.id, leap.id]))
 
-        infiltration("Dark Elf")
-        ours = infiltration("Skaven of Clan Pestilens")
-        infiltration("Skink")
-        by_group = Skill.objects.create(name="Black Hunger", type="Skaven", for_everyone=False)
-        by_group.warband_links.create(warband_group=self.skaven)
-        by_type = Skill.objects.create(name="Black Hunger", type="Moulder", for_everyone=False)
-        by_type.warband_links.create(warband_type=self.pestilens)
+    def test_a_skill_in_several_of_its_groups_is_one_special_skill_as_the_campaigns_current_entry(self) -> None:
+        infiltration = Skill.objects.create(name="Infiltration")
+        self.group("Skaven", infiltration, groups=[self.skaven])
+        self.group("Pestilens", infiltration, types=[self.pestilens])
+        version = Skill.objects.create(name="Infiltration", campaign=self.campaign, replaces=infiltration)
 
-        # a line naming its type beats a group line, whatever the list's name
-        self.assertEqual(sorted(self.who_can()["special_skill_ids"]), sorted([ours.id, by_type.id]))
+        self.assertEqual(self.who_can()["special_skill_ids"], [version.id])
 
 
 class WhoCanReadTests(WhoCanTestCase):
@@ -232,17 +235,17 @@ class WhoCanReadTests(WhoCanTestCase):
         self.item("Short Sword", {"everyone": True, "not_groups": [self.humans]})
         HiredSword.objects.create(name="Ratcatcher", **STATS).warband_links.create(warband_group=self.skaven)
         DramatisPersona.objects.create(name="Johann", **STATS).warband_links.create(warband_group=self.skaven)
-        Skill.objects.create(name="Tail Fighting", type="Skaven", for_everyone=False).warband_links.create(warband_group=self.skaven)  # fmt: skip
+        self.group("Skaven", Skill.objects.create(name="Tail Fighting"), groups=[self.skaven])
         before = count()
         for index in range(3):
             self.item(f"Blade {index}", {"types": [self.pestilens]}, {"groups": [self.skaven]})
             HiredSword.objects.create(name=f"Sword {index}", **STATS).warband_links.create(warband_type=self.eshin)
-            Skill.objects.create(name=f"Trick {index}", type="Skaven", for_everyone=False).warband_links.create(warband_group=self.skaven)  # fmt: skip
+            self.group(f"Tricks {index}", Skill.objects.create(name=f"Trick {index}"), groups=[self.skaven])
 
         self.assertEqual(count(), before)
         # the warband and the membership, its types, the items, their rows and the rows' lines, each hireling kind
-        # and its lines, the special skills and their lines
-        self.assertEqual(before, 12)
+        # and its lines, the skill groups, their lines and their skills
+        self.assertEqual(before, 13)
         self.client.force_authenticate(user=self.viewer)
         self.assertEqual(self.client.get(f"/api/warbands/{self.warband.id}/who-can/").status_code, 200)
         self.client.force_authenticate(user=self.outsider)

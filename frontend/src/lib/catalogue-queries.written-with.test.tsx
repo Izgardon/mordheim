@@ -75,7 +75,7 @@ describe("a beast's writes change the items list too", () => {
   it("leaves the items list alone when a skill is saved", () => {
     const { queryClient, cache } = setup();
 
-    cache.write("skills", 7, { id: 1, name: "Sprint", type: "Speed", description: "" });
+    cache.write("skills", 7, { id: 1, name: "Sprint", description: "" });
 
     expect(stale(queryClient, items)).toBe(false);
   });

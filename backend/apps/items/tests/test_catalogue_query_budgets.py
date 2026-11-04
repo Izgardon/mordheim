@@ -32,6 +32,7 @@ from .catalogue_support import (
     ITEMS,
     KINDS,
     RACES,
+    SKILL_GROUPS,
     SKILLS,
     CatalogueTestCase,
     catalogue_cache_on,
@@ -169,8 +170,8 @@ class CatalogueQueryBudgetTests(CatalogueTestCase):
             with self.subTest(kind=kind.key):
                 book = make_entry(kind, f"Book {kind.key}")
                 house = make_entry(kind, f"House {kind.key}", campaign=self.campaign)
-                # an item's rule links, price rows and their who-can lines (no animal here); a skill's who-can lines
-                prefetches = {ITEMS: 3, SKILLS: 1}.get(kind, 0)
+                # an item's rule links, price rows and their who-can lines (no animal here); a skill group's lines and skills
+                prefetches = {ITEMS: 3, SKILL_GROUPS: 2}.get(kind, 0)
                 self.assertLessEqual(self.count("get", kind.detail_url(book.id)), 1 + prefetches)
                 self.assertLessEqual(self.count("get", kind.detail_url(house.id)), 2 + prefetches)
 
@@ -287,7 +288,7 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         # while a hired sword was a bestiary entry with a profile). The answer: the hired sword detail's 9
         # prefetched reads, spells and restrictions included though none were sent. The brief's 10 would need the answer built from what was
         # written instead of read back.
-        skills = [Skill.objects.create(name=f"Trick {n}", type="Combat").id for n in range(6)]
+        skills = [Skill.objects.create(name=f"Trick {n}").id for n in range(6)]
         specials = [Special.objects.create(name=f"Gift {n}", type="Ability").id for n in range(3)]
         gear = [{"item_id": make_entry(ITEMS, f"Kit {n}").id, "quantity": 1} for n in range(6)]
         sword = HIRED_SWORDS.body("Mercenary", self.campaign, skill_ids=skills, special_ids=specials, item_entries=gear)
@@ -296,12 +297,12 @@ class CatalogueWriteBudgetTests(CatalogueTestCase):
         self.assertEqual(self.count(HIRED_SWORDS.list_url(), sword), 21)
         self.assertEqual(self.count(HIRED_SWORDS.list_url(), small), 21)
 
-    def test_a_skill_create_costs_7_queries(self):
+    def test_a_skill_create_costs_6_queries(self):
         # membership, the name check (CAT-TWEAK-02, PR C), the savepoint pair, the INSERT, the campaign's catalogue
-        # version (PERF-13) and the answer's who may learn it (the items rebuild). It was 5 before the name check, 5
+        # version (PERF-13). It was 7 with the answer's who may learn it (the items rebuild; a skill group's since phase 1a), 5 before the name check, 5
         # with the campaign read by the serializer's campaign field instead of the version (IMP-79 dropped it), 3
         # before the duplicate guard's savepoint (BUG-17)
-        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 7)
+        self.assertEqual(self.count(SKILLS.list_url(), SKILLS.body("Feint", self.campaign)), 6)
 
 
 class VersionWriteBudgetTests(CatalogueTestCase):

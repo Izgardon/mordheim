@@ -614,6 +614,8 @@ export type BattleRosterUnit = BattleRosterCompanionFields & {
   items: BattleRosterItem[];
   singleUseItems: BattleRosterSingleUseItem[];
   skills: BattleRosterDetailEntry[];
+  /** A hero's or hired sword's skill groups (his `available_skills`): a skill shows under the first. */
+  skillAccess?: string[];
   spells: BattleRosterSpellEntry[];
   specials: BattleRosterDetailEntry[];
   /** His upkeep (structured fee). */

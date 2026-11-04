@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, cast
 from django.db import transaction
 
 from apps.logs.utils import log_warband_event
+from apps.skills.access import current_groups, learned_through
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.utils.leaders import lock_warband
 
@@ -78,6 +79,7 @@ def _log_loadout_additions(
 ) -> None:
     """One loadout log row per skill, special or spell the PATCH added, compared as the client sent the ids."""
     unit_name = unit.name or unit.unit_type or kind.unknown_name
+    groups = None  # the campaign's skill groups, read for the first skill he learns
     for link in kind.links():
         if link.write_field not in before:
             continue
@@ -85,7 +87,12 @@ def _log_loadout_additions(
         if not added:
             continue
         for entry in link.catalogue._default_manager.filter(id__in=added):
-            entry_type = entry.type or DEFAULT_ENTRY_TYPE[link.target]
+            if link.target == "skill":  # a skill's group: the one he learns it through
+                groups = groups if groups is not None else current_groups(warband.campaign_id)
+                found = learned_through(entry, unit, warband.campaign_id, groups)
+            else:
+                found = entry.type
+            entry_type = found or DEFAULT_ENTRY_TYPE[link.target]
             payload = {"hero": unit_name, link.target: entry.name, f"{link.target}_type": entry_type}
             log_warband_event(warband.id, "loadout", str(link.log_entry), payload)
 

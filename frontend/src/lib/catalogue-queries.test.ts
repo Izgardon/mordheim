@@ -10,7 +10,7 @@ import { queryKeys } from "./query-keys";
 
 import type { Skill } from "@/features/skills/types/skill-types";
 
-const skill = (id: number, name: string) => ({ id, name, type: "Speed" }) as Skill;
+const skill = (id: number, name: string) => ({ id, name, description: "" }) as Skill;
 const skillsKey = queryKeys.campaign.catalogue(7, "skills");
 
 describe("catalogue cache writes", () => {

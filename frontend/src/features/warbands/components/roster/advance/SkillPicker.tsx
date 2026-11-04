@@ -6,27 +6,25 @@ import { SearchCombobox, type SearchOption } from "@/components/ui/search-select
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { skillOptions } from "@/features/catalogue/search-options";
 import { inPlayOnly } from "@/features/reference/in-play";
+import { cameThrough, isCore, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
 import { skillList } from "@/features/skills/skill-list";
 import type { Skill } from "@/features/skills/types/skill-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
-import {
-  buildAvailableSkillsPayload,
-  parseAvailableSkills,
-  skillAbbrevToType,
-} from "../../../utils/warband-utils";
+import { accessNames } from "../../../utils/warband-utils";
 
 const ALL = "all";
-const CORE = Object.values(skillAbbrevToType);
 
 const clip = (text: string, length = 140) =>
   text.length > length ? `${text.slice(0, length).trimEnd()}…` : text;
 
 /**
- * A new skill, guided (William): his skill lists as chips ("the unit should have the skill lists
- * already"), that list's skills as rows with their rules, and "Show all" for the rest, greyed with
- * the "not in his lists" warning and still pickable. Only the campaign's skills show (William: "i
- * also shouldnt see skills that arent part of my campaign"). The pick shows its full rules.
+ * A new skill, guided (William): a chip for each skill group in his skill access ("the unit should
+ * have the skill lists already") with that group's skills as rows with their rules, and "Show all"
+ * for the rest, greyed with the "not in his groups" warning and still pickable; a skill in two of
+ * his groups shows under both. Only the campaign's skills show (William: "i also shouldnt see
+ * skills that arent part of my campaign"). The pick shows its full rules and the group it comes
+ * through.
  */
 export default function SkillPicker({
   campaignId,
@@ -44,15 +42,15 @@ export default function SkillPicker({
 }) {
   const skills = inPlayOnly(useCatalogue("skills", campaignId).data ?? []);
   const settings = useSettingsById();
-  const lists = buildAvailableSkillsPayload(parseAvailableSkills(access));
-  const tabs = lists.length ? lists : CORE;
-  const [tab, setTab] = useState(tabs[0] ?? ALL);
-  const rows = skillOptions(skills, { settings, large, access: lists });
+  const groups = useSkillGroups(campaignId);
+  const his = unitGroups(groups, accessNames(access));
+  const tabs = his.length ? his : groups.groups.filter(isCore);
+  const [picked, setTab] = useState<number | typeof ALL | null>(null);
+  const tab = picked ?? tabs[0]?.id ?? ALL; // his first group once the groups have loaded
+  const shown = tab === ALL ? undefined : groups.byId.get(tab);
+  const rows = skillOptions(skills, { settings, groups, large, access: his });
   const byId = new Map(skills.map((skill) => [skill.id, skill]));
-  const inTab = (option: SearchOption) => {
-    const skill = byId.get(Number(option.id));
-    return !skill || tab === ALL || skill.type === tab;
-  };
+  const inTab = (option: SearchOption) => !shown || shown.skill_ids.includes(Number(option.id));
   const options = rows.filter(inTab).map((option) => ({
     ...option,
     group: tab === ALL ? option.group : undefined,
@@ -60,12 +58,13 @@ export default function SkillPicker({
   }));
 
   if (value) {
+    const via = cameThrough(groups, value.id, his);
     return (
       <div className="flex flex-col gap-1.5 border border-accent-line bg-accent-soft p-2.5">
         <span className="flex items-center gap-1.5 text-sm font-bold text-head">
-          <SkillListIcon list={skillList(value.type)} className="text-kind-skill" />
+          <SkillListIcon list={skillList(via?.access_name)} className="text-kind-skill" />
           {value.name}
-          <span className="font-normal text-muted-foreground">· {value.type}</span>
+          {via ? <span className="font-normal text-muted-foreground">· {via.name}</span> : null}
           <button
             type="button"
             className="ml-auto text-xs font-bold text-accent-text hover:underline"
@@ -83,13 +82,16 @@ export default function SkillPicker({
 
   return (
     <div className="flex flex-col gap-2">
-      <div role="group" aria-label="Skill lists" className="flex flex-wrap gap-1.5">
-        {[...tabs, ALL].map((key) => (
-          <Chip key={key} pressed={tab === key} onClick={() => setTab(key)}>
-            {key === ALL ? null : <SkillListIcon list={skillList(key)} />}
-            {key === ALL ? "Show all" : key}
+      <div role="group" aria-label="Skill groups" className="flex flex-wrap gap-1.5">
+        {tabs.map((group) => (
+          <Chip key={group.id} pressed={tab === group.id} onClick={() => setTab(group.id)}>
+            <SkillListIcon list={skillList(group.access_name)} />
+            {group.name}
           </Chip>
         ))}
+        <Chip pressed={tab === ALL} onClick={() => setTab(ALL)}>
+          Show all
+        </Chip>
       </div>
       <SearchCombobox
         inline

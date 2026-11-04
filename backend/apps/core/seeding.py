@@ -21,8 +21,8 @@ from apps.campaigns.models import CampaignType
 from apps.warbands.models import WarbandGroup, WarbandType
 
 # The catalogue import's generated files (backend/catalogue_import/out/), which the seeders read in place: settings,
-# warband types and groups, items and their shared rules, and the settings and who-can lists of the skills, hired
-# swords and dramatis personae we seed
+# warband types and groups, items and their shared rules, skills and skill groups, and the settings and who-can lists
+# of the skills, hired swords and dramatis personae we seed
 IMPORT_OUT = Path(settings.BASE_DIR) / "catalogue_import" / "out"
 
 STAT_FIELDS = (
@@ -139,25 +139,21 @@ class SettingAssignments:
         return self.ids.get((name.strip().lower(), row_type.strip().lower()), self.default)
 
 
-class WhoCanLists:
-    """Who may hire or learn each of our seeded skills, hired swords and dramatis personae (`out/who-can.json`, the
-    items rebuild), the warband slugs as ids: `of(name, type)` gives the file's row with `lines` ready for the
-    writes (`warband_type_id` or `warband_group_id`, `excluded`), or None for a row it doesn't list. The lists
-    name warband types and groups, so they apply once seed_warband_types has run (seed_all runs it first); before that
-    every row is for everyone, as an unlisted one is. A slug the database lacks once they are seeded stops the run."""
+class AccessLines:
+    """Who-can lines from the catalogue import's slugs (`{"type": slug}` or `{"group": slug}`, `excluded`) as the
+    writes take them (`warband_type_id` or `warband_group_id`, `excluded`). The lines name warband types and groups,
+    so they apply once seed_warband_types has run (seed_all runs it first): before that nothing is `ready`. A slug the
+    database lacks once they are seeded stops the run."""
 
-    def __init__(self, kind: str) -> None:
+    def __init__(self) -> None:
         self.types = dict(WarbandType.objects.filter(campaign__isnull=True).values_list("slug", "id"))
         self.groups = dict(WarbandGroup.objects.values_list("slug", "id"))
-        try:
-            data = json.loads((IMPORT_OUT / "who-can.json").read_text(encoding="utf-8"))
-        except (OSError, ValueError) as exc:
-            raise CommandError(f"Unable to read who can hire and learn: {exc}") from exc
-        self.rows = {
-            (clean(row.get("name")).lower(), clean(row.get("type")).lower()): row for row in data.get(kind, [])
-        }
 
-    def _line(self, line: Mapping[str, Any], name: str) -> dict[str, Any]:
+    @property
+    def ready(self) -> bool:
+        return bool(self.types)
+
+    def line(self, line: Mapping[str, Any], name: str) -> dict[str, Any]:
         if "type" in line:
             if line["type"] not in self.types:
                 raise CommandError(f"{name}: warband type '{line['type']}' isn't seeded.")
@@ -166,8 +162,27 @@ class WhoCanLists:
             raise CommandError(f"{name}: warband group '{line.get('group')}' isn't seeded.")
         return {"warband_group_id": self.groups[line["group"]], "excluded": bool(line.get("excluded"))}
 
+    def of(self, lines: Iterable[Mapping[str, Any]], name: str) -> list[dict[str, Any]]:
+        return [self.line(line, name) for line in lines]
+
+
+class WhoCanLists:
+    """Who may hire each of our seeded hired swords and dramatis personae (`out/who-can.json`, the items rebuild), the
+    warband slugs as ids: `of(name)` gives the file's row with `lines` ready for the writes (AccessLines), or None for
+    a row it doesn't list. Before the warband types are seeded every row is for everyone, as an unlisted one is."""
+
+    def __init__(self, kind: str) -> None:
+        self.access = AccessLines()
+        try:
+            data = json.loads((IMPORT_OUT / "who-can.json").read_text(encoding="utf-8"))
+        except (OSError, ValueError) as exc:
+            raise CommandError(f"Unable to read who can hire and learn: {exc}") from exc
+        self.rows = {
+            (clean(row.get("name")).lower(), clean(row.get("type")).lower()): row for row in data.get(kind, [])
+        }
+
     def of(self, name: str, row_type: str = "") -> dict[str, Any] | None:
-        row = self.rows.get((name.strip().lower(), row_type.strip().lower())) if self.types else None
+        row = self.rows.get((name.strip().lower(), row_type.strip().lower())) if self.access.ready else None
         if row is None:
             return None
-        return {**row, "lines": [self._line(line, name) for line in row.get("warbands", [])]}
+        return {**row, "lines": self.access.of(row.get("warbands", []), name)}

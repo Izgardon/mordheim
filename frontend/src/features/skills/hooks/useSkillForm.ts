@@ -1,6 +1,5 @@
 import { useCallback, useState } from "react";
 
-import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
@@ -14,28 +13,23 @@ import type { Skill } from "../types/skill-types";
 
 type SkillFormValues = {
   name: string;
-  type: string;
   description: string;
-  typeCommitted: boolean;
-  /** A Large unit's skill, and the note shown when learning it. */
-  large_only: boolean;
-  learn_note: string;
+  /** The skill groups holding it (skill groups, phase 1a); null until changed: the groups list's. */
+  groupIds: number[] | null;
 };
 
 const valuesOf = (skill: Skill | null): SkillFormValues => ({
   name: skill?.name ?? "",
-  type: skill?.type ?? "",
   description: skill?.description ?? "",
-  typeCommitted: Boolean(skill),
-  large_only: Boolean(skill?.large_only),
-  learn_note: skill?.learn_note ?? "",
+  groupIds: null,
 });
 
 type UseSkillFormOptions = {
   campaignId: number;
   /** The skill being edited; null when adding one. */
   skill: Skill | null;
-  typeOptions: readonly string[];
+  /** The ids of the campaign's groups holding a skill (`groupsOf`). */
+  groupIdsOf: (skillId: number) => number[];
   /** Server field errors clear whenever this changes (the edited skill, or the dialog opening). */
   resetKey: unknown;
   /** After a save, its answer already in the cached skills list. */
@@ -50,13 +44,13 @@ type UseSkillFormOptions = {
 
 /**
  * A skill's Add or Edit form, inline on the Skills page or in the warband pages' dialog: the
- * values, the list ("type") box, the save (trimmed values; the answer goes into the cached list)
- * and the delete (refusals stay in its confirm, BUG-148).
+ * values, the groups that hold it, the save (trimmed values; the answer goes into the cached list,
+ * and the groups list is read again) and the delete (refusals stay in its confirm, BUG-148).
  */
 export function useSkillForm({
   campaignId,
   skill,
-  typeOptions,
+  groupIdsOf,
   resetKey,
   onSaved,
   onDeleted,
@@ -65,6 +59,7 @@ export function useSkillForm({
 }: UseSkillFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState(() => valuesOf(skill));
+  const groupIds = values.groupIds ?? (skill ? groupIdsOf(skill.id) : []);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(["name"], resetKey);
@@ -82,20 +77,10 @@ export function useSkillForm({
     onDeleted,
   });
   const revert = useCatalogueRevert({ kind: "skills", campaignId, entry: skill, onReverted });
-  const typeField = useCatalogueTypeField({
-    value: values.type,
-    onChange: (type, typeCommitted) => setValues((prev) => ({ ...prev, type, typeCommitted })),
-    typeOptions,
-    extraOption: skill?.type,
-  });
 
   const save = async (after?: () => void) => {
-    if (!values.name.trim() || !values.type.trim() || !values.description.trim()) {
-      setFormError("Name, type, and description are required.");
-      return;
-    }
-    if (!values.typeCommitted) {
-      setFormError("Add or select a type before saving.");
+    if (!values.name.trim() || !values.description.trim()) {
+      setFormError("Name and description are required.");
       return;
     }
     if (!skill && Number.isNaN(campaignId)) {
@@ -106,10 +91,8 @@ export function useSkillForm({
     setFormError("");
     const payload = {
       name: values.name.trim(),
-      type: values.type.trim(),
       description: values.description.trim(),
-      large_only: values.large_only,
-      learn_note: values.learn_note.trim(),
+      group_ids: groupIds,
     };
     try {
       // A book skill's first edit makes the campaign's version of it (CAT-TWEAK-01).
@@ -130,26 +113,22 @@ export function useSkillForm({
     }
   };
 
-  const { reset: resetTypeField } = typeField;
   const { clear: clearFieldErrors } = fieldErrors;
-  /** Back to `entry`'s values (a blank form for null), with no message and no added lists. */
+  /** Back to `entry`'s values (a blank form for null), with no message. */
   const load = useCallback(
     (entry: Skill | null) => {
       setValues(valuesOf(entry));
-      resetTypeField();
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors, resetTypeField]
+    [clearFieldErrors]
   );
 
   return {
-    values,
+    values: { ...values, groupIds },
     setName: (name: string) => setValues((prev) => ({ ...prev, name })),
     setDescription: (description: string) => setValues((prev) => ({ ...prev, description })),
-    setLearning: (change: Partial<Pick<SkillFormValues, "large_only" | "learn_note">>) =>
-      setValues((prev) => ({ ...prev, ...change })),
-    typeField,
+    setGroupIds: (groupIds: number[]) => setValues((prev) => ({ ...prev, groupIds })),
     fieldErrors: fieldErrors.errors,
     nameTaken,
     isSaving: isSaving || deletion.isDeleting,

@@ -13,6 +13,7 @@ OUT = PACKAGE / "out"
 ITEM_DATA = BACKEND / "apps" / "items" / "data"
 SKILL_DATA = BACKEND / "apps" / "skills" / "data"
 HIRELING_DATA = BACKEND / "apps" / "hirelings" / "data"
+SKILL_FILES = ("cavalcade-skills.json",)  # skill rules mordheimer's skills list lacks (new_skill_groups `source`)
 
 
 @dataclass
@@ -31,6 +32,7 @@ class Sources:
     our_skills: list[dict[str, Any]] = field(default_factory=list)
     our_hired_swords: list[dict[str, Any]] = field(default_factory=list)
     our_personae: list[dict[str, Any]] = field(default_factory=list)
+    skill_files: dict[str, list[dict[str, Any]]] = field(default_factory=dict)  # SKILL_FILES, by file name
 
 
 def _values(data: Json) -> list[dict[str, Any]]:
@@ -54,4 +56,5 @@ def load_sources(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> Source
         overrides=load_json(package / "overrides.json"),
         our_skills=_values(load_json(SKILL_DATA / "skills.json")),
         our_hired_swords=_values(load_json(HIRELING_DATA / "hired-swords.json")),
+        skill_files={name: _values(load_json(src / name)) for name in SKILL_FILES},
     )

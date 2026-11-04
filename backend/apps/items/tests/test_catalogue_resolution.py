@@ -18,7 +18,7 @@ class WriteResolutionTests(CatalogueTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.client.force_authenticate(user=self.player)
-        self.skill = make_entry(SKILLS, "Hiding", campaign=self.campaign, type="Skaven", replaces=self.infiltration[2])
+        self.skill = make_entry(SKILLS, "Hiding", campaign=self.campaign, replaces=self.infiltration[2])
         self.spell = make_entry(SPELLS, "Life drain", campaign=self.campaign, type="Necromancy", replaces=self.lifestealer[0])  # fmt: skip
         self.special = make_entry(SPECIALS, "Huge", campaign=self.campaign, type="Trait", replaces=self.large)
         self.sword = make_entry(ITEMS, "Sword", campaign=self.campaign, cost=30, replaces=self.book_sword)
@@ -55,7 +55,7 @@ class WriteResolutionTests(CatalogueTestCase):
         self.assertEqual(list(hero.hero_items.values_list("item_id", "cost")), [(self.sword.id, 12)])
 
     def test_a_same_named_entry_of_another_type_changes_nothing(self):
-        make_entry(SKILLS, "Infiltration", campaign=self.campaign, type="Combat")
+        make_entry(SKILLS, "Infiltration", campaign=self.campaign)
         hero = make_unit(HERO, self.warband)
 
         self.client.patch(unit_url(HERO, self.warband.id, hero.id), {"skill_ids": [self.infiltration[0].id]}, format="json")  # fmt: skip

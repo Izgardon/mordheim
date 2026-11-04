@@ -66,7 +66,7 @@ export default function HirelingDetail(props: HirelingDetailProps) {
         ) : null}
       </DetailSection>
       {entry.available_skill_types.length ? (
-        <DetailSection title="Skill lists">
+        <DetailSection title="Skill groups">
           <TagList tags={entry.available_skill_types.map((type) => ({ label: type }))} />
         </DetailSection>
       ) : null}

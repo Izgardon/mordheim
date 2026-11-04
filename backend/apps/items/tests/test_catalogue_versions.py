@@ -127,7 +127,7 @@ class FirstEditTests(VersionTestCase):
         self.assertEqual(list(BestiaryEntrySkill.objects.filter(bestiary_entry=self.beast).values_list("skill_id", flat=True)), [skill_version])  # fmt: skip
         self.hero.refresh_from_db()
         self.assertEqual(self.hero.race_id, race_version)
-        self.assertEqual(Skill.objects.filter(name="Infiltration", campaign__isnull=True).count(), 6)
+        self.assertEqual(Skill.objects.filter(name__startswith="Infiltration", campaign__isnull=True).count(), 5)
 
     def test_a_hired_swords_version_is_a_copied_row_in_the_campaign(self):
         response = self.edit(HIRED_SWORDS, self.ogre.id, {"hire_fee": {"gold": 95}})

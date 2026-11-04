@@ -24,6 +24,7 @@ from .catalogue_support import (
     ITEMS,
     KINDS,
     RACES,
+    SKILL_GROUPS,
     SKILLS,
     CatalogueTestCase,
     make_entry,
@@ -65,6 +66,9 @@ class CatalogueEventTests(CatalogueTestCase):
             with self.subTest(kind=kind.key):
                 lists = {kind.key, ITEMS.key} if kind is BESTIARY else {kind.key}  # an item shows the animal it hires
                 lists |= {HIRED_SWORDS.key, DRAMATIS_PERSONAE.key} if kind is RACES else set()  # their rows name it
+                lists |= (
+                    {SKILLS.key, SKILL_GROUPS.key} if kind in (SKILLS, SKILL_GROUPS) else set()
+                )  # groups hold skills
                 created = self.send("post", kind.list_url(), kind.body(f"Live {kind.key}", self.campaign))
                 url = kind.detail_url(created.data["id"])
                 statuses = [created.status_code, self.send("patch", url, {"name": "Changed"}).status_code]
@@ -82,7 +86,7 @@ class CatalogueEventTests(CatalogueTestCase):
         self.send("delete", f"{SKILLS.detail_url(self.infiltration[1].id)}?campaign_id={self.campaign.id}")
         self.send("post", f"{SKILLS.detail_url(self.infiltration[1].id)}restore/", {"campaign_id": self.campaign.id})
 
-        self.assertEqual([kind for _, kind, _ in self.changed()], ["skills"] * 4)
+        self.assertEqual([kind for _, kind, _ in self.changed()], ["skills", "skill_groups"] * 4)
 
     def test_house_rules_and_new_injury_specials_tell_them_and_refusals_and_seeds_do_not(self):
         self.send("post", self.url("rules/"), {"title": "Half price", "effect_key": HALF_PRICE_ARMOUR_EFFECT_KEY})

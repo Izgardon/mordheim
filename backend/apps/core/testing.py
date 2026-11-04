@@ -118,7 +118,7 @@ def build_reference_campaign(unit_count: int = 3) -> ReferenceCampaign:
 
     race = Race.objects.create(name="Human", movement=4, weapon_skill=3, ballistic_skill=3, leadership=7)
     items = [_catalogue_item(f"Sword {index}", 10 + index) for index in range(unit_count)]
-    skills = [Skill.objects.create(name=f"Skill {index}", type="Combat") for index in range(unit_count)]
+    skills = [Skill.objects.create(name=f"Skill {index}") for index in range(unit_count)]
     spells = [Spell.objects.create(name=f"Spell {index}", type="Lesser Magic") for index in range(unit_count)]
     specials = [Special.objects.create(name=f"Special {index}", type="Special") for index in range(unit_count)]
 

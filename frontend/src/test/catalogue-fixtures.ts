@@ -7,7 +7,7 @@ import { blankFee } from "@/features/hirelings/fees";
 import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
 import type { Item, ItemAvailability } from "@/features/items/types/item-types";
-import type { Skill } from "@/features/skills/types/skill-types";
+import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 import { CAMPAIGN_ID } from "./campaign-fixtures";
 
@@ -70,8 +70,20 @@ export const skill = (overrides: Partial<Skill> = {}): Skill => ({
   id: 205,
   campaign_id: null,
   name: "Strike to Injure",
-  type: "Combat",
   description: "Add +1 to injury rolls.",
+  ...overrides,
+});
+
+export const skillGroup = (overrides: Partial<SkillGroup> = {}): SkillGroup => ({
+  id: 601,
+  campaign_id: null,
+  name: "Combat",
+  access_name: overrides.name ?? "Combat",
+  for_everyone: true,
+  warbands: [],
+  large_only: false,
+  learn_note: "",
+  skill_ids: [],
   ...overrides,
 });
 

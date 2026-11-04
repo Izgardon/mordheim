@@ -1,0 +1,17 @@
+[
+ {
+  "name": "Noblesse obliges",
+  "description": "The warrior feels utterly superior to his opponents, with long lineage and prestige to look down upon his common enemies, seen as nothing more than cattle to be slaughtered.\n\nThe Warrior is immune to fear and can stomp opponents who are knocked down with is iron-shod boots. This gives them additional attack against Knocked down opponents at their own Strength.",
+  "source": "The Cursed Cavalcade (mordheimer)"
+ },
+ {
+  "name": "Torturer",
+  "description": "Having learned the craft of torture in the Ritual of the Comet, the warrior knows how to inflict maximum pain on the body and uses it in a sadistic and cruel way in combat.\n\nAny model successfully wounded (and not saved) in close combat by this Hero loses 1 point of Strength permanently for the duration of the battle as the pain from the wound causes agony. The effect is accumulative and can reduce the Strength of the target to a minimum of 1. The Undead are immune to this effect.",
+  "source": "The Cursed Cavalcade (mordheimer)"
+ },
+ {
+  "name": "Duelist",
+  "description": "The warrior is an expert in hand-to-hand combat method of the Imperial duelist, aristocrats famed for their skill in single combat.\n\nAt the end of each Close Combat phase, the Duelist can force any non-large opponent he is fighting one-on-one to pass a Strength test or be pushed 2\" in any direction choosen by the Duelist. If this brings the target in contact with another model, both suffer an automatic Strength 2 hit. If this pushes the opponent off from a high place, then he falls and takes damage as normal. The duelist stays on the elevated area.",
+  "source": "The Cursed Cavalcade (mordheimer)"
+ }
+]

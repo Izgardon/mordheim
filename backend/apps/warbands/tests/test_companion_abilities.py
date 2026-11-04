@@ -21,7 +21,7 @@ class CompanionAbilityTests(RosterTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.horse, self.raven = warhorse(), raven()
-        self.charge = Skill.objects.create(name="Thunderous Charge", type="Mount")
+        self.charge = Skill.objects.create(name="Thunderous Charge")
         self.kick = Special.objects.create(name="Kick", type="Ability", description="Kicks in close combat.")
         self.hoof = Spell.objects.create(name="Hoof Hex", type="Beast", dc="7", description="A hex.")
         teach(self.horse, skills=(self.charge,), specials=(self.kick,), spells=(self.hoof,))
@@ -41,7 +41,7 @@ class CompanionAbilityTests(RosterTestCase):
         unit = self.hero_payload(f"/api/warbands/{self.warband.id}/sheet/")
 
         mount = unit["mount"]
-        self.assertEqual(mount["skills"], [{"id": self.charge.id, "name": "Thunderous Charge", "type": "Mount"}])
+        self.assertEqual(mount["skills"], [{"id": self.charge.id, "name": "Thunderous Charge"}])
         kick = {"id": self.kick.id, "name": "Kick", "type": "Ability", "description": "Kicks in close combat."}
         self.assertEqual(mount["specials"], [kick])
         hoof = {"id": self.hoof.id, "name": "Hoof Hex", "type": "Beast", "dc": "7", "description": "A hex."}
@@ -80,7 +80,7 @@ class CompanionAbilityTests(RosterTestCase):
     def test_a_purchase_for_a_group_lists_each_kind_of_mount_it_rides_in_mounts(self):
         # The page lists a group's mount entries from `mounts`; a purchase answer without it left the group's last
         # read in place (a Pony bought for a group on a Warhorse showed no Pony entries until a re-read).
-        pony, footed = make_animal("Pony", "mount", cost=30, available_in_shop=True), Skill.objects.create(name="Sure Footed", type="Mount")  # fmt: skip
+        pony, footed = make_animal("Pony", "mount", cost=30, available_in_shop=True), Skill.objects.create(name="Sure Footed")  # fmt: skip
         teach(pony, skills=(footed,))
         group = make_unit(HENCHMEN, self.warband, members=("A", "B"))
         HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
@@ -96,7 +96,7 @@ class CompanionAbilityTests(RosterTestCase):
         self.assertEqual(response.data["mount"]["name"], "Warhorse")
 
     def test_a_group_on_mixed_mounts_lists_each_kind_once_in_mounts(self):
-        pony, footed = make_animal("Pony", "mount"), Skill.objects.create(name="Sure Footed", type="Mount")
+        pony, footed = make_animal("Pony", "mount"), Skill.objects.create(name="Sure Footed")
         teach(pony, skills=(footed,))
         group = make_unit(HENCHMEN, self.warband, members=("A", "B", "C"))
         for item in (self.horse, pony, self.horse):

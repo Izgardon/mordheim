@@ -88,15 +88,62 @@ def _fighters(log: TemplateLog) -> list[str]:
     return out
 
 
-def _groups(log: TemplateLog, known: set[str]) -> list[str]:
-    missing = sorted(group for group in log.fighters.groups if group not in known)
+def learns(group: dict[str, Any], type_slug: str, members: dict[str, set[str]]) -> bool:
+    """Whether a warband type learns from a skill group: it is for everyone or a line names the type or a warband
+    group holding it, and no exclusion names either."""
+
+    def names(line: dict[str, Any]) -> bool:
+        return line.get("type") == type_slug or type_slug in members.get(line.get("group") or "", set())
+
+    lines = group.get("warbands") or []
+    if any(names(line) for line in lines if line.get("excluded")):
+        return False
+    return bool(group.get("for_everyone")) or any(names(line) for line in lines if not line.get("excluded"))
+
+
+def skill_group_misses(
+    templates: list[dict[str, Any]], skill_groups: list[dict[str, Any]], warband_groups: list[dict[str, Any]]
+) -> tuple[dict[str, list[str]], dict[tuple[str, str], list[str]]]:
+    """The names in fighters' skill access that are no skill group (-> "template: fighter"), and the groups not for
+    everyone whose learners leave out a type the template serves ((group, type) -> fighters)."""
+    by_name = {group["name"]: group for group in skill_groups}
+    members = {group["slug"]: set(group["members"]) for group in warband_groups}
+    unknown: dict[str, list[str]] = {}
+    unlearned: dict[tuple[str, str], list[str]] = {}
+    for template in templates:
+        for fighter in template["fighters"]:
+            changed = [name for change in fighter["variant_changes"].values() for name in change.get("skill_types", [])]
+            for name in dict.fromkeys([*fighter["skill_types"], *changed]):
+                group = by_name.get(name)
+                if group is None:
+                    unknown.setdefault(name, []).append(f"{template['name']}: {fighter['name']}")
+                    continue
+                for link in template["types"]:
+                    if not learns(group, link["type"], members):
+                        unlearned.setdefault((name, link["type"]), []).append(f"{template['name']}: {fighter['name']}")
+    return unknown, unlearned
+
+
+def _groups(
+    templates: list[dict[str, Any]], skill_groups: list[dict[str, Any]], warbands: list[dict[str, Any]]
+) -> list[str]:
+    unknown, unlearned = skill_group_misses(templates, skill_groups, warbands)
     out = ["### Skill groups", ""]
-    if missing:
-        rows = [[group, len(log.fighters.groups[group]), log.fighters.groups[group][0]] for group in missing]
-        out += ["Names in fighters' skill access that aren't a skill group (or list) of ours yet:", ""]
-        out += _table(["Name", "Fighters", "First"], rows)
+    if unknown:
+        rows = [[name, ", ".join(fighters)] for name, fighters in sorted(unknown.items())]
+        out += ["Names in fighters' skill access that are no skill group:", "", *_table(["Name", "Fighters"], rows)]
     else:
-        out += ["Every name in the fighters' skill access is one of our skill groups.", ""]
+        out += ["Every name in the fighters' skill access is a skill group (out/skill-groups.json).", ""]
+    if unlearned:
+        rows = [[name, slug, ", ".join(fighters)] for (name, slug), fighters in sorted(unlearned.items())]
+        out += [
+            "Groups the fighters name whose learners (skill_group_learners) leave out a warband type the template"
+            " serves:",
+            "",
+            *_table(["Group", "Warband type", "Fighters"], rows),
+        ]
+    else:
+        out += ["Each of those groups is for everyone or names every warband type its fighters' template serves.", ""]
     return out
 
 
@@ -135,7 +182,12 @@ def _rules(log: TemplateLog) -> list[str]:
     return [*out[:2], *(f"- {line}" for line in out[2:]), ""]
 
 
-def render_templates(templates: list[dict[str, Any]], log: TemplateLog, known_groups: set[str]) -> str:
+def render_templates(
+    templates: list[dict[str, Any]],
+    log: TemplateLog,
+    skill_groups: list[dict[str, Any]],
+    warband_groups: list[dict[str, Any]],
+) -> str:
     lines = [
         "## Warband templates",
         "",
@@ -145,7 +197,7 @@ def render_templates(templates: list[dict[str, Any]], log: TemplateLog, known_gr
         *_counts(templates),
         *_lines(log),
         *_fighters(log),
-        *_groups(log, known_groups),
+        *_groups(templates, skill_groups, warband_groups),
         *_casters(log),
         *_rules(log),
     ]

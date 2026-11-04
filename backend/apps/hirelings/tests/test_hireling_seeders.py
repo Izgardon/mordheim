@@ -16,7 +16,7 @@ from apps.items.models import Item
 from apps.items.tests.catalogue_support import STATS
 from apps.items.tests.test_catalogue_characterisation_seeders import data_file, run
 from apps.races.models import Race
-from apps.skills.models import Skill
+from apps.skills.models import Skill, SkillGroup
 from apps.special.models import Special
 
 OGRE = {
@@ -59,7 +59,7 @@ class HirelingSeederTests(TestCase):
         cls.ogre_race = Race.objects.create(name="Ogre", **STATS)
         cls.sword = Item.objects.create(name="Sword", type="Weapon")
         cls.axe = Item.objects.create(name="Axe", type="Weapon")
-        cls.sprint = Skill.objects.create(name="Sprint", type="Speed")
+        cls.sprint = Skill.objects.create(name="Sprint")
 
     def test_a_hired_sword_is_seeded_with_its_links_kit_fees_race_and_note(self):
         with data_file([OGRE]) as path:
@@ -73,7 +73,9 @@ class HirelingSeederTests(TestCase):
         self.assertEqual(ogre.upkeep_fee, make_fee(note="1 piece of wyrdstone"))
         self.assertEqual((ogre.race_id, ogre.race_label), (self.ogre_race.id, "Ogre"))
         self.assertEqual(ogre.available_skill_types, ["Combat", "Hired Sword - Ogre Bodyguard"])
-        self.assertEqual(Skill.objects.get(name="Bully").type, "Hired Sword - Ogre Bodyguard")
+        own = SkillGroup.objects.get(name="Hired Sword - Ogre Bodyguard", campaign__isnull=True)
+        self.assertEqual(list(own.skill_links.values_list("skill__name", flat=True)), ["Bully"])  # his own group
+        self.assertTrue(own.for_everyone)
         self.assertEqual(list(ogre.item_links.order_by("item__name").values_list("item_id", "quantity")), [(self.axe.id, 1), (self.sword.id, 2)])  # fmt: skip
         self.assertEqual(list(ogre.skill_links.values_list("skill_id", flat=True)), [self.sprint.id])
         fear = Special.objects.get(name="Fear")

@@ -66,7 +66,7 @@ class SkillSummarySerializer(serializers.ModelSerializer):
 class SkillDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
-        fields = ("id", "name", "type")
+        fields = ("id", "name")
 
 
 class SpecialSummarySerializer(serializers.ModelSerializer):

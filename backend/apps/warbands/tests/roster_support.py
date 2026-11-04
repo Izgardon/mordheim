@@ -25,7 +25,7 @@ from apps.campaigns.models import (
 )
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.races.models import Race
-from apps.skills.models import Skill
+from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
 from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import Henchman, HenchmenGroup, Hero, Hireling, Warband, WarbandLog, WarbandTrade, WarbandType
@@ -248,6 +248,7 @@ class RosterTestCase(APITestCase):
     sword: Item
     axe: Item
     skills: list[Skill]
+    combat: SkillGroup  # holds the skills: the group his log names a learned one by
     specials: list[Special]
     spells: list[Spell]
     large: Special
@@ -299,7 +300,9 @@ class RosterTestCase(APITestCase):
         cls.sword = _catalogue_item("Sword", [10], sisters, parry)  # one price row: cost defaults to 10
         cls.axe = _catalogue_item("Axe", [5, 15], sisters, parry)  # two price rows: no default cost
 
-        cls.skills = [Skill.objects.create(name=f"Skill {n}", type="Combat") for n in range(2)]
+        cls.skills = [Skill.objects.create(name=f"Skill {n}") for n in range(2)]
+        cls.combat = SkillGroup.objects.create(name="Combat")  # the group his log names a learned skill by
+        SkillGroupSkill.objects.bulk_create([SkillGroupSkill(group=cls.combat, skill=skill) for skill in cls.skills])
         cls.specials = [Special.objects.create(name=f"Special {n}", type="Ability") for n in range(2)]
         cls.spells = [Spell.objects.create(name=f"Spell {n}", type="Lesser Magic", dc="7") for n in range(2)]
         cls.large = Special.objects.create(name="Large", type="Trait")
