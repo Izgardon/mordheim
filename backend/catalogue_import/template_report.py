@@ -160,6 +160,20 @@ def _casters(log: TemplateLog) -> list[str]:
     return out
 
 
+def _upgrades(log: TemplateLog) -> list[str]:
+    """What the import set for each upgrade group (template_answers.UPGRADE_TERMS), the entries made warband rules,
+    and the variants' own lines and skills."""
+    upgrades = log.upgrades
+    out = ["### Upgrades and variants", "", *_table(["Page", "Group", "Set"], upgrades.terms)]
+    out += [f"{page}: {name} is a warband rule, not an upgrade." for page, name in upgrades.as_rules]
+    out += [f"{page}: no terms for the group {group}." for page, group in upgrades.no_terms]
+    out += [f"{page}: {owner} names {key}, no fighter of the page." for page, owner, key in upgrades.unknown_keys]
+    lines = [[page, variant, name, line] for page, variant, name, line in log.lists.variant_lines]
+    out += ["", "Lines for one variant only:", "", *_table(["Page", "Variant", "List", "Line"], lines)]
+    out += [f"{page}: every {variant} hero has {skill}." for page, variant, skill in log.hero_skills]
+    return [*out, ""]
+
+
 def _rules(log: TemplateLog) -> list[str]:
     lists = log.lists
     out = ["### Warband rules", "", *NOT_APPLIED]
@@ -199,6 +213,7 @@ def render_templates(
         *_fighters(log),
         *_groups(templates, skill_groups, warband_groups),
         *_casters(log),
+        *_upgrades(log),
         *_rules(log),
     ]
     return "\n".join(lines).rstrip() + "\n"

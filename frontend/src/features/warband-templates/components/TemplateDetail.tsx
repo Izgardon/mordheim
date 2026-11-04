@@ -64,7 +64,7 @@ export default function TemplateDetail({
       isMobile={isMobile}
       aside={
         <>
-          <TemplateLists template={template} />
+          <TemplateLists template={template} variant={variant} />
           <TemplateUpgrades upgrades={template.upgrades} />
         </>
       }

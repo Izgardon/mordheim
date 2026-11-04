@@ -94,7 +94,7 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                "Special": 745,  # 185, the dramatis personae's own rules (next step 12) and the warband templates' 464
+                "Special": 744,  # 185, the dramatis personae's own rules (next step 12) and the warband templates' 463
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -143,9 +143,9 @@ class SeedAllTests(TestCase):
                 "WarbandTemplateType": 56,  # 57 types, but Norse Explorers BTB waits for its PDF
                 "TemplateFighter": 333,
                 "TemplateList": 120,  # mordheimer's 113, the Pit Fighters' four for their three, and 6 special
-                "TemplateListItem": 1338,
-                "TemplateRule": 156,  # 150, the Pit Fighters' two style notes and four upgrade groups' texts
-                "TemplateUpgrade": 24,
+                "TemplateListItem": 1341,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
+                "TemplateRule": 157,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons
+                "TemplateUpgrade": 23,  # 24, less Poisoned Weapons, a warband rule (phase 3)
             },
         )
         mercenaries = WarbandTemplate.objects.get(slug="mercenaries")

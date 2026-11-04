@@ -3,8 +3,9 @@ group, camp's Recruit for a new group) is filled from that fighter of the warban
 
 What the fighter gives goes under what the recruit sent, so the dialog's name, type, race, cost and starting XP win:
 his type (the fighter's name), race, profile (written values as written), skill groups, spell lores, caster, Large,
-leader, rules (his specials), starting XP, and for a group its size, gains-XP (no level-ups) and promotable. The unit
-remembers the key; nothing links it to the template after, so a later template edit touches nothing on the roster.
+leader, rules (his specials), the skills his variant gives him (the Hung's heroes' Ride [Animal]), starting XP, and
+for a group its size, gains-XP (no level-ups) and promotable. The unit remembers the key; nothing links it to the
+template after, so a later template edit touches nothing on the roster.
 
 Every hire of a fighter whose lists have the "1st free" Dagger gets one free, before and after the first battle (a
 group: every member, as its loadout, so a member who joins later carries it at no cost). A fighter with no list gets
@@ -20,7 +21,7 @@ from apps.warbands.units.errors import FieldErrors
 from apps.warbands.utils.stats import stat_inputs
 
 from ..models import HENCHMAN, HERO, TemplateFighter, TemplateFighterSpecial, TemplateListItem
-from .resolve import apply_variant, templates_for_type, warband_variant
+from .resolve import apply_variant, start_skills, templates_for_type, warband_variant
 
 if TYPE_CHECKING:
     from apps.warbands.units.kinds import UnitKindSpec
@@ -41,6 +42,9 @@ def unit_body(kind_key: str, fighter: TemplateFighter) -> dict[str, Any]:
         **stat_inputs(fighter),
         "special_ids": [link.special_id for link in fighter.special_links.all()],
     }
+    skills = [int(entry["id"]) for entry in start_skills(fighter) if entry.get("id")]
+    if skills:
+        body["skill_ids"] = skills
     if kind_key == "hero":
         return {
             **body,
@@ -55,10 +59,13 @@ def unit_body(kind_key: str, fighter: TemplateFighter) -> dict[str, Any]:
     return {**body, **group}
 
 
-def free_items(fighters: list[TemplateFighter]) -> dict[str, int]:
-    """Fighter key -> the item a hire of his gets free: the first "1st free" line of his lists (one query)."""
+def free_items(fighters: list[TemplateFighter], variant: str) -> dict[str, int]:
+    """Fighter key -> the item a hire of his gets free: the first "1st free" line of his lists for the variant (one
+    query)."""
     lines = (
-        TemplateListItem.objects.filter(first_free=True, equipment_list__fighter_links__fighter__in=fighters)
+        TemplateListItem.objects.filter(
+            first_free=True, equipment_list__fighter_links__fighter__in=fighters, variant__in=("", variant)
+        )
         .order_by("equipment_list__position", "position", "id")
         .values_list("equipment_list__fighter_links__fighter__key", "item_id")
     )
@@ -84,7 +91,7 @@ def fill_from_template(
     found = template.first()
     variant = warband_variant(warband, found) if found is not None else ""
     fighters = {row.key: apply_variant(row, variant) for row in found.fighters.all()} if found is not None else {}
-    free = free_items(list(fighters.values())) if fighters else {}
+    free = free_items(list(fighters.values()), variant) if fighters else {}
     given: dict[int, int] = {}
     for index, entry in keyed:
         fighter = fighters.get(str(entry["fighter_key"]))

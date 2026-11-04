@@ -42,6 +42,7 @@ const line = (id: number, name: string, cost: number | null, extra: Partial<Temp
     warband_max: null,
     held: null,
     note: "",
+    variant: "",
     ...extra,
   }) satisfies TemplateLine;
 

@@ -2,7 +2,7 @@ import { RuleBlock, TagList } from "@/features/reference/ReferenceDetail";
 import { ProfileStrip } from "@/features/reference/profile";
 import type { SpecialKind } from "@/components/ui/game-icons";
 
-import { countLabel, groupLabel, skillsFor, spellLabel } from "../template-view";
+import { countLabel, groupLabel, skillsFor, spellLabel, startSkillsFor } from "../template-view";
 import type { TemplateFighter, WarbandTemplate } from "../types/template-types";
 
 const CAPTION = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
@@ -64,6 +64,7 @@ export default function TemplateFighterCard({
       <p className="m-0 text-xs text-muted-foreground">{facts(fighter).join(" · ")}</p>
       <ProfileStrip profile={{ ...fighter, armour_save: null }} />
       <Tags label="Skills" names={skillsFor(fighter, variant)} />
+      <Tags label="Starts with" names={startSkillsFor(fighter, variant)} />
       <Tags label="Spells" names={fighter.spell_types.map(spellLabel)} />
       <Tags label="Lists" names={lists} />
       {fighter.rules.length ? (

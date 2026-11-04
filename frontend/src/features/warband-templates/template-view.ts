@@ -96,6 +96,16 @@ export function inVariant(fighter: TemplateFighter, variant: string): TemplateFi
 export const skillsFor = (fighter: TemplateFighter, variant: string) =>
   fighter.variant_changes[variant]?.skill_types ?? fighter.skill_types;
 
+/** The skills the variant gives him from the start: the Hung's heroes' Ride [Animal]. */
+export const startSkillsFor = (fighter: TemplateFighter, variant: string) =>
+  (fighter.variant_changes[variant]?.skills ?? []).map((skill) => skill.name);
+
+/** A list's lines in the variant: every variant's and its own (the Kurgan's bows). */
+export const linesFor = <Line extends Pick<TemplateLine, "variant">>(
+  lines: Line[],
+  variant: string
+) => lines.filter((line) => !line.variant || line.variant === variant);
+
 /** "1", "0–2", "any" or "2+": how many of him a warband may have. */
 export function countLabel(fighter: Pick<TemplateFighter, "min_count" | "max_count">) {
   const { min_count: min, max_count: max } = fighter;

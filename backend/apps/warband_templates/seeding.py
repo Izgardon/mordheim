@@ -2,7 +2,7 @@
 by slug with its child rows written afresh, its fighters' own rules as specials typed by the template ("Warband -
 Mercenaries", owner kind warband) and the book's Large, Wizard and Priest where they are ours.
 
-Settings, warband types, races, items and specials are found in the book (seed_settings, seed_warband_types,
+Settings, warband types, races, items, skills and specials are found in the book (seed_settings, seed_warband_types,
 seed_races, seed_items, seed_bestiary and seed_spells_and_special run first); a name the database lacks stops the
 run. A book template the import drops is archived, and so is a template's own special no template holds any more.
 """
@@ -19,6 +19,7 @@ from apps.campaigns.models import CampaignType
 from apps.core.seeding import IMPORT_OUT
 from apps.items.models import Item
 from apps.races.models import Race
+from apps.skills.models import Skill
 from apps.special.kinds import WARBAND, book_kind
 from apps.special.models import Special
 from apps.warbands.models import WarbandType
@@ -54,10 +55,10 @@ FIGHTER_FIELDS = (
     "is_leader",
     "caster",
     "large",
-    "variant_changes",
     "fixed_kit",
 )
-LINE_FIELDS = ("shown_as", "cost", "cost_note", "first_free", "brace_cost", "who", "warband_max", "note")
+LINE_FIELDS = ("shown_as", "cost", "cost_note", "first_free", "brace_cost", "who", "warband_max", "note", "variant")
+UPGRADE_FIELDS = ("group", "cost", "cost_note", "note", "who", "max_per_fighter", "later_double", "at_recruit")
 
 
 def read_templates(out: Path = IMPORT_OUT) -> list[dict[str, Any]]:
@@ -99,6 +100,7 @@ class BookRows:
             (item.name, item.variant): item.pk for item in Item.objects.filter(**book, archived_at__isnull=True)
         }
         self.specials = {(row.name, row.type): row.pk for row in Special.objects.filter(**book)}
+        self.skills = dict(Skill.objects.filter(**book).values_list("name", "id"))
         self.seen_specials: set[int] = set()
 
     @staticmethod
@@ -118,6 +120,16 @@ class BookRows:
 
     def item(self, ref: Mapping[str, str], owner: str) -> int:
         return self._found(self.items, (ref["name"], ref.get("variant", "")), "item", owner)
+
+    def variant_changes(self, changes: Mapping[str, Any], owner: str) -> dict[str, Any]:
+        """A fighter's `variant_changes` as stored: the skills a variant gives him, named in the import, linked to the
+        book's skill of that name (`{"id", "name"}`)."""
+        stored: dict[str, Any] = {}
+        for variant, change in changes.items():
+            skills = change.get("skills")
+            linked = [{"id": self._found(self.skills, name, "skill", owner), "name": name} for name in skills or []]
+            stored[variant] = {**change, "skills": linked} if skills else dict(change)
+        return stored
 
     def special(self, entry: Mapping[str, str], owner: str) -> int:
         """A template's own special (upserted with its text) or a book one it reuses (Large, Wizard, Priest)."""
@@ -170,11 +182,8 @@ def write_template(entry: Mapping[str, Any], book: BookRows) -> WarbandTemplate:
         TemplateUpgrade(
             template=template,
             position=n,
-            group=row["group"],
             special_id=book.special(row["special"], name),
-            cost=row["cost"],
-            cost_note=row["cost_note"],
-            note=row["note"],
+            **{field: row[field] for field in UPGRADE_FIELDS},
         )
         for n, row in enumerate(entry["upgrades"])
     )
@@ -213,6 +222,7 @@ def write_fighters(
             position=n,
             race_id=book.race(row["race"], f"{owner}, {row['name']}"),
             **{field: row[field] for field in FIGHTER_FIELDS},
+            variant_changes=book.variant_changes(row["variant_changes"], f"{owner}, {row['name']}"),
             **stats_of(row["stats"], f"{owner}, {row['name']}"),
         )
         for n, row in enumerate(entries)

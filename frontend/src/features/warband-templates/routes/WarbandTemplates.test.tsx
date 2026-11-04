@@ -108,6 +108,7 @@ const MERCENARIES: WarbandTemplate = {
           who: {},
           warband_max: null,
           note: "",
+          variant: "",
         },
         {
           id: 51,
@@ -120,6 +121,20 @@ const MERCENARIES: WarbandTemplate = {
           who: { heroes: true },
           warband_max: null,
           note: "",
+          variant: "",
+        },
+        {
+          id: 52,
+          item: { id: 5, name: "Halberd", variant: "", type: "Weapon" },
+          shown_as: "",
+          cost: 10,
+          cost_note: "",
+          first_free: false,
+          brace_cost: null,
+          who: {},
+          warband_max: null,
+          note: "",
+          variant: "middenheim",
         },
       ],
     },
@@ -147,7 +162,12 @@ const MERCENARIES: WarbandTemplate = {
       is_leader: false,
       caster: "No",
       large: false,
-      variant_changes: { middenheim: { skill_types: ["Combat", "Strength", "Speed"] } },
+      variant_changes: {
+        middenheim: {
+          skill_types: ["Combat", "Strength", "Speed"],
+          skills: [{ id: 2, name: "Ride [Animal]" }],
+        },
+      },
       fixed_kit: "",
       lists: ["mercenary-equipment"],
       rules: [],
@@ -200,6 +220,7 @@ describe("The Warbands page", () => {
       "35 gc · 0–2"
     );
     expect(tags("Skills")).toBe("SkillsCombatStrengthSpeed");
+    expect(tags("Starts with")).toBe("Starts withRide [Animal]");
     expect(screen.getByRole("button", { name: "Middenheim" })).toHaveAttribute(
       "aria-pressed",
       "true"
@@ -210,6 +231,9 @@ describe("The Warbands page", () => {
 
     await user.click(screen.getByRole("button", { name: "Reikland" }));
     expect(tags("Skills")).toBe("SkillsCombatShootingStrength");
+    expect(
+      within(screen.getByRole("article", { name: "Champion" })).queryByText("Starts with")
+    ).toBeNull();
     await user.click(screen.getByRole("button", { name: "Reiklander Special rules" }));
     expect(
       await screen.findByRole("article", { name: "Reiklander Special rules" })
@@ -227,5 +251,15 @@ describe("The Warbands page", () => {
         .getAllByRole("listitem")
         .map((line) => line.textContent)
     ).toEqual(["Dagger1st free / 2 gc", "Pistol15 gc, brace 30Heroes only"]);
+  });
+
+  it("shows a variant's own line only in that variant", async () => {
+    const user = setupUser();
+    renderApp(PAGE);
+    await user.click(await row("Middenheimers"));
+    const list = await screen.findByRole("list", { name: "Mercenary Equipment" });
+    expect(within(list).getByText("Halberd")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Reikland" }));
+    expect(within(list).queryByText("Halberd")).toBeNull();
   });
 });

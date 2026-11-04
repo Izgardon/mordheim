@@ -85,6 +85,18 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
         self.assertEqual(self.fighter(body, "captain")["off_lines"], [])
         self.assertEqual(warriors["free_item"], {"id": self.dagger.id, "name": "Dagger"})
 
+    def test_a_line_for_one_variant_is_read_only_by_that_variant(self) -> None:
+        bow = make_entry(ITEMS, "Bow", cost=10)
+        line = TemplateListItem.objects.create(
+            equipment_list=self.made.kit, item=bow, cost=10, warband_max=1, variant="middenheim"
+        )
+        names = [row["item"]["name"] for row in self.read()["template"]["lists"][0]["lines"]]
+        self.assertNotIn("Bow", names)
+        self.warband.template_variant = "middenheim"
+        self.warband.save()
+        lines = {row["item"]["name"]: row for row in self.read()["template"]["lists"][0]["lines"]}
+        self.assertEqual((lines["Bow"]["id"], lines["Bow"]["held"]), (line.id, 0))
+
     def test_it_counts_the_rules_the_warband_lacks_and_closes_list_prices_after_the_first_fight(self) -> None:
         WarbandRule.objects.create(warband=self.warband, title=" hard bargains ")
         body = self.read()

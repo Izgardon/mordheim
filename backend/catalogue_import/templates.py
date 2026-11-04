@@ -10,11 +10,12 @@ from typing import Any
 from catalogue_import.common import load_json, slugify
 from catalogue_import.snapshot import Snapshot
 from catalogue_import.sources import BACKEND
-from catalogue_import.template_answers import SIZES, TEMPLATE_TYPES, VARIANT_TERMS, VARIANTS
+from catalogue_import.template_answers import SIZES, TEMPLATE_TYPES, VARIANT_HERO_SKILLS, VARIANT_TERMS, VARIANTS
 from catalogue_import.template_fighters import FighterLog, Lores, build_fighter
 from catalogue_import.template_lists import ItemIndex
-from catalogue_import.template_parts import ListLog, build_lists, build_rules, build_upgrades
+from catalogue_import.template_parts import ListLog, build_lists, build_rules
 from catalogue_import.template_text import clean_rule
+from catalogue_import.template_upgrades import UpgradeLog, build_upgrades
 from catalogue_import.warbands import Resolver
 
 # words a rule written for one fighter or another shares ("Pursuers have", "An Ogre has")
@@ -25,6 +26,8 @@ FILLER = frozenset({"a", "an", "the", "has", "have", "is", "are", "and", "so", "
 class TemplateLog:
     fighters: FighterLog = field(default_factory=FighterLog)
     lists: ListLog = field(default_factory=ListLog)
+    upgrades: UpgradeLog = field(default_factory=UpgradeLog)
+    hero_skills: list[tuple[str, str, str]] = field(default_factory=list)  # page, variant, a skill every hero gets
     no_types: list[str] = field(default_factory=list)  # pages that map to no type
     shared_types: list[tuple[str, list[str]]] = field(default_factory=list)  # a type two pages map to
     named_apart: list[tuple[str, str]] = field(default_factory=list)  # page, a rule worded apart for one fighter
@@ -68,6 +71,16 @@ def _specials_once(fighters: list[dict[str, Any]], upgrades: list[dict[str, Any]
             log.named_apart.append((slug, special["name"]))
 
 
+def hero_skills(slug: str, fighters: list[dict[str, Any]], log: TemplateLog) -> None:
+    """The skills a variant gives every hero (VARIANT_HERO_SKILLS: the Hung's Ride Warhorse), into each hero's
+    `variant_changes` by name; the seeder links each to our skill."""
+    for variant, names in VARIANT_HERO_SKILLS.get(slug, {}).items():
+        for fighter in fighters:
+            if fighter["kind"] == "hero":
+                fighter["variant_changes"].setdefault(variant, {})["skills"] = list(names)
+        log.hero_skills += [(slug, variant, name) for name in names]
+
+
 def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: TemplateLog) -> dict[str, Any] | None:
     page = snapshot.pages[slug]
     types = page_types(slug, page, context["types"], context["resolver"])
@@ -83,7 +96,8 @@ def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: 
         build_fighter(slug, fighter, fighter_context, list_keys.get(fighter["name"], []), log.fighters)
         for fighter in page["fighters"]
     ]
-    upgrades, upgrade_rules = build_upgrades(page, owner)
+    hero_skills(slug, fighters, log)
+    upgrades, upgrade_rules = build_upgrades(slug, page, owner, log.upgrades)
     _specials_once(fighters, upgrades, slug, log)
     rules = build_rules(slug, page, variants, log.lists) + upgrade_rules
     book = page.get("warbandRules") or {}

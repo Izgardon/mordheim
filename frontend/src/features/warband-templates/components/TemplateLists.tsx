@@ -1,6 +1,6 @@
 import { DetailSection } from "@/features/reference/ReferenceDetail";
 
-import { lineName, priceLabel, whoLabel } from "../template-view";
+import { lineName, linesFor, priceLabel, whoLabel } from "../template-view";
 import type { TemplateLine, WarbandTemplate } from "../types/template-types";
 
 /** Who may take it, the most a warband may have and the book's note: "Gaoler only · max 1". */
@@ -12,15 +12,21 @@ function lineNotes(line: TemplateLine, template: WarbandTemplate) {
   ].filter(Boolean);
 }
 
-/** The template's equipment lists: each with its note and its lines at their list prices. */
-export default function TemplateLists({ template }: { template: WarbandTemplate }) {
+/** The template's equipment lists: each with its note and its lines in the variant at their list prices. */
+export default function TemplateLists({
+  template,
+  variant,
+}: {
+  template: WarbandTemplate;
+  variant: string;
+}) {
   return (
     <>
       {template.lists.map((list) => (
         <DetailSection key={list.id} title={list.name}>
           {list.note ? <p className="m-0 text-xs text-text2">{list.note}</p> : null}
           <ul aria-label={list.name} className="m-0 flex list-none flex-col p-0">
-            {list.lines.map((line) => {
+            {linesFor(list.lines, variant).map((line) => {
               const notes = lineNotes(line, template);
               return (
                 <li

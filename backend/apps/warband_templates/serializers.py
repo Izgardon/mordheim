@@ -111,6 +111,7 @@ class TemplateLineSerializer(serializers.ModelSerializer):
             "who",
             "warband_max",
             "note",
+            "variant",
         )
 
     def get_item(self, line: TemplateListItem) -> dict[str, Any]:
@@ -175,7 +176,19 @@ class TemplateUpgradeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TemplateUpgrade
-        fields = ("id", "group", "name", "description", "cost", "cost_note", "note")
+        fields = (
+            "id",
+            "group",
+            "name",
+            "description",
+            "cost",
+            "cost_note",
+            "note",
+            "who",
+            "max_per_fighter",
+            "later_double",
+            "at_recruit",
+        )
 
 
 class WarbandTemplateDetailSerializer(WarbandTemplateSerializer):

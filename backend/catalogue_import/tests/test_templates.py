@@ -16,8 +16,10 @@ from catalogue_import.template_fighters import (
     variant_numbers,
 )
 from catalogue_import.template_lists import Fighter, ItemIndex, line_price, read_note
-from catalogue_import.template_parts import ListLog, build_lists, build_rules, build_upgrades
+from catalogue_import.template_parts import ListLog, build_lists, build_rules
 from catalogue_import.template_text import clean_rule, clean_title
+from catalogue_import.template_upgrades import UpgradeLog, build_upgrades
+from catalogue_import.templates import TemplateLog, hero_skills
 
 ITEMS = [
     {"name": "Dagger", "variant": "", "slug": "dagger", "tags": ["dagger", "daggers"]},
@@ -271,7 +273,7 @@ class PartsTests(SimpleTestCase):
                 "items": [{"heading": "daemon soul", "cost": "20", "ruleFull": "A 4+ save."}],
             }
         ]
-        upgrades, rules = build_upgrades(warband_page(mutations=mutations), "Warband - Cult")
+        upgrades, rules = build_upgrades("mercenaries", warband_page(mutations=mutations), "Warband - Cult")
         self.assertEqual(
             upgrades,
             [
@@ -281,9 +283,60 @@ class PartsTests(SimpleTestCase):
                     "cost": 20,
                     "cost_note": "",
                     "note": "",
+                    "who": {},
+                    "max_per_fighter": None,
+                    "later_double": False,
+                    "at_recruit": False,
                 }
             ],
         )
         self.assertEqual(
             rules, [{"title": "Mutations", "description": "Bought when recruited.", "variant": "", "type": ""}]
         )
+
+    def test_williams_upgrade_terms_and_an_entry_that_is_a_rule(self) -> None:
+        markings = {
+            "mutationName": "Sacred markings",
+            "mutationflavour": "",
+            "items": [
+                {"heading": "Oversized Jaws", "cost": "40", "ruleFull": "Bites. (Saurus Only)"},
+                {"heading": "Mark of the Old Ones", "cost": "50", "ruleFull": "Re-rolls."},
+            ],
+        }
+        equipment = {
+            "mutationName": "New Equipment",
+            "mutationflavour": "",
+            "items": [{"heading": "Poisoned Weapons", "cost": "", "ruleFull": "Skinks brew poisons."}],
+        }
+        log = UpgradeLog()
+        page = warband_page(mutations=[equipment, markings])
+        upgrades, rules = build_upgrades("lizardmen", page, "Warband - Lizardmen", log)
+        terms = [(row["who"], row["max_per_fighter"], row["later_double"], row["at_recruit"]) for row in upgrades]
+        self.assertEqual(
+            terms, [({"fighters": ["saurus-totem-warrior"]}, 1, False, True), ({"heroes": True}, 1, False, True)]
+        )
+        self.assertEqual(rules, [{"title": "Poisoned Weapons", "description": "Skinks brew poisons.", "variant": "", "type": ""}])  # fmt: skip
+        self.assertEqual(log.as_rules, [("lizardmen", "Poisoned Weapons")])
+        self.assertEqual(log.unknown_keys, [("lizardmen", "Oversized Jaws", "saurus-totem-warrior")])
+        marks = {"mutationName": "Mark of the Dark Gods", "items": [{"heading": "Mark of Tchar", "cost": ""}]}
+        [mark], _rules = build_upgrades("marauders-of-chaos", warband_page(mutations=[marks]), "Warband - Marauders")
+        self.assertEqual((mark["cost"], mark["max_per_fighter"], mark["at_recruit"]), (0, 1, False))
+
+    def test_a_variants_own_lines_and_the_skills_it_gives_every_hero(self) -> None:
+        items = [*ITEMS, {"name": "Bow", "variant": "", "slug": "bow", "tags": ["bow"]}]
+        page = warband_page(
+            name="Marauders of Chaos",
+            equipmentLists=[
+                {"id": "hero-equipment-list", "title": "Heroes", "items": [{"name": "dagger", "cost": {"cost": 2}}]}
+            ],
+        )
+        log = ListLog()
+        lists, _keys = build_lists("marauders-of-chaos", page, ItemIndex(items), log)
+        lines = [(line["item"]["name"], line["cost"], line["variant"]) for line in lists[0]["lines"]]
+        self.assertEqual(lines, [("Dagger", 2, ""), ("Bow", 10, "kurgan")])
+        self.assertIn(("marauders-of-chaos", "henchmen-equipment-list", "Bow"), log.unmatched)  # no such list here
+        self.assertIn(("marauders-of-chaos", "hero-equipment-list", "Warhorse"), log.unmatched)
+        fighters = [{"kind": "hero", "variant_changes": {}}, {"kind": "henchman", "variant_changes": {}}]
+        template_log = TemplateLog()
+        hero_skills("marauders-of-chaos", fighters, template_log)
+        self.assertEqual([row["variant_changes"] for row in fighters], [{"hung": {"skills": ["Ride [Animal]"]}}, {}])

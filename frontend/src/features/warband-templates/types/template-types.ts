@@ -15,12 +15,17 @@ export type TemplateType = {
   in_play: boolean | null;
 };
 
-/** A subfaction, with its own starting gold or most warriors where its rules give them (Marienburg's 600 gc). */
+/**
+ * A subfaction, with its own starting gold, most warriors and bonus to find rare items where its
+ * rules give them (Marienburg's 600 gc and +1; the Kurgan's -1, except for the items named).
+ */
 export type TemplateVariant = {
   key: string;
   name: string;
   starting_gold?: number;
   max_models?: number;
+  rare_bonus?: number;
+  rare_bonus_except?: string[];
 };
 
 /** `GET warband-templates/?campaign_id=`: a template and the warband types it serves. */
@@ -64,6 +69,8 @@ export type TemplateLine = {
   who: TemplateWho;
   warband_max: number | null;
   note: string;
+  /** "" for every variant, else the one it is for (the Kurgan's bows). */
+  variant: string;
 };
 
 export type TemplateList = {
@@ -78,11 +85,15 @@ export type TemplateSpecial = { id: number; name: string; kind: string; descript
 
 export type TemplateSpellType = { name: string; note: string };
 
-/** What a variant changes on a fighter: Middenheim's skill table and Strength 4, the Kurgan's any warhounds. */
+/**
+ * What a variant changes on a fighter: Middenheim's skill table and Strength 4, the Kurgan's any
+ * warhounds, the Hung's heroes' Ride [Animal] (`skills`, which he has from the start).
+ */
 export type VariantChange = {
   skill_types?: string[];
   stats?: Partial<Record<StatKey, number | string>>;
   max_count?: number | null;
+  skills?: { id: number; name: string }[];
 };
 
 export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
@@ -122,6 +133,14 @@ export type TemplateUpgrade = {
   cost: number | null;
   cost_note: string;
   note: string;
+  /** Who may take it, as a list line's `who`. */
+  who: TemplateWho;
+  /** The most of its group one fighter may have (null: any). */
+  max_per_fighter: number | null;
+  /** The second and later of its group cost double. */
+  later_double: boolean;
+  /** Bought only when he is recruited. */
+  at_recruit: boolean;
 };
 
 /** `GET warband-templates/:id/`: the whole template. */

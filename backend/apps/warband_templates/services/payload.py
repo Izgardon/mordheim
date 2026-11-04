@@ -25,6 +25,7 @@ from .resolve import (
     template_size,
     templates_for_type,
     variant_keys,
+    variant_lines,
     variant_rules,
     warband_variant,
 )
@@ -60,13 +61,13 @@ def warband_template(warband: Warband) -> dict[str, Any]:
     if template is None:
         return {"template": None, "variant": warband.template_variant, "list_prices_open": open_now}
     variant = warband_variant(warband, template)
-    lists = {row.pk: row for row in template.lists.all()}
-    limited = {line.item_id for row in lists.values() for line in row.lines.all() if line.warband_max}
+    lines = {row.pk: variant_lines(row.lines.all(), variant) for row in template.lists.all()}
+    limited = {line.item_id for found in lines.values() for line in found if line.warband_max}
     context = {
         "variant": variant,
         "warband_type_id": warband.warband_type_id,
         "fighters": {fighter.key: apply_variant(fighter, variant) for fighter in template.fighters.all()},
-        "lists": lists,
+        "lines": lines,
         "holdings": fighter_holdings(warband),
         "held": held_items(warband, limited),
         "missing_rules": _missing_rules(warband, template, variant),

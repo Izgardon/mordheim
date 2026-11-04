@@ -125,8 +125,9 @@ class TemplateFighter(WrittenStatBlock):
     `group_min` to `group_max`. `cost` is per model and `starting_xp` a hero's or a group's. `skill_types` are skill
     group names ("Combat", "Skaven"); `spell_types` the lores he casts from, `[{"name", "note"}]` ("with the Mark of
     Tchar the Eagle"). `variant_changes` holds, by variant key, what differs: his skill groups, and his profile as
-    `stats` written as the book writes them (`{"middenheim": {"skill_types": [...], "stats": {"strength": 4}}}`);
-    `fixed_kit` what an animal carries ("None")."""
+    `stats` written as the book writes them (`{"middenheim": {"skill_types": [...], "stats": {"strength": 4}}}`), and
+    skills he has from the start as `skills`, `[{"id", "name"}]` (the Hung's heroes' Ride [Animal]); `fixed_kit` what
+    an animal carries ("None")."""
 
     template = models.ForeignKey(WarbandTemplate, related_name="fighters", on_delete=models.CASCADE)
     key = models.SlugField(max_length=80)
@@ -207,7 +208,7 @@ class TemplateListItem(models.Model):
     the list's own name for the item ("Jambiya" for a Dagger). `first_free`: the "1st free" dagger. `who` narrows who
     may take it, by fighter key: `{}` everyone, `{"heroes": true}`, `{"fighters": [...]}` (with or without heroes),
     `{"except": [...]}`; others still may, with a warning. `warband_max`: at most this many in the warband (a
-    warning)."""
+    warning). `variant`: blank for every variant, else the one it is for (the Kurgan's bows)."""
 
     equipment_list = models.ForeignKey(TemplateList, related_name="lines", on_delete=models.CASCADE)
     position = models.PositiveSmallIntegerField(default=0)
@@ -220,6 +221,7 @@ class TemplateListItem(models.Model):
     who = models.JSONField(default=dict, blank=True)
     warband_max = models.PositiveSmallIntegerField(null=True, blank=True)
     note = models.CharField(max_length=300, blank=True, default="")
+    variant = models.CharField(max_length=40, blank=True, default="")
 
     class Meta:
         db_table = "template_list_item"
@@ -245,8 +247,11 @@ class TemplateFighterList(models.Model):
 
 
 class TemplateUpgrade(models.Model):
-    """A paid extra bought onto a fighter (a mutation, a Mark of Chaos): its group ("Mutations"), the special it
-    gives, its cost (null: none in the book) and a note on who takes it."""
+    """A paid extra bought onto a hero (a mutation, a Mark of Chaos; the templates plan, phase 3): its group
+    ("Mutations"), the special it gives, its cost (null: none in the book) and a note. `who` is who may take it, in a
+    list line's shape (others still may, with a warning); the rest hold for its group on one fighter: at most
+    `max_per_fighter` of it (a warning; null: any number), the second and later at double (`later_double`), and bought
+    only when he is recruited (`at_recruit`, a warning in the store)."""
 
     template = models.ForeignKey(WarbandTemplate, related_name="upgrades", on_delete=models.CASCADE)
     position = models.PositiveSmallIntegerField(default=0)
@@ -255,6 +260,10 @@ class TemplateUpgrade(models.Model):
     cost = models.PositiveIntegerField(null=True, blank=True)
     cost_note = models.CharField(max_length=120, blank=True, default="")
     note = models.CharField(max_length=300, blank=True, default="")
+    who = models.JSONField(default=dict, blank=True)
+    max_per_fighter = models.PositiveSmallIntegerField(null=True, blank=True)
+    later_double = models.BooleanField(default=False)
+    at_recruit = models.BooleanField(default=False)
 
     class Meta:
         db_table = "template_upgrade"

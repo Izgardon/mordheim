@@ -15,6 +15,7 @@ from django.test import TestCase
 from apps.campaigns.models import CampaignType
 from apps.items.models import Item
 from apps.races.models import Race
+from apps.skills.models import Skill
 from apps.special.kinds import WARBAND
 from apps.special.models import Special
 from apps.warband_templates.models import TemplateFighter, TemplateListItem, WarbandTemplate
@@ -54,7 +55,7 @@ def fighter(**fields: Any) -> dict[str, Any]:
         "is_leader": True,
         "caster": "Wizard",
         "large": False,
-        "variant_changes": {"middenheim": {"skill_types": ["Combat"]}},
+        "variant_changes": {"middenheim": {"skill_types": ["Combat"], "skills": ["Ride [Animal]"]}},
         "fixed_kit": "",
         "lists": ["kit"],
         "specials": [
@@ -76,6 +77,7 @@ def template(**fields: Any) -> dict[str, Any]:
         "who": {"heroes": True},
         "warband_max": None,
         "note": "",
+        "variant": "",
     }
     return {
         "slug": "mercenaries",
@@ -100,6 +102,10 @@ def template(**fields: Any) -> dict[str, Any]:
                 "cost": 35,
                 "cost_note": "",
                 "note": "",
+                "who": {"fighters": ["captain"]},
+                "max_per_fighter": 1,
+                "later_double": True,
+                "at_recruit": True,
             }
         ],
         **fields,
@@ -120,6 +126,7 @@ class SeedWarbandTemplatesTests(TestCase):
     human: Race
     dagger: Item
     large: Special
+    ride: Skill
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -130,6 +137,7 @@ class SeedWarbandTemplatesTests(TestCase):
         cls.human = Race.objects.create(name="Human", **{key: 4 for key in PROFILE})
         cls.dagger = Item.objects.create(name="Dagger", type="Weapon", campaign_type=mordheim)
         cls.large = Special.objects.create(name="Large", type="Trait")
+        cls.ride = Skill.objects.create(name="Ride [Animal]")
 
     def test_a_template_is_written_with_its_types_rules_lists_fighters_and_upgrades(self) -> None:
         output = seed(template())
@@ -156,7 +164,15 @@ class SeedWarbandTemplatesTests(TestCase):
         rules = {link.special.name: link.special for link in captain.special_links.select_related("special")}
         self.assertEqual(rules["Large"].id, self.large.id)
         self.assertEqual((rules["Leader"].owner_kind, rules["Leader"].description), (WARBAND, "Leads."))
-        self.assertEqual(made.upgrades.get().special.name, "Tentacle")
+        upgrade = made.upgrades.get()
+        self.assertEqual(
+            (upgrade.special.name, upgrade.who, upgrade.max_per_fighter, upgrade.later_double, upgrade.at_recruit),
+            ("Tentacle", {"fighters": ["captain"]}, 1, True, True),
+        )
+        self.assertEqual(
+            captain.variant_changes,
+            {"middenheim": {"skill_types": ["Combat"], "skills": [{"id": self.ride.id, "name": "Ride [Animal]"}]}},
+        )
 
     def test_a_reseed_writes_the_child_rows_afresh_and_archives_what_went(self) -> None:
         seed(template(), template(slug="skaven", name="Skaven", types=[], lists=[], fighters=[], upgrades=[]))

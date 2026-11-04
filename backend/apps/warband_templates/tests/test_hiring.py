@@ -5,7 +5,7 @@ member who joins later pays nothing for it), and an unknown fighter is refused; 
 
 from typing import Any
 
-from apps.items.tests.catalogue_support import ITEMS, CatalogueTestCase, make_entry
+from apps.items.tests.catalogue_support import ITEMS, SKILLS, CatalogueTestCase, make_entry
 from apps.warband_templates.models import TemplateFighter, TemplateListItem
 from apps.warbands.models import HenchmenGroup, Hero, LedgerAction, WarbandTrade
 
@@ -70,6 +70,22 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
         self.assertEqual(self.batch("heroes", {"create": [create]}).status_code, 200)
         hero = Hero.objects.get(warband=self.warband, name="Otto")
         self.assertEqual((hero.strength, hero.unit_type, hero.xp, hero.price), (4, "Watch Captain", 0, 60))
+
+    def test_a_hero_gets_the_skills_his_variant_gives_him(self) -> None:
+        ride = make_entry(SKILLS, "Ride [Animal]")
+        TemplateFighter.objects.filter(pk=self.made.captain.pk).update(
+            variant_changes={"middenheim": {"skills": [{"id": ride.id, "name": "Ride [Animal]"}]}}
+        )
+        self.assertEqual(
+            self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Karl"}]}).status_code, 200
+        )
+        self.assertEqual(list(Hero.objects.get(name="Karl").hero_skills.values_list("skill_id", flat=True)), [])
+        self.warband.template_variant = "middenheim"
+        self.warband.save()
+        self.assertEqual(
+            self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Otto"}]}).status_code, 200
+        )
+        self.assertEqual(list(Hero.objects.get(name="Otto").hero_skills.values_list("skill_id", flat=True)), [ride.id])
 
     def test_a_group_buys_one_loadout_and_every_member_gets_the_dagger(self) -> None:
         create = {"fighter_key": "warriors", "name": "Lads", "henchmen": [{"name": "A"}, {"name": "B"}]}

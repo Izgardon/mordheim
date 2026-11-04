@@ -13,6 +13,7 @@ from .services.resolve import template_gold, template_size, variant_rules
 from .services.who import allows, who_text
 
 NOBODY = {"count": 0, "groups": 0}
+Lines = dict[int, list[TemplateListItem]]  # a list's id -> its lines for the warband's variant
 
 
 class HireLineSerializer(TemplateLineSerializer):
@@ -35,6 +36,7 @@ class HireLineSerializer(TemplateLineSerializer):
             "who",
             "warband_max",
             "note",
+            "variant",
             "who_text",
             "held",
         )
@@ -47,25 +49,26 @@ class HireLineSerializer(TemplateLineSerializer):
 
 
 class HireListSerializer(serializers.ModelSerializer):
-    lines = HireLineSerializer(many=True, read_only=True)
+    """A list with its lines for the warband's variant (the payload's `lines`)."""
+
+    lines = serializers.SerializerMethodField()
 
     class Meta:
         model = TemplateList
         fields = ("id", "key", "name", "note", "lines")
 
-
-def fighter_lines(fighter: TemplateFighter, lists: dict[int, TemplateList]) -> list[TemplateListItem]:
-    """The lines of the fighter's lists, in his lists' order."""
-    return [
-        line
-        for link in fighter.list_links.all()
-        for line in (lists[link.equipment_list_id].lines.all() if link.equipment_list_id in lists else [])
-    ]
+    def get_lines(self, row: TemplateList) -> Any:
+        return HireLineSerializer(self.context["lines"].get(row.pk, []), many=True, context=self.context).data
 
 
-def free_line(fighter: TemplateFighter, lists: dict[int, TemplateList]) -> TemplateListItem | None:
+def fighter_lines(fighter: TemplateFighter, lines: Lines) -> list[TemplateListItem]:
+    """The lines of the fighter's lists for the variant, in his lists' order."""
+    return [line for link in fighter.list_links.all() for line in lines.get(link.equipment_list_id, [])]
+
+
+def free_line(fighter: TemplateFighter, lines: Lines) -> TemplateListItem | None:
     """The "1st free" line of his lists (the Dagger every hire of his gets free), or None."""
-    return next((line for line in fighter_lines(fighter, lists) if line.first_free), None)
+    return next((line for line in fighter_lines(fighter, lines) if line.first_free), None)
 
 
 class HireFighterSerializer(TemplateFighterSerializer):
@@ -86,11 +89,11 @@ class HireFighterSerializer(TemplateFighterSerializer):
 
     def get_off_lines(self, fighter: TemplateFighter) -> list[int]:
         return [
-            line.pk for line in fighter_lines(fighter, self.context["lists"]) if not allows(line.who or {}, fighter)
+            line.pk for line in fighter_lines(fighter, self.context["lines"]) if not allows(line.who or {}, fighter)
         ]
 
     def get_free_item(self, fighter: TemplateFighter) -> dict[str, Any] | None:
-        line = free_line(fighter, self.context["lists"])
+        line = free_line(fighter, self.context["lines"])
         return {"id": line.item_id, "name": line.item.name} if line is not None else None
 
 

@@ -4,6 +4,7 @@ The campaign's own template for the type comes first: one made in the campaign, 
 Otherwise the book's template for the type, unless the campaign replaced or removed it. Otherwise none, and recruiting
 is typed by hand as before. Archived templates serve nobody. The types a warband counts as never pick one. The
 variant is the warband's (`template_variant`): its type's preset, else picked when raising, changeable in Settings.
+A variant reads its own rules and list lines besides every variant's, and its changes to each fighter.
 """
 
 from collections.abc import Iterable, Mapping
@@ -16,12 +17,13 @@ from apps.warbands.models import Warband
 from apps.warbands.models.shared import STAT_FIELDS
 from apps.warbands.utils.stats import read_stat
 
-from ..models import TemplateFighter, TemplateRule, WarbandTemplate, WarbandTemplateType
+from ..models import TemplateFighter, TemplateListItem, TemplateRule, WarbandTemplate, WarbandTemplateType
 
 KIND = "warband_templates"  # the catalogue kind's key (apps/core/catalogue/kinds.py)
-# what a variant may change on a fighter (`variant_changes`): his skill groups, spell lores, profile or group size
+# what a variant may change on a fighter (`variant_changes`): his skill groups, spell lores, profile or group size,
+# and the skills he has from the start (`skills`: the Hung's heroes' Ride [Animal])
 VARIANT_FIELDS = frozenset(
-    {"skill_types", "spell_types", "cost", "starting_xp", "max_count", "group_min", "group_max", "stats"}
+    {"skill_types", "spell_types", "cost", "starting_xp", "max_count", "group_min", "group_max", "stats", "skills"}
 )
 
 
@@ -93,11 +95,25 @@ def variant_changes(fighter: TemplateFighter, variant: str) -> Mapping[str, Any]
     return {key: value for key, value in (changes or {}).items() if key in VARIANT_FIELDS}
 
 
+def variant_lines(lines: Iterable[TemplateListItem], variant: str) -> list[TemplateListItem]:
+    """A list's lines for the variant: those for every variant and the variant's own (the Kurgan's bows)."""
+    return [line for line in lines if line.variant in ("", variant)]
+
+
+def start_skills(fighter: TemplateFighter) -> list[dict[str, Any]]:
+    """The skills the variant gives him from the start, `[{"id", "name"}]` (set by `apply_variant`)."""
+    found: list[dict[str, Any]] = getattr(fighter, "start_skills", None) or []
+    return found
+
+
 def apply_variant(fighter: TemplateFighter, variant: str) -> TemplateFighter:
     """The fighter (in memory, never saved) as the variant has him: Middenheim's Champions' skill groups and
-    Strength 4. A changed stat is read as written ("1(2)"), so its written value follows it."""
+    Strength 4, the Hung's heroes' Ride [Animal] (`start_skills`). A changed stat is read as written ("1(2)"), so its
+    written value follows it."""
     for field, value in variant_changes(fighter, variant).items():
-        if field == "stats":
+        if field == "skills":
+            fighter.start_skills = [dict(entry) for entry in value or []]  # type: ignore[attr-defined]
+        elif field == "stats":
             written = dict(fighter.written_stats or {})
             for stat, shown in dict(value).items():
                 if stat not in STAT_FIELDS:

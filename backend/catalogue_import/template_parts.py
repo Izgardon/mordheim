@@ -1,8 +1,7 @@
-"""A warband template's warband rules, equipment lists (the special equipment as one more list, the Pit Fighters' four
-plain lists) and upgrades, from a snapshot page."""
+"""A warband template's warband rules and equipment lists (the special equipment as one more list, the Pit Fighters'
+four plain lists, and a variant's own lines), from a snapshot page."""
 
 import re
-import string
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -15,6 +14,7 @@ from catalogue_import.template_answers import (
     SPECIAL_EQUIPMENT_ITEMS,
     STYLE_NOTES,
     STYLES_AFTER,
+    VARIANT_LINES,
 )
 from catalogue_import.template_lists import TAG, Fighter, ItemIndex, Price, Who, line_price, plain, read_note
 from catalogue_import.template_text import clean_rule, clean_title
@@ -37,6 +37,7 @@ class ListLog:
         default_factory=list
     )  # page, heading, title, type: a type's rule
     untitled: list[tuple[str, int]] = field(default_factory=list)
+    variant_lines: list[tuple[str, str, str, str]] = field(default_factory=list)  # page, variant, list, line
 
 
 def _same_name(alias: str, *names: str) -> bool:
@@ -63,7 +64,7 @@ def _fighters(page: dict[str, Any]) -> list[Fighter]:
     ]
 
 
-def _line(item: dict[str, Any], price: Price, who: Who, shown_as: str = "") -> dict[str, Any]:
+def _line(item: dict[str, Any], price: Price, who: Who, shown_as: str = "", variant: str = "") -> dict[str, Any]:
     return {
         "item": {"name": item["name"], "variant": item["variant"]},
         "shown_as": shown_as,
@@ -74,6 +75,7 @@ def _line(item: dict[str, Any], price: Price, who: Who, shown_as: str = "") -> d
         "who": who.who,
         "warband_max": who.warband_max,
         "note": who.note,
+        "variant": variant,
     }
 
 
@@ -154,6 +156,21 @@ def _pit_fighter_lists(
     return lists, keys
 
 
+def _variant_lines(
+    slug: str, page: dict[str, Any], lists: list[dict[str, Any]], index: ItemIndex, log: ListLog
+) -> None:
+    """William's lines for one variant (VARIANT_LINES: the Kurgan's bows, the Hung's warhorses), each at the end of
+    its list, for that variant only."""
+    by_key = {entry["key"]: entry for entry in lists}
+    for variant, list_key, name, cost in VARIANT_LINES.get(slug, []):
+        item, _how = index.find(name, [page["name"]])
+        if item is None or list_key not in by_key:
+            log.unmatched.append((slug, list_key, name))
+            continue
+        by_key[list_key]["lines"].append(_line(item, Price(cost), Who(), variant=variant))
+        log.variant_lines.append((slug, variant, by_key[list_key]["name"], f"{item['name']} {cost} gc"))
+
+
 def build_lists(
     slug: str, page: dict[str, Any], index: ItemIndex, log: ListLog
 ) -> tuple[list[dict[str, Any]], dict[str, list[str]]]:
@@ -171,6 +188,7 @@ def build_lists(
             for raw in page["equipmentLists"]
         ]
         keys = {row["name"]: [slugify(key) for key in row.get("equipmentLists") or []] for row in page["fighters"]}
+    _variant_lines(slug, page, lists, index, log)
     special = _special_lines(slug, page, index, log)
     if special:
         lists.append({**SPECIAL_LIST, "note": "", "lines": special})
@@ -214,36 +232,3 @@ def build_rules(slug: str, page: dict[str, Any], variants: list[dict[str, str]],
         if slug == PIT_FIGHTERS and title == STYLES_AFTER:
             rules += _style_notes(page)
     return rules
-
-
-def _upgrade_text(entry: dict[str, Any]) -> str:
-    text = clean_rule(entry.get("ruleFull"))
-    parts = [
-        f"{clean_title(rule.get('rulename'))}: {clean_rule(rule.get('ruleFull'))}" for rule in entry.get("rules") or []
-    ]
-    return "\n\n".join(filter(None, [text, *parts]))
-
-
-def build_upgrades(page: dict[str, Any], owner: str) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
-    """The Mutations, Marks and Blessings, each with the special it gives, and each group's own text as a warband
-    rule of its name (who may buy them, and when)."""
-    upgrades, rules = [], []
-    for group in page.get("mutations") or []:
-        name = clean_title(group.get("mutationName"))
-        text = clean_rule(group.get("mutationflavour"))
-        if text:
-            rules.append({"title": name, "description": text, "variant": "", "type": ""})
-        for entry in group.get("items") or []:
-            heading = clean_title(entry.get("heading"))
-            heading = string.capwords(heading) if heading == heading.lower() else heading
-            cost = str(entry.get("cost") or "").strip()
-            upgrades.append(
-                {
-                    "group": name,
-                    "special": {"name": heading, "type": owner, "description": _upgrade_text(entry)},
-                    "cost": int(cost) if cost.isdigit() else None,
-                    "cost_note": "" if cost.isdigit() or not cost else cost,
-                    "note": "",
-                }
-            )
-    return upgrades, rules

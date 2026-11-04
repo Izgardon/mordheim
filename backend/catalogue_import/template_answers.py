@@ -2,6 +2,8 @@
 2026), as data the import reads: change them here and rebuild. Keys are the snapshot's page slugs
 (`sources/testwarbands-2026-10-31/warbands/<page>.json`) and its fighters' names."""
 
+from typing import Any
+
 # Pages that serve several of our types, each type with the variant it presets ("": the player picks one).
 # Mercenaries: all four Mercenary types; Tileans: all four Tilean types; Norse: TC13 only (BTB's waits for its PDF).
 TEMPLATE_TYPES: dict[str, dict[str, str]] = {
@@ -52,11 +54,72 @@ VARIANT_STATS: dict[str, dict[str, dict[str, dict[str, int]]]] = {
 VARIANT_COUNTS: dict[str, dict[str, dict[str, int | None]]] = {
     "marauders-of-chaos": {"kurgan": {"Warhound of Chaos": None}},  # "any number of Warhounds of Chaos"
 }
-# ... and a variant's own starting gold or most warriors
-VARIANT_TERMS: dict[str, dict[str, dict[str, int]]] = {
-    "mercenaries": {"marienburg": {"starting_gold": 600}},  # "an extra 100 gold crowns (600 in total)"
-    "marauders-of-chaos": {"hung": {"max_models": 12}},  # "The maximum number of warriors in the warband is 12"
+# ... and a variant's own starting gold, most warriors and bonus to find rare items (phase 3: the store's rare search
+# starts there; `rare_bonus_except`, the items it leaves alone, by name)
+VARIANT_TERMS: dict[str, dict[str, dict[str, object]]] = {
+    "mercenaries": {
+        # "an extra 100 gold crowns (600 in total)"; "a +1 bonus when attempting to find rare items"
+        "marienburg": {"starting_gold": 600, "rare_bonus": 1},
+    },
+    "marauders-of-chaos": {
+        "norse": {"rare_bonus": 1},  # "a +1 to their rarity rolls when searching during the post-game sequence"
+        # "suffers –1 when rolling to find Rare items except for Great Axes and Barbed Whips"
+        "kurgan": {"rare_bonus": -1, "rare_bonus_except": ["Great Axe", "Barbed Whip"]},
+        "hung": {"max_models": 12},  # "The maximum number of warriors in the warband is 12"
+    },
 }
+# A list line only one variant has (phase 3): page -> (variant, list key, item, list price). The Kurgan's "Heroes and
+# Chaos Marauder Henchmen may use bows (cost: 10 gold crowns, availability: common)", on the lists they buy from; the
+# Hung's "Warhorses always cost 40 gold crowns to the warband", on the heroes' list, since "all Heroes ...
+# automatically have the Ride Warhorse skill"
+VARIANT_LINES: dict[str, list[tuple[str, str, str, int]]] = {
+    "marauders-of-chaos": [
+        ("kurgan", "hero-equipment-list", "Bow", 10),
+        ("kurgan", "henchmen-equipment-list", "Bow", 10),
+        ("hung", "hero-equipment-list", "Warhorse", 40),
+    ],
+}
+# Skills a variant gives every hero, by name (phase 3): the Hung's "all Heroes ... automatically have the Ride Warhorse
+# skill" is our Ride [Animal] (the mounted rules' Ride skill; the only special named Ride Warhorse is the Merchant
+# Caravans' Knights Vanguard's own)
+VARIANT_HERO_SKILLS: dict[str, dict[str, list[str]]] = {"marauders-of-chaos": {"hung": ["Ride [Animal]"]}}
+
+# The upgrades bought onto a fighter (phase 3), by page and group, read from each group's text: who may take one (a
+# list line's `who`, by fighter key), the most of the group one fighter may have, whether the second and later cost
+# double, whether they are bought only when he is recruited, and a price where the book gives none
+UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
+    # "Mutations may be bought for a Mutant or a Possessed warrior only when they are recruited ... one or more
+    # mutations ... second and subsequent mutations bought for the same model cost double"
+    ("cult-of-the-posessed", "Mutations"): {
+        "who": {"fighters": ["the-possessed", "mutants"]},
+        "later_double": True,
+        "at_recruit": True,
+    },
+    # "Blessings of Nurgle may be bought for Tainted Ones only when they are recruited ... one or more Blessings ...
+    # second and subsequent Blessings cost double"
+    ("carnival-of-chaos", "Blessings of Nurgle"): {
+        "who": {"fighters": ["tainted-ones"]},
+        "later_double": True,
+        "at_recruit": True,
+    },
+    # "A Hero may only have a single Sacred Marking and these may only be bought when you recruit the Hero"
+    ("lizardmen", "Sacred markings"): {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
+    # no price in the book: "Upon being hired Seers choose their Mark"; the leader may choose one through the Eye of
+    # the Gods; one Mark each ("their Mark"). No two models may have different Marks: its rule says so, unchecked
+    ("marauders-of-chaos", "Mark of the Dark Gods"): {
+        "who": {"fighters": ["marauder-chieftain", "seer"]},
+        "max_per_fighter": 1,
+        "cost": 0,
+    },
+}
+# One upgrade's own `who`, where its text narrows its group's: "(Saurus Only)", "(Skinks only)"
+UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {
+    ("lizardmen", "Oversized Jaws"): {"fighters": ["saurus-totem-warrior"]},
+    ("lizardmen", "Poison Glands"): {"fighters": ["skink-priest", "skink-great-crests"]},
+}
+# Entries of an upgrade group that are no upgrade but a warband rule, by page: Poisoned Weapons lets Skink Heroes and
+# Saurus buy Dark Venom and Black Lotus, and Skink henchmen Reptile Venom; nothing is bought onto a fighter
+UPGRADES_AS_RULES: dict[str, frozenset[str]] = {"lizardmen": frozenset({"Poisoned Weapons"})}
 
 # Most warriors where the book gives none; their starting gold reads as 500 gc
 SIZES: dict[str, int] = {
@@ -292,10 +355,13 @@ NOT_APPLIED = [
     "Applied as data: Reikland's Marksmen BS +1, Middenheim's Mercenary Captain and Champions S +1 (S4), Remas'"
     " Captain, Champions and Youngbloods Ld +1, Marienburg's 600 gc, the Hung's 12 warriors and the Kurgan's"
     " any number of warhounds; the Ostermarkers' rules are for their type.",
+    "Applied as data (phase 3): Marienburg's and the Norse' +1 and the Kurgan's -1 to find rare items (not for Great"
+    " Axes and Barbed Whips), where the store's rare search starts its bonus; the Kurgan's 10 gc bows on the heroes'"
+    " and henchmen's lists and the Hung's 40 gc warhorses on the heroes' list, for that variant only; Ride [Animal]"
+    " for every Hung hero.",
     "Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian"
     " campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen),"
-    " Remas' rout re-roll against Dark Elves, Marienburg's and the Norse' +1 and the Kurgan's -1 to find rare items,"
-    " the Kurgan's bows for heroes and Marauders (10 gc, a line no list of theirs has), the Hung's 40 gc warhorses"
-    " and Ride Warhorse for every hero, and the Ostermarker captain's starting wardog.",
+    " Remas' rout re-roll against Dark Elves, a Hung henchman who becomes a hero getting Ride Warhorse, and the"
+    " Ostermarker captain's starting wardog.",
     "Mercenaries: the Ostermarkers pick one of the three cities' skill tables.",
 ]
