@@ -8,7 +8,7 @@ from typing import Any
 
 from catalogue_import.assignments import AssignmentLog, build_assignments
 from catalogue_import.availability import Context, Decisions
-from catalogue_import.common import as_list, dump_json, loose_key, slugify
+from catalogue_import.common import as_list, dump_json, load_json, loose_key, slugify
 from catalogue_import.grading import build_settings, collect_evidence
 from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
@@ -18,8 +18,10 @@ from catalogue_import.personae import Catalogue, build_personae
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
 from catalogue_import.skill_lists import SkillLists
+from catalogue_import.snapshot import SNAPSHOT, load_snapshot
 from catalogue_import.sources import ITEM_DATA, PACKAGE, Sources, load_sources
 from catalogue_import.statements import PhraseReader
+from catalogue_import.warband_items import template_items
 from catalogue_import.warbands import Resolver, build_warband_types, extra_rows
 
 MIM_VARIANT = "Mutiny in Marienburg"
@@ -189,7 +191,10 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     )
     reader = MimReader(resolver, groups)
     mim = [mim_item(item, sources.properties, index, reader, mim_log) for item in sources.mim_items]
-    everything = items + mim
+    snapshot = load_snapshot(package / "sources" / SNAPSHOT.name)
+    seed = [row for row in load_json(item_data / "standard-items.json") if isinstance(row, dict)]
+    added = template_items(overrides, snapshot.pages, seed, sources.properties, types, groups, index)
+    everything = items + mim + added
     add_notes(everything, overrides.get("item_notes", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue([item["name"] for item in everything], [row["name"] for row in sources.our_skills])
@@ -206,6 +211,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "shared item rules": len(shared),
         "items (mordheimer)": len(items),
         "items (MiM)": len(mim),
+        "items (warband templates)": len(added),
         "price rows": sum(len(item["availabilities"]) for item in everything),
     }
     report = ReportData(

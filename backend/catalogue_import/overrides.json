@@ -1,5 +1,5 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group).",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). seed_items_back: an item of our old seed (apps/items/data/standard-items.json) -> the setting and source it comes back with, and why: its price rows and properties as they were, single use kept. extra_items: items no source has: name, type, subtype, setting, source, cost, the warband types that buy it, the price row's note, and why. warband_items: an item a warband's special equipment brings in (warband_items.py) -> the snapshot page (testwarbands-2026-10-31), the entry when it is named otherwise, the warband type that buys it, its type and subtype: one price row for that type at the book's price and rarity.",
   "warband_aliases": {
     "Stromfels Reavers": ["shallows-beasts"],
     "Amazons": ["amazons-lustria", "amazons-mordheim"],
@@ -54,7 +54,7 @@
   },
   "setting_grades": {},
   "keep_hidden_items": [],
-  "drop_items": ["Swivel Gun"],
+  "drop_items": [],
   "item_warbands": {
     "Katar": {
       "warbands": ["arabian-tomb-raiders"],
@@ -70,6 +70,10 @@
     }
   },
   "item_warbands_add": {
+    "Nightmare": {
+      "warbands": ["cursed-cavalcade"],
+      "why": "the Cursed Cavalcade's special equipment: the Aristocrat may ride one; the templates plan, William, 4 Nov 2026"
+    },
     "Elven Steed": {
       "warbands": ["druchii", "wood-elves-of-athel-loren"],
       "why": "its note says Elves only; its list predates these warbands; William, 1 Nov 2026"
@@ -196,7 +200,8 @@
     "Venom Ring": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026"
   },
   "item_notes": {
-    "Stromfels Heart": "Priest of Stromfels only"
+    "Stromfels Heart": "Priest of Stromfels only",
+    "Nightmare": "Cursed Cavalcade: the Aristocrat only"
   },
   "whole_names": ["Harpoon Gun/Crossbow"],
   "skill_lists": {
@@ -235,7 +240,68 @@
     "The Headless Horseman": {
       "warbands": ["beastmen-raiders"],
       "why": "Beastmen Raiders joined Evil, so his list is the Evil group again and follows it; William, 1 Nov 2026"
+    },
+    "Witch Hunter": {
+      "warbands": ["merchant-caravans"],
+      "why": "Merchant Caravans hire whoever Mercenaries may (their Hired Swords rule); the templates plan, William, 4 Nov 2026"
+    },
+    "Halfling Knight": {
+      "warbands": ["merchant-caravans"],
+      "why": "Merchant Caravans hire whoever Mercenaries may (their Hired Swords rule); the templates plan, William, 4 Nov 2026"
+    },
+    "Imperial Tactician": {
+      "warbands": ["merchant-caravans"],
+      "why": "Merchant Caravans hire whoever Mercenaries may (their Hired Swords rule); the templates plan, William, 4 Nov 2026"
+    },
+    "Knight of the White Wolf": {
+      "warbands": ["merchant-caravans"],
+      "why": "Merchant Caravans hire whoever Mercenaries may (their Hired Swords rule); the templates plan, William, 4 Nov 2026"
     }
+  },
+  "seed_items_back": {
+    "Swivel Gun - Ball Shot": {
+      "setting": "mordheim-1b",
+      "source": "Town Cryer #9",
+      "why": "the Swivel Gun's shots, single use, from our old seed; the templates plan, William, 4 Nov 2026"
+    },
+    "Swivel Gun - Chain Shot": {
+      "setting": "mordheim-1b",
+      "source": "Town Cryer #9",
+      "why": "the Swivel Gun's shots, single use, from our old seed; the templates plan, William, 4 Nov 2026"
+    },
+    "Swivel Gun - Grape Shot": {
+      "setting": "mordheim-1b",
+      "source": "Town Cryer #9",
+      "why": "the Swivel Gun's shots, single use, from our old seed; the templates plan, William, 4 Nov 2026"
+    }
+  },
+  "extra_items": [
+    {
+      "name": "War Chain",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "setting": "mordheim-1b",
+      "source": "Town Cryer #14",
+      "cost": 20,
+      "warbands": ["pit-fighters-old"],
+      "note": "Pit Fighters (old) only",
+      "why": "on the Pit Fighters (old) list; no rules for now (question 29); William, 4 Nov 2026"
+    }
+  ],
+  "warband_items": {
+    "Hedonist Whip": { "page": "court-of-the-profane-pleasures", "warband": "court-of-profane-pleasures", "type": "Weapon", "subtype": "Melee" },
+    "Slaaneshi Man-Catcher": { "page": "court-of-the-profane-pleasures", "warband": "court-of-profane-pleasures", "type": "Weapon", "subtype": "Melee" },
+    "Banner of the Noble House": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
+    "Bird of Prey": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
+    "Boar Spear": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Weapon", "subtype": "Melee" },
+    "Cathayan Quilted Silk Armour": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Armour" },
+    "Sun King Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
+    "Silver Death Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
+    "Fish Head Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
+    "Faceless Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
+    "Plague Doctor Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
+    "Evil Jester Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
+    "Misericordia (Cursed Cavalcade)": { "page": "cursed-cavalcade", "entry": "Misericordia", "warband": "cursed-cavalcade", "type": "Weapon", "subtype": "Melee" }
   },
   "setting_assignments": {
     "skills": {

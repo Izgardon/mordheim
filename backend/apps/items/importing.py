@@ -114,6 +114,7 @@ class ImportedItems:
             "save_value": clean(entry.get("save")) or None,
             "statblock": json.dumps(statblock, ensure_ascii=False) if statblock else None,
             "tags": list(entry.get("tags") or []),
+            "single_use": bool(entry.get("single_use")),  # the Swivel Gun's shots, back from our old seed
             "campaign_type_id": self.setting(entry["setting"]),
             "archived_at": None,  # back in the import: back in the lists
         }

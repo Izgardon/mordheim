@@ -1,3 +1,4 @@
+import json
 from typing import Any, ClassVar
 
 from django.test import SimpleTestCase
@@ -68,3 +69,45 @@ class BuildTests(SimpleTestCase):
         items: list[dict[str, Any]] = [{"name": "Heart", "availabilities": [{"note": ""}, {"note": "Rare 10"}]}]
         add_notes(items, {"Heart": "Priest only"})
         self.assertEqual([row["note"] for row in items[0]["availabilities"]], ["Priest only", "Rare 10; Priest only"])
+
+
+class TemplateItemsBuildTests(SimpleTestCase):
+    """What the warband templates change in the items and the hiring lists (William, 4 Nov 2026)."""
+
+    items: ClassVar[dict[str, dict[str, Any]]]
+    who_can: ClassVar[dict[str, Any]]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        built = build()
+        cls.items = {item["name"]: item for item in json.loads(built["items.json"])}
+        cls.who_can = json.loads(built["who-can.json"])
+
+    def test_the_swivel_gun_is_back_for_pirates_and_its_shots_are_single_use(self) -> None:
+        [row] = self.items["Swivel Gun"]["availabilities"]
+        self.assertEqual(
+            ([line["type"] for line in row["warbands"]], row["note"]),
+            (
+                ["pirates"],
+                "Gunners only; max one per warband",
+            ),
+        )
+        shots = [name for name, item in self.items.items() if item.get("single_use")]
+        self.assertEqual(
+            sorted(shots), ["Swivel Gun - Ball Shot", "Swivel Gun - Chain Shot", "Swivel Gun - Grape Shot"]
+        )
+
+    def test_the_cavalcade_joins_the_nightmares_row_and_gets_its_own_misericordia(self) -> None:
+        [row] = self.items["Nightmare"]["availabilities"]
+        self.assertIn({"type": "cursed-cavalcade", "excluded": False}, row["warbands"])
+        self.assertTrue(row["note"].endswith("Cursed Cavalcade: the Aristocrat only"))
+        [dagger] = self.items["Misericordia (Cursed Cavalcade)"]["availabilities"]
+        self.assertEqual((dagger["cost"], dagger["rarity"]), (5, 9))
+        self.assertEqual(self.items["Misericordia"]["availabilities"][0]["cost"], 10)  # Lustrian Reavers' stays
+
+    def test_merchant_caravans_hire_the_four_mercenaries_hire_that_they_missed(self) -> None:
+        swords = {row["name"]: row for row in self.who_can["hired_swords"]}
+        for name in ("Witch Hunter", "Halfling Knight", "Imperial Tactician", "Knight of the White Wolf"):
+            with self.subTest(name=name):
+                self.assertIn({"type": "merchant-caravans", "excluded": False}, swords[name]["warbands"])

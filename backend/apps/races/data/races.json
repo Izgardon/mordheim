@@ -322,5 +322,53 @@
     "initiative": "6",
     "attacks": "5",
     "leadership": "9"
+  },
+  {
+    "name": "Undead",
+    "movement": "4",
+    "weapon_skill": "6",
+    "ballistic_skill": "6",
+    "strength": "4",
+    "toughness": "4",
+    "wounds": "3",
+    "initiative": "6",
+    "attacks": "4",
+    "leadership": "9"
+  },
+  {
+    "name": "Other Beastmen",
+    "movement": "5",
+    "weapon_skill": "7",
+    "ballistic_skill": "6",
+    "strength": "4",
+    "toughness": "5",
+    "wounds": "4",
+    "initiative": "6",
+    "attacks": "4",
+    "leadership": "9"
+  },
+  {
+    "name": "Bull Centaur (Black Dwarfs)",
+    "movement": "8",
+    "weapon_skill": "7",
+    "ballistic_skill": "6",
+    "strength": "5",
+    "toughness": "5",
+    "wounds": "4",
+    "initiative": "6",
+    "attacks": "5",
+    "leadership": "10"
+  },
+  {
+    "name": "Bull Centaur (Sons of Hashut)",
+    "movement": "7",
+    "weapon_skill": "7",
+    "ballistic_skill": "3",
+    "strength": "5",
+    "toughness": "5",
+    "wounds": "4",
+    "initiative": "4",
+    "attacks": "5",
+    "leadership": "9"
   }
 ]

@@ -80,6 +80,11 @@ class SeedItemsTests(TestCase):
         cls.skaven = WarbandType.objects.create(name="Skaven", slug="skaven", campaign_type=cls.mordheim)
         cls.elves = WarbandGroup.objects.create(slug="elves", name="Elves", kind="race")
 
+    def test_an_item_the_import_says_is_single_use_is_seeded_so(self) -> None:
+        seed([entry("Swivel Gun - Ball Shot", 5, single_use=True), entry("Sword")])
+        single = dict(Item.objects.filter(campaign__isnull=True).values_list("name", "single_use"))
+        self.assertEqual(single, {"Swivel Gun - Ball Shot": True, "Sword": False})
+
     def test_an_item_is_written_with_its_setting_text_rules_and_price_rows(self) -> None:
         rows = [
             {**entry("x")["availabilities"][0], "cost": 25, "dice": 2, "rarity": 9, "note": "Heroes only"},

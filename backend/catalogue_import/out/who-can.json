@@ -8408,6 +8408,10 @@
         {
           "type": "nipponese-expedition",
           "excluded": false
+        },
+        {
+          "type": "merchant-caravans",
+          "excluded": false
         }
       ],
       "note": "Any non-chaos human warband may hire a Witch Hunter, he has his own reasons, but will not stay with a Witch Hunter band for more than one battle. See also the Burn the witch rule below.",
@@ -10619,6 +10623,10 @@
         {
           "type": "nipponese-expedition",
           "excluded": false
+        },
+        {
+          "type": "merchant-caravans",
+          "excluded": false
         }
       ],
       "note": "Any good aligned warband may hire a Halfling Knight.",
@@ -10742,6 +10750,10 @@
         {
           "type": "nipponese-expedition",
           "excluded": false
+        },
+        {
+          "type": "merchant-caravans",
+          "excluded": false
         }
       ],
       "note": "Any human warband may hire an Imperial Tactician.",
@@ -10808,6 +10820,10 @@
         },
         {
           "type": "nipponese-expedition",
+          "excluded": false
+        },
+        {
+          "type": "merchant-caravans",
           "excluded": false
         }
       ],
