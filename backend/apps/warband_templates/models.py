@@ -135,7 +135,7 @@ class TemplateFighter(WrittenStatBlock):
     caster = models.CharField(max_length=20, choices=CASTERS, default="No")
     large = models.BooleanField(default=False)
     variant_changes = models.JSONField(default=dict, blank=True)
-    fixed_kit = models.CharField(max_length=160, blank=True, default="")
+    fixed_kit = models.TextField(max_length=1000, blank=True, default="")  # "None. Plague Bearers have huge claws …"
     flavour = models.TextField(max_length=4000, blank=True, default="")
     note = models.TextField(max_length=2000, blank=True, default="")
 

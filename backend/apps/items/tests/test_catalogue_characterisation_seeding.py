@@ -1,7 +1,7 @@
 """The catalogue seeders on the committed data (pass 5; BUG-17, BUG-51, BUG-54, CAT-TEST-12, -13).
 
 `seed_all` runs `seed_settings`, `seed_warband_types`, `seed_races`, `seed_items`, `seed_skills`, `seed_spells_and_special`,
-`seed_bestiary`, `seed_dramatis_personae`, then `seed_hired_swords`, each upserting the book by name (and type) in its
+`seed_bestiary`, `seed_dramatis_personae`, `seed_warband_templates`, then `seed_hired_swords`, each upserting the book by name (and type) in its
 own transaction, and `seed_catalogue_if_empty` runs it on a wiped production database. It works on an empty database and again later, also once a campaign holds
 an entry of a book entry's name and type (a custom override, a house-rule clone, and every version PR C's
 copy-on-write makes): the seeders read and write the book only (BUG-17). Small, file-driven seeder cases are in
@@ -29,9 +29,19 @@ from apps.races.models import Race
 from apps.skills.models import Skill
 from apps.special.models import Special
 from apps.spells.models import Spell
+from apps.warband_templates.models import (
+    TemplateFighter,
+    TemplateList,
+    TemplateListItem,
+    TemplateRule,
+    TemplateUpgrade,
+    WarbandTemplate,
+    WarbandTemplateType,
+)
 from apps.warbands.models import WarbandGroup, WarbandType
 
-BOOK_MODELS = (Race, Item, ItemRule, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
+BOOK_MODELS = (Race, Item, ItemRule, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona, WarbandTemplate)
+TEMPLATE_ROWS = (WarbandTemplateType, TemplateFighter, TemplateList, TemplateListItem, TemplateRule, TemplateUpgrade)
 
 
 def seed_all() -> str:
@@ -71,10 +81,11 @@ class SeedAllTests(TestCase):
                 "ItemRule": 51,  # the import's shared rules
                 "Skill": 251,
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                "Special": 281,  # 185 + the dramatis personae's own rules (next step 12)
+                "Special": 745,  # 185, the dramatis personae's own rules (next step 12) and the warband templates' 464
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
+                "WarbandTemplate": 50,  # mordheimer's New Warband Format pages, Tileans (old) left out
             },
         )
         for model in BOOK_MODELS:
@@ -84,7 +95,7 @@ class SeedAllTests(TestCase):
             if hasattr(model, "campaign_type"):  # grading phase 1: skills and hired swords get the import's settings
                 with self.subTest(model=model.__name__, column="campaign_type"):
                     ungraded = model._default_manager.filter(**{"campaign_type__isnull": True})
-                    if model in (HiredSword, DramatisPersona, Item):  # every book item and hireling has its setting
+                    if model in (HiredSword, DramatisPersona, Item, WarbandTemplate):  # each has its setting
                         self.assertFalse(ungraded.exists())
                     elif model is Skill:  # but the ones a hired sword's seeding makes ("Hired Sword - …")
                         self.assertFalse(ungraded.exclude(**{"type__startswith": "Hired Sword - "}).exists())
@@ -107,6 +118,29 @@ class SeedAllTests(TestCase):
         self.assertEqual(set(Item.objects.values_list("id", "name", "type")), items)
         # every availability is deleted and written again under a new id (CAT-BUG-08's id churn)
         self.assertEqual(set(ItemAvailability.objects.values_list("id", flat=True)) & availabilities, set())
+
+    def test_the_warband_templates_come_in_whole(self):
+        # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
+        self.assertIn("Warband templates import complete. Templates: 50, archived", self.output)
+        counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
+        self.assertEqual(
+            counts,
+            {
+                "WarbandTemplateType": 56,  # 57 types, but Norse Explorers BTB waits for its PDF
+                "TemplateFighter": 333,
+                "TemplateList": 120,  # mordheimer's 113, the Pit Fighters' four for their three, and 6 special
+                "TemplateListItem": 1338,
+                "TemplateRule": 156,  # 150, the Pit Fighters' two style notes and four upgrade groups' texts
+                "TemplateUpgrade": 24,
+            },
+        )
+        mercenaries = WarbandTemplate.objects.get(slug="mercenaries")
+        presets = dict(mercenaries.type_links.values_list("warband_type__slug", "variant"))
+        self.assertEqual(presets, {"reiklanders": "reikland", "middenheimers": "middenheim", "marienburgers": "marienburg", "ostermarkers": ""})  # fmt: skip
+        swivel = TemplateListItem.objects.get(equipment_list__template__slug="pirates", item__name="Swivel Gun")
+        self.assertEqual((swivel.cost, swivel.warband_max), (65, 1))
+        owners = Special.objects.filter(template_fighter_links__isnull=False).values_list("owner_kind", flat=True)
+        self.assertEqual(set(owners), {"warband", "general"})  # the templates' own, and our Large, Wizard and Priest
 
     def test_skaven_and_clan_pestilens_keep_their_own_maximums(self):
         # the 2026-10-28 data audit: races.json held Clan Pestilens' maximums under the name "Skaven" too, and

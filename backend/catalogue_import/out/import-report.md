@@ -301,3 +301,155 @@ In our current seed but on neither mordheimer nor the MiM list: Ladders.
 In our current seed under another name (not dropped): Pike -> Pike (Tileans), Pike (Merchant Caravans); Healing Herb -> Healing Herbs; Mad Cap Mushroom -> Mad Cap Mushrooms.
 mordheimer items it hides as aliases of "Club, Mace or Hammer" (their names are its tags), not imported: Club, Mace, Hammer, Staff. List any in `keep_hidden_items` to import it.
 Lance's strength "As user +2 when charging on horseback" is cut to the part before "when"; its rules already say when.
+
+## Warband templates
+
+mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates.json`; William's settled answers are `template_answers.py`.
+
+### Counts
+
+| What | Rows |
+| --- | --- |
+| templates | 50 |
+| warband types linked | 56 |
+| fighters (heroes, henchmen) | 333 (169, 164) |
+| henchmen that gain no XP | 51 |
+| henchmen that can't be promoted | 62 |
+| equipment lists | 120 |
+| list lines | 1338 |
+| warband rules | 156 |
+| upgrades | 24 |
+| the templates' own specials | 464 |
+
+### List lines
+
+Every line names one of our items.
+
+Lines found other than by name or tag:
+
+| Page | Line | Item | How |
+| --- | --- | --- | --- |
+| amazons-lustria | sunstaff-lustria | Sunstaff (Lustria) | its slug |
+| cursed-cavalcade | misericordia | Misericordia (Cursed Cavalcade) | named for the warband |
+| cursed-cavalcade | Misericordia | Misericordia (Cursed Cavalcade) | named for the warband |
+| merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
+| tileans | pike | Pike (Tileans) | named for the warband |
+
+172 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+
+Every note was read into who may take the line, a limit or a brace price.
+
+### Fighters
+
+Fighters with no race:
+
+| Page | Fighter | mordheimer's race |
+| --- | --- | --- |
+| beastmen-raiders | Warhounds of Chaos |  |
+| beastmen-raiders | Minotaur |  |
+| carnival-of-chaos | Brute | mutant |
+| carnival-of-chaos | Tainted One | mutant |
+| cursed-cavalcade | Aristocrat |  |
+| cursed-cavalcade | Companion |  |
+| cursed-cavalcade | Twisted Scholar |  |
+| cursed-cavalcade | Cursed Piper |  |
+| cursed-cavalcade | Thrall |  |
+| cursed-cavalcade | Captured Thrall |  |
+| cursed-cavalcade | Great Bear |  |
+| cursed-cavalcade | Wild Beast |  |
+| cursed-cavalcade | Fighting Ape |  |
+| undead | Dire wolves |  |
+| undead | Zombies |  |
+| witch-hunters | War hounds |  |
+
+36 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, kroxigor, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+
+Several profiles, the first kept:
+
+| Page | Fighter | Profiles |
+| --- | --- | --- |
+| carnival-of-chaos | Plague Cart | Cart \| Wheel \| Horse \| Guardian |
+| court-of-the-profane-pleasures | Slaaneshi Devout | Base \| Male Form \| Female Form |
+
+Written values, kept as written:
+
+| Page | Fighter | Stats |
+| --- | --- | --- |
+| beastmen-raiders | Centigor | attacks 1(2) |
+| black-orcs | Orc Nutta | leadership 5* |
+| carnival-of-chaos | Plague Cart | movement -, weapon_skill -, ballistic_skill -, strength -, initiative -, attacks -, leadership - |
+| lizardmen | Saurus Totem Warrior | attacks 1+1 |
+| lizardmen | Saurus Brave | attacks 1+1 |
+| lustrian-reavers | Tilean Hunting Hawk | wounds -, leadership - |
+| marauders-of-chaos | Condemned | weapon_skill D6, strength D6, toughness D6, attacks D3 |
+| marauders-of-chaos | Spawn of Chaos | movement 2D6, attacks D6+1 |
+| night-goblins-web | Cave Squig | movement 2d6 |
+| night-goblins-web | Great Squig | movement 3D6 |
+| night-goblins | Cave Squig | movement 2D6 |
+| orc-mob | Cave Squig | movement 2D6 |
+| the-restless-dead | Scarecrow | toughness 3(6) |
+| tomb-guardians-old | Tomb Scorpion | ballistic_skill - |
+| tomb-guardians-old | Stone Golem | ballistic_skill - |
+| tomb-guardians | Tomb Scorpion | ballistic_skill -, strength 2* |
+
+Ticked for special skills with no group to name, the tick left out: imperial-outriders: Knight, imperial-outriders: Outrider, imperial-outriders: Scout.
+
+### Skill groups
+
+Names in fighters' skill access that aren't a skill group (or list) of ours yet:
+
+| Name | Fighters | First |
+| --- | --- | --- |
+| Amazons (Lustria) | 3 | amazons-lustria: Serpent Priestess |
+| Black Dwarfs | 3 | black-dwarfs: Sorcerer |
+| Bretonnian Chapel Guard | 2 | bretonnian-chapel-guard: Questing Knight |
+| Cursed Cavalcade | 4 | cursed-cavalcade: Aristocrat |
+| Dwarf Rangers | 2 | dwarf-rangers: Runesmith |
+| Horned Hunters | 3 | horned-hunters: Horned Hunter |
+| Merchant Caravans | 1 | merchant-caravans: Merchant |
+| Night Goblins (Mordheim 1c) | 2 | night-goblins: Big Boss |
+| Sons of Hashut | 3 | the-sons-of-hashut: Apprentice Sorcerer |
+
+### Casters
+
+| Page | Fighter | Caster | Lores |
+| --- | --- | --- | --- |
+| amazons-lustria | Serpent Priestess | Wizard | Amazon Rituals |
+| amazons | Priestess | Wizard | Amazon Rituals |
+| arabian-tomb-raiders | Mystic | Wizard | Arabian Elemental Magic |
+| beastmen-raiders | Beastmen Shaman | Wizard | Chaos Rituals |
+| black-dwarfs | Sorcerer | Wizard | Rituals of Hashut |
+| bretonnian-chapel-guard | Damsel | Priest | Lady's Prayers |
+| carnival-of-chaos | Carnival Master | Wizard | Nurgle Rituals |
+| court-of-the-profane-pleasures | Slaaneshi Priest of Obscene | Wizard | Chaos Rituals |
+| cult-of-the-posessed | Magister | Wizard | Chaos Rituals |
+| dark-elves | Dark Elf Sorceress | Wizard | Dark Elf Magic |
+| forest-goblins | Shaman | Wizard | Forest Goblin Magic |
+| horned-hunters | Priest of Taal | Priest | Prayers of Taal |
+| lizardmen | Skink Priest | Wizard | Lizardmen Magic |
+| marauders-of-chaos | Seer | Wizard | Chaos Rituals, Onogal Rituals, Shornaal Rituals, Tchar Rituals |
+| merchant-caravans | Magician | Wizard | Lesser Magic |
+| night-goblins-web | Shaman | Wizard | Goblin Magic |
+| night-goblins | Shaman | Wizard | Waaaagh! Magic |
+| orc-mob | Orc Shaman | Wizard | Waaaagh! Magic |
+| ostlander | Priest of Taal | Priest | Prayers of Taal |
+| shadow-warriors | Shadow Weaver | Wizard | Shadow Warrior Magic |
+| sisters-of-sigmar | Sigmarite Matriarch | Priest | Prayers of Sigmar |
+| skaven-eshin | Eshin Sorcerer | Wizard | Magic of the Horned Rat |
+| skaven-pestilens | Pestilens Sorcerer | Wizard | Magic of the Horned Rat |
+| the-restless-dead | Liche | Wizard | Necromancy (Restless Dead) |
+| the-restless-dead | Necromancer | Wizard | Necromancy (Restless Dead) |
+| the-sons-of-hashut | Apprentice Sorcerer | Wizard | Chaos Dwarfs Magic |
+| tomb-guardians-old | Liche Priest | Wizard | Mortuary Cult Scrolls |
+| tomb-guardians | Liche Priest | Wizard | Mortuary Cult Scrolls |
+| undead | Necromancer | Wizard | Necromancy |
+| witch-hunters | Warrior-Priest | Priest | Prayers of Sigmar |
+
+mordheimer's lore names that differ from ours: Charms & Hexes -> Charms and Hexes; Lady’s Prayers -> Lady's Prayers; Lizardman Magic -> Lizardmen Magic; Necromancy (The Restless Dead) -> Necromancy (Restless Dead); Spells of the Djed’hi -> Spells of the Djedhi.
+
+### Warband rules
+
+- Mercenaries: Middenheim's Captain and Champions start with Strength 4 (its rule's text); their profiles keep mordheimer's S3 until it is settled as a variant change.
+- Mercenaries: the Ostermarkers pick one of the three cities' skill tables; their own rule is kept under the key ostermark, which no variant has, so the Warbands page shows it with every city.
+- mercenaries: 'Ostermarker Special rules' (heading Ostermark) belongs to a type, not a variant: kept under its own key.
+- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); carnival-of-chaos: Immune to Psychology (Plague Cart); carnival-of-chaos: Stream of Corruption (Blessings of Nurgle); carnival-of-chaos: Cloud of Flies (Blessings of Nurgle); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); marauders-of-chaos: Fear (Spawn of Chaos); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); the-restless-dead: Cause Fear (Grave Guard); the-restless-dead: Cause Fear (Scarecrow); the-restless-dead: Immune to Psychology (Scarecrow); the-restless-dead: Immune to Poison (Scarecrow); the-restless-dead: No Pain (Scarecrow); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); undead: Cause Fear (Ghouls); undead: Immune to Psychology (Dire wolves); undead: Immune to Psychology (Zombies); undead: No Pain (Zombies).

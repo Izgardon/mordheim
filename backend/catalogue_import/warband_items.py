@@ -32,7 +32,7 @@ def _item(name: str, kind: str, subtype: str, setting: str, source: str, **field
         "setting": setting,
         "source": source,
         "link_url": fields.get("link_url", ""),
-        "tags": [name.lower()],
+        "tags": fields.get("tags", [name.lower()]),
         "flavour": "",
         "range": fields.get("range", ""),
         "strength": fields.get("strength", ""),
@@ -70,7 +70,9 @@ def seed_items_back(
             _row({"cost": price.get("cost"), "dice": None, "dice_multiplier": None, "cost_note": ""}, None, [], "")
             for price in row.get("availabilities") or []
         ]
-        fields = {"strength": row.get("strength") or "", "rules": rules, "availabilities": prices}
+        shot = name.rpartition(" - ")[2].lower()  # "ball shot": what a list calls it
+        tags = [name.lower(), shot] if shot != name.lower() else [name.lower()]
+        fields = {"strength": row.get("strength") or "", "rules": rules, "availabilities": prices, "tags": tags}
         kind = row.get("type") or "Miscellaneous"
         items.append(
             _item(

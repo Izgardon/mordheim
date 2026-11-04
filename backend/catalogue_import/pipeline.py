@@ -21,6 +21,8 @@ from catalogue_import.skill_lists import SkillLists
 from catalogue_import.snapshot import SNAPSHOT, load_snapshot
 from catalogue_import.sources import ITEM_DATA, PACKAGE, Sources, load_sources
 from catalogue_import.statements import PhraseReader
+from catalogue_import.template_report import render_templates
+from catalogue_import.templates import TemplateLog, build_templates, our_races_and_lores
 from catalogue_import.warband_items import template_items
 from catalogue_import.warbands import Resolver, build_warband_types, extra_rows
 
@@ -204,6 +206,9 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     assignments = build_assignments(sources, assignment_log)
     hiring_log = HiringLog()
     who_can = build_who_can(sources, resolver, groups, hiring_log, skill_lists)
+    template_log = TemplateLog()
+    templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log)
+    known_groups = {row["type"] for row in sources.our_skills}  # our skill lists, until skill groups land
     counts = {
         "settings": len(settings),
         "warband types": len(types),
@@ -247,5 +252,6 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "who-can.json": dump_json(who_can),
         "skills.json": dump_json(sources.our_skills),
         "dramatis-personae.json": dump_json(sources.our_personae),
-        "import-report.md": render_report(report),
+        "warband-templates.json": dump_json(templates),
+        "import-report.md": render_report(report) + "\n" + render_templates(templates, template_log, known_groups),
     }

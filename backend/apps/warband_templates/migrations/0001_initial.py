@@ -172,7 +172,7 @@ class Migration(migrations.Migration):
                 ),
                 ("large", models.BooleanField(default=False)),
                 ("variant_changes", models.JSONField(blank=True, default=dict)),
-                ("fixed_kit", models.CharField(blank=True, default="", max_length=160)),
+                ("fixed_kit", models.TextField(blank=True, default="", max_length=1000)),
                 ("flavour", models.TextField(blank=True, default="", max_length=4000)),
                 ("note", models.TextField(blank=True, default="", max_length=2000)),
                 (

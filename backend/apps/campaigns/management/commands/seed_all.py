@@ -15,6 +15,7 @@ class Command(BaseCommand):
             "seed_spells_and_special",
             "seed_bestiary",
             "seed_dramatis_personae",
+            "seed_warband_templates",  # after the warband types, races, items, the bestiary's animals and specials
             "seed_hired_swords",  # last: seed_catalogue_if_empty takes a book hired sword for a complete catalogue
         ]
 
