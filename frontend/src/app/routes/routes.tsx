@@ -30,6 +30,9 @@ const Spells = lazy(() => import("../../features/spells/routes/Spells"));
 const Bestiary = lazy(() => import("../../features/bestiary/routes/Bestiary"));
 const HirelingCatalogue = lazy(() => import("../../features/hirelings/routes/HirelingCatalogue"));
 const Rules = lazy(() => import("../../features/rules/routes/Rules"));
+const WarbandTemplates = lazy(
+  () => import("../../features/warband-templates/routes/WarbandTemplates")
+);
 const HouseRules = lazy(() => import("../../features/rules/routes/HouseRules"));
 const SearchEverything = lazy(() => import("../../features/search/routes/SearchEverything"));
 const CampaignSettings = lazy(() => import("../../features/campaigns/routes/CampaignSettings"));
@@ -113,6 +116,7 @@ export const routes: RouteObject[] = [
                     element: <HirelingCatalogue key="dramatis-personae" kind="dramatis-personae" />,
                   },
                   { path: "rules", element: <Rules /> },
+                  { path: "warband-templates", element: <WarbandTemplates /> },
                   { path: "house-rules", element: <HouseRules /> },
                   { path: "search", element: <SearchEverything /> },
                   // Locations is a panel of the warband page now.

@@ -17,19 +17,21 @@ export default function WarbandRules({
   rules,
   canEdit,
 }: {
-  warbandId: number;
+  /** None: a warband template's rules (Reference → Warbands), read only. */
+  warbandId?: number;
   warbandName: string;
   rules: WarbandRule[];
   canEdit: boolean;
 }) {
   const [open, setOpen] = useState(false);
+  const editable = canEdit && warbandId !== undefined;
   const [opening, setOpening] = useState<RulesOpening>({});
   const show = (next: RulesOpening) => {
     setOpening(next);
     setOpen(true);
   };
 
-  if (!rules.length && !canEdit) return null;
+  if (!rules.length && !editable) return null;
 
   return (
     <section aria-label="Warband rules" className="flex flex-wrap items-center gap-2">
@@ -46,7 +48,7 @@ export default function WarbandRules({
           {rule.title}
         </Chip>
       ))}
-      {canEdit && !rules.length ? (
+      {editable && !rules.length ? (
         <button
           type="button"
           onClick={() => show({ adding: true })}
@@ -62,7 +64,7 @@ export default function WarbandRules({
         warbandId={warbandId}
         warbandName={warbandName}
         rules={rules}
-        canEdit={canEdit}
+        canEdit={editable}
       />
     </section>
   );

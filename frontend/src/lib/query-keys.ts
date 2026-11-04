@@ -60,6 +60,11 @@ export const queryKeys = {
     houseRules: (campaignId: number) => ["campaign", campaignId, "rules"] as const,
     /** The warband types it may pick: the book's and its own, each in play or not. */
     warbandTypes: (campaignId: number) => ["campaign", campaignId, "warband-types"] as const,
+    /** Its warband templates and the types each serves (Reference → Warbands), or one whole. */
+    warbandTemplates: (campaignId: number) =>
+      ["campaign", campaignId, "warband-templates"] as const,
+    warbandTemplate: (campaignId: number, templateId: number) =>
+      ["campaign", campaignId, "warband-templates", templateId] as const,
     /** The server's list of common house rules (`rules/common/`), the same for every campaign. */
     commonRules: (campaignId: number) => ["campaign", campaignId, "common-rules"] as const,
     /** The campaign chat's history, newest page first (an infinite query). */

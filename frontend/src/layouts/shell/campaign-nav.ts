@@ -15,6 +15,7 @@ export type NavLink = {
 /** The reference pages, in the rail's order (design E). */
 export const REFERENCE_LINKS: NavLink[] = [
   { label: "Rules", path: "rules" },
+  { label: "Warbands", path: "warband-templates" },
   { label: "Wargear", path: "items" },
   { label: "Skills", path: "skills" },
   { label: "Skill groups", path: "skill-groups" },
