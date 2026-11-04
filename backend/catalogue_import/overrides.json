@@ -1,5 +1,5 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it, our skills it holds (skills) and new ones (new_skills) with rules from mordheimer, or from the source file in sources/ it names.",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists. group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it (type, or types), our skills it holds (skills) and new ones (new_skills; {name, rule} names one apart from the skill whose rules it takes) with rules from mordheimer, or from the source file in sources/ it names.",
   "warband_aliases": {
     "Stromfels Reavers": ["shallows-beasts"],
     "Amazons": ["amazons-lustria", "amazons-mordheim"],
@@ -211,6 +211,9 @@
     "Knowledge of Myths and Legends (Strigany)": "left out of the catalogue for now (William)",
     "Prize-fighter (Strigany)": "left out of the catalogue for now (William)",
     "Animal Charmer (eg. Dog Charmer) (Strigany)": "left out of the catalogue for now (William)",
+    "Infiltration (Strigany)": "left out of the catalogue for now (William): no Strigany warband type exists (William, 4 Nov 2026: take recommendations)",
+    "Bull Rush (Strigany)": "left out of the catalogue for now (William): no Strigany warband type exists, so no Strigany group (William, 4 Nov 2026: take recommendations); Bull Rush stays, the Ostlanders'",
+    "Songster (Strigany)": "left out of the catalogue for now (William): no Strigany warband type exists, so no Strigany group (William, 4 Nov 2026: take recommendations)",
     "Skills list prohibitions (Saurus)": "a rules note, not a skill (William): Saurus can't take Academic skills or use missile weapons"
   },
   "extra_skills": [
@@ -264,7 +267,21 @@
       "why": "the Academic list's wording (William, 4 Nov 2026: \"i agree with recs\")"
     }
   },
-  "skill_group_learners": {},
+  "skill_group_learners": {
+    "Dark Elf": { "warbands": [{ "type": "dark-elves" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Dwarves": { "warbands": [{ "type": "dwarf-treasure-hunters" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Dwarf Troll Slayers": { "warbands": [{ "type": "dwarf-treasure-hunters" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Halflings": { "warbands": [{ "type": "halflings" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Low Kings": { "warbands": [{ "type": "low-kings" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Night Goblins": { "warbands": [{ "type": "night-goblins-web" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Ogres": { "warbands": [{ "group": "ogres" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Orcs": { "warbands": [{ "group": "orcs" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Ostlanders": { "warbands": [{ "type": "ostlanders" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Sea Ghosts": { "warbands": [{ "type": "sea-ghosts" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Shadow Warriors": { "warbands": [{ "type": "shadow-warriors" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Skaven": { "warbands": [{ "type": "skaven" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Skaven Clan Pestilens": { "warbands": [{ "type": "skaven-of-clan-pestilens-tc29" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" }
+  },
   "new_skill_groups": {
     "Black Dwarfs": {
       "type": "black-dwarfs",
@@ -283,15 +300,20 @@
     "Horned Hunters": {
       "type": "horned-hunters",
       "skills": ["Animal Friendship", "Infiltration", "Foul Odour", "Hide in Shadows"],
-      "new_skills": ["Master Trapper", "Pathfinder"]
+      "new_skills": [
+        "Master Trapper",
+        { "name": "Pathfinder (Horned Hunters)", "rule": "Pathfinder" }
+      ],
+      "why": "Pathfinder is the Dwarf Pathfinder hired sword's own skill (a different rule), so the Horned Hunters' is its own skill named after its group, as the splits are (William, 4 Nov 2026: take recommendations)"
     },
     "Night Goblins (MIC)": {
       "type": "night-goblins-mic",
       "skills": ["Infiltration", "Sneaky Git", "Netter"],
       "new_skills": ["Ded Shooty"]
     },
-    "Amazons (Lustria)": {
-      "type": "amazons-lustria",
+    "Amazons": {
+      "types": ["amazons-lustria", "amazons-mordheim"],
+      "why": "open to both Amazons warbands, as warband_aliases maps Amazons; its skills keep Mordheim 1b, the lower of their settings (William, 4 Nov 2026: take recommendations)",
       "new_skills": ["Skink Hunter", "Elixir of Life", "Mesmerising Dance", "Savage Fury", "Concealment"]
     },
     "Bretonnian Chapel Guard": {
@@ -354,7 +376,14 @@
       "Battle Tongue (Academic)": "mordheim",
       "Noblesse Obliges (Cursed Cavalcade)": "mordheim-1c",
       "Torturer (Cursed Cavalcade)": "mordheim-1c",
-      "Duelist (Cursed Cavalcade)": "mordheim-1c"
+      "Duelist (Cursed Cavalcade)": "mordheim-1c",
+      "Chaos Engineer (Black Dwarfs)": "border-town-burning",
+      "Tyrant (Black Dwarfs)": "border-town-burning",
+      "Bribery (Merchant Caravans)": "border-town-burning",
+      "Dubious Income (Merchant Caravans)": "border-town-burning",
+      "Wholesale (Merchant Caravans)": "border-town-burning",
+      "Deal Breaker (Merchant Caravans)": "border-town-burning",
+      "Connected (Merchant Caravans)": "border-town-burning"
     },
     "hired_swords": { "Norse Shaman": "border-town-burning" }
   }

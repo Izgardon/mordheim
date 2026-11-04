@@ -70,7 +70,7 @@ class SeedAllTests(TestCase):
                 "Item": 321,  # the import's 290 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
-                "SkillGroup": 69,  # the import's 50 + a group of his own for each of 19 hired swords
+                "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
                 "Special": 281,  # 185 + the dramatis personae's own rules (next step 12)
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
@@ -274,7 +274,7 @@ class SeedAllTests(TestCase):
         # and nine groups are new, each its warband type's alone
         infiltration = Skill.objects.get(name="Infiltration")
         held_by = set(infiltration.group_links.values_list("group__name", flat=True))
-        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Strigany", "Horned Hunters", "Night Goblins (MIC)"})  # fmt: skip
+        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)"})  # fmt: skip
         self.assertTrue(infiltration.description.startswith("A warrior with this skill is always placed"))
         self.assertEqual(set(Skill.objects.get(name="Infiltration (Skink)").group_links.values_list("group__name", flat=True)), {"Skink"})  # fmt: skip
         self.assertTrue(Skill.objects.filter(name="Battle Tongue").exists())
@@ -284,7 +284,18 @@ class SeedAllTests(TestCase):
         self.assertEqual(list(cavalcade.warband_links.values_list("warband_type__slug", flat=True)), ["cursed-cavalcade"])  # fmt: skip
         self.assertFalse(cavalcade.for_everyone)
         dwarves = SkillGroup.objects.get(name="Dwarves").warband_links.values_list("warband_type__slug", flat=True)
-        self.assertEqual(list(dwarves), ["dwarf-treasure-hunters"])  # the warbands that may learn every skill in it
+        self.assertEqual(
+            list(dwarves), ["dwarf-treasure-hunters"]
+        )  # skill_group_learners: the warband it is named after
+        sea_ghosts = SkillGroup.objects.get(name="Sea Ghosts").warband_links.values_list(
+            "warband_type__slug", flat=True
+        )
+        self.assertEqual(list(sea_ghosts), ["sea-ghosts"])
+        self.assertFalse(SkillGroup.objects.filter(name="Strigany").exists())  # no Strigany warband type
+        hunters = SkillGroup.objects.get(name="Horned Hunters").skill_links.values_list("skill__name", flat=True)
+        self.assertIn("Pathfinder (Horned Hunters)", hunters)  # the hired sword's Pathfinder keeps the bare name
+        amazons = SkillGroup.objects.get(name="Amazons").warband_links.values_list("warband_group__slug", flat=True)
+        self.assertEqual(list(amazons), ["amazons"])  # both Amazons types, stored as their group
 
     def test_the_dark_mage_knows_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,

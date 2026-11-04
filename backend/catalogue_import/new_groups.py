@@ -1,9 +1,11 @@
 """The skill groups our rows lack (phase 1a, overrides.json ``new_skill_groups``) and the build of every group.
 
-A new group is open to its warband type only. Its skills are ours by name (``skills``) and new ones (``new_skills``,
-title-cased) whose rules come from mordheimer's ``Rules`` (the entry naming the group's warband) or from a source file
-in ``sources/`` (``source``), each given a setting the way our rows are (assignments.py: mordheimer's for its name,
-else overrides.json's ``setting_assignments`` by "Name (Group)", else Mordheim's). A new name that a skill we have
+A new group is open to its warband type only (``type``), or to the types it names (``types``; a list that is exactly a
+group's members is stored as that group). Its skills are ours by name (``skills``) and new ones (``new_skills``,
+title-cased; ``{"name", "rule"}`` names a new skill apart from the mordheimer skill whose rules it takes, "Pathfinder
+(Horned Hunters)") whose rules come from mordheimer's ``Rules`` (the entry naming the group's warband) or from a source
+file in ``sources/`` (``source``), each given a setting the way our rows are (assignments.py: mordheimer's for its
+name, else overrides.json's ``setting_assignments`` by "Name (Group)", else Mordheim's). A new name that a skill we have
 already holds (one of ours, or a hired sword's or dramatis persona's own special skill, which their seeder makes) is
 left out of the group and reported, never merged. mordheimer skills naming the group's warband that the group leaves
 out are reported too.
@@ -36,6 +38,13 @@ def rules_text(entry: dict[str, Any]) -> str:
     """A mordheimer skill's rules, cleaned as the import cleans its other text."""
     parts = [clean_inline(rule.get("ruleFull")) for rule in entry.get("Rules") or [] if isinstance(rule, dict)]
     return "\n\n".join(part for part in parts if part)
+
+
+def _named(raw: str | dict[str, str]) -> tuple[str, str]:
+    """A new skill's name and the name of the skill whose rules it takes: a bare name (title-cased) is both."""
+    if isinstance(raw, dict):
+        return raw["name"], raw.get("rule", raw["name"])
+    return title_case(raw), title_case(raw)
 
 
 def hireling_skill_names(*profiles: list[dict[str, Any]]) -> dict[str, str]:
@@ -78,20 +87,20 @@ class NewGroups:
     def groups(self, assign: Assign) -> list[dict[str, Any]]:
         groups = []
         for name, decision in self.decisions.items():
-            slug = decision["type"]
-            if slug not in self.build.order:
-                raise ValueError(f"overrides.json new_skill_groups {name!r}: no warband type {slug!r}")
+            slugs = list(decision.get("types") or [decision["type"]])
+            unknown = [slug for slug in slugs if slug not in self.build.order]
+            if unknown:
+                raise ValueError(f"overrides.json new_skill_groups {name!r}: no warband type {unknown[0]!r}")
             skills = [self._ours(name, skill) for skill in decision.get("skills", [])]
             self.reused += [skill for skill in skills if skill not in self.reused]
-            wanted = decision.get("new_skills", [])
-            made = [self._new(name, raw, decision.get("source"), assign) for raw in wanted]
+            wanted = [_named(raw) for raw in decision.get("new_skills", [])]
+            made = [self._new(name, skill, rule, decision.get("source"), assign) for skill, rule in wanted]
             skills += [skill for skill in made if skill is not None]
-            self._left_out(name, slug, [*skills, *wanted])
+            self._left_out(name, slugs, [*skills, *(rule for _skill, rule in wanted)])
             groups.append(
                 {
                     "name": name,
-                    "for_everyone": False,
-                    "warbands": [{"type": slug, "excluded": False}],
+                    **self.build.access_of(frozenset(slugs)),
                     "large_only": False,
                     "note": "",
                     "how": "new group",
@@ -106,19 +115,19 @@ class NewGroups:
             raise ValueError(f"overrides.json new_skill_groups {group!r}: no skill {name!r}")
         return skill.name
 
-    def _new(self, group: str, raw: str, source: str | None, assign: Assign) -> str | None:
-        """A new skill of the group (made once for every group listing it); None when a skill we have holds its
-        name."""
-        name, key = title_case(raw), norm_name(raw)
+    def _new(self, group: str, name: str, rule: str, source: str | None, assign: Assign) -> str | None:
+        """A new skill of the group (made once for every group listing it), with the rules (and setting) of `rule`;
+        None when a skill we have holds its name."""
+        key = norm_name(name)
         if key in self.made:
             return self.made[key].name
         held = self._held(key)
         if held:
             self.build.log.collisions.append((name, group, held))
             return None
-        text, origin = self._rule(group, name, source)
+        text, origin = self._rule(group, rule, source)
         self.made[key] = Skill(name, text)
-        assigned = assign([{"name": name, "type": group}])[0]
+        assigned = assign([{"name": rule, "type": group}])[0]
         self.settings.append({"name": name, "setting": assigned["setting"], "how": assigned["how"]})
         self.build.log.new_skills.append((name, group, assigned["setting"], origin))
         return name
@@ -143,12 +152,12 @@ class NewGroups:
         entry = best_entry(group, found)
         return rules_text(entry), f"mordheimer ({entry.get('source')})"
 
-    def _left_out(self, group: str, slug: str, names: list[str]) -> None:
-        """mordheimer's skills naming the group's warband that the group doesn't hold."""
+    def _left_out(self, group: str, slugs: list[str], names: list[str]) -> None:
+        """mordheimer's skills naming the group's warbands that the group doesn't hold."""
         listed = {norm_name(name) for name in names}
         for key, entries in self.theirs.items():
             permitted = [name for entry in entries for name in as_list(entry.get("permittedWarbands"))]
-            if key not in listed and any(slug in self.resolver.find(name) for name in permitted):
+            if key not in listed and any(set(slugs) & set(self.resolver.find(name)) for name in permitted):
                 self.build.log.left_out.append((group, title_case(str(entries[0]["name"]))))
 
 

@@ -41,9 +41,9 @@ STATS = {
     "leadership": 7,
 }
 
-# The six lists that had a skill named "Infiltration" in skills.json: a book skill each here, "Infiltration (Skaven)"
-# (a skill's name is unique in the book since the skill groups, phase 1a).
-INFILTRATION_TYPES = ("Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Skink", "Strigany")
+# The five lists with a skill named "Infiltration" in skills.json (the Strigany's is left out): a book skill each
+# here, "Infiltration (Skaven)" (a skill's name is unique in the book since the skill groups, phase 1a).
+INFILTRATION_TYPES = ("Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Skink")
 EDIT = "edit_catalogue"  # create and edit every kind; joining grants it (decision 4)
 DELETE = "delete_catalogue"  # delete every kind; owners and admins, and players granted it (decision 5)
 
@@ -184,7 +184,7 @@ class CatalogueTestCase(CampaignTestCase):
     """CampaignTestCase ("Shards": owner Olga, admin Ada, players Pia and Rex holding only `edit_catalogue`, outsider Otto
     with his own campaign `elsewhere`) plus a small book catalogue:
 
-    the Axe (Weapon, 5 gc), the Sword (Weapon, 10 gc) and Heavy Armour (Armour, 50 gc); "Infiltration (...)" for the six
+    the Axe (Weapon, 5 gc), the Sword (Weapon, 10 gc) and Heavy Armour (Armour, 50 gc); "Infiltration (...)" for the five
     book skill types; "Lifestealer" in two spell lores; the trait specials Large (Trait), Wizard and Priest (Caster);
     the race Human; the book warband type Mercenaries; the shared rule Parry on the Sword, whose price row is for the
     Mercenaries; the bestiary's Warhound (a creature); the hired sword Ogre Bodyguard

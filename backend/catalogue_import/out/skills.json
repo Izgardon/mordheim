@@ -584,10 +584,6 @@
     "description": "Only a Clan Pestilens member with the Resilient Strength skill may choose the Ignore Pain special skill.  A Clan Pestilens member with this skill treats “Stunned” injuries as “Knocked Down.” (TC 29)"
   },
   {
-    "name": "Songster",
-    "description": "Entertaining shanties and novelty songs boost the morale of all those around. Any friendly model within 6\" of the Hero may re-roll any failed Leadership test with a +1 to Leadership. This includes rout tests."
-  },
-  {
     "name": "Sand worm",
     "description": "The warrior can bury himself in sand and become almost undetectable.  The model can Hide in open ground.  Cannot be used inside buildings."
   },
@@ -814,6 +810,10 @@
   {
     "name": "Master Trapper",
     "description": "This huntsman is a masterful trap setter. Trip wire range has been extended by this warrior to reach 4\". Traps set by a master trapper are triggered by a score of 2+."
+  },
+  {
+    "name": "Pathfinder (Horned Hunters)",
+    "description": "Taal has gifted this hunter with an uncanny ability to find paths through unexplored territories. Roll one additional D6 during the exploration phase. A warband may only contain one pathfinder."
   },
   {
     "name": "Ded Shooty",

@@ -95,11 +95,11 @@
     ]
   },
   {
-    "name": "Amazons (Lustria)",
+    "name": "Amazons",
     "for_everyone": false,
     "warbands": [
       {
-        "type": "amazons-lustria",
+        "group": "amazons",
         "excluded": false
       }
     ],
@@ -276,7 +276,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "Fury of Khaine",
       "Powerful Build",
@@ -337,7 +337,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "Ferocious Charge",
       "Monster Slayer",
@@ -360,7 +360,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "Master of Blades",
       "Extra Tough",
@@ -410,17 +410,13 @@
     "for_everyone": false,
     "warbands": [
       {
-        "type": "ostlanders",
-        "excluded": false
-      },
-      {
         "type": "halflings",
         "excluded": false
       }
     ],
     "large_only": false,
     "note": "",
-    "how": "union",
+    "how": "skill_group_learners",
     "skills": [
       "Crude Belch",
       "Stealthy",
@@ -467,7 +463,8 @@
       "Infiltration",
       "Foul Odour",
       "Hide in Shadows",
-      "Master Trapper"
+      "Master Trapper",
+      "Pathfinder (Horned Hunters)"
     ]
   },
   {
@@ -490,21 +487,13 @@
     "for_everyone": false,
     "warbands": [
       {
-        "type": "druchii",
-        "excluded": false
-      },
-      {
-        "type": "halflings",
-        "excluded": false
-      },
-      {
         "type": "low-kings",
         "excluded": false
       }
     ],
     "large_only": false,
     "note": "",
-    "how": "union",
+    "how": "skill_group_learners",
     "skills": [
       "Backstabber",
       "Pick Locks",
@@ -559,17 +548,13 @@
     "for_everyone": false,
     "warbands": [
       {
-        "type": "night-goblins-mic",
-        "excluded": false
-      },
-      {
         "type": "night-goblins-web",
         "excluded": false
       }
     ],
     "large_only": false,
     "note": "",
-    "how": "union",
+    "how": "skill_group_learners",
     "skills": [
       "Hide in Shadows",
       "Fungus Farmer",
@@ -633,7 +618,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "union",
+    "how": "skill_group_learners",
     "skills": [
       "Master of arms",
       "Crude Belch",
@@ -654,7 +639,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "union",
+    "how": "skill_group_learners",
     "skills": [
       "’ard ’ead",
       "Waaagh!",
@@ -676,7 +661,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "Bull Rush",
       "Foul Odour",
@@ -788,49 +773,13 @@
     "for_everyone": false,
     "warbands": [
       {
-        "type": "skaven",
-        "excluded": false
-      },
-      {
-        "type": "dark-elves",
-        "excluded": false
-      },
-      {
-        "type": "horned-hunters",
-        "excluded": false
-      },
-      {
-        "type": "shadow-warriors",
-        "excluded": false
-      },
-      {
-        "type": "night-goblins-mic",
-        "excluded": false
-      },
-      {
-        "type": "night-goblins-web",
-        "excluded": false
-      },
-      {
-        "type": "druchii",
-        "excluded": false
-      },
-      {
-        "type": "ogre-hunting-party",
-        "excluded": false
-      },
-      {
-        "type": "wood-elves-of-athel-loren",
-        "excluded": false
-      },
-      {
         "type": "sea-ghosts",
         "excluded": false
       }
     ],
     "large_only": false,
     "note": "",
-    "how": "union",
+    "how": "skill_group_learners",
     "skills": [
       "Infiltration",
       "Luck",
@@ -851,7 +800,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "See in Shadows",
       "Hide in Shadows",
@@ -891,7 +840,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "Black Hunger",
       "Tail Fighting",
@@ -911,7 +860,7 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "Black Hunger",
       "Censer Bearer",
@@ -975,60 +924,6 @@
       "True Grit",
       "Thick Skull",
       "Unlimited Hatred"
-    ]
-  },
-  {
-    "name": "Strigany",
-    "for_everyone": false,
-    "warbands": [
-      {
-        "type": "ostlanders",
-        "excluded": false
-      },
-      {
-        "type": "skaven",
-        "excluded": false
-      },
-      {
-        "type": "dark-elves",
-        "excluded": false
-      },
-      {
-        "type": "horned-hunters",
-        "excluded": false
-      },
-      {
-        "type": "shadow-warriors",
-        "excluded": false
-      },
-      {
-        "type": "night-goblins-mic",
-        "excluded": false
-      },
-      {
-        "type": "night-goblins-web",
-        "excluded": false
-      },
-      {
-        "type": "druchii",
-        "excluded": false
-      },
-      {
-        "type": "dwarf-slayer-cult",
-        "excluded": false
-      },
-      {
-        "type": "ogre-hunting-party",
-        "excluded": false
-      }
-    ],
-    "large_only": false,
-    "note": "",
-    "how": "union",
-    "skills": [
-      "Bull Rush",
-      "Songster",
-      "Infiltration"
     ]
   },
   {

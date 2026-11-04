@@ -731,11 +731,6 @@
       "how": "mordheimer"
     },
     {
-      "name": "Songster",
-      "setting": "mordheim-2a",
-      "how": "mordheimer"
-    },
-    {
       "name": "Sand worm",
       "setting": "mordheim-1b",
       "how": "mordheimer"
@@ -1002,13 +997,13 @@
     },
     {
       "name": "Chaos Engineer",
-      "setting": "mordheim-1c",
-      "how": "mordheimer"
+      "setting": "border-town-burning",
+      "how": "overrides.json"
     },
     {
       "name": "Tyrant",
-      "setting": "mordheim-1c",
-      "how": "mordheimer"
+      "setting": "border-town-burning",
+      "how": "overrides.json"
     },
     {
       "name": "Unlimited Hatred",
@@ -1017,6 +1012,11 @@
     },
     {
       "name": "Master Trapper",
+      "setting": "nemesis-crown",
+      "how": "mordheimer"
+    },
+    {
+      "name": "Pathfinder (Horned Hunters)",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
@@ -1077,28 +1077,28 @@
     },
     {
       "name": "Bribery",
-      "setting": "mordheim-1c",
-      "how": "mordheimer"
+      "setting": "border-town-burning",
+      "how": "overrides.json"
     },
     {
       "name": "Dubious Income",
-      "setting": "mordheim-1c",
-      "how": "mordheimer"
+      "setting": "border-town-burning",
+      "how": "overrides.json"
     },
     {
       "name": "Wholesale",
-      "setting": "mordheim-1c",
-      "how": "mordheimer"
+      "setting": "border-town-burning",
+      "how": "overrides.json"
     },
     {
       "name": "Deal Breaker",
-      "setting": "mordheim-1c",
-      "how": "mordheimer"
+      "setting": "border-town-burning",
+      "how": "overrides.json"
     },
     {
       "name": "Connected",
-      "setting": "mordheim-1c",
-      "how": "mordheimer"
+      "setting": "border-town-burning",
+      "how": "overrides.json"
     },
     {
       "name": "Noblesse Obliges",

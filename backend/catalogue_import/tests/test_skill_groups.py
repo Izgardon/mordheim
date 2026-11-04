@@ -173,6 +173,12 @@ class GroupAccessTests(SimpleTestCase):
         self.assertEqual((skink["how"], skink["warbands"]), ("skill_group_learners", LIZARDS["warbands"]))
         self.assertNotIn("Skink", [flag.group for flag in result.log.flagged])
 
+    def test_a_settling_naming_a_group_or_warband_we_lack_stops_the_build(self) -> None:
+        with self.assertRaisesMessage(ValueError, "type gnomes"):
+            built({"skill_group_learners": {"Skink": {"warbands": [{"type": "gnomes"}]}}})
+        with self.assertRaisesMessage(ValueError, "strigany"):
+            built({"skill_group_learners": {"Strigany": {"for_everyone": True}}})
+
     def test_the_core_groups_come_first_then_the_rest_by_name(self) -> None:
         names = [row["name"] for row in built().groups]
 
@@ -215,6 +221,22 @@ class NewGroupTests(SimpleTestCase):
 
         self.assertEqual(reused["Hide in Shadows"], (["skaven", "lizardmen"], ["skaven", "lizardmen", "witch-hunters"]))  # fmt: skip
         self.assertNotIn("Sprint", reused)  # for everyone before and after
+
+    def test_a_new_group_may_name_several_types_and_a_new_skill_apart_from_the_rule_it_takes(self) -> None:
+        hunters = {
+            "types": ["witch-hunters", "sisters-of-sigmar"],
+            "new_skills": [{"name": "Burn Them (Hunters)", "rule": "Burn them"}],
+        }
+        hired = [{"name": "Torch Bearer", "hired_sword": {"available_special_skills": [{"name": "Burn Them"}]}}]
+        result = built({"new_skill_groups": {"Hunters": hunters}}, hired=hired)
+
+        group_row = group(result, "Hunters")
+        self.assertEqual(group_row["warbands"], [{"group": "sigmarite", "excluded": False}])  # the group they make up
+        self.assertEqual(group_row["skills"], ["Burn Them (Hunters)"])
+        burn = next(skill for skill in result.skills if skill["name"] == "Burn Them (Hunters)")
+        self.assertEqual(burn["description"], "Burn the witch.")
+        self.assertEqual(result.log.collisions, [])
+        self.assertIn({"name": "Burn Them (Hunters)", "setting": "mordheim", "how": "mordheimer"}, result.settings)
 
     def test_a_new_group_naming_a_skill_or_type_we_lack_stops_the_build(self) -> None:
         with self.assertRaisesMessage(ValueError, "no skill 'Leap'"):

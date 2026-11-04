@@ -134,6 +134,12 @@ class SkillGroupBuild:
             skill.description = self._wording(skill)
             self.row_skill.update({label(row): skill.name for row in skill.rows})
 
+    def _unknown_learners(self) -> list[str]:
+        """skill_group_learners lines naming a warband type or group the build doesn't have."""
+        known = {("type", slug) for slug in self.order} | {("group", slug) for slug in self.members}
+        lines = [line for entry in self.learners.values() for line in entry.get("warbands", [])]
+        return [f"{kind} {line[kind]}" for line in lines for kind in ("type", "group") if kind in line and (kind, line[kind]) not in known]  # fmt: skip
+
     def _wording(self, skill: Skill) -> str:
         texts = [(label(row), str(row.get("description") or "")) for row in skill.rows]
         if len(texts) == 1:
@@ -183,6 +189,9 @@ class SkillGroupBuild:
             known = [label(row) for row in members if label(row) in self.row_access]
             access = self.group_access(name, [self.row_access[key] for key in known])
             groups.append({"name": name, **access, "skills": skills})
+        unknown = self._unknown_learners() + sorted(set(self.learners) - {norm_name(name) for name in lists})
+        if unknown:
+            raise ValueError(f"overrides.json skill_group_learners names what we lack: {', '.join(unknown)}")
         return groups
 
     def type_set(self, access: dict[str, Any]) -> frozenset[str]:
