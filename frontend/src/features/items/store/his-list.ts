@@ -70,6 +70,8 @@ export type HisUpgrades = {
   offUpgrades: number[];
   /** How many of a group he has: his specials that are its upgrades, and the basket's for him. */
   held: (group: string) => number;
+  /** Whether he has the upgrade already (its special), or it is in the basket for him. */
+  has: (upgrade: TemplateUpgrade) => boolean;
 };
 
 /** Upgrades for the hero the store is buying for (none for a group, or a template without any). */
@@ -77,7 +79,7 @@ export function hisUpgrades(
   answer: WarbandTemplateAnswer | undefined,
   his: HisList | null,
   hero: WarbandHero | undefined,
-  basket: { group: string }[]
+  basket: { id: number; group: string }[]
 ): HisUpgrades | null {
   const upgrades = answer?.template?.upgrades ?? [];
   if (!his || his.fighter.kind !== "hero" || !hero || !upgrades.length) return null;
@@ -88,5 +90,7 @@ export function hisUpgrades(
     held: (group) =>
       upgrades.filter((upgrade) => upgrade.group === group && specials.has(upgrade.special_id))
         .length + basket.filter((line) => line.group === group).length,
+    has: (upgrade) =>
+      specials.has(upgrade.special_id) || basket.some((line) => line.id === upgrade.id),
   };
 }

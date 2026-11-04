@@ -8,6 +8,9 @@ import {
 } from "@/features/warbands/components/recruit/upgrade-draft";
 import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 
+/** One he already has, or has in the basket (a warning: buying it again links it twice). */
+const HAS_IT = "He has it already.";
+
 /**
  * Upgrades in the store (the templates plan, phase 3), buying for a hero from the template: his
  * template's upgrades by group, each at what it costs him next (the second and later of a group
@@ -19,6 +22,7 @@ export default function StoreUpgrades({
   upgrades,
   offUpgrades,
   held,
+  has,
   canBuy,
   isMobile,
   onGet,
@@ -27,6 +31,8 @@ export default function StoreUpgrades({
   offUpgrades: number[];
   /** How many of the group he has, his specials and the basket's lines for him. */
   held: (group: string) => number;
+  /** Whether he has the upgrade already, or it is in the basket for him. */
+  has: (upgrade: TemplateUpgrade) => boolean;
   canBuy: boolean;
   isMobile: boolean;
   onGet: (upgrade: TemplateUpgrade, price: number) => void;
@@ -47,6 +53,7 @@ export default function StoreUpgrades({
             const price = upgradePrice(upgrade, count);
             const off = offUpgrades.includes(upgrade.id) ? upgrade.who_text : "";
             const warnings = [
+              has(upgrade) ? HAS_IT : "",
               off,
               overUpgradeMax(upgrade, count + 1) ?? "",
               upgrade.at_recruit ? AT_RECRUIT : "",

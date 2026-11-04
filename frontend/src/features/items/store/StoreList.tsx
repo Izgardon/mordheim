@@ -143,6 +143,7 @@ export default function StoreList(props: StoreListProps) {
           )}
           offUpgrades={props.upgrades.offUpgrades}
           held={props.upgrades.held}
+          has={props.upgrades.has}
           canBuy={props.canBuy}
           isMobile={props.isMobile}
           onGet={props.upgrades.onGet}

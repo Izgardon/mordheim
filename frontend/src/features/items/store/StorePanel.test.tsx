@@ -315,12 +315,17 @@ describe("StorePanel, Upgrades for a hero from the template", () => {
     expect(claw).toHaveTextContent("Great Claw");
     expect(claw).toHaveTextContent("100 gc"); // he has a Tentacle: the second costs double
     expect(claw).toHaveTextContent("Bought only when recruited.");
+    expect(claw).not.toHaveTextContent("He has it already.");
+    const tentacle = within(mutations).getAllByRole("listitem")[2];
+    expect(tentacle).toHaveTextContent("Tentacle");
+    expect(tentacle).toHaveTextContent("He has it already.");
     const theMarks = screen.getByRole("list", { name: "Mark of the Dark Gods" });
     expect(theMarks).toHaveTextContent("Seers only");
     expect(theMarks).toHaveTextContent("free");
 
     await user.click(screen.getByRole("button", { name: "Get Mark of Tchar" }));
     expect(theMarks).toHaveTextContent("At most 1 from Mark of the Dark Gods: he would have 2.");
+    expect(within(theMarks).getAllByRole("listitem")[1]).toHaveTextContent("He has it already.");
     await user.click(screen.getByRole("button", { name: "Get Great Claw" }));
     await user.clear(screen.getByLabelText("Price for Great Claw"));
     await user.type(screen.getByLabelText("Price for Great Claw"), "90");
