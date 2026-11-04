@@ -12,6 +12,7 @@ from catalogue_import.common import as_list, dump_json, load_json, loose_key, sl
 from catalogue_import.grading import build_settings, collect_evidence
 from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
+from catalogue_import.injuries import build_serious_injuries
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, mim_item
 from catalogue_import.new_groups import SkillGroups, build_skill_groups
@@ -237,6 +238,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     grouped = _skill_groups(sources, types, groups, skill_lists, resolver, who_can, assignments, assignment_log)
     template_log = TemplateLog()
     templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log)
+    injuries = build_serious_injuries(snapshot.injuries)
     counts = {
         "settings": len(settings),
         "warband types": len(types),
@@ -249,6 +251,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "skills": len(grouped.skills),
         "skill groups": len(grouped.groups),
         "skill group links": sum(len(group["skills"]) for group in grouped.groups),
+        "serious injuries (D66)": len(injuries),
     }
     report = ReportData(
         counts,
@@ -286,6 +289,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "skill-groups.json": dump_json(grouped.groups),
         "dramatis-personae.json": dump_json(sources.our_personae),
         "warband-templates.json": dump_json(templates),
+        "serious-injuries.json": dump_json(injuries),
         "import-report.md": render_report(report)
         + "\n"
         + render_templates(templates, template_log, grouped.groups, groups),

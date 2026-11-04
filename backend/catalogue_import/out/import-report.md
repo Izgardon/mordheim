@@ -30,6 +30,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skills | 223 |
 | skill groups | 49 |
 | skill group links | 266 |
+| serious injuries (D66) | 20 |
 
 ## mordheimer's contradictions
 

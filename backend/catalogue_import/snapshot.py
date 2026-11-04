@@ -1,5 +1,6 @@
 """mordheimer's New Warband Format snapshot (`sources/testwarbands-2026-10-31/`, 31 Oct 2026): its warband pages, its
-spell lists and the test pages' URLs, read for the warband templates and the items they bring in."""
+spell lists and the test pages' URLs, read for the warband templates and the items they bring in, and its serious
+injuries file, read for the book's serious injury table (injuries.py)."""
 
 import json
 from dataclasses import dataclass
@@ -14,6 +15,7 @@ class Snapshot:
     pages: dict[str, dict[str, Any]]  # page slug -> the page's warband, in slug order
     magic: dict[str, Any]
     manifest: dict[str, str]  # page slug -> its test page's URL
+    injuries: list[dict[str, Any]]  # serious-injuries.json: the injuries and the rules the pages link to
 
 
 def _read(path: Path) -> Any:
@@ -24,4 +26,4 @@ def _read(path: Path) -> Any:
 def load_snapshot(root: Path = SNAPSHOT) -> Snapshot:
     pages = {path.stem: _read(path) for path in sorted((root / "warbands").glob("*.json"))}
     manifest = {row["slug"]: row["page"] for row in _read(root / "manifest.json")["warbandPages"]}
-    return Snapshot(pages, _read(root / "magic.json"), manifest)
+    return Snapshot(pages, _read(root / "magic.json"), manifest, _read(root / "serious-injuries.json"))

@@ -1,7 +1,8 @@
 # mordheimer "New Warband Format" snapshot, 31 October 2026
 
 Data only, for warband templates after the switch (William, 2026-10-31: "templates after the switch"). The
-warband templates import reads the warbands, `magic.json` and `race-max-stats.json`.
+warband templates import reads the warbands, `magic.json` and `race-max-stats.json`; the serious injury table
+(`injuries.py`, `out/serious-injuries.json`) reads the 20 serious injuries in `serious-injuries.json`.
 
 Taken from https://mordheimer.net/docs/testwarbands: the JSON embedded in each test page's webpack chunk, pulled
 out as text and checked with `JSON.parse` (no downloaded code was run), saved with a 2-space indent.
