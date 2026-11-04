@@ -15,6 +15,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
 import { CAPTION, FormError, SettingsCard } from "./settings-ui";
+import WarbandVariant from "./WarbandVariant";
 
 type WarbandTypeCardProps = {
   warband: Warband;
@@ -43,6 +44,11 @@ export default function WarbandTypeCard({ warband, canEdit, onSaved }: WarbandTy
         warband_type: updated.warband_type,
         counts_as: updated.counts_as,
         warband_link: updated.warband_link,
+        template_variant: updated.template_variant,
+      });
+      // its template's fighters and rules read with the variant (the templates plan, phase 2)
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.campaign.warbandHireTemplate(warband.campaign_id, warband.id),
       });
       // what it can usually buy, hire and learn follows its types (the items rebuild)
       void queryClient.invalidateQueries({
@@ -84,6 +90,12 @@ export default function WarbandTypeCard({ warband, canEdit, onSaved }: WarbandTy
           </p>
         )}
       </div>
+      <WarbandVariant
+        warband={warband}
+        canEdit={canEdit}
+        saving={saving}
+        onPick={(variant) => void save({ template_variant: variant })}
+      />
       <div className="flex flex-col gap-1.5 border-t border-line pt-4">
         <span className={CAPTION}>Counts as</span>
         <div className="flex flex-wrap gap-1.5">

@@ -67,6 +67,8 @@ export type Warband = {
   mounts_rating?: number;
   gold?: number;
   max_units?: number | null;
+  /** Its template's variant (the templates plan, phase 2): its type's preset, else picked when raising. */
+  template_variant?: string;
   /** From the summary (the sheet merges it in): see `WarbandRosterCounts`. */
   unit_count?: number;
   hero_count?: number;
@@ -136,6 +138,8 @@ export type WarbandCreatePayload = {
   counts_as_ids?: number[];
   warband_link?: string | null;
   max_units?: number;
+  /** For a type whose template presets no variant. */
+  template_variant?: string;
 };
 
 export type WarbandUpdatePayload = {
@@ -150,6 +154,7 @@ export type WarbandUpdatePayload = {
   max_units?: number | null;
   show_loadout_on_mobile?: boolean;
   warband_link?: string | null;
+  template_variant?: string;
 };
 
 export type LevelUpHistoryEntry = {
@@ -194,6 +199,8 @@ export type WarbandHero = UnitCompanionFields &
   PendingPickFields & {
     id: number;
     warband_id: number;
+    /** The template fighter he was recruited as ("champion"); blank: typed by hand. */
+    fighter_key?: string;
     name: string | null;
     unit_type: string | null;
     race_id: number | null;
@@ -228,6 +235,8 @@ export type WarbandHero = UnitCompanionFields &
     created_at: string;
     updated_at: string;
     available_skills?: HeroSkills | string[] | null;
+    /** The spell lores he casts from, by name (copied from his template fighter). */
+    available_spell_types?: string[];
     race?: {
       name: string;
       movement: number;
@@ -308,6 +317,8 @@ export type WarbandHireling = UnitCompanionFields &
     created_at: string;
     updated_at: string;
     available_skills?: HeroSkills | string[] | null;
+    /** The spell lores he casts from, by name (copied from his template fighter). */
+    available_spell_types?: string[];
     race?: {
       name: string;
       movement: number;
@@ -354,6 +365,8 @@ export type WarbandHeroPayload = {
   attacks?: number | string | null;
   leadership?: number | string | null;
   available_skills?: HeroSkills | string[] | null;
+  /** The spell lores he casts from, by name (copied from his template fighter). */
+  available_spell_types?: string[];
   items?: { id: number; cost?: number | null }[];
   skill_ids?: number[];
   special_ids?: number[];
@@ -380,6 +393,8 @@ export type WarbandHirelingPayload = {
   large?: boolean | null;
   caster?: HeroCaster | null;
   available_skills?: HeroSkills | string[] | null;
+  /** The spell lores he casts from, by name (copied from his template fighter). */
+  available_spell_types?: string[];
   half_rate?: boolean | null;
   no_level_ups?: boolean | null;
   blood_pacted?: boolean | null;
@@ -535,6 +550,10 @@ export type HenchmenGroup = UnitCompanionFields &
     large: boolean | null;
     half_rate: boolean | null;
     no_level_ups?: boolean | null;
+    /** False: Lad's got talent warns ("Zombies can't be promoted in their rules."). */
+    promotable?: boolean;
+    /** The template fighter it was recruited as; blank: typed by hand. */
+    fighter_key?: string;
     dead: boolean | null;
     /** How many more battles the group misses, and why (`MissingGamesFields`). */
     missing_games?: number;
@@ -586,6 +605,7 @@ export type HenchmenGroupPayload = {
   large?: boolean | null;
   half_rate?: boolean | null;
   no_level_ups?: boolean | null;
+  promotable?: boolean;
   dead?: boolean | null;
   movement?: number | string | null;
   weapon_skill?: number | string | null;

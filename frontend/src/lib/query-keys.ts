@@ -121,6 +121,12 @@ export const queryKeys = {
     /** What the warband can usually buy, hire and learn (the server decides: who-can/). */
     warbandWhoCan: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "who-can"] as const,
+    /** Its template as the hire screens read it: the variant applied, what it has of each fighter. */
+    warbandHireTemplate: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "template"] as const,
+    /** A warband type's template in outline, for the raise screen (the variant picked). */
+    raiseOutline: (campaignId: number, warbandTypeId: number, variant: string) =>
+      ["campaign", campaignId, "raise-outline", warbandTypeId, variant] as const,
     /** A summary read that refreshes the sheet's summary after a write (never observed). */
     warbandSummary: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "summary"] as const,

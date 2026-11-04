@@ -9,14 +9,17 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { cn } from "@/lib/utils";
 
+import { useRaiseOutline } from "../../api/warband-template-queries";
 import { createWarband } from "../../api/warbands-api";
 import type { Warband, WarbandTypeBrief } from "../../types/warband-types";
 import WarbandTypePicker from "../type-picker/WarbandTypePicker";
 import { linkAfterPick } from "../type-picker/warband-type-picker";
+import RaiseOutline from "./RaiseOutline";
 
 /**
  * No warband in this campaign yet (design E): name one, pick its warband type (which fills the
- * warband link, the player's to replace), then raise it.
+ * warband link, the player's to replace, and shows its template in outline, with a variant to
+ * pick where the type presets none), then raise it.
  */
 export default function CreateWarband({
   campaignId,
@@ -29,6 +32,10 @@ export default function CreateWarband({
   const [name, setName] = useState("");
   const [warbandType, setWarbandType] = useState<WarbandTypeBrief | null>(null);
   const [link, setLink] = useState("");
+  // the template's variant, for a type that presets none (the templates plan, phase 2)
+  const [variant, setVariant] = useState("");
+  const outline = useRaiseOutline(campaignId, warbandType?.id ?? null, variant).data?.template;
+  const needsVariant = Boolean(outline?.variants.length && !outline.preset_variant && !variant);
   const [saving, setSaving] = useState(false);
 
   return (
@@ -62,6 +69,7 @@ export default function CreateWarband({
                   name: name.trim(),
                   warband_type_id: warbandType.id,
                   warband_link: link.trim() || null,
+                  ...(variant ? { template_variant: variant } : {}),
                 })
               );
             } catch (error) {
@@ -90,6 +98,7 @@ export default function CreateWarband({
               onPick={(picked) => {
                 setLink((current) => linkAfterPick(current, warbandType, picked));
                 setWarbandType(picked);
+                setVariant("");
               }}
             />
           </Field>
@@ -112,10 +121,19 @@ export default function CreateWarband({
               className="h-11 text-base md:h-11"
             />
           </Field>
+          {warbandType ? (
+            <RaiseOutline
+              campaignId={campaignId}
+              typeId={warbandType.id}
+              typeName={warbandType.name}
+              variant={variant}
+              onVariant={setVariant}
+            />
+          ) : null}
           <Button
             type="submit"
             className={cn("min-h-12", isMobile ? "w-full" : "self-start")}
-            disabled={saving || !name.trim() || !warbandType}
+            disabled={saving || !name.trim() || !warbandType || needsVariant}
           >
             {saving ? "Raising..." : "Raise the warband"}
           </Button>
