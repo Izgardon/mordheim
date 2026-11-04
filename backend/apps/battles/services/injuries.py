@@ -4,7 +4,9 @@ The server owns the tables: a draft's roll keeps its dice and its tick (`apply`)
 and its effect. Simple results (dead, a characteristic -1, a named special such as Old Battle Wound) are applied at
 finalise when ticked; complex ones (Robbed, Captured, Sold to the Pits, Multiple Injuries and the like) are flagged
 to apply by hand. Only a unit's last roll counts (earlier ones were re-rolled); finalise writes one log per unit with
-that roll, the re-rolls and what was applied. The labels are the ones the postbattle page has always shown.
+that roll, the re-rolls and what was applied. The D66 table is the book's (the catalogue import's
+`out/serious-injuries.json`, from mordheimer's snapshot), its results named as the book names them; the D100 table's
+labels are the ones the postbattle page has always shown.
 
 A result that keeps the unit out of games carries a hint, `misses` (the games, and the dice when the book rolls for
 them: Deep Wound's D3): postbattle offers it as the unit's missing games, set at finalise only when the player ticks
@@ -45,22 +47,25 @@ def _copy(effect: dict[str, Any]) -> dict[str, Any]:
 
 _D66_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
     (11, 15, "Dead", DEAD),
-    (16, 21, "Full Recovery", NONE),
-    (22, 26, "Horrible Scars", _special("Horrible Scars")),
-    (31, 31, "Old Battle Wound", _special("Old Battle Wound")),
-    (32, 32, "Nervous Condition", _stat("initiative")),
-    (33, 33, "Smashed Leg", _misses(1)),
-    (34, 34, "Arm Wound", _misses(1)),
-    (35, 35, "Severe Head Wound", _special("Severe Head Wound")),
+    (16, 21, "Multiple Injuries", MANUAL),  # roll D6 times more
+    (22, 22, "Leg Wound", _stat("movement")),
+    (23, 23, "Arm Wound", _misses(1)),
+    (24, 24, "Madness", MANUAL),  # a D6 for stupidity or frenzy
+    (25, 25, "Smashed Leg", _misses(1)),
+    (26, 26, "Chest Wound", _stat("toughness")),
+    (31, 31, "Blinded in One Eye", _stat("ballistic_skill")),
+    (32, 32, "Old Battle Wound", _special("Old Battle Wound")),
+    (33, 33, "Nervous Condition", _stat("initiative")),
+    (34, 34, "Hand Injury", _stat("weapon_skill")),
+    (35, 35, "Deep Wound", _misses(2, "D3")),
     (36, 36, "Robbed", MANUAL),
-    (41, 55, "Sold to the Pits", _misses(1)),
+    (41, 55, "Full Recovery", NONE),
     (56, 56, "Bitter Enmity", MANUAL),
     (61, 61, "Captured", _misses(1)),
-    (62, 62, "Hardened", _special("Hardened")),
-    (63, 63, "Mad", MANUAL),
-    (64, 64, "Stupidity", _special("Stupidity")),
-    (65, 65, "Frenzy", _special("Frenzy")),
-    (66, 66, "Multiple Injuries", MANUAL),
+    (62, 63, "Hardened", _special("Hardened")),
+    (64, 64, "Horrible Scars", _special("Horrible Scars")),
+    (65, 65, "Sold to the Pits", _misses(1)),
+    (66, 66, "Survives Against the Odds", MANUAL),  # +1 Experience
 ]
 _D100_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
     (1, 14, "Dead", DEAD),

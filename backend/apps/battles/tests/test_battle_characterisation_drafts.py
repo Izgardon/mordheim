@@ -55,7 +55,7 @@ class PostbattleDraftTests(BattleTestCase):
     def test_finalise_logs_each_units_final_roll_once(self):
         # BUG-47: a roll that never went through a draft was never logged; finalise now logs every unit's last roll
         battle_id = self.postbattle()
-        rolls = [injury_roll([1, 1], label="anything"), injury_roll([4, 5])]
+        rolls = [injury_roll([1, 1], label="anything"), injury_roll([6, 5])]
         self.ok(self.finalize(self.player, battle_id, draft(self.results(**{self.h: {"rolls": rolls}}))))
 
         log = WarbandLog.objects.get(warband=self.warband, entry_type="serious_injury")
@@ -66,8 +66,8 @@ class PostbattleDraftTests(BattleTestCase):
                 {
                     "unit_name": self.h,
                     "roll_type": "d66",
-                    "rolls": [4, 5],
-                    "result_code": "45",
+                    "rolls": [6, 5],
+                    "result_code": "65",
                     "result_label": "Sold to the Pits",
                     "dead_suggestion": False,
                     "effect": {

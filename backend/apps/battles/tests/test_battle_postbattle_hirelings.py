@@ -50,7 +50,7 @@ class HirelingPostbattleTests(BattleTestCase):
 
     def test_each_hireling_rolls_on_its_own_table_and_takes_its_effects(self):
         battle_id = self.postbattle()
-        results = self.results(persona=[roll([3, 2])], sword=[roll([1], "d6")])  # Nervous Condition; a 1: dead
+        results = self.results(persona=[roll([3, 3])], sword=[roll([1], "d6")])  # Nervous Condition; a 1: dead
 
         self.ok(self.finalize(self.player, battle_id, draft(results)))
 
@@ -119,7 +119,7 @@ class HirelingPostbattleTests(BattleTestCase):
         battle_id = self.postbattle()
         Hireling.objects.filter(id=self.persona.id).update(injury_table="henchman")  # a house rule, mid-battle
 
-        self.ok(self.finalize(self.player, battle_id, draft(self.results(persona=[roll([3, 2])]))))
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(persona=[roll([3, 3])]))))
 
         self.persona.refresh_from_db()
         self.assertEqual(self.persona.initiative, 3)  # the hero table's Nervous Condition, as the page rolled it

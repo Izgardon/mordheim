@@ -193,11 +193,10 @@ class MissingGamesFromInjuriesTests(BattleTestCase):
             describe_roll("d100", [47])["effect"], {"kind": "manual", "misses": {"games": 2, "dice": "D3"}}
         )
         self.assertEqual(describe_roll("d66", [6, 1])["effect"], {"kind": "manual", "misses": {"games": 1}})  # Captured
-        self.assertEqual(describe_roll("d66", [3, 1])["effect"], {"kind": "special", "special": "Old Battle Wound"})
+        self.assertEqual(describe_roll("d66", [3, 2])["effect"], {"kind": "special", "special": "Old Battle Wound"})
         for table in ("d66", "d100"):
             missing = {row["label"] for row in injury_tables()[table] if "misses" in row["effect"]}
-            expected = {"Smashed Leg", "Arm Wound", "Captured", "Sold to the Pits"} | ({"Deep Wound"} if table == "d100" else set())  # fmt: skip
-            self.assertEqual(missing, expected)
+            self.assertEqual(missing, {"Smashed Leg", "Arm Wound", "Deep Wound", "Captured", "Sold to the Pits"})
 
     def test_a_confirmed_injury_sets_missing_games_for_the_games_after_this_one(self):
         self.hero.missing_games = 1  # brought anyway: this battle counts his last game, then the wound sets 3

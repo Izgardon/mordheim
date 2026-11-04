@@ -6,7 +6,8 @@ is simple (dead, a characteristic -1, a named special) and flagged to apply by h
 
 from typing import Any
 
-from apps.battles.services.injuries import describe_roll
+from apps.battles.services.injuries import describe_roll, injury_tables
+from apps.core.seeding import IMPORT_OUT, read_json_list
 from apps.special.models import Special
 from apps.warbands.models import HeroSpecial, WarbandLog
 
@@ -18,14 +19,27 @@ def roll(rolls: list[int], roll_type: str = "d66", **fields: Any) -> dict[str, A
 
 
 class InjuryTableTests(BattleTestCase):
+    def test_the_d66_table_is_the_books(self):
+        # it was the old postbattle page's shuffle: 16-21 Full Recovery, 41-55 Sold to the Pits, 66 Multiple Injuries
+        book = read_json_list(IMPORT_OUT / "serious-injuries.json")
+        self.assertEqual(
+            [(row["low"], row["high"], row["label"].casefold()) for row in injury_tables()["d66"]],
+            [(row["low"], row["high"], row["name"].casefold()) for row in book],
+        )
+
     def test_each_result_has_its_effect(self):
         cases: list[tuple[str, list[int], str, dict[str, Any]]] = [
             ("d66", [1, 3], "Dead", {"kind": "dead"}),
-            ("d66", [2, 1], "Full Recovery", {"kind": "none"}),
-            ("d66", [3, 1], "Old Battle Wound", {"kind": "special", "special": "Old Battle Wound"}),
-            ("d66", [3, 2], "Nervous Condition", {"kind": "stat", "stat": "initiative", "change": -1}),
+            ("d66", [1, 6], "Multiple Injuries", {"kind": "manual"}),
+            ("d66", [2, 2], "Leg Wound", {"kind": "stat", "stat": "movement", "change": -1}),
+            ("d66", [3, 1], "Blinded in One Eye", {"kind": "stat", "stat": "ballistic_skill", "change": -1}),
+            ("d66", [3, 2], "Old Battle Wound", {"kind": "special", "special": "Old Battle Wound"}),
+            ("d66", [3, 3], "Nervous Condition", {"kind": "stat", "stat": "initiative", "change": -1}),
+            ("d66", [3, 5], "Deep Wound", {"kind": "manual", "misses": {"games": 2, "dice": "D3"}}),
             ("d66", [3, 6], "Robbed", {"kind": "manual"}),
-            ("d66", [6, 6], "Multiple Injuries", {"kind": "manual"}),
+            ("d66", [4, 5], "Full Recovery", {"kind": "none"}),
+            ("d66", [6, 3], "Hardened", {"kind": "special", "special": "Hardened"}),
+            ("d66", [6, 6], "Survives Against the Odds", {"kind": "manual"}),
             ("d100", [30], "Chest Wound", {"kind": "stat", "stat": "toughness", "change": -1}),
             ("d100", [7], "Dead", {"kind": "dead"}),
             ("d6", [2], "Dead", {"kind": "dead"}),
@@ -55,9 +69,9 @@ class InjuryFinaliseTests(BattleTestCase):
         ana, bea, cy, di = self.keys[:4]
         rolls = {
             ana: [roll([1, 2])],  # dead
-            bea: [roll([1, 1]), roll([3, 2])],  # re-rolled into Nervous Condition: initiative -1
-            cy: [roll([3, 1])],  # Old Battle Wound: a special
-            di: [roll([2, 2], apply=False)],  # Horrible Scars, unticked
+            bea: [roll([1, 1]), roll([3, 3])],  # re-rolled into Nervous Condition: initiative -1
+            cy: [roll([3, 2])],  # Old Battle Wound: a special
+            di: [roll([6, 4], apply=False)],  # Horrible Scars, unticked
             self.keys[4]: [roll([1], roll_type="d6")],  # a henchman's 1: dead
         }
         results = {key: unit_result(key, rolls=rolls.get(key), name=key) for key in self.keys}
@@ -90,7 +104,7 @@ class InjuryFinaliseTests(BattleTestCase):
         ana = self.keys[0]
         battle_id = self.to_postbattle({self.player: [ana], self.viewer: [self.rat]})
 
-        self.ok(self.finalize(self.player, battle_id, draft({ana: unit_result(ana, rolls=[roll([2, 4])])})))
+        self.ok(self.finalize(self.player, battle_id, draft({ana: unit_result(ana, rolls=[roll([6, 4])])})))
 
         self.assertEqual(list(HeroSpecial.objects.values_list("special_id", flat=True)), [scars.id])
         self.assertEqual(Special.objects.filter(name="Horrible Scars").count(), 1)
