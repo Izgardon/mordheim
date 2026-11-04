@@ -25,6 +25,9 @@ class Hero(RosterUnit, PendingPicks):
         ),
     )
     available_skills = models.JSONField(default=dict, blank=True)
+    available_spell_types = models.JSONField(default=list, blank=True)  # the spell lores he casts from, by name
+    # the template fighter he was recruited as ("champion"; the templates plan, phase 2); blank: added by hand
+    fighter_key = models.SlugField(max_length=80, blank=True, default="")
     trading_action = models.BooleanField(default=True)
 
     items: models.ManyToManyField = models.ManyToManyField(

@@ -34,6 +34,8 @@ class Warband(models.Model):
     backstory = models.TextField(max_length=5000, null=True, blank=True)
     warband_link = models.URLField(max_length=500, null=True, blank=True)
     max_units = models.PositiveSmallIntegerField(default=15)  # warband size: warn only (decision 12)
+    # its template's variant (the templates plan, phase 2): its type's preset, else picked when raising; blank: none
+    template_variant = models.CharField(max_length=40, blank=True, default="")
     show_loadout_on_mobile = models.BooleanField(default=False)
     # The sum of the ledger, changed only by services/ledger.py in the same transaction as each row (decision 4).
     gold = models.BigIntegerField(default=0, db_default=0)

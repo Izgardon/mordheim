@@ -136,6 +136,8 @@ HERO_SUMMARY = {
     "half_rate": "bool",
     "trading_action": "bool",
     "available_skills": {},
+    "available_spell_types": [],  # the templates plan, phase 2: his spell lores, and what he was recruited as
+    "fighter_key": "str",
     **MISSING,
     **STATS,
     **COMPANIONS,
@@ -165,6 +167,8 @@ HENCHMEN_SUMMARY = {
     "large": "bool",
     "half_rate": "bool",
     "no_level_ups": "bool",
+    "promotable": "bool",  # the templates plan, phase 2: Lad's got talent warns when not, and what it was recruited as
+    "fighter_key": "str",
     "dead": "bool",
     "source_beast_id": None,  # recruited from a creature: its beast and kind
     "beast_kind": None,
@@ -197,6 +201,7 @@ HIRELING_SUMMARY = {
     "large": "bool",
     "caster": "str",
     "available_skills": {},
+    "available_spell_types": [],  # the templates plan, phase 2
     "half_rate": "bool",
     "no_level_ups": "bool",
     "blood_pacted": "bool",

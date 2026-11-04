@@ -15,6 +15,10 @@ class HenchmenGroup(RosterUnit):
     )
     max_size = models.PositiveIntegerField(default=5)
     no_level_ups = models.BooleanField(default=False)
+    # Lad's got talent warns, and still promotes, when his rules say the group can't be promoted (Zombies)
+    promotable = models.BooleanField(default=True)
+    # the template fighter it was recruited as ("warriors"; the templates plan, phase 2); blank: added by hand
+    fighter_key = models.SlugField(max_length=80, blank=True, default="")
     # the creature the group was recruited from (units/services/beasts.py): joining needs the same beast, and its
     # Animal item is what a member turns back into; held with RESTRICT, so the beast is archived, not deleted
     source_beast = models.ForeignKey(

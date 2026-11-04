@@ -60,6 +60,7 @@ MISSING_FIELDS = ("missing_games", "missing_reason")  # every read payload; only
 PICK_FIELDS = ("pending_skills", "pending_spells", "pending_specials")  # heroes and hired swords: picks to make later
 XP_CHANGE_FIELDS = ("xp_change",)  # every update serializer: the card's − and + (half rate counts half)
 MAX_XP_CHANGE = Decimal(999)
+MAX_SPELL_TYPES = 12
 
 
 def get_prefetched_or_query(obj: Any, prefetch_key: str, queryset_attr: str) -> list[Any]:
@@ -231,6 +232,10 @@ class UnitWriteSerializer(WrittenStatsSerializer, CampaignCatalogueScopeMixin, s
     special_ids = serializers.ListField(child=serializers.IntegerField(), write_only=True, required=False)
     spell_ids = serializers.ListField(  # left out of Meta.fields by kinds without spells
         child=serializers.IntegerField(), write_only=True, required=False
+    )
+    # the spell lores he casts from, by name (heroes and hired swords; the templates plan, phase 2)
+    available_spell_types = serializers.ListField(
+        child=serializers.CharField(max_length=80), max_length=MAX_SPELL_TYPES, required=False
     )
     # Missing games (edit mode): only a unit already on the roster misses games, so only updates list them
     missing_games = serializers.IntegerField(min_value=0, max_value=MAX_MISSING_GAMES, required=False)

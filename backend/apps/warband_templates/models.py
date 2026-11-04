@@ -60,6 +60,16 @@ class WarbandTemplate(CatalogueEntry):
     def __str__(self) -> str:
         return self.name
 
+    @property
+    def gold(self) -> int:
+        """The starting gold as it reads: the book's, else 500 gc."""
+        return DEFAULT_STARTING_GOLD if self.starting_gold is None else self.starting_gold
+
+    @property
+    def most_warriors(self) -> int:
+        """The most warriors as it reads: the book's, else 15."""
+        return DEFAULT_MAX_MODELS if self.max_models is None else self.max_models
+
 
 class WarbandTemplateType(models.Model):
     """A warband type the template serves, and the variant that type always is (Reiklanders: reikland; blank: the

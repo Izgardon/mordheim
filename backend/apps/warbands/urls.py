@@ -1,5 +1,7 @@
 from django.urls import path
 
+from apps.warband_templates.views import WarbandTemplateForWarbandView, WarbandTypeTemplateView
+
 from .units.kinds import HENCHMEN_GROUP, HERO, HIRELING
 from .units.urls import unit_urlpatterns
 from .views import (
@@ -28,6 +30,11 @@ from .views import (
 
 urlpatterns = [
     path("campaigns/<int:campaign_id>/warband-types/", CampaignWarbandTypesView.as_view(), name="warband-types"),
+    path(
+        "campaigns/<int:campaign_id>/warband-types/<int:warband_type_id>/template/",
+        WarbandTypeTemplateView.as_view(),
+        name="warband-type-template",
+    ),
     path("warband-groups/", WarbandGroupListView.as_view(), name="warband-groups"),
     path("warbands/", WarbandListCreateView.as_view(), name="warbands"),
     path("warbands/<int:warband_id>/", WarbandDetailView.as_view(), name="warbands-detail"),
@@ -62,6 +69,7 @@ urlpatterns = [
         name="warbands-purchases",
     ),
     path("warbands/<int:warband_id>/who-can/", WarbandWhoCanView.as_view(), name="warbands-who-can"),
+    path("warbands/<int:warband_id>/template/", WarbandTemplateForWarbandView.as_view(), name="warbands-template"),
     path(
         "warbands/<int:warband_id>/rarity-rolls/",
         WarbandRarityRollView.as_view(),

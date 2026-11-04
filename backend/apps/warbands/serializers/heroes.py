@@ -31,6 +31,7 @@ WRITE_FIELDS = (
     "trading_action",
     "dead",
     "available_skills",
+    "available_spell_types",
     *STAT_FIELDS,
     "items",
 )
@@ -58,6 +59,8 @@ class HeroSummarySerializer(UnitSummarySerializer):
             "half_rate",
             "trading_action",
             "available_skills",
+            "available_spell_types",
+            "fighter_key",
             *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
@@ -94,6 +97,8 @@ class HeroDetailSerializer(UnitDetailSerializer):
             "trading_action",
             "dead",
             "available_skills",
+            "available_spell_types",
+            "fighter_key",
             *MISSING_FIELDS,
             *STAT_FIELDS,
             *COMPANION_FIELDS,
@@ -110,7 +115,7 @@ class HeroCreateSerializer(UnitWriteSerializer):
 
     class Meta:
         model = Hero
-        fields = (*WRITE_FIELDS, "skill_ids", "special_ids", "spell_ids")
+        fields = (*WRITE_FIELDS, "fighter_key", "skill_ids", "special_ids", "spell_ids")
 
 
 class HeroUpdateSerializer(UnitWriteSerializer):

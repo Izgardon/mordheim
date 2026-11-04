@@ -46,6 +46,7 @@ class WarbandSerializer(serializers.ModelSerializer):
             "backstory",
             "warband_link",
             "max_units",
+            "template_variant",
             "dice_color",
             "show_loadout_on_mobile",
             "created_at",
@@ -159,7 +160,15 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Warband
-        fields = ("name", "warband_type_id", "counts_as_ids", "campaign_id", "max_units", "warband_link")
+        fields = (
+            "name",
+            "warband_type_id",
+            "counts_as_ids",
+            "campaign_id",
+            "max_units",
+            "warband_link",
+            "template_variant",
+        )
 
     def validate_name(self, value):
         cleaned = str(value).strip()
@@ -186,6 +195,7 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
             "dice_color",
             "show_loadout_on_mobile",
             "warband_link",
+            "template_variant",
         )
 
     def validate_name(self, value):

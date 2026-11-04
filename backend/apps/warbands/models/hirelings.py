@@ -39,6 +39,7 @@ class Hireling(RosterUnit, PendingPicks):
         ),
     )
     available_skills = models.JSONField(default=dict, blank=True)
+    available_spell_types = models.JSONField(default=list, blank=True)  # the spell lores he casts from, by name
     no_level_ups = models.BooleanField(default=False)
     rating = models.PositiveIntegerField(default=0)
     blood_pacted = models.BooleanField(default=False)

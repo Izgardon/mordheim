@@ -35,6 +35,7 @@ WRITE_FIELDS = (
     "large",
     "half_rate",
     "no_level_ups",
+    "promotable",
     "dead",
     *STAT_FIELDS,
     "items",
@@ -190,6 +191,8 @@ class HenchmenGroupSummarySerializer(HenchmenMembersMixin, UnitSummarySerializer
             "large",
             "half_rate",
             "no_level_ups",
+            "promotable",
+            "fighter_key",
             "dead",
             "source_beast_id",
             "beast_kind",
@@ -229,6 +232,8 @@ class HenchmenGroupDetailSerializer(HenchmenMembersMixin, UnitDetailSerializer):
             "large",
             "half_rate",
             "no_level_ups",
+            "promotable",
+            "fighter_key",
             "dead",
             "source_beast_id",
             "beast_kind",
@@ -252,7 +257,7 @@ class HenchmenGroupCreateSerializer(UnitWriteSerializer):
 
     class Meta:
         model = HenchmenGroup
-        fields = WRITE_FIELDS
+        fields = (*WRITE_FIELDS, "fighter_key")
 
     def validate_henchmen(self, value):
         if not value:
