@@ -121,6 +121,7 @@ export function useRecruit(kind: UnitKindKey, warbandId: number, existingIds: nu
     const result = await unitApi(kind).batch(warbandId, {
       create: [body as never],
       ...(hire.purchases.length ? { purchases: hire.purchases } : {}),
+      ...(hire.upgrades.length ? { upgrades: hire.upgrades } : {}),
     });
     updateCache(warbandId, {
       [LIST_KEY[kind]]: result.units,

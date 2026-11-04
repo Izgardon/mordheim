@@ -75,6 +75,11 @@ class Line:
         return (self.price or 0) * self.data["quantity"] if self.data["is_buying"] else 0
 
 
+def gold_negative(warband: Warband) -> Warning:
+    """A charge that leaves the warband below 0 gc: it went ahead and says so (decision 2)."""
+    return {"code": GOLD_NEGATIVE, "message": f"This leaves the warband at {warband.gold} gc.", "gold": warband.gold}
+
+
 def archived_entry(item: Item) -> Warning:
     """An item bought from a list read before it was archived, or removed from the campaign's catalogue: the purchase
     goes through and says so (decision 5)."""
@@ -215,9 +220,7 @@ def buy_lines(warband: Warband, lines: Sequence[Line]) -> tuple[list[WarbandTrad
         warnings += _line_warnings(warband, line)
     warnings += _companion_warnings(warband, lines)
     if charged and warband.gold < 0:
-        warnings.append(
-            {"code": GOLD_NEGATIVE, "message": f"This leaves the warband at {warband.gold} gc.", "gold": warband.gold}
-        )
+        warnings.append(gold_negative(warband))
     return trades, warnings
 
 

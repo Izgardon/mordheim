@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 
 import type { TemplateLine } from "../../types/hire-template-types";
 import { lineLabel, overWarbandMax, pickKey, tallyTotal, type KitPick } from "./hire-draft";
+import type { UpgradePick } from "./useUpgradePicks";
 
 type PriceProps = {
   label: string;
@@ -33,8 +34,8 @@ const ROW = "flex min-h-9 items-center gap-2.5 border-t border-line py-1 first:b
 
 /**
  * What the hire costs, as the store's basket tallies it: his cost (each member's, for a group),
- * each item picked at its price, and the free dagger. Every price can be changed; the total and
- * the gold left follow, and the server writes what the tally says.
+ * each item picked at its price, each upgrade picked (a hero's) and the free dagger. Every price
+ * can be changed; the total and the gold left follow, and the server writes what the tally says.
  */
 export default function HireTally({
   name,
@@ -47,6 +48,8 @@ export default function HireTally({
   onPrice,
   freeItem,
   gold,
+  upgrades = [],
+  onUpgradePrice,
 }: {
   /** What he is recruited as ("Champion", "Warriors"). */
   name: string;
@@ -60,9 +63,16 @@ export default function HireTally({
   onPrice: (key: string, value: string) => void;
   freeItem: { id: number; name: string } | null;
   gold: number;
+  /** A hero's upgrades picked, each at its price (the second and later of a group at double). */
+  upgrades?: UpgradePick[];
+  onUpgradePrice?: (id: number, value: string) => void;
 }) {
   const each = members > 1;
-  const total = tallyTotal(cost, members, picks, prices);
+  const extra = upgrades.reduce(
+    (sum, pick) => sum + Math.max(0, Math.trunc(Number(pick.price) || 0)),
+    0
+  );
+  const total = tallyTotal(cost, members, picks, prices) + extra;
   const left = gold - total;
   return (
     <div className="flex flex-col border-t border-accent-line pt-2">
@@ -98,6 +108,20 @@ export default function HireTally({
             </li>
           );
         })}
+        {upgrades.map((pick) => (
+          <li key={`upgrade-${pick.upgrade.id}`} className={cn(ROW, "flex-wrap")}>
+            <span className="flex-1 text-[13px] text-ink">{pick.upgrade.name}</span>
+            <Price
+              label={pick.upgrade.name}
+              value={pick.price}
+              onChange={(value) => onUpgradePrice?.(pick.upgrade.id, value)}
+              each={false}
+            />
+            {pick.warning ? (
+              <span className="basis-full text-xs text-danger">{pick.warning}</span>
+            ) : null}
+          </li>
+        ))}
         {freeItem ? (
           <li className={ROW}>
             <span className="flex-1 text-[13px] text-ink">

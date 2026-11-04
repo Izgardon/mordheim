@@ -2,6 +2,7 @@ import type {
   TemplateFighter as BookFighter,
   TemplateLine as BookLine,
   TemplateList as BookList,
+  TemplateUpgrade as BookUpgrade,
   TemplateVariant,
 } from "@/features/warband-templates/types/template-types";
 
@@ -24,12 +25,23 @@ export type TemplateLine = BookLine & {
 
 export type TemplateList = Omit<BookList, "lines"> & { lines: TemplateLine[] };
 
+/** An upgrade with the special it links, the price of the second and later of its group, and who it is for. */
+export type TemplateUpgrade = BookUpgrade & {
+  special_id: number;
+  /** The second and later of its group on one hero: double for Mutations and Blessings. */
+  later_cost: number | null;
+  /** "Tainted Ones only"; blank: any hero's. */
+  who_text: string;
+};
+
 /** A fighter as the warband's variant has him, with what the warband already has of him. */
 export type TemplateFighter = Omit<BookFighter, "variant_changes"> & {
   /** Heroes on the roster recruited as him, or a henchman's living models and groups. */
   have: { count: number; groups: number };
   /** The lines of his lists he isn't meant to take (dimmed, still pickable). */
   off_lines: number[];
+  /** The template's upgrades he isn't meant to take (dimmed, still pickable). */
+  off_upgrades: number[];
   /** The Dagger every hire of his gets free. */
   free_item: { id: number; name: string } | null;
 };
@@ -46,6 +58,8 @@ export type WarbandTemplate = {
   rules: WarbandRule[];
   lists: TemplateList[];
   fighters: TemplateFighter[];
+  /** What a hero may have bought onto him: Mutations, Blessings, Sacred markings, Marks. */
+  upgrades: TemplateUpgrade[];
   /** How many of those rules the warband has no rule of that title for. */
   missing_rules: number;
 };

@@ -15,6 +15,7 @@ from ..models import (
     TemplateFighterSpecial,
     TemplateList,
     TemplateListItem,
+    TemplateUpgrade,
     WarbandTemplate,
 )
 from .holdings import fighter_holdings, held_items
@@ -32,8 +33,8 @@ from .resolve import (
 
 
 def hire_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[WarbandTemplate]:
-    """The templates with what the hire screens show: rules, lists with their lines' items, and fighters with their
-    races, rules and lists (one query each)."""
+    """The templates with what the hire screens show: rules, lists with their lines' items, fighters with their
+    races, rules and lists, and upgrades with their specials (one query each)."""
     lines = TemplateListItem.objects.select_related("item")
     fighters = TemplateFighter.objects.select_related("race").prefetch_related(
         Prefetch("special_links", queryset=TemplateFighterSpecial.objects.select_related("special")),
@@ -43,6 +44,7 @@ def hire_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[WarbandTemplate]:
         "rules",
         Prefetch("lists", queryset=TemplateList.objects.prefetch_related(Prefetch("lines", queryset=lines))),
         Prefetch("fighters", queryset=fighters),
+        Prefetch("upgrades", queryset=TemplateUpgrade.objects.select_related("special")),
     )
 
 
@@ -54,7 +56,7 @@ def _missing_rules(warband: Warband, template: WarbandTemplate, variant: str) ->
 
 
 def warband_template(warband: Warband) -> dict[str, Any]:
-    """The warband's template with its variant applied, and whether list prices are still open (twelve queries with
+    """The warband's template with its variant applied, and whether list prices are still open (thirteen queries with
     a template, two without)."""
     open_now = list_prices_open(warband.id)
     template = hire_details(templates_for_type(warband.campaign_id, warband.warband_type_id)).first()
@@ -68,6 +70,7 @@ def warband_template(warband: Warband) -> dict[str, Any]:
         "warband_type_id": warband.warband_type_id,
         "fighters": {fighter.key: apply_variant(fighter, variant) for fighter in template.fighters.all()},
         "lines": lines,
+        "upgrades": list(template.upgrades.all()),
         "holdings": fighter_holdings(warband),
         "held": held_items(warband, limited),
         "missing_rules": _missing_rules(warband, template, variant),

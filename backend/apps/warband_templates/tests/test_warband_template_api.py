@@ -11,7 +11,13 @@ from django.test.utils import CaptureQueriesContext
 from apps.battles.models import Battle
 from apps.campaigns.models import CampaignSettings
 from apps.items.tests.catalogue_support import ITEMS, CatalogueTestCase, make_entry
-from apps.warband_templates.models import HENCHMAN, TemplateFighter, TemplateFighterList, TemplateListItem
+from apps.warband_templates.models import (
+    HENCHMAN,
+    TemplateFighter,
+    TemplateFighterList,
+    TemplateListItem,
+    TemplateUpgrade,
+)
 from apps.warbands.models import Henchman, HenchmenGroup, HenchmenGroupItem, Hero, HeroItem, WarbandItem, WarbandRule
 
 from .support import PROFILE, Made, make_template
@@ -85,6 +91,27 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
         self.assertEqual(self.fighter(body, "captain")["off_lines"], [])
         self.assertEqual(warriors["free_item"], {"id": self.dagger.id, "name": "Dagger"})
 
+    def test_upgrades_say_their_later_price_and_who_they_are_for(self) -> None:
+        TemplateUpgrade.objects.filter(template=self.made.template).update(
+            who={"fighters": ["captain"]}, later_double=True, max_per_fighter=2, at_recruit=True
+        )
+        body = self.read()
+        [upgrade] = body["template"]["upgrades"]
+        self.assertEqual(
+            {key: upgrade[key] for key in ("name", "group", "special_id", "cost", "later_cost", "who_text")},
+            {
+                "name": "Tentacle",
+                "group": "Mutations",
+                "special_id": self.made.mutation.id,
+                "cost": 35,
+                "later_cost": 70,
+                "who_text": "Captain only",
+            },
+        )
+        self.assertEqual((upgrade["max_per_fighter"], upgrade["at_recruit"]), (2, True))
+        self.assertEqual(self.fighter(body, "warriors")["off_upgrades"], [upgrade["id"]])
+        self.assertEqual(self.fighter(body, "captain")["off_upgrades"], [])
+
     def test_a_line_for_one_variant_is_read_only_by_that_variant(self) -> None:
         bow = make_entry(ITEMS, "Bow", cost=10)
         line = TemplateListItem.objects.create(
@@ -131,8 +158,8 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
             Henchman.objects.create(group=group, name="Lad")
             WarbandRule.objects.create(warband=self.warband, title=f"Rule {number}")
         # the warband and membership, list prices, the template, its rules, lists, lines, fighters, their rules and
-        # lists, the heroes and groups by fighter, the limited items held, the warband's rule titles
-        self.assertEqual((few, count()), (14, 14))
+        # lists, its upgrades, the heroes and groups by fighter, the limited items held, the warband's rule titles
+        self.assertEqual((few, count()), (15, 15))
 
 
 class RaiseOutlineTests(CatalogueTestCase):

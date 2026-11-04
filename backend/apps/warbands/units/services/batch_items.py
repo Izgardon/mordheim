@@ -48,7 +48,7 @@ class ItemLines:
         return {line.data["unit_id"] for line in self.all if line.data.get("unit_id") is not None}
 
 
-def _target_error(data: Mapping[str, Any], creates: int, unit_ids: set[int]) -> str | None:
+def target_error(data: Mapping[str, Any], creates: int, unit_ids: set[int]) -> str | None:
     unit_id, create_index = data.get("unit_id"), data.get("create_index")
     if (unit_id is None) == (create_index is None):
         return "Name the unit with unit_id or create_index."
@@ -70,7 +70,7 @@ def _validated(body: Mapping[str, Any], creates: int, unit_ids: set[int], errors
             if not line.is_valid():
                 errors.update(flatten_errors(line.errors, key))
                 continue
-            target = _target_error(line.validated_data, creates, unit_ids)
+            target = target_error(line.validated_data, creates, unit_ids)
             if target:
                 errors[f"{key}.unit_id"] = [target]
                 continue

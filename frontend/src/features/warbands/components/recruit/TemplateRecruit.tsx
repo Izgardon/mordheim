@@ -4,9 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
 
-import type { TemplateFighter, TemplateList } from "../../types/hire-template-types";
+import type {
+  TemplateFighter,
+  TemplateList,
+  TemplateUpgrade,
+} from "../../types/hire-template-types";
 import HireKit from "./HireKit";
 import HireTally from "./HireTally";
+import HireUpgrades from "./HireUpgrades";
 import {
   fighterLines,
   kitPurchases,
@@ -18,26 +23,30 @@ import {
   unpriced,
   type KitPick,
 } from "./hire-draft";
+import { useUpgradePicks } from "./useUpgradePicks";
 
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 
-/** What a template hire sends: the fighter, the name, a group's models, his cost and the kit's purchases. */
+/** What a template hire sends: the fighter, the name, a group's models, his cost, the kit and his upgrades. */
 export type TemplateHire = {
   fighter: TemplateFighter;
   name: string;
   models: number;
   cost: string;
   purchases: ReturnType<typeof kitPurchases>;
+  upgrades: { create_index: number; upgrade_id: number; price: number }[];
 };
 
 /**
  * The rest of a hire once Recruit as picked a template fighter: his name (a group's models,
- * warning past its size), the kit from his lists, and the tally. The server fills his type,
+ * warning past its size), the kit from his lists, a hero's upgrades (before and after the first
+ * battle: the book sells them on recruitment), and the tally. The server fills his type,
  * race, profile, skills, spells, rules and starting XP, and gives the free dagger.
  */
 export default function TemplateRecruit({
   fighter,
   lists,
+  upgrades = [],
   listPricesOpen,
   gold,
   saving,
@@ -46,6 +55,8 @@ export default function TemplateRecruit({
 }: {
   fighter: TemplateFighter;
   lists: TemplateList[];
+  /** The template's upgrades: a hero's section, none for a group. */
+  upgrades?: TemplateUpgrade[];
   listPricesOpen: boolean;
   gold: number;
   saving: boolean;
@@ -59,6 +70,7 @@ export default function TemplateRecruit({
   const [cost, setCost] = useState(String(fighter.cost));
   const [picks, setPicks] = useState<KitPick[]>([]);
   const [prices, setPrices] = useState<Record<string, string>>({});
+  const bought = useUpgradePicks(group ? [] : upgrades);
   const count = group ? Math.max(1, Math.min(20, Math.trunc(Number(models) || 1))) : 1;
   const warnings = [overCount(fighter, count), group ? overGroup(fighter, count) : null].filter(
     Boolean
@@ -88,6 +100,7 @@ export default function TemplateRecruit({
           models: count,
           cost,
           purchases: kitPurchases(picks, prices, lines),
+          upgrades: bought.lines(),
         });
       }}
     >
@@ -127,6 +140,9 @@ export default function TemplateRecruit({
         picks={listPricesOpen ? picks : []}
         onToggle={toggle}
       />
+      {group ? null : (
+        <HireUpgrades upgrades={upgrades} offUpgrades={fighter.off_upgrades} picks={bought} />
+      )}
       <HireTally
         name={group ? fighter.plural || fighter.name : fighter.name}
         members={count}
@@ -137,10 +153,12 @@ export default function TemplateRecruit({
         prices={prices}
         onPrice={(key, value) => setPrices({ ...prices, [key]: value })}
         freeItem={fighter.free_item}
+        upgrades={bought.picks}
+        onUpgradePrice={bought.setPrice}
         gold={gold}
       />
       <div className="flex flex-wrap gap-2">
-        <Button type="submit" disabled={saving || unpriced(picks, prices)}>
+        <Button type="submit" disabled={saving || unpriced(picks, prices) || bought.unpriced}>
           Recruit
         </Button>
         <Button type="button" variant="ghost" onClick={onCancel}>

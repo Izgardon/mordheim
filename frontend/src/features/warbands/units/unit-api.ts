@@ -29,6 +29,8 @@ export type UnitBatch<K extends UnitKindKey> = {
   purchases?: (BatchItemTarget & PurchaseLine)[];
   /** Copies taken out of the stash, with their costs (BUG-108). */
   stash_takes?: (BatchItemTarget & { item_id: number; quantity: number })[];
+  /** Upgrades of the warband's template bought onto its heroes, at their prices (the templates plan, phase 3). */
+  upgrades?: (BatchItemTarget & { upgrade_id: number; price: number })[];
 };
 
 /** Every visible unit of the kind after the batch (detail shape), the summary and any warnings. */

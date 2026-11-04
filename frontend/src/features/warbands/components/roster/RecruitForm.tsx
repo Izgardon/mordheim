@@ -65,6 +65,7 @@ export default function RecruitForm({
         key={fighter.key}
         fighter={fighter}
         lists={answer.template.lists}
+        upgrades={answer.template.upgrades}
         listPricesOpen={answer.list_prices_open}
         gold={gold}
         saving={saving}

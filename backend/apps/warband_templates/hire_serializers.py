@@ -7,8 +7,13 @@ from typing import Any
 
 from rest_framework import serializers
 
-from .models import TemplateFighter, TemplateList, TemplateListItem, WarbandTemplate
-from .serializers import TemplateFighterSerializer, TemplateLineSerializer, TemplateRuleSerializer
+from .models import TemplateFighter, TemplateList, TemplateListItem, TemplateUpgrade, WarbandTemplate
+from .serializers import (
+    TemplateFighterSerializer,
+    TemplateLineSerializer,
+    TemplateRuleSerializer,
+    TemplateUpgradeSerializer,
+)
 from .services.resolve import template_gold, template_size, variant_rules
 from .services.who import allows, who_text
 
@@ -71,18 +76,40 @@ def free_line(fighter: TemplateFighter, lines: Lines) -> TemplateListItem | None
     return next((line for line in fighter_lines(fighter, lines) if line.first_free), None)
 
 
+class HireUpgradeSerializer(TemplateUpgradeSerializer):
+    """An upgrade with the special it links (`special_id`, to count the ones a hero has), the price of the second and
+    later of its group on one hero (`later_cost`: double where the book says) and the reason anyone else sees it
+    dimmed (`who_text`)."""
+
+    special_id = serializers.IntegerField(read_only=True)
+    later_cost = serializers.SerializerMethodField()
+    who_text = serializers.SerializerMethodField()
+
+    class Meta(TemplateUpgradeSerializer.Meta):
+        fields = (*TemplateUpgradeSerializer.Meta.fields, "special_id", "later_cost", "who_text")
+
+    def get_later_cost(self, upgrade: TemplateUpgrade) -> int | None:
+        if upgrade.cost is None:
+            return None
+        return upgrade.cost * 2 if upgrade.later_double else upgrade.cost
+
+    def get_who_text(self, upgrade: TemplateUpgrade) -> str:
+        return who_text(upgrade.who or {}, self.context["fighters"])
+
+
 class HireFighterSerializer(TemplateFighterSerializer):
     """A fighter as the variant has him, with what the warband has of him (`have`: heroes, or a henchman's models and
     groups), the lines he isn't meant to take (`off_lines`) and the item a hire of his gets free (`free_item`)."""
 
     have = serializers.SerializerMethodField()
     off_lines = serializers.SerializerMethodField()
+    off_upgrades = serializers.SerializerMethodField()
     free_item = serializers.SerializerMethodField()
 
     class Meta(TemplateFighterSerializer.Meta):
         fields = tuple(
             field for field in TemplateFighterSerializer.Meta.fields if field not in ("variant_changes", "lists")
-        ) + ("lists", "have", "off_lines", "free_item")
+        ) + ("lists", "have", "off_lines", "off_upgrades", "free_item")
 
     def get_have(self, fighter: TemplateFighter) -> dict[str, int]:
         return dict(self.context["holdings"].get(fighter.key, NOBODY))
@@ -91,6 +118,9 @@ class HireFighterSerializer(TemplateFighterSerializer):
         return [
             line.pk for line in fighter_lines(fighter, self.context["lines"]) if not allows(line.who or {}, fighter)
         ]
+
+    def get_off_upgrades(self, fighter: TemplateFighter) -> list[int]:
+        return [upgrade.pk for upgrade in self.context["upgrades"] if not allows(upgrade.who or {}, fighter)]
 
     def get_free_item(self, fighter: TemplateFighter) -> dict[str, Any] | None:
         line = free_line(fighter, self.context["lines"])
@@ -105,6 +135,7 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
     most_warriors = serializers.SerializerMethodField()
     rules = serializers.SerializerMethodField()
     lists = HireListSerializer(many=True, read_only=True)
+    upgrades = HireUpgradeSerializer(many=True, read_only=True)
     fighters = serializers.SerializerMethodField()
     missing_rules = serializers.SerializerMethodField()
 
@@ -121,6 +152,7 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
             "rules",
             "lists",
             "fighters",
+            "upgrades",
             "missing_rules",
         )
 

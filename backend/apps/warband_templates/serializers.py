@@ -176,7 +176,7 @@ class TemplateUpgradeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TemplateUpgrade
-        fields = (
+        fields: tuple[str, ...] = (
             "id",
             "group",
             "name",

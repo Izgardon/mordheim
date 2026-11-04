@@ -328,6 +328,8 @@ class UnitBatchSerializer(serializers.Serializer):
             # pass 2, decision 1 and BUG-108: copies bought or taken from the stash for the batch's units
             "purchases": serializers.ListField(child=serializers.DictField(), required=False, default=list),
             "stash_takes": serializers.ListField(child=serializers.DictField(), required=False, default=list),
+            # the templates plan, phase 3: upgrades bought onto the batch's heroes (a Mutation, a Mark)
+            "upgrades": serializers.ListField(child=serializers.DictField(), required=False, default=list),
         }
 
 

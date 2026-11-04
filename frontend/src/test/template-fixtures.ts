@@ -1,6 +1,7 @@
 import type {
   TemplateFighter,
   TemplateLine,
+  TemplateUpgrade,
   WarbandTemplateAnswer,
 } from "@/features/warbands/types/hire-template-types";
 
@@ -68,6 +69,7 @@ export const makeTemplateFighter = (
   rules: [],
   have: { count: 0, groups: 0 },
   off_lines: [],
+  off_upgrades: [],
   free_item: null,
   ...overrides,
 });
@@ -90,7 +92,31 @@ export const makeTemplateAnswer = (
     missing_rules: 0,
     lists: [],
     fighters: [],
+    upgrades: [],
     ...template,
   },
+  ...overrides,
+});
+
+export const makeTemplateUpgrade = (
+  id: number,
+  name: string,
+  cost: number,
+  overrides: Partial<TemplateUpgrade> = {}
+): TemplateUpgrade => ({
+  id,
+  group: "Mutations",
+  name,
+  description: "",
+  special_id: id * 100,
+  cost,
+  later_cost: cost,
+  cost_note: "",
+  note: "",
+  who: {},
+  who_text: "",
+  max_per_fighter: null,
+  later_double: false,
+  at_recruit: false,
   ...overrides,
 });

@@ -3,9 +3,10 @@
 Everything is validated first and every error is reported at once, keyed by entry ("create.0.name",
 "update.2.xp", "dismiss.1"). Then, in one transaction, the dismissals, updates and creates run through the
 same services as the per-unit endpoints (dismissals first, so they free places under the caps), then the
-stash takes and purchases (batch_items.py), and the item a hire from the warband's template gets free. A create
-naming a `fighter_key` is filled from that template fighter first (apps/warband_templates/services/hiring.py). Any
-refusal on the way (a cap, a unit changed in another tab since
+stash takes and purchases (batch_items.py), the item a hire from the warband's template gets free, and the
+template's upgrades bought onto its heroes (apps/warband_templates/services/upgrades.py: the hire dialog's for a
+create, the store's for a hero on the roster). A create naming a `fighter_key` is filled from that template fighter
+first (apps/warband_templates/services/hiring.py). Any refusal on the way (a cap, a unit changed in another tab since
 its `updated_at`) rolls the whole batch back: all or nothing, so Cancel never needs a server call.
 """
 
@@ -18,12 +19,13 @@ from django.db import transaction
 from rest_framework import serializers
 
 from apps.warband_templates.services.hiring import fill_from_template
+from apps.warband_templates.services.upgrades import UpgradeLines, buy_upgrades, plan_upgrades
 from apps.warbands.models import RosterUnit, Warband, not_dismissed
-from apps.warbands.services.purchases import Warning
+from apps.warbands.services.purchases import GOLD_NEGATIVE, Warning, gold_negative
 from apps.warbands.units.errors import FieldErrors, RosterError, flatten_errors
 from apps.warbands.utils.leaders import lock_warband
 
-from .batch_items import ItemLines, apply_lines, plan_lines
+from .batch_items import ItemLines, apply_lines, plan_lines, target_error
 from .create import recruit
 from .dismiss import dismiss
 from .update import save_update
@@ -42,6 +44,7 @@ class BatchPlan:
     versions: dict[int, tuple[int, datetime]] = field(default_factory=dict)  # unit id -> (update index, updated_at)
     lines: ItemLines = field(default_factory=ItemLines)
     free_items: dict[int, int] = field(default_factory=dict)  # create index -> the item a template hire gets free
+    upgrades: UpgradeLines = field(default_factory=UpgradeLines)  # upgrades bought onto its heroes (phase 3)
     created_ids: list[int] = field(default_factory=list)  # set by apply_batch
 
 
@@ -113,11 +116,23 @@ def plan_batch(
             plan.creates.append((writer, entry))
         else:
             plan.errors.update(flatten_errors(writer.errors, f"create.{index}"))
-    if body.get("purchases") or body.get("stash_takes") or plan.free_items:
+    if body.get("purchases") or body.get("stash_takes") or body.get("upgrades") or plan.free_items:
         roster = set(kind.visible(kind.objects.filter(warband=warband)).values_list("id", flat=True))
         creates, unit_ids = len(body["create"]), roster - set(dismiss_ids)
         plan.lines = plan_lines(warband, body, creates, unit_ids, plan.errors, free=plan.free_items)
+        plan.upgrades = plan_upgrades(
+            kind, warband, body.get("upgrades") or [], lambda data: target_error(data, creates, unit_ids), plan.errors
+        )
     return plan
+
+
+def _buy_upgrades(kind: "UnitKindSpec", warband: Warband, plan: BatchPlan, created: list[RosterUnit]) -> bool:
+    """The plan's upgrades onto its heroes, after the items; whether any charged gold."""
+    if not plan.upgrades.lines:
+        return False
+    ids = plan.upgrades.unit_ids()
+    units = {unit.pk: unit for unit in kind.objects.filter(id__in=ids).only("id", "name", "unit_type")} if ids else {}
+    return bool(buy_upgrades(kind, warband, plan.upgrades, units, created))
 
 
 def _check_versions(kind: "UnitKindSpec", warband: Warband, versions: Mapping[int, tuple[int, datetime]]) -> None:
@@ -156,4 +171,7 @@ def apply_batch(kind: "UnitKindSpec", warband: Warband, plan: BatchPlan) -> list
                 detail = refused.message
                 raise RosterError(detail, refused.error_code, {f"create.{index}": [detail]}) from None
         plan.created_ids = [unit.pk for unit in created]
-        return apply_lines(kind, warband, plan.lines, created)
+        warnings = apply_lines(kind, warband, plan.lines, created)
+        if _buy_upgrades(kind, warband, plan, created) and warband.gold < 0:  # the gold as the upgrades left it
+            warnings = [warning for warning in warnings if warning["code"] != GOLD_NEGATIVE] + [gold_negative(warband)]
+        return warnings

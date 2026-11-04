@@ -83,6 +83,7 @@ const fighter = (key: string, name: string, cost: number, extra: Partial<Templat
     rules: [],
     have: { count: 0, groups: 0 },
     off_lines: [],
+    off_upgrades: [],
     free_item: { id: 10, name: "Dagger" },
     ...extra,
   }) satisfies TemplateFighter;
@@ -118,6 +119,7 @@ const answer = (open: boolean): WarbandTemplateAnswer => ({
       fighter("champions", "Champion", 35, { off_lines: [4] }),
       fighter("youngbloods", "Youngblood", 15, { have: { count: 2, groups: 0 } }),
     ],
+    upgrades: [],
   },
 });
 
