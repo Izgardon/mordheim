@@ -23,6 +23,8 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
+const media = vi.hoisted(() => ({ mobile: false }));
+vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => media.mobile }));
 vi.mock("../../api/warband-cache", async (importOriginal) => ({
   ...(await importOriginal<typeof import("../../api/warband-cache")>()),
   useWarbandCacheUpdate: () => () => undefined,
@@ -146,6 +148,7 @@ function renderForm(onCreated = vi.fn()) {
 describe("Recruiting from the warband's template", () => {
   beforeEach(() => {
     fakeApi.reset();
+    media.mobile = false;
     fakeApi.on("POST /warbands/9/heroes/batch/", { units: [ulrich], summary: {}, warnings: [] });
   });
 
@@ -208,5 +211,36 @@ describe("Recruiting from the warband's template", () => {
     await user.click(await screen.findByRole("radio", { name: "Someone not in the template" }));
     expect(screen.getByRole("form", { name: "Recruit" })).toBeInTheDocument();
     expect(screen.getByLabelText("Type")).toBeInTheDocument();
+  });
+});
+
+describe("Recruiting on a phone", () => {
+  it("opens as a bottom sheet with Recruit as, the kit and the tally inside", async () => {
+    fakeApi.reset();
+    media.mobile = true;
+    fakeApi.on("GET /warbands/9/template/", answer(true));
+    const onCancel = vi.fn();
+    renderWithQueryClient(
+      <RecruitForm
+        kind="hero"
+        campaignId={1}
+        warbandId={9}
+        typeName="Reiklanders"
+        gold={74}
+        resources={[]}
+        existingIds={[]}
+        canCreateRace={false}
+        onCancel={onCancel}
+        onCreated={vi.fn()}
+      />
+    );
+    const user = setupUser();
+    const sheet = await screen.findByRole("dialog", { name: "Add a hero" });
+    await user.click(await within(sheet).findByRole("radio", { name: /Champion/ }));
+    expect(within(sheet).getByRole("button", { name: "Sword 10" })).toBeInTheDocument();
+    expect(within(sheet).getByRole("list", { name: "Tally" })).toBeInTheDocument();
+    await user.click(within(sheet).getByRole("button", { name: "Cancel" }));
+    expect(onCancel).toHaveBeenCalled();
+    media.mobile = false;
   });
 });

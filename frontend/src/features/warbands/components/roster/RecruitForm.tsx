@@ -1,6 +1,8 @@
 import { useState } from "react";
 
+import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useWarbandHireTemplate } from "../../api/warband-template-queries";
 import { useRecruit } from "../../hooks/units/useRecruit";
@@ -11,13 +13,19 @@ import RecruitAsPicker, { BY_HAND } from "../recruit/RecruitAsPicker";
 import TemplateRecruit from "../recruit/TemplateRecruit";
 
 const FIGHTER_KIND = { hero: "hero", henchmen_group: "henchman" } as const;
+const SHEET_TITLE: Record<UnitKindKey, string> = {
+  hero: "Add a hero",
+  henchmen_group: "Add a group",
+  hireling: "Hire someone not in the list",
+};
 
 /**
- * The inline recruit form at the top of its roster section (William: "an inline form rather
- * than a modal"). With a template (the templates plan, phase 2), Add hero and Add group start on
- * Recruit as: a fighter picked fills the hire from the template, with the kit and the tally;
- * someone not in the template, or a hired sword not in the list, is typed by hand. Once saved,
- * the new card opens in Edit for the rest.
+ * The recruit form: inline at the top of its roster section on the web (William: "an inline form
+ * rather than a modal"), a bottom sheet on a phone as the app's other dialogs are (William, 4 Nov).
+ * With a template (the templates plan, phase 2), Add hero and Add group start on Recruit as: a
+ * fighter picked fills the hire from the template, with the kit, a hero's upgrades and the tally;
+ * someone not in the template, or a hired sword not in the list, is typed by hand. Once saved, the
+ * new card opens in Edit for the rest.
  */
 export default function RecruitForm({
   kind,
@@ -46,6 +54,7 @@ export default function RecruitForm({
   /** The new card's key, to open it in Edit. */
   onCreated: (key: string) => void;
 }) {
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const fromTemplate = kind !== "hireling";
   const template = useWarbandHireTemplate(campaignId, warbandId, fromTemplate);
   const { recruitFromTemplate, saving } = useRecruit(kind, warbandId, existingIds);
@@ -96,11 +105,26 @@ export default function RecruitForm({
     );
   }
 
+  const picker = fighters.length ? (
+    <RecruitAsPicker title={typeName} fighters={fighters} value={as} onPick={setAs} />
+  ) : null;
+  if (isMobile) {
+    return (
+      <BottomSheet
+        open
+        onOpenChange={(open) => (open ? null : onCancel())}
+        title={SHEET_TITLE[kind]}
+      >
+        <div className="flex flex-col gap-3">
+          {picker}
+          {body}
+        </div>
+      </BottomSheet>
+    );
+  }
   return (
     <div className="flex flex-col gap-3 border border-accent-line bg-panel p-3.5">
-      {fighters.length ? (
-        <RecruitAsPicker title={typeName} fighters={fighters} value={as} onPick={setAs} />
-      ) : null}
+      {picker}
       {body}
     </div>
   );
