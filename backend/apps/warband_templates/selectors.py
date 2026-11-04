@@ -1,4 +1,5 @@
-"""What the templates' list rows read, each in one query whatever the number of rows (query budgets)."""
+"""What the templates' list rows and the whole template read, each in one query whatever the number of rows (query
+budgets)."""
 
 from typing import Any
 
@@ -6,7 +7,16 @@ from django.db.models import Prefetch, QuerySet
 
 from apps.campaigns.in_play import with_in_play
 
-from .models import WarbandTemplate, WarbandTemplateType
+from .models import (
+    TemplateFighter,
+    TemplateFighterList,
+    TemplateFighterSpecial,
+    TemplateList,
+    TemplateListItem,
+    TemplateUpgrade,
+    WarbandTemplate,
+    WarbandTemplateType,
+)
 
 
 def type_links(campaign_id: int | None = None) -> Prefetch:
@@ -21,3 +31,20 @@ def template_rows(rows: QuerySet[WarbandTemplate] | None = None, campaign_id: in
     """The templates with their warband types (one more query)."""
     found = WarbandTemplate.objects.all() if rows is None else rows
     return found.prefetch_related(type_links(campaign_id))
+
+
+def template_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[Any]:
+    """The templates with everything the whole template shows: its types, rules, lists with their lines' items,
+    fighters with their races, lists and rules, and upgrades with their specials (one query each)."""
+    lines = TemplateListItem.objects.select_related("item")
+    fighters = TemplateFighter.objects.select_related("race").prefetch_related(
+        Prefetch("special_links", queryset=TemplateFighterSpecial.objects.select_related("special")),
+        Prefetch("list_links", queryset=TemplateFighterList.objects.select_related("equipment_list")),
+    )
+    return rows.prefetch_related(
+        type_links(),
+        "rules",
+        Prefetch("lists", queryset=TemplateList.objects.prefetch_related(Prefetch("lines", queryset=lines))),
+        Prefetch("fighters", queryset=fighters),
+        Prefetch("upgrades", queryset=TemplateUpgrade.objects.select_related("special")),
+    )

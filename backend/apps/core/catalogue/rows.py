@@ -19,7 +19,7 @@ from apps.races.serializers import RaceSerializer
 from apps.skills.serializers import SkillLearnersSerializer
 from apps.special.serializers import SpecialSerializer
 from apps.spells.serializers import SpellSerializer
-from apps.warband_templates.serializers import WarbandTemplateSerializer
+from apps.warband_templates.serializers import WarbandTemplateDetailSerializer, WarbandTemplateSerializer
 
 from .payloads import STAT_FIELDS, with_badges
 
@@ -80,4 +80,7 @@ DramatisPersonaRowSerializer = with_badges(DramatisPersonaSerializer, book_field
 DramatisPersonaDetailRowSerializer = with_badges(DramatisPersonaDetailSerializer, book_fields=PERSONA_FIELDS)
 WarbandTemplateRowSerializer = with_badges(
     WarbandTemplateSerializer, book_fields=("name", "starting_gold", "max_models", "variants")
+)
+WarbandTemplateDetailRowSerializer = with_badges(
+    WarbandTemplateDetailSerializer, book_fields=("name", "starting_gold", "max_models", "variants")
 )

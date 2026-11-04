@@ -1,0 +1,134 @@
+"""`GET warband-templates/` and `GET warband-templates/<id>/` (read only): the book's list, a campaign's with each
+template and type in play or not and its house version in place of the book's, one whole template in a fixed number
+of queries, and nothing written."""
+
+from typing import Any
+
+from django.db import connection, transaction
+from django.test.utils import CaptureQueriesContext
+
+from apps.campaigns.models import CampaignType
+from apps.core.catalogue import versions
+from apps.core.catalogue.kinds import WARBAND_TEMPLATES
+from apps.items.tests.catalogue_support import CatalogueTestCase
+from apps.warband_templates.models import TemplateFighter, TemplateFighterList, WarbandTemplate, WarbandTemplateType
+from apps.warbands.models import WarbandType
+
+from .support import PROFILE, Made, make_template
+
+LIST = "/api/warband-templates/"
+
+
+class WarbandTemplateApiTests(CatalogueTestCase):
+    made: Made
+    khemri: CampaignType
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        cls.made = make_template("Mercenaries", item=cls.book_axe, race=cls.human, warband_type=cls.mercenaries)
+        cls.khemri = CampaignType.objects.create(slug="khemri", name="Khemri", grade="1b")
+        ostermarkers = WarbandType.objects.create(name="Ostermarkers", slug="ostermarkers", campaign_type=cls.khemri)
+        WarbandTemplateType.objects.create(template=cls.made.template, warband_type=ostermarkers)
+
+    def get(self, url: str, user: Any = None) -> Any:
+        self.client.force_authenticate(user=user or self.player)
+        return self.client.get(url)
+
+    def test_the_book_list_carries_each_template_and_the_types_it_serves(self) -> None:
+        response = self.get(LIST)
+        self.assertEqual(response.status_code, 200)
+        [row] = response.json()
+        self.assertEqual(
+            (row["name"], row["gold"], row["most_warriors"], row["in_play"]), ("Mercenaries", 500, 15, None)
+        )
+        self.assertEqual(
+            [(entry["name"], entry["variant"]) for entry in row["types"]],
+            [
+                ("Mercenaries", "reikland"),
+                ("Ostermarkers", ""),
+            ],
+        )
+
+    def test_a_campaigns_list_says_which_types_are_in_play_there(self) -> None:
+        [row] = self.get(f"{LIST}?campaign_id={self.campaign.id}").json()
+        self.assertTrue(row["in_play"])
+        self.assertEqual(
+            {entry["name"]: entry["in_play"] for entry in row["types"]},
+            {
+                "Mercenaries": True,
+                "Ostermarkers": False,
+            },
+        )
+
+    def test_a_campaigns_house_version_stands_in_for_the_books(self) -> None:
+        with transaction.atomic():
+            version = versions.editable(WARBAND_TEMPLATES, self.made.template, self.campaign.id)
+        WarbandTemplate.objects.filter(pk=version.pk).update(starting_gold=600)
+        [row] = self.get(f"{LIST}?campaign_id={self.campaign.id}").json()
+        self.assertEqual((row["id"], row["replaces"], row["gold"]), (version.pk, self.made.template.pk, 600))
+        self.assertEqual([entry["name"] for entry in row["types"]], ["Mercenaries", "Ostermarkers"])
+
+    def test_an_outsider_reads_no_campaigns_list_and_nothing_is_written(self) -> None:
+        self.assertEqual(self.get(f"{LIST}?campaign_id={self.campaign.id}", self.outsider).status_code, 404)
+        self.client.force_authenticate(user=self.owner)
+        body = {"campaign_id": self.campaign.id, "name": "Night Watch"}
+        self.assertEqual(self.client.post(LIST, body, format="json").status_code, 405)
+        detail = f"{LIST}{self.made.template.id}/?campaign_id={self.campaign.id}"
+        self.assertEqual(self.client.patch(detail, body, format="json").status_code, 405)
+
+    def test_a_template_reads_whole(self) -> None:
+        body = self.get(f"{LIST}{self.made.template.id}/").json()
+        self.assertEqual(
+            [(rule["title"], rule["variant"]) for rule in body["rules"]],
+            [
+                ("Hard Bargains", ""),
+                ("Marksmen", "reikland"),
+            ],
+        )
+        [kit] = body["lists"]
+        self.assertEqual(
+            (kit["key"], kit["lines"][0]["item"]["name"], kit["lines"][0]["shown_as"]), ("kit", "Axe", "Hatchet")
+        )
+        captain = body["fighters"][0]
+        self.assertEqual((captain["key"], captain["race"], captain["lists"]), ("captain", "Human", ["kit"]))
+        self.assertEqual([rule["name"] for rule in captain["rules"]], ["Leader"])
+        self.assertEqual(body["upgrades"][0]["name"], "Tentacle")
+
+    def test_a_template_reads_in_the_same_queries_however_many_fighters_it_has(self) -> None:
+        def count() -> int:
+            self.client.force_authenticate(user=self.player)
+            with CaptureQueriesContext(connection) as captured:
+                response = self.client.get(f"{LIST}{self.made.template.id}/")
+            self.assertEqual(response.status_code, 200)
+            return len(captured)
+
+        few = count()
+        for number in range(3):
+            fighter = TemplateFighter.objects.create(
+                template=self.made.template,
+                key=f"extra-{number}",
+                kind="henchman",
+                name="Extra",
+                race=self.human,
+                **PROFILE,
+            )
+            TemplateFighterList.objects.create(fighter=fighter, equipment_list=self.made.kit)
+            fighter.special_links.create(special=self.made.rule)
+        self.assertEqual((few, count()), (9, 9))  # the template, then one query for each kind of its rows
+
+    def test_a_campaigns_list_reads_in_the_same_queries_however_many_templates_it_holds(self) -> None:
+        def count() -> int:
+            self.client.force_authenticate(user=self.player)
+            with CaptureQueriesContext(connection) as captured:
+                response = self.client.get(f"{LIST}?campaign_id={self.campaign.id}")
+            self.assertEqual(response.status_code, 200)
+            return len(captured)
+
+        few = count()
+        for name in ("Skaven", "Undead"):
+            served = WarbandType.objects.create(name=name, slug=name.lower())
+            make_template(name, item=self.book_axe, race=self.human, warband_type=served)
+        self.assertEqual(
+            (few, count()), (3, 3)
+        )  # the membership with the catalogue version, the templates, their types

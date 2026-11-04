@@ -67,6 +67,7 @@ from .rows import (
     SkillRowSerializer,
     SpecialRowSerializer,
     SpellRowSerializer,
+    WarbandTemplateDetailRowSerializer,
     WarbandTemplateRowSerializer,
 )
 from .specs import CatalogueKindSpec, Filter, Holder, Twin, UsageKey
@@ -321,7 +322,7 @@ WARBAND_TEMPLATES = CatalogueKindSpec(  # read only until the template editor (t
     model=WarbandTemplate,
     url_kwarg="template_id",
     row_serializer=WarbandTemplateRowSerializer,
-    entry_serializer=WarbandTemplateRowSerializer,
+    entry_serializer=WarbandTemplateDetailRowSerializer,
     named=True,
     versioned=True,
     filters={"search": NAME_AND_TYPE["search"]},

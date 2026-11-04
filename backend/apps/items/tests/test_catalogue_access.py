@@ -19,6 +19,8 @@ from apps.campaigns.access import CAMPAIGN_RULES
 from apps.campaigns.models import Campaign
 from apps.core.catalogue.kinds import CATALOGUE_KINDS, LIST_KINDS
 from apps.core.catalogue.views import CatalogueScopedView
+from apps.warband_templates.tests.support import make_template
+from apps.warbands.models import WarbandType
 
 from .catalogue_support import DELETE, KINDS, RACES, CatalogueKind, CatalogueTestCase, make_entry
 
@@ -28,7 +30,7 @@ EDITED: dict[str, dict[str, Any]] = {
     "races": {"movement": 5},
     "items": {"flavour": "Edited"},
 }  # the rest: a new description
-CATALOGUE_APPS = ("items", "skills", "spells", "special", "races", "bestiary", "hirelings")
+CATALOGUE_APPS = ("items", "skills", "spells", "special", "races", "bestiary", "hirelings", "warband_templates")
 
 
 class CatalogueAccessFixture(CatalogueTestCase):
@@ -92,10 +94,47 @@ class CatalogueAccessFixture(CatalogueTestCase):
             ("GET", f"{book}usage/", None, (400,) * 5),  # a book entry's usage is in a campaign
         ]
 
+    def template_rows(self) -> list[Row]:
+        """The warband templates, read only: their lists and entries, and Revert, restore and usage."""
+        spare = WarbandType.objects.create(name="Spare", slug="spare")
+        book = make_template("Book Template", item=self.book_axe, race=self.human, warband_type=self.mercenaries)
+        house = make_template(
+            "House Template", item=self.book_axe, race=self.human, warband_type=self.mercenaries, campaign=self.campaign
+        )
+        spare_book = make_template("Spare Template", item=self.book_axe, race=self.human, warband_type=spare)
+        version = make_template(
+            "Spare Template",
+            item=self.book_axe,
+            race=self.human,
+            warband_type=spare,
+            campaign=self.campaign,
+            replaces=spare_book.template,
+        )
+        url = "/api/warband-templates/"
+        book_url, house_url = f"{url}{book.template.id}/", f"{url}{house.template.id}/"
+        campaign, member = self.campaign.id, (200, 200, 200, 200, 404)
+        return [
+            ("GET", f"{url}?campaign_id={campaign}", None, member),
+            ("GET", url, None, (200,) * 5),  # the book: a login is enough
+            ("GET", house_url, None, member),
+            ("GET", book_url, None, (200,) * 5),
+            ("POST", f"{url}{version.template.id}/revert/", None, member),
+            ("POST", f"{house_url}revert/", None, (409, 409, 409, 409, 404)),  # not a version
+            ("POST", f"{book_url}revert/", {"campaign_id": campaign}, (409, 409, 409, 409, 404)),
+            ("POST", f"{book_url}revert/", None, (403,) * 5),
+            ("POST", f"{house_url}restore/", None, member),
+            ("POST", f"{book_url}restore/", {"campaign_id": campaign}, member),
+            ("POST", f"{book_url}restore/", None, (403,) * 5),
+            ("GET", f"{house_url}usage/", None, member),
+            ("GET", f"{book_url}usage/?campaign_id={campaign}", None, member),
+            ("GET", f"{book_url}usage/", None, (400,) * 5),
+        ]
+
     def matrix(self) -> list[Row]:
         campaign = self.campaign.id
         return [
             *(row for kind in KINDS for row in self.kind_rows(kind)),
+            *self.template_rows(),
             ("PUT", RACES.detail_url(self.house["races"]), RACES.body("Gnome"), (200, 200, 200, 200, 404)),
             ("GET", f"/api/item-rules/?campaign_id={campaign}", None, (200, 200, 200, 200, 404)),
             ("POST", "/api/item-rules/", {"campaign_id": campaign, "name": "Cleave"}, (201, 201, 201, 201, 404)),
@@ -147,7 +186,7 @@ def catalogue_patterns() -> list[URLPattern]:
         for entry in get_resolver(f"apps.{app}.urls").url_patterns
         if isinstance(entry, URLPattern)
     ]
-    assert len(patterns) == 41, [pattern.name for pattern in patterns]
+    assert len(patterns) == 46, [pattern.name for pattern in patterns]
     return patterns
 
 
