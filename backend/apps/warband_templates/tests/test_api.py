@@ -11,7 +11,14 @@ from apps.campaigns.models import CampaignType
 from apps.core.catalogue import versions
 from apps.core.catalogue.kinds import WARBAND_TEMPLATES
 from apps.items.tests.catalogue_support import CatalogueTestCase
-from apps.warband_templates.models import TemplateFighter, TemplateFighterList, WarbandTemplate, WarbandTemplateType
+from apps.warband_templates.models import (
+    TemplateFighter,
+    TemplateFighterList,
+    TemplateListItem,
+    TemplateUpgrade,
+    WarbandTemplate,
+    WarbandTemplateType,
+)
 from apps.warbands.models import WarbandType
 
 from .support import PROFILE, Made, make_template
@@ -78,6 +85,7 @@ class WarbandTemplateApiTests(CatalogueTestCase):
         self.assertEqual(self.client.patch(detail, body, format="json").status_code, 405)
 
     def test_a_template_reads_whole(self) -> None:
+        TemplateUpgrade.objects.filter(template=self.made.template).update(who={"fighters": ["warriors"]})
         body = self.get(f"{LIST}{self.made.template.id}/").json()
         self.assertEqual(
             [(rule["title"], rule["variant"]) for rule in body["rules"]],
@@ -93,7 +101,13 @@ class WarbandTemplateApiTests(CatalogueTestCase):
         captain = body["fighters"][0]
         self.assertEqual((captain["key"], captain["race"], captain["lists"]), ("captain", "Human", ["kit"]))
         self.assertEqual([rule["name"] for rule in captain["rules"]], ["Leader"])
-        self.assertEqual(body["upgrades"][0]["name"], "Tentacle")
+        self.assertEqual((body["upgrades"][0]["name"], body["upgrades"][0]["who_text"]), ("Tentacle", "Warriors only"))
+
+    def test_who_may_take_a_line_is_the_servers_wording(self) -> None:
+        # the templates plan, phase 3: one wording, plural names, as the hire screens read it
+        TemplateListItem.objects.filter(pk=self.made.line.pk).update(who={"heroes": True, "fighters": ["warriors"]})
+        body = self.get(f"{LIST}{self.made.template.id}/").json()
+        self.assertEqual(body["lists"][0]["lines"][0]["who_text"], "Heroes and Warriors only")
 
     def test_a_template_reads_in_the_same_queries_however_many_fighters_it_has(self) -> None:
         def count() -> int:

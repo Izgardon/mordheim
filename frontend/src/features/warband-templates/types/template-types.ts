@@ -71,6 +71,8 @@ export type TemplateLine = {
   note: string;
   /** "" for every variant, else the one it is for (the Kurgan's bows). */
   variant: string;
+  /** Who may take it, in the server's words: "Gaolers only", "Not Questing Knight"; blank: anyone. */
+  who_text: string;
 };
 
 export type TemplateList = {
@@ -141,6 +143,8 @@ export type TemplateUpgrade = {
   later_double: boolean;
   /** Bought only when he is recruited. */
   at_recruit: boolean;
+  /** Who may take it, in the server's words: "Tainted Ones only"; blank: any hero. */
+  who_text: string;
 };
 
 /** `GET warband-templates/:id/`: the whole template. */

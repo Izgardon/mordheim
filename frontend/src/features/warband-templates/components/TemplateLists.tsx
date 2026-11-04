@@ -1,12 +1,12 @@
 import { DetailSection } from "@/features/reference/ReferenceDetail";
 
-import { lineName, linesFor, priceLabel, whoLabel } from "../template-view";
+import { lineName, linesFor, priceLabel } from "../template-view";
 import type { TemplateLine, WarbandTemplate } from "../types/template-types";
 
-/** Who may take it, the most a warband may have and the book's note: "Gaoler only · max 1". */
-function lineNotes(line: TemplateLine, template: WarbandTemplate) {
+/** Who may take it (the server's words), the most a warband may have and the book's note: "Gaolers only · max 1". */
+function lineNotes(line: TemplateLine) {
   return [
-    whoLabel(line.who, template.fighters),
+    line.who_text,
     line.warband_max ? `max ${line.warband_max} per warband` : "",
     line.note,
   ].filter(Boolean);
@@ -27,7 +27,7 @@ export default function TemplateLists({
           {list.note ? <p className="m-0 text-xs text-text2">{list.note}</p> : null}
           <ul aria-label={list.name} className="m-0 flex list-none flex-col p-0">
             {linesFor(list.lines, variant).map((line) => {
-              const notes = lineNotes(line, template);
+              const notes = lineNotes(line);
               return (
                 <li
                   key={line.id}

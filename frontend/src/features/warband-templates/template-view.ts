@@ -6,7 +6,6 @@ import type {
   TemplateLine,
   TemplateRule,
   TemplateSpellType,
-  TemplateWho,
   WarbandTemplate,
   WarbandTemplateSummary,
 } from "./types/template-types";
@@ -128,18 +127,6 @@ export function priceLabel(
   const base = line.first_free ? `1st free / ${line.cost} gc` : `${line.cost} gc`;
   const brace = line.brace_cost !== null ? `, brace ${line.brace_cost}` : "";
   return `${base}${line.cost_note ? ` ${line.cost_note}` : ""}${brace}`;
-}
-
-const listed = (names: string[]) =>
-  names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0];
-
-/** Who may take a line: "Heroes only", "Gaoler only", "Heroes and Corsairs only", "Not Questing Knight". */
-export function whoLabel(who: TemplateWho, fighters: Pick<TemplateFighter, "key" | "name">[]) {
-  const named = (keys: string[] = []) =>
-    keys.map((key) => fighters.find((fighter) => fighter.key === key)?.name ?? key);
-  if (who.except?.length) return `Not ${listed(named(who.except))}`;
-  const parts = [...(who.heroes ? ["Heroes"] : []), ...named(who.fighters)];
-  return parts.length ? `${listed(parts)} only` : "";
 }
 
 /** The line's item as the list names it: "Jambiya (Dagger)", or the item's own name. */

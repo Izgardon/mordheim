@@ -15,7 +15,7 @@ from .serializers import (
     TemplateUpgradeSerializer,
 )
 from .services.resolve import template_gold, template_size, variant_rules
-from .services.who import allows, who_text
+from .services.who import allows
 
 NOBODY = {"count": 0, "groups": 0}
 Lines = dict[int, list[TemplateListItem]]  # a list's id -> its lines for the warband's variant
@@ -25,7 +25,6 @@ class HireLineSerializer(TemplateLineSerializer):
     """A line with the reason anyone else sees it dimmed (`who_text`) and, where the warband may hold only so many
     (`warband_max`), how many it holds now (`held`)."""
 
-    who_text = serializers.SerializerMethodField()
     held = serializers.SerializerMethodField()
 
     class Meta:
@@ -45,9 +44,6 @@ class HireLineSerializer(TemplateLineSerializer):
             "who_text",
             "held",
         )
-
-    def get_who_text(self, line: TemplateListItem) -> str:
-        return who_text(line.who or {}, self.context["fighters"])
 
     def get_held(self, line: TemplateListItem) -> int | None:
         return self.context["held"].get(line.item_id, 0) if line.warband_max else None
@@ -83,18 +79,14 @@ class HireUpgradeSerializer(TemplateUpgradeSerializer):
 
     special_id = serializers.IntegerField(read_only=True)
     later_cost = serializers.SerializerMethodField()
-    who_text = serializers.SerializerMethodField()
 
     class Meta(TemplateUpgradeSerializer.Meta):
-        fields = (*TemplateUpgradeSerializer.Meta.fields, "special_id", "later_cost", "who_text")
+        fields = (*TemplateUpgradeSerializer.Meta.fields, "special_id", "later_cost")
 
     def get_later_cost(self, upgrade: TemplateUpgrade) -> int | None:
         if upgrade.cost is None:
             return None
         return upgrade.cost * 2 if upgrade.later_double else upgrade.cost
-
-    def get_who_text(self, upgrade: TemplateUpgrade) -> str:
-        return who_text(upgrade.who or {}, self.context["fighters"])
 
 
 class HireFighterSerializer(TemplateFighterSerializer):

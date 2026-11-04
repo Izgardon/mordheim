@@ -18,6 +18,7 @@ from .models import (
     WarbandTemplate,
     WarbandTemplateType,
 )
+from .services.who import who_text
 
 
 class TemplateTypeSerializer(serializers.ModelSerializer):
@@ -96,7 +97,11 @@ class TemplateSpecialSerializer(serializers.Serializer):
 
 
 class TemplateLineSerializer(serializers.ModelSerializer):
+    """A list line, with the reason anyone it isn't meant for sees it dimmed (`who_text`, "Gaolers only": the
+    serializer's `fighters` context, by key)."""
+
     item = serializers.SerializerMethodField()
+    who_text = serializers.SerializerMethodField()
 
     class Meta:
         model = TemplateListItem
@@ -112,7 +117,11 @@ class TemplateLineSerializer(serializers.ModelSerializer):
             "warband_max",
             "note",
             "variant",
+            "who_text",
         )
+
+    def get_who_text(self, line: TemplateListItem) -> str:
+        return who_text(line.who or {}, self.context.get("fighters") or {})
 
     def get_item(self, line: TemplateListItem) -> dict[str, Any]:
         item = line.item
@@ -171,8 +180,11 @@ class TemplateFighterSerializer(serializers.ModelSerializer):
 
 
 class TemplateUpgradeSerializer(serializers.ModelSerializer):
+    """An upgrade, with who may take it worded as a line's is (`who_text`, from the `fighters` context)."""
+
     name = serializers.CharField(source="special.name", read_only=True)
     description = serializers.CharField(source="special.description", read_only=True)
+    who_text = serializers.SerializerMethodField()
 
     class Meta:
         model = TemplateUpgrade
@@ -188,16 +200,30 @@ class TemplateUpgradeSerializer(serializers.ModelSerializer):
             "max_per_fighter",
             "later_double",
             "at_recruit",
+            "who_text",
         )
+
+    def get_who_text(self, upgrade: TemplateUpgrade) -> str:
+        return who_text(upgrade.who or {}, self.context.get("fighters") or {})
 
 
 class WarbandTemplateDetailSerializer(WarbandTemplateSerializer):
-    """The whole template: its warband rules, equipment lists, fighters and upgrades (selectors.template_details)."""
+    """The whole template: its warband rules, equipment lists, fighters and upgrades (selectors.template_details), each
+    line and upgrade saying who may take it in the server's words ("Gaolers only"), read from its fighters."""
 
     rules = TemplateRuleSerializer(many=True, read_only=True)
-    lists = TemplateListSerializer(many=True, read_only=True)
+    lists = serializers.SerializerMethodField()
     fighters = TemplateFighterSerializer(many=True, read_only=True)
-    upgrades = TemplateUpgradeSerializer(many=True, read_only=True)
+    upgrades = serializers.SerializerMethodField()
 
     class Meta(WarbandTemplateSerializer.Meta):
         fields = (*WarbandTemplateSerializer.Meta.fields, "rules", "lists", "fighters", "upgrades")
+
+    def _with_fighters(self, template: WarbandTemplate) -> dict[str, Any]:
+        return {**self.context, "fighters": {fighter.key: fighter for fighter in template.fighters.all()}}
+
+    def get_lists(self, template: WarbandTemplate) -> Any:
+        return TemplateListSerializer(template.lists.all(), many=True, context=self._with_fighters(template)).data
+
+    def get_upgrades(self, template: WarbandTemplate) -> Any:
+        return TemplateUpgradeSerializer(template.upgrades.all(), many=True, context=self._with_fighters(template)).data

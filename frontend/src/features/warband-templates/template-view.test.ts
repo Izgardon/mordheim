@@ -10,7 +10,6 @@ import {
   skillsFor,
   termsFor,
   typeRows,
-  whoLabel,
 } from "./template-view";
 import type {
   TemplateFighter,
@@ -105,18 +104,7 @@ describe("a list line's labels", () => {
     expect(priceLabel({ ...line, cost: 200, cost_note: "+10D6" })).toBe("200 gc +10D6");
   });
 
-  it("names who may take it and the list's own name for it", () => {
-    const fighters = [
-      { key: "gaolers", name: "Gaoler" },
-      { key: "corsairs", name: "Corsair" },
-      { key: "questing-knight", name: "Questing Knight" },
-    ];
-    expect(whoLabel({}, fighters)).toBe("");
-    expect(whoLabel({ fighters: ["gaolers"] }, fighters)).toBe("Gaoler only");
-    expect(whoLabel({ heroes: true, fighters: ["corsairs"] }, fighters)).toBe(
-      "Heroes and Corsair only"
-    );
-    expect(whoLabel({ except: ["questing-knight"] }, fighters)).toBe("Not Questing Knight");
+  it("names a line's item as the list names it", () => {
     const item = { id: 1, name: "Dagger", variant: "", type: "Weapon" };
     expect(lineName({ item, shown_as: "Jambiya" })).toBe("Jambiya (Dagger)");
     expect(lineName({ item, shown_as: "" })).toBe("Dagger");

@@ -17,8 +17,6 @@ import type { WarbandRule } from "./warband-types";
 
 /** A line with the reason anyone it isn't meant for sees it dimmed, and the copies held of a limited item. */
 export type TemplateLine = BookLine & {
-  /** "Gaolers only"; blank: everyone's. */
-  who_text: string;
   /** With `warband_max`: the copies the warband holds now. */
   held: number | null;
 };
@@ -30,8 +28,6 @@ export type TemplateUpgrade = BookUpgrade & {
   special_id: number;
   /** The second and later of its group on one hero: double for Mutations and Blessings. */
   later_cost: number | null;
-  /** "Tainted Ones only"; blank: any hero's. */
-  who_text: string;
 };
 
 /** A fighter as the warband's variant has him, with what the warband already has of him. */

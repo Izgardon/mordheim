@@ -109,6 +109,7 @@ const MERCENARIES: WarbandTemplate = {
           warband_max: null,
           note: "",
           variant: "",
+          who_text: "",
         },
         {
           id: 51,
@@ -122,6 +123,7 @@ const MERCENARIES: WarbandTemplate = {
           warband_max: null,
           note: "",
           variant: "",
+          who_text: "Heroes only",
         },
         {
           id: 52,
@@ -131,10 +133,11 @@ const MERCENARIES: WarbandTemplate = {
           cost_note: "",
           first_free: false,
           brace_cost: null,
-          who: {},
+          who: { fighters: ["champions"] },
           warband_max: null,
           note: "",
           variant: "middenheim",
+          who_text: "Champions only",
         },
       ],
     },
@@ -259,6 +262,7 @@ describe("The Warbands page", () => {
     await user.click(await row("Middenheimers"));
     const list = await screen.findByRole("list", { name: "Mercenary Equipment" });
     expect(within(list).getByText("Halberd")).toBeInTheDocument();
+    expect(within(list).getByText("Champions only")).toBeInTheDocument(); // the server's words
     await user.click(screen.getByRole("button", { name: "Reikland" }));
     expect(within(list).queryByText("Halberd")).toBeNull();
   });
