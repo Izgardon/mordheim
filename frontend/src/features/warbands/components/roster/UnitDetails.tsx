@@ -8,6 +8,7 @@ import type { Item } from "@/features/items/types/item-types";
 import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
 import { skillList } from "@/features/skills/skill-list";
 
+import { useItemLabel } from "../../hooks/units/useItemLabel";
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import type { AdvancePick } from "../../units/unit-api";
 import { loadoutLine } from "../../units/loadout";
@@ -46,6 +47,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
   const { kind } = entry;
   const [open, setOpen] = useState<{ row: string; index: number } | null>(null);
   const lists = boxRows(entry);
+  const itemLabel = useItemLabel(props.campaignId, props.warbandId);
   const groups = useSkillGroups(props.campaignId);
   const access = "available_skills" in entry.unit ? entry.unit.available_skills : undefined;
   const his = unitGroups(groups, accessNames(access));
@@ -59,7 +61,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
     label: kind === "henchmen_group" ? "Each carries" : "Items",
     icon: "items",
     boxes: lists.items.map((item) => ({
-      name: item.name,
+      name: itemLabel(entry.unit, item),
       kind: itemStatsLine(item),
       text: item.flavour ?? "",
       rules: item.rules?.map((rule) => rule.name).filter(Boolean),

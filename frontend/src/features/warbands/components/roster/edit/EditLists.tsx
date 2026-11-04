@@ -18,6 +18,7 @@ import { useCatalogue } from "@/lib/catalogue-queries";
 import type { HeroCaster } from "../../../types/warband-types";
 import { buildAvailableSkillsPayload } from "../../../utils/warband-utils";
 import { boonBaneOptions } from "../boon-bane-options";
+import { useItemLabel } from "../../../hooks/units/useItemLabel";
 import UnitSectionLabel from "../UnitSectionLabel";
 import { isInjury, type RosterUnit } from "../unit-view";
 import EditPickList from "./EditPickList";
@@ -47,6 +48,7 @@ export default function EditLists({
 }) {
   const { kind, unit } = entry;
   const { draft, set, lists, setLists } = form;
+  const itemLabel = useItemLabel(campaignId, warbandId);
   const skills = useCatalogue("skills", campaignId).data ?? [];
   const specials = useCatalogue("specials", campaignId).data ?? [];
   const spells = useCatalogue("spells", campaignId).data ?? [];
@@ -101,8 +103,8 @@ export default function EditLists({
             className="min-h-[34px] max-w-[200px] text-[13px] text-ink"
           >
             <ItemKindIcon kind={itemKind(item)} className="shrink-0 text-accent-text" />
-            <span title={item.name} className="truncate">
-              {item.name}
+            <span title={itemLabel(unit, item)} className="truncate">
+              {itemLabel(unit, item)}
             </span>
           </ChipLabel>
         ))}

@@ -10,6 +10,7 @@ from typing import Any
 
 from django.db.models import prefetch_related_objects
 
+from apps.warband_templates.services.item_names import template_item_names
 from apps.warbands.models import Warband
 from apps.warbands.prefetches import item_detail_prefetches
 from apps.warbands.serializers import (
@@ -90,6 +91,8 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
         "summary": WarbandSummarySerializer(warband, context=summary_context).data,
         "capabilities": capabilities,
         "rules": WarbandRuleSerializer(warband.rules.all(), many=True).data,
+        # the list's own name for an item, by fighter key, from its template (the templates plan, question 12)
+        "item_names": template_item_names(warband),
         **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},
     }
 

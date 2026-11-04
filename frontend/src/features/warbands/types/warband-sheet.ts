@@ -41,6 +41,8 @@ export type WarbandSheet = {
   capabilities: WarbandCapabilities;
   /** The warband's own rules, in the order they were added. */
   rules: WarbandRule[];
+  /** The list's own name for an item, by fighter key and item id, from its template ("Jambiya"). */
+  item_names?: Record<string, Record<string, string>>;
   heroes: WarbandHero[];
   henchmen_groups: HenchmenGroup[];
   hirelings: WarbandHireling[];

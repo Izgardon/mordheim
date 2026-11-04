@@ -10,6 +10,7 @@ import { StatStrip } from "@/components/ui/stat-strip";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { cn } from "@/lib/utils";
 
+import { useItemLabel } from "../../hooks/units/useItemLabel";
 import { eachCarries, loadoutLine } from "../../units/loadout";
 import UnitBadges from "./UnitBadges";
 import {
@@ -64,6 +65,7 @@ const ADVANCE =
  */
 export default function UnitCard(props: UnitCardProps) {
   const { entry, campaign, layout, open, canEdit } = props;
+  const itemLabel = useItemLabel(campaign?.id ?? 0, props.warbandId);
   // editing: no head (name, type, profile), straight into the form (William); on a phone the form
   // is a sheet, which portals out of the card
   if (props.editing) {
@@ -258,13 +260,17 @@ export default function UnitCard(props: UnitCardProps) {
         </div>
         {open ? null : isGroup(entry) && !creature ? (
           <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-            <span className="text-[13px] text-text2">{eachCarries(entry.unit)}</span>
+            <span className="text-[13px] text-text2">
+              {eachCarries(entry.unit, (item) => itemLabel(entry.unit, item))}
+            </span>
             <span className="font-mono text-xs text-muted-foreground">
               {loadoutLine(entry.unit)}
             </span>
           </div>
         ) : (
-          <span className="text-[13px] text-text2">{gearSummary(creature ? [] : unit.items)}</span>
+          <span className="text-[13px] text-text2">
+            {gearSummary(creature ? [] : unit.items, (item) => itemLabel(unit, item))}
+          </span>
         )}
       </div>
       {props.children}
