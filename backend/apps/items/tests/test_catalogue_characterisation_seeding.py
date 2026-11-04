@@ -26,12 +26,12 @@ from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordItem, H
 from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.items.services import sync_half_price_armour_for_campaign
 from apps.races.models import Race
-from apps.skills.models import Skill
+from apps.skills.models import Skill, SkillGroup
 from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import WarbandGroup, WarbandType
 
-BOOK_MODELS = (Race, Item, ItemRule, Skill, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
+BOOK_MODELS = (Race, Item, ItemRule, Skill, SkillGroup, Spell, Special, BestiaryEntry, HiredSword, DramatisPersona)
 
 
 def seed_all() -> str:
@@ -69,7 +69,8 @@ class SeedAllTests(TestCase):
                 "Race": 27,
                 "Item": 321,  # the import's 290 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
-                "Skill": 251,
+                "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
+                "SkillGroup": 69,  # the import's 50 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
                 "Special": 281,  # 185 + the dramatis personae's own rules (next step 12)
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
@@ -86,8 +87,9 @@ class SeedAllTests(TestCase):
                     ungraded = model._default_manager.filter(**{"campaign_type__isnull": True})
                     if model in (HiredSword, DramatisPersona, Item):  # every book item and hireling has its setting
                         self.assertFalse(ungraded.exists())
-                    elif model is Skill:  # but the ones a hired sword's seeding makes ("Hired Sword - …")
-                        self.assertFalse(ungraded.exclude(**{"type__startswith": "Hired Sword - "}).exists())
+                    elif model is Skill:  # but the ones a hired sword's seeding makes (his "Hired Sword - …" group)
+                        own = {"group_links__group__name__startswith": "Hired Sword - "}
+                        self.assertFalse(ungraded.exclude(**own).exists())
                     else:  # the rest count as Mordheim's until they get theirs
                         self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
@@ -116,16 +118,19 @@ class SeedAllTests(TestCase):
         self.assertEqual(skaven, {"Skaven": (6, 4), "Skaven (Clan Pestilens)": (5, 5)})
 
     def test_both_pirates_lists_keep_their_own_sea_legs(self):
-        # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type, and
-        # seed_skills upserts on name and type, so its Sea Legs, Cutlass Master and Swashbuckler overwrote Town Cryer
-        # 9's (a fresh seed said "Updated: 3") and the Pirates' Sea Legs was the other list's rope-and-rigging rule
-        self.assertIn("Skills import complete. Created: 227, Updated: 0", self.output)
-        sea_legs = {skill.type: skill.description for skill in Skill.objects.filter(name="Sea Legs")}
-        self.assertEqual(set(sea_legs), {"Pirates", "Pirates (TBMF)"})
-        self.assertIn("If he Falls during a battle", sea_legs["Pirates"])
-        self.assertIn("swings through rope and rigging", sea_legs["Pirates (TBMF)"])
-        second = set(Skill.objects.filter(type="Pirates (TBMF)").values_list("name", flat=True))
-        self.assertEqual(second, {"Captain Blood", "Sea Legs", "Cutlass Master", "Treasure Hunter", "Swashbuckler"})
+        # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
+        # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
+        # the two lists are two groups sharing Cutlass Master and Swashbuckler
+        self.assertIn("Skills import complete. Created: 223, Updated: 0", self.output)
+        self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
+        self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
+        second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)
+        self.assertEqual(
+            set(second), {"Captain Blood", "Sea Legs (TBMF)", "Cutlass Master", "Treasure Hunter", "Swashbuckler"}
+        )
+        first = set(SkillGroup.objects.get(name="Pirates").skill_links.values_list("skill__name", flat=True))
+        self.assertIn("Sea Legs", first)
+        self.assertNotIn("Sea Legs (TBMF)", first)
 
     def test_knives_carry_their_save_modifier_and_two_handed_is_one_shared_rule(self):
         # the 2026-10-28 data audit against mordheimer, kept by the import: the knives carry "+1 Enemy armour save",
@@ -223,40 +228,63 @@ class SeedAllTests(TestCase):
         self.assertEqual((ogre.race.name if ogre.race else None, ogre.race_label), ("Ogre", "Ogre"))
 
     def test_who_may_hire_and_learn_comes_from_the_import(self):
-        # the items rebuild: every hired sword names who may hire him (mordheimer's lists), the general skill lists are
-        # for everyone and a special list's skills name their warbands
+        # the items rebuild: every hired sword names who may hire him (mordheimer's lists); since the skill groups
+        # (phase 1a) the core groups are for everyone and a warband's group names its warbands
         self.assertFalse(HiredSword.objects.filter(for_everyone=True).exists())
         self.assertFalse(HiredSword.objects.filter(warband_links__isnull=True).exists())
-        self.assertTrue(Skill.objects.get(name="Sprint", type="Speed").for_everyone)
-        tail = Skill.objects.get(name="Tail Fighting", type="Skaven")
-        self.assertFalse(tail.for_everyone)
-        self.assertTrue(tail.warband_links.exists())
+        self.assertTrue(SkillGroup.objects.get(name="Speed").for_everyone)
+        skaven = SkillGroup.objects.get(name="Skaven")
+        self.assertFalse(skaven.for_everyone)
+        self.assertTrue(skaven.warband_links.exists())
+        self.assertIn("Tail Fighting", skaven.skill_links.values_list("skill__name", flat=True))
 
     def test_williams_skill_list_decisions_are_seeded(self):
-        # the fees and skill lists step: the import's out/skills.json with his decisions, and who-can's extras
-        def learners(name: str) -> set[str]:
-            skill = Skill.objects.get(name=name, campaign__isnull=True)
-            return set(skill.warband_links.values_list("warband_type__slug", flat=True))
+        # the fees and skill lists step: the import's skills with his decisions, each list's decision now its group's
+        def group(name: str) -> SkillGroup:
+            return SkillGroup.objects.get(name=name, campaign__isnull=True)
 
-        large = Skill.objects.filter(type="Large Special")
-        self.assertEqual(large.count(), 5)
-        self.assertTrue(all(skill.large_only and skill.for_everyone for skill in large))
-        self.assertFalse(Skill.objects.filter(large_only=True).exclude(type="Large Special").exists())
-        mist = Skill.objects.get(name="Mist Form")
-        self.assertEqual(
-            (mist.learn_note, mist.for_everyone, learners("Mist Form")), ("Vampire only", False, {"undead"})
-        )
-        self.assertEqual(learners("Respirator"), {"metal-mongers"})
-        self.assertEqual(learners("Captain Blood"), {"pirates"})
-        self.assertTrue(Skill.objects.get(name="Falconer").for_everyone)
+        def learners(name: str) -> set[str]:
+            return set(group(name).warband_links.values_list("warband_type__slug", flat=True))
+
+        def holds(name: str) -> set[str]:
+            return set(group(name).skill_links.values_list("skill__name", flat=True))
+
+        large = group("Large Special")
+        self.assertEqual((len(holds("Large Special")), large.large_only, large.for_everyone), (5, True, True))
+        self.assertEqual(list(SkillGroup.objects.filter(large_only=True)), [large])
+        vampires = group("Undead Vampires")
+        self.assertEqual((vampires.learn_note, vampires.for_everyone, learners("Undead Vampires")), ("Vampire only", False, {"undead"}))  # fmt: skip
+        self.assertIn("Mist Form", holds("Undead Vampires"))
+        self.assertEqual(learners("Skaven Metal Mongers"), {"metal-mongers"})
+        self.assertEqual(learners("Pirates (TBMF)"), {"pirates"})
+        self.assertTrue(group("Animal").for_everyone)
+        self.assertIn("Falconer", holds("Animal"))
         inventor = Skill.objects.get(name="Master Inventor")
-        self.assertEqual(learners("Master Inventor"), {"guild-of-disgraced-engineers"})
+        self.assertEqual(learners("Dwarf Exiled Engineers"), {"guild-of-disgraced-engineers"})
+        self.assertIn("Master Inventor", holds("Dwarf Exiled Engineers"))
         self.assertEqual(inventor.campaign_type.slug if inventor.campaign_type else None, "mutiny-in-marienburg")
         self.assertIn("D3+1 inventions", inventor.description)
         self.assertNotIn("Master Inventor", Skill.objects.get(name="Quick Thinker").description)
         gone = ("Prize-fighter", "Knowledge of Myths and Legends", "Skills list prohibitions", "New Skill")
         self.assertFalse(Skill.objects.filter(name__in=gone).exists())
         self.assertFalse(Skill.objects.filter(name__startswith="Animal Charmer").exists())
+
+    def test_skill_groups_merge_split_and_add_as_william_agreed(self):
+        # the skill groups (phase 1a): a name in several lists is one skill in each list's group, six stay two skills,
+        # and nine groups are new, each its warband type's alone
+        infiltration = Skill.objects.get(name="Infiltration")
+        held_by = set(infiltration.group_links.values_list("group__name", flat=True))
+        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Strigany", "Horned Hunters", "Night Goblins (MIC)"})  # fmt: skip
+        self.assertTrue(infiltration.description.startswith("A warrior with this skill is always placed"))
+        self.assertEqual(set(Skill.objects.get(name="Infiltration (Skink)").group_links.values_list("group__name", flat=True)), {"Skink"})  # fmt: skip
+        self.assertTrue(Skill.objects.filter(name="Battle Tongue").exists())
+        self.assertFalse(Skill.objects.filter(name="Battle tongue").exists())
+        cavalcade = SkillGroup.objects.get(name="Cursed Cavalcade")
+        self.assertEqual(set(cavalcade.skill_links.values_list("skill__name", flat=True)), {"Noblesse Obliges", "Torturer", "Duelist"})  # fmt: skip
+        self.assertEqual(list(cavalcade.warband_links.values_list("warband_type__slug", flat=True)), ["cursed-cavalcade"])  # fmt: skip
+        self.assertFalse(cavalcade.for_everyone)
+        dwarves = SkillGroup.objects.get(name="Dwarves").warband_links.values_list("warband_type__slug", flat=True)
+        self.assertEqual(list(dwarves), ["dwarf-treasure-hunters"])  # the warbands that may learn every skill in it
 
     def test_the_dark_mage_knows_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,

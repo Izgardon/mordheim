@@ -35,7 +35,7 @@ class HirelingVersionTests(CatalogueTestCase):
         self.ogre.skill_links.create(skill=self.infiltration[0])
         self.ogre.skill_links.create(skill=self.infiltration[1])
         self.ogre.item_links.create(item=self.book_sword, quantity=2)
-        self.sneak = make_entry(SKILLS, "Sneak", campaign=self.campaign, type="Dark Elf", replaces=self.infiltration[0])
+        self.sneak = make_entry(SKILLS, "Sneak", campaign=self.campaign, replaces=self.infiltration[0])
 
     def edit(self, kind: CatalogueKind, entry_id: int, body: dict[str, Any]) -> dict[str, Any]:
         response = self.patch_as(self.player, kind.detail_url(entry_id), {"campaign_id": self.campaign.id, **body})

@@ -49,7 +49,7 @@ class AdvancePickTests(RosterTestCase):
 
     def test_a_skill_outside_his_lists_can_still_be_picked(self):
         hero = make_unit(HERO, self.warband, level_up=1, available_skills=["Shooting"])
-        outside = Skill.objects.create(name="Lightning Reflexes", type="Speed")
+        outside = Skill.objects.create(name="Lightning Reflexes")
         answer = self._advance(HERO, hero, "Skill", {"list": "skills", "id": outside.id})
         self.assertEqual([skill["name"] for skill in answer["skills"]], ["Lightning Reflexes"])
 
@@ -113,6 +113,6 @@ class AdvancePickTests(RosterTestCase):
         self._pick(HENCHMEN, group, {"list": "skills", "id": self.skills[0].id}, status=400)
 
     def test_another_campaigns_entry_is_refused(self):
-        foreign = Skill.objects.create(name="Elsewhere", type="Combat", campaign=self.foreign_race.campaign)
+        foreign = Skill.objects.create(name="Elsewhere", campaign=self.foreign_race.campaign)
         hero = make_unit(HERO, self.warband, pending_skills=1)
         self._pick(HERO, hero, {"list": "skills", "id": foreign.id}, status=400)

@@ -74,7 +74,7 @@ class BattleRosterCompanionTests(BattleTestCase):
             HenchmenGroupItem.objects.create(henchmen_group=group, item=self.horse, companion=True)
 
     def test_a_mounts_and_a_pets_beast_entries_come_into_the_battle_in_the_rosters_shapes(self):
-        charge = Skill.objects.create(name="Thunderous Charge", type="Mount")
+        charge = Skill.objects.create(name="Thunderous Charge")
         hoof = Spell.objects.create(name="Hoof Hex", type="Beast", dc="7", description="Left out of the roster.")
         teach(self.horse, skills=(charge,), spells=(hoof,))
         battle_id = self.to_prebattle()
@@ -88,7 +88,7 @@ class BattleRosterCompanionTests(BattleTestCase):
         self.assertNotIn("skills", hero["pets"][0])
 
     def test_rosters_read_beasts_in_a_fixed_number_of_queries(self):
-        teach(self.horse, skills=(Skill.objects.create(name="Thunderous Charge", type="Mount"),))
+        teach(self.horse, skills=(Skill.objects.create(name="Thunderous Charge"),))
         self.ride(1)
         battle_id = self.to_prebattle()
         self.roster(battle_id)  # the first read in a minute writes presence

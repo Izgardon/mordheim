@@ -72,15 +72,15 @@ class InPlayListTests(CatalogueTestCase):
     def test_a_campaign_list_says_whether_each_row_is_in_play_and_hides_none(self):
         make_entry(SKILLS, "Desert Lore", campaign_type=self.khemri)
         make_entry(SKILLS, "Jungle Lore", campaign_type=self.lustria)
-        make_entry(SKILLS, "Sprint", campaign_type=self.mordheim)
+        make_entry(SKILLS, "Dodge", campaign_type=self.mordheim)
         make_entry(SKILLS, "Ungraded")
         make_entry(SKILLS, "Our Trick", campaign=self.campaign)
         rows = self.rows(SKILLS, self.campaign)
         flags = {
-            name: rows[name]["in_play"] for name in ("Desert Lore", "Jungle Lore", "Sprint", "Ungraded", "Our Trick")
+            name: rows[name]["in_play"] for name in ("Desert Lore", "Jungle Lore", "Dodge", "Ungraded", "Our Trick")
         }
         self.assertEqual(
-            flags, {"Desert Lore": True, "Jungle Lore": False, "Sprint": True, "Ungraded": True, "Our Trick": True}
+            flags, {"Desert Lore": True, "Jungle Lore": False, "Dodge": True, "Ungraded": True, "Our Trick": True}
         )
         self.assertEqual(rows["Jungle Lore"]["setting_id"], self.lustria.id)
         self.assertIsNone(self.rows(SKILLS)["Jungle Lore"]["in_play"])  # the book's own list knows no campaign
@@ -116,5 +116,5 @@ class InPlayListTests(CatalogueTestCase):
         for index in range(3):
             make_entry(SKILLS, f"Lore {index}", campaign_type=self.lustria)
         self.client.force_authenticate(user=self.player)
-        with self.assertNumQueries(3):  # the caller's access, the rows with in_play, who may learn them
+        with self.assertNumQueries(2):  # the caller's access, the rows with in_play
             self.client.get(SKILLS.list_url(self.campaign))

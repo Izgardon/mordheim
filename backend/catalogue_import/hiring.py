@@ -87,7 +87,7 @@ def _hireling(
     }
 
 
-def _named_after(list_name: str, resolver: Resolver, groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def named_after(list_name: str, resolver: Resolver, groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """The warband type a skill list is named after ("Low Kings"), else the group ("Orcs"); [] when neither."""
     slugs = resolver.find(list_name)
     if slugs:
@@ -118,7 +118,7 @@ def _skill(
         access, left_out, how = {"for_everyone": True, "warbands": []}, [], "general list"
     elif decided := lists.access(list_name, name):
         access, left_out, how = decided, [], "overrides.json"
-    elif warbands := _named_after(list_name, resolver, groups):
+    elif warbands := named_after(list_name, resolver, groups):
         access, left_out, how = {"for_everyone": False, "warbands": warbands}, [], "its list's name"
         log.by_list_name.append((label, list_name))
     else:

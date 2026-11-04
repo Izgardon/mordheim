@@ -95,7 +95,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "restore": ("POST", "restore/", {}),
     "leave": ("POST", "leave/", {}),
     "remove_posts": ("DELETE", "messages/{message}/", None),
-    "edit_catalogue": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge", "type": "Speed"}),
+    "edit_catalogue": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge"}),
     "delete_catalogue": ("DELETE", "/api/items/{item}/", None),  # an item nothing holds
     "manage_rules": ("POST", "rules/", {"title": "No running"}),
     "manage_warbands": ("PATCH", "/api/warbands/{rival_warband}/", {"name": "Rats"}),

@@ -34,7 +34,7 @@ class HirelingCatalogueModelTests(TestCase):
     def setUpTestData(cls) -> None:
         cls.campaign = Campaign.objects.create(name="Shards", join_code="SHARDS")
         cls.sword = Item.objects.create(name="Sword", type="Weapon")
-        cls.skill = Skill.objects.create(name="Sprint", type="Speed")
+        cls.skill = Skill.objects.create(name="Sprint")
 
     def test_both_tables_carry_the_catalogue_columns_the_profile_and_the_same_links(self):
         profile = {"name", "description", "armour_save", "large", "caster", "race", "race_label", "hire_fee"}

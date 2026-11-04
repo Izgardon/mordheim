@@ -13,8 +13,8 @@ by name) where it lists the row: its warband types and groups, its fee and upkee
 sentence as `hire_note`; otherwise the row's own fees and its `unique_to` as the note.
 
 Rows are upserted in the book by name (BUG-17). Links resolve against the book (`core/book_lookups.py`); a row's own
-specials, spells and special skills the book lacks are created in it under "Hired Sword - <name>" ("Dramatis
-Persona - <name>"), and the special skills' type joins the skill types the row may take. `race` is matched to the
+specials and spells the book lacks are created in it under "Hired Sword - <name>" ("Dramatis Persona - <name>"), and
+its special skills go in a book skill group of that name, which joins the skill groups the row may take. `race` is matched to the
 book's race of that name; the text is kept as `race_label` either way. The run is all or nothing.
 """
 

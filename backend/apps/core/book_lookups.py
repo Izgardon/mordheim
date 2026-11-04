@@ -1,7 +1,8 @@
 """What the bestiary and hireling seeders resolve an entry's links against: the book's skills, specials, spells and
 items (BUG-17), by name with apostrophes straightened, through the aliases their data uses for book names (BUG-54).
-A hired sword's (or dramatis persona's) own specials, spells and special skills that the book lacks are created in
-it under "Hired Sword - <name>" (or "Dramatis Persona - <name>").
+A hired sword's (or dramatis persona's) own specials and spells that the book lacks are created in it under "Hired
+Sword - <name>" (or "Dramatis Persona - <name>"); his special skills are the book's of their names (created when it
+lacks one) in a skill group of that name, which his skill access names (skill groups, phase 1a).
 """
 
 import re
@@ -12,7 +13,7 @@ from django.db.models import Model
 
 from apps.core.seeding import parse_int
 from apps.items.models import Item
-from apps.skills.models import Skill
+from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
 from apps.special.kinds import book_kind, owner_kind_of
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -158,11 +159,17 @@ class BookLookups:
         return special
 
     def special_skills(self, items: list[Any], owner: str) -> bool:
-        """A hired sword's special skills, made sure of in the book; whether he has any."""
+        """A hired sword's special skills, made sure of in the book and held by his own group ("Hired Sword -
+        <name>", for everyone: only his skill access names it); whether he has any."""
         named = [(name, description) for name, description in map(name_and_description, items) if name]
-        for name, description in named:
-            self._own(Skill, self.skills, name, description, owner, "skill")
-        return bool(named)
+        if not named:
+            return False
+        skills = [self._own(Skill, self.skills, name, description, owner, "skill") for name, description in named]
+        group, _created = SkillGroup.objects.get_or_create(campaign=None, name=self.own_type_of(owner))
+        SkillGroupSkill.objects.bulk_create(
+            [SkillGroupSkill(group=group, skill=skill) for skill in skills], ignore_conflicts=True
+        )
+        return True
 
     def spell(self, item: Any, owner: str) -> Spell | None:
         name, fields = spell_fields(item)
@@ -215,7 +222,8 @@ class BookLookups:
         row = cache.get(key)
         if row is None:
             kind = self.own_type_of(owner)
-            row = model._default_manager.create(name=name, type=kind, description=description, campaign=None)
+            typed = {} if model is Skill else {"type": kind}  # a skill's group holds it (special_skills)
+            row = model._default_manager.create(name=name, description=description, campaign=None, **typed)
             cache[key] = row
             self.warnings.append(f"  Created {noun} '{name}' ({kind}) for '{owner}'")
         elif description and not row.description:

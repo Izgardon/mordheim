@@ -96,11 +96,11 @@ class VisibilityRuleTests(TestCase):
         set_settings(cls.campaign, [setting["khemri"].id])
         set_settings(cls.other, [setting["lustria"].id])
         cls.rows = {
-            "khemri": Skill.objects.create(name="Desert Lore", type="Academic", campaign_type=setting["khemri"]),
-            "lustria": Skill.objects.create(name="Jungle Lore", type="Academic", campaign_type=setting["lustria"]),
-            "mordheim": Skill.objects.create(name="Sprint", type="Speed", campaign_type=setting["mordheim"]),
-            "none": Skill.objects.create(name="Dodge", type="Speed"),
-            "custom": Skill.objects.create(name="Old Trick", type="Speed", campaign=cls.campaign),
+            "khemri": Skill.objects.create(name="Desert Lore", campaign_type=setting["khemri"]),
+            "lustria": Skill.objects.create(name="Jungle Lore", campaign_type=setting["lustria"]),
+            "mordheim": Skill.objects.create(name="Sprint", campaign_type=setting["mordheim"]),
+            "none": Skill.objects.create(name="Dodge"),
+            "custom": Skill.objects.create(name="Old Trick", campaign=cls.campaign),
         }
 
     def in_play(self, campaign: Campaign) -> dict[str, bool]:

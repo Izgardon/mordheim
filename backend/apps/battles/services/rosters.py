@@ -14,6 +14,7 @@ from typing import Any
 
 from django.db.models import F, Prefetch
 
+from apps.skills.access import access_names
 from apps.warbands.models import (
     Henchman,
     HenchmanItemGap,
@@ -149,6 +150,7 @@ def hero_entry(hero: Hero) -> dict:
         "items": items,
         "singleUseItems": _single_use(items),
         "skills": _named(hero.hero_skills.all(), "skill"),
+        "skillAccess": access_names(hero.available_skills),  # his skill groups, which a skill shows under
         "spells": _spells(hero.hero_spells.all()),
         "specials": _named(hero.hero_specials.all(), "special"),
     }
@@ -175,6 +177,7 @@ def hireling_entry(hireling: Hireling) -> dict:
         "items": items,
         "singleUseItems": _single_use(items),
         "skills": _named(hireling.hireling_skills.all(), "skill"),
+        "skillAccess": access_names(hireling.available_skills),
         "spells": _spells(hireling.hireling_spells.all()),
         "specials": _named(hireling.hireling_specials.all(), "special"),
     }

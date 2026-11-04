@@ -87,7 +87,7 @@ def _recruit_hero(api: Api, demo: Demo, spec: HeroSpec, player: str) -> None:
         "xp": spec.xp,
         "is_leader": spec.leader,
         "caster": spec.caster,
-        "available_skills": dict.fromkeys(spec.access, True),
+        "available_skills": list(spec.access),  # skill group names (skills/access.py)
         "skill_ids": [found for name in spec.skills if (found := book.skill(name))],
         "spell_ids": [found for name, school in spec.spells if (found := book.spell(name, school))],
         **_stats(spec.stats),

@@ -1,97 +1,105 @@
-"""Seed the book's skills from JSON (the catalogue import's `out/skills.json`, or --json): our skills table
-(`apps/skills/data/skills.json`) with William's decisions applied (catalogue_import/skill_lists.py). Who may learn each,
-whether it is a Large unit's skill and its learning note come from the import's `who-can.json`.
+"""Seed the book's skills and skill groups (skill groups, phase 1a) from the catalogue import: `out/skills.json` (one
+skill per name with its rules: our skills table with William's decisions applied, merged by name, and the new groups'
+skills) and `out/skill-groups.json` (each group with who learns from it, whether it is a Large unit's, the note shown
+when learning from it and its skills by name). Each skill's setting comes from `out/setting-assignments.json`.
 
-Campaign rows are never read or written (BUG-17); the run is all or nothing; there is no --truncate (BUG-16: it
-deleted campaign skills and every copy of them). The Google Sheets and CSV sources are gone (IMP-81): the JSON is
-committed with the code.
+Skills are upserted by name and groups by name; each seeded group's skills and who-can lines are written again. A
+group's lines name warband types and groups, so they apply once seed_warband_types has run (seed_all runs it first);
+before that every group is for everyone. `--json` seeds another skills file (and `--groups` another groups file; with
+`--json` alone no group is touched). Campaign rows are never read or written (BUG-17); the run is all or nothing;
+there is no --truncate (BUG-16: it deleted campaign skills and every copy of them).
 """
 
 from pathlib import Path
+from typing import Any
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
 from apps.core.catalogue.cache import bump
-from apps.core.seeding import (
-    IMPORT_OUT,
-    SettingAssignments,
-    WhoCanLists,
-    clean,
-    entry_value,
-    read_json_list,
-    upsert_global,
-)
-from apps.skills.models import Skill, SkillWarband
+from apps.core.seeding import IMPORT_OUT, AccessLines, SettingAssignments, clean, read_json_list, upsert_global
+from apps.skills.models import Skill, SkillGroup, SkillGroupSkill, SkillGroupWarband
 
 DEFAULT_JSON_PATH = IMPORT_OUT / "skills.json"
-
-HEADER_ALIASES = {
-    "name": ["name", "skill", "skill name", "skill_name"],
-    "type": ["type", "skill type", "skill_type", "category", "group"],
-    "description": ["description", "desc", "details", "effect", "rules"],
-}
+DEFAULT_GROUPS_PATH = IMPORT_OUT / "skill-groups.json"
 
 
-def _skill_type(value):
-    cleaned = clean(value)
-    if not cleaned:
-        return cleaned
-    if cleaned.lower().endswith("skills"):
-        cleaned = cleaned[: -len("skills")].rstrip()
-        if cleaned.endswith("'") or cleaned.endswith("’"):
-            cleaned = cleaned[:-1].rstrip()
-    return cleaned
+def _path(given: str | None, default: Path, what: str) -> Path:
+    path = Path(given) if given else default
+    if not path.exists():
+        if given:
+            raise CommandError(f"JSON file not found at {path}")
+        raise CommandError(f"{what} not found. Provide --json or build the catalogue import ({path}).")
+    return path
 
 
 class Command(BaseCommand):
-    help = "Seed skills from a JSON data file."
+    help = "Seed skills and skill groups from the catalogue import's JSON."
 
     def add_arguments(self, parser):
-        parser.add_argument("--json", dest="json_path", help="Path to a JSON file.")
+        parser.add_argument("--json", dest="json_path", help="Path to a skills JSON file.")
+        parser.add_argument("--groups", dest="groups_path", help="Path to a skill groups JSON file.")
 
     def handle(self, *args, **options):
-        """Upsert the book's skills by name and type, all or nothing (BUG-17)."""
+        """Upsert the book's skills by name, then its groups, all or nothing (BUG-17)."""
         with transaction.atomic():
-            self._import(options)
+            skills = self._skills(_path(options.get("json_path"), DEFAULT_JSON_PATH, "Skills JSON"))
+            groups_path = options.get("groups_path")
+            if groups_path or not options.get("json_path"):
+                self._groups(_path(groups_path, DEFAULT_GROUPS_PATH, "Skill groups JSON"), skills)
             bump(None)  # every cached catalogue list shows the book (PERF-13)
 
-    def _import(self, options):
-        json_path = options.get("json_path")
-        path = Path(json_path) if json_path else DEFAULT_JSON_PATH
-        if not path.exists():
-            if json_path:
-                raise CommandError(f"JSON file not found at {path}")
-            raise CommandError(f"JSON file not found. Provide --json or build the catalogue import ({path}).")
-
+    def _skills(self, path: Path) -> dict[str, Skill]:
         created = updated = skipped = 0
         settings = SettingAssignments("skills")  # each skill's setting, from the catalogue import
-        who_can = WhoCanLists("skills")  # who may learn each (the items rebuild): a special skill names its warbands
-        lines: list[SkillWarband] = []
-        SkillWarband.objects.filter(skill__campaign__isnull=True).delete()  # the book's lines, written again below
         for entry in read_json_list(path, "skill objects"):
-            name = clean(entry_value(entry, HEADER_ALIASES["name"]))
-            skill_type = _skill_type(entry_value(entry, HEADER_ALIASES["type"]))
-            if not name or not skill_type:
+            name = clean(entry.get("name")) if isinstance(entry, dict) else ""
+            if not name:
                 skipped += 1
                 continue
-            description = clean(entry_value(entry, HEADER_ALIASES["description"]))
-            own_type = clean(entry_value(entry, HEADER_ALIASES["type"]))  # the file's own type
-            learners = who_can.of(name, own_type)
-            learning = {
-                "for_everyone": learners["for_everyone"] if learners else True,
-                "large_only": bool(learners and learners.get("large_only")),
-                "learn_note": clean(learners.get("note")) if learners else "",
-            }
-            defaults = {"description": description, "campaign_type_id": settings.of(name, own_type), **learning}
-            skill, was_created = upsert_global(Skill, {"name": name, "type": skill_type}, defaults)
-            lines += [SkillWarband(skill=skill, **line) for line in (learners["lines"] if learners else [])]
-            if was_created:
-                created += 1
-            else:
-                updated += 1
-
-        SkillWarband.objects.bulk_create(lines)
+            defaults = {"description": clean(entry.get("description")), "campaign_type_id": settings.of(name)}
+            _skill, was_created = upsert_global(Skill, {"name": name}, defaults)
+            created, updated = (created + 1, updated) if was_created else (created, updated + 1)
         self.stdout.write(
             self.style.SUCCESS(f"Skills import complete. Created: {created}, Updated: {updated}, Skipped: {skipped}")
         )
+        return {skill.name.strip().lower(): skill for skill in Skill.objects.filter(campaign__isnull=True)}
+
+    def _groups(self, path: Path, skills: dict[str, Skill]) -> None:
+        access = AccessLines()  # who learns from each, once the warband types are seeded
+        entries = [entry for entry in read_json_list(path, "skill group objects") if clean(entry.get("name"))]
+        names = [clean(entry["name"]) for entry in entries]
+        book = SkillGroup.objects.filter(campaign__isnull=True, name__in=names)
+        SkillGroupSkill.objects.filter(group__in=book).delete()  # the seeded groups' links, written again below
+        SkillGroupWarband.objects.filter(group__in=book).delete()
+        links: list[SkillGroupSkill] = []
+        lines: list[SkillGroupWarband] = []
+        created = 0
+        for entry, name in zip(entries, names, strict=True):
+            group, was_created = upsert_global(SkillGroup, {"name": name}, self._group_fields(entry, access))
+            created += was_created
+            links += [SkillGroupSkill(group=group, skill=self._skill(skills, skill, name)) for skill in entry.get("skills", [])]  # fmt: skip
+            if access.ready:
+                lines += [SkillGroupWarband(group=group, **line) for line in access.of(entry.get("warbands", []), name)]
+        SkillGroupSkill.objects.bulk_create(links, ignore_conflicts=True)
+        SkillGroupWarband.objects.bulk_create(lines)
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Skill groups import complete. Created: {created}, Updated: {len(entries) - created}, Links: {len(links)}"
+            )
+        )
+
+    @staticmethod
+    def _group_fields(entry: dict[str, Any], access: AccessLines) -> dict[str, Any]:
+        return {
+            "for_everyone": bool(entry.get("for_everyone", True)) if access.ready else True,
+            "large_only": bool(entry.get("large_only")),
+            "learn_note": clean(entry.get("note")),
+        }
+
+    @staticmethod
+    def _skill(skills: dict[str, Skill], name: Any, group: str) -> Skill:
+        found = skills.get(clean(name).lower())
+        if found is None:
+            raise CommandError(f"Skill group '{group}': no book skill '{clean(name)}'.")
+        return found

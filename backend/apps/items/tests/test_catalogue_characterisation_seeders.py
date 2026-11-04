@@ -152,12 +152,12 @@ class SeederUpsertTests(SeederTestCase):
 
         self.assertCountEqual(Race.objects.values_list("campaign_id", "movement"), [(None, 4), (self.campaign.id, 9)])
 
-    def test_seed_skills_updates_the_book_skill_beside_a_campaign_skill_of_its_name_and_type(self):
+    def test_seed_skills_updates_the_book_skill_beside_a_campaign_skill_of_its_name(self):
         # BUG-17 (was pinned: seed_skills stopped at the campaign's skill; flipped in PR A)
-        book = Skill.objects.create(name="Infiltration", type="Skaven")
-        house = Skill.objects.create(name="Infiltration", type="Skaven", campaign=self.campaign, description="House")
+        book = Skill.objects.create(name="Infiltration")
+        house = Skill.objects.create(name="Infiltration", campaign=self.campaign, description="House")
 
-        with data_file([{"name": "Infiltration", "type": "Skaven Skills", "description": "Sneaks."}]) as path:
+        with data_file([{"name": "Infiltration", "description": "Sneaks."}]) as path:
             run("seed_skills", json_path=path)
 
         book.refresh_from_db()
@@ -255,7 +255,7 @@ class SeederTruncateTests(SeederTestCase):
         hero = Hero.objects.create(warband=self.warband, name="Abbess", unit_type="Matriarch")
         charm = book_item("Lucky Charm", 25, campaign=self.campaign)
         hero.hero_items.create(item=charm, cost=25)
-        skill = Skill.objects.create(name="Ambush", type="Combat", campaign=self.campaign)
+        skill = Skill.objects.create(name="Ambush", campaign=self.campaign)
         hero.hero_skills.create(skill=skill)
         commands = ("seed_items", "seed_skills", "seed_spells_and_special", "seed_races")
         for command in (*commands, "seed_bestiary"):

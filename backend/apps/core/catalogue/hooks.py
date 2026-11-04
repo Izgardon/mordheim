@@ -1,7 +1,7 @@
 """The differences between catalogue kinds that are behaviour rather than data (IMP-79), as pass 1 did for units.
 
-The generic views (views.py) call these hooks. `CatalogueHooks` is what specials need (skills add who may learn them,
-spells a roll their lore doesn't hold yet): every row of the model with what its badges read, the list rule (merge.py),
+The generic views (views.py) call these hooks. `CatalogueHooks` is what specials need (skills write the groups holding
+them, skill groups their order, who learns from them and their skills, spells a roll their lore doesn't hold yet): every row of the model with what its badges read, the list rule (merge.py),
 a create that saves the serializer in the campaign, an edit that saves it, a delete of the entry. A create or an edit
 may leave `write_warnings` on the entry it saved, which the answer carries (`warnings`). Items refuse deleting or reverting a house rule's
 clone and any write of a beast's Animal item, and write through `items/writes.py`; bestiary entries write through
@@ -25,7 +25,8 @@ from apps.hirelings import writes as hireling_writes
 from apps.hirelings.models import HirelingProfile
 from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
-from apps.skills.selectors import skill_learners
+from apps.skills import writes as skill_writes
+from apps.skills.selectors import group_learners, group_skills, in_group_order
 from apps.spells import rolls as spell_rolls
 
 from . import merge
@@ -208,13 +209,40 @@ class SpellHooks(CatalogueHooks):
 
 
 class SkillHooks(CatalogueHooks):
-    """Skills read who may learn them (one query for every row's lines, with their types and groups)."""
+    """A skill's create or edit may send the groups that hold it (`group_ids`: skills/writes.py)."""
 
-    def read(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
-        return rows.prefetch_related(skill_learners())
+    def create(self, serializer: Serializer, campaign_id: int) -> Model:
+        group_ids = serializer.validated_data.pop("group_ids", None)
+        entry = super().create(serializer, campaign_id)
+        if group_ids is not None:
+            skill_writes.set_skill_groups(entry, group_ids, campaign_id)  # type: ignore[arg-type]
+        return entry
+
+    def update(self, entry: Any, serializer: Serializer) -> None:
+        group_ids = serializer.validated_data.pop("group_ids", None)
+        super().update(entry, serializer)
+        if group_ids is not None:
+            skill_writes.set_skill_groups(entry, group_ids, entry.campaign_id)
+
+
+class SkillGroupHooks(CatalogueHooks):
+    """Skill groups list in their order (the core five, then by name) with who learns from each and its skills as the
+    list's campaign's current entries (one query each); they write through skills/writes.py."""
+
+    def listed(
+        self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
+    ) -> QuerySet[Any]:
+        listed = in_group_order(super().listed(kind, rows, campaign_id, params))
+        return listed.prefetch_related(group_learners(), group_skills(campaign_id))
 
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
-        return self.rows(kind).prefetch_related(skill_learners())
+        return self.rows(kind).prefetch_related(group_learners(), group_skills())
+
+    def create(self, serializer: Serializer, campaign_id: int) -> Model:
+        return skill_writes.create_group(campaign_id, serializer.validated_data)
+
+    def update(self, entry: Any, serializer: Serializer) -> None:
+        skill_writes.update_group(entry, serializer.validated_data)
 
 
 class RaceHooks(CatalogueHooks):

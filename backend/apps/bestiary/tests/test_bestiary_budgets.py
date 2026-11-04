@@ -74,7 +74,7 @@ class BestiaryReadBudgetTests(BestiaryBudgetTestCase):
 
 class BestiaryWriteBudgetTests(BestiaryBudgetTestCase):
     def body(self, name: str, links: int) -> dict[str, Any]:
-        skills = [Skill.objects.create(name=f"{name} trick {n}", type="Animal").id for n in range(links)]
+        skills = [Skill.objects.create(name=f"{name} trick {n}").id for n in range(links)]
         gear = [make_entry(ITEMS, f"{name} gear {n}").id for n in range(links)]
         only = [{"warband_type_id": self.only.id}]
         prices = [{"cost": 10 * (n + 1), "note": f"note {n}", "for_everyone": False, "warbands": only} for n in range(links)]  # fmt: skip

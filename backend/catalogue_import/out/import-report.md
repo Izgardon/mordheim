@@ -26,6 +26,9 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 62 |
 | price rows | 319 |
+| skills | 223 |
+| skill groups | 50 |
+| skill group links | 268 |
 
 ## mordheimer's contradictions
 
@@ -169,7 +172,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 227 | 158 | 29 | 40 |
+| skills | 223 | 160 | 23 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -212,11 +215,10 @@ Norse Shaman (hired swords) is in lustria, border-town-burning on mordheimer; it
 
 ## Who can hire and learn
 
-`out/who-can.json`: mordheimer's `permittedWarbands` for its hired swords and dramatis personae (by name) and for our skills (from the entry each takes its setting from), as warband types or groups. A skill mordheimer lacks is for everyone on a general list, else for the warband its list is named after.
+`out/who-can.json`: mordheimer's `permittedWarbands` for its hired swords and dramatis personae (by name), as warband types or groups. Our skill rows are read the same way (from the entry each takes its setting from; a row mordheimer lacks is for everyone on a general list, else for the warband its list is named after), and each skill group's who-can is built from them (below).
 
 | Kind | Entries | Everyone | Everyone except | Named warbands |
 | --- | --- | --- | --- | --- |
-| skills | 227 | 61 | 0 | 166 |
 | hired swords | 72 | 0 | 0 | 72 |
 | dramatis personae | 30 | 1 | 0 | 29 |
 
@@ -257,7 +259,7 @@ Every fee was read.
 
 ## Skill lists (William's decisions)
 
-`overrides.json` (`skill_lists`, `drop_skills`, `extra_skills`, `skill_descriptions`) applied to our skills; `out/skills.json` is the result, the rows `seed_skills` reads. A list's decision places its skills mordheimer lacks; its note is shown when learning, and a Large unit's skill warns for any other unit, never blocks.
+`overrides.json` (`skill_lists`, `drop_skills`, `extra_skills`, `skill_descriptions`) applied to our skill rows before they become skill groups (below). A list's decision is its group's: who learns from it, its note shown when learning, and a Large unit's group warns for any other unit, never blocks.
 
 | List | Learned by | Note | Skills it places |
 | --- | --- | --- | --- |
@@ -274,6 +276,175 @@ Left out: Prize-fighter (Strigany), left out of the catalogue for now (William)
 Left out: Animal Charmer (eg. Dog Charmer) (Strigany), left out of the catalogue for now (William)
 Added: Master Inventor (Dwarf Exiled Engineers), from the Guild of Disgraced Engineers PDF (Broheim, Mutiny in Marienburg), Dwarf Engineer Skill List.
 Description put right: Quick Thinker (Dwarf Exiled Engineers).
+
+## Skill groups
+
+`out/skills.json` is 223 skills, one per name; `out/skill-groups.json` is 50 groups holding them (268 links), the five core groups first.
+
+### Merged by name
+
+18 names sat in two or more lists; each is one skill now, in every group that had it, under the title-case spelling. The wording is overrides.json's (`skill_wordings`) or the longest; every other wording is dropped:
+
+| Skill | Rows merged | Wording | Dropped wordings |
+| --- | --- | --- | --- |
+| Powerful Build | Powerful Build (Dark Elf), Powerful Build (Sea Ghosts), Powerful Build (Shadow Warriors) | longest | Powerful Build (Dark Elf): The warrior is strongly built for an Elf and is capable of feats of strength. A warrior with this skill may choose skills from the Strength table. The Sorceress may never take this skill and no more than two warriors in the warband may take this skill at any one time. (TC10) / Powerful Build (Sea Ghosts): The warrior is strongly built for an Elf, and is capable of feats of strength not often seen among the elder race. A warrior with this skill may choose skills from the Strength skills table from now on. There may never be more than two Elves with this skill in the warband at any one time. (MiM) |
+| Infiltration | Infiltration (Dark Elf), Infiltration (Sea Ghosts), Infiltration (Skaven), Infiltration (Skaven Metal Mongers), Infiltration (Strigany) | overrides.json | Infiltration (Dark Elf): A Skaven with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (RB 93) / Infiltration (Sea Ghosts): An Elf with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (MiM) / Infiltration (Skaven Metal Mongers): A Skaven with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models that infiltrate, roll a D6 for each, and the lowest roll sets up first. (MiM) / Infiltration (Strigany): A Strigany with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12" away from any enemy model. If both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first. (MiM) |
+| Master of Blades | Master of Blades (Dwarves), Master of Blades (Dwarf Troll Slayers) | longest | - |
+| Extra Tough | Extra Tough (Dwarves), Extra Tough (Dwarf Exiled Engineers), Extra Tough (Dwarf Troll Slayers) | longest | Extra Tough (Dwarf Exiled Engineers): This Dwarf is notorious for walking away from wounds that would kill a lesser being. When rolling on the Heroes Serious Injury Chart for this hero after a game in which he has been taken Out of Action, the dice may be re-rolled once. The result of this second dice roll must be accepted, even if it is a worse result. (MiM) |
+| Resource Hunter | Resource Hunter (Dwarves), Resource Hunter (Dwarf Troll Slayers) | longest | - |
+| True Grit | True Grit (Dwarves), True Grit (Dwarf Exiled Engineers), True Grit (Dwarf Troll Slayers) | longest | True Grit (Dwarf Exiled Engineers): Dwarfs are hardy individuals and this hero is hardy even for a Dwarf! When rolling on the Injury Table for this hero, a roll of 1-3 is treated as Knocked Down, 4- 5 as Stunned and 6 is Taken Out. (MiM) |
+| Thick Skull | Thick Skull (Dwarves), Thick Skull (Dwarf Exiled Engineers), Thick Skull (Dwarf Troll Slayers) | longest | Thick Skull (Dwarves): The Hero has a thick skull, even for a Dwarf. He has a 3+ save on a D6 to avoid being stunned. If the save is made, treat a stunned result as knocked down instead. If the Dwarf also wears a helmet, this save is 2+ instead of 3+ (this takes the place of the normal Helmet special rule). (A02 24) |
+| Hide in Shadows | Hide in Shadows (Night Goblins), Hide in shadows (Hochland Bandits), Hide in Shadows (Sea Ghosts), Hide in Shadows (Shadow Warriors) | overrides.json | Hide in Shadows (Night Goblins): The sneaky Goblin has become an expert at concealing himself from his enemies (and potential victims!). An enemy warrior attempting to detect this warrior when he is Hidden must halve his Initiative (round up) before measuring the distance. (TBMF) / Hide in shadows (Hochland Bandits): The Bandit has become an expert at concealing himself from his enemies (and potential victims!). An enemy warrior attempting to detect this warrior when he is Hidden must halve his Initiative (round up) before measuring the distance. (NC) / Hide in Shadows (Sea Ghosts): Over time the Hero has learned how to freeze in place and remain undetected, even from the heightened senses of their Dark Elf cousins. An enemy warrior attempting to detect this warrior when he is Hidden must halve his Initiative before measuring the distance. (MiM) / Hide in Shadows (Shadow Warriors): Over time Shadow Warriors have learned how to freeze in place and remain undetected, even from the heightened senses of their Dark Elf cousins. An enemy warrior attempting to detect this warrior when he is Hidden must halve his Initiative before measuring the distance. (TC10) |
+| Crude Belch | Crude belch (Halflings), Crude belch (Ogres) | longest | Crude belch (Ogres): Ogres eat almost anything. Consequences are to be expected from those inconsiderate enough to consume a rich meal before battle. A Hero with this 'condition' may unleash his thunderous fumes on all enemies engaged in close combat. Those that do not pass a Ld test suffer a –1 ‘to hit’ modifier for the turn. The Ogre must wait until a new enemy engages him in combat before he relieves himself again. (BTB) |
+| Stealthy | Stealthy (Halflings), Stealthy (Low Kings) | longest | Stealthy (Low Kings): The Hero can hide even after running, and can run while within 8" of enemy models if he starts and ends his move hidden. (MiM) |
+| Taunt | Taunt (Halflings), Taunt (Ostlanders) | longest | Taunt (Halflings): After years of baiting persecutors into drunken brawls, this Halfling has learned some of the vilest insults in the Empire. During the Shooting phase, the Halfling may choose to taunt one enemy instead of shooting with a missile weapon. The Hero must be able to see the enemy and taunting requires a line of sight as it would for shooting. The player should insult the enemy warrior whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian!) and the enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the Halfling who taunted him.  (MiM) |
+| Battle Tongue | Battle tongue (Norse), Battle Tongue (Academic) | overrides.json | Battle tongue (Norse): Only a hero with the leader skill may gain this skill. It allows models within 12” of him to use bis leadership, rather than the normal 6”. (TC 13) |
+| Bull Rush | Bull Rush (Ostlanders), Bull Rush (Strigany) | longest | Bull Rush (Strigany): This warrior can use his massive girth to overpower his opponents. When he charges, the Hero may attempt to knock down his opponent rather than making his normal attacks. Roll to hit once with a +1 to hit modifier, though no roll to wound is necessary. Instead, if the warrior hits with this attack, the opposing model is knocked down. (MiM) |
+| Cutlass Master | Cutlass Master (Pirates), Cutlass Master (Pirates (TBMF)) | longest | Cutlass Master (Pirates (TBMF)): These short, single bladed swords are the mainstay weapon of any pirate crew, and in the hands of a trained seaman they are superb weapons for close quarters fighting. If the pirate is equipped with a Sword, this skill will give him the additional benefit of also being able to parry successfully if the player rolls equal to the number rolled to hit, not just higher as normal. (FO 65) |
+| Swashbuckler | Swashbuckler (Pirates), Swashbuckler (Pirates (TBMF)) | longest | Swashbuckler (Pirates): The pirate cuts a dashing figure in combat, mixing dazzling swordplay and acrobatic feats with charm and witty comments. Even the basest villains in Mordheim respect (and curse) his ability to always seem to effortlessly slip from their grasp. The pirate may make a Leadership Test at the end of any Hand-to-Hand phase (pirate’s or enemy’s turn) if he is still in base contact with any enemy models. If he passes he may make a normal movement away from the enemy (he may not run or charge), without the enemy striking any blows on him. If he fails the test he remains in combat and must fight as normal in the following turn. (TC 9) |
+| See in Shadows | See in Shadows (Sea Ghosts), See in Shadows (Shadow Warriors) | longest | See in Shadows (Sea Ghosts): The warrior's senses have become especially keen from years spent walking the shadows. As long as he has movement to reach them, the warrior may always roll to charge opponents he cannot see (instead of the normal 4"). (MiM) |
+| Black Hunger | Black Hunger (Skaven), Black Hunger (Skaven Clan Pestilens) | longest | - |
+| Tail Fighting | Tail Fighting (Skaven), Tail Fighting (Skaven Metal Mongers) | longest | Tail Fighting (Skaven Metal Mongers): The Skaven may wield a shield, dagger or a sword with its tail. The model gains an extra attack with the appropriate weapon or a +1 bonus to its armour save. (MiM) |
+
+Merged skills whose rows had different settings, given the lowest: Hide in Shadows: mordheim-1b, mordheim-1c, nemesis-crown -> mordheim-1b; Crude Belch: mordheim-1c, mordheim-2a -> mordheim-1c; Battle Tongue: mordheim, mordheim-1b -> mordheim.
+
+### Kept apart (`skill_splits`)
+
+| Row | Its own skill | Why |
+| --- | --- | --- |
+| Hardy Constitution (Grave Robber) | Hardy Constitution (Grave Robber) | its rule differs from the Pirates' Hardy Constitution, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
+| Infiltration (Skink) | Infiltration (Skink) | its rule differs from the other five lists' Infiltration, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
+| Mutant (Marauders of Chaos) | Mutant (Marauders of Chaos) | its rule differs from the Beastmen Raiders' Mutant, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
+| Bellowing roar (Ogres) | Bellowing Roar (Ogres) | its rule differs from the Beastmen Raiders' Bellowing Roar, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
+| Sea Legs (Pirates (TBMF)) | Sea Legs (TBMF) | its rule differs from the Pirates' Sea Legs, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
+| Sniper (Shadow Warriors) | Sniper (Shadow Warriors) | its rule differs from the Hochland Bandits' Sniper, which keeps the name (William, 4 Nov 2026: "i agree with recs") |
+
+### Every group
+
+Who learns from a group: `skill_group_learners`, else its list's decision (`skill_lists`), else the warbands that may learn every skill in it (intersection; union when that is empty); a new group is its warband type's alone.
+
+| Group | Who learns from it | How | Note | Skills |
+| --- | --- | --- | --- | --- |
+| Combat | everyone | intersection | - | Strike to Injure, Combat Master, Weapons Training, Web of Steel, Expert Swordsman, Step Aside |
+| Shooting | everyone | intersection | - | Quick Shot, Pistolier, Eagle Eyes, Weapons Expert, Nimble, Trick Shooter, Hunter, Knife-Fighter |
+| Academic | everyone | intersection | - | Battle Tongue, Sorcery, Streetwise, Haggle, Arcane Lore, Wyrdstone Hunter, Warrior Wizard, Scribe, Mind Focus, Tactician, Hunch, Magical Aptitude, Trap Expert, Driver, Strategist, Scholar |
+| Strength | everyone | intersection | - | Mighty Blow, Pit Fighter, Resilient, Fearsome, Strongman, Unstoppable Charge, Handyman, Beastmaster |
+| Speed | everyone | intersection | - | Leap, Sprint, Acrobat, Lightning Reflexes, Jump Up, Dodge, Scale Sheer Surfaces |
+| Amazons (Lustria) | Amazons (Lustria) | new group | - | Skink Hunter, Elixir of Life, Mesmerising Dance, Savage Fury, Concealment |
+| Animal | everyone | skill_lists | - | [Animal] Handler, Ride [Animal], Falconer |
+| Battle Monks of Cathay | Battle Monks of Cathay | intersection | - | Heron Strike, Swallow Kick, Water Form, Inch Punch |
+| Beastmen Raiders | Beastmen Raiders | intersection | - | Shaggy Hide, Mutant, Fearless, Horned One, Bellowing Roar, Manhater |
+| Black Dwarfs | Black Dwarfs | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull, Chaos Engineer, Tyrant |
+| Bretonnian Chapel Guard | Bretonnian Chapel Guard | new group | - | Renowned Virtue, Questing Vow, Shield Bash, Bulging Muscles, Untiring |
+| Bretonnian Knights | Bretonnian Knights | intersection | - | Virtue of Purity, Virtue of Valor, Virtue of Discipline, Virtue of Noble Disdain, Virtue of the Impetuous, Virtue of the Squire |
+| Cavalry | everyone | intersection | - | Cavalry Commander, Trick Riding, Combat Riding, Evade, Running Dismount, Athletic Mount, Horse Archer, Mounted Combat Master |
+| Cursed Cavalcade | Cursed Cavalcade | new group | - | Noblesse Obliges, Torturer, Duelist |
+| Dark Elf | Dark Elves | intersection | - | Fury of Khaine, Powerful Build, Fey Quickness, Infiltration, Master of Poisons |
+| Dwarf Exiled Engineers | Guild of Disgraced Engineers | skill_lists | - | True Grit, Thick Skull, Extra Tough, Tunneler, Tinkerer, Quick Thinker, Master Inventor |
+| Dwarf Rangers | Dwarf Rangers | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull |
+| Dwarf Troll Slayers | Dwarf Treasure Hunters | intersection | - | Ferocious Charge, Monster Slayer, Berserker, Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
+| Dwarves | Dwarf Treasure Hunters | intersection | - | Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
+| Forest Goblins | Forest Goblins (NC) | intersection | - | Animosity |
+| Grave Robber | Grave Robbers | intersection | - | Darkstalker, Instinctual Violence, De-animator, Hardy Constitution (Grave Robber), Body Dealer |
+| Halflings | Ostlanders, Halflings | union | - | Crude Belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt |
+| Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump back, Sniper, Throw voice |
+| Horned Hunters | Horned Hunters | new group | - | Animal Friendship, Infiltration, Foul Odour, Hide in Shadows, Master Trapper |
+| Large Special | everyone, Large units only | skill_lists | - | Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip |
+| Low Kings | Druchii, Halflings, Low Kings | union | - | Backstabber, Pick Locks, Poisoner, Slaver, Stealthy, Cutpurse |
+| Marauders of Chaos | Marauders of Chaos | intersection | - | Chosen of chaos, Tattooed body, Sweeping blow, Mutant (Marauders of Chaos), Heart of the warrior |
+| Merchant Caravans | Merchant Caravans | new group | - | Bribery, Dubious Income, Wholesale, Deal Breaker, Connected |
+| Night Goblins | Night Goblins (MIC), Night Goblins (WEB) | union | - | Hide in Shadows, Fungus Farmer, Infiltrate, Netter, Ride Squig, Sneaky Git |
+| Night Goblins (MIC) | Night Goblins (MIC) | new group | - | Infiltration, Sneaky Git, Netter, Ded Shooty |
+| Norse | Norse Explorers (TC13), Norse Explorers (BTB) | intersection | - | Barbarian courage, Berserk charge, Battle Tongue, Shield master, Crushing blow |
+| Ogres | Ogres (group) | union | - | Master of arms, Crude Belch, Maneater, Bull charge, Dog of war, Bellowing Roar (Ogres) |
+| Orcs | Orcs (group) | union | - | ’ard ’ead, Waaagh!, ’ere we go!, Da cunnin’ plan, Well ’ard, ’eadbasher, Proven warrior |
+| Ostlanders | Ostlanders | intersection | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |
+| Pirates | Pirates | intersection | - | Sea Shanty Singer, Sea Legs, Cutlass Master, Booming Voice, Hardy Constitution, Swashbuckler |
+| Pirates (TBMF) | Pirates | skill_lists | - | Captain Blood, Sea Legs (TBMF), Cutlass Master, Treasure Hunter, Swashbuckler |
+| Pit Fighters | Pit Fighters | intersection | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
+| Restless Dead Lich and Necromancer | The Restless Dead | intersection | - | Corpse Bomb, Deathspeaker, Wraith Touch, Forbidden Rite, Summoner |
+| Saurus | Lizardmen (TC11) | intersection | - | Bellowing Battle Roar, Toughened Hide |
+| Sea Ghosts | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Sea Ghosts | union | - | Infiltration, Luck, See in Shadows, Hide in Shadows, Powerful Build, Fey |
+| Shadow Warriors | Shadow Warriors | intersection | - | See in Shadows, Hide in Shadows, Sniper (Shadow Warriors), Powerful Build, Master of Runes |
+| Sisters of Sigmar | Sisters of Sigmar | intersection | - | Sign of Sigmar, Protection of Sigmar, Utter Determination, Righteous Fury, Absolute Faith |
+| Skaven | Skaven | intersection | - | Black Hunger, Tail Fighting, Wall Runner, Infiltration, Art of Silent Death |
+| Skaven Clan Pestilens | Skaven of Clan Pestilens (TC29) | intersection | - | Black Hunger, Censer Bearer, Rotten Body, Contagious, Ignore Pain |
+| Skaven Metal Mongers | Metal Mongers | skill_lists | - | Tail Fighting, Infiltration, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat |
+| Skink | Lizardmen (TC11) | intersection | - | Infiltration (Skink), Great Hunter |
+| Sons of Hashut | Sons Of Hashut | new group | - | Extra Tough, True Grit, Thick Skull, Unlimited Hatred |
+| Strigany | Ostlanders, Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Dwarf Slayer Cult, Ogre Hunting Party | union | - | Bull Rush, Songster, Infiltration |
+| Tomb Robbers | Arabian Tomb Raiders | intersection | - | Sand worm, Hit and run, Weather tolerant |
+| Undead Vampires | Undead | skill_lists | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
+
+### Flagged groups (settle in `skill_group_learners`)
+
+The warbands that may learn every skill of the group differ from those that may learn one of them (or none may learn all, so the union is taken). The last column is the warband the list is named after, a likely answer:
+
+| Group | Intersection | Union | Taken | Named after |
+| --- | --- | --- | --- | --- |
+| Dark Elf | Dark Elves | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | intersection | - |
+| Dwarves | Dwarf Treasure Hunters | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | intersection | - |
+| Night Goblins | nobody | Night Goblins (MIC), Night Goblins (WEB) | union | Night Goblins (MIC) |
+| Halflings | nobody | Ostlanders, Halflings | union | Halflings |
+| Low Kings | nobody | Druchii, Halflings, Low Kings | union | Low Kings |
+| Ogres | nobody | Maneaters, Ogre Hunting Party | union | Ogres (group) |
+| Orcs | nobody | Orc Mob, Black Orcs, Orc Pirates & Savage Orcs, Savage Orcs (KAZ), Savage Orcs (ATH) | union | Orcs (group) |
+| Ostlanders | Ostlanders | Ostlanders, Horned Hunters | intersection | Ostlanders |
+| Dwarf Troll Slayers | Dwarf Treasure Hunters | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | intersection | Dwarf Troll Slayers |
+| Sea Ghosts | nobody | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Sea Ghosts | union | Sea Ghosts |
+| Shadow Warriors | Shadow Warriors | Dark Elves, Shadow Warriors | intersection | Shadow Warriors |
+| Skaven | Skaven | Skaven, Dark Elves, Horned Hunters, Skaven of Clan Pestilens (TC29), Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party, Skaven of Clan Moulder | intersection | Skaven |
+| Skaven Clan Pestilens | Skaven of Clan Pestilens (TC29) | Skaven, Skaven of Clan Pestilens (TC29), Skaven of Clan Moulder | intersection | - |
+| Strigany | nobody | Ostlanders, Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Dwarf Slayer Cult, Ogre Hunting Party | union | - |
+
+### New groups and skills (`new_skill_groups`)
+
+23 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+
+| Skill | Group | Setting | Rules from |
+| --- | --- | --- | --- |
+| Chaos Engineer | Black Dwarfs | mordheim-1c | mordheimer (Border Town Burning) |
+| Tyrant | Black Dwarfs | mordheim-1c | mordheimer (Border Town Burning) |
+| Unlimited Hatred | Sons of Hashut | mordheim-1c | mordheimer (GW Troll Magazine (Spain)) |
+| Master Trapper | Horned Hunters | nemesis-crown | mordheimer (Nemesis Crown Supplement) |
+| Ded Shooty | Night Goblins (MIC) | mordheim-1c | mordheimer (Mordheimer's Information Centre) |
+| Skink Hunter | Amazons (Lustria) | mordheim-1b | mordheimer (Town Cryer #15) |
+| Elixir of Life | Amazons (Lustria) | mordheim-1b | mordheimer (Town Cryer #15) |
+| Mesmerising Dance | Amazons (Lustria) | mordheim-1b | mordheimer (Town Cryer #15) |
+| Savage Fury | Amazons (Lustria) | mordheim-1b | mordheimer (Town Cryer #15) |
+| Concealment | Amazons (Lustria) | mordheim-1b | mordheimer (Town Cryer #15) |
+| Renowned Virtue | Bretonnian Chapel Guard | mordheim-1c | mordheimer (Fan made from the web) |
+| Questing Vow | Bretonnian Chapel Guard | mordheim-1c | mordheimer (Fan made from the web) |
+| Shield Bash | Bretonnian Chapel Guard | mordheim-1c | mordheimer (Fan made from the web) |
+| Bulging Muscles | Bretonnian Chapel Guard | mordheim-1c | mordheimer (Fan made from the web) |
+| Untiring | Bretonnian Chapel Guard | mordheim-1c | mordheimer (Fan made from the web) |
+| Bribery | Merchant Caravans | mordheim-1c | mordheimer (Border Town Burning) |
+| Dubious Income | Merchant Caravans | mordheim-1c | mordheimer (Border Town Burning) |
+| Wholesale | Merchant Caravans | mordheim-1c | mordheimer (Border Town Burning) |
+| Deal Breaker | Merchant Caravans | mordheim-1c | mordheimer (Border Town Burning) |
+| Connected | Merchant Caravans | mordheim-1c | mordheimer (Border Town Burning) |
+| Noblesse Obliges | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
+| Torturer | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
+| Duelist | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
+
+Name collision, left out of Horned Hunters and not merged: Pathfinder is already Dwarf Pathfinder's own skill.
+mordheimer also lists Combat Master for Dwarf Rangers; left out of the group.
+mordheimer also lists Ferocious Charge for Dwarf Rangers; left out of the group.
+mordheimer also lists Monster Slayer for Dwarf Rangers; left out of the group.
+mordheimer also lists Berserker for Dwarf Rangers; left out of the group.
+
+Our skills the new groups hold, whose learners change (a skill is learnable by whoever has a group holding it):
+
+| Skill | Before (its rows' who-can) | Now (its groups) |
+| --- | --- | --- |
+| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
+| True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
+| Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
+| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Ostlanders, Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Dwarf Slayer Cult, Ogre Hunting Party, Wood Elves of Athel Loren, Metal Mongers, Sea Ghosts |
+| Foul Odour | Ostlanders | Ostlanders, Horned Hunters |
+| Hide in Shadows | Hochland Bandits, Shadow Warriors, Night Goblins (WEB) | Skaven, Dark Elves, Hochland Bandits, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Sea Ghosts |
+| Sneaky Git | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
+| Netter | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 
 ## MiM items that need rules (PDF pass)
 

@@ -11,11 +11,15 @@ purpose, note the new date here, and review the diff of `out/` that follows.
 | `mordheimer-hired-swords.json` | mordheimer's 72 hired swords (object keyed by slug) | The JSON embedded in the bundle of mordheimer's structured test page for the Averlanders, 21 Oct 2026 |
 | `mordheimer-dramatis-personae.json` | mordheimer's 30 dramatis personae (object keyed by slug) | The same test bundle, 21 Oct 2026 |
 | `warbands-merged.json` | 162 warband types: name, race, Broheim and mordheimer grade, setting, source and links | Broheim's warband tables (broheim.net) merged by name with mordheimer's warband index, 21 Oct 2026 |
+| `cavalcade-skills.json` | the Cursed Cavalcade's 3 skills (name, description, source), which mordheimer's skills list lacks | mordheimer's Cursed Cavalcade warband page, 4 Nov 2026 (the skill groups brief) |
 
 Also read, from the repo itself: `apps/items/data/mim-items.json` (the 62 Mutiny in Marienburg items) and
 `apps/items/data/item-properties.json` (the property names those items point at), plus
 `apps/items/data/standard-items.json` only to list what the first pass drops.
 
-Skills, hired swords and dramatis personae are not converted yet. The build reads them for setting grades, as
-evidence for warband group membership, and to give our own seeded skills, hired swords and dramatis personae
-(`apps/skills/data/skills.json`, `apps/hirelings/data/`) their settings in `out/setting-assignments.json`.
+Our skills table (`apps/skills/data/skills.json`: a name and its list per row) becomes `out/skills.json` (one skill
+per name) and `out/skill-groups.json` (each list a group holding its skills, with who learns from it), plus the new
+groups overrides.json names (`new_skill_groups`, their new skills' rules from `mordheimer-skills.json` or
+`cavalcade-skills.json`). Hired swords and dramatis personae are not converted yet. The build reads them for setting
+grades, as evidence for warband group membership, and to give our own seeded skills, hired swords and dramatis
+personae (`apps/hirelings/data/`) their settings in `out/setting-assignments.json`.

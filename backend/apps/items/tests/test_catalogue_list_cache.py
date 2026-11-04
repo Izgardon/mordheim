@@ -153,7 +153,7 @@ class CacheInvalidationTests(CatalogueListCacheTestCase):
 
         rows: dict[str, list[dict[str, Any]]] = {
             "seed_races": [{"name": "Gnome", **STATS}],
-            "seed_skills": [{"name": "Tinker", "type": "Gnome", "description": "Fixes things."}],
+            "seed_skills": [{"name": "Tinker", "description": "Fixes things."}],
             "seed_bestiary": [{"name": "Gnome", "kind": "creature", **STATS}],
         }
         for command, data in rows.items():

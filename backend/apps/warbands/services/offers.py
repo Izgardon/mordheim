@@ -2,9 +2,10 @@
 show it and decide nothing. The rules are `who_can.py`'s; this reads the campaign's current entries of each kind (its
 own and the book's it hasn't replaced or removed, as its catalogue lists show them) in a fixed number of queries:
 the items with their settings, then their price rows, then the rows' who-can lines; each hireling kind with its
-setting, then its lines; the special skills (a skill not for everyone), then their lines. A special skill several
-lists share by name (Infiltration: Skaven, Dark Elf, Skink...) is offered once, from the list named most like the
-warband's type.
+setting, then its lines; the skill groups (skill groups phase 1a), then their lines, then their skills. A group is
+open to the warband when its lines let it in (its type, its group, or everyone); the skills of a group not for
+everyone that names the warband's type or group are its special skills (a skill is learnable by whoever has a group
+holding it).
 """
 
 from typing import Any
@@ -44,39 +45,38 @@ def _hirelings(kind: Any, campaign_id: int, buyer: Buyer) -> list[dict[str, Any]
     return [access(entry, buyer, entry.in_play, _setting(entry)) for entry in entries]
 
 
-def _list_fit(skill: Any, buyer: Buyer) -> int:
-    """0 when the skill's list is named as the buyer's type ("Skaven"), 1 when one name holds the other ("Skaven
-    Metal Mongers"), else 2."""
-    ours, theirs = str(skill.type or "").strip().lower(), buyer.name.strip().lower()
-    if ours == theirs:
-        return 0
-    return 1 if ours and (ours in theirs or theirs in ours) else 2
+def _skill_groups(campaign_id: int, buyer: Buyer) -> tuple[list[int], list[int]]:
+    """The campaign's current skill groups open to the buyer (in their order), and the skills of those not for
+    everyone that name its type or group (its special skills, as the campaign's current entries)."""
+    from apps.core.catalogue.kinds import SKILL_GROUPS
+    from apps.skills.models import SkillGroup
+    from apps.skills.selectors import current_skill_id, group_skills, in_group_order
 
-
-def _special_skills(campaign_id: int, buyer: Buyer) -> list[int]:
-    from apps.core.catalogue.kinds import SKILLS
-
-    skills = _current(SKILLS, campaign_id).filter(for_everyone=False).prefetch_related("warband_links")
-    best: dict[str, tuple[int, int, int]] = {}
-    for skill in skills:
-        at = step(False, skill.warband_links.all(), buyer)
-        if at not in (1, 2):
+    rows = campaign_list(SKILL_GROUPS, SkillGroup.objects.all(), campaign_id)
+    groups = in_group_order(rows).prefetch_related("warband_links", group_skills(campaign_id))
+    open_ids: list[int] = []
+    special: set[int] = set()
+    for group in groups:
+        at = step(group.for_everyone, group.warband_links.all(), buyer)
+        if at is None:
             continue
-        key = (at, _list_fit(skill, buyer), skill.pk)
-        name = str(skill.name).strip().lower()
-        best[name] = min(best.get(name, key), key)
-    return sorted(key[2] for key in best.values())
+        open_ids.append(group.pk)
+        if not group.for_everyone and at in (1, 2):
+            special |= {current_skill_id(link) for link in group.skill_links.all()}
+    return open_ids, sorted(special)
 
 
 def who_can(warband: Warband) -> dict[str, Any]:
     """`{items: [{item_id, availability_id, options, can_buy, reason}], hired_swords: [{id, can_hire, reason}],
-    dramatis_personae: [...], special_skill_ids: [...]}`."""
+    dramatis_personae: [...], skill_group_ids: [...], special_skill_ids: [...]}`."""
     from apps.core.catalogue.kinds import DRAMATIS_PERSONAE, HIRED_SWORDS
 
     buyer, campaign_id = buyer_of(warband), warband.campaign_id
+    group_ids, special_ids = _skill_groups(campaign_id, buyer)
     return {
         "items": _items(campaign_id, buyer),
         "hired_swords": _hirelings(HIRED_SWORDS, campaign_id, buyer),
         "dramatis_personae": _hirelings(DRAMATIS_PERSONAE, campaign_id, buyer),
-        "special_skill_ids": _special_skills(campaign_id, buyer),
+        "skill_group_ids": group_ids,
+        "special_skill_ids": special_ids,
     }

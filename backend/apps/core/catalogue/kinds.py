@@ -1,10 +1,10 @@
 """The catalogue kinds registry (design 0.29 for the catalogue, IMP-79): each kind as data.
 
-Items, skills, spells, specials, races, bestiary entries, hired swords and dramatis personae, plus the add-only shared
-item rules. A spec names the kind's model and serializers, how its list is
+Items, skills, skill groups, spells, specials, races, bestiary entries, hired swords and dramatis personae, plus the
+add-only shared item rules. A spec names the kind's model and serializers, how its list is
 filtered, the child rows an entry carries (what a version copies), the tables whose rows hold an entry (`holders`:
 what a delete can't take with it, what `usage/` counts, and what a version's first edit moves onto it and Revert
-moves back), the rows that follow an entry without holding it (`followers`; none since the bestiary favourites went)
+moves back), the rows that follow an entry without holding it (`followers`: a campaign's skill group links)
 and the entry of another kind that goes everywhere it goes (`twin`: a beast's Animal item). Differences that are
 behaviour are hooks (hooks.py), as pass 1 did for units (`warbands/units/kinds.py`).
 """
@@ -32,8 +32,8 @@ from apps.items.selectors import by_listing
 from apps.items.serializers import ItemRuleSerializer, ItemWriteSerializer
 from apps.races.models import Race
 from apps.races.serializers import RaceCreateSerializer
-from apps.skills.models import Skill
-from apps.skills.serializers import SkillCreateSerializer
+from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
+from apps.skills.serializers import SkillCreateSerializer, SkillGroupWriteSerializer
 from apps.special.models import Special
 from apps.special.serializers import SpecialCreateSerializer
 from apps.spells.models import Spell
@@ -49,6 +49,7 @@ from .hooks import (
     ItemHooks,
     ItemRuleHooks,
     RaceHooks,
+    SkillGroupHooks,
     SkillHooks,
     SpellHooks,
 )
@@ -61,6 +62,7 @@ from .rows import (
     HiredSwordRowSerializer,
     ItemRowSerializer,
     RaceRowSerializer,
+    SkillGroupRowSerializer,
     SkillRowSerializer,
     SpecialRowSerializer,
     SpellRowSerializer,
@@ -248,10 +250,27 @@ SKILLS = CatalogueKindSpec(
     write_serializer=SkillCreateSerializer,
     named=True,
     versioned=True,
-    filters=NAME_AND_TYPE,
-    children=("warband_links",),  # who may learn it
+    filters={"search": NAME_AND_TYPE["search"]},
+    lists=("skills", "skill_groups"),  # a write may move it into or out of groups
     holders=_copies("skills", _linked_by(BestiaryEntrySkill, "skill"), *_listed_by_hirelings("skill_links", "skill")),
+    followers=(Move(SkillGroupSkill, "skill", "group__campaign_id", ("group_id",)),),  # the campaign's groups' links
     hooks=SkillHooks(),
+)
+SKILL_GROUPS = CatalogueKindSpec(  # skill groups (phase 1a): units name them in their skill access, nothing holds one
+    key="skill_groups",
+    noun="skill group",
+    model=SkillGroup,
+    url_kwarg="group_id",
+    row_serializer=SkillGroupRowSerializer,
+    entry_serializer=SkillGroupRowSerializer,
+    write_serializer=SkillGroupWriteSerializer,
+    named=True,
+    versioned=True,
+    filters={"search": NAME_AND_TYPE["search"]},
+    reread=True,
+    lists=("skill_groups", "skills"),
+    children=("skill_links", "warband_links"),  # its skills and who learns from it
+    hooks=SkillGroupHooks(),
 )
 SPELLS = CatalogueKindSpec(
     key="spells",
@@ -372,7 +391,8 @@ ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or dele
 )
 
 CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
-    kind.key: kind for kind in (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
+    kind.key: kind
+    for kind in (ITEMS, SKILLS, SKILL_GROUPS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
 }
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {
     **CATALOGUE_KINDS,

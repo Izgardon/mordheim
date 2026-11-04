@@ -88,7 +88,7 @@ class HireCopyTests(HireTestCase):
         )  # noted, unpaid
 
     def test_the_campaigns_version_is_hired_with_the_campaigns_entries(self):
-        skill = Skill.objects.create(name="Skill 0", type="Combat", campaign=self.campaign, replaces=self.skills[0])
+        skill = Skill.objects.create(name="Skill 0", campaign=self.campaign, replaces=self.skills[0])
         blade = Item.objects.create(name="Sword", type="Melee", campaign=self.campaign, replaces=self.sword)
         version = HiredSword.objects.create(name="Ogre Bodyguard", campaign=self.campaign, replaces=self.ogre, hire_fee=make_fee(gold=95), **STATS)  # fmt: skip
         version.skill_links.create(skill=self.skills[0])  # a link to a book skill the campaign has a version of
@@ -159,7 +159,7 @@ class HireRuleTests(HireTestCase):
         small = count()
         for index in range(5):
             self.ogre.item_links.create(item=Item.objects.create(name=f"Gear {index}", type="Melee"), quantity=3)
-            self.ogre.skill_links.create(skill=Skill.objects.create(name=f"Trick {index}", type="Combat"))
+            self.ogre.skill_links.create(skill=Skill.objects.create(name=f"Trick {index}"))
 
         self.assertEqual(count(), small)
         # the warband and membership; the entry and its four kinds of link; the race, skills and specials mapped to

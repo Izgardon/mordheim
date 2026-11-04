@@ -14,6 +14,7 @@ from django.db.models import F, Q
 from django.db.models.functions import Greatest
 
 from apps.logs.utils import log_warband_event
+from apps.skills.access import learned_through
 from apps.spells.models import Spell
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.units.catalogue_scope import current_entry
@@ -114,7 +115,8 @@ def apply_pick(kind: "UnitKindSpec", warband: Warband, unit: RosterUnit, pick: R
         result = PickResult(pick.list, entry.id, entry.name, added=added)
     if result.added and link.log_entry:
         payload = {"hero": unit.name or unit.unit_type or kind.unknown_name, link.target: entry.name}
-        log_warband_event(warband.id, "loadout", link.log_entry, {**payload, f"{link.target}_type": entry.type})
+        learned = learned_through(entry, unit, warband.campaign_id) if link.target == "skill" else entry.type
+        log_warband_event(warband.id, "loadout", link.log_entry, {**payload, f"{link.target}_type": learned})
     return replace(result, roll=pick.roll)
 
 

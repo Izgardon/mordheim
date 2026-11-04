@@ -27,6 +27,8 @@ class SeededSettingTests(TestCase):
         self.assertFalse(HiredSword.objects.filter(campaign_type__isnull=True).exists())
 
     def test_skills_take_theirs_by_name_and_list_and_the_rest_are_mordheims(self) -> None:
-        self.assertEqual(self.setting_of(Skill, name="Hide in shadows", type="Hochland Bandits"), "nemesis-crown")
-        self.assertEqual(self.setting_of(Skill, name="Hide in Shadows", type="Shadow Warriors"), "mordheim-1b")
+        # Hide in Shadows' lists were Mordheim 1b, 1c and the Nemesis Crown's: the one skill takes the lowest
+        self.assertEqual(self.setting_of(Skill, name="Hide in Shadows"), "mordheim-1b")
+        self.assertEqual(self.setting_of(Skill, name="Sniper"), "nemesis-crown")  # the Hochland Bandits' own
+        self.assertEqual(self.setting_of(Skill, name="Sniper (Shadow Warriors)"), "mordheim-1b")
         self.assertEqual(self.setting_of(Skill, name="Tunneler"), "mordheim")  # not on mordheimer

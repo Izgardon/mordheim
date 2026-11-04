@@ -22,11 +22,11 @@ from .catalogue_support import (
     BESTIARY,
     DRAMATIS_PERSONAE,
     HIRED_SWORDS,
-    INFILTRATION_TYPES,
     ITEMS,
     KINDS,
     RACES,
     SKILLS,
+    SPELLS,
     CatalogueKind,
     CatalogueTestCase,
     make_entry,
@@ -45,16 +45,21 @@ class CreateNameTests(CatalogueTestCase):
         return matches
 
     def test_a_book_name_is_taken_in_any_case_and_type_and_lists_every_match(self):
-        matches = self.refused(self.create_as(self.player, SKILLS, "  infiltration ", type="Combat"))
+        # a typed kind's book may hold a name once per type (a spell per lore; a skill's name is unique since the
+        # skill groups, phase 1a), and every one of them is a match
+        matches = self.refused(self.create_as(self.player, SPELLS, "  lifestealer ", type="Lesser Magic"))
 
+        lores = ("Necromancy", "Necromancy (Restless Dead)")
         self.assertEqual(
             sorted((match["kind"], match["type"], match["source"], match["archived"]) for match in matches),
-            sorted(("skills", kind, "book", False) for kind in INFILTRATION_TYPES),
+            sorted(("spells", lore, "book", False) for lore in lores),
         )
-        self.assertEqual({match["name"] for match in matches}, {"Infiltration"})
-        self.assertEqual({match["id"] for match in matches}, {skill.id for skill in self.infiltration})
-        detail = self.create_as(self.player, SKILLS, "Infiltration", type="Combat").json()["detail"]
-        self.assertEqual(detail, "Infiltration is already in the catalogue: Dark Elf, Sea Ghosts and 4 more. Edit one instead.")  # fmt: skip
+        self.assertEqual({match["name"] for match in matches}, {"Lifestealer"})
+        self.assertEqual({match["id"] for match in matches}, {spell.id for spell in self.lifestealer})
+        detail = self.create_as(self.player, SPELLS, "Lifestealer").json()["detail"]
+        self.assertEqual(detail, "Lifestealer is already in the catalogue: Necromancy, Necromancy (Restless Dead). Edit one instead.")  # fmt: skip
+        [skill] = self.refused(self.create_as(self.player, SKILLS, "  infiltration (DARK ELF) "))
+        self.assertEqual((skill["id"], skill["type"]), (self.infiltration[0].id, None))
 
     def test_every_kind_refuses_a_campaign_or_book_name_and_writes_nothing(self):
         books = {
@@ -79,7 +84,7 @@ class CreateNameTests(CatalogueTestCase):
         CatalogueRemoval.objects.create(campaign=self.campaign, kind="skills", entry_id=self.infiltration[0].id)
 
         [archived] = self.refused(self.create_as(self.player, SKILLS, "Ambush"))
-        removed = self.refused(self.create_as(self.player, SKILLS, "Infiltration"))
+        removed = self.refused(self.create_as(self.player, SKILLS, "Infiltration (Dark Elf)"))
 
         self.assertEqual((archived["source"], archived["archived"]), ("campaign", True))
         self.assertEqual([match["archived"] for match in removed if match["id"] == self.infiltration[0].id], [True])

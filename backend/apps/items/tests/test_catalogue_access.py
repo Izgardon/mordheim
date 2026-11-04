@@ -52,9 +52,17 @@ class CatalogueAccessFixture(CatalogueTestCase):
         self.grant(self.rival, DELETE)
 
     def books(self) -> dict[str, int]:
-        entries = [self.book_axe, self.infiltration[0], self.lifestealer[0], self.large, self.human, self.warhound]
+        entries = [
+            self.book_axe,
+            self.infiltration[0],
+            self.combat,
+            self.lifestealer[0],
+            self.large,
+            self.human,
+            self.warhound,
+        ]
         return {
-            **{kind.key: entry.pk for kind, entry in zip(KINDS[:6], entries, strict=True)},
+            **{kind.key: entry.pk for kind, entry in zip(KINDS[:7], entries, strict=True)},
             "hired_swords": self.ogre.id,
             "dramatis_personae": self.aenur.id,
         }
@@ -147,7 +155,7 @@ def catalogue_patterns() -> list[URLPattern]:
         for entry in get_resolver(f"apps.{app}.urls").url_patterns
         if isinstance(entry, URLPattern)
     ]
-    assert len(patterns) == 41, [pattern.name for pattern in patterns]
+    assert len(patterns) == 46, [pattern.name for pattern in patterns]
     return patterns
 
 

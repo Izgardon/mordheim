@@ -24,7 +24,7 @@ from apps.hirelings.fees import make_fee
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.races.models import Race
-from apps.skills.models import Skill
+from apps.skills.models import Skill, SkillGroup
 from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.warbands.models import WarbandType
@@ -41,7 +41,8 @@ STATS = {
     "leadership": 7,
 }
 
-# The six book skill types that share the name "Infiltration" in skills.json.
+# The six lists that had a skill named "Infiltration" in skills.json: a book skill each here, "Infiltration (Skaven)"
+# (a skill's name is unique in the book since the skill groups, phase 1a).
 INFILTRATION_TYPES = ("Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Skink", "Strigany")
 EDIT = "edit_catalogue"  # create and edit every kind; joining grants it (decision 4)
 DELETE = "delete_catalogue"  # delete every kind; owners and admins, and players granted it (decision 5)
@@ -97,7 +98,13 @@ SKILLS = CatalogueKind(
     "skills",
     "skills",
     Skill,
-    payload={"type": "Combat", "description": "Strikes first."},
+    payload={"description": "Strikes first."},
+)
+SKILL_GROUPS = CatalogueKind(
+    "skill_groups",
+    "skill-groups",
+    SkillGroup,
+    payload={"for_everyone": True},
 )
 SPELLS = CatalogueKind(
     "spells",
@@ -130,7 +137,7 @@ DRAMATIS_PERSONAE = CatalogueKind(
     DramatisPersona,
     payload={"hire_fee": {"gold": 25}, "stays": "one_battle", "payment_note": "25 gc or 1 shard", **STATS},
 )
-KINDS = (ITEMS, SKILLS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
+KINDS = (ITEMS, SKILLS, SKILL_GROUPS, SPELLS, SPECIALS, RACES, BESTIARY, HIRED_SWORDS, DRAMATIS_PERSONAE)
 
 
 def make_entry(kind: CatalogueKind, name: str, /, campaign: Campaign | None = None, **fields: Any) -> Any:
@@ -143,7 +150,8 @@ def make_entry(kind: CatalogueKind, name: str, /, campaign: Campaign | None = No
             ItemAvailability.objects.create(item=item, cost=cost)
         return item
     defaults: dict[str, dict[str, Any]] = {
-        SKILLS.key: {"type": "Combat"},
+        SKILLS.key: {},
+        SKILL_GROUPS.key: {},
         SPELLS.key: {"type": "Lesser Magic"},
         SPECIALS.key: {"type": "Ability"},
         RACES.key: dict(STATS),
@@ -176,7 +184,7 @@ class CatalogueTestCase(CampaignTestCase):
     """CampaignTestCase ("Shards": owner Olga, admin Ada, players Pia and Rex holding only `edit_catalogue`, outsider Otto
     with his own campaign `elsewhere`) plus a small book catalogue:
 
-    the Axe (Weapon, 5 gc), the Sword (Weapon, 10 gc) and Heavy Armour (Armour, 50 gc); "Infiltration" in the six
+    the Axe (Weapon, 5 gc), the Sword (Weapon, 10 gc) and Heavy Armour (Armour, 50 gc); "Infiltration (...)" for the six
     book skill types; "Lifestealer" in two spell lores; the trait specials Large (Trait), Wizard and Priest (Caster);
     the race Human; the book warband type Mercenaries; the shared rule Parry on the Sword, whose price row is for the
     Mercenaries; the bestiary's Warhound (a creature); the hired sword Ogre Bodyguard
@@ -187,6 +195,7 @@ class CatalogueTestCase(CampaignTestCase):
     book_sword: Item
     heavy_armour: Item
     infiltration: list[Skill]
+    combat: SkillGroup
     lifestealer: list[Spell]
     large: Special
     human: Race
@@ -208,8 +217,9 @@ class CatalogueTestCase(CampaignTestCase):
             availability=cls.book_sword.availabilities.get(), warband_type=cls.mercenaries
         )
         cls.heavy_armour = make_entry(ITEMS, "Heavy Armour", type="Armour", subtype="Armour", save_value="5+", cost=50)
-        cls.infiltration = [Skill.objects.create(name="Infiltration", type=kind) for kind in INFILTRATION_TYPES]
-        Skill.objects.create(name="Sprint", type="Speed")
+        cls.infiltration = [Skill.objects.create(name=f"Infiltration ({kind})") for kind in INFILTRATION_TYPES]
+        Skill.objects.create(name="Sprint")
+        cls.combat = SkillGroup.objects.create(name="Combat")  # a book skill group
         cls.lifestealer = [
             Spell.objects.create(name="Lifestealer", type=lore) for lore in ("Necromancy", "Necromancy (Restless Dead)")
         ]
