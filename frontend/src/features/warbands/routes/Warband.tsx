@@ -154,6 +154,7 @@ export default function Warband() {
         />
       </div>
       <WarbandRules
+        campaignId={campaignId}
         warbandId={warbandId}
         warbandName={warband.name}
         rules={sheet.rules}

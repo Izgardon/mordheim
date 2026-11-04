@@ -12,11 +12,14 @@ import WarbandRulesDialog, { type RulesOpening } from "./WarbandRulesDialog";
  * a rule's pill opens the modal at it. Left out for a viewer when there are none.
  */
 export default function WarbandRules({
+  campaignId,
   warbandId,
   warbandName,
   rules,
   canEdit,
 }: {
+  /** The warband's campaign: its editors can add the template's missing rules. */
+  campaignId?: number;
   /** None: a warband template's rules (Reference → Warbands), read only. */
   warbandId?: number;
   warbandName: string;
@@ -61,6 +64,7 @@ export default function WarbandRules({
         open={open}
         onOpenChange={setOpen}
         opening={opening}
+        campaignId={campaignId}
         warbandId={warbandId}
         warbandName={warbandName}
         rules={rules}

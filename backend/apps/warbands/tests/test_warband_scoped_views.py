@@ -35,8 +35,9 @@ class WarbandScopedViewStructureTests(SimpleTestCase):
         # restrictions/ went with the warband's hand-ticked restrictions (grading phase 1); who-can/ came with the items rebuild;
         # roster-stats/ (PERF-42) and the stash's items/<item>/ discard went as routes the rebuilt frontend never called
         self.assertEqual(
-            len(scoped), 48
-        )  # henchmen loadouts: gaps/<gap>/ and members/<member>/take-kit/; <unit>/pick/; rules; template/
+            len(scoped), 49
+        )  # henchmen loadouts: gaps/<gap>/ and members/<member>/take-kit/; <unit>/pick/; rules; template/;
+        # rules/from-template/
         for pattern in scoped:
             with self.subTest(route=pattern.name):
                 self.assertTrue(issubclass(_view_class(pattern), WarbandScopedView))

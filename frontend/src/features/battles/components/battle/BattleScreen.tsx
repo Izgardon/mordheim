@@ -464,6 +464,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
         campaignId={campaignId}
         scenario={scenario}
         scenarioLink={battleState.battle.scenario_link}
+        warbands={participants.map((participant) => participant.warband)}
       />
       <BattleMenuSheet {...panelProps("menu")} kicker={scenario} rows={menuRows} />
       <FinishSheet finishing={screen.finishing} />

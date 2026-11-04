@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 
 import { useRuleCreate, useRuleDelete, useRuleUpdate } from "../../api/rule-queries";
 import type { WarbandRule, WarbandRulePayload } from "../../types/warband-types";
+import AddTemplateRules from "./AddTemplateRules";
 
 /** Where the modal opens: at one rule (its pill), on the add form, or at the top. */
 export type RulesOpening = { ruleId?: number; adding?: boolean };
@@ -100,12 +101,13 @@ function RuleForm({
 /**
  * The warband's rules in one modal (a bottom sheet on a phone): every rule's title and
  * description, the one its pill opened at picked out. The warband's editors add, edit and delete
- * them here.
+ * them here, and with a campaign given, Add the template's rules copies the missing ones.
  */
 export default function WarbandRulesDialog({
   open,
   onOpenChange,
   opening,
+  campaignId,
   warbandId,
   warbandName,
   rules,
@@ -114,6 +116,8 @@ export default function WarbandRulesDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   opening: RulesOpening;
+  /** The warband's campaign: its template is read for Add the template's rules. */
+  campaignId?: number;
   warbandId?: number;
   warbandName: string;
   rules: WarbandRule[];
@@ -193,13 +197,18 @@ export default function WarbandRulesDialog({
         />
       ) : null}
       {canEdit && !editing ? (
-        <button
-          type="button"
-          onClick={() => setEditing({ kind: "add" })}
-          className="min-h-9 self-start border border-dashed border-strong px-3 text-xs font-bold text-accent-text"
-        >
-          Add rule
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setEditing({ kind: "add" })}
+            className="min-h-9 self-start border border-dashed border-strong px-3 text-xs font-bold text-accent-text"
+          >
+            Add rule
+          </button>
+          {campaignId && warbandId ? (
+            <AddTemplateRules campaignId={campaignId} warbandId={warbandId} open={open} />
+          ) : null}
+        </div>
       ) : null}
     </ModalSheet>
   );

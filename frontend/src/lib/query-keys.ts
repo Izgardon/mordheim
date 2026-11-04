@@ -124,6 +124,9 @@ export const queryKeys = {
     /** Its template as the hire screens read it: the variant applied, what it has of each fighter. */
     warbandHireTemplate: (campaignId: number, warbandId: number) =>
       ["campaign", campaignId, "warband", warbandId, "template"] as const,
+    /** Its own rules, for a page that doesn't hold its sheet (the battle Rules sheet). */
+    warbandRules: (campaignId: number, warbandId: number) =>
+      ["campaign", campaignId, "warband", warbandId, "rules"] as const,
     /** A warband type's template in outline, for the raise screen (the variant picked). */
     raiseOutline: (campaignId: number, warbandTypeId: number, variant: string) =>
       ["campaign", campaignId, "raise-outline", warbandTypeId, variant] as const,

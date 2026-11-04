@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient, type QueryClient } from "@tanstack/react-query";
 
+import { queryKeys } from "@/lib/query-keys";
+
 import { isWarbandQuery } from "./warband-cache";
+import { addTemplateRules } from "./warbands-rules";
 import { createWarbandRule, deleteWarbandRule, updateWarbandRule } from "./warbands-api";
 
 import type { WarbandSheet } from "../types/warband-sheet";
@@ -46,5 +49,19 @@ export function useRuleDelete(warbandId: number) {
       patchSheetRules(queryClient, warbandId, (rules) =>
         rules.filter((rule) => rule.id !== ruleId)
       ),
+  });
+}
+
+/** Add the template's rules: the sheet takes the warband's rules as they now stand, and its template reads again. */
+export function useRulesFromTemplate(campaignId: number, warbandId: number) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => addTemplateRules(warbandId),
+    onSuccess: (rules) => {
+      patchSheetRules(queryClient, warbandId, () => rules);
+      void queryClient.invalidateQueries({
+        queryKey: queryKeys.campaign.warbandHireTemplate(campaignId, warbandId),
+      });
+    },
   });
 }

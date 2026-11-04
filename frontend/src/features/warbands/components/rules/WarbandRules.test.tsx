@@ -129,3 +129,54 @@ describe("WarbandRules", () => {
     expect(within(dialog).getByRole("article", { name: "Burn the witch" })).toBeVisible();
   });
 });
+
+describe("Add the template's rules", () => {
+  function renderWithTemplate(missing: number) {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.warbandSheet(1, 9), {
+      rules: [hatred],
+    } as unknown as WarbandSheet);
+    fakeApi.on("GET /warbands/9/template/", {
+      template: { missing_rules: missing },
+      variant: "",
+      list_prices_open: false,
+    });
+    const Rules = () => {
+      const sheet = useQuery({ ...warbandSheetQuery(1, 9), enabled: false }).data;
+      return (
+        <WarbandRules
+          campaignId={1}
+          warbandId={9}
+          warbandName="Monks"
+          rules={sheet?.rules ?? []}
+          canEdit
+        />
+      );
+    };
+    return renderWithQueryClient(<Rules />, { queryClient });
+  }
+
+  it("copies the rules the warband lacks, and shows only while some are missing", async () => {
+    fakeApi.on("POST /warbands/9/rules/from-template/", [hatred, burn]);
+    const user = setupUser();
+    renderWithTemplate(1);
+    await user.click(screen.getByRole("button", { name: "Warband rules" }));
+    const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
+    await user.click(
+      await within(dialog).findByRole("button", { name: "Add the template's rules" })
+    );
+    expect(
+      await within(dialog).findByRole("article", { name: "Burn the witch" })
+    ).toBeInTheDocument();
+    expect(fakeApi.countOf("POST /warbands/9/rules/from-template/")).toBe(1);
+  });
+
+  it("is left out when none are missing", async () => {
+    const user = setupUser();
+    renderWithTemplate(0);
+    await user.click(screen.getByRole("button", { name: "Warband rules" }));
+    const dialog = await screen.findByRole("dialog", { name: "Warband rules" });
+    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/template/")).toBe(1));
+    expect(within(dialog).queryByRole("button", { name: "Add the template's rules" })).toBeNull();
+  });
+});

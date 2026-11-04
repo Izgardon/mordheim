@@ -25,3 +25,16 @@ export function deleteWarbandRule(warbandId: number, ruleId: number) {
     headers: socketIdHeaders(),
   });
 }
+
+/** Add the template's rules: those of its template, for its variant and type, whose title it lacks; all its rules after. */
+export function addTemplateRules(warbandId: number) {
+  return apiRequest<WarbandRule[]>(`/warbands/${warbandId}/rules/from-template/`, {
+    method: "POST",
+    headers: socketIdHeaders(),
+  });
+}
+
+/** The warband's rules, for a page that doesn't hold its sheet (the battle Rules sheet). */
+export function listWarbandRules(warbandId: number) {
+  return apiRequest<WarbandRule[]>(`/warbands/${warbandId}/rules/`);
+}
