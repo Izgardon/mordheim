@@ -19,7 +19,7 @@ from typing import Any
 from django.db.models import F, Q
 
 from apps.core.catalogue import cache as catalogue_cache
-from apps.special.kinds import BANE, book_kind
+from apps.special.kinds import BANE, GENERAL, book_kind
 from apps.special.models import Special
 
 DEAD = {"kind": "dead"}
@@ -149,12 +149,14 @@ def injury_outcome(result: dict[str, Any], unit_name: str) -> InjuryOutcome:
 
 
 def injury_special(name: str, campaign_id: int) -> Special:
-    """The special an injury grants: the book's of that name (or the campaign's version of it, CAT-TWEAK-03), else
-    the campaign's own, created the first time (a bane unless the book's classification says otherwise). One query to
-    find it."""
+    """The special an injury grants: the book's general special of that name (or the campaign's version of it,
+    CAT-TWEAK-03), else the campaign's own, created the first time (a bane unless the book's classification says
+    otherwise). Never a warband's, hired sword's or dramatis persona's own rule of the name (the Hochland Bandits'
+    Hardened, the Old Prospector's). One query to find it."""
     named = Q(name__iexact=name) & (Q(campaign__isnull=True) | Q(campaign_id=campaign_id))
     versions = Q(campaign_id=campaign_id, replaces__campaign__isnull=True, replaces__name__iexact=name)
-    rows = list(Special.objects.filter(named | versions).order_by(F("campaign_id").asc(nulls_first=True), "id"))
+    general = Special.objects.filter(owner_kind=GENERAL)
+    rows = list(general.filter(named | versions).order_by(F("campaign_id").asc(nulls_first=True), "id"))
     book = next((row for row in rows if row.campaign_id is None), None)
     if book is not None:
         return next((row for row in rows if row.replaces_id == book.id), book)

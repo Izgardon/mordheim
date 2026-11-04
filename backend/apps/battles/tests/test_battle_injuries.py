@@ -1,13 +1,15 @@
 """Serious injuries applied at finalise (decision 7, BUG-47, BATL-TWEAK-05).
 
 The server's table gives each roll's result and effect. At finalise a unit's last roll, when ticked, is applied if it
-is simple (dead, a characteristic -1, a named special) and flagged to apply by hand otherwise; one log per unit.
+is simple (dead, a characteristic -1, a named special) and flagged to apply by hand otherwise; one log per unit. A
+named special is a general one, never a warband's, hired sword's or dramatis persona's own rule of the name.
 """
 
 from typing import Any
 
-from apps.battles.services.injuries import describe_roll, injury_tables
+from apps.battles.services.injuries import describe_roll, injury_special, injury_tables
 from apps.core.seeding import IMPORT_OUT, read_json_list
+from apps.special.kinds import GENERAL, HIRED_SWORD, WARBAND
 from apps.special.models import Special
 from apps.warbands.models import HeroSpecial, WarbandLog
 
@@ -108,3 +110,31 @@ class InjuryFinaliseTests(BattleTestCase):
 
         self.assertEqual(list(HeroSpecial.objects.values_list("special_id", flat=True)), [scars.id])
         self.assertEqual(Special.objects.filter(name="Horrible Scars").count(), 1)
+
+    def test_an_injury_grants_the_general_special_never_a_warbands_or_hired_swords_own(self):
+        # a hero who rolled Hardened got the Hochland Bandits' rule: the first book special of the name
+        Special.objects.create(name="Hardened", type="Warband - Hochland Bandits", owner_kind=WARBAND)
+        Special.objects.create(name="Hardened", type="Hired Sword - Old Prospector", owner_kind=HIRED_SWORD)
+        hardened = Special.objects.create(name="Hardened", type="Injury")
+        ana = self.keys[0]
+        battle_id = self.to_postbattle({self.player: [ana], self.viewer: [self.rat]})
+
+        self.ok(self.finalize(self.player, battle_id, draft({ana: unit_result(ana, rolls=[roll([6, 2])])})))
+
+        self.assertEqual(list(HeroSpecial.objects.values_list("special_id", flat=True)), [hardened.id])
+
+
+class InjurySpecialTests(BattleTestCase):
+    def test_the_campaigns_version_of_the_general_special_comes_first(self):
+        Special.objects.create(name="Hardened", type="Warband - Hochland Bandits", owner_kind=WARBAND)
+        book = Special.objects.create(name="Hardened", type="Injury")
+        self.assertEqual(injury_special("Hardened", self.campaign.id), book)
+        version = Special.objects.create(campaign=self.campaign, name="Inured", type="Injury", replaces=book)
+        self.assertEqual(injury_special("Hardened", self.campaign.id), version)
+
+    def test_with_only_a_warbands_own_rule_of_the_name_the_campaign_gets_its_own(self):
+        bandits = Special.objects.create(name="Hardened", type="Warband - Hochland Bandits", owner_kind=WARBAND)
+        own = injury_special("Hardened", self.campaign.id)
+        self.assertNotEqual(own.id, bandits.id)
+        self.assertEqual((own.campaign_id, own.type, own.owner_kind), (self.campaign.id, "Injury", GENERAL))
+        self.assertEqual(injury_special("Hardened", self.campaign.id), own)
