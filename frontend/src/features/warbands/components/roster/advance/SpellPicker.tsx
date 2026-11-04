@@ -21,27 +21,36 @@ export type SpellChoice = ({ mode: "roll"; lore: string; roll: number } | { mode
 const fold = (text?: string | null) => (text ?? "").trim().toLowerCase();
 
 /**
- * A new spell, guided (William): pick one of the lores he already has a spell from and roll a D6
- * on its table, or click a row; a spell he knows gets 1 easier for him ("Difficulty 7 → 6"). A
- * spell with no roll ("–") is never rolled, only clicked. With no spells yet any lore will do, with
- * a warning. "Pick instead" chooses any spell by hand, with a warning.
+ * A new spell, guided (William): pick one of his lores (those his template fighter casts from,
+ * then those he already has a spell from) and roll a D6 on its table, or click a row; a spell he
+ * knows gets 1 easier for him ("Difficulty 7 → 6"). Another lore is offered greyed under Show all,
+ * still pickable. A spell with no roll ("–") is never rolled, only clicked. With no lore of his yet
+ * any lore will do, with a warning. "Pick instead" chooses any spell by hand, with a warning.
  */
 export default function SpellPicker({
   campaignId,
   known,
+  lores: his = [],
   value,
   onChange,
 }: {
   campaignId: number;
   /** The spells he has. */
   known: Spell[];
+  /** The lores he casts from (his `available_spell_types`, copied from his template fighter). */
+  lores?: string[];
   value: SpellChoice | null;
   onChange: (choice: SpellChoice | null) => void;
 }) {
   const spells = useCatalogue("spells", campaignId).data ?? [];
   const settings = useSettingsById();
-  const own = [...new Set(known.map((spell) => spell.type?.trim()).filter(Boolean))] as string[];
+  const knownLores = known.map((spell) => spell.type?.trim()).filter(Boolean) as string[];
+  const own = [...new Map([...his, ...knownLores].map((name) => [fold(name), name])).values()];
   const tabled = [...new Set(spells.filter((s) => s.roll).map((s) => s.type?.trim() ?? ""))];
+  const others = tabled
+    .filter((name) => name && !own.some((mine) => fold(mine) === fold(name)))
+    .sort();
+  const [all, setAll] = useState(false);
   const lores = own.length ? own : tabled.filter(Boolean).sort();
   const [lore, setLore] = useState<string | null>(lores.length === 1 ? lores[0] : null);
   const [picking, setPicking] = useState(value?.mode === "pick");
@@ -98,10 +107,12 @@ export default function SpellPicker({
         <span className="text-xs font-semibold text-danger">He knows no lore yet: any lore</span>
       )}
       <div role="group" aria-label="Lores" className="flex flex-wrap gap-1.5">
-        {lores.map((name) => (
+        {[...lores, ...(own.length && all ? others : [])].map((name) => (
           <Chip
             key={name}
             pressed={lore === name}
+            className={lores.includes(name) ? undefined : "opacity-60"}
+            title={lores.includes(name) ? undefined : "Not one of his lores"}
             onClick={() => {
               setLore(name);
               onChange(null);
@@ -110,7 +121,15 @@ export default function SpellPicker({
             {name}
           </Chip>
         ))}
+        {own.length && others.length ? (
+          <Chip pressed={all} onClick={() => setAll(!all)}>
+            Show all
+          </Chip>
+        ) : null}
       </div>
+      {lore && !lores.includes(lore) ? (
+        <span className="text-xs font-semibold text-danger">Not one of his lores</span>
+      ) : null}
       {lore ? (
         <>
           <RollField dice={1} value={roll} onChange={rolled} />

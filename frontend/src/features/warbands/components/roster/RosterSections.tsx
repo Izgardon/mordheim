@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import type { Item } from "@/features/items/types/item-types";
 
+import { useWarbandHireTemplate } from "../../api/warband-template-queries";
 import { useUnitActions } from "../../hooks/units/useUnitActions";
 import type { UnitKindKey } from "../../types/units";
 import type {
@@ -50,6 +51,8 @@ type RosterSectionsProps = {
 export default function RosterSections(props: RosterSectionsProps) {
   const { warbandId, campaign, canEdit } = props;
   const actions = useUnitActions(warbandId);
+  // read ahead for Add hero and Add group, so Recruit as is there when they open (the templates plan)
+  useWarbandHireTemplate(campaign?.id ?? 0, warbandId, canEdit);
   const cards = useRosterCards();
 
   const heroes: RosterUnit[] = props.heroes.map((unit) => ({ kind: "hero", unit }));

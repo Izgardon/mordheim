@@ -105,6 +105,11 @@ function initialDraft(entry: RosterUnit): Draft {
           blood_pacted: Boolean(entry.unit.blood_pacted),
         }
       : {}),
+    // the templates plan, phase 2: his spell lores, and whether the group can be promoted
+    ...("available_spell_types" in unit
+      ? { available_spell_types: unit.available_spell_types ?? [] }
+      : {}),
+    ...(entry.kind === "henchmen_group" ? { promotable: entry.unit.promotable !== false } : {}),
   };
 }
 

@@ -52,3 +52,34 @@ describe("The spell picker", () => {
     );
   });
 });
+
+describe("His lores first", () => {
+  const bolt: Spell = { id: 71, name: "Fireball", type: "Lesser Magic", dc: "7", roll: 1 };
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /spells/?campaign_id=1", [visage, horror, awakening, bolt]);
+  });
+
+  it("offers the lores he casts from, and the rest greyed under Show all, still pickable", async () => {
+    renderWithQueryClient(
+      <SpellPicker
+        campaignId={1}
+        known={[]}
+        lores={["Lesser Magic"]}
+        value={null}
+        onChange={vi.fn()}
+      />
+    );
+    const user = setupUser();
+    const lores = screen.getByRole("group", { name: "Lores" });
+    expect(await within(lores).findByRole("button", { name: "Show all" })).toBeInTheDocument();
+    expect(within(lores).getByRole("button", { name: "Lesser Magic" })).toBeInTheDocument();
+    expect(within(lores).queryByRole("button", { name: LORE })).toBeNull();
+    expect(screen.queryByText("He knows no lore yet: any lore")).toBeNull();
+
+    await user.click(within(lores).getByRole("button", { name: "Show all" }));
+    await user.click(within(lores).getByRole("button", { name: LORE }));
+    expect(screen.getByText("Not one of his lores")).toBeInTheDocument();
+    expect(await screen.findByRole("table", { name: `${LORE} spells` })).toBeInTheDocument();
+  });
+});

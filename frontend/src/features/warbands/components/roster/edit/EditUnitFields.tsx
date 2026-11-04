@@ -11,7 +11,9 @@ import EditGroupModels from "./EditGroupModels";
 import EditLists from "./EditLists";
 import EditProfile, { EditXpField } from "./EditProfile";
 import RaceField from "./RaceField";
+import RaceMaxWarning from "./RaceMaxWarning";
 import SkillAccessField from "./SkillAccessField";
+import SpellLoresField from "./SpellLoresField";
 import type { UnitEditDraft } from "./useUnitEditDraft";
 
 const CASTERS: [HeroCaster, string][] = [
@@ -48,6 +50,7 @@ export default function EditUnitFields({
   const { kind, unit } = entry;
   const { draft, set } = form;
   const caster = "caster" in draft ? (String(draft.caster) as HeroCaster) : "No";
+  const lores = (draft.available_spell_types as string[] | undefined) ?? [];
 
   const field = (label: string, key: string, numeric = false) => (
     <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
@@ -89,6 +92,7 @@ export default function EditUnitFields({
         {toggle("Large", "large")}
         {toggle("Trading action", "trading_action")}
         {toggle("No level ups", "no_level_ups")}
+        {toggle("Can be promoted", "promotable")}
         {toggle("Bloodpacted", "blood_pacted")}
         {"caster" in draft ? (
           <span
@@ -126,15 +130,31 @@ export default function EditUnitFields({
         <XpTrack xp={Number(draft.xp) || 0} thresholds={xpTable(kind, campaign)} />
       )}
       <div className="grid gap-3.5 min-[720px]:grid-cols-2">
-        <EditProfile form={form} unitLabel={unitName(unit)} />
-        {"available_skills" in draft ? (
-          <SkillAccessField
+        <div className="flex flex-col gap-1.5">
+          <EditProfile form={form} unitLabel={unitName(unit)} />
+          <RaceMaxWarning
             campaignId={campaignId}
-            warbandId={warbandId}
-            value={draft.available_skills as Record<string, boolean>}
-            onChange={(next) => set("available_skills", next)}
+            raceId={(draft.race as number | null) ?? null}
+            draft={draft}
           />
-        ) : null}
+        </div>
+        <div className="flex flex-col gap-3">
+          {"available_skills" in draft ? (
+            <SkillAccessField
+              campaignId={campaignId}
+              warbandId={warbandId}
+              value={draft.available_skills as Record<string, boolean>}
+              onChange={(next) => set("available_skills", next)}
+            />
+          ) : null}
+          {"available_spell_types" in draft && (caster !== "No" || lores.length) ? (
+            <SpellLoresField
+              campaignId={campaignId}
+              value={lores}
+              onChange={(next) => set("available_spell_types", next)}
+            />
+          ) : null}
+        </div>
       </div>
       <EditLists
         entry={entry}

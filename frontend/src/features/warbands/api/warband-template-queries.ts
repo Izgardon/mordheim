@@ -35,5 +35,8 @@ export function useRaiseOutline(campaignId: number, warbandTypeId: number | null
     queryKey: queryKeys.campaign.raiseOutline(campaignId, warbandTypeId ?? 0, variant),
     queryFn: () => getRaiseOutline(campaignId, warbandTypeId as number, variant),
     enabled: warbandTypeId !== null && campaignId > 0,
+    // another variant of the same type keeps the outline on screen while it reads
+    placeholderData: (previous, previousQuery) =>
+      previousQuery?.queryKey[3] === (warbandTypeId ?? 0) ? previous : undefined,
   });
 }

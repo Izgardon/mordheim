@@ -74,6 +74,11 @@ export default function LadsGotTalent({
   return (
     <div className="flex flex-col gap-3 border border-accent-line bg-panel p-3">
       <p className="m-0 font-display text-lg font-semibold text-head">The lad&apos;s got talent</p>
+      {group.promotable === false ? (
+        <p className="m-0 text-xs font-semibold text-danger">
+          {group.name || group.unit_type || "These henchmen"} can&apos;t be promoted in their rules.
+        </p>
+      ) : null}
       <span className={label}>Who joins the heroes</span>
       <div role="group" aria-label="Henchman" className="flex flex-wrap gap-1.5">
         {members.map((member) => (

@@ -99,6 +99,7 @@ export default function AdvanceGain({
         <SpellPicker
           campaignId={campaignId}
           known={("spells" in unit ? (unit.spells ?? []) : []) as Spell[]}
+          lores={"available_spell_types" in unit ? unit.available_spell_types : undefined}
           value={flow.spell}
           onChange={flow.setSpell}
         />
