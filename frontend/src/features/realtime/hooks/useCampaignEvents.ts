@@ -20,6 +20,7 @@ const CATALOGUE_KINDS: Record<string, CatalogueKind> = {
   items: "items",
   item_rules: "item-rules",
   skills: "skills",
+  skill_groups: "skill-groups",
   spells: "spells",
   specials: "specials",
   races: "races",

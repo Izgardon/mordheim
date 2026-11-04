@@ -11,6 +11,7 @@ export type CatalogueEntryKind = Exclude<CatalogueKind, "item-rules">;
 const PATHS: Record<CatalogueEntryKind, string> = {
   items: "items",
   skills: "skills",
+  "skill-groups": "skill-groups",
   spells: "spells",
   specials: "special",
   races: "races",

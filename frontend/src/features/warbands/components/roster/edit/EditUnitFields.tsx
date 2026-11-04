@@ -130,6 +130,7 @@ export default function EditUnitFields({
         {"available_skills" in draft ? (
           <SkillAccessField
             campaignId={campaignId}
+            warbandId={warbandId}
             value={draft.available_skills as Record<string, boolean>}
             onChange={(next) => set("available_skills", next)}
           />

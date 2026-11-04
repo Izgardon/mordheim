@@ -25,6 +25,7 @@ const BattlePrebattle = lazy(() => import("../../features/battles/routes/BattleP
 const BattleActive = lazy(() => import("../../features/battles/routes/BattleActive"));
 const Wargear = lazy(() => import("../../features/items/routes/Wargear"));
 const Skills = lazy(() => import("../../features/skills/routes/Skills"));
+const SkillGroups = lazy(() => import("../../features/skills/routes/SkillGroups"));
 const Spells = lazy(() => import("../../features/spells/routes/Spells"));
 const Bestiary = lazy(() => import("../../features/bestiary/routes/Bestiary"));
 const HirelingCatalogue = lazy(() => import("../../features/hirelings/routes/HirelingCatalogue"));
@@ -100,6 +101,7 @@ export const routes: RouteObject[] = [
                   // The reference pages and Search everything.
                   { path: "items", element: <Wargear /> },
                   { path: "skills", element: <Skills /> },
+                  { path: "skill-groups", element: <SkillGroups /> },
                   { path: "spells", element: <Spells /> },
                   { path: "bestiary", element: <Bestiary /> },
                   {

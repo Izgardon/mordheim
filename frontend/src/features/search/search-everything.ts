@@ -8,7 +8,7 @@ import type { Item } from "@/features/items/types/item-types";
 import type { RuleEntry } from "@/features/rules/rules-index";
 import { ruleSnippet } from "@/features/rules/rules-index";
 import type { HouseRule } from "@/features/rules/types/rule-types";
-import type { Skill } from "@/features/skills/types/skill-types";
+import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 
 import type { CampaignSearchAnswer } from "./api/search-api";
@@ -30,6 +30,8 @@ export type SearchGroup = { id: string; label: string; hits: SearchHit[] };
 export type SearchSources = {
   items: Item[];
   skills: Skill[];
+  /** The campaign's skill groups: a skill's hit names the groups holding it. */
+  skillGroups: SkillGroup[];
   spells: Spell[];
   beasts: BestiaryEntrySummary[];
   hiredSwords: HirelingProfile[];
@@ -119,7 +121,10 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       ).map(({ entry, snippet }) => ({
         key: `skill-${entry.id}`,
         title: entry.name,
-        meta: entry.type.replace(/_/g, " "),
+        meta: sources.skillGroups
+          .filter((group) => group.skill_ids.includes(entry.id))
+          .map((group) => group.name)
+          .join(", "),
         snippet,
         to: `skills?open=${entry.id}`,
       })),

@@ -59,6 +59,7 @@ const whoCan: WhoCan = {
   items: [{ item_id: 201, availability_id: 21, options: [21], can_buy: true, reason: "" }],
   hired_swords: [],
   dramatis_personae: [],
+  skill_group_ids: [],
   special_skill_ids: [],
 };
 

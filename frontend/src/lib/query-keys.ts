@@ -10,6 +10,7 @@ export type CatalogueKind =
   | "items"
   | "item-rules"
   | "skills"
+  | "skill-groups"
   | "spells"
   | "specials"
   | "races"

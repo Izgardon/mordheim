@@ -202,6 +202,9 @@ export type WhoCan = {
   items: ItemOffer[];
   hired_swords: HireAccess[];
   dramatis_personae: HireAccess[];
+  /** The skill groups open to it (its type, its group, or everyone), in group order. */
+  skill_group_ids: number[];
+  /** The skills of the groups that name its type or group. */
   special_skill_ids: number[];
 };
 

@@ -6,9 +6,9 @@ import {
   SkillListIcon,
   SpecialKindIcon,
   type GameIconName,
+  type SkillList,
   type SpecialKind,
 } from "@/components/ui/game-icons";
-import { skillList } from "@/features/skills/skill-list";
 import type { Spell } from "@/features/spells/types/spell-types";
 
 import { spellDifficulty } from "./advance/advance-table";
@@ -18,10 +18,14 @@ import { pendingPicks, type PendingList, type RosterUnit } from "./unit-view";
 export type Box = BoxDetail & { boxKind: BoxTileKind; icon?: ReactNode; pending?: PendingList };
 export type Row = { key: string; label: string; icon: GameIconName; boxes: Box[] };
 
-/** A unit's skill, special, spell or injury as its box shows it. */
-type Entry = {
+/**
+ * A unit's skill, special, spell or injury as its box shows it: a skill's `type` is the group it
+ * comes through for him and `list` that group's icon (`cameThrough`).
+ */
+export type Entry = {
   name: string;
   type?: string | null;
+  list?: SkillList;
   kind?: SpecialKind;
   description?: string | null;
   dc?: Spell["dc"];
@@ -41,9 +45,9 @@ const BOX_KIND: Record<PendingList | "injuries", BoxTileKind> = {
   injuries: "injury",
 };
 
-/** A box's icon: a skill's list, a special's kind (Boons & Banes), an injury's; spells have none. */
+/** A box's icon: a skill's group, a special's kind (Boons & Banes), an injury's; spells have none. */
 function entryIcon(list: PendingList | "injuries", entry: Entry): ReactNode {
-  if (list === "skills") return <SkillListIcon list={skillList(entry.type)} />;
+  if (list === "skills") return <SkillListIcon list={entry.list ?? "special"} />;
   if (list === "specials") return <SpecialKindIcon kind={entry.kind} />;
   if (list === "injuries") return <GameIcon name="injuries" />;
   return undefined;
@@ -56,7 +60,7 @@ const PENDING_ICON: Record<PendingList, ReactNode> = {
 };
 
 /**
- * One list's boxes on an open card: each entry with its second line (a skill's list, a spell's
+ * One list's boxes on an open card: each entry with its second line (a skill's group, a spell's
  * lore and his difficulty, "Difficulty 7 → 6" once he rolled it again), then the picks an
  * advance left for later, each picked from its box.
  */

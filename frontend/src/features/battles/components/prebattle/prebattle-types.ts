@@ -68,6 +68,8 @@ export type PrebattleUnit = BattleRosterCompanionFields & {
   singleUseItems?: UnitSingleUseItem[];
   items?: UnitItemEntry[];
   skills?: UnitDetailEntry[];
+  /** A hero's or hired sword's skill groups: a skill shows under the first that holds it. */
+  skillAccess?: string[];
   spells?: UnitSpellDetailEntry[];
   specials?: UnitDetailEntry[];
   rating?: number;

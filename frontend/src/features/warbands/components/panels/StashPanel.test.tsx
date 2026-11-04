@@ -71,6 +71,7 @@ const whoCan: WhoCan = {
   ],
   hired_swords: [],
   dramatis_personae: [],
+  skill_group_ids: [],
   special_skill_ids: [],
 };
 const units: RosterUnit[] = [

@@ -5,10 +5,13 @@ import { ItemKindIcon } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { itemKind, itemStatsLine } from "@/features/items/item-kind";
 import type { Item } from "@/features/items/types/item-types";
+import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
+import { skillList } from "@/features/skills/skill-list";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import type { AdvancePick } from "../../units/unit-api";
 import { loadoutLine } from "../../units/loadout";
+import { accessNames } from "../../utils/warband-utils";
 import GroupMembers from "./GroupMembers";
 import PendingPick from "./PendingPick";
 import RulesPanel from "./RulesPanel";
@@ -43,6 +46,13 @@ export default function UnitDetails(props: UnitDetailsProps) {
   const { kind } = entry;
   const [open, setOpen] = useState<{ row: string; index: number } | null>(null);
   const lists = boxRows(entry);
+  const groups = useSkillGroups(props.campaignId);
+  const access = "available_skills" in entry.unit ? entry.unit.available_skills : undefined;
+  const his = unitGroups(groups, accessNames(access));
+  const skills = lists.skills.map((skill) => {
+    const via = cameThrough(groups, skill.id, his);
+    return { ...skill, type: via?.name, list: skillList(via?.access_name) };
+  });
 
   const itemsRow: Row = {
     key: "items",
@@ -63,7 +73,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
       key: "skills",
       label: "Skills",
       icon: "skills" as const,
-      boxes: entryBoxes(entry, "skills", lists.skills),
+      boxes: entryBoxes(entry, "skills", skills),
     },
     {
       key: "specials",

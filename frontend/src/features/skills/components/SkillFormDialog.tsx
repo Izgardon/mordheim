@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import type { ReactNode } from "react";
 
 import { Button } from "@components/button";
@@ -10,6 +10,7 @@ import {
 import { useControllableOpen } from "@/features/catalogue/hooks/useControllableOpen";
 
 import { useSkillForm } from "../hooks/useSkillForm";
+import { groupsOf, useSkillGroups } from "../skill-groups";
 import SkillFormFields from "./SkillFormFields";
 
 import type { Skill } from "../types/skill-types";
@@ -17,7 +18,6 @@ import type { Skill } from "../types/skill-types";
 type SkillFormDialogBaseProps = {
   /** The campaign: a book skill's edit makes its version. */
   campaignId: number;
-  typeOptions?: string[];
   trigger?: ReactNode | null;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -40,14 +40,19 @@ type SkillFormDialogProps = SkillFormDialogCreateProps | SkillFormDialogEditProp
 
 /** The Skills page's Add skill dialog, and its edit mode (Delete, Revert). */
 export default function SkillFormDialog(props: SkillFormDialogProps) {
-  const { mode, typeOptions = [], trigger } = props;
+  const { mode, trigger } = props;
   const skill = props.mode === "edit" ? props.skill : null;
   const { campaignId } = props;
   const dialog = useControllableOpen(props);
+  const groups = useSkillGroups(campaignId);
+  const groupIdsOf = useCallback(
+    (skillId: number) => groupsOf(groups, skillId).map((group) => group.id),
+    [groups]
+  );
   const form = useSkillForm({
     campaignId,
     skill,
-    typeOptions,
+    groupIdsOf,
     resetKey: dialog.open,
     onSaved: (saved) => (props.mode === "create" ? props.onCreated(saved) : props.onUpdated(saved)),
     onDeleted: props.mode === "edit" ? props.onDeleted : undefined,
@@ -75,7 +80,12 @@ export default function SkillFormDialog(props: SkillFormDialogProps) {
       canDelete={props.mode === "edit" && props.canDelete}
       onReset={() => load(skill)}
     >
-      <SkillFormFields layout="dialog" form={form} idSuffix={skill ? `-${skill.id}` : ""} />
+      <SkillFormFields
+        layout="dialog"
+        form={form}
+        groups={groups}
+        idSuffix={skill ? `-${skill.id}` : ""}
+      />
     </CatalogueFormDialog>
   );
 }

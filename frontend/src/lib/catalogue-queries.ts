@@ -7,7 +7,7 @@ import { listHirelingProfiles } from "@/features/hirelings/api/hireling-catalogu
 import { listItemRules, listItems } from "@/features/items/api/items-api";
 import { invalidateWhoCan } from "@/features/items/api/who-can-queries";
 import { listRaces } from "@/features/races/api/races-api";
-import { listSkills } from "@/features/skills/api/skills-api";
+import { listSkillGroups, listSkills } from "@/features/skills/api/skills-api";
 import { listSpecial } from "@/features/special/api/special-api";
 import { listSpells } from "@/features/spells/api/spells-api";
 
@@ -19,7 +19,7 @@ import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-ty
 import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
 import type { Item, ItemRule } from "@/features/items/types/item-types";
 import type { Race } from "@/features/races/types/race-types";
-import type { Skill } from "@/features/skills/types/skill-types";
+import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 
@@ -30,6 +30,7 @@ type CatalogueEntries = {
   items: Item;
   "item-rules": ItemRule;
   skills: Skill;
+  "skill-groups": SkillGroup;
   spells: Spell;
   specials: Special;
   races: Race;
@@ -61,6 +62,8 @@ const fetchers: { [K in CatalogueKind]: Fetcher<K> } = {
   "item-rules": (campaignId, signal) => listItemRules({ campaignId, signal }),
   skills: (campaignId, signal, variant) =>
     listSkills({ campaignId, signal, ...archivedOf(variant) }),
+  "skill-groups": (campaignId, signal, variant) =>
+    listSkillGroups({ campaignId, signal, ...archivedOf(variant) }),
   spells: (campaignId, signal, variant) =>
     listSpells({ campaignId, signal, ...archivedOf(variant) }),
   specials: (campaignId, signal) => listSpecial({ campaignId, signal }),
@@ -88,6 +91,7 @@ const errorLabels: Record<CatalogueKind, string> = {
   items: "Unable to load items",
   "item-rules": "Unable to load the shared rules",
   skills: "Unable to load skills",
+  "skill-groups": "Unable to load skill groups",
   spells: "Unable to load spells",
   specials: "Unable to load special",
   races: "Unable to load races",
@@ -251,6 +255,9 @@ export function invalidateCatalogue(
 const WRITTEN_WITH: Partial<Record<CatalogueKind, CatalogueKind[]>> = {
   bestiary: ["items"],
   races: ["hired-swords", "dramatis-personae"],
+  // a skill's write moves it into or out of groups; a group's write changes which skills it holds
+  skills: ["skill-groups"],
+  "skill-groups": ["skills"],
 };
 
 /** `kind` and the kinds its writes change with it. */
@@ -263,6 +270,7 @@ export const WHO_CAN_KINDS = new Set<CatalogueKind>([
   "hired-swords",
   "dramatis-personae",
   "skills",
+  "skill-groups",
 ]);
 
 /**

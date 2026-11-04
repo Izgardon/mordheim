@@ -5,31 +5,34 @@ import type { SearchOption } from "@/components/ui/search-select";
 import { outOfPlay } from "@/features/campaigns/api/settings-queries";
 import type { Setting } from "@/features/campaigns/types/campaign-types";
 import type { Race } from "@/features/races/types/race-types";
+import { cameThrough, type SkillGroupIndex } from "@/features/skills/skill-groups";
 import { largeWarning, learningNotes } from "@/features/skills/skill-learning";
 import { skillList } from "@/features/skills/skill-list";
-import type { Skill } from "@/features/skills/types/skill-types";
+import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 
 /**
  * The searchable select's rows for the catalogue (William: "titles and subtitles with skill
- * category, spell school as subtitles"): a skill's list, a spell's lore and difficulty, a
- * special's type, a race's maximums. Skills carry their list's icon and specials their kind's (Boons
- * & Banes); spells none. Rows outside the campaign or the unit's skill lists carry a warning and
- * stay pickable.
+ * category, spell school as subtitles"): a skill's group, a spell's lore and difficulty, a
+ * special's type, a race's maximums. Skills carry their group's icon and specials their kind's
+ * (Boons & Banes); spells none. Rows outside the campaign or the unit's skill groups carry a
+ * warning and stay pickable.
  */
 
 type Settings = Map<number, Setting>;
 
-/** A skill outside the unit's skill access: a warning, never a block. */
-export const OUTSIDE_ACCESS = "Not in his skill lists";
+/** A skill outside the unit's skill groups: a warning, never a block. */
+export const OUTSIDE_ACCESS = "Not in his skill groups";
 
 export type SkillContext = {
   settings: Settings;
-  /** The unit is Large: a Large unit's skill warns for any other. */
+  /** The campaign's skill groups (`useSkillGroups`). */
+  groups: SkillGroupIndex;
+  /** The unit is Large: a skill through a Large unit's group warns for any other. */
   large?: boolean | null;
-  /** The skill lists the unit may pick from, as type names (empty: any). */
-  access?: string[];
+  /** The groups the unit may pick from (`unitGroups`; empty: any). */
+  access?: SkillGroup[];
   /** The warband's special skills (who-can), listed first. */
   specials?: Set<number>;
 };
@@ -37,20 +40,25 @@ export type SkillContext = {
 const joined = (...parts: (string | null | undefined | false)[]) =>
   parts.filter(Boolean).join(" · ");
 
+/** A skill's row: the group it comes through for the unit (`cameThrough`), with that group's notes. */
 export function skillOption(skill: Skill, context: SkillContext): SearchOption {
   const special = Boolean(context.specials?.has(skill.id));
   const access = context.access ?? [];
-  const outside = access.length && !special && !access.includes(skill.type) ? OUTSIDE_ACCESS : "";
-  const notes = learningNotes({ ...skill, large_only: Boolean(context.large && skill.large_only) });
+  const via = cameThrough(context.groups, skill.id, access);
+  const inAccess = access.some((group) => group.skill_ids.includes(skill.id));
+  const outside = access.length && !special && !inAccess ? OUTSIDE_ACCESS : "";
+  const notes = learningNotes(
+    via && { ...via, large_only: Boolean(context.large && via.large_only) }
+  );
   return {
     id: skill.id,
     title: skill.name,
     icon: createElement(SkillListIcon, {
-      list: skillList(skill.type),
+      list: skillList(via?.access_name),
       className: "text-kind-skill",
     }),
-    subtitle: joined(skill.type, ...notes),
-    warning: outOfPlay(skill, context.settings) || largeWarning(skill, context.large) || outside,
+    subtitle: joined(via?.name, ...notes),
+    warning: outOfPlay(skill, context.settings) || largeWarning(via, context.large) || outside,
     group: special ? "Your warband's" : undefined,
   };
 }
