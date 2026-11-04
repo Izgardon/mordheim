@@ -114,14 +114,14 @@ export default function WarbandRulesDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
   opening: RulesOpening;
-  warbandId: number;
+  warbandId?: number;
   warbandName: string;
   rules: WarbandRule[];
   canEdit: boolean;
 }) {
-  const create = useRuleCreate(warbandId);
-  const update = useRuleUpdate(warbandId);
-  const remove = useRuleDelete(warbandId);
+  const create = useRuleCreate(warbandId ?? 0); // none: read only (canEdit is off)
+  const update = useRuleUpdate(warbandId ?? 0);
+  const remove = useRuleDelete(warbandId ?? 0);
   const [editing, setEditing] = useState<Editing>(null);
   const onError = (error: unknown) => toast.error(getErrorMessage(error));
   const done = { onSuccess: () => setEditing(null), onError };

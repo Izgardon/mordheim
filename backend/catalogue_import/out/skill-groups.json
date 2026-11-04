@@ -333,6 +333,18 @@
       {
         "type": "dwarf-treasure-hunters",
         "excluded": false
+      },
+      {
+        "type": "dwarf-rangers",
+        "excluded": false
+      },
+      {
+        "type": "pit-fighters",
+        "excluded": false
+      },
+      {
+        "type": "pit-fighters-old",
+        "excluded": false
       }
     ],
     "large_only": false,
@@ -718,11 +730,15 @@
       {
         "type": "pit-fighters",
         "excluded": false
+      },
+      {
+        "type": "pit-fighters-old",
+        "excluded": false
       }
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "Bulging Biceps",
       "Force of Will",

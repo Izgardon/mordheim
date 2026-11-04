@@ -345,7 +345,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Dark Elf | Dark Elves | skill_group_learners | - | Fury of Khaine, Powerful Build, Fey Quickness, Infiltration, Master of Poisons |
 | Dwarf Exiled Engineers | Guild of Disgraced Engineers | skill_lists | - | True Grit, Thick Skull, Extra Tough, Tunneler, Tinkerer, Quick Thinker, Master Inventor |
 | Dwarf Rangers | Dwarf Rangers | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull |
-| Dwarf Troll Slayers | Dwarf Treasure Hunters | skill_group_learners | - | Ferocious Charge, Monster Slayer, Berserker, Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
+| Dwarf Troll Slayers | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Ferocious Charge, Monster Slayer, Berserker, Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarves | Dwarf Treasure Hunters | skill_group_learners | - | Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Forest Goblins | Forest Goblins (NC) | intersection | - | Animosity |
 | Grave Robber | Grave Robbers | intersection | - | Darkstalker, Instinctual Violence, De-animator, Hardy Constitution (Grave Robber), Body Dealer |
@@ -364,7 +364,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Ostlanders | Ostlanders | skill_group_learners | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |
 | Pirates | Pirates | intersection | - | Sea Shanty Singer, Sea Legs, Cutlass Master, Booming Voice, Hardy Constitution, Swashbuckler |
 | Pirates (TBMF) | Pirates | skill_lists | - | Captain Blood, Sea Legs (TBMF), Cutlass Master, Treasure Hunter, Swashbuckler |
-| Pit Fighters | Pit Fighters | intersection | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
+| Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
 | Restless Dead Lich and Necromancer | The Restless Dead | intersection | - | Corpse Bomb, Deathspeaker, Wraith Touch, Forbidden Rite, Summoner |
 | Saurus | Lizardmen (TC11) | intersection | - | Bellowing Battle Roar, Toughened Hide |
 | Sea Ghosts | Sea Ghosts | skill_group_learners | - | Infiltration, Luck, See in Shadows, Hide in Shadows, Powerful Build, Fey |
@@ -418,9 +418,10 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 
 | Skill | Before (its rows' who-can) | Now (its groups) |
 | --- | --- | --- |
-| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
-| True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
-| Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
+| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
+| Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs |
+| True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
+| Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
 | Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Metal Mongers, Sea Ghosts |
 | Foul Odour | Ostlanders | Ostlanders, Horned Hunters |
 | Hide in Shadows | Hochland Bandits, Shadow Warriors, Night Goblins (WEB) | Hochland Bandits, Horned Hunters, Shadow Warriors, Night Goblins (WEB), Sea Ghosts |
@@ -548,14 +549,7 @@ Ticked for special skills with no group to name, the tick left out: imperial-out
 
 Every name in the fighters' skill access is a skill group (out/skill-groups.json).
 
-Groups the fighters name whose learners (skill_group_learners) leave out a warband type the template serves:
-
-| Group | Warband type | Fighters |
-| --- | --- | --- |
-| Dwarf Troll Slayers | dwarf-rangers | Dwarf Rangers: Dwarf Troll Slayers |
-| Dwarf Troll Slayers | pit-fighters | Pit Fighters: Dwarf Troll Slayer |
-| Dwarf Troll Slayers | pit-fighters-old | Pit Fighters (old): Dwarf Troll Slayer |
-| Pit Fighters | pit-fighters-old | Pit Fighters (old): Pit King, Pit Fighters (old): Pit Veteran, Pit Fighters (old): Pit Fighter Initiate |
+Each of those groups is for everyone or names every warband type its fighters' template serves.
 
 ### Casters
 
