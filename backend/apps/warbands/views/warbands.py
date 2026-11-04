@@ -8,7 +8,7 @@ from apps.campaigns.models import DEFAULT_RESOURCE_NAME, CampaignSettings
 from apps.campaigns.permissions import get_writable_membership, parse_campaign_id
 from apps.warband_templates.services.payload import raise_gold
 from apps.warband_templates.services.raising import copy_rules, picked_variant, settle_variant
-from apps.warband_templates.services.resolve import template_for_type
+from apps.warband_templates.services.resolve import template_for_type, template_size
 from apps.warbands.access import check_backstory_change
 from apps.warbands.models import LedgerAction, Warband, WarbandResource
 from apps.warbands.serializers import (
@@ -53,7 +53,7 @@ class WarbandListCreateView(APIView):
         template = template_for_type(campaign_id, serializer.validated_data["warband_type"].pk)
         variant = picked_variant(template, serializer.validated_data.pop("template_variant", ""))
         if template is not None:
-            serializer.validated_data.setdefault("max_units", template.most_warriors)
+            serializer.validated_data.setdefault("max_units", template_size(template, variant))
         with transaction.atomic():
             # locked: a rename of the default resource renames this warband's too, before or after (one at a time)
             settings = CampaignSettings.objects.select_for_update().filter(campaign_id=campaign_id).first()
@@ -62,7 +62,7 @@ class WarbandListCreateView(APIView):
             # the one everyone starts with (William, 3 Nov 2026), named as the campaign names it
             name = settings.default_resource_name if settings else DEFAULT_RESOURCE_NAME
             WarbandResource.objects.create(warband=warband, name=name, amount=0, is_default=True)
-            starting_gold = raise_gold(abs(settings.starting_gold) if settings else 500, template)
+            starting_gold = raise_gold(abs(settings.starting_gold) if settings else 500, template, variant)
             ledger.record(warband, LedgerAction.STARTING_GOLD, starting_gold, "Starting Gold")
             if template is not None:
                 copy_rules(warband, template, variant)

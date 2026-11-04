@@ -1,3 +1,4 @@
+import { writtenNumber, type StatKey } from "@/features/catalogue/utils/statblock";
 import { inPlayOnly } from "@/features/reference/in-play";
 
 import type {
@@ -17,6 +18,8 @@ export type TemplateTypeRow = {
   template: WarbandTemplateSummary;
   /** The variant the type always is; "" when the player picks one. */
   variant: string;
+  /** The warband type: a rule for one type shows on its row only. */
+  typeId: number;
 };
 
 /**
@@ -41,16 +44,52 @@ export function typeRows(templates: WarbandTemplateSummary[]): TemplateTypeRow[]
           : type.name,
       template,
       variant: type.variant,
+      typeId: type.id,
     }))
     .sort((a, b) => a.typeName.localeCompare(b.typeName) || a.id.localeCompare(b.id));
 }
 
-/** The rule pills for a variant: every variant's, the variant's own, and a type's own (Ostermark). */
-export function rulesFor(template: WarbandTemplate, variant: string): TemplateRule[] {
-  const keys = new Set(template.variants.map((entry) => entry.key));
+/** The rule pills for a type in a variant: every variant's and the variant's own, every type's and the type's own (the Ostermarkers'). */
+export function rulesFor(
+  template: WarbandTemplate,
+  variant: string,
+  typeId: number
+): TemplateRule[] {
   return template.rules.filter(
-    (rule) => !rule.variant || rule.variant === variant || !keys.has(rule.variant)
+    (rule) =>
+      (!rule.variant || rule.variant === variant) &&
+      (rule.warband_type_id === null || rule.warband_type_id === typeId)
   );
+}
+
+/** The starting gold and most warriors in a variant: its own (Marienburg's 600 gc), else the template's. */
+export function termsFor(
+  template: Pick<WarbandTemplateSummary, "gold" | "most_warriors" | "variants">,
+  variant: string
+) {
+  const own = template.variants.find((entry) => entry.key === variant);
+  return {
+    gold: own?.starting_gold ?? template.gold,
+    mostWarriors: own?.max_models ?? template.most_warriors,
+  };
+}
+
+/** The fighter as the variant has him: its skill table, his profile as written (Middenheim's S4), his most. */
+export function inVariant(fighter: TemplateFighter, variant: string): TemplateFighter {
+  const change = fighter.variant_changes[variant];
+  if (!change) return fighter;
+  const shown = { ...fighter, written_stats: { ...(fighter.written_stats ?? {}) } };
+  for (const [stat, value] of Object.entries(change.stats ?? {}) as [StatKey, number | string][]) {
+    const text = String(value);
+    const number = writtenNumber(text);
+    shown[stat] = number;
+    const rest = number === null ? text : text.slice(String(number).length);
+    if (rest) shown.written_stats[stat] = rest;
+    else delete shown.written_stats[stat];
+  }
+  if (change.skill_types) shown.skill_types = change.skill_types;
+  if (change.max_count !== undefined) shown.max_count = change.max_count;
+  return shown;
 }
 
 /** His skill groups in the variant: its own table where it has one. */

@@ -33,9 +33,30 @@ VARIANTS: dict[str, list[dict[str, str]]] = {
         {"key": "hung", "name": "The Hung", "subfaction": "The Hung", "heading": "The Hung"},
     ],
 }
-# A rule heading that is no variant of the page: the Ostermarkers' rules, kept under their own key (the Ostermarkers
-# pick one of the three skill tables; the report says so)
-RULE_HEADINGS: dict[str, dict[str, str]] = {"mercenaries": {"Ostermark": "ostermark"}}
+# A rule heading that is no variant of the page but one of its warband types (William, 4 Nov 2026: take
+# recommendations): the Ostermarkers' rules are for the ostermarkers type, whichever skill table they pick
+RULE_TYPES: dict[str, dict[str, str]] = {"mercenaries": {"Ostermark": "ostermarkers"}}
+
+# A variant's rule that changes a number, as data (William, 4 Nov 2026: take recommendations). Each fighter's profile
+# change by page, variant and fighter, added to his stat (a written value keeps what follows its number) ...
+VARIANT_STATS: dict[str, dict[str, dict[str, dict[str, int]]]] = {
+    "mercenaries": {
+        "reikland": {"Marksman": {"ballistic_skill": 1}},  # "All Marksmen therefore add +1 to their Ballistic Skill"
+        "middenheim": {"Mercenary Captain": {"strength": 1}, "Champion": {"strength": 1}},  # "Strength 4 instead of 3"
+    },
+    "tileans": {  # "The leadership value of a Remasen captain, champion and young blood are always one point higher"
+        "remas": {"Captain": {"leadership": 1}, "Champion": {"leadership": 1}, "Youngblood": {"leadership": 1}},
+    },
+}
+# ... a fighter's most in a variant (None: any number) ...
+VARIANT_COUNTS: dict[str, dict[str, dict[str, int | None]]] = {
+    "marauders-of-chaos": {"kurgan": {"Warhound of Chaos": None}},  # "any number of Warhounds of Chaos"
+}
+# ... and a variant's own starting gold or most warriors
+VARIANT_TERMS: dict[str, dict[str, dict[str, int]]] = {
+    "mercenaries": {"marienburg": {"starting_gold": 600}},  # "an extra 100 gold crowns (600 in total)"
+    "marauders-of-chaos": {"hung": {"max_models": 12}},  # "The maximum number of warriors in the warband is 12"
+}
 
 # Most warriors where the book gives none; their starting gold reads as 500 gc
 SIZES: dict[str, int] = {
@@ -88,6 +109,9 @@ RACES: dict[str, str | None] = {
     "skaven": "Skaven",
     "bull centaur": "Bull Centaur",
 }
+# Fighters mordheimer gives no race, settled (William, 4 Nov 2026: take recommendations): the Beastmen's Minotaur
+# takes our Minotaur; the Cursed Cavalcade's fighters stay raceless
+RACES_BY_FIGHTER: dict[tuple[str, str], str] = {("beastmen-raiders", "Minotaur"): "Minotaur"}
 # A warband's own maximum is a race of its own, and the Undead warband's Vampire is our Vampire
 RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("skaven-pestilens", "skaven"): "Skaven (Clan Pestilens)",
@@ -265,8 +289,13 @@ SPECIAL_EQUIPMENT_ITEMS: dict[tuple[str, str], str] = {("lustrian-reavers", "Fir
 
 # What the book says that the data can't hold yet: listed in the report until William settles each
 NOT_APPLIED = [
-    "Mercenaries: Middenheim's Captain and Champions start with Strength 4 (its rule's text); their profiles keep"
-    " mordheimer's S3 until it is settled as a variant change.",
-    "Mercenaries: the Ostermarkers pick one of the three cities' skill tables; their own rule is kept under the key"
-    " ostermark, which no variant has, so the Warbands page shows it with every city.",
+    "Applied as data: Reikland's Marksmen BS +1, Middenheim's Mercenary Captain and Champions S +1 (S4), Remas'"
+    " Captain, Champions and Youngbloods Ld +1, Marienburg's 600 gc, the Hung's 12 warriors and the Kurgan's"
+    " any number of warhounds; the Ostermarkers' rules are for their type.",
+    "Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian"
+    " campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen),"
+    " Remas' rout re-roll against Dark Elves, Marienburg's and the Norse' +1 and the Kurgan's -1 to find rare items,"
+    " the Kurgan's bows for heroes and Marauders (10 gc, a line no list of theirs has), the Hung's 40 gc warhorses"
+    " and Ride Warhorse for every hero, and the Ostermarker captain's starting wardog.",
+    "Mercenaries: the Ostermarkers pick one of the three cities' skill tables.",
 ]

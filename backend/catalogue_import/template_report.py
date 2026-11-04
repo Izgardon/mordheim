@@ -163,8 +163,8 @@ def _casters(log: TemplateLog) -> list[str]:
 def _rules(log: TemplateLog) -> list[str]:
     lists = log.lists
     out = ["### Warband rules", "", *NOT_APPLIED]
-    for page, heading, title in lists.rule_only:
-        out.append(f"{page}: {title!r} (heading {heading}) belongs to a type, not a variant: kept under its own key.")
+    for page, heading, title, rule_type in lists.rule_only:
+        out.append(f"{page}: {title!r} (heading {heading}) is for the {rule_type} type only.")
     for page, heading in lists.headings:
         out.append(f"{page}: the heading {heading!r} is no variant; its rule is for every variant.")
     for page, position in lists.untitled:

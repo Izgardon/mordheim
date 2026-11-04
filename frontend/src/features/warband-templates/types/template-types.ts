@@ -1,5 +1,6 @@
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
 import type { CatalogueProfile } from "@/features/reference/profile";
+import type { StatKey } from "@/features/catalogue/utils/statblock";
 
 /** A warband type a template serves, and the variant it always is ("" when the player picks). */
 export type TemplateType = {
@@ -14,7 +15,13 @@ export type TemplateType = {
   in_play: boolean | null;
 };
 
-export type TemplateVariant = { key: string; name: string };
+/** A subfaction, with its own starting gold or most warriors where its rules give them (Marienburg's 600 gc). */
+export type TemplateVariant = {
+  key: string;
+  name: string;
+  starting_gold?: number;
+  max_models?: number;
+};
 
 /** `GET warband-templates/?campaign_id=`: a template and the warband types it serves. */
 export type WarbandTemplateSummary = CatalogueBadgeFields & {
@@ -34,7 +41,14 @@ export type WarbandTemplateSummary = CatalogueBadgeFields & {
   types: TemplateType[];
 };
 
-export type TemplateRule = { id: number; title: string; description: string; variant: string };
+/** A warband rule: for every variant or one (`variant`), and for every type or one (`warband_type_id`). */
+export type TemplateRule = {
+  id: number;
+  title: string;
+  description: string;
+  variant: string;
+  warband_type_id: number | null;
+};
 
 /** Who may take a list line: everyone ({}), heroes, the fighters named, or all but some (by key). */
 export type TemplateWho = { heroes?: boolean; fighters?: string[]; except?: string[] };
@@ -64,6 +78,13 @@ export type TemplateSpecial = { id: number; name: string; kind: string; descript
 
 export type TemplateSpellType = { name: string; note: string };
 
+/** What a variant changes on a fighter: Middenheim's skill table and Strength 4, the Kurgan's any warhounds. */
+export type VariantChange = {
+  skill_types?: string[];
+  stats?: Partial<Record<StatKey, number | string>>;
+  max_count?: number | null;
+};
+
 export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
   id: number;
   key: string;
@@ -85,8 +106,8 @@ export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
   is_leader: boolean;
   caster: string;
   large: boolean;
-  /** By variant key: what differs from the first variant's (its skill groups). */
-  variant_changes: Record<string, { skill_types?: string[] }>;
+  /** By variant key: what differs from the first variant's (its skill groups, profile as written, most). */
+  variant_changes: Record<string, VariantChange>;
   fixed_kit: string;
   /** The keys of the lists he buys from. */
   lists: string[];

@@ -87,7 +87,10 @@ def template(**fields: Any) -> dict[str, Any]:
         "max_models": 15,
         "variants": [{"key": "reikland", "name": "Reikland"}],
         "types": [{"type": "reiklanders", "variant": "reikland"}],
-        "rules": [{"title": "Hard Bargains", "description": "Haggle.", "variant": ""}],
+        "rules": [
+            {"title": "Hard Bargains", "description": "Haggle.", "variant": "", "type": ""},
+            {"title": "Reiklander rules", "description": "Drilled.", "variant": "", "type": "reiklanders"},
+        ],
         "lists": [{"key": "kit", "name": "Kit", "note": "", "lines": [line]}],
         "fighters": [fighter()],
         "upgrades": [
@@ -137,7 +140,10 @@ class SeedWarbandTemplatesTests(TestCase):
         self.assertEqual(
             list(made.type_links.values_list("warband_type_id", "variant")), [(self.reiklanders.id, "reikland")]
         )
-        self.assertEqual(list(made.rules.values_list("title", "variant")), [("Hard Bargains", "")])
+        self.assertEqual(
+            list(made.rules.values_list("title", "variant", "warband_type_id")),
+            [("Hard Bargains", "", None), ("Reiklander rules", "", self.reiklanders.id)],
+        )
         line = TemplateListItem.objects.get(equipment_list__template=made)
         self.assertEqual(
             (line.item_id, line.shown_as, line.first_free, line.who),

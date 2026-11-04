@@ -14,13 +14,14 @@ from django.db.models import Exists, F, OuterRef, Q, QuerySet, Subquery
 from apps.core.models import CatalogueRemoval
 from apps.warbands.models import Warband
 from apps.warbands.models.shared import STAT_FIELDS
+from apps.warbands.utils.stats import read_stat
 
 from ..models import TemplateFighter, TemplateRule, WarbandTemplate, WarbandTemplateType
 
 KIND = "warband_templates"  # the catalogue kind's key (apps/core/catalogue/kinds.py)
 # what a variant may change on a fighter (`variant_changes`): his skill groups, spell lores, profile or group size
 VARIANT_FIELDS = frozenset(
-    {"skill_types", "spell_types", "cost", "starting_xp", "group_min", "group_max", *STAT_FIELDS, "written_stats"}
+    {"skill_types", "spell_types", "cost", "starting_xp", "max_count", "group_min", "group_max", "stats"}
 )
 
 
@@ -64,9 +65,26 @@ def variant_keys(template: WarbandTemplate) -> list[str]:
     return [str(entry.get("key")) for entry in template.variants or [] if entry.get("key")]
 
 
-def variant_rules(rules: Iterable[TemplateRule], variant: str) -> list[TemplateRule]:
-    """The template's rules for a variant, in the book's order: those for every variant and the variant's own."""
-    return [rule for rule in rules if rule.variant in ("", variant)]
+def _variant_entry(template: WarbandTemplate, variant: str) -> Mapping[str, Any]:
+    return next((entry for entry in template.variants or [] if variant and entry.get("key") == variant), {})
+
+
+def template_gold(template: WarbandTemplate, variant: str) -> int:
+    """The starting gold the template gives in a variant: the variant's own (Marienburg's 600), else the book's."""
+    gold = _variant_entry(template, variant).get("starting_gold")
+    return int(gold) if gold is not None else template.gold
+
+
+def template_size(template: WarbandTemplate, variant: str) -> int:
+    """The most warriors in a variant: the variant's own (the Hung's 12), else the book's."""
+    size = _variant_entry(template, variant).get("max_models")
+    return int(size) if size is not None else template.most_warriors
+
+
+def variant_rules(rules: Iterable[TemplateRule], variant: str, warband_type_id: int | None) -> list[TemplateRule]:
+    """The template's rules for a warband of the type in a variant, in the book's order: those for every variant
+    and the variant's own, for every type the template serves and the type's own (the Ostermarkers')."""
+    return [rule for rule in rules if rule.variant in ("", variant) and rule.warband_type_id in (None, warband_type_id)]
 
 
 def variant_changes(fighter: TemplateFighter, variant: str) -> Mapping[str, Any]:
@@ -76,7 +94,20 @@ def variant_changes(fighter: TemplateFighter, variant: str) -> Mapping[str, Any]
 
 
 def apply_variant(fighter: TemplateFighter, variant: str) -> TemplateFighter:
-    """The fighter (in memory, never saved) as the variant has him: Middenheim's Champions' skill groups."""
+    """The fighter (in memory, never saved) as the variant has him: Middenheim's Champions' skill groups and
+    Strength 4. A changed stat is read as written ("1(2)"), so its written value follows it."""
     for field, value in variant_changes(fighter, variant).items():
-        setattr(fighter, field, value)
+        if field == "stats":
+            written = dict(fighter.written_stats or {})
+            for stat, shown in dict(value).items():
+                if stat not in STAT_FIELDS:
+                    continue
+                read = read_stat(shown)
+                setattr(fighter, stat, read.number)
+                written.pop(stat, None)
+                if read.written:
+                    written[stat] = read.written
+            fighter.written_stats = written
+        else:
+            setattr(fighter, field, value)
     return fighter

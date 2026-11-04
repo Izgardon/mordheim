@@ -11,7 +11,7 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useWarbandTemplates } from "../api/template-queries";
 import TemplateDetail from "../components/TemplateDetail";
-import { typeRows } from "../template-view";
+import { termsFor, typeRows } from "../template-view";
 
 const counted = (count: number) => `${count} warband type${count === 1 ? "" : "s"}`;
 
@@ -74,7 +74,7 @@ export default function WarbandTemplates() {
             sub={row.template.name === row.typeName ? undefined : row.template.name}
             aside={
               <span className="font-mono text-[13px] font-bold text-ink">
-                {row.template.gold} gc
+                {termsFor(row.template, row.variant).gold} gc
               </span>
             }
             cells={
@@ -82,10 +82,10 @@ export default function WarbandTemplates() {
                 ? undefined
                 : [
                     <span key="gold" className="font-mono">
-                      {row.template.gold} gc
+                      {termsFor(row.template, row.variant).gold} gc
                     </span>,
                     <span key="size" className="font-mono">
-                      {row.template.most_warriors}
+                      {termsFor(row.template, row.variant).mostWarriors}
                     </span>,
                   ]
             }
@@ -94,6 +94,7 @@ export default function WarbandTemplates() {
               campaignId={campaignId}
               templateId={row.template.id}
               preset={row.variant}
+              typeId={row.typeId}
               isMobile={isMobile}
             />
           </ReferenceRow>

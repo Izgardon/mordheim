@@ -9,9 +9,15 @@ from apps.core.catalogue import versions
 from apps.core.catalogue.kinds import WARBAND_TEMPLATES
 from apps.core.models import CatalogueRemoval
 from apps.items.tests.catalogue_support import CatalogueTestCase
-from apps.warband_templates.models import WarbandTemplate, WarbandTemplateType
+from apps.warband_templates.models import TemplateRule, WarbandTemplate, WarbandTemplateType
 from apps.warband_templates.services.list_prices import list_prices_open
-from apps.warband_templates.services.resolve import apply_variant, template_for_type, variant_rules
+from apps.warband_templates.services.resolve import (
+    apply_variant,
+    template_for_type,
+    template_gold,
+    template_size,
+    variant_rules,
+)
 from apps.warbands.models import WarbandType
 
 from .support import Made, make_template
@@ -64,16 +70,41 @@ class TemplateForTypeTests(CatalogueTestCase):
         self.assertIsNone(template_for_type(self.campaign.id, self.warband.warband_type_id))
         self.assertIsNone(template_for_type(self.campaign.id, None))
 
-    def test_a_variant_picks_its_rules_and_changes_its_fighters(self) -> None:
-        rules = self.made.template.rules.all()
-        self.assertEqual([rule.title for rule in variant_rules(rules, "")], ["Hard Bargains"])
-        self.assertEqual([rule.title for rule in variant_rules(rules, "reikland")], ["Hard Bargains", "Marksmen"])
+    def test_a_variant_and_a_type_pick_their_rules_and_a_variant_changes_its_fighters(self) -> None:
+        ostermarkers = WarbandType.objects.create(name="Ostermarkers", slug="ostermarkers")
+        TemplateRule.objects.create(template=self.made.template, position=2, title="Wardogs", warband_type=ostermarkers)
+        rules = list(self.made.template.rules.all())
+        type_id = self.mercenaries.id
+        self.assertEqual([rule.title for rule in variant_rules(rules, "", type_id)], ["Hard Bargains"])
+        self.assertEqual(
+            [rule.title for rule in variant_rules(rules, "reikland", type_id)], ["Hard Bargains", "Marksmen"]
+        )
+        self.assertEqual(
+            [rule.title for rule in variant_rules(rules, "", ostermarkers.id)], ["Hard Bargains", "Wardogs"]
+        )
         captain = self.made.captain
         captain.skill_types = ["Combat", "Shooting"]
         captain.variant_changes = {"middenheim": {"skill_types": ["Combat", "Strength"], "name": "Not changed"}}
         self.assertEqual(apply_variant(captain, "reikland").skill_types, ["Combat", "Shooting"])
         changed = apply_variant(captain, "middenheim")
         self.assertEqual((changed.skill_types, changed.name), (["Combat", "Strength"], "Captain"))
+
+    def test_a_variant_changes_numbers_as_written_and_gives_its_own_gold_and_size(self) -> None:
+        captain = self.made.captain
+        captain.written_stats = {"attacks": "(2)", "movement": "D6"}
+        captain.variant_changes = {
+            "middenheim": {"stats": {"strength": 4, "attacks": "2(2)", "movement": 5}, "max_count": None}
+        }
+        changed = apply_variant(captain, "middenheim")
+        self.assertEqual((changed.strength, changed.attacks, changed.movement, changed.max_count), (4, 2, 5, None))
+        self.assertEqual(changed.written_stats, {"attacks": "(2)"})
+        template = self.made.template
+        template.variants = [
+            {"key": "reikland", "name": "Reikland"},
+            {"key": "hung", "starting_gold": 600, "max_models": 12},
+        ]
+        self.assertEqual((template_gold(template, "hung"), template_size(template, "hung")), (600, 12))
+        self.assertEqual((template_gold(template, "reikland"), template_size(template, "")), (500, 15))
 
 
 class ListPricesTests(CatalogueTestCase):

@@ -10,7 +10,7 @@ from typing import Any
 from catalogue_import.common import load_json, slugify
 from catalogue_import.snapshot import Snapshot
 from catalogue_import.sources import BACKEND
-from catalogue_import.template_answers import SIZES, TEMPLATE_TYPES, VARIANTS
+from catalogue_import.template_answers import SIZES, TEMPLATE_TYPES, VARIANT_TERMS, VARIANTS
 from catalogue_import.template_fighters import FighterLog, Lores, build_fighter
 from catalogue_import.template_lists import ItemIndex
 from catalogue_import.template_parts import ListLog, build_lists, build_rules, build_upgrades
@@ -95,7 +95,10 @@ def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: 
         "link_url": context["urls"].get(types[0]["type"]) or snapshot.manifest.get(slug, ""),
         "starting_gold": book.get("startingGc"),
         "max_models": book.get("maxModels") or SIZES.get(slug),
-        "variants": [{"key": variant["key"], "name": variant["name"]} for variant in variants],
+        "variants": [
+            {"key": variant["key"], "name": variant["name"], **VARIANT_TERMS.get(slug, {}).get(variant["key"], {})}
+            for variant in variants
+        ],
         "types": types,
         "rules": rules,
         "lists": lists,

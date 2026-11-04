@@ -154,7 +154,15 @@ def write_template(entry: Mapping[str, Any], book: BookRows) -> WarbandTemplate:
         for row in entry["types"]
     )
     TemplateRule.objects.bulk_create(
-        TemplateRule(template=template, position=n, **rule) for n, rule in enumerate(entry["rules"])
+        TemplateRule(
+            template=template,
+            position=n,
+            title=rule["title"],
+            description=rule["description"],
+            variant=rule["variant"],
+            warband_type_id=book.warband_type(rule["type"], name) if rule.get("type") else None,
+        )
+        for n, rule in enumerate(entry["rules"])
     )
     lists = write_lists(template, entry["lists"], book)
     write_fighters(template, entry["fighters"], lists, book)

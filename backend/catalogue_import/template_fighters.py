@@ -13,10 +13,13 @@ from catalogue_import.template_answers import (
     LORES,
     MAGIC_WARBANDS,
     RACES,
+    RACES_BY_FIGHTER,
     RACES_BY_PAGE,
     SPECIAL_ADDED,
     SPECIAL_GROUPS,
     SPECIAL_GROUPS_BY_FIGHTER,
+    VARIANT_COUNTS,
+    VARIANT_STATS,
 )
 from catalogue_import.template_lists import plain
 from catalogue_import.template_text import clean_rule, clean_title
@@ -76,8 +79,9 @@ def profile(page: str, fighter: dict[str, Any], log: FighterLog) -> dict[str, in
 def race_of(page: str, fighter: dict[str, Any], races: set[str], log: FighterLog) -> str | None:
     """Our race for his: a warband's own maximum where it has one, None for a creature or where none fits."""
     raw = norm_name(fighter.get("race") or "")
-    name = RACES_BY_PAGE.get((page, raw)) or RACES.get(raw)
-    if raw in CREATURES:
+    named = RACES_BY_FIGHTER.get((page, plain(fighter["name"])))
+    name = named or RACES_BY_PAGE.get((page, raw)) or RACES.get(raw)
+    if raw in CREATURES and named is None:
         log.creatures.append((page, fighter["name"], raw))
         return None
     if name is None:
@@ -178,6 +182,27 @@ def rules(fighter: dict[str, Any], owner: str) -> tuple[list[dict[str, str]], bo
     return specials, leader, large
 
 
+def _plus(value: int | str, amount: int) -> int | str:
+    """A stat as written, its number raised by `amount` ("1(2)" and 1: "2(2)"); text with no number stays."""
+    if isinstance(value, int):
+        return value + amount
+    text = str(value)
+    digits = len(text) - len(text.lstrip("0123456789"))
+    return f"{int(text[:digits]) + amount}{text[digits:]}" if digits else text
+
+
+def variant_numbers(page: str, name: str, stats: dict[str, int | str], changes: dict[str, Any]) -> None:
+    """A variant's numbers for the fighter, into his `variant_changes`: his profile as the variant has it
+    (VARIANT_STATS, `stats` written as the book writes them) and his most (VARIANT_COUNTS)."""
+    for variant, fighters in VARIANT_STATS.get(page, {}).items():
+        if name in fighters:
+            raised = {stat: _plus(stats[stat], amount) for stat, amount in fighters[name].items()}
+            changes.setdefault(variant, {})["stats"] = raised
+    for variant, counts in VARIANT_COUNTS.get(page, {}).items():
+        if name in counts:
+            changes.setdefault(variant, {})["max_count"] = counts[name]
+
+
 def build_fighter(
     page: str, fighter: dict[str, Any], context: dict[str, Any], lists: list[str], log: FighterLog
 ) -> dict[str, Any]:
@@ -186,6 +211,8 @@ def build_fighter(
     lores = context["lores"].of(page, fighter["name"])
     specials, leader, large = rules(fighter, context["owner"])
     base, changes = skill_types(page, fighter, context["variants"], log)
+    stats = profile(page, fighter, log)
+    variant_numbers(page, plain(fighter["name"]), stats, changes)
     caster = ("Priest" if all("Prayers" in lore["name"] for lore in lores) else "Wizard") if lores else "No"
     if lores:
         log.casters.append((page, fighter["name"], caster, [lore["name"] for lore in lores]))
@@ -202,7 +229,7 @@ def build_fighter(
         "max_count": fighter.get("maxQty"),
         "group_min": None if hero else group.get("min"),
         "group_max": None if hero else group.get("max"),
-        "stats": profile(page, fighter, log),
+        "stats": stats,
         "skill_types": base,
         "spell_types": lores,
         "gains_xp": hero or fighter.get("gainExp") is not False,

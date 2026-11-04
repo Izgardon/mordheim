@@ -3,10 +3,12 @@ import { describe, expect, it } from "vitest";
 import {
   countLabel,
   groupLabel,
+  inVariant,
   lineName,
   priceLabel,
   rulesFor,
   skillsFor,
+  termsFor,
   typeRows,
   whoLabel,
 } from "./template-view";
@@ -123,19 +125,60 @@ describe("a list line's labels", () => {
 
 describe("rulesFor", () => {
   it("is every variant's rules, the variant's own and a type's own", () => {
-    const rule = (id: number, variant: string) => ({
+    const rule = (id: number, variant: string, typeId: number | null = null) => ({
       id,
       title: `Rule ${id}`,
       description: "",
       variant,
+      warband_type_id: typeId,
     });
     const template = {
       variants: [
         { key: "reikland", name: "Reikland" },
         { key: "middenheim", name: "Middenheim" },
       ],
-      rules: [rule(1, ""), rule(2, "reikland"), rule(3, "middenheim"), rule(4, "ostermark")],
+      rules: [rule(1, ""), rule(2, "reikland"), rule(3, "middenheim"), rule(4, "", 12)],
     } as unknown as WarbandTemplate;
-    expect(rulesFor(template, "middenheim").map((entry) => entry.id)).toEqual([1, 3, 4]);
+    expect(rulesFor(template, "middenheim", 11).map((entry) => entry.id)).toEqual([1, 3]);
+    expect(rulesFor(template, "", 12).map((entry) => entry.id)).toEqual([1, 4]);
+  });
+});
+
+describe("a variant's numbers", () => {
+  it("are its own gold and size, else the template's", () => {
+    const template = {
+      gold: 500,
+      most_warriors: 15,
+      variants: [
+        { key: "reikland", name: "Reikland" },
+        { key: "marienburg", name: "Marienburg", starting_gold: 600, max_models: 12 },
+      ],
+    };
+    expect(termsFor(template, "marienburg")).toEqual({ gold: 600, mostWarriors: 12 });
+    expect(termsFor(template, "reikland")).toEqual({ gold: 500, mostWarriors: 15 });
+  });
+
+  it("change his profile as written, his skills and his most", () => {
+    const champion = {
+      strength: 3,
+      attacks: 1,
+      movement: null,
+      max_count: 2,
+      skill_types: ["Combat"],
+      written_stats: { attacks: "(2)", movement: "D6" },
+      variant_changes: {
+        middenheim: {
+          skill_types: ["Strength"],
+          stats: { strength: 4, attacks: "2(2)", movement: 5 },
+        },
+        kurgan: { max_count: null },
+      },
+    } as unknown as TemplateFighter;
+    const middenheim = inVariant(champion, "middenheim");
+    expect([middenheim.strength, middenheim.attacks, middenheim.movement]).toEqual([4, 2, 5]);
+    expect(middenheim.written_stats).toEqual({ attacks: "(2)" });
+    expect(middenheim.skill_types).toEqual(["Strength"]);
+    expect(inVariant(champion, "kurgan").max_count).toBeNull();
+    expect(inVariant(champion, "reikland")).toBe(champion);
   });
 });

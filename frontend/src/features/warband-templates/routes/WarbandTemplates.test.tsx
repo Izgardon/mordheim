@@ -63,7 +63,7 @@ const MERCENARIES: WarbandTemplate = {
   most_warriors: 15,
   variants: [
     { key: "reikland", name: "Reikland" },
-    { key: "middenheim", name: "Middenheim" },
+    { key: "middenheim", name: "Middenheim", starting_gold: 600 },
   ],
   source: "Mordheim Rulebook",
   link_url: "",
@@ -79,13 +79,16 @@ const MERCENARIES: WarbandTemplate = {
       title: "Reiklander Special rules",
       description: "Marksmen +1 BS.",
       variant: "reikland",
+      warband_type_id: null,
     },
     {
       id: 2,
       title: "Middenheimer Special rules",
       description: "S4 heroes.",
       variant: "middenheim",
+      warband_type_id: null,
     },
+    { id: 3, title: "Reiklander drill", description: "Drill.", variant: "", warband_type_id: 10 },
   ],
   lists: [
     {
@@ -179,8 +182,9 @@ afterEach(() => {
 describe("The Warbands page", () => {
   it("is a row per warband type in play with a template", async () => {
     renderApp(PAGE);
-    expect(await row("Middenheimers")).toHaveTextContent("MiddenheimersMercenaries500 gc15");
-    expect(await row("Reiklanders")).toBeInTheDocument();
+    // a variant's own starting gold (Marienburg's 600 gc in the book)
+    expect(await row("Middenheimers")).toHaveTextContent("MiddenheimersMercenaries600 gc15");
+    expect(await row("Reiklanders")).toHaveTextContent("ReiklandersMercenaries500 gc15");
     expect(
       screen.queryByRole("button", { name: (label) => label.startsWith("Ostermarkers") })
     ).toBeNull();
@@ -202,6 +206,7 @@ describe("The Warbands page", () => {
     );
     expect(screen.getByRole("button", { name: "Middenheimer Special rules" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Reiklander Special rules" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Reiklander drill" })).toBeNull(); // the Reiklanders' own
 
     await user.click(screen.getByRole("button", { name: "Reikland" }));
     expect(tags("Skills")).toBe("SkillsCombatShootingStrength");

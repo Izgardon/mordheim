@@ -83,7 +83,7 @@ class WarbandTemplateSerializer(serializers.ModelSerializer):
 class TemplateRuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplateRule
-        fields = ("id", "title", "description", "variant")
+        fields = ("id", "title", "description", "variant", "warband_type_id")
 
 
 class TemplateSpecialSerializer(serializers.Serializer):

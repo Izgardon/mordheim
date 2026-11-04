@@ -497,7 +497,6 @@ Fighters with no race:
 | Page | Fighter | mordheimer's race |
 | --- | --- | --- |
 | beastmen-raiders | Warhounds of Chaos |  |
-| beastmen-raiders | Minotaur |  |
 | carnival-of-chaos | Brute | mutant |
 | carnival-of-chaos | Tainted One | mutant |
 | cursed-cavalcade | Aristocrat |  |
@@ -590,7 +589,8 @@ mordheimer's lore names that differ from ours: Charms & Hexes -> Charms and Hexe
 
 ### Warband rules
 
-- Mercenaries: Middenheim's Captain and Champions start with Strength 4 (its rule's text); their profiles keep mordheimer's S3 until it is settled as a variant change.
-- Mercenaries: the Ostermarkers pick one of the three cities' skill tables; their own rule is kept under the key ostermark, which no variant has, so the Warbands page shows it with every city.
-- mercenaries: 'Ostermarker Special rules' (heading Ostermark) belongs to a type, not a variant: kept under its own key.
+- Applied as data: Reikland's Marksmen BS +1, Middenheim's Mercenary Captain and Champions S +1 (S4), Remas' Captain, Champions and Youngbloods Ld +1, Marienburg's 600 gc, the Hung's 12 warriors and the Kurgan's any number of warhounds; the Ostermarkers' rules are for their type.
+- Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen), Remas' rout re-roll against Dark Elves, Marienburg's and the Norse' +1 and the Kurgan's -1 to find rare items, the Kurgan's bows for heroes and Marauders (10 gc, a line no list of theirs has), the Hung's 40 gc warhorses and Ride Warhorse for every hero, and the Ostermarker captain's starting wardog.
+- Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
+- mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
 - A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); carnival-of-chaos: Immune to Psychology (Plague Cart); carnival-of-chaos: Stream of Corruption (Blessings of Nurgle); carnival-of-chaos: Cloud of Flies (Blessings of Nurgle); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); marauders-of-chaos: Fear (Spawn of Chaos); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); the-restless-dead: Cause Fear (Grave Guard); the-restless-dead: Cause Fear (Scarecrow); the-restless-dead: Immune to Psychology (Scarecrow); the-restless-dead: Immune to Poison (Scarecrow); the-restless-dead: No Pain (Scarecrow); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); undead: Cause Fear (Ghouls); undead: Immune to Psychology (Dire wolves); undead: Immune to Psychology (Zombies); undead: No Pain (Zombies).

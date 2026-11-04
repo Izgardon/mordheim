@@ -10,8 +10,8 @@ from catalogue_import.common import loose_key, slugify
 from catalogue_import.template_answers import (
     PIT_FIGHTER_LISTS,
     PIT_FIGHTERS,
-    RULE_HEADINGS,
     RULE_TITLES,
+    RULE_TYPES,
     SPECIAL_EQUIPMENT_ITEMS,
     STYLE_NOTES,
     STYLES_AFTER,
@@ -33,7 +33,9 @@ class ListLog:
     markers: int = 0  # notes that were an errata or FAQ marker only, dropped
     shown_as: int = 0
     headings: list[tuple[str, str]] = field(default_factory=list)  # page, a rule heading matching nothing
-    rule_only: list[tuple[str, str, str]] = field(default_factory=list)  # page, heading, title: a type's rule
+    rule_only: list[tuple[str, str, str, str]] = field(
+        default_factory=list
+    )  # page, heading, title, type: a type's rule
     untitled: list[tuple[str, int]] = field(default_factory=list)
 
 
@@ -185,28 +187,30 @@ def _style_notes(page: dict[str, Any]) -> list[dict[str, str]]:
             f"{plain(entry['name']).capitalize()}, {entry['cost']['cost']} gc: {plain(entry.get('loadout')).replace('; ', ', ')}"
             for entry in raw_lists[list_id]["items"]
         ]
-        notes.append({"title": title, "description": "\n".join(lines), "variant": ""})
+        notes.append({"title": title, "description": "\n".join(lines), "variant": "", "type": ""})
     return notes
 
 
 def build_rules(slug: str, page: dict[str, Any], variants: list[dict[str, str]], log: ListLog) -> list[dict[str, str]]:
-    """The warband rules in the book's order, each for every variant or for its heading's; the untitled take
-    William's titles, or their variant's name."""
-    headings = {variant["heading"]: variant["key"] for variant in variants} | RULE_HEADINGS.get(slug, {})
+    """The warband rules in the book's order, each for every variant or for its heading's, and for every type or for
+    its heading's (the Ostermarkers'); the untitled take William's titles, or their variant's name."""
+    headings = {variant["heading"]: variant["key"] for variant in variants}
+    types = RULE_TYPES.get(slug, {})
     names = {variant["key"]: variant["name"] for variant in variants}
     rules = []
     for position, raw in enumerate(page.get("specialRules") or []):
         heading = plain(raw.get("heading"))
-        variant = headings.get(heading, "")
-        if heading and heading not in headings:
+        variant, rule_type = headings.get(heading, ""), types.get(heading, "")
+        if heading and heading not in headings and not rule_type:
             log.headings.append((slug, heading))
         title = clean_title(raw.get("rulename")) or RULE_TITLES.get((slug, position)) or names.get(variant, "")
         if not title:
             log.untitled.append((slug, position))
             title = f"Rule {position + 1}"
-        if heading in RULE_HEADINGS.get(slug, {}):
-            log.rule_only.append((slug, heading, title))
-        rules.append({"title": title, "description": clean_rule(raw.get("ruleFull")), "variant": variant})
+        if rule_type:
+            log.rule_only.append((slug, heading, title, rule_type))
+        description = clean_rule(raw.get("ruleFull"))
+        rules.append({"title": title, "description": description, "variant": variant, "type": rule_type})
         if slug == PIT_FIGHTERS and title == STYLES_AFTER:
             rules += _style_notes(page)
     return rules
@@ -228,7 +232,7 @@ def build_upgrades(page: dict[str, Any], owner: str) -> tuple[list[dict[str, Any
         name = clean_title(group.get("mutationName"))
         text = clean_rule(group.get("mutationflavour"))
         if text:
-            rules.append({"title": name, "description": text, "variant": ""})
+            rules.append({"title": name, "description": text, "variant": "", "type": ""})
         for entry in group.get("items") or []:
             heading = clean_title(entry.get("heading"))
             heading = string.capwords(heading) if heading == heading.lower() else heading

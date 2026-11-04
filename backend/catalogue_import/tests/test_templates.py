@@ -6,7 +6,14 @@ from typing import Any
 
 from django.test import SimpleTestCase
 
-from catalogue_import.template_fighters import FighterLog, build_fighter, profile, skill_types
+from catalogue_import.template_fighters import (
+    FighterLog,
+    build_fighter,
+    profile,
+    race_of,
+    skill_types,
+    variant_numbers,
+)
 from catalogue_import.template_lists import Fighter, ItemIndex, line_price, read_note
 from catalogue_import.template_parts import ListLog, build_lists, build_rules, build_upgrades
 from catalogue_import.template_text import clean_rule, clean_title
@@ -184,6 +191,24 @@ class FighterTests(SimpleTestCase):
         self.assertEqual(skill_types("imperial-outriders", knight, [], log)[0], ["Combat"])
         self.assertEqual(log.no_special_group, [("imperial-outriders", "Knight")])
 
+    def test_a_variants_numbers_change_his_profile_as_written_and_his_most(self) -> None:
+        changes: dict[str, Any] = {"middenheim": {"skill_types": ["Combat"]}}
+        variant_numbers("mercenaries", "Champion", {"strength": 3, "ballistic_skill": 3}, changes)
+        self.assertEqual(changes, {"middenheim": {"skill_types": ["Combat"], "stats": {"strength": 4}}})
+        written: dict[str, Any] = {}
+        variant_numbers("tileans", "Captain", {"leadership": "8(9)"}, written)
+        self.assertEqual(written, {"remas": {"stats": {"leadership": "9(9)"}}})
+        hounds: dict[str, Any] = {}
+        variant_numbers("marauders-of-chaos", "Warhound of Chaos", {}, hounds)
+        self.assertEqual(hounds, {"kurgan": {"max_count": None}})
+
+    def test_the_beastmens_minotaur_takes_our_minotaur(self) -> None:
+        log = FighterLog()
+        minotaur = {"name": "Minotaur", "race": ""}
+        self.assertEqual(race_of("beastmen-raiders", minotaur, {"Minotaur"}, log), "Minotaur")
+        self.assertIsNone(race_of("cursed-cavalcade", {"name": "Aristocrat", "race": ""}, set(), log))
+        self.assertEqual(log.no_race, [("cursed-cavalcade", "Aristocrat", "")])
+
     def test_only_the_first_of_several_profiles_is_kept(self) -> None:
         log = FighterLog()
         cart = {"name": "Plague Cart", "statblock": [{"title": "Cart", "m": "-", "t": 8}, {"title": "Wheel", "t": 6}]}
@@ -203,14 +228,14 @@ class PartsTests(SimpleTestCase):
         log = ListLog()
         rules = build_rules("mercenaries", page, VARIANTS, log)
         self.assertEqual(
-            [(rule["title"], rule["variant"]) for rule in rules],
+            [(rule["title"], rule["variant"], rule["type"]) for rule in rules],
             [
-                ("Middenheimer Special rules", "middenheim"),
-                ("Ostermarker Special rules", "ostermark"),
-                ("Hard Head", ""),
+                ("Middenheimer Special rules", "middenheim", ""),
+                ("Ostermarker Special rules", "", "ostermarkers"),
+                ("Hard Head", "", ""),
             ],
         )
-        self.assertEqual(log.rule_only, [("mercenaries", "Ostermark", "Ostermarker Special rules")])
+        self.assertEqual(log.rule_only, [("mercenaries", "Ostermark", "Ostermarker Special rules", "ostermarkers")])
         untitled = build_rules(
             "bretonnian", warband_page(specialRules=[{"rulename": "", "ruleFull": "Pray."}]), [], log
         )
@@ -253,4 +278,6 @@ class PartsTests(SimpleTestCase):
                 }
             ],
         )
-        self.assertEqual(rules, [{"title": "Mutations", "description": "Bought when recruited.", "variant": ""}])
+        self.assertEqual(
+            rules, [{"title": "Mutations", "description": "Bought when recruited.", "variant": "", "type": ""}]
+        )

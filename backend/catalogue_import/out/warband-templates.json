@@ -18,22 +18,26 @@
       {
         "title": "Isolationists",
         "description": "The Amazons are constantly battling against the predations of the Lizardmen and greedy treasure-seeking Norse. Amazon culture reflects their dislike and distrust of outsiders and in battle they are particularly savage. Amazons get to re-roll any attack rolls that miss in the first round of combat against Lizardmen and Norse.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Sacrifice",
         "description": "The Amazons are quick to sacrifice any captive to their gods. The Amazons follow the rules for Possessed in the Rulebook when it comes to captives. lf an Amazon Warband captures a Lizardman, they may sacrifice him as normal, plus get a free Skins and Charms.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Norse Enmity",
         "description": "When facing a Norse Warband an Amazon Warband will fight to the death. The Amazons can re-roll their first failed Rout against the Norse. Remember you can't re-roll a failed re-roll. In addition, Amazons can never choose to voluntarily rout when facing a Norse warband unless their Warband Leader has been taken Out of Action.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Not one of us",
         "description": "Due to the Amazons' isolationism and suspicions about other races they never side with anyone else. For this reason, the Amazons may not have any Hired Swords or Dramatis Personae unless they are Amazons themselves.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -793,12 +797,14 @@
       {
         "title": "Sacrifice",
         "description": "The Amazons are quick to sacrifice any captive to their gods. The Amazons follow the rules for Possessed in the Rulebook when it comes to captives.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Not one of us",
         "description": "Due to the Amazons’ isolationism and suspicions about other races they never side with anyone else. For this reason, the Amazons may not have any Hired Swords or Dramatis Personae unless they are actually Amazons themselves.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -1465,7 +1471,8 @@
       {
         "title": "Hate Undead",
         "description": "The men of Araby have suffered heavily at the hands (or should that be claws!) of the Tomb King’s armies in the Land of the Dead. Therefore, Araby Nomad Heroes hate all Undead.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -3014,17 +3021,20 @@
       {
         "title": "Strictures",
         "description": "A stringent regime of meditation is used by monks. Their faith is supported by a notion that the skin of one's body is armour in itself. Dragon Monks and Warrior Monks never wear any kind of armour.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Distaste for Poison",
         "description": "The use of poisons and various drugs is a speciality for dishonorable warriors who would stoop to such ends. Dragon Monks and Warrior Monks frown on this and may never use any kind of poison or venom.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Outsiders",
         "description": "Foreigners are generally considered unwelcome by the border guards of Cathay. The Battle Monks warband may never hire any sort of Hired Sword or Dramatis Personae unless specifically stated with the Hired sword/Dramatis Personae.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -3695,7 +3705,8 @@
       {
         "title": "Animals",
         "description": "Beastmen are fearsome creatures of Chaos that do not interact with other races other than in war. A Beastmen warband may never hire any Hired Swords unless specifically stated with the Hired Sword.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -4276,7 +4287,7 @@
         "kind": "henchman",
         "name": "Minotaur",
         "plural": "Minotaurs",
-        "race": null,
+        "race": "Minotaur",
         "cost": 200,
         "starting_xp": 0,
         "min_count": 0,
@@ -4350,22 +4361,26 @@
       {
         "title": "Hard to Kill",
         "description": "Like their uncorrupted brethren, Chaos Dwarfs are tough, resilient individuals who can only be taken out of action on a roll of 6 instead of 5-6 when rolling on the Injury chart. Treat a roll of 1-2 as knocked down, 3-5 as stunned, and 6 as out of action.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hard Head",
         "description": "Chaos Dwarfs ignore the special rules for clubs, maces, etc. They too are not easy to knock out!",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Armour",
         "description": "Chaos Dwarfs never suffer movement penalties for wearing armour.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hired Swords",
         "description": "A Chaos Dwarf warband may hire the following Hired Swords: Ogre Bodyguard, Pit Fighter, Warlock, Imperial Assassin, and Hobgoblin Scout. They may hire any Hired Sword described as all may hire, or allowed by Orc warbands and Chaos warbands. They may never hire Elves of any sort!",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -5030,17 +5045,20 @@
       {
         "title": "Let the goons do the work",
         "description": "Black Orcs rely on themselves to do the killing and do not ride mounts of any kind. Only normal Orcs may ride a boar or other such mount.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Da Boss is Dead!",
         "description": "If the Boss should be killed a Black Orc will always assume leadership of the warband before any other type, irrespective of relative experience. The replacement will automatically acquire the \"Oi Behave!\" skill.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Animosity",
         "description": "Orcs and Goblins enjoy nothing more than a good scrap, unfortunately they’re not always very discerning about who they scrap with! To represent this, at the start of the Orc player’s turn, roll a D6 for each Henchman who is either an Orc or a Goblin. A roll of 1 means that the warrior has taken offense to something one of his mates has done or said. Do not roll for models that are engaged in hand-to-hand combat (they’re already scrappin’!). To find out just how offended the model is, roll another D6 and consult the following chart to see what happens:\n\nD6 | Result\n1 | “I ’Erd Dat!”\nThe warrior decides that the nearest friendly Orc or Goblin Henchman has insulted his lineage or personal hygiene and must pay the price!\nIf there is a friendly Orc or Goblin Henchman or Hired Sword within charge reach (if there are multiple targets within reach, choose the one nearest to the mad model), the offended warrior will immediately charge and fight a round of hand-to-hand combat against the source of his ire. At the end of this round of combat, the models will immediately move 1\" apart and no longer count as being in close combat (unless one of them fails another Animosity test and rolls this result again).\nIf there are no friendly Orc or Goblin Henchmen or Hired Swords within charge reach, and the warrior is armed with a missile weapon, he immediately takes a shot at the nearest friendly Orc or Goblin Henchman or Hired Sword. If none of the above applies, or if the nearest friendly model is an Orc Hero, the warrior behaves as if a 2-5 had been rolled on this chart. In any case, the warrior in question may take no other action this turn, though he may defend himself if attacked in hand-to-hand combat.\n2-5 | “Wud Yoo Say?”\nThe warrior is fairly certain he heard an offensive sound from the nearest friendly Orc or Goblin, but he’s not quite sure. He spends the turn hurling insults at his mate.\nHe may do nothing else this turn, though he may defend himself if attacked in hand-to-hand combat.\n6 | “I’ll Show Yer!”\nThe warrior imagines that his mates are laughing about him behind his back and calling him silly names. To show them up he decides that he’ll be the first one to the scrap!\nThis model must move as quickly as possible towards the nearest enemy model, charging into combat if possible. If there are no enemy models within sight, the Orc or Goblin warrior may make a normal move immediately. This move is in addition to his regular move in the Movement phase, so he may therefore move twice in a single turn if you wish.\nIf the extra move takes the Orc or Goblin warrior within charge reach of an enemy model, the warrior must charge into close combat during his regular movement.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -5796,17 +5814,20 @@
       {
         "title": "Chivalry",
         "description": "No Knight may ever use any missile weapon at all, with the exception of Holy Water. Likewise, they will never use any drug or poison, nor learn any spells (prayers are allowed).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Lord’s Boon",
         "description": "Every Knight, either at warband formation or upon later recruitment, is likely to start with some sort of boon from the baron, marquis, or similar lord he serves. Each Knight may, upon purchase, start with ONE of the following items, which is bought at half cost: a Warhorse, Light Armour, OR Heavy Armour. This item may not be traded, given to another warrior, or sold. The warrior may set it aside and choose not to use it, but no Bretonnian warrior would dare use a boon item that belonged to another Knight, even after the warrior’s death. If the Knight dies, his \"Lord’s Boon\" item is removed from the warband, having been buried with him or returned to his benefactor.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Virtue of Purity",
         "description": "Knights with the Virtue of Purity may never voluntarily break from combat, unless he is knocked down. He is immune to All Alone and any other mundane effect that would cause him to leave combat. Magical spells and effects that would cause him to flee (ex. Dread of Aramar) affect him as normal.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -6746,7 +6767,8 @@
       {
         "title": "Blessing of the Lady",
         "description": "Before heading into battle Bretonnian Knights kneel and pray to the Lady of the Lake, avowing to fight to the death for honour and justice.\n\nBefore playing a game of Mordheim make a Leadership test against the Leadership characteristic of the warbands leader. If the test is successful the Lady of the Lake has bestowed her blessing on the warband. The blessing takes the form of a powerful curse upon the enemies of chivalry, and in particular upon those that make use of the foul and dishonourable weapons of mass destruction. Any model in the opposing warband who wishes to fire a black powder weapon must roll a D6 and score 4+ to overcome the curse, otherwise they may not fire the weapon. The opposing player must test each time they wish to fire such a weapon.\n\nModels armed with other shooting weapons, such as bows and crossbows, do not have to test unless they dare raise their weapons against the gallant Knights of Bretonnia. If any enemy model wishes to shoot at a Bretonnian Knight (Questing Knights and Errants only), then they must first roll a 4+ on a D6 to overcome the curse.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -7604,17 +7626,20 @@
       {
         "title": "Dangerous to Know",
         "description": "Because of its rather diseased nature a Carnival of Chaos warband would find it very hard to keep any Hired Swords alive! Therefore, a Carnival of Chaos may never hire any type of Hired Sword.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Tainted",
         "description": "The Carnival is a similarly unclean mass of mutation and Chaos to the Possessed and so counts as such for purposes of exploration and serious injuries.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Blessings of Nurgle",
         "description": "Those that worship at the fetid altar of the Lord of Decay suffer from terrible diseases and decay, which are known as Blessings of Nurgle.\n\nBlessings of Nurgle may be bought for Tainted Ones only when they are recruited; you may not buy new Blessings for a model after recruitment. Any Tainted may have one or more Blessings. The first Blessing is bought at the price indicated, but second and subsequent Blessings cost double.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -8361,12 +8386,14 @@
       {
         "title": "Corruption of the Mind and Flesh",
         "description": "Whenever an enemy model, be it Hero or a Henchman of the opponents of the Warband or one of their own models dies, the Warband may opt to perform an obscene ritual to attach a part of the dying warrior into one of the Slaaneshi Beastmen, Cultist or the Slaaneshi Hounds: arm, leg, head or strips of muscle, for example. You can take one stat of the fallen warrior and replace it with the same stat of the Beastman, Cultist or Hound. We encourage players to convert the model to represent the corrupted creature with appropriate new body parts. This ritual costs 1 Wyrdstone, and 1 Hero cannot search for Rare items at the market while performing the ritual.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Mutations",
         "description": "Any Hero may buy one of the following Mutations when you recruit them (see Cults of Possessed (https://mordheimer.net/docs/warbands/core-warbands/cult-of-the-possessed#mutations) Rules for Mutations):\n- Extra arm\n- Tentacle\n- Great Claw",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -9162,7 +9189,8 @@
       {
         "title": "Mutations",
         "description": "Those who dwell in Mordheim soon develop horrible mutations, and the Cult of the Possessed seem to be especially susceptible. In addition, Mordheim attracts mutants from all over the Empire, who are always quick to join the Chaos covens. Most mutations are simply inconvenient or hideous, but some make their bearers extremely dangerous in combat.\n\nMutations may be bought for a Mutant or a Possessed warrior only when they are recruited; you may not buy new mutations for a model after recruitment. Any Mutant or Possessed may have one or more mutations. The first mutation is bought at the price indicated, but second and subsequent mutations bought for the same model cost double.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -9910,17 +9938,20 @@
       {
         "title": "Kindred Hatred",
         "description": "The Dark Elves have been fighting the High Elves for many centuries. The wars between these two races have been very long and bloody affairs. Dark Elves Hate any High Elf warriors including High Elf Hired Swords.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Excellent Sight",
         "description": "Elves have eyesight unmatched by mere humans. All the Elves in a Dark Elves Warband can spot Hidden enemies from twice as far away as other warriors (i.e. twice their Initiative in inches).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Black Powder Weapons",
         "description": "Dark Elves may never use black powder weapons as they find them too crude, noisy and unreliable.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -10616,37 +10647,44 @@
       {
         "title": "Don’t Trust ‘Em",
         "description": "While Ranger Warbands are free to ally with other Dwarf warbands in multi-player games, their point of view is so different that they do not trust them fully. Members of a Dwarf Rangers warband are never considered ‘friendly models’ to other dwarfs and vice versa.\n\nThis means that members of one warband WILL stop members of the other from Marching, they won’t keep each other from taking all alone tests, etc. They don’t count as enemy models and may split any treasure found at the end of the game as normal, but the two bands are not friends, make no mistake!\n\nAll Dwarfs are subject to the following special rules:",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hard to Kill",
         "description": "Dwarfs are tough, resilient individuals who can only be taken out of action on a roll of 6 instead of 5-6 when rolling on the Injury chart. Treat a roll of 1-2 as knocked down, 3-5 as stunned, and 6 as out of action.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hard Head",
         "description": "Dwarfs ignore the special rules for maces, clubs, etc. They are not easy to knock out!",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Armour",
         "description": "Dwarfs never suffer movement penalties for wearing armour.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hate Orcs and Goblins",
         "description": "All Dwarfs hate Orcs and Goblins. See the psychology section of the Mordheim rules for details on the effects of hatred.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Grudgebearers",
         "description": "Dwarfs hold an ancient grudge against Elves from the days when the two races fought for supremacy in the Old World. A Dwarf warband may never include any kind of Elven Hired Sword or Dramatis Personae.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Incomparable Miners",
         "description": "Dwarfs spend much of their lives underground searching for precious minerals, and they are the best in the world at this kind of work. In the city of Mordheim they apply similar skills to the search for wyrdstone. When checking for wyrdstone at the end of a game, add +1 to the number of pieces found for a Dwarf warband.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -11356,32 +11394,38 @@
       {
         "title": "Hard to Kill",
         "description": "Dwarfs are tough, resilient individuals who can only be taken out of action on a roll of 6 instead of 5-6 when rolling on the Injury chart. Treat a roll of 1-2 as knocked down, 3-5 as stunned, and 6 as out of action.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hard Head",
         "description": "Dwarfs ignore the special rules for maces, clubs, etc. They are not easy to knock out!",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Armour",
         "description": "Dwarfs never suffer movement penalties for wearing armour.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hate Orcs and Goblins",
         "description": "All Dwarfs hate Orcs and Goblins. See the psychology section of the Mordheim rules for details on the effects of hatred.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Grudgebearers",
         "description": "Dwarfs hold an ancient grudge against Elves from the days when the two races fought for supremacy in the Old World. A Dwarf warband may never include any kind of Elven Hired Sword or Dramatis Personae.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Incomparable Miners",
         "description": "Dwarfs spend much of their lives underground searching for precious minerals, and they are the best in the world at this kind of work. In the city of Mordheim they apply similar skills to the search for wyrdstone. When checking for wyrdstone at the end of a game, add +1 to the number of pieces found for a Dwarf warband.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -12078,12 +12122,14 @@
       {
         "title": "Natives",
         "description": "Used to poking through the underbrush, Forest Goblins suffer no movement penalties from moving through any wooded terrain.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Animosity",
         "description": "Orcs and Goblins enjoy nothing more than a good scrap, unfortunately they’re not always very discerning about who they scrap with! To represent this, at the start of the Orc player’s turn, roll a D6 for each Henchman who is either an Orc or a Goblin. A roll of 1 means that the warrior has taken offense to something one of his mates has done or said. Do not roll for models that are engaged in hand-to-hand combat (they’re already scrappin’!). To find out just how offended the model is, roll another D6 and consult the following chart to see what happens:\n\nAnimosity Result\n\n| D6 | Result | | :------------------------: | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | | 1 | \"I ’Erd Dat!\"\nThe warrior decides that the nearest friendly Orc or Goblin Henchman has insulted his lineage or personal hygiene and must pay the price!\nIf there is a friendly Orc or Goblin Henchman or Hired Sword within charge reach (if there are multiple targets within reach, choose the one nearest to the mad model), the offended warrior will immediately charge and fight a round of hand-to-hand combat against the source of his ire. At the end of this round of combat, the models will immediately move 1\" apart and no longer count as being in close combat (unless one of them fails another Animosity test and rolls this result again).\nIf there are no friendly Orc or Goblin Henchmen or Hired Swords within charge reach, and the warrior is armed with a missile weapon, he immediately takes a shot at the nearest friendly Orc or Goblin Henchman or Hired Sword. If none of the above applies, or if the nearest friendly model is an Orc Hero, the warrior behaves as if a 2-5 had been rolled on this chart. In any case, the warrior in question may take no other action this turn, though he may defend himself if attacked in hand-to-hand combat. | | 2-5 | \"Wud Yoo Say?\"\nThe warrior is fairly certain he heard an offensive sound from the nearest friendly Orc or Goblin, but he’s not quite sure. He spends the turn hurling insults at his mate.\nHe may do nothing else this turn, though he may defend himself if attacked in hand-to-hand combat. | | 6 | \"I’ll Show Yer!\"\nThe warrior imagines that his mates are laughing about him behind his back and calling him silly names. To show them up he decides that he’ll be the first one to the scrap!\nThis model must move as quickly as possible towards the nearest enemy model, charging into combat if possible. If there are no enemy models within sight, the Orc or Goblin warrior may make a normal move immediately. This move is in addition to his regular move in the Movement phase, so he may therefore move twice in a single turn if you wish.\nIf the extra move takes the Orc or Goblin warrior within charge reach of an enemy model, the warrior must charge into close combat during his regular movement. |",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -12732,17 +12778,20 @@
       {
         "title": "Impeccable Care",
         "description": "Amongst one of the first things that the students are taught is to take proper care of their equipment and the right way to perform that maintenance. Once they have mastered this function, they learn to repair the same weapons should they become damaged and because of this they can buy such black powder weapons on the cheap and quickly return them to good working order. As a result they can buy these weapons at a fairly reduced price! They can ALWAYS use the reduced cost for black powder weapons listed in their starting Equipment List, and they gain an additional +2 on rare rolls to find any black powder weapons since people don’t mind selling broken guns!",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Properly Used",
         "description": "The students know the proper way to use their weapons, spending many hours on the school’s shooting range. This is considered to be a good use of time between lessons and recommended by all the school’s instructors, after all if the students constantly blow themselves up with their weapons, there wouldn’t be many graduates. When using the optional Misfire rules, if a one is rolled, roll a second dice. On a 3+ the misfire is ignored (the shot still misses, but the weapon does NOT explode).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Proud To A Fault!",
         "description": "Anyone studying at the Gunnery School is very proud of this fact, as it is a great honour to be accepted. After they start using black powder weapons, students recognise the superiority of these weapons and refuse to bend their knee to the ‘lesser’ ranged weapons. The members of this warband NEVER use any non-black powder ranged weapons (this prohibition does NOT apply to hired swords or dramatis personae, as they are hired help and have not received proper Nuln training).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -13624,22 +13673,26 @@
       {
         "title": "Hired Swords",
         "description": "Bandits have no compunction about hiring mercenaries, and may hire any Hired Swords allowed to a Human Mercenary warband.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Powder's Expensive!",
         "description": "Bandits are often too poor to purchase or upkeep expensive equipment like gunpowder weapons. The exception to this is Bandit heroes, who often see such extravagances as pistols as symbols of their status and higher wealth. The higher costs for black powder weapons in the equipment chart, and the fact that henchmen can't purchase them at all, reflect the extreme rarity of these types of weapons for Bandit warbands.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Foragers",
         "description": "Bandits are used to lean times, and know how to make their gold stretch. Because of this, they usually have fewer expenses between adventures. When determining Income for a Bandit warband, always use the next lower warband size category (a warband with 1-3 members still uses the first column however!). For example, a warband with 15 members finds 4 Treasures in the Exploration Phase. When they sell these Treasures, they use the 10-12 members column instead of the 13-15 members column, resulting in a gain of 5 gold pieces for the warband.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Know Who To Sell To",
         "description": "Bandits are used to getting rid of stolen goods, and have built up contacts for doing so. When a Bandit warband sells equipment, they get half of any random element of the equipment cost, in addition to the normal half of the item's basic cost.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -14512,7 +14565,8 @@
       {
         "title": "Woodcraft",
         "description": "Followers of Taal make their homes in the wilderness and shall only frequent towns or cities when it is compulsory for them to do so. They are expert woodsmen and their knowledge of the wilds is unrivalled by all except perhaps the Wood Elves. Horned Hunter warbands move through any difficult terrain they encounter without suffering any movement penalties.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -15203,7 +15257,8 @@
       {
         "title": "Hired Swords",
         "description": "The Imperial Outriders may only be accompanied by mounted Hired Swords. This includes the Freelance Knight from the Mordheim Rulebook and the Roadwarden from the Empire In Flames supplement. The Highwayman keeps himself a safe distance from any official representatives of the Empire and so may not be hired.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -15823,12 +15878,14 @@
       {
         "title": "May Hire",
         "description": "A Kislevite warband is allowed the same selection of Hired Swords as Human Mercenary warbands (https://mordheimer.net/docs/warbands/core-warbands/mercenaries).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Ancient Enemies",
         "description": "Kislevite warbands may never ally with any type of Chaos warband. This restriction pertains to the following warbands: Possessed, Beastmen, Carnival of Chaos, Skaven, Dark Elf, Chaos Dwarf, and any other warbands the players judge to be sufficiently 'Chaotic'.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -16759,42 +16816,50 @@
       {
         "title": "Scaly Skin",
         "description": "All Lizardmen have a natural save thanks to their thick scales. Saurus have a 5+ save and Skinks have a 6+. This save cannot be modified beyond 6 due to Strength modifiers but any result of ‘no save’ on the Critical Hit chart will negate this 6+ save. Light Armour adds +1 to the save, as does the addition of a shield.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Armour",
         "description": "Armour is rare amongst the Lizardmen and the cost of light armour is always 50 gc, even if you are buying it from Equipment chart.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Bite Attack",
         "description": "Saurus have a powerful bite attack, this bite attack uses the Saurus’ own Strength to wound and receive no penalty for not using a weapon. The Bite attack always strikes last, regardless of who charged or which weapon is used. The Bite even attacks after Double-Handed Weapons.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Cold Blooded",
         "description": "All Lizardmen are slow to react to psychology, they may roll 3D6 and select the lowest two dice when taking a psychology test or Rout test. A Lizardmen Warband may never use the Leadership of Saurus or Kroxigor when taking a rout test.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Aquatic",
         "description": "Skinks may move through water terrain with no penalty, and count as being in cover whilst they are in the water.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Jungle born",
         "description": "All Skinks can move through jungle terrain without penalty.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Saurus Rarity",
         "description": "The Slann Mage-Priests would never include more Saurus braves in a Warband than Skink braves and thus you can never have more Saurus braves than Skink braves in the Warband.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Sacred markings",
         "description": "Many Skink and Saurus warriors are born with distinct markings or mutations. They are regarded as being blessed by the gods and often rise to become leaders. A Hero may only have a single Sacred Marking and these may only be bought when you recruit the Hero, not in the middle of a campaign.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -17481,17 +17546,20 @@
       {
         "title": "Rare Heroes",
         "description": "You can only ever buy one of each type of Heroes during the existence of your Warband, representing the extreme rarity of these the toughest of survivors of Lustria.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Promotions",
         "description": "When you lose one of the Heroes for whatever reason, you cannot buy a new one. However, you retain all the equipment of the fallen Hero, and you may now promote one of the Prospects into the role of the lost hero, as if that Henchman just successfully rolled Lad’s Got Talent on the Henchmen Advancement Table: You may choose two skill lists available to Heroes in your warband. These are the skill types your new Hero can choose from when the model gains new skills. The new Hero can immediately make one roll on the Heroes Advance table.\n\nThe new Hero then gains the armour, weapons and equipment of the fallen Hero and assumes their position the Warband. The Prospect’s own equipment may be added to the Warband stash. If you have no Prospect currently in your Warband, you can promote the next one you hire.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hired Swords",
         "description": "The Lustrian Reavers are proud and suspicious, and therefore rarely use Hired Swords. They may hire an Ogre Bodyguard, Dwarf Trollslayer, Tilean Marksman or a Big Game Hunter.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -18459,32 +18527,38 @@
       {
         "title": "Fear",
         "description": "Ogres are large, threatening creatures that with the exception of Youngbloods, cause fear.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Large",
         "description": "Except for Youngbloods and Half-growns Ogres are huge, lumbering creatures and therefore make tempting targets for archers. Any model may shoot at them, even if they are not the closest target and gets a +1 bonus on the ‘to hit’ roll.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Gluttony",
         "description": "Because of a voracious appetite, each Ogre model counts as two models when selling wyrdstone or treasure. Any model which is captured due to Serious Injuries or Exploration can be devoured and his possessions retained, reducing the combined model count of your warband by one (or two if the captive ‘shared meal’ is a Large Target). Each Ogre always counts as at least one model towards the total, no matter how much he eats!\n\nAn Ogre Hero devouring captured models is granted experience points equal to the number of models that were consumed. Any member or animal (including mounts) from your warband can be eaten in the same way! Remove any consumed comrades from the warband roster immediately.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Slow Witted",
         "description": "Although Ogres are capable of earning experience and bettering themselves they are not the smartest of creatures. Ogres only improve at half the rate of everyone else. They must earn twice the usual number of experience points to gain an advance.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Difficult Customers",
         "description": "Unable to create anything of lasting worth, Ogres tend to rely on more civilised folk for the acquisition of quality goods. Widely regarded by vendors as their least popular and most frightening customers, Ogre Heroes suffer -1 when rolling to find Rare items that are not exclusively available to Ogres.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Cannibals",
         "description": "Most Hired Swords refuse to work for Ogres, as they know for sure they’ll end up being a meal sooner or later. An Ogre warband may never hire any Hired Swords, except for Halflings (Scout, Thief, etc.) and the Ogre Bodyguard, or unless stated otherwise, in which case Ogres can choose to devour him when the contract ends (see Gluttony).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -19225,7 +19299,8 @@
       },
       {
         "key": "hung",
-        "name": "The Hung"
+        "name": "The Hung",
+        "max_models": 12
       }
     ],
     "types": [
@@ -19238,42 +19313,50 @@
       {
         "title": "Eye of the Gods",
         "description": "An aspiring chaos follower is always Eye of the Gods: watched by the vigilant eyes of the dark gods, who reward the successful generously but punish failures harshly. Roll 2D6 after every battle.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Spawn of Chaos",
         "description": "If you lost the preceding battle, add +1 to the roll for each of your Heroes that was taken out of action during the battle. On a total of 12 or more the warband’s leader turns into a Chaos spawn. His experience, skills, injuries and equipment are lost.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Mark of Chaos",
         "description": "If you won the battle, add +1 for every enemy model the leader took out of action. On a total of 12 or more you may choose a Mark of Chaos for the winning leader (see Marks of the Dark Gods below).\n\nAs soon as the leader receives a Mark of Chaos through the Eye of the Gods special rule this test is no longer taken – until the leader leaves the warband in which case the new leader must prove himself to the Dark Gods the same way his predecessor did.\n\nIf the warband already includes a Spawn of Chaos the doomed leader is simply erased from the roster. There may never be more than one Spawn of Chaos in a single warband. The Eye of the Dark Gods rule is not in effect if the warband leader did not take part in the previous battle",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hired Swords",
         "description": "Marauders of Chaos may only hire the following Hired Swords: Pit Fighters, Ogres, Norse Shamans and Imperial Assassins plus any other Hired Swords which specify they may be hired by Marauders of Chaos. Witches and Warlocks may be hired except by warbands that include warriors with the Mark of Arkhar.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Special Rules",
         "description": "Reavers: Due to their proximity to the Empire and the frequency of their raiding, the Norse excel at finding the best equipment and supplies quickly. As such, they gain a +1 to their rarity rolls when searching during the post-game sequence.\n\nPantheon: The Norse worship a myriad of gods, spirits and ancestors. As a result of their wide pantheon the Eye of the Gods special rule's effect (of becoming a Chaos Spawn or receiving a Mark) happens on a result of 13+ instead of 12+.",
-        "variant": "norse"
+        "variant": "norse",
+        "type": ""
       },
       {
         "title": "Special Rules",
         "description": "Pedigree: Some Kurgan tribes delight in the spectacle of trained pit hounds fighting against bears, trolls and other creatures. A Kurgan warband may include any number of Warhounds of Chaos – not only up to five.\n\nBone Bows: The Kurgans are renowned for making scary bows, using the bones of their fallen enemies. Heroes and Chaos Marauder Henchmen may use bows (cost: 10 gold crowns, availability: common).\n\nDifficult Customers: While some of the less bloodthirsty of the Norse and Hung tribes even trade with merchants from the south, the Kurgan live far away from civilisation and when they come to raid the southern farmsteads and villages they are certainly not welcomed. Therefore a Kurgan warband suffers –1 when rolling to find Rare items except for Great Axes and Barbed Whips.",
-        "variant": "kurgan"
+        "variant": "kurgan",
+        "type": ""
       },
       {
         "title": "Special Rules",
         "description": "Disloyalty: The treachery of the Hung is infamous. As one horseman is no more trustworthy than the next, these nomads tribal allegiance is flimsy at best. The maximum number of warriors in the warband is 12 (instead of 15).\n\nAffinity with Horses: Warhorses always cost 40 gold crowns to the warband – not only to starting warbands. In addition, all Heroes (including Henchmen that advance to Heroes) automatically have the Ride Warhorse skill. Note that the number of mounts per warband is not restricted in the Border Town Burning setting.",
-        "variant": "hung"
+        "variant": "hung",
+        "type": ""
       },
       {
         "title": "Mark of the Dark Gods",
         "description": "The Eye of the Gods special rule may let the warband’s leader choose a Mark of the Dark Gods. With exception to the Mark of Chaos Undivided there may never be two models in the warband with different Marks. Upon being hired Seers choose their Mark when in correspondence with the tribe, granting an audience with their god. A Seer who becomes leader at the same time has to choose the Mark for his associated patron when being rewarded through the Eye of the Gods.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -19927,7 +20010,11 @@
         "is_leader": false,
         "caster": "No",
         "large": false,
-        "variant_changes": {},
+        "variant_changes": {
+          "kurgan": {
+            "max_count": null
+          }
+        },
         "fixed_kit": "",
         "lists": [],
         "specials": [
@@ -20081,7 +20168,8 @@
       },
       {
         "key": "marienburg",
-        "name": "Marienburg"
+        "name": "Marienburg",
+        "starting_gold": 600
       }
     ],
     "types": [
@@ -20106,22 +20194,26 @@
       {
         "title": "Reiklander Special rules",
         "description": "Reikland Mercenaries are accustomed to the demands of military discipline and have a strongly developed loyalty between officers and men. To represent this, fighters may use their Captain’s Leadership if within 12\" rather than the usual 6\".\n\nA strong tradition of martial training is also responsible for the high standards of archery amongst the people of Reikland. All Marksmen therefore add +1 to their Ballistic Skill, whether they are recruited when the warband is first formed or added later.",
-        "variant": "reikland"
+        "variant": "reikland",
+        "type": ""
       },
       {
         "title": "Middenheimer Special rules",
         "description": "The men of Middenheim are famous for their physical prowess. To represent their advantage in size and bulk, the Champions and Captains of a Middenheim warband start with Strength 4 instead of Strength 3.",
-        "variant": "middenheim"
+        "variant": "middenheim",
+        "type": ""
       },
       {
         "title": "Marienburger Special rules",
         "description": "As natural traders with contacts in the merchant guilds Marienburg warbands receive a +1 bonus when attempting to find rare items (see the Trading section for rules).\n\nTo reflect their enormous wealth Marienburgers start off with an extra 100 gold crowns (600 in total) when fighting in a campaign. In a one-off game they are permitted an extra 20% gold crowns when recruiting a warband. For example, in a 1,000 gold crown game a Marienburger warband will have 1,200gc.",
-        "variant": "marienburg"
+        "variant": "marienburg",
+        "type": ""
       },
       {
         "title": "Ostermarker Special rules",
         "description": "Ostermarkers follow the rules for Mercenary warbands. In addition Ostermarkers (Heroes and Henchmen) may re-roll a failed Leadership test for being all alone and routing. A warrior or warband must accept the second roll, however, regardless of the result. Furthermore, the men often use hounds to guard their farms and raise the alarm against trespassers. Any captain of an Ostermarker warband may have a wardog as part of his starting equipment to represent the beast who once protected his farm and holdings from bandits and other, fouler creatures.",
-        "variant": "ostermark"
+        "variant": "",
+        "type": "ostermarkers"
       }
     ],
     "lists": [
@@ -20625,7 +20717,13 @@
         "is_leader": true,
         "caster": "No",
         "large": false,
-        "variant_changes": {},
+        "variant_changes": {
+          "middenheim": {
+            "stats": {
+              "strength": 4
+            }
+          }
+        },
         "fixed_kit": "",
         "lists": [
           "mercenary-equipment"
@@ -20678,7 +20776,10 @@
               "Combat",
               "Strength",
               "Speed"
-            ]
+            ],
+            "stats": {
+              "strength": 4
+            }
           },
           "marienburg": {
             "skill_types": [
@@ -20810,7 +20911,13 @@
         "is_leader": false,
         "caster": "No",
         "large": false,
-        "variant_changes": {},
+        "variant_changes": {
+          "reikland": {
+            "stats": {
+              "ballistic_skill": 4
+            }
+          }
+        },
         "fixed_kit": "",
         "lists": [
           "marksman-equipment"
@@ -20882,27 +20989,32 @@
       {
         "title": "Merchant",
         "description": "The Merchant is the warband's leader (any Warrior within 6“ of him may use his Leadership when taking Ld tests) and the one who is in charge of the business. If the Merchant leaves the caravan (e.g. dies permanently through Serious Injuries), a new leader is determined as normal. The new leader gets the Merchant special rule, allowing him to choose new skills from the Merchant's special skills section. The model counts as a Merchant for all purposes just as the previous Merchant used to. If no model in the warband is allowed to become the leader, an Apprentice must be bought as soon as possible to become the leader.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Trade",
         "description": "Instead of searching for rare items the Merchant may sell a rare item that has been stored in the Trade Cart during the preceding battle. This must be done before Heroes of either warband search for rare items. Roll a D6 to determine how many gold coins the Merchant would get for the item.\n\n| D6 | Gold coins | | --- | ------------------------------------- | | 1-2 | Half the item's basic price | | 3-4 | The item's full basic price | | 5-6 | Full plus half the item's basic price |\n\nNote that the Merchant may decide whether he wants to sell the item for that price or if he wants to try again after the next battle. This can be combined with the wholesale skill to sell up to D3+1 items each game.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Open for Business",
         "description": "All players may choose to send any of their Heroes to the Merchant instead of having them search for rare items. A Hero doing so may buy one item from the warband's stored equipment if the players can agree on a price (including exchange deals with items and Treasures). Instead of buying an item, a Hero may also go to the Merchant to sell any one item (rare, common, magical, treasure counters) to him. If players cannot agree on a price, no deal is closed and the visit is wasted.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Rarity",
         "description": "Any rare item that is reduced to Rare 2 or Rarity: below by the Trade Wagon's Reputation rule, the Streetwise skill, etc., can be bought as Common items.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hired Swords",
         "description": "Merchant Caravans may hire every Hired Sword that is available to Mercenary warbands.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -21737,7 +21849,8 @@
       {
         "title": "Weak and Puny",
         "description": "Halflings are very weak and puny and even the lightest of blows tends to knock them senseless. When rolling for a Halfling’s injury, treat a roll of a 2 as ‘stunned’.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -22198,47 +22311,56 @@
       {
         "title": "Cause Fear",
         "description": "All Undead warriors cause Fear.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Immune to Psychology",
         "description": "All Undead warriors are immune to psychology and never leave combat.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "No pain",
         "description": "All Undead warriors treat a Stunned result as Knocked Down.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "May not run",
         "description": "No Undead warrior may run, but may charge as normal.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Immune to poison",
         "description": "No Undead warrior is affected by poison.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "No Brain",
         "description": "Skeletons are quite dead and never gain experience, this rule only affects Skeletons. While the Mummy Prince, Mummy Warriors and Tomb Guards don't actually learn new skills they rather remember the skills they knew when they were alive. Liche Priests are undead but have retained a form of living mind and are capable of learning from their experiences.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Flammable",
         "description": "The Mummy Prince and the Mummy Warriors are mummies and the following rules apply. Mummies are dry as tinder and wrapped in bandages soaked in highly flammable chemicals. A hit from a fire-based attack will cause double the normal number of wounds.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Do not Drink",
         "description": "Undead models do not need food and water, however any living animals that accompany the Mummies follow the water rules as normal.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Home Ground",
         "description": "The Tomb Guardians live in the Necropolises and have no trouble locating the hidden tombs in search of weapons and armour to help them defend their homes. The Tomb Guardian warband will always roll one extra dice in the exploration phase, this only apply in the Cities of the Dead setting.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -22939,12 +23061,14 @@
       {
         "title": "Animosity",
         "description": "Goblins spend much of their lives squabbling and fighting amongst themselves. Sometimes this will happen at the worst of times. At the beginning of each Night Goblin turn roll a D6. On a roll of 1 they start to squabble and will do nothing else for the rest of the turn. Only Night Goblins are affected. Trolls, Squigs, Snotlings and other non-goblins are not affected and will act as normal.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hate Stunties",
         "description": "Night Goblins are subject to hatred towards Dwarfs. This only affects Night Goblins not any other greenskins. Fanatics are so out of their skull that they are not affected.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -23568,27 +23692,32 @@
       {
         "title": "Animosity",
         "description": "Night Goblins spend much of their lives squabbling and fighting among themselves. At the start of the Night Goblin player’s turn, roll a D6 for each Night Goblin Warrior Henchman. A roll of 1 means that the warrior has taken offense to something one of their mates has done or said. Do not roll for models that are engaged in hand-to-hand combat (they’re already scrappin’!). To find out just how offended the model is, roll another D6 and consult the following chart to see what happens:\n\nD6 | Result\n1 | “I ’Erd Dat!”\nThe warrior decides that the nearest friendly Orc or Goblin Henchman has insulted his lineage or personal hygiene and must pay the price!\nIf there is a friendly Orc or Goblin Henchman or Hired Sword within charge reach (if there are multiple targets within reach, choose the one nearest to the mad model), the offended warrior will immediately charge and fight a round of hand-to-hand combat against the source of his ire. At the end of this round of combat, the models will immediately move 1\" apart and no longer count as being in close combat (unless one of them fails another Animosity test and rolls this result again).\nIf there are no friendly Orc or Goblin Henchmen or Hired Swords within charge reach, and the warrior is armed with a missile weapon, he immediately takes a shot at the nearest friendly Orc or Goblin Henchman or Hired Sword. If none of the above applies, or if the nearest friendly model is an Orc Hero, the warrior behaves as if a 2-5 had been rolled on this chart. In any case, the warrior in question may take no other action this turn, though he may defend himself if attacked in hand-to-hand combat.\n2-5 | “Wud Yoo Say?”\nThe warrior is fairly certain he heard an offensive sound from the nearest friendly Orc or Goblin, but he’s not quite sure. He spends the turn hurling insults at his mate.\nHe may do nothing else this turn, though he may defend himself if attacked in hand-to-hand combat.\n6 | “I’ll Show Yer!”\nThe warrior imagines that his mates are laughing about him behind his back and calling him silly names. To show them up he decides that he’ll be the first one to the scrap!\nThis model must move as quickly as possible towards the nearest enemy model, charging into combat if possible. If there are no enemy models within sight, the Orc or Goblin warrior may make a normal move immediately. This move is in addition to his regular move in the Movement phase, so he may therefore move twice in a single turn if you wish.\nIf the extra move takes the Orc or Goblin warrior within charge reach of an enemy model, the warrior must charge into close combat during his regular movement.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hate Stunties",
         "description": "Night Goblins are subject to hatred towards Dwarfs. This only affects Night Goblins, not any other models in the warband. Fanatics are so out of their skull that they are not affected.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Fear Elves",
         "description": "Night Goblins are terrified of the Elven race. This only affects Night Goblins, not any other models in the warband. Fanatics are so out of their skull that they are not affected.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Distasteful Company",
         "description": "Many Hired Swords refuse to work for Night Goblins, they know that the backstabbing 'lil gits are likely to turn on them. Night Goblins may only hire Pit Fighters, Ogre Bodyguards, Warlocks, Witches, plus any Hired Sword that specifically states they work with Orcs or Goblins.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Mad Cap Masters",
         "description": "Night Goblins consume so much dangerous fungi they can ignore some of the permanent side effects of Mad Cap Mushrooms, provided they have a constant supply. Night Goblins affected by Mad Cap overuse may ignore the resulting stupidity, but only while under the effect of more Mad Caps. Once the model loses frenzy, due to being knocked down or stunned, it will be effected by Stupidity as normal.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -24608,7 +24737,8 @@
       {
         "title": "Seafaring",
         "description": "The Norse are seafaring people and spend much of their time rowing boats. To represent this, all Norse warriors get +2 to Strength when they row a boat.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -25385,12 +25515,14 @@
       {
         "title": "Distasteful Company",
         "description": "Many Hired Swords refuse to work for Orcs, as they know that Orcs are just as likely to eat them as fight alongside them. Orcs may only hire the following Hired Swords: Pit Fighters, Ogre Bodyguards or Warlocks.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Animosity",
         "description": "Orcs and Goblins enjoy nothing more than a good scrap, unfortunately they’re not always very discerning about who they scrap with! To represent this, at the start of the Orc player’s turn, roll a D6 for each Henchman who is either an Orc or a Goblin. A roll of 1 means that the warrior has taken offense to something one of his mates has done or said. Do not roll for models that are engaged in hand-to-hand combat (they’re already scrappin’!). To find out just how offended the model is, roll another D6 and consult the following chart to see what happens:\n\nAnimosity Result\n\nD6 | Result\n1 | “I ’Erd Dat!”\nThe warrior decides that the nearest friendly Orc or Goblin Henchman has insulted his lineage or personal hygiene and must pay the price!\nIf there is a friendly Orc or Goblin Henchman or Hired Sword within charge reach (if there are multiple targets within reach, choose the one nearest to the mad model), the offended warrior will immediately charge and fight a round of hand-to-hand combat against the source of his ire. At the end of this round of combat, the models will immediately move 1\" apart and no longer count as being in close combat (unless one of them fails another Animosity test and rolls this result again).\nIf there are no friendly Orc or Goblin Henchmen or Hired Swords within charge reach, and the warrior is armed with a missile weapon, he immediately takes a shot at the nearest friendly Orc or Goblin Henchman or Hired Sword. If none of the above applies, or if the nearest friendly model is an Orc Hero, the warrior behaves as if a 2-5 had been rolled on this chart. In any case, the warrior in question may take no other action this turn, though he may defend himself if attacked in hand-to-hand combat.\n2-5 | “Wud Yoo Say?”\nThe warrior is fairly certain he heard an offensive sound from the nearest friendly Orc or Goblin, but he’s not quite sure. He spends the turn hurling insults at his mate.\nHe may do nothing else this turn, though he may defend himself if attacked in hand-to-hand combat.\n6 | “I’ll Show Yer!”\nThe warrior imagines that his mates are laughing about him behind his back and calling him silly names. To show them up he decides that he’ll be the first one to the scrap!\nThis model must move as quickly as possible towards the nearest enemy model, charging into combat if possible. If there are no enemy models within sight, the Orc or Goblin warrior may make a normal move immediately. This move is in addition to his regular move in the Movement phase, so he may therefore move twice in a single turn if you wish.\nIf the extra move takes the Orc or Goblin warrior within charge reach of an enemy model, the warrior must charge into close combat during his regular movement.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -26122,7 +26254,8 @@
       {
         "title": "Self-Sufficient",
         "description": "The men of Ostland have no desire to give their hard-earned gold to outsiders. As a result they can never hire any Mercenaries except for Ogres (who are not an uncommon sight in Ostland).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -27057,12 +27190,14 @@
       {
         "title": "Bowmen",
         "description": "All warriors in an Outlaws warband may be equipped with only one missile weapon at any time. All warriors must carry a type of bow, but not crossbows, as part of their equipment. So, even if an Outlaw acquires skills that allow him to use additional ballistic weaponry, he cannot do so. The only exception to this is the Cleric who may choose to carry a bow, but is not compelled to do so.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hired Swords",
         "description": "The following Hired Swords are not available to the Outlaws: Bounty Hunter, Wolf-Priest of Ulric, Norse Shaman, Dark Elf Assassin.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -27565,22 +27700,26 @@
       {
         "title": "Swabbies",
         "description": "Pirate warbands can ‘recruit’ new members to join the adventuresome life of a pirate, sometimes willingly but oftentimes more as an alternative to walking the plank! Only humans can be recruited in this manner though – not even the most bloodthirsty pirate would ever trust a Skaven or Beastman, and other races even though friendly to mankind would normally never follow a mere human into battle! The following special rules apply to certain situations in Mordheim game play:\n\nKidnapped! Enemy human Heroes who after the game rolled up the Captured result (D66 roll of 61) can be ‘offered’ one opportunity to join the pirate crew (usually at the point of a cutlass!). As an alternative to exchanging/ransoming the captured Hero back to their original Warband (or selling him to slavers), the Pirate Captain can instead add the captured enemy to the ship’s crew as follows. Both players roll 2D6, with the Pirate player adding the Captain’s Leadership and the enemy player adding the Leadership of the captured Hero. If either side won that game, it may add +1 to it’s score.\n\nIf the Pirate player’s result is higher, the Hero renounces his old ways for the life of the high seas! She or he joins the Crew, either starting a new Crew group or joining an existing one if it has four models or less. There is no extra cost to add him to a group which has accumulated experience points, and any equipment or weapons he had are immediately sold off to buy him the proper weapons and armour to match his new unit in an even swap. His skills and characteristics are changed to those of a starting Crewman, or to match those of his new crewmates if joining an existing group.\n\nOtherwise, the Hero has resisted the siren’s song of the sea, and is forced to become a Swabbie (see Swabbies below). He is stripped of his equipment and weapons; these are handed out as the player desires. He does retain any skills and keeps his original characteristics, but can only be re-armed with the weapons listed in the Swabbie equipment list.\n\nEnemy human Henchmen taken Out of Action during the game and then lost from their original Warband for good (a 1-2 was rolled for them post-game) also have a chance of joining up too! Roll another D6 for each: on a roll of 4+, the Pirates manage to drag them away or otherwise make off with their wounded bodies, and patch them up on the ship. The Pirate player can then test to see if they will join exactly as above, by both players rolling 2D6 and adding it to the Captain’s and the Henchman’s Leadership. This test can only be done if the Pirates win the game, so the Pirate player will always get a +1 to his roll.\n\nHired Swords and Special Characters are too skilled to be taken off in this manner, and can never be recruited – they have their own agendas to pursue, and will ensure the pirate life is not part of those plans.\n\nWell now matey, have you ever considered pirating as a career? If the Pirates encounter Stragglers (result 44) or Prisoners (result 333) when Searching, there is a chance they may sign up to sail under the Jolly Roger. Either of these options may be used instead of the regular options listed for these situations.\n\nIf a Straggler is found, the Captain can try to convince him to join the crew by making a successful Leadership test. If passed, the Straggler joins as a Swabbie (he’s too unhinged even to become a member of the Crew!)\n\nIf Prisoners are found, roll a D3 to determine how many are rescued. If the Captain passes a Leadership test (he must make a separate test for each one), the Prisoner eagerly joins his rescuers as a member of the Crew, either starting a new Crew group or joining an existing one if it has four models or less. If he is starting a new Crew group, he will start at the normal characteristics levels for a normal Crew member and at Zero Experience. There is no extra cost to add him to an existing group which has accumulated experience points, and his skills and characteristics match those of his new crewmates. The player must pay though to equip and arm the new Crewman as per his new unit. If the player cannot pay, the prisoner must join as a Swabbie. If the test is failed, the Prisoner isn’t quite so convinced of the worthiness of the sea dogs and is added as a Swabbie.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hired Swords",
         "description": "Unless noted otherwise, Pirate Warbands have the same access to Hired Swords & any other items as for a regular human Mercenary Warband, and follow all the normal rules for them as well. They must however pay an additional +20 gc in upkeep if they have both Dwarfs and Elves together in the same warband (the ship is only so big, and the confines make them more irritable than usual!).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "One-off games",
         "description": "In one-off games, a Pirate Warband starts with two Swabbies for free.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Succession",
         "description": "If the Captain is killed, one of the Mates will take over in the same manner as a Champion taking over for a Mercenary warband.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -28554,37 +28693,44 @@
       {
         "title": "Pit Fighter",
         "description": "All Pit Fighters have the Pit Fighter skill as described in the Strength Skill List (+1 WS, +1 A when fighting in ruins, buildings and The Pit).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hired Swords",
         "description": "Pit Fighters may hire all Hired Swords available except for the Elf Ranger, who feels working with such dirty and brutish individuals would just not do!",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Weapons & Armour",
         "description": "Unlike other warbands that may chose which weapons and armour to equip their warriors with, Pit Fighters have to chose a specific fighting style which dictates their weapons and armour configuration. This is with the exception of Trollslayers and Ogres that may chose from a limited selection of equipment. The fighting style does not restrict Heroes from using items not on their list if they learn the appropriate skills.\n\nPit Fighters may chose to change their fighting style at any stage by either swapping with another warrior in the warband or by simply buying a new style (or the separate components). Pit Fighter warbands also differ from other warbands in that a Henchman group may contain a mix of several different fighting styles and does not have to equip all of its warriors in the same manner.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Pit Fighter fighting styles",
         "description": "Orc style, 20 gc: Helmet, Dagger, Axe, Shield\nUndead style, 35 gc: Helmet, Dagger, Spiked Gauntlet, Sword\nEmpire style, 45 gc: Helmet, Dagger, Double-handed Weapon, Light armour\nChaos style, 50 gc: Helmet, Dagger, Flail, Shield, Light armour",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Pursuer fighting styles",
         "description": "Skink style, 25 gc: Helmet, Dagger, Trident or Javelins, Net or Buckler\nWitch elf style, 30 gc: Helmet, Dagger, 2 x Sword or Spear & Net",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Free the Slaves!",
         "description": "Pit Fighters hate all slavers. The Pit Fighters will never sell their captured opponents to the slavers.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "In the Pit!",
         "description": "Pit Fighters who capture an opponent may decide to let him fight in the infamous fighting pits of Cutthroat’s Haven (use the rules that appeared earlier in this magazine). The Pit Fighter warband may decide to send in one or more of their own fighters to fight the captive. If the Pit Fighter wins, he gains +2 Experience, the warband gets all the captive’s armour and weapons +50gc. If the Pit Fighter loses, then roll to see whether he is dead or injured as normal (ignore all following results: Robbed, Captured, Hardened, Sold to the Pits, and Survives against the Odds). He will not lose his armour or weapons. The captive will get the 50gc and the +2 Experience when he wins. If the captive wins, the audience decides whether he gains his freedom. Roll a D6; on a 4+ the audience raises their thumbs and he is free. A 1-3 means he remains the Pit Fighters’ captive and may be fielded in the pits after future games.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -29456,22 +29602,26 @@
       {
         "title": "Hired Swords",
         "description": "Pit Fighters may hire all Hired Swords available except for the Elf Ranger, who feels working with such dirty and brutish individuals would just not do.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Pit Fighter",
         "description": "All Pit Fighters have the Pit Fighter skill as described in the Strength Skill List except the Pit Fighter Initiates.(Pit Fighter Skill: +1 WS, +1 A when fighting in ruins, buildings and The Pit.)",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Free the Slaves!",
         "description": "Pit Fighters hate all Slavers. The Pit Fighters will never sell their captured opponents to the slavers.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "In the Pit!",
         "description": "Pit Fighters who capture an opponent may decide to let him fight in the infamous fighting pits of Cutthroat’s Haven (use the rules that appeared earlier in this magazine). The Pit Fighter Warband may decide to send in one or more of their own fighters to fight the captive, if the Pit Fighter wins he gains +2 Experience, the Warband gets all the Captive’s armour and weapons +50ge, if the Pit Fighter loses then roll to see whether he is dead or injured as normal (ignore all following results: Robbed, Captured, Hardened, Sold to the Pits and Survives Against the Odds), he will not lose his armour or weapons, the Captive will get the 50 gc and the +2 Experience when he wins. If the Captive wins the audience decides whether he gains his freedom. Roll a D6 on a 4+ the audience raise their thumbs and he is free. A 1-3 means he remains the Pit Fighters Captive and may be fielded in the pits after future games.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -30374,27 +30524,32 @@
       {
         "title": "Hate Dark Elves",
         "description": "All warriors in a Shadow Warrior Warband (excluding any Hired Swords) have an unyielding hatred for Dark Elves.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Excellent Sight",
         "description": "Elves have eyesight unmatched by mere humans. All the Elves in a Shadow Warrior Warband can spot Hidden enemies from twice as far away as other warriors (i.e. twice their Initiative in inches).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Distaste for Poison",
         "description": "The use of poisons and various drugs is a Dark Elf specialty. As such, it is frowned upon by Shadow Warriors, even more so than by other High Elves. Warriors in a Shadow Warrior Warband may not use poisons of any type.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Unforgiving",
         "description": "In addition to their hatred of their corrupt kin, the folk of Nagarythe have a long history of struggle against the forces of Chaos. In multiplayer games, a Shadow Warrior warband may never forge an alliance with any Warband of a Chaotic nature (Possessed, Skaven, Beastmen, Dark Elves, etc.).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Tolerant",
         "description": "Due to their outsider status with their own people, the Elves of Nagarythe have learned to stifle their distaste for ‘lesser races’, and have even been known to work alongside them from time to time. A Shadow Warrior Warband may hire any Hired Sword that is not of a Chaotic or evil bent (so no Skaven, Possessed, Beastmen, Dark Elves, Undead, etc.). They also shun the company of anyone specialising in the use of poison (so no Assassins).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -32691,17 +32846,20 @@
       {
         "title": "Foolish Nobleness",
         "description": "Even if all non-animal member of the warband are Human, the distorted and perverted power of the dark gods bent the morale and psyche of these men beyond any imaginable level, even for the most tolerant of mercenary. For this reason, the Cursed Cavalcade is treated as an Evil warband, and, similarly to the Cult of the Possessed, for all game effects purpose (such as, for example, for the effect 333 - Prisoners, on the exploration chart). They cannot hire any Hired Sword or Dramatis Personae, other than the Crow Master and anyone that specifically says otherwise.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Capture!",
         "description": "If a Hero takes Out of Action an enemy human Henchmen model with a Misericordia, and you have less than 5 Captured Thrall in you warband, roll a die: on a 5+ the model is captured. Enemy Heroes can only be Captured as a result of a roll of “61 - Captured!” on the Serious Injuries Table. It’s not possible to Capture more than 2 model per game. If you already captured 2 henchmen, or already have 5 Captured Thrall in your warband, reroll any result of “61- Captured!” for the heroes.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "The Throne of Worms",
         "description": "The most horrible end for an enemy of the Cavalcade is not death but capture! Captured models are brought down to the Throne of Worms and abandoned to the judgment of this abomination. Only a few survive this madness but they emerge lost forever!\n\nFor each enemy captured, instead of rolling on the Serious Injury Table after the battle, roll 1d6:\n\n1-2 The warrior is swallowed up forever by the Throne of Worms. Remove the warrior from the original warband’s roster.\n3-5 The warrior completely loses his mind and is submitted to the power of the Throne. Remove the warrior from the original warband’s roster and You gain a Captured Thrall for your warband.\n6 The warrior is sacrificed with a ritual to the Throne. Remove the warrior from the original warband’s roster and a random Hero in your warband gains 1 XP.\n\nNote: this replaces the Captured! standard rules on the Serious Injuries Table for Heroes.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -34603,37 +34761,44 @@
       {
         "title": "Hard Head",
         "description": "Chaos Dwarfs and Bull Centaurs ignore the special rules for maces, clubs, etc. They are not easy to knock out!",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Armour",
         "description": "Chaos Dwarfs and Bull Centaurs never suffer movement penalties for wearing armour.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hard to Kill",
         "description": "Chaos Dwarfs and Bull Centaurs are tough, resilient individuals who can only be taken out of action on a roll of 6 instead of 5-6 when rolling on the Injury chart. Treat a roll of 1-2 as knocked down, 3-5 as stunned, and 6 as out of action.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Slavers",
         "description": "One of the main objectives of the Chaos Dwarfs of Mordheim is to get more slaves for their sacrifices and for their tasks. Consequently, the Chaos Dwarfs will never free any slave they capture.\n\nPick one: Sacrifice them or put them to work. If you sacrifice them, the apprentice sorcerer will get +1 to Experience for each slave sacrificed. If put to work, you force them to help them in their quest for the witchstone; at the end of the game, gain an additional +1 wyrdstone for each working slave; then make a 1D6 roll: On a result of 2 to 6, the captive dies due to overwork, disease, the effects of long exposure to the sorcerer’s stone, or for any other similar reason, and the Chaos Dwarf band may keep the captive’s equipment. On a result of 1, the captive manages to escape, returns to his band with his equipment intact and, in addition, gains an experience bonus of 1D3 (if he is a henchman, simply add 1 to his total).",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Uncommon",
         "description": "Chaos Dwarfs are quite rare in Old World settlements. For this reason, when they make rolls for the acquisition of new recruits in their bands, they have to spend 1.5 times (rounding up) the amount of experience they normally spend for veterancy. Remember that this is not the case for Hobgoblins, a race far more common than that of Chaos Dwarfs. For example, a group of Chaos Dwarf recruits armed with blunderbusses with 4 experience points would require at least 6 experience points to acquire one recruit, 12 to recruit two and so on.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Indentured Servants",
         "description": "A Chaos Dwarf warband must start with at least 4 Hobgoblins; if it drops below 4 Hobgoblins, you cannot recruit other members until the number of Hobgoblins is increased to four or more.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Hired Swords",
         "description": "A Chaos Dwarf warband may hire the following Hired Swords: Ogre Bodyguard, Pit Fighter, Warlock, Imperial Assassin, and Hobgoblin Scout. They may hire any Hired Sword described as “all may hire,” or allowed by Orc warbands and Chaos warbands. They may never hire Elves of any sort!",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -35380,17 +35545,20 @@
       {
         "title": "Miragliano",
         "description": "Therefore Miraglean Heroes have a +1 to hit when using crossbows only.\n\nMarksmen get a +1 to hit with any missile weapon they use.\n\nAll Miragleans have a deep-seated hatred toward Skaven. This dates back to the red pox outbreak of 1812 when three quarters of the population of the city perished. When fighting Skaven a Miraglean warband will be affected by the rules for hatred towards them. Hired swords are not affected by the Hatred rule.\n\nHired Swords: Miragleans warband cannot have Skaven Hired Swords.",
-        "variant": "miragliano"
+        "variant": "miragliano",
+        "type": ""
       },
       {
         "title": "Remas",
         "description": "To represent this, the Remasen player is allowed to re-roll any rout test one time and must abide by the second roll. This only applies when fighting Dark Elves.\n\nRemasen officers are steadfast individuals whose years of training have afforded them excellent leadership. The leadership value of a Remasen captain, champion and young blood are always one point higher regardless of whom they are fighting.\n\nHired Swords: Remasens warband cannot have Dark Elf Hired Swords.",
-        "variant": "remas"
+        "variant": "remas",
+        "type": ""
       },
       {
         "title": "Trantio",
         "description": "To represent this a Trantio war band will always start a one-off match with an extra 100 GC and in a Lustrian campaign they will start with an extra 20% GC added to their total.",
-        "variant": "trantio"
+        "variant": "trantio",
+        "type": ""
       }
     ],
     "lists": [
@@ -35894,7 +36062,13 @@
         "is_leader": true,
         "caster": "No",
         "large": false,
-        "variant_changes": {},
+        "variant_changes": {
+          "remas": {
+            "stats": {
+              "leadership": 9
+            }
+          }
+        },
         "fixed_kit": "",
         "lists": [
           "tilean-equipment-list"
@@ -35947,7 +36121,10 @@
               "Combat",
               "Academic",
               "Strength"
-            ]
+            ],
+            "stats": {
+              "leadership": 8
+            }
           }
         },
         "fixed_kit": "",
@@ -35996,7 +36173,10 @@
               "Combat",
               "Academic",
               "Speed"
-            ]
+            ],
+            "stats": {
+              "leadership": 7
+            }
           },
           "trantio": {
             "skill_types": [
@@ -36151,47 +36331,56 @@
       {
         "title": "Cause Fear",
         "description": "All Undead warriors cause Fear.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Immune to Psychology",
         "description": "All Undead warriors are immune to psychology and never leave combat.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "No pain",
         "description": "All Undead warriors treat a Stunned result as Knocked Down.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "May not run",
         "description": "No Undead warrior may run, but may charge as normal.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Immune to poison",
         "description": "No Undead warrior is affected by poison.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "No Brain",
         "description": "Skeletons are not alive, thus they never gain experience.\n\nNote: Tomb Lords don't actually learn new skills, rather they remember the skills they knew when they were alive. Liche Priests and Acolyes are also undead but the have retained a form of living mind and are capable of learning from their experiences.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Flammable",
         "description": "The Tomb Lord is as dry as tinder and wrapped in bandages soaked in highly flammable resins and preservatives. A hit from a fire-based attack will cause double the normal number of wounds on it.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Do not Drink",
         "description": "Undead models do not need food and water. However any living animals that accompany the Mummies follow the water rules as normal.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       },
       {
         "title": "Home Ground",
         "description": "The Tomb Guardians live in the Necropolises and have no trouble locating the hidden tombs in search of weapons and armour to help them defend their homes. A Tomb Guardian warband always roll one extra dice in the Exploration phase.",
-        "variant": ""
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [

@@ -9,7 +9,7 @@ from rest_framework import serializers
 
 from .models import TemplateFighter, TemplateList, TemplateListItem, WarbandTemplate
 from .serializers import TemplateFighterSerializer, TemplateLineSerializer, TemplateRuleSerializer
-from .services.resolve import variant_rules
+from .services.resolve import template_gold, template_size, variant_rules
 from .services.who import allows, who_text
 
 NOBODY = {"count": 0, "groups": 0}
@@ -98,8 +98,8 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
     """The template with the warband's variant applied: its rules for the variant, lists, fighters, and how many of
     the variant's rules the warband lacks by title (`missing_rules`)."""
 
-    gold = serializers.IntegerField(read_only=True)
-    most_warriors = serializers.IntegerField(read_only=True)
+    gold = serializers.SerializerMethodField()
+    most_warriors = serializers.SerializerMethodField()
     rules = serializers.SerializerMethodField()
     lists = HireListSerializer(many=True, read_only=True)
     fighters = serializers.SerializerMethodField()
@@ -121,8 +121,15 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
             "missing_rules",
         )
 
+    def get_gold(self, template: WarbandTemplate) -> int:
+        return template_gold(template, self.context["variant"])
+
+    def get_most_warriors(self, template: WarbandTemplate) -> int:
+        return template_size(template, self.context["variant"])
+
     def get_rules(self, template: WarbandTemplate) -> Any:
-        return TemplateRuleSerializer(variant_rules(template.rules.all(), self.context["variant"]), many=True).data
+        rules = variant_rules(template.rules.all(), self.context["variant"], self.context["warband_type_id"])
+        return TemplateRuleSerializer(rules, many=True).data
 
     def get_fighters(self, template: WarbandTemplate) -> Any:
         return HireFighterSerializer(list(self.context["fighters"].values()), many=True, context=self.context).data

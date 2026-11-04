@@ -5,7 +5,7 @@ import { DetailSection, FactLine, ReferenceDetail } from "@/features/reference/R
 import WarbandRules from "@/features/warbands/components/rules/WarbandRules";
 
 import { useWarbandTemplate } from "../api/template-queries";
-import { rulesFor } from "../template-view";
+import { inVariant, rulesFor, termsFor } from "../template-view";
 import TemplateFighterCard from "./TemplateFighterCard";
 import TemplateLists from "./TemplateLists";
 import TemplateUpgrades from "./TemplateUpgrades";
@@ -15,6 +15,8 @@ type TemplateDetailProps = {
   templateId: number;
   /** The variant the row's warband type always is; "" when the player picks one. */
   preset: string;
+  /** The row's warband type: its own rules show here only. */
+  typeId: number;
   isMobile: boolean;
 };
 
@@ -27,6 +29,7 @@ export default function TemplateDetail({
   campaignId,
   templateId,
   preset,
+  typeId,
   isMobile,
 }: TemplateDetailProps) {
   const query = useWarbandTemplate(campaignId, templateId);
@@ -42,10 +45,16 @@ export default function TemplateDetail({
   }
 
   const variant = picked ?? (preset || template.variants[0]?.key || "");
+  const terms = termsFor(template, variant);
   const heroes = template.fighters.filter((fighter) => fighter.kind === "hero");
   const henchmen = template.fighters.filter((fighter) => fighter.kind === "henchman");
   const card = (fighter: (typeof template.fighters)[number]) => (
-    <TemplateFighterCard key={fighter.id} fighter={fighter} template={template} variant={variant} />
+    <TemplateFighterCard
+      key={fighter.id}
+      fighter={inVariant(fighter, variant)}
+      template={template}
+      variant={variant}
+    />
   );
 
   return (
@@ -62,8 +71,8 @@ export default function TemplateDetail({
     >
       <FactLine
         facts={[
-          { label: "Starting gold", value: `${template.gold} gc` },
-          { label: "Most warriors", value: template.most_warriors },
+          { label: "Starting gold", value: `${terms.gold} gc` },
+          { label: "Most warriors", value: terms.mostWarriors },
         ]}
       />
       {template.variants.length ? (
@@ -81,7 +90,7 @@ export default function TemplateDetail({
       ) : null}
       <WarbandRules
         warbandName={template.name}
-        rules={rulesFor(template, variant)}
+        rules={rulesFor(template, variant, typeId)}
         canEdit={false}
       />
       {heroes.length ? (

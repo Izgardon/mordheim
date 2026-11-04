@@ -59,7 +59,7 @@ def settle_variant(warband: Warband, validated: MutableMapping[str, Any]) -> Non
 def copy_rules(warband: Warband, template: WarbandTemplate, variant: str, *, missing_only: bool = False) -> int:
     """Copy the template's rules for the variant onto the warband's, in order (one INSERT); `missing_only`: just those
     whose title the warband has no rule of (one more query). How many were copied."""
-    rules = variant_rules(template.rules.all(), variant)
+    rules = variant_rules(template.rules.all(), variant, warband.warband_type_id)
     if missing_only:
         have = {title.strip().lower() for title in warband.rules.values_list("title", flat=True)}
         rules = [rule for rule in rules if rule.title.strip().lower() not in have]

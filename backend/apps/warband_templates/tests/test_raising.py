@@ -51,6 +51,22 @@ class RaisingTests(CatalogueTestCase):
         self.assertEqual(warband.template_variant, "middenheim")
         self.assertEqual(list(warband.rules.values_list("title", flat=True)), ["Hard Bargains"])
 
+    def test_a_variants_gold_and_size_and_its_types_rules_are_what_it_is_raised_with(self) -> None:
+        template = self.made.template
+        template.starting_gold = 500
+        template.variants = [
+            {"key": "reikland", "name": "Reikland"},
+            {"key": "middenheim", "name": "Middenheim", "starting_gold": 600, "max_models": 9},
+        ]
+        template.save()
+        template.type_links.update(variant="")
+        ostermarkers = WarbandType.objects.create(name="Ostermarkers", slug="ostermarkers")
+        template.rules.create(position=5, title="Our own", warband_type=self.mercenaries)
+        template.rules.create(position=6, title="Wardogs", warband_type=ostermarkers)
+        warband = self.raised(self.raise_one(template_variant="middenheim"))
+        self.assertEqual((warband.gold, warband.max_units), (600, 9))
+        self.assertEqual(list(warband.rules.values_list("title", flat=True)), ["Hard Bargains", "Our own"])
+
     def test_a_type_without_a_template_raises_as_before(self) -> None:
         self.made.template.type_links.all().delete()
         warband = self.raised(self.raise_one(template_variant="middenheim", max_units=9))

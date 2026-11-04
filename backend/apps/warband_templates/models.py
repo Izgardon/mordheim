@@ -24,7 +24,8 @@ CASTERS = (("No", "No"), ("Wizard", "Wizard"), ("Priest", "Priest"))  # as on he
 class WarbandTemplate(CatalogueEntry):
     """A warband list. `starting_gold` and `max_models` are the book's figures (null: 500 gc, 15 warriors); a warband
     raised from it will get the campaign's gold plus the difference from 500. `variants` are its subfactions in
-    order, `[{"key": "reikland", "name": "Reikland"}]`: a type presets one, or the player picks."""
+    order, `[{"key": "reikland", "name": "Reikland"}]`: a type presets one, or the player picks; a variant may give its
+    own `starting_gold` and `max_models` (Marienburg's 600 gc, the Hung's 12 warriors)."""
 
     campaign = models.ForeignKey(
         "campaigns.Campaign", related_name="warband_templates", null=True, blank=True, on_delete=models.CASCADE
@@ -98,13 +99,17 @@ class WarbandTemplateType(models.Model):
 
 class TemplateRule(models.Model):
     """One of the template's warband rules, in the book's order: the same shape as a warband's own rules
-    (`WarbandRule`), which raising will copy them into. `variant`: blank for every variant, else its key."""
+    (`WarbandRule`), which raising copies them into. `variant`: blank for every variant, else its key;
+    `warband_type`: blank for every type it serves, else the one type it is for (the Ostermarkers' rules)."""
 
     template = models.ForeignKey(WarbandTemplate, related_name="rules", on_delete=models.CASCADE)
     position = models.PositiveSmallIntegerField(default=0)
     title = models.CharField(max_length=160)
     description = models.TextField(max_length=MAX_RULE_TEXT, blank=True, default="")
     variant = models.CharField(max_length=40, blank=True, default="")
+    warband_type = models.ForeignKey(
+        "warbands.WarbandType", related_name="template_rules", null=True, blank=True, on_delete=models.CASCADE
+    )
 
     class Meta:
         db_table = "template_rule"
@@ -119,7 +124,8 @@ class TemplateFighter(WrittenStatBlock):
     will remember it was recruited as. Counts: `min_count` to `max_count` (null: any number); a henchmen group holds
     `group_min` to `group_max`. `cost` is per model and `starting_xp` a hero's or a group's. `skill_types` are skill
     group names ("Combat", "Skaven"); `spell_types` the lores he casts from, `[{"name", "note"}]` ("with the Mark of
-    Tchar the Eagle"). `variant_changes` holds, by variant key, what differs (`{"middenheim": {"skill_types": [...]}}`);
+    Tchar the Eagle"). `variant_changes` holds, by variant key, what differs: his skill groups, and his profile as
+    `stats` written as the book writes them (`{"middenheim": {"skill_types": [...], "stats": {"strength": 4}}}`);
     `fixed_kit` what an animal carries ("None")."""
 
     template = models.ForeignKey(WarbandTemplate, related_name="fighters", on_delete=models.CASCADE)
