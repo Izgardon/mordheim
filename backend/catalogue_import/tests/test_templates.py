@@ -9,6 +9,7 @@ from django.test import SimpleTestCase
 from catalogue_import.template_fighters import (
     FighterLog,
     build_fighter,
+    plural_of,
     profile,
     race_of,
     skill_types,
@@ -201,6 +202,11 @@ class FighterTests(SimpleTestCase):
         hounds: dict[str, Any] = {}
         variant_numbers("marauders-of-chaos", "Warhound of Chaos", {}, hounds)
         self.assertEqual(hounds, {"kurgan": {"max_count": None}})
+
+    def test_a_plurals_mens_slip_is_mended(self) -> None:
+        self.assertEqual(plural_of({"plural": "Marksmens"}), "Marksmen")
+        self.assertEqual(plural_of({"plural": "Cabin Boys"}), "Cabin Boys")
+        self.assertEqual(plural_of({}), "")
 
     def test_the_beastmens_minotaur_takes_our_minotaur(self) -> None:
         log = FighterLog()

@@ -203,6 +203,12 @@ def variant_numbers(page: str, name: str, stats: dict[str, int | str], changes: 
             changes.setdefault(variant, {})["max_count"] = counts[name]
 
 
+def plural_of(fighter: dict[str, Any]) -> str:
+    """mordheimer's plural, its "-mens" slip mended ("Marksmens" is "Marksmen", "Underclassmens" "Underclassmen")."""
+    text = plain(fighter.get("plural"))
+    return text[:-1] if text.endswith("mens") else text
+
+
 def build_fighter(
     page: str, fighter: dict[str, Any], context: dict[str, Any], lists: list[str], log: FighterLog
 ) -> dict[str, Any]:
@@ -221,7 +227,7 @@ def build_fighter(
         "key": slugify(fighter["id"]),
         "kind": "hero" if hero else "henchman",
         "name": plain(fighter["name"]),
-        "plural": plain(fighter.get("plural")),
+        "plural": plural_of(fighter),
         "race": race_of(page, fighter, context["races"], log),
         "cost": fighter.get("costGc") or 0,
         "starting_xp": fighter.get("startingXp") or 0,
