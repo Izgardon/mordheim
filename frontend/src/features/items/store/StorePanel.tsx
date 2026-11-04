@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { SidePanel } from "@/components/ui/side-panel";
+import { useWarbandHireTemplate } from "@/features/warbands/api/warband-template-queries";
 import type {
   HenchmenGroup,
   Warband,
@@ -10,6 +11,7 @@ import type {
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import ItemInfo, { useShownItem } from "../components/ItemInfo";
+import { hisListFor, variantTerms } from "./his-list";
 import StoreBasket from "./StoreBasket";
 import StoreList from "./StoreList";
 import { recipientsFor, useStoreBasket } from "./useStoreBasket";
@@ -58,6 +60,13 @@ export default function StorePanel(props: StorePanelProps) {
     spent: hero.trading_action === false,
   }));
   const details = useShownItem(props.open);
+  // the template the roster reads ahead: His list for a unit recruited from it, the variant's rare bonus
+  const template = useWarbandHireTemplate(props.campaignId, warband.id, props.open).data;
+  const his = hisListFor(template, { heroes, henchmenGroups }, firstKey);
+  const inBasket = (itemId: number) =>
+    basket.lines
+      .filter((line) => line.item.id === itemId)
+      .reduce((sum, line) => sum + line.recipient.count, 0);
   const gold = warband.gold ?? 0;
   const left = gold - basket.total;
   const buyAll = async () => {
@@ -111,6 +120,9 @@ export default function StorePanel(props: StorePanelProps) {
         searchers={searchers}
         again={opening.again}
         isMobile={isMobile}
+        his={his}
+        variant={variantTerms(template)}
+        inBasket={inBasket}
         onPick={basket.add}
         isShown={details.isShown}
         onToggleShown={details.toggle}

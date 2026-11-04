@@ -7,6 +7,7 @@ import type {
   WarbandHero,
   WarbandHireling,
 } from "@/features/warbands/types/warband-types";
+import { isWarbandQuery } from "@/features/warbands/api/warband-cache";
 import { isCreatureGroup } from "@/features/warbands/utils/companions";
 import { getErrorMessage } from "@/lib/get-error-message";
 
@@ -189,6 +190,9 @@ export function useStoreBasket(warbandId: number) {
       return false;
     } finally {
       setBuying(false);
+      // what the warband holds of a limited item (the template's `held`) has changed
+      if (bought)
+        void queryClient.invalidateQueries({ predicate: isWarbandQuery(warbandId, "template") });
     }
   };
 

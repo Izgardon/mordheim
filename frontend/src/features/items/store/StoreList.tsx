@@ -2,26 +2,18 @@ import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
 import { Chip } from "@/components/ui/chip";
-import { ItemKindIcon } from "@/components/ui/game-icons";
 import { Switch } from "@/components/ui/switch";
+import type { TemplateVariant } from "@/features/warband-templates/types/template-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { cn } from "@/lib/utils";
 
 import { useWhoCan } from "../api/who-can-queries";
-import { ItemRowButton, type ShownItem } from "../components/ItemInfo";
-import { itemKind } from "../item-kind";
-import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
+import type { ShownItem } from "../components/ItemInfo";
 import { isSold } from "../utils/item-listing";
-import AcquireForm from "./AcquireForm";
-import {
-  STORE_CATEGORIES,
-  itemName,
-  kindOf,
-  searchWords,
-  storeCategory,
-  type StoreCategory,
-} from "./store-items";
+import { hisLine, hisRow, rareBonusFor, type HisList } from "./his-list";
+import { STORE_CATEGORIES, searchWords, storeCategory, type StoreCategory } from "./store-items";
+import StoreRow, { type StoreOffer } from "./StoreRow";
 import type { BasketLine, Recipient } from "./useStoreBasket";
 
 export type StoreListProps = {
@@ -34,6 +26,12 @@ export type StoreListProps = {
   /** Buy again: the item whose row opens first, at this price. */
   again?: { itemId: number; name: string; price: number | null } | null;
   isMobile: boolean;
+  /** The unit the store is buying for, recruited from the template: his lists. */
+  his?: HisList | null;
+  /** The warband's variant's terms: where a rare search starts its bonus. */
+  variant?: TemplateVariant | null;
+  /** The copies of an item the basket holds, for a per-warband limit. */
+  inBasket?: (itemId: number) => number;
   onPick: (line: Omit<BasketLine, "id">) => void;
   /** Whether a row's item shows its details at the foot of the store. */
   isShown: (key: string) => boolean;
@@ -43,20 +41,21 @@ export type StoreListProps = {
 /**
  * The store's list (design E, the items rebuild): search, "What I can buy" (on: what the warband
  * can't usually buy is hidden; off: it shows with the server's reason, "Not usually available to
- * Skaven.", and can still be bought), category chips, and a row per item (name, kind, the price
- * row the server picked for the warband, Common or Rare N) whose Get opens its acquire form and
- * whose name shows its details at the foot of the store.
+ * Skaven.", and can still be bought), His list when buying for a unit from the template (on: only
+ * his lists' items, as they name them, at the store's price; both on: his items the warband can
+ * usually buy), category chips, and a row per item.
  */
 export default function StoreList(props: StoreListProps) {
   const catalogue = useCatalogue("items", props.campaignId);
   const whoCan = useWhoCan(props.campaignId, props.warbandId);
   const [query, setQuery] = useState(props.again?.name ?? "");
   const [onlyMine, setOnlyMine] = useState(true);
+  const [onlyHis, setOnlyHis] = useState(true);
   const [category, setCategory] = useState<StoreCategory>("all");
   const [openId, setOpenId] = useState<number | null>(props.again?.itemId ?? null);
   const offers = useMemo(
     () =>
-      catalogue.data.filter(isSold).flatMap((item) => {
+      catalogue.data.filter(isSold).flatMap((item): StoreOffer[] => {
         const offer = whoCan.items.get(item.id);
         const byId = new Map((item.availabilities ?? []).map((row) => [row.id, row]));
         const rows = (offer?.options ?? []).flatMap((id) => byId.get(id) ?? []);
@@ -65,13 +64,22 @@ export default function StoreList(props: StoreListProps) {
       }),
     [catalogue.data, whoCan.items]
   );
-  const rows = offers.filter(
-    ({ item, warning }) =>
-      item.id === openId ||
-      ((!onlyMine || !warning) &&
-        (category === "all" || storeCategory(item) === category) &&
-        matchesSearchQuery(query, ...searchWords(item)))
-  );
+  const his = props.his ?? null;
+  const hisOn = his !== null && onlyHis;
+  const copies = props.recipients.find((entry) => entry.key === props.firstKey)?.count ?? 1;
+  const rows = offers.flatMap((offer) => {
+    const line = his ? hisLine(his, offer.item.id) : null;
+    const shown =
+      offer.item.id === openId ||
+      ((!onlyMine || !offer.warning) &&
+        (!hisOn || line !== null) &&
+        (category === "all" || storeCategory(offer.item) === category) &&
+        matchesSearchQuery(query, ...searchWords(offer.item), hisOn ? (line?.shown_as ?? "") : ""));
+    if (!shown) return [];
+    const view =
+      hisOn && his && line ? hisRow(his, line, props.inBasket?.(offer.item.id) ?? 0, copies) : null;
+    return [{ offer, view }];
+  });
 
   return (
     <div className="flex flex-col gap-3.5">
@@ -87,9 +95,16 @@ export default function StoreList(props: StoreListProps) {
             className="min-w-0 flex-1 bg-transparent text-sm text-ink outline-none"
           />
         </label>
-        <Switch checked={onlyMine} onCheckedChange={setOnlyMine}>
-          What I can buy
-        </Switch>
+        <div className="flex gap-2.5">
+          <Switch checked={onlyMine} onCheckedChange={setOnlyMine}>
+            What I can buy
+          </Switch>
+          {his ? (
+            <Switch checked={onlyHis} onCheckedChange={setOnlyHis}>
+              His list
+            </Switch>
+          ) : null}
+        </div>
       </div>
       <div
         role="group"
@@ -118,83 +133,29 @@ export default function StoreList(props: StoreListProps) {
         <p className="m-0 text-sm text-text2">Nothing in the store by that name.</p>
       ) : null}
       <ul className="m-0 flex list-none flex-col border-t border-line p-0">
-        {rows.map(({ item, availability, rows: options, warning }) => {
-          const open = openId === item.id;
-          const key = `store:${item.id}`;
-          return (
-            <li key={item.id} className="flex flex-col gap-2.5 border-b border-line py-2.5">
-              <div className="flex items-center gap-3">
-                <ItemRowButton
-                  shown={props.isShown(key)}
-                  onToggle={() => props.onToggleShown({ key, item, availability })}
-                >
-                  <ItemKindIcon kind={itemKind(item)} className="h-5 w-5 text-accent-text" />
-                  <div className="flex min-w-0 flex-1 flex-col gap-px">
-                    <span className="item-name font-bold text-ink">{itemName(item)}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {props.isMobile ? `${priceLabel(availability)} · ` : `${kindOf(item)}`}
-                      {props.isMobile ? (
-                        <span className={!isCommon(availability.rarity) ? "text-accent-text" : ""}>
-                          {rarityLabel(availability.rarity)}
-                        </span>
-                      ) : null}
-                    </span>
-                    {warning ? (
-                      <span className="text-xs font-semibold text-danger">{warning}</span>
-                    ) : null}
-                  </div>
-                  {props.isMobile ? null : (
-                    <div className="flex w-24 shrink-0 flex-col text-right">
-                      <span className="font-mono text-sm font-bold text-head">
-                        {priceLabel(availability)}
-                      </span>
-                      <span
-                        className={cn(
-                          "text-xs",
-                          !isCommon(availability.rarity) ? "text-accent-text" : "text-faint"
-                        )}
-                      >
-                        {rarityLabel(availability.rarity)}
-                      </span>
-                    </div>
-                  )}
-                </ItemRowButton>
-                {props.canBuy ? (
-                  <button
-                    type="button"
-                    aria-expanded={open}
-                    onClick={() => setOpenId(open ? null : item.id)}
-                    className={cn(
-                      "shrink-0 border px-3 text-[13px] font-bold",
-                      props.isMobile ? "min-h-11 min-w-16" : "min-h-10 min-w-[72px]",
-                      open
-                        ? "border-border bg-transparent text-muted-foreground"
-                        : "border-accent-line bg-accent-soft text-accent-hi"
-                    )}
-                  >
-                    {open ? "Close" : "Get"}
-                  </button>
-                ) : null}
-              </div>
-              {open ? (
-                <AcquireForm
-                  warbandId={props.warbandId}
-                  item={item}
-                  rows={options}
-                  startPrice={props.again?.itemId === item.id ? props.again.price : null}
-                  recipients={props.recipients}
-                  firstKey={props.firstKey}
-                  searchers={props.searchers}
-                  isMobile={props.isMobile}
-                  onPick={(line) => {
-                    props.onPick(line);
-                    setOpenId(null);
-                  }}
-                />
-              ) : null}
-            </li>
-          );
-        })}
+        {rows.map(({ offer, view }) => (
+          <StoreRow
+            key={offer.item.id}
+            offer={offer}
+            his={view}
+            open={openId === offer.item.id}
+            onOpen={(open) => setOpenId(open ? offer.item.id : null)}
+            canBuy={props.canBuy}
+            isMobile={props.isMobile}
+            warbandId={props.warbandId}
+            recipients={props.recipients}
+            firstKey={props.firstKey}
+            searchers={props.searchers}
+            startPrice={props.again?.itemId === offer.item.id ? props.again.price : null}
+            rareBonus={rareBonusFor(props.variant ?? null, offer.item)}
+            onPick={(line) => {
+              props.onPick(line);
+              setOpenId(null);
+            }}
+            isShown={props.isShown}
+            onToggleShown={props.onToggleShown}
+          />
+        ))}
       </ul>
     </div>
   );

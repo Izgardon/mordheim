@@ -20,6 +20,8 @@ type AcquireFormProps = {
   rows: ItemAvailability[];
   /** The price to start from (Buy again's current price), else the row's cost. */
   startPrice?: number | null;
+  /** The bonus a rare search starts on: the warband's variant's (Marienburg +1, the Kurgan -1). */
+  startBonus?: number;
   recipients: Recipient[];
   /** The unit the store was opened for: its button comes first, highlighted. */
   firstKey: string | null;
@@ -46,7 +48,7 @@ export default function AcquireForm(props: AcquireFormProps) {
   const [rolled, setRolled] = useState<number | null>(null);
   const [free, setFree] = useState(false);
   const [reason, setReason] = useState("");
-  const [bonus, setBonus] = useState(0);
+  const [bonus, setBonus] = useState(props.startBonus ?? 0);
   const [search, setSearch] = useState<StoreSearch | null>(null);
   const [skipped, setSkipped] = useState(false);
   if (!row) return null;
