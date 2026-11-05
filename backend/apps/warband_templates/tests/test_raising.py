@@ -47,6 +47,10 @@ class RaisingTests(CatalogueTestCase):
         bad = self.raise_one(template_variant="atlantis")
         self.assertEqual(bad.status_code, 400)
         self.assertEqual(bad.data["template_variant"], ["Not one of this warband type's variants."])
+        none = self.raise_one()  # William, 5 Nov: a type that presets none needs one picked
+        self.assertEqual(
+            (none.status_code, none.data["template_variant"]), (400, ["Pick one of this warband type's variants."])
+        )
         warband = self.raised(self.raise_one(template_variant="middenheim"))
         self.assertEqual(warband.template_variant, "middenheim")
         self.assertEqual(list(warband.rules.values_list("title", flat=True)), ["Hard Bargains"])

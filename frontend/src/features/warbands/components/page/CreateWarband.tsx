@@ -32,10 +32,15 @@ export default function CreateWarband({
   const [name, setName] = useState("");
   const [warbandType, setWarbandType] = useState<WarbandTypeBrief | null>(null);
   const [link, setLink] = useState("");
-  // the template's variant, for a type that presets none (the templates plan, phase 2)
+  // the template's variant, for a type that presets none (the templates plan, phase 2): none is
+  // picked at first, and Raise waits for one (William, 5 Nov: the one block on raising), also while
+  // the outline that says whether one is needed is still being read
   const [variant, setVariant] = useState("");
-  const outline = useRaiseOutline(campaignId, warbandType?.id ?? null, variant).data?.template;
-  const needsVariant = Boolean(outline?.variants.length && !outline.preset_variant && !variant);
+  const read = useRaiseOutline(campaignId, warbandType?.id ?? null, variant);
+  const outline = read.data?.template;
+  const needsVariant =
+    (warbandType !== null && read.isPending) ||
+    Boolean(outline?.variants.length && !outline.preset_variant && !variant);
   const [saving, setSaving] = useState(false);
 
   return (

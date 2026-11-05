@@ -140,12 +140,24 @@ describe("Raising a warband from its type's template", () => {
     const user = await pickType();
 
     const picker = await screen.findByRole("radiogroup", { name: "Variant" });
+    expect(
+      within(picker)
+        .getAllByRole("radio")
+        .map((radio) => radio.getAttribute("aria-checked"))
+    ).toEqual(["false", "false"]);
     expect(screen.getByRole("button", { name: "Raise the warband" })).toBeDisabled();
     await user.click(within(picker).getByRole("radio", { name: "The Hung" }));
     await user.click(await screen.findByRole("button", { name: "Raise the warband" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/")).toMatchObject({ template_variant: "hung" })
     );
+  });
+
+  it("waits for the outline before Raise, which says whether a variant is needed", async () => {
+    fakeApi.on("POST /warbands/", { id: 11, name: "The Gilded Wagon" });
+    renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+    await pickType(); // the outline never answers
+    expect(screen.getByRole("button", { name: "Raise the warband" })).toBeDisabled();
   });
 
   it("shows no outline for a type with no template", async () => {

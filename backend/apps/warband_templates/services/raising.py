@@ -19,17 +19,22 @@ from ..models import WarbandTemplate
 from .resolve import template_for_type, variant_keys, variant_rules, warband_variant
 
 UNKNOWN_VARIANT = "Not one of this warband type's variants."
+NO_VARIANT = "Pick one of this warband type's variants."
 
 
 def picked_variant(template: WarbandTemplate | None, sent: str) -> str:
     """The variant a warband is raised as: its type's preset, else the one sent, which must be one of the template's
-    (a 400 otherwise); blank without a template."""
+    (a 400 otherwise, and for none when the template has variants: William's one block on raising, 5 Nov); blank
+    without a template."""
     if template is None:
         return ""
     preset = str(getattr(template, "preset_variant", "") or "")
     if preset:
         return preset
-    if sent and sent not in variant_keys(template):
+    keys = variant_keys(template)
+    if keys and not sent:
+        raise serializers.ValidationError({"template_variant": [NO_VARIANT]})
+    if sent and sent not in keys:
         raise serializers.ValidationError({"template_variant": [UNKNOWN_VARIANT]})
     return sent
 
