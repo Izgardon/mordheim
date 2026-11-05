@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from apps.campaigns.models import CampaignSettings
 
 from ...models import Battle, BattleParticipant
-from .suggested import rules_for, suggestions_for
+from .suggested import broadcast_rules, rules_for, suggestions_for
 
 
 def settings_of(battle: Battle) -> CampaignSettings | None:
@@ -34,7 +34,8 @@ class Guides:
     def broadcast(self) -> dict | None:
         if not self.suggested:
             return None
-        return {"rules": self.rules, "suggested": {str(user_id): entry for user_id, entry in self.suggested.items()}}
+        suggested = {str(user_id): entry for user_id, entry in self.suggested.items()}
+        return {"rules": broadcast_rules(self.rules), "suggested": suggested}
 
 
 def postbattle_guides(battle: Battle, *, user_id: int | None = None) -> Guides:

@@ -430,6 +430,8 @@ export type BattleInjuryTableRow = {
   high: number;
   label: string;
   effect: BattleInjuryEffect;
+  /** The book's line for the result (the D66's; the D6's and the D100's are blank). */
+  text?: string;
 };
 
 /** The postbattle rules the server applies (IMP-52), in `state/?view=postbattle`. */

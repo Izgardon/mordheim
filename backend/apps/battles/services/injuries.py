@@ -16,11 +16,13 @@ it (services/postbattle/missing.py). Smashed Leg and Arm Wound miss the next gam
 """
 
 from dataclasses import dataclass, field
+from functools import cache
 from typing import Any
 
 from django.db.models import F, Q
 
 from apps.core.catalogue import cache as catalogue_cache
+from apps.core.seeding import IMPORT_OUT, read_json_list
 from apps.special.categories import book_category
 from apps.special.kinds import BANE, GENERAL, INJURY, book_kind
 from apps.special.models import Special
@@ -198,12 +200,24 @@ def granted_specials() -> list[str]:
     return list(dict.fromkeys(effect["special"] for *_, effect in ranges if effect["kind"] == "special"))
 
 
-def _rows(ranges: list[tuple[int, int, str, dict[str, Any]]]) -> list[dict[str, Any]]:
-    return [{"low": low, "high": high, "label": label, "effect": _copy(effect)} for low, high, label, effect in ranges]
+@cache
+def book_texts() -> dict[tuple[int, int], str]:
+    """The book's line for each D66 result, by its roll range (the catalogue import's `out/serious-injuries.json`)."""
+    return {(row["low"], row["high"]): row["text"] for row in read_json_list(IMPORT_OUT / "serious-injuries.json")}
+
+
+def _rows(
+    ranges: list[tuple[int, int, str, dict[str, Any]]], texts: dict[tuple[int, int], str]
+) -> list[dict[str, Any]]:
+    return [
+        {"low": low, "high": high, "label": label, "effect": _copy(effect), "text": texts.get((low, high), "")}
+        for low, high, label, effect in ranges
+    ]
 
 
 def injury_tables() -> dict[str, list[dict[str, Any]]]:
     """The tables as postbattle shows them (IMP-52): each result's roll range (a d66 range runs over its codes),
-    label and effect. A d6 (henchmen, and hirelings on the henchman table) is Dead on 1-2."""
+    label, effect and the book's line (the D66's only; the D6's and the D100's have none). A d6 (henchmen, and
+    hirelings on the henchman table) is Dead on 1-2."""
     d6 = [(1, 2, "Dead", DEAD), (3, 6, "Survives", NONE)]
-    return {"d6": _rows(d6), "d66": _rows(_D66_RANGES), "d100": _rows(_D100_RANGES)}
+    return {"d6": _rows(d6, {}), "d66": _rows(_D66_RANGES, book_texts()), "d100": _rows(_D100_RANGES, {})}

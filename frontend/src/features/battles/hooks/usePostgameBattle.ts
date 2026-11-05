@@ -20,11 +20,11 @@ export function usePostgameBattle(campaignId: number, battleId: number, managesB
     battleId,
     state.battleState?.participants
   );
-  // Broadcasts may leave the rules out; the campaign's last ones stand in.
+  // Broadcasts may leave the rules out, or their injury lines; the campaign's last ones stand in.
   const rules = useCampaignBattleRules(campaignId, state.battleState?.rules);
   const cached = state.battleState;
   const battleState = useMemo(
-    () => (cached && !cached.rules && rules ? { ...cached, rules } : cached),
+    () => (cached && rules && cached.rules !== rules ? { ...cached, rules } : cached),
     [cached, rules]
   );
   const capabilities = useBattleCapabilities({

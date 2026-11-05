@@ -60,10 +60,12 @@ export default function BattleProvider({
     cachedState?.participants
   );
 
-  // Broadcasts may leave the rules out; the campaign's last ones stand in (item 8).
+  // Broadcasts may leave the rules out, or their injury lines; the campaign's last ones stand in
+  // (item 8).
   const rules = useCampaignBattleRules(campaignId, cachedState?.rules);
   const battleState = useMemo(
-    () => (cachedState && !cachedState.rules && rules ? { ...cachedState, rules } : cachedState),
+    () =>
+      cachedState && rules && cachedState.rules !== rules ? { ...cachedState, rules } : cachedState,
     [cachedState, rules]
   );
   const view = deriveBattleView({

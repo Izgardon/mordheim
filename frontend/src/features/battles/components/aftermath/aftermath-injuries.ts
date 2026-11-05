@@ -11,6 +11,7 @@ import {
 import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
 import type {
   BattlePostbattleRules,
+  BattlePostbattleSeriousInjuryRoll,
   BattlePostbattleState,
 } from "@/features/battles/types/battle-types";
 import { rollDie } from "@/lib/dice";
@@ -86,4 +87,17 @@ export function withMissingTicked(
     const { missing_games: _dropped, ...rest } = current;
     return ticked ? { ...rest, missing_games: { games, reason: roll?.result_label ?? "" } } : rest;
   });
+}
+
+/** The book's line for a roll's result, from the server's table ("" for the D6's and the D100's). */
+export function injuryText(
+  rules: BattlePostbattleRules | undefined,
+  roll: Pick<BattlePostbattleSeriousInjuryRoll, "roll_type" | "result_code"> | undefined
+) {
+  if (!roll) return "";
+  const code = Number(roll.result_code);
+  const row = rules?.injury_tables[roll.roll_type]?.find(
+    (entry) => code >= entry.low && code <= entry.high
+  );
+  return row?.text ?? "";
 }

@@ -29,6 +29,13 @@ class InjuryTableTests(BattleTestCase):
             [(row["low"], row["high"], row["name"].casefold()) for row in book],
         )
 
+    def test_each_d66_result_carries_the_books_line(self):
+        book = read_json_list(IMPORT_OUT / "serious-injuries.json")
+        tables = injury_tables()
+        self.assertEqual([row["text"] for row in tables["d66"]], [row["text"] for row in book])
+        self.assertTrue(all(row["text"] for row in tables["d66"]))  # Robbed and Madness too, not only those with a rule
+        self.assertEqual({row["text"] for row in (*tables["d6"], *tables["d100"])}, {""})
+
     def test_each_result_has_its_effect(self):
         cases: list[tuple[str, list[int], str, dict[str, Any]]] = [
             ("d66", [1, 3], "Dead", {"kind": "dead"}),

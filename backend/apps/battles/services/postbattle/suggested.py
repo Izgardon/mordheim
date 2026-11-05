@@ -180,6 +180,16 @@ def rules_for(settings: CampaignSettings | None) -> dict:
     return postbattle_rules((settings.hero_death_roll if settings else None) or "d66")
 
 
+def broadcast_rules(rules: dict) -> dict:
+    """The rules as a broadcast carries them: without the injury tables' book lines (some 4 KB of the message's 10 KB),
+    which every page has from its state or its write's answer and keeps (useCampaignBattleRules)."""
+    tables = {
+        roll: [{key: value for key, value in row.items() if key != "text"} for row in rows]
+        for roll, rows in rules["injury_tables"].items()
+    }
+    return {**rules, "injury_tables": tables}
+
+
 def suggestions_for(
     battle: Battle,
     participants: list[BattleParticipant],

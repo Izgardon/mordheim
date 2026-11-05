@@ -7,6 +7,7 @@ from typing import Any
 from unittest import mock
 
 from apps.battles.services import broadcast
+from apps.battles.services.postbattle.suggested import broadcast_rules
 
 from .battle_support import BattleTestCase, build_fixture_warband, catalogue_item
 
@@ -46,7 +47,9 @@ class EndSnapshotTests(BattleTestCase):
         suggested = message["postbattle"]["suggested"]
         self.assertEqual(sorted(suggested), sorted([str(self.player.id), str(self.viewer.id)]))
         self.assertEqual(suggested[str(self.player.id)], self.guide(self.player, battle_id)["suggested_postbattle"])
-        self.assertEqual(message["postbattle"]["rules"], data["rules"])
+        self.assertTrue(all(row["text"] for row in data["rules"]["injury_tables"]["d66"]))  # the book's lines
+        self.assertEqual(message["postbattle"]["rules"], broadcast_rules(data["rules"]))  # without them: 10 KB
+        self.assertNotIn("text", message["postbattle"]["rules"]["injury_tables"]["d66"][0])
         self.assertLessEqual(len(json.dumps({key: message[key] for key in ("battle", "participants", "postbattle")})), 9000)  # fmt: skip
 
         data = self.ok(self.post_as(self.viewer, self.url(battle_id, "results"), {"winners": [self.warband.id]})).data

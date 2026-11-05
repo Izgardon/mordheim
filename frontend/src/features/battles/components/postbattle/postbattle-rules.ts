@@ -125,3 +125,26 @@ export function seriousInjuryRoll(
     ...(row ? { effect: row.effect } : {}),
   };
 }
+
+/**
+ * The rules with the injury tables' book lines kept from `previous` where `next` has none: a
+ * broadcast carries the rules without them (its 10 KB), the state and a write's answer with them.
+ * `next` itself when there is nothing to keep.
+ */
+export function keepInjuryTexts(next: BattlePostbattleRules, previous: Rules) {
+  const kept = previous?.injury_tables;
+  if (!kept) return next;
+  let changed = false;
+  const tables: BattlePostbattleRules["injury_tables"] = {};
+  for (const roll of Object.keys(next.injury_tables) as (keyof typeof kept)[]) {
+    tables[roll] = next.injury_tables[roll]?.map((row) => {
+      const text = kept[roll]?.find(
+        (entry) => entry.low === row.low && entry.high === row.high
+      )?.text;
+      if (row.text !== undefined || text === undefined) return row;
+      changed = true;
+      return { ...row, text };
+    });
+  }
+  return changed ? { ...next, injury_tables: tables } : next;
+}

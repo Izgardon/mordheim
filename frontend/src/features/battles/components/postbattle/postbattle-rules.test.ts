@@ -7,6 +7,7 @@ import {
   explorationDiceLimits,
   explorationTableRows,
   heroDeathRollFor,
+  keepInjuryTexts,
   seriousInjuryRoll,
 } from "./postbattle-rules";
 
@@ -61,5 +62,34 @@ describe("postbattle-rules: the server's rules (IMP-52)", () => {
       result_label: "Check the serious injury chart manually",
       dead_suggestion: false,
     });
+  });
+});
+
+describe("keepInjuryTexts", () => {
+  const withTexts = () => {
+    const rules = postbattleRules();
+    return {
+      ...rules,
+      injury_tables: {
+        ...rules.injury_tables,
+        d66: rules.injury_tables.d66?.map((row) => ({ ...row, text: `${row.label}: the book` })),
+      },
+    };
+  };
+
+  it("keeps the book's lines a broadcast's rules come without", () => {
+    const kept = keepInjuryTexts(postbattleRules(), withTexts());
+    expect(kept.injury_tables.d66?.map((row) => row.text)).toEqual(
+      withTexts().injury_tables.d66?.map((row) => row.text)
+    );
+    expect(kept.injury_tables.d6?.map((row) => row.text)).toEqual([undefined, undefined]);
+  });
+
+  it("is the rules themselves with lines of their own, or none to keep", () => {
+    const fresh = withTexts();
+    expect(keepInjuryTexts(fresh, postbattleRules())).toBe(fresh);
+    const bare = postbattleRules();
+    expect(keepInjuryTexts(bare, undefined)).toBe(bare);
+    expect(keepInjuryTexts(bare, postbattleRules())).toBe(bare);
   });
 });

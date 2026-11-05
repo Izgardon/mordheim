@@ -16,6 +16,7 @@ import { rollDie } from "@/lib/dice";
 import {
   injuryDice,
   injuryRows,
+  injuryText,
   withInjuryRoll,
   withMissingTicked,
   withoutLastRoll,
@@ -65,6 +66,7 @@ export default function InjuriesTab(props: InjuriesTabProps) {
         const misses = roll?.effect?.misses;
         const offer = misses && row.unitKind !== "henchman" && !row.dead;
         const games = row.missingGames?.games ?? misses?.games ?? 1;
+        const text = injuryText(rules, roll);
         return (
           <RollCard
             key={row.unitKey}
@@ -85,6 +87,9 @@ export default function InjuriesTab(props: InjuriesTabProps) {
             rollLabel={`Roll ${dice}`}
             onRoll={() => onChange(withInjuryRoll(draft, row, rules))}
           >
+            {text ? (
+              <p className="m-0 basis-full text-[13px] leading-relaxed text-text2">{text}</p>
+            ) : null}
             {offer ? (
               <label className="flex min-h-10 basis-full cursor-pointer items-center gap-2.5 border border-accent-line bg-panel px-3 py-2 text-[13px] text-ink">
                 <input
