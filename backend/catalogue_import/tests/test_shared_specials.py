@@ -135,3 +135,8 @@ class CommittedSharedSpecialsTests(SimpleTestCase):
         held += [u["special"] for t in templates for u in t["upgrades"]]
         copies = [row["name"] for row in held if "description" in row and key(row["name"]) in shared.names]
         self.assertEqual(copies, [])
+        # the Grace of Shornaal is +1 to Initiative tests; the Cursed Cavalcade's Fighting Ape's Agile gives skills
+        ape = next(f for t in templates if t["name"] == "The Cursed Cavalcade" for f in t["fighters"] if f["name"] == "Fighting Ape")  # fmt: skip
+        agile = [row for row in ape["specials"] if row["name"].startswith("Agile")]
+        self.assertEqual([(row["name"], row["type"]) for row in agile], [("Agile (Fighting Ape)", "Warband - The Cursed Cavalcade")])  # fmt: skip
+        self.assertIn("Scale Sheer Surfaces", agile[0]["description"])

@@ -10,7 +10,8 @@ William's list `apps/special/data/shared-specials.json`, into `out/shared-specia
 - one for each mutation Mutiny in Marienburg adds to the list (William's pages, `from`) or the random mutation table
   gives (random_mutations.py): the list's `text`, its `cost` where a list prices it, and its `setting` where it isn't
   Mordheim 1a's. Its type is its family (`mutation_types`: "Mutation", "Blessing of Nurgle", "Favour of Tchar",
-  "Bounty of Arkhar"), which makes it a mutation (special/categories.py); a family is one more type and its entries.
+  "Bounty of Arkhar", "Grace of Shornaal"), which makes it a mutation (special/categories.py); a family is one more
+  type and its entries.
 
 A list price that differs from the page's keeps the page's and is reported. A template fighter's rule or an upgrade
 of a shared name or alias links it (templates.py); a rule the list keeps

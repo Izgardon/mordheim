@@ -31,7 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 49 |
 | skill group links | 266 |
 | serious injuries (D66) | 20 |
-| shared specials | 52 |
+| shared specials | 57 |
 | random mutation results (D66) | 36 |
 
 ## mordheimer's contradictions
@@ -707,10 +707,15 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Spiked Tail | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 50 |  | 0 | 0 | 0 | 0 |
 | Regeneration | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 60 |  | 0 | 0 | 0 | 0 |
 | Spit Acid | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 35 |  | 0 | 0 | 0 | 0 |
+| Alluring | Grace of Shornaal | the list's text (Mutiny in Marienburg, Graces of Shornaal) | 50 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Metallic Growths | Grace of Shornaal | the list's text (Mutiny in Marienburg, Graces of Shornaal) | 45 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Agile | Grace of Shornaal | the list's text (Mutiny in Marienburg, Graces of Shornaal) | 35 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Vestigial Twin | Grace of Shornaal | the list's text (Mutiny in Marienburg, Graces of Shornaal) | 60 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Elastic Limbs | Grace of Shornaal | the list's text (Mutiny in Marienburg, Graces of Shornaal) | 40 |  | 0 | 0 | 0 | 0 |
+| Piercing Tongue | Grace of Shornaal | the list's text (Mutiny in Marienburg, Graces of Shornaal) | 30 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Atrophy | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Beweaponed Extremities | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Brightly Patterned Skin | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
-| Elastic Limbs | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Enormously Fat | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Extremely Thin | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Furry | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
@@ -777,6 +782,7 @@ List prices the pages differ from: none.
 | Resilient (Old Prospector) | Old Prospector | The Resilient skill: -1 Strength to every hit against him in close combat; the mutation is +1 Toughness. |
 | No Pain (Sigmund) | Sigmund Spindle, the Harvester of Flesh | Ignores knocked down results too: only losing his last wound takes him out of action. |
 | No Pain (Veskit) | Veskit, High Executioner of Clan Eshin | Ignores knocked down results too: only losing his last wound takes him out of action. |
+| Agile (Fighting Ape) | The Cursed Cavalcade: Fighting Ape | The Scale Sheer Surfaces, Acrobat and Dodge skills and a diving charge from up to 10" high; the Grace of Shornaal is +1 to Initiative tests. |
 
 ## Random mutation table
 
@@ -794,7 +800,7 @@ List prices the pages differ from: none.
 | 22 | Cloud of Flies | the same | Blessing of Nurgle | 25 |  |
 | 23 | Cloven Hooves | Cloven Hoofs | Mutation | 40 |  |
 | 24 | Crystalline Body | the same | Mutation | 60 |  |
-| 25 | Elastic Limbs | the same | Mutation |  |  |
+| 25 | Elastic Limbs | the same | Grace of Shornaal | 40 |  |
 | 26 | Enormously Fat | the same | Mutation |  |  |
 | 31 | Extra Arm | the same | Mutation | 40 |  |
 | 32 | Extremely Thin | the same | Mutation |  |  |

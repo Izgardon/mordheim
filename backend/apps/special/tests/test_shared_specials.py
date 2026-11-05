@@ -28,7 +28,7 @@ def seed() -> str:
 class SharedSeedTests(TestCase):
     def test_each_is_a_general_special_with_its_wording_kind_and_category(self):
         seed()
-        families = ("Mutation", "Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar")
+        families = ("Mutation", "Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar", "Grace of Shornaal")
         rows = {row.name: row for row in Special.objects.filter(type__in=("Psychology", "Trait", *families))}
         fear, poison, immune = rows["Fear"], rows["Immune to Poison"], rows["Immune to Psychology"]
         self.assertTrue(fear.description.startswith("This model causes fear.\n\nFear is a natural reaction"))
@@ -50,28 +50,36 @@ class SharedSeedTests(TestCase):
         kinds = dict(mutations.filter(name__in=("Atrophy", "Warts", "Horns")).values_list("name", "kind"))
         self.assertEqual(kinds, {"Atrophy": BANE, "Warts": TRAIT, "Horns": BOON})
         counted = Counter(mutations.values_list("type", flat=True))
-        # the generic list's 15 and the random table's 12 of its own; the Nurgle family 7, Tchar's 6 and Arkhar's 6
-        self.assertEqual(
-            counted, {"Mutation": 27, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
-        )
+        # the generic list's 15 and the random table's 11 of its own; the Nurgle family 7, Tchar's 6, Arkhar's 6 and
+        # Shornaal's 6 (its Elastic Limbs the table's)
+        families_counted = {"Mutation": 26, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
+        self.assertEqual(counted, {**families_counted, "Grace of Shornaal": 6})
+        twin, limbs = rows["Vestigial Twin"], rows["Elastic Limbs"]
+        self.assertEqual((twin.cost, twin.kind, twin.category, limbs.cost), (60, BOON, MUTATION, 40))
+        self.assertTrue(twin.description.endswith('Its Movement is reduced by 2".'))
         self.assertFalse(mutations.filter(description__icontains="Tainted One").exists())  # a general subject
         self.assertEqual((claw.cost, rot.cost, rows["Mark of Nurgle"].cost, fear.cost), (50, 50, 35, None))
         self.assertEqual({row.campaign_type_id for row in mutations}, {None})  # no settings seeded: Mordheim's
 
     def test_mutiny_in_marienburgs_own_are_its_settings_and_the_rest_mordheim_1as(self):
         # William, 5 Nov 2026: the generic list and the Nurgle family are 1a's, and every special the random table
-        # gives (Tchar's Beak and Burning Body and Arkhar's Fangs among them); the rest of the Favours of Tchar and the
-        # Bounties of Arkhar are Mutiny in Marienburg's
+        # gives (Tchar's Beak and Burning Body, Arkhar's Fangs and Shornaal's Elastic Limbs among them); the rest of the
+        # Favours of Tchar, the Bounties of Arkhar and the Graces of Shornaal are Mutiny in Marienburg's
         mim = CampaignType.objects.create(slug="mutiny-in-marienburg", name="Mutiny in Marienburg")
         seed()
         theirs = Special.objects.filter(campaign_type=mim).values_list("name", flat=True)
         self.assertEqual(
-            set(theirs), {"Electrical Touch", "Eye of Tchar", "Mer-creature", "Telekinesis"} | {"Centauroid"}
+            set(theirs),
+            {"Electrical Touch", "Eye of Tchar", "Mer-creature", "Telekinesis"}
+            | {"Centauroid"}
+            | {"Alluring", "Metallic Growths", "Agile", "Vestigial Twin", "Piercing Tongue"},
         )
         tchar = Special.objects.filter(type="Favour of Tchar", campaign_type__isnull=True)
         self.assertEqual(set(tchar.values_list("name", flat=True)), {"Beak", "Burning Body"})
         arkhar = Special.objects.filter(type="Bounty of Arkhar", campaign_type__isnull=True)
         self.assertEqual(set(arkhar.values_list("name", flat=True)), {"Iron-hard Skin", "Spiked Tail", "Regeneration", "Spit Acid", "Fangs"})  # fmt: skip
+        shornaal = Special.objects.filter(type="Grace of Shornaal", campaign_type__isnull=True)
+        self.assertEqual(set(shornaal.values_list("name", flat=True)), {"Elastic Limbs"})
 
     def test_the_copies_seeded_before_are_archived_and_a_second_run_finds_none(self):
         copies = [
@@ -84,13 +92,13 @@ class SharedSeedTests(TestCase):
         ]
         frenzy = Special.objects.create(name="Frenzy", type="Animal")
 
-        self.assertIn("Shared specials - Created: 52, Updated: 0, copies archived: 5.", seed())
+        self.assertIn("Shared specials - Created: 57, Updated: 0, copies archived: 5.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         frenzy.refresh_from_db()
         self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 52, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 57, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):

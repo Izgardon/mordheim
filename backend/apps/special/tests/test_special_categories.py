@@ -48,7 +48,8 @@ class BookCategoryTests(TestCase):
     def test_the_rules_apply_in_order(self):
         self.assertEqual(book_category("Regeneration", INJURY_TYPE), INJURY)  # the type before the name
         self.assertEqual(book_category("Tentacle", MUTATION_TYPE), MUTATION)  # the shared mutations
-        for family in ("Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar"):  # each family is a mutation's type
+        families = ("Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar", "Grace of Shornaal")
+        for family in families:  # each family is a mutation's type
             self.assertEqual(book_category("Regeneration", family), MUTATION)
         self.assertEqual(book_category("Regeneration (Troll)", "Warband - Orc Mob"), BODY)  # a Troll's own
         self.assertEqual(book_category("Immune to Poison", MUTATION_TYPE), MUTATION)  # the type before the name

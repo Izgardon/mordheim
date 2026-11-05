@@ -95,6 +95,7 @@ class CommittedRandomMutationTests(SimpleTestCase):
         self.assertEqual(families["Beaked"], ("Beak", "Favour of Tchar"))
         self.assertEqual(families["Fangs"], ("Fangs", "Bounty of Arkhar"))
         self.assertEqual(families["Burning Body"], ("Burning Body", "Favour of Tchar"))
+        self.assertEqual(families["Elastic Limbs"], ("Elastic Limbs", "Grace of Shornaal"))  # the two do the same
         # kept apart where the effect differs
         self.assertEqual(gives["Plague Bearer"], "Plague Bearer")
         # every special the table gives is Mordheim 1a's, a family's too

@@ -1,5 +1,5 @@
 {
-  "mutation_types": ["Mutation", "Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar"],
+  "mutation_types": ["Mutation", "Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar", "Grace of Shornaal"],
   "shared": [
     {
       "name": "Fear",
@@ -255,6 +255,59 @@
       "aliases": ["Acid Spray"]
     },
     {
+      "name": "Alluring",
+      "type": "Grace of Shornaal",
+      "from": "Mutiny in Marienburg, Graces of Shornaal",
+      "cost": 50,
+      "setting": "mutiny-in-marienburg",
+      "text": "In the first round of combat, every enemy model that isn't Undead suffers -1 to hit. The model also adds +1 to its roll to find rare items.",
+      "aliases": []
+    },
+    {
+      "name": "Metallic Growths",
+      "type": "Grace of Shornaal",
+      "from": "Mutiny in Marienburg, Graces of Shornaal",
+      "cost": 45,
+      "setting": "mutiny-in-marienburg",
+      "text": "The model has a special 6+ save against missiles and hand-to-hand combat hits. It can't be combined with other armour, but may be taken whenever the model fails any other saving throw. It is never modified, and may be taken even where no saving throw is normally allowed.",
+      "aliases": []
+    },
+    {
+      "name": "Agile",
+      "type": "Grace of Shornaal",
+      "from": "Mutiny in Marienburg, Graces of Shornaal",
+      "cost": 35,
+      "setting": "mutiny-in-marienburg",
+      "text": "The model gains +1 to Initiative tests, and may ignore the Initiative test it would normally take for being knocked down or stunned within 1\" of the edge of a roof, building or other sheer surface.",
+      "aliases": []
+    },
+    {
+      "name": "Vestigial Twin",
+      "type": "Grace of Shornaal",
+      "from": "Mutiny in Marienburg, Graces of Shornaal",
+      "cost": 60,
+      "setting": "mutiny-in-marienburg",
+      "text": "Each time the model picks a new skill, its twin learns another: pick two skills from the skill tables open to the model. A wizard may instead randomly generate a new spell in place of its own skill, then pick a skill for the twin. When spotting hidden enemies the model's Initiative is doubled, and it ignores the rules for fighting alone (Leadership & Psychology). Its Movement is reduced by 2\".",
+      "aliases": []
+    },
+    {
+      "name": "Elastic Limbs",
+      "type": "Grace of Shornaal",
+      "from": "Mutiny in Marienburg, Graces of Shornaal",
+      "cost": 40,
+      "text": "If the model isn't in base contact with an enemy model at the start of the hand-to-hand combat phase, it may make one hand-to-hand attack against a single visible enemy within 6\" of it. That enemy can't fight back.",
+      "aliases": []
+    },
+    {
+      "name": "Piercing Tongue",
+      "type": "Grace of Shornaal",
+      "from": "Mutiny in Marienburg, Graces of Shornaal",
+      "cost": 30,
+      "setting": "mutiny-in-marienburg",
+      "text": "In the shooting phase the model may make a tongue attack against any model within 2\", at its own Strength and with no penalty for range or for moving. It may attack enemy models engaged in close combat, but can't make the attack while it is engaged in close combat itself.",
+      "aliases": []
+    },
+    {
       "name": "Atrophy",
       "type": "Mutation",
       "from": "the random mutation table",
@@ -273,13 +326,6 @@
       "type": "Mutation",
       "from": "the random mutation table",
       "text": "Bright stripes, spots or other patterns on the model's skin. No effect on play.",
-      "aliases": []
-    },
-    {
-      "name": "Elastic Limbs",
-      "type": "Mutation",
-      "from": "the random mutation table",
-      "text": "If the model isn't in base contact with an enemy at the start of the hand-to-hand combat phase, it may make one hand-to-hand attack against a single visible enemy within 6\". That enemy can't strike back.",
       "aliases": []
     },
     {
@@ -468,6 +514,12 @@
       "rule": "No Pain",
       "owners": [{"dramatis_persona": "Veskit, High Executioner of Clan Eshin"}],
       "why": "Ignores knocked down results too: only losing his last wound takes him out of action."
+    },
+    {
+      "name": "Agile (Fighting Ape)",
+      "rule": "Agile",
+      "owners": [{"warband": "The Cursed Cavalcade", "fighter": "Fighting Ape"}],
+      "why": "The Scale Sheer Surfaces, Acrobat and Dodge skills and a diving charge from up to 10\" high; the Grace of Shornaal is +1 to Initiative tests."
     }
   ]
 }

@@ -33,7 +33,8 @@ MUTATION_GROUPS = {
 @cache
 def mutation_types() -> frozenset[str]:
     """The mutation families, each a shared special's type ("Mutation", "Blessing of Nurgle", "Favour of Tchar",
-    "Bounty of Arkhar"): William's list's `mutation_types` (data/shared-specials.json), so a family is data."""
+    "Bounty of Arkhar", "Grace of Shornaal"): William's list's `mutation_types` (data/shared-specials.json), so a
+    family is data."""
     with SHARED_PATH.open(encoding="utf-8") as handle:
         data = json.load(handle)
     return frozenset({MUTATION_TYPE, *data.get("mutation_types", [])})
