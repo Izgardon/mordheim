@@ -499,8 +499,6 @@ Fighters with no race:
 | Page | Fighter | mordheimer's race |
 | --- | --- | --- |
 | beastmen-raiders | Warhounds of Chaos |  |
-| carnival-of-chaos | Brute | mutant |
-| carnival-of-chaos | Tainted One | mutant |
 | cursed-cavalcade | Aristocrat |  |
 | cursed-cavalcade | Companion |  |
 | cursed-cavalcade | Twisted Scholar |  |
@@ -514,7 +512,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-36 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, kroxigor, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+35 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 

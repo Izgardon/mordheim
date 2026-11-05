@@ -173,8 +173,15 @@ RACES: dict[str, str | None] = {
     "bull centaur": "Bull Centaur",
 }
 # Fighters mordheimer gives no race, settled (William, 4 Nov 2026: take recommendations): the Beastmen's Minotaur
-# takes our Minotaur; the Cursed Cavalcade's fighters stay raceless
-RACES_BY_FIGHTER: dict[tuple[str, str], str] = {("beastmen-raiders", "Minotaur"): "Minotaur"}
+# takes our Minotaur; the Cursed Cavalcade's fighters stay raceless. The review (William, 5 Nov 2026: W10): the
+# Carnival's Brute ("what were once men") and Tainted One (the warband's "mortal members"), "mutant" to mordheimer,
+# are Human, as the Cult's Mutants are; the Lizardmen's Kroxigor ("race": "kroxigor") takes our Kroxigor
+RACES_BY_FIGHTER: dict[tuple[str, str], str] = {
+    ("beastmen-raiders", "Minotaur"): "Minotaur",
+    ("carnival-of-chaos", "Brute"): "Human",
+    ("carnival-of-chaos", "Tainted One"): "Human",
+    ("lizardmen", "Kroxigor"): "Kroxigor",
+}
 # A warband's own maximum is a race of its own, and the Undead warband's Vampire is our Vampire
 RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("skaven-pestilens", "skaven"): "Skaven (Clan Pestilens)",

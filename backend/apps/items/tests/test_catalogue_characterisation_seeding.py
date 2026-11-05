@@ -88,7 +88,7 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             self.seeded,
             {
-                "Race": 31,  # 27, and the templates' Undead, Other Beastmen and two Bull Centaur maximums
+                "Race": 32,  # 27, and the templates' Undead, Other Beastmen, two Bull Centaur maximums and the Kroxigor
                 "Item": 339,  # the import's 308 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
@@ -241,9 +241,20 @@ class SeedAllTests(TestCase):
     def test_skaven_and_clan_pestilens_keep_their_own_maximums(self):
         # the 2026-10-28 data audit: races.json held Clan Pestilens' maximums under the name "Skaven" too, and
         # seed_races upserts by name, so the Skaven race had M5 T5 instead of M6 T4
-        self.assertIn("Races import complete. Created: 31, Updated: 0", self.output)
+        self.assertIn("Races import complete. Created: 32, Updated: 0", self.output)
         skaven = {race.name: (race.movement, race.toughness) for race in Race.objects.filter(name__startswith="Skaven")}
         self.assertEqual(skaven, {"Skaven": (6, 4), "Skaven (Clan Pestilens)": (5, 5)})
+
+    def test_the_carnivals_brute_and_tainted_one_are_human_and_the_kroxigor_a_kroxigor(self):
+        # the review (5 Nov 2026: W10): mordheimer's "mutant" Brute and Tainted One came in raceless, and so did the
+        # Kroxigor ("race": "kroxigor", among the creatures), so a hire of one inherited no race maximum
+        fighters = TemplateFighter.objects.filter(
+            template__slug__in=("carnival-of-chaos", "lizardmen"), name__in=("Brute", "Tainted One", "Kroxigor")
+        )
+        races = dict(fighters.values_list("name", "race__name"))
+        self.assertEqual(races, {"Brute": "Human", "Tainted One": "Human", "Kroxigor": "Kroxigor"})
+        kroxigor = Race.objects.get(name="Kroxigor")  # his profile: he never gains experience
+        self.assertEqual((kroxigor.movement, kroxigor.strength, kroxigor.toughness, kroxigor.wounds), (6, 5, 4, 3))
 
     def test_both_pirates_lists_keep_their_own_sea_legs(self):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since

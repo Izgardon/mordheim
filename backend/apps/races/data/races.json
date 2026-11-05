@@ -370,5 +370,17 @@
     "initiative": "4",
     "attacks": "5",
     "leadership": "9"
+  },
+  {
+    "name": "Kroxigor",
+    "movement": "6",
+    "weapon_skill": "3",
+    "ballistic_skill": "0",
+    "strength": "5",
+    "toughness": "4",
+    "wounds": "3",
+    "initiative": "1",
+    "attacks": "3",
+    "leadership": "8"
   }
 ]
