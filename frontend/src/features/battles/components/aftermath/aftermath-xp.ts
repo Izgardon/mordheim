@@ -153,9 +153,12 @@ export function advanceLabel(id: string) {
   return `+1 ${resolveAdvanceLabel(id)}`;
 }
 
-/** Rolls the advance table: 2D6 (and the D6 that follows on a 6, 8 or 9 for a hero). */
-export function rollAdvance(group: boolean, at: number): BattlePostbattleAdvance {
-  const rolls = [rollDie(6), rollDie(6)];
+/**
+ * The advance table's result for the 2D6 `faces` (rolled or typed), with the D6 that follows on a
+ * 6, 8 or 9 for a hero rolled here (`withFollowUp` takes it typed over).
+ */
+export function rollAdvance(group: boolean, at: number, faces: number[]): BattlePostbattleAdvance {
+  const rolls = faces.slice(0, 2);
   const total = rolls[0] + rolls[1];
   let id: string | null;
   if (group) {
@@ -169,6 +172,13 @@ export function rollAdvance(group: boolean, at: number): BattlePostbattleAdvance
   }
   const advance = id ?? "Skill";
   return { id: advance, label: advanceLabel(advance), at, rolls };
+}
+
+/** A hero's advance with its follow-up D6 rolled again or typed: the stat follows the new face. */
+export function withFollowUp(advance: BattlePostbattleAdvance, face: number) {
+  const rolls = [advance.rolls[0], advance.rolls[1], face];
+  const id = resolveHero1d6Stat(rolls[0] + rolls[1], face) ?? advance.id;
+  return { ...advance, id, label: advanceLabel(id), rolls };
 }
 
 /** The draft with `advances` as every result of the row (a group's members share them). */

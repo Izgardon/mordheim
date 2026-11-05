@@ -1,6 +1,7 @@
 import { Minus, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import DiceEntry from "@/components/ui/dice-entry";
 import { IconButton } from "@/components/ui/icon-button";
 import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
 import { cn } from "@/lib/utils";
@@ -10,6 +11,7 @@ import {
   rollAdvance,
   withAdvances,
   withCorrectedXp,
+  withFollowUp,
   xpBlock,
   type XpRow,
 } from "./aftermath-xp";
@@ -70,14 +72,20 @@ function XpCard({
       ))}
     </div>
   );
+  const at = block.at;
   const advance =
-    block.canAdvance && block.at !== null ? (
-      <Button
-        className={isMobile ? "min-h-11" : ""}
-        onClick={() => onAdvances([...row.advances, rollAdvance(row.group, block.at as number)])}
-      >
-        Advance at {block.at} · roll 2D6
-      </Button>
+    block.canAdvance && at !== null ? (
+      <DiceEntry
+        // the next advance starts with empty boxes
+        key={row.advances.length}
+        dice="2D6"
+        onFaces={(faces) => onAdvances([...row.advances, rollAdvance(row.group, at, faces)])}
+        button={(roll) => (
+          <Button className={isMobile ? "min-h-11 flex-1" : ""} onClick={roll}>
+            Advance at {at} · roll 2D6
+          </Button>
+        )}
+      />
     ) : null;
 
   return (
@@ -112,7 +120,26 @@ function XpCard({
           <span className="border border-accent-line bg-accent-soft px-2 py-0.5 font-mono text-xs font-bold text-accent-hi">
             {done.at} XP
           </span>
-          <span className="font-mono text-muted-foreground">2D6 {done.rolls.join(" · ")}</span>
+          <span className="font-mono text-muted-foreground">
+            2D6 {done.rolls.slice(0, 2).join(" · ")}
+          </span>
+          {done.rolls.length > 2 ? (
+            <DiceEntry
+              dice="D6"
+              size="sm"
+              total={done.rolls[2]}
+              onFaces={([face]) =>
+                onAdvances(
+                  row.advances.map((entry, i) => (i === index ? withFollowUp(entry, face) : entry))
+                )
+              }
+              button={(roll) => (
+                <Button size="sm" variant="secondary" className="h-9" onClick={roll}>
+                  Roll D6
+                </Button>
+              )}
+            />
+          ) : null}
           <span className="font-bold text-head">{done.label}</span>
           {!row.group && done.rolls.length === 2 && done.rolls[0] + done.rolls[1] === 7
             ? (["WS", "BS"] as const).map((stat) => (
@@ -166,9 +193,9 @@ function XpCard({
 
 /**
  * Experience (design E): each unit's XP from the battle with its reasons, − and + to correct it,
- * the boxes of its current block, and Advance when a threshold is reached; the roll's result
- * shows and the next block follows, so a unit can advance twice. Saved with the draft and taken
- * at Ready.
+ * the boxes of its current block, and Advance when a threshold is reached (its 2D6 rolled or typed
+ * in, and a hero's follow-up D6 rolled again or typed over); the roll's result shows and the next
+ * block follows, so a unit can advance twice. Saved with the draft and taken at Ready.
  */
 export default function ExperienceTab({
   draft,
