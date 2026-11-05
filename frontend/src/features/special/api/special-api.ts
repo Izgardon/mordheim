@@ -1,5 +1,5 @@
 import { apiRequest } from "../../../lib/api-client";
-import type { SpecialKind } from "@/components/ui/game-icons";
+import type { SpecialCategory, SpecialKind } from "@/components/ui/game-icons";
 import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 import type { Special } from "../types/special-types";
@@ -17,6 +17,8 @@ export type SpecialCreatePayload = {
   type: string;
   /** Left out: a trait. */
   kind?: SpecialKind;
+  /** Left out: an aura. */
+  category?: SpecialCategory;
   description: string;
 };
 
