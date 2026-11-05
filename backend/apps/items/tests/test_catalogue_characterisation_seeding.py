@@ -256,6 +256,13 @@ class SeedAllTests(TestCase):
         kroxigor = Race.objects.get(name="Kroxigor")  # his profile: he never gains experience
         self.assertEqual((kroxigor.movement, kroxigor.strength, kroxigor.toughness, kroxigor.wounds), (6, 5, 4, 3))
 
+    def test_a_race_is_named_in_the_singular(self):
+        # the review (5 Nov 2026: D10): "Skinks" and "Centigors" beside Human and Saurus; Other Beastmen stays (the plan)
+        self.assertFalse(Race.objects.filter(name__in=("Skinks", "Centigors")).exists())
+        lizardmen = TemplateFighter.objects.filter(template__slug="lizardmen", name__startswith="Skink")
+        self.assertEqual(set(lizardmen.values_list("race__name", flat=True)), {"Skink"})
+        self.assertEqual(HiredSword.objects.values_list("race__name", flat=True).get(name="Chaos Centaur"), "Centigor")
+
     def test_both_pirates_lists_keep_their_own_sea_legs(self):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
@@ -330,7 +337,7 @@ class SeedAllTests(TestCase):
     def test_hired_swords_take_mordheimers_initiative_skill_lists_and_races(self):
         # the 2026-10-28 data audit: the Norse Shaman had I3, the Human Scout lacked Shooting and the Mule Skinner
         # Academic, and nine race labels matched no book race; five of them name one under mordheimer's race, and
-        # two more take the book race that fits (a Chaos Centaur is a Centigors-sized centaur, and the bestiary says
+        # two more take the book race that fits (a Chaos Centaur is a Centigor-sized centaur, and the bestiary says
         # "Gnoblars count as Greenskins"); the Bone Goliath (undead construct) takes Undead, the race the warband
         # templates brought in (a Human's maximum), and the Chaos Fury (daemon) has none
         shaman, scout, skinner = (HiredSword.objects.get(name=name) for name in ("Norse Shaman", "Human Scout", "Mule Skinner"))  # fmt: skip
@@ -339,9 +346,9 @@ class SeedAllTests(TestCase):
         self.assertLessEqual({"Combat", "Academic", "Strength"}, set(skinner.available_skill_types))
         races = dict(HiredSword.objects.values_list("name", "race__name"))
         self.assertEqual({name for name, race in races.items() if race is None}, {"Chaos Fury"})
-        mapped = {"Chameleon Skink": "Skinks", "Dark Elf Assassin": "Elf", "Shadow Warrior": "Elf"}
+        mapped = {"Chameleon Skink": "Skink", "Dark Elf Assassin": "Elf", "Shadow Warrior": "Elf"}
         mapped |= {"Wood Elf Hunter": "Elf", "Ungor Trapper": "Ungor"}
-        mapped |= {"Chaos Centaur": "Centigors", "Ninja Gnoblar": "Goblin", "Bone Goliath": "Undead"}
+        mapped |= {"Chaos Centaur": "Centigor", "Ninja Gnoblar": "Goblin", "Bone Goliath": "Undead"}
         self.assertEqual({name: races[name] for name in mapped}, mapped)
 
     def test_the_ogre_keeps_both_swords_and_the_fees_are_structured(self):

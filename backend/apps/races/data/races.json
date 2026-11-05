@@ -132,7 +132,7 @@
     "leadership": "10"
   },
   {
-    "name": "Skinks",
+    "name": "Skink",
     "movement": "6",
     "weapon_skill": "5",
     "ballistic_skill": "6",
@@ -300,7 +300,7 @@
     "leadership": "7"
   },
   {
-    "name": "Centigors",
+    "name": "Centigor",
     "movement": "9",
     "weapon_skill": "7",
     "ballistic_skill": "6",
