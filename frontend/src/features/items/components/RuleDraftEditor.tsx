@@ -4,6 +4,7 @@ import { Button } from "@components/button";
 import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 import { TEXTAREA } from "@/features/catalogue/components/form-layout";
+import PrebattleRollFields from "@/features/catalogue/components/PrebattleRollFields";
 
 import type { RuleDraft } from "../utils/item-form-values";
 
@@ -20,7 +21,8 @@ const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 
 /**
  * One of a house item's rules: a shared rule (its name fixed, the item's own wording optional) or
- * one of its own (a name and its text), either with an optional D6 table of rolls and results.
+ * one of its own (a name, its text and its pre-battle roll), either with an optional D6 table of
+ * rolls and results.
  */
 export default function RuleDraftEditor({
   rule,
@@ -76,6 +78,14 @@ export default function RuleDraftEditor({
           onChange={(event) => onChange({ ...rule, text: event.target.value })}
         />
       </label>
+      {rule.ruleId ? null : (
+        <PrebattleRollFields
+          layout="dialog"
+          idPrefix={id("rule")}
+          values={rule}
+          onChange={(prebattle) => onChange({ ...rule, ...prebattle })}
+        />
+      )}
       {rule.d6.length ? (
         <div className="flex flex-col gap-1.5">
           <span className="text-xs font-bold text-muted-foreground">D6 table</span>

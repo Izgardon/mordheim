@@ -47,7 +47,7 @@ export type UnitSpellDetailEntry = UnitDetailEntry & {
 export type UnitItemEntry = UnitDetailEntry & {
   count: number;
   singleUse: boolean;
-  /** Its shared rules with a pre-battle roll (left out when none has one). */
+  /** Its rules with a pre-battle roll, shared or its own (left out when none has one). */
   prebattleRolls?: BattleRosterItemRoll[];
 };
 

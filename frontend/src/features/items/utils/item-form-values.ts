@@ -1,3 +1,9 @@
+import {
+  prebattlePayload,
+  prebattleValuesOf,
+  type PrebattleRollValues,
+} from "@/features/catalogue/components/PrebattleRollFields";
+
 import type {
   Item,
   ItemRule,
@@ -35,10 +41,10 @@ export type TableRowDraft = { roll: string; result: string };
 
 /**
  * One of an item's rules as the form edits it: a shared rule (`ruleId`, its own wording
- * optional) or one of its own (a name and text), with an optional D6 table (two columns). Any
- * other table it carries (an imported profile, a second table) is kept as it is.
+ * optional) or one of its own (a name and text, and its pre-battle roll), with an optional D6 table
+ * (two columns). Any other table it carries (an imported profile, a second table) is kept as it is.
  */
-export type RuleDraft = {
+export type RuleDraft = PrebattleRollValues & {
   key: number;
   ruleId: number | null;
   name: string;
@@ -81,6 +87,8 @@ export const blankRule = (ruleId: number | null = null, name = ""): RuleDraft =>
   text: "",
   d6: [],
   kept: [],
+  prebattleRoll: "",
+  prebattleText: "",
 });
 
 /**
@@ -102,6 +110,7 @@ function ruleDraftOf(rule: ItemRuleLink, shared: Map<number, ItemRule>): RuleDra
     text: book && rule.text === book.text ? "" : rule.text,
     d6,
     kept: first && isD6(first) ? rest : rule.table,
+    ...prebattleValuesOf(rule.rule_id ? undefined : rule),
   };
 }
 
@@ -169,6 +178,7 @@ export function itemPayload(values: ItemFormValues): ItemWritePayload {
       summary: rule.summary.trim(),
       text: rule.text.trim(),
       table: tablesOf(rule),
+      ...prebattlePayload(rule.ruleId ? prebattleValuesOf(undefined) : rule),
     })),
     availabilities: priceRowsPayload(values.prices),
   };

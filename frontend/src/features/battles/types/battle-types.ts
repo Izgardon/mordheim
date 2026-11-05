@@ -568,15 +568,18 @@ export type BattleState = BattleStateOf<BattleParticipant> & {
   capabilitiesBasis?: string;
 };
 
-/** A shared item rule's pre-battle roll: the rule, its dice ("D6") and what the roll does. */
-export type BattleRosterItemRoll = { rule: string; roll: string; text: string };
+/**
+ * An item's pre-battle roll: a shared rule's (its name) or the item's own rule's (null), its dice
+ * ("D6") and what the roll does.
+ */
+export type BattleRosterItemRoll = { rule: string | null; roll: string; text: string };
 
 export type BattleRosterItem = {
   id: number;
   name: string;
   count: number;
   singleUse: boolean;
-  /** Its shared rules with a pre-battle roll (left out when none has one). */
+  /** Its rules with a pre-battle roll, shared or its own (left out when none has one). */
   prebattleRolls?: BattleRosterItemRoll[];
 };
 

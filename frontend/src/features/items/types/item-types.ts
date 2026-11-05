@@ -46,6 +46,9 @@ export type ItemRuleLink = {
   summary: string;
   text: string;
   table: RuleTable[];
+  /** Its pre-battle roll ("D6"; "" for none) and what it does: a shared rule's, or its own rule's. */
+  prebattle_roll?: string;
+  prebattle_text?: string;
 };
 
 /**
@@ -85,6 +88,9 @@ export type RuleLinkPayload = {
   summary: string;
   text: string;
   table: RuleTable[];
+  /** A rule of its own's pre-battle roll (a shared rule's link keeps none). */
+  prebattle_roll?: string;
+  prebattle_text?: string;
 };
 
 /** Where a suggested sale price comes from (decision 3). */

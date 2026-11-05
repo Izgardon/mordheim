@@ -3,8 +3,8 @@ import type { Dice } from "@/lib/dice";
 
 /**
  * One roll a unit makes before the battle (William, 5 Nov 2026): the rule that asks for it (a
- * special, a skill, or a shared rule of an item he carries), its dice and the rule's words on what
- * the roll does. The page shows it and applies nothing.
+ * special, a skill, or a rule of an item he carries, shared or its own), its dice and the rule's
+ * words on what the roll does. The page shows it and applies nothing.
  */
 export type PrebattleRollLine = { key: string; source: string; dice: Dice; text: string };
 
@@ -13,7 +13,10 @@ const DICE = /^\d*D\d+$/;
 const line = (key: string, source: string, roll?: string, text?: string) =>
   roll && DICE.test(roll) ? [{ key, source, dice: roll as Dice, text: text ?? "" }] : [];
 
-/** A unit's rolls: his specials', his skills', then each carried item's rules', named "Rule (Item)". */
+/**
+ * A unit's rolls: his specials', his skills', then each carried item's rules': a shared rule's named
+ * "Rule (Item)", the item's own rule's by the item ("Evil Jester Mask").
+ */
 export function unitRolls(unit: PrebattleUnit): PrebattleRollLine[] {
   return [
     ...(unit.specials ?? []).flatMap((entry) =>
@@ -23,8 +26,13 @@ export function unitRolls(unit: PrebattleUnit): PrebattleRollLine[] {
       line(`skill:${entry.id}`, entry.name, entry.prebattleRoll, entry.prebattleText)
     ),
     ...(unit.items ?? []).flatMap((item) =>
-      (item.prebattleRolls ?? []).flatMap((rule) =>
-        line(`item:${item.id}:${rule.rule}`, `${rule.rule} (${item.name})`, rule.roll, rule.text)
+      (item.prebattleRolls ?? []).flatMap((rule, index) =>
+        line(
+          `item:${item.id}:${index}`,
+          rule.rule ? `${rule.rule} (${item.name})` : item.name,
+          rule.roll,
+          rule.text
+        )
       )
     ),
   ];

@@ -28,7 +28,7 @@ const unit = (fields: Partial<PrebattleUnit>): PrebattleUnit => ({
 });
 
 describe("A unit's pre-battle rolls", () => {
-  it("are his specials', skills' and carried items' rules with a roll, in that order", () => {
+  it("are his specials', skills' and carried items' rules with a roll, an own rule named by its item", () => {
     const hero = unit({
       specials: [
         { id: 3, name: "Hardened" },
@@ -44,12 +44,20 @@ describe("A unit's pre-battle rolls", () => {
           singleUse: false,
           prebattleRolls: [{ rule: "Grin", roll: "D6", text: "On a 1, stupid." }],
         },
+        {
+          id: 9,
+          name: "Evil Jester Mask",
+          count: 1,
+          singleUse: false,
+          prebattleRolls: [{ rule: null, roll: "D6", text: "On a 6, frenzy." }],
+        },
       ],
     });
     expect(unitRolls(hero)).toEqual([
       { key: "special:4", source: "Old Battle Wound", dice: "D6", text: WOUND },
       { key: "skill:5", source: "Spy", dice: "D3", text: "Re-deploy D3." },
-      { key: "item:8:Grin", source: "Grin (Jester Mask)", dice: "D6", text: "On a 1, stupid." },
+      { key: "item:8:0", source: "Grin (Jester Mask)", dice: "D6", text: "On a 1, stupid." },
+      { key: "item:9:0", source: "Evil Jester Mask", dice: "D6", text: "On a 6, frenzy." },
     ]);
   });
 
