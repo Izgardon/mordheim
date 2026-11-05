@@ -1,6 +1,7 @@
 import { Minus, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import DiceEntry from "@/components/ui/dice-entry";
 import { IconButton } from "@/components/ui/icon-button";
 import {
   getSelectedExplorationDiceValues,
@@ -9,13 +10,13 @@ import {
 import { explorationMultiples } from "@/features/battles/data/exploration-multiples";
 import type { ExplorationState } from "@/features/battles/hooks/useExploration";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
-import { rollDice } from "@/lib/dice";
 import { cn } from "@/lib/utils";
 
 /**
- * Explore (design E): the dice (one per hero on his feet, one more for a win), rolled once and
- * kept with the draft; the total and the shards it finds; which resource they go to; and each
- * multiple's place, whose rules "Read and roll" opens in the campaign's locations.
+ * Explore (design E): the dice (one per hero on his feet, one more for a win), rolled once or
+ * typed in a box each, and kept with the draft; the total and the shards it finds; which resource
+ * they go to; and each multiple's place, whose rules "Read and roll" opens in the campaign's
+ * locations.
  */
 export default function ExploreTab({
   explore,
@@ -40,12 +41,8 @@ export default function ExploreTab({
   const multiples = rolled ? explorationMultiples(chosen) : [];
   const hot = new Set(multiples.map((entry) => entry.face));
   const total = chosen.reduce((sum, value) => sum + value, 0);
-  const roll = () =>
-    explore.setExploration({
-      ...exploration,
-      diceValues: rollDice(exploration.diceCount),
-      hasRolledAllDice: true,
-    });
+  const take = (faces: number[]) =>
+    explore.setExploration({ ...exploration, diceValues: faces, hasRolledAllDice: true });
 
   return (
     <div className="flex flex-col gap-3">
@@ -97,9 +94,15 @@ export default function ExploreTab({
                 <Plus aria-hidden="true" />
               </IconButton>
             </div>
-            <Button disabled={exploration.diceCount <= 0} onClick={roll}>
-              Roll {exploration.diceCount}D6
-            </Button>
+            <DiceEntry
+              dice={`${exploration.diceCount}D6`}
+              onFaces={take}
+              button={(roll) => (
+                <Button disabled={exploration.diceCount <= 0} onClick={roll}>
+                  Roll {exploration.diceCount}D6
+                </Button>
+              )}
+            />
           </div>
         )}
         <div
