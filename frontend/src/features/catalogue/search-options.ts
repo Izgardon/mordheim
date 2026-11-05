@@ -83,6 +83,24 @@ export const spellOption = (spell: Spell, settings: Settings): SearchOption => (
   warning: outOfPlay(spell, settings),
 });
 
+const fold = (text?: string | null) => (text ?? "").trim().toLowerCase();
+
+/**
+ * Spells for a caster, his lores first (as the advance's spell picker has them): those of his
+ * lores under "His lores", then the rest under "Other lores", the greyed rows last in each. With
+ * no lore of his, every spell as one list.
+ */
+export function spellOptions(spells: Spell[], settings: Settings, lores: string[] = []) {
+  const his = new Set(lores.map(fold).filter(Boolean));
+  const rows = (mine: boolean, group?: string) =>
+    warnedLast(
+      spells
+        .filter((spell) => his.has(fold(spell.type)) === mine)
+        .map((spell) => ({ ...spellOption(spell, settings), group }))
+    );
+  return his.size ? [...rows(true, "His lores"), ...rows(false, "Other lores")] : rows(false);
+}
+
 export const specialOption = (special: Special, settings: Settings): SearchOption => ({
   id: special.id,
   title: special.name,

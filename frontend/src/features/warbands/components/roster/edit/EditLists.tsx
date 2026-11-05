@@ -3,12 +3,7 @@ import type { ReactNode } from "react";
 import { ChipLabel } from "@/components/ui/chip";
 import { ItemKindIcon, type GameIconName } from "@/components/ui/game-icons";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import {
-  skillOptions,
-  specialOption,
-  spellOption,
-  warnedLast,
-} from "@/features/catalogue/search-options";
+import { skillOptions, specialOption, spellOptions } from "@/features/catalogue/search-options";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
 import { itemKind } from "@/features/items/item-kind";
 import { inPlayOnly } from "@/features/reference/in-play";
@@ -66,7 +61,12 @@ export default function EditLists({
   // only the campaign's skills are offered; one he has from outside it still shows as his
   const skillRows = skillOptions(inPlayOnly(skills), skillContext);
   const heldSkills = skillOptions(skills, skillContext);
-  const spellRows = warnedLast(spells.map((spell) => spellOption(spell, settings)));
+  // his lores first (those he casts from, then those of the spells he has), as the advance's picker
+  const lores = [
+    ...((draft.available_spell_types as string[] | undefined) ?? []),
+    ...lists.spells.map((spell) => spell.type ?? ""),
+  ];
+  const spellRows = spellOptions(spells, settings, lores);
   // a hired sword's or dramatis persona's own rule isn't offered; one he has keeps its chip
   const heldSpecials = specials.map((special) => specialOption(special, settings));
   const caster = "caster" in draft ? (String(draft.caster) as HeroCaster) : "No";
