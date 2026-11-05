@@ -1,12 +1,15 @@
 """The rules a template's fighters have and its upgrades give, as specials (the templates plan, phase 4): one picked
 from the catalogue, or one written in the editor, which is the campaign's own and typed by the template ("Warband -
 Night Watch") with the owner kind warband, as the import's fighter rules are, so the Boons & Banes pickers leave it
-out. A written rule whose name the template's type already holds is refused: pick that one instead."""
+out; its category (its icon) is the one picked, else the book's rule for it (an upgrade in the Possessed's Mutations is a
+mutation: special/categories.py). A written rule whose name the template's type already holds is refused: pick that
+one instead."""
 
 from collections.abc import Sequence
 from typing import Any
 
 from apps.core.errors import ApiError
+from apps.special.categories import book_category
 from apps.special.kinds import TRAIT, WARBAND
 from apps.special.models import Special
 
@@ -43,6 +46,7 @@ def specials_for(template: WarbandTemplate, rules: Sequence[dict[str, Any]]) -> 
                 type=kind,
                 owner_kind=WARBAND,
                 kind=draft.get("kind") or TRAIT,
+                category=draft.get("category") or book_category(name, kind, draft.get("group", "")),
                 description=draft.get("description", ""),
             )
             for name, draft in drafts.items()

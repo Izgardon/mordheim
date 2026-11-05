@@ -11,6 +11,7 @@ from rest_framework import serializers
 
 from apps.campaigns.models import CampaignType
 from apps.core.catalogue.scope import CatalogueEntryField, refuse_unknown
+from apps.special.categories import CATEGORY_CHOICES
 from apps.special.kinds import KIND_CHOICES
 from apps.special.models import Special
 from apps.warbands.models import WarbandType
@@ -49,12 +50,13 @@ class WhoField(serializers.JSONField):
 
 class SpecialRuleSerializer(serializers.Serializer):
     """A rule a fighter has or an upgrade gives: a special picked (`special_id`), or one written (`name`, with its
-    `description` and Boons & Banes `kind`), which the save makes the template's own."""
+    `description`, Boons & Banes `kind` and `category`), which the save makes the template's own."""
 
     special_id = serializers.IntegerField(min_value=1, required=False)
     name = serializers.CharField(max_length=160, required=False)
     description = serializers.CharField(max_length=4000, allow_blank=True, required=False, default="")
     kind = serializers.ChoiceField(choices=KIND_CHOICES, required=False)
+    category = serializers.ChoiceField(choices=CATEGORY_CHOICES, required=False)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         if "special_id" in attrs:
@@ -142,6 +144,13 @@ class RulesSerializer(serializers.Serializer):
     """`PUT warband-templates/<id>/rules/`: every rule, in order."""
 
     rules = TemplateRuleSerializer(many=True)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        """A rule for one type names a type the campaign can pick; one the template doesn't serve warns (checks.py)."""
+        type_ids = list({rule["warband_type_id"] for rule in attrs["rules"]} - {None})
+        if type_ids:
+            _campaign_types(type_ids, self.context["campaign_id"])
+        return attrs
 
 
 class UpgradeSerializer(serializers.Serializer):

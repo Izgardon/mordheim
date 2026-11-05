@@ -108,14 +108,19 @@ class FighterTests(EditorTestCase):
         self.assertEqual([link.equipment_list.key for link in captain.list_links.all()], ["kit"])
         written = Special.objects.get(name="Lantern Bearer")
         self.assertEqual(
-            (written.campaign_id, written.type, written.owner_kind),
-            (self.campaign.id, "Warband - Mercenaries", WARBAND),
+            (written.campaign_id, written.type, written.owner_kind, written.category),
+            (self.campaign.id, "Warband - Mercenaries", WARBAND, "aura"),  # none picked: the book's rule, an aura
         )
         self.assertEqual(
             list(captain.special_links.values_list("special_id", flat=True)), [self.made.rule.id, written.id]
         )
         refused = self.save("fighters/captain/", fighter_body(rules=[{"name": "Lantern Bearer"}]), template=version)
         self.assertEqual((refused.status_code, refused.json()["code"]), (400, "name_taken"))
+        row = next(row for row in body["template"]["fighters"] if row["key"] == "captain")
+        self.assertEqual(
+            [(rule["name"], rule["category"]) for rule in row["rules"]],
+            [("Leader", "aura"), ("Lantern Bearer", "aura")],
+        )
 
     def test_unknown_lists_keys_and_unordered_counts_are_refused(self) -> None:
         for changes in (
@@ -207,9 +212,19 @@ class RulesAndUpgradesTests(EditorTestCase):
         )
         self.assertEqual(rules[1]["warband_type_id"], self.mercenaries.id)
         self.assertNotIn(first.id, [row["id"] for row in rules])
-        other = WarbandType.objects.create(name="Elsewhere", slug="elsewhere-type")
-        refused = self.save("rules/", {"rules": [{"title": "X", "warband_type_id": other.id}]})
+        theirs = WarbandType.objects.create(name="Theirs", slug="theirs", campaign=self.elsewhere)
+        refused = self.save("rules/", {"rules": [{"title": "X", "warband_type_id": theirs.id}]})
         self.assertEqual(refused.status_code, 400)
+
+    def test_a_rule_for_a_type_it_doesnt_serve_is_kept_with_a_warning(self) -> None:
+        ostermarkers = WarbandType.objects.create(name="Ostermarkers", slug="ostermarkers")
+        body = self.saved("rules/", {"rules": [{"title": "Wardog", "warband_type_id": ostermarkers.id}]})
+        [rule] = body["template"]["rules"]
+        self.assertEqual(rule["warband_type_id"], ostermarkers.id)
+        self.assertIn(
+            ("rules", str(rule["id"]), "For Ostermarkers, which it doesn't serve: no warband reads it."),
+            [(row["section"], row["key"], row["text"]) for row in body["warnings"]],
+        )
 
     def test_upgrades_pick_a_special_or_write_one(self) -> None:
         upgrade = TemplateUpgrade.objects.get(template=self.book)
@@ -228,7 +243,7 @@ class RulesAndUpgradesTests(EditorTestCase):
                     },
                     {
                         "group": "Mutations",
-                        "rule": {"name": "Spines", "description": "Ouch.", "kind": "boon"},
+                        "rule": {"name": "Spines", "description": "Ouch.", "kind": "boon", "category": "mutation"},
                         "cost": None,
                         "cost_note": "see rules",
                         "max_per_fighter": 1,
@@ -242,8 +257,13 @@ class RulesAndUpgradesTests(EditorTestCase):
             [(row["name"], row["cost"]) for row in rows], [("Tentacle", 40), ("Spines", None), ("Large", 0)]
         )
         self.assertEqual((rows[0]["who_text"], rows[0]["later_double"]), ("Captain only", True))
+        self.assertEqual((rows[0]["special_id"], rows[1]["kind"]), (self.made.mutation.id, "boon"))
         spines = Special.objects.get(name="Spines")
-        self.assertEqual((spines.kind, spines.owner_kind, spines.campaign_id), ("boon", WARBAND, self.campaign.id))
+        self.assertEqual(
+            (spines.kind, spines.category, spines.owner_kind, spines.campaign_id),
+            ("boon", "mutation", WARBAND, self.campaign.id),
+        )
+        self.assertEqual(rows[1]["category"], "mutation")
         version = WarbandTemplate.objects.get(pk=body["template"]["id"])
         self.assertEqual(TemplateUpgrade.objects.filter(template=version).count(), 3)
         self.assertEqual(TemplateUpgrade.objects.filter(template=self.book).count(), 1)

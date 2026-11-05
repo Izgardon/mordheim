@@ -13,6 +13,7 @@ from .models import (
     TemplateFighterSpecial,
     TemplateList,
     TemplateListItem,
+    TemplateRule,
     TemplateUpgrade,
     WarbandTemplate,
     WarbandTemplateType,
@@ -43,7 +44,7 @@ def template_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[Any]:
     )
     return rows.prefetch_related(
         type_links(),
-        "rules",
+        Prefetch("rules", queryset=TemplateRule.objects.select_related("warband_type")),
         Prefetch("lists", queryset=TemplateList.objects.prefetch_related(Prefetch("lines", queryset=lines))),
         Prefetch("fighters", queryset=fighters),
         Prefetch("upgrades", queryset=TemplateUpgrade.objects.select_related("special")),

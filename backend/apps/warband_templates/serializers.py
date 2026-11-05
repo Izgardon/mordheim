@@ -88,11 +88,12 @@ class TemplateRuleSerializer(serializers.ModelSerializer):
 
 
 class TemplateSpecialSerializer(serializers.Serializer):
-    """A rule a fighter has or an upgrade gives: the special's name, text and Boons & Banes kind."""
+    """A rule a fighter has or an upgrade gives: the special's name, text, Boons & Banes kind and category (its icon)."""
 
     id = serializers.IntegerField(source="special.id")
     name = serializers.CharField(source="special.name")
     kind = serializers.CharField(source="special.kind")
+    category = serializers.CharField(source="special.category")
     description = serializers.CharField(source="special.description")
 
 
@@ -180,10 +181,14 @@ class TemplateFighterSerializer(serializers.ModelSerializer):
 
 
 class TemplateUpgradeSerializer(serializers.ModelSerializer):
-    """An upgrade, with who may take it worded as a line's is (`who_text`, from the `fighters` context)."""
+    """An upgrade: the special it gives (its id, name, text, Boons & Banes kind and category), with who may take it
+    worded as a line's is (`who_text`, from the `fighters` context)."""
 
     name = serializers.CharField(source="special.name", read_only=True)
     description = serializers.CharField(source="special.description", read_only=True)
+    special_id = serializers.IntegerField(read_only=True)
+    kind = serializers.CharField(source="special.kind", read_only=True)
+    category = serializers.CharField(source="special.category", read_only=True)
     who_text = serializers.SerializerMethodField()
 
     class Meta:
@@ -191,8 +196,11 @@ class TemplateUpgradeSerializer(serializers.ModelSerializer):
         fields: tuple[str, ...] = (
             "id",
             "group",
+            "special_id",
             "name",
             "description",
+            "kind",
+            "category",
             "cost",
             "cost_note",
             "note",

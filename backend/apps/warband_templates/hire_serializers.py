@@ -77,11 +77,10 @@ class HireUpgradeSerializer(TemplateUpgradeSerializer):
     later of its group on one hero (`later_cost`: double where the book says) and the reason anyone else sees it
     dimmed (`who_text`)."""
 
-    special_id = serializers.IntegerField(read_only=True)
     later_cost = serializers.SerializerMethodField()
 
     class Meta(TemplateUpgradeSerializer.Meta):
-        fields = (*TemplateUpgradeSerializer.Meta.fields, "special_id", "later_cost")
+        fields = (*TemplateUpgradeSerializer.Meta.fields, "later_cost")
 
     def get_later_cost(self, upgrade: TemplateUpgrade) -> int | None:
         if upgrade.cost is None:

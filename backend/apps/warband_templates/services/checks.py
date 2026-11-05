@@ -5,6 +5,7 @@ otherwise get wrong, each a warning by section (and by fighter or list key), nev
   campaign's own come first, the oldest first, so one of them isn't used for that type).
 - Fighters: no leader; a fighter with no list and no fixed kit; more heroes than the campaign's hero cap.
 - Lists: a list nobody buys from.
+- Rules: a rule for a type it doesn't serve (a copy keeps its source's, a type taken out leaves its own): nobody reads it.
 """
 
 from collections import defaultdict
@@ -82,4 +83,10 @@ def template_warnings(template: WarbandTemplate, campaign_id: int, hero_cap: int
     ]
     used = {link.equipment_list_id for fighter in fighters for link in fighter.list_links.all()}
     found += [_warning("lists", "Nobody buys from it.", row.key) for row in template.lists.all() if row.pk not in used]
+    served = {link.warband_type_id for link in template.type_links.all()}
+    found += [
+        _warning("rules", f"For {rule.warband_type.name}, which it doesn't serve: no warband reads it.", str(rule.pk))
+        for rule in template.rules.all()
+        if rule.warband_type is not None and rule.warband_type_id not in served
+    ]
     return found
