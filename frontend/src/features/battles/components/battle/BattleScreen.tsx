@@ -395,7 +395,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
     <BattleFeed
       lines={feed}
       onUndo={(id) => void screen.undo(id).catch(() => undefined)}
-      className={isMobile ? "h-[118px]" : "h-[min(60vh,560px)]"}
+      className={isMobile ? "max-h-[118px]" : "h-[min(60vh,560px)]"}
     />
   );
   const strip = <SideStrip sides={sides} selectedId={side?.id ?? ""} onSelect={setSelected} />;
