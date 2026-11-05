@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import DiceEntry from "@/components/ui/dice-entry";
 import type { CampaignLocation } from "@/features/campaigns/types/campaign-types";
-import { rollDie } from "@/lib/dice";
 import { cn } from "@/lib/utils";
 
 import type { WarbandHero } from "../../types/warband-types";
@@ -20,8 +20,9 @@ const d6Results = (location: CampaignLocation) => [
 const hasD6 = (location: CampaignLocation) => d6Results(location).some((entry) => entry?.trim());
 
 /**
- * One location in the Locations panel: its name, area and text, a D6 roll when it has results,
- * Send a hero (your warband), and Edit and Remove for those who manage locations.
+ * One location in the Locations panel: its name, area and text, a D6 roll when it has results
+ * (rolled, or the die typed in), Send a hero (your warband), and Edit and Remove for those who
+ * manage locations.
  */
 export default function LocationCard({
   location,
@@ -73,13 +74,23 @@ export default function LocationCard({
               <span className="border border-border px-[7px] py-px text-[11px] font-bold text-muted-foreground">
                 D6 roll
               </span>
-              <button
-                type="button"
-                className="text-xs font-bold text-accent-text hover:underline"
-                onClick={() => setRolled(rollDie(6))}
-              >
-                {rolled ? "Roll again" : "Roll D6"}
-              </button>
+              <DiceEntry
+                dice="D6"
+                size="sm"
+                className="gap-1.5"
+                total={rolled}
+                onFaces={([face]) => setRolled(face)}
+                onChange={([face]) => (face === null ? setRolled(null) : undefined)}
+                button={(roll) => (
+                  <button
+                    type="button"
+                    className="text-xs font-bold text-accent-text hover:underline"
+                    onClick={roll}
+                  >
+                    {rolled ? "Roll again" : "Roll D6"}
+                  </button>
+                )}
+              />
             </div>
           ) : null}
           {rolled ? (
