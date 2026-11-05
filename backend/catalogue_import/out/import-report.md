@@ -109,6 +109,7 @@ Names put right in overrides.json (`warband_type_names`, `persona_names`):
 | --- | --- | --- |
 | warband type | Arabyan Theives | Arabyan Thieves |
 | warband type | Assassin Squad, Knives From The Dark | Assassin Squad, Knives from the Dark |
+| warband type | Circus Extraordinare | Circus Extraordinaire |
 | warband type | Dreamwalkers, Cult Of Morr | Dreamwalkers, Cult of Morr |
 | warband type | Lords Of The Marsh | Lords of the Marsh |
 | warband type | Masters Of Horror | Masters of Horror |
@@ -193,7 +194,7 @@ No membership questions left.
 | Grade 3 | 3 | Mordheim split by grade | 3: 14 |
 
 Named settings that mix grades, kept whole at the majority grade: Empire in Flames, Lustria, Khemri, Border Town Burning, Mutiny in Marienburg.
-Warband types with no setting in either source, placed in Mordheim's part for their grade: Pit Fighters (old), Bretonnian Grail Companions, Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Knives from the Dark, Circus Extraordinare, Drowned Dead, Dwarf Grudgebearers, Goblin Raiders, Hobgoblin Horde, Mordheimer's Fanatics, Ostermark Roadwardens, The Innocents, Tilean Thespian Troupe, Werewolf Hunting Pack, Wood Elves, the Asrai Way-farers.
+Warband types with no setting in either source, placed in Mordheim's part for their grade: Pit Fighters (old), Bretonnian Grail Companions, Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Knives from the Dark, Circus Extraordinaire, Drowned Dead, Dwarf Grudgebearers, Goblin Raiders, Hobgoblin Horde, Mordheimer's Fanatics, Ostermark Roadwardens, The Innocents, Tilean Thespian Troupe, Werewolf Hunting Pack, Wood Elves, the Asrai Way-farers.
 Warband types on neither site, added in overrides.json: Albion Commandos.
 Grades not counted (not 1a to 3): 2c, 3a, all on MiM items.
 
