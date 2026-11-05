@@ -8,6 +8,7 @@ from django.db.models import Q
 from rest_framework import serializers
 from rest_framework.fields import Field
 
+from apps.core.models import PREBATTLE_DICE
 from apps.warbands.access_lines import (
     AccessLineInputSerializer,
     AccessLineSerializer,
@@ -16,6 +17,8 @@ from apps.warbands.access_lines import (
 )
 
 from .models import ANIMAL, Item, ItemAvailability, ItemRule, ItemRuleLink
+
+NO_ROLL = {"prebattle_roll": "", "prebattle_text": ""}
 
 MAX_COST = 2_147_483_647  # the largest cost the column holds
 WEAPON_DEFAULTS = {"strength": "As user", "range": "Close combat"}
@@ -48,7 +51,8 @@ class ItemRuleSerializer(serializers.ModelSerializer):
 
 class ItemRuleLinkSerializer(serializers.Serializer):
     """One of an item's rules as it reads: a shared rule's name, summary and text unless the item words them its own
-    way (`shared`), or a rule only this item has; with its D6 tables."""
+    way (`shared`), or a rule only this item has; with its D6 tables and its pre-battle roll (a shared rule's, or the
+    item's own rule's)."""
 
     id = serializers.IntegerField()
     rule_id = serializers.IntegerField(allow_null=True)
@@ -57,6 +61,8 @@ class ItemRuleLinkSerializer(serializers.Serializer):
     summary = serializers.SerializerMethodField()
     text = serializers.SerializerMethodField()
     table = serializers.JSONField()
+    prebattle_roll = serializers.SerializerMethodField()
+    prebattle_text = serializers.SerializerMethodField()
 
     def get_shared(self, link: ItemRuleLink) -> bool:
         return link.rule_id is not None
@@ -76,6 +82,12 @@ class ItemRuleLinkSerializer(serializers.Serializer):
 
     def get_text(self, link: ItemRuleLink) -> str:
         return self._own(link, "text")
+
+    def get_prebattle_roll(self, link: ItemRuleLink) -> str:
+        return self._own(link, "prebattle_roll")
+
+    def get_prebattle_text(self, link: ItemRuleLink) -> str:
+        return self._own(link, "prebattle_text")
 
 
 class ItemAvailabilitySerializer(serializers.ModelSerializer):
@@ -174,19 +186,22 @@ class TableSerializer(serializers.Serializer):
 
 class RuleLinkInputSerializer(serializers.Serializer):
     """One of an item's rules a write sends: a shared rule's id (its own wording optional), or a rule of its own with
-    a name; either with D6 tables."""
+    a name and its pre-battle roll; either with D6 tables. A shared rule's roll is the shared rule's: its link keeps
+    none."""
 
     rule_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)
     name = serializers.CharField(max_length=120, allow_blank=True, required=False, default="")
     summary = serializers.CharField(max_length=1000, allow_blank=True, required=False, default="")
     text = serializers.CharField(max_length=4000, allow_blank=True, required=False, default="")
     table = TableSerializer(many=True, required=False, default=list)
+    prebattle_roll = serializers.ChoiceField(choices=PREBATTLE_DICE, allow_blank=True, required=False, default="")
+    prebattle_text = serializers.CharField(max_length=2000, allow_blank=True, required=False, default="")
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
-        attrs = {"rule_id": None, "name": "", "summary": "", "text": "", "table": [], **attrs}
+        attrs = {"rule_id": None, "name": "", "summary": "", "text": "", "table": [], **NO_ROLL, **attrs}
         if attrs["rule_id"] is None and not attrs["name"].strip():
             raise serializers.ValidationError({"name": ["A rule of the item's own needs a name."]})
-        return attrs
+        return {**attrs, **NO_ROLL} if attrs["rule_id"] is not None else attrs
 
 
 class AvailabilityInputSerializer(serializers.Serializer):

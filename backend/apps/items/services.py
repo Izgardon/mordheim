@@ -73,6 +73,8 @@ def _sync_rule_links(source, clone):
                 summary=link.summary,
                 text=link.text,
                 table=link.table,
+                prebattle_roll=link.prebattle_roll,
+                prebattle_text=link.prebattle_text,
             )
             for link in source.rule_links.all()
         ]

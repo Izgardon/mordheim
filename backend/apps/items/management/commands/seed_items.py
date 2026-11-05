@@ -20,7 +20,7 @@ from apps.core.catalogue.cache import bump
 from apps.core.seeding import upsert_global
 from apps.items.importing import ImportedItems
 from apps.items.models import ANIMAL, Item, ItemRule
-from apps.special.prebattle import ITEM_RULE, mark_book_rolls
+from apps.special.prebattle import ITEM_RULE, mark_book_item_rolls, mark_book_rolls
 
 
 class Command(BaseCommand):
@@ -45,6 +45,7 @@ class Command(BaseCommand):
                 imported.write_links(item, entry)
                 seen.append(item.pk)
                 created, updated = created + was_created, updated + (not was_created)
+            mark_book_item_rolls()  # the items' own rules' pre-battle rolls (special/prebattle.py)
             dropped = (
                 Item.objects.filter(campaign__isnull=True, archived_at__isnull=True)
                 .exclude(type=ANIMAL)

@@ -6,8 +6,9 @@ mid-battle stays in it. Every unit kind is read in one query plus its link table
 Each unit carries its mount, pets and the Move and save its mount gives it (`effectiveStats`, beside its own
 `stats`), and a group recruited from a creature its beast and kind, so the snapshot keeps them too. A mounted group
 carries its mount warnings (`mountWarnings`, the warband page's), which prebattle shows as a note: never a block.
-A skill or special with a pre-battle roll carries its dice and text, and an item its shared rules' (`prebattleRolls`,
-read with the copy), which prebattle shows under the unit (core/models.py: PrebattleRoll).
+A skill or special with a pre-battle roll carries its dice and text, and an item its rules' (`prebattleRolls`, a shared
+rule's with its name and one of the item's own with none, read with the copy), which prebattle shows under the unit
+(core/models.py: PrebattleRoll).
 """
 
 from collections import defaultdict
@@ -15,7 +16,7 @@ from collections.abc import Iterable
 from typing import Any
 
 from django.contrib.postgres.expressions import ArraySubquery
-from django.db.models import F, OuterRef, Prefetch
+from django.db.models import Case, F, OuterRef, Prefetch, Q, When
 from django.db.models.functions import JSONObject
 
 from apps.items.models import ItemRuleLink
@@ -271,9 +272,15 @@ def _by_warband(rows: Iterable, entry) -> defaultdict[int, list[dict]]:
 
 
 def _item_rolls() -> ArraySubquery:
-    """A copy's item's shared rules with a pre-battle roll, in the item's order, read with the copy."""
-    rules = ItemRuleLink.objects.filter(item_id=OuterRef("item_id"), rule__prebattle_roll__gt="")
-    columns = JSONObject(rule="rule__name", roll="rule__prebattle_roll", text="rule__prebattle_text")
+    """A copy's item's rules with a pre-battle roll, in the item's order, read with the copy: a shared rule's with
+    its name, a rule of the item's own with none (the item names it)."""
+    own = Q(rule__isnull=True, prebattle_roll__gt="")
+    rules = ItemRuleLink.objects.filter(own | Q(rule__prebattle_roll__gt=""), item_id=OuterRef("item_id"))
+
+    def of(field: str) -> Case:
+        return Case(When(rule__isnull=True, then=F(field)), default=F(f"rule__{field}"))
+
+    columns = JSONObject(rule="rule__name", roll=of("prebattle_roll"), text=of("prebattle_text"))
     return ArraySubquery(rules.order_by("position", "id").values(entry=columns))
 
 

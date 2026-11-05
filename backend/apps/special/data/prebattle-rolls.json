@@ -4,6 +4,14 @@
       "roll": "D3",
       "text": "At the start of the game, after all warbands have been deployed, the Imperial Tactician may then recommend up to D3+1 changes to your deployment (IE, you may change the starting position of up to D3+1 of your warriors)."
     },
+    "Fungus Brew": {
+      "roll": "D6",
+      "text": "Before a battle, the Shaman may brew a special batch of Fungus Brew using 1 to 3 Mad Cap Mushrooms, and various other fungi they have collected. The brew must be consumed immediately, and affects a single Night Goblin Warrior henchmen group until the end of the battle. Roll on the Fungus Brew Table once for each Mad Cap Mushroom used in the brewing process. If any of the dice come up with the same result, the batch is ruined and provides no effect other than a nasty headache!\n\nD6 | Result\n1 | Rowdy: Affected by Animosity on a 1 or 2.\n2 | Dizzy: -1 Initiative.\n3 | Fearless: Immune to fear and all alone tests.\n4 | Numbed: +1 Save which may not be reduced below 6+.\n5 | Belligerent: hatred against the opposing warband(s).\n6 | Loony: frenzy, followed by stupidity if it wears off by a Goblin being knocked down or stunned"
+    },
+    "Hiring Fee": {
+      "roll": "D6",
+      "text": "She will only come to the aid of a Sisters of Sigmar warband if their enemy has a higher warband rating. Consult the table below, and roll a D6 to see whether Bertha will aid the warband. A request for Bertha to aid the warband must be made for each battle you wish her to help the warband.\n\nDifference in Warband RatingDice roll required0-49Nil50-996+100-1495+150-1994+200+3+"
+    },
     "Maintenance": {
       "roll": "D6",
       "text": "Before each game, roll 1D6 and apply the result to the equipment of your Heroes and the Weaponsmith, accepting the first result even if no model is equipped with the relevant equipment: 1: The Weaponsmith hammers a few nails, polishes a few blades, but nothing more. 2: Heavy armours provide a saving throw of 4+, light armours of 5+. 3: Helmets give a saving throw of +1 in addition to their normal effect. 4: Bucklers give a saving throw of +1 in addition to their normal effect. 5: Shields allow parrying like bucklers in addition to their normal effect. 6: Short bows, bows, crossbows, and handguns have their range increased by 6\", pistols and duelling pistols by 3\". This increase does not stack with other bonuses from additional skills or special rules (the highest bonus applies)."
@@ -22,6 +30,10 @@
       "roll": "D3",
       "text": "At the start of the battle, the undead player may deploy D3 Zombies for free. These zombies do not count towards the maximum number of models in the warband, but increase the warband’s rating as normal. Zombies created in this way may not be used as Corpse Bombs. These Zombies only last for the duration of the battle."
     },
+    "Forbidden Rite": {
+      "roll": "D3",
+      "text": "If the hero with this skill did not search for rare items during their last exploration phase, then they start the next battle with a pool of D3+1 (+1) modifiers they can use to increase their casting rolls. They may use as many of these modifiers at a time as they desire."
+    },
     "Rune Use": {
       "roll": "2D6",
       "text": "Before the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle. If he rolls a natural 2 the item being inscribed on is broken, remove it from your roster. A gromril item may reroll a result of 2 but a second 2 stands. If he rolls a natural 12 the rune is 'durable' and will last beyond one battle."
@@ -35,5 +47,23 @@
       "text": "Before the battle commences but after deployment, the player controlling the Hobgoblin Scout may re-deploy D3 models (not including the Scout), using the normal deployment rules. If the player chooses not to do this, then the Scout may be set up anywhere on the board that is not within 18\" of any enemy model."
     }
   },
-  "item_rule": {}
+  "item_rule": {},
+  "item": {
+    "Evil Jester Mask": {
+      "roll": "D6",
+      "text": "At the beginning of the battle roll a D6: on a roll of 1 the warrior is subject to Stupidity for the duration of the battle. On a roll of 2-5, the warrior hates all the enemies during the battle. On a roll of 6, the warrior is affected by Frenzy."
+    },
+    "Scorpion Ring": {
+      "roll": "2D6",
+      "text": "At the beginning of the battle the warrior is able to call forth a single Tomb Scorpion to fight for the warband if he can pass a Leadership test. The summoned scorpion will fight for a single battle only (use Tomb Scorpion from Tomb Guardians list)."
+    },
+    "Tarot Cards": {
+      "roll": "2D6",
+      "text": "A Hero with a deck of tarot cards may consult them before each game. Make a Leadership test. If successful, the Hero gains a favorable insight into the future and you may modify the result of any one dice in the Exploration phase by -1/+1 (even if the Hero with the cards is taken Out Of Action). If the Leadership test is failed by three or more (i.e., a Hero with Ld of 8 rolls 11 or 12) the cards show a portent of doom and despair and the Hero refuses to fight in the following battle and must miss the next game."
+    },
+    "Vodka": {
+      "roll": "D6",
+      "text": "In addition, because of its nullifying alcoholic effects, every warband member must test against their Toughness before the start of the game — a failure resulting in -1 Initiative for the duration of the game."
+    }
+  }
 }

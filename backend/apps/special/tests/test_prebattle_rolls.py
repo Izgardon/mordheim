@@ -1,6 +1,6 @@
 """Pre-battle rolls (William, 5 Nov 2026): William's list in special/data/prebattle-rolls.json marks the book's
-specials, skills and shared item rules with their dice and text, every seeder sets them, and a campaign's rows keep
-their own (special/prebattle.py)."""
+specials, skills, shared item rules and items' own rules with their dice and text, every seeder sets them, and a
+campaign's rows keep their own (special/prebattle.py)."""
 
 import json
 import tempfile
@@ -15,11 +15,19 @@ from django.core.management.base import CommandError
 from django.test import SimpleTestCase, TestCase
 
 from apps.campaigns.models import Campaign
-from apps.items.models import ItemRule
+from apps.items.models import Item, ItemRule, ItemRuleLink
 from apps.skills.models import Skill
 from apps.special import prebattle
 from apps.special.models import Special
-from apps.special.prebattle import ITEM_RULE, SKILL, SPECIAL, book_rolls, mark_book_rolls
+from apps.special.prebattle import (
+    ITEM,
+    ITEM_RULE,
+    SKILL,
+    SPECIAL,
+    book_rolls,
+    mark_book_item_rolls,
+    mark_book_rolls,
+)
 from apps.warbands.tests.roster_support import RosterTestCase
 
 OLD_BATTLE_WOUND = (
@@ -27,10 +35,24 @@ OLD_BATTLE_WOUND = (
     "battle. Roll at the start of each battle from now on."
 )
 MODELS: dict[str, Any] = {SPECIAL: Special, SKILL: Skill, ITEM_RULE: ItemRule}
+WORDS = {SPECIAL: "description", SKILL: "description", ITEM_RULE: "text"}
 
 
 def listed() -> dict[str, dict[str, dict[str, str]]]:
     return dict(json.loads(prebattle.ROLLS_PATH.read_text(encoding="utf-8")))
+
+
+def marked(kind: str) -> list[tuple[str, str, str, str]]:
+    """The book rows of a kind with a roll: the name it is listed by, its dice and text, and the rule's own words (an
+    item's link that isn't its own rule shows as "(a shared rule's link)")."""
+    if kind == ITEM:
+        links = (
+            ItemRuleLink.objects.filter(item__campaign__isnull=True).exclude(prebattle_roll="").select_related("item")
+        )
+        named = [(link.item.name if link.rule_id is None else "(a shared rule's link)", link) for link in links]
+        return [(name, link.prebattle_roll, link.prebattle_text, link.text) for name, link in named]
+    rows = MODELS[kind].objects.filter(campaign__isnull=True).exclude(prebattle_roll="")
+    return [(row.name, row.prebattle_roll, row.prebattle_text, getattr(row, WORDS[kind])) for row in rows]
 
 
 class WilliamsListTests(SimpleTestCase):
@@ -42,7 +64,7 @@ class WilliamsListTests(SimpleTestCase):
 
     def test_every_mark_has_dice_the_dice_entry_reads_and_its_text(self):
         data = listed()
-        self.assertEqual(set(data), {SPECIAL, SKILL, ITEM_RULE})
+        self.assertEqual(set(data), {SPECIAL, SKILL, ITEM_RULE, ITEM})
         marks = [mark for kind in data.values() for mark in kind.values()]
         self.assertTrue(marks)
         for mark in marks:
@@ -101,6 +123,40 @@ class MarkBookRollsTests(RosterTestCase):
         book.refresh_from_db()
         self.assertEqual((book.prebattle_roll, book.prebattle_text), ("D3", "D3."))
 
+    def test_an_items_own_rule_holding_the_listed_text_is_marked_and_every_other_link_cleared(self):
+        jester = listed()[ITEM]["Evil Jester Mask"]["text"]
+        mask = Item.objects.create(name="Evil Jester Mask", type="Misc")
+        own = ItemRuleLink.objects.create(item=mask, position=0, name="Evil Jester Mask", text=f"A grin. {jester}")
+        other = ItemRuleLink.objects.create(
+            item=mask, position=1, name="Grin", text="Grins.", prebattle_roll="D6", prebattle_text="Stale."
+        )
+        shared = ItemRuleLink.objects.create(item=mask, position=2, rule=ItemRule.objects.get(slug="parry"))
+        theirs = Item.objects.create(campaign=self.campaign, name="Evil Jester Mask", type="Misc")
+        house = ItemRuleLink.objects.create(item=theirs, name="Evil Jester Mask", text=jester)
+
+        self.assertEqual(mark_book_item_rolls(), 2)
+
+        rolls = {link.pk: (link.prebattle_roll, link.prebattle_text) for link in ItemRuleLink.objects.all()}
+        self.assertEqual(rolls[own.pk], ("D6", jester))
+        self.assertEqual((rolls[other.pk], rolls[shared.pk], rolls[house.pk]), (("", ""), ("", ""), ("", "")))
+
+    def test_an_items_own_rule_takes_a_roll_and_a_shared_rules_link_keeps_none(self):
+        parry = ItemRule.objects.get(slug="parry")
+        self.client.force_authenticate(user=self.campaign_owner)
+        rules = [
+            {"name": "Grin", "text": "Grins.", "prebattle_roll": "D6", "prebattle_text": "On a 1, stupid."},
+            {"rule_id": parry.id, "prebattle_roll": "D6", "prebattle_text": "Not the link's."},
+        ]
+        body = {"campaign_id": self.campaign.id, "name": "Mask", "type": "Misc", "availabilities": [{"cost": 5}]}
+        made = self.client.post("/api/items/", {**body, "rules": rules}, format="json")
+        self.assertEqual(made.status_code, 201, made.data)
+        self.assertEqual(
+            [(rule["name"], rule["prebattle_roll"], rule["prebattle_text"]) for rule in made.data["rules"]],
+            [("Grin", "D6", "On a 1, stupid."), ("Parry", "", "")],
+        )
+        link = ItemRuleLink.objects.get(item_id=made.data["id"], rule=parry)
+        self.assertEqual((link.prebattle_roll, link.prebattle_text), ("", ""))
+
     def test_a_custom_special_and_a_shared_item_rule_take_a_roll(self):
         self.client.force_authenticate(user=self.campaign_owner)
         body = {"campaign_id": self.campaign.id, "prebattle_roll": "D6", "prebattle_text": "On a 1 he hides."}
@@ -119,27 +175,18 @@ class SeededRollsTests(TestCase):
         with redirect_stdout(StringIO()):
             call_command("seed_all")
 
-    def test_seed_all_marks_every_listed_rule_and_nothing_else(self):
+    def test_seed_all_marks_every_listed_rule_in_its_own_words_and_nothing_else(self):
         for kind, marks in listed().items():
-            model = MODELS[kind]
-            marked = model.objects.filter(campaign__isnull=True).exclude(prebattle_roll="")
-            self.assertEqual(
-                {name.casefold() for name in marked.values_list("name", flat=True)},
-                {name.casefold() for name in marks},
-                kind,
-            )
-            for row in marked:
-                mark = next(mark for name, mark in marks.items() if name.casefold() == row.name.casefold())
-                self.assertEqual((row.prebattle_roll, row.prebattle_text), (mark["roll"], mark["text"]), row.name)
+            rows = marked(kind)
+            self.assertEqual({row[0].casefold() for row in rows}, {name.casefold() for name in marks}, kind)
+            for name, roll, text, words in rows:
+                mark = next(mark for listed_name, mark in marks.items() if listed_name.casefold() == name.casefold())
+                self.assertEqual((roll, text), (mark["roll"], mark["text"]), name)
+                self.assertIn(text, words, name)
         wound = Special.objects.get(campaign__isnull=True, name="Old Battle Wound", type="Injury")
         self.assertEqual((wound.prebattle_roll, wound.prebattle_text), ("D6", OLD_BATTLE_WOUND))
-
-    def test_every_text_is_the_rules_own_words(self):
-        for kind, marks in listed().items():
-            for name, mark in marks.items():
-                rows = MODELS[kind].objects.filter(campaign__isnull=True, name__iexact=name)
-                for row in rows:
-                    self.assertIn(mark["text"], getattr(row, "text" if kind == ITEM_RULE else "description"), name)
+        mask = ItemRuleLink.objects.get(item__campaign__isnull=True, item__name="Evil Jester Mask", rule__isnull=True)
+        self.assertEqual(mask.prebattle_roll, "D6")
 
     def test_a_reseed_leaves_a_campaigns_version_its_own_roll(self):
         wound = Special.objects.get(campaign__isnull=True, name="Old Battle Wound", type="Injury")

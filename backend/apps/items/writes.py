@@ -13,7 +13,7 @@ from .models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRuleLin
 
 LINKS = ("availabilities", "rules")
 ROW_FIELDS = ("label", "cost", "dice", "dice_multiplier", "cost_note", "rarity", "for_everyone", "note")
-RULE_FIELDS = ("name", "summary", "text", "table")
+RULE_FIELDS = ("name", "summary", "text", "table", "prebattle_roll", "prebattle_text")
 
 
 def write_availabilities(item: Item, rows: Sequence[Mapping[str, Any]]) -> None:

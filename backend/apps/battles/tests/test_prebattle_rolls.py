@@ -1,6 +1,6 @@
 """The pre-battle step's rolls (William, 5 Nov 2026): in the battle rosters each skill and special with a pre-battle
-roll carries its dice and text, and each item its shared rules' (battles/services/rosters.py), read with the rest at
-no extra query. Prebattle shows them under the unit and nothing applies them."""
+roll carries its dice and text, and each item its rules' (a shared rule's or its own, battles/services/rosters.py),
+read with the rest at no extra query. Prebattle shows them under the unit and nothing applies them."""
 
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
@@ -26,6 +26,9 @@ class PrebattleRollsRosterTests(BattleTestCase):
         self.mask = catalogue_item("Jester Mask", 20)
         ItemRuleLink.objects.create(item=self.mask, position=0, name="Its own", text="No roll here.")
         ItemRuleLink.objects.create(item=self.mask, position=1, rule=self.grin)
+        ItemRuleLink.objects.create(
+            item=self.mask, position=2, name="Leer", text="On a 6, frenzy.", prebattle_roll="D6", prebattle_text="Six."
+        )
         self.hero = Hero.objects.create(warband=self.warband, name="Gunther", unit_type="Champion")
         self.hero.hero_specials.create(special=self.wound)
         self.hero.hero_specials.create(special=self.specials[0])  # no roll
@@ -53,7 +56,10 @@ class PrebattleRollsRosterTests(BattleTestCase):
             [{"id": self.spy.id, "name": "Spy", "prebattleRoll": "D3", "prebattleText": "Re-deploy D3 models."}],
         )
         mask = next(item for item in hero["items"] if item["id"] == self.mask.id)
-        self.assertEqual(mask["prebattleRolls"], [{"rule": "Grin", "roll": "D6", "text": "On a 1, stupid."}])
+        self.assertEqual(
+            mask["prebattleRolls"],
+            [{"rule": "Grin", "roll": "D6", "text": "On a 1, stupid."}, {"rule": None, "roll": "D6", "text": "Six."}],
+        )
         sword = next(item for item in hero["items"] if item["id"] == self.sword.id)
         self.assertNotIn("prebattleRolls", sword)
         self.assertEqual(roster["hirelings"][0]["specials"], [wound])
@@ -82,4 +88,5 @@ class PrebattleRollsRosterTests(BattleTestCase):
         Special.objects.update(prebattle_roll="")
         Skill.objects.update(prebattle_roll="")
         ItemRule.objects.update(prebattle_roll="")
+        ItemRuleLink.objects.update(prebattle_roll="")
         self.assertEqual(count(), with_rolls)

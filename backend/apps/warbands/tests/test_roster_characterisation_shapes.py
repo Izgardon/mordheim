@@ -78,8 +78,18 @@ ITEM_DETAIL = {
     "row_id": "int",  # the bestiary rewrite step 4: this copy, its companion switch, the beast's kind
     "companion": "bool",
     "beast_kind": None,
-    "rules": [
-        {"id": "int", "rule_id": "int", "shared": "bool", "name": "str", "summary": "str", "text": "str", "table": []}
+    "rules": [  # with its pre-battle roll (a shared rule's, or the item's own rule's)
+        {
+            "id": "int",
+            "rule_id": "int",
+            "shared": "bool",
+            "name": "str",
+            "summary": "str",
+            "text": "str",
+            "table": [],
+            "prebattle_roll": "str",
+            "prebattle_text": "str",
+        }
     ],
     "availabilities": [
         {

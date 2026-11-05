@@ -109,10 +109,11 @@ class ItemRule(PrebattleRoll):
         return self.name
 
 
-class ItemRuleLink(models.Model):
+class ItemRuleLink(PrebattleRoll):
     """One of an item's rules, in order: a shared rule (`rule`), its text only where the item words it differently, or
     (no rule) one only this item has, with its name. `table`: its D6 tables, each `{columns, rows}` (a row's first
-    cell is the roll); a `{{table:N}}` marker in the text says where the Nth stands."""
+    cell is the roll); a `{{table:N}}` marker in the text says where the Nth stands. A rule of its own carries its
+    pre-battle roll (`PrebattleRoll`); a shared rule's is the shared rule's, and its link holds none."""
 
     item = models.ForeignKey(Item, related_name="rule_links", on_delete=models.CASCADE)
     position = models.PositiveSmallIntegerField(default=0)
