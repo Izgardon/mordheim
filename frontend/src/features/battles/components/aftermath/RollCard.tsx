@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import DiceEntry from "@/components/ui/dice-entry";
+import type { Dice } from "@/lib/dice";
 import { cn } from "@/lib/utils";
 
 type Rolled = { faces: number[]; result: string; good: boolean; onUndo: () => void };
@@ -25,8 +27,9 @@ export function DiceFaces({ faces, size = "md" }: { faces: number[]; size?: "md"
 }
 
 /**
- * One roll on the Injuries tab (design E): the unit and its dice, then Roll, or the faces, the
- * result in good or danger, and Undo. A bad result lines the card in danger.
+ * One roll on the Injuries tab (design E): the unit and its dice, then Roll with a box for each
+ * die rolled at the table, or the faces, the result in good or danger, and Undo. A bad result
+ * lines the card in danger.
  */
 export default function RollCard({
   title,
@@ -34,8 +37,8 @@ export default function RollCard({
   danger,
   isMobile,
   rolled,
-  rollLabel,
-  onRoll,
+  dice,
+  onFaces,
   children,
 }: {
   title: string;
@@ -43,8 +46,10 @@ export default function RollCard({
   danger: boolean;
   isMobile: boolean;
   rolled: Rolled | null;
-  rollLabel: string;
-  onRoll: () => void;
+  /** What it rolls: "Roll D66" and two boxes, tens then units. */
+  dice: Dice;
+  /** The faces, rolled or typed: the same draft either way. */
+  onFaces: (faces: number[]) => void;
   children?: ReactNode;
 }) {
   return (
@@ -93,9 +98,17 @@ export default function RollCard({
           </Button>
         </div>
       ) : (
-        <Button className={isMobile ? "min-h-12 text-[15px]" : ""} onClick={onRoll}>
-          {rollLabel}
-        </Button>
+        <DiceEntry
+          dice={dice}
+          size={isMobile ? "lg" : "md"}
+          className={isMobile ? "flex-nowrap" : undefined}
+          onFaces={onFaces}
+          button={(roll) => (
+            <Button className={isMobile ? "min-h-12 flex-1 text-[15px]" : ""} onClick={roll}>
+              Roll {dice}
+            </Button>
+          )}
+        />
       )}
       {children}
     </article>

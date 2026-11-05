@@ -14,7 +14,7 @@ import type {
   BattlePostbattleSeriousInjuryRoll,
   BattlePostbattleState,
 } from "@/features/battles/types/battle-types";
-import { rollDie } from "@/lib/dice";
+import { diceSides, rollDie, type Dice } from "@/lib/dice";
 
 /** The units the Injuries tab rolls for: everyone taken out of action. */
 export function injuryRows(draft: BattlePostbattleState, roster: ParticipantRoster | undefined) {
@@ -24,31 +24,32 @@ export function injuryRows(draft: BattlePostbattleState, roster: ParticipantRost
 }
 
 /** "D66", "D100" or "D6 · dies on 1–2": the dice a row rolls, as its subtitle says. */
-export function injuryDice(table: InjuryTable, rules: BattlePostbattleRules | undefined) {
+export function injuryDice(table: InjuryTable, rules: BattlePostbattleRules | undefined): Dice {
   if (table === "henchman") return "D6";
   return heroDeathRollFor(rules) === "d100" ? "D100" : "D66";
 }
 
+/** The die a result's missing games are rolled on ("D3"), or null for a set number of games. */
+export function missesDice(misses: { games?: number; dice?: string } | undefined): Dice | null {
+  return misses?.dice ? `D${Number(misses.dice.replace(/\D/g, "")) || 3}` : null;
+}
+
 /**
- * The draft with a serious-injury roll added for `row` (only the last roll counts): dead when the
- * table says so, and the missing games it offers ticked at once (a D3 is rolled here); the player
- * can untick them.
+ * The draft with a serious-injury roll of `values` (rolled or typed, as `injuryDice` says) added
+ * for `row` (only the last roll counts): dead when the table says so, and the missing games it
+ * offers ticked at once (their dice rolled here, which the player can type over); the player can
+ * untick them.
  */
 export function withInjuryRoll(
   draft: BattlePostbattleState,
   row: PostbattleRenderableRow,
-  rules: BattlePostbattleRules | undefined
+  rules: BattlePostbattleRules | undefined,
+  values: number[]
 ) {
-  const hero = row.injuryTable === "hero";
-  const values =
-    hero && heroDeathRollFor(rules) === "d100"
-      ? [rollDie(100)]
-      : hero
-        ? [rollDie(6), rollDie(6)]
-        : [rollDie(6)];
   const roll = seriousInjuryRoll(row.injuryTable, values, rules);
   const misses = roll.effect?.misses;
-  const games = misses?.dice ? rollDie(Number(misses.dice.replace(/\D/g, "")) || 3) : misses?.games;
+  const die = missesDice(misses);
+  const games = die ? rollDie(diceSides(die)[0]) : misses?.games;
   return updateUnitResult(draft, row.unitKey, (current) => {
     const { missing_games: _dropped, ...rest } = current;
     return {

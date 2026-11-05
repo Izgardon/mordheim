@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import DiceEntry from "@/components/ui/dice-entry";
 import {
   mountRollResult,
   setMountSurvival,
@@ -9,12 +11,12 @@ import type {
   BattlePostbattleState,
   BattlePostbattleSuggestion,
 } from "@/features/battles/types/battle-types";
-import { rollDie } from "@/lib/dice";
 
 import {
   injuryDice,
   injuryRows,
   injuryText,
+  missesDice,
   withInjuryRoll,
   withMissingTicked,
   withoutLastRoll,
@@ -39,8 +41,9 @@ const good = (row: PostbattleRenderableRow) => {
 
 /**
  * Injuries (design E): a card per unit taken out of action, rolling its table (heroes and hero-
- * table hired swords D66 or D100, the rest a D6 that kills on 1–2) with Undo; the missing games a
- * result keeps him out for, ticked to be set at Ready; and each rider's mount survival roll.
+ * table hired swords D66 or D100, the rest a D6 that kills on 1–2) or taking the dice typed in,
+ * with Undo; the missing games a result keeps him out for, ticked to be set at Ready (their dice
+ * rolled again or typed over); and each rider's mount survival roll.
  */
 export default function InjuriesTab(props: InjuriesTabProps) {
   const { draft, rules, onChange } = props;
@@ -62,6 +65,7 @@ export default function InjuriesTab(props: InjuriesTabProps) {
         const dice = injuryDice(row.injuryTable, rules);
         const sub = row.injuryTable === "henchman" ? `${dice} · dies on 1–2` : dice;
         const misses = roll?.effect?.misses;
+        const missDice = missesDice(misses);
         const offer = misses && row.unitKind !== "henchman" && !row.dead;
         const games = row.missingGames?.games ?? misses?.games ?? 1;
         const text = injuryText(rules, roll);
@@ -82,28 +86,40 @@ export default function InjuriesTab(props: InjuriesTabProps) {
                   }
                 : null
             }
-            rollLabel={`Roll ${dice}`}
-            onRoll={() => onChange(withInjuryRoll(draft, row, rules))}
+            dice={dice}
+            onFaces={(faces) => onChange(withInjuryRoll(draft, row, rules, faces))}
           >
             {text ? (
               <p className="m-0 basis-full text-[13px] leading-relaxed text-text2">{text}</p>
             ) : null}
             {offer ? (
-              <label className="flex min-h-10 basis-full cursor-pointer items-center gap-2.5 border border-accent-line bg-panel px-3 py-2 text-[13px] text-ink">
-                <input
-                  type="checkbox"
-                  className="h-4 w-4 accent-[var(--color-accent)]"
-                  checked={Boolean(row.missingGames)}
-                  onChange={(event) =>
-                    onChange(withMissingTicked(draft, row, event.target.checked, games))
-                  }
-                />
-                Misses{" "}
-                {misses.dice
-                  ? `${misses.dice} games (rolled ${games})`
-                  : `${games} game${games === 1 ? "" : "s"}`}
-                , set at Ready
-              </label>
+              <div className="flex basis-full flex-wrap items-center gap-x-3 gap-y-1.5 border border-accent-line bg-panel px-3 py-2">
+                <label className="flex min-h-10 flex-1 cursor-pointer items-center gap-2.5 text-[13px] text-ink">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 accent-[var(--color-accent)]"
+                    checked={Boolean(row.missingGames)}
+                    onChange={(event) =>
+                      onChange(withMissingTicked(draft, row, event.target.checked, games))
+                    }
+                  />
+                  Misses {missDice ? `${missDice} games` : `${games} game${games === 1 ? "" : "s"}`}
+                  , set at Ready
+                </label>
+                {missDice ? (
+                  <DiceEntry
+                    dice={missDice}
+                    size="sm"
+                    total={row.missingGames?.games ?? null}
+                    onFaces={([rolled]) => onChange(withMissingTicked(draft, row, true, rolled))}
+                    button={(reroll) => (
+                      <Button size="sm" variant="secondary" className="h-9" onClick={reroll}>
+                        Roll {missDice}
+                      </Button>
+                    )}
+                  />
+                ) : null}
+              </div>
             ) : null}
           </RollCard>
         );
@@ -129,9 +145,9 @@ export default function InjuriesTab(props: InjuriesTabProps) {
                   }
                 : null
             }
-            rollLabel="Roll D6"
-            onRoll={() =>
-              onChange(setMountSurvival(draft, unitKey, mountRollResult(rollDie(6), risk.dies_on)))
+            dice="D6"
+            onFaces={([face]) =>
+              onChange(setMountSurvival(draft, unitKey, mountRollResult(face, risk.dies_on)))
             }
           />
         );

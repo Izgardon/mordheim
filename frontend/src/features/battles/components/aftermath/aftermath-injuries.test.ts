@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { BattlePostbattleRules } from "@/features/battles/types/battle-types";
 
-import { injuryText } from "./aftermath-injuries";
+import { injuryText, missesDice } from "./aftermath-injuries";
 
 const MANUAL = { kind: "manual" } as const;
 
@@ -27,5 +27,14 @@ describe("injuryText", () => {
     expect(injuryText(rules, { roll_type: "d6", result_code: "1" })).toBe("");
     expect(injuryText(rules, { roll_type: "d100", result_code: "07" })).toBe("");
     expect(injuryText(undefined, { roll_type: "d66", result_code: "36" })).toBe("");
+  });
+});
+
+describe("missesDice", () => {
+  it("is the die a result's missing games are rolled on, or none for a set number", () => {
+    expect(missesDice({ games: 0, dice: "D3" })).toBe("D3");
+    expect(missesDice({ games: 0, dice: "d6" })).toBe("D6");
+    expect(missesDice({ games: 1 })).toBeNull();
+    expect(missesDice(undefined)).toBeNull();
   });
 });
