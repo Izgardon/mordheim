@@ -115,6 +115,19 @@ describe("Raising a warband from its type's template", () => {
     });
   });
 
+  it("fills the link from the type with no note saying so", async () => {
+    caravans.link_url = "https://mordheimer.net/caravans";
+    try {
+      fakeApi.on(OUTLINE, outline({}));
+      renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} />);
+      await pickType();
+      expect(screen.getByLabelText("Warband link")).toHaveValue("https://mordheimer.net/caravans");
+      expect(screen.queryByText(/Filled from/)).toBeNull();
+    } finally {
+      caravans.link_url = "";
+    }
+  });
+
   it("asks for a variant when the type presets none, and sends it", async () => {
     const variants = [
       { key: "norse", name: "The Norse" },

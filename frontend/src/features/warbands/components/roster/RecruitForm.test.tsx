@@ -158,7 +158,7 @@ describe("Recruiting from the warband's template", () => {
     const user = setupUser();
     const picker = await screen.findByRole("radiogroup", { name: "Recruit as" });
     expect(within(picker).getByRole("radio", { name: /Youngblood/ })).toHaveTextContent(
-      "Already 2 of 2. You can still add one."
+      "Already 2 of 2."
     );
     await user.click(within(picker).getByRole("radio", { name: /Champion/ }));
     await user.type(screen.getByLabelText("Name"), "Ulrich");

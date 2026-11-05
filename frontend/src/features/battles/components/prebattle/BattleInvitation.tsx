@@ -38,11 +38,11 @@ export default function BattleInvitation({ page }: { page: PrebattlePage }) {
           <h1 id="invite-title" className="m-0 font-display text-[26px] font-semibold text-head">
             {scenario}
           </h1>
-          <p className="m-0 text-sm text-text2">
-            {flags.isBattleCreator
-              ? "You called this battle."
-              : `${inviter ?? "Another player"} invited you to battle.`}
-          </p>
+          {flags.isBattleCreator ? null : (
+            <p className="m-0 text-sm text-text2">
+              {inviter ?? "Another player"} invited you to battle.
+            </p>
+          )}
           {scenarioLink ? (
             <a
               href={scenarioLink}

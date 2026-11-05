@@ -216,9 +216,6 @@ export default function PrebattleBody({ page, isMobile, onOpenNotes }: Prebattle
                 onChange={(event) => ratings.setRatingInput(me.user.id, event.target.value)}
                 className="max-w-[160px] font-mono"
               />
-              <p className="m-0 text-xs text-muted-foreground">
-                Temporary units add their own rating to it.
-              </p>
             </Card>
           ) : null}
           {ready.actionError ? (

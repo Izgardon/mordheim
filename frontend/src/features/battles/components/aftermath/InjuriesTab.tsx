@@ -1,5 +1,3 @@
-import { Shield } from "lucide-react";
-
 import {
   mountRollResult,
   setMountSurvival,
@@ -138,12 +136,6 @@ export default function InjuriesTab(props: InjuriesTabProps) {
           />
         );
       })}
-      {!mounts.length ? (
-        <div className="flex items-center gap-2.5 border border-dashed border-strong px-3.5 py-3 text-[13px] text-muted-foreground">
-          <Shield className="h-4 w-4 shrink-0 text-accent-text" aria-hidden="true" />
-          No mount was lost under a rider taken out of action.
-        </div>
-      ) : null}
     </div>
   );
 }

@@ -102,15 +102,7 @@ export default function CreateWarband({
               }}
             />
           </Field>
-          <Field
-            label="Warband link"
-            htmlFor="new-warband-link"
-            hint={
-              warbandType?.link_url && link === warbandType.link_url
-                ? `Filled from ${warbandType.name}.`
-                : undefined
-            }
-          >
+          <Field label="Warband link" htmlFor="new-warband-link">
             <Input
               id="new-warband-link"
               type="url"

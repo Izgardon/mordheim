@@ -43,7 +43,7 @@ export function overCount(fighter: TemplateFighter, adding: number): string | nu
   if (max === null) return null;
   const have = fighter.have.count;
   if (fighter.kind === "hero") {
-    return have + adding > max ? `Already ${have} of ${max}. You can still add one.` : null;
+    return have + adding > max ? `Already ${have} of ${max}.` : null;
   }
   return have + adding > max
     ? `That makes ${have + adding} of ${max}. You can still add them.`
