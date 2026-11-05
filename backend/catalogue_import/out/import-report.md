@@ -31,7 +31,8 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 49 |
 | skill group links | 266 |
 | serious injuries (D66) | 20 |
-| shared specials | 38 |
+| shared specials | 53 |
+| random mutation results (D66) | 36 |
 
 ## mordheimer's contradictions
 
@@ -692,6 +693,21 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Spiked Tail | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 50 |  | 0 | 0 | 0 | 0 |
 | Regeneration | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 60 |  | 0 | 0 | 0 | 0 |
 | Spit Acid | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 35 |  | 0 | 0 | 0 | 0 |
+| Atrophy | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Beaked | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Beweaponed Extremities | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Brightly Patterned Skin | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Burning Body | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Elastic Limbs | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Enormously Fat | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Extremely Thin | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Fangs | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Furry | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Horns | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Plague Bearer | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Resilient | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Stunted | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Warts | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 
 List prices the pages differ from: none.
 
@@ -737,3 +753,54 @@ List prices the pages differ from: none.
 | Scaly Skin (Cold One Beasthounds) | Dark Elves: Cold One Beasthound | A 6+ armour save; the mutation's is 5+, and armour adds to it. |
 | Scaly Skin (Kroxigor) | Lizardmen: Kroxigor | A natural 4+ save; the mutation's is 5+. |
 | Scaly Skin (Chameleon Skink) | Chameleon Skink | The Lizardmen's Scaly Skin, a Skink's 6+; the mutation's is 5+. |
+| Resilient (Old Prospector) | Old Prospector | The Resilient skill: -1 Strength to every hit against him in close combat; the mutation is +1 Toughness. |
+
+## Random mutation table
+
+`sources/random-mutations.json` (mordheimer's Power in the Stones, Town Cryer #15) as `out/random-mutations.json`: what each D66 result gives when the D100 serious injury result 100, Mutation, rolls on it. A result matched to a special by what it does names it; * is drummed out of a human mercenary warband.
+
+| D66 | Result | * | Special | Type | Cost | Setting |
+| --- | --- | --- | --- | --- | --- | --- |
+| 11 | Acid Spray | * | Spit Acid | Bounty of Arkhar | 35 |  |
+| 12 | Atrophy |  | the same | Mutation |  |  |
+| 13 | Beaked | * | the same | Mutation |  |  |
+| 14 | Beweaponed Extremities | * | the same | Mutation |  |  |
+| 15 | Blackblood |  | the same | Mutation | 30 |  |
+| 16 | Brightly Patterned Skin | * | the same | Mutation |  |  |
+| 21 | Burning Body | * | the same | Mutation |  |  |
+| 22 | Cloud of Flies |  | the same | Blessing of Nurgle | 25 |  |
+| 23 | Cloven Hooves | * | Cloven Hoofs | Mutation | 40 |  |
+| 24 | Crystalline Body | * | the same | Mutation | 60 |  |
+| 25 | Elastic Limbs | * | the same | Mutation |  |  |
+| 26 | Enormously Fat |  | the same | Mutation |  |  |
+| 31 | Extra Arm | * | the same | Mutation | 40 |  |
+| 32 | Extremely Thin |  | the same | Mutation |  |  |
+| 33 | Eyestalks | * | Hideous | Mutation | 40 |  |
+| 34 | Fangs | * | the same | Mutation |  |  |
+| 35 | Furry | * | the same | Mutation |  |  |
+| 36 | Great Claw | * | the same | Mutation | 50 |  |
+| 41 | Hideous |  | the same | Mutation | 40 |  |
+| 42 | Horns | * | the same | Mutation |  |  |
+| 43 | Iron Hard Skin | * | Iron-hard Skin | Bounty of Arkhar | 45 |  |
+| 44 | Mace Tail | * | Spiked Tail | Bounty of Arkhar | 50 |  |
+| 45 | Moronic |  | Stupidity | Psychology |  |  |
+| 46 | Plague Bearer | * | the same | Mutation |  |  |
+| 51 | Poisonous Bite |  | the same | Mutation | 50 |  |
+| 52 | Prehensile Tail | * | the same | Mutation | 50 |  |
+| 53 | Regeneration |  | the same | Bounty of Arkhar | 60 |  |
+| 54 | Resilient |  | the same | Mutation |  |  |
+| 55 | Scorpion Tail | * | the same | Mutation | 40 |  |
+| 56 | Skull Face | * | Hideous | Mutation | 40 |  |
+| 61 | Spines | * | the same | Mutation | 35 |  |
+| 62 | Stunted |  | the same | Mutation |  |  |
+| 63 | Suckers | * | the same | Blessing of Nurgle | 25 |  |
+| 64 | Tentacle | * | the same | Mutation | 35 |  |
+| 65 | Warts |  | the same | Mutation |  |  |
+| 66 | Wings | * | the same | Mutation | 45 |  |
+
+Kept apart from a family's, the effect differing:
+
+- Beaked and Beak: Tchar's Beak always strikes last.
+- Burning Body and Burning Body (Tchar): An automatic Strength 2 hit on each model in base contact; Tchar's sets them on fire on a 4+.
+- Fangs and Fangs (Arkhar): Arkhar's Fangs always strike last.
+- Plague Bearer and Plague Carrier: Plague Carrier, and it causes fear too.

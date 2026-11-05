@@ -13,7 +13,7 @@ from django.test import TestCase
 from apps.campaigns.models import CampaignType
 from apps.core.book_lookups import BookLookups
 from apps.special.categories import AURA, BODY, MUTATION
-from apps.special.kinds import BANE, BOON, DRAMATIS_PERSONA, GENERAL, WARBAND
+from apps.special.kinds import BANE, BOON, DRAMATIS_PERSONA, GENERAL, TRAIT, WARBAND
 from apps.special.models import Special
 
 BELANDYSH = "Belandysh, Condemned Champion of Chen"
@@ -43,10 +43,15 @@ class SharedSeedTests(TestCase):
         self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))
         self.assertIn("In addition, the model is immune to all poisons.", rot.description)
         mutations = Special.objects.filter(type__in=families)
-        self.assertEqual(set(mutations.values_list("kind", "category")), {(BOON, MUTATION)})
+        self.assertEqual({row.category for row in mutations}, {MUTATION})
+        bought = mutations.filter(cost__isnull=False)  # every priced one helps him; the random table's may not
+        self.assertEqual(set(bought.values_list("kind", flat=True)), {BOON})
+        kinds = dict(mutations.filter(name__in=("Atrophy", "Warts", "Horns")).values_list("name", "kind"))
+        self.assertEqual(kinds, {"Atrophy": BANE, "Warts": TRAIT, "Horns": BOON})
         counted = Counter(mutations.values_list("type", flat=True))
+        # the generic list's 15 and the random table's 15 of its own; the Nurgle family 7, Tchar's 6 and Arkhar's 6
         self.assertEqual(
-            counted, {"Mutation": 15, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
+            counted, {"Mutation": 30, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
         )
         self.assertFalse(mutations.filter(description__icontains="Tainted One").exists())  # a general subject
         self.assertEqual((claw.cost, rot.cost, rows["Mark of Nurgle"].cost, fear.cost), (50, 50, 35, None))
@@ -77,13 +82,13 @@ class SharedSeedTests(TestCase):
         ]
         frenzy = Special.objects.create(name="Frenzy", type="Animal")
 
-        self.assertIn("Shared specials - Created: 38, Updated: 0, copies archived: 5.", seed())
+        self.assertIn("Shared specials - Created: 53, Updated: 0, copies archived: 5.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         frenzy.refresh_from_db()
         self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 38, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 53, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):
@@ -128,8 +133,10 @@ class SharedLookupTests(TestCase):
         own = BookLookups("Dramatis Persona").special({"name": "Regeneration", "description": "4+."}, BELANDYSH)
         skink = BookLookups("Hired Sword").special({"name": "Scaly Skin", "description": "6+."}, "Chameleon Skink")
         rot = BookLookups("Hired Sword").special("Neiglish Rot", "Anyone")  # MiM's name for Nurgle's Rot
+        skill = BookLookups("Hired Sword").special({"name": "Resilient", "description": "The skill."}, "Old Prospector")
 
-        assert own is not None and skink is not None and rot is not None
+        assert own is not None and skink is not None and rot is not None and skill is not None
+        self.assertEqual((skill.name, skill.type), ("Resilient (Old Prospector)", "Hired Sword - Old Prospector"))
         self.assertEqual((own.name, own.category), ("Regeneration (Belandysh)", BODY))
         self.assertEqual((skink.name, skink.type), ("Scaly Skin (Chameleon Skink)", "Hired Sword - Chameleon Skink"))
         self.assertEqual((rot.name, rot.type, rot.category), ("Nurgle's Rot", "Blessing of Nurgle", MUTATION))

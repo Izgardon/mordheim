@@ -17,6 +17,7 @@ from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, mim_item
 from catalogue_import.new_groups import SkillGroups, build_skill_groups
 from catalogue_import.personae import Catalogue, build_personae, put_names_right
+from catalogue_import.random_mutations import build_random_mutations, render_random
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
 from catalogue_import.shared_specials import build_shared, load_shared, render_shared
@@ -243,6 +244,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     one_rule = load_shared()  # the shared specials (William, 5 Nov 2026)
     templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log, one_rule)
     shared_specials = build_shared(one_rule, sources.our_hired_swords, sources.our_personae, snapshot.injuries)
+    random_mutations = build_random_mutations(one_rule)  # the random mutation table (William, 5 Nov 2026)
     injuries = build_serious_injuries(snapshot.injuries)
     counts = {
         "settings": len(settings),
@@ -258,6 +260,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "skill group links": sum(len(group["skills"]) for group in grouped.groups),
         "serious injuries (D66)": len(injuries),
         "shared specials": len(shared_specials["specials"]),
+        "random mutation results (D66)": len(random_mutations),
     }
     report = ReportData(
         counts,
@@ -301,9 +304,12 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "warband-templates.json": dump_json(templates),
         "serious-injuries.json": dump_json(injuries),
         "shared-specials.json": dump_json(shared_specials),
+        "random-mutations.json": dump_json(random_mutations),
         "import-report.md": render_report(report)
         + "\n"
         + render_templates(templates, template_log, grouped.groups, groups)
         + "\n"
-        + render_shared(one_rule),
+        + render_shared(one_rule)
+        + "\n"
+        + render_random(random_mutations, one_rule),
     }

@@ -17,7 +17,8 @@
       "type": "Psychology",
       "description": "Many large and powerful creatures, as well as some of the more unhinged individuals in Mordheim, are unfortunately rather stupid.\n\nModels that are stupid test at the start of their turn to see if they overcome their stupidity. Make a test for each model affected by stupidity. If you pass the test by rolling their Leadership value or less on 2D6 then all is well – the creatures behave reasonably intelligently and the player may move and fight with them as normal.\n\nIf the test is failed all is not well. Until the start of his next turn (when it takes a new Stupidity test) the model will not cast spells or fight in hand-to-hand combat (though his opponent will still have to roll to hit him as normal).\n\nIf a model who fails a Stupidity test is not in hand-to-hand combat, roll a D6.\n\nD6 | Result\n1-3 | The warrior moves directly forward at half speed in a shambling manner. He will not charge an enemy (stop his movement 1\" away from any enemy he would have come into contact with). He can fall down from the edge of a sheer drop (see the Falling rules) or hit an obstacle, in which case he stops. The model will not shoot this turn.\n4-6 | The warrior stands inactive and drools a bit during this turn. He may do nothing else, as drooling is so demanding.\n\nRegardless of whether the test is passed or failed, the result applies until the start of the model's following turn (when it takes a new Stupidity test).",
       "aliases": [
-        "Stupid"
+        "Stupid",
+        "Moronic"
       ],
       "cost": null,
       "setting": null
@@ -58,7 +59,9 @@
       "name": "Cloven Hoofs",
       "type": "Mutation",
       "description": "The warrior gains +1 Movement.",
-      "aliases": [],
+      "aliases": [
+        "Cloven Hooves"
+      ],
       "cost": 40,
       "setting": null
     },
@@ -106,7 +109,10 @@
       "name": "Hideous",
       "type": "Mutation",
       "description": "The model causes fear.",
-      "aliases": [],
+      "aliases": [
+        "Eyestalks",
+        "Skull Face"
+      ],
       "cost": 40,
       "setting": null
     },
@@ -276,7 +282,9 @@
       "name": "Iron-hard Skin",
       "type": "Bounty of Arkhar",
       "description": "The model's armour save improves by +1. With no armour, its skin alone gives it a 6+ save.",
-      "aliases": [],
+      "aliases": [
+        "Iron Hard Skin"
+      ],
       "cost": 45,
       "setting": null
     },
@@ -292,7 +300,9 @@
       "name": "Spiked Tail",
       "type": "Bounty of Arkhar",
       "description": "Unless it already has a tail, the model gains an extra tail attack in each hand-to-hand combat phase, at its Strength +1. A model that already has a tail decides at the start of each hand-to-hand combat which tail it uses.",
-      "aliases": [],
+      "aliases": [
+        "Mace Tail"
+      ],
       "cost": 50,
       "setting": null
     },
@@ -308,8 +318,130 @@
       "name": "Spit Acid",
       "type": "Bounty of Arkhar",
       "description": "In the shooting phase the model may spit acid at a target up to 8\" away: a Strength 4 shooting attack with no penalty for range or for moving.",
-      "aliases": [],
+      "aliases": [
+        "Acid Spray"
+      ],
       "cost": 35,
+      "setting": null
+    },
+    {
+      "name": "Atrophy",
+      "type": "Mutation",
+      "description": "Part of the model withers. Roll a D6. 1, the head: it is subject to stupidity. 2-4, an arm: it loses the use of one arm and may use only a single one-handed weapon from now on; with both arms lost it is retired from the warband unless it has a tail or bite attack. 5-6, a leg: its Movement is halved, rounding up; with both legs lost it is retired from the warband.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Beaked",
+      "type": "Mutation",
+      "description": "Unless it already has a bite attack, the model makes an extra bite attack in each hand-to-hand combat phase.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Beweaponed Extremities",
+      "type": "Mutation",
+      "description": "The model's hands become weapons: roll a D6 for each arm, 1-2 a sword, 3-4 a mace, 5-6 an axe. It may no longer use weapons or equipment that need hands. It gains the usual extra attack for an additional hand weapon, and each follows the rules for a weapon of its type (a sword may parry); with two swords it re-rolls failed parries as with a sword and buckler.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Brightly Patterned Skin",
+      "type": "Mutation",
+      "description": "Bright stripes, spots or other patterns on the model's skin. No effect on play.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Burning Body",
+      "type": "Mutation",
+      "description": "The model may carry no weapons or armour unless they are magical or of Gromril or Ithilmar. It suffers none of the usual penalties for fighting with its fists (no -1 Strength, and enemies get no +1 to their armour saves), and always counts as having a lantern. Every model in base contact with it suffers an automatic Strength 2 hit at the start of each close combat phase; the flames never cause critical hits.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Elastic Limbs",
+      "type": "Mutation",
+      "description": "If the model isn't in base contact with an enemy at the start of the hand-to-hand combat phase, it may make one hand-to-hand attack against a single visible enemy within 6\". That enemy can't strike back.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Enormously Fat",
+      "type": "Mutation",
+      "description": "The model's Movement is halved, rounding up; it gains +1 Toughness and suffers -1 Initiative.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Extremely Thin",
+      "type": "Mutation",
+      "description": "The model's Toughness is halved, rounding up.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Fangs",
+      "type": "Mutation",
+      "description": "Unless it already has a bite attack, the model makes an extra bite attack at its normal Strength in each hand-to-hand combat phase.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Furry",
+      "type": "Mutation",
+      "description": "Long, dense fur covers the model. No effect on its profile.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Horns",
+      "type": "Mutation",
+      "description": "The model gains an extra gore attack in hand-to-hand combat at its normal Strength, and may no longer wear a helmet.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Plague Bearer",
+      "type": "Mutation",
+      "description": "The model's Movement and Initiative are reduced by 1. Each time it hits an enemy in hand-to-hand combat, the enemy must roll its Toughness or less on a D6, or suffer -1 Movement and -1 Initiative for the rest of the battle (it recovers after the battle). It may infect each model only once in a battle. It also causes fear.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Resilient",
+      "type": "Mutation",
+      "description": "The model gains +1 Toughness.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Stunted",
+      "type": "Mutation",
+      "description": "The model's Movement and Initiative are reduced by 1.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Warts",
+      "type": "Mutation",
+      "description": "Repellent warts cover the model. Its profile is unaffected.",
+      "aliases": [],
+      "cost": null,
       "setting": null
     }
   ],
@@ -343,6 +475,11 @@
       "owner": "Chameleon Skink",
       "rule": "Scaly Skin",
       "name": "Scaly Skin (Chameleon Skink)"
+    },
+    {
+      "owner": "Old Prospector",
+      "rule": "Resilient",
+      "name": "Resilient (Old Prospector)"
     }
   ]
 }

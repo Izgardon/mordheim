@@ -1,0 +1,326 @@
+[
+  {
+    "roll": 11,
+    "name": "Acid Spray",
+    "special": {
+      "name": "Spit Acid",
+      "type": "Bounty of Arkhar"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 12,
+    "name": "Atrophy",
+    "special": {
+      "name": "Atrophy",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 13,
+    "name": "Beaked",
+    "special": {
+      "name": "Beaked",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 14,
+    "name": "Beweaponed Extremities",
+    "special": {
+      "name": "Beweaponed Extremities",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 15,
+    "name": "Blackblood",
+    "special": {
+      "name": "Blackblood",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 16,
+    "name": "Brightly Patterned Skin",
+    "special": {
+      "name": "Brightly Patterned Skin",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 21,
+    "name": "Burning Body",
+    "special": {
+      "name": "Burning Body",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 22,
+    "name": "Cloud of Flies",
+    "special": {
+      "name": "Cloud of Flies",
+      "type": "Blessing of Nurgle"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 23,
+    "name": "Cloven Hooves",
+    "special": {
+      "name": "Cloven Hoofs",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 24,
+    "name": "Crystalline Body",
+    "special": {
+      "name": "Crystalline Body",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 25,
+    "name": "Elastic Limbs",
+    "special": {
+      "name": "Elastic Limbs",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 26,
+    "name": "Enormously Fat",
+    "special": {
+      "name": "Enormously Fat",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 31,
+    "name": "Extra Arm",
+    "special": {
+      "name": "Extra Arm",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 32,
+    "name": "Extremely Thin",
+    "special": {
+      "name": "Extremely Thin",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 33,
+    "name": "Eyestalks",
+    "special": {
+      "name": "Hideous",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 34,
+    "name": "Fangs",
+    "special": {
+      "name": "Fangs",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 35,
+    "name": "Furry",
+    "special": {
+      "name": "Furry",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 36,
+    "name": "Great Claw",
+    "special": {
+      "name": "Great Claw",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 41,
+    "name": "Hideous",
+    "special": {
+      "name": "Hideous",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 42,
+    "name": "Horns",
+    "special": {
+      "name": "Horns",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 43,
+    "name": "Iron Hard Skin",
+    "special": {
+      "name": "Iron-hard Skin",
+      "type": "Bounty of Arkhar"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 44,
+    "name": "Mace Tail",
+    "special": {
+      "name": "Spiked Tail",
+      "type": "Bounty of Arkhar"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 45,
+    "name": "Moronic",
+    "special": {
+      "name": "Stupidity",
+      "type": "Psychology"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 46,
+    "name": "Plague Bearer",
+    "special": {
+      "name": "Plague Bearer",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 51,
+    "name": "Poisonous Bite",
+    "special": {
+      "name": "Poisonous Bite",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 52,
+    "name": "Prehensile Tail",
+    "special": {
+      "name": "Prehensile Tail",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 53,
+    "name": "Regeneration",
+    "special": {
+      "name": "Regeneration",
+      "type": "Bounty of Arkhar"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 54,
+    "name": "Resilient",
+    "special": {
+      "name": "Resilient",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 55,
+    "name": "Scorpion Tail",
+    "special": {
+      "name": "Scorpion Tail",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 56,
+    "name": "Skull Face",
+    "special": {
+      "name": "Hideous",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 61,
+    "name": "Spines",
+    "special": {
+      "name": "Spines",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 62,
+    "name": "Stunted",
+    "special": {
+      "name": "Stunted",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 63,
+    "name": "Suckers",
+    "special": {
+      "name": "Suckers",
+      "type": "Blessing of Nurgle"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 64,
+    "name": "Tentacle",
+    "special": {
+      "name": "Tentacle",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  },
+  {
+    "roll": 65,
+    "name": "Warts",
+    "special": {
+      "name": "Warts",
+      "type": "Mutation"
+    },
+    "drummed_out": false
+  },
+  {
+    "roll": 66,
+    "name": "Wings",
+    "special": {
+      "name": "Wings",
+      "type": "Mutation"
+    },
+    "drummed_out": true
+  }
+]

@@ -94,10 +94,10 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                # special.json's 25, 3 injury specials, the 38 shared (Fear, the mutations of every family), the
-                # templates' 402 (the three Night Goblin and Orc Trolls' one Regeneration (Troll)) and the hired swords'
-                # and personae's own 255 (next step 12; May not run, no longer the Nightmare's)
-                "Special": 723,
+                # special.json's 25, 3 injury specials, the 53 shared (Fear, the mutations of every family and the
+                # random table's), the templates' 402 (the three Night Goblin and Orc Trolls' one Regeneration (Troll))
+                # and the hired swords' and personae's own 255 (next step 12; May not run, no longer the Nightmare's)
+                "Special": 738,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)

@@ -12,6 +12,7 @@ purpose, note the new date here, and review the diff of `out/` that follows.
 | `mordheimer-dramatis-personae.json` | mordheimer's 30 dramatis personae (object keyed by slug) | The same test bundle, 21 Oct 2026 |
 | `warbands-merged.json` | 162 warband types: name, race, Broheim and mordheimer grade, setting, source and links | Broheim's warband tables (broheim.net) merged by name with mordheimer's warband index, 21 Oct 2026 |
 | `cavalcade-skills.json` | the Cursed Cavalcade's 3 skills (name, description, source), which mordheimer's skills list lacks | mordheimer's Cursed Cavalcade warband page, 4 Nov 2026 (the skill groups brief) |
+| `random-mutations.json` | the Random Mutation Table's 36 D66 results: each roll, the name as the table prints it and its * (drummed out of a human mercenary warband), and the table's three rules in short; no rule text (each result's special is worded in `apps/special/data/shared-specials.json`) | mordheimer's Power in the Stones page, https://mordheimer.net/docs/optional-rules/power-in-the-stones#random-mutation-table (first printed in Town Cryer #15), 5 Nov 2026 (the mutations brief) |
 
 Also read, from the repo itself: `apps/items/data/mim-items.json` (the 62 Mutiny in Marienburg items) and
 `apps/items/data/item-properties.json` (the property names those items point at), plus

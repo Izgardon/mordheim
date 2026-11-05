@@ -8,7 +8,7 @@
       "first_line": "This model causes fear.",
       "aliases": ["Cause Fear", "Causes Fear", "Fearsome"]
     },
-    {"name": "Stupidity", "type": "Psychology", "psychology": "Stupidity", "aliases": ["Stupid"]},
+    {"name": "Stupidity", "type": "Psychology", "psychology": "Stupidity", "aliases": ["Stupid", "Moronic"]},
     {
       "name": "Immune to Psychology",
       "type": "Psychology",
@@ -18,7 +18,13 @@
     {"name": "Immune to Poison", "type": "Trait", "text": "Not affected by any poison.", "aliases": []},
     {"name": "Daemon Soul", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 20, "aliases": []},
     {"name": "Great Claw", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 50, "aliases": []},
-    {"name": "Cloven Hoofs", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 40, "aliases": []},
+    {
+      "name": "Cloven Hoofs",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "cost": 40,
+      "aliases": ["Cloven Hooves"]
+    },
     {"name": "Tentacle", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 35, "aliases": []},
     {"name": "Blackblood", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 30, "aliases": []},
     {"name": "Spines", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 35, "aliases": []},
@@ -30,7 +36,7 @@
       "upgrade_of": "Cult of the Possessed",
       "subject": {"The mutant": "The model"},
       "cost": 40,
-      "aliases": []
+      "aliases": ["Eyestalks", "Skull Face"]
     },
     {
       "name": "Crystalline Body",
@@ -204,7 +210,7 @@
       "from": "Mutiny in Marienburg, Bounties of Arkhar",
       "cost": 45,
       "text": "The model's armour save improves by +1. With no armour, its skin alone gives it a 6+ save.",
-      "aliases": []
+      "aliases": ["Iron Hard Skin"]
     },
     {
       "name": "Fangs (Arkhar)",
@@ -221,7 +227,7 @@
       "from": "Mutiny in Marienburg, Bounties of Arkhar",
       "cost": 50,
       "text": "Unless it already has a tail, the model gains an extra tail attack in each hand-to-hand combat phase, at its Strength +1. A model that already has a tail decides at the start of each hand-to-hand combat which tail it uses.",
-      "aliases": []
+      "aliases": ["Mace Tail"]
     },
     {
       "name": "Regeneration",
@@ -237,6 +243,119 @@
       "from": "Mutiny in Marienburg, Bounties of Arkhar",
       "cost": 35,
       "text": "In the shooting phase the model may spit acid at a target up to 8\" away: a Strength 4 shooting attack with no penalty for range or for moving.",
+      "aliases": ["Acid Spray"]
+    },
+    {
+      "name": "Atrophy",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "Part of the model withers. Roll a D6. 1, the head: it is subject to stupidity. 2-4, an arm: it loses the use of one arm and may use only a single one-handed weapon from now on; with both arms lost it is retired from the warband unless it has a tail or bite attack. 5-6, a leg: its Movement is halved, rounding up; with both legs lost it is retired from the warband.",
+      "aliases": []
+    },
+    {
+      "name": "Beaked",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "Unless it already has a bite attack, the model makes an extra bite attack in each hand-to-hand combat phase.",
+      "apart_from": "Beak",
+      "why": "Tchar's Beak always strikes last.",
+      "aliases": []
+    },
+    {
+      "name": "Beweaponed Extremities",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "The model's hands become weapons: roll a D6 for each arm, 1-2 a sword, 3-4 a mace, 5-6 an axe. It may no longer use weapons or equipment that need hands. It gains the usual extra attack for an additional hand weapon, and each follows the rules for a weapon of its type (a sword may parry); with two swords it re-rolls failed parries as with a sword and buckler.",
+      "aliases": []
+    },
+    {
+      "name": "Brightly Patterned Skin",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "Bright stripes, spots or other patterns on the model's skin. No effect on play.",
+      "aliases": []
+    },
+    {
+      "name": "Burning Body",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "The model may carry no weapons or armour unless they are magical or of Gromril or Ithilmar. It suffers none of the usual penalties for fighting with its fists (no -1 Strength, and enemies get no +1 to their armour saves), and always counts as having a lantern. Every model in base contact with it suffers an automatic Strength 2 hit at the start of each close combat phase; the flames never cause critical hits.",
+      "apart_from": "Burning Body (Tchar)",
+      "why": "An automatic Strength 2 hit on each model in base contact; Tchar's sets them on fire on a 4+.",
+      "aliases": []
+    },
+    {
+      "name": "Elastic Limbs",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "If the model isn't in base contact with an enemy at the start of the hand-to-hand combat phase, it may make one hand-to-hand attack against a single visible enemy within 6\". That enemy can't strike back.",
+      "aliases": []
+    },
+    {
+      "name": "Enormously Fat",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "The model's Movement is halved, rounding up; it gains +1 Toughness and suffers -1 Initiative.",
+      "aliases": []
+    },
+    {
+      "name": "Extremely Thin",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "The model's Toughness is halved, rounding up.",
+      "aliases": []
+    },
+    {
+      "name": "Fangs",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "Unless it already has a bite attack, the model makes an extra bite attack at its normal Strength in each hand-to-hand combat phase.",
+      "apart_from": "Fangs (Arkhar)",
+      "why": "Arkhar's Fangs always strike last.",
+      "aliases": []
+    },
+    {
+      "name": "Furry",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "Long, dense fur covers the model. No effect on its profile.",
+      "aliases": []
+    },
+    {
+      "name": "Horns",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "The model gains an extra gore attack in hand-to-hand combat at its normal Strength, and may no longer wear a helmet.",
+      "aliases": []
+    },
+    {
+      "name": "Plague Bearer",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "The model's Movement and Initiative are reduced by 1. Each time it hits an enemy in hand-to-hand combat, the enemy must roll its Toughness or less on a D6, or suffer -1 Movement and -1 Initiative for the rest of the battle (it recovers after the battle). It may infect each model only once in a battle. It also causes fear.",
+      "apart_from": "Plague Carrier",
+      "why": "Plague Carrier, and it causes fear too.",
+      "aliases": []
+    },
+    {
+      "name": "Resilient",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "The model gains +1 Toughness.",
+      "aliases": []
+    },
+    {
+      "name": "Stunted",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "The model's Movement and Initiative are reduced by 1.",
+      "aliases": []
+    },
+    {
+      "name": "Warts",
+      "type": "Mutation",
+      "from": "the random mutation table",
+      "text": "Repellent warts cover the model. Its profile is unaffected.",
       "aliases": []
     }
   ],
@@ -349,6 +468,12 @@
       "rule": "Scaly Skin",
       "owners": [{"hired_sword": "Chameleon Skink"}],
       "why": "The Lizardmen's Scaly Skin, a Skink's 6+; the mutation's is 5+."
+    },
+    {
+      "name": "Resilient (Old Prospector)",
+      "rule": "Resilient",
+      "owners": [{"hired_sword": "Old Prospector"}],
+      "why": "The Resilient skill: -1 Strength to every hit against him in close combat; the mutation is +1 Toughness."
     }
   ]
 }
