@@ -64,9 +64,11 @@ class SkillSummarySerializer(serializers.ModelSerializer):
 
 
 class SkillDetailSerializer(serializers.ModelSerializer):
+    # its rule text, which the unit's skill box opens to (a special's and a spell's carry theirs); read with the unit's
+    # row like the rest (prefetches.py: ENTRY_COLUMNS), so no query more
     class Meta:
         model = Skill
-        fields = ("id", "name")
+        fields = ("id", "name", "description")
 
 
 class SpecialSummarySerializer(serializers.ModelSerializer):

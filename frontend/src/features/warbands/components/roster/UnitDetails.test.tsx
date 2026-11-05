@@ -1,6 +1,6 @@
 /**
  * An open card shows a unit's injuries in his one Boons & Banes row, each with its category's icon
- * (William, 5 Nov 2026): there is no Injuries row.
+ * (William, 5 Nov 2026): there is no Injuries row; a skill's box opens to its rule text.
  */
 import { MemoryRouter } from "react-router-dom";
 import { screen, within } from "@testing-library/react";
@@ -68,5 +68,45 @@ describe("An open card's Boons & Banes", () => {
         .map((box) => box.textContent)
     ).toEqual(["HatredPsychology", "Old Battle WoundInjury", "LargeTrait"]);
     expect(screen.queryByText("Injuries")).not.toBeInTheDocument();
+  });
+});
+
+describe("An open card's skills", () => {
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /warbands/9/template/", {
+      template: null,
+      variant: "",
+      list_prices_open: true,
+    });
+  });
+
+  // William, 5 Nov 2026: "on unit profiles, the skills dont show a description"
+  it("open to their rule text, as his boons and banes do", async () => {
+    const strike = { id: 7, name: "Strike to Injure", description: "Add +1 to all injury rolls." };
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
+        <RosterSections
+          warbandId={9}
+          campaign={null}
+          heroes={[makeHero({ id: 5, name: "Konrad Adler", skills: [strike] })]}
+          henchmenGroups={[]}
+          hirelings={[]}
+          resources={[]}
+          canEdit={false}
+          canCreateRace={false}
+          onLoadout={vi.fn()}
+          onHire={vi.fn()}
+          onAdvance={vi.fn()}
+          onBuyAgain={vi.fn()}
+          renderEdit={() => null}
+        />
+      </MemoryRouter>
+    );
+    const user = setupUser();
+    await user.click(screen.getByRole("button", { name: "Open Konrad Adler" }));
+    await user.click(screen.getByRole("button", { name: /Strike to Injure/ }));
+
+    expect(screen.getByText("Add +1 to all injury rolls.")).toBeInTheDocument();
   });
 });

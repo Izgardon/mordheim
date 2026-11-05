@@ -1,6 +1,7 @@
 """GET /api/warbands/<id>/sheet/ (PERF-24): the whole sheet in one request, with capability flags."""
 
 from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
+from apps.skills.models import Skill
 from apps.warbands.models import Henchman, LedgerAction, WarbandResource
 from apps.warbands.services import ledger
 
@@ -61,6 +62,26 @@ class WarbandSheetTests(RosterTestCase):
                 self.assertEqual(sheet[key], self.client.get(f"{base}{segment}/detail/").json())
         self.assertEqual([m["name"] for m in sheet["henchmen_groups"][0]["henchmen"]], ["Alpha", "Beta"])
         self.assertEqual(len(sheet["heroes"]), 1)
+
+    def test_every_units_skills_carry_their_rule_text(self):
+        # William, 5 Nov 2026: "on unit profiles, the skills dont show a description"; a skill box opens to the
+        # text the payload carries, as a special's and a spell's do
+        strike = Skill.objects.create(name="Strike to Injure", description="Add +1 to all injury rolls.")
+        hero = make_unit(HERO, self.warband, race=self.race)
+        hero.hero_skills.create(skill=strike)
+        group = make_unit(HENCHMEN, self.warband, race=self.race, members=("Alpha",))
+        group.henchmen_group_skills.create(skill=strike)
+        sword = make_unit(HIRELING, self.warband)
+        sword.hireling_skills.create(skill=strike)
+
+        sheet = self.client.get(self._url()).json()
+
+        for key in ("heroes", "henchmen_groups", "hirelings"):
+            with self.subTest(units=key):
+                self.assertEqual(
+                    sheet[key][0]["skills"],
+                    [{"id": strike.id, "name": "Strike to Injure", "description": "Add +1 to all injury rolls."}],
+                )
 
     def test_an_empty_warband_has_an_empty_roster(self):
         sheet = self.client.get(self._url()).json()

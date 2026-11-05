@@ -119,7 +119,7 @@ ITEM_DETAIL = {
     "sale_price_basis": "str",
 }
 NAMED = {"id": "int", "name": "str"}
-SKILL_DETAIL = {"id": "int", "name": "str"}  # its groups: the campaign's skill groups list (skill groups, phase 1a)
+SKILL_DETAIL = {"id": "int", "name": "str", "description": "str"}  # its groups: the campaign's skill groups list
 SPECIAL_SUMMARY = {"id": "int", "name": "str", "kind": "str", "category": "str"}  # Boons & Banes, its icon
 SPECIAL_DETAIL = {"id": "int", "name": "str", "type": "str", "kind": "str", "category": "str", "description": "str"}
 SPELL_SUMMARY = {"id": "int", "name": "str", "dc_change": "int"}  # dc_change: his own, from the advance flow
