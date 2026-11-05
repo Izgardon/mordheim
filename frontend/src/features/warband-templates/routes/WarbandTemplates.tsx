@@ -108,7 +108,7 @@ export default function WarbandTemplates() {
             open={params.isOpen(row.id)}
             onToggle={() => params.toggle(row.id)}
             name={row.typeName}
-            sub={row.template ? (row.shared ? row.template.name : undefined) : "No template"}
+            sub={row.sub}
             dim={!row.template}
             aside={
               <span className="font-mono text-[13px] font-bold text-ink">
@@ -137,10 +137,12 @@ export default function WarbandTemplates() {
                 isMobile={isMobile}
                 onEdit={canEdit ? () => setEditing(row.template?.id ?? null) : undefined}
               />
-            ) : canEdit ? (
+            ) : canEdit && row.typeId !== null ? (
               <NoTemplate
                 row={row}
-                onMake={() => setMaking({ forType: { id: row.typeId, name: row.typeName } })}
+                onMake={() =>
+                  setMaking({ forType: { id: row.typeId as number, name: row.typeName } })
+                }
               />
             ) : null}
           </ReferenceRow>

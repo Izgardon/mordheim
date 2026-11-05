@@ -11,26 +11,36 @@ import type {
   WarbandTemplateSummary,
 } from "./types/template-types";
 
-/** One row of the Warbands page: a warband type in play, and the template it uses (null: none). */
+/**
+ * One row of the Warbands page: a warband type in play and the template it uses (null: none), or
+ * a template that serves no type at all (`typeId` null), so it can be opened, edited and deleted.
+ */
 export type TemplateTypeRow = {
   id: string;
+  /** The type's name, or the template's for one serving no type. */
   typeName: string;
   template: WarbandTemplateSummary | null;
   /** The variant the type always is; "" when the player picks one. */
   variant: string;
   /** The warband type: a rule for one type shows on its row only. */
-  typeId: number;
+  typeId: number | null;
   /**
-   * The template serves several types (Mercenaries, Tileans), so the row names it under the
-   * type's name; a template of one type is only that type's name written another way.
+   * The line under the name: the template's name where it serves several types (Mercenaries,
+   * Tileans) or shares the type with another template; "No template", "No warband type".
    */
-  shared: boolean;
+  sub?: string;
 };
+
+export const NO_TEMPLATE = "No template";
+export const NO_TYPE = "No warband type";
+
+const live = (template: WarbandTemplateSummary) => template.types.filter((type) => !type.archived);
 
 /**
  * Each warband type in play in the campaign with its template (the reference pages' scoping: its
  * template's setting and its own), by name: a template serving four types gives four rows; a type
- * in play that no template serves is a row with none (Make a template).
+ * in play that no template serves is a row with none (Make a template), and a template serving
+ * none is a row of its own (its editor warns).
  */
 export function typeRows(
   templates: WarbandTemplateSummary[],
@@ -40,45 +50,63 @@ export function typeRows(
   const served = new Set(templates.flatMap((template) => template.types.map((type) => type.id)));
   const types = [
     ...inPlayOnly(templates).flatMap((template) =>
-      inPlayOnly(template.types)
-        .filter((type) => !type.archived)
-        .map((type) => ({
-          template: template as WarbandTemplateSummary | null,
-          type: {
-            id: type.id,
-            name: type.name,
-            source_code: type.source_code,
-            variant: type.variant,
-          },
-        }))
+      inPlayOnly(live(template)).map((type) => ({
+        template: template as WarbandTemplateSummary | null,
+        type: {
+          id: type.id,
+          name: type.name,
+          source_code: type.source_code,
+          variant: type.variant,
+        },
+      }))
     ),
     ...inPlayOnly(warbandTypes)
       .filter((type) => !served.has(type.id))
       .map((type) => ({ template: null, type: { ...type, variant: "" } })),
   ];
   const named = new Map<string, number>();
-  types.forEach(({ type }) => named.set(type.name, (named.get(type.name) ?? 0) + 1));
-  return types
-    .map(({ template, type }) => ({
-      id: template ? `${template.id}-${type.id}` : `type-${type.id}`,
-      // two types of one name ("Night Goblins") are told apart by their source, as the type picker does
-      typeName:
-        (named.get(type.name) ?? 0) > 1 && type.source_code
-          ? `${type.name} (${type.source_code})`
-          : type.name,
-      template,
-      variant: type.variant,
-      typeId: type.id,
-      shared: (template?.types.filter((entry) => !entry.archived).length ?? 0) > 1,
-    }))
-    .sort((a, b) => a.typeName.localeCompare(b.typeName) || a.id.localeCompare(b.id));
+  const templatesOf = new Map<number, number>();
+  types.forEach(({ type }) => {
+    named.set(type.name, (named.get(type.name) ?? 0) + 1);
+    templatesOf.set(type.id, (templatesOf.get(type.id) ?? 0) + 1);
+  });
+  const typed = types.map(({ template, type }) => ({
+    id: template ? `${template.id}-${type.id}` : `type-${type.id}`,
+    // two types of one name ("Night Goblins") are told apart by their source, as the type picker does
+    typeName:
+      (named.get(type.name) ?? 0) > 1 && type.source_code
+        ? `${type.name} (${type.source_code})`
+        : type.name,
+    template,
+    variant: type.variant,
+    typeId: type.id as number | null,
+    sub: !template
+      ? NO_TEMPLATE
+      : live(template).length > 1 || (templatesOf.get(type.id) ?? 0) > 1
+        ? template.name
+        : undefined,
+  }));
+  const typeless = inPlayOnly(templates)
+    .filter((template) => !live(template).length)
+    .map((template) => ({
+      id: `template-${template.id}`,
+      typeName: template.name,
+      template: template as WarbandTemplateSummary | null,
+      variant: "",
+      typeId: null,
+      sub: NO_TYPE,
+    }));
+  return [...typed, ...typeless].sort(
+    (a, b) => a.typeName.localeCompare(b.typeName) || a.id.localeCompare(b.id)
+  );
 }
 
 /** The rule pills for a type in a variant: every variant's and the variant's own, every type's and the type's own (the Ostermarkers'). */
 export function rulesFor(
   template: WarbandTemplate,
   variant: string,
-  typeId: number
+  /** Null for a template serving no type: its rules for every type. */
+  typeId: number | null
 ): TemplateRule[] {
   return template.rules.filter(
     (rule) =>

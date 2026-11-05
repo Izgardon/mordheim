@@ -85,13 +85,34 @@ describe("typeRows", () => {
       type(30, "Averlanders"),
       { ...type(31, "Averlanders (old)"), archived: true },
     ]);
-    expect(
-      typeRows([mercenaries, cavalcade, lone]).map((row) => [row.typeName, row.shared])
-    ).toEqual([
-      ["Averlanders", false],
-      ["Cursed Cavalcade", false],
-      ["Reiklanders", true],
+    expect(typeRows([mercenaries, cavalcade, lone]).map((row) => [row.typeName, row.sub])).toEqual([
+      ["Averlanders", undefined],
+      ["Cursed Cavalcade", undefined],
+      ["Reiklanders", "Mercenaries"],
     ]);
+  });
+
+  it("names each template under a type that two templates serve, the book's by its name", () => {
+    const book = summary(1, "Cult of the Possessed", [type(10, "Cult of the Possessed")]);
+    const copy = { ...summary(2, "Review Copy Cult", [type(10, "Cult of the Possessed")]) };
+    expect(typeRows([book, copy]).map((row) => [row.typeName, row.sub])).toEqual([
+      ["Cult of the Possessed", "Cult of the Possessed"],
+      ["Cult of the Possessed", "Review Copy Cult"],
+    ]);
+  });
+
+  it("lists a template serving no warband type as a row of its own, to open, edit and delete", () => {
+    const blank = summary(5, "Review Blank Band", []);
+    const gone = summary(6, "Old Band", [{ ...type(60, "Old Type"), archived: true }]);
+    const skaven = summary(2, "Skaven", [type(20, "Skaven")]);
+    expect(
+      typeRows([skaven, blank, gone]).map((row) => [row.typeName, row.sub, row.typeId, row.id])
+    ).toEqual([
+      ["Old Band", "No warband type", null, "template-6"],
+      ["Review Blank Band", "No warband type", null, "template-5"],
+      ["Skaven", undefined, 20, "2-20"],
+    ]);
+    expect(typeRows([summary(7, "Elsewhere", [], false)])).toEqual([]);
   });
 });
 

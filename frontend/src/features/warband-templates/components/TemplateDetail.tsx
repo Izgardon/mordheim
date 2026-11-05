@@ -20,8 +20,8 @@ type TemplateDetailProps = {
   templateId: number;
   /** The variant the row's warband type always is; "" when the player picks one. */
   preset: string;
-  /** The row's warband type: its own rules show here only. */
-  typeId: number;
+  /** The row's warband type: its own rules show here only (null: a template serving none). */
+  typeId: number | null;
   isMobile: boolean;
   /** Opens the template editor (those who edit the catalogue). */
   onEdit?: () => void;
