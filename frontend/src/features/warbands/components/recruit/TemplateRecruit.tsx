@@ -122,6 +122,7 @@ export default function TemplateRecruit({
             <NumberInput
               id={`${ids}-models`}
               inputSize="sm"
+              compact
               min={1}
               max={20}
               value={models}
