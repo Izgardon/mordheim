@@ -10,6 +10,8 @@ export type AccessLine = {
   warband_type_id: number | null;
   warband_group_id: number | null;
   name: string;
+  /** A type's source code ("BTB"), which tells two types of one name apart; blank for a group. */
+  source_code?: string;
   excluded: boolean;
 };
 

@@ -91,7 +91,15 @@ ITEM_DETAIL = {
             "cost_note": "str",
             "rarity": None,
             "for_everyone": "bool",
-            "warbands": [{"warband_type_id": "int", "warband_group_id": None, "name": "str", "excluded": "bool"}],
+            "warbands": [
+                {
+                    "warband_type_id": "int",
+                    "warband_group_id": None,
+                    "name": "str",
+                    "source_code": "str",
+                    "excluded": "bool",
+                }
+            ],
             "note": "str",
         }
     ],

@@ -51,6 +51,18 @@ describe("price rows", () => {
       )
     ).toBe("For Humans, not Witch Hunters");
   });
+
+  it("tell two types of one name apart by their source codes, as the type picker does", () => {
+    const norse = (code: string) => ({ ...line("Norse Explorers"), source_code: code });
+    expect(
+      whoLine(
+        availability({
+          for_everyone: false,
+          warbands: [norse("BTB"), { ...line("Lizardmen"), source_code: "LUS" }, norse("TC13")],
+        })
+      )
+    ).toBe("For Norse Explorers (BTB), Lizardmen, Norse Explorers (TC13)");
+  });
 });
 
 describe("store items", () => {

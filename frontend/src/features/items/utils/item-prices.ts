@@ -39,20 +39,33 @@ export function priceLabel(row: Price | null | undefined) {
 export const rolledPrice = (row: Price, pips: number) =>
   (row.cost ?? 0) + pips * (row.dice_multiplier ?? 1);
 
-const names = (lines: AccessLine[]) => lines.map((line) => line.name).join(", ");
+/**
+ * Each line's name, a type's with its source code where another line of the list has its name
+ * ("Norse Explorers (BTB)", "Norse Explorers (TC13)"), as the type picker tells them apart.
+ */
+export function lineNames(lines: Pick<AccessLine, "name" | "source_code">[]) {
+  const count = new Map<string, number>();
+  lines.forEach((line) => count.set(line.name, (count.get(line.name) ?? 0) + 1));
+  return lines.map((line) =>
+    (count.get(line.name) ?? 0) > 1 && line.source_code
+      ? `${line.name} (${line.source_code})`
+      : line.name
+  );
+}
 
 /**
  * Who may buy a price row (or hire, or learn): "For everyone", "Everyone except Dark Elves",
  * "For Skaven, Lizardmen", or "For Humans, not Witch Hunters".
  */
 export function whoLine(list: { for_everyone: boolean; warbands: AccessLine[] }) {
-  const included = list.warbands.filter((line) => !line.excluded);
-  const excluded = list.warbands.filter((line) => line.excluded);
+  const named = lineNames(list.warbands);
+  const names = (excluded: boolean) =>
+    named.filter((_, index) => list.warbands[index].excluded === excluded).join(", ");
+  const included = names(false);
+  const excluded = names(true);
   if (list.for_everyone) {
-    return excluded.length ? `Everyone except ${names(excluded)}` : "For everyone";
+    return excluded ? `Everyone except ${excluded}` : "For everyone";
   }
-  if (!included.length) return "Not usually available to anyone";
-  return excluded.length
-    ? `For ${names(included)}, not ${names(excluded)}`
-    : `For ${names(included)}`;
+  if (!included) return "Not usually available to anyone";
+  return excluded ? `For ${included}, not ${excluded}` : `For ${included}`;
 }

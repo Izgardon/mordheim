@@ -5,6 +5,8 @@ export type AccessDraft = {
   kind: "type" | "group";
   id: number;
   name: string;
+  /** A type's source code, which tells two types of one name apart. */
+  sourceCode?: string;
   excluded: boolean;
 };
 
@@ -21,6 +23,7 @@ export function draftOf(list: { for_everyone: boolean; warbands: AccessLine[] })
       kind: line.warband_type_id ? "type" : "group",
       id: (line.warband_type_id ?? line.warband_group_id) as number,
       name: line.name,
+      sourceCode: line.source_code ?? "",
       excluded: line.excluded,
     })),
   };
@@ -33,6 +36,7 @@ export const listOf = (draft: WhoCanDraft): { for_everyone: boolean; warbands: A
     warband_type_id: line.kind === "type" ? line.id : null,
     warband_group_id: line.kind === "group" ? line.id : null,
     name: line.name,
+    source_code: line.sourceCode ?? "",
     excluded: line.excluded,
   })),
 });

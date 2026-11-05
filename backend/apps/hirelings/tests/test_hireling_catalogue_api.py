@@ -15,6 +15,7 @@ from django.test.utils import CaptureQueriesContext
 from apps.core.catalogue.payloads import BADGES
 from apps.hirelings.models import MAX_KIT_QUANTITY
 from apps.items.tests.catalogue_support import DRAMATIS_PERSONAE, HIRED_SWORDS, ITEMS, CatalogueTestCase, make_entry
+from apps.warbands.models import WarbandType
 
 STATS = [
     "movement",
@@ -71,13 +72,14 @@ class HirelingPayloadTests(CatalogueTestCase):
         return response.json()
 
     def test_a_hired_sword_row_and_detail(self):
+        WarbandType.objects.filter(pk=self.mercenaries.pk).update(source_code="MHR")  # tells two of one name apart
         [row] = [row for row in self.get(HIRED_SWORDS.list_url(self.campaign)) if row["id"] == self.ogre.id]
         detail = self.get(HIRED_SWORDS.detail_url(self.ogre.id))
 
         self.assertEqual(list(row), [*ROW, "warbands", *BADGES])
         self.assertEqual(list(detail), [*ROW, "warbands", *KIT, *BADGES])
         self.assertEqual((row["race_id"], row["race_name"], row["race_label"]), (self.human.id, "Human", "Ogre"))
-        line = {"warband_type_id": self.mercenaries.id, "warband_group_id": None, "name": "Mercenaries", "excluded": False}  # fmt: skip
+        line = {"warband_type_id": self.mercenaries.id, "warband_group_id": None, "name": "Mercenaries", "source_code": "MHR", "excluded": False}  # fmt: skip
         self.assertEqual((row["for_everyone"], row["warbands"]), (True, [line]))
         self.assertEqual([entry["name"] for entry in detail["skills"]], ["Infiltration (Dark Elf)"])
         self.assertEqual(([entry["name"] for entry in detail["specials"]], [entry["name"] for entry in detail["spells"]]), (["Large"], ["Lifestealer"]))  # fmt: skip

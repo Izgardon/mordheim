@@ -16,16 +16,22 @@ from apps.warbands.models import WarbandGroup, WarbandType
 
 
 class AccessLineSerializer(serializers.Serializer):
-    """`{warband_type_id, warband_group_id, name, excluded}`: the line's type or group (one is null) and its name."""
+    """`{warband_type_id, warband_group_id, name, source_code, excluded}`: the line's type or group (one is null), its
+    name and a type's source code (a group's is blank), which tells two types of one name apart ("Norse Explorers
+    (BTB)")."""
 
     warband_type_id = serializers.IntegerField(allow_null=True)
     warband_group_id = serializers.IntegerField(allow_null=True)
     name = serializers.SerializerMethodField()
+    source_code = serializers.SerializerMethodField()
     excluded = serializers.BooleanField()
 
     def get_name(self, line: Any) -> str:
         named = line.warband_type if line.warband_type_id else line.warband_group
         return str(named.name) if named is not None else ""
+
+    def get_source_code(self, line: Any) -> str:
+        return str(line.warband_type.source_code) if line.warband_type_id and line.warband_type else ""
 
 
 class AccessLineInputSerializer(serializers.Serializer):

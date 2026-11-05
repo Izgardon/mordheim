@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { SearchCombobox } from "@/components/ui/search-select";
 import { Switch } from "@/components/ui/switch";
 import { useWarbandGroups } from "@/features/items/api/who-can-queries";
+import { lineNames } from "@/features/items/utils/item-prices";
 import { useWarbandTypes } from "@/features/warbands/api/warband-types-queries";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +44,7 @@ export default function WhoCanField({ campaignId, value, onChange, label, id }: 
         kind: "type" as const,
         id: type.id,
         name: type.name,
+        sourceCode: type.source_code,
         hint: type.source_code || type.setting?.name || "",
       })),
     ],
@@ -51,6 +53,7 @@ export default function WhoCanField({ campaignId, value, onChange, label, id }: 
   const taken = (option: Pick<AccessDraft, "kind" | "id">) =>
     value.lines.some((line) => line.kind === option.kind && line.id === option.id);
   const key = (option: { kind: string; id: number }) => `${option.kind}-${option.id}`;
+  const labels = lineNames(value.lines.map((line) => ({ ...line, source_code: line.sourceCode })));
 
   return (
     <div className="flex flex-col gap-2">
@@ -79,7 +82,7 @@ export default function WhoCanField({ campaignId, value, onChange, label, id }: 
                 aria-label={`${line.excluded ? "Let" : "Shut out"} ${line.name}`}
                 className="hover:underline"
               >
-                {line.excluded ? `not ${line.name}` : line.name}
+                {line.excluded ? `not ${labels[index]}` : labels[index]}
                 {line.kind === "group" ? " (group)" : ""}
               </button>
               <button
