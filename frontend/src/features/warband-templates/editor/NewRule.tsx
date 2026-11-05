@@ -47,42 +47,51 @@ export default function NewRule({
     <div className="flex w-full flex-col gap-2 border border-line bg-page p-2.5">
       <div className="grid grid-cols-2 gap-2 min-[520px]:grid-cols-[1fr_auto_auto]">
         <Field label="New rule" className="col-span-2 min-[520px]:col-span-1">
-          <span className="flex items-center gap-1.5">
-            <SpecialIcon category={draft.category} kind={draft.kind} />
-            <Input
-              inputSize="sm"
-              value={draft.name}
-              onChange={(event) => setDraft({ ...draft, name: event.target.value })}
-            />
-          </span>
+          {(id) => (
+            <span className="flex items-center gap-1.5">
+              <SpecialIcon category={draft.category} kind={draft.kind} />
+              <Input
+                id={id}
+                inputSize="sm"
+                value={draft.name}
+                onChange={(event) => setDraft({ ...draft, name: event.target.value })}
+              />
+            </span>
+          )}
         </Field>
         <Field label="Kind">
-          <select
-            className={SELECT}
-            value={draft.kind}
-            onChange={(event) => setDraft({ ...draft, kind: event.target.value as SpecialKind })}
-          >
-            {KINDS.map((kind) => (
-              <option key={kind.value} value={kind.value}>
-                {kind.label}
-              </option>
-            ))}
-          </select>
+          {(id) => (
+            <select
+              id={id}
+              className={SELECT}
+              value={draft.kind}
+              onChange={(event) => setDraft({ ...draft, kind: event.target.value as SpecialKind })}
+            >
+              {KINDS.map((kind) => (
+                <option key={kind.value} value={kind.value}>
+                  {kind.label}
+                </option>
+              ))}
+            </select>
+          )}
         </Field>
         <Field label="Category">
-          <select
-            className={SELECT}
-            value={draft.category}
-            onChange={(event) =>
-              setDraft({ ...draft, category: event.target.value as SpecialCategory })
-            }
-          >
-            {CATEGORIES.map((category) => (
-              <option key={category.value} value={category.value}>
-                {category.label}
-              </option>
-            ))}
-          </select>
+          {(id) => (
+            <select
+              id={id}
+              className={SELECT}
+              value={draft.category}
+              onChange={(event) =>
+                setDraft({ ...draft, category: event.target.value as SpecialCategory })
+              }
+            >
+              {CATEGORIES.map((category) => (
+                <option key={category.value} value={category.value}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
+          )}
         </Field>
       </div>
       <textarea

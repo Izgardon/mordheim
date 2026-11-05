@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +9,10 @@ import type { EditorWarning } from "../types/editor-types";
 /** A field's small caption. */
 export const CAPTION = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 
-/** A labelled field: the caption over its input. */
+/**
+ * A labelled field: the caption over its input. Given as a function of an id, the input takes the
+ * id and the label names it (`htmlFor`), so it is tied to its input for every reader.
+ */
 export function Field({
   label,
   className,
@@ -17,12 +20,14 @@ export function Field({
 }: {
   label: string;
   className?: string;
-  children: ReactNode;
+  children: ReactNode | ((id: string) => ReactNode);
 }) {
+  const id = useId();
+  const tied = typeof children === "function";
   return (
-    <label className={cn("flex min-w-0 flex-col gap-1", className)}>
+    <label htmlFor={tied ? id : undefined} className={cn("flex min-w-0 flex-col gap-1", className)}>
       <span className={CAPTION}>{label}</span>
-      {children}
+      {tied ? children(id) : children}
     </label>
   );
 }

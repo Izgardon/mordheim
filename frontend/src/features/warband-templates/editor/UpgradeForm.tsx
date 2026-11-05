@@ -52,18 +52,23 @@ export default function UpgradeForm({
     >
       <div className="grid grid-cols-2 gap-2 min-[620px]:grid-cols-4">
         <Field label="Group" className="col-span-2">
-          <Input
-            inputSize="sm"
-            maxLength={120}
-            list={listId}
-            value={draft.group}
-            onChange={(event) => set({ group: event.target.value })}
-          />
-          <datalist id={listId}>
-            {groups.map((group) => (
-              <option key={group} value={group} />
-            ))}
-          </datalist>
+          {(id) => (
+            <>
+              <Input
+                id={id}
+                inputSize="sm"
+                maxLength={120}
+                list={listId}
+                value={draft.group}
+                onChange={(event) => set({ group: event.target.value })}
+              />
+              <datalist id={listId}>
+                {groups.map((group) => (
+                  <option key={group} value={group} />
+                ))}
+              </datalist>
+            </>
+          )}
         </Field>
         <NumberField
           label="Cost"
@@ -78,20 +83,26 @@ export default function UpgradeForm({
           onChange={(most) => set({ most })}
         />
         <Field label="Cost note" className="col-span-2">
-          <Input
-            inputSize="sm"
-            maxLength={120}
-            value={draft.costNote}
-            onChange={(event) => set({ costNote: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={120}
+              value={draft.costNote}
+              onChange={(event) => set({ costNote: event.target.value })}
+            />
+          )}
         </Field>
         <Field label="Note" className="col-span-2">
-          <Input
-            inputSize="sm"
-            maxLength={300}
-            value={draft.note}
-            onChange={(event) => set({ note: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={300}
+              value={draft.note}
+              onChange={(event) => set({ note: event.target.value })}
+            />
+          )}
         </Field>
       </div>
       <div className="flex flex-col gap-1.5">

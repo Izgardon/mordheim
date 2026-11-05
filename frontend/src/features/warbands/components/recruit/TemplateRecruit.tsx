@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -67,6 +67,7 @@ export default function TemplateRecruit({
   const lines = fighterLines(fighter, lists);
   const [name, setName] = useState("");
   const [models, setModels] = useState(String(fighter.group_min || 1));
+  const ids = useId();
   const [cost, setCost] = useState(String(fighter.cost));
   const [picks, setPicks] = useState<KitPick[]>([]);
   const [prices, setPrices] = useState<Record<string, string>>({});
@@ -105,9 +106,10 @@ export default function TemplateRecruit({
       }}
     >
       <div className="grid grid-cols-[1fr_auto] gap-2">
-        <label className={LABEL}>
+        <label htmlFor={`${ids}-name`} className={LABEL}>
           Name
           <Input
+            id={`${ids}-name`}
             inputSize="sm"
             autoFocus
             value={name}
@@ -115,9 +117,10 @@ export default function TemplateRecruit({
           />
         </label>
         {group ? (
-          <label className={LABEL}>
+          <label htmlFor={`${ids}-models`} className={LABEL}>
             Models
             <NumberInput
+              id={`${ids}-models`}
               inputSize="sm"
               min={1}
               max={20}

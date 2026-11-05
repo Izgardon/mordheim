@@ -51,20 +51,26 @@ export default function ListForm(props: ListFormProps) {
     >
       <div className="grid grid-cols-1 gap-2 min-[620px]:grid-cols-2">
         <Field label="Name">
-          <Input
-            inputSize="sm"
-            maxLength={160}
-            value={draft.name}
-            onChange={(event) => set({ name: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={160}
+              value={draft.name}
+              onChange={(event) => set({ name: event.target.value })}
+            />
+          )}
         </Field>
         <Field label="Note">
-          <Input
-            inputSize="sm"
-            maxLength={500}
-            value={draft.note}
-            onChange={(event) => set({ note: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={500}
+              value={draft.note}
+              onChange={(event) => set({ note: event.target.value })}
+            />
+          )}
         </Field>
       </div>
       <div className="flex flex-col gap-1.5">

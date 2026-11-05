@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
@@ -49,6 +49,7 @@ export default function MakeTemplateDialog({
   onMade,
 }: MakeTemplateDialogProps) {
   const [name, setName] = useState(forType?.name ?? "");
+  const nameId = useId();
   const [copying, setCopying] = useState(false);
   const [source, setSource] = useState<SearchOption | null>(null);
   const templates = useWarbandTemplates(campaignId);
@@ -85,9 +86,14 @@ export default function MakeTemplateDialog({
         </>
       }
     >
-      <label className="flex flex-col gap-1.5">
+      <label htmlFor={nameId} className="flex flex-col gap-1.5">
         <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">Name</span>
-        <Input value={name} maxLength={160} onChange={(event) => setName(event.target.value)} />
+        <Input
+          id={nameId}
+          value={name}
+          maxLength={160}
+          onChange={(event) => setName(event.target.value)}
+        />
       </label>
       <div role="group" aria-label="Start" className="flex flex-wrap gap-1.5">
         <Chip pressed={!copying} onClick={() => setCopying(false)}>

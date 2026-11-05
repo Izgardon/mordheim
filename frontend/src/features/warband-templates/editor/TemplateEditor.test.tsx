@@ -171,6 +171,17 @@ describe("The template editor", () => {
     expect(within(form).queryByRole("button", { name: "Brethren" })).toBeNull();
   });
 
+  it("ties each field's label to its input (for=, not only wrapped)", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+    await user.click(await screen.findByRole("button", { name: /^Fighters/ }));
+    await user.click(screen.getByRole("button", { name: /^Champion/ }));
+    for (const name of ["Name", "Plural", "Fixed kit"]) {
+      const input = screen.getByRole("textbox", { name });
+      expect(document.querySelector(`label[for="${input.id}"]`)).toHaveTextContent(name);
+    }
+  });
+
   it("says what Revert loses before it goes back to the book", async () => {
     fakeApi.on(
       EDITOR,

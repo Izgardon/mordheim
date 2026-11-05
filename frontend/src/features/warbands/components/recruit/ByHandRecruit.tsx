@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -64,12 +64,14 @@ export default function ByHandRecruit({
   onCreated: (key: string) => void;
 }) {
   const [draft, setDraft] = useState(blankRecruit);
+  const ids = useId();
   const { recruit, saving } = useRecruit(kind, warbandId, existingIds);
   const set = (change: Partial<RecruitDraft>) => setDraft((current) => ({ ...current, ...change }));
   const text = (label: string, key: "name" | "type") => (
-    <label className={LABEL}>
+    <label htmlFor={`${ids}-${key}`} className={LABEL}>
       {label}
       <Input
+        id={`${ids}-${key}`}
         inputSize="sm"
         autoFocus={key === "name"}
         value={draft[key]}
@@ -78,9 +80,10 @@ export default function ByHandRecruit({
     </label>
   );
   const number = (label: string, key: "cost" | "count" | "xp", min = 0, max?: number) => (
-    <label className={LABEL}>
+    <label htmlFor={`${ids}-${key}`} className={LABEL}>
       {label}
       <NumberInput
+        id={`${ids}-${key}`}
         inputSize="sm"
         min={min}
         max={max}

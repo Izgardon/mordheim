@@ -301,7 +301,9 @@ describe("Making and editing templates on the Warbands page", () => {
     await user.click(lizardmen);
     await user.click(screen.getByRole("button", { name: "Make a template for Lizardmen (2b)" }));
     const dialog = await screen.findByRole("dialog", { name: "Make a template" });
-    expect(within(dialog).getByRole("textbox")).toHaveValue("Lizardmen (2b)");
+    const name = within(dialog).getByRole("textbox");
+    expect(name).toHaveValue("Lizardmen (2b)");
+    expect(document.querySelector(`label[for="${name.id}"]`)).toHaveTextContent("Name");
   });
 
   it("makes a copy for the type, which the editor opens on", async () => {

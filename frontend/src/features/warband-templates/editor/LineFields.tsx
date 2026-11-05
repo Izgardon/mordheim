@@ -69,44 +69,56 @@ export default function LineFields({
           </Switch>
         </div>
         <Field label="Cost note" className="col-span-2">
-          <Input
-            inputSize="sm"
-            maxLength={120}
-            value={line.costNote}
-            onChange={(event) => set({ costNote: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={120}
+              value={line.costNote}
+              onChange={(event) => set({ costNote: event.target.value })}
+            />
+          )}
         </Field>
         <Field label="Shown as" className="col-span-2">
-          <Input
-            inputSize="sm"
-            maxLength={160}
-            value={line.shownAs}
-            placeholder="(its own name)"
-            onChange={(event) => set({ shownAs: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={160}
+              value={line.shownAs}
+              placeholder="(its own name)"
+              onChange={(event) => set({ shownAs: event.target.value })}
+            />
+          )}
         </Field>
         <Field label="Note" className="col-span-2">
-          <Input
-            inputSize="sm"
-            maxLength={300}
-            value={line.note}
-            onChange={(event) => set({ note: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={300}
+              value={line.note}
+              onChange={(event) => set({ note: event.target.value })}
+            />
+          )}
         </Field>
         {variants.length ? (
           <Field label="Variant" className="col-span-2">
-            <select
-              className="h-9 border border-strong bg-page px-2 text-sm text-ink"
-              value={line.variant}
-              onChange={(event) => set({ variant: event.target.value })}
-            >
-              <option value="">Every variant</option>
-              {variants.map((variant) => (
-                <option key={variant.key} value={variant.key}>
-                  {variant.name}
-                </option>
-              ))}
-            </select>
+            {(id) => (
+              <select
+                id={id}
+                className="h-9 border border-strong bg-page px-2 text-sm text-ink"
+                value={line.variant}
+                onChange={(event) => set({ variant: event.target.value })}
+              >
+                <option value="">Every variant</option>
+                {variants.map((variant) => (
+                  <option key={variant.key} value={variant.key}>
+                    {variant.name}
+                  </option>
+                ))}
+              </select>
+            )}
           </Field>
         ) : null}
       </div>

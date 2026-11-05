@@ -92,11 +92,14 @@ export default function BasicsSection({ answer, campaignId, save }: SectionProps
     <section aria-label="Basics" className="flex flex-col gap-4">
       <Warnings warnings={warningsFor(answer.warnings, "basics")} />
       <Field label="Name">
-        <Input
-          value={draft.name}
-          maxLength={160}
-          onChange={(event) => set({ name: event.target.value })}
-        />
+        {(id) => (
+          <Input
+            id={id}
+            value={draft.name}
+            maxLength={160}
+            onChange={(event) => set({ name: event.target.value })}
+          />
+        )}
       </Field>
       <TypesField
         campaignId={campaignId}
@@ -106,20 +109,23 @@ export default function BasicsSection({ answer, campaignId, save }: SectionProps
       />
       <div className="grid grid-cols-2 gap-3 min-[620px]:grid-cols-[2fr_1fr_1fr]">
         <Field label="Setting" className="col-span-2 min-[620px]:col-span-1">
-          <select
-            className={SELECT}
-            value={draft.settingId ?? ""}
-            onChange={(event) =>
-              set({ settingId: event.target.value ? Number(event.target.value) : null })
-            }
-          >
-            <option value="">None (always in play)</option>
-            {settings.map((setting) => (
-              <option key={setting.id} value={setting.id}>
-                {setting.name}
-              </option>
-            ))}
-          </select>
+          {(id) => (
+            <select
+              id={id}
+              className={SELECT}
+              value={draft.settingId ?? ""}
+              onChange={(event) =>
+                set({ settingId: event.target.value ? Number(event.target.value) : null })
+              }
+            >
+              <option value="">None (always in play)</option>
+              {settings.map((setting) => (
+                <option key={setting.id} value={setting.id}>
+                  {setting.name}
+                </option>
+              ))}
+            </select>
+          )}
         </Field>
         <NumberField
           label="Starting gold"

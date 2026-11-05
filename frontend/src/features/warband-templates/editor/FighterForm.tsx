@@ -69,20 +69,26 @@ export default function FighterForm(props: FighterFormProps) {
     >
       <div className="grid grid-cols-2 gap-2 min-[620px]:grid-cols-4">
         <Field label="Name" className="col-span-2">
-          <Input
-            inputSize="sm"
-            maxLength={160}
-            value={draft.name}
-            onChange={(event) => set({ name: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={160}
+              value={draft.name}
+              onChange={(event) => set({ name: event.target.value })}
+            />
+          )}
         </Field>
         <Field label="Plural" className="col-span-2">
-          <Input
-            inputSize="sm"
-            maxLength={160}
-            value={draft.plural}
-            onChange={(event) => set({ plural: event.target.value })}
-          />
+          {(id) => (
+            <Input
+              id={id}
+              inputSize="sm"
+              maxLength={160}
+              value={draft.plural}
+              onChange={(event) => set({ plural: event.target.value })}
+            />
+          )}
         </Field>
         <NumberField label="Cost" value={draft.cost} onChange={(cost) => set({ cost })} />
         <NumberField
@@ -154,12 +160,15 @@ export default function FighterForm(props: FighterFormProps) {
         </div>
       </div>
       <Field label="Fixed kit">
-        <Input
-          inputSize="sm"
-          maxLength={1000}
-          value={draft.fixedKit}
-          onChange={(event) => set({ fixedKit: event.target.value })}
-        />
+        {(id) => (
+          <Input
+            id={id}
+            inputSize="sm"
+            maxLength={1000}
+            value={draft.fixedKit}
+            onChange={(event) => set({ fixedKit: event.target.value })}
+          />
+        )}
       </Field>
       <div className="flex flex-col gap-1.5">
         <span className={CAPTION}>Rules</span>

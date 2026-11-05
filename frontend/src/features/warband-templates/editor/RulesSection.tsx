@@ -48,39 +48,45 @@ function ScopeFields({
     <div className="flex flex-wrap gap-3">
       {template.variants.length ? (
         <Field label="Variant">
-          <select
-            className={SELECT}
-            value={scope.variant}
-            onChange={(event) => onChange({ ...scope, variant: event.target.value })}
-          >
-            <option value="">Every variant</option>
-            {template.variants.map((variant) => (
-              <option key={variant.key} value={variant.key}>
-                {variant.name}
-              </option>
-            ))}
-          </select>
+          {(id) => (
+            <select
+              id={id}
+              className={SELECT}
+              value={scope.variant}
+              onChange={(event) => onChange({ ...scope, variant: event.target.value })}
+            >
+              <option value="">Every variant</option>
+              {template.variants.map((variant) => (
+                <option key={variant.key} value={variant.key}>
+                  {variant.name}
+                </option>
+              ))}
+            </select>
+          )}
         </Field>
       ) : null}
       {template.types.length > 1 ? (
         <Field label="Warband type">
-          <select
-            className={SELECT}
-            value={scope.warband_type_id ?? ""}
-            onChange={(event) =>
-              onChange({
-                ...scope,
-                warband_type_id: event.target.value ? Number(event.target.value) : null,
-              })
-            }
-          >
-            <option value="">Every type</option>
-            {template.types.map((type) => (
-              <option key={type.id} value={type.id}>
-                {type.name}
-              </option>
-            ))}
-          </select>
+          {(id) => (
+            <select
+              id={id}
+              className={SELECT}
+              value={scope.warband_type_id ?? ""}
+              onChange={(event) =>
+                onChange({
+                  ...scope,
+                  warband_type_id: event.target.value ? Number(event.target.value) : null,
+                })
+              }
+            >
+              <option value="">Every type</option>
+              {template.types.map((type) => (
+                <option key={type.id} value={type.id}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
+          )}
         </Field>
       ) : null}
     </div>
