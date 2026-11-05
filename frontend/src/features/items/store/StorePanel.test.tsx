@@ -301,6 +301,16 @@ describe("StorePanel, Upgrades for a hero from the template", () => {
     );
   }
 
+  it("finds an upgrade by name without saying nothing in the store has it", async () => {
+    const user = setupUser();
+    renderUpgrades();
+    await user.type(screen.getByRole("searchbox", { name: "Search the store" }), "Mark of Tchar");
+    expect(screen.getByRole("button", { name: "Get Mark of Tchar" })).toBeInTheDocument();
+    expect(screen.queryByText("Nothing in the store by that name.")).toBeNull();
+    await user.type(screen.getByRole("searchbox", { name: "Search the store" }), "zzz");
+    expect(screen.getByText("Nothing in the store by that name.")).toBeInTheDocument();
+  });
+
   it("prices each at what it costs him next, with its warnings, and Buy all buys it onto him", async () => {
     fakeApi.on(`POST /warbands/${WARBAND}/heroes/batch/`, {
       units: [marked],
@@ -324,8 +334,12 @@ describe("StorePanel, Upgrades for a hero from the template", () => {
     expect(theMarks).toHaveTextContent("free");
 
     await user.click(screen.getByRole("button", { name: "Get Mark of Tchar" }));
-    expect(theMarks).toHaveTextContent("At most 1 from Mark of the Dark Gods: he would have 2.");
-    expect(within(theMarks).getAllByRole("listitem")[1]).toHaveTextContent("He has it already.");
+    const [, tchar, arkhar] = within(theMarks).getAllByRole("listitem");
+    // only in the basket, and counted once: Buy all gives him one Mark
+    expect(tchar).toHaveTextContent("In the basket.");
+    expect(tchar).not.toHaveTextContent("He has it already.");
+    expect(tchar).not.toHaveTextContent("would have");
+    expect(arkhar).toHaveTextContent("At most 1 from Mark of the Dark Gods: he would have 2.");
     await user.click(screen.getByRole("button", { name: "Get Great Claw" }));
     await user.clear(screen.getByLabelText("Price for Great Claw"));
     await user.type(screen.getByLabelText("Price for Great Claw"), "90");

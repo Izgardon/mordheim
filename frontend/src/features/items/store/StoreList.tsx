@@ -71,6 +71,12 @@ export default function StoreList(props: StoreListProps) {
   const his = props.his ?? null;
   const hisOn = his !== null && onlyHis;
   const copies = props.recipients.find((entry) => entry.key === props.firstKey)?.count ?? 1;
+  const upgrades =
+    props.upgrades && category === "all"
+      ? props.upgrades.upgrades.filter((upgrade) =>
+          matchesSearchQuery(query, upgrade.name, upgrade.group)
+        )
+      : [];
   const rows = offers.flatMap((offer) => {
     const line = his ? hisLine(his, offer.item.id) : null;
     const shown =
@@ -133,17 +139,15 @@ export default function StoreList(props: StoreListProps) {
         <p className="m-0 text-sm text-muted-foreground">Opening the store…</p>
       ) : catalogue.error ? (
         <p className="m-0 text-sm text-danger">{catalogue.error}</p>
-      ) : rows.length === 0 ? (
+      ) : rows.length === 0 && upgrades.length === 0 ? (
         <p className="m-0 text-sm text-text2">Nothing in the store by that name.</p>
       ) : null}
-      {props.upgrades && category === "all" ? (
+      {props.upgrades ? (
         <StoreUpgrades
-          upgrades={props.upgrades.upgrades.filter((upgrade) =>
-            matchesSearchQuery(query, upgrade.name, upgrade.group)
-          )}
+          upgrades={upgrades}
           offUpgrades={props.upgrades.offUpgrades}
           held={props.upgrades.held}
-          has={props.upgrades.has}
+          holds={props.upgrades.holds}
           canBuy={props.canBuy}
           isMobile={props.isMobile}
           onGet={props.upgrades.onGet}

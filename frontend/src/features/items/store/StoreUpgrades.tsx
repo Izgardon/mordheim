@@ -8,8 +8,9 @@ import {
 } from "@/features/warbands/components/recruit/upgrade-draft";
 import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 
-/** One he already has, or has in the basket (a warning: buying it again links it twice). */
+/** One he already has, or has only in the basket (buying it again links it twice). */
 const HAS_IT = "He has it already.";
+const IN_BASKET = "In the basket.";
 
 /**
  * Upgrades in the store (the templates plan, phase 3), buying for a hero from the template: his
@@ -22,7 +23,7 @@ export default function StoreUpgrades({
   upgrades,
   offUpgrades,
   held,
-  has,
+  holds,
   canBuy,
   isMobile,
   onGet,
@@ -31,8 +32,8 @@ export default function StoreUpgrades({
   offUpgrades: number[];
   /** How many of the group he has, his specials and the basket's lines for him. */
   held: (group: string) => number;
-  /** Whether he has the upgrade already, or it is in the basket for him. */
-  has: (upgrade: TemplateUpgrade) => boolean;
+  /** Where he holds the upgrade: "his" (its special), "basket" (only there), or null. */
+  holds: (upgrade: TemplateUpgrade) => "his" | "basket" | null;
   canBuy: boolean;
   isMobile: boolean;
   onGet: (upgrade: TemplateUpgrade, price: number) => void;
@@ -52,10 +53,12 @@ export default function StoreUpgrades({
             const count = held(group);
             const price = upgradePrice(upgrade, count);
             const off = offUpgrades.includes(upgrade.id) ? upgrade.who_text : "";
+            const where = holds(upgrade);
             const warnings = [
-              has(upgrade) ? HAS_IT : "",
+              where === "his" ? HAS_IT : where === "basket" ? IN_BASKET : "",
               off,
-              overUpgradeMax(upgrade, count + 1) ?? "",
+              // one in the basket is counted already: Buy all gives him `count`
+              overUpgradeMax(upgrade, where === "basket" ? count : count + 1) ?? "",
               upgrade.at_recruit ? AT_RECRUIT : "",
             ].filter(Boolean);
             return (

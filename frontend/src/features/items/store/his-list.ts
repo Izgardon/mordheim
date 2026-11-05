@@ -70,8 +70,8 @@ export type HisUpgrades = {
   offUpgrades: number[];
   /** How many of a group he has: his specials that are its upgrades, and the basket's for him. */
   held: (group: string) => number;
-  /** Whether he has the upgrade already (its special), or it is in the basket for him. */
-  has: (upgrade: TemplateUpgrade) => boolean;
+  /** Where he holds it: "his" (its special), "basket" (only there, for him), or null. */
+  holds: (upgrade: TemplateUpgrade) => "his" | "basket" | null;
 };
 
 /** Upgrades for the hero the store is buying for (none for a group, or a template without any). */
@@ -90,7 +90,11 @@ export function hisUpgrades(
     held: (group) =>
       upgrades.filter((upgrade) => upgrade.group === group && specials.has(upgrade.special_id))
         .length + basket.filter((line) => line.group === group).length,
-    has: (upgrade) =>
-      specials.has(upgrade.special_id) || basket.some((line) => line.id === upgrade.id),
+    holds: (upgrade) =>
+      specials.has(upgrade.special_id)
+        ? "his"
+        : basket.some((line) => line.id === upgrade.id)
+          ? "basket"
+          : null,
   };
 }
