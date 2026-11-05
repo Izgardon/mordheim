@@ -203,6 +203,10 @@ export const getWarbandUnitCount = (
 
 // ── Trade formatting ────────────────────────────────────────────────────
 
+/** A ledger row's gold: a Group row's is its rows' total (the header itself moves none). */
+export const ledgerTotal = (row: { price: number; children: { price: number }[] }) =>
+  row.children.reduce((sum, child) => sum + child.price, row.price);
+
 export const formatTradeDate = (value: string): string => {
   const date = new Date(value);
   if (Number.isNaN(date.valueOf())) return "";
