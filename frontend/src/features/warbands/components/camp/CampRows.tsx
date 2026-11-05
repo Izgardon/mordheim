@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { Check, Dices } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { rollDice } from "@/lib/dice";
+import DiceEntry from "@/components/ui/dice-entry";
 import { cn } from "@/lib/utils";
 
 import { dueText, upkeepCharged, upkeepLines } from "./camp-state";
@@ -16,9 +16,10 @@ type RowProps = {
   sub: string;
   action?: string;
   primary?: boolean;
-  dice?: boolean;
   done?: boolean;
   onAction?: () => void;
+  /** Drawn in the action's place: the veterans' roll, with its boxes. */
+  roll?: ReactNode;
   focused: boolean;
   isMobile: boolean;
   children?: ReactNode;
@@ -48,17 +49,17 @@ function Row(props: RowProps) {
           </span>
           <span className="text-xs text-muted-foreground">{props.sub}</span>
         </div>
-        {props.action ? (
-          <Button
-            size="sm"
-            variant={props.primary ? "primary" : "secondary"}
-            className={cn("shrink-0", props.isMobile ? "h-10" : "h-9")}
-            onClick={props.onAction}
-          >
-            {props.dice ? <Dices aria-hidden="true" /> : null}
-            {props.action}
-          </Button>
-        ) : null}
+        {props.roll ??
+          (props.action ? (
+            <Button
+              size="sm"
+              variant={props.primary ? "primary" : "secondary"}
+              className={cn("shrink-0", props.isMobile ? "h-10" : "h-9")}
+              onClick={props.onAction}
+            >
+              {props.action}
+            </Button>
+          ) : null)}
       </div>
       {props.children}
     </li>
@@ -66,8 +67,9 @@ function Row(props: RowProps) {
 }
 
 /**
- * Camp's rows (design E), top to bottom: Sell, Veterans (roll 2D6 for the XP pool, then Recruit),
- * Hired swords (Hire), Upkeep (Pay all, and Pay or Let go per hired sword) and Buy items.
+ * Camp's rows (design E), top to bottom: Sell, Veterans (2D6 for the XP pool, rolled or typed in,
+ * then Recruit), Hired swords (Hire), Upkeep (Pay all, and Pay or Let go per hired sword) and Buy
+ * items.
  */
 export default function CampRows({
   camp,
@@ -111,14 +113,30 @@ export default function CampRows({
         {...row("recruit")}
         title="Veterans"
         sub={vet ? `${pool} XP available` : "Roll for available XP"}
-        action={vet ? "Recruit" : "2D6"}
-        dice={!vet}
+        action="Recruit"
         primary={Boolean(vet) && !done.recruit}
         done={done.recruit}
-        onAction={
-          vet
-            ? onRecruit
-            : () => void withCamp({ ...record, veterans: { dice: rollDice(2), spent: 0 } })
+        onAction={onRecruit}
+        roll={
+          vet ? undefined : (
+            <DiceEntry
+              dice="2D6"
+              size={camp.isMobile ? "md" : "sm"}
+              className="shrink-0 flex-nowrap"
+              onFaces={(dice) => void withCamp({ ...record, veterans: { dice, spent: 0 } })}
+              button={(roll) => (
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className={camp.isMobile ? "h-10" : "h-9"}
+                  onClick={roll}
+                >
+                  <Dices aria-hidden="true" />
+                  2D6
+                </Button>
+              )}
+            />
+          )
         }
       />
       <Row
