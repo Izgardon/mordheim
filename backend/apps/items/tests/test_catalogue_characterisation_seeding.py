@@ -160,7 +160,9 @@ class SeedAllTests(TestCase):
                 "TemplateList": 120,  # mordheimer's 113, the Pit Fighters' four for their three, and 6 special
                 "TemplateListItem": 1341,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
                 "TemplateRule": 157,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons
-                "TemplateUpgrade": 23,  # 24, less Poisoned Weapons, a warband rule (phase 3)
+                # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
+                # Cult's other 6, the Court's 3, the Beastmen's 15 and the Marauders' 15 and 6 Blessings
+                "TemplateUpgrade": 68,
             },
         )
         mercenaries = WarbandTemplate.objects.get(slug="mercenaries")
@@ -202,8 +204,14 @@ class SeedAllTests(TestCase):
                 "Stupidity": (4, 0, 0, 0, 1),
                 "Immune to Psychology": (11, 0, 1, 2, 0),
                 "Immune to Poison": (10, 0, 3, 3, 2),
-                "Hideous": (0, 2, 0, 0, 0),  # the Cult's Mutations and the Blessings of Nurgle, 40 gc each
-                "Cloud of Flies": (2, 1, 0, 0, 0),  # the Plague Bearer's and the Nurgling's own, and the Blessing's
+                "Hideous": (0, 4, 0, 0, 0),  # the Cult's, the Blessings of Nurgle, the Beastmen's and Marauders', 40 gc
+                "Cloud of Flies": (
+                    2,
+                    2,
+                    0,
+                    0,
+                    0,
+                ),  # the Plague Bearer's and the Nurgling's, the Carnival's and Marauders'
             },
         )
         hideous = TemplateUpgrade.objects.filter(special__name="Hideous").values_list("cost", flat=True)

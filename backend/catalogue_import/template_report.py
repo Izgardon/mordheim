@@ -168,6 +168,9 @@ def _upgrades(log: TemplateLog) -> list[str]:
     out += [f"{page}: {name} is a warband rule, not an upgrade." for page, name in upgrades.as_rules]
     out += [f"{page}: no terms for the group {group}." for page, group in upgrades.no_terms]
     out += [f"{page}: {owner} names {key}, no fighter of the page." for page, owner, key in upgrades.unknown_keys]
+    tailored = [[page, group, str(added), terms, note] for page, group, added, terms, note in upgrades.mutations]
+    out += ["", "Tailored lists of the shared mutations (`MUTATION_UPGRADES`):", ""]
+    out += _table(["Page", "Group", "Mutations added", "Set", "Note"], tailored)
     lines = [[page, variant, name, line] for page, variant, name, line in log.lists.variant_lines]
     out += ["", "Lines for one variant only:", "", *_table(["Page", "Variant", "List", "Line"], lines)]
     out += [f"{page}: every {variant} hero has {skill}." for page, variant, skill in log.hero_skills]

@@ -2,14 +2,17 @@
 gives and its group's terms read from the group's text (`template_answers.UPGRADE_TERMS`): who may take one, the most
 of the group a fighter may have, whether the second and later cost double, whether they are bought only when he is
 recruited. Each group's own text is a warband rule of its name, and an entry that is no upgrade (the Lizardmen's
-Poisoned Weapons) is a warband rule instead."""
+Poisoned Weapons) is a warband rule instead. The warbands that buy the shared mutations do it through tailored lists of
+them (`template_answers.MUTATION_UPGRADES`), added once every page has given its prices."""
 
 import string
 from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.common import slugify
-from catalogue_import.template_answers import UPGRADE_TERMS, UPGRADE_WHO, UPGRADES_AS_RULES
+from catalogue_import.shared_specials import SharedSpecials
+from catalogue_import.shared_specials import key as rule_key
+from catalogue_import.template_answers import MUTATION_UPGRADES, UPGRADE_TERMS, UPGRADE_WHO, UPGRADES_AS_RULES
 from catalogue_import.template_text import clean_rule, clean_title
 
 
@@ -21,6 +24,8 @@ class UpgradeLog:
         default_factory=list
     )  # page, group or upgrade, a key no fighter has
     no_terms: list[tuple[str, str]] = field(default_factory=list)  # page, a group no answer covers
+    # page, group, the shared mutations a tailored list added, its terms, its note (MUTATION_UPGRADES)
+    mutations: list[tuple[str, str, int, str, str]] = field(default_factory=list)
 
 
 def _upgrade_text(entry: dict[str, Any]) -> str:
@@ -96,3 +101,39 @@ def build_upgrades(
         elif added:
             log.no_terms.append((slug, name))
     return upgrades, rules
+
+
+def mutation_upgrades(
+    slug: str, template: dict[str, Any], shared: SharedSpecials, log: UpgradeLog | None = None
+) -> None:
+    """The tailored lists that sell the shared mutations (`template_answers.MUTATION_UPGRADES`), added to the page's
+    upgrades once every page has given its prices: each the shared special at its price (`cost_of`), on the list's
+    terms (or the page's own group's) with its note, after the page's own of the group and leaving out those it has."""
+    log = log if log is not None else UpgradeLog()
+    upgrades = template["upgrades"]
+    keys = {fighter["key"] for fighter in template["fighters"]}
+    for line in MUTATION_UPGRADES.get(slug, []):
+        group, note = line["group"], line.get("note", "")
+        terms = line.get("terms") or UPGRADE_TERMS.get((slug, group), {})
+        who = dict(terms.get("who") or {})
+        _check_keys(slug, group, who, keys, log)
+        named = [shared.names[rule_key(name)] for name in line.get("names", [])]
+        entries = shared.family(line["family"]) if "family" in line else named
+        held = {upgrade["special"]["name"] for upgrade in upgrades if upgrade["group"] == group}
+        added = [entry for entry in entries if entry["name"] not in held | set(line.get("except", []))]
+        for entry in added:
+            shared.rule("warband", f"{template['name']}: {group}", entry["name"])
+            upgrades.append(
+                {
+                    "group": group,
+                    "special": {"name": entry["name"], "type": entry["type"]},
+                    "cost": shared.cost_of(entry),
+                    "cost_note": "",
+                    "note": note,
+                    "who": who,
+                    "max_per_fighter": terms.get("max_per_fighter"),
+                    "later_double": bool(terms.get("later_double")),
+                    "at_recruit": bool(terms.get("at_recruit")),
+                }
+            )
+        log.mutations.append((slug, group, len(added), terms_text(terms), note))

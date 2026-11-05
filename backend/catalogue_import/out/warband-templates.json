@@ -4506,7 +4506,323 @@
         ]
       }
     ],
-    "upgrades": []
+    "upgrades": [
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Daemon Soul",
+          "type": "Mutation"
+        },
+        "cost": 20,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Great Claw",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Cloven Hoofs",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Tentacle",
+          "type": "Mutation"
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Blackblood",
+          "type": "Mutation"
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Spines",
+          "type": "Mutation"
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Scorpion Tail",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Extra Arm",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Hideous",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Crystalline Body",
+          "type": "Mutation"
+        },
+        "cost": 60,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Hulking Brute",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Poisonous Bite",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Prehensile Tail",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Scaly Skin",
+          "type": "Mutation"
+        },
+        "cost": 60,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Wings",
+          "type": "Mutation"
+        },
+        "cost": 45,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "beastmen-chieftain",
+            "beastmen-shaman",
+            "bestigors",
+            "centigor"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      }
+    ]
   },
   {
     "slug": "black-dwarfs",
@@ -9543,7 +9859,56 @@
         "specials": []
       }
     ],
-    "upgrades": []
+    "upgrades": [
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Extra Arm",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Tentacle",
+          "type": "Mutation"
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Great Claw",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      }
+    ]
   },
   {
     "slug": "cult-of-the-possessed",
@@ -10375,6 +10740,120 @@
           "type": "Mutation"
         },
         "cost": 40,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "the-possessed",
+            "mutants"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": true
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Crystalline Body",
+          "type": "Mutation"
+        },
+        "cost": 60,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "the-possessed",
+            "mutants"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": true
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Hulking Brute",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "the-possessed",
+            "mutants"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": true
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Poisonous Bite",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "the-possessed",
+            "mutants"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": true
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Prehensile Tail",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "the-possessed",
+            "mutants"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": true
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Scaly Skin",
+          "type": "Mutation"
+        },
+        "cost": 60,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "the-possessed",
+            "mutants"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": true
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Wings",
+          "type": "Mutation"
+        },
+        "cost": 45,
         "cost_note": "",
         "note": "",
         "who": {
@@ -21095,6 +21574,447 @@
           ]
         },
         "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Daemon Soul",
+          "type": "Mutation"
+        },
+        "cost": 20,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Great Claw",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Cloven Hoofs",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Tentacle",
+          "type": "Mutation"
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Blackblood",
+          "type": "Mutation"
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Spines",
+          "type": "Mutation"
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Scorpion Tail",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Extra Arm",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Hideous",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Crystalline Body",
+          "type": "Mutation"
+        },
+        "cost": 60,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Hulking Brute",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Poisonous Bite",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Prehensile Tail",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Scaly Skin",
+          "type": "Mutation"
+        },
+        "cost": 60,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Wings",
+          "type": "Mutation"
+        },
+        "cost": 45,
+        "cost_note": "",
+        "note": "With the Mutant skill.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Blessings of Nurgle",
+        "special": {
+          "name": "Stream of Corruption",
+          "type": "Blessing of Nurgle"
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Blessings of Nurgle",
+        "special": {
+          "name": "Nurgle's Rot",
+          "type": "Blessing of Nurgle"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Blessings of Nurgle",
+        "special": {
+          "name": "Cloud of Flies",
+          "type": "Blessing of Nurgle"
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Blessings of Nurgle",
+        "special": {
+          "name": "Bloated Foulness",
+          "type": "Blessing of Nurgle"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Blessings of Nurgle",
+        "special": {
+          "name": "Suckers",
+          "type": "Blessing of Nurgle"
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Blessings of Nurgle",
+        "special": {
+          "name": "Plague Carrier",
+          "type": "Blessing of Nurgle"
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
+        "who": {
+          "fighters": [
+            "marauder-chieftain",
+            "seer",
+            "champions",
+            "condemned"
+          ]
+        },
+        "max_per_fighter": null,
         "later_double": false,
         "at_recruit": false
       }

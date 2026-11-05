@@ -127,6 +127,55 @@ UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {
 # Saurus buy Dark Venom and Black Lotus, and Skink henchmen Reptile Venom; nothing is bought onto a fighter
 UPGRADES_AS_RULES: dict[str, frozenset[str]] = {"lizardmen": frozenset({"Poisoned Weapons"})}
 
+# The tailored lists that sell the shared mutations (William, 5 Nov 2026: "having a tailored upgrade section is
+# enough"), by page: each a group, what it sells (`family`: every priced shared special of that type, in the list's
+# order, less `except`; or `names`), its terms (UPGRADE_TERMS' shape; none given: the page's own group's) and a note
+# said with the group. Each upgrade links the shared special at its price; a page's own group of the name keeps its
+# upgrades and takes the rest after them. Left out: the hired swords who may take a mutation (the Chaos Centaur, the
+# Ungor Trapper: upgrades are for heroes, so a player adds one from Boons & Banes), Twistkin (Clan Moulder isn't
+# seeded) and the god families on the Marauders' Marks.
+MUTANT_SKILL = "With the Mutant skill."
+MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
+    # the generic list's 15 (Mutiny in Marienburg's extended list of the Cult's) on the Cult's terms
+    "cult-of-the-posessed": [{"group": "Mutations", "family": "Mutation"}],
+    # its "Mutations" rule: "Any Hero may buy one of the following Mutations when you recruit them": Extra arm,
+    # Tentacle, Great Claw, at the Cult's price
+    "court-of-the-profane-pleasures": [
+        {
+            "group": "Mutations",
+            "names": ["Extra Arm", "Tentacle", "Great Claw"],
+            "terms": {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
+        }
+    ],
+    # the Mutant skill, "The Beastman may buy one mutation", in every hero's special skills; no time or doubling is
+    # stated
+    "beastmen-raiders": [
+        {
+            "group": "Mutations",
+            "family": "Mutation",
+            "terms": {"who": {"fighters": ["beastmen-chieftain", "beastmen-shaman", "bestigors", "centigor"]}},
+            "note": MUTANT_SKILL,
+        }
+    ],
+    # the Marauders' mutant skill, "may buy one mutation ... Heroes with the Mark of Onogal may choose a Blessing of
+    # Nurgle instead ... except the Mark of Nurgle", in every hero's special skills
+    "marauders-of-chaos": [
+        {
+            "group": "Mutations",
+            "family": "Mutation",
+            "terms": {"who": {"fighters": ["marauder-chieftain", "seer", "champions", "condemned"]}},
+            "note": MUTANT_SKILL,
+        },
+        {
+            "group": "Blessings of Nurgle",
+            "family": "Blessing of Nurgle",
+            "except": ["Mark of Nurgle"],
+            "terms": {"who": {"fighters": ["marauder-chieftain", "seer", "champions", "condemned"]}},
+            "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
+        },
+    ],
+}
+
 # Most warriors where the book gives none; their starting gold reads as 500 gc
 SIZES: dict[str, int] = {
     "dwarf-rangers": 12,

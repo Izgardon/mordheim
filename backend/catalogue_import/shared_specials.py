@@ -80,6 +80,10 @@ class SharedSpecials:
         page = self.page_costs.get(entry["name"]) if entry.get("upgrade_of") else None
         return listed if page is None else page
 
+    def family(self, family: str) -> list[dict[str, Any]]:
+        """The priced specials of a family (a mutation type), in the list's order: what a list of it sells."""
+        return [entry for entry in self.entries if entry["type"] == family and self.cost_of(entry) is not None]
+
     def rule(self, kind: str, owner: str, name: str) -> tuple[str, dict[str, Any]] | None:
         """What an owner's rule of the name is, logged: ("apart", the line keeping it his) or ("shared", the shared
         special); None for a rule of his own."""

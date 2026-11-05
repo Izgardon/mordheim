@@ -16,7 +16,7 @@ from catalogue_import.template_fighters import FighterLog, Lores, build_fighter
 from catalogue_import.template_lists import ItemIndex
 from catalogue_import.template_parts import ListLog, build_lists, build_rules
 from catalogue_import.template_text import clean_rule
-from catalogue_import.template_upgrades import UpgradeLog, build_upgrades
+from catalogue_import.template_upgrades import UpgradeLog, build_upgrades, mutation_upgrades
 from catalogue_import.warbands import Resolver
 
 # words a rule written for one fighter or another shares ("Pursuers have", "An Ogre has")
@@ -171,8 +171,8 @@ def build_templates(
     log: TemplateLog,
     shared: SharedSpecials,
 ) -> list[dict[str, Any]]:
-    """Every page's template, by name, its rules that are shared specials linked to them (`shared`); a type two pages
-    claim is reported (the seeder keeps one template a type)."""
+    """Every page's template, by name, its rules that are shared specials linked to them (`shared`) and its tailored
+    lists of the shared mutations added; a type two pages claim is reported (the seeder keeps one template a type)."""
     context = {
         "shared": shared,
         "types": types,
@@ -183,9 +183,14 @@ def build_templates(
         "settings": {row["slug"]: row["setting"] for row in types},
         "urls": {row["slug"]: row["mordheimer_url"] for row in types},
     }
-    templates = [
-        template for slug in snapshot.pages if (template := build_template(slug, snapshot, context, log)) is not None
+    built = [
+        (slug, template)
+        for slug in snapshot.pages
+        if (template := build_template(slug, snapshot, context, log)) is not None
     ]
+    for slug, template in built:  # once every page gave its mutations' prices (the Cult's, the Carnival's)
+        mutation_upgrades(slug, template, shared, log.upgrades)
+    templates = [template for _slug, template in built]
     claimed: dict[str, list[str]] = {}
     for template in templates:
         for link in template["types"]:

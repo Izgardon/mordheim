@@ -502,7 +502,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | equipment lists | 120 |
 | list lines | 1341 |
 | warband rules | 157 |
-| upgrades | 23 |
+| upgrades | 68 |
 | the templates' own specials | 402 |
 
 ### List lines
@@ -629,6 +629,17 @@ mordheimer's lore names that differ from ours: Charms & Hexes -> Charms and Hexe
 
 lizardmen: Poisoned Weapons is a warband rule, not an upgrade.
 
+Tailored lists of the shared mutations (`MUTATION_UPGRADES`):
+
+| Page | Group | Mutations added | Set | Note |
+| --- | --- | --- | --- | --- |
+| beastmen-raiders | Mutations | 15 | who beastmen-chieftain, beastmen-shaman, bestigors, centigor | With the Mutant skill. |
+| court-of-the-profane-pleasures | Mutations | 3 | who heroes; at most 1 each; at recruit |  |
+| cult-of-the-posessed | Mutations | 6 | who the-possessed, mutants; later double; at recruit |  |
+| marauders-of-chaos | Mutations | 15 | who marauder-chieftain, seer, champions, condemned | With the Mutant skill. |
+| marauders-of-chaos | Blessings of Nurgle | 6 | who marauder-chieftain, seer, champions, condemned | Mark of Onogal heroes with the Mutant skill, instead of a mutation. |
+
+
 Lines for one variant only:
 
 | Page | Variant | List | Line |
@@ -659,28 +670,28 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Stupidity | Psychology | the rulebook's Stupidity (snapshot) |  |  | 4 | 0 | 0 | 1 |
 | Immune to Psychology | Psychology | the list's text |  |  | 11 | 1 | 2 | 0 |
 | Immune to Poison | Trait | the list's text |  |  | 10 | 3 | 3 | 2 |
-| Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 1 | 0 | 0 | 0 |
-| Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 1 | 0 | 0 | 0 |
-| Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 1 | 0 | 0 | 0 |
-| Tentacle | Mutation | Cult of the Possessed's upgrade | 35 |  | 1 | 0 | 0 | 0 |
-| Blackblood | Mutation | Cult of the Possessed's upgrade | 30 |  | 1 | 0 | 0 | 0 |
-| Spines | Mutation | Cult of the Possessed's upgrade | 35 |  | 1 | 0 | 0 | 0 |
-| Scorpion Tail | Mutation | Cult of the Possessed's upgrade | 40 |  | 1 | 0 | 0 | 0 |
-| Extra Arm | Mutation | Cult of the Possessed's upgrade | 40 |  | 1 | 0 | 0 | 0 |
-| Hideous | Mutation | Cult of the Possessed's upgrade; subject made general | 40 |  | 2 | 0 | 0 | 0 |
-| Crystalline Body | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 0 | 0 | 0 | 0 |
-| Hulking Brute | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 0 | 0 | 0 | 0 |
-| Poisonous Bite | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 0 | 0 | 0 | 0 |
-| Prehensile Tail | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 0 | 0 | 0 | 0 |
-| Scaly Skin | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 0 | 0 | 0 | 0 |
-| Wings | Mutation | the list's text (Mutiny in Marienburg, p161) | 45 |  | 0 | 0 | 0 | 0 |
-| Stream of Corruption | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 2 | 0 | 0 | 0 |
-| Nurgle's Rot | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 50 |  | 1 | 0 | 0 | 0 |
-| Cloud of Flies | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 3 | 0 | 0 | 0 |
-| Bloated Foulness | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 40 |  | 1 | 0 | 0 | 0 |
+| Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 3 | 0 | 0 | 0 |
+| Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 4 | 0 | 0 | 0 |
+| Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 3 | 0 | 0 | 0 |
+| Tentacle | Mutation | Cult of the Possessed's upgrade | 35 |  | 4 | 0 | 0 | 0 |
+| Blackblood | Mutation | Cult of the Possessed's upgrade | 30 |  | 3 | 0 | 0 | 0 |
+| Spines | Mutation | Cult of the Possessed's upgrade | 35 |  | 3 | 0 | 0 | 0 |
+| Scorpion Tail | Mutation | Cult of the Possessed's upgrade | 40 |  | 3 | 0 | 0 | 0 |
+| Extra Arm | Mutation | Cult of the Possessed's upgrade | 40 |  | 4 | 0 | 0 | 0 |
+| Hideous | Mutation | Cult of the Possessed's upgrade; subject made general | 40 |  | 4 | 0 | 0 | 0 |
+| Crystalline Body | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 3 | 0 | 0 | 0 |
+| Hulking Brute | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 3 | 0 | 0 | 0 |
+| Poisonous Bite | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 3 | 0 | 0 | 0 |
+| Prehensile Tail | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 3 | 0 | 0 | 0 |
+| Scaly Skin | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 3 | 0 | 0 | 0 |
+| Wings | Mutation | the list's text (Mutiny in Marienburg, p161) | 45 |  | 3 | 0 | 0 | 0 |
+| Stream of Corruption | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 3 | 0 | 0 | 0 |
+| Nurgle's Rot | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 50 |  | 2 | 0 | 0 | 0 |
+| Cloud of Flies | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 4 | 0 | 0 | 0 |
+| Bloated Foulness | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 40 |  | 2 | 0 | 0 | 0 |
 | Mark of Nurgle | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 35 |  | 1 | 0 | 0 | 0 |
-| Suckers | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 0 | 0 | 0 | 0 |
-| Plague Carrier | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 0 | 0 | 0 | 0 |
+| Suckers | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 1 | 0 | 0 | 0 |
+| Plague Carrier | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 1 | 0 | 0 | 0 |
 | Beak | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 35 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Burning Body (Tchar) | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 40 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Electrical Touch | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 45 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
@@ -717,20 +728,28 @@ List prices the pages differ from: none.
 - Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
 - Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
-- Daemon Soul: Cult of the Possessed: Mutations.
-- Great Claw: Cult of the Possessed: Mutations.
-- Cloven Hoofs: Cult of the Possessed: Mutations.
-- Tentacle: Cult of the Possessed: Mutations.
-- Blackblood: Cult of the Possessed: Mutations.
-- Spines: Cult of the Possessed: Mutations.
-- Scorpion Tail: Cult of the Possessed: Mutations.
-- Extra Arm: Cult of the Possessed: Mutations.
-- Hideous: Carnival of Chaos: Blessings of Nurgle; Cult of the Possessed: Mutations.
-- Stream of Corruption: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Blessings of Nurgle.
-- Nurgle's Rot: Carnival of Chaos: Blessings of Nurgle.
-- Cloud of Flies: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling; Carnival of Chaos: Blessings of Nurgle.
-- Bloated Foulness: Carnival of Chaos: Blessings of Nurgle.
+- Daemon Soul: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
+- Great Claw: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations.
+- Cloven Hoofs: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
+- Tentacle: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations.
+- Blackblood: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
+- Spines: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
+- Scorpion Tail: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
+- Extra Arm: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations.
+- Hideous: Carnival of Chaos: Blessings of Nurgle; Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
+- Crystalline Body: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
+- Hulking Brute: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
+- Poisonous Bite: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
+- Prehensile Tail: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
+- Scaly Skin: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
+- Wings: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
+- Stream of Corruption: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle.
+- Nurgle's Rot: Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle.
+- Cloud of Flies: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling; Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle.
+- Bloated Foulness: Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle.
 - Mark of Nurgle: Carnival of Chaos: Blessings of Nurgle.
+- Suckers: Marauders of Chaos: Blessings of Nurgle.
+- Plague Carrier: Marauders of Chaos: Blessings of Nurgle.
 
 ### Kept apart
 
