@@ -94,7 +94,9 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                "Special": 747,  # 185, the personae's own rules (next step 12), the templates' 463, 3 injury specials
+                # special.json's 24, 3 injury specials, the 4 shared (Fear, Stupidity, the immunities), the templates' 420
+                # and the hired swords' and personae's own 254 (next step 12)
+                "Special": 705,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -154,7 +156,51 @@ class SeedAllTests(TestCase):
         swivel = TemplateListItem.objects.get(equipment_list__template__slug="pirates", item__name="Swivel Gun")
         self.assertEqual((swivel.cost, swivel.warband_max), (65, 1))
         owners = Special.objects.filter(template_fighter_links__isnull=False).values_list("owner_kind", flat=True)
-        self.assertEqual(set(owners), {"warband", "general"})  # the templates' own, and our Large, Wizard and Priest
+        self.assertEqual(set(owners), {"warband", "general"})  # the templates' own; our Large, Wizard, Priest, shared
+
+    def test_every_owner_links_the_one_shared_special_and_the_rules_kept_apart_stay_theirs(self):
+        # William, 5 Nov 2026 (special/shared.py): one Fear, Stupidity, Immune to Psychology and Immune to Poison,
+        # linked by the templates' fighters, the hired swords, the dramatis personae and the beasts
+        book = Special.objects.filter(campaign__isnull=True)
+        self.assertFalse(book.filter(name__in=("Cause Fear", "Causes Fear", "Fearsome", "Stupid")).exists())
+        names = ("Fear", "Stupidity", "Immune to Psychology", "Immune to Poison")
+        links = {
+            row.name: (
+                row.template_fighter_links.count(),
+                row.template_upgrades.count(),
+                row.hired_sword_specials.count(),
+                row.dramatis_persona_specials.count(),
+                row.bestiary_entry_specials.count(),
+            )
+            for row in book.filter(name__in=names)
+        }
+        self.assertEqual(
+            links,
+            {
+                "Fear": (32, 0, 5, 5, 3),  # fighters, upgrades, hired swords, dramatis personae, beasts
+                "Stupidity": (4, 0, 0, 0, 1),
+                "Immune to Psychology": (11, 0, 1, 2, 0),
+                "Immune to Poison": (10, 0, 3, 3, 2),
+            },
+        )
+        apart = book.filter(name__regex=r"^(Fear|Stupidity|Immune to (Psychology|Poison)) \(")
+        kept = dict(apart.values_list("name", "owner_kind"))
+        self.assertEqual(
+            kept,
+            {
+                "Fear (Maximilian)": "dramatis_persona",
+                "Stupidity (Rat Ogre)": "warband",  # the Skaven's and Clan Pestilens' one row
+                "Stupidity (Cold One Beasthounds)": "warband",
+                "Immune to Psychology (Plague Bearers)": "warband",  # the Nurglings' too
+                "Immune to Psychology (Plague Cart)": "warband",
+                "Immune to Psychology (Belandysh)": "dramatis_persona",
+                "Immune to Psychology (Ippan Shu)": "dramatis_persona",
+                "Immune to Psychology (Nightmare)": "general",  # a mount's book rule, typed Animal
+                "Immune to Poison (Plague Bearers)": "warband",
+            },
+        )
+        rat_ogres = book.get(name="Stupidity (Rat Ogre)").template_fighter_links.values_list("fighter__template__slug", flat=True)  # fmt: skip
+        self.assertEqual(sorted(rat_ogres), ["skaven", "skaven-of-clan-pestilens"])
 
     def test_skaven_and_clan_pestilens_keep_their_own_maximums(self):
         # the 2026-10-28 data audit: races.json held Clan Pestilens' maximums under the name "Skaven" too, and

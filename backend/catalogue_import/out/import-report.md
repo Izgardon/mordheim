@@ -31,6 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 49 |
 | skill group links | 266 |
 | serious injuries (D66) | 20 |
+| shared specials | 4 |
 
 ## mordheimer's contradictions
 
@@ -471,7 +472,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 1341 |
 | warband rules | 157 |
 | upgrades | 23 |
-| the templates' own specials | 463 |
+| the templates' own specials | 420 |
 
 ### List lines
 
@@ -616,4 +617,36 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen), Remas' rout re-roll against Dark Elves, a Hung henchman who becomes a hero getting Ride Warhorse, and the Ostermarker captain's starting wardog.
 - Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
 - mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
-- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); carnival-of-chaos: Immune to Psychology (Plague Cart); carnival-of-chaos: Stream of Corruption (Blessings of Nurgle); carnival-of-chaos: Cloud of Flies (Blessings of Nurgle); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); marauders-of-chaos: Fear (Spawn of Chaos); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); the-restless-dead: Cause Fear (Grave Guard); the-restless-dead: Cause Fear (Scarecrow); the-restless-dead: Immune to Psychology (Scarecrow); the-restless-dead: Immune to Poison (Scarecrow); the-restless-dead: No Pain (Scarecrow); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); undead: Cause Fear (Ghouls); undead: Immune to Psychology (Dire wolves); undead: Immune to Psychology (Zombies); undead: No Pain (Zombies).
+- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); carnival-of-chaos: Stream of Corruption (Blessings of Nurgle); carnival-of-chaos: Cloud of Flies (Blessings of Nurgle); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); the-restless-dead: No Pain (Scarecrow); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); undead: No Pain (Zombies).
+
+## Shared specials
+
+`apps/special/data/shared-specials.json` (William, 5 Nov 2026) as `out/shared-specials.json`: one general special for each rule below, which every owner's rule of its name or an alias links instead of a copy of its own (the templates' in `out/warband-templates.json`; the hired swords', dramatis personae's and beasts' by their seeders, by name). Rules linked, by owner kind:
+
+| Special | Type | Wording | Warband | Hired sword | Dramatis persona | Beast |
+| --- | --- | --- | --- | --- | --- | --- |
+| Fear | Psychology | the rulebook's Fear (snapshot), after a first line | 32 | 5 | 5 | 3 |
+| Stupidity | Psychology | the rulebook's Stupidity (snapshot) | 4 | 0 | 0 | 1 |
+| Immune to Psychology | Psychology | the list's text | 11 | 1 | 2 | 0 |
+| Immune to Poison | Trait | the list's text | 10 | 3 | 3 | 2 |
+
+### Merged
+
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel The Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
+- Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
+- Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
+- Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
+
+### Kept apart
+
+| Rule | Owners | Why |
+| --- | --- | --- |
+| Fear (Maximilian) | Maximilian The Mad | His warband's models within 3" of him are immune to fear. |
+| Stupidity (Rat Ogre) | Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre | Not stupid while a Skaven Hero is within 6". |
+| Stupidity (Cold One Beasthounds) | Dark Elves: Cold One Beasthound | Tests on the Beastmaster's Leadership within 6" of him. |
+| Immune to Psychology (Plague Bearers) | Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling | Automatically passes every Leadership-based test, rout tests included. |
+| Immune to Psychology (Plague Cart) | Carnival of Chaos: Plague Cart | Automatically passes every Leadership-based test, rout tests included. |
+| Immune to Psychology (Belandysh) | Belandysh, Condemned Champion Of Chen | Automatically passes all Leadership tests. |
+| Immune to Psychology (Ippan Shu) | Grand Master Ippan Shu | Automatically passes all Leadership-based tests. |
+| Immune to Psychology (Nightmare) | Nightmare | Never takes Leadership tests, and stands still if left leaderless. |
+| Immune to Poison (Plague Bearers) | Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |

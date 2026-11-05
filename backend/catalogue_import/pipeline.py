@@ -19,6 +19,7 @@ from catalogue_import.new_groups import SkillGroups, build_skill_groups
 from catalogue_import.personae import Catalogue, build_personae
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
+from catalogue_import.shared_specials import build_shared, load_shared, render_shared
 from catalogue_import.skill_lists import SkillLists
 from catalogue_import.snapshot import SNAPSHOT, load_snapshot
 from catalogue_import.sources import ITEM_DATA, PACKAGE, Sources, load_sources
@@ -237,7 +238,9 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     who_can = build_who_can(sources, resolver, groups, hiring_log, skill_lists)
     grouped = _skill_groups(sources, types, groups, skill_lists, resolver, who_can, assignments, assignment_log)
     template_log = TemplateLog()
-    templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log)
+    one_rule = load_shared()  # the shared specials (William, 5 Nov 2026)
+    templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log, one_rule)
+    shared_specials = build_shared(one_rule, sources.our_hired_swords, sources.our_personae, snapshot.injuries)
     injuries = build_serious_injuries(snapshot.injuries)
     counts = {
         "settings": len(settings),
@@ -252,6 +255,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "skill groups": len(grouped.groups),
         "skill group links": sum(len(group["skills"]) for group in grouped.groups),
         "serious injuries (D66)": len(injuries),
+        "shared specials": len(shared_specials["specials"]),
     }
     report = ReportData(
         counts,
@@ -290,7 +294,10 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         "dramatis-personae.json": dump_json(sources.our_personae),
         "warband-templates.json": dump_json(templates),
         "serious-injuries.json": dump_json(injuries),
+        "shared-specials.json": dump_json(shared_specials),
         "import-report.md": render_report(report)
         + "\n"
-        + render_templates(templates, template_log, grouped.groups, groups),
+        + render_templates(templates, template_log, grouped.groups, groups)
+        + "\n"
+        + render_shared(one_rule),
     }

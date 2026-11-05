@@ -41,6 +41,6 @@ def book_category(name: str, special_type: str = "", upgrade_group: str = "") ->
     if (special_type, upgrade_group.strip()) in MUTATION_GROUPS:
         return MUTATION
     listed = _book_categories().get(name.strip().casefold())
-    if listed:  # the review file before the Animal type: a mount's Fear or Stupid is still an aura (William, 5 Nov)
+    if listed:  # the review file before the Animal type: a mount's Stubborn or Bicker is still an aura (William, 5 Nov)
         return listed
     return BODY if special_type == ANIMAL_TYPE else AURA

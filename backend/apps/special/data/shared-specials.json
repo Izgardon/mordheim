@@ -1,0 +1,84 @@
+{
+  "shared": [
+    {
+      "name": "Fear",
+      "type": "Psychology",
+      "psychology": "Fear",
+      "first_line": "This model causes fear.",
+      "aliases": ["Cause Fear", "Causes Fear", "Fearsome"]
+    },
+    {"name": "Stupidity", "type": "Psychology", "psychology": "Stupidity", "aliases": ["Stupid"]},
+    {
+      "name": "Immune to Psychology",
+      "type": "Psychology",
+      "text": "Not affected by psychology (such as fear) and never leaves combat.",
+      "aliases": []
+    },
+    {"name": "Immune to Poison", "type": "Trait", "text": "Not affected by any poison.", "aliases": []}
+  ],
+  "apart": [
+    {
+      "name": "Fear (Maximilian)",
+      "rule": "Fear",
+      "owners": [{"dramatis_persona": "Maximilian The Mad"}],
+      "why": "His warband's models within 3\" of him are immune to fear."
+    },
+    {
+      "name": "Stupidity (Rat Ogre)",
+      "rule": "Stupidity",
+      "owners": [
+        {"warband": "Skaven", "fighter": "Rat Ogre"},
+        {"warband": "Skaven of Clan Pestilens", "fighter": "Rat Ogre"}
+      ],
+      "why": "Not stupid while a Skaven Hero is within 6\"."
+    },
+    {
+      "name": "Stupidity (Cold One Beasthounds)",
+      "rule": "Stupidity",
+      "owners": [{"warband": "Dark Elves", "fighter": "Cold One Beasthound"}],
+      "why": "Tests on the Beastmaster's Leadership within 6\" of him."
+    },
+    {
+      "name": "Immune to Psychology (Plague Bearers)",
+      "rule": "Immune to Psychology",
+      "owners": [
+        {"warband": "Carnival of Chaos", "fighter": "Plague Bearer"},
+        {"warband": "Carnival of Chaos", "fighter": "Nurgling"}
+      ],
+      "why": "Automatically passes every Leadership-based test, rout tests included."
+    },
+    {
+      "name": "Immune to Psychology (Plague Cart)",
+      "rule": "Immune to Psychology",
+      "owners": [{"warband": "Carnival of Chaos", "fighter": "Plague Cart"}],
+      "why": "Automatically passes every Leadership-based test, rout tests included."
+    },
+    {
+      "name": "Immune to Psychology (Belandysh)",
+      "rule": "Immune to Psychology",
+      "owners": [{"dramatis_persona": "Belandysh, Condemned Champion Of Chen"}],
+      "why": "Automatically passes all Leadership tests."
+    },
+    {
+      "name": "Immune to Psychology (Ippan Shu)",
+      "rule": "Immune to Psychology",
+      "owners": [{"dramatis_persona": "Grand Master Ippan Shu"}],
+      "why": "Automatically passes all Leadership-based tests."
+    },
+    {
+      "name": "Immune to Psychology (Nightmare)",
+      "rule": "Immune to Psychology (Mount)",
+      "owners": [{"beast": "Nightmare"}],
+      "why": "Never takes Leadership tests, and stands still if left leaderless."
+    },
+    {
+      "name": "Immune to Poison (Plague Bearers)",
+      "rule": "Immune to Poison",
+      "owners": [
+        {"warband": "Carnival of Chaos", "fighter": "Plague Bearer"},
+        {"warband": "Carnival of Chaos", "fighter": "Nurgling"}
+      ],
+      "why": "Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed."
+    }
+  ]
+}

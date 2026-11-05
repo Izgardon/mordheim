@@ -2,7 +2,9 @@
 items (BUG-17), by name with apostrophes straightened, through the aliases their data uses for book names (BUG-54).
 A hired sword's (or dramatis persona's) own specials and spells that the book lacks are created in it under "Hired
 Sword - <name>" (or "Dramatis Persona - <name>"); his special skills are the book's of their names (created when it
-lacks one) in a skill group of that name, which his skill access names (skill groups, phase 1a).
+lacks one) in a skill group of that name, which his skill access names (skill groups, phase 1a). A special of a shared
+special's name or alias is the shared one (Fear for "Cause Fear"), unless William's list keeps that owner's apart under
+a name of its own (special/shared.py).
 """
 
 import re
@@ -17,6 +19,7 @@ from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
 from apps.special.categories import book_category
 from apps.special.kinds import INJURY, WARBAND, book_kind, owner_kind_of
 from apps.special.models import Special
+from apps.special.shared import read_shared
 from apps.spells.models import Spell
 from apps.spells.rolls import book_roll_taken
 
@@ -101,6 +104,22 @@ def spell_fields(spell_item):
     }
 
 
+def shared_names(
+    book: dict[tuple[str, str], Special],
+) -> tuple[dict[str, tuple[str, Special | None]], dict[tuple[str, str], str]]:
+    """From the import's out/shared-specials.json: each shared special's name and alias -> its name and its book row
+    of the name and type (None until seed_spells_and_special seeds it), and (owner, his rule) -> the name of the rule
+    kept his own."""
+    data = read_shared()
+    names = {
+        lookup_key(name): (entry["name"], book.get((entry["name"], entry["type"])))
+        for entry in data["specials"]
+        for name in (entry["name"], *entry["aliases"])
+    }
+    kept = {(lookup_key(line["owner"]), lookup_key(line["rule"])): line["name"] for line in data["apart"]}
+    return names, kept
+
+
 @dataclass
 class EntryLinks:
     """What a seeded entry links: its skills, specials and spells, and its equipment (item id -> quantity)."""
@@ -122,8 +141,9 @@ class BookLookups:
         self.skills = {lookup_key(row.name): row for row in Skill.objects.filter(**book)}
         # not a warband template fighter's own rules ("Warband - Mercenaries"): they stay the template's; nor the
         # injury tables' specials, worded for the injury: the Old Prospector keeps his own Hardened
-        specials = Special.objects.filter(**book).exclude(owner_kind=WARBAND).exclude(type=INJURY)
+        specials = list(Special.objects.filter(**book).exclude(owner_kind=WARBAND).exclude(type=INJURY))
         self.specials = {lookup_key(row.name): row for row in specials}
+        self.shared, self.kept = shared_names({(row.name, row.type): row for row in specials})
         self.spells = {lookup_key(row.name): row for row in Spell.objects.filter(**book)}
         self.items: dict[tuple[str, str], Item] = {}
         self.item_names: dict[str, Item] = {}
@@ -147,13 +167,21 @@ class BookLookups:
         return found
 
     def special(self, item: Any, owner: str) -> Special | None:
-        """The book's special of the item's name (made the owner's when the book lacks it), its kind and category the
-        book's classification gives the name (Boons & Banes, special/categories.py) and its owner kind its type
-        (special/kinds.py), each corrected on a row seeded before."""
+        """The shared special the item's name means (special/shared.py), or the book's special of its name, or of the
+        name William's list keeps the owner's apart under ("Immune to Psychology (Belandysh)"), made the owner's when
+        the book lacks it: its kind and category the book's classification gives the name (Boons & Banes,
+        special/categories.py) and its owner kind its type (special/kinds.py), each corrected on a row seeded before."""
         name, description = name_and_description(item)
         if not name:
             return None
-        special: Special = self._own(Special, self.specials, name, description, owner, "special")
+        kept = self.kept.get((lookup_key(owner), lookup_key(name)))
+        shared = None if kept else self.shared.get(lookup_key(name))
+        if shared is not None:
+            shared_name, row = shared
+            if row is None:
+                self.warnings.append(f"  Special '{name}' not found for '{owner}': {shared_name} isn't seeded yet")
+            return row
+        special: Special = self._own(Special, self.specials, kept or name, description, owner, "special")
         fields = {
             "kind": book_kind(special.name, special.kind),
             "category": book_category(special.name, special.type),
@@ -207,10 +235,12 @@ class BookLookups:
 
     def links(self, data: dict[str, Any], owner: str) -> EntryLinks:
         """The skills, specials, spells and equipment a seeded entry lists, resolved in the book (its own specials and
-        spells created there); unresolved ones are warned about and left out."""
+        spells created there); unresolved ones are warned about and left out, and two names for one shared special
+        link it once."""
+        specials = [special for item in data.get("specials", []) if (special := self.special(item, owner))]
         links = EntryLinks(
             skills=[skill for name in data.get("skills", []) if (skill := self.skill(name, owner))],
-            specials=[special for item in data.get("specials", []) if (special := self.special(item, owner))],
+            specials=list(dict.fromkeys(specials)),
             spells=[spell for item in data.get("spells", []) if (spell := self.spell(item, owner))],
             quantities={},
         )

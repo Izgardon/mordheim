@@ -1,6 +1,7 @@
 """The book's warband templates from the catalogue import (`out/warband-templates.json`, read in place): each upserted
 by slug with its child rows written afresh, its fighters' own rules as specials typed by the template ("Warband -
-Mercenaries", owner kind warband) and the book's Large, Wizard and Priest where they are ours.
+Mercenaries", owner kind warband), or the book's special they are: our Large, Wizard and Priest, and the shared ones
+(Fear, Stupidity: special/shared.py), which the import names by name and type with no text.
 
 Settings, warband types, races, items, skills and specials are found in the book (seed_settings, seed_warband_types,
 seed_races, seed_items, seed_bestiary and seed_spells_and_special run first); a name the database lacks stops the

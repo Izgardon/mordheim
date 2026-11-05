@@ -40,7 +40,7 @@ class BookCategoryTests(TestCase):
         self.assertEqual(book_category("Tentacle", CULT, "Mutations"), MUTATION)
         self.assertEqual(book_category("Tentacle", CULT), AURA)  # a fighter's rule of the name isn't bought
         self.assertEqual(book_category("Thick Skinned", "Animal"), BODY)  # the Animal type's rules
-        self.assertEqual(book_category("Fear", "Animal"), AURA)  # a mount's mental rule, by its line
+        self.assertEqual(book_category("Stubborn", "Animal"), AURA)  # a mount's mental rule, by its line
         self.assertEqual(book_category("Fear", "Warband - Skaven"), AURA)
         self.assertEqual(book_category(" large ", "Trait"), BODY)  # the review file, read loosely
         self.assertEqual(book_category("Hideous", "Warband - Carnival of Chaos"), MUTATION)

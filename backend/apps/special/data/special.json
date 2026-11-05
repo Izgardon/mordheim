@@ -40,16 +40,6 @@
     "description": "The mount has been specially trained to fight on a battlefield. The rider may re-roll any failed loss of control tests. Only one re-roll is allowed per test.\n\nNote\n\nIt is suggested that Chaos steeds should be available to all Chaos warbands, not just those that existed when these rules were originally published."
   },
   {
-    "name": "Fear",
-    "type": "Animal",
-    "description": "Rhinoxen are large and dangerous cavebeasts with horns as long as a fullgrown man. They cause fear."
-  },
-  {
-    "name": "Stupid",
-    "type": "Animal",
-    "description": "Roll against the rider's Leadership each turn; if the rider fails the test then usual stupidity applies, otherwise move as normal."
-  },
-  {
     "name": "Scaly",
     "type": "Animal",
     "description": "Cold ones give an additional +1 armour save bonus (making +2 total)."
@@ -90,12 +80,7 @@
     "description": "As an undead creature, a Nightmare may not run, but may charge as normal."
   },
   {
-    "name": "Immune to Poison",
-    "type": "Animal",
-    "description": "Temple Dogs are not affected by poison."
-  },
-  {
-    "name": "Immune to Psychology (Mount)",
+    "name": "Immune to Psychology (Nightmare)",
     "type": "Animal",
     "description": "As an Undead creature, Nightmares are immune to psychology, never have to make Leadership tests, and will always stand still if left leaderless. However, if the rider suffers a wound, he must roll on the Whoa Boy! Table as normal."
   },

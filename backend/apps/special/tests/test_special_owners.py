@@ -29,14 +29,14 @@ class OwnerKindTests(TestCase):
         self.assertEqual((persona.type, persona.owner_kind), ("Dramatis Persona - Bertha", DRAMATIS_PERSONA))
 
     def test_a_book_special_found_by_name_stays_general_and_a_stale_row_is_corrected(self):
-        fear = Special.objects.create(name="Fear", type="Animal")
+        skin = Special.objects.create(name="Thick Skinned", type="Animal")
         stale = Special.objects.create(name="Bodyguard", type="Hired Sword - Ogre")  # seeded before the field
         lookups = BookLookups("Hired Sword")
-        found, mine = lookups.special("Fear", "Ogre"), lookups.special("Bodyguard", "Ogre")
+        found, mine = lookups.special("Thick Skinned", "Ogre"), lookups.special("Bodyguard", "Ogre")
         assert found is not None and mine is not None
-        fear.refresh_from_db()
+        skin.refresh_from_db()
         stale.refresh_from_db()
-        self.assertEqual((found.id, fear.owner_kind), (fear.id, GENERAL))
+        self.assertEqual((found.id, skin.owner_kind), (skin.id, GENERAL))
         self.assertEqual((mine.id, stale.owner_kind), (stale.id, HIRED_SWORD))
 
     def test_a_warband_template_fighters_rule_stays_the_templates(self):

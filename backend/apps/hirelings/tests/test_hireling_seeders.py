@@ -53,6 +53,7 @@ class HirelingSeederTests(TestCase):
     sword: Item
     axe: Item
     sprint: Skill
+    fear: Special
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -60,6 +61,7 @@ class HirelingSeederTests(TestCase):
         cls.sword = Item.objects.create(name="Sword", type="Weapon")
         cls.axe = Item.objects.create(name="Axe", type="Weapon")
         cls.sprint = Skill.objects.create(name="Sprint")
+        cls.fear = Special.objects.create(name="Fear", type="Psychology")  # shared: seed_spells_and_special seeds it
 
     def test_a_hired_sword_is_seeded_with_its_links_kit_fees_race_and_note(self):
         with data_file([OGRE]) as path:
@@ -78,8 +80,9 @@ class HirelingSeederTests(TestCase):
         self.assertTrue(own.for_everyone)
         self.assertEqual(list(ogre.item_links.order_by("item__name").values_list("item_id", "quantity")), [(self.axe.id, 1), (self.sword.id, 2)])  # fmt: skip
         self.assertEqual(list(ogre.skill_links.values_list("skill_id", flat=True)), [self.sprint.id])
-        fear = Special.objects.get(name="Fear")
-        self.assertEqual((fear.type, list(ogre.special_links.values_list("special_id", flat=True))), ("Hired Sword - Ogre Bodyguard", [fear.id]))  # fmt: skip
+        # his Fear is the shared special (William, 5 Nov 2026), not a copy of his own
+        self.assertEqual(list(ogre.special_links.values_list("special_id", flat=True)), [self.fear.id])
+        self.assertFalse(Special.objects.filter(type="Hired Sword - Ogre Bodyguard").exists())
         # the warband types aren't seeded: his own fees, everyone may hire him, and his "unique to" is the note
         self.assertEqual((ogre.for_everyone, ogre.hire_note, ogre.warband_links.count()), (True, "Mercenaries only", 0))
 

@@ -27,15 +27,15 @@ class SpecialKindTests(TestCase):
 
     def test_the_classification_reads_names_loosely_and_falls_back(self):
         self.assertEqual(book_kind(" fear "), BOON)
-        self.assertEqual(book_kind("Stupid"), BANE)
+        self.assertEqual(book_kind("Stupidity"), BANE)
         self.assertEqual(book_kind("Large"), TRAIT)
         self.assertEqual(book_kind("Not in the book"), TRAIT)
         self.assertEqual(book_kind("Not in the book", BANE), BANE)
 
     def test_seeding_the_book_sets_each_kind(self):
         call_command("seed_spells_and_special", stdout=StringIO())
-        kinds = dict(Special.objects.filter(campaign=None, name__in=("Fear", "Stupid", "Large")).values_list("name", "kind"))  # fmt: skip
-        self.assertEqual(kinds, {"Fear": BOON, "Stupid": BANE, "Large": TRAIT})
+        kinds = dict(Special.objects.filter(campaign=None, name__in=("Fear", "Stupidity", "Large")).values_list("name", "kind"))  # fmt: skip
+        self.assertEqual(kinds, {"Fear": BOON, "Stupidity": BANE, "Large": TRAIT})  # the shared two among them
 
     def test_a_hired_swords_own_special_takes_its_kind(self):
         lookups = BookLookups("Hired Sword")

@@ -1,6 +1,7 @@
 """Seed the book's spells and specials from JSON (`apps/spells/data/spells.json`, `apps/special/data/special.json`),
-and the specials the serious injury tables grant by name, typed "Injury", with the book's rule text (the catalogue
-import's `out/serious-injuries.json`).
+the specials the serious injury tables grant by name, typed "Injury", with the book's rule text (the catalogue
+import's `out/serious-injuries.json`), and the shared specials (Fear, Stupidity and the immunities: the import's
+`out/shared-specials.json`, special/shared.py), archiving the copies of them seeded before.
 
 Rows are matched by name and type in the book only (BUG-17); the run is all or nothing; there is no --truncate
 (BUG-16: it deleted campaign rows and every copy of them). A lore keeps the first spell on each roll: a later one on
@@ -11,13 +12,16 @@ from pathlib import Path
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
+from django.utils import timezone
 
 from apps.battles.services.injuries import granted_specials
+from apps.core.book_lookups import lookup_key
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import IMPORT_OUT, read_json_list, upsert_global
 from apps.special.categories import book_category
 from apps.special.kinds import BANE, GENERAL, INJURY, book_kind
 from apps.special.models import Special
+from apps.special.shared import read_shared
 from apps.spells.models import Spell
 from apps.spells.rolls import first_on_each_roll
 
@@ -35,6 +39,7 @@ class Command(BaseCommand):
             spells_created, spells_updated = self._seed(Spell, SPELLS_JSON_PATH, "Spells", ("description", "dc"))
             special_created, special_updated = self._seed(Special, SPECIAL_JSON_PATH, "Special", ("description",))
             injury_created, injury_updated = self._seed_injury_specials()
+            shared_created, shared_updated, copies = self._seed_shared_specials()
             bump(None)  # every cached catalogue list shows the book (PERF-13)
 
         self.stdout.write(
@@ -42,7 +47,8 @@ class Command(BaseCommand):
                 f"Seeding complete. "
                 f"Spells - Created: {spells_created}, Updated: {spells_updated}. "
                 f"Special - Created: {special_created}, Updated: {special_updated}. "
-                f"Injury specials - Created: {injury_created}, Updated: {injury_updated}."
+                f"Injury specials - Created: {injury_created}, Updated: {injury_updated}. "
+                f"Shared specials - Created: {shared_created}, Updated: {shared_updated}, copies archived: {copies}."
             )
         )
 
@@ -101,3 +107,34 @@ class Command(BaseCommand):
             else:
                 updated += 1
         return created, updated
+
+    def _seed_shared_specials(self) -> tuple[int, int, int]:
+        """Each shared special as the book's general special of its name and type, with its wording, its kind and its
+        category the book's classification; then every other unarchived book special of a shared name or alias, or of
+        a rule kept apart under a name of its own (a mount's Fear, a fighter's Cause Fear, the Nightmare's Immune to
+        Psychology (Mount) seeded before), is archived, since its owners link the shared one or their own now."""
+        data = read_shared()
+        entries = data["specials"]
+        created = updated = 0
+        shared: list[int] = []
+        for entry in entries:
+            name, entry_type = entry["name"], entry["type"]
+            defaults = {
+                "description": entry["description"],
+                "kind": book_kind(name),
+                "category": book_category(name, entry_type),
+                "owner_kind": GENERAL,
+                "archived_at": None,
+            }
+            row, was_created = upsert_global(Special, {"name": name, "type": entry_type}, defaults)
+            shared.append(row.pk)
+            if was_created:
+                created += 1
+            else:
+                updated += 1
+        names = {lookup_key(name) for entry in entries for name in (entry["name"], *entry["aliases"])}
+        names |= {lookup_key(line["rule"]) for line in data["apart"]}
+        live = Special.objects.filter(campaign__isnull=True, archived_at__isnull=True).exclude(pk__in=shared)
+        copies = [row.pk for row in live.only("pk", "name") if lookup_key(row.name) in names]
+        archived = Special.objects.filter(pk__in=copies).update(archived_at=timezone.now())
+        return created, updated, archived

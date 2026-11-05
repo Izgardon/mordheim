@@ -4487,8 +4487,7 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Beastmen Raiders",
-            "description": "Minotaurs are huge, bellowing monsters and cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Bloodgreed",
@@ -5975,13 +5974,11 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Black Orcs",
-            "description": "Trolls are frightening monsters which cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Stupidity",
-            "type": "Warband - Black Orcs",
-            "description": "A Troll is subject to the rules for stupidity."
+            "type": "Psychology"
           },
           {
             "name": "Regeneration",
@@ -8429,19 +8426,18 @@
             "description": "Plague Bearers are Daemons of the lord of disease, Nurgle, and are not made of living flesh but the eternal and unchanging forces of Chaos. Therefore they never gain Experience."
           },
           {
-            "name": "Immune to Poison",
+            "name": "Immune to Poison (Plague Bearers)",
             "type": "Warband - Carnival of Chaos",
             "description": "Plague Bearers are the Daemonic embodiment of disease and pestilence. They are totally immune to all poisons and diseases."
           },
           {
-            "name": "Immune to Psychology",
+            "name": "Immune to Psychology (Plague Bearers)",
             "type": "Warband - Carnival of Chaos",
             "description": "Plague Bearers are Daemons and do not know the concept of fear. They automatically pass any Leadership-based test they are required to take."
           },
           {
-            "name": "Cause Fear",
-            "type": "Warband - Carnival of Chaos",
-            "description": "Plague Bearers are horrifying supernatural creatures and therefore cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Daemonic Aura",
@@ -8505,12 +8501,12 @@
             "description": "Nurglings are Daemons of the diseased Lord Nurgle and are not made of living flesh but the eternal and unchanging forces of Chaos. Therefore they never gain Experience."
           },
           {
-            "name": "Immune to Poison",
+            "name": "Immune to Poison (Plague Bearers)",
             "type": "Warband - Carnival of Chaos",
             "description": "Plague Bearers are the Daemonic embodiment of disease and pestilence. They are totally immune to all poisons and diseases."
           },
           {
-            "name": "Immune to Psychology",
+            "name": "Immune to Psychology (Plague Bearers)",
             "type": "Warband - Carnival of Chaos",
             "description": "Plague Bearers are Daemons and do not know the concept of fear. They automatically pass any Leadership-based test they are required to take."
           },
@@ -9390,8 +9386,7 @@
           },
           {
             "name": "Immune to Psychology",
-            "type": "Warband - Court of the Profane Pleasures",
-            "description": "The Devout is immune to Psychology and all alone tests."
+            "type": "Psychology"
           }
         ]
       },
@@ -10056,8 +10051,7 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Cult of the Possessed",
-            "description": "The Possessed are terrifying, twisted creatures and therefore cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Mutations",
@@ -11125,7 +11119,7 @@
             "description": "Cold One Beasthounds are nasty viscous brutes that are barely kept under control. If the Beastmaster dies the beasts will immediately escape from the warband and they are removed from the warband roster. If the Beastmaster is unable to participate in a battle, then neither will the beasts."
           },
           {
-            "name": "Stupidity",
+            "name": "Stupidity (Cold One Beasthounds)",
             "type": "Warband - Dark Elves",
             "description": "Cold One Beasthounds may use the basic Leadership of the Beastmaster if they are within 6\" of him. They may never use the Leadership of the warband leader, nor may they benefit from the Beastmaster’s increased Leadership if he is within 6\" of the leader."
           },
@@ -11136,8 +11130,7 @@
           },
           {
             "name": "Fear",
-            "type": "Warband - Dark Elves",
-            "description": "Cold One Beasthounds cause Fear."
+            "type": "Psychology"
           }
         ]
       }
@@ -13315,8 +13308,7 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Forest Goblins",
-            "description": "Gigantic Spiders cause fear as described in the Mordheim Rulebook."
+            "type": "Psychology"
           },
           {
             "name": "Large",
@@ -17506,9 +17498,8 @@
             "description": "A bear doesn’t care about the warband’s mission or enmity for other warbands – it’s just following the orders of its trainer. Sometimes it gets bored waiting for orders; for this reason Trained Bears are subject to the rules for Stupidity. If given ‘special attention’ by its trainer, it will mind a bit better, so a bear is not required to take these Stupidity tests if the warband’s Bear Tamer is within 6\". In fact this is the only member of the warband the bear will listen to; a Trained Bear will never use the warband leader’s Leadership for any tests it is required to take. It may use the Bear Tamer’s leadership if within 6\" of him however. Note that the warband cannot control the bear without a Bear Tamer. The Trained Bear may not be used in any game in which the warband's Bear Tamer does not take part (and this means that if the warband does not include a Bear Tamer at all, the warband must keep the bear staked back at camp until they hire a new one!)."
           },
           {
-            "name": "Fearsome",
-            "type": "Warband - Kislevites",
-            "description": "A charging bear is a very scary sight indeed! A Trained Bear causes fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Bear Hug",
@@ -18230,9 +18221,8 @@
             "description": "Kroxigor may move through water with no penalty, and count as being in cover whilst in water."
           },
           {
-            "name": "Cause Fear",
-            "type": "Warband - Lizardmen",
-            "description": "Kroxigor are large and frightening monsters that cause Fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Large",
@@ -20104,8 +20094,7 @@
           },
           {
             "name": "Fear",
-            "type": "Warband - Maneaters",
-            "description": "Sabretusks are huge feline predators and thus cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Animals",
@@ -20865,8 +20854,7 @@
           },
           {
             "name": "Fear",
-            "type": "Warband - Marauders of Chaos",
-            "description": "The Condemned’s unnatural appearance makes him cause fear in his enemies."
+            "type": "Psychology"
           },
           {
             "name": "Experience",
@@ -21002,9 +20990,8 @@
             "description": "Roll at the beginning of each Close Combat phase to determine the spawn’s number of Attacks for that phase."
           },
           {
-            "name": "Fear (Spawn of Chaos)",
-            "type": "Warband - Marauders of Chaos",
-            "description": "Spawn are disgusting and revolting blasphemies against nature and cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Special Movement",
@@ -24082,19 +24069,16 @@
         "lists": [],
         "specials": [
           {
-            "name": "Cause Fear",
-            "type": "Warband - Nehekhara Tomb Guards",
-            "description": "Stone Golems are giant, (seemingly) living statues and therefore cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Immune to Psychology",
-            "type": "Warband - Nehekhara Tomb Guards",
-            "description": "Stone Golems do not think for themselves and therefore are not affected by psychology and never leave combat."
+            "type": "Psychology"
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - Nehekhara Tomb Guards",
-            "description": "Stone Golems are not affected by any poison."
+            "type": "Trait"
           },
           {
             "name": "No Brain",
@@ -24675,13 +24659,11 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Night Goblins",
-            "description": "Trolls are frightening monsters which cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Stupidity",
-            "type": "Warband - Night Goblins",
-            "description": "A Troll is subject to the rules for stupidity."
+            "type": "Psychology"
           },
           {
             "name": "Regeneration",
@@ -25756,9 +25738,8 @@
             "description": "A Great Squig will need a Goblin to keep it in line, just like a Cave Squig. In addition, due to the ferocity of these beasts, if the scatter die results in a “hit” for a wild Great Squig it moves towards the closest model (friend or foe) it can see. If this movement takes it into contact with another model it will engage it in close combat and count as charging, even with a member of the Night Goblin warband."
           },
           {
-            "name": "Cause Fear",
-            "type": "Warband - Night Goblins (web)",
-            "description": "Great Squigs are massive balls of flesh and teeth, they cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Large",
@@ -25807,13 +25788,11 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Night Goblins (web)",
-            "description": "Trolls are frightening monsters which cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Stupidity",
-            "type": "Warband - Night Goblins (web)",
-            "description": "A Troll is subject to the rules for stupidity."
+            "type": "Psychology"
           },
           {
             "name": "Regeneration",
@@ -26477,8 +26456,7 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Norse Explorers",
-            "description": "Wulfen are terrifying creatures to behold and cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Bestial",
@@ -27377,13 +27355,11 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Orc Mob",
-            "description": "Trolls are frightening monsters which cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Stupidity",
-            "type": "Warband - Orc Mob",
-            "description": "A Troll is subject to the rules for stupidity."
+            "type": "Psychology"
           },
           {
             "name": "Regeneration",
@@ -28367,8 +28343,7 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Ostlander Mercenaries",
-            "description": "Ogres are large, threatening creatures that cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Large",
@@ -30871,8 +30846,7 @@
           },
           {
             "name": "Fear",
-            "type": "Warband - Pit Fighters",
-            "description": "Ogre Pit Fighters are large, threatening creatures that cause fear."
+            "type": "Psychology"
           },
           {
             "name": "Large",
@@ -31737,8 +31711,7 @@
           },
           {
             "name": "Fear",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "Ogre Pit Fighters are large, threatening creatures that cause Fear. See the Psychology section for details."
+            "type": "Psychology"
           },
           {
             "name": "Large",
@@ -33569,11 +33542,10 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Skaven",
-            "description": "Rat Ogres are so frightening they cause fear."
+            "type": "Psychology"
           },
           {
-            "name": "Stupidity",
+            "name": "Stupidity (Rat Ogre)",
             "type": "Warband - Skaven",
             "description": "A Rat Ogre is subject to stupidity unless a Skaven Hero is within 6\" of it."
           },
@@ -34225,12 +34197,11 @@
         "specials": [
           {
             "name": "Fear",
-            "type": "Warband - Skaven of Clan Pestilens",
-            "description": "Rat Ogres are so frightening they cause fear."
+            "type": "Psychology"
           },
           {
-            "name": "Stupidity",
-            "type": "Warband - Skaven of Clan Pestilens",
+            "name": "Stupidity (Rat Ogre)",
+            "type": "Warband - Skaven",
             "description": "A Rat Ogre is subject to stupidity unless a Skaven Hero is within 6\" of it."
           },
           {
@@ -35758,14 +35729,12 @@
             "type": "Caster"
           },
           {
-            "name": "Cause Fear",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is a horrible abomination and causes fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Immune to Psychology",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by psychology and never leaves combat."
+            "type": "Psychology"
           },
           {
             "name": "No Pain",
@@ -35774,8 +35743,7 @@
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by poison."
+            "type": "Trait"
           },
           {
             "name": "Eternal",
@@ -35905,19 +35873,16 @@
             "description": "Grave Guards carry weapons laden with evil magic. All close combat ‘to hit’ rolls of a 6 will automatically wound. You may roll ‘to wound’ as normal to determine if it is a ‘critical hit’, but even a failed ‘to wound’ roll will still cause a wound if a 6 was rolled first ‘to hit’."
           },
           {
-            "name": "Cause Fear (Grave Guard)",
-            "type": "Warband - The Restless Dead",
-            "description": "Grave Guards are terrifying undead creatures and so cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by poison."
+            "type": "Trait"
           },
           {
             "name": "Immune to Psychology",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by psychology and never leaves combat."
+            "type": "Psychology"
           },
           {
             "name": "No Pain",
@@ -35971,9 +35936,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Cause Fear",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is a horrible abomination and causes fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "May not run",
@@ -35982,13 +35946,11 @@
           },
           {
             "name": "Immune to Psychology",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by psychology and never leaves combat."
+            "type": "Psychology"
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by poison."
+            "type": "Trait"
           },
           {
             "name": "No Pain",
@@ -36039,9 +36001,8 @@
         ],
         "specials": [
           {
-            "name": "Cause Fear",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is a horrible abomination and causes fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "May not run",
@@ -36050,13 +36011,11 @@
           },
           {
             "name": "Immune to Psychology",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by psychology and never leaves combat."
+            "type": "Psychology"
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by poison."
+            "type": "Trait"
           },
           {
             "name": "No Pain",
@@ -36107,9 +36066,8 @@
         ],
         "specials": [
           {
-            "name": "Cause Fear",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is a horrible abomination and causes fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "May not run",
@@ -36118,13 +36076,11 @@
           },
           {
             "name": "Immune to Psychology",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by psychology and never leaves combat."
+            "type": "Psychology"
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche is not affected by poison."
+            "type": "Trait"
           },
           {
             "name": "No Pain",
@@ -36173,19 +36129,16 @@
         "lists": [],
         "specials": [
           {
-            "name": "Cause Fear (Scarecrow)",
-            "type": "Warband - The Restless Dead",
-            "description": "The sight of a tall, lanky and silent scarecrow moving is highly unnatural and so causes fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
-            "name": "Immune to Psychology (Scarecrow)",
-            "type": "Warband - The Restless Dead",
-            "description": "The scarecrow is immune to all psychology and will never leave combat."
+            "name": "Immune to Psychology",
+            "type": "Psychology"
           },
           {
-            "name": "Immune to Poison (Scarecrow)",
-            "type": "Warband - The Restless Dead",
-            "description": "The scarecrow is immune to all poisons."
+            "name": "Immune to Poison",
+            "type": "Trait"
           },
           {
             "name": "No Pain (Scarecrow)",
@@ -38870,19 +38823,16 @@
             "description": "Any models in the warband within 6\" of the Vampire may use his Leadership instead of their own."
           },
           {
-            "name": "Cause Fear",
-            "type": "Warband - Undead",
-            "description": "Vampires are terrifying Undead creatures and therefore cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "Immune to Psychology",
-            "type": "Warband - Undead",
-            "description": "Vampires are not affected by psychology (such as fear) and never leave combat."
+            "type": "Psychology"
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - Undead",
-            "description": "Vampires are not affected by any poison."
+            "type": "Trait"
           },
           {
             "name": "No Pain",
@@ -39016,9 +38966,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Cause Fear (Ghouls)",
-            "type": "Warband - Undead",
-            "description": "Ghouls are twisted and repulsive creatures and therefore cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           }
         ]
       },
@@ -39067,19 +39016,16 @@
             "description": "Dire Wolves are slow to react and may not run (but may charge normally)."
           },
           {
-            "name": "Cause Fear",
-            "type": "Warband - Undead",
-            "description": "Vampires are terrifying Undead creatures and therefore cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
-            "name": "Immune to Psychology (Dire wolves)",
-            "type": "Warband - Undead",
-            "description": "Dire Wolves are not affected by psychology and never leave combat."
+            "name": "Immune to Psychology",
+            "type": "Psychology"
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - Undead",
-            "description": "Vampires are not affected by any poison."
+            "type": "Trait"
           },
           {
             "name": "Unliving",
@@ -39128,9 +39074,8 @@
         "lists": [],
         "specials": [
           {
-            "name": "Cause Fear",
-            "type": "Warband - Undead",
-            "description": "Vampires are terrifying Undead creatures and therefore cause fear."
+            "name": "Fear",
+            "type": "Psychology"
           },
           {
             "name": "May not run",
@@ -39138,14 +39083,12 @@
             "description": "Zombies are slow Undead creatures and may not run (but may charge normally)."
           },
           {
-            "name": "Immune to Psychology (Zombies)",
-            "type": "Warband - Undead",
-            "description": "Zombies are not affected by psychology and never leave combat."
+            "name": "Immune to Psychology",
+            "type": "Psychology"
           },
           {
             "name": "Immune to Poison",
-            "type": "Warband - Undead",
-            "description": "Vampires are not affected by any poison."
+            "type": "Trait"
           },
           {
             "name": "No Pain (Zombies)",
