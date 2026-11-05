@@ -60,6 +60,9 @@ describe("WarbandRules", () => {
     );
     expect(dialog).toHaveTextContent("Hates all Skaven.");
     expect(within(dialog).queryByRole("button", { name: /^Edit |^Add rule$/ })).toBeNull();
+    // read only on the web too, it closes with its × as the drawers do
+    await user.click(within(dialog).getByRole("button", { name: "Close" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
   });
 
   it("opens them all from Warband rules", async () => {

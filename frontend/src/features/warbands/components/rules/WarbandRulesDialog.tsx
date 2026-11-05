@@ -62,6 +62,7 @@ export default function WarbandRulesDialog({
       kicker={warbandName}
       title="Warband rules"
       className="max-w-[720px]"
+      closeButton
     >
       <div className="flex flex-col">
         {rules.map((rule) =>
