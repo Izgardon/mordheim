@@ -21,7 +21,7 @@ export default function AddTemplateRules({
   open: boolean;
 }) {
   const template = useWarbandHireTemplate(campaignId, warbandId, open).data?.template;
-  const add = useRulesFromTemplate(campaignId, warbandId);
+  const add = useRulesFromTemplate(warbandId);
   if (!template?.missing_rules) return null;
   return (
     <button
