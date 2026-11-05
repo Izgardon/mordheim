@@ -605,6 +605,7 @@ Lines for one variant only:
 | marauders-of-chaos | kurgan | Hero equipment list | Bow 10 gc |
 | marauders-of-chaos | kurgan | Henchmen equipment list | Bow 10 gc |
 | marauders-of-chaos | hung | Hero equipment list | Warhorse 40 gc |
+| mercenaries | middenheim | Mercenary Equipment | Wolfcloak 10 gc |
 
 marauders-of-chaos: every hung hero has Ride [Animal].
 

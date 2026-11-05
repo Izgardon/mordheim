@@ -15,6 +15,7 @@ from catalogue_import.template_answers import (
     STYLE_NOTES,
     STYLES_AFTER,
     VARIANT_LINES,
+    VARIANT_ONLY,
 )
 from catalogue_import.template_lists import TAG, Fighter, ItemIndex, Price, Who, line_price, plain, read_note
 from catalogue_import.template_text import clean_rule, clean_title
@@ -160,7 +161,8 @@ def _variant_lines(
     slug: str, page: dict[str, Any], lists: list[dict[str, Any]], index: ItemIndex, log: ListLog
 ) -> None:
     """William's lines for one variant (VARIANT_LINES: the Kurgan's bows, the Hung's warhorses), each at the end of
-    its list, for that variant only."""
+    its list, for that variant only, and the book's lines only one variant may buy (VARIANT_ONLY: the Mercenaries'
+    Wolfcloak, Middenheim's)."""
     by_key = {entry["key"]: entry for entry in lists}
     for variant, list_key, name, cost in VARIANT_LINES.get(slug, []):
         item, _how = index.find(name, [page["name"]])
@@ -169,6 +171,13 @@ def _variant_lines(
             continue
         by_key[list_key]["lines"].append(_line(item, Price(cost), Who(), variant=variant))
         log.variant_lines.append((slug, variant, by_key[list_key]["name"], f"{item['name']} {cost} gc"))
+    for variant, list_key, name in VARIANT_ONLY.get(slug, []):  # a book line one variant only may buy (W11)
+        found = [line for line in by_key.get(list_key, {}).get("lines", []) if line["item"]["name"] == name]
+        if not found:
+            log.unmatched.append((slug, list_key, name))
+        for line in found:
+            line["variant"] = variant
+            log.variant_lines.append((slug, variant, by_key[list_key]["name"], f"{name} {line['cost']} gc"))
 
 
 def build_lists(

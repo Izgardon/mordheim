@@ -155,6 +155,9 @@ class SeedAllTests(TestCase):
         self.assertEqual(presets, {"reiklanders": "reikland", "middenheimers": "middenheim", "marienburgers": "marienburg", "ostermarkers": ""})  # fmt: skip
         swivel = TemplateListItem.objects.get(equipment_list__template__slug="pirates", item__name="Swivel Gun")
         self.assertEqual((swivel.cost, swivel.warband_max), (65, 1))
+        # the review (5 Nov 2026: W11): the Wolfcloak is Middenheim's line, not every Mercenary city's
+        wolfcloak = TemplateListItem.objects.get(equipment_list__template__slug="mercenaries", item__name="Wolfcloak")
+        self.assertEqual(wolfcloak.variant, "middenheim")
         owners = Special.objects.filter(template_fighter_links__isnull=False).values_list("owner_kind", flat=True)
         self.assertEqual(set(owners), {"warband", "general"})  # the templates' own; our Large, Wizard, Priest, shared
 

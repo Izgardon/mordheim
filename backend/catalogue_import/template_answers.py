@@ -79,6 +79,12 @@ VARIANT_LINES: dict[str, list[tuple[str, str, str, int]]] = {
         ("hung", "hero-equipment-list", "Warhorse", 40),
     ],
 }
+# A book line that only one variant may buy (the review, William, 5 Nov 2026: W11): page -> (variant, list key, our
+# item). The Mercenaries' Wolfcloak is on the list the three cities share, but the item names the Middenheimers alone
+# of the Mercenaries (its price is "the expense of traveling to Middenheim and taking part in a hunt")
+VARIANT_ONLY: dict[str, list[tuple[str, str, str]]] = {
+    "mercenaries": [("middenheim", "mercenary-equipment", "Wolfcloak")],
+}
 # Skills a variant gives every hero, by name (phase 3): the Hung's "all Heroes ... automatically have the Ride Warhorse
 # skill" is our Ride [Animal] (the mounted rules' Ride skill; the only special named Ride Warhorse is the Merchant
 # Caravans' Knights Vanguard's own)
