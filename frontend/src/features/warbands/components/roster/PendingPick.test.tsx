@@ -82,7 +82,7 @@ describe("A pick left for later", () => {
     expect(screen.queryByRole("option", { name: /Sand Walker/ })).not.toBeInTheDocument();
   });
 
-  it("offers general boons and banes, not a hired sword's, dramatis persona's or template fighter's own", async () => {
+  it("offers general boons and banes with the injuries, not a hired sword's, dramatis persona's or template fighter's own", async () => {
     fakeApi.on("GET /special/?campaign_id=1", [
       { id: 80, name: "Hatred", type: "Psychology", kind: "boon", owner_kind: "general" },
       { id: 81, name: "Stupid", type: "Animal", kind: "bane" },
@@ -93,7 +93,14 @@ describe("A pick left for later", () => {
         type: "Dramatis Persona - Bertha",
         owner_kind: "dramatis_persona",
       },
-      { id: 84, name: "Old Battle Wound", type: "Injury", kind: "bane", owner_kind: "general" },
+      {
+        id: 84,
+        name: "Old Battle Wound",
+        type: "Injury",
+        kind: "bane",
+        category: "injury",
+        owner_kind: "general",
+      },
       { id: 85, name: "Expert Swordsmen", type: "Warband - Mercenaries", owner_kind: "warband" },
     ]);
     renderWithQueryClient(pick("specials"));
@@ -101,6 +108,7 @@ describe("A pick left for later", () => {
     expect(screen.getAllByRole("option").map((option) => option.textContent)).toEqual([
       expect.stringContaining("Hatred"),
       expect.stringContaining("Stupid"),
+      expect.stringContaining("Old Battle Wound"),
     ]);
   });
 });

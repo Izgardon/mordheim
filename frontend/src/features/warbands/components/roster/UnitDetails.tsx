@@ -90,13 +90,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
       boxes: entryBoxes(entry, "spells", lists.spells),
     },
   ].filter((row) => row.boxes.length > 0);
-  const injuries: Row = {
-    key: "injuries",
-    label: "Injuries",
-    icon: "injuries",
-    boxes: entryBoxes(entry, "injuries", lists.injuries),
-  };
-  const all = [itemsRow, ...skillRows, injuries];
+  const all = [itemsRow, ...skillRows];
   const selectedRow = all.find((row) => row.key === open?.row);
   const selected = open && selectedRow ? selectedRow.boxes[open.index] : undefined;
 
@@ -121,7 +115,6 @@ export default function UnitDetails(props: UnitDetailsProps) {
   );
   const members = isGroup(entry) && !isCreature(entry);
   const showItems = lists.items.length > 0 || (canEdit && !isCreature(entry));
-  const showRest = injuries.boxes.length > 0 || members;
 
   return (
     <div className="flex flex-col gap-3 border-t border-line pt-3">
@@ -157,17 +150,14 @@ export default function UnitDetails(props: UnitDetailsProps) {
         {skillRows.length ? (
           <div className="flex flex-col gap-3.5">{skillRows.map((line) => row(line))}</div>
         ) : null}
-        {showRest ? (
+        {members ? (
           <div className="flex flex-col gap-3.5">
-            {injuries.boxes.length ? row(injuries) : null}
-            {members ? (
-              <GroupMembers
-                group={entry.unit}
-                campaignId={props.campaignId}
-                warbandId={props.warbandId}
-                canEdit={canEdit}
-              />
-            ) : null}
+            <GroupMembers
+              group={entry.unit}
+              campaignId={props.campaignId}
+              warbandId={props.warbandId}
+              canEdit={canEdit}
+            />
           </div>
         ) : null}
       </div>

@@ -130,9 +130,6 @@ export function xpInfo(entry: RosterUnit, campaign: CampaignSummary | null) {
 export const itemBoxKind = (item: Item): BoxTileKind =>
   item.beast_kind === "mount" ? "mount" : "item";
 
-/** A special that is a lasting injury (its type says so: the injury tables make them "Injury"). */
-export const isInjury = (special: { type?: string | null }) => /injur/i.test(special.type ?? "");
-
 /**
  * One line of a unit's Kills list: "Magister Halvard · Street Fight · round 2 · melee", with the
  * model who scored it for a henchmen group ("· by Kurt"). A kill logged after the fight has no
@@ -152,16 +149,14 @@ export function killLine(kill: UnitKill) {
     .join(" · ");
 }
 
-/** The open card's rows of boxes: items, skills, specials, spells and injuries. */
+/** The open card's rows of boxes: items, skills, specials (his injuries among them) and spells. */
 export function boxRows(entry: RosterUnit) {
   const { unit } = entry;
-  const specials = unit.specials ?? [];
   const spells = "spells" in unit ? (unit.spells ?? []) : [];
   return {
     items: isCreature(entry) ? [] : unit.items,
     skills: unit.skills ?? [],
-    specials: specials.filter((special) => !isInjury(special)),
-    injuries: specials.filter(isInjury),
+    specials: unit.specials ?? [],
     spells,
   };
 }

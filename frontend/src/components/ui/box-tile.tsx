@@ -3,18 +3,10 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * item: carried gear; mount: a mount (accent); injury: a lasting injury (danger); skill, special
- * and spell: each with its own accent; pending: a pick an advance left; quiet: a plain rule.
+ * item: carried gear; mount: a mount (accent); skill, special and spell: each with its own accent;
+ * pending: a pick an advance left; quiet: a plain rule.
  */
-export type BoxTileKind =
-  | "item"
-  | "mount"
-  | "injury"
-  | "skill"
-  | "special"
-  | "spell"
-  | "pending"
-  | "quiet";
+export type BoxTileKind = "item" | "mount" | "skill" | "special" | "spell" | "pending" | "quiet";
 
 const KIND_STYLES: Record<BoxTileKind, { box: string; name: string; type: string; icon: string }> =
   {
@@ -29,12 +21,6 @@ const KIND_STYLES: Record<BoxTileKind, { box: string; name: string; type: string
       name: "text-accent-hi",
       type: "text-accent-text",
       icon: "text-accent-hi",
-    },
-    injury: {
-      box: "border-danger-line bg-danger-bg",
-      name: "text-danger",
-      type: "text-danger",
-      icon: "text-danger",
     },
     skill: {
       box: "border-border border-l-kind-skill bg-transparent",
@@ -83,7 +69,7 @@ type BoxTileProps = {
 };
 
 /**
- * An item, skill, special, spell or injury box in a unit's rows, told apart by icon and accent. At
+ * An item, skill, special or spell box in a unit's rows, told apart by icon and accent. At
  * most 200 px wide (William): a long name or second line ends in "…", the full text in its title.
  */
 export function BoxTile({

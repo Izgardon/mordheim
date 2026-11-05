@@ -20,8 +20,8 @@ export type Box = BoxDetail & { boxKind: BoxTileKind; icon?: ReactNode; pending?
 export type Row = { key: string; label: string; icon: GameIconName; boxes: Box[] };
 
 /**
- * A unit's skill, special, spell or injury as its box shows it: a skill's `type` is the group it
- * comes through for him and `list` that group's icon (`cameThrough`).
+ * A unit's skill, special or spell as its box shows it: a skill's `type` is the group it comes
+ * through for him and `list` that group's icon (`cameThrough`).
  */
 export type Entry = {
   name: string;
@@ -40,18 +40,16 @@ const NOUN: Record<PendingList, string> = {
   spells: "Spell",
   specials: "Boon or bane",
 };
-const BOX_KIND: Record<PendingList | "injuries", BoxTileKind> = {
+const BOX_KIND: Record<PendingList, BoxTileKind> = {
   skills: "skill",
   specials: "special",
   spells: "spell",
-  injuries: "injury",
 };
 
 /** A box's icon: a skill's group, a special's category in its kind's colour; spells have none. */
-function entryIcon(list: PendingList | "injuries", entry: Entry): ReactNode {
+function entryIcon(list: PendingList, entry: Entry): ReactNode {
   if (list === "skills") return <SkillListIcon list={entry.list ?? "special"} />;
-  if (list === "specials" || list === "injuries")
-    return <SpecialIcon category={entry.category} kind={entry.kind} />;
+  if (list === "specials") return <SpecialIcon category={entry.category} kind={entry.kind} />;
   return undefined;
 }
 
@@ -66,11 +64,7 @@ const PENDING_ICON: Record<PendingList, ReactNode> = {
  * lore and his difficulty, "Difficulty 7 → 6" once he rolled it again), then the picks an
  * advance left for later, each picked from its box.
  */
-export function entryBoxes(
-  unit: RosterUnit,
-  list: PendingList | "injuries",
-  entries: Entry[]
-): Box[] {
+export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]): Box[] {
   return [
     ...entries.map((entry) => {
       const difficulty = spellDifficulty(entry.dc, entry.dc_change);
@@ -85,14 +79,12 @@ export function entryBoxes(
         icon: entryIcon(list, entry),
       };
     }),
-    ...(list === "injuries"
-      ? []
-      : Array.from({ length: pendingPicks(unit, list) }, () => ({
-          name: `${NOUN[list]} to choose`,
-          kind: "Pick one",
-          boxKind: "pending" as BoxTileKind,
-          icon: PENDING_ICON[list],
-          pending: list,
-        }))),
+    ...Array.from({ length: pendingPicks(unit, list) }, () => ({
+      name: `${NOUN[list]} to choose`,
+      kind: "Pick one",
+      boxKind: "pending" as BoxTileKind,
+      icon: PENDING_ICON[list],
+      pending: list,
+    })),
   ];
 }

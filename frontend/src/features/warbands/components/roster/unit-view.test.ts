@@ -4,6 +4,7 @@ import type { HenchmenGroup, UnitKill } from "../../types/warband-types";
 import { makeHero } from "@/test/warband-fixtures";
 
 import {
+  boxRows,
   formatXp,
   killLine,
   memberName,
@@ -105,5 +106,24 @@ describe("statValues", () => {
     });
     const { values } = statValues({ kind: "hero", unit: hero });
     expect([values.A, values.WS, values.S, values.T]).toEqual(["2(2)", "-", 3, "4*"]);
+  });
+});
+
+describe("boxRows", () => {
+  it("keeps his injuries in his one Boons & Banes list, in their order", () => {
+    const hero = makeHero({
+      specials: [
+        { id: 1, name: "Hatred", type: "Psychology", kind: "boon", category: "aura" },
+        { id: 2, name: "Old Battle Wound", type: "Injury", kind: "bane", category: "injury" },
+        { id: 3, name: "Large", type: "Trait", kind: "trait", category: "body" },
+      ],
+    });
+    const rows = boxRows({ kind: "hero", unit: hero });
+    expect(rows.specials.map((special) => special.name)).toEqual([
+      "Hatred",
+      "Old Battle Wound",
+      "Large",
+    ]);
+    expect(Object.keys(rows)).toEqual(["items", "skills", "specials", "spells"]);
   });
 });

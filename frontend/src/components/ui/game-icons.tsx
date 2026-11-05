@@ -2,7 +2,6 @@ import type { IconType } from "react-icons";
 import {
   GiBeamsAura,
   GiBiceps,
-  GiBleedingWound,
   GiBlunderbuss,
   GiBowArrow,
   GiBreastplate,
@@ -57,7 +56,6 @@ export const GAME_ICONS = {
   skills: GiRuneStone, // the special lists' icon (William: "match the special skill icon in the pills")
   specials: GiYinYang, // Boons & Banes: good and bad
   spells: GiSpellBook,
-  injuries: GiBleedingWound,
   // the info lines: the warband's (Rating, Gold, Units, Record) and the overview's stats
   rating: GiLaurels,
   units: GiThreeFriends,

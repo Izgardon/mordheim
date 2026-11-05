@@ -20,17 +20,17 @@ import { buildAvailableSkillsPayload } from "../../../utils/warband-utils";
 import { boonBaneOptions } from "../boon-bane-options";
 import { useItemLabel } from "../../../hooks/units/useItemLabel";
 import UnitSectionLabel from "../UnitSectionLabel";
-import { isInjury, type RosterUnit } from "../unit-view";
+import type { RosterUnit } from "../unit-view";
 import EditPickList from "./EditPickList";
-import type { Named, UnitEditDraft } from "./useUnitEditDraft";
+import type { UnitEditDraft } from "./useUnitEditDraft";
 
 const heading = (label: string, icon: GameIconName) => (
   <UnitSectionLabel icon={icon}>{label}</UnitSectionLabel>
 );
 
 /**
- * The edit form's lists as a 2 × 2 grid (William): Items, Skills, Boons & Banes, then Spells for a
- * caster (or one who has some) and Injuries when he has any. One column on a phone.
+ * The edit form's lists as a 2 × 2 grid (William): Items, Skills, Boons & Banes (his injuries
+ * among them), then Spells for a caster (or one who has some). One column on a phone.
  */
 export default function EditLists({
   entry,
@@ -69,21 +69,6 @@ export default function EditLists({
   const spellRows = warnedLast(spells.map((spell) => spellOption(spell, settings)));
   // a hired sword's or dramatis persona's own rule isn't offered; one he has keeps its chip
   const heldSpecials = specials.map((special) => specialOption(special, settings));
-  const rules = lists.specials.filter((special) => !isInjury(special));
-  const injuries = lists.specials.filter(isInjury);
-  // a new pick keeps its type, which says whether it is an injury
-  const typed = (entry: Named) =>
-    entry.type === undefined
-      ? { ...entry, type: specials.find((s) => s.id === entry.id)?.type }
-      : entry;
-  const setSpecials = (next: Named[], injured: boolean) =>
-    setLists((c) => ({
-      ...c,
-      specials: [
-        ...c.specials.filter((special) => isInjury(special) !== injured),
-        ...next.map(typed),
-      ],
-    }));
   const caster = "caster" in draft ? (String(draft.caster) as HeroCaster) : "No";
   const showSpells = kind !== "henchmen_group" && (caster !== "No" || lists.spells.length > 0);
 
@@ -135,10 +120,10 @@ export default function EditLists({
         title={heading("Boons & Banes", "specials")}
         noun="boon or bane"
         plural="boons and banes"
-        entries={rules}
+        entries={lists.specials}
         options={boonBaneOptions(specials, settings)}
         known={heldSpecials}
-        onChange={(next) => setSpecials(next, false)}
+        onChange={(next) => setLists((c) => ({ ...c, specials: next }))}
         {...picks("pending_specials")}
       />
       {showSpells ? (
@@ -149,17 +134,6 @@ export default function EditLists({
           options={spellRows}
           onChange={(next) => setLists((c) => ({ ...c, spells: next }))}
           {...picks("pending_spells")}
-        />
-      ) : null}
-      {injuries.length ? (
-        <EditPickList
-          title={heading("Injuries", "injuries")}
-          noun="injury"
-          plural="injuries"
-          entries={injuries}
-          options={boonBaneOptions(specials, settings, true)}
-          known={heldSpecials}
-          onChange={(next) => setSpecials(next, true)}
         />
       ) : null}
     </div>
