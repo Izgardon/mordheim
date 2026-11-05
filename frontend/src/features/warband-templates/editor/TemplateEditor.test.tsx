@@ -10,7 +10,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
-import { makeEditorAnswer, makeEditorTemplate } from "@/test/template-editor-fixtures";
+import {
+  makeEditorAnswer,
+  makeEditorFighter,
+  makeEditorTemplate,
+} from "@/test/template-editor-fixtures";
 import { setupUser } from "@/test/user-event";
 
 import TemplateEditor from "./TemplateEditor";
@@ -140,6 +144,31 @@ describe("The template editor", () => {
         { title: "Lantern Bearer", description: "", variant: "reikland", warband_type_id: null },
       ],
     });
+  });
+
+  it("offers only heroes as an upgrade's named fighters: upgrades are bought for heroes", async () => {
+    const brethren = makeEditorFighter({
+      id: 8,
+      key: "brethren",
+      kind: "henchman",
+      name: "Brother",
+    });
+    fakeApi.on(
+      EDITOR,
+      makeEditorAnswer({
+        template: makeEditorTemplate({
+          fighters: [makeEditorFighter(), { ...brethren, plural: "Brethren" }],
+        }),
+      })
+    );
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+    await user.click(await screen.findByRole("button", { name: /^Upgrades/ }));
+    await user.click(screen.getByRole("button", { name: "Upgrade" }));
+    await user.selectOptions(screen.getByRole("combobox", { name: "Who may take it" }), "named");
+    const form = screen.getByRole("group", { name: "New upgrade" });
+    expect(within(form).getByRole("button", { name: "Champion" })).toBeInTheDocument();
+    expect(within(form).queryByRole("button", { name: "Brethren" })).toBeNull();
   });
 
   it("says what Revert loses before it goes back to the book", async () => {

@@ -12,8 +12,9 @@ import WhoField from "./WhoField";
 
 /**
  * One upgrade's form: its group, the special it gives (picked, or written as the template's own),
- * its cost (empty for none in the book, 0 for free) and cost note, who may take it, the most of
- * its group per fighter, later ones at double, and bought only when he is recruited.
+ * its cost (empty for none in the book, 0 for free) and cost note, who may take it (of the heroes:
+ * upgrades are bought for heroes), the most of its group per fighter, later ones at double, and
+ * bought only when he is recruited.
  */
 export default function UpgradeForm({
   campaignId,
@@ -106,7 +107,7 @@ export default function UpgradeForm({
       </div>
       <WhoField
         who={draft.who}
-        fighters={template.fighters}
+        fighters={template.fighters.filter((fighter) => fighter.kind === "hero")}
         whoText={draft.whoText}
         onChange={(who) => set({ who, whoText: "" })}
       />
