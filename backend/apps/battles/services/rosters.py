@@ -6,14 +6,19 @@ mid-battle stays in it. Every unit kind is read in one query plus its link table
 Each unit carries its mount, pets and the Move and save its mount gives it (`effectiveStats`, beside its own
 `stats`), and a group recruited from a creature its beast and kind, so the snapshot keeps them too. A mounted group
 carries its mount warnings (`mountWarnings`, the warband page's), which prebattle shows as a note: never a block.
+A skill or special with a pre-battle roll carries its dice and text, and an item its shared rules' (`prebattleRolls`,
+read with the copy), which prebattle shows under the unit (core/models.py: PrebattleRoll).
 """
 
 from collections import defaultdict
 from collections.abc import Iterable
 from typing import Any
 
-from django.db.models import F, Prefetch
+from django.contrib.postgres.expressions import ArraySubquery
+from django.db.models import F, OuterRef, Prefetch
+from django.db.models.functions import JSONObject
 
+from apps.items.models import ItemRuleLink
 from apps.skills.access import access_names
 from apps.warbands.models import (
     Henchman,
@@ -49,6 +54,9 @@ def _item_entries(links: Iterable) -> list[dict]:
         existing = counts.get(key)
         if existing is None:
             counts[key] = {"id": item.id, "name": item.name, "count": 1, "singleUse": bool(item.single_use)}
+            rolls = getattr(link, "item_rolls", None)
+            if rolls:
+                counts[key]["prebattleRolls"] = rolls
             continue
         existing["count"] += 1
         existing["singleUse"] = existing["singleUse"] or bool(item.single_use)
@@ -59,12 +67,17 @@ def _single_use(items: list[dict]) -> list[dict]:
     return [{"id": item["id"], "name": item["name"], "quantity": item["count"]} for item in items if item["singleUse"]]
 
 
+def _prebattle(rule) -> dict:
+    """A skill's or special's pre-battle roll, which prebattle shows under the unit (none: nothing)."""
+    return {"prebattleRoll": rule.prebattle_roll, "prebattleText": rule.prebattle_text} if rule.prebattle_roll else {}
+
+
 def _named(links: Iterable, attr_name: str) -> list[dict]:
     entries = []
     for link in links:
         entry = getattr(link, attr_name, None)
         if entry and entry.id:
-            entries.append({"id": entry.id, "name": entry.name})
+            entries.append({"id": entry.id, "name": entry.name, **_prebattle(entry)})
     return entries
 
 
@@ -257,9 +270,18 @@ def _by_warband(rows: Iterable, entry) -> defaultdict[int, list[dict]]:
     return grouped
 
 
+def _item_rolls() -> ArraySubquery:
+    """A copy's item's shared rules with a pre-battle roll, in the item's order, read with the copy."""
+    rules = ItemRuleLink.objects.filter(item_id=OuterRef("item_id"), rule__prebattle_roll__gt="")
+    columns = JSONObject(rule="rule__name", roll="rule__prebattle_roll", text="rule__prebattle_text")
+    return ArraySubquery(rules.order_by("position", "id").values(entry=columns))
+
+
 def _items(relation: str, model) -> Prefetch:
-    """A kind's copies in row order with their items, each Animal item's beast and its entries: one query."""
-    return Prefetch(relation, queryset=with_beasts(model.objects.all()).order_by("id"))
+    """A kind's copies in row order with their items, each Animal item's beast and its entries, and their items'
+    pre-battle rolls: one query."""
+    copies = with_beasts(model.objects.all()).annotate(item_rolls=_item_rolls())
+    return Prefetch(relation, queryset=copies.order_by("id"))
 
 
 def _live_rosters(warband_ids: list[int]) -> tuple[defaultdict, defaultdict, defaultdict]:
