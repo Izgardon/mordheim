@@ -33,7 +33,7 @@ const SECTION_VIEWS: Record<EditorSection, (props: SectionProps) => JSX.Element>
   upgrades: UpgradesSection,
 };
 
-/** The section chips, each with its warnings' count. */
+/** The section chips, each with its warnings' count; they wrap on a phone rather than scroll. */
 function SectionChips({
   answer,
   section,
@@ -44,11 +44,7 @@ function SectionChips({
   onPick: (section: EditorSection) => void;
 }) {
   return (
-    <div
-      role="group"
-      aria-label="Section"
-      className="-mx-1 flex shrink-0 gap-1.5 overflow-x-auto px-1 pb-0.5"
-    >
+    <div role="group" aria-label="Section" className="flex shrink-0 flex-wrap gap-1.5">
       {SECTIONS.map(({ id, label }) => {
         const warned = warningsFor(answer.warnings, id).length;
         return (
