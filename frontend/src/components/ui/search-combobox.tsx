@@ -55,6 +55,8 @@ export type SearchComboboxProps = {
   onDismiss?: () => void;
   /** At most this many rows; typing finds the rest. */
   limit?: number;
+  /** A pick closes the list (a single pick: the field stays for the next, closed). */
+  closeOnPick?: boolean;
 };
 
 const CAPTION =
@@ -91,6 +93,7 @@ export function SearchCombobox(props: SearchComboboxProps) {
     else return;
     setTyped("");
     setActive(0);
+    if (props.closeOnPick) setOpen(false);
   };
   const move = (by: number) => {
     setOpen(true);

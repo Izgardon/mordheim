@@ -110,6 +110,17 @@ describe("SearchCombobox", () => {
 });
 
 describe("SearchSelect", () => {
+  it("closes its list after a pick, also when the field stays empty for the next (L4)", async () => {
+    const onChange = vi.fn();
+    render(<SearchSelect label="Warband type" value={null} options={SKILLS} onChange={onChange} />);
+    const input = screen.getByRole("combobox", { name: "Warband type" });
+    await userEvent.click(input);
+    await userEvent.click(screen.getByRole("option", { name: /Quick Shot/ }));
+    expect(onChange).toHaveBeenCalledWith(SKILLS[1]);
+    expect(input).toHaveAttribute("aria-expanded", "false");
+    expect(screen.queryByRole("listbox")).toBeNull();
+  });
+
   it("shows the value with its subtitle, searches in its place, and clears", async () => {
     const onChange = vi.fn();
     const { rerender } = render(

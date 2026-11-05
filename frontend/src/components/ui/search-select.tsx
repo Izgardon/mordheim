@@ -46,7 +46,8 @@ function OptionText({ option, clamp = false }: { option: SearchOption; clamp?: b
 
 /**
  * Picks one entry (a race, a skill group, a warband type): the value shows its title and subtitle,
- * pressing it opens the search in its place, and `clearLabel` adds a × that empties it.
+ * pressing it opens the search in its place, and `clearLabel` adds a × that empties it. A pick
+ * closes the list, also where the field stays empty for the next pick (the editor's types).
  */
 export function SearchSelect({
   value,
@@ -66,6 +67,7 @@ export function SearchSelect({
       <SearchCombobox
         {...picker}
         autoFocus={searching}
+        closeOnPick
         onPick={(option) => {
           onChange(option);
           setSearching(false);
