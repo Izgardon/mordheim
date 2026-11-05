@@ -42,8 +42,8 @@ class SpecialKindTests(TestCase):
         own = lookups.special({"name": "Hard to Kill", "description": "Hard to kill."}, "Ogre Bodyguard")
         assert own is not None
         self.assertEqual((own.type, own.kind), ("Hired Sword - Ogre Bodyguard", BOON))
-        stale = Special.objects.create(name="Bicker", type="Animal")  # seeded before it had a kind: a trait
-        found = BookLookups().special("Bicker", "Gnoblar")
+        stale = Special.objects.create(name="Bicker (Gnoblar)", type="Animal")  # seeded before it had a kind: a trait
+        found = BookLookups().special("Bicker (Gnoblar)", "Gnoblar Fighter")
         assert found is not None
         stale.refresh_from_db()
         self.assertEqual((found.id, stale.kind), (stale.id, BANE))

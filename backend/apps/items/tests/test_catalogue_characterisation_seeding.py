@@ -94,9 +94,9 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                # special.json's 24, 3 injury specials, the 18 shared (Fear, the mutations), the templates' 405 and the
-                # hired swords' and personae's own 254 (next step 12)
-                "Special": 704,
+                # special.json's 25, 3 injury specials, the 18 shared (Fear, the mutations), the templates' 405 and the
+                # hired swords' and personae's own 255 (next step 12; May not run, no longer the Nightmare's)
+                "Special": 706,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -210,6 +210,26 @@ class SeedAllTests(TestCase):
         self.assertEqual([text.split(" are ")[0] for text in texts], ["Nurglings", "Nurglings"])
         rat_ogres = book.get(name="Stupidity (Rat Ogre)").template_fighter_links.values_list("fighter__template__slug", flat=True)  # fmt: skip
         self.assertEqual(sorted(rat_ogres), ["skaven", "skaven-of-clan-pestilens"])
+
+    def test_a_rule_one_beast_holds_is_named_for_it(self):
+        # the review (5 Nov 2026: W7): a book rule typed Animal that one beast holds reads "<rule> (<beast>)" in the
+        # Boons & Banes pickers ("Save (Temple Dog)", the Rhinox's rarity rule "Rarity (Rhinox)"); one that several
+        # hold keeps its name (Battle Schooled), and so does Animal, every animal's
+        animal = Special.objects.filter(campaign__isnull=True, type="Animal", archived_at__isnull=True)
+        self.assertEqual({row.name for row in animal if not row.name.endswith(")")}, {"Animal", "Battle Schooled"})
+
+        def rules(beast: str) -> set[str]:
+            entry = BestiaryEntry.objects.get(name=beast)
+            return set(entry.bestiary_entry_specials.values_list("special__name", flat=True))
+
+        temple_dog = {"Fear", "Save (Temple Dog)", "Ferocious Charge (Temple Dog)", "Magical attacks (Temple Dog)"}
+        self.assertEqual(rules("Temple Dog"), temple_dog | {"Immune to Poison"})
+        self.assertEqual(rules("War Boar"), {"Ferocious Charge (War Boar)", "Thick Skinned (War Boar)"})
+        self.assertEqual(rules("Rhinox"), {"Rarity (Rhinox)", "Fear", "Bad Tempered (Rhinox)", "Thunderous Charge (Rhinox)"})  # fmt: skip
+        self.assertEqual(rules("Cold One"), {"Fear", "Stupidity", "Scaly (Cold One)"})
+        self.assertEqual(rules("Gnoblar Fighter"), {"Weapons/Armour (Gnoblar)", "Largely Insignificant (Gnoblar)", "Bicker (Gnoblar)"})  # fmt: skip
+        charge = Special.objects.get(campaign__isnull=True, name="Ferocious Charge (Temple Dog)").description
+        self.assertIn("+1 Strength", charge)  # the Temple Dog's own, not the boar's +2S
 
     def test_the_lizardmens_oversized_jaws_and_poison_glands_are_body(self):
         # William, 5 Nov 2026: two of the Sacred markings are bodily (data/special-categories.json), not auras

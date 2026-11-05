@@ -51,8 +51,8 @@ class BookCategoryTests(TestCase):
         self.assertEqual(book_category("Immune to Poison", MUTATION_TYPE), MUTATION)  # the type before the name
         self.assertEqual(book_category("Tentacle", CULT, "Mutations"), MUTATION)  # one the editor writes
         self.assertEqual(book_category("Tentacle", CULT), AURA)  # a fighter's rule of the name isn't bought
-        self.assertEqual(book_category("Thick Skinned", "Animal"), BODY)  # the Animal type's rules
-        self.assertEqual(book_category("Stubborn", "Animal"), AURA)  # a mount's mental rule, by its line
+        self.assertEqual(book_category("Thick Skinned (War Boar)", "Animal"), BODY)  # the Animal type's rules
+        self.assertEqual(book_category("Stubborn (Mule)", "Animal"), AURA)  # a mount's mental rule, by its line
         self.assertEqual(book_category("Fear", "Warband - Skaven"), AURA)
         self.assertEqual(book_category(" large ", "Trait"), BODY)  # the review file, read loosely
         self.assertEqual(book_category("Bloated Foulness", "Warband - Carnival of Chaos", "Blessings of Nurgle"), MUTATION)  # fmt: skip
@@ -65,9 +65,11 @@ class BookCategoryTests(TestCase):
     def test_seeding_the_book_sets_each_category(self):
         call_command("seed_spells_and_special", stdout=StringIO())
         book = Special.objects.filter(campaign=None)
-        names = ("Large", "Wizard", "Bicker", "Thick Skinned")
+        names = ("Large", "Wizard", "Bicker (Gnoblar)", "Thick Skinned (War Boar)")
         categories = dict(book.filter(name__in=names).values_list("name", "category"))
-        self.assertEqual(categories, {"Large": BODY, "Wizard": AURA, "Bicker": AURA, "Thick Skinned": BODY})
+        self.assertEqual(
+            categories, {"Large": BODY, "Wizard": AURA, "Bicker (Gnoblar)": AURA, "Thick Skinned (War Boar)": BODY}
+        )
         self.assertEqual(set(book.filter(type=INJURY_TYPE).values_list("category", flat=True)), {INJURY})
 
     def test_a_hired_swords_own_special_takes_its_category(self):

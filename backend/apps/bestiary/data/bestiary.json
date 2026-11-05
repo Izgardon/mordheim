@@ -19,9 +19,9 @@
     "large": false,
     "caster": "No",
     "specials": [
-      "Weapons/Armour",
-      "Largely Insignificant",
-      "Bicker"
+      "Weapons/Armour (Gnoblar)",
+      "Largely Insignificant (Gnoblar)",
+      "Bicker (Gnoblar)"
     ],
     "skills": [],
     "spells": [],
@@ -133,7 +133,7 @@
     "specials": [
       "Fear",
       "Stupid",
-      "Scaly"
+      "Scaly (Cold One)"
     ],
     "skills": [],
     "spells": [],
@@ -205,8 +205,8 @@
     "large": false,
     "caster": "No",
     "specials": [
-      "Poisoned Attack",
-      "Wall Walk"
+      "Poisoned Attack (Giant Spider)",
+      "Wall Walk (Giant Spider)"
     ],
     "skills": [],
     "spells": [],
@@ -276,10 +276,10 @@
     "large": false,
     "caster": "No",
     "specials": [
-      "Slow",
-      "Stubborn",
-      "Ornery",
-      "Non-combatant"
+      "Slow (Mule)",
+      "Stubborn (Mule)",
+      "Ornery (Mule)",
+      "Non-combatant (Mule)"
     ],
     "skills": [],
     "spells": [],
@@ -314,7 +314,7 @@
     "large": false,
     "caster": "No",
     "specials": [
-      "May Not Run",
+      "May Not Run (Nightmare)",
       "Immune to Poison",
       "Immune to Psychology (Mount)"
     ],
@@ -352,10 +352,10 @@
     "large": false,
     "caster": "No",
     "specials": [
-      "Rhinox",
+      "Rarity (Rhinox)",
       "Fear",
-      "Bad Tempered",
-      "Thunderous Charge"
+      "Bad Tempered (Rhinox)",
+      "Thunderous Charge (Rhinox)"
     ],
     "skills": [],
     "spells": [],
@@ -427,9 +427,9 @@
     "caster": "No",
     "specials": [
       "Fear",
-      "Save",
-      "Ferocious Charge",
-      "Magical attacks",
+      "Save (Temple Dog)",
+      "Ferocious Charge (Temple Dog)",
+      "Magical attacks (Temple Dog)",
       "Immune to Poison"
     ],
     "skills": [],
@@ -467,8 +467,8 @@
     "large": false,
     "caster": "No",
     "specials": [
-      "Ferocious Charge",
-      "Thick Skinned"
+      "Ferocious Charge (War Boar)",
+      "Thick Skinned (War Boar)"
     ],
     "skills": [],
     "spells": [],
