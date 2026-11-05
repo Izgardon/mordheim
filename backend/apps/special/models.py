@@ -30,6 +30,9 @@ class Special(CatalogueEntry):
     category = models.CharField(max_length=8, choices=CATEGORY_CHOICES, default=AURA)
     # a hired sword's or dramatis persona's own rule, left out of the Boons & Banes pickers, or a general one (kinds.py)
     owner_kind = models.CharField(max_length=16, choices=OWNER_KIND_CHOICES, default=GENERAL)
+    # its price in gold crowns where a list sells it (the mutations: shared.py), shown beside it; null: none. Nothing
+    # charges it: a warband template's upgrade keeps its own cost, and a picker adds the special for nothing
+    cost = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         db_table = "special"

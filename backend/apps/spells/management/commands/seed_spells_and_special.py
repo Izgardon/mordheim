@@ -15,6 +15,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from apps.battles.services.injuries import granted_specials
+from apps.campaigns.models import CampaignType
 from apps.core.book_lookups import lookup_key
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import IMPORT_OUT, read_json_list, upsert_global
@@ -109,18 +110,23 @@ class Command(BaseCommand):
         return created, updated
 
     def _seed_shared_specials(self) -> tuple[int, int, int]:
-        """Each shared special as the book's general special of its name and type, with its wording, its kind and its
-        category the book's classification; then every other unarchived book special of a shared name or alias, or of
-        a rule kept apart under a name of its own (a mount's Fear, a fighter's Cause Fear, the Nightmare's Immune to
-        Psychology (Mount) seeded before), is archived, since its owners link the shared one or their own now."""
+        """Each shared special as the book's general special of its name and type, with its wording, its price (a
+        mutation's, where a list sells it), its setting (none: Mordheim's; one not seeded yet reads as none), its kind
+        and its category the book's classification; then every other unarchived book special of a shared name or
+        alias, or of a rule kept apart under a name of its own (a mount's Fear, a fighter's Cause Fear, the
+        Nightmare's Immune to Psychology (Mount) seeded before), is archived, since its owners link the shared one or
+        their own now."""
         data = read_shared()
         entries = data["specials"]
+        settings = dict(CampaignType.objects.values_list("slug", "id"))
         created = updated = 0
         shared: list[int] = []
         for entry in entries:
             name, entry_type = entry["name"], entry["type"]
             defaults = {
                 "description": entry["description"],
+                "cost": entry.get("cost"),
+                "campaign_type_id": settings.get(entry.get("setting") or ""),
                 "kind": book_kind(name),
                 "category": book_category(name, entry_type),
                 "owner_kind": GENERAL,
