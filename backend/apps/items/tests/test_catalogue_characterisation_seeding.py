@@ -203,6 +203,8 @@ class SeedAllTests(TestCase):
         )
         hideous = TemplateUpgrade.objects.filter(special__name="Hideous").values_list("cost", flat=True)
         self.assertEqual(set(hideous), {40})
+        # the review (5 Nov 2026): a Carnival Tainted One read "The mutant causes fear." too
+        self.assertEqual(book.get(name="Hideous").description, "The model causes fear.")
         apart = book.filter(name__regex=r"^(Fear|Stupidity|Immune to (Psychology|Poison)) \(")
         kept = dict(apart.values_list("name", "owner_kind"))
         self.assertEqual(

@@ -23,7 +23,13 @@
     {"name": "Spines", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
     {"name": "Scorpion Tail", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
     {"name": "Extra Arm", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
-    {"name": "Hideous", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {
+      "name": "Hideous",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "subject": {"The mutant": "The model"},
+      "aliases": []
+    },
     {
       "name": "Stream of Corruption",
       "type": "Mutation",
