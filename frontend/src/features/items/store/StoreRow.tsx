@@ -80,8 +80,10 @@ export default function StoreRow({ offer, his, ...props }: StoreRowProps) {
             ))}
           </div>
           {props.isMobile ? null : (
-            <div className={cn("flex w-24 shrink-0 flex-col text-right", his?.off && "opacity-60")}>
-              <span className="font-mono text-sm font-bold text-head">
+            <div
+              className={cn("flex min-w-24 shrink-0 flex-col text-right", his?.off && "opacity-60")}
+            >
+              <span className="whitespace-nowrap font-mono text-sm font-bold text-head">
                 {priceLabel(availability)}
               </span>
               <span
