@@ -158,16 +158,14 @@
       "type": "Favour of Tchar",
       "from": "Mutiny in Marienburg, p162",
       "cost": 35,
-      "setting": "mutiny-in-marienburg",
       "text": "Unless it already has a bite attack, the model makes an extra bite attack in each close combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
-      "aliases": []
+      "aliases": ["Beaked"]
     },
     {
-      "name": "Burning Body (Tchar)",
+      "name": "Burning Body",
       "type": "Favour of Tchar",
       "from": "Mutiny in Marienburg, p162",
       "cost": 40,
-      "setting": "mutiny-in-marienburg",
       "text": "The model may carry no weapons or armour unless they are magical or of Gromril or Ithilmar. It suffers none of the usual penalties for fighting with its fists, and always counts as having a lantern. At the end of every turn, roll a D6 for each model in base contact with it: on a 4+ that model is set on fire (Border Town Burning, page 70).",
       "aliases": []
     },
@@ -225,11 +223,10 @@
       "aliases": ["Iron Hard Skin"]
     },
     {
-      "name": "Fangs (Arkhar)",
+      "name": "Fangs",
       "type": "Bounty of Arkhar",
       "from": "Mutiny in Marienburg, Bounties of Arkhar",
       "cost": 35,
-      "setting": "mutiny-in-marienburg",
       "text": "Unless it already has a bite attack, the model makes an extra bite attack in each hand-to-hand combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
       "aliases": []
     },
@@ -265,15 +262,6 @@
       "aliases": []
     },
     {
-      "name": "Beaked",
-      "type": "Mutation",
-      "from": "the random mutation table",
-      "text": "Unless it already has a bite attack, the model makes an extra bite attack in each hand-to-hand combat phase.",
-      "apart_from": "Beak",
-      "why": "Tchar's Beak always strikes last.",
-      "aliases": []
-    },
-    {
       "name": "Beweaponed Extremities",
       "type": "Mutation",
       "from": "the random mutation table",
@@ -285,15 +273,6 @@
       "type": "Mutation",
       "from": "the random mutation table",
       "text": "Bright stripes, spots or other patterns on the model's skin. No effect on play.",
-      "aliases": []
-    },
-    {
-      "name": "Burning Body",
-      "type": "Mutation",
-      "from": "the random mutation table",
-      "text": "The model may carry no weapons or armour unless they are magical or of Gromril or Ithilmar. It suffers none of the usual penalties for fighting with its fists (no -1 Strength, and enemies get no +1 to their armour saves), and always counts as having a lantern. Every model in base contact with it suffers an automatic Strength 2 hit at the start of each close combat phase; the flames never cause critical hits.",
-      "apart_from": "Burning Body (Tchar)",
-      "why": "An automatic Strength 2 hit on each model in base contact; Tchar's sets them on fire on a 4+.",
       "aliases": []
     },
     {
@@ -315,15 +294,6 @@
       "type": "Mutation",
       "from": "the random mutation table",
       "text": "The model's Toughness is halved, rounding up.",
-      "aliases": []
-    },
-    {
-      "name": "Fangs",
-      "type": "Mutation",
-      "from": "the random mutation table",
-      "text": "Unless it already has a bite attack, the model makes an extra bite attack at its normal Strength in each hand-to-hand combat phase.",
-      "apart_from": "Fangs (Arkhar)",
-      "why": "Arkhar's Fangs always strike last.",
       "aliases": []
     },
     {

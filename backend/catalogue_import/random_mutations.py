@@ -4,9 +4,11 @@
 
 Each result gives one shared special (`apps/special/data/shared-specials.json`), matched by what it does, not its
 name: a result that does what a special we have does is that special, the table's name its alias (Acid Spray is Spit
-Acid, Eyestalks is Hideous, Moronic is Stupidity), and keeps its family and its price; one that does what none does is
-a special of its own, worded from the table, kept apart (`apart_from`) from a family's of its name or like it whose
-effect differs (Burning Body and Burning Body (Tchar)). A result that names no shared special stops the build."""
+Acid, Eyestalks is Hideous, Moronic is Stupidity; William, 5 Nov 2026: Beaked is Tchar's Beak, Fangs and Burning Body
+Arkhar's and Tchar's), and keeps its family and its price, in Mordheim 1a as every special the table gives; one that
+does what none does is a special of its own, worded from the table, kept apart (`apart_from`) from a family's of its
+name or like it whose effect differs (Plague Bearer and Plague Carrier). A result that names no shared special stops
+the build."""
 
 from typing import Any
 

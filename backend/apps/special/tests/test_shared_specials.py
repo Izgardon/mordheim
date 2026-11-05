@@ -42,6 +42,7 @@ class SharedSeedTests(TestCase):
         self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, BOON, MUTATION))
         self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))
         self.assertIn("In addition, the model is immune to all poisons.", rot.description)
+        self.assertIn("successful to wound roll of 6", rot.description)  # William, 5 Nov 2026: "Use the to wound rot"
         mutations = Special.objects.filter(type__in=families)
         self.assertEqual({row.category for row in mutations}, {MUTATION})
         bought = mutations.filter(cost__isnull=False)  # every priced one helps him; the random table's may not
@@ -49,9 +50,9 @@ class SharedSeedTests(TestCase):
         kinds = dict(mutations.filter(name__in=("Atrophy", "Warts", "Horns")).values_list("name", "kind"))
         self.assertEqual(kinds, {"Atrophy": BANE, "Warts": TRAIT, "Horns": BOON})
         counted = Counter(mutations.values_list("type", flat=True))
-        # the generic list's 15 and the random table's 15 of its own; the Nurgle family 7, Tchar's 6 and Arkhar's 6
+        # the generic list's 15 and the random table's 12 of its own; the Nurgle family 7, Tchar's 6 and Arkhar's 6
         self.assertEqual(
-            counted, {"Mutation": 30, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
+            counted, {"Mutation": 27, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
         )
         self.assertFalse(mutations.filter(description__icontains="Tainted One").exists())  # a general subject
         self.assertEqual((claw.cost, rot.cost, rows["Mark of Nurgle"].cost, fear.cost), (50, 50, 35, None))
@@ -59,17 +60,18 @@ class SharedSeedTests(TestCase):
 
     def test_mutiny_in_marienburgs_own_are_its_settings_and_the_rest_mordheim_1as(self):
         # William, 5 Nov 2026: the generic list and the Nurgle family are 1a's, and every special the random table
-        # gives; the rest of the Favours of Tchar and the Bounties of Arkhar are Mutiny in Marienburg's
+        # gives (Tchar's Beak and Burning Body and Arkhar's Fangs among them); the rest of the Favours of Tchar and the
+        # Bounties of Arkhar are Mutiny in Marienburg's
         mim = CampaignType.objects.create(slug="mutiny-in-marienburg", name="Mutiny in Marienburg")
         seed()
         theirs = Special.objects.filter(campaign_type=mim).values_list("name", flat=True)
         self.assertEqual(
-            set(theirs),
-            {"Beak", "Burning Body (Tchar)", "Electrical Touch", "Eye of Tchar", "Mer-creature", "Telekinesis"}
-            | {"Centauroid", "Fangs (Arkhar)"},
+            set(theirs), {"Electrical Touch", "Eye of Tchar", "Mer-creature", "Telekinesis"} | {"Centauroid"}
         )
+        tchar = Special.objects.filter(type="Favour of Tchar", campaign_type__isnull=True)
+        self.assertEqual(set(tchar.values_list("name", flat=True)), {"Beak", "Burning Body"})
         arkhar = Special.objects.filter(type="Bounty of Arkhar", campaign_type__isnull=True)
-        self.assertEqual(set(arkhar.values_list("name", flat=True)), {"Iron-hard Skin", "Spiked Tail", "Regeneration", "Spit Acid"})  # fmt: skip
+        self.assertEqual(set(arkhar.values_list("name", flat=True)), {"Iron-hard Skin", "Spiked Tail", "Regeneration", "Spit Acid", "Fangs"})  # fmt: skip
 
     def test_the_copies_seeded_before_are_archived_and_a_second_run_finds_none(self):
         copies = [
@@ -82,13 +84,13 @@ class SharedSeedTests(TestCase):
         ]
         frenzy = Special.objects.create(name="Frenzy", type="Animal")
 
-        self.assertIn("Shared specials - Created: 55, Updated: 0, copies archived: 5.", seed())
+        self.assertIn("Shared specials - Created: 52, Updated: 0, copies archived: 5.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         frenzy.refresh_from_db()
         self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 55, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 52, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):

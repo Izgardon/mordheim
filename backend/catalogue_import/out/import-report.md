@@ -31,7 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 49 |
 | skill group links | 266 |
 | serious injuries (D66) | 20 |
-| shared specials | 55 |
+| shared specials | 52 |
 | random mutation results (D66) | 36 |
 
 ## mordheimer's contradictions
@@ -695,27 +695,24 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Mark of Nurgle | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 35 |  | 1 | 0 | 0 | 0 |
 | Suckers | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 1 | 0 | 0 | 0 |
 | Plague Carrier | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 1 | 0 | 0 | 0 |
-| Beak | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 35 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
-| Burning Body (Tchar) | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 40 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Beak | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 35 |  | 0 | 0 | 0 | 0 |
+| Burning Body | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 40 |  | 0 | 0 | 0 | 0 |
 | Electrical Touch | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 45 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Eye of Tchar | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 45 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Mer-creature | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 25 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Telekinesis | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 30 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Centauroid | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 80 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Iron-hard Skin | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 45 |  | 0 | 0 | 0 | 0 |
-| Fangs (Arkhar) | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 35 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Fangs | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 35 |  | 0 | 0 | 0 | 0 |
 | Spiked Tail | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 50 |  | 0 | 0 | 0 | 0 |
 | Regeneration | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 60 |  | 0 | 0 | 0 | 0 |
 | Spit Acid | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 35 |  | 0 | 0 | 0 | 0 |
 | Atrophy | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
-| Beaked | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Beweaponed Extremities | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Brightly Patterned Skin | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
-| Burning Body | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Elastic Limbs | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Enormously Fat | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Extremely Thin | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
-| Fangs | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Furry | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Horns | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Plague Bearer | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
@@ -789,11 +786,11 @@ List prices the pages differ from: none.
 | --- | --- | --- | --- | --- | --- |
 | 11 | Acid Spray | Spit Acid | Bounty of Arkhar | 35 |  |
 | 12 | Atrophy | the same | Mutation |  |  |
-| 13 | Beaked | the same | Mutation |  |  |
+| 13 | Beaked | Beak | Favour of Tchar | 35 |  |
 | 14 | Beweaponed Extremities | the same | Mutation |  |  |
 | 15 | Blackblood | the same | Mutation | 30 |  |
 | 16 | Brightly Patterned Skin | the same | Mutation |  |  |
-| 21 | Burning Body | the same | Mutation |  |  |
+| 21 | Burning Body | the same | Favour of Tchar | 40 |  |
 | 22 | Cloud of Flies | the same | Blessing of Nurgle | 25 |  |
 | 23 | Cloven Hooves | Cloven Hoofs | Mutation | 40 |  |
 | 24 | Crystalline Body | the same | Mutation | 60 |  |
@@ -802,7 +799,7 @@ List prices the pages differ from: none.
 | 31 | Extra Arm | the same | Mutation | 40 |  |
 | 32 | Extremely Thin | the same | Mutation |  |  |
 | 33 | Eyestalks | Hideous | Mutation | 40 |  |
-| 34 | Fangs | the same | Mutation |  |  |
+| 34 | Fangs | the same | Bounty of Arkhar | 35 |  |
 | 35 | Furry | the same | Mutation |  |  |
 | 36 | Great Claw | the same | Mutation | 50 |  |
 | 41 | Hideous | the same | Mutation | 40 |  |
@@ -826,7 +823,4 @@ List prices the pages differ from: none.
 
 Kept apart from a family's, the effect differing:
 
-- Beaked and Beak: Tchar's Beak always strikes last.
-- Burning Body and Burning Body (Tchar): An automatic Strength 2 hit on each model in base contact; Tchar's sets them on fire on a 4+.
-- Fangs and Fangs (Arkhar): Arkhar's Fangs always strike last.
 - Plague Bearer and Plague Carrier: Plague Carrier, and it causes fear too.

@@ -94,11 +94,12 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                # special.json's 25, 3 injury specials, the 55 shared (Fear, No Pain, May Not Run, the mutations of
-                # every family and the random table's), the templates' 395 (the three Night Goblin and Orc Trolls' one
-                # Regeneration (Troll); the Undead's and the Restless Dead's No Pain and May not run shared) and the
-                # hired swords' and personae's own 255 (next step 12; Sigmund's and Veskit's No Pain)
-                "Special": 733,
+                # special.json's 25, 3 injury specials, the 52 shared (Fear, No Pain, May Not Run, the mutations of
+                # every family and the random table's: its Beaked, Fangs and Burning Body are Tchar's and Arkhar's), the
+                # templates' 395 (the three Night Goblin and Orc Trolls' one Regeneration (Troll); the Undead's and
+                # the Restless Dead's No Pain and May not run shared) and the hired swords' and personae's own 255
+                # (next step 12; Sigmund's and Veskit's No Pain)
+                "Special": 730,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -117,10 +118,10 @@ class SeedAllTests(TestCase):
                     elif model is Skill:  # but the ones a hired sword's seeding makes (his "Hired Sword - …" group)
                         own = {"group_links__group__name__startswith": "Hired Sword - "}
                         self.assertFalse(ungraded.exclude(**own).exists())
-                    elif model is Special:  # only Mutiny in Marienburg's Favours of Tchar and Bounties of Arkhar
+                    elif model is Special:  # only Mutiny in Marienburg's Tchar and Arkhar ones the random table lacks
                         graded = Special.objects.filter(campaign_type__isnull=False)
                         self.assertEqual(set(graded.values_list("campaign_type__slug", flat=True)), {"mutiny-in-marienburg"})  # fmt: skip
-                        self.assertEqual(graded.count(), 8)
+                        self.assertEqual(graded.count(), 5)
                     else:  # the rest count as Mordheim's until they get theirs
                         self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import

@@ -19,8 +19,8 @@
     "roll": 13,
     "name": "Beaked",
     "special": {
-      "name": "Beaked",
-      "type": "Mutation"
+      "name": "Beak",
+      "type": "Favour of Tchar"
     }
   },
   {
@@ -52,7 +52,7 @@
     "name": "Burning Body",
     "special": {
       "name": "Burning Body",
-      "type": "Mutation"
+      "type": "Favour of Tchar"
     }
   },
   {
@@ -124,7 +124,7 @@
     "name": "Fangs",
     "special": {
       "name": "Fangs",
-      "type": "Mutation"
+      "type": "Bounty of Arkhar"
     }
   },
   {

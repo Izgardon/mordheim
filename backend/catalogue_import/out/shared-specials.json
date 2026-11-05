@@ -242,17 +242,19 @@
       "name": "Beak",
       "type": "Favour of Tchar",
       "description": "Unless it already has a bite attack, the model makes an extra bite attack in each close combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
-      "aliases": [],
+      "aliases": [
+        "Beaked"
+      ],
       "cost": 35,
-      "setting": "mutiny-in-marienburg"
+      "setting": null
     },
     {
-      "name": "Burning Body (Tchar)",
+      "name": "Burning Body",
       "type": "Favour of Tchar",
       "description": "The model may carry no weapons or armour unless they are magical or of Gromril or Ithilmar. It suffers none of the usual penalties for fighting with its fists, and always counts as having a lantern. At the end of every turn, roll a D6 for each model in base contact with it: on a 4+ that model is set on fire (Border Town Burning, page 70).",
       "aliases": [],
       "cost": 40,
-      "setting": "mutiny-in-marienburg"
+      "setting": null
     },
     {
       "name": "Electrical Touch",
@@ -305,12 +307,12 @@
       "setting": null
     },
     {
-      "name": "Fangs (Arkhar)",
+      "name": "Fangs",
       "type": "Bounty of Arkhar",
       "description": "Unless it already has a bite attack, the model makes an extra bite attack in each hand-to-hand combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
       "aliases": [],
       "cost": 35,
-      "setting": "mutiny-in-marienburg"
+      "setting": null
     },
     {
       "name": "Spiked Tail",
@@ -349,14 +351,6 @@
       "setting": null
     },
     {
-      "name": "Beaked",
-      "type": "Mutation",
-      "description": "Unless it already has a bite attack, the model makes an extra bite attack in each hand-to-hand combat phase.",
-      "aliases": [],
-      "cost": null,
-      "setting": null
-    },
-    {
       "name": "Beweaponed Extremities",
       "type": "Mutation",
       "description": "The model's hands become weapons: roll a D6 for each arm, 1-2 a sword, 3-4 a mace, 5-6 an axe. It may no longer use weapons or equipment that need hands. It gains the usual extra attack for an additional hand weapon, and each follows the rules for a weapon of its type (a sword may parry); with two swords it re-rolls failed parries as with a sword and buckler.",
@@ -368,14 +362,6 @@
       "name": "Brightly Patterned Skin",
       "type": "Mutation",
       "description": "Bright stripes, spots or other patterns on the model's skin. No effect on play.",
-      "aliases": [],
-      "cost": null,
-      "setting": null
-    },
-    {
-      "name": "Burning Body",
-      "type": "Mutation",
-      "description": "The model may carry no weapons or armour unless they are magical or of Gromril or Ithilmar. It suffers none of the usual penalties for fighting with its fists (no -1 Strength, and enemies get no +1 to their armour saves), and always counts as having a lantern. Every model in base contact with it suffers an automatic Strength 2 hit at the start of each close combat phase; the flames never cause critical hits.",
       "aliases": [],
       "cost": null,
       "setting": null
@@ -400,14 +386,6 @@
       "name": "Extremely Thin",
       "type": "Mutation",
       "description": "The model's Toughness is halved, rounding up.",
-      "aliases": [],
-      "cost": null,
-      "setting": null
-    },
-    {
-      "name": "Fangs",
-      "type": "Mutation",
-      "description": "Unless it already has a bite attack, the model makes an extra bite attack at its normal Strength in each hand-to-hand combat phase.",
       "aliases": [],
       "cost": null,
       "setting": null
