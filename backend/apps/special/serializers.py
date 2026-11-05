@@ -20,6 +20,8 @@ class SpecialSerializer(serializers.ModelSerializer):
             "owner_kind",
             "description",
             "cost",
+            "prebattle_roll",
+            "prebattle_text",
         )
 
 
@@ -28,4 +30,5 @@ class SpecialCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Special
-        fields = ("name", "type", "kind", "category", "description", "cost")  # left out: a trait, an aura, no price
+        # left out: a trait, an aura, no price, no pre-battle roll
+        fields = ("name", "type", "kind", "category", "description", "cost", "prebattle_roll", "prebattle_text")

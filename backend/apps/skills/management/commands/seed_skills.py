@@ -19,6 +19,7 @@ from django.db import transaction
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import IMPORT_OUT, AccessLines, SettingAssignments, clean, read_json_list, upsert_global
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill, SkillGroupWarband
+from apps.special.prebattle import SKILL, mark_book_rolls
 
 DEFAULT_JSON_PATH = IMPORT_OUT / "skills.json"
 DEFAULT_GROUPS_PATH = IMPORT_OUT / "skill-groups.json"
@@ -47,6 +48,7 @@ class Command(BaseCommand):
             groups_path = options.get("groups_path")
             if groups_path or not options.get("json_path"):
                 self._groups(_path(groups_path, DEFAULT_GROUPS_PATH, "Skill groups JSON"), skills)
+            mark_book_rolls(Skill, SKILL)  # their pre-battle rolls (special/prebattle.py)
             bump(None)  # every cached catalogue list shows the book (PERF-13)
 
     def _skills(self, path: Path) -> dict[str, Skill]:

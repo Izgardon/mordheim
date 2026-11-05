@@ -42,6 +42,9 @@ from apps.core.seeding import (
     upsert_global,
 )
 from apps.races.models import Race
+from apps.skills.models import Skill
+from apps.special.models import Special
+from apps.special.prebattle import SKILL, SPECIAL, mark_book_rolls
 
 from .fees import Fee, clean_fee, make_fee
 from .models import STAYS, DramatisPersona, HiredSword, HirelingProfile
@@ -180,6 +183,8 @@ def seed_profiles(spec: SeedSpec, paths: list[Path]) -> tuple[Counter[str], list
                 continue
             for data in read_json_list(path, f"{spec.noun.lower()} rows"):
                 run.seed(data)
+        mark_book_rolls(Special, SPECIAL)  # his own specials' and skills' pre-battle rolls (special/prebattle.py)
+        mark_book_rolls(Skill, SKILL)
         bump(None)  # every cached catalogue list shows the book (PERF-13)
     return run.counts, run.lookups.warnings
 

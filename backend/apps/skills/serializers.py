@@ -23,7 +23,7 @@ class SkillSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
-        fields = ("id", "campaign_id", "setting_id", "name", "description")
+        fields = ("id", "campaign_id", "setting_id", "name", "description", "prebattle_roll", "prebattle_text")
 
 
 class SkillCreateSerializer(serializers.ModelSerializer):
@@ -34,7 +34,7 @@ class SkillCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Skill
-        fields = ("name", "description", "group_ids")
+        fields = ("name", "description", "prebattle_roll", "prebattle_text", "group_ids")  # left out: no roll
         extra_kwargs = {"description": {"allow_blank": False}}
 
 

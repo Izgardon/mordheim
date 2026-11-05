@@ -19,7 +19,8 @@ from apps.campaigns.services.house_rules import resync_every_campaign
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import upsert_global
 from apps.items.importing import ImportedItems
-from apps.items.models import ANIMAL, Item
+from apps.items.models import ANIMAL, Item, ItemRule
+from apps.special.prebattle import ITEM_RULE, mark_book_rolls
 
 
 class Command(BaseCommand):
@@ -32,6 +33,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             imported = ImportedItems(Path(options["out"])) if options.get("out") else ImportedItems()
             rules = imported.seed_rules()
+            mark_book_rolls(ItemRule, ITEM_RULE)  # the shared rules' pre-battle rolls (special/prebattle.py)
             created = updated = 0
             seen: list[int] = []
             for entry in imported.items:

@@ -9,6 +9,8 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from apps.core.catalogue.cache import bump
+from apps.special.models import Special
+from apps.special.prebattle import SPECIAL, mark_book_rolls
 from apps.warband_templates.models import WarbandTemplateType
 from apps.warband_templates.seeding import BookRows, archive_dropped, read_templates, write_template
 
@@ -26,6 +28,7 @@ class Command(BaseCommand):
             WarbandTemplateType.objects.filter(campaign__isnull=True).delete()  # a type may move between templates
             seen = [write_template(entry, book).pk for entry in entries]
             templates, specials = archive_dropped(seen, book)
+            mark_book_rolls(Special, SPECIAL)  # its own specials' pre-battle rolls (special/prebattle.py)
             bump(None)  # every cached catalogue list shows the book (PERF-13)
         self.stdout.write(
             self.style.SUCCESS(

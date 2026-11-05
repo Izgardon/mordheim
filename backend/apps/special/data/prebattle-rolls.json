@@ -1,0 +1,39 @@
+{
+  "special": {
+    "Expert Tactician": {
+      "roll": "D3",
+      "text": "At the start of the game, after all warbands have been deployed, the Imperial Tactician may then recommend up to D3+1 changes to your deployment (IE, you may change the starting position of up to D3+1 of your warriors)."
+    },
+    "Maintenance": {
+      "roll": "D6",
+      "text": "Before each game, roll 1D6 and apply the result to the equipment of your Heroes and the Weaponsmith, accepting the first result even if no model is equipped with the relevant equipment: 1: The Weaponsmith hammers a few nails, polishes a few blades, but nothing more. 2: Heavy armours provide a saving throw of 4+, light armours of 5+. 3: Helmets give a saving throw of +1 in addition to their normal effect. 4: Bucklers give a saving throw of +1 in addition to their normal effect. 5: Shields allow parrying like bucklers in addition to their normal effect. 6: Short bows, bows, crossbows, and handguns have their range increased by 6\", pistols and duelling pistols by 3\". This increase does not stack with other bonuses from additional skills or special rules (the highest bonus applies)."
+    },
+    "Old Battle Wound": {
+      "roll": "D6",
+      "text": "The warrior survives, but his wound will prevent him from fighting if you roll a 1 on a D6 at the start of any battle. Roll at the start of each battle from now on."
+    },
+    "Potions": {
+      "roll": "D6",
+      "text": "A single hero in the warband who have hired the Witch may partake of such a potion before the battle. Roll a D6 to discover the draught's effect."
+    }
+  },
+  "skill": {
+    "Deathspeaker": {
+      "roll": "D3",
+      "text": "At the start of the battle, the undead player may deploy D3 Zombies for free. These zombies do not count towards the maximum number of models in the warband, but increase the warband’s rating as normal. Zombies created in this way may not be used as Corpse Bombs. These Zombies only last for the duration of the battle."
+    },
+    "Rune Use": {
+      "roll": "2D6",
+      "text": "Before the battle the Runesmith may attempt to inscribe every Rune he knows, but once only. No Rune may be inscribed on an item with a Rune already on it. If he passes the difficulty roll he has succeeded and the Rune will affect the weapon/armour for the coming battle. If he rolls a natural 2 the item being inscribed on is broken, remove it from your roster. A gromril item may reroll a result of 2 but a second 2 stands. If he rolls a natural 12 the rune is 'durable' and will last beyond one battle."
+    },
+    "Send False Signals": {
+      "roll": "D6",
+      "text": "Thus, after all warbands have deployed (but before the hiring player has used the Expert Tactician ability), the player controlling the Imperial Tactician may move 1 member from each opposing warband D6” in any direction. This move may not move a warband member off the board, nor may it place a member of the warband in direct harm (you can't force a warrior to jump off a building!)."
+    },
+    "Spy": {
+      "roll": "D3",
+      "text": "Before the battle commences but after deployment, the player controlling the Hobgoblin Scout may re-deploy D3 models (not including the Scout), using the normal deployment rules. If the player chooses not to do this, then the Scout may be set up anywhere on the board that is not within 18\" of any enemy model."
+    }
+  },
+  "item_rule": {}
+}

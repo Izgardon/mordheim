@@ -33,6 +33,8 @@ from apps.core.seeding import clean, parse_armour_save, read_json_list, read_sta
 from apps.items.importing import ImportedItems, legacy_rows, mordheim_part
 from apps.items.models import Item
 from apps.items.writes import replace_availabilities
+from apps.special.models import Special
+from apps.special.prebattle import SPECIAL, mark_book_rolls
 
 DEFAULT_JSON_PATHS = [Path("apps/bestiary/data/bestiary.json"), Path("apps/bestiary/data/mim-bestiary.json")]
 MIM = "mutiny-in-marienburg"
@@ -150,6 +152,7 @@ class Command(BaseCommand):
         lookups = BookLookups()
         with transaction.atomic():
             counts = self._seed(paths, lookups, ItemSource())
+            mark_book_rolls(Special, SPECIAL)  # a beast's own specials' pre-battle rolls (special/prebattle.py)
             bump(None)  # every cached catalogue list shows the book (PERF-13)
 
         for warning in lookups.warnings:

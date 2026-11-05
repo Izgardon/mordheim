@@ -22,6 +22,7 @@ from apps.core.seeding import IMPORT_OUT, read_json_list, upsert_global
 from apps.special.categories import book_category
 from apps.special.kinds import BANE, GENERAL, INJURY, book_kind
 from apps.special.models import Special
+from apps.special.prebattle import SPECIAL, mark_book_rolls
 from apps.special.shared import read_shared
 from apps.spells.models import Spell
 from apps.spells.rolls import first_on_each_roll
@@ -41,6 +42,7 @@ class Command(BaseCommand):
             special_created, special_updated = self._seed(Special, SPECIAL_JSON_PATH, "Special", ("description",))
             injury_created, injury_updated = self._seed_injury_specials()
             shared_created, shared_updated, copies = self._seed_shared_specials()
+            mark_book_rolls(Special, SPECIAL)  # their pre-battle rolls (special/prebattle.py)
             bump(None)  # every cached catalogue list shows the book (PERF-13)
 
         self.stdout.write(

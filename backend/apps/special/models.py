@@ -1,12 +1,12 @@
 from django.db import models
 
-from apps.core.models import CatalogueEntry, version_constraints
+from apps.core.models import CatalogueEntry, PrebattleRoll, version_constraints
 
 from .categories import AURA, CATEGORY_CHOICES
 from .kinds import GENERAL, KIND_CHOICES, OWNER_KIND_CHOICES, TRAIT
 
 
-class Special(CatalogueEntry):
+class Special(CatalogueEntry, PrebattleRoll):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="specials",

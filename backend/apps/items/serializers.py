@@ -43,7 +43,7 @@ class ItemRuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItemRule
-        fields = ("id", "campaign_id", "name", "summary", "text")
+        fields = ("id", "campaign_id", "name", "summary", "text", "prebattle_roll", "prebattle_text")
 
 
 class ItemRuleLinkSerializer(serializers.Serializer):

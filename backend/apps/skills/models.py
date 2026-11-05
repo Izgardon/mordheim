@@ -12,11 +12,11 @@ version of a group copies its links and who-can lines like other child rows.
 
 from django.db import models
 
-from apps.core.models import CatalogueEntry, version_constraints
+from apps.core.models import CatalogueEntry, PrebattleRoll, version_constraints
 from apps.warbands.models.types import WarbandAccess, access_constraints
 
 
-class Skill(CatalogueEntry):
+class Skill(CatalogueEntry, PrebattleRoll):
     campaign = models.ForeignKey(
         "campaigns.Campaign",
         related_name="skills",

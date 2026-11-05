@@ -13,7 +13,7 @@ row's own list: for everyone (minus the excluded), or warband types and groups (
 
 from django.db import models
 
-from apps.core.models import CatalogueEntry, version_constraints
+from apps.core.models import CatalogueEntry, PrebattleRoll, version_constraints
 from apps.warbands.models.types import WarbandAccess, access_constraints
 
 ANIMAL = "Animal"  # the item type of a beast: one per bestiary entry, written by the bestiary only
@@ -84,8 +84,9 @@ class Item(CatalogueEntry):
         return f"{self.name} ({self.variant})" if self.variant else self.name
 
 
-class ItemRule(models.Model):
-    """A rule several items share, from the import (`slug`); a campaign adds its own (no slug)."""
+class ItemRule(PrebattleRoll):
+    """A rule several items share, from the import (`slug`); a campaign adds its own (no slug). A unit carrying an item
+    with it rolls its pre-battle roll, if it has one (`PrebattleRoll`)."""
 
     campaign = models.ForeignKey(
         "campaigns.Campaign", related_name="item_rules", null=True, blank=True, on_delete=models.CASCADE

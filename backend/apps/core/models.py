@@ -69,6 +69,26 @@ class CatalogueEntry(models.Model):
         abstract = True
 
 
+# The dice a pre-battle roll throws, as the shared dice entry reads them (frontend lib/dice.ts)
+PREBATTLE_DICE = ("D3", "D6", "2D6", "3D6", "D66")
+
+
+class PrebattleRoll(models.Model):
+    """A rule that makes its owner roll before each battle (William, 5 Nov 2026): a special, a skill or a shared
+    item rule. `prebattle_roll` is its dice (blank: none) and `prebattle_text` the rule's words on what the roll
+    does. The pre-battle step shows the roll under each unit holding it and applies nothing: the player leaves the
+    unit out or edits its stats himself. The book's are set from William's list (apps/special/prebattle.py); a
+    campaign's version keeps its own."""
+
+    prebattle_roll = models.CharField(
+        max_length=4, blank=True, default="", choices=[(dice, dice) for dice in PREBATTLE_DICE]
+    )
+    prebattle_text = models.TextField(max_length=2000, blank=True, default="")
+
+    class Meta:
+        abstract = True
+
+
 def version_constraints(prefix: str) -> list[models.BaseConstraint]:
     """One version of a book entry per campaign, and only a campaign's row is one (the service also requires that
     it replaces a book row)."""
