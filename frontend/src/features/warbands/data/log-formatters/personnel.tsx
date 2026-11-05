@@ -8,6 +8,16 @@ type SeriousInjuryPayload = {
   result_label?: string | null;
   applied?: boolean;
   apply_by_hand?: boolean;
+  /** A Mutation's follow-up on the random mutation table: its D66, the result and its special. */
+  mutation?: { rolls?: number[]; result_code?: string; name?: string; special?: string };
+};
+
+/** "D66 34: Fangs", or "D66 44: Mace Tail (Spiked Tail)" where the result gives a special of another name. */
+const mutationLine = (mutation: NonNullable<SeriousInjuryPayload["mutation"]>) => {
+  const name = mutation.name?.trim() || "";
+  const special = mutation.special?.trim() || "";
+  const gives = special && special !== name ? ` (${special})` : "";
+  return `${mutation.result_code ?? ""}: ${name || special}${gives}`;
 };
 
 type StatsKeptPayload = {
@@ -73,6 +83,11 @@ const seriousInjury: LogFormatter = (log) => {
       {rollTypeRaw ? <span>({renderDiceBadge(rollTypeRaw)})</span> : null}
       {resultCode || resultLabel ? (
         <span>= {[resultCode, resultLabel].filter(Boolean).join(": ")}</span>
+      ) : null}
+      {payload.mutation ? (
+        <span>
+          then {renderDiceBadge("D66")} {mutationLine(payload.mutation)}
+        </span>
       ) : null}
       {payload.applied ? <span>(applied)</span> : null}
       {payload.apply_by_hand ? <span>(apply by hand)</span> : null}

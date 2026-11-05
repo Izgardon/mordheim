@@ -85,6 +85,19 @@ describe("keepInjuryTexts", () => {
     expect(kept.injury_tables.d6?.map((row) => row.text)).toEqual([undefined, undefined]);
   });
 
+  it("keeps a D100 campaign's random mutation table, which a broadcast's rules come without", () => {
+    const fangs = {
+      roll: 34,
+      name: "Fangs",
+      special: "Fangs",
+      special_type: "Mutation",
+      text: "A bite.",
+    };
+    const state = { ...postbattleRules("d100"), random_mutations: [fangs] };
+    expect(keepInjuryTexts(postbattleRules("d100"), state).random_mutations).toEqual([fangs]);
+    expect(keepInjuryTexts(postbattleRules("d66"), state).random_mutations).toBeUndefined();
+  });
+
   it("is the rules themselves with lines of their own, or none to keep", () => {
     const fresh = withTexts();
     expect(keepInjuryTexts(fresh, postbattleRules())).toBe(fresh);

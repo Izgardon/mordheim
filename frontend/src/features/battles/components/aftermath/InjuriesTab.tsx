@@ -21,6 +21,8 @@ import {
   withMissingTicked,
   withoutLastRoll,
 } from "./aftermath-injuries";
+import { mutationRows } from "./aftermath-mutation";
+import MutationRollCard from "./MutationRollCard";
 import RollCard from "./RollCard";
 
 type InjuriesTabProps = {
@@ -32,10 +34,11 @@ type InjuriesTabProps = {
   onChange: (next: BattlePostbattleState) => void;
 };
 
-/** A result reads good unless it kills, keeps him out, takes a stat away or is left to the chart. */
+/** A result reads good unless it kills, keeps him out, takes a stat away, mutates him or is left to the chart. */
 const good = (row: PostbattleRenderableRow) => {
   const effect = row.seriousInjuryRolls[row.seriousInjuryRolls.length - 1]?.effect;
-  if (row.dead || effect?.kind === "manual" || effect?.misses) return false;
+  if (row.dead || effect?.kind === "manual" || effect?.kind === "mutation" || effect?.misses)
+    return false;
   return effect?.kind !== "stat" || (effect.change ?? 0) > 0;
 };
 
@@ -43,7 +46,8 @@ const good = (row: PostbattleRenderableRow) => {
  * Injuries (design E): a card per unit taken out of action, rolling its table (heroes and hero-
  * table hired swords D66 or D100, the rest a D6 that kills on 1–2) or taking the dice typed in,
  * with Undo; the missing games a result keeps him out for, ticked to be set at Ready (their dice
- * rolled again or typed over); and each rider's mount survival roll.
+ * rolled again or typed over); a D100 Mutation's D66 on the random mutation table; and each
+ * rider's mount survival roll.
  */
 export default function InjuriesTab(props: InjuriesTabProps) {
   const { draft, rules, onChange } = props;
@@ -124,6 +128,17 @@ export default function InjuriesTab(props: InjuriesTabProps) {
           </RollCard>
         );
       })}
+      {mutationRows(rows).map((row) => (
+        <MutationRollCard
+          key={`mutation-${row.unitKey}`}
+          row={row}
+          draft={draft}
+          roster={props.roster}
+          rules={rules}
+          isMobile={props.isMobile}
+          onChange={onChange}
+        />
+      ))}
       {mounts.map(([unitKey, risk]) => {
         const saved = draft.mount_survival?.[unitKey];
         const rolled = saved && saved.roll !== null ? saved : null;

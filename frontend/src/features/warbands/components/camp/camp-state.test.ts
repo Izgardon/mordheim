@@ -64,4 +64,22 @@ describe("readySummary", () => {
   it("says None when nobody reached an advance", () => {
     expect(advancesLine(camp({ "hero:1": result("Dieter Brandt", 0) }))).toBe("None");
   });
+
+  it("names the special a Mutation gives beside it in the injuries", () => {
+    const mutated = {
+      ...result("Dieter Brandt", 0),
+      serious_injury_rolls: [
+        {
+          roll_type: "d100",
+          rolls: [100],
+          result_label: "Mutation",
+          mutation: { rolls: [4, 4], special: "Spiked Tail" },
+        },
+      ],
+    } as unknown as ReturnType<typeof result>;
+    const injuries = readySummary(camp({ "hero:1": mutated })).find(
+      (line) => line.k === "Injuries"
+    );
+    expect(injuries?.v).toBe("Dieter Brandt: Mutation (Spiked Tail)");
+  });
 });

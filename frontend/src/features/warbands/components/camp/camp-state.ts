@@ -111,7 +111,8 @@ export function readySummary(camp: OpenCamp) {
     .map((r) => {
       const roll = last(r.serious_injury_rolls);
       const games = r.missing_games?.games;
-      return `${r.unit_name}: ${roll.result_label}${games ? `, misses ${games} game${games === 1 ? "" : "s"}` : ""}`;
+      const mutation = roll.mutation?.special ? ` (${roll.mutation.special})` : "";
+      return `${r.unit_name}: ${roll.result_label}${mutation}${games ? `, misses ${games} game${games === 1 ? "" : "s"}` : ""}`;
     });
   const finds = draft.finds.gold_crowns;
   const after = camp.gold - upkeepCharged(camp) + finds;

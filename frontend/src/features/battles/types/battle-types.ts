@@ -99,7 +99,8 @@ export type BattlePostbattleSeriousInjuryRoll = {
   apply?: boolean;
   /** What the server's table says the result does. */
   effect?: {
-    kind: "dead" | "stat" | "special" | "none" | "manual";
+    /** "mutation": the D100's 100, followed by a D66 on the random mutation table. */
+    kind: "dead" | "stat" | "special" | "none" | "manual" | "mutation";
     stat?: string;
     change?: number;
     special?: string;
@@ -109,6 +110,20 @@ export type BattlePostbattleSeriousInjuryRoll = {
      */
     misses?: { games: number; dice?: string };
   };
+  /** A Mutation's follow-up D66 on the random mutation table: its special is gained at finalise. */
+  mutation?: BattlePostbattleMutationRoll;
+};
+
+/**
+ * A Mutation's follow-up roll: its two D6 (tens, units), and what the server's table says of them
+ * (the result's name, and the special it gives and its type).
+ */
+export type BattlePostbattleMutationRoll = {
+  rolls: number[];
+  result_code?: string;
+  name?: string;
+  special?: string;
+  special_type?: string;
 };
 
 /** The missing games a hero's or hired sword's injury sets at finalise: the player's opt-in. */
@@ -443,6 +458,23 @@ export type BattlePostbattleRules = {
   hero_death_roll: CampaignHeroDeathRoll;
   /** Only the tables its units roll on: the d6 and the campaign's hero table. */
   injury_tables: Partial<Record<"d6" | "d66" | "d100", BattleInjuryTableRow[]>>;
+  /**
+   * The random mutation table the D100's Mutation rolls on (a D100 campaign's only; a broadcast's
+   * rules come without it, and the page keeps the one it had).
+   */
+  random_mutations?: BattleRandomMutation[];
+};
+
+/**
+ * A D66 result of the random mutation table: its name as the table prints it, the special it gives
+ * (its name and type) and the special's text.
+ */
+export type BattleRandomMutation = {
+  roll: number;
+  name: string;
+  special: string;
+  special_type: string;
+  text: string;
 };
 
 /** The server's suggestions for the reader's own postbattle (IMP-52). */

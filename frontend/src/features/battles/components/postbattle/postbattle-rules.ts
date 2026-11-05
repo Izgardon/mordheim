@@ -127,14 +127,18 @@ export function seriousInjuryRoll(
 }
 
 /**
- * The rules with the injury tables' book lines kept from `previous` where `next` has none: a
- * broadcast carries the rules without them (its 10 KB), the state and a write's answer with them.
- * `next` itself when there is nothing to keep.
+ * The rules with the injury tables' book lines, and a D100 campaign's random mutation table, kept
+ * from `previous` where `next` has none: a broadcast carries the rules without them (its 10 KB),
+ * the state and a write's answer with them. `next` itself when there is nothing to keep.
  */
 export function keepInjuryTexts(next: BattlePostbattleRules, previous: Rules) {
   const kept = previous?.injury_tables;
   if (!kept) return next;
-  let changed = false;
+  // the random mutation table too, which a broadcast's rules come without (a D100 campaign's only)
+  const mutations =
+    next.random_mutations ??
+    (next.hero_death_roll === "d100" ? previous?.random_mutations : undefined);
+  let changed = mutations !== next.random_mutations;
   const tables: BattlePostbattleRules["injury_tables"] = {};
   for (const roll of Object.keys(next.injury_tables) as (keyof typeof kept)[]) {
     tables[roll] = next.injury_tables[roll]?.map((row) => {
@@ -146,5 +150,6 @@ export function keepInjuryTexts(next: BattlePostbattleRules, previous: Rules) {
       return { ...row, text };
     });
   }
-  return changed ? { ...next, injury_tables: tables } : next;
+  if (!changed) return next;
+  return { ...next, injury_tables: tables, ...(mutations ? { random_mutations: mutations } : {}) };
 }

@@ -87,6 +87,19 @@ describe("log formatters, by feature", () => {
         })
       )
     ).toContain("(apply by hand)");
+    expect(
+      textOf(
+        log("personnel", "serious_injury", {
+          unit_name: "Rolf",
+          roll_type: "d100",
+          rolls: [100],
+          result_code: "100",
+          result_label: "Mutation",
+          mutation: { rolls: [4, 4], result_code: "44", name: "Mace Tail", special: "Spiked Tail" },
+          applied: true,
+        })
+      )
+    ).toContain("= 100: Mutationthen D66 44: Mace Tail (Spiked Tail)(applied)");
   });
 
   it("cover every entry that has its own formatter", () => {
