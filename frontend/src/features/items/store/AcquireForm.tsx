@@ -3,9 +3,9 @@ import { Dices, Minus, Plus } from "lucide-react";
 
 import { NumberInput } from "@/components/ui/number-input";
 import { Chip } from "@/components/ui/chip";
+import DiceEntry from "@/components/ui/dice-entry";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
-import { rollDice } from "@/lib/dice";
 import { cn } from "@/lib/utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
@@ -35,9 +35,9 @@ const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 /**
  * Getting one item (design E, the items rebuild): the price row (a choice when the warband may use
  * several: "Brace"), its note ("Heroes only") shown and never checked; the price each, prefilled
- * and editable, a price with dice ("25 + 2D6") rolled with the button and sent with its row so the
- * server adds the roll; Free, for an item found or given; for a rare item the search; then one
- * button per recipient with its total, which puts the item in the basket.
+ * and editable, a price with dice ("25 + 2D6") rolled with the button or typed in its boxes and
+ * sent with its row so the server adds the roll; Free, for an item found or given; for a rare item
+ * the search; then one button per recipient with its total, which puts the item in the basket.
  */
 export default function AcquireForm(props: AcquireFormProps) {
   const { item, rows } = props;
@@ -65,9 +65,8 @@ export default function AcquireForm(props: AcquireFormProps) {
     setSearch(null);
     setSkipped(false);
   };
-  const roll = () => {
-    if (!row.dice) return;
-    const pips = rollDice(row.dice).reduce((sum, value) => sum + value, 0);
+  const take = (faces: number[]) => {
+    const pips = faces.reduce((sum, value) => sum + value, 0);
     setRolled(pips);
     setEdited(false);
     setPrice(String(rolledPrice(row, pips)));
@@ -126,15 +125,26 @@ export default function AcquireForm(props: AcquireFormProps) {
                 {row.cost ?? 0} + {diceLabel(row)}
               </span>
             )}
-            <button
-              type="button"
-              onClick={roll}
+            <DiceEntry
+              key={row.id}
+              dice={`${row.dice}D6`}
+              size="sm"
+              className="flex-nowrap"
+              total={rolled}
               disabled={free}
-              className="flex min-h-9 items-center gap-1.5 border border-strong px-2.5 text-xs font-bold text-ink disabled:opacity-50"
-            >
-              <Dices className="h-3.5 w-3.5" aria-hidden="true" />
-              {rolled === null ? "Roll it" : `Rolled ${rolled}, reroll`}
-            </button>
+              onFaces={take}
+              button={(roll) => (
+                <button
+                  type="button"
+                  onClick={roll}
+                  disabled={free}
+                  className="flex min-h-9 items-center gap-1.5 border border-strong px-2.5 text-xs font-bold text-ink disabled:opacity-50"
+                >
+                  <Dices className="h-3.5 w-3.5" aria-hidden="true" />
+                  {rolled === null ? "Roll it" : "Roll again"}
+                </button>
+              )}
+            />
           </div>
         ) : null}
         <label className="ml-auto flex min-h-10 items-center gap-2 text-[13px] text-ink">

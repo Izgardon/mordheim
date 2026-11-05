@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
+import DiceEntry from "@/components/ui/dice-entry";
 import { rollDice } from "@/lib/dice";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
@@ -27,10 +28,11 @@ export function searchText(search: StoreSearch) {
 }
 
 /**
- * A rare item's search (design E): one button per hero (a hero whose trading action is spent
- * still searches, with the server's warning) and No hero, then Buy without searching. Each search
- * rolls 2D6 here and is saved at once (today's rarity roll: the hero spends his trading action
- * and the roll is logged); the result line says whether one was found.
+ * A rare item's search (design E): boxes for the 2D6 rolled at the table, then one button per hero
+ * (a hero whose trading action is spent still searches, with the server's warning) and No hero,
+ * then Buy without searching. Each search takes the dice typed in, else rolls 2D6 here, and is
+ * saved at once (today's rarity roll: the hero spends his trading action and the roll is logged);
+ * the result line says whether one was found.
  */
 export default function RareSearch(props: {
   warbandId: number;
@@ -46,10 +48,14 @@ export default function RareSearch(props: {
 }) {
   const queryClient = useQueryClient();
   const [saving, setSaving] = useState(false);
+  /** The 2D6 typed in, until a search takes them. */
+  const [typed, setTyped] = useState<(number | null)[]>([null, null]);
   const { search } = props;
+  const entered = typed.every((face) => face !== null) ? (typed as number[]) : null;
+  const halfTyped = !entered && typed.some((face) => face !== null);
 
   const searchWith = async (heroId: number | null, who: string) => {
-    const dice = rollDice(2);
+    const dice = entered ?? rollDice(2);
     const total = dice[0] + dice[1] + props.bonus;
     const found = total >= props.rarity;
     setSaving(true);
@@ -63,6 +69,7 @@ export default function RareSearch(props: {
         success: found,
       });
       props.onSearch({ heroId, who, dice, bonus: props.bonus, total, found });
+      setTyped([null, null]);
     } catch (error) {
       toast.error("Couldn't save the search.", { description: getErrorMessage(error) });
     } finally {
@@ -77,11 +84,21 @@ export default function RareSearch(props: {
   return (
     <>
       <div className="flex flex-wrap gap-1.5">
+        <DiceEntry
+          dice="2D6"
+          size={props.isMobile ? "md" : "sm"}
+          className="mr-1"
+          total={entered ? entered[0] + entered[1] : null}
+          disabled={saving}
+          onChange={setTyped}
+          onFaces={setTyped}
+          button={null}
+        />
         {props.searchers.map((hero) => (
           <button
             key={hero.id}
             type="button"
-            disabled={saving}
+            disabled={saving || halfTyped}
             title={hero.spent ? "His trading action is spent: he can still search" : undefined}
             onClick={() => void searchWith(hero.id, hero.name)}
             className={cn(button, "border-accent-line bg-page text-accent-hi hover:bg-accent-soft")}
@@ -94,7 +111,7 @@ export default function RareSearch(props: {
         ))}
         <button
           type="button"
-          disabled={saving}
+          disabled={saving || halfTyped}
           onClick={() => void searchWith(null, "No hero")}
           className={cn(button, "border-accent-line bg-page text-accent-hi hover:bg-accent-soft")}
         >
