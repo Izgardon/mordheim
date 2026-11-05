@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 
+import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import type { Item } from "@/features/items/types/item-types";
+import MakeTemplateForWarband from "@/features/warband-templates/components/MakeTemplateForWarband";
 
 import { useWarbandHireTemplate } from "../../api/warband-template-queries";
 import { useUnitActions } from "../../hooks/units/useUnitActions";
@@ -12,6 +14,7 @@ import type {
   WarbandHireling,
   WarbandResource,
   WarbandRosterCounts,
+  WarbandTypeBrief,
 } from "../../types/warband-types";
 import { ROSTER_HEROES, ROSTER_SECTIONS } from "../page/warband-layout";
 import RecruitForm from "./RecruitForm";
@@ -31,7 +34,7 @@ type RosterSectionsProps = {
   resources: WarbandResource[];
   /** The warband's gold and type: a hire from its template tallies against them. */
   gold?: number;
-  typeName?: string;
+  warbandType?: WarbandTypeBrief | null;
   /** The server's cap counts: one in a hero's place is a hero, a dramatis persona no hired sword. */
   counts?: Pick<WarbandRosterCounts, "hero_count" | "hireling_count">;
   canEdit: boolean;
@@ -52,7 +55,7 @@ export default function RosterSections(props: RosterSectionsProps) {
   const { warbandId, campaign, canEdit } = props;
   const actions = useUnitActions(warbandId);
   // read ahead for Add hero and Add group, so Recruit as is there when they open (the templates plan)
-  useWarbandHireTemplate(campaign?.id ?? 0, warbandId, canEdit);
+  const hireTemplate = useWarbandHireTemplate(campaign?.id ?? 0, warbandId, canEdit);
   const cards = useRosterCards();
 
   const heroes: RosterUnit[] = props.heroes.map((unit) => ({ kind: "hero", unit }));
@@ -69,7 +72,7 @@ export default function RosterSections(props: RosterSectionsProps) {
         kind={kind}
         campaignId={campaign?.id ?? 0}
         warbandId={warbandId}
-        typeName={props.typeName ?? ""}
+        typeName={props.warbandType?.name ?? ""}
         gold={props.gold ?? 0}
         resources={props.resources}
         existingIds={list.map((entry) => entry.unit.id)}
@@ -124,6 +127,21 @@ export default function RosterSections(props: RosterSectionsProps) {
   };
 
   const maxHeroes = campaign?.max_heroes;
+  // beside Add hero while the type has no template (the templates plan, phase 4); kept mounted once
+  // made, so the editor it opened stays open
+  const type = props.warbandType;
+  const makeTemplate =
+    canEdit &&
+    type &&
+    campaign &&
+    campaignCapabilities(campaign).edit_catalogue &&
+    hireTemplate.data ? (
+      <MakeTemplateForWarband
+        campaignId={campaign.id}
+        warbandType={type}
+        hasTemplate={Boolean(hireTemplate.data.template)}
+      />
+    ) : null;
   const maxHired = campaign?.max_hired_swords;
   const models = props.henchmenGroups.reduce((sum, group) => sum + group.henchmen.length, 0);
 
@@ -135,6 +153,7 @@ export default function RosterSections(props: RosterSectionsProps) {
         add={canEdit ? "Add hero" : undefined}
         onAdd={() => cards.setRecruiting("hero")}
         form={recruitForm("hero", heroes)}
+        extra={makeTemplate}
       >
         <div className={ROSTER_HEROES}>{heroes.map((entry) => card(entry, "hero"))}</div>
       </RosterSection>

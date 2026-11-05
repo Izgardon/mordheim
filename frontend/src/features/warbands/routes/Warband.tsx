@@ -177,7 +177,7 @@ export default function Warband() {
                   }}
                   resources={warband.resources ?? []}
                   gold={warband.gold ?? 0}
-                  typeName={warband.warband_type?.name ?? ""}
+                  warbandType={warband.warband_type}
                   canEdit={canEdit}
                   canCreateRace={capabilities.edit_catalogue}
                   onLoadout={setLoadoutFor}

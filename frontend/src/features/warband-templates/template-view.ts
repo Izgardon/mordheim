@@ -1,5 +1,6 @@
 import { writtenNumber, type StatKey } from "@/features/catalogue/utils/statblock";
 import { inPlayOnly } from "@/features/reference/in-play";
+import type { WarbandTypeRow } from "@/features/warbands/types/warband-types";
 
 import type {
   TemplateFighter,
@@ -10,11 +11,11 @@ import type {
   WarbandTemplateSummary,
 } from "./types/template-types";
 
-/** One row of the Warbands page: a warband type in play, and the template it uses. */
+/** One row of the Warbands page: a warband type in play, and the template it uses (null: none). */
 export type TemplateTypeRow = {
   id: string;
   typeName: string;
-  template: WarbandTemplateSummary;
+  template: WarbandTemplateSummary | null;
   /** The variant the type always is; "" when the player picks one. */
   variant: string;
   /** The warband type: a rule for one type shows on its row only. */
@@ -27,20 +28,39 @@ export type TemplateTypeRow = {
 };
 
 /**
- * Each warband type with a template, in play in the campaign (the reference pages' scoping: its
- * template's setting and its own), by name: a template serving four types gives four rows.
+ * Each warband type in play in the campaign with its template (the reference pages' scoping: its
+ * template's setting and its own), by name: a template serving four types gives four rows; a type
+ * in play that no template serves is a row with none (Make a template).
  */
-export function typeRows(templates: WarbandTemplateSummary[]): TemplateTypeRow[] {
-  const types = inPlayOnly(templates).flatMap((template) =>
-    inPlayOnly(template.types)
-      .filter((type) => !type.archived)
-      .map((type) => ({ template, type }))
-  );
+export function typeRows(
+  templates: WarbandTemplateSummary[],
+  /** The campaign's warband types: those in play that no template serves get a row too. */
+  warbandTypes: WarbandTypeRow[] = []
+): TemplateTypeRow[] {
+  const served = new Set(templates.flatMap((template) => template.types.map((type) => type.id)));
+  const types = [
+    ...inPlayOnly(templates).flatMap((template) =>
+      inPlayOnly(template.types)
+        .filter((type) => !type.archived)
+        .map((type) => ({
+          template: template as WarbandTemplateSummary | null,
+          type: {
+            id: type.id,
+            name: type.name,
+            source_code: type.source_code,
+            variant: type.variant,
+          },
+        }))
+    ),
+    ...inPlayOnly(warbandTypes)
+      .filter((type) => !served.has(type.id))
+      .map((type) => ({ template: null, type: { ...type, variant: "" } })),
+  ];
   const named = new Map<string, number>();
   types.forEach(({ type }) => named.set(type.name, (named.get(type.name) ?? 0) + 1));
   return types
     .map(({ template, type }) => ({
-      id: `${template.id}-${type.id}`,
+      id: template ? `${template.id}-${type.id}` : `type-${type.id}`,
       // two types of one name ("Night Goblins") are told apart by their source, as the type picker does
       typeName:
         (named.get(type.name) ?? 0) > 1 && type.source_code
@@ -49,7 +69,7 @@ export function typeRows(templates: WarbandTemplateSummary[]): TemplateTypeRow[]
       template,
       variant: type.variant,
       typeId: type.id,
-      shared: template.types.filter((entry) => !entry.archived).length > 1,
+      shared: (template?.types.filter((entry) => !entry.archived).length ?? 0) > 1,
     }))
     .sort((a, b) => a.typeName.localeCompare(b.typeName) || a.id.localeCompare(b.id));
 }

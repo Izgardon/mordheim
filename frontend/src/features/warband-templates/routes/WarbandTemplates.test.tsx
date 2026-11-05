@@ -267,3 +267,82 @@ describe("The Warbands page", () => {
     expect(within(list).queryByText("Halberd")).toBeNull();
   });
 });
+
+describe("Making and editing templates on the Warbands page", () => {
+  const warbandType = (id: number, name: string, in_play = true) => ({
+    id,
+    name,
+    slug: name.toLowerCase(),
+    campaign_id: null,
+    setting: null,
+    source: "",
+    link_url: "",
+    groups: [],
+    race: "",
+    source_code: "",
+    broheim_grade: "",
+    mordheimer_grade: "",
+    in_play,
+  });
+
+  it("lists a type in play with no template, which opens to Make a template", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/warband-types/`, [
+      warbandType(10, "Reiklanders"),
+      warbandType(20, "Lizardmen (2b)"),
+      warbandType(21, "Khemri Raiders", false),
+    ]);
+    const user = setupUser();
+    renderApp(PAGE);
+    const lizardmen = await row("Lizardmen (2b)");
+    expect(lizardmen).toHaveTextContent("Lizardmen (2b)No template––");
+    expect(
+      screen.queryByRole("button", { name: (label) => label.startsWith("Khemri") })
+    ).toBeNull();
+    await user.click(lizardmen);
+    await user.click(screen.getByRole("button", { name: "Make a template for Lizardmen (2b)" }));
+    const dialog = await screen.findByRole("dialog", { name: "Make a template" });
+    expect(within(dialog).getByRole("textbox")).toHaveValue("Lizardmen (2b)");
+  });
+
+  it("makes a copy for the type, which the editor opens on", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/warband-types/`, [warbandType(20, "Lizardmen (2b)")]);
+    const copy = { ...MERCENARIES, id: 8, campaign_id: CAMPAIGN_ID, name: "Lizardmen (2b)" };
+    fakeApi.on("POST /warband-templates/", () => ({
+      template: copy,
+      facts: { source: "custom", copied_from: { id: 1, name: "Mercenaries" }, warbands: 0 },
+      warnings: [],
+    }));
+    const user = setupUser();
+    renderApp(PAGE);
+    await user.click(await row("Lizardmen (2b)"));
+    await user.click(screen.getByRole("button", { name: "Make a template for Lizardmen (2b)" }));
+    const dialog = await screen.findByRole("dialog", { name: "Make a template" });
+    await user.click(within(dialog).getByRole("button", { name: "Copy a template" }));
+    await user.click(within(dialog).getByRole("combobox", { name: "Copy of" }));
+    await user.click(await within(dialog).findByRole("option", { name: /^Mercenaries/ }));
+    await user.click(within(dialog).getByRole("button", { name: "Make the template" }));
+
+    expect(
+      await screen.findByText("Custom · copied from Mercenaries · used by 0 warbands")
+    ).toBeInTheDocument();
+    expect(fakeApi.bodyOf("POST /warband-templates/")).toEqual({
+      campaign_id: CAMPAIGN_ID,
+      name: "Lizardmen (2b)",
+      copy_of: 1,
+      type_ids: [20],
+    });
+  });
+
+  it("opens a template in the editor from Edit template", async () => {
+    fakeApi.on(`GET /warband-templates/1/editor/?campaign_id=${CAMPAIGN_ID}`, {
+      template: MERCENARIES,
+      facts: { source: "book", copied_from: null, warbands: 3 },
+      warnings: [],
+    });
+    const user = setupUser();
+    renderApp(PAGE);
+    await user.click(await row("Reiklanders"));
+    await user.click(await screen.findByRole("button", { name: "Edit template" }));
+    expect(await screen.findByText("The book's · used by 3 warbands")).toBeInTheDocument();
+  });
+});

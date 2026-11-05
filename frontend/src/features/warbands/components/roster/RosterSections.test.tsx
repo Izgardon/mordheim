@@ -11,6 +11,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
+import { campaignSummary } from "@/test/campaign-fixtures";
+import { makeTemplateAnswer } from "@/test/template-fixtures";
 import { makeHero } from "@/test/warband-fixtures";
 
 import type { WarbandHero } from "../../types/warband-types";
@@ -118,5 +120,57 @@ describe("Recruiting from the roster", () => {
       within(hired).getByRole("form", { name: "Hire someone not in the list" })
     ).toBeInTheDocument();
     expect(within(hired).getByText("Hire fee paid")).toBeInTheDocument();
+  });
+});
+
+describe("Make a template for a type with none (the templates plan, phase 4)", () => {
+  const reiklanders = {
+    id: 10,
+    name: "Reiklanders",
+    slug: "reiklanders",
+    campaign_id: null,
+    setting: null,
+    source: "",
+    link_url: "",
+    groups: [],
+  };
+  const renderRoster = () =>
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
+        <RosterSections
+          warbandId={9}
+          campaign={campaignSummary()}
+          heroes={[aldric]}
+          henchmenGroups={[]}
+          hirelings={[]}
+          resources={[]}
+          warbandType={reiklanders}
+          canEdit
+          canCreateRace={false}
+          onLoadout={vi.fn()}
+          onHire={vi.fn()}
+          onAdvance={vi.fn()}
+          onBuyAgain={vi.fn()}
+          renderEdit={() => null}
+        />
+      </MemoryRouter>
+    );
+
+  beforeEach(() => fakeApi.reset());
+
+  it("shows beside Add hero while the type has no template", async () => {
+    fakeApi.on("GET /warbands/9/template/", NO_TEMPLATE);
+    renderRoster();
+    const heroes = screen.getByRole("region", { name: "Heroes" });
+    expect(
+      await within(heroes).findByRole("button", { name: "Make a template for Reiklanders" })
+    ).toBeInTheDocument();
+  });
+
+  it("isn't there once the type has one", async () => {
+    fakeApi.on("GET /warbands/9/template/", makeTemplateAnswer());
+    renderRoster();
+    await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/template/")).toBe(1));
+    expect(screen.queryByRole("button", { name: /^Make a template/ })).toBeNull();
   });
 });

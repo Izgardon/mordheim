@@ -1,5 +1,6 @@
 import { useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { DetailSection, FactLine, ReferenceDetail } from "@/features/reference/ReferenceDetail";
 import WarbandRules from "@/features/warbands/components/rules/WarbandRules";
@@ -10,6 +11,10 @@ import TemplateFighterCard from "./TemplateFighterCard";
 import TemplateLists from "./TemplateLists";
 import TemplateUpgrades from "./TemplateUpgrades";
 
+/** A campaign's template says whose it is: its own ("Custom"), or its house version of the book's. */
+const sourceLabel = (template: { campaign_id: number | null; replaces?: number | null }) =>
+  template.campaign_id === null ? "" : template.replaces ? "House version" : "Custom";
+
 type TemplateDetailProps = {
   campaignId: number;
   templateId: number;
@@ -18,6 +23,8 @@ type TemplateDetailProps = {
   /** The row's warband type: its own rules show here only. */
   typeId: number;
   isMobile: boolean;
+  /** Opens the template editor (those who edit the catalogue). */
+  onEdit?: () => void;
 };
 
 /**
@@ -31,6 +38,7 @@ export default function TemplateDetail({
   preset,
   typeId,
   isMobile,
+  onEdit,
 }: TemplateDetailProps) {
   const query = useWarbandTemplate(campaignId, templateId);
   const [picked, setPicked] = useState<string | null>(null);
@@ -45,6 +53,12 @@ export default function TemplateDetail({
   }
 
   const variant = picked ?? (preset || template.variants[0]?.key || "");
+  // on the web at the top of the right-hand column; on a phone above the figures, not under the lists
+  const editButton = (
+    <Button variant="secondary" className="min-h-10 self-start" onClick={onEdit}>
+      Edit template
+    </Button>
+  );
   const terms = termsFor(template, variant);
   const heroes = template.fighters.filter((fighter) => fighter.kind === "hero");
   const henchmen = template.fighters.filter((fighter) => fighter.kind === "henchman");
@@ -60,15 +74,17 @@ export default function TemplateDetail({
   return (
     <ReferenceDetail
       title={template.name}
-      kind={template.source}
+      kind={[sourceLabel(template), template.source].filter(Boolean).join(" · ")}
       isMobile={isMobile}
       aside={
         <>
+          {onEdit && !isMobile ? editButton : null}
           <TemplateLists template={template} variant={variant} />
           <TemplateUpgrades upgrades={template.upgrades} />
         </>
       }
     >
+      {onEdit && isMobile ? editButton : null}
       <FactLine
         facts={[
           { label: "Starting gold", value: `${terms.gold} gc` },
