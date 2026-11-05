@@ -44,6 +44,15 @@ const open = () =>
   );
 
 const advanceTable = () => screen.getByRole("table", { name: "Hero advance table" });
+/** The 2D6 typed in, a box each: "34" is a 3 and a 4. */
+const roll2D6 = async (user: ReturnType<typeof setupUser>, typed: string) => {
+  await user.type(screen.getByLabelText("First D6 rolled"), typed[0]);
+  await user.keyboard(typed[1]);
+};
+const faces = () =>
+  ["First D6 rolled", "Second D6 rolled"].map(
+    (name) => (screen.getByLabelText(name) as HTMLInputElement).value
+  );
 
 describe("The advance dialog", () => {
   beforeEach(() => {
@@ -60,7 +69,7 @@ describe("The advance dialog", () => {
     open();
     const user = setupUser();
     expect(screen.queryByRole("button", { name: "By hand" })).not.toBeInTheDocument();
-    await user.type(screen.getByLabelText("2D6 rolled"), "7");
+    await roll2D6(user, "34");
     expect(within(advanceTable()).getByRole("row", { current: true })).toHaveTextContent(
       "+1 Weapon Skill or +1 Ballistic Skill"
     );
@@ -80,10 +89,12 @@ describe("The advance dialog", () => {
   it("takes a clicked row as if the dice had shown it, a range row with no roll", async () => {
     open();
     const user = setupUser();
+    await roll2D6(user, "34");
     await user.click(within(advanceTable()).getByRole("button", { name: /Weapon Skill or/ }));
-    expect(screen.getByLabelText("2D6 rolled")).toHaveValue(7);
+    expect(within(advanceTable()).getByRole("row", { current: true })).toHaveTextContent("7");
+    expect(faces()).toEqual(["3", "4"]);
     await user.click(within(advanceTable()).getAllByRole("button", { name: "New skill" })[0]);
-    expect(screen.getByLabelText("2D6 rolled")).toHaveValue(null);
+    expect(faces()).toEqual(["", ""]);
     expect(within(advanceTable()).getByRole("row", { current: true })).toHaveTextContent("2–5");
     await user.click(await screen.findByRole("option", { name: /Strike to Injure/ }));
     expect(screen.getByText("New skill: Strike to Injure")).toBeInTheDocument();
@@ -97,7 +108,7 @@ describe("The advance dialog", () => {
   it("presets a D6 row's stat from the die, which can still be changed", async () => {
     open();
     const user = setupUser();
-    await user.type(screen.getByLabelText("2D6 rolled"), "6");
+    await roll2D6(user, "33");
     const stat = screen.getByRole("combobox", { name: "Characteristic" });
     await user.type(screen.getByLabelText("D6 rolled"), "5");
     expect(stat).toHaveValue("A");
@@ -120,7 +131,7 @@ describe("The advance dialog", () => {
     ]);
     open();
     const user = setupUser();
-    await user.type(screen.getByLabelText("2D6 rolled"), "3");
+    await roll2D6(user, "12");
     const kind = screen.getByRole("combobox", { name: "New" });
     expect(kind).toHaveValue("Skill");
     expect(await screen.findByRole("option", { name: /Strike to Injure/ })).toBeInTheDocument();
@@ -163,7 +174,7 @@ describe("An advance on a written stat", () => {
   it("shows the whole written value before and after, and that only its first number goes up", async () => {
     openFor({ ...hero, attacks: 1, written_stats: { attacks: "(2)" } });
     const user = setupUser();
-    await user.type(screen.getByLabelText("2D6 rolled"), "6");
+    await roll2D6(user, "33");
     await user.type(screen.getByLabelText("D6 rolled"), "5");
     expect(screen.getByText(/^A 1\(2\) → 2\(2\)/)).toBeInTheDocument();
     expect(screen.getByText("Only the first number goes up")).toBeInTheDocument();
@@ -172,7 +183,7 @@ describe("An advance on a written stat", () => {
   it("warns that a written stat with no number gets nothing", async () => {
     openFor({ ...hero, weapon_skill: null, written_stats: { weapon_skill: "D6" } });
     const user = setupUser();
-    await user.type(screen.getByLabelText("2D6 rolled"), "7");
+    await roll2D6(user, "34");
     await user.selectOptions(screen.getByRole("combobox", { name: "Characteristic" }), "WS");
     expect(screen.getByText(/WS D6/)).toBeInTheDocument();
     expect(screen.getByText("D6 has no number to add 1 to")).toBeInTheDocument();
@@ -219,7 +230,7 @@ describe("The lad's got talent", () => {
     fakeApi.on(GROUP_LEVEL_UP, group);
     openGroup();
 
-    await user.type(screen.getByLabelText("2D6 rolled"), "11");
+    await roll2D6(user, "56");
     const promote = screen.getByRole("button", { name: "Pick who joins the heroes" });
     expect(promote).toBeDisabled();
     await user.click(screen.getByRole("button", { name: "Beta" }));
@@ -227,13 +238,12 @@ describe("The lad's got talent", () => {
 
     expect(fakeApi.bodyOf(PROMOTE)).toEqual({ henchman_id: 72 });
     expect(await screen.findByText(/already came up, roll again/)).toBeInTheDocument();
-    expect(screen.getByLabelText("2D6 rolled")).toHaveValue(null);
-    await user.type(screen.getByLabelText("2D6 rolled"), "12");
+    expect(faces()).toEqual(["", ""]);
+    await roll2D6(user, "66");
     expect(screen.getByRole("alert")).toHaveTextContent("roll again");
     expect(screen.queryByRole("button", { name: /Promote/ })).toBeNull();
     expect(screen.getByRole("button", { name: "Confirm" })).toBeDisabled();
-    await user.clear(screen.getByLabelText("2D6 rolled"));
-    await user.type(screen.getByLabelText("2D6 rolled"), "3");
+    await roll2D6(user, "12");
     await user.click(screen.getByRole("button", { name: "Confirm" }));
     expect(fakeApi.bodyOf(GROUP_LEVEL_UP)).toMatchObject({ payload: { advance: { id: "I" } } });
   });
@@ -243,7 +253,7 @@ describe("The lad's got talent", () => {
     const history = [{ code: "LGT", label: "Lad's Got Talent", timestamp: "2026-11-03T10:00:00Z" }];
     openGroup({ ...group, level_up_history: history });
 
-    await user.type(screen.getByLabelText("2D6 rolled"), "10");
+    await roll2D6(user, "55");
 
     expect(screen.getByRole("alert")).toHaveTextContent("already came up on this advance");
     expect(screen.queryByRole("button", { name: "Pick who joins the heroes" })).toBeNull();
