@@ -2,7 +2,7 @@ import { Dices } from "lucide-react";
 
 import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
-import { rollDice } from "@/lib/dice";
+import DiceEntry from "@/components/ui/dice-entry";
 import { cn } from "@/lib/utils";
 
 import { feeGold, feeOf, matchCounter, type Fee } from "../../fees";
@@ -34,9 +34,9 @@ type FeePaymentProps = {
 
 /**
  * What is paid for a fee (the fees step), every part prefilled and editable: the gold (Roll for its
- * dice, rerollable, fills the gold) and each resource line's amount, paid from a counter of the
- * warband's (the one of its name to start, another, a new one, or not at all). A counter short of
- * the amount warns and offers to pay what it holds: a guide, never a block.
+ * dice, rerollable, or the dice typed in, fills the gold) and each resource line's amount, paid
+ * from a counter of the warband's (the one of its name to start, another, a new one, or not at
+ * all). A counter short of the amount warns and offers to pay what it holds: a guide, never a block.
  */
 export default function FeePayment(props: FeePaymentProps) {
   const { payment, onChange, counters, idPrefix, compact } = props;
@@ -46,8 +46,8 @@ export default function FeePayment(props: FeePaymentProps) {
       ...payment,
       lines: payment.lines.map((line, i) => (i === index ? { ...line, ...change } : line)),
     });
-  const roll = () => {
-    const total = rollDice(fee.dice ?? 0).reduce((sum, die) => sum + die, 0);
+  const take = (faces: number[]) => {
+    const total = faces.reduce((sum, die) => sum + die, 0);
     onChange({ ...payment, roll: total, gold: String(feeGold(fee, total)) });
   };
   const pick = async (index: number, line: PaymentLine, value: string) => {
@@ -76,11 +76,19 @@ export default function FeePayment(props: FeePaymentProps) {
           </span>
         </label>
         {fee.kind === "gold" && fee.dice ? (
-          <Button size="sm" variant="secondary" className="h-9" onClick={roll}>
-            <Dices aria-hidden="true" />
-            {payment.roll === null ? "Roll" : "Roll again"} {fee.dice}D6
-            {fee.dice_multiplier ? `×${fee.dice_multiplier}` : ""}
-          </Button>
+          <DiceEntry
+            dice={`${fee.dice}D6`}
+            size="sm"
+            total={payment.roll}
+            onFaces={take}
+            button={(roll) => (
+              <Button size="sm" variant="secondary" className="h-9" onClick={roll}>
+                <Dices aria-hidden="true" />
+                {payment.roll === null ? "Roll" : "Roll again"} {fee.dice}D6
+                {fee.dice_multiplier ? `×${fee.dice_multiplier}` : ""}
+              </Button>
+            )}
+          />
         ) : null}
         {payment.roll !== null ? (
           <span className="pb-2 font-mono text-xs text-muted-foreground">
