@@ -8,14 +8,18 @@ import { boonBaneOptions } from "../boon-bane-options";
 
 /**
  * A new boon or bane, as a skill is picked: the campaign's general boons, banes and traits in the
- * search (a hired sword's or dramatis persona's own are left out), and the pick with its rules.
+ * search (a hired sword's or dramatis persona's own and those he has are left out), and the pick
+ * with its rules.
  */
 export default function BoonBanePicker({
   campaignId,
+  held,
   value,
   onChange,
 }: {
   campaignId: number;
+  /** The specials he has, which aren't offered again. */
+  held: { id: number }[];
   value: Special | null;
   onChange: (special: Special | null) => void;
 }) {
@@ -52,7 +56,7 @@ export default function BoonBanePicker({
       label="Search boons and banes"
       placeholder="Search boons and banes"
       emptyText="No boon or bane matches."
-      options={boonBaneOptions(specials, settings)}
+      options={boonBaneOptions(specials, settings, held)}
       onPick={(option) =>
         onChange(specials.find((special) => special.id === Number(option.id)) ?? null)
       }

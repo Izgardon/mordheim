@@ -104,7 +104,12 @@ export default function AdvanceGain({
           onChange={flow.setSpell}
         />
       ) : (
-        <BoonBanePicker campaignId={campaignId} value={flow.special} onChange={flow.setSpecial} />
+        <BoonBanePicker
+          campaignId={campaignId}
+          held={unit.specials ?? []}
+          value={flow.special}
+          onChange={flow.setSpecial}
+        />
       )}
     </div>
   );

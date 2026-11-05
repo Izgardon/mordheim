@@ -88,7 +88,7 @@ export default function PendingPick({
           label="Search boons and banes"
           placeholder="Search boons and banes"
           emptyText="No boon or bane matches."
-          options={boonBaneOptions(specials ?? [], settings)}
+          options={boonBaneOptions(specials ?? [], settings, unit.specials ?? [])}
           onPick={(option) => onPick({ list: "specials", id: Number(option.id) })}
           onDismiss={onClose}
         />
