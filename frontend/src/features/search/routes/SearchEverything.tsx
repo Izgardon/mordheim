@@ -8,6 +8,7 @@ import type { CampaignLayoutContext } from "@/features/campaigns/routes/Campaign
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
 import { inPlayOnly } from "@/features/reference/in-play";
 import { SectionPicker } from "@/features/reference/ReferencePage";
+import { referenceSpecials } from "@/features/special/boons-banes";
 import { useHouseRules } from "@/features/rules/api/rule-queries";
 import { ruleEntries } from "@/features/rules/rules-index";
 import { myWarbandQuery } from "@/features/warbands/api/warband-queries";
@@ -92,7 +93,7 @@ function ResultGroup({
 
 /**
  * Search everything (`/campaigns/:id/search?q=`): one field over the reference
- * (items, skills, spells, beasts, hired swords, dramatis personae), the rulebook's text and the
+ * (items, skills, spells, Boons & Banes, beasts, hired swords, dramatis personae), the rulebook's text and the
  * house rules, searched here from the lists the pages already load, and this campaign's warbands
  * and units (the server's `search/`) and locations. Results are grouped by kind with counts; each
  * opens its page with its row open, or the warband page for a warband or unit. `/` or Ctrl+K
@@ -110,6 +111,7 @@ export default function SearchEverything() {
   const skills = useCatalogue("skills", campaignId);
   const skillGroups = useCatalogue("skill-groups", campaignId);
   const spells = useCatalogue("spells", campaignId);
+  const specials = useCatalogue("specials", campaignId);
   const beasts = useCatalogue("bestiary", campaignId);
   const hiredSwords = useCatalogue("hired-swords", campaignId);
   const personae = useCatalogue("dramatis-personae", campaignId);
@@ -130,6 +132,7 @@ export default function SearchEverything() {
             skills: inPlayOnly(skills.data),
             skillGroups: skillGroups.data,
             spells: inPlayOnly(spells.data),
+            specials: referenceSpecials(specials.data),
             beasts: inPlayOnly(beasts.data),
             hiredSwords: inPlayOnly(hiredSwords.data),
             personae: inPlayOnly(personae.data),
@@ -154,6 +157,7 @@ export default function SearchEverything() {
       server.data,
       skillGroups.data,
       skills.data,
+      specials.data,
       spells.data,
       withLocations,
     ]

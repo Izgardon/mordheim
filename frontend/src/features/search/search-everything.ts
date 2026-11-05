@@ -9,6 +9,7 @@ import type { RuleEntry } from "@/features/rules/rules-index";
 import { ruleSnippet } from "@/features/rules/rules-index";
 import type { HouseRule } from "@/features/rules/types/rule-types";
 import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
+import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 
 import type { CampaignSearchAnswer } from "./api/search-api";
@@ -33,6 +34,8 @@ export type SearchSources = {
   /** The campaign's skill groups: a skill's hit names the groups holding it. */
   skillGroups: SkillGroup[];
   spells: Spell[];
+  /** The Boons & Banes the reference lists (`referenceSpecials`). */
+  specials: Special[];
   beasts: BestiaryEntrySummary[];
   hiredSwords: HirelingProfile[];
   personae: HirelingProfile[];
@@ -77,7 +80,7 @@ function ranked<T>(candidates: Candidate<T>[], needle: string) {
 const words = (text?: string | null) => (text ?? "").replace(/\s+/g, " ").trim();
 
 /**
- * Search everything: one search over the reference (items, skills, spells, beasts,
+ * Search everything: one search over the reference (items, skills, spells, Boons & Banes, beasts,
  * hired swords, dramatis personae), the rulebook's text and the house rules, and this campaign's
  * warbands, units and locations; grouped by kind, empty groups left out.
  */
@@ -145,6 +148,24 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
         meta: (entry.type ?? "").replace(/_/g, " "),
         snippet,
         to: `spells?open=${entry.id}`,
+      })),
+    },
+    {
+      id: "boons-banes",
+      label: "Boons & Banes",
+      hits: ranked(
+        sources.specials.map((special) => ({
+          entry: special,
+          name: special.name,
+          text: words(special.description),
+        })),
+        needle
+      ).map(({ entry, snippet }) => ({
+        key: `special-${entry.id}`,
+        title: entry.name,
+        meta: entry.type ?? "",
+        snippet,
+        to: `boons-banes?open=${entry.id}`,
       })),
     },
     {

@@ -19,6 +19,7 @@ export const REFERENCE_LINKS: NavLink[] = [
   { label: "Wargear", path: "items" },
   { label: "Skills", path: "skills" },
   { label: "Spells", path: "spells" },
+  { label: "Boons & Banes", path: "boons-banes" },
   { label: "Bestiary", path: "bestiary" },
   { label: "Hired swords", path: "hired-swords" },
   { label: "Dramatis personae", path: "dramatis-personae" },

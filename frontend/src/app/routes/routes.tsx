@@ -26,6 +26,7 @@ const BattleActive = lazy(() => import("../../features/battles/routes/BattleActi
 const Wargear = lazy(() => import("../../features/items/routes/Wargear"));
 const Skills = lazy(() => import("../../features/skills/routes/Skills"));
 const Spells = lazy(() => import("../../features/spells/routes/Spells"));
+const BoonsBanes = lazy(() => import("../../features/special/routes/BoonsBanes"));
 const Bestiary = lazy(() => import("../../features/bestiary/routes/Bestiary"));
 const HirelingCatalogue = lazy(() => import("../../features/hirelings/routes/HirelingCatalogue"));
 const Rules = lazy(() => import("../../features/rules/routes/Rules"));
@@ -104,6 +105,7 @@ export const routes: RouteObject[] = [
                   { path: "items", element: <Wargear /> },
                   { path: "skills", element: <Skills /> },
                   { path: "spells", element: <Spells /> },
+                  { path: "boons-banes", element: <BoonsBanes /> },
                   { path: "bestiary", element: <Bestiary /> },
                   {
                     path: "hired-swords",
