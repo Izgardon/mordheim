@@ -20,6 +20,7 @@ from apps.core.seeding import IMPORT_OUT
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.skills.models import Skill
+from apps.special.categories import book_category
 from apps.special.kinds import WARBAND, book_kind
 from apps.special.models import Special
 from apps.warbands.models import WarbandType
@@ -131,8 +132,9 @@ class BookRows:
             stored[variant] = {**change, "skills": linked} if skills else dict(change)
         return stored
 
-    def special(self, entry: Mapping[str, str], owner: str) -> int:
-        """A template's own special (upserted with its text) or a book one it reuses (Large, Wizard, Priest)."""
+    def special(self, entry: Mapping[str, str], owner: str, group: str = "") -> int:
+        """A template's own special (upserted with its text, its category by the upgrade `group` it is bought from
+        too) or a book one it reuses (Large, Wizard, Priest)."""
         key = (entry["name"], entry["type"])
         if "description" not in entry:
             found = self._found(self.specials, key, "special", owner)
@@ -140,6 +142,7 @@ class BookRows:
             fields = {
                 "description": entry["description"],
                 "kind": book_kind(entry["name"]),
+                "category": book_category(entry["name"], entry["type"], group),
                 "owner_kind": WARBAND,
                 "archived_at": None,
             }
@@ -182,7 +185,7 @@ def write_template(entry: Mapping[str, Any], book: BookRows) -> WarbandTemplate:
         TemplateUpgrade(
             template=template,
             position=n,
-            special_id=book.special(row["special"], name),
+            special_id=book.special(row["special"], name, row["group"]),
             **{field: row[field] for field in UPGRADE_FIELDS},
         )
         for n, row in enumerate(entry["upgrades"])

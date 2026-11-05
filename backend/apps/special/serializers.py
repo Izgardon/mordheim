@@ -9,7 +9,7 @@ class SpecialSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Special
-        fields = ("id", "campaign_id", "setting_id", "name", "type", "kind", "owner_kind", "description")
+        fields = ("id", "campaign_id", "setting_id", "name", "type", "kind", "category", "owner_kind", "description")
 
 
 class SpecialCreateSerializer(serializers.ModelSerializer):
@@ -17,4 +17,4 @@ class SpecialCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Special
-        fields = ("name", "type", "kind", "description")  # kind: trait when left out
+        fields = ("name", "type", "kind", "category", "description")  # left out: a trait, an aura

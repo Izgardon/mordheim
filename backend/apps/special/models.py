@@ -2,6 +2,7 @@ from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
 
+from .categories import AURA, CATEGORY_CHOICES
 from .kinds import GENERAL, KIND_CHOICES, OWNER_KIND_CHOICES, TRAIT
 
 
@@ -24,6 +25,9 @@ class Special(CatalogueEntry):
     # Boons & Banes: whether it helps the unit (boon), holds it back (bane) or is neither (trait), set for the book's
     # from data/special-kinds.json (kinds.py)
     kind = models.CharField(max_length=5, choices=KIND_CHOICES, default=TRAIT)
+    # what it is, which picks its icon (the kind colours it): an injury, a mutation, an aura or the body, set for the
+    # book's by book_category (categories.py)
+    category = models.CharField(max_length=8, choices=CATEGORY_CHOICES, default=AURA)
     # a hired sword's or dramatis persona's own rule, left out of the Boons & Banes pickers, or a general one (kinds.py)
     owner_kind = models.CharField(max_length=16, choices=OWNER_KIND_CHOICES, default=GENERAL)
 

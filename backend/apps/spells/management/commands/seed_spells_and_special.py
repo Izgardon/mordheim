@@ -15,6 +15,7 @@ from django.db import transaction
 from apps.battles.services.injuries import granted_specials
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import IMPORT_OUT, read_json_list, upsert_global
+from apps.special.categories import book_category
 from apps.special.kinds import BANE, GENERAL, INJURY, book_kind
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -48,7 +49,8 @@ class Command(BaseCommand):
     def _seed(
         self, model: type[Spell] | type[Special], path: Path, label: str, texts: tuple[str, ...]
     ) -> tuple[int, int]:
-        """Upsert each named, typed row of the file: its stripped texts, a spell's roll and a special's kind."""
+        """Upsert each named, typed row of the file: its stripped texts, a spell's roll and a special's kind and
+        category."""
         if not path.exists():
             self.stdout.write(self.style.WARNING(f"{label} JSON not found at {path}"))
             return 0, 0
@@ -65,8 +67,9 @@ class Command(BaseCommand):
             defaults = {field: entry.get(field, "").strip() for field in texts}
             if model is Spell:
                 defaults["roll"] = entry.get("roll")
-            else:  # Boons & Banes (special/kinds.py)
+            else:  # Boons & Banes (special/kinds.py) and its icon (special/categories.py)
                 defaults["kind"] = book_kind(name)
+                defaults["category"] = book_category(name, entry_type)
             _, was_created = upsert_global(model, {"name": name, "type": entry_type}, defaults)
             if was_created:
                 created += 1
@@ -76,8 +79,9 @@ class Command(BaseCommand):
 
     def _seed_injury_specials(self) -> tuple[int, int]:
         """Each special the injury tables grant by name as the book's general "Injury" special, its kind the book's
-        classification (a bane unless it says otherwise) and its text the book's result of that name. A name the
-        book's table lacks is left to the campaign's own special (injuries.py: injury_special), with a warning."""
+        classification (a bane unless it says otherwise), its category injury and its text the book's result of that
+        name. A name the book's table lacks is left to the campaign's own special (injuries.py: injury_special), with
+        a warning."""
         texts = {row["name"].casefold(): row["text"] for row in read_json_list(SERIOUS_INJURIES_PATH)}
         created = updated = 0
         for name in granted_specials():
@@ -85,7 +89,12 @@ class Command(BaseCommand):
             if text is None:
                 self.stdout.write(self.style.WARNING(f"Injury special '{name}' isn't in the book's serious injuries"))
                 continue
-            defaults = {"description": text, "kind": book_kind(name, BANE), "owner_kind": GENERAL}
+            defaults = {
+                "description": text,
+                "kind": book_kind(name, BANE),
+                "category": book_category(name, INJURY),
+                "owner_kind": GENERAL,
+            }
             _, was_created = upsert_global(Special, {"name": name, "type": INJURY}, defaults)
             if was_created:
                 created += 1

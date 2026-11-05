@@ -21,6 +21,7 @@ from typing import Any
 from django.db.models import F, Q
 
 from apps.core.catalogue import cache as catalogue_cache
+from apps.special.categories import book_category
 from apps.special.kinds import BANE, GENERAL, INJURY, book_kind
 from apps.special.models import Special
 
@@ -152,9 +153,9 @@ def injury_outcome(result: dict[str, Any], unit_name: str) -> InjuryOutcome:
 
 def injury_special(name: str, campaign_id: int) -> Special:
     """The special an injury grants: the book's general special of that name (or the campaign's version of it,
-    CAT-TWEAK-03), else the campaign's own, created the first time (a bane unless the book's classification says
-    otherwise). Never a warband's, hired sword's or dramatis persona's own rule of the name (the Hochland Bandits'
-    Hardened, the Old Prospector's). One query to find it."""
+    CAT-TWEAK-03), else the campaign's own, created the first time (an injury, a bane unless the book's
+    classification says otherwise). Never a warband's, hired sword's or dramatis persona's own rule of the name (the
+    Hochland Bandits' Hardened, the Old Prospector's). One query to find it."""
     named = Q(name__iexact=name) & (Q(campaign__isnull=True) | Q(campaign_id=campaign_id))
     versions = Q(campaign_id=campaign_id, replaces__campaign__isnull=True, replaces__name__iexact=name)
     general = Special.objects.filter(owner_kind=GENERAL)
@@ -165,7 +166,13 @@ def injury_special(name: str, campaign_id: int) -> Special:
     own = next((row for row in rows if row.campaign_id is not None and row.name.lower() == name.lower()), None)
     if own is not None:
         return own
-    special = Special.objects.create(campaign_id=campaign_id, name=name, type=INJURY, kind=book_kind(name, BANE))
+    special = Special.objects.create(
+        campaign_id=campaign_id,
+        name=name,
+        type=INJURY,
+        kind=book_kind(name, BANE),
+        category=book_category(name, INJURY),
+    )
     catalogue_cache.bump(campaign_id, "specials")  # its specials list shows it (PERF-13, BUG-80)
     return special
 

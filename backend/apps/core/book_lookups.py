@@ -14,6 +14,7 @@ from django.db.models import Model
 from apps.core.seeding import parse_int
 from apps.items.models import Item
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
+from apps.special.categories import book_category
 from apps.special.kinds import INJURY, WARBAND, book_kind, owner_kind_of
 from apps.special.models import Special
 from apps.spells.models import Spell
@@ -146,14 +147,18 @@ class BookLookups:
         return found
 
     def special(self, item: Any, owner: str) -> Special | None:
-        """The book's special of the item's name (made the owner's when the book lacks it), its kind the book's
-        classification gives the name (Boons & Banes) and its owner kind its type (special/kinds.py), either corrected
-        on a row seeded before."""
+        """The book's special of the item's name (made the owner's when the book lacks it), its kind and category the
+        book's classification gives the name (Boons & Banes, special/categories.py) and its owner kind its type
+        (special/kinds.py), each corrected on a row seeded before."""
         name, description = name_and_description(item)
         if not name:
             return None
         special: Special = self._own(Special, self.specials, name, description, owner, "special")
-        fields = {"kind": book_kind(special.name, special.kind), "owner_kind": owner_kind_of(special.type)}
+        fields = {
+            "kind": book_kind(special.name, special.kind),
+            "category": book_category(special.name, special.type),
+            "owner_kind": owner_kind_of(special.type),
+        }
         changed = [field for field, value in fields.items() if getattr(special, field) != value]
         for field in changed:
             setattr(special, field, fields[field])
