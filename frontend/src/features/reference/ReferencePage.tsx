@@ -19,10 +19,10 @@ type ReferencePageProps = {
   /** One line above the list: "12 skills shown". */
   summary?: ReactNode;
   /**
-   * The page's catalogue kind: a Show archived switch beside the summary lists its archived
-   * entries above the list (`?archived=1`), each with Restore.
+   * The page's catalogue kind (or kinds: skills and skill groups): a Show archived switch beside
+   * the summary lists their archived entries above the list (`?archived=1`), each with Restore.
    */
-  archived?: ArchivedOptions;
+  archived?: ArchivedOptions | ArchivedOptions[];
   children: ReactNode;
 };
 
@@ -70,7 +70,8 @@ export function SectionPicker({ current, actions }: { current: string; actions?:
 export default function ReferencePage(props: ReferencePageProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const url = useCatalogueSearchParams();
-  const showArchived = Boolean(props.archived) && url.get("archived") === "1";
+  const archived = props.archived ? [props.archived].flat() : [];
+  const showArchived = archived.length > 0 && url.get("archived") === "1";
   return (
     <div className="flex flex-col gap-6 pb-14 max-[960px]:gap-2.5">
       {isMobile ? (
@@ -96,12 +97,12 @@ export default function ReferencePage(props: ReferencePageProps) {
           {props.filters}
         </section>
       ) : null}
-      {props.summary || props.archived ? (
+      {props.summary || archived.length ? (
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p role="status" className="m-0 text-[13px] text-text2">
             {props.summary}
           </p>
-          {props.archived ? (
+          {archived.length ? (
             <Switch
               checked={showArchived}
               onCheckedChange={(on) => url.set({ archived: on ? "1" : null })}
@@ -112,7 +113,9 @@ export default function ReferencePage(props: ReferencePageProps) {
           ) : null}
         </div>
       ) : null}
-      {props.archived && showArchived ? <ArchivedEntries options={props.archived} /> : null}
+      {showArchived
+        ? archived.map((options) => <ArchivedEntries key={options.kind} options={options} />)
+        : null}
       {props.children}
     </div>
   );

@@ -32,23 +32,52 @@ export function settingFilterKey(
   return setting && MORDHEIM_SLUGS.has(setting.slug) ? MORDHEIM : String(settingId);
 }
 
+type SettingRow = {
+  setting_id?: number | null;
+  campaign_id?: number | null;
+  replaces?: number | null;
+};
+
 /**
- * The Setting filter's options for these rows' settings: All settings, then each one once in the
- * book's order (Mordheim first, its grades as one), the campaign's own last.
+ * The Setting filter key of a row whose book entries may have no setting yet (skills, specials): a
+ * book entry with none, and a campaign's version of one, is Mordheim's; a custom entry the
+ * campaign's own.
  */
-export function settingFilterOptions(
-  settingIds: (number | null | undefined)[],
-  settings: Map<number, Setting>
-) {
-  const keys = [...new Set(settingIds.map((id) => settingFilterKey(id, settings)))];
-  const options = keys.map((key) => {
-    if (key === OWN) return { id: key, label: "This campaign", order: Infinity };
-    if (key === MORDHEIM) return { id: key, label: "Mordheim", order: -Infinity };
-    const setting = settings.get(Number(key));
-    return { id: key, label: setting?.name ?? "Unknown", order: setting?.sort_order ?? 998 };
-  });
+export function entrySettingKey(row: SettingRow, settings: Map<number, Setting>): string {
+  if (row.setting_id != null) return settingFilterKey(row.setting_id, settings);
+  return row.campaign_id != null && row.replaces == null ? OWN : MORDHEIM;
+}
+
+/** A Setting filter key's name: "Mordheim", "Khemri", "This campaign". */
+function settingKeyOption(key: string, settings: Map<number, Setting>) {
+  if (key === OWN) return { id: key, label: "This campaign", order: Infinity };
+  if (key === MORDHEIM) return { id: key, label: "Mordheim", order: -Infinity };
+  const setting = settings.get(Number(key));
+  return { id: key, label: setting?.name ?? "Unknown", order: setting?.sort_order ?? 998 };
+}
+
+export const settingKeyLabel = (key: string, settings: Map<number, Setting>) =>
+  settingKeyOption(key, settings).label;
+
+/**
+ * The Setting filter's options for these Setting filter keys: All settings, then each one once in
+ * the book's order (Mordheim first, its grades as one), the campaign's own last.
+ */
+export function settingKeyOptions(keys: string[], settings: Map<number, Setting>) {
+  const options = [...new Set(keys)].map((key) => settingKeyOption(key, settings));
   return [
     { id: ALL_SETTINGS, label: "All settings" },
     ...options.sort((a, b) => a.order - b.order).map(({ id, label }) => ({ id, label })),
   ];
+}
+
+/** The Setting filter's options for these rows' settings (`settingKeyOptions`). */
+export function settingFilterOptions(
+  settingIds: (number | null | undefined)[],
+  settings: Map<number, Setting>
+) {
+  return settingKeyOptions(
+    settingIds.map((id) => settingFilterKey(id, settings)),
+    settings
+  );
 }

@@ -11,7 +11,15 @@ import { useWargearRows } from "@/features/items/routes/wargear-rows";
 import type { Item } from "@/features/items/types/item-types";
 import { makeItem } from "@/test/warband-fixtures";
 
-import { ALL_SETTINGS, inPlayOnly, settingFilterKey, settingFilterOptions } from "./in-play";
+import {
+  ALL_SETTINGS,
+  entrySettingKey,
+  inPlayOnly,
+  settingFilterKey,
+  settingFilterOptions,
+  settingKeyLabel,
+  settingKeyOptions,
+} from "./in-play";
 
 const setting = (id: number, slug: string, name: string, sort_order: number): Setting => ({
   id,
@@ -62,6 +70,23 @@ describe("the reference's scope", () => {
       { id: "mordheim", label: "Mordheim" },
       { id: "5", label: "Empire in Flames" },
       { id: "own", label: "This campaign" },
+    ]);
+  });
+
+  it("counts a book entry with no setting yet as Mordheim's, a custom one as the campaign's", () => {
+    // skills and specials: book rows not graded yet have none (campaigns/in_play.py)
+    const key = (row: Parameters<typeof entrySettingKey>[0]) => entrySettingKey(row, settings);
+
+    expect(key({ setting_id: null, campaign_id: null })).toBe("mordheim");
+    expect(key({ setting_id: null, campaign_id: 9, replaces: 4 })).toBe("mordheim"); // a version
+    expect(key({ setting_id: null, campaign_id: 9, replaces: null })).toBe("own");
+    expect(key({ setting_id: 2, campaign_id: 9, replaces: 4 })).toBe("mordheim");
+    expect(key({ setting_id: 7 })).toBe("7");
+    expect(settingKeyLabel("7", settings)).toBe("Khemri");
+    expect(settingKeyOptions(["7", "mordheim", "7"], settings)).toEqual([
+      { id: ALL_SETTINGS, label: "All settings" },
+      { id: "mordheim", label: "Mordheim" },
+      { id: "7", label: "Khemri" },
     ]);
   });
 });
