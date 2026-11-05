@@ -50,7 +50,7 @@ export default function PrebattleRollFields({
           id={fieldId(layout, rollId)}
           value={values.prebattleRoll}
           onChange={(event) => onChange({ ...current, prebattleRoll: event.target.value })}
-          className="h-9 w-full max-w-[160px] border border-strong bg-page px-2 text-sm text-ink md:h-11"
+          className="block h-9 w-full max-w-[160px] border border-strong bg-page px-2 text-sm text-ink md:h-11"
         >
           <option value="">None</option>
           {PREBATTLE_DICE.map((dice) => (
