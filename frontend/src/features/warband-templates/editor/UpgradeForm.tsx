@@ -9,12 +9,13 @@ import { Switch } from "@/components/ui/switch";
 import type { WarbandTemplate } from "../types/template-types";
 import { CAPTION, Field, FORM_BOX, NumberField, SaveRow } from "./editor-ui";
 import RulePicker from "./RulePicker";
-import type { UpgradeDraft } from "./upgrade-draft";
+import { withRule, type UpgradeDraft } from "./upgrade-draft";
 import WhoField from "./WhoField";
 
 /**
  * One upgrade's form: its group, the special it gives (picked, or written as the template's own),
- * its cost (empty for none in the book, 0 for free) and cost note, who may take it (of the heroes:
+ * its cost (empty for none in the book, 0 for free; a picked special's price unless one is typed)
+ * and cost note, who may take it (of the heroes:
  * upgrades are bought for heroes), the most of its group per fighter, later ones at double, and
  * bought only when he is recruited.
  */
@@ -116,7 +117,7 @@ export default function UpgradeForm({
           rules={draft.rule ? [draft.rule] : []}
           single
           label="Pick a rule"
-          onChange={([rule]) => set({ rule: rule ?? null })}
+          onChange={([rule]) => setDraft((current) => withRule(current, rule ?? null))}
         />
       </div>
       <WhoField

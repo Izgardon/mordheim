@@ -2,6 +2,7 @@ import { createElement } from "react";
 
 import { SpecialIcon, type SpecialCategory, type SpecialKind } from "@/components/ui/game-icons";
 import type { SearchOption } from "@/components/ui/search-select";
+import { specialCost } from "@/features/special/special-cost";
 import type { Special } from "@/features/special/types/special-types";
 
 /**
@@ -15,6 +16,8 @@ export type RuleDraft = {
   /** Its icon: an aura unless picked. */
   category: SpecialCategory;
   description: string;
+  /** A picked special's price (a mutation's), the upgrade's cost unless one is typed. */
+  cost?: number | null;
 };
 
 /** The template's own specials' type, as the server writes it. */
@@ -36,7 +39,7 @@ export function ruleOptions(specials: Special[], templateName: string): SearchOp
     .map(({ special, at }) => ({
       id: special.id,
       title: special.name,
-      subtitle: special.type ?? undefined,
+      subtitle: [special.type, specialCost(special)].filter(Boolean).join(" · ") || undefined,
       group: labels[at],
       icon: createElement(SpecialIcon, { category: special.category, kind: special.kind }),
     }));
@@ -52,5 +55,6 @@ export function pickedRule(specials: Special[], id: number): RuleDraft | null {
     kind: special.kind ?? "trait",
     category: special.category ?? "aura",
     description: special.description ?? "",
+    cost: special.cost ?? null,
   };
 }

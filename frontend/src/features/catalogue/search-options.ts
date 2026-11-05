@@ -9,15 +9,16 @@ import { cameThrough, type SkillGroupIndex } from "@/features/skills/skill-group
 import { largeWarning, learningNotes } from "@/features/skills/skill-learning";
 import { skillList } from "@/features/skills/skill-list";
 import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
+import { specialCost } from "@/features/special/special-cost";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
 
 /**
  * The searchable select's rows for the catalogue (William: "titles and subtitles with skill
  * category, spell school as subtitles"): a skill's group, a spell's lore and difficulty, a
- * special's type, a race's maximums. Skills carry their group's icon and specials their
- * category's in their kind's colour (Boons & Banes); spells none. Rows outside the campaign or the
- * unit's skill groups carry a warning and stay pickable.
+ * special's type and price ("35 gc", a mutation's), a race's maximums. Skills carry their group's
+ * icon and specials their category's in their kind's colour (Boons & Banes); spells none. Rows
+ * outside the campaign or the unit's skill groups carry a warning and stay pickable.
  */
 
 type Settings = Map<number, Setting>;
@@ -105,7 +106,7 @@ export const specialOption = (special: Special, settings: Settings): SearchOptio
   id: special.id,
   title: special.name,
   icon: createElement(SpecialIcon, { category: special.category, kind: special.kind }),
-  subtitle: special.type ?? undefined,
+  subtitle: joined(special.type, specialCost(special)) || undefined,
   warning: outOfPlay(special, settings),
 });
 

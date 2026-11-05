@@ -54,6 +54,20 @@ export const upgradeDraft = (upgrade: TemplateUpgrade | null, group = ""): Upgra
         atRecruit: false,
       };
 
+/**
+ * The draft with `rule` picked: a priced special's price becomes the cost, unless a cost of
+ * another was typed (an empty one, or the last pick's own, is the default the pick replaces).
+ */
+export function withRule(draft: UpgradeDraft, rule: RuleDraft | null): UpgradeDraft {
+  const defaulted = draft.cost.trim() === "" || draft.cost === textOf(draft.rule?.cost);
+  const cost = rule?.cost;
+  return {
+    ...draft,
+    rule,
+    ...(defaulted && cost !== null && cost !== undefined ? { cost: String(cost) } : {}),
+  };
+}
+
 /** What an upgrade sends: its cost empty for none in the book, 0 for free. */
 export function upgradeInput(draft: UpgradeDraft): UpgradeInput | null {
   const { rule } = draft;

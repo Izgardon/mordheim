@@ -17,5 +17,7 @@ export type Special = CatalogueBadgeFields & {
   category?: SpecialCategory;
   owner_kind?: SpecialOwnerKind;
   description?: string | null;
+  /** Its price in gold crowns where a list sells it (the mutations); null: none. Nothing charges it. */
+  cost?: number | null;
   campaign_id?: number | null;
 };

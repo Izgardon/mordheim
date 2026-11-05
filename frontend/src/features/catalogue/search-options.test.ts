@@ -1,8 +1,19 @@
 import { describe, expect, it } from "vitest";
 
 import { spell } from "@/test/catalogue-fixtures";
+import { makeSpecial } from "@/test/warband-fixtures";
 
-import { spellOptions } from "./search-options";
+import { specialOption, spellOptions } from "./search-options";
+
+describe("specialOption", () => {
+  it("says a priced special's price beside its type, and only its type without one", () => {
+    const claw = makeSpecial({ id: 7, name: "Great Claw", type: "Mutation", cost: 50 });
+    expect(specialOption(claw, new Map()).subtitle).toBe("Mutation · 50 gc");
+    expect(specialOption({ ...claw, cost: 0 }, new Map()).subtitle).toBe("Mutation · 0 gc");
+    expect(specialOption({ ...claw, cost: null }, new Map()).subtitle).toBe("Mutation");
+    expect(specialOption({ ...claw, type: null, cost: 35 }, new Map()).subtitle).toBe("35 gc");
+  });
+});
 
 const spells = [
   spell({ id: 1, name: "Age of Stone", type: "Charms and Hexes" }),
