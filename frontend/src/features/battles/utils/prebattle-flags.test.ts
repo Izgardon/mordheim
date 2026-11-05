@@ -45,6 +45,15 @@ describe("prebattleFlags", () => {
     ).toMatchObject({ canEditOwnConfig: false });
   });
 
+  it("says you wait for the others only while someone still in isn't ready", () => {
+    const ready = (opponent: NonNullable<Parameters<typeof battleState>[0]>["opponent"]) =>
+      flagsFor(battleState({ status: "prebattle", me: { status: "ready" }, opponent })).readyLine;
+    expect(ready({ status: "accepted" })).toBe("You're ready. Waiting for the others.");
+    expect(ready({ status: "ready" })).toBe("Everyone is ready.");
+    expect(ready({ status: "declined" })).toBe("Everyone is ready.");
+    expect(flagsFor(battleState({ status: "prebattle" })).readyLine).toBeNull();
+  });
+
   it("offers an invitee Accept and Decline, never the creator", () => {
     const state = battleState({
       status: "inviting",

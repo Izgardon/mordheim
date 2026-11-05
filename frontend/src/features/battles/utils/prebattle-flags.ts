@@ -36,6 +36,13 @@ export function prebattleFlags({
   const currentUserReady = currentParticipant?.status === "ready";
   const allParticipantsReady =
     participants.length > 0 && participants.every((participant) => participant.status === "ready");
+  // those still in the battle, as "2 of 2 ready" counts them
+  const stillIn = participants.filter(
+    (participant) =>
+      participant.status !== "declined" && participant.status !== "canceled_prebattle"
+  );
+  const everyoneReady =
+    stillIn.length > 0 && stillIn.every((participant) => participant.status === "ready");
   const invitePending = status === "inviting";
   const canAcceptInvite = invitePending && currentParticipant?.status === "invited";
   const waitingForOthers = invitePending && currentParticipant?.status === "accepted";
@@ -47,6 +54,12 @@ export function prebattleFlags({
   return {
     currentUserReady,
     allParticipantsReady,
+    // the line under the title once you are ready
+    readyLine: !currentUserReady
+      ? null
+      : everyoneReady
+        ? "Everyone is ready."
+        : "You're ready. Waiting for the others.",
     invitePending,
     canAcceptInvite,
     waitingForOthers,
