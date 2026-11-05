@@ -60,14 +60,14 @@ class WarningTests(EditorTestCase):
         )
         WarbandTemplateType.objects.create(template=own, campaign=self.campaign, warband_type=self.mercenaries)
         self.assertIn(
-            ("basics", "", "Mercenaries: the book's Mercenaries serves them too; this one comes first."),
+            ("basics", "", "Mercenaries: the book's Mercenaries serves it too; this one comes first."),
             self.texts(self.editor(own)),
         )
         self.assertIn(
             (
                 "basics",
                 "",
-                "Mercenaries: Night Watch serves them too and comes first, so this one isn't used for them.",
+                "Mercenaries: Night Watch serves it too and comes first, so this one isn't used for it.",
             ),
             self.texts(self.editor()),
         )

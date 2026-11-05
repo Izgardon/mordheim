@@ -44,9 +44,9 @@ def _shared_types(template: WarbandTemplate, campaign_id: int) -> list[dict[str,
         first, kind = rows[0].template, rows[0].warband_type.name
         names = ", ".join(_named(other) for other in others)
         text = (
-            f"{kind}: {names} serves them too; this one comes first."
+            f"{kind}: {names} serves it too; this one comes first."
             if first.pk == template.pk
-            else f"{kind}: {names} serves them too and comes first, so this one isn't used for them."
+            else f"{kind}: {names} serves it too and comes first, so this one isn't used for it."
         )
         found.append(_warning("basics", text))
     return found
