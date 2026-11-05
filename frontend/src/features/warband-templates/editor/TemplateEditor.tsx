@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Chip } from "@/components/ui/chip";
 import { SidePanel } from "@/components/ui/side-panel";
 import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useEditorSave, useTemplateEditor } from "../api/editor-queries";
 import type { EditorAnswer, EditorSection } from "../types/editor-types";
@@ -110,12 +111,15 @@ export default function TemplateEditor(props: TemplateEditorProps) {
   const [shownId, setShownId] = useState(templateId);
   if (templateId !== null && templateId !== shownId) setShownId(templateId);
   const query = useTemplateEditor(campaignId, shownId);
+  const isMobile = useMediaQuery("(max-width: 960px)");
   const answer = query.data;
   return (
     <SidePanel
       open={templateId !== null}
       onOpenChange={(open) => (open ? null : props.onClose())}
       kicker="Warband template"
+      // on a phone the sheet keeps one height, so it doesn't jump as the sections change
+      className={isMobile ? "h-[85dvh]" : undefined}
       title={answer?.template.name ?? "Warband template"}
     >
       {answer ? (
