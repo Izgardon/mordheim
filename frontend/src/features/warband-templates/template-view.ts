@@ -19,6 +19,11 @@ export type TemplateTypeRow = {
   variant: string;
   /** The warband type: a rule for one type shows on its row only. */
   typeId: number;
+  /**
+   * The template serves several types (Mercenaries, Tileans), so the row names it under the
+   * type's name; a template of one type is only that type's name written another way.
+   */
+  shared: boolean;
 };
 
 /**
@@ -44,6 +49,7 @@ export function typeRows(templates: WarbandTemplateSummary[]): TemplateTypeRow[]
       template,
       variant: type.variant,
       typeId: type.id,
+      shared: template.types.filter((entry) => !entry.archived).length > 1,
     }))
     .sort((a, b) => a.typeName.localeCompare(b.typeName) || a.id.localeCompare(b.id));
 }

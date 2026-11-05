@@ -74,6 +74,25 @@ describe("typeRows", () => {
       "Night Goblins (WEB)",
     ]);
   });
+
+  it("names the template under the type only when it serves several types", () => {
+    const mercenaries = summary(1, "Mercenaries", [
+      type(10, "Reiklanders", "reikland"),
+      type(11, "Ostermarkers", "", false),
+    ]);
+    const cavalcade = summary(2, "The Cursed Cavalcade", [type(20, "Cursed Cavalcade")]);
+    const lone = summary(3, "Averlander Mercenaries", [
+      type(30, "Averlanders"),
+      { ...type(31, "Averlanders (old)"), archived: true },
+    ]);
+    expect(
+      typeRows([mercenaries, cavalcade, lone]).map((row) => [row.typeName, row.shared])
+    ).toEqual([
+      ["Averlanders", false],
+      ["Cursed Cavalcade", false],
+      ["Reiklanders", true],
+    ]);
+  });
 });
 
 const fighter = (fields: Partial<TemplateFighter>) => fields as TemplateFighter;

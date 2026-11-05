@@ -71,7 +71,7 @@ export default function WarbandTemplates() {
             open={params.isOpen(row.id)}
             onToggle={() => params.toggle(row.id)}
             name={row.typeName}
-            sub={row.template.name === row.typeName ? undefined : row.template.name}
+            sub={row.shared ? row.template.name : undefined}
             aside={
               <span className="font-mono text-[13px] font-bold text-ink">
                 {termsFor(row.template, row.variant).gold} gc
