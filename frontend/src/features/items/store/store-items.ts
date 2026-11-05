@@ -4,7 +4,7 @@ import type { Item } from "../types/item-types";
 export const STORE_CATEGORIES = [
   { id: "all", label: "All" },
   { id: "melee", label: "Melee" },
-  { id: "missile", label: "Missile" },
+  { id: "missile", label: "Ranged" },
   { id: "armour", label: "Armour" },
   { id: "misc", label: "Misc" },
   { id: "animals", label: "Animals" },

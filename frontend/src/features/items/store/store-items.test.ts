@@ -3,7 +3,8 @@ import { describe, expect, it } from "vitest";
 import { availability, item } from "@/test/catalogue-fixtures";
 
 import { diceLabel, priceLabel, rarityLabel, rolledPrice, whoLine } from "../utils/item-prices";
-import { itemName, searchWords, storeCategory } from "./store-items";
+import { itemKindLine } from "../item-kind";
+import { STORE_CATEGORIES, itemName, kindOf, searchWords, storeCategory } from "./store-items";
 
 const line = (name: string, excluded = false, group = false) => ({
   warband_type_id: group ? null : name.length,
@@ -66,6 +67,13 @@ describe("price rows", () => {
 });
 
 describe("store items", () => {
+  it("label a bow with the word its chip uses, on the store row and the unit card", () => {
+    const bow = item({ type: "Weapon", subtype: "Ranged" });
+    const chip = STORE_CATEGORIES.find((entry) => entry.id === storeCategory(bow));
+    expect(chip?.label).toBe(kindOf(bow));
+    expect(itemKindLine(bow)).toBe("Ranged weapon");
+  });
+
   it("sort into the store's chips, name a variant, and are found by their rules and tags", () => {
     const blunderbuss = item({ subtype: "Blackpowder" });
     expect(storeCategory(blunderbuss)).toBe("missile");

@@ -20,7 +20,7 @@ export function itemKind(item: Pick<Item, "type" | "subtype" | "beast_kind">): I
 
 export const ITEM_KIND_LABEL: Record<ItemKind, string> = {
   melee: "Melee weapon",
-  missile: "Missile weapon",
+  missile: "Ranged weapon",
   blackpowder: "Blackpowder",
   armour: "Armour",
   animal: "Animal",
