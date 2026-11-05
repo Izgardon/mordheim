@@ -82,13 +82,13 @@ class SharedSeedTests(TestCase):
         ]
         frenzy = Special.objects.create(name="Frenzy", type="Animal")
 
-        self.assertIn("Shared specials - Created: 54, Updated: 0, copies archived: 5.", seed())
+        self.assertIn("Shared specials - Created: 55, Updated: 0, copies archived: 5.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         frenzy.refresh_from_db()
         self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 54, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 55, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):
@@ -137,6 +137,17 @@ class SharedLookupTests(TestCase):
         self.assertEqual((goliath.type, goliath.owner_kind, goliath.category), ("Trait", GENERAL, BODY))
         self.assertEqual(goliath.description, "The model treats a stunned result on the Injury chart as knocked down.")
         self.assertEqual((own.name, own.type, own.category), ("No Pain (Sigmund)", f"Dramatis Persona - {sigmund}", BODY))  # fmt: skip
+
+    def test_the_rat_ogre_and_the_bone_goliath_share_one_may_not_run_worded_for_the_model(self):
+        # the Bone Goliath showed the Clan Skryre Rat Ogre's text: one hired sword's row, found by name
+        lookups = BookLookups("Hired Sword")
+        rat = lookups.special({"name": "May not run", "description": "It may not run."}, "Clan Skryre Rat Ogre")
+        goliath = lookups.special({"name": "May not run", "description": "Slow undead."}, "Bone Goliath")
+
+        assert rat is not None
+        self.assertEqual((rat, rat.type, rat.owner_kind), (goliath, "Trait", GENERAL))
+        self.assertEqual(rat.description, "The model may not run, but may charge normally.")
+        self.assertFalse(Special.objects.filter(type__startswith="Hired Sword - ", name__iexact="May not run").exists())
 
     def test_an_owners_rule_of_a_mutations_name_that_does_otherwise_is_kept_his(self):
         # the mutation heals him once; Belandysh ignores each wound on a 4+, and the Chameleon Skink's is a Skink's 6+

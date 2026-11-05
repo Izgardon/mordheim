@@ -36790,9 +36790,8 @@
             "type": "Trait"
           },
           {
-            "name": "May not Run",
-            "type": "Warband - The Restless Dead",
-            "description": "Grave Guards are slow undead creatures and may not run (but can charge normally)."
+            "name": "May Not Run",
+            "type": "Trait"
           },
           {
             "name": "No deal",
@@ -36840,9 +36839,8 @@
             "type": "Psychology"
           },
           {
-            "name": "May not run",
-            "type": "Warband - The Restless Dead",
-            "description": "Zombies are slow undead creatures and may not run (but may charge normally)."
+            "name": "May Not Run",
+            "type": "Trait"
           },
           {
             "name": "Immune to Psychology",
@@ -36904,9 +36902,8 @@
             "type": "Psychology"
           },
           {
-            "name": "May not run",
-            "type": "Warband - The Restless Dead",
-            "description": "Zombies are slow undead creatures and may not run (but may charge normally)."
+            "name": "May Not Run",
+            "type": "Trait"
           },
           {
             "name": "Immune to Psychology",
@@ -36968,9 +36965,8 @@
             "type": "Psychology"
           },
           {
-            "name": "May not run",
-            "type": "Warband - The Restless Dead",
-            "description": "Zombies are slow undead creatures and may not run (but may charge normally)."
+            "name": "May Not Run",
+            "type": "Trait"
           },
           {
             "name": "Immune to Psychology",
@@ -39906,9 +39902,8 @@
             "description": "Dire Wolves are slavering creatures that overpower their opponents when they charge. Dire Wolves fight with 2 attacks instead of 1 during the turn they charge."
           },
           {
-            "name": "May not Run",
-            "type": "Warband - Undead",
-            "description": "Dire Wolves are slow to react and may not run (but may charge normally)."
+            "name": "May Not Run",
+            "type": "Trait"
           },
           {
             "name": "Fear",
@@ -39972,9 +39967,8 @@
             "type": "Psychology"
           },
           {
-            "name": "May not run",
-            "type": "Warband - Undead",
-            "description": "Zombies are slow Undead creatures and may not run (but may charge normally)."
+            "name": "May Not Run",
+            "type": "Trait"
           },
           {
             "name": "Immune to Psychology",

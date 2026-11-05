@@ -31,7 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 49 |
 | skill group links | 266 |
 | serious injuries (D66) | 20 |
-| shared specials | 54 |
+| shared specials | 55 |
 | random mutation results (D66) | 36 |
 
 ## mordheimer's contradictions
@@ -503,7 +503,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 1341 |
 | warband rules | 157 |
 | upgrades | 68 |
-| the templates' own specials | 399 |
+| the templates' own specials | 395 |
 
 ### List lines
 
@@ -671,6 +671,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Immune to Psychology | Psychology | the list's text |  |  | 11 | 1 | 2 | 0 |
 | Immune to Poison | Trait | the list's text |  |  | 10 | 3 | 3 | 2 |
 | No Pain | Trait | the list's text |  |  | 9 | 1 | 1 | 0 |
+| May Not Run | Trait | the list's text |  |  | 6 | 2 | 0 | 0 |
 | Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 3 | 0 | 0 | 0 |
 | Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 4 | 0 | 0 | 0 |
 | Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 3 | 0 | 0 | 0 |
@@ -730,6 +731,7 @@ List prices the pages differ from: none.
 - Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
 - No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin.
+- May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Bone Goliath.
 - Daemon Soul: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
 - Great Claw: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations.
 - Cloven Hoofs: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.

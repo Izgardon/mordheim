@@ -48,6 +48,14 @@
       "setting": null
     },
     {
+      "name": "May Not Run",
+      "type": "Trait",
+      "description": "The model may not run, but may charge normally.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
       "name": "Daemon Soul",
       "type": "Mutation",
       "description": "A Daemon lives within the mutant’s soul. This gives him a 4+ save against the effects of spells or prayers.",
