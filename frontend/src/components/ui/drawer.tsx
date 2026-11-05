@@ -2,7 +2,7 @@ import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
-import { DialogKicker, keepOpenForPortals } from "@/components/ui/dialog";
+import { closeListFirst, DialogKicker, keepOpenForPortals } from "@/components/ui/dialog";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/utils";
 
@@ -43,6 +43,7 @@ export function Drawer({
         <DialogPrimitive.Content
           {...(description ? {} : { "aria-describedby": undefined })}
           onInteractOutside={keepOpenForPortals}
+          onEscapeKeyDown={closeListFirst}
           className={cn(
             "fixed inset-y-0 right-0 z-[60] flex w-[600px] max-w-full flex-col border-l border-accent-line bg-panel text-ink shadow-[-18px_0_40px_var(--color-shadow)] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right",
             className

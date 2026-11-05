@@ -2,7 +2,7 @@ import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 
-import { DialogKicker, keepOpenForPortals } from "@/components/ui/dialog";
+import { closeListFirst, DialogKicker, keepOpenForPortals } from "@/components/ui/dialog";
 import { IconButton } from "@/components/ui/icon-button";
 import { cn } from "@/lib/utils";
 
@@ -74,6 +74,7 @@ export function BottomSheet({
         <DialogPrimitive.Content
           {...(description ? {} : { "aria-describedby": undefined })}
           onInteractOutside={keepOpenForPortals}
+          onEscapeKeyDown={closeListFirst}
           onOpenAutoFocus={(event) => event.preventDefault()}
           style={offset ? { transform: `translateY(${offset}px)` } : undefined}
           className={cn(

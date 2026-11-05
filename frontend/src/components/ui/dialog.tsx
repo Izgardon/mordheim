@@ -13,6 +13,21 @@ import { Tooltip } from "@components/tooltip";
  * Outside-interaction handler for anything built on the Radix dialog: a tap inside a portaled
  * dropdown or select (or anything marked `data-allow-dialog-interaction`) keeps the dialog open.
  */
+/**
+ * Escape in a search whose list is open closes the list only (a combobox, as WAI-ARIA has it), not
+ * the drawer or sheet around it with the form being filled in.
+ */
+function closeListFirst(event: { target: EventTarget | null; preventDefault: () => void }) {
+  const target = event.target;
+  if (
+    target instanceof HTMLElement &&
+    target.getAttribute("role") === "combobox" &&
+    target.getAttribute("aria-expanded") === "true"
+  ) {
+    event.preventDefault();
+  }
+}
+
 function keepOpenForPortals(event: { target: EventTarget | null; preventDefault: () => void }) {
   const target = event.target;
   if (!(target instanceof HTMLElement)) {
@@ -258,5 +273,6 @@ export {
   DialogTitle,
   DialogKicker,
   DialogDescription,
+  closeListFirst,
   keepOpenForPortals,
 };
