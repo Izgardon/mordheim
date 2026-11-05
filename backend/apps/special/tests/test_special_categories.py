@@ -1,7 +1,7 @@
 """Every special is an injury, a mutation, an aura or the body (special/categories.py), which picks its icon.
 
 The book's are set by `book_category`, which every seeder of a book special calls: typed Injury, an upgrade bought from
-the Cult of the Possessed's Mutations, typed Animal (body), the name's in data/special-categories.json, else aura. A
+the Cult of the Possessed's Mutations, the name's in data/special-categories.json, typed Animal (body), else aura. A
 custom special picks its own, an aura when it doesn't; a campaign's version of a book special keeps it.
 """
 
@@ -30,13 +30,17 @@ class BookCategoryTests(TestCase):
             data = json.load(handle)
         self.assertGreater(len(data), 50)
         self.assertEqual(set(data.values()) - set(dict(CATEGORY_CHOICES)), set())
-        self.assertNotIn(AURA, data.values())  # the default needs no line
+        # the default needs a line only to keep an Animal-typed rule an aura (a mount's Fear)
+        call_command("seed_spells_and_special", stdout=StringIO())
+        animal = set(Special.objects.filter(type="Animal").values_list("name", flat=True))
+        self.assertEqual({name for name, category in data.items() if category == AURA} - animal, set())
 
     def test_the_rules_apply_in_order(self):
         self.assertEqual(book_category("Regeneration", INJURY_TYPE), INJURY)  # the type before the name
         self.assertEqual(book_category("Tentacle", CULT, "Mutations"), MUTATION)
         self.assertEqual(book_category("Tentacle", CULT), AURA)  # a fighter's rule of the name isn't bought
-        self.assertEqual(book_category("Fear", "Animal"), BODY)  # the Animal type's rules
+        self.assertEqual(book_category("Thick Skinned", "Animal"), BODY)  # the Animal type's rules
+        self.assertEqual(book_category("Fear", "Animal"), AURA)  # a mount's mental rule, by its line
         self.assertEqual(book_category("Fear", "Warband - Skaven"), AURA)
         self.assertEqual(book_category(" large ", "Trait"), BODY)  # the review file, read loosely
         self.assertEqual(book_category("Hideous", "Warband - Carnival of Chaos"), MUTATION)
@@ -46,8 +50,9 @@ class BookCategoryTests(TestCase):
     def test_seeding_the_book_sets_each_category(self):
         call_command("seed_spells_and_special", stdout=StringIO())
         book = Special.objects.filter(campaign=None)
-        categories = dict(book.filter(name__in=("Large", "Wizard", "Bicker")).values_list("name", "category"))
-        self.assertEqual(categories, {"Large": BODY, "Wizard": AURA, "Bicker": BODY})
+        names = ("Large", "Wizard", "Bicker", "Thick Skinned")
+        categories = dict(book.filter(name__in=names).values_list("name", "category"))
+        self.assertEqual(categories, {"Large": BODY, "Wizard": AURA, "Bicker": AURA, "Thick Skinned": BODY})
         self.assertEqual(set(book.filter(type=INJURY_TYPE).values_list("category", flat=True)), {INJURY})
 
     def test_a_hired_swords_own_special_takes_its_category(self):

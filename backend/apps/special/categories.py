@@ -33,13 +33,14 @@ def _book_categories() -> dict[str, str]:
 
 def book_category(name: str, special_type: str = "", upgrade_group: str = "") -> str:
     """The category the book's classification gives a special, by the first rule that holds: typed "Injury", an
-    upgrade in a group bought as mutations (`MUTATION_GROUPS`), typed "Animal" (body), its name in
-    data/special-categories.json, else aura."""
+    upgrade in a group bought as mutations (`MUTATION_GROUPS`), its name in data/special-categories.json (an aura
+    line there keeps a mount's mental rule an aura), typed "Animal" (body), else aura."""
     special_type = special_type.strip()
     if special_type == INJURY_TYPE:
         return INJURY
     if (special_type, upgrade_group.strip()) in MUTATION_GROUPS:
         return MUTATION
-    if special_type == ANIMAL_TYPE:
-        return BODY
-    return _book_categories().get(name.strip().casefold(), AURA)
+    listed = _book_categories().get(name.strip().casefold())
+    if listed:  # the review file before the Animal type: a mount's Fear or Stupid is still an aura (William, 5 Nov)
+        return listed
+    return BODY if special_type == ANIMAL_TYPE else AURA
