@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import {
   AT_RECRUIT,
+  groupNote,
   overUpgradeMax,
   upgradeGroups,
   upgradePrice,
@@ -49,6 +50,9 @@ export default function StoreUpgrades({
           className="m-0 flex list-none flex-col border-t border-line p-0"
         >
           <li className="pt-2 text-xs font-bold text-muted-foreground">{group}</li>
+          {groupNote(members) ? (
+            <li className="text-xs text-muted-foreground">{groupNote(members)}</li>
+          ) : null}
           {members.map((upgrade) => {
             const count = held(group);
             const price = upgradePrice(upgrade, count);

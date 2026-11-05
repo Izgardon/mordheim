@@ -2,7 +2,7 @@ import { Chip } from "@/components/ui/chip";
 import { cn } from "@/lib/utils";
 
 import type { TemplateUpgrade } from "../../types/hire-template-types";
-import { upgradeGroups, upgradePrice } from "./upgrade-draft";
+import { groupNote, upgradeGroups, upgradePrice } from "./upgrade-draft";
 import type { UpgradePicks } from "./useUpgradePicks";
 
 /** "50", "free" (the Marks), or "· price to type" where the book gives none: as the kit's chips read. */
@@ -34,6 +34,9 @@ export default function HireUpgrades({
           <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
             {group}
           </span>
+          {groupNote(members) ? (
+            <span className="text-xs text-muted-foreground">{groupNote(members)}</span>
+          ) : null}
           <div className="flex flex-wrap gap-1.5">
             {members.map((upgrade) => {
               const pick = picks.picks.find((entry) => entry.upgrade.id === upgrade.id);

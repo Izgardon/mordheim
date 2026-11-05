@@ -15,6 +15,13 @@ export function upgradeGroups(upgrades: TemplateUpgrade[]): [string, TemplateUpg
   return [...groups.entries()];
 }
 
+/**
+ * A group's note, said once over its upgrades: "With the Mutant skill." for the Beastmen's and
+ * the Marauders' Mutations (the notes its upgrades carry, each once; "" for none).
+ */
+export const groupNote = (members: Pick<TemplateUpgrade, "note">[]) =>
+  [...new Set(members.map((upgrade) => upgrade.note.trim()).filter(Boolean))].join(" ");
+
 /** What it costs a hero who already has (or has picked) `held` of its group: the first's price, else the later's. */
 export const upgradePrice = (upgrade: TemplateUpgrade, held: number) =>
   held > 0 ? upgrade.later_cost : upgrade.cost;
