@@ -1,8 +1,9 @@
 """Every special is an injury, a mutation, an aura or the body (special/categories.py), which picks its icon.
 
-The book's are set by `book_category`, which every seeder of a book special calls: typed Injury, an upgrade bought from
-the Cult of the Possessed's Mutations, the name's in data/special-categories.json, typed Animal (body), else aura. A
-custom special picks its own, an aura when it doesn't; a campaign's version of a book special keeps it.
+The book's are set by `book_category`, which every seeder of a book special calls: typed Injury, typed Mutation (the
+shared mutations) or an upgrade the editor writes in a group of mutations, the name's in data/special-categories.json,
+typed Animal (body), else aura. A custom special picks its own, an aura when it doesn't; a campaign's version of a
+book special keeps it.
 """
 
 import json
@@ -13,7 +14,16 @@ from django.test import TestCase
 
 from apps.battles.services.injuries import injury_special
 from apps.core.book_lookups import BookLookups
-from apps.special.categories import AURA, BODY, CATEGORIES_PATH, CATEGORY_CHOICES, INJURY, MUTATION, book_category
+from apps.special.categories import (
+    AURA,
+    BODY,
+    CATEGORIES_PATH,
+    CATEGORY_CHOICES,
+    INJURY,
+    MUTATION,
+    MUTATION_TYPE,
+    book_category,
+)
 from apps.special.kinds import INJURY as INJURY_TYPE
 from apps.special.kinds import WARBAND
 from apps.special.models import Special
@@ -37,13 +47,15 @@ class BookCategoryTests(TestCase):
 
     def test_the_rules_apply_in_order(self):
         self.assertEqual(book_category("Regeneration", INJURY_TYPE), INJURY)  # the type before the name
-        self.assertEqual(book_category("Tentacle", CULT, "Mutations"), MUTATION)
+        self.assertEqual(book_category("Tentacle", MUTATION_TYPE), MUTATION)  # the shared mutations
+        self.assertEqual(book_category("Immune to Poison", MUTATION_TYPE), MUTATION)  # the type before the name
+        self.assertEqual(book_category("Tentacle", CULT, "Mutations"), MUTATION)  # one the editor writes
         self.assertEqual(book_category("Tentacle", CULT), AURA)  # a fighter's rule of the name isn't bought
         self.assertEqual(book_category("Thick Skinned", "Animal"), BODY)  # the Animal type's rules
         self.assertEqual(book_category("Stubborn", "Animal"), AURA)  # a mount's mental rule, by its line
         self.assertEqual(book_category("Fear", "Warband - Skaven"), AURA)
         self.assertEqual(book_category(" large ", "Trait"), BODY)  # the review file, read loosely
-        self.assertEqual(book_category("Hideous", "Warband - Carnival of Chaos"), MUTATION)
+        self.assertEqual(book_category("Bloated Foulness", "Warband - Carnival of Chaos", "Blessings of Nurgle"), MUTATION)  # fmt: skip
         self.assertEqual(book_category("Mark of Tchar the Eagle", "Warband - Marauders of Chaos", "Mark of the Dark Gods"), AURA)  # fmt: skip
         self.assertEqual(book_category("Not in the book"), AURA)
 

@@ -1,7 +1,8 @@
 """The rules a template's fighters have and its upgrades give, as specials (the templates plan, phase 4): one picked
-from the catalogue, or one written in the editor, which is the campaign's own and typed by the template ("Warband -
-Night Watch") with the owner kind warband, as the import's fighter rules are, so the Boons & Banes pickers leave it
-out; its category (its icon) is the one picked, else the book's rule for it (an upgrade in the Possessed's Mutations is a
+from the catalogue, linked as it is (a shared general special, Fear or a mutation, too: special/shared.py), or one
+written in the editor, which is the campaign's own and typed by the template ("Warband - Night Watch") with the owner
+kind warband, as the import's fighter rules are, so the Boons & Banes pickers leave it out; its category (its icon) is
+the one picked, else the book's rule for it (an upgrade in the Possessed's Mutations or the Blessings of Nurgle is a
 mutation: special/categories.py). A written rule whose name the template's type already holds is refused: pick that
 one instead."""
 

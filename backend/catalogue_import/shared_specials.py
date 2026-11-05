@@ -4,8 +4,8 @@ William's list `apps/special/data/shared-specials.json`, into `out/shared-specia
 - Fear, Stupidity and Immune to Psychology (typed Psychology) and Immune to Poison (Trait): the snapshot's psychology
   entry of its `psychology` name, cleaned as the templates' rules are and after its `first_line`, else the list's
   `text`;
-- a special an upgrade sells: the upgrade of its name on the template that sells it (`upgrade_of`), its `subject`
-  made general ("The Tainted One" -> "The model").
+- one Mutation for each of the Cult of the Possessed's mutations and the Blessings of Nurgle: the upgrade of its name
+  on the template that sells it (`upgrade_of`), its `subject` made general ("The Tainted One" -> "The model").
 
 A template fighter's rule or an upgrade of a shared name or alias links it (templates.py); a rule the list keeps
 `apart` stays its owner's own, named for him, with his own text. The hired swords', dramatis personae's and beasts'

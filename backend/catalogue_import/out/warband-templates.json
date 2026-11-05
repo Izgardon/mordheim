@@ -8412,13 +8412,11 @@
         "specials": [
           {
             "name": "Cloud of Flies",
-            "type": "Warband - Carnival of Chaos",
-            "description": "Plague Bearers are surrounded by a cloud of flies, which buzz around them and their combat opponent. They do not affect the Plague Bearer but distract foes by buzzing into eyes, nostrils and mouths. A Plague Bearer’s close combat opponent suffers a -1 to hit modifier on all attacks."
+            "type": "Mutation"
           },
           {
             "name": "Stream of Corruption",
-            "type": "Warband - Carnival of Chaos",
-            "description": "Plague Bearers can spew forth a grotesque stream of maggots, entrails and filth. This is counted as a shooting attack with a range of 6\" and is resolved at Strength 3 with no saves for armour."
+            "type": "Mutation"
           },
           {
             "name": "Daemonic",
@@ -8487,8 +8485,7 @@
         "specials": [
           {
             "name": "Cloud of Flies",
-            "type": "Warband - Carnival of Chaos",
-            "description": "Plague Bearers are surrounded by a cloud of flies, which buzz around them and their combat opponent. They do not affect the Plague Bearer but distract foes by buzzing into eyes, nostrils and mouths. A Plague Bearer’s close combat opponent suffers a -1 to hit modifier on all attacks."
+            "type": "Mutation"
           },
           {
             "name": "Swarm",
@@ -8615,9 +8612,8 @@
       {
         "group": "Blessings of Nurgle",
         "special": {
-          "name": "Stream of Corruption (Blessings of Nurgle)",
-          "type": "Warband - Carnival of Chaos",
-          "description": "The Tainted One can spew forth a grotesque stream of maggots, entrails and filth. This is counted as a shooting attack with a range of 6\" and is resolved at Strength 3 with no saves for armour."
+          "name": "Stream of Corruption",
+          "type": "Mutation"
         },
         "cost": 25,
         "cost_note": "",
@@ -8634,9 +8630,8 @@
       {
         "group": "Blessings of Nurgle",
         "special": {
-          "name": "Nurgle’s Rot",
-          "type": "Warband - Carnival of Chaos",
-          "description": "The Tainted One is infected with the deadly pestilence of its lord – Nurgle’s Rot. In addition, the Tainted One is immune to all poisons. Nurgle’s Rot is a deadly contagion for which there is no known cure. This virulent disease can be passed on in hand-to-hand combat. If the Tainted One makes a successful to wound roll of 6 this will result in the target model contracting the Rot (note: Nurgle’s Rot only affects the living, so Undead, Daemons and the Possessed are immune). Once a warrior has contracted the Rot, mark this on the warband roster. Rather than killing the victim immediately, the Rot can take some time to set in. From now on, before the start of each battle, the warrior must pass a Toughness test. If successful, his constitution has managed to stave off the Rot’s effects. If unsuccessful, the warrior loses one point of Toughness permanently (if he reaches zero, he has succumbed to the Rot and died, remove him from the roster). In addition, if a 6 is rolled for the Toughness test then he has unwittingly passed the Rot on to another member of the warband (randomly allocate a warband member and mark this on the roster)."
+          "name": "Nurgle's Rot",
+          "type": "Mutation"
         },
         "cost": 50,
         "cost_note": "",
@@ -8653,9 +8648,8 @@
       {
         "group": "Blessings of Nurgle",
         "special": {
-          "name": "Cloud of Flies (Blessings of Nurgle)",
-          "type": "Warband - Carnival of Chaos",
-          "description": "The Tainted One is surrounded by a cloud of flies, which buzz around him and his combat opponent. They do not affect the Tainted One but distract foes by buzzing into eyes, nostrils and mouths. The Tainted One’s close combat opponent suffers a -1 to hit modifier on all attacks."
+          "name": "Cloud of Flies",
+          "type": "Mutation"
         },
         "cost": 25,
         "cost_note": "",
@@ -8673,8 +8667,7 @@
         "group": "Blessings of Nurgle",
         "special": {
           "name": "Bloated Foulness",
-          "type": "Warband - Carnival of Chaos",
-          "description": "The Tainted One is a huge, disgusting mass of diseased, flabby folds. It gains +1 Wound and +1 Toughness but has its Movement reduced by -1."
+          "type": "Mutation"
         },
         "cost": 40,
         "cost_note": "",
@@ -8692,8 +8685,7 @@
         "group": "Blessings of Nurgle",
         "special": {
           "name": "Mark of Nurgle",
-          "type": "Warband - Carnival of Chaos",
-          "description": "The Tainted One is burned with the great mark of Nurgle, the three spheres, that weep foul pus constantly. It gains +1 Wound and is immune to all poisons."
+          "type": "Mutation"
         },
         "cost": 35,
         "cost_note": "",
@@ -8711,8 +8703,7 @@
         "group": "Blessings of Nurgle",
         "special": {
           "name": "Hideous",
-          "type": "Warband - Carnival of Chaos",
-          "description": "The Tainted One is so disgusting that its flesh hangs in tatters from its body and its entrails are rotten and exposed. It causes Fear."
+          "type": "Mutation"
         },
         "cost": 40,
         "cost_note": "",
@@ -10229,8 +10220,7 @@
         "group": "Mutations",
         "special": {
           "name": "Daemon Soul",
-          "type": "Warband - Cult of the Possessed",
-          "description": "A Daemon lives within the mutant’s soul. This gives him a 4+ save against the effects of spells or prayers."
+          "type": "Mutation"
         },
         "cost": 20,
         "cost_note": "",
@@ -10249,8 +10239,7 @@
         "group": "Mutations",
         "special": {
           "name": "Great Claw",
-          "type": "Warband - Cult of the Possessed",
-          "description": "One of the mutant’s arms ends in a great, crab-like claw. He may carry no weapons in this arm, but gains an extra attack in hand-to-hand combat with a +1 Strength bonus."
+          "type": "Mutation"
         },
         "cost": 50,
         "cost_note": "",
@@ -10269,8 +10258,7 @@
         "group": "Mutations",
         "special": {
           "name": "Cloven Hoofs",
-          "type": "Warband - Cult of the Possessed",
-          "description": "The warrior gains +1 Movement."
+          "type": "Mutation"
         },
         "cost": 40,
         "cost_note": "",
@@ -10289,8 +10277,7 @@
         "group": "Mutations",
         "special": {
           "name": "Tentacle",
-          "type": "Warband - Cult of the Possessed",
-          "description": "One of the mutant’s arms ends in a tentacle. He may grapple his opponent in close combat to reduce his attacks by -1, down to a minimum of 1. The mutant may decide which attack his opponent loses."
+          "type": "Mutation"
         },
         "cost": 35,
         "cost_note": "",
@@ -10309,8 +10296,7 @@
         "group": "Mutations",
         "special": {
           "name": "Blackblood",
-          "type": "Warband - Cult of the Possessed",
-          "description": "If the model loses a wound in close combat, anyone in base contact with the model suffers a Strength 3 hit (no critical hits) from the spurting corrosive blood."
+          "type": "Mutation"
         },
         "cost": 30,
         "cost_note": "",
@@ -10329,8 +10315,7 @@
         "group": "Mutations",
         "special": {
           "name": "Spines",
-          "type": "Warband - Cult of the Possessed",
-          "description": "Any model in base contact with the mutant suffers an automatic Strength 1 hit at the beginning of each close combat phase. Spines will never cause critical hits."
+          "type": "Mutation"
         },
         "cost": 35,
         "cost_note": "",
@@ -10349,8 +10334,7 @@
         "group": "Mutations",
         "special": {
           "name": "Scorpion Tail",
-          "type": "Warband - Cult of the Possessed",
-          "description": "The mutant has a long barbed tail with a venomed tip, allowing him to make an extra Strength 5 attack in each hand-to-hand combat phase. If the model hit by the tail is immune to poison, the Strength of the hit is reduced to 2."
+          "type": "Mutation"
         },
         "cost": 40,
         "cost_note": "",
@@ -10369,8 +10353,7 @@
         "group": "Mutations",
         "special": {
           "name": "Extra Arm",
-          "type": "Warband - Cult of the Possessed",
-          "description": "The mutant may use any single-handed weapon in the extra arm, giving him +1 attack when fighting in hand-to-hand combat. Alternatively, he may carry a shield or a buckler in the extra arm. If a Possessed chooses to do this, he gains an extra attack but still cannot carry a weapon."
+          "type": "Mutation"
         },
         "cost": 40,
         "cost_note": "",
@@ -10389,8 +10372,7 @@
         "group": "Mutations",
         "special": {
           "name": "Hideous",
-          "type": "Warband - Cult of the Possessed",
-          "description": "The mutant causes fear."
+          "type": "Mutation"
         },
         "cost": 40,
         "cost_note": "",

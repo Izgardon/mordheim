@@ -94,9 +94,9 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                # special.json's 24, 3 injury specials, the 4 shared (Fear, Stupidity, the immunities), the templates' 420
-                # and the hired swords' and personae's own 254 (next step 12)
-                "Special": 705,
+                # special.json's 24, 3 injury specials, the 18 shared (Fear, the mutations), the templates' 403 and the
+                # hired swords' and personae's own 254 (next step 12)
+                "Special": 702,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -159,11 +159,11 @@ class SeedAllTests(TestCase):
         self.assertEqual(set(owners), {"warband", "general"})  # the templates' own; our Large, Wizard, Priest, shared
 
     def test_every_owner_links_the_one_shared_special_and_the_rules_kept_apart_stay_theirs(self):
-        # William, 5 Nov 2026 (special/shared.py): one Fear, Stupidity, Immune to Psychology and Immune to Poison,
-        # linked by the templates' fighters, the hired swords, the dramatis personae and the beasts
+        # William, 5 Nov 2026 (special/shared.py): one Fear, Stupidity, Immune to Psychology and Immune to Poison, and
+        # one of each mutation, linked by the templates' fighters and upgrades, the hired swords, personae and beasts
         book = Special.objects.filter(campaign__isnull=True)
         self.assertFalse(book.filter(name__in=("Cause Fear", "Causes Fear", "Fearsome", "Stupid")).exists())
-        names = ("Fear", "Stupidity", "Immune to Psychology", "Immune to Poison")
+        names = ("Fear", "Stupidity", "Immune to Psychology", "Immune to Poison", "Hideous", "Cloud of Flies")
         links = {
             row.name: (
                 row.template_fighter_links.count(),
@@ -181,8 +181,12 @@ class SeedAllTests(TestCase):
                 "Stupidity": (4, 0, 0, 0, 1),
                 "Immune to Psychology": (11, 0, 1, 2, 0),
                 "Immune to Poison": (10, 0, 3, 3, 2),
+                "Hideous": (0, 2, 0, 0, 0),  # the Cult's Mutations and the Blessings of Nurgle, 40 gc each
+                "Cloud of Flies": (2, 1, 0, 0, 0),  # the Plague Bearer's and the Nurgling's own, and the Blessing's
             },
         )
+        hideous = TemplateUpgrade.objects.filter(special__name="Hideous").values_list("cost", flat=True)
+        self.assertEqual(set(hideous), {40})
         apart = book.filter(name__regex=r"^(Fear|Stupidity|Immune to (Psychology|Poison)) \(")
         kept = dict(apart.values_list("name", "owner_kind"))
         self.assertEqual(

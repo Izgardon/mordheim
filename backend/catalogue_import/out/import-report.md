@@ -31,7 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 49 |
 | skill group links | 266 |
 | serious injuries (D66) | 20 |
-| shared specials | 4 |
+| shared specials | 18 |
 
 ## mordheimer's contradictions
 
@@ -472,7 +472,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 1341 |
 | warband rules | 157 |
 | upgrades | 23 |
-| the templates' own specials | 420 |
+| the templates' own specials | 403 |
 
 ### List lines
 
@@ -617,7 +617,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen), Remas' rout re-roll against Dark Elves, a Hung henchman who becomes a hero getting Ride Warhorse, and the Ostermarker captain's starting wardog.
 - Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
 - mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
-- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); carnival-of-chaos: Stream of Corruption (Blessings of Nurgle); carnival-of-chaos: Cloud of Flies (Blessings of Nurgle); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); the-restless-dead: No Pain (Scarecrow); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); undead: No Pain (Zombies).
+- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); the-restless-dead: No Pain (Scarecrow); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); undead: No Pain (Zombies).
 
 ## Shared specials
 
@@ -629,6 +629,20 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Stupidity | Psychology | the rulebook's Stupidity (snapshot) | 4 | 0 | 0 | 1 |
 | Immune to Psychology | Psychology | the list's text | 11 | 1 | 2 | 0 |
 | Immune to Poison | Trait | the list's text | 10 | 3 | 3 | 2 |
+| Daemon Soul | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
+| Great Claw | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
+| Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
+| Tentacle | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
+| Blackblood | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
+| Spines | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
+| Scorpion Tail | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
+| Extra Arm | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
+| Hideous | Mutation | Cult of the Possessed's upgrade | 2 | 0 | 0 | 0 |
+| Stream of Corruption | Mutation | Carnival of Chaos's upgrade; subject made general | 2 | 0 | 0 | 0 |
+| Nurgle's Rot | Mutation | Carnival of Chaos's upgrade | 1 | 0 | 0 | 0 |
+| Cloud of Flies | Mutation | Carnival of Chaos's upgrade; subject made general | 3 | 0 | 0 | 0 |
+| Bloated Foulness | Mutation | Carnival of Chaos's upgrade | 1 | 0 | 0 | 0 |
+| Mark of Nurgle | Mutation | Carnival of Chaos's upgrade | 1 | 0 | 0 | 0 |
 
 ### Merged
 
@@ -636,6 +650,20 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
 - Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
+- Daemon Soul: Cult of the Possessed: Mutations.
+- Great Claw: Cult of the Possessed: Mutations.
+- Cloven Hoofs: Cult of the Possessed: Mutations.
+- Tentacle: Cult of the Possessed: Mutations.
+- Blackblood: Cult of the Possessed: Mutations.
+- Spines: Cult of the Possessed: Mutations.
+- Scorpion Tail: Cult of the Possessed: Mutations.
+- Extra Arm: Cult of the Possessed: Mutations.
+- Hideous: Carnival of Chaos: Blessings of Nurgle; Cult of the Possessed: Mutations.
+- Stream of Corruption: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Blessings of Nurgle.
+- Nurgle's Rot: Carnival of Chaos: Blessings of Nurgle.
+- Cloud of Flies: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling; Carnival of Chaos: Blessings of Nurgle.
+- Bloated Foulness: Carnival of Chaos: Blessings of Nurgle.
+- Mark of Nurgle: Carnival of Chaos: Blessings of Nurgle.
 
 ### Kept apart
 

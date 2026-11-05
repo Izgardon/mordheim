@@ -1,7 +1,7 @@
 """Shared specials (William, 5 Nov 2026; special/shared.py): one general Fear, Stupidity, Immune to Psychology and
-Immune to Poison, which seed_spells_and_special seeds from the catalogue import's out/shared-specials.json, archiving
-the copies seeded before; the hireling and bestiary seeders' book lookups link an owner's rule of a shared name or
-alias to it, or keep his own where William's list keeps it apart.
+Immune to Poison, and one of each mutation, which seed_spells_and_special seeds from the catalogue import's
+out/shared-specials.json, archiving the copies seeded before; the hireling and bestiary seeders' book lookups link an
+owner's rule of a shared name or alias to it, or keep his own where William's list keeps it apart.
 """
 
 from io import StringIO
@@ -10,8 +10,8 @@ from django.core.management import call_command
 from django.test import TestCase
 
 from apps.core.book_lookups import BookLookups
-from apps.special.categories import AURA, BODY
-from apps.special.kinds import BANE, BOON, DRAMATIS_PERSONA, GENERAL, WARBAND
+from apps.special.categories import AURA, BODY, MUTATION
+from apps.special.kinds import BANE, BOON, DRAMATIS_PERSONA, GENERAL, TRAIT, WARBAND
 from apps.special.models import Special
 
 BELANDYSH = "Belandysh, Condemned Champion Of Chen"
@@ -35,6 +35,11 @@ class SharedSeedTests(TestCase):
         self.assertEqual((rows["Stupidity"].kind, poison.type, poison.kind), (BANE, "Trait", BOON))
         self.assertEqual((poison.category, poison.description), (BODY, "Not affected by any poison."))
         self.assertEqual(immune.description, "Not affected by psychology (such as fear) and never leaves combat.")
+        claw, flies = rows["Great Claw"], rows["Cloud of Flies"]
+        self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, TRAIT, MUTATION))
+        self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))  # no Tainted One
+        mutations = Special.objects.filter(type="Mutation")
+        self.assertEqual((mutations.count(), set(mutations.values_list("category", flat=True))), (14, {MUTATION}))
 
     def test_the_copies_seeded_before_are_archived_and_a_second_run_finds_none(self):
         copies = [
@@ -45,13 +50,13 @@ class SharedSeedTests(TestCase):
         ]
         frenzy = Special.objects.create(name="Frenzy", type="Animal")
 
-        self.assertIn("Shared specials - Created: 4, Updated: 0, copies archived: 4.", seed())
+        self.assertIn("Shared specials - Created: 18, Updated: 0, copies archived: 4.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         frenzy.refresh_from_db()
         self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 4, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 18, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):

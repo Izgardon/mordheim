@@ -14,7 +14,33 @@
       "text": "Not affected by psychology (such as fear) and never leaves combat.",
       "aliases": []
     },
-    {"name": "Immune to Poison", "type": "Trait", "text": "Not affected by any poison.", "aliases": []}
+    {"name": "Immune to Poison", "type": "Trait", "text": "Not affected by any poison.", "aliases": []},
+    {"name": "Daemon Soul", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Great Claw", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Cloven Hoofs", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Tentacle", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Blackblood", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Spines", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Scorpion Tail", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Extra Arm", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Hideous", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {
+      "name": "Stream of Corruption",
+      "type": "Mutation",
+      "upgrade_of": "Carnival of Chaos",
+      "subject": {"The Tainted One": "The model"},
+      "aliases": []
+    },
+    {"name": "Nurgle's Rot", "type": "Mutation", "upgrade_of": "Carnival of Chaos", "aliases": []},
+    {
+      "name": "Cloud of Flies",
+      "type": "Mutation",
+      "upgrade_of": "Carnival of Chaos",
+      "subject": {"The Tainted One": "The model"},
+      "aliases": []
+    },
+    {"name": "Bloated Foulness", "type": "Mutation", "upgrade_of": "Carnival of Chaos", "aliases": []},
+    {"name": "Mark of Nurgle", "type": "Mutation", "upgrade_of": "Carnival of Chaos", "aliases": []}
   ],
   "apart": [
     {

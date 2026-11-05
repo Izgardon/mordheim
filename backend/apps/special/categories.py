@@ -19,8 +19,13 @@ CATEGORY_CHOICES = ((INJURY, "Injury"), (MUTATION, "Mutation"), (AURA, "Aura"), 
 CATEGORIES_PATH = Path(__file__).resolve().parent / "data" / "special-categories.json"
 
 ANIMAL_TYPE = "Animal"  # the mounts' and beasts' rules (data/special.json)
-# a warband template's upgrade groups bought as mutations: (its specials' type, the group)
-MUTATION_GROUPS = {("Warband - Cult of the Possessed", "Mutations")}
+MUTATION_TYPE = "Mutation"  # the shared mutations: the Cult of the Possessed's and the Blessings of Nurgle (shared.py)
+# a warband template's upgrade groups bought as mutations, for a rule the template editor writes in one: (its specials'
+# type, the group); the book's upgrades in them give the shared mutations
+MUTATION_GROUPS = {
+    ("Warband - Cult of the Possessed", "Mutations"),
+    ("Warband - Carnival of Chaos", "Blessings of Nurgle"),
+}
 
 
 @cache
@@ -32,13 +37,14 @@ def _book_categories() -> dict[str, str]:
 
 
 def book_category(name: str, special_type: str = "", upgrade_group: str = "") -> str:
-    """The category the book's classification gives a special, by the first rule that holds: typed "Injury", an
-    upgrade in a group bought as mutations (`MUTATION_GROUPS`), its name in data/special-categories.json (an aura
-    line there keeps a mount's mental rule an aura), typed "Animal" (body), else aura."""
+    """The category the book's classification gives a special, by the first rule that holds: typed "Injury", typed
+    "Mutation" or an upgrade in a group bought as mutations (`MUTATION_GROUPS`), its name in
+    data/special-categories.json (an aura line there keeps a mount's mental rule an aura), typed "Animal" (body), else
+    aura."""
     special_type = special_type.strip()
     if special_type == INJURY_TYPE:
         return INJURY
-    if (special_type, upgrade_group.strip()) in MUTATION_GROUPS:
+    if special_type == MUTATION_TYPE or (special_type, upgrade_group.strip()) in MUTATION_GROUPS:
         return MUTATION
     listed = _book_categories().get(name.strip().casefold())
     if listed:  # the review file before the Animal type: a mount's Stubborn or Bicker is still an aura (William, 5 Nov)

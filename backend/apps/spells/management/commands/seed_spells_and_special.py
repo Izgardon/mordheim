@@ -1,6 +1,6 @@
 """Seed the book's spells and specials from JSON (`apps/spells/data/spells.json`, `apps/special/data/special.json`),
 the specials the serious injury tables grant by name, typed "Injury", with the book's rule text (the catalogue
-import's `out/serious-injuries.json`), and the shared specials (Fear, Stupidity and the immunities: the import's
+import's `out/serious-injuries.json`), and the shared specials (Fear, Stupidity, the mutations: the import's
 `out/shared-specials.json`, special/shared.py), archiving the copies of them seeded before.
 
 Rows are matched by name and type in the book only (BUG-17); the run is all or nothing; there is no --truncate

@@ -1,7 +1,7 @@
 """Shared specials (William, 5 Nov 2026): one general special for a rule many owners hold under names of their own,
-Fear, Stupidity, Immune to Psychology and Immune to Poison. William's list is `data/shared-specials.json`: each
-special's type, wording and the names that mean it, and the rules kept apart because their text changes what the rule
-does ("Stupidity (Rat Ogre)").
+Fear, Stupidity, Immune to Psychology and Immune to Poison, and one for each mutation the Cult of the Possessed and the
+Blessings of Nurgle sell. William's list is `data/shared-specials.json`: each special's type, wording and the names
+that mean it, and the rules kept apart because their text changes what the rule does ("Stupidity (Rat Ogre)").
 
 The catalogue import builds `out/shared-specials.json` from it (catalogue_import/shared_specials.py), with the
 template fighters' rules and upgrades already linked; seed_spells_and_special seeds each special and archives the
