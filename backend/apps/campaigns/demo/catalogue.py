@@ -8,7 +8,6 @@ from django.core.management.base import CommandError
 
 from apps.hirelings.models import HiredSword
 from apps.items.models import Item
-from apps.races.models import Race
 from apps.skills.models import Skill
 from apps.spells.models import Spell
 from apps.warbands.models import WarbandType
@@ -37,9 +36,6 @@ class Book:
         if found is None:
             raise CommandError(f"The catalogue has no warband type {slug!r}: run `manage.py seed_all` first.")
         return int(found)
-
-    def race(self, name: str | None) -> int | None:
-        return self._first(Race, "race", name=name) if name else None
 
     def item(self, name: str) -> int | None:
         return self._first(Item, "item", name=name)

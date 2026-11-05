@@ -18,7 +18,7 @@ from apps.campaigns.demo.cast import CAMPAIGN_NAME, CAPTAIN_EMAIL, EMAIL_DOMAIN,
 from apps.campaigns.demo.guard import check_local, remote_password
 from apps.campaigns.models import Campaign, CampaignMembership, PivotalMoment
 from apps.trades.models import TradeRequest
-from apps.warbands.models import Hero, Warband, WarbandLog, WarbandTrade
+from apps.warbands.models import HenchmenGroup, Hero, Warband, WarbandLog, WarbandTrade
 
 NEON_HOST = "ep-quiet-sun-123456.eu-west-2.aws.neon.tech"
 
@@ -82,6 +82,23 @@ class SeedDemoCampaignTests(TestCase):
         for warband in Warband.objects.filter(campaign=campaign):  # the stored gold is the ledger's sum
             ledger = WarbandTrade.objects.filter(warband=warband).aggregate(total=Sum("price"))["total"]
             self.assertEqual(warband.gold, ledger, warband.name)
+
+    def test_every_hero_and_group_is_hired_from_its_template(self):
+        # the review (5 Nov 2026: W13): the demo's units carried no fighter_key, so His list and the store's Upgrades
+        # never showed, and the Black Eagles' Marksmen had BS 3; they are hired as the hire dialog hires them
+        campaign = demo_campaign()
+        heroes = Hero.objects.filter(warband__campaign=campaign)
+        groups = HenchmenGroup.objects.filter(warband__campaign=campaign)
+        self.assertEqual((heroes.count(), groups.count()), (16, 8))
+        self.assertFalse(heroes.filter(fighter_key="").exists())
+        self.assertFalse(groups.filter(fighter_key="").exists())
+        bowmen = groups.get(name="Reikland Bowmen")
+        self.assertEqual((bowmen.fighter_key, bowmen.ballistic_skill), ("marksmen", 4))  # Reikland's Marksmen +1 BS
+        konrad = heroes.get(name="Konrad Adler")
+        self.assertEqual((konrad.fighter_key, konrad.unit_type, konrad.is_leader), ("mercenary-captain", "Mercenary Captain", True))  # fmt: skip
+        self.assertIn(
+            ("Dagger", 0), konrad.hero_items.values_list("item__name", "cost")
+        )  # his list's first Dagger, free
 
     def test_running_it_again_rebuilds_it_and_touches_nothing_else(self):
         old_id = demo_campaign().id

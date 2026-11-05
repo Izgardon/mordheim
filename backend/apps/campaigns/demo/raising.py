@@ -1,25 +1,14 @@
-"""Raising a demo warband as its player would: the warband (with its default resource, Wyrdstone), its backstory, each
-hero and henchmen group recruited at its price and kitted out through purchases, a late recruit who joins without part
-of the group's kit (his gap), the hired swords hired at their fee, and the stash's spares bought."""
+"""Raising a demo warband as its player would: the warband (raised from its type's template, with its default resource,
+Wyrdstone), its backstory, each hero and henchmen group hired from the template as the hire dialog hires them, a late
+recruit who joins without part of the group's kit (his gap), the hired swords hired at their fee, and the stash's
+spares bought."""
 
 from dataclasses import dataclass, field
 from typing import Any
 
 from .api import Api
-from .cast import GroupSpec, HeroSpec, Kit, Stats, WarbandSpec
+from .cast import GroupSpec, HeroSpec, Kit, WarbandSpec
 from .catalogue import Book
-
-STAT_NAMES = (
-    "movement",
-    "weapon_skill",
-    "ballistic_skill",
-    "strength",
-    "toughness",
-    "wounds",
-    "initiative",
-    "attacks",
-    "leadership",
-)
 
 
 @dataclass
@@ -64,10 +53,6 @@ class Demo:
         return [unit for unit in self.units.values() if unit.player == player and not unit.dead]
 
 
-def _stats(stats: Stats) -> dict[str, int]:
-    return dict(zip(STAT_NAMES, stats, strict=True))
-
-
 def _buy(api: Api, user: Any, warband_id: int, target: tuple[str, int | None], kit: Kit, book: Book) -> None:
     target_type, target_id = target
     for name, price in kit:
@@ -77,54 +62,48 @@ def _buy(api: Api, user: Any, warband_id: int, target: tuple[str, int | None], k
             api.post(user, f"warbands/{warband_id}/purchases/", body)
 
 
+def _hire(api: Api, demo: Demo, player: str, segment: str, create: dict[str, Any], kit: Kit) -> dict[str, Any]:
+    """A hire from the warband's template as the hire dialog's Recruit as makes it: one roster Save (`batch/`) whose
+    create names the fighter's key, which fills in the rest (and gives his list's free Dagger), with his kit bought
+    at the prices sent; the new unit, as the Save's answer lists it."""
+    user, warband_id = demo.users[player], demo.warbands[player]
+    found = [(item_id, price) for name, price in kit if (item_id := demo.book.item(name)) is not None]
+    purchases = [{"create_index": 0, "item_id": item_id, "quantity": 1, "price": price} for item_id, price in found]
+    body = {"create": [create], **({"purchases": purchases} if purchases else {})}
+    units = api.post(user, f"warbands/{warband_id}/{segment}/batch/", body)["units"]
+    return dict(max(units, key=lambda unit: unit["id"]))  # the newest: ids only grow
+
+
 def _recruit_hero(api: Api, demo: Demo, spec: HeroSpec, player: str) -> None:
-    user, warband_id, book = demo.users[player], demo.warbands[player], demo.book
-    body: dict[str, Any] = {
-        "name": spec.name,
-        "unit_type": spec.unit_type,
-        "race": book.race(spec.race),
-        "price": spec.price,
-        "xp": spec.xp,
-        "is_leader": spec.leader,
-        "caster": spec.caster,
-        "available_skills": list(spec.access),  # skill group names (skills/access.py)
-        "skill_ids": [found for name in spec.skills if (found := book.skill(name))],
-        "spell_ids": [found for name, school in spec.spells if (found := book.spell(name, school))],
-        **_stats(spec.stats),
-    }
-    hero = api.post(user, f"warbands/{warband_id}/heroes/", body)
-    _buy(api, user, warband_id, ("hero", hero["id"]), spec.items, book)
-    demo.units[spec.handle] = Unit(f"hero:{hero['id']}", spec.name, spec.unit_type, player)
+    book = demo.book
+    skills = [found for name in spec.skills if (found := book.skill(name))]
+    spells = [found for name, lore in spec.spells if (found := book.spell(name, lore))]
+    create: dict[str, Any] = {"fighter_key": spec.fighter_key, "name": spec.name}
+    create |= {"skill_ids": skills} if skills else {}  # what is sent wins over his template's
+    create |= {"spell_ids": spells} if spells else {}
+    hero = _hire(api, demo, player, "heroes", create, spec.items)
+    demo.units[spec.handle] = Unit(f"hero:{hero['id']}", spec.name, hero["unit_type"], player)
 
 
-def _late_recruit(api: Api, user: Any, path: str, members: list[dict], name: str) -> list[dict]:
-    """The group's last recruit joins after its kit was bought, without the kit's last row: his gap."""
+def _late_recruit(api: Api, user: Any, path: str, members: list[dict], name: str, lacks: int | None) -> list[dict]:
+    """The group's last recruit joins after its kit was bought, without its last item's row: his gap."""
     rows = api.get(user, path)["items"]
-    without = [rows[-1]["row_id"]] if rows else []
+    without = [row["row_id"] for row in rows if lacks is not None and row["id"] == lacks][-1:]
     entries = [{"id": member["id"]} for member in members] + [{"name": name, "without": without}]
     return list(api.patch(user, path, {"henchmen": entries})["henchmen"])
 
 
 def _recruit_group(api: Api, demo: Demo, spec: GroupSpec, player: str) -> None:
-    user, warband_id, book = demo.users[player], demo.warbands[player], demo.book
-    body: dict[str, Any] = {
-        "name": spec.name,
-        "unit_type": spec.unit_type,
-        "race": book.race(spec.race),
-        "price": spec.price,
-        "large": spec.large,
-        "henchmen": [{"name": name} for name in spec.members],
-        **_stats(spec.stats),
-    }
-    group = api.post(user, f"warbands/{warband_id}/henchmen-groups/", body)
-    _buy(api, user, warband_id, ("henchmen_group", group["id"]), spec.items, book)
+    create = {"fighter_key": spec.fighter_key, "name": spec.name, "henchmen": [{"name": name} for name in spec.members]}
+    group = _hire(api, demo, player, "henchmen-groups", create, spec.items)
     members = list(group["henchmen"])
     if spec.late_member:
-        path = f"warbands/{warband_id}/henchmen-groups/{group['id']}/"
-        members = _late_recruit(api, user, path, members, spec.late_member)
+        path = f"warbands/{demo.warbands[player]}/henchmen-groups/{group['id']}/"
+        lacks = demo.book.item(spec.items[-1][0]) if spec.items else None
+        members = _late_recruit(api, demo.users[player], path, members, spec.late_member, lacks)
     demo.groups[spec.handle] = group["id"]
     for number, member in enumerate(members, start=1):
-        unit = Unit(f"henchman:{member['id']}", member["name"], spec.unit_type, player, spec.handle, spec.name)
+        unit = Unit(f"henchman:{member['id']}", member["name"], group["unit_type"], player, spec.handle, spec.name)
         demo.units[f"{spec.handle}.{number}"] = unit
 
 
