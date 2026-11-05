@@ -27,7 +27,7 @@
     "low": 24,
     "high": 24,
     "name": "Madness",
-    "text": "Roll a D6. On a 1-3 the warrior suffers from stupidity (https://mordheimer.net/docs/rules/leadership-psychology#stupidity); on 4-6 the warrior suffers from frenzy (https://mordheimer.net/docs/rules/leadership-psychology#frenzy) from now on."
+    "text": "Roll a D6. On a 1-3 the warrior suffers from stupidity; on 4-6 the warrior suffers from frenzy from now on."
   },
   {
     "low": 25,
@@ -87,7 +87,7 @@
     "low": 56,
     "high": 56,
     "name": "Bitter Enmity",
-    "text": "The warrior makes a full physical recovery, but is psychologically scarred by his experience. From now on the warrior hates (https://mordheimer.net/docs/rules/leadership-psychology#hatred) the following (roll a D6):\n\nD6 | Result\n1-3 | The individual who caused the injury. If it was a Henchman, he hates the enemy leader instead.\n4 | The leader of the warband that caused the injury.\n5 | The entire warband of the warrior responsible for the injury.\n6 | All warbands of that type."
+    "text": "The warrior makes a full physical recovery, but is psychologically scarred by his experience. From now on the warrior hates the following (roll a D6):\n\nD6 | Result\n1-3 | The individual who caused the injury. If it was a Henchman, he hates the enemy leader instead.\n4 | The leader of the warband that caused the injury.\n5 | The entire warband of the warrior responsible for the injury.\n6 | All warbands of that type."
   },
   {
     "low": 61,
@@ -105,13 +105,13 @@
     "low": 64,
     "high": 64,
     "name": "Horrible Scars",
-    "text": "The warrior causes fear (https://mordheimer.net/docs/rules/leadership-psychology#fear) from now on."
+    "text": "The warrior causes fear from now on."
   },
   {
     "low": 65,
     "high": 65,
     "name": "Sold To The Pits",
-    "text": "The warrior wakes up in the infamous fighting pits of Cutthroat’s Haven and must fight against a Pit Fighter (https://mordheimer.net/docs/campaigns/hired-swords/grade-1a#pit-fighter).\n\nRoll to see which side charges, and fight the battle as normal. If the warrior loses, roll to see whether he is dead or injured (ie, a D66 roll of 11-35). If he is not dead, he is thrown out of the fighting pits without his armour and weapons and may re-join his warband.\n\nIf the warrior wins he gains 50 gc, +2 Experience and is free to rejoin his warband with all his weapons and equipment."
+    "text": "The warrior wakes up in the infamous fighting pits of Cutthroat’s Haven and must fight against a Pit Fighter.\n\nRoll to see which side charges, and fight the battle as normal. If the warrior loses, roll to see whether he is dead or injured (ie, a D66 roll of 11-35). If he is not dead, he is thrown out of the fighting pits without his armour and weapons and may re-join his warband.\n\nIf the warrior wins he gains 50 gc, +2 Experience and is free to rejoin his warband with all his weapons and equipment."
   },
   {
     "low": 66,

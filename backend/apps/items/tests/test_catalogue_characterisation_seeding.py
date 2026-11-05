@@ -94,9 +94,9 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                # special.json's 25, 3 injury specials, the 18 shared (Fear, the mutations), the templates' 405 and the
+                # special.json's 25, 3 injury specials, the 18 shared (Fear, the mutations), the templates' 404 and the
                 # hired swords' and personae's own 255 (next step 12; May not run, no longer the Nightmare's)
-                "Special": 706,
+                "Special": 705,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -166,6 +166,11 @@ class SeedAllTests(TestCase):
         # the review (5 Nov 2026: W11): the Wolfcloak is Middenheim's line, not every Mercenary city's
         wolfcloak = TemplateListItem.objects.get(equipment_list__template__slug="mercenaries", item__name="Wolfcloak")
         self.assertEqual(wolfcloak.variant, "middenheim")
+        # the review (5 Nov 2026: L8): a link in a rule keeps its words, never its URL ("see Beastmen Raiders")
+        for model in (Special, TemplateRule):
+            with self.subTest(model=model.__name__):
+                self.assertFalse(model.objects.filter(description__contains="https://").exists())
+        self.assertTrue(Special.objects.filter(description__contains="(see Beastmen Raiders)").exists())  # a Mark's
         owners = Special.objects.filter(template_fighter_links__isnull=False).values_list("owner_kind", flat=True)
         self.assertEqual(set(owners), {"warband", "general"})  # the templates' own; our Large, Wizard, Priest, shared
 

@@ -18,11 +18,10 @@ class SeriousInjuryTests(SimpleTestCase):
             entry("64 Horrible Scars", "<p>He causes fear.<br /><br />From now on.</p>"),
             entry("Parry", "<p>Parried.</p>", kind="rules"),
         ]
-        url = "https://mordheimer.net/docs/rules/leadership-psychology#fear"
         self.assertEqual(
             build_serious_injuries(entries),
-            [
-                {"low": 62, "high": 63, "name": "Hardened", "text": f"From now on he is immune to fear ({url})."},
+            [  # a link keeps its words, its URL dropped (the review, 5 Nov 2026: L8)
+                {"low": 62, "high": 63, "name": "Hardened", "text": "From now on he is immune to fear."},
                 {"low": 64, "high": 64, "name": "Horrible Scars", "text": "He causes fear.\n\nFrom now on."},
             ],
         )

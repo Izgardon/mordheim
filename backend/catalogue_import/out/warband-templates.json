@@ -6736,7 +6736,7 @@
           {
             "name": "Ride",
             "type": "Warband - Bretonnian Chapel Guard",
-            "description": "A Questing Knight starts with the skill Ride Warhorse (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#ride-eg-ride-horse)."
+            "description": "A Questing Knight starts with the skill Ride Warhorse."
           },
           {
             "name": "Vow of Poverty",
@@ -8743,7 +8743,7 @@
       },
       {
         "title": "Mutations",
-        "description": "Any Hero may buy one of the following Mutations when you recruit them (see Cults of Possessed (https://mordheimer.net/docs/warbands/core-warbands/cult-of-the-possessed#mutations) Rules for Mutations):\n- Extra arm\n- Tentacle\n- Great Claw",
+        "description": "Any Hero may buy one of the following Mutations when you recruit them (see Cults of Possessed Rules for Mutations):\n- Extra arm\n- Tentacle\n- Great Claw",
         "variant": "",
         "type": ""
       }
@@ -16289,7 +16289,7 @@
           {
             "name": "Ride",
             "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#ride-eg-ride-horse) as detailed in the Blazing Saddles article."
+            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
           }
         ]
       },
@@ -16337,7 +16337,7 @@
           {
             "name": "Ride",
             "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#ride-eg-ride-horse) as detailed in the Blazing Saddles article."
+            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
           }
         ]
       },
@@ -16385,7 +16385,7 @@
           {
             "name": "Ride",
             "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#ride-eg-ride-horse) as detailed in the Blazing Saddles article."
+            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
           }
         ]
       },
@@ -16429,7 +16429,7 @@
           {
             "name": "Ride",
             "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#ride-eg-ride-horse) as detailed in the Blazing Saddles article."
+            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
           }
         ]
       },
@@ -16472,12 +16472,12 @@
           {
             "name": "Ride (Hussar)",
             "type": "Warband - Imperial Outriders",
-            "description": "Horsemen have the Ride skill (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#ride-eg-ride-horse) as detailed in the Blazing Saddles article."
+            "description": "Horsemen have the Ride skill as detailed in the Blazing Saddles article."
           },
           {
             "name": "Combat Riding",
             "type": "Warband - Imperial Outriders",
-            "description": "Horsemen have the Combat Riding skill (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#combat-riding) as detailed in the Blazing Saddles article."
+            "description": "Horsemen have the Combat Riding skill as detailed in the Blazing Saddles article."
           }
         ]
       },
@@ -16521,12 +16521,12 @@
           {
             "name": "Ride",
             "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#ride-eg-ride-horse) as detailed in the Blazing Saddles article."
+            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
           },
           {
             "name": "Horse Handling",
             "type": "Warband - Imperial Outriders",
-            "description": "Grooms have the Animal Handling skill (https://mordheimer.net/docs/optional-rules/mounted-combat/blazing-saddles#beast-handler--eg-dog-handler) as detailed in the Blazing Saddles article."
+            "description": "Grooms have the Animal Handling skill as detailed in the Blazing Saddles article."
           }
         ]
       }
@@ -16551,7 +16551,7 @@
     "rules": [
       {
         "title": "May Hire",
-        "description": "A Kislevite warband is allowed the same selection of Hired Swords as Human Mercenary warbands (https://mordheimer.net/docs/warbands/core-warbands/mercenaries).",
+        "description": "A Kislevite warband is allowed the same selection of Hired Swords as Human Mercenary warbands.",
         "variant": "",
         "type": ""
       },
@@ -17491,7 +17491,7 @@
           {
             "name": "Fiercely Loyal",
             "type": "Warband - Kislevites",
-            "description": "Such dedication is built into the relationship between Bear Tamer and bear that if his trainer is injured, a bear will often stand over the body to protect it, or even drag the trainer’s body to safety. As long as his bear is not taken Out of Action during a game, a Bear Tamer ignores the following results on the Serious Injuries table (https://mordheimer.net/docs/campaigns/#heroes-with-serious-injuries): ‘Sold to the Pits’, ‘Robbed’, and ‘Captured’ (and ignore equivalent results in settings such as Lustria that have their own special Serious Injury table). If any of these results are rolled for the Bear Tamer, treat the result as a ‘Full Recovery’ instead."
+            "description": "Such dedication is built into the relationship between Bear Tamer and bear that if his trainer is injured, a bear will often stand over the body to protect it, or even drag the trainer’s body to safety. As long as his bear is not taken Out of Action during a game, a Bear Tamer ignores the following results on the Serious Injuries table: ‘Sold to the Pits’, ‘Robbed’, and ‘Captured’ (and ignore equivalent results in settings such as Lustria that have their own special Serious Injury table). If any of these results are rolled for the Bear Tamer, treat the result as a ‘Full Recovery’ instead."
           },
           {
             "name": "Animal",
@@ -19028,12 +19028,12 @@
           {
             "name": "Wizard Upgrade",
             "type": "Warband - Lustrian Reavers",
-            "description": "At the cost of +30 Gold Crowns, you can make Jungle Shadow a Wizard. Jungle Shadow uses the Lesser Magic (https://mordheimer.net/docs/magic/lesser-magic) list. Generate a single Spell as standard for a wizard. If you make the Jungle Shadow a Wizard, remove the Light Armour from the equipment list when starting out, and generate 1 Lesser Magic spell they can use."
+            "description": "At the cost of +30 Gold Crowns, you can make Jungle Shadow a Wizard. Jungle Shadow uses the Lesser Magic list. Generate a single Spell as standard for a wizard. If you make the Jungle Shadow a Wizard, remove the Light Armour from the equipment list when starting out, and generate 1 Lesser Magic spell they can use."
           },
           {
             "name": "Silent Hunter",
             "type": "Warband - Lustrian Reavers",
-            "description": "Jungle Shadow is always considered to be Hidden (https://mordheimer.net/docs/rules/movement#hiding) if the model is touching any piece of terrain of 1” high. Shooting does not reveal Jungle Shadow’s position, though spellcasting does."
+            "description": "Jungle Shadow is always considered to be Hidden if the model is touching any piece of terrain of 1” high. Shooting does not reveal Jungle Shadow’s position, though spellcasting does."
           },
           {
             "name": "Surprise attack",
@@ -19043,7 +19043,7 @@
           {
             "name": "Canopy Walker",
             "type": "Warband - Lustrian Reavers",
-            "description": "Jungle Shadow automatically passes all climbing (https://mordheimer.net/docs/rules/movement#climbing), jumping (https://mordheimer.net/docs/rules/movement#jumping-down) and falling (https://mordheimer.net/docs/rules/movement#falling) off ledges tests."
+            "description": "Jungle Shadow automatically passes all climbing, jumping and falling off ledges tests."
           }
         ]
       },
@@ -19232,7 +19232,7 @@
           {
             "name": "Nimble",
             "type": "Warband - Lustrian Reavers",
-            "description": "Can climb any sheer surfaces without taking Initiative tests. Can re-roll all failed Diving Charge (https://mordheimer.net/docs/rules/movement#diving-charge) tests. The Monkey can enter buildings unlike other animals. Due to its agility, the Monkey also has a 5+ Ward save which it can take against any and all wounds it suffers in Melee combat or from shooting/magic or even falling damage."
+            "description": "Can climb any sheer surfaces without taking Initiative tests. Can re-roll all failed Diving Charge tests. The Monkey can enter buildings unlike other animals. Due to its agility, the Monkey also has a 5+ Ward save which it can take against any and all wounds it suffers in Melee combat or from shooting/magic or even falling damage."
           },
           {
             "name": "Animal",
@@ -21003,7 +21003,7 @@
         "special": {
           "name": "Mark of Chaos Undivided",
           "type": "Warband - Marauders of Chaos",
-          "description": "Leader: All warband members within the leader rule's radius (6\" normally and 12\" with Battle Tongue) may re-roll all failed Ld tests.\n\nSeer: With the Seer of Chaos Undivided as the tribe's spiritual leader the warband may include 0-3 Gors (see Beastmen Raiders (https://mordheimer.net/docs/warbands/grade-1a-warbands/beastmen-raiders/#0--5-gor)) that count towards the maximum of 15 members. Re-roll all results of ‘The lad’s got talent’ for them.\n\nA Seer of Chaos Undivided uses Chaos Rituals."
+          "description": "Leader: All warband members within the leader rule's radius (6\" normally and 12\" with Battle Tongue) may re-roll all failed Ld tests.\n\nSeer: With the Seer of Chaos Undivided as the tribe's spiritual leader the warband may include 0-3 Gors (see Beastmen Raiders) that count towards the maximum of 15 members. Re-roll all results of ‘The lad’s got talent’ for them.\n\nA Seer of Chaos Undivided uses Chaos Rituals."
         },
         "cost": 0,
         "cost_note": "",
@@ -28151,7 +28151,7 @@
           {
             "name": "Prayers",
             "type": "Warband - Ostlander Mercenaries",
-            "description": "A Priest of Taal may use the Prayers of Taal (https://mordheimer.net/docs/magic/prayers-of-taal)."
+            "description": "A Priest of Taal may use the Prayers of Taal."
           },
           {
             "name": "Strictures",
@@ -38819,7 +38819,7 @@
           {
             "name": "No Pain",
             "type": "Warband - Undead",
-            "description": "Vampires treat a ‘stunned’ result on the Injury chart (https://mordheimer.net/docs/rules/wounds-and-injuries#injuries) as ‘knocked down’."
+            "description": "Vampires treat a ‘stunned’ result on the Injury chart as ‘knocked down’."
           }
         ]
       },
@@ -39017,7 +39017,7 @@
           {
             "name": "No Pain",
             "type": "Warband - Undead",
-            "description": "Vampires treat a ‘stunned’ result on the Injury chart (https://mordheimer.net/docs/rules/wounds-and-injuries#injuries) as ‘knocked down’."
+            "description": "Vampires treat a ‘stunned’ result on the Injury chart as ‘knocked down’."
           }
         ]
       },
@@ -39073,9 +39073,9 @@
             "type": "Trait"
           },
           {
-            "name": "No Pain (Zombies)",
+            "name": "No Pain",
             "type": "Warband - Undead",
-            "description": "Zombies treat a stunned result on the Injury chart as knocked down."
+            "description": "Vampires treat a ‘stunned’ result on the Injury chart as ‘knocked down’."
           },
           {
             "name": "No Brain",

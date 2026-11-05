@@ -1,12 +1,12 @@
 """Rule text for warband templates, cleaned (William: rule text only for now): the page's hard line wraps joined,
-breaks as paragraphs, links as plain text with the URL kept (an anchor on the page itself as its text only), errata
-and FAQ markers (✏️, ❓) dropped, and a table as lines of cells."""
+breaks as paragraphs, links as their words only (the review, 5 Nov 2026: L8, "see Beastmen Raiders", the URL
+dropped), errata and FAQ markers (✏️, ❓) dropped, and a table as lines of cells. Every rule the import cleans reads
+it: the templates' rules, the shared specials' wordings and the serious injuries' text."""
 
 import re
 
 from catalogue_import.text import Table, clean_text
 
-MORDHEIMER = "https://mordheimer.net"
 _MARKER_TOOLTIP = re.compile(r"<Tooltip\b[^>]*>\s*[❓✏️️\s]*</Tooltip>", re.I)
 _SUP = re.compile(r"</?sup\b[^>]*>", re.I)
 _LINK = re.compile(r"<a\b[^>]*\bhref=[\"']?([^\"' >]+)[\"']?[^>]*>(.*?)</a>", re.S | re.I)
@@ -15,12 +15,7 @@ _WRAP = re.compile(r"(?<!\n)\n(?!\n)")  # a single line break: the source's hard
 
 
 def _link(match: re.Match[str]) -> str:
-    href, text = match.group(1), match.group(2)
-    if href.startswith("/"):
-        return f"{text} ({MORDHEIMER}{href})"
-    if href.startswith("http"):
-        return f"{text} ({href})"
-    return text  # "#amazon-rituals": a place on mordheimer's own page
+    return match.group(2)  # the link's words, wherever it points ("/docs/...", "https://...", "#amazon-rituals")
 
 
 def _table_lines(table: Table) -> str:

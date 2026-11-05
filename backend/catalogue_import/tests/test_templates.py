@@ -45,11 +45,12 @@ class RuleTextTests(SimpleTestCase):
         text = 'Fighters may use\nhis Leadership.<Tooltip content="faq23">❓</Tooltip>\n\n<br /><br />Marksmen add +1.'
         self.assertEqual(clean_rule(text), "Fighters may use his Leadership.\n\nMarksmen add +1.")
 
-    def test_a_link_keeps_its_url_and_an_anchor_its_text(self) -> None:
+    def test_a_link_keeps_its_words_and_drops_its_url(self) -> None:
+        # the review (5 Nov 2026: L8): "(see Beastmen Raiders (https://mordheimer.net/docs/...))" in a rule
         text = 'Uses <a href="/docs/magic/lesser-magic">Lesser Magic</a> or <a href="#tchar">Tchar Rituals</a>.'
-        self.assertEqual(
-            clean_rule(text), "Uses Lesser Magic (https://mordheimer.net/docs/magic/lesser-magic) or Tchar Rituals."
-        )
+        self.assertEqual(clean_rule(text), "Uses Lesser Magic or Tchar Rituals.")
+        text = '(see <a href="https://mordheimer.net/docs/warbands/beastmen-raiders/#gor">Beastmen Raiders</a>)'
+        self.assertEqual(clean_rule(text), "(see Beastmen Raiders)")
 
     def test_a_table_becomes_lines_of_cells_and_a_title_loses_its_colon(self) -> None:
         text = "Roll:<table><tr><th>D6</th><th>Result</th></tr><tr><td>1</td><td>Squabble</td></tr></table>"
