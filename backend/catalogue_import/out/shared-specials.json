@@ -93,7 +93,7 @@
     {
       "name": "Nurgle's Rot",
       "type": "Mutation",
-      "description": "The Tainted One is infected with the deadly pestilence of its lord – Nurgle’s Rot. In addition, the Tainted One is immune to all poisons. Nurgle’s Rot is a deadly contagion for which there is no known cure. This virulent disease can be passed on in hand-to-hand combat. If the Tainted One makes a successful to wound roll of 6 this will result in the target model contracting the Rot (note: Nurgle’s Rot only affects the living, so Undead, Daemons and the Possessed are immune). Once a warrior has contracted the Rot, mark this on the warband roster. Rather than killing the victim immediately, the Rot can take some time to set in. From now on, before the start of each battle, the warrior must pass a Toughness test. If successful, his constitution has managed to stave off the Rot’s effects. If unsuccessful, the warrior loses one point of Toughness permanently (if he reaches zero, he has succumbed to the Rot and died, remove him from the roster). In addition, if a 6 is rolled for the Toughness test then he has unwittingly passed the Rot on to another member of the warband (randomly allocate a warband member and mark this on the roster).",
+      "description": "The model is infected with the deadly pestilence of its lord – Nurgle’s Rot. In addition, the model is immune to all poisons. Nurgle’s Rot is a deadly contagion for which there is no known cure. This virulent disease can be passed on in hand-to-hand combat. If the model makes a successful to wound roll of 6 this will result in the target model contracting the Rot (note: Nurgle’s Rot only affects the living, so Undead, Daemons and the Possessed are immune). Once a warrior has contracted the Rot, mark this on the warband roster. Rather than killing the victim immediately, the Rot can take some time to set in. From now on, before the start of each battle, the warrior must pass a Toughness test. If successful, his constitution has managed to stave off the Rot’s effects. If unsuccessful, the warrior loses one point of Toughness permanently (if he reaches zero, he has succumbed to the Rot and died, remove him from the roster). In addition, if a 6 is rolled for the Toughness test then he has unwittingly passed the Rot on to another member of the warband (randomly allocate a warband member and mark this on the roster).",
       "aliases": []
     },
     {
@@ -105,13 +105,13 @@
     {
       "name": "Bloated Foulness",
       "type": "Mutation",
-      "description": "The Tainted One is a huge, disgusting mass of diseased, flabby folds. It gains +1 Wound and +1 Toughness but has its Movement reduced by -1.",
+      "description": "The model is a huge, disgusting mass of diseased, flabby folds. It gains +1 Wound and +1 Toughness but has its Movement reduced by -1.",
       "aliases": []
     },
     {
       "name": "Mark of Nurgle",
       "type": "Mutation",
-      "description": "The Tainted One is burned with the great mark of Nurgle, the three spheres, that weep foul pus constantly. It gains +1 Wound and is immune to all poisons.",
+      "description": "The model is burned with the great mark of Nurgle, the three spheres, that weep foul pus constantly. It gains +1 Wound and is immune to all poisons.",
       "aliases": []
     }
   ],

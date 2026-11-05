@@ -639,10 +639,10 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Extra Arm | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
 | Hideous | Mutation | Cult of the Possessed's upgrade | 2 | 0 | 0 | 0 |
 | Stream of Corruption | Mutation | Carnival of Chaos's upgrade; subject made general | 2 | 0 | 0 | 0 |
-| Nurgle's Rot | Mutation | Carnival of Chaos's upgrade | 1 | 0 | 0 | 0 |
+| Nurgle's Rot | Mutation | Carnival of Chaos's upgrade; subject made general | 1 | 0 | 0 | 0 |
 | Cloud of Flies | Mutation | Carnival of Chaos's upgrade; subject made general | 3 | 0 | 0 | 0 |
-| Bloated Foulness | Mutation | Carnival of Chaos's upgrade | 1 | 0 | 0 | 0 |
-| Mark of Nurgle | Mutation | Carnival of Chaos's upgrade | 1 | 0 | 0 | 0 |
+| Bloated Foulness | Mutation | Carnival of Chaos's upgrade; subject made general | 1 | 0 | 0 | 0 |
+| Mark of Nurgle | Mutation | Carnival of Chaos's upgrade; subject made general | 1 | 0 | 0 | 0 |
 
 ### Merged
 

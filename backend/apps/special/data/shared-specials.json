@@ -31,7 +31,13 @@
       "subject": {"The Tainted One": "The model"},
       "aliases": []
     },
-    {"name": "Nurgle's Rot", "type": "Mutation", "upgrade_of": "Carnival of Chaos", "aliases": []},
+    {
+      "name": "Nurgle's Rot",
+      "type": "Mutation",
+      "upgrade_of": "Carnival of Chaos",
+      "subject": {"The Tainted One": "The model"},
+      "aliases": []
+    },
     {
       "name": "Cloud of Flies",
       "type": "Mutation",
@@ -39,8 +45,20 @@
       "subject": {"The Tainted One": "The model"},
       "aliases": []
     },
-    {"name": "Bloated Foulness", "type": "Mutation", "upgrade_of": "Carnival of Chaos", "aliases": []},
-    {"name": "Mark of Nurgle", "type": "Mutation", "upgrade_of": "Carnival of Chaos", "aliases": []}
+    {
+      "name": "Bloated Foulness",
+      "type": "Mutation",
+      "upgrade_of": "Carnival of Chaos",
+      "subject": {"The Tainted One": "The model"},
+      "aliases": []
+    },
+    {
+      "name": "Mark of Nurgle",
+      "type": "Mutation",
+      "upgrade_of": "Carnival of Chaos",
+      "subject": {"The Tainted One": "The model"},
+      "aliases": []
+    }
   ],
   "apart": [
     {

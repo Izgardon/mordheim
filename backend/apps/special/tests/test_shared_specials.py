@@ -11,7 +11,7 @@ from django.test import TestCase
 
 from apps.core.book_lookups import BookLookups
 from apps.special.categories import AURA, BODY, MUTATION
-from apps.special.kinds import BANE, BOON, DRAMATIS_PERSONA, GENERAL, TRAIT, WARBAND
+from apps.special.kinds import BANE, BOON, DRAMATIS_PERSONA, GENERAL, WARBAND
 from apps.special.models import Special
 
 BELANDYSH = "Belandysh, Condemned Champion Of Chen"
@@ -35,11 +35,14 @@ class SharedSeedTests(TestCase):
         self.assertEqual((rows["Stupidity"].kind, poison.type, poison.kind), (BANE, "Trait", BOON))
         self.assertEqual((poison.category, poison.description), (BODY, "Not affected by any poison."))
         self.assertEqual(immune.description, "Not affected by psychology (such as fear) and never leaves combat.")
-        claw, flies = rows["Great Claw"], rows["Cloud of Flies"]
-        self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, TRAIT, MUTATION))
-        self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))  # no Tainted One
+        claw, flies, rot = rows["Great Claw"], rows["Cloud of Flies"], rows["Nurgle's Rot"]
+        self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, BOON, MUTATION))
+        self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))
+        self.assertIn("In addition, the model is immune to all poisons.", rot.description)
         mutations = Special.objects.filter(type="Mutation")
-        self.assertEqual((mutations.count(), set(mutations.values_list("category", flat=True))), (14, {MUTATION}))
+        self.assertEqual(set(mutations.values_list("kind", "category")), {(BOON, MUTATION)})
+        self.assertEqual(mutations.count(), 14)
+        self.assertFalse(mutations.filter(description__icontains="Tainted One").exists())  # a general subject
 
     def test_the_copies_seeded_before_are_archived_and_a_second_run_finds_none(self):
         copies = [
