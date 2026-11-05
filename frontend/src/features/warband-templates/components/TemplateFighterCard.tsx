@@ -74,7 +74,12 @@ export default function TemplateFighterCard({
           </summary>
           <div className="mt-2 flex flex-col gap-2.5">
             {fighter.rules.map((rule) => (
-              <RuleBlock key={rule.id} name={rule.name} kind={rule.kind as SpecialKind}>
+              <RuleBlock
+                key={rule.id}
+                name={rule.name}
+                kind={rule.kind as SpecialKind}
+                category={rule.category}
+              >
                 {rule.description}
               </RuleBlock>
             ))}

@@ -109,6 +109,8 @@ export const makeTemplateUpgrade = (
   name,
   description: "",
   special_id: id * 100,
+  kind: "trait",
+  category: "aura",
   cost,
   later_cost: cost,
   cost_note: "",

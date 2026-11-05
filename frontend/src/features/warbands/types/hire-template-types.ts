@@ -25,7 +25,6 @@ export type TemplateList = Omit<BookList, "lines"> & { lines: TemplateLine[] };
 
 /** An upgrade with the special it links, the price of the second and later of its group, and who it is for. */
 export type TemplateUpgrade = BookUpgrade & {
-  special_id: number;
   /** The second and later of its group on one hero: double for Mutations and Blessings. */
   later_cost: number | null;
 };

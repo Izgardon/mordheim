@@ -1,3 +1,4 @@
+import type { SpecialCategory } from "@/components/ui/game-icons";
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
 import type { CatalogueProfile } from "@/features/reference/profile";
 import type { StatKey } from "@/features/catalogue/utils/statblock";
@@ -83,7 +84,14 @@ export type TemplateList = {
   lines: TemplateLine[];
 };
 
-export type TemplateSpecial = { id: number; name: string; kind: string; description: string };
+/** A rule a fighter has: the special's name, its Boons & Banes kind and category (its icon), its text. */
+export type TemplateSpecial = {
+  id: number;
+  name: string;
+  kind: string;
+  category: SpecialCategory;
+  description: string;
+};
 
 export type TemplateSpellType = { name: string; note: string };
 
@@ -130,8 +138,12 @@ export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
 export type TemplateUpgrade = {
   id: number;
   group: string;
+  /** The special it gives: its id, name, text, Boons & Banes kind and category (its icon). */
+  special_id: number;
   name: string;
   description: string;
+  kind: string;
+  category: SpecialCategory;
   cost: number | null;
   cost_note: string;
   note: string;
