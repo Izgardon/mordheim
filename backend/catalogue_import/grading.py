@@ -17,7 +17,7 @@ MORDHEIM_PARTS = {
 }
 FIXED_GRADES = {"mordheim": "1a", "mordheim-1b": "1b", "mordheim-1c": "1c", "mordheim-2a": "2a", "grade-3": "3"}
 SETTING_NAMES = {
-    "mordheim": "Mordheim",
+    "mordheim": "Mordheim 1a",  # the grade in its name, as its 1b, 1c and 2a have (the review, 5 Nov 2026: D4)
     "mordheim-1b": "Mordheim 1b",
     "mordheim-1c": "Mordheim 1c",
     "mordheim-2a": "Mordheim 2a",

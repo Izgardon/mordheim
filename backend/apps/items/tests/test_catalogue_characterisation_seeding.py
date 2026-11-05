@@ -119,6 +119,9 @@ class SeedAllTests(TestCase):
                         self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
         self.assertEqual(CampaignType.objects.count(), 19)
+        mordheim = CampaignType.objects.filter(slug__startswith="mordheim").order_by("sort_order")
+        names = list(mordheim.values_list("name", flat=True))  # the review (5 Nov 2026: D4): 1a was "Mordheim"
+        self.assertEqual(names, ["Mordheim 1a", "Mordheim 1b", "Mordheim 1c", "Mordheim 2a"])
         self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 163)
         # the review (5 Nov 2026: D1): Broheim's typo and its capital "Of" and "The" are put right, the slug kept
         book_types = WarbandType.objects.filter(campaign__isnull=True)

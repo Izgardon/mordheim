@@ -61,7 +61,7 @@ class CampaignType(models.Model):
     """A setting: the world or supplement content belongs to (Mordheim, Khemri, Lustria …), seeded from the
     catalogue import (`seed_settings`). Only settings carry a grade (grading phase 1): every warband type and
     catalogue entry belongs to one setting through its `campaign_type`, a null one counting as Mordheim's. Mordheim
-    itself splits by grade into Mordheim (1a, `always_on`), Mordheim 1b, 1c and 2a, and Grade 3. A campaign ticks the
+    itself splits by grade into Mordheim 1a (`always_on`), Mordheim 1b, 1c and 2a, and Grade 3. A campaign ticks the
     settings in play (`Campaign.campaign_types`); picking a grade is a preset that ticks every setting at or below
     it (`apps/campaigns/in_play.py`)."""
 

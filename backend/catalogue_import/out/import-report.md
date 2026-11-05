@@ -171,7 +171,7 @@ No membership questions left.
 
 | Setting | Grade | How | Grades of its contents |
 | --- | --- | --- | --- |
-| Mordheim | 1a | Mordheim split by grade | 1a: 185 |
+| Mordheim 1a | 1a | Mordheim split by grade | 1a: 185 |
 | Mordheim 1b | 1b | Mordheim split by grade | 1b: 163 |
 | Mordheim 1c | 1c | Mordheim split by grade | 1c: 97 |
 | Mordheim 2a | 2a | Mordheim split by grade | 2a: 104, 2b: 6 |
