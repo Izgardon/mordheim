@@ -32,6 +32,7 @@ from ...validation.postbattle import MAX_EXPLORATION_DICE
 from ..exploration import exploration_table
 from ..injuries import injury_tables
 from ..kills import count_by_unit, live_kills
+from ..random_mutations import random_mutation_table
 from ..selection import selected_unit_keys
 from ..unusual import MAX_EXPLORATION_DICE as MAX_CHOSEN_DICE
 from .kill_list import unit_kills
@@ -167,13 +168,17 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, live: I
 
 
 def postbattle_rules(hero_death_roll: str) -> dict:
+    """The postbattle rules, and in a D100 campaign the random mutation table its 100, Mutation, rolls on."""
     tables = injury_tables()
-    return {
+    rules = {
         "exploration_table": exploration_table(),
         "exploration_dice": {"max": MAX_EXPLORATION_DICE, "max_chosen": MAX_CHOSEN_DICE},
         "hero_death_roll": hero_death_roll,
         "injury_tables": {roll: tables[roll] for roll in ("d6", hero_death_roll) if roll in tables},
     }
+    if hero_death_roll == "d100":
+        rules["random_mutations"] = list(random_mutation_table())
+    return rules
 
 
 def rules_for(settings: CampaignSettings | None) -> dict:
@@ -181,13 +186,14 @@ def rules_for(settings: CampaignSettings | None) -> dict:
 
 
 def broadcast_rules(rules: dict) -> dict:
-    """The rules as a broadcast carries them: without the injury tables' book lines (some 4 KB of the message's 10 KB),
-    which every page has from its state or its write's answer and keeps (useCampaignBattleRules)."""
+    """The rules as a broadcast carries them: without the injury tables' book lines (some 4 KB of the message's 10 KB)
+    and the random mutation table, which every page has from its state or its write's answer and keeps
+    (useCampaignBattleRules)."""
     tables = {
         roll: [{key: value for key, value in row.items() if key != "text"} for row in rows]
         for roll, rows in rules["injury_tables"].items()
     }
-    return {**rules, "injury_tables": tables}
+    return {**{key: value for key, value in rules.items() if key != "random_mutations"}, "injury_tables": tables}
 
 
 def suggestions_for(

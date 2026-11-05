@@ -2,10 +2,10 @@
 
 `normalize_postbattle` cleans what a client sends; the draft save and finalise then check it against the
 participant's units and the campaign (services/postbattle/validate.py). Injury rolls get their result and effect
-from the server's tables (decision 7); the exploration amount comes from the server's chart (decision 9). A hero's or
-hired sword's result may carry the missing games its injury sets at finalise (`missing_games`, the player's opt-in). The
-post-game adds each unit's Aftermath `advances`, an upkeep entry's `paid` tick and `resources` and the `camp` record
-(validation/camp.py).
+from the server's tables (decision 7), and a Mutation's follow-up D66 from the random mutation table; the exploration
+amount comes from the server's chart (decision 9). A hero's or hired sword's result may carry the missing games its
+injury sets at finalise (`missing_games`, the player's opt-in). The post-game adds each unit's Aftermath `advances`, an
+upkeep entry's `paid` tick and `resources` and the `camp` record (validation/camp.py).
 """
 
 from typing import Any
@@ -13,6 +13,7 @@ from typing import Any
 from apps.warbands.units.services.missing import MAX_MISSING_GAMES
 
 from ..services.injuries import describe_roll
+from ..services.random_mutations import describe_mutation
 from .camp import normalize_advances, normalize_camp, normalize_upkeep_resources
 from .coerce import coerce_bool, coerce_int, optional_cost
 from .unit_keys import parse_unit_key
@@ -149,12 +150,27 @@ def _injury_roll(roll: Any) -> dict[str, Any]:
     if len(rolls) != count:
         raise ValueError(f"{roll_type} serious_injury_roll must have exactly {word} roll{'s' if count > 1 else ''}")
     # the server's table gives the result and its effect; `apply` is the tick (decision 7, BUG-47)
-    return {
+    described = describe_roll(roll_type, rolls)
+    entry = {
         "roll_type": roll_type,
         "rolls": rolls,
-        **describe_roll(roll_type, rolls),
+        **described,
         "apply": coerce_bool(roll.get("apply", True), field_name="serious_injury_roll apply"),
     }
+    if described["effect"]["kind"] == "mutation" and roll.get("mutation") is not None:
+        entry["mutation"] = _mutation_roll(roll["mutation"])  # dropped on any other result
+    return entry
+
+
+def _mutation_roll(value: Any) -> dict[str, Any]:
+    """A Mutation's follow-up: its two D6 (tens, units), and what the random mutation table says of them."""
+    rolls_raw = value.get("rolls") if isinstance(value, dict) else None
+    if not isinstance(rolls_raw, list) or len(rolls_raw) != 2:
+        raise ValueError("serious_injury_roll mutation must have exactly two rolls")
+    rolls = [
+        coerce_int(face, field_name="serious_injury_roll mutation roll", minimum=1, maximum=6) for face in rolls_raw
+    ]
+    return describe_mutation(rolls)
 
 
 def _special_ids(entry: dict) -> list[int]:

@@ -6,9 +6,10 @@ finalise when ticked; complex ones (Robbed, Captured, Sold to the Pits, Multiple
 to apply by hand. Only a unit's last roll counts (earlier ones were re-rolled); finalise writes one log per unit with
 that roll, the re-rolls and what was applied. The D66 table is the book's (the catalogue import's
 `out/serious-injuries.json`, from mordheimer's snapshot), its results named as the book names them; the D100 table's
-labels are the ones the postbattle page has always shown. A named special is the book's general one ("Injury",
-seeded with the book's rule text by seed_spells_and_special), never a warband's, hired sword's or dramatis persona's
-own rule of the name; a campaign gets its own only for a name the book has none of.
+labels are the ones the postbattle page has always shown; its 100, Mutation, takes a follow-up D66 on the random
+mutation table, kept on the roll, whose special it grants (random_mutations.py). A named special is the book's general
+one ("Injury", seeded with the book's rule text by seed_spells_and_special), never a warband's, hired sword's or
+dramatis persona's own rule of the name; a campaign gets its own only for a name the book has none of.
 
 A result that keeps the unit out of games carries a hint, `misses` (the games, and the dice when the book rolls for
 them: Deep Wound's D3): postbattle offers it as the unit's missing games, set at finalise only when the player ticks
@@ -27,9 +28,13 @@ from apps.special.categories import book_category
 from apps.special.kinds import BANE, GENERAL, INJURY, book_kind
 from apps.special.models import Special
 
+from .random_mutations import mutation_special
+
 DEAD = {"kind": "dead"}
 NONE = {"kind": "none"}
 MANUAL = {"kind": "manual"}
+# the D100's 100: a follow-up D66 on the random mutation table, kept on the roll (`mutation`), gives a special
+MUTATION = {"kind": "mutation"}
 
 
 def _stat(name: str) -> dict[str, Any]:
@@ -95,7 +100,7 @@ _D100_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
     (92, 94, "Sold to the Pits", MANUAL),
     (95, 97, "Survives Against the Odds", MANUAL),
     (98, 99, "Really Survives Against the Odds", MANUAL),
-    (100, 100, "Mutation", MANUAL),
+    (100, 100, "Mutation", MUTATION),
 ]
 
 
@@ -129,28 +134,38 @@ class InjuryOutcome:
     dead: bool = False
     stat: str | None = None
     special: str | None = None
+    mutation: tuple[str, str] | None = None  # the special a Mutation's follow-up gives: its name and type
     log: dict[str, Any] | None = field(default=None)
 
 
 def injury_outcome(result: dict[str, Any], unit_name: str) -> InjuryOutcome:
-    """The effect of the unit's last roll when it is ticked; earlier rolls are logged as re-rolls."""
+    """The effect of the unit's last roll when it is ticked; earlier rolls are logged as re-rolls. A Mutation applies
+    once its follow-up D66 names a special, and is left to apply by hand until then."""
     rolls = result.get("serious_injury_rolls") or []
     if not rolls:
         return InjuryOutcome()
     final, rerolls = rolls[-1], rolls[:-1]
     effect = final.get("effect") or MANUAL
-    applies = bool(final.get("apply", True)) and effect["kind"] in ("dead", "stat", "special")
+    mutation = final.get("mutation") if effect["kind"] == MUTATION["kind"] else None
+    gives = (mutation or {}).get("special")
+    kinds = ("dead", "stat", "special", *(("mutation",) if gives else ()))
+    applies = bool(final.get("apply", True)) and effect["kind"] in kinds
     log = {
         "unit_name": unit_name,
         **{key: final.get(key) for key in ("roll_type", "rolls", "result_code", "result_label", "dead_suggestion")},
         "effect": effect,
         "applied": applies,
-        "apply_by_hand": effect["kind"] == "manual",
+        "apply_by_hand": effect["kind"] == "manual" or (effect["kind"] == MUTATION["kind"] and not gives),
         "rerolls": [roll.get("rolls", []) for roll in rerolls],
     }
+    if mutation:
+        log["mutation"] = {key: mutation.get(key) for key in ("rolls", "result_code", "name", "special")}
     if not applies:
         return InjuryOutcome(log=log)
-    return InjuryOutcome(dead=effect["kind"] == "dead", stat=effect.get("stat"), special=effect.get("special"), log=log)
+    gained = (str(gives), str((mutation or {}).get("special_type", ""))) if gives else None
+    return InjuryOutcome(
+        dead=effect["kind"] == "dead", stat=effect.get("stat"), special=effect.get("special"), mutation=gained, log=log
+    )
 
 
 def injury_special(name: str, campaign_id: int) -> Special:
@@ -186,8 +201,11 @@ def apply_stat_and_special(unit: Any, outcome: InjuryOutcome, campaign_id: int) 
     if outcome.stat and getattr(unit, outcome.stat) is not None:  # a written "D6" or "-" has no number to lower
         setattr(unit, outcome.stat, max(0, getattr(unit, outcome.stat) - 1))
         fields.append(outcome.stat)
-    if outcome.special:
-        special = injury_special(outcome.special, campaign_id)
+    if outcome.special or outcome.mutation:
+        if outcome.mutation:  # the special the random mutation table gives (random_mutations.py)
+            special = mutation_special(*outcome.mutation, campaign_id)
+        else:
+            special = injury_special(outcome.special or "", campaign_id)
         links = unit.hero_specials if hasattr(unit, "hero_specials") else unit.hireling_specials
         if not links.filter(special=special).exists():
             links.create(special=special)
