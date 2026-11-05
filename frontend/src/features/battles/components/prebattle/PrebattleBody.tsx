@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { ChipLabel } from "@/components/ui/chip";
 import CustomUnitFields from "@/features/battles/components/shared/CustomUnitFields";
 import type { PrebattlePage } from "@/features/battles/hooks/usePrebattlePage";
+import { usePrebattleRolls } from "@/features/battles/hooks/usePrebattleRolls";
 import { numberedOr } from "@/features/battles/utils/battle-number";
 import { participantProgress } from "@/features/battles/utils/participant-progress";
 import { cn } from "@/lib/utils";
@@ -27,6 +28,7 @@ export default function PrebattleBody({ page, isMobile, onOpenNotes }: Prebattle
   const { battle, selection, isOwnSelected, config, ratings, ready, visible, flags } = page;
   const { start, creatorCancel } = page;
   const { battleState, rosters, rosterErrors } = battle;
+  const rolls = usePrebattleRolls();
   const { participants } = battleState;
   const me = selection.currentParticipant;
   const shown = selection.selectedParticipant;
@@ -130,6 +132,7 @@ export default function PrebattleBody({ page, isMobile, onOpenNotes }: Prebattle
       selectedKeys={visible.selectedKeys}
       overrides={visible.overrides}
       config={isOwnSelected ? editable : undefined}
+      rolls={isOwnSelected ? rolls : undefined}
     />
   );
 

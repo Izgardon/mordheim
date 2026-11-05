@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Check } from "lucide-react";
 
 import { NumberInput } from "@/components/ui/number-input";
@@ -72,8 +73,8 @@ function StatEditor({ unit, config }: { unit: PrebattleUnit; config: PrebattleCo
 
 /**
  * One unit a warband may bring: its tick (your own, while you may change it), name and type, a
- * "Missing" chip for a unit missing games, its battle stat changes and Edit stats, and Remove for
- * a temporary unit.
+ * "Missing" chip for a unit missing games, its battle stat changes and Edit stats, Remove for a
+ * temporary unit, and under it the rolls it makes before the battle (`rolls`), ticked or not.
  */
 export default function PrebattleUnitRow({
   unit,
@@ -82,6 +83,7 @@ export default function PrebattleUnitRow({
   config,
   detail,
   onRemove,
+  rolls,
 }: {
   unit: PrebattleUnit;
   picked: boolean;
@@ -89,6 +91,7 @@ export default function PrebattleUnitRow({
   config?: PrebattleConfig;
   detail?: string;
   onRemove?: () => void;
+  rolls?: ReactNode;
 }) {
   const editing = config?.editingUnitKey === unit.key;
   const stats = { ...unit.stats, ...(override?.stats ?? {}) };
@@ -131,6 +134,7 @@ export default function PrebattleUnitRow({
           </Button>
         ) : null}
       </div>
+      {rolls ? <div className={config ? "pl-14" : undefined}>{rolls}</div> : null}
       {editing && config ? (
         <StatEditor unit={unit} config={config} />
       ) : picked && changed.length ? (

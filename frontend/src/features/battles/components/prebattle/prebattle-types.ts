@@ -1,6 +1,7 @@
 import type {
   BattleRosterCompanion,
   BattleRosterCompanionFields,
+  BattleRosterItemRoll,
   BattleRosterMissingFields,
 } from "@/features/battles/types/battle-types";
 import type { BattleWarning } from "@/features/battles/utils/battle-warnings";
@@ -34,6 +35,9 @@ export type UnitSingleUseItem = {
 export type UnitDetailEntry = {
   id: number;
   name: string;
+  /** A skill's or special's pre-battle roll ("D6") and what it does (left out when it has none). */
+  prebattleRoll?: string;
+  prebattleText?: string;
 };
 
 export type UnitSpellDetailEntry = UnitDetailEntry & {
@@ -43,6 +47,8 @@ export type UnitSpellDetailEntry = UnitDetailEntry & {
 export type UnitItemEntry = UnitDetailEntry & {
   count: number;
   singleUse: boolean;
+  /** Its shared rules with a pre-battle roll (left out when none has one). */
+  prebattleRolls?: BattleRosterItemRoll[];
 };
 
 export type PrebattleUnit = BattleRosterCompanionFields & {

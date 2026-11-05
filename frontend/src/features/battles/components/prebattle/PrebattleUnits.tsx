@@ -7,7 +7,14 @@ import type {
   UnitOverride,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import type { PrebattleConfig } from "@/features/battles/hooks/usePrebattleConfig";
+import type { PrebattleRolls } from "@/features/battles/hooks/usePrebattleRolls";
+import {
+  groupRolls,
+  unitRolls,
+  type PrebattleRollLine,
+} from "@/features/battles/utils/prebattle-rolls";
 
+import PrebattleRollLines from "./PrebattleRollLines";
 import PrebattleUnitRow from "./PrebattleUnitRow";
 
 type PrebattleUnitsProps = {
@@ -17,6 +24,8 @@ type PrebattleUnitsProps = {
   overrides: Record<string, UnitOverride>;
   /** Your own form while you may change it; read-only otherwise (another player's, or once ready). */
   config?: PrebattleConfig;
+  /** Your own warband's rolls before the battle, shown under each unit making one. */
+  rolls?: PrebattleRolls;
 };
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
@@ -33,7 +42,8 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 /**
  * The units a warband brings: its heroes, henchmen (each member picked on its own,
  * or the group at once), hired swords, pets that fight and temporary units. Your own while you may
- * still change them; a unit missing games starts unpicked, as today.
+ * still change them; a unit missing games starts unpicked, as today. Your own show the rolls they
+ * make before the battle (`rolls`): a hero's or hired sword's under his row, a group's once.
  */
 export default function PrebattleUnits({
   roster,
@@ -41,10 +51,15 @@ export default function PrebattleUnits({
   selectedKeys,
   overrides,
   config,
+  rolls,
 }: PrebattleUnitsProps) {
   const picked = new Set(selectedKeys);
   const editable = config;
   const visible = (unit: PrebattleUnit) => Boolean(editable) || picked.has(unit.key);
+  const rollLines = (lines: PrebattleRollLine[], owner: string, className?: string) =>
+    rolls && lines.length ? (
+      <PrebattleRollLines lines={lines} owner={owner} rolls={rolls} className={className} />
+    ) : undefined;
   const row = (unit: PrebattleUnit, detail?: string, onRemove?: () => void) => (
     <PrebattleUnitRow
       key={unit.key}
@@ -54,6 +69,11 @@ export default function PrebattleUnits({
       config={editable}
       detail={detail}
       onRemove={onRemove}
+      rolls={
+        unit.kind === "hero" || unit.kind === "hireling"
+          ? rollLines(unitRolls(unit), unit.key)
+          : undefined
+      }
     />
   );
   const heroes = roster.heroes.filter(visible);
@@ -100,6 +120,7 @@ export default function PrebattleUnits({
                     </Button>
                   ) : null}
                 </div>
+                {rollLines(groupRolls(members), `group:${group.id}`, "pb-1 pl-2 pt-1")}
                 <ul className="m-0 list-none p-0 pl-2">{members.map((member) => row(member))}</ul>
               </li>
             );
