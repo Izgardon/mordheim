@@ -108,6 +108,40 @@ describe("The template editor", () => {
     });
   });
 
+  it("saves the rules whole when one is added, for one variant", async () => {
+    fakeApi.on("PUT /warband-templates/1/rules/", () => makeEditorAnswer());
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+    await user.click(await screen.findByRole("button", { name: "Rules" }));
+    expect(screen.getByRole("article", { name: "S4 heroes" })).toHaveTextContent("Middenheim only");
+    await user.click(screen.getByRole("button", { name: "Add rule" }));
+    const form = screen.getByRole("form", { name: "Add a rule" });
+    await user.type(within(form).getByLabelText("Title"), "Lantern Bearer");
+    await user.selectOptions(within(form).getByLabelText("Variant"), "reikland");
+    await user.click(within(form).getByRole("button", { name: "Add rule" }));
+
+    expect(fakeApi.bodyOf("PUT /warband-templates/1/rules/")).toEqual({
+      campaign_id: CAMPAIGN_ID,
+      rules: [
+        {
+          id: 1,
+          title: "Hard Bargains",
+          description: "Haggle.",
+          variant: "",
+          warband_type_id: null,
+        },
+        {
+          id: 2,
+          title: "S4 heroes",
+          description: "",
+          variant: "middenheim",
+          warband_type_id: null,
+        },
+        { title: "Lantern Bearer", description: "", variant: "reikland", warband_type_id: null },
+      ],
+    });
+  });
+
   it("says what Revert loses before it goes back to the book", async () => {
     fakeApi.on(
       EDITOR,
