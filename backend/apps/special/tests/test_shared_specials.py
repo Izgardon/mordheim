@@ -82,13 +82,13 @@ class SharedSeedTests(TestCase):
         ]
         frenzy = Special.objects.create(name="Frenzy", type="Animal")
 
-        self.assertIn("Shared specials - Created: 53, Updated: 0, copies archived: 5.", seed())
+        self.assertIn("Shared specials - Created: 54, Updated: 0, copies archived: 5.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         frenzy.refresh_from_db()
         self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 53, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 54, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):
@@ -127,6 +127,16 @@ class SharedLookupTests(TestCase):
         mount = lookups.special("Immune to Psychology (Mount)", "Nightmare")  # the book's Animal rule of its name
         assert mount is not None
         self.assertEqual((mount.name, mount.type), ("Immune to Psychology (Nightmare)", "Animal"))
+
+    def test_no_pain_is_one_rule_for_the_model_but_sigmunds_and_veskits_ignore_knocked_down_too(self):
+        goliath = BookLookups("Hired Sword").special({"name": "No Pain", "description": "Bone Goliaths treat ..."}, "Bone Goliath")  # fmt: skip
+        sigmund = "Sigmund Spindle, the Harvester of Flesh"
+        own = BookLookups("Dramatis Persona").special({"name": "No Pain", "description": "Ignores both."}, sigmund)
+
+        assert goliath is not None and own is not None
+        self.assertEqual((goliath.type, goliath.owner_kind, goliath.category), ("Trait", GENERAL, BODY))
+        self.assertEqual(goliath.description, "The model treats a stunned result on the Injury chart as knocked down.")
+        self.assertEqual((own.name, own.type, own.category), ("No Pain (Sigmund)", f"Dramatis Persona - {sigmund}", BODY))  # fmt: skip
 
     def test_an_owners_rule_of_a_mutations_name_that_does_otherwise_is_kept_his(self):
         # the mutation heals him once; Belandysh ignores each wound on a 4+, and the Chameleon Skink's is a Skink's 6+

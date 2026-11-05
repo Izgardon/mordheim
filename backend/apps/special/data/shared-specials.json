@@ -16,6 +16,12 @@
       "aliases": []
     },
     {"name": "Immune to Poison", "type": "Trait", "text": "Not affected by any poison.", "aliases": []},
+    {
+      "name": "No Pain",
+      "type": "Trait",
+      "text": "The model treats a stunned result on the Injury chart as knocked down.",
+      "aliases": []
+    },
     {"name": "Daemon Soul", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 20, "aliases": []},
     {"name": "Great Claw", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 50, "aliases": []},
     {
@@ -474,6 +480,18 @@
       "rule": "Resilient",
       "owners": [{"hired_sword": "Old Prospector"}],
       "why": "The Resilient skill: -1 Strength to every hit against him in close combat; the mutation is +1 Toughness."
+    },
+    {
+      "name": "No Pain (Sigmund)",
+      "rule": "No Pain",
+      "owners": [{"dramatis_persona": "Sigmund Spindle, the Harvester of Flesh"}],
+      "why": "Ignores knocked down results too: only losing his last wound takes him out of action."
+    },
+    {
+      "name": "No Pain (Veskit)",
+      "rule": "No Pain",
+      "owners": [{"dramatis_persona": "Veskit, High Executioner of Clan Eshin"}],
+      "why": "Ignores knocked down results too: only losing his last wound takes him out of action."
     }
   ]
 }

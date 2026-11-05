@@ -40,6 +40,14 @@
       "setting": null
     },
     {
+      "name": "No Pain",
+      "type": "Trait",
+      "description": "The model treats a stunned result on the Injury chart as knocked down.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
       "name": "Daemon Soul",
       "type": "Mutation",
       "description": "A Daemon lives within the mutant’s soul. This gives him a 4+ save against the effects of spells or prayers.",
@@ -480,6 +488,16 @@
       "owner": "Old Prospector",
       "rule": "Resilient",
       "name": "Resilient (Old Prospector)"
+    },
+    {
+      "owner": "Sigmund Spindle, the Harvester of Flesh",
+      "rule": "No Pain",
+      "name": "No Pain (Sigmund)"
+    },
+    {
+      "owner": "Veskit, High Executioner of Clan Eshin",
+      "rule": "No Pain",
+      "name": "No Pain (Veskit)"
     }
   ]
 }

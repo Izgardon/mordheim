@@ -36640,8 +36640,7 @@
           },
           {
             "name": "No Pain",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche treats a stunned result on the injury chart as knocked down."
+            "type": "Trait"
           },
           {
             "name": "Immune to Poison",
@@ -36788,8 +36787,7 @@
           },
           {
             "name": "No Pain",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche treats a stunned result on the injury chart as knocked down."
+            "type": "Trait"
           },
           {
             "name": "May not Run",
@@ -36856,8 +36854,7 @@
           },
           {
             "name": "No Pain",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche treats a stunned result on the injury chart as knocked down."
+            "type": "Trait"
           },
           {
             "name": "No Brain",
@@ -36921,8 +36918,7 @@
           },
           {
             "name": "No Pain",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche treats a stunned result on the injury chart as knocked down."
+            "type": "Trait"
           },
           {
             "name": "No Brain",
@@ -36986,8 +36982,7 @@
           },
           {
             "name": "No Pain",
-            "type": "Warband - The Restless Dead",
-            "description": "A Liche treats a stunned result on the injury chart as knocked down."
+            "type": "Trait"
           },
           {
             "name": "Experience",
@@ -37043,9 +37038,8 @@
             "type": "Trait"
           },
           {
-            "name": "No Pain (Scarecrow)",
-            "type": "Warband - The Restless Dead",
-            "description": "The scarecrow treats all stunned results on the injury chart as knocked down."
+            "name": "No Pain",
+            "type": "Trait"
           },
           {
             "name": "No Brain",
@@ -39738,8 +39732,7 @@
           },
           {
             "name": "No Pain",
-            "type": "Warband - Undead",
-            "description": "Vampires treat a ‘stunned’ result on the Injury chart as ‘knocked down’."
+            "type": "Trait"
           }
         ]
       },
@@ -39936,8 +39929,7 @@
           },
           {
             "name": "No Pain",
-            "type": "Warband - Undead",
-            "description": "Vampires treat a ‘stunned’ result on the Injury chart as ‘knocked down’."
+            "type": "Trait"
           }
         ]
       },
@@ -39994,8 +39986,7 @@
           },
           {
             "name": "No Pain",
-            "type": "Warband - Undead",
-            "description": "Vampires treat a ‘stunned’ result on the Injury chart as ‘knocked down’."
+            "type": "Trait"
           },
           {
             "name": "No Brain",
