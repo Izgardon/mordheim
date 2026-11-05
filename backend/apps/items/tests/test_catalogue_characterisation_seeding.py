@@ -206,6 +206,13 @@ class SeedAllTests(TestCase):
         rat_ogres = book.get(name="Stupidity (Rat Ogre)").template_fighter_links.values_list("fighter__template__slug", flat=True)  # fmt: skip
         self.assertEqual(sorted(rat_ogres), ["skaven", "skaven-of-clan-pestilens"])
 
+    def test_the_lizardmens_oversized_jaws_and_poison_glands_are_body(self):
+        # William, 5 Nov 2026: two of the Sacred markings are bodily (data/special-categories.json), not auras
+        markings = Special.objects.filter(template_upgrades__group="Sacred markings").values_list("name", "category")
+        self.assertEqual(
+            dict(markings), {"Oversized Jaws": "body", "Poison Glands": "body", "Mark of the Old Ones": "aura"}
+        )
+
     def test_skaven_and_clan_pestilens_keep_their_own_maximums(self):
         # the 2026-10-28 data audit: races.json held Clan Pestilens' maximums under the name "Skaven" too, and
         # seed_races upserts by name, so the Skaven race had M5 T5 instead of M6 T4

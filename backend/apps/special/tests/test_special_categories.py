@@ -57,6 +57,9 @@ class BookCategoryTests(TestCase):
         self.assertEqual(book_category(" large ", "Trait"), BODY)  # the review file, read loosely
         self.assertEqual(book_category("Bloated Foulness", "Warband - Carnival of Chaos", "Blessings of Nurgle"), MUTATION)  # fmt: skip
         self.assertEqual(book_category("Mark of Tchar the Eagle", "Warband - Marauders of Chaos", "Mark of the Dark Gods"), AURA)  # fmt: skip
+        lizardmen = "Warband - Lizardmen"  # the Sacred markings: two bodily, by their lines (William, 5 Nov)
+        self.assertEqual([book_category(name, lizardmen) for name in ("Oversized Jaws", "Poison Glands")], [BODY, BODY])
+        self.assertEqual(book_category("Mark of the Old Ones", lizardmen), AURA)
         self.assertEqual(book_category("Not in the book"), AURA)
 
     def test_seeding_the_book_sets_each_category(self):
