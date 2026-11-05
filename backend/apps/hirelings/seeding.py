@@ -2,7 +2,8 @@
 seed_dramatis_personae read the same shape.
 
 Each row is an object: `name`, `description` (fluff), the nine characteristics, `armour_save` ("4+" or null),
-`large`, `caster`, `skills`, `specials`, `spells` and `equipment` (`{"item", "quantity", "item_type"?}` or an item's
+`large`, `caster`, `skills`, `specials`, `spells` (his own under `spell_lore` where it is given, else under "Hired
+Sword - <name>") and `equipment` (`{"item", "quantity", "item_type"?}` or an item's
 name), and the hire terms in one object (`hired_sword`, or `dramatis_persona`): `hire_fee` and `upkeep_fee` (structured
 fees, fees.py; or `hire_cost` and `upkeep_cost` in gold with a `*_cost_expression` kept as the note), `rating`,
 `grade`, `race`, `unique_to`, `available_skill_types` and `available_special_skills`; a dramatis persona's adds

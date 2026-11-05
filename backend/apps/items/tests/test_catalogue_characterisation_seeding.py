@@ -465,18 +465,19 @@ class SeedAllTests(TestCase):
 
     def test_the_dark_mage_knows_his_six_spells(self):
         # BUG-54, CAT-TEST-13: the "1 - " to "6 - " prefixes kept his spells from matching; they are his own spells,
-        # written as book spells of his type with the roll from the prefix and the difficulty from the text
+        # written as book spells with the roll from the prefix and the difficulty from the text, in the lore his rules
+        # name them by, Dark Magic (the review, 5 Nov 2026: D3; they were "Hired Sword - Dark Mage")
         spells = Spell.objects.filter(hired_sword_spells__hired_sword__name="Dark Mage").order_by("roll")
 
         self.assertEqual(
             [(spell.roll, spell.name, spell.dc, spell.type) for spell in spells],
             [
-                (1, "Banishment", "8", "Hired Sword - Dark Mage"),
-                (2, "Soul Render", "8", "Hired Sword - Dark Mage"),
-                (3, "Shade Mount", "8", "Hired Sword - Dark Mage"),
-                (4, "Jozun's Decay", "9", "Hired Sword - Dark Mage"),
-                (5, "Cowel of Pain", "6", "Hired Sword - Dark Mage"),
-                (6, "Doom & Dark", "7", "Hired Sword - Dark Mage"),
+                (1, "Banishment", "8", "Dark Magic"),
+                (2, "Soul Render", "8", "Dark Magic"),
+                (3, "Shade Mount", "8", "Dark Magic"),
+                (4, "Jozun's Decay", "9", "Dark Magic"),
+                (5, "Cowel of Pain", "6", "Dark Magic"),
+                (6, "Doom & Dark", "7", "Dark Magic"),
             ],
         )
 

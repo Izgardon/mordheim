@@ -1,7 +1,8 @@
 """What the bestiary and hireling seeders resolve an entry's links against: the book's skills, specials, spells and
 items (BUG-17), by name with apostrophes straightened, through the aliases their data uses for book names (BUG-54).
 A hired sword's (or dramatis persona's) own specials and spells that the book lacks are created in it under "Hired
-Sword - <name>" (or "Dramatis Persona - <name>"); his special skills are the book's of their names (created when it
+Sword - <name>" (or "Dramatis Persona - <name>"), his spells under his `spell_lore` where he has one ("Dark Magic",
+the review, 5 Nov 2026: D3); his special skills are the book's of their names (created when it
 lacks one) in a skill group of that name, which his skill access names (skill groups, phase 1a). A special of a shared
 special's name or alias is the shared one (Fear for "Cause Fear"), unless William's list keeps that owner's apart under
 a name of its own (special/shared.py).
@@ -133,7 +134,8 @@ class EntryLinks:
 class BookLookups:
     """One run's caches of the book's skills, specials and spells (by name) and items (by name and type, and by name),
     and the warnings the run prints: links it couldn't resolve and entries it created. An entry's own specials,
-    spells and special skills are created under "<own_type> - <name>" ("Hired Sword - Dark Mage")."""
+    spells and special skills are created under "<own_type> - <name>" ("Hired Sword - Dark Mage"), his spells under his
+    `spell_lore` where he has one."""
 
     def __init__(self, own_type: str = "Hired Sword") -> None:
         self.own_type = own_type
@@ -207,13 +209,15 @@ class BookLookups:
         )
         return True
 
-    def spell(self, item: Any, owner: str) -> Spell | None:
+    def spell(self, item: Any, owner: str, lore: str = "") -> Spell | None:
+        """The book's spell of the item's name, else his own, created under `lore` (the entry's `spell_lore`: his
+        spells as his source names them, the Dark Mage's "Dark Magic") or "<own_type> - <name>"."""
         name, fields = spell_fields(item)
         if not name:
             return None
         spell = self.spells.get(lookup_key(name))
         if spell is None:  # his own spell (the Dark Mage's six), as specials and skills are (BUG-54)
-            spell_type = self.own_type_of(owner)
+            spell_type = lore.strip() or self.own_type_of(owner)
             if book_roll_taken(spell_type, fields["roll"]):  # his lore keeps the first on each roll (spells/rolls.py)
                 self.warnings.append(
                     f"  Spell '{name}' ({spell_type}): roll {fields['roll']} is taken, saved with none"
@@ -238,10 +242,11 @@ class BookLookups:
         spells created there); unresolved ones are warned about and left out, and two names for one shared special
         link it once."""
         specials = [special for item in data.get("specials", []) if (special := self.special(item, owner))]
+        lore = str(data.get("spell_lore") or "")
         links = EntryLinks(
             skills=[skill for name in data.get("skills", []) if (skill := self.skill(name, owner))],
             specials=list(dict.fromkeys(specials)),
-            spells=[spell for item in data.get("spells", []) if (spell := self.spell(item, owner))],
+            spells=[spell for item in data.get("spells", []) if (spell := self.spell(item, owner, lore))],
             quantities={},
         )
         for equipment in data.get("equipment", []):

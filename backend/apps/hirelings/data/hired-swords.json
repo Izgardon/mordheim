@@ -3536,6 +3536,7 @@
     "armour_save": null,
     "large": false,
     "caster": "Wizard",
+    "spell_lore": "Dark Magic",
     "specials": [
       {
         "name": "Wizard",
