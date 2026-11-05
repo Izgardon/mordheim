@@ -45,9 +45,9 @@ What each item takes; a row set or kept in overrides.json is settled, the rest s
 | Gnoblar Fighter | Its note says "Ogres and Chaos Dwarfs only"; its list leaves out Black Dwarfs, Ogre Hunting Party | the list plus Ogre Hunting Party, set in overrides.json (its note says Ogres and Chaos Dwarfs only, but "black dwarves dont get gnoblar fighters"; William, 1 Nov 2026) |
 | Nightmare | overrides.json sets who may buy it | the list plus Cursed Cavalcade, set in overrides.json (the Cursed Cavalcade's special equipment: the Aristocrat may ride one; the templates plan, William, 4 Nov 2026) |
 | Rhinox | Its note says "Ogres, Marauders, Norse and Merchant Caravans only"; its list leaves out Ogre Hunting Party | the list plus Ogre Hunting Party, set in overrides.json (its note names the Ogres; its list predates the Ogre Hunting Party; William, 1 Nov 2026) |
-| Riding/Draft Horse | Its note says "Humans only"; its list also names Black Dwarfs, Undead and leaves out Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult Of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order Of The Mare, Outlaws of Stirwood Forest, Redux, Protectorate Of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania | the list plus Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult Of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order Of The Mare, Outlaws of Stirwood Forest, Redux, Protectorate Of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania, set in overrides.json (its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026) |
+| Riding/Draft Horse | Its note says "Humans only"; its list also names Black Dwarfs, Undead and leaves out Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order of the Mare, Outlaws of Stirwood Forest, Redux, Protectorate of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania | the list plus Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order of the Mare, Outlaws of Stirwood Forest, Redux, Protectorate of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania, set in overrides.json (its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026) |
 | Wardogs | Its note says "Not available to Skaven"; its list also excludes Skaven of Clan Pestilens (TC29) | the exclusion list, kept in overrides.json (not for any Skaven, Clan Pestilens included; William, 1 Nov 2026) |
-| Warhorse | Its note says "Humans only"; its list also names Black Dwarfs, Undead and leaves out Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult Of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order Of The Mare, Outlaws of Stirwood Forest, Redux, Protectorate Of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania | the list plus Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult Of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order Of The Mare, Outlaws of Stirwood Forest, Redux, Protectorate Of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania, set in overrides.json (its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026) |
+| Warhorse | Its note says "Humans only"; its list also names Black Dwarfs, Undead and leaves out Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order of the Mare, Outlaws of Stirwood Forest, Redux, Protectorate of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania | the list plus Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order of the Mare, Outlaws of Stirwood Forest, Redux, Protectorate of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania, set in overrides.json (its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026) |
 | Chaos Dwarf Blunderbuss | Its note says "Chaos Dwarfs only"; its list leaves out Black Dwarfs | the list plus Black Dwarfs, set in overrides.json (its note says Chaos Dwarfs only; its list predates the Black Dwarfs; William, 1 Nov 2026) |
 | Ball and Chain | Its note says "Goblins only"; its list leaves out Forest Goblins (NC) | the list, kept in overrides.json (Forest Goblins don't get it; William, 1 Nov 2026) |
 | Dragon Sword | Its note says "Battle Monks and Merchant Caravans only"; its list also names Nipponese Expedition | the list, kept in overrides.json (mordheimer's list stands; William, 1 Nov 2026) |
@@ -57,10 +57,10 @@ What each item takes; a row set or kept in overrides.json is settled, the rest s
 | Katar | Its lists let no one buy it; it belongs to the khemri setting | only Arabian Tomb Raiders, set in overrides.json (on the Arabian Tomb Raiders' Slave equipment list, not on Khemri's trading chart) |
 | Sons of Hashut Obsidian Weapon | Its note says "Chaos Dwarfs only"; its list leaves out Black Dwarfs | the list plus Black Dwarfs, set in overrides.json (its note says Chaos Dwarfs only; its list predates the Black Dwarfs; William, 1 Nov 2026) |
 | Spiked Gauntlet | Its lists let no one buy it; its note says "Pit Fighters only" | only Pit Fighters, Pit Fighters (old), set in overrides.json (its note says Pit Fighters only, and "pit fighters is a legitimate warband so that weapon should appear for them"; William, 1 Nov 2026) |
-| Black Lotus | overrides.json sets who may buy it | everyone except Protectorate Of Sigmar, Sisters of Sigmar, Witch Hunters, set in overrides.json (the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026) |
+| Black Lotus | overrides.json sets who may buy it | everyone except Protectorate of Sigmar, Sisters of Sigmar, Witch Hunters, set in overrides.json (the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026) |
 | Black Lotus | Its override prices it for Sisters of Sigmar, Witch Hunters, which it excludes | the exclusion: no override row for them, kept in overrides.json (the exclusion stands, the Protectorate of Sigmar shut out too; William, 1 Nov 2026) |
 | Bota Bag | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
-| Dark Venom | overrides.json sets who may buy it | everyone except Protectorate Of Sigmar, Sisters of Sigmar, Witch Hunters, set in overrides.json (the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026) |
+| Dark Venom | overrides.json sets who may buy it | everyone except Protectorate of Sigmar, Sisters of Sigmar, Witch Hunters, set in overrides.json (the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026) |
 | Dark Venom | Its override prices it for Sisters of Sigmar, Witch Hunters, which it excludes | the exclusion: no override row for them, kept in overrides.json (the exclusion stands, the Protectorate of Sigmar shut out too; William, 1 Nov 2026) |
 | Lamp of the Djinn | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
 | Magic Carpet | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
@@ -68,11 +68,11 @@ What each item takes; a row set or kept in overrides.json is settled, the rest s
 | Monkey's Paw | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
 | Nehekharan Map | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
 | Nomad Robes | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
-| Rickshaw | Its note says "Humans only"; its list also names Black Dwarfs, Undead and leaves out Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult Of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order Of The Mare, Outlaws of Stirwood Forest, Redux, Protectorate Of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania | the list plus Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult Of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order Of The Mare, Outlaws of Stirwood Forest, Redux, Protectorate Of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania, set in overrides.json (its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026) |
+| Rickshaw | Its note says "Humans only"; its list also names Black Dwarfs, Undead and leaves out Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order of the Mare, Outlaws of Stirwood Forest, Redux, Protectorate of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania | the list plus Court of Profane Pleasures, Cursed Cavalcade, Dreamwalkers, Cult of Morr, Grave Robbers, Mazzalupo, Nipponese Expedition, Order of the Mare, Outlaws of Stirwood Forest, Redux, Protectorate of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania, set in overrides.json (its note says Humans only: its list stands, with the human warbands it misses; William, 1 Nov 2026) |
 | Scorpion Ring | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
 | Snake Charmer's flute | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
 | Squig Prodder | Its note says "Goblins only"; its list leaves out Forest Goblins (NC), Night Goblins (MIC) | the list plus Forest Goblins (NC), Night Goblins (MIC), set in overrides.json (its note says Goblins only; its list predates these warbands; William, 1 Nov 2026) |
-| Tarot Cards | overrides.json sets who may buy it | everyone except Protectorate Of Sigmar, Sisters of Sigmar, Witch Hunters, set in overrides.json (the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026) |
+| Tarot Cards | overrides.json sets who may buy it | everyone except Protectorate of Sigmar, Sisters of Sigmar, Witch Hunters, set in overrides.json (the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026) |
 | Tome of Magic | Its note says "Not available to Witch Hunters or Sisters of Sigmar"; its list also excludes Skaven of Clan Pestilens (TC29) | everyone except Sisters of Sigmar, Witch Hunters, set in overrides.json (as its note says, so Clan Pestilens may buy it: "why no pestilens, isn't it available to any caster?"; William, 1 Nov 2026) |
 | Trip Wire | Its note says "Horned Hunters only"; its list also names Nipponese Expedition | the list, kept in overrides.json (mordheimer's list stands; William, 1 Nov 2026) |
 | Venom Ring | Its lists let no one buy it; it belongs to the khemri setting | for everyone, as the setting already limits it, kept in overrides.json (Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026) |
@@ -98,9 +98,26 @@ Names in item, skill, hired-sword or dramatis data that match no warband type ex
 | Ostlander Mercenaries | skills | Ostlanders | the Ostlanders' skill list |
 | Outlaws of Stirwood Forest | dramatis personae, hired swords, items | The Outlaws of Stirwood Forest | same warband, without "The" |
 | Snotling Warband | skills | Snotlings | the Snotlings' skill list |
-| Sons of Hashut: | hired swords | Sons Of Hashut | same warband, stray colon |
+| Sons of Hashut: | hired swords | Sons of Hashut | same warband, stray colon |
 | The Cursed Cavalcade | dramatis personae | Cursed Cavalcade | same warband, with "The" |
-| The Sons of Hashut | dramatis personae, hired swords, items, skills | Sons Of Hashut | same warband, with "The" |
+| The Sons of Hashut | dramatis personae, hired swords, items, skills | Sons of Hashut | same warband, with "The" |
+
+Names put right in overrides.json (`warband_type_names`, `persona_names`):
+
+| Kind | The source's name | Ours |
+| --- | --- | --- |
+| warband type | Arabyan Theives | Arabyan Thieves |
+| warband type | Assassin Squad, Knives From The Dark | Assassin Squad, Knives from the Dark |
+| warband type | Dreamwalkers, Cult Of Morr | Dreamwalkers, Cult of Morr |
+| warband type | Lords Of The Marsh | Lords of the Marsh |
+| warband type | Masters Of Horror | Masters of Horror |
+| warband type | Order Of The Mare | Order of the Mare |
+| warband type | Protectorate Of Sigmar | Protectorate of Sigmar |
+| warband type | Skaven Of Clan Pristekk | Skaven of Clan Pristekk |
+| warband type | Sons Of Hashut | Sons of Hashut |
+| warband type | Survivors Of Strigos | Survivors of Strigos |
+| warband type | The Brood Of Ghurash | The Brood of Ghurash |
+| warband type | Wood Elves, The Asrai Way-farers | Wood Elves, the Asrai Way-farers |
 
 ## Same-name list
 
@@ -124,13 +141,13 @@ Settled in overrides.json (`group_members`): each type named here stays where it
 
 | Group | Types | Added | Kept in | Kept out |
 | --- | --- | --- | --- | --- |
-| Humans | 80 | Pit Fighters | Court of Profane Pleasures, Cursed Cavalcade, Order Of The Mare, Outlaws of Stirwood Forest, Redux, Protectorate Of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania | Undead, Mootlanders, Black Dwarfs |
+| Humans | 80 | Pit Fighters | Court of Profane Pleasures, Cursed Cavalcade, Order of the Mare, Outlaws of Stirwood Forest, Redux, Protectorate of Sigmar, Sorcerous Society, Vampire Hunters of Sylvania | Undead, Mootlanders, Black Dwarfs |
 | Elves | 11 |  | Druchii, Wood Elves of Athel Loren |  |
 | Dwarfs | 11 |  | Dwarf Slayer Cult |  |
 | Skaven | 13 |  | Skaven of Clan Moulder, Underworld Alliance | Nipponese Expedition |
 | Goblins | 11 |  | Underworld Alliance | Snotlings |
-| Orcs & Goblins | 16 |  | Snotlings | Sons Of Hashut |
-| Sigmarite | 3 | Protectorate Of Sigmar |  |  |
+| Orcs & Goblins | 16 |  | Snotlings | Sons of Hashut |
+| Sigmarite | 3 | Protectorate of Sigmar |  |  |
 | Mercenaries | 19 | Ostlanders, Imperial Outriders, Miragleans, Remasens, Tileans, Trantios, Lustrian Reavers |  |  |
 | Good | 32 | Imperial Outriders |  |  |
 | Evil | 19 | Beastmen Raiders |  | Hochland Bandits, Horned Hunters, Lizardmen (TC11), Pirates |
@@ -162,7 +179,7 @@ No membership questions left.
 | Grade 3 | 3 | Mordheim split by grade | 3: 14 |
 
 Named settings that mix grades, kept whole at the majority grade: Empire in Flames, Lustria, Khemri, Border Town Burning, Mutiny in Marienburg.
-Warband types with no setting in either source, placed in Mordheim's part for their grade: Pit Fighters (old), Bretonnian Grail Companions, Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Knives From The Dark, Circus Extraordinare, Drowned Dead, Dwarf Grudgebearers, Goblin Raiders, Hobgoblin Horde, Mordheimer's Fanatics, Ostermark Roadwardens, The Innocents, Tilean Thespian Troupe, Werewolf Hunting Pack, Wood Elves, The Asrai Way-farers.
+Warband types with no setting in either source, placed in Mordheim's part for their grade: Pit Fighters (old), Bretonnian Grail Companions, Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Knives from the Dark, Circus Extraordinare, Drowned Dead, Dwarf Grudgebearers, Goblin Raiders, Hobgoblin Horde, Mordheimer's Fanatics, Ostermark Roadwardens, The Innocents, Tilean Thespian Troupe, Werewolf Hunting Pack, Wood Elves, the Asrai Way-farers.
 Warband types on neither site, added in overrides.json: Albion Commandos.
 Grades not counted (not 1a to 3): 2c, 3a, all on MiM items.
 
@@ -376,7 +393,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Skaven Clan Pestilens | Skaven of Clan Pestilens (TC29) | skill_group_learners | - | Black Hunger, Censer Bearer, Rotten Body, Contagious, Ignore Pain |
 | Skaven Metal Mongers | Metal Mongers | skill_lists | - | Tail Fighting, Infiltration, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat |
 | Skink | Lizardmen (TC11) | intersection | - | Infiltration (Skink), Great Hunter |
-| Sons of Hashut | Sons Of Hashut | new group | - | Extra Tough, True Grit, Thick Skull, Unlimited Hatred |
+| Sons of Hashut | Sons of Hashut | new group | - | Extra Tough, True Grit, Thick Skull, Unlimited Hatred |
 | Tomb Robbers | Arabian Tomb Raiders | intersection | - | Sand worm, Hit and run, Weather tolerant |
 | Undead Vampires | Undead | skill_lists | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
 
@@ -420,10 +437,10 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 
 | Skill | Before (its rows' who-can) | Now (its groups) |
 | --- | --- | --- |
-| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
+| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
 | Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs |
-| True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
-| Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons Of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons Of Hashut, Guild of Disgraced Engineers |
+| True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
+| Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
 | Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Metal Mongers, Sea Ghosts |
 | Foul Odour | Ostlanders | Ostlanders, Horned Hunters |
 | Hide in Shadows | Hochland Bandits, Shadow Warriors, Night Goblins (WEB) | Hochland Bandits, Horned Hunters, Shadow Warriors, Night Goblins (WEB), Sea Ghosts |

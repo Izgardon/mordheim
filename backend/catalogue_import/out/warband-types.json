@@ -771,7 +771,7 @@
   },
   {
     "slug": "sons-of-hashut",
-    "name": "Sons Of Hashut",
+    "name": "Sons of Hashut",
     "setting": "mordheim-1c",
     "setting_assumed": false,
     "race": "Chaos Dwarf",
@@ -799,7 +799,7 @@
   },
   {
     "slug": "dreamwalkers-cult-of-morr",
-    "name": "Dreamwalkers, Cult Of Morr",
+    "name": "Dreamwalkers, Cult of Morr",
     "setting": "mordheim-2a",
     "setting_assumed": false,
     "race": "Human",
@@ -869,7 +869,7 @@
   },
   {
     "slug": "masters-of-horror",
-    "name": "Masters Of Horror",
+    "name": "Masters of Horror",
     "setting": "sylvania",
     "setting_assumed": false,
     "race": "Universal Monsters",
@@ -939,7 +939,7 @@
   },
   {
     "slug": "order-of-the-mare",
-    "name": "Order Of The Mare",
+    "name": "Order of the Mare",
     "setting": "mordheim-2a",
     "setting_assumed": false,
     "race": "Human",
@@ -967,7 +967,7 @@
   },
   {
     "slug": "protectorate-of-sigmar",
-    "name": "Protectorate Of Sigmar",
+    "name": "Protectorate of Sigmar",
     "setting": "mordheim-2a",
     "setting_assumed": false,
     "race": "Human",
@@ -1023,7 +1023,7 @@
   },
   {
     "slug": "survivors-of-strigos",
-    "name": "Survivors Of Strigos",
+    "name": "Survivors of Strigos",
     "setting": "sylvania",
     "setting_assumed": false,
     "race": "Vampire",
@@ -1149,7 +1149,7 @@
   },
   {
     "slug": "the-brood-of-ghurash",
-    "name": "The Brood Of Ghurash",
+    "name": "The Brood of Ghurash",
     "setting": "sealed-city",
     "setting_assumed": false,
     "race": "Troll",
@@ -1457,7 +1457,7 @@
   },
   {
     "slug": "lords-of-the-marsh",
-    "name": "Lords Of The Marsh",
+    "name": "Lords of the Marsh",
     "setting": "mutiny-in-marienburg",
     "setting_assumed": false,
     "race": "Fimir",
@@ -1723,7 +1723,7 @@
   },
   {
     "slug": "skaven-of-clan-pristekk",
-    "name": "Skaven Of Clan Pristekk",
+    "name": "Skaven of Clan Pristekk",
     "setting": "sealed-city",
     "setting_assumed": false,
     "race": "Skaven",
@@ -1947,7 +1947,7 @@
   },
   {
     "slug": "arabyan-theives",
-    "name": "Arabyan Theives",
+    "name": "Arabyan Thieves",
     "setting": "khemri",
     "setting_assumed": false,
     "race": "Human",
@@ -1961,7 +1961,7 @@
   },
   {
     "slug": "assassin-squad-knives-from-the-dark",
-    "name": "Assassin Squad, Knives From The Dark",
+    "name": "Assassin Squad, Knives from the Dark",
     "setting": "grade-3",
     "setting_assumed": true,
     "race": "Skaven",
@@ -2255,7 +2255,7 @@
   },
   {
     "slug": "wood-elves-the-asrai-way-farers",
-    "name": "Wood Elves, The Asrai Way-farers",
+    "name": "Wood Elves, the Asrai Way-farers",
     "setting": "grade-3",
     "setting_assumed": true,
     "race": "Wood Elf",

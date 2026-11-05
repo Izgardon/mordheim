@@ -120,6 +120,11 @@ class SeedAllTests(TestCase):
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
         self.assertEqual(CampaignType.objects.count(), 19)
         self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 163)
+        # the review (5 Nov 2026: D1): Broheim's typo and its capital "Of" and "The" are put right, the slug kept
+        book_types = WarbandType.objects.filter(campaign__isnull=True)
+        self.assertEqual(book_types.get(slug="arabyan-theives").name, "Arabyan Thieves")
+        self.assertEqual(book_types.get(slug="sons-of-hashut").name, "Sons of Hashut")
+        self.assertFalse(book_types.filter(name__regex=r" (Of|The|From) ").exists())
         self.assertEqual(WarbandGroup.objects.count(), 20)
 
     def test_a_second_run_changes_no_book_row_but_rewrites_every_availability(self):

@@ -92,6 +92,19 @@ class ResolverTests(SimpleTestCase):
         self.assertEqual((commandos["link_url"], commandos["broheim_grade"]), ("", None))
         self.assertEqual(Resolver(types).resolve("Albion Commandos", "items"), ["albion-commandos"])
 
+    def test_a_name_put_right_keeps_its_slug_and_one_naming_no_type_stops_the_build(self) -> None:
+        # the review (5 Nov 2026: D1): Broheim's "Arabyan Theives" and "Sons Of Hashut", through warband_type_names
+        rows = [warband("Arabyan Theives", "Human"), warband("Sons Of Hashut", "Dwarf")]
+        names = {"Arabyan Theives": "Arabyan Thieves", "Sons Of Hashut": "Sons of Hashut"}
+        types = build_warband_types(rows, names)
+        self.assertEqual(
+            [(row["slug"], row["name"]) for row in types],
+            [("arabyan-theives", "Arabyan Thieves"), ("sons-of-hashut", "Sons of Hashut")],
+        )
+        self.assertEqual(Resolver(types).resolve("Arabyan Thieves", "items"), ["arabyan-theives"])
+        with self.assertRaisesRegex(ValueError, "no warband type Nobody"):
+            build_warband_types(rows, {"Nobody": "Somebody"})
+
     def test_shared_names_get_their_source_code_and_odd_names_are_logged(self) -> None:
         rows = [warband("Night Goblins", "Night Goblin", "MIC"), warband("Night Goblins", "Night Goblin", "WEB")]
         types = build_warband_types(rows)

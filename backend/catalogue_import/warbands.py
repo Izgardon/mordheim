@@ -50,8 +50,14 @@ def extra_rows(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
     ]
 
 
-def build_warband_types(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """One row per Broheim warband. A name used by several types gets its source code in the slug."""
+def build_warband_types(rows: list[dict[str, Any]], names: dict[str, str] | None = None) -> list[dict[str, Any]]:
+    """One row per Broheim warband. A name used by several types gets its source code in the slug. `names`
+    (overrides.json "warband_type_names") puts a source's name right ("Arabyan Theives"), its slug kept; one that
+    names no row stops the build."""
+    renamed = dict(names or {})
+    unknown = set(renamed) - {row["name"] for row in rows}
+    if unknown:
+        raise ValueError(f"overrides.json warband_type_names: no warband type {', '.join(sorted(unknown))}")
     clashes = Counter(slugify(row["name"]) for row in rows)
     types = []
     for row in rows:
@@ -62,7 +68,7 @@ def build_warband_types(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
         types.append(
             {
                 "slug": slug,
-                "name": row["name"],
+                "name": renamed.get(row["name"], row["name"]),
                 "setting": setting,
                 "setting_assumed": not named,
                 "race": row.get("race") or "",

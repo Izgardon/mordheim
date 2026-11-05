@@ -1,7 +1,7 @@
 """The import report: what William needs to decide, short and scannable."""
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.common import GRADE_RANK, normalise_grade
@@ -33,6 +33,9 @@ class ReportData:
     hiring_log: Any
     skill_lists: Any
     skill_groups: Any  # new_groups.SkillGroups
+    renamed: dict[str, dict[str, str]] = field(
+        default_factory=dict
+    )  # kind -> the source's name -> ours (overrides.json)
 
 
 def _cell(value: object) -> str:
@@ -100,12 +103,17 @@ def _names(data: ReportData) -> list[str]:
         "Names in item, skill, hired-sword or dramatis data that match no warband type exactly, or match several. A"
         " mapping kept in overrides.json (`warband_aliases`) is settled."
     )
+    renamed = [[kind, source, ours] for kind, names in data.renamed.items() for source, ours in names.items()]
     return [
         "## Warband names that need a mapping",
         "",
         intro,
         "",
         *_table(["Name", "Where", "Mapped to", "Why"], rows),
+        "",
+        "Names put right in overrides.json (`warband_type_names`, `persona_names`):",
+        "",
+        *_table(["Kind", "The source's name", "Ours"], renamed),
         "",
     ]
 

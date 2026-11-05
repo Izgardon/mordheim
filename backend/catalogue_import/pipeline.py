@@ -197,7 +197,8 @@ def _skill_groups(
 def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str]:
     sources = load_sources(package, item_data)
     overrides = sources.overrides
-    types = build_warband_types(sources.warbands + extra_rows(overrides.get("extra_warband_types", [])))
+    rows = sources.warbands + extra_rows(overrides.get("extra_warband_types", []))
+    types = build_warband_types(rows, overrides.get("warband_type_names"))
     resolver = Resolver(types, overrides.get("warband_aliases"))
     evidence = collect_evidence(types, sources)
     settings = build_settings(evidence, overrides.get("setting_grades", {}))
@@ -280,6 +281,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         hiring_log,
         skill_lists.log,
         grouped,
+        {"warband type": overrides.get("warband_type_names", {})},
     )
     return {
         "settings.json": dump_json(settings),
