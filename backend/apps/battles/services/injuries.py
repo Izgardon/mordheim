@@ -66,7 +66,7 @@ _D66_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
     (61, 61, "Captured", _misses(1)),
     (62, 63, "Hardened", _special("Hardened")),
     (64, 64, "Horrible Scars", _special("Horrible Scars")),
-    (65, 65, "Sold to the Pits", _misses(1)),
+    (65, 65, "Sold to the Pits", MANUAL),  # he fights in the pits and rejoins: no missed game (William, 5 Nov)
     (66, 66, "Survives Against the Odds", MANUAL),  # +1 Experience
 ]
 _D100_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
@@ -78,7 +78,7 @@ _D100_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
     (27, 28, "Smashed Leg", _misses(1)),
     (29, 31, "Chest Wound", _stat("toughness")),
     (32, 34, "Big City Shakes", MANUAL),
-    (35, 37, "Blind in One Eye", _stat("ballistic_skill")),
+    (35, 37, "Blinded in One Eye", _stat("ballistic_skill")),  # the D66's wording
     (38, 39, "Old Battle Wound", _special("Old Battle Wound")),
     (40, 42, "Nervous Condition", _stat("initiative")),
     (43, 45, "Hand Injury", _stat("weapon_skill")),
@@ -89,7 +89,7 @@ _D100_RANGES: list[tuple[int, int, str, dict[str, Any]]] = [
     (81, 85, "Captured", _misses(1)),
     (86, 88, "Hardened", _special("Hardened")),
     (89, 91, "Horrible Scars", _special("Horrible Scars")),
-    (92, 94, "Sold to the Pits", _misses(1)),
+    (92, 94, "Sold to the Pits", MANUAL),
     (95, 97, "Survives Against the Odds", MANUAL),
     (98, 99, "Really Survives Against the Odds", MANUAL),
     (100, 100, "Mutation", MANUAL),
