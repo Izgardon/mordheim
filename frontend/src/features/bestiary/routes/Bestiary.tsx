@@ -115,6 +115,7 @@ function BeastDetail({
               key={rule.key}
               name={rule.name}
               kind={"kind" in rule ? rule.kind : undefined}
+              category={"category" in rule ? rule.category : undefined}
             >
               {rule.description}
             </RuleBlock>

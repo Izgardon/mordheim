@@ -1,4 +1,4 @@
-import { SpecialKindIcon } from "@/components/ui/game-icons";
+import { SpecialIcon } from "@/components/ui/game-icons";
 import { SearchCombobox } from "@/components/ui/search-select";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import type { Special } from "@/features/special/types/special-types";
@@ -26,7 +26,7 @@ export default function BoonBanePicker({
     return (
       <div className="flex flex-col gap-1.5 border border-accent-line bg-accent-soft p-2.5">
         <span className="flex items-center gap-1.5 text-sm font-bold text-head">
-          <SpecialKindIcon kind={value.kind} className="text-kind-special" />
+          <SpecialIcon category={value.category} kind={value.kind} />
           {value.name}
           {value.type ? (
             <span className="font-normal text-muted-foreground">· {value.type}</span>

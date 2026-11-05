@@ -1,4 +1,4 @@
-import type { SpecialKind } from "@/components/ui/game-icons";
+import type { SpecialCategory, SpecialKind } from "@/components/ui/game-icons";
 import type { CatalogueBadgeFields } from "@/features/catalogue/types/catalogue-entry";
 
 /**
@@ -11,8 +11,10 @@ export type Special = CatalogueBadgeFields & {
   id: number;
   name: string;
   type?: string | null;
-  /** Boons & Banes: boon, bane or trait. */
+  /** Boons & Banes: boon, bane or trait (its icon's colour). */
   kind?: SpecialKind;
+  /** Injury, mutation, aura or body (its icon). */
+  category?: SpecialCategory;
   owner_kind?: SpecialOwnerKind;
   description?: string | null;
   campaign_id?: number | null;

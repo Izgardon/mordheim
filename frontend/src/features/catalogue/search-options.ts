@@ -1,6 +1,6 @@
 import { createElement } from "react";
 
-import { SkillListIcon, SpecialKindIcon } from "@/components/ui/game-icons";
+import { SkillListIcon, SpecialIcon } from "@/components/ui/game-icons";
 import type { SearchOption } from "@/components/ui/search-select";
 import { outOfPlay } from "@/features/campaigns/api/settings-queries";
 import type { Setting } from "@/features/campaigns/types/campaign-types";
@@ -15,9 +15,9 @@ import type { Spell } from "@/features/spells/types/spell-types";
 /**
  * The searchable select's rows for the catalogue (William: "titles and subtitles with skill
  * category, spell school as subtitles"): a skill's group, a spell's lore and difficulty, a
- * special's type, a race's maximums. Skills carry their group's icon and specials their kind's
- * (Boons & Banes); spells none. Rows outside the campaign or the unit's skill groups carry a
- * warning and stay pickable.
+ * special's type, a race's maximums. Skills carry their group's icon and specials their
+ * category's in their kind's colour (Boons & Banes); spells none. Rows outside the campaign or the
+ * unit's skill groups carry a warning and stay pickable.
  */
 
 type Settings = Map<number, Setting>;
@@ -86,7 +86,7 @@ export const spellOption = (spell: Spell, settings: Settings): SearchOption => (
 export const specialOption = (special: Special, settings: Settings): SearchOption => ({
   id: special.id,
   title: special.name,
-  icon: createElement(SpecialKindIcon, { kind: special.kind, className: "text-kind-special" }),
+  icon: createElement(SpecialIcon, { category: special.category, kind: special.kind }),
   subtitle: special.type ?? undefined,
   warning: outOfPlay(special, settings),
 });

@@ -1,5 +1,6 @@
 import type { IconType } from "react-icons";
 import {
+  GiBeamsAura,
   GiBiceps,
   GiBleedingWound,
   GiBlunderbuss,
@@ -10,20 +11,20 @@ import {
   GiChest,
   GiCrossedSwords,
   GiCrystalGrowth,
-  GiCursedStar,
   GiDeathSkull,
   GiHorseHead,
   GiKnapsack,
-  GiKnot,
   GiLaurels,
   GiLightBackpack,
+  GiMuscleUp,
   GiPocketBow,
   GiPotionBall,
   GiRuneStone,
   GiScrollUnfurled,
   GiShop,
   GiSpellBook,
-  GiSunbeams,
+  GiSpikedTentacle,
+  GiStitchedWound,
   GiSwapBag,
   GiThreeFriends,
   GiTombstone,
@@ -102,13 +103,24 @@ export const SKILL_LIST_ICONS: Record<SkillList, IconType> = {
   special: GiRuneStone,
 };
 
-/** Boons & Banes: what a special is (the server's `kind`). */
+/** Boons & Banes: whether a special helps the unit, holds it back or neither (the server's `kind`). */
 export type SpecialKind = "boon" | "bane" | "trait";
 
-export const SPECIAL_KIND_ICONS: Record<SpecialKind, IconType> = {
-  boon: GiSunbeams,
-  bane: GiCursedStar,
-  trait: GiKnot,
+/** What a special is (the server's `category`), which picks its icon. */
+export type SpecialCategory = "injury" | "mutation" | "aura" | "body";
+
+export const SPECIAL_CATEGORY_ICONS: Record<SpecialCategory, IconType> = {
+  injury: GiStitchedWound,
+  mutation: GiSpikedTentacle,
+  aura: GiBeamsAura,
+  body: GiMuscleUp,
+};
+
+/** The colour a special's kind gives its icon: a boon gold, a bane red, a trait the ink. */
+export const SPECIAL_KIND_COLOURS: Record<SpecialKind, string> = {
+  boon: "text-kind-special",
+  bane: "text-danger",
+  trait: "text-ink",
 };
 
 /** A game icon at the text's size and colour (the tokens), hidden from screen readers. */
@@ -135,17 +147,26 @@ export function SkillListIcon({ list, className }: { list: SkillList; className?
   );
 }
 
-/** A boon's, bane's or trait's icon (a special with no kind yet is a trait). */
-export function SpecialKindIcon({
+/**
+ * A special's icon: its category's, in its kind's colour (one with neither yet is an aura and a
+ * trait, as the server's defaults are).
+ */
+export function SpecialIcon({
+  category,
   kind,
   className,
 }: {
+  category?: SpecialCategory | null;
   kind?: SpecialKind | null;
   className?: string;
 }) {
-  const Icon = SPECIAL_KIND_ICONS[kind ?? "trait"];
+  const Icon = SPECIAL_CATEGORY_ICONS[category ?? "aura"];
   return (
-    <Icon aria-hidden="true" focusable="false" className={cn("h-4 w-4 shrink-0", className)} />
+    <Icon
+      aria-hidden="true"
+      focusable="false"
+      className={cn("h-4 w-4 shrink-0", SPECIAL_KIND_COLOURS[kind ?? "trait"], className)}
+    />
   );
 }
 

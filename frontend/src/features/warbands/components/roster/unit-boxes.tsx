@@ -4,9 +4,10 @@ import type { BoxTileKind } from "@/components/ui/box-tile";
 import {
   GameIcon,
   SkillListIcon,
-  SpecialKindIcon,
+  SpecialIcon,
   type GameIconName,
   type SkillList,
+  type SpecialCategory,
   type SpecialKind,
 } from "@/components/ui/game-icons";
 import type { Spell } from "@/features/spells/types/spell-types";
@@ -27,6 +28,7 @@ export type Entry = {
   type?: string | null;
   list?: SkillList;
   kind?: SpecialKind;
+  category?: SpecialCategory;
   description?: string | null;
   dc?: Spell["dc"];
   /** A spell's: how much easier it is for him. */
@@ -45,11 +47,11 @@ const BOX_KIND: Record<PendingList | "injuries", BoxTileKind> = {
   injuries: "injury",
 };
 
-/** A box's icon: a skill's group, a special's kind (Boons & Banes), an injury's; spells have none. */
+/** A box's icon: a skill's group, a special's category in its kind's colour; spells have none. */
 function entryIcon(list: PendingList | "injuries", entry: Entry): ReactNode {
   if (list === "skills") return <SkillListIcon list={entry.list ?? "special"} />;
-  if (list === "specials") return <SpecialKindIcon kind={entry.kind} />;
-  if (list === "injuries") return <GameIcon name="injuries" />;
+  if (list === "specials" || list === "injuries")
+    return <SpecialIcon category={entry.category} kind={entry.kind} />;
   return undefined;
 }
 

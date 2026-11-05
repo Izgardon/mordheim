@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
-import { SpecialKindIcon, type SpecialKind } from "@/components/ui/game-icons";
+import { SpecialIcon, type SpecialCategory, type SpecialKind } from "@/components/ui/game-icons";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NumberInput } from "@/components/ui/number-input";
@@ -24,14 +24,14 @@ type Linked = {
   description?: string | null;
   /** A special's: boon, bane or trait. */
   kind?: SpecialKind;
+  /** A special's: injury, mutation, aura or body. */
+  category?: SpecialCategory;
 };
 
 const linkOption = (entry: Linked): SearchOption => ({
   id: entry.id,
   title: entry.name,
-  icon: entry.kind ? (
-    <SpecialKindIcon kind={entry.kind} className="text-kind-special" />
-  ) : undefined,
+  icon: entry.kind ? <SpecialIcon category={entry.category} kind={entry.kind} /> : undefined,
   subtitle: entry.type || entry.description?.slice(0, 80) || undefined,
 });
 
@@ -110,7 +110,7 @@ function NewSpecialRule({ links }: { links: BestiaryLinks }) {
               pressed={links.newSpecialKind === kind}
               onClick={() => links.setNewSpecialKind(kind)}
             >
-              <SpecialKindIcon kind={kind} />
+              <SpecialIcon kind={kind} />
               {label}
             </Chip>
           ))}
