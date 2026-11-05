@@ -12,6 +12,7 @@ import { changeNote, factsLine, SECTIONS, warningsFor } from "./editor-facts";
 import FightersSection from "./FightersSection";
 import ListsSection from "./ListsSection";
 import RulesSection from "./RulesSection";
+import UpgradesSection from "./UpgradesSection";
 import type { SectionProps } from "./section-props";
 
 type TemplateEditorProps = {
@@ -23,11 +24,12 @@ type TemplateEditorProps = {
   onClose: () => void;
 };
 
-const SECTION_VIEWS: Partial<Record<EditorSection, (props: SectionProps) => JSX.Element>> = {
+const SECTION_VIEWS: Record<EditorSection, (props: SectionProps) => JSX.Element> = {
   basics: BasicsSection,
   fighters: FightersSection,
   lists: ListsSection,
   rules: RulesSection,
+  upgrades: UpgradesSection,
 };
 
 /** The section chips, each with its warnings' count. */
@@ -46,7 +48,7 @@ function SectionChips({
       aria-label="Section"
       className="-mx-1 flex shrink-0 gap-1.5 overflow-x-auto px-1 pb-0.5"
     >
-      {SECTIONS.filter(({ id }) => SECTION_VIEWS[id]).map(({ id, label }) => {
+      {SECTIONS.map(({ id, label }) => {
         const warned = warningsFor(answer.warnings, id).length;
         return (
           <Chip key={id} pressed={section === id} className="shrink-0" onClick={() => onPick(id)}>
@@ -68,7 +70,7 @@ function EditorBody({
   const [section, setSection] = useState<EditorSection>("basics");
   const capabilities = useCampaignCapabilities(campaignId);
   const save = useEditorSave(campaignId, answer.template.id, onTemplateChange);
-  const View = SECTION_VIEWS[section] ?? BasicsSection;
+  const View = SECTION_VIEWS[section];
   return (
     <>
       <div className="flex flex-col gap-1.5">
