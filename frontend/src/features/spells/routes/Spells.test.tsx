@@ -191,4 +191,29 @@ describe("The Spells page", () => {
     expect(queryLoreRow(DEAD)).toHaveAttribute("aria-expanded", "false");
     await waitFor(() => expect(scrolledTo).toEqual([`ref-${horror.id}`, "ref-40"]));
   });
+
+  it('asks "Discard changes?" before an edited spell\'s dialog closes, and only then', async () => {
+    const user = setupUser();
+    renderApp(`${PAGE}?open=${horror.id}`);
+    await user.click(await screen.findByRole("button", { name: "Edit spell" }));
+    let dialog = await screen.findByRole("dialog", { name: "Edit Spell" });
+    await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull()); // nothing changed
+
+    await user.click(screen.getByRole("button", { name: "Edit spell" }));
+    dialog = await screen.findByRole("dialog", { name: "Edit Spell" });
+    const name = within(dialog).getByRole("textbox", { name: /^Name/ });
+    await user.clear(name);
+    await user.type(name, "Living Terror");
+    await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
+    const ask = await screen.findByRole("dialog", { name: "Discard changes?" });
+    await user.click(within(ask).getByRole("button", { name: "Keep editing" }));
+    expect(screen.getByRole("dialog", { name: "Edit Spell" })).toBeInTheDocument();
+    expect(name).toHaveValue("Living Terror");
+
+    await user.click(within(dialog).getByRole("button", { name: "Cancel" }));
+    const again = await screen.findByRole("dialog", { name: "Discard changes?" });
+    await user.click(within(again).getByRole("button", { name: "Discard" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+  });
 });

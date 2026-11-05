@@ -1,6 +1,11 @@
 import { useState } from "react";
 
 import { Chip } from "@/components/ui/chip";
+import {
+  DirtyRegistry,
+  useDiscardChanges,
+  useDirtyRegistry,
+} from "@/components/ui/discard-changes";
 import { SidePanel } from "@/components/ui/side-panel";
 import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -99,7 +104,8 @@ function EditorBody({
  * phone. Its header names the template with where it comes from, what it was copied from and how
  * many warbands use it, and the change note; then Basics, Fighters, Lists, Rules and Upgrades,
  * each saved on its own. The first save of a book template makes the campaign's house version,
- * whose id the editor follows.
+ * whose id the editor follows. Closing it with a form changed and not saved asks "Discard
+ * changes?" first (William: a form of more than 8 inputs).
  */
 export default function TemplateEditor(props: TemplateEditorProps) {
   const { campaignId, templateId } = props;
@@ -109,27 +115,32 @@ export default function TemplateEditor(props: TemplateEditorProps) {
   const query = useTemplateEditor(campaignId, shownId);
   const isMobile = useMediaQuery("(max-width: 960px)");
   const answer = query.data;
+  const changes = useDirtyRegistry();
+  const discard = useDiscardChanges({ dirty: changes.dirty, onClose: props.onClose });
   return (
     <SidePanel
       open={templateId !== null}
-      onOpenChange={(open) => (open ? null : props.onClose())}
+      onOpenChange={(open) => (open ? null : discard.close())}
       kicker="Warband template"
       // on a phone the sheet keeps one height, so it doesn't jump as the sections change
       className={isMobile ? "h-[85dvh]" : undefined}
       title={answer?.template.name ?? "Warband template"}
     >
-      {answer ? (
-        <EditorBody
-          answer={answer}
-          campaignId={campaignId}
-          onTemplateChange={props.onTemplateChange}
-          onClose={props.onClose}
-        />
-      ) : (
-        <p className="m-0 text-sm text-text2">
-          {query.isError ? "Unable to load this template." : "Loading…"}
-        </p>
-      )}
+      <DirtyRegistry value={changes.value}>
+        {answer ? (
+          <EditorBody
+            answer={answer}
+            campaignId={campaignId}
+            onTemplateChange={props.onTemplateChange}
+            onClose={props.onClose}
+          />
+        ) : (
+          <p className="m-0 text-sm text-text2">
+            {query.isError ? "Unable to load this template." : "Loading…"}
+          </p>
+        )}
+      </DirtyRegistry>
+      {discard.confirm}
     </SidePanel>
   );
 }

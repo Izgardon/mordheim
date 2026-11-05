@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { useDirtySince, useReportDirty } from "@/components/ui/discard-changes";
+
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
@@ -47,6 +49,7 @@ const variantNote = (template: WarbandTemplate, fighter: TemplateFighter | null)
 export default function FighterForm(props: FighterFormProps) {
   const { template, fighter } = props;
   const [draft, setDraft] = useState<FighterDraft>(() => fighterDraft(fighter, props.kind));
+  useReportDirty(useDirtySince(draft).dirty);
   const [deleting, setDeleting] = useState(false);
   const races = useCatalogue("races", props.campaignId);
   const settings = useSettingsById();

@@ -1,4 +1,6 @@
 import { useState } from "react";
+
+import { useDirtySince, useReportDirty } from "@/components/ui/discard-changes";
 import { X } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -84,6 +86,8 @@ function TypesField({
 export default function BasicsSection({ answer, campaignId, save }: SectionProps) {
   const { template } = answer;
   const [draft, setDraft] = useState<BasicsDraft>(() => basicsDraft(template));
+  const changes = useDirtySince(draft);
+  useReportDirty(changes.dirty);
   const settings = useSettingsList().data?.settings ?? [];
   const set = (patch: Partial<BasicsDraft>) => setDraft((current) => ({ ...current, ...patch }));
   const variants = draft.variants.filter((variant) => !variant.isNew && variant.name.trim());
@@ -150,7 +154,9 @@ export default function BasicsSection({ answer, campaignId, save }: SectionProps
         pending={save.pending}
         error={save.error}
         disabled={!draft.name.trim()}
-        onSave={() => void save.run(saveBasics(basicsInput(draft)))}
+        onSave={async () => {
+          if (await save.run(saveBasics(basicsInput(draft)))) changes.markClean();
+        }}
       />
     </section>
   );

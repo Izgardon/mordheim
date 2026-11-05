@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDirtySince } from "@/components/ui/discard-changes";
 
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
@@ -82,6 +83,7 @@ export function useBestiaryEntryForm({
   const fieldErrors = useFieldErrors(SHOWN_FIELDS, resetKey);
   const links = useBestiaryLinks({ campaignId, open, specialType: "Animal" });
   const shop = useShopPrices();
+  const { dirty, markClean } = useDirtySince({ values, links: links.payload(), rows: shop.rows });
   const nameTaken = useNameTakenMatches({ kind: "bestiary", campaignId, fieldErrors, onEditMatch });
   const deletion = useCatalogueDelete({
     kind: "bestiary",
@@ -148,6 +150,7 @@ export function useBestiaryEntryForm({
   const load = useCallback(
     (next: BestiaryEntry | null, kind?: BeastKind) => {
       setValues(bestiaryValuesOf(next, kind));
+      markClean();
       loadLinks(next);
       loadPrices(next?.item);
       if (next?.available_in_shop) {
@@ -156,10 +159,11 @@ export function useBestiaryEntryForm({
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors, ensureOne, loadLinks, loadPrices]
+    [clearFieldErrors, ensureOne, loadLinks, loadPrices, markClean]
   );
 
   return {
+    dirty,
     campaignId,
     values,
     change: (patch: Partial<BestiaryEntryValues>) => setValues((prev) => ({ ...prev, ...patch })),

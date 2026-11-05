@@ -2,6 +2,11 @@ import { useState } from "react";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import {
+  DirtyRegistry,
+  useDiscardChanges,
+  useDirtyRegistry,
+} from "@/components/ui/discard-changes";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useWarbandHireTemplate } from "../../api/warband-template-queries";
@@ -55,6 +60,9 @@ export default function RecruitForm({
   onCreated: (key: string) => void;
 }) {
   const isMobile = useMediaQuery("(max-width: 960px)");
+  // a hired sword typed by hand is a long form: leaving it with changes asks first (William)
+  const changes = useDirtyRegistry();
+  const discard = useDiscardChanges({ dirty: changes.dirty, onClose: onCancel });
   const fromTemplate = kind !== "hireling";
   const template = useWarbandHireTemplate(campaignId, warbandId, fromTemplate);
   const { recruitFromTemplate, saving } = useRecruit(kind, warbandId, existingIds);
@@ -93,7 +101,7 @@ export default function RecruitForm({
         resources={resources}
         existingIds={existingIds}
         canCreateRace={canCreateRace}
-        onCancel={onCancel}
+        onCancel={discard.close}
         onCreated={onCreated}
       />
     );
@@ -112,20 +120,22 @@ export default function RecruitForm({
     return (
       <BottomSheet
         open
-        onOpenChange={(open) => (open ? null : onCancel())}
+        onOpenChange={(open) => (open ? null : discard.close())}
         title={SHEET_TITLE[kind]}
       >
         <div className="flex flex-col gap-3">
           {picker}
-          {body}
+          <DirtyRegistry value={changes.value}>{body}</DirtyRegistry>
         </div>
+        {discard.confirm}
       </BottomSheet>
     );
   }
   return (
     <div className="flex flex-col gap-3 border border-accent-line bg-panel p-3.5">
       {picker}
-      {body}
+      <DirtyRegistry value={changes.value}>{body}</DirtyRegistry>
+      {discard.confirm}
     </div>
   );
 }

@@ -10,6 +10,8 @@ import type { CatalogueRevertState } from "../hooks/useCatalogueRevert";
 export type CatalogueFormState = {
   isSaving: boolean;
   formError: string;
+  /** Changed since it loaded: closing asks "Discard changes?" first (a long form, William). */
+  dirty?: boolean;
   save: (after?: () => void) => Promise<void>;
   deleteConfirm?: CatalogueDeleteConfirmState;
   remove?: (after?: () => void) => Promise<void>;

@@ -4,7 +4,7 @@
  * campaign's house version (which the editor then follows), and a section saved whole.
  */
 import { useState } from "react";
-import { screen, within } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
@@ -180,6 +180,32 @@ describe("The template editor", () => {
       const input = screen.getByRole("textbox", { name });
       expect(document.querySelector(`label[for="${input.id}"]`)).toHaveTextContent(name);
     }
+  });
+
+  it('asks "Discard changes?" before it closes with a section changed and not saved', async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+    await screen.findAllByRole("textbox", { name: "Name" });
+    await user.click(within(panel()).getByRole("button", { name: "Close panel" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull()); // nothing changed
+  });
+
+  it("keeps editing, or discards, a change made before closing", async () => {
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+    const [name] = await screen.findAllByRole("textbox", { name: "Name" });
+    await user.type(name, " of Marienburg");
+    await user.click(within(panel()).getByRole("button", { name: "Close panel" }));
+    const ask = await screen.findByRole("dialog", { name: "Discard changes?" });
+    await user.click(within(ask).getByRole("button", { name: "Keep editing" }));
+    expect(name).toHaveValue("Mercenaries of Marienburg");
+    await user.click(within(panel()).getByRole("button", { name: "Close panel" }));
+    await user.click(
+      within(await screen.findByRole("dialog", { name: "Discard changes?" })).getByRole("button", {
+        name: "Discard",
+      })
+    );
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
   });
 
   it("says what Revert loses before it goes back to the book", async () => {

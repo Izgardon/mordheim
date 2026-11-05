@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
+import { useReportDirty } from "@/components/ui/discard-changes";
 import { Input } from "@/components/ui/input";
 
 import type { WarbandRulePayload } from "../../types/warband-types";
@@ -37,6 +38,8 @@ export default function RuleForm({
 }) {
   const [title, setTitle] = useState(initial.title);
   const [description, setDescription] = useState(initial.description);
+  // the template editor asks before it closes on a rule changed here (the rules modal doesn't ask)
+  useReportDirty(title !== initial.title || description !== initial.description);
   const [confirming, setConfirming] = useState(false);
 
   return (

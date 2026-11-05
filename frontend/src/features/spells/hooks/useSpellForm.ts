@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { useDirtySince } from "@/components/ui/discard-changes";
 
 import { useCatalogueTypeField } from "@/features/catalogue/hooks/useCatalogueTypeField";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
@@ -73,6 +74,7 @@ export function useSpellForm({
 }: UseSpellFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState(() => valuesOf(spell));
+  const { dirty, markClean } = useDirtySince(values);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(["name"], resetKey);
@@ -152,14 +154,16 @@ export function useSpellForm({
   const load = useCallback(
     (entry: Spell | null) => {
       setValues(valuesOf(entry));
+      markClean();
       resetTypeField(keepAddedTypes);
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors, keepAddedTypes, resetTypeField]
+    [clearFieldErrors, keepAddedTypes, resetTypeField, markClean]
   );
 
   return {
+    dirty,
     values,
     setValue: (field: SpellTextField, value: string) =>
       setValues((prev) => ({ ...prev, [field]: value })),

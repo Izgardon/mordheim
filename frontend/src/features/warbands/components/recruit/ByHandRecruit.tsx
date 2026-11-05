@@ -1,5 +1,7 @@
 import { useId, useState } from "react";
 
+import { useDirtySince, useReportDirty } from "@/components/ui/discard-changes";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
@@ -64,6 +66,8 @@ export default function ByHandRecruit({
   onCreated: (key: string) => void;
 }) {
   const [draft, setDraft] = useState(blankRecruit);
+  const changed = useDirtySince(draft).dirty;
+  useReportDirty(kind === "hireling" && changed); // a hired sword's, with his fees, is a long form
   const ids = useId();
   const { recruit, saving } = useRecruit(kind, warbandId, existingIds);
   const set = (change: Partial<RecruitDraft>) => setDraft((current) => ({ ...current, ...change }));

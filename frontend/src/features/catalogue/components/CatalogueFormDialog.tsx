@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@components/dialog";
 import { Tooltip } from "@components/tooltip";
+import { useDiscardChanges } from "@/components/ui/discard-changes";
 import { Pencil } from "lucide-react";
 
 import { CatalogueDeleteConfirm } from "./CatalogueDeleteConfirm";
@@ -56,7 +57,10 @@ export function editEntryTrigger(label: string) {
   );
 }
 
-/** A catalogue form in a dialog (the warband pages' Add item, New skill, ...). */
+/**
+ * A catalogue form in a dialog (the warband pages' Add item, New skill, ...): closing it with
+ * changes unsaved (Cancel, Escape, a click outside) asks "Discard changes?" first.
+ */
 export function CatalogueFormDialog({
   form,
   dialog,
@@ -70,13 +74,15 @@ export function CatalogueFormDialog({
   onReset,
   children,
 }: CatalogueFormDialogProps) {
-  const handleOpenChange = (next: boolean) => {
-    dialog.setOpen(next);
-    if (!next) {
+  const discard = useDiscardChanges({
+    dirty: Boolean(form.dirty),
+    onClose: () => {
+      dialog.setOpen(false);
       onReset();
       form.deleteConfirm?.close();
-    }
-  };
+    },
+  });
+  const handleOpenChange = (next: boolean) => (next ? dialog.setOpen(true) : discard.close());
   const { deleteConfirm, remove, revert } = form;
   const triggerNode = trigger === undefined ? defaultTrigger : trigger;
   const offersDelete = Boolean(
@@ -135,6 +141,7 @@ export function CatalogueFormDialog({
           </Button>
         </DialogFooter>
       </DialogContent>
+      {discard.confirm}
       {editing && offersRevert && revert ? (
         <RevertConfirm revert={revert} entry={editing} onReverted={closeAfter} />
       ) : null}

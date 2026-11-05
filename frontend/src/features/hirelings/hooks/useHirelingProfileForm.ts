@@ -1,5 +1,6 @@
 import { useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useDirtySince } from "@/components/ui/discard-changes";
 
 import { useBestiaryLinks } from "@/features/bestiary/hooks/useBestiaryLinks";
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
@@ -84,6 +85,7 @@ export function useHirelingProfileForm({
     specialType: config.specialType,
     maxQuantity: MAX_KIT_QUANTITY,
   });
+  const { dirty, markClean } = useDirtySince({ values, links: links.payload() });
   const nameTaken = useNameTakenMatches({ kind, campaignId, fieldErrors, onEditMatch });
   const deletion = useCatalogueDelete({
     kind,
@@ -137,14 +139,16 @@ export function useHirelingProfileForm({
   const load = useCallback(
     (next: HirelingProfileDetail | null) => {
       setValues(hirelingValuesOf(next));
+      markClean();
       loadLinks(next);
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors, loadLinks]
+    [clearFieldErrors, loadLinks, markClean]
   );
 
   return {
+    dirty,
     config,
     campaignId,
     values,

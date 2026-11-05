@@ -1,5 +1,7 @@
 import { useId, useState } from "react";
 
+import { useDirtySince, useReportDirty } from "@/components/ui/discard-changes";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -41,6 +43,7 @@ export default function UpgradeForm({
   onCancel: () => void;
 }) {
   const [draft, setDraft] = useState(initial);
+  useReportDirty(useDirtySince(draft).dirty);
   const [deleting, setDeleting] = useState(false);
   const listId = useId();
   const set = (patch: Partial<UpgradeDraft>) => setDraft((current) => ({ ...current, ...patch }));

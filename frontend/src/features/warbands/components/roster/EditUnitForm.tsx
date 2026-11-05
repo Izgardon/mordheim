@@ -3,6 +3,7 @@ import { useState } from "react";
 import { NumberInput } from "@/components/ui/number-input";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import { useDirtySince, useDiscardChanges } from "@/components/ui/discard-changes";
 import { Input } from "@/components/ui/input";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -47,7 +48,8 @@ function MissingGames({ form, onDone }: { form: UnitEditDraft; onDone: () => voi
  * One unit's edit form (design E): inline in its open card on the web, a bottom sheet on a
  * phone. Saved alone through the batch save; Duplicate and Dismiss go the same way. Every action
  * sits at the bottom: Save, Cancel and Duplicate on the left, Missing games and Dismiss on the
- * right.
+ * right. Cancel or closing the sheet with changes unsaved asks "Discard changes?" first (William:
+ * a form of more than 8 inputs).
  */
 export default function EditUnitForm({
   entry,
@@ -68,6 +70,9 @@ export default function EditUnitForm({
 }) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const form = useUnitEditDraft(entry, campaignId, warbandId);
+  const { draft, lists, members, dismissed } = form;
+  const changed = useDirtySince({ draft, lists, members, dismissed }).dirty;
+  const discard = useDiscardChanges({ dirty: changed, onClose });
   const [confirmDismiss, setConfirmDismiss] = useState(false);
   const [missingOpen, setMissingOpen] = useState(false);
   const { saving } = form;
@@ -119,12 +124,12 @@ export default function EditUnitForm({
     return (
       <BottomSheet
         open
-        onOpenChange={(open) => (open ? null : onClose())}
+        onOpenChange={(open) => (open ? null : discard.close())}
         kicker="Edit"
         title={unitName(entry.unit)}
         footer={
           <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,2fr)] gap-2">
-            <Button variant="secondary" onClick={onClose}>
+            <Button variant="secondary" onClick={discard.close}>
               Cancel
             </Button>
             <Button disabled={saving} onClick={() => void form.save().then(done)}>
@@ -138,6 +143,7 @@ export default function EditUnitForm({
           {duplicate}
           {right}
         </div>
+        {discard.confirm}
       </BottomSheet>
     );
   }
@@ -149,12 +155,13 @@ export default function EditUnitForm({
         <Button disabled={saving} onClick={() => void form.save().then(done)}>
           Save
         </Button>
-        <Button variant="ghost" onClick={onClose}>
+        <Button variant="ghost" onClick={discard.close}>
           Cancel
         </Button>
         {duplicate}
         {right}
       </div>
+      {discard.confirm}
     </div>
   );
 }

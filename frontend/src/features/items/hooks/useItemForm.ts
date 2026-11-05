@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useDirtySince } from "@/components/ui/discard-changes";
 
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
@@ -60,6 +61,7 @@ export function useItemForm({
   const catalogueCache = useCatalogueCache();
   const shared = useCatalogue("item-rules", campaignId, { enabled }).data;
   const [values, setValues] = useState<ItemFormValues>(() => itemValuesOf(item));
+  const { dirty, markClean } = useDirtySince(values);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
   const fieldErrors = useFieldErrors(ITEM_FIELDS, resetKey);
@@ -111,13 +113,15 @@ export function useItemForm({
   const load = useCallback(
     (entry: Item | null) => {
       setValues(itemValuesOf(entry, shared));
+      markClean();
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors, shared]
+    [clearFieldErrors, shared, markClean]
   );
 
   return {
+    dirty,
     campaignId,
     values,
     shared,

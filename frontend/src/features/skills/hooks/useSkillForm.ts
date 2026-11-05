@@ -1,4 +1,5 @@
 import { useCallback, useState } from "react";
+import { useDirtySince } from "@/components/ui/discard-changes";
 
 import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
@@ -59,6 +60,7 @@ export function useSkillForm({
 }: UseSkillFormOptions) {
   const catalogueCache = useCatalogueCache();
   const [values, setValues] = useState(() => valuesOf(skill));
+  const { dirty, markClean } = useDirtySince(values);
   const groupIds = values.groupIds ?? (skill ? groupIdsOf(skill.id) : []);
   const [isSaving, setIsSaving] = useState(false);
   const [formError, setFormError] = useState("");
@@ -118,13 +120,15 @@ export function useSkillForm({
   const load = useCallback(
     (entry: Skill | null) => {
       setValues(valuesOf(entry));
+      markClean();
       setFormError("");
       clearFieldErrors();
     },
-    [clearFieldErrors]
+    [clearFieldErrors, markClean]
   );
 
   return {
+    dirty,
     values: { ...values, groupIds },
     setName: (name: string) => setValues((prev) => ({ ...prev, name })),
     setDescription: (description: string) => setValues((prev) => ({ ...prev, description })),

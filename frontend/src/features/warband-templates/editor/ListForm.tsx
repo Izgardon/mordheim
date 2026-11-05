@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+import { useDirtySince, useReportDirty } from "@/components/ui/discard-changes";
+
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
@@ -32,6 +34,7 @@ type ListFormProps = {
 export default function ListForm(props: ListFormProps) {
   const { template, campaignId } = props;
   const [draft, setDraft] = useState<ListDraft>(() => listDraft(template, props.list));
+  useReportDirty(useDirtySince(draft).dirty);
   const [openLine, setOpenLine] = useState<number | null>(null);
   const [deleting, setDeleting] = useState(false);
   const charts = useItemCharts(campaignId, template.id);
