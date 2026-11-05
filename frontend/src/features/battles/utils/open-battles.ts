@@ -13,7 +13,7 @@ export type OpenBattlePhase = (typeof OPEN_BATTLE_PHASES)[number];
 export const PHASE_ACTION: Record<OpenBattlePhase, string> = {
   fight: "Rejoin",
   postgame: "To the Aftermath",
-  prebattle: "Back to pre-battle",
+  prebattle: "Open pre-battle",
   invitation: "Answer the invitation",
 };
 

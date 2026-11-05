@@ -15,7 +15,7 @@ type Props = { campaignId: number; battles: YourOpenBattle[] };
 /**
  * Your open battles, at the top of the Battles page while you are in more than one (a player can
  * be in several pre-battles and post-games, but fight only one), in the rejoin banner's order:
- * each with where you stand and its way on (Rejoin, Back to pre-battle, To the Aftermath), an
+ * each with where you stand and its way on (Rejoin, Open pre-battle, To the Aftermath), an
  * invitation with Accept and Decline, and what accepting it clears.
  */
 export default function YourOpenBattles(props: Props) {

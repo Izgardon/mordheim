@@ -132,7 +132,7 @@ describe("the overview's Start battle while you are in a pre-battle", () => {
     fakeApi.on(`GET ${BASE}/battles/?open=1`, [prebattle]);
     const user = setupUser();
     renderApp(BASE);
-    await screen.findByRole("link", { name: "Back to pre-battle" });
+    await screen.findByRole("link", { name: "Open pre-battle" });
 
     await user.click(screen.getByRole("button", { name: "More campaign actions" }));
     await user.click(await screen.findByRole("menuitem", { name: "Start another battle" }));

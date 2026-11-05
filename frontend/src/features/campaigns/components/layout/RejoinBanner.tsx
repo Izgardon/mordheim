@@ -21,7 +21,7 @@ const BAR_KICKER: Record<OpenBattlePhase, string> = {
 /**
  * Your unfinished battle, on every page of the campaign but the overview (whose Start battle reads
  * Rejoin) and the battle's own (William: "a permanent banner at the top prompting to rejoin"):
- * where you are, and one button there that says what waits (Rejoin, Back to pre-battle, Answer
+ * where you are, and one button there that says what waits (Rejoin, Open pre-battle, Answer
  * the invitation, To the Aftermath). With several, the one that needs you most, and "+N more" to
  * the Battles page, which lists them. It goes once the battle is done for you. In the web bar;
  * in the page's flow on a phone.

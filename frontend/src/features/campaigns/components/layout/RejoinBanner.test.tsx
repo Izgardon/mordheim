@@ -43,7 +43,7 @@ describe("RejoinBanner", () => {
 
   it.each([
     ["finished_battle", "postbattle", "To the Aftermath", "You're in a battle"],
-    ["ready", "prebattle", "Back to pre-battle", "You're in a battle"],
+    ["ready", "prebattle", "Open pre-battle", "You're in a battle"],
     ["invited", "prebattle", "Answer the invitation", "You're invited to a battle"],
   ] as const)("a %s player on %s reads %s", (status, page, action, lead) => {
     renderBanner([open(40, { participant_status: status, unfinished: true, page })]);
