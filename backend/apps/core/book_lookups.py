@@ -14,7 +14,7 @@ from django.db.models import Model
 from apps.core.seeding import parse_int
 from apps.items.models import Item
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
-from apps.special.kinds import WARBAND, book_kind, owner_kind_of
+from apps.special.kinds import INJURY, WARBAND, book_kind, owner_kind_of
 from apps.special.models import Special
 from apps.spells.models import Spell
 from apps.spells.rolls import book_roll_taken
@@ -119,8 +119,9 @@ class BookLookups:
         self.own_type = own_type
         book = {"campaign__isnull": True}  # the book: every setting's rows
         self.skills = {lookup_key(row.name): row for row in Skill.objects.filter(**book)}
-        # not a warband template fighter's own rules ("Warband - Mercenaries"): they stay the template's
-        specials = Special.objects.filter(**book).exclude(owner_kind=WARBAND)
+        # not a warband template fighter's own rules ("Warband - Mercenaries"): they stay the template's; nor the
+        # injury tables' specials, worded for the injury: the Old Prospector keeps his own Hardened
+        specials = Special.objects.filter(**book).exclude(owner_kind=WARBAND).exclude(type=INJURY)
         self.specials = {lookup_key(row.name): row for row in specials}
         self.spells = {lookup_key(row.name): row for row in Spell.objects.filter(**book)}
         self.items: dict[tuple[str, str], Item] = {}

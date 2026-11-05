@@ -6,7 +6,9 @@ finalise when ticked; complex ones (Robbed, Captured, Sold to the Pits, Multiple
 to apply by hand. Only a unit's last roll counts (earlier ones were re-rolled); finalise writes one log per unit with
 that roll, the re-rolls and what was applied. The D66 table is the book's (the catalogue import's
 `out/serious-injuries.json`, from mordheimer's snapshot), its results named as the book names them; the D100 table's
-labels are the ones the postbattle page has always shown.
+labels are the ones the postbattle page has always shown. A named special is the book's general one ("Injury",
+seeded with the book's rule text by seed_spells_and_special), never a warband's, hired sword's or dramatis persona's
+own rule of the name; a campaign gets its own only for a name the book has none of.
 
 A result that keeps the unit out of games carries a hint, `misses` (the games, and the dice when the book rolls for
 them: Deep Wound's D3): postbattle offers it as the unit's missing games, set at finalise only when the player ticks
@@ -19,7 +21,7 @@ from typing import Any
 from django.db.models import F, Q
 
 from apps.core.catalogue import cache as catalogue_cache
-from apps.special.kinds import BANE, GENERAL, book_kind
+from apps.special.kinds import BANE, GENERAL, INJURY, book_kind
 from apps.special.models import Special
 
 DEAD = {"kind": "dead"}
@@ -163,7 +165,7 @@ def injury_special(name: str, campaign_id: int) -> Special:
     own = next((row for row in rows if row.campaign_id is not None and row.name.lower() == name.lower()), None)
     if own is not None:
         return own
-    special = Special.objects.create(campaign_id=campaign_id, name=name, type="Injury", kind=book_kind(name, BANE))
+    special = Special.objects.create(campaign_id=campaign_id, name=name, type=INJURY, kind=book_kind(name, BANE))
     catalogue_cache.bump(campaign_id, "specials")  # its specials list shows it (PERF-13, BUG-80)
     return special
 
@@ -181,6 +183,12 @@ def apply_stat_and_special(unit: Any, outcome: InjuryOutcome, campaign_id: int) 
         if not links.filter(special=special).exists():
             links.create(special=special)
     return fields
+
+
+def granted_specials() -> list[str]:
+    """The specials the tables grant by name, which seed_spells_and_special seeds as the book's."""
+    ranges = (*_D66_RANGES, *_D100_RANGES)
+    return list(dict.fromkeys(effect["special"] for *_, effect in ranges if effect["kind"] == "special"))
 
 
 def _rows(ranges: list[tuple[int, int, str, dict[str, Any]]]) -> list[dict[str, Any]]:

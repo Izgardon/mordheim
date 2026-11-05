@@ -42,6 +42,11 @@ OWNER_KIND_CHOICES = (
 )
 OWNER_TYPES = {"Hired Sword": HIRED_SWORD, "Dramatis Persona": DRAMATIS_PERSONA, "Warband": WARBAND}  # seeded types
 
+# The specials the serious injury tables grant by name (battles/services/injuries.py) are typed "Injury": the book's
+# are general, seeded with the book's rule text (seed_spells_and_special), and stay the injury's, so the hireling
+# seeders' book lookups leave them out and a hired sword's own rule of the name (the Old Prospector's Hardened) is his.
+INJURY = "Injury"
+
 
 def owner_kind_of(special_type: str) -> str:
     """The owner kind a seeded special's type says: "Hired Sword - Dark Mage" is a hired sword's own rule."""

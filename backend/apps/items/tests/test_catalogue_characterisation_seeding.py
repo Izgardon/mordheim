@@ -94,7 +94,7 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                "Special": 744,  # 185, the dramatis personae's own rules (next step 12) and the warband templates' 463
+                "Special": 747,  # 185, the personae's own rules (next step 12), the templates' 463, 3 injury specials
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
