@@ -94,9 +94,9 @@ class SeedAllTests(TestCase):
                 "Skill": 247,  # the import's 223 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 68,  # the import's 49 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
-                # special.json's 24, 3 injury specials, the 18 shared (Fear, the mutations), the templates' 403 and the
+                # special.json's 24, 3 injury specials, the 18 shared (Fear, the mutations), the templates' 405 and the
                 # hired swords' and personae's own 254 (next step 12)
-                "Special": 702,
+                "Special": 704,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
@@ -195,14 +195,19 @@ class SeedAllTests(TestCase):
                 "Fear (Maximilian)": "dramatis_persona",
                 "Stupidity (Rat Ogre)": "warband",  # the Skaven's and Clan Pestilens' one row
                 "Stupidity (Cold One Beasthounds)": "warband",
-                "Immune to Psychology (Plague Bearers)": "warband",  # the Nurglings' too
+                "Immune to Psychology (Plague Bearers)": "warband",
+                "Immune to Psychology (Nurglings)": "warband",  # their own text (the review, 5 Nov 2026: W6)
                 "Immune to Psychology (Plague Cart)": "warband",
                 "Immune to Psychology (Belandysh)": "dramatis_persona",
                 "Immune to Psychology (Ippan Shu)": "dramatis_persona",
                 "Immune to Psychology (Nightmare)": "general",  # a mount's book rule, typed Animal
                 "Immune to Poison (Plague Bearers)": "warband",
+                "Immune to Poison (Nurglings)": "warband",
             },
         )
+        nurglings = TemplateFighter.objects.get(template__slug="carnival-of-chaos", name="Nurgling")
+        texts = nurglings.special_links.filter(special__name__endswith="(Nurglings)").values_list("special__description", flat=True)  # fmt: skip
+        self.assertEqual([text.split(" are ")[0] for text in texts], ["Nurglings", "Nurglings"])
         rat_ogres = book.get(name="Stupidity (Rat Ogre)").template_fighter_links.values_list("fighter__template__slug", flat=True)  # fmt: skip
         self.assertEqual(sorted(rat_ogres), ["skaven", "skaven-of-clan-pestilens"])
 

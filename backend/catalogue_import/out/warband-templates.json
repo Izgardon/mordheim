@@ -8498,14 +8498,14 @@
             "description": "Nurglings are Daemons of the diseased Lord Nurgle and are not made of living flesh but the eternal and unchanging forces of Chaos. Therefore they never gain Experience."
           },
           {
-            "name": "Immune to Poison (Plague Bearers)",
+            "name": "Immune to Poison (Nurglings)",
             "type": "Warband - Carnival of Chaos",
-            "description": "Plague Bearers are the Daemonic embodiment of disease and pestilence. They are totally immune to all poisons and diseases."
+            "description": "Nurglings are the Daemonic embodiment of disease and pestilence. They are totally immune to all poisons and diseases."
           },
           {
-            "name": "Immune to Psychology (Plague Bearers)",
+            "name": "Immune to Psychology (Nurglings)",
             "type": "Warband - Carnival of Chaos",
-            "description": "Plague Bearers are Daemons and do not know the concept of fear. They automatically pass any Leadership-based test they are required to take."
+            "description": "Nurglings are Daemons and do not know the concept of fear. They automatically pass any Leadership-based test they are required to take."
           },
           {
             "name": "Daemonic Aura (Nurgling)",

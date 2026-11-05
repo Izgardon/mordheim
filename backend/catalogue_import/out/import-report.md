@@ -472,7 +472,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 1341 |
 | warband rules | 157 |
 | upgrades | 23 |
-| the templates' own specials | 403 |
+| the templates' own specials | 405 |
 
 ### List lines
 
@@ -672,9 +672,11 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Fear (Maximilian) | Maximilian The Mad | His warband's models within 3" of him are immune to fear. |
 | Stupidity (Rat Ogre) | Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre | Not stupid while a Skaven Hero is within 6". |
 | Stupidity (Cold One Beasthounds) | Dark Elves: Cold One Beasthound | Tests on the Beastmaster's Leadership within 6" of him. |
-| Immune to Psychology (Plague Bearers) | Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling | Automatically passes every Leadership-based test, rout tests included. |
+| Immune to Psychology (Plague Bearers) | Carnival of Chaos: Plague Bearer | Automatically passes every Leadership-based test, rout tests included. |
+| Immune to Psychology (Nurglings) | Carnival of Chaos: Nurgling | Automatically passes every Leadership-based test, rout tests included. |
 | Immune to Psychology (Plague Cart) | Carnival of Chaos: Plague Cart | Automatically passes every Leadership-based test, rout tests included. |
 | Immune to Psychology (Belandysh) | Belandysh, Condemned Champion Of Chen | Automatically passes all Leadership tests. |
 | Immune to Psychology (Ippan Shu) | Grand Master Ippan Shu | Automatically passes all Leadership-based tests. |
 | Immune to Psychology (Nightmare) | Nightmare | Never takes Leadership tests, and stands still if left leaderless. |
-| Immune to Poison (Plague Bearers) | Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |
+| Immune to Poison (Plague Bearers) | Carnival of Chaos: Plague Bearer | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |
+| Immune to Poison (Nurglings) | Carnival of Chaos: Nurgling | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |

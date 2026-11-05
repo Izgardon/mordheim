@@ -85,10 +85,13 @@
     {
       "name": "Immune to Psychology (Plague Bearers)",
       "rule": "Immune to Psychology",
-      "owners": [
-        {"warband": "Carnival of Chaos", "fighter": "Plague Bearer"},
-        {"warband": "Carnival of Chaos", "fighter": "Nurgling"}
-      ],
+      "owners": [{"warband": "Carnival of Chaos", "fighter": "Plague Bearer"}],
+      "why": "Automatically passes every Leadership-based test, rout tests included."
+    },
+    {
+      "name": "Immune to Psychology (Nurglings)",
+      "rule": "Immune to Psychology",
+      "owners": [{"warband": "Carnival of Chaos", "fighter": "Nurgling"}],
       "why": "Automatically passes every Leadership-based test, rout tests included."
     },
     {
@@ -118,10 +121,13 @@
     {
       "name": "Immune to Poison (Plague Bearers)",
       "rule": "Immune to Poison",
-      "owners": [
-        {"warband": "Carnival of Chaos", "fighter": "Plague Bearer"},
-        {"warband": "Carnival of Chaos", "fighter": "Nurgling"}
-      ],
+      "owners": [{"warband": "Carnival of Chaos", "fighter": "Plague Bearer"}],
+      "why": "Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed."
+    },
+    {
+      "name": "Immune to Poison (Nurglings)",
+      "rule": "Immune to Poison",
+      "owners": [{"warband": "Carnival of Chaos", "fighter": "Nurgling"}],
       "why": "Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed."
     }
   ]
