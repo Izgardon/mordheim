@@ -52,6 +52,23 @@ class BasicsTests(EditorTestCase):
             [("Mercenaries", "middenheim"), ("Night Watch", "")],
         )
 
+    def test_basics_saved_with_no_change_make_no_house_version(self) -> None:
+        read = self.get_as(self.player, self.at(f"editor/?campaign_id={self.campaign.id}")).json()
+        template = read["template"]
+        same = {
+            "name": template["name"],
+            "setting_id": template["setting_id"],
+            "starting_gold": template["starting_gold"],
+            "max_models": template["max_models"],
+            "variants": template["variants"],
+            "types": [{"id": row["id"], "variant": row["variant"]} for row in template["types"]],
+        }
+        self.assertEqual(self.saved("basics/", same), read)
+        self.assertFalse(WarbandTemplate.objects.filter(replaces=self.book).exists())
+        changed = self.saved("basics/", {**same, "max_models": 12})
+        self.assertNotEqual(changed["template"]["id"], self.book.id)
+        self.assertEqual(changed["facts"]["source"], "house")
+
     def test_a_variant_taken_out_takes_its_own_rules_and_lines(self) -> None:
         TemplateListItem.objects.create(equipment_list=self.made.kit, item=self.book_sword, cost=10, variant="reikland")
         self.made.captain.variant_changes = {"reikland": {"skill_types": ["Shooting"]}}

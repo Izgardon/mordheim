@@ -92,6 +92,11 @@ class TemplateSectionView(CatalogueEntryView):
 class BasicsView(TemplateSectionView):
     def put(self, request: Request, **kwargs: Any) -> Response:
         data = self.body(BasicsSerializer)
+        campaign_id = self.campaign_id
+        assert campaign_id is not None  # load_scope found it
+        template = current_template(self.entry, campaign_id)
+        if edit_basics.unchanged(template, data):  # no change, no house version: answered as a read
+            return Response(editor_payload(template.pk, campaign_id, self.access.settings))
         return self.save(lambda template: edit_basics.write_basics(template, data), name=data["name"])
 
 

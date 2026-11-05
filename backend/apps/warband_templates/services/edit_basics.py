@@ -11,6 +11,22 @@ from ..models import TemplateFighter, TemplateListItem, TemplateRule, WarbandTem
 BASIC_FIELDS = ("name", "campaign_type", "starting_gold", "max_models", "variants")
 
 
+def unchanged(template: WarbandTemplate, data: dict[str, Any]) -> bool:
+    """The Basics sent are the template's as they stand (one query, for its types): saving them writes nothing, so a
+    book template gets no house version (William, 5 Nov)."""
+    setting = data["campaign_type"]
+    own = (
+        template.name,
+        template.campaign_type_id,
+        template.starting_gold,
+        template.max_models,
+        template.variants or [],
+    )
+    sent = (data["name"], setting.pk if setting else None, data["starting_gold"], data["max_models"], data["variants"])
+    types = {link.warband_type_id: link.variant for link in template.type_links.all()}
+    return own == sent and types == {row["id"]: row["variant"] for row in data["types"]}
+
+
 def write_basics(template: WarbandTemplate, data: dict[str, Any]) -> None:
     """Save the Basics: the template's own fields, its types, and what a variant taken out leaves behind."""
     kept = {entry["key"] for entry in data["variants"]}
