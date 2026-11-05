@@ -1,6 +1,7 @@
 """What a special is (William, 4-5 Nov 2026), which picks its icon: an injury (the serious injury results), a mutation
-(Great Claw, Tentacle, Daemon Soul), an aura (mental, leadership, fear, magic, marks and the like; the default) or the
-body (Large, Regeneration, Scaly Skin, Hard to Kill, the animals' rules). Its Boons & Banes kind colours the icon.
+(Great Claw, Tentacle, Daemon Soul, every family's), an aura (mental, leadership, fear, magic, marks and the like; the
+default) or the body (Large, a Troll's Regeneration, a Kroxigor's Scaly Skin, Hard to Kill, the animals' rules). Its
+Boons & Banes kind colours the icon.
 
 The book's are set by `book_category`, which every seeder of a book special calls (seed_spells_and_special, the
 hired swords' and dramatis personae's own specials through `BookLookups`, the warband templates' and the specials the
@@ -17,15 +18,25 @@ from .kinds import INJURY as INJURY_TYPE
 INJURY, MUTATION, AURA, BODY = "injury", "mutation", "aura", "body"
 CATEGORY_CHOICES = ((INJURY, "Injury"), (MUTATION, "Mutation"), (AURA, "Aura"), (BODY, "Body"))
 CATEGORIES_PATH = Path(__file__).resolve().parent / "data" / "special-categories.json"
+SHARED_PATH = Path(__file__).resolve().parent / "data" / "shared-specials.json"
 
 ANIMAL_TYPE = "Animal"  # the mounts' and beasts' rules (data/special.json)
-MUTATION_TYPE = "Mutation"  # the shared mutations: the Cult of the Possessed's and the Blessings of Nurgle (shared.py)
+MUTATION_TYPE = "Mutation"  # the shared mutations of the generic list and the random table (shared.py)
 # a warband template's upgrade groups bought as mutations, for a rule the template editor writes in one: (its specials'
 # type, the group); the book's upgrades in them give the shared mutations
 MUTATION_GROUPS = {
     ("Warband - Cult of the Possessed", "Mutations"),
     ("Warband - Carnival of Chaos", "Blessings of Nurgle"),
 }
+
+
+@cache
+def mutation_types() -> frozenset[str]:
+    """The mutation families, each a shared special's type ("Mutation", "Blessing of Nurgle", "Favour of Tchar",
+    "Bounty of Arkhar"): William's list's `mutation_types` (data/shared-specials.json), so a family is data."""
+    with SHARED_PATH.open(encoding="utf-8") as handle:
+        data = json.load(handle)
+    return frozenset({MUTATION_TYPE, *data.get("mutation_types", [])})
 
 
 @cache
@@ -38,13 +49,13 @@ def _book_categories() -> dict[str, str]:
 
 def book_category(name: str, special_type: str = "", upgrade_group: str = "") -> str:
     """The category the book's classification gives a special, by the first rule that holds: typed "Injury", typed
-    "Mutation" or an upgrade in a group bought as mutations (`MUTATION_GROUPS`), its name in
+    a mutation family (`mutation_types`) or an upgrade in a group bought as mutations (`MUTATION_GROUPS`), its name in
     data/special-categories.json (an aura line there keeps a mount's mental rule an aura), typed "Animal" (body), else
     aura."""
     special_type = special_type.strip()
     if special_type == INJURY_TYPE:
         return INJURY
-    if special_type == MUTATION_TYPE or (special_type, upgrade_group.strip()) in MUTATION_GROUPS:
+    if special_type in mutation_types() or (special_type, upgrade_group.strip()) in MUTATION_GROUPS:
         return MUTATION
     listed = _book_categories().get(name.strip().casefold())
     if listed:  # the review file before the Animal type: a mount's Stubborn or Bicker is still an aura (William, 5 Nov)

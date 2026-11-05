@@ -8,7 +8,9 @@
         "Cause Fear",
         "Causes Fear",
         "Fearsome"
-      ]
+      ],
+      "cost": null,
+      "setting": null
     },
     {
       "name": "Stupidity",
@@ -16,103 +18,299 @@
       "description": "Many large and powerful creatures, as well as some of the more unhinged individuals in Mordheim, are unfortunately rather stupid.\n\nModels that are stupid test at the start of their turn to see if they overcome their stupidity. Make a test for each model affected by stupidity. If you pass the test by rolling their Leadership value or less on 2D6 then all is well – the creatures behave reasonably intelligently and the player may move and fight with them as normal.\n\nIf the test is failed all is not well. Until the start of his next turn (when it takes a new Stupidity test) the model will not cast spells or fight in hand-to-hand combat (though his opponent will still have to roll to hit him as normal).\n\nIf a model who fails a Stupidity test is not in hand-to-hand combat, roll a D6.\n\nD6 | Result\n1-3 | The warrior moves directly forward at half speed in a shambling manner. He will not charge an enemy (stop his movement 1\" away from any enemy he would have come into contact with). He can fall down from the edge of a sheer drop (see the Falling rules) or hit an obstacle, in which case he stops. The model will not shoot this turn.\n4-6 | The warrior stands inactive and drools a bit during this turn. He may do nothing else, as drooling is so demanding.\n\nRegardless of whether the test is passed or failed, the result applies until the start of the model's following turn (when it takes a new Stupidity test).",
       "aliases": [
         "Stupid"
-      ]
+      ],
+      "cost": null,
+      "setting": null
     },
     {
       "name": "Immune to Psychology",
       "type": "Psychology",
       "description": "Not affected by psychology (such as fear) and never leaves combat.",
-      "aliases": []
+      "aliases": [],
+      "cost": null,
+      "setting": null
     },
     {
       "name": "Immune to Poison",
       "type": "Trait",
       "description": "Not affected by any poison.",
-      "aliases": []
+      "aliases": [],
+      "cost": null,
+      "setting": null
     },
     {
       "name": "Daemon Soul",
       "type": "Mutation",
       "description": "A Daemon lives within the mutant’s soul. This gives him a 4+ save against the effects of spells or prayers.",
-      "aliases": []
+      "aliases": [],
+      "cost": 20,
+      "setting": null
     },
     {
       "name": "Great Claw",
       "type": "Mutation",
       "description": "One of the mutant’s arms ends in a great, crab-like claw. He may carry no weapons in this arm, but gains an extra attack in hand-to-hand combat with a +1 Strength bonus.",
-      "aliases": []
+      "aliases": [],
+      "cost": 50,
+      "setting": null
     },
     {
       "name": "Cloven Hoofs",
       "type": "Mutation",
       "description": "The warrior gains +1 Movement.",
-      "aliases": []
+      "aliases": [],
+      "cost": 40,
+      "setting": null
     },
     {
       "name": "Tentacle",
       "type": "Mutation",
       "description": "One of the mutant’s arms ends in a tentacle. He may grapple his opponent in close combat to reduce his attacks by -1, down to a minimum of 1. The mutant may decide which attack his opponent loses.",
-      "aliases": []
+      "aliases": [],
+      "cost": 35,
+      "setting": null
     },
     {
       "name": "Blackblood",
       "type": "Mutation",
       "description": "If the model loses a wound in close combat, anyone in base contact with the model suffers a Strength 3 hit (no critical hits) from the spurting corrosive blood.",
-      "aliases": []
+      "aliases": [],
+      "cost": 30,
+      "setting": null
     },
     {
       "name": "Spines",
       "type": "Mutation",
       "description": "Any model in base contact with the mutant suffers an automatic Strength 1 hit at the beginning of each close combat phase. Spines will never cause critical hits.",
-      "aliases": []
+      "aliases": [],
+      "cost": 35,
+      "setting": null
     },
     {
       "name": "Scorpion Tail",
       "type": "Mutation",
       "description": "The mutant has a long barbed tail with a venomed tip, allowing him to make an extra Strength 5 attack in each hand-to-hand combat phase. If the model hit by the tail is immune to poison, the Strength of the hit is reduced to 2.",
-      "aliases": []
+      "aliases": [],
+      "cost": 40,
+      "setting": null
     },
     {
       "name": "Extra Arm",
       "type": "Mutation",
       "description": "The mutant may use any single-handed weapon in the extra arm, giving him +1 attack when fighting in hand-to-hand combat. Alternatively, he may carry a shield or a buckler in the extra arm. If a Possessed chooses to do this, he gains an extra attack but still cannot carry a weapon.",
-      "aliases": []
+      "aliases": [],
+      "cost": 40,
+      "setting": null
     },
     {
       "name": "Hideous",
       "type": "Mutation",
       "description": "The model causes fear.",
-      "aliases": []
+      "aliases": [],
+      "cost": 40,
+      "setting": null
+    },
+    {
+      "name": "Crystalline Body",
+      "type": "Mutation",
+      "description": "The model's Toughness becomes 6 and its Wounds 1. Neither can be changed afterwards by experience or mutation: an advance that would change either is re-rolled until it gives another characteristic.",
+      "aliases": [],
+      "cost": 60,
+      "setting": null
+    },
+    {
+      "name": "Hulking Brute",
+      "type": "Mutation",
+      "description": "The model gains +2 Strength and suffers -4 Leadership.",
+      "aliases": [],
+      "cost": 50,
+      "setting": null
+    },
+    {
+      "name": "Poisonous Bite",
+      "type": "Mutation",
+      "description": "Unless it already has a bite attack, the model gains an extra attack in each hand-to-hand combat phase: a poisonous bite at Strength 5, or Strength 2 against a target immune to poison. A bite attack it already has becomes poisonous in this way instead.",
+      "aliases": [],
+      "cost": 50,
+      "setting": null
+    },
+    {
+      "name": "Prehensile Tail",
+      "type": "Mutation",
+      "description": "Unless it already has a tail attack, the model gains an extra tail attack in each hand-to-hand combat phase. The tail may hold and use any single-handed weapon, or carry and use a shield or buckler. A model with other tail attacks picks one tail at the start of each hand-to-hand combat, and uses none of the others while it uses an equipped prehensile tail. A model that can't use weapons only gains the extra attack (unless it has a tail already), and still can't use weapons.",
+      "aliases": [],
+      "cost": 50,
+      "setting": null
+    },
+    {
+      "name": "Scaly Skin",
+      "type": "Mutation",
+      "description": "Scales give the model a 5+ save. Strength modifiers can't take this save beyond 6, but any 'no save' result on the Critical Hit charts negates it. Light armour adds +1 to the save, as do other armours.",
+      "aliases": [],
+      "cost": 60,
+      "setting": null
+    },
+    {
+      "name": "Wings",
+      "type": "Mutation",
+      "description": "The model can't fly, but it can glide down from a raised position: from a roof, walkway, cliff or other platform it moves 2\" horizontally for each 1\" it moves down.",
+      "aliases": [],
+      "cost": 45,
+      "setting": null
     },
     {
       "name": "Stream of Corruption",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
       "description": "The model can spew forth a grotesque stream of maggots, entrails and filth. This is counted as a shooting attack with a range of 6\" and is resolved at Strength 3 with no saves for armour.",
-      "aliases": []
+      "aliases": [],
+      "cost": 25,
+      "setting": null
     },
     {
       "name": "Nurgle's Rot",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
       "description": "The model is infected with the deadly pestilence of its lord – Nurgle’s Rot. In addition, the model is immune to all poisons. Nurgle’s Rot is a deadly contagion for which there is no known cure. This virulent disease can be passed on in hand-to-hand combat. If the model makes a successful to wound roll of 6 this will result in the target model contracting the Rot (note: Nurgle’s Rot only affects the living, so Undead, Daemons and the Possessed are immune). Once a warrior has contracted the Rot, mark this on the warband roster. Rather than killing the victim immediately, the Rot can take some time to set in. From now on, before the start of each battle, the warrior must pass a Toughness test. If successful, his constitution has managed to stave off the Rot’s effects. If unsuccessful, the warrior loses one point of Toughness permanently (if he reaches zero, he has succumbed to the Rot and died, remove him from the roster). In addition, if a 6 is rolled for the Toughness test then he has unwittingly passed the Rot on to another member of the warband (randomly allocate a warband member and mark this on the roster).",
-      "aliases": []
+      "aliases": [
+        "Neiglish Rot"
+      ],
+      "cost": 50,
+      "setting": null
     },
     {
       "name": "Cloud of Flies",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
       "description": "The model is surrounded by a cloud of flies, which buzz around him and his combat opponent. They do not affect the model but distract foes by buzzing into eyes, nostrils and mouths. The model’s close combat opponent suffers a -1 to hit modifier on all attacks.",
-      "aliases": []
+      "aliases": [],
+      "cost": 25,
+      "setting": null
     },
     {
       "name": "Bloated Foulness",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
       "description": "The model is a huge, disgusting mass of diseased, flabby folds. It gains +1 Wound and +1 Toughness but has its Movement reduced by -1.",
-      "aliases": []
+      "aliases": [],
+      "cost": 40,
+      "setting": null
     },
     {
       "name": "Mark of Nurgle",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
       "description": "The model is burned with the great mark of Nurgle, the three spheres, that weep foul pus constantly. It gains +1 Wound and is immune to all poisons.",
-      "aliases": []
+      "aliases": [],
+      "cost": 35,
+      "setting": null
+    },
+    {
+      "name": "Suckers",
+      "type": "Blessing of Nurgle",
+      "description": "The model automatically passes Initiative tests when climbing.",
+      "aliases": [],
+      "cost": 25,
+      "setting": null
+    },
+    {
+      "name": "Plague Carrier",
+      "type": "Blessing of Nurgle",
+      "description": "The model's Movement and Initiative are reduced by 1. Each time it hits an enemy in hand-to-hand combat, the enemy must roll its Toughness or less on a D6, or suffer -1 Movement and -1 Initiative for the rest of the battle (it recovers after the battle). It may infect each model only once in a battle.",
+      "aliases": [],
+      "cost": 25,
+      "setting": null
+    },
+    {
+      "name": "Beak",
+      "type": "Favour of Tchar",
+      "description": "Unless it already has a bite attack, the model makes an extra bite attack in each close combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
+      "aliases": [],
+      "cost": 35,
+      "setting": "mutiny-in-marienburg"
+    },
+    {
+      "name": "Burning Body (Tchar)",
+      "type": "Favour of Tchar",
+      "description": "The model may carry no weapons or armour unless they are magical or of Gromril or Ithilmar. It suffers none of the usual penalties for fighting with its fists, and always counts as having a lantern. At the end of every turn, roll a D6 for each model in base contact with it: on a 4+ that model is set on fire (Border Town Burning, page 70).",
+      "aliases": [],
+      "cost": 40,
+      "setting": "mutiny-in-marienburg"
+    },
+    {
+      "name": "Electrical Touch",
+      "type": "Favour of Tchar",
+      "description": "The model may give up one of its close combat attacks to jolt an enemy model instead, resolved at +1 Initiative: an automatic Strength 3 hit that ignores all armour saves, or Strength 5 against an enemy wearing any metal armour. After a jolt it takes D3 turns to build another charge.",
+      "aliases": [],
+      "cost": 45,
+      "setting": "mutiny-in-marienburg"
+    },
+    {
+      "name": "Eye of Tchar",
+      "type": "Favour of Tchar",
+      "description": "Instead of attacking in close combat, the model may try to transfix a living model in base contact that isn't immune to psychology: the victim must pass a Leadership test or be transfixed. A transfixed model may not attack in close combat and counts as knocked down for being attacked. It must pass a Leadership test at the start of each later combat phase, or stays transfixed.",
+      "aliases": [],
+      "cost": 45,
+      "setting": "mutiny-in-marienburg"
+    },
+    {
+      "name": "Mer-creature",
+      "type": "Favour of Tchar",
+      "description": "The model is aquatic. It can be submerged in water without harm, treats impassable obstacles such as deep rivers, lakes or open sea as difficult terrain, and ignores the penalties for slow-moving rivers and ponds that count as difficult terrain. On land its Movement is reduced by 1.",
+      "aliases": [],
+      "cost": 25,
+      "setting": "mutiny-in-marienburg"
+    },
+    {
+      "name": "Telekinesis",
+      "type": "Favour of Tchar",
+      "description": "Only a spell caster may have this. In the shooting phase, instead of casting a spell, the model may lift a loose object within 6\" with a successful Leadership test (at -3 if the object is taller than 1\") and move it anywhere within 6\" of itself. A weapon lifted so can be fired in the shooting phase, or used to attack an enemy model in the hand-to-hand combat phase. Once put down, an object needs another successful test to move it or another; the object must be put down before the model casts a spell. This isn't a spell.",
+      "aliases": [],
+      "cost": 30,
+      "setting": "mutiny-in-marienburg"
+    },
+    {
+      "name": "Centauroid",
+      "type": "Bounty of Arkhar",
+      "description": "The model's legs become the four legs and body of a beast the size of a small horse: +2 Movement and +1 Toughness.",
+      "aliases": [],
+      "cost": 80,
+      "setting": "mutiny-in-marienburg"
+    },
+    {
+      "name": "Iron-hard Skin",
+      "type": "Bounty of Arkhar",
+      "description": "The model's armour save improves by +1. With no armour, its skin alone gives it a 6+ save.",
+      "aliases": [],
+      "cost": 45,
+      "setting": null
+    },
+    {
+      "name": "Fangs (Arkhar)",
+      "type": "Bounty of Arkhar",
+      "description": "Unless it already has a bite attack, the model makes an extra bite attack in each hand-to-hand combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
+      "aliases": [],
+      "cost": 35,
+      "setting": "mutiny-in-marienburg"
+    },
+    {
+      "name": "Spiked Tail",
+      "type": "Bounty of Arkhar",
+      "description": "Unless it already has a tail, the model gains an extra tail attack in each hand-to-hand combat phase, at its Strength +1. A model that already has a tail decides at the start of each hand-to-hand combat which tail it uses.",
+      "aliases": [],
+      "cost": 50,
+      "setting": null
+    },
+    {
+      "name": "Regeneration",
+      "type": "Bounty of Arkhar",
+      "description": "When the model suffers one or more wounds, it may try to regenerate: on a D6 roll of 4+ it heals back to its full Wounds at once. On a lower roll its regeneration is spent, and it may not try again for the rest of the battle.",
+      "aliases": [],
+      "cost": 60,
+      "setting": null
+    },
+    {
+      "name": "Spit Acid",
+      "type": "Bounty of Arkhar",
+      "description": "In the shooting phase the model may spit acid at a target up to 8\" away: a Strength 4 shooting attack with no penalty for range or for moving.",
+      "aliases": [],
+      "cost": 35,
+      "setting": null
     }
   ],
   "apart": [
@@ -135,6 +333,16 @@
       "owner": "Nightmare",
       "rule": "Immune to Psychology (Mount)",
       "name": "Immune to Psychology (Nightmare)"
+    },
+    {
+      "owner": "Belandysh, Condemned Champion of Chen",
+      "rule": "Regeneration",
+      "name": "Regeneration (Belandysh)"
+    },
+    {
+      "owner": "Chameleon Skink",
+      "rule": "Scaly Skin",
+      "name": "Scaly Skin (Chameleon Skink)"
     }
   ]
 }

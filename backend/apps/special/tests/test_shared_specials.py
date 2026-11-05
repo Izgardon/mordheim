@@ -4,11 +4,13 @@ out/shared-specials.json, archiving the copies seeded before; the hireling and b
 owner's rule of a shared name or alias to it, or keep his own where William's list keeps it apart.
 """
 
+from collections import Counter
 from io import StringIO
 
 from django.core.management import call_command
 from django.test import TestCase
 
+from apps.campaigns.models import CampaignType
 from apps.core.book_lookups import BookLookups
 from apps.special.categories import AURA, BODY, MUTATION
 from apps.special.kinds import BANE, BOON, DRAMATIS_PERSONA, GENERAL, WARBAND
@@ -26,7 +28,8 @@ def seed() -> str:
 class SharedSeedTests(TestCase):
     def test_each_is_a_general_special_with_its_wording_kind_and_category(self):
         seed()
-        rows = {row.name: row for row in Special.objects.filter(type__in=("Psychology", "Trait", "Mutation"))}
+        families = ("Mutation", "Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar")
+        rows = {row.name: row for row in Special.objects.filter(type__in=("Psychology", "Trait", *families))}
         fear, poison, immune = rows["Fear"], rows["Immune to Poison"], rows["Immune to Psychology"]
         self.assertTrue(fear.description.startswith("This model causes fear.\n\nFear is a natural reaction"))
         charged = "\n\na) If the model is charged by a warrior or a creature which causes fear.\n\n"  # no markdown
@@ -39,10 +42,29 @@ class SharedSeedTests(TestCase):
         self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, BOON, MUTATION))
         self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))
         self.assertIn("In addition, the model is immune to all poisons.", rot.description)
-        mutations = Special.objects.filter(type="Mutation")
+        mutations = Special.objects.filter(type__in=families)
         self.assertEqual(set(mutations.values_list("kind", "category")), {(BOON, MUTATION)})
-        self.assertEqual(mutations.count(), 14)
+        counted = Counter(mutations.values_list("type", flat=True))
+        self.assertEqual(
+            counted, {"Mutation": 15, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
+        )
         self.assertFalse(mutations.filter(description__icontains="Tainted One").exists())  # a general subject
+        self.assertEqual((claw.cost, rot.cost, rows["Mark of Nurgle"].cost, fear.cost), (50, 50, 35, None))
+        self.assertEqual({row.campaign_type_id for row in mutations}, {None})  # no settings seeded: Mordheim's
+
+    def test_mutiny_in_marienburgs_own_are_its_settings_and_the_rest_mordheim_1as(self):
+        # William, 5 Nov 2026: the generic list and the Nurgle family are 1a's, and every special the random table
+        # gives; the rest of the Favours of Tchar and the Bounties of Arkhar are Mutiny in Marienburg's
+        mim = CampaignType.objects.create(slug="mutiny-in-marienburg", name="Mutiny in Marienburg")
+        seed()
+        theirs = Special.objects.filter(campaign_type=mim).values_list("name", flat=True)
+        self.assertEqual(
+            set(theirs),
+            {"Beak", "Burning Body (Tchar)", "Electrical Touch", "Eye of Tchar", "Mer-creature", "Telekinesis"}
+            | {"Centauroid", "Fangs (Arkhar)"},
+        )
+        arkhar = Special.objects.filter(type="Bounty of Arkhar", campaign_type__isnull=True)
+        self.assertEqual(set(arkhar.values_list("name", flat=True)), {"Iron-hard Skin", "Spiked Tail", "Regeneration", "Spit Acid"})  # fmt: skip
 
     def test_the_copies_seeded_before_are_archived_and_a_second_run_finds_none(self):
         copies = [
@@ -50,16 +72,18 @@ class SharedSeedTests(TestCase):
             Special.objects.create(name="Cause Fear", type="Warband - Undead", owner_kind=WARBAND),
             Special.objects.create(name="Immune to psychology", type=f"Dramatis Persona - {BELANDYSH}"),
             Special.objects.create(name="Immune to Psychology (Mount)", type="Animal"),  # the Nightmare's kept apart
+            # a Troll's rule seeded under the mutation's name: the template seeding names it Regeneration (Troll) now
+            Special.objects.create(name="Regeneration", type="Warband - Orc Mob", owner_kind=WARBAND),
         ]
         frenzy = Special.objects.create(name="Frenzy", type="Animal")
 
-        self.assertIn("Shared specials - Created: 18, Updated: 0, copies archived: 4.", seed())
+        self.assertIn("Shared specials - Created: 38, Updated: 0, copies archived: 5.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         frenzy.refresh_from_db()
         self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 18, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 38, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):
@@ -98,6 +122,17 @@ class SharedLookupTests(TestCase):
         mount = lookups.special("Immune to Psychology (Mount)", "Nightmare")  # the book's Animal rule of its name
         assert mount is not None
         self.assertEqual((mount.name, mount.type), ("Immune to Psychology (Nightmare)", "Animal"))
+
+    def test_an_owners_rule_of_a_mutations_name_that_does_otherwise_is_kept_his(self):
+        # the mutation heals him once; Belandysh ignores each wound on a 4+, and the Chameleon Skink's is a Skink's 6+
+        own = BookLookups("Dramatis Persona").special({"name": "Regeneration", "description": "4+."}, BELANDYSH)
+        skink = BookLookups("Hired Sword").special({"name": "Scaly Skin", "description": "6+."}, "Chameleon Skink")
+        rot = BookLookups("Hired Sword").special("Neiglish Rot", "Anyone")  # MiM's name for Nurgle's Rot
+
+        assert own is not None and skink is not None and rot is not None
+        self.assertEqual((own.name, own.category), ("Regeneration (Belandysh)", BODY))
+        self.assertEqual((skink.name, skink.type), ("Scaly Skin (Chameleon Skink)", "Hired Sword - Chameleon Skink"))
+        self.assertEqual((rot.name, rot.type, rot.category), ("Nurgle's Rot", "Blessing of Nurgle", MUTATION))
 
 
 class SharedNotSeededTests(TestCase):

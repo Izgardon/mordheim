@@ -88,7 +88,7 @@ def _share(fighters: list[dict[str, Any]], upgrades: list[dict[str, Any]], name:
         found = shared.rule("warband", f"{name}: {upgrade['group']}", upgrade["special"]["name"])
         if found is not None and found[0] == "shared":
             entry = found[1]
-            shared.sold_by(name, entry, upgrade["special"]["description"])
+            shared.sold_by(name, entry, upgrade["special"]["description"], upgrade["cost"])
             upgrade["special"] = {"name": entry["name"], "type": entry["type"]}
 
 

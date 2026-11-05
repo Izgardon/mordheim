@@ -1,4 +1,5 @@
 {
+  "mutation_types": ["Mutation", "Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar"],
   "shared": [
     {
       "name": "Fear",
@@ -15,54 +16,227 @@
       "aliases": []
     },
     {"name": "Immune to Poison", "type": "Trait", "text": "Not affected by any poison.", "aliases": []},
-    {"name": "Daemon Soul", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
-    {"name": "Great Claw", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
-    {"name": "Cloven Hoofs", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
-    {"name": "Tentacle", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
-    {"name": "Blackblood", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
-    {"name": "Spines", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
-    {"name": "Scorpion Tail", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
-    {"name": "Extra Arm", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "aliases": []},
+    {"name": "Daemon Soul", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 20, "aliases": []},
+    {"name": "Great Claw", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 50, "aliases": []},
+    {"name": "Cloven Hoofs", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 40, "aliases": []},
+    {"name": "Tentacle", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 35, "aliases": []},
+    {"name": "Blackblood", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 30, "aliases": []},
+    {"name": "Spines", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 35, "aliases": []},
+    {"name": "Scorpion Tail", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 40, "aliases": []},
+    {"name": "Extra Arm", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 40, "aliases": []},
     {
       "name": "Hideous",
       "type": "Mutation",
       "upgrade_of": "Cult of the Possessed",
       "subject": {"The mutant": "The model"},
+      "cost": 40,
+      "aliases": []
+    },
+    {
+      "name": "Crystalline Body",
+      "type": "Mutation",
+      "from": "Mutiny in Marienburg, p160",
+      "cost": 60,
+      "text": "The model's Toughness becomes 6 and its Wounds 1. Neither can be changed afterwards by experience or mutation: an advance that would change either is re-rolled until it gives another characteristic.",
+      "aliases": []
+    },
+    {
+      "name": "Hulking Brute",
+      "type": "Mutation",
+      "from": "Mutiny in Marienburg, p160",
+      "cost": 50,
+      "text": "The model gains +2 Strength and suffers -4 Leadership.",
+      "aliases": []
+    },
+    {
+      "name": "Poisonous Bite",
+      "type": "Mutation",
+      "from": "Mutiny in Marienburg, p160",
+      "cost": 50,
+      "text": "Unless it already has a bite attack, the model gains an extra attack in each hand-to-hand combat phase: a poisonous bite at Strength 5, or Strength 2 against a target immune to poison. A bite attack it already has becomes poisonous in this way instead.",
+      "aliases": []
+    },
+    {
+      "name": "Prehensile Tail",
+      "type": "Mutation",
+      "from": "Mutiny in Marienburg, p160",
+      "cost": 50,
+      "text": "Unless it already has a tail attack, the model gains an extra tail attack in each hand-to-hand combat phase. The tail may hold and use any single-handed weapon, or carry and use a shield or buckler. A model with other tail attacks picks one tail at the start of each hand-to-hand combat, and uses none of the others while it uses an equipped prehensile tail. A model that can't use weapons only gains the extra attack (unless it has a tail already), and still can't use weapons.",
+      "aliases": []
+    },
+    {
+      "name": "Scaly Skin",
+      "type": "Mutation",
+      "from": "Mutiny in Marienburg, p160",
+      "cost": 60,
+      "text": "Scales give the model a 5+ save. Strength modifiers can't take this save beyond 6, but any 'no save' result on the Critical Hit charts negates it. Light armour adds +1 to the save, as do other armours.",
+      "aliases": []
+    },
+    {
+      "name": "Wings",
+      "type": "Mutation",
+      "from": "Mutiny in Marienburg, p161",
+      "cost": 45,
+      "text": "The model can't fly, but it can glide down from a raised position: from a roof, walkway, cliff or other platform it moves 2\" horizontally for each 1\" it moves down.",
       "aliases": []
     },
     {
       "name": "Stream of Corruption",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
       "subject": {"The Tainted One": "The model"},
+      "cost": 25,
       "aliases": []
     },
     {
       "name": "Nurgle's Rot",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
       "subject": {"The Tainted One": "The model"},
-      "aliases": []
+      "cost": 50,
+      "aliases": ["Neiglish Rot"]
     },
     {
       "name": "Cloud of Flies",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
       "subject": {"The Tainted One": "The model"},
+      "cost": 25,
       "aliases": []
     },
     {
       "name": "Bloated Foulness",
-      "type": "Mutation",
+      "type": "Blessing of Nurgle",
+      "upgrade_of": "Carnival of Chaos",
+      "subject": {"The Tainted One": "The model"},
+      "cost": 40,
+      "aliases": []
+    },
+    {
+      "name": "Mark of Nurgle",
+      "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
       "subject": {"The Tainted One": "The model"},
       "aliases": []
     },
     {
-      "name": "Mark of Nurgle",
-      "type": "Mutation",
-      "upgrade_of": "Carnival of Chaos",
-      "subject": {"The Tainted One": "The model"},
+      "name": "Suckers",
+      "type": "Blessing of Nurgle",
+      "from": "Mutiny in Marienburg, Blessings of Onogal",
+      "cost": 25,
+      "text": "The model automatically passes Initiative tests when climbing.",
+      "aliases": []
+    },
+    {
+      "name": "Plague Carrier",
+      "type": "Blessing of Nurgle",
+      "from": "Mutiny in Marienburg, Blessings of Onogal",
+      "cost": 25,
+      "text": "The model's Movement and Initiative are reduced by 1. Each time it hits an enemy in hand-to-hand combat, the enemy must roll its Toughness or less on a D6, or suffer -1 Movement and -1 Initiative for the rest of the battle (it recovers after the battle). It may infect each model only once in a battle.",
+      "aliases": []
+    },
+    {
+      "name": "Beak",
+      "type": "Favour of Tchar",
+      "from": "Mutiny in Marienburg, p162",
+      "cost": 35,
+      "setting": "mutiny-in-marienburg",
+      "text": "Unless it already has a bite attack, the model makes an extra bite attack in each close combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
+      "aliases": []
+    },
+    {
+      "name": "Burning Body (Tchar)",
+      "type": "Favour of Tchar",
+      "from": "Mutiny in Marienburg, p162",
+      "cost": 40,
+      "setting": "mutiny-in-marienburg",
+      "text": "The model may carry no weapons or armour unless they are magical or of Gromril or Ithilmar. It suffers none of the usual penalties for fighting with its fists, and always counts as having a lantern. At the end of every turn, roll a D6 for each model in base contact with it: on a 4+ that model is set on fire (Border Town Burning, page 70).",
+      "aliases": []
+    },
+    {
+      "name": "Electrical Touch",
+      "type": "Favour of Tchar",
+      "from": "Mutiny in Marienburg, p162",
+      "cost": 45,
+      "setting": "mutiny-in-marienburg",
+      "text": "The model may give up one of its close combat attacks to jolt an enemy model instead, resolved at +1 Initiative: an automatic Strength 3 hit that ignores all armour saves, or Strength 5 against an enemy wearing any metal armour. After a jolt it takes D3 turns to build another charge.",
+      "aliases": []
+    },
+    {
+      "name": "Eye of Tchar",
+      "type": "Favour of Tchar",
+      "from": "Mutiny in Marienburg, p162",
+      "cost": 45,
+      "setting": "mutiny-in-marienburg",
+      "text": "Instead of attacking in close combat, the model may try to transfix a living model in base contact that isn't immune to psychology: the victim must pass a Leadership test or be transfixed. A transfixed model may not attack in close combat and counts as knocked down for being attacked. It must pass a Leadership test at the start of each later combat phase, or stays transfixed.",
+      "aliases": []
+    },
+    {
+      "name": "Mer-creature",
+      "type": "Favour of Tchar",
+      "from": "Mutiny in Marienburg, p162",
+      "cost": 25,
+      "setting": "mutiny-in-marienburg",
+      "text": "The model is aquatic. It can be submerged in water without harm, treats impassable obstacles such as deep rivers, lakes or open sea as difficult terrain, and ignores the penalties for slow-moving rivers and ponds that count as difficult terrain. On land its Movement is reduced by 1.",
+      "aliases": []
+    },
+    {
+      "name": "Telekinesis",
+      "type": "Favour of Tchar",
+      "from": "Mutiny in Marienburg, p162",
+      "cost": 30,
+      "setting": "mutiny-in-marienburg",
+      "text": "Only a spell caster may have this. In the shooting phase, instead of casting a spell, the model may lift a loose object within 6\" with a successful Leadership test (at -3 if the object is taller than 1\") and move it anywhere within 6\" of itself. A weapon lifted so can be fired in the shooting phase, or used to attack an enemy model in the hand-to-hand combat phase. Once put down, an object needs another successful test to move it or another; the object must be put down before the model casts a spell. This isn't a spell.",
+      "aliases": []
+    },
+    {
+      "name": "Centauroid",
+      "type": "Bounty of Arkhar",
+      "from": "Mutiny in Marienburg, Bounties of Arkhar",
+      "cost": 80,
+      "setting": "mutiny-in-marienburg",
+      "text": "The model's legs become the four legs and body of a beast the size of a small horse: +2 Movement and +1 Toughness.",
+      "aliases": []
+    },
+    {
+      "name": "Iron-hard Skin",
+      "type": "Bounty of Arkhar",
+      "from": "Mutiny in Marienburg, Bounties of Arkhar",
+      "cost": 45,
+      "text": "The model's armour save improves by +1. With no armour, its skin alone gives it a 6+ save.",
+      "aliases": []
+    },
+    {
+      "name": "Fangs (Arkhar)",
+      "type": "Bounty of Arkhar",
+      "from": "Mutiny in Marienburg, Bounties of Arkhar",
+      "cost": 35,
+      "setting": "mutiny-in-marienburg",
+      "text": "Unless it already has a bite attack, the model makes an extra bite attack in each hand-to-hand combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
+      "aliases": []
+    },
+    {
+      "name": "Spiked Tail",
+      "type": "Bounty of Arkhar",
+      "from": "Mutiny in Marienburg, Bounties of Arkhar",
+      "cost": 50,
+      "text": "Unless it already has a tail, the model gains an extra tail attack in each hand-to-hand combat phase, at its Strength +1. A model that already has a tail decides at the start of each hand-to-hand combat which tail it uses.",
+      "aliases": []
+    },
+    {
+      "name": "Regeneration",
+      "type": "Bounty of Arkhar",
+      "from": "Mutiny in Marienburg, Bounties of Arkhar",
+      "cost": 60,
+      "text": "When the model suffers one or more wounds, it may try to regenerate: on a D6 roll of 4+ it heals back to its full Wounds at once. On a lower roll its regeneration is spent, and it may not try again for the rest of the battle.",
+      "aliases": []
+    },
+    {
+      "name": "Spit Acid",
+      "type": "Bounty of Arkhar",
+      "from": "Mutiny in Marienburg, Bounties of Arkhar",
+      "cost": 35,
+      "text": "In the shooting phase the model may spit acid at a target up to 8\" away: a Strength 4 shooting attack with no penalty for range or for moving.",
       "aliases": []
     }
   ],
@@ -135,6 +309,46 @@
       "rule": "Immune to Poison",
       "owners": [{"warband": "Carnival of Chaos", "fighter": "Nurgling"}],
       "why": "Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed."
+    },
+    {
+      "name": "Regeneration (Troll)",
+      "rule": "Regeneration",
+      "owners": [
+        {"warband": "Night Goblins", "fighter": "Troll"},
+        {"warband": "Night Goblins (web)", "fighter": "Troll"},
+        {"warband": "Orc Mob", "fighter": "Troll"}
+      ],
+      "why": "Ignores each wound on a 4+, never one from fire, and never rolls for injury; the mutation heals once."
+    },
+    {
+      "name": "Regeneration (Black Orcs' Troll)",
+      "rule": "Regeneration",
+      "owners": [{"warband": "Black Orcs", "fighter": "Troll"}],
+      "why": "The Trolls' rule, but one taken out of action by fire rolls for injury as a henchman."
+    },
+    {
+      "name": "Regeneration (Belandysh)",
+      "rule": "Regeneration",
+      "owners": [{"dramatis_persona": "Belandysh, Condemned Champion of Chen"}],
+      "why": "Ignores each wound on a 4+, never one from fire; the mutation heals once."
+    },
+    {
+      "name": "Scaly Skin (Cold One Beasthounds)",
+      "rule": "Scaly Skin",
+      "owners": [{"warband": "Dark Elves", "fighter": "Cold One Beasthound"}],
+      "why": "A 6+ armour save; the mutation's is 5+, and armour adds to it."
+    },
+    {
+      "name": "Scaly Skin (Kroxigor)",
+      "rule": "Scaly Skin",
+      "owners": [{"warband": "Lizardmen", "fighter": "Kroxigor"}],
+      "why": "A natural 4+ save; the mutation's is 5+."
+    },
+    {
+      "name": "Scaly Skin (Chameleon Skink)",
+      "rule": "Scaly Skin",
+      "owners": [{"hired_sword": "Chameleon Skink"}],
+      "why": "The Lizardmen's Scaly Skin, a Skink's 6+; the mutation's is 5+."
     }
   ]
 }

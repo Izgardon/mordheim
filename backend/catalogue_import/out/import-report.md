@@ -31,7 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 49 |
 | skill group links | 266 |
 | serious injuries (D66) | 20 |
-| shared specials | 18 |
+| shared specials | 38 |
 
 ## mordheimer's contradictions
 
@@ -502,7 +502,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 1341 |
 | warband rules | 157 |
 | upgrades | 23 |
-| the templates' own specials | 404 |
+| the templates' own specials | 402 |
 
 ### List lines
 
@@ -650,28 +650,50 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 ## Shared specials
 
-`apps/special/data/shared-specials.json` (William, 5 Nov 2026) as `out/shared-specials.json`: one general special for each rule below, which every owner's rule of its name or an alias links instead of a copy of its own (the templates' in `out/warband-templates.json`; the hired swords', dramatis personae's and beasts' by their seeders, by name). Rules linked, by owner kind:
+`apps/special/data/shared-specials.json` (William, 5 Nov 2026) as `out/shared-specials.json`: one general special for each rule below, which every owner's rule of its name or an alias links instead of a copy of its own (the templates' in `out/warband-templates.json`; the hired swords', dramatis personae's and beasts' by their seeders, by name). A mutation's type is its family; its cost is the list's (gc), and a blank setting is Mordheim 1a's. Rules linked, by owner kind:
 
-| Special | Type | Wording | Warband | Hired sword | Dramatis persona | Beast |
-| --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the rulebook's Fear (snapshot), after a first line | 32 | 5 | 5 | 3 |
-| Stupidity | Psychology | the rulebook's Stupidity (snapshot) | 4 | 0 | 0 | 1 |
-| Immune to Psychology | Psychology | the list's text | 11 | 1 | 2 | 0 |
-| Immune to Poison | Trait | the list's text | 10 | 3 | 3 | 2 |
-| Daemon Soul | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
-| Great Claw | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
-| Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
-| Tentacle | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
-| Blackblood | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
-| Spines | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
-| Scorpion Tail | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
-| Extra Arm | Mutation | Cult of the Possessed's upgrade | 1 | 0 | 0 | 0 |
-| Hideous | Mutation | Cult of the Possessed's upgrade; subject made general | 2 | 0 | 0 | 0 |
-| Stream of Corruption | Mutation | Carnival of Chaos's upgrade; subject made general | 2 | 0 | 0 | 0 |
-| Nurgle's Rot | Mutation | Carnival of Chaos's upgrade; subject made general | 1 | 0 | 0 | 0 |
-| Cloud of Flies | Mutation | Carnival of Chaos's upgrade; subject made general | 3 | 0 | 0 | 0 |
-| Bloated Foulness | Mutation | Carnival of Chaos's upgrade; subject made general | 1 | 0 | 0 | 0 |
-| Mark of Nurgle | Mutation | Carnival of Chaos's upgrade; subject made general | 1 | 0 | 0 | 0 |
+| Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 32 | 5 | 5 | 3 |
+| Stupidity | Psychology | the rulebook's Stupidity (snapshot) |  |  | 4 | 0 | 0 | 1 |
+| Immune to Psychology | Psychology | the list's text |  |  | 11 | 1 | 2 | 0 |
+| Immune to Poison | Trait | the list's text |  |  | 10 | 3 | 3 | 2 |
+| Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 1 | 0 | 0 | 0 |
+| Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 1 | 0 | 0 | 0 |
+| Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 1 | 0 | 0 | 0 |
+| Tentacle | Mutation | Cult of the Possessed's upgrade | 35 |  | 1 | 0 | 0 | 0 |
+| Blackblood | Mutation | Cult of the Possessed's upgrade | 30 |  | 1 | 0 | 0 | 0 |
+| Spines | Mutation | Cult of the Possessed's upgrade | 35 |  | 1 | 0 | 0 | 0 |
+| Scorpion Tail | Mutation | Cult of the Possessed's upgrade | 40 |  | 1 | 0 | 0 | 0 |
+| Extra Arm | Mutation | Cult of the Possessed's upgrade | 40 |  | 1 | 0 | 0 | 0 |
+| Hideous | Mutation | Cult of the Possessed's upgrade; subject made general | 40 |  | 2 | 0 | 0 | 0 |
+| Crystalline Body | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 0 | 0 | 0 | 0 |
+| Hulking Brute | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 0 | 0 | 0 | 0 |
+| Poisonous Bite | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 0 | 0 | 0 | 0 |
+| Prehensile Tail | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 0 | 0 | 0 | 0 |
+| Scaly Skin | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 0 | 0 | 0 | 0 |
+| Wings | Mutation | the list's text (Mutiny in Marienburg, p161) | 45 |  | 0 | 0 | 0 | 0 |
+| Stream of Corruption | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 2 | 0 | 0 | 0 |
+| Nurgle's Rot | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 50 |  | 1 | 0 | 0 | 0 |
+| Cloud of Flies | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 3 | 0 | 0 | 0 |
+| Bloated Foulness | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 40 |  | 1 | 0 | 0 | 0 |
+| Mark of Nurgle | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 35 |  | 1 | 0 | 0 | 0 |
+| Suckers | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 0 | 0 | 0 | 0 |
+| Plague Carrier | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 0 | 0 | 0 | 0 |
+| Beak | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 35 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Burning Body (Tchar) | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 40 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Electrical Touch | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 45 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Eye of Tchar | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 45 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Mer-creature | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 25 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Telekinesis | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 30 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Centauroid | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 80 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Iron-hard Skin | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 45 |  | 0 | 0 | 0 | 0 |
+| Fangs (Arkhar) | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 35 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
+| Spiked Tail | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 50 |  | 0 | 0 | 0 | 0 |
+| Regeneration | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 60 |  | 0 | 0 | 0 | 0 |
+| Spit Acid | Bounty of Arkhar | the list's text (Mutiny in Marienburg, Bounties of Arkhar) | 35 |  | 0 | 0 | 0 | 0 |
+
+List prices the pages differ from: none.
 
 ### Merged
 
@@ -709,3 +731,9 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Immune to Psychology (Nightmare) | Nightmare | Never takes Leadership tests, and stands still if left leaderless. |
 | Immune to Poison (Plague Bearers) | Carnival of Chaos: Plague Bearer | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |
 | Immune to Poison (Nurglings) | Carnival of Chaos: Nurgling | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |
+| Regeneration (Troll) | Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll | Ignores each wound on a 4+, never one from fire, and never rolls for injury; the mutation heals once. |
+| Regeneration (Black Orcs' Troll) | Black Orcs: Troll | The Trolls' rule, but one taken out of action by fire rolls for injury as a henchman. |
+| Regeneration (Belandysh) | Belandysh, Condemned Champion of Chen | Ignores each wound on a 4+, never one from fire; the mutation heals once. |
+| Scaly Skin (Cold One Beasthounds) | Dark Elves: Cold One Beasthound | A 6+ armour save; the mutation's is 5+, and armour adds to it. |
+| Scaly Skin (Kroxigor) | Lizardmen: Kroxigor | A natural 4+ save; the mutation's is 5+. |
+| Scaly Skin (Chameleon Skink) | Chameleon Skink | The Lizardmen's Scaly Skin, a Skink's 6+; the mutation's is 5+. |

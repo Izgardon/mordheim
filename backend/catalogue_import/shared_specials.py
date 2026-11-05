@@ -4,10 +4,16 @@ William's list `apps/special/data/shared-specials.json`, into `out/shared-specia
 - Fear, Stupidity and Immune to Psychology (typed Psychology) and Immune to Poison (Trait): the snapshot's psychology
   entry of its `psychology` name, cleaned as the templates' rules are and after its `first_line`, else the list's
   `text`;
-- one Mutation for each of the Cult of the Possessed's mutations and the Blessings of Nurgle: the upgrade of its name
-  on the template that sells it (`upgrade_of`), its `subject` made general ("The Tainted One" -> "The model").
+- one for each of the Cult of the Possessed's mutations and the Blessings of Nurgle: the upgrade of its name on the
+  template that sells it (`upgrade_of`), its `subject` made general ("The Tainted One" -> "The model"), at that
+  upgrade's price;
+- one for each mutation Mutiny in Marienburg adds to the list (William's pages, `from`) or the random mutation table
+  gives (random_mutations.py): the list's `text`, its `cost` where a list prices it, and its `setting` where it isn't
+  Mordheim 1a's. Its type is its family (`mutation_types`: "Mutation", "Blessing of Nurgle", "Favour of Tchar",
+  "Bounty of Arkhar"), which makes it a mutation (special/categories.py); a family is one more type and its entries.
 
-A template fighter's rule or an upgrade of a shared name or alias links it (templates.py); a rule the list keeps
+A list price that differs from the page's keeps the page's and is reported. A template fighter's rule or an upgrade
+of a shared name or alias links it (templates.py); a rule the list keeps
 `apart` stays its owner's own, named for him, with his own text. The hired swords', dramatis personae's and beasts'
 rules are linked by name by their seeders' book lookups (apps/core/book_lookups.py), which read the names and the
 rules kept apart from the output; the report lists every rule merged and kept apart, for every owner."""
@@ -49,21 +55,30 @@ def owner_label(owner: dict[str, str]) -> str:
 class SharedLog:
     merged: list[tuple[str, str, str, str]] = field(default_factory=list)  # shared special, owner kind, owner, his rule
     apart: list[tuple[str, str, str]] = field(default_factory=list)  # the rule kept his own, owner kind, owner
+    prices: list[tuple[str, int, int]] = field(default_factory=list)  # special, the list's price, the page's (kept)
 
 
 class SharedSpecials:
-    """William's list: the shared specials by name and alias and the rules kept apart by owner, the wordings the build
-    finds on the pages, and what each owner's rule became."""
+    """William's list: the shared specials by name and alias and the rules kept apart by owner, the wordings and prices
+    the build finds on the pages, and what each owner's rule became."""
 
     def __init__(self, data: dict[str, Any]) -> None:
         self.entries: list[dict[str, Any]] = data["shared"]
         self.lines: list[dict[str, Any]] = data["apart"]
+        self.mutation_types: list[str] = data.get("mutation_types", [])
         self.names = {key(name): entry for entry in self.entries for name in (entry["name"], *entry["aliases"])}
         self.apart = {(owner_label(owner), key(line["rule"])): line for line in self.lines for owner in line["owners"]}
         self.unused = set(self.apart)
         self.wordings: dict[str, str] = {}  # an upgrade_of special -> the wording on its page
+        self.page_costs: dict[str, int | None] = {}  # an upgrade_of special -> its price on its page
         self.kept: dict[str, tuple[str, str, str]] = {}  # a rule kept apart -> its first owner's type, text and gist
         self.log = SharedLog()
+
+    def cost_of(self, entry: dict[str, Any]) -> int | None:
+        """A special's price: its page's for one a template sells (`upgrade_of`), else the list's (None: unpriced)."""
+        listed = entry.get("cost")
+        page = self.page_costs.get(entry["name"]) if entry.get("upgrade_of") else None
+        return listed if page is None else page
 
     def rule(self, kind: str, owner: str, name: str) -> tuple[str, dict[str, Any]] | None:
         """What an owner's rule of the name is, logged: ("apart", the line keeping it his) or ("shared", the shared
@@ -80,13 +95,20 @@ class SharedSpecials:
         self.log.merged.append((entry["name"], kind, owner, name))
         return "shared", entry
 
-    def sold_by(self, template: str, entry: dict[str, Any], text: str) -> None:
-        """The wording of a mutation its template sells, its subject made general."""
+    def sold_by(self, template: str, entry: dict[str, Any], text: str, cost: int | None = None) -> None:
+        """The wording and price of a mutation its template sells, its subject made general; a list price that differs
+        is reported (the page's stays)."""
         if entry.get("upgrade_of") != template:
             return
         for old, new in (entry.get("subject") or {}).items():
             text = text.replace(old, new).replace(old[0].lower() + old[1:], new[0].lower() + new[1:])
         self.wordings.setdefault(entry["name"], text)
+        if entry["name"] in self.page_costs:
+            return
+        self.page_costs[entry["name"]] = cost
+        listed = entry.get("cost")
+        if listed is not None and cost is not None and listed != cost:
+            self.log.prices.append((entry["name"], listed, cost))
 
     def scan(self, kind: str, rows: list[dict[str, Any]]) -> None:
         """What each hired sword's, dramatis persona's or beast's rules become (their seeders link them by name)."""
@@ -97,8 +119,9 @@ class SharedSpecials:
                     self.rule(OWNER_KINDS[kind], row["name"], name)
 
     def output(self, injuries: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
-        """out/shared-specials.json: each shared special with its wording and aliases, and the rules kept apart that the
-        seeders' book lookups name (the templates' are named here). A line naming no owner's rule stops the build."""
+        """out/shared-specials.json: each shared special with its wording, aliases, price and setting (none: Mordheim
+        1a's), and the rules kept apart that the seeders' book lookups name (the templates' are named here). A line
+        naming no owner's rule stops the build."""
         if self.unused:
             missing = [
                 f"{owner} has no rule {self.apart[(owner, rule)]['rule']!r}" for owner, rule in sorted(self.unused)
@@ -111,6 +134,8 @@ class SharedSpecials:
                 "type": entry["type"],
                 "description": self._wording(entry, psychology),
                 "aliases": entry["aliases"],
+                "cost": self.cost_of(entry),
+                "setting": entry.get("setting"),
             }
             for entry in self.entries
         ]
@@ -143,7 +168,7 @@ def load_shared() -> SharedSpecials:
 
 def _source(entry: dict[str, Any]) -> str:
     if "text" in entry:
-        return "the list's text"
+        return "the list's text" + (f" ({entry['from']})" if entry.get("from") else "")
     if PSYCHOLOGY in entry:
         return f"the rulebook's {entry[PSYCHOLOGY]} (snapshot)" + (
             ", after a first line" if "first_line" in entry else ""
@@ -153,29 +178,43 @@ def _source(entry: dict[str, Any]) -> str:
 
 
 def render_shared(shared: SharedSpecials) -> str:
-    """The report's Shared specials section: each special, its wording and how many rules link it by owner kind, the
-    rules merged into it, and the rules kept apart with William's reasons."""
+    """The report's Shared specials section: each special, its wording, price, setting and how many rules link it by
+    owner kind, the list prices the pages differ from, the rules merged into it, and the rules kept apart with
+    William's reasons."""
     kinds = list(OWNER_KINDS.values())
     counts = {(entry["name"], kind): 0 for entry in shared.entries for kind in kinds}
     merged: dict[str, list[str]] = {entry["name"]: [] for entry in shared.entries}
     for name, kind, owner, rule in shared.log.merged:
         counts[(name, kind)] += 1
         merged[name].append(owner if key(rule) == key(name) else f"{owner} ({rule})")
-    header = "| Special | Type | Wording | " + " | ".join(kind.capitalize() for kind in kinds) + " |"
+    header = "| Special | Type | Wording | Cost | Setting | " + " | ".join(kind.capitalize() for kind in kinds) + " |"
     lines = [
         "## Shared specials",
         "",
         "`apps/special/data/shared-specials.json` (William, 5 Nov 2026) as `out/shared-specials.json`: one general"
         " special for each rule below, which every owner's rule of its name or an alias links instead of a copy of its"
         " own (the templates' in `out/warband-templates.json`; the hired swords', dramatis personae's and beasts' by"
-        " their seeders, by name). Rules linked, by owner kind:",
+        " their seeders, by name). A mutation's type is its family; its cost is the list's (gc), and a blank setting is"
+        " Mordheim 1a's. Rules linked, by owner kind:",
         "",
         header,
-        "| " + " | ".join("---" for _ in range(3 + len(kinds))) + " |",
+        "| " + " | ".join("---" for _ in range(5 + len(kinds))) + " |",
     ]
     for entry in shared.entries:
-        row = [entry["name"], entry["type"], _source(entry), *(str(counts[(entry["name"], kind)]) for kind in kinds)]
+        cost = shared.cost_of(entry)
+        row = [
+            entry["name"],
+            entry["type"],
+            _source(entry),
+            "" if cost is None else str(cost),
+            entry.get("setting") or "",
+            *(str(counts[(entry["name"], kind)]) for kind in kinds),
+        ]
         lines.append("| " + " | ".join(row) + " |")
+    differ = [
+        f"{name}: the list's {listed} gc, the page's {page} gc (kept)" for name, listed, page in shared.log.prices
+    ]
+    lines += ["", f"List prices the pages differ from: {'; '.join(differ) if differ else 'none'}."]
     lines += ["", "### Merged", ""]
     lines += [f"- {name}: {'; '.join(owners)}." for name, owners in merged.items() if owners]
     lines += ["", "### Kept apart", "", "| Rule | Owners | Why |", "| --- | --- | --- |"]

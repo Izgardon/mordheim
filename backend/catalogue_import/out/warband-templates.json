@@ -5981,7 +5981,7 @@
             "type": "Psychology"
           },
           {
-            "name": "Regeneration",
+            "name": "Regeneration (Black Orcs' Troll)",
             "type": "Warband - Black Orcs",
             "description": "Trolls have a unique physiology that allows them to regenerate wounds. Whenever an enemy successfully inflicts a wound on a Troll roll a D6, on a result of 4 or more the wound is ignored and the Troll is unhurt. Trolls may not regenerate wounds caused by fire or fire-based magic. Trolls never roll for Injury after a battle, unless they were taken Out of Action by a Flaming weapon or spell. Then they roll after the battle as a normal Henchman."
           },
@@ -8412,11 +8412,11 @@
         "specials": [
           {
             "name": "Cloud of Flies",
-            "type": "Mutation"
+            "type": "Blessing of Nurgle"
           },
           {
             "name": "Stream of Corruption",
-            "type": "Mutation"
+            "type": "Blessing of Nurgle"
           },
           {
             "name": "Daemonic",
@@ -8485,7 +8485,7 @@
         "specials": [
           {
             "name": "Cloud of Flies",
-            "type": "Mutation"
+            "type": "Blessing of Nurgle"
           },
           {
             "name": "Swarm",
@@ -8613,7 +8613,7 @@
         "group": "Blessings of Nurgle",
         "special": {
           "name": "Stream of Corruption",
-          "type": "Mutation"
+          "type": "Blessing of Nurgle"
         },
         "cost": 25,
         "cost_note": "",
@@ -8631,7 +8631,7 @@
         "group": "Blessings of Nurgle",
         "special": {
           "name": "Nurgle's Rot",
-          "type": "Mutation"
+          "type": "Blessing of Nurgle"
         },
         "cost": 50,
         "cost_note": "",
@@ -8649,7 +8649,7 @@
         "group": "Blessings of Nurgle",
         "special": {
           "name": "Cloud of Flies",
-          "type": "Mutation"
+          "type": "Blessing of Nurgle"
         },
         "cost": 25,
         "cost_note": "",
@@ -8667,7 +8667,7 @@
         "group": "Blessings of Nurgle",
         "special": {
           "name": "Bloated Foulness",
-          "type": "Mutation"
+          "type": "Blessing of Nurgle"
         },
         "cost": 40,
         "cost_note": "",
@@ -8685,7 +8685,7 @@
         "group": "Blessings of Nurgle",
         "special": {
           "name": "Mark of Nurgle",
-          "type": "Mutation"
+          "type": "Blessing of Nurgle"
         },
         "cost": 35,
         "cost_note": "",
@@ -11106,7 +11106,7 @@
             "description": "Cold One Beasthounds may use the basic Leadership of the Beastmaster if they are within 6\" of him. They may never use the Leadership of the warband leader, nor may they benefit from the Beastmaster’s increased Leadership if he is within 6\" of the leader."
           },
           {
-            "name": "Scaly Skin",
+            "name": "Scaly Skin (Cold One Beasthounds)",
             "type": "Warband - Dark Elves",
             "description": "Cold One Beasthounds have tough scaly skin, and are considered to have a 6+ armour save. This save cannot be modified beyond 6 due to strength modifiers but any result of ‘no save’ on the Critical Hit chart will negate the unmodified 6+ save."
           },
@@ -18193,7 +18193,7 @@
         "lists": [],
         "specials": [
           {
-            "name": "Scaly skin",
+            "name": "Scaly Skin (Kroxigor)",
             "type": "Warband - Lizardmen",
             "description": "Kroxigor has a natural save of 4+."
           },
@@ -24648,8 +24648,8 @@
             "type": "Psychology"
           },
           {
-            "name": "Regeneration",
-            "type": "Warband - Night Goblins",
+            "name": "Regeneration (Troll)",
+            "type": "Warband - Night Goblins (web)",
             "description": "Trolls have a unique physiology that allow them to regenerate wounds. Whenever an enemy successfully inflicts a wound on a Troll roll a D6, on a result of 4 or more the wound is ignored and the Troll is unhurt. Trolls may not regenerate wounds caused by fire or fire-based magic. Trolls never roll for Injury after a battle."
           },
           {
@@ -25777,7 +25777,7 @@
             "type": "Psychology"
           },
           {
-            "name": "Regeneration",
+            "name": "Regeneration (Troll)",
             "type": "Warband - Night Goblins (web)",
             "description": "Trolls have a unique physiology that allow them to regenerate wounds. Whenever an enemy successfully inflicts a wound on a Troll roll a D6, on a result of 4 or more the wound is ignored and the Troll is unhurt. Trolls may not regenerate wounds caused by fire or fire-based magic. Trolls never roll for Injury after a battle."
           },
@@ -27344,8 +27344,8 @@
             "type": "Psychology"
           },
           {
-            "name": "Regeneration",
-            "type": "Warband - Orc Mob",
+            "name": "Regeneration (Troll)",
+            "type": "Warband - Night Goblins (web)",
             "description": "Trolls have a unique physiology that allow them to regenerate wounds. Whenever an enemy successfully inflicts a wound on a Troll roll a D6, on a result of 4 or more the wound is ignored and the Troll is unhurt. Trolls may not regenerate wounds caused by fire or fire-based magic. Trolls never roll for Injury after a battle."
           },
           {

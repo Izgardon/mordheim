@@ -95,6 +95,24 @@ class SharedSpecialsTests(SimpleTestCase):
         self.assertIn("| Fear (Max) | Max | An aura too. |", report)
         self.assertIn("- Cloud of Flies: Carnival: Blessings.", report)
 
+    def test_a_mutation_takes_its_pages_price_over_the_lists_and_a_new_one_the_lists_price_and_setting(self) -> None:
+        self.shared.entries[1]["cost"] = 30  # MiM's price for the Carnival's Cloud of Flies, say
+        beak = {"name": "Beak", "type": "Favour of Tchar", "text": "A bite.", "cost": 35, "aliases": []}
+        self.shared.entries.append({**beak, "setting": "mutiny-in-marienburg", "from": "MiM, p162"})
+        self.shared.unused.clear()
+        text = "The Tainted One is surrounded by flies."
+        upgrades = [{"group": "Blessings", "cost": 25, "special": {"name": "Cloud of Flies", "type": "Warband - Carnival", "description": text}}]  # fmt: skip
+        _share([], upgrades, "Carnival", self.shared)
+
+        out = {row["name"]: row for row in self.shared.output([FEAR])["specials"]}
+
+        self.assertEqual((out["Cloud of Flies"]["cost"], out["Cloud of Flies"]["setting"]), (25, None))  # the page's
+        self.assertEqual((out["Beak"]["cost"], out["Beak"]["setting"]), (35, "mutiny-in-marienburg"))
+        self.assertEqual((out["Fear"]["cost"], out["Fear"]["setting"]), (None, None))
+        report = render_shared(self.shared)
+        self.assertIn("List prices the pages differ from: Cloud of Flies: the list's 30 gc, the page's 25 gc (kept).", report)  # fmt: skip
+        self.assertIn("| Beak | Favour of Tchar | the list's text (MiM, p162) | 35 | mutiny-in-marienburg |", report)
+
     def test_an_owner_the_list_names_without_the_rule_and_a_page_selling_none_stop_the_build(self) -> None:
         with self.assertRaisesRegex(ValueError, "Max has no rule 'Fear'"):
             self.shared.output([FEAR])

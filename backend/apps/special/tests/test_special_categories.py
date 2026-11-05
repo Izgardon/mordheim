@@ -48,6 +48,9 @@ class BookCategoryTests(TestCase):
     def test_the_rules_apply_in_order(self):
         self.assertEqual(book_category("Regeneration", INJURY_TYPE), INJURY)  # the type before the name
         self.assertEqual(book_category("Tentacle", MUTATION_TYPE), MUTATION)  # the shared mutations
+        for family in ("Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar"):  # each family is a mutation's type
+            self.assertEqual(book_category("Regeneration", family), MUTATION)
+        self.assertEqual(book_category("Regeneration (Troll)", "Warband - Orc Mob"), BODY)  # a Troll's own
         self.assertEqual(book_category("Immune to Poison", MUTATION_TYPE), MUTATION)  # the type before the name
         self.assertEqual(book_category("Tentacle", CULT, "Mutations"), MUTATION)  # one the editor writes
         self.assertEqual(book_category("Tentacle", CULT), AURA)  # a fighter's rule of the name isn't bought
@@ -76,8 +79,8 @@ class BookCategoryTests(TestCase):
         own = BookLookups("Hired Sword").special({"name": "Hard to Kill", "description": "Tough."}, "Ogre Bodyguard")
         assert own is not None
         self.assertEqual((own.type, own.category), ("Hired Sword - Ogre Bodyguard", BODY))
-        stale = Special.objects.create(name="Regeneration", type="Monster")  # seeded before it had one: an aura
-        found = BookLookups().special("Regeneration", "Troll")
+        stale = Special.objects.create(name="Hard Head", type="Monster")  # seeded before it had one: an aura
+        found = BookLookups().special("Hard Head", "Troll")
         assert found is not None
         stale.refresh_from_db()
         self.assertEqual((found.id, stale.category), (stale.id, BODY))
