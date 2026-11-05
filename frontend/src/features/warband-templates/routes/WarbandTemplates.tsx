@@ -23,15 +23,12 @@ const counted = (count: number) => `${count} warband type${count === 1 ? "" : "s
 type Making = { forType?: { id: number; name: string } } | null;
 
 /** An open row of a type no template serves: Make a template, for those who edit the catalogue. */
-function NoTemplate({ row, onMake }: { row: TemplateTypeRow; onMake?: () => void }) {
+function NoTemplate({ row, onMake }: { row: TemplateTypeRow; onMake: () => void }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 px-4 py-4">
-      <span className="text-sm text-text2">No template.</span>
-      {onMake ? (
-        <Button variant="secondary" className="min-h-10" onClick={onMake}>
-          Make a template for {row.typeName}
-        </Button>
-      ) : null}
+    <div className="px-4 py-4">
+      <Button variant="secondary" className="min-h-10" onClick={onMake}>
+        Make a template for {row.typeName}
+      </Button>
     </div>
   );
 }
@@ -140,16 +137,12 @@ export default function WarbandTemplates() {
                 isMobile={isMobile}
                 onEdit={canEdit ? () => setEditing(row.template?.id ?? null) : undefined}
               />
-            ) : (
+            ) : canEdit ? (
               <NoTemplate
                 row={row}
-                onMake={
-                  canEdit
-                    ? () => setMaking({ forType: { id: row.typeId, name: row.typeName } })
-                    : undefined
-                }
+                onMake={() => setMaking({ forType: { id: row.typeId, name: row.typeName } })}
               />
-            )}
+            ) : null}
           </ReferenceRow>
         ))}
       </ReferenceList>
