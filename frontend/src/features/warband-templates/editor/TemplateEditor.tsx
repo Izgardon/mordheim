@@ -10,6 +10,7 @@ import BasicsSection from "./BasicsSection";
 import EditorActions from "./EditorActions";
 import { changeNote, factsLine, SECTIONS, warningsFor } from "./editor-facts";
 import FightersSection from "./FightersSection";
+import ListsSection from "./ListsSection";
 import type { SectionProps } from "./section-props";
 
 type TemplateEditorProps = {
@@ -24,6 +25,7 @@ type TemplateEditorProps = {
 const SECTION_VIEWS: Partial<Record<EditorSection, (props: SectionProps) => JSX.Element>> = {
   basics: BasicsSection,
   fighters: FightersSection,
+  lists: ListsSection,
 };
 
 /** The section chips, each with its warnings' count. */
