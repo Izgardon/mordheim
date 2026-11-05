@@ -30,13 +30,12 @@ export const CATEGORY_FILTERS: { id: CategoryFilter; label: string }[] = [
 export const categoryOf = (special: Special): SpecialCategory => special.category ?? "aura";
 
 /**
- * The Boons & Banes the reference lists: those in play in the campaign that are general rules or
- * a warband's, not a hired sword's or dramatis persona's own (theirs show with them).
+ * The Boons & Banes the reference lists: the general rules in play in the campaign, as the pickers
+ * offer. A warband's, hired sword's or dramatis persona's own rules show with them (the Warbands
+ * page, the hired swords).
  */
 export const referenceSpecials = (specials: Special[]) =>
-  inPlayOnly(specials).filter(
-    (special) => !special.owner_kind || ["general", "warband"].includes(special.owner_kind)
-  );
+  inPlayOnly(specials).filter((special) => !special.owner_kind || special.owner_kind === "general");
 
 type BoonBaneFilters = {
   query: string;

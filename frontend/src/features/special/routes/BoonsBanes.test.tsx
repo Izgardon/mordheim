@@ -100,18 +100,18 @@ afterEach(() => {
 });
 
 describe("The Boons & Banes page", () => {
-  it("lists the general and warband rules in play with type, price and setting", async () => {
+  it("lists the general rules in play with type, price and setting", async () => {
     const user = setupUser();
     renderApp(PAGE);
 
     expect(await row("Spiked Tail")).toHaveTextContent("Spiked TailMutation35 gcMordheim");
     expect(names()).toEqual([
-      "CrazedWarband - Cult of the PossessedMordheim",
       "FearPsychologyMordheim",
       "Old Battle WoundInjuryMordheim",
       "Spiked TailMutation35 gcMordheim",
     ]);
-    expect(screen.getByText("4 boons and banes shown")).toBeInTheDocument();
+    expect(screen.getByText("3 boons and banes shown")).toBeInTheDocument();
+    expect(screen.queryByText("Crazed")).toBeNull();
     expect(screen.queryByRole("button", { name: "Add" })).toBeNull();
 
     await user.click(await row("Old Battle Wound"));
@@ -126,8 +126,8 @@ describe("The Boons & Banes page", () => {
     await row("Fear");
     const search = screen.getByRole("searchbox", { name: "Search boons and banes" });
 
-    await user.type(search, "leadership");
-    expect(names()).toEqual(["CrazedWarband - Cult of the PossessedMordheim"]);
+    await user.type(search, "battle");
+    expect(names()).toEqual(["Old Battle WoundInjuryMordheim"]);
     await user.clear(search);
     await user.type(search, "psychology");
     expect(names()).toEqual(["FearPsychologyMordheim"]);

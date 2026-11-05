@@ -55,8 +55,6 @@ describe("Search everything's Boons & Banes", () => {
       ["Scorpion Tail", "Mutation", "boons-banes?open=2"],
       ["Spiked Tail", "Mutation", "boons-banes?open=1"],
     ]);
-    expect(searchEverything("crazed", { ...nothing, specials })[0].hits[0].to).toBe(
-      "boons-banes?open=5"
-    );
+    expect(searchEverything("crazed", { ...nothing, specials })).toEqual([]);
   });
 });
