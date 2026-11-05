@@ -12,7 +12,7 @@ campaign is refused (BUG-147); shared item rules list the book's and the campaig
 
 from typing import TYPE_CHECKING, Any
 
-from django.db.models import Model, Q, QuerySet
+from django.db.models import Model, Q, QuerySet, RestrictedError
 from django.http import QueryDict
 from rest_framework.exceptions import APIException, NotFound, PermissionDenied
 from rest_framework.request import Request
@@ -254,8 +254,10 @@ class RaceHooks(CatalogueHooks):
 
 
 class WarbandTemplateHooks(CatalogueHooks):
-    """Warband templates (the templates plan, phase 1b): read only for now. A list row carries the warband types the
-    template serves, each saying whether it is in play in the list's campaign; the detail reads the whole template."""
+    """Warband templates (the templates plan, phase 1b; written by the editor's own routes, phase 4). A list row carries
+    the warband types the template serves, each saying whether it is in play in the list's campaign; the detail reads
+    the whole template. Nothing holds one (units keep a fighter's key), so a campaign's own is archived rather than
+    deleted while a warband of the campaign uses it."""
 
     def listed(
         self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
@@ -264,6 +266,13 @@ class WarbandTemplateHooks(CatalogueHooks):
 
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
         return template_details(self.rows(kind))
+
+    def delete(self, entry: Any) -> None:
+        from apps.warband_templates.services.editor import users  # the registry imports the templates app
+
+        if entry.campaign_id is not None and users(entry, entry.campaign_id):
+            raise RestrictedError("A warband of the campaign uses this template.", set())
+        entry.delete()
 
 
 class ItemRuleHooks(CatalogueHooks):

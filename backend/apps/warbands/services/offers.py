@@ -31,7 +31,8 @@ def _setting(entry: Model) -> str:
     return str(setting.name) if setting is not None else "Its setting"
 
 
-def _items(campaign_id: int, buyer: Buyer) -> list[dict[str, Any]]:
+def item_offers(campaign_id: int, buyer: Buyer) -> list[dict[str, Any]]:
+    """Each of the campaign's current items' offer to the buyer (a warband, or a template's types: the editor)."""
     from apps.core.catalogue.kinds import ITEMS  # the registry imports the warbands app
 
     rows = ItemAvailability.objects.order_by("id").prefetch_related("warband_links")
@@ -74,7 +75,7 @@ def who_can(warband: Warband) -> dict[str, Any]:
     buyer, campaign_id = buyer_of(warband), warband.campaign_id
     group_ids, special_ids = _skill_groups(campaign_id, buyer)
     return {
-        "items": _items(campaign_id, buyer),
+        "items": item_offers(campaign_id, buyer),
         "hired_swords": _hirelings(HIRED_SWORDS, campaign_id, buyer),
         "dramatis_personae": _hirelings(DRAMATIS_PERSONAE, campaign_id, buyer),
         "skill_group_ids": group_ids,

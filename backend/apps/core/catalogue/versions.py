@@ -84,19 +84,33 @@ def retire(kind: CatalogueKindSpec, campaign_id: int, versions: list[Any]) -> No
     kind.model._default_manager.filter(pk__in=list(id_map)).delete()
 
 
-def copy_entry(kind: CatalogueKindSpec, source: Model, campaign_id: int) -> Model:
-    """A copy of the book entry `source` in the campaign, replacing it, with every child row (parents first)."""
-    clone = _copied(source, None, campaign_id, replaces_id=source.pk)
+def copy_entry(
+    kind: CatalogueKindSpec,
+    source: Model,
+    campaign_id: int,
+    *,
+    version: bool = True,
+    skip: tuple[str, ...] = (),
+    **changes: Any,
+) -> Model:
+    """A copy of `source` in the campaign with every child row (parents first) but the paths in `skip` (and theirs):
+    the book entry's version, replacing it, or with `version` off an entry of the campaign's own (a warband template
+    copied in the editor), with `changes` to its own fields. The copy keeps each copied child row's id -> its copy's,
+    by path (`copied_ids`), so the write that made it can find the rows it was sent."""
+    clone = _copied(source, None, campaign_id, replaces_id=source.pk if version else None, **changes)
     _point_at_versions([clone], campaign_id, skip="replaces_id")
     clone.save(force_insert=True)
     copied: dict[str, dict[Any, Any]] = {"": {source.pk: clone.pk}}
     siblings: dict[Any, dict[Any, Any]] = {}  # child model -> old id -> new, for links between child rows
     for path in kind.children:
         parent, _, name = path.rpartition("__")
+        if any(path == left or path.startswith(f"{left}__") for left in skip):
+            continue
         relation = _model_at(kind.model, parent)._meta.get_field(name)
         assert isinstance(relation, ForeignObjectRel)
         copied[path] = _copy_children(relation, copied[parent], campaign_id, siblings)
         siblings.setdefault(relation.related_model, {}).update(copied[path])
+    clone.copied_ids = copied  # type: ignore[attr-defined]
     return clone
 
 

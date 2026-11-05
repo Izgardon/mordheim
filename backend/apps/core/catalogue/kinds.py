@@ -335,7 +335,7 @@ DRAMATIS_PERSONAE = CatalogueKindSpec(
     children=HIRELING_LINKS,
     hooks=HirelingProfileHooks(DramatisPersona),
 )
-WARBAND_TEMPLATES = CatalogueKindSpec(  # read only until the template editor (the templates plan, phase 4)
+WARBAND_TEMPLATES = CatalogueKindSpec(  # written by the template editor's own routes (the templates plan, phase 4)
     key="warband_templates",
     noun="warband template",
     model=WarbandTemplate,
@@ -345,6 +345,7 @@ WARBAND_TEMPLATES = CatalogueKindSpec(  # read only until the template editor (t
     named=True,
     versioned=True,
     filters={"search": NAME_AND_TYPE["search"]},
+    lists=("warband_templates", "specials"),  # an editor write may add the template's own specials
     children=(  # parents first: a fighter's lists point at the copy's lists (versions.py)
         "type_links",
         "rules",

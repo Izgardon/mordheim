@@ -19,6 +19,7 @@ from apps.campaigns.access import CAMPAIGN_RULES
 from apps.campaigns.models import Campaign
 from apps.core.catalogue.kinds import CATALOGUE_KINDS, LIST_KINDS
 from apps.core.catalogue.views import CatalogueScopedView
+from apps.warband_templates.tests.editor_support import fighter_body
 from apps.warband_templates.tests.support import make_template
 from apps.warbands.models import WarbandType
 
@@ -103,7 +104,7 @@ class CatalogueAccessFixture(CatalogueTestCase):
         ]
 
     def template_rows(self) -> list[Row]:
-        """The warband templates, read only: their lists and entries, and Revert, restore and usage."""
+        """The warband templates: their lists and entries, Revert, restore and usage, and the editor's routes."""
         spare = WarbandType.objects.create(name="Spare", slug="spare")
         book = make_template("Book Template", item=self.book_axe, race=self.human, warband_type=self.mercenaries)
         house = make_template(
@@ -136,6 +137,41 @@ class CatalogueAccessFixture(CatalogueTestCase):
             ("GET", f"{house_url}usage/", None, member),
             ("GET", f"{book_url}usage/?campaign_id={campaign}", None, member),
             ("GET", f"{book_url}usage/", None, (400,) * 5),
+            *self.editor_rows(book.template.id, house.template.id, version.template.id),
+        ]
+
+    def editor_rows(self, book_id: int, house_id: int, version_id: int) -> list[Row]:
+        """The template editor's routes (phase 4): making one, its reads and each section's save, and deleting."""
+        url, campaign, member = "/api/warband-templates/", self.campaign.id, (200, 200, 200, 200, 404)
+        book_url, house_url = f"{url}{book_id}/", f"{url}{house_id}/"
+        made, deleter = (201, 201, 201, 201, 404), (403, 200, 200, 200, 404)
+        variants = [{"key": "reikland", "name": "Reikland"}, {"key": "middenheim", "name": "Middenheim"}]
+        types = [{"id": self.mercenaries.id, "variant": "reikland"}]
+        basics = {"setting_id": None, "starting_gold": 500, "max_models": 15, "variants": variants, "types": types}
+        on_book = {"campaign_id": campaign}
+        return [
+            ("POST", url, {"campaign_id": campaign, "name": "New Template"}, made),
+            ("GET", f"{house_url}editor/", None, member),
+            ("GET", f"{book_url}editor/?campaign_id={campaign}", None, member),
+            ("GET", f"{book_url}editor/", None, (400,) * 5),
+            ("GET", f"{house_url}who-can/", None, member),
+            ("GET", f"{book_url}who-can/?campaign_id={campaign}", None, member),
+            ("PUT", f"{house_url}basics/", {"name": "House Template", **basics}, member),
+            ("PUT", f"{book_url}basics/", {"name": "Book Template", **basics, **on_book}, member),  # the house version
+            ("PUT", f"{book_url}basics/", {"name": "Book Template", **basics}, (403,) * 5),
+            ("POST", f"{house_url}fighters/", fighter_body(kind="henchman"), made),
+            ("PUT", f"{house_url}fighters/captain/", fighter_body(name="Captain"), member),
+            ("PUT", f"{book_url}fighters/captain/", {**fighter_body(name="Captain"), **on_book}, member),
+            ("DELETE", f"{house_url}fighters/warriors/", None, member),
+            ("POST", f"{house_url}lists/", {"name": "Extra list"}, made),
+            ("PUT", f"{house_url}lists/kit/", {"name": "Kit list"}, member),
+            ("DELETE", f"{house_url}lists/kit/", None, member),
+            ("PUT", f"{house_url}rules/", {"rules": [{"title": "Hard Bargains"}]}, member),
+            ("PUT", f"{house_url}upgrades/", {"upgrades": []}, member),
+            ("DELETE", house_url, None, deleter),  # a warband uses it: archived
+            ("DELETE", f"{book_url}?campaign_id={campaign}", None, deleter),  # removed for the campaign
+            ("DELETE", book_url, None, (403,) * 5),
+            ("DELETE", f"{url}{version_id}/", None, (403, 409, 409, 409, 404)),  # a version is reverted
         ]
 
     def matrix(self) -> list[Row]:
@@ -194,7 +230,7 @@ def catalogue_patterns() -> list[URLPattern]:
         for entry in get_resolver(f"apps.{app}.urls").url_patterns
         if isinstance(entry, URLPattern)
     ]
-    assert len(patterns) == 51, [pattern.name for pattern in patterns]
+    assert len(patterns) == 60, [pattern.name for pattern in patterns]
     return patterns
 
 

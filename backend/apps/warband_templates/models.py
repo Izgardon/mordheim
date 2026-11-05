@@ -42,6 +42,9 @@ class WarbandTemplate(CatalogueEntry):
     source = models.CharField(max_length=200, blank=True, default="")  # "Mordheim Rulebook"
     link_url = models.URLField(max_length=500, blank=True, default="")  # mordheimer's page
     notes = models.TextField(max_length=4000, blank=True, default="")  # editor's notes
+    copied_from = models.ForeignKey(  # a campaign's own template made as a copy (the editor, phase 4)
+        "self", related_name="+", null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     class Meta:
         db_table = "warband_template"
@@ -74,8 +77,8 @@ class WarbandTemplate(CatalogueEntry):
 
 class WarbandTemplateType(models.Model):
     """A warband type the template serves, and the variant that type always is (Reiklanders: reikland; blank: the
-    player picks one when raising). `campaign` is the template's, so a type has one template in the book and one in
-    each campaign (the campaign's own, or its house version of the book's)."""
+    player picks one when raising). `campaign` is the template's. A type has one template in the book; a campaign's
+    own templates may serve a type twice, which the editor warns about (the resolver takes the campaign's oldest)."""
 
     template = models.ForeignKey(WarbandTemplate, related_name="type_links", on_delete=models.CASCADE)
     campaign = models.ForeignKey(
@@ -89,8 +92,9 @@ class WarbandTemplateType(models.Model):
         ordering = ["id"]
         constraints = [
             models.UniqueConstraint(
-                fields=["campaign", "warband_type"], name="warband_template_type_once", nulls_distinct=False
+                fields=["warband_type"], condition=models.Q(campaign__isnull=True), name="warband_template_type_book"
             ),
+            models.UniqueConstraint(fields=["template", "warband_type"], name="warband_template_type_unique"),
         ]
 
     def __str__(self) -> str:

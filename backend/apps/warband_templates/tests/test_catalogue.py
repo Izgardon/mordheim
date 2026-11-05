@@ -14,6 +14,7 @@ from apps.items.tests.catalogue_support import RACES as RACE_KIND
 from apps.items.tests.catalogue_support import CatalogueTestCase, make_entry
 from apps.races.models import Race
 from apps.warband_templates.models import TemplateFighter, TemplateFighterList, TemplateListItem, WarbandTemplate
+from apps.warbands.models import WarbandType
 
 from .support import Made, make_template
 
@@ -90,8 +91,9 @@ class TemplateVersionTests(CatalogueTestCase):
         self.assertTrue(shown())
 
     def test_a_campaigns_own_template_is_deleted_with_its_rows(self):
+        watch = WarbandType.objects.create(name="Night Watch", slug="night-watch", campaign=self.campaign)
         own = make_template(
-            "Night Watch", item=self.book_axe, race=self.human, warband_type=self.mercenaries, campaign=self.campaign
+            "Night Watch", item=self.book_axe, race=self.human, warband_type=watch, campaign=self.campaign
         )
         body = archive.delete_entry(WARBAND_TEMPLATES, own.template, self.campaign.id, self.owner)
         self.assertIsNone(body)

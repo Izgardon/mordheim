@@ -27,21 +27,27 @@ VARIANT_FIELDS = frozenset(
 )
 
 
+def in_campaign(campaign_id: int) -> QuerySet[WarbandTemplate]:
+    """The templates that serve in the campaign: its own, and the book's it hasn't replaced or removed, none archived,
+    the campaign's own first (the oldest first: the editor warns when two serve one type)."""
+    ref = OuterRef("pk")
+    replaced = WarbandTemplate.objects.filter(campaign_id=campaign_id, replaces_id=ref)
+    removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=KIND, entry_id=ref)
+    book = Q(campaign__isnull=True) & ~Exists(replaced) & ~Exists(removed)
+    rows = WarbandTemplate.objects.filter(Q(campaign_id=campaign_id) | book, archived_at__isnull=True)
+    return rows.order_by(F("campaign_id").asc(nulls_last=True), "id")
+
+
 def templates_for_type(campaign_id: int, warband_type_id: int | None) -> QuerySet[WarbandTemplate]:
     """The templates serving the type in the campaign, the campaign's own first, each with the variant the type
     presets (`preset_variant`, blank: picked when raising). One query when read."""
     if warband_type_id is None:
         return WarbandTemplate.objects.none()
-    ref = OuterRef("pk")
-    replaced = WarbandTemplate.objects.filter(campaign_id=campaign_id, replaces_id=ref)
-    removed = CatalogueRemoval.objects.filter(campaign_id=campaign_id, kind=KIND, entry_id=ref)
-    book = Q(campaign__isnull=True) & ~Exists(replaced) & ~Exists(removed)
-    preset = WarbandTemplateType.objects.filter(template_id=ref, warband_type_id=warband_type_id).values("variant")
-    rows = WarbandTemplate.objects.filter(
-        Q(campaign_id=campaign_id) | book, archived_at__isnull=True, type_links__warband_type_id=warband_type_id
-    )
-    found: QuerySet[WarbandTemplate] = rows.annotate(preset_variant=Subquery(preset[:1])).order_by(
-        F("campaign_id").asc(nulls_last=True), "id"
+    preset = WarbandTemplateType.objects.filter(template_id=OuterRef("pk"), warband_type_id=warband_type_id)
+    found: QuerySet[WarbandTemplate] = (
+        in_campaign(campaign_id)
+        .filter(type_links__warband_type_id=warband_type_id)
+        .annotate(preset_variant=Subquery(preset.values("variant")[:1]))
     )
     return found
 

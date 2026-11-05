@@ -25,6 +25,7 @@ NAME_CONSTRAINTS = frozenset(
         "bestiary_entry_unique_name",
         "hired_sword_unique_name",
         "dramatis_persona_unique_name",
+        "warband_template_unique_name",
     }
 )
 

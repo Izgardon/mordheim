@@ -76,13 +76,14 @@ class WarbandTemplateApiTests(CatalogueTestCase):
         self.assertEqual((row["id"], row["replaces"], row["gold"]), (version.pk, self.made.template.pk, 600))
         self.assertEqual([entry["name"] for entry in row["types"]], ["Mercenaries", "Ostermarkers"])
 
-    def test_an_outsider_reads_no_campaigns_list_and_nothing_is_written(self) -> None:
+    def test_an_outsider_reads_no_campaigns_list_and_writes_nothing(self) -> None:
         self.assertEqual(self.get(f"{LIST}?campaign_id={self.campaign.id}", self.outsider).status_code, 404)
-        self.client.force_authenticate(user=self.owner)
+        self.client.force_authenticate(user=self.outsider)
         body = {"campaign_id": self.campaign.id, "name": "Night Watch"}
-        self.assertEqual(self.client.post(LIST, body, format="json").status_code, 405)
+        self.assertEqual(self.client.post(LIST, body, format="json").status_code, 404)
+        self.client.force_authenticate(user=self.owner)
         detail = f"{LIST}{self.made.template.id}/?campaign_id={self.campaign.id}"
-        self.assertEqual(self.client.patch(detail, body, format="json").status_code, 405)
+        self.assertEqual(self.client.patch(detail, body, format="json").status_code, 405)  # the editor's routes write
 
     def test_a_template_reads_whole(self) -> None:
         TemplateUpgrade.objects.filter(template=self.made.template).update(who={"fighters": ["warriors"]})
