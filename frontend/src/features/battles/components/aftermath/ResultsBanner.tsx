@@ -23,7 +23,8 @@ function startingWinners(state: BattleState) {
 
 /**
  * The results (decision 4): waiting for the last player to finish, or Confirm results for him or
- * a battle manager, which picks the winners (none is No winner); changeable until the battle ends.
+ * a battle manager, which picks the winners (none is No winner); changeable until the battle ends,
+ * which is once every aftermath is done (the fight has ended already, so the banner says so).
  */
 export default function ResultsBanner({
   state,
@@ -47,7 +48,7 @@ export default function ResultsBanner({
       ? "Everyone has finished fighting. Confirm who won: the battle ends once the results are confirmed and every aftermath is done."
       : `Waiting for ${confirmer?.user.label ?? "the last player to finish"} to confirm the results.`
     : results.canConfirm
-      ? `Results confirmed: ${confirmed.length ? `${confirmed.join(" and ")} won` : "no winner"}. You can change them until the battle ends.`
+      ? `Results confirmed: ${confirmed.length ? `${confirmed.join(" and ")} won` : "no winner"}. You can change them until every aftermath is done.`
       : null;
   if (!text) return null;
   const open = (next: boolean) => {
