@@ -138,6 +138,13 @@ export function xpBlock(row: XpRow) {
   return { boxes, next, canAdvance: crossed.length > done, at: crossed[done] ?? null };
 }
 
+/** The advances this battle's XP brings him that aren't rolled yet (none for one who gains no XP). */
+export function advancesWaiting(row: XpRow) {
+  if (!row.canGainXp) return 0;
+  const crossed = row.thresholds.filter((at) => at > row.from && at <= Math.floor(row.to)).length;
+  return Math.max(0, crossed - row.advances.length);
+}
+
 /** How an advance reads: "+1 Toughness", "New skill", "The lad's got talent". */
 export function advanceLabel(id: string) {
   if (id === "LGT") return "The lad's got talent";

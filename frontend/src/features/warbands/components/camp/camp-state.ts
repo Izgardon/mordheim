@@ -1,5 +1,9 @@
 import { injuryRows } from "@/features/battles/components/aftermath/aftermath-injuries";
-import { buildXpRows, xpBlock } from "@/features/battles/components/aftermath/aftermath-xp";
+import {
+  advancesWaiting,
+  buildXpRows,
+  xpBlock,
+} from "@/features/battles/components/aftermath/aftermath-xp";
 import type { BattlePostbattleState } from "@/features/battles/types/battle-types";
 
 import type { OpenCamp } from "./camp-types";
@@ -66,7 +70,11 @@ export function aftermathDone(camp: OpenCamp) {
 
 const last = <T>(list: T[]) => list[list.length - 1];
 
-/** The Ready confirm's headline results (design E): deaths, advances, injuries, gold, shards. */
+/**
+ * The Ready confirm's headline results (design E): deaths, advances (those rolled, and the units
+ * with one waiting, which their card offers after Ready: information, never a block), injuries,
+ * gold, shards.
+ */
 export function readySummary(camp: OpenCamp) {
   const draft: BattlePostbattleState = camp.draft;
   const results = Object.values(draft.unit_results);
@@ -88,6 +96,16 @@ export function readySummary(camp: OpenCamp) {
       (r) =>
         `${r.unit_kind === "henchman" ? r.group_name : r.unit_name}: ${r.advances!.map((a) => a.label).join(", ")}`
     );
+  const waiting = buildXpRows(
+    draft,
+    camp.postgame.sheet,
+    camp.campaign,
+    camp.battleState.suggested_postbattle
+  ).flatMap((row) => {
+    const count = advancesWaiting(row);
+    if (!count) return [];
+    return [`${row.name}: ${count === 1 ? "advance" : `${count} advances`} waiting`];
+  });
   const injuries = results
     .filter((r) => !r.dead && r.serious_injury_rolls.length)
     .map((r) => {
@@ -105,7 +123,7 @@ export function readySummary(camp: OpenCamp) {
     .map((line) => `${line.amount} ${line.resource}`);
   return [
     { k: "Deaths", v: deaths.join(", ") || "None" },
-    { k: "Advances", v: advances.join(" · ") || "None" },
+    { k: "Advances", v: [...advances, ...waiting].join(" · ") || "None" },
     { k: "Injuries", v: injuries.join(" · ") || "None" },
     { k: "Gold", v: `${camp.gold} → ${after} gc` },
     ...(inKind.length ? [{ k: "Upkeep", v: inKind.join(", ") }] : []),
