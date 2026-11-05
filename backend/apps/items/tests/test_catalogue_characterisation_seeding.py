@@ -264,6 +264,17 @@ class SeedAllTests(TestCase):
         kroxigor = Race.objects.get(name="Kroxigor")  # his profile: he never gains experience
         self.assertEqual((kroxigor.movement, kroxigor.strength, kroxigor.toughness, kroxigor.wounds), (6, 5, 4, 3))
 
+    def test_the_dramatis_personae_are_named_in_one_casing(self):
+        # the review (5 Nov 2026: D2): "Aenur, the sword of twilight", "Crow Master, The" and "Drenok Johansen,
+        # Wielder Of The Great Axe" (overrides.json persona_names); their own rules' types follow their names
+        names = set(DramatisPersona.objects.values_list("name", flat=True))
+        wanted = {"Aenur, the Sword of Twilight", "The Crow Master", "Drenok Johansen, Wielder of the Great Axe"}
+        self.assertLessEqual(wanted, names)
+        self.assertEqual({name for name in names if re.search(r" (Of|The|In|From)\b|, The |­", name)}, set())
+        self.assertFalse(Special.objects.filter(type__startswith="Dramatis Persona - Crow Master").exists())
+        maximilian = DramatisPersona.objects.get(name="Maximilian the Mad")
+        self.assertTrue(maximilian.special_links.filter(special__name="Fear (Maximilian)").exists())  # still his own
+
     def test_a_race_is_named_in_the_singular(self):
         # the review (5 Nov 2026: D10): "Skinks" and "Centigors" beside Human and Saurus; Other Beastmen stays (the plan)
         self.assertFalse(Race.objects.filter(name__in=("Skinks", "Centigors")).exists())

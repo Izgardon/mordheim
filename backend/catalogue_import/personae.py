@@ -185,3 +185,18 @@ def build_personae(
     """``out/dramatis-personae.json``: every one of mordheimer's dramatis personae, by name."""
     rows = [persona_row(entry, catalogue, in_rules) for entry in personae if clean_inline(entry.get("name"))]
     return sorted(rows, key=lambda row: row["name"].lower())
+
+
+def put_names_right(personae: list[dict[str, Any]], names: dict[str, str]) -> None:
+    """William's names for mordheimer's dramatis personae (overrides.json "persona_names", the review, 5 Nov 2026: one
+    casing, "Aenur, the Sword of Twilight", "The Crow Master"), set on the source's rows before anything reads them,
+    so the seed rows, who may hire them and their settings all name them so; one naming nobody stops the build."""
+    found = set()
+    for entry in personae:
+        name = clean_inline(entry.get("name"))
+        if name in names:
+            entry["name"] = names[name]
+            found.add(name)
+    missing = sorted(set(names) - found)
+    if missing:
+        raise ValueError(f"overrides.json persona_names: no dramatis persona {', '.join(missing)}")

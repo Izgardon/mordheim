@@ -33,9 +33,8 @@ class ReportData:
     hiring_log: Any
     skill_lists: Any
     skill_groups: Any  # new_groups.SkillGroups
-    renamed: dict[str, dict[str, str]] = field(
-        default_factory=dict
-    )  # kind -> the source's name -> ours (overrides.json)
+    # kind -> the source's name -> ours (overrides.json warband_type_names, persona_names)
+    renamed: dict[str, dict[str, str]] = field(default_factory=dict)
 
 
 def _cell(value: object) -> str:

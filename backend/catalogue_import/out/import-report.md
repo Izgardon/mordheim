@@ -118,6 +118,19 @@ Names put right in overrides.json (`warband_type_names`, `persona_names`):
 | warband type | Survivors Of Strigos | Survivors of Strigos |
 | warband type | The Brood Of Ghurash | The Brood of Ghurash |
 | warband type | Wood Elves, The Asrai Way-farers | Wood Elves, the Asrai Way-farers |
+| dramatis persona | Aenur, the sword of twilight | Aenur, the Sword of Twilight |
+| dramatis persona | Belandysh, Condemned Champion Of Chen | Belandysh, Condemned Champion of Chen |
+| dramatis persona | Bertha Bestraufrung, high matriarch of the sisterhood | Bertha Bestraufrung, High Matriarch of the Sisterhood |
+| dramatis persona | Crow Master, The | The Crow Master |
+| dramatis persona | Dijin Katal, The Renegade Assassin | Dijin Katal, the Renegade Assassin |
+| dramatis persona | Drenok Johansen, Wielder Of The Great Axe | Drenok Johansen, Wielder of the Great Axe |
+| dramatis persona | Johann the knife | Johann the Knife |
+| dramatis persona | Khar-mel The Djinn | Khar-mel the Djinn |
+| dramatis persona | Maximilian The Mad | Maximilian the Mad |
+| dramatis persona | Nicodemus, the cursed pilgrim | Nicodemus, the Cursed Pilgrim |
+| dramatis persona | Penthesilea, Mark Of The Serpent | Penthesilea, Mark of the Serpent |
+| dramatis persona | Veskit, high executioner of clan eshin | Veskit, High Executioner of Clan Eshin |
+| dramatis persona | William Schäke­stange, Master Bard | William Schäkestange, Master Bard |
 
 ## Same-name list
 
@@ -256,17 +269,17 @@ Fees that aren't plain numbers, as structured fees (kind, gold, D6, resources an
 | hired swords | Wolf Priest of Ulric | Hero | takes a hero's place | n/a | none |
 | hired swords | Bone Goliath | 225 | 225 gc | n/a | none |
 | hired swords | Ninja | 70 +3D6 | 70 gc + 3D6 | n/a | none |
-| dramatis personae | Aenur, the sword of twilight | 150 | 150 gc | n/a | none |
-| dramatis personae | Bertha Bestraufrung, high matriarch of the sisterhood | n/a | special (see the rules) | n/a | none |
+| dramatis personae | Aenur, the Sword of Twilight | 150 | 150 gc | n/a | none |
+| dramatis personae | Bertha Bestraufrung, High Matriarch of the Sisterhood | n/a | special (see the rules) | n/a | none |
 | dramatis personae | Countess Marianna Chevaux, Vampire Assassin | 150 | 150 gc | 75 gc* | 75 gc; note: 75 gc* |
-| dramatis personae | Nicodemus, the cursed pilgrim | 1 wyrdstone | 1 Wyrdstone | 1 wyrdstone | 1 Wyrdstone |
+| dramatis personae | Nicodemus, the Cursed Pilgrim | 1 wyrdstone | 1 Wyrdstone | 1 wyrdstone | 1 Wyrdstone |
 | dramatis personae | Ulli & Marquand | 30 | 30 gc | n/a | none |
 | dramatis personae | Dark Emissary | n/a | special (see the rules) | n/a | none |
-| dramatis personae | Dijin Katal, The Renegade Assassin | 85 | 85 gc | n/a | none |
+| dramatis personae | Dijin Katal, the Renegade Assassin | 85 | 85 gc | n/a | none |
 | dramatis personae | Heinrich 'Altdorf' Schmidt | 75 | 75 gc | 1 treasure | 1 Treasure |
-| dramatis personae | Penthesilea, Mark Of The Serpent | n/a | special (see the rules) | n/a | none |
+| dramatis personae | Penthesilea, Mark of the Serpent | n/a | special (see the rules) | n/a | none |
 | dramatis personae | Truthsayer | n/a | special (see the rules) | n/a | none |
-| dramatis personae | Belandysh, Condemned Champion Of Chen | 90 gc and 5 campaign points | 90 gc + 5 Campaign points | 30 gc and 1 campaign point | 30 gc + 1 Campaign points |
+| dramatis personae | Belandysh, Condemned Champion of Chen | 90 gc and 5 campaign points | 90 gc + 5 Campaign points | 30 gc and 1 campaign point | 30 gc + 1 Campaign points |
 | dramatis personae | Grand Master Ippan Shu | 75 gc and 3 campaign points | 75 gc + 3 Campaign points | 2 campaign points | 2 Campaign points |
 | dramatis personae | Innominatus, the Tilean Gladiator | 120 | 120 gc | 40 gc* | 40 gc; note: 40 gc* |
 | dramatis personae | Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne | 30 | special (see the rules); note: All warbands devoted to Chaos (such as the Cult of Possessed and Beastmen Raiders) may attempt to hire Aksho'akhash by having a spell-caster in the warband attempt a summoning ritual once after each game. The spell-caster must possess the Macabre Tome from the ‘Flurry of Furies’ scenario (see the previous page), pay the hiring fee*, and pass a Leadership test. If the ritual is successful, the Macabre Tome is destroyed and the Daemon is summoned. | 30 | 30 gc |
@@ -662,7 +675,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 ### Merged
 
-- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel The Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
 - Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
 - Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
@@ -685,13 +698,13 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Rule | Owners | Why |
 | --- | --- | --- |
-| Fear (Maximilian) | Maximilian The Mad | His warband's models within 3" of him are immune to fear. |
+| Fear (Maximilian) | Maximilian the Mad | His warband's models within 3" of him are immune to fear. |
 | Stupidity (Rat Ogre) | Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre | Not stupid while a Skaven Hero is within 6". |
 | Stupidity (Cold One Beasthounds) | Dark Elves: Cold One Beasthound | Tests on the Beastmaster's Leadership within 6" of him. |
 | Immune to Psychology (Plague Bearers) | Carnival of Chaos: Plague Bearer | Automatically passes every Leadership-based test, rout tests included. |
 | Immune to Psychology (Nurglings) | Carnival of Chaos: Nurgling | Automatically passes every Leadership-based test, rout tests included. |
 | Immune to Psychology (Plague Cart) | Carnival of Chaos: Plague Cart | Automatically passes every Leadership-based test, rout tests included. |
-| Immune to Psychology (Belandysh) | Belandysh, Condemned Champion Of Chen | Automatically passes all Leadership tests. |
+| Immune to Psychology (Belandysh) | Belandysh, Condemned Champion of Chen | Automatically passes all Leadership tests. |
 | Immune to Psychology (Ippan Shu) | Grand Master Ippan Shu | Automatically passes all Leadership-based tests. |
 | Immune to Psychology (Nightmare) | Nightmare | Never takes Leadership tests, and stands still if left leaderless. |
 | Immune to Poison (Plague Bearers) | Carnival of Chaos: Plague Bearer | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |

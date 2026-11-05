@@ -16,7 +16,7 @@ from catalogue_import.injuries import build_serious_injuries
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, mim_item
 from catalogue_import.new_groups import SkillGroups, build_skill_groups
-from catalogue_import.personae import Catalogue, build_personae
+from catalogue_import.personae import Catalogue, build_personae, put_names_right
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
 from catalogue_import.shared_specials import build_shared, load_shared, render_shared
@@ -197,6 +197,7 @@ def _skill_groups(
 def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str]:
     sources = load_sources(package, item_data)
     overrides = sources.overrides
+    put_names_right(sources.personae, overrides.get("persona_names", {}))
     rows = sources.warbands + extra_rows(overrides.get("extra_warband_types", []))
     types = build_warband_types(rows, overrides.get("warband_type_names"))
     resolver = Resolver(types, overrides.get("warband_aliases"))
@@ -281,7 +282,10 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         hiring_log,
         skill_lists.log,
         grouped,
-        {"warband type": overrides.get("warband_type_names", {})},
+        {
+            "warband type": overrides.get("warband_type_names", {}),
+            "dramatis persona": overrides.get("persona_names", {}),
+        },
     )
     return {
         "settings.json": dump_json(settings),

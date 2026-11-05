@@ -64,7 +64,7 @@
     {
       "name": "Fear (Maximilian)",
       "rule": "Fear",
-      "owners": [{"dramatis_persona": "Maximilian The Mad"}],
+      "owners": [{"dramatis_persona": "Maximilian the Mad"}],
       "why": "His warband's models within 3\" of him are immune to fear."
     },
     {
@@ -103,7 +103,7 @@
     {
       "name": "Immune to Psychology (Belandysh)",
       "rule": "Immune to Psychology",
-      "owners": [{"dramatis_persona": "Belandysh, Condemned Champion Of Chen"}],
+      "owners": [{"dramatis_persona": "Belandysh, Condemned Champion of Chen"}],
       "why": "Automatically passes all Leadership tests."
     },
     {

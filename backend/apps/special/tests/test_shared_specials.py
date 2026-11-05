@@ -14,7 +14,7 @@ from apps.special.categories import AURA, BODY, MUTATION
 from apps.special.kinds import BANE, BOON, DRAMATIS_PERSONA, GENERAL, WARBAND
 from apps.special.models import Special
 
-BELANDYSH = "Belandysh, Condemned Champion Of Chen"
+BELANDYSH = "Belandysh, Condemned Champion of Chen"
 
 
 def seed() -> str:

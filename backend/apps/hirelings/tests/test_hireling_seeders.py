@@ -145,12 +145,12 @@ class HirelingSeederTests(TestCase):
         output = run("seed_dramatis_personae")
 
         self.assertIn("Created: 30, updated: 0.", output)
-        aenur = DramatisPersona.objects.get(name="Aenur, the sword of twilight")
+        aenur = DramatisPersona.objects.get(name="Aenur, the Sword of Twilight")
         self.assertEqual((aenur.hire_fee["gold"], aenur.stays, aenur.weapon_skill), (150, "one_battle", 8))
         self.assertFalse(aenur.for_everyone)
         self.assertIn("Reiklanders", {line.warband_type.name for line in aenur.warband_links.select_related("warband_type") if line.warband_type})  # fmt: skip
         self.assertEqual(aenur.hire_note, "Any warband except Skaven, Undead and the Possessed may hire Aenur.")
-        nicodemus = DramatisPersona.objects.get(name="Nicodemus, the cursed pilgrim")
+        nicodemus = DramatisPersona.objects.get(name="Nicodemus, the Cursed Pilgrim")
         wyrdstone = make_fee(resources=[("Wyrdstone", 1)])
         self.assertEqual((nicodemus.hire_fee, nicodemus.upkeep_fee), (wyrdstone, wyrdstone))  # paid in wyrdstone
         self.assertEqual(nicodemus.caster, "Wizard")

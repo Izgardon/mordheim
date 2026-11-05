@@ -72,7 +72,7 @@
     }
   },
   {
-    "name": "Aenur, the sword of twilight",
+    "name": "Aenur, the Sword of Twilight",
     "description": "Many famous swordsmen have come to Mordheim to make their fortune, but few can match the terrifying reputation of the Elf swordsman Aenur. This mighty warrior was responsible for slaying the entire Possessed warband of Karl Zimmeran, and single-handedly cleansed the Rat Hole, a settlement that had been overrun by Beastmen.\n\nRumours about Aenur’s origin abound. Elves usually avoid human settlements, and Mordheim in particular, but for some reason the tall, pale swordsman has stayed in the proximity of the ruined city for months.\n\nSome say Aenur comes from beyond the Great Ocean, from the fabled Elven kingdoms, and that he is the captain of the legendary Order of Swordmasters. Others claim that he is a Wood Elf prince in exile. Aenur himself says little about his past and those who are wise do not question him.\n\nWhenever a warband prepares an expedition to explore the inner city, there is a chance they may hear a sharp rap at the gate of their encampment – their unexpected visitor will be Aenur, offering his services to their leader.\n\nIf, indeed, Aenur seeks something in the grim ruins of Mordheim, no-one knows what this might be. Some say that he wishes to explore the Pit itself, and slay the enigmatic Shadow Lord, though such a task must surely be above even this mighty warrior.\n\nAenur is tall even for an Elf, and beneath his finely woven Elven cloak he wears armour of gleaming ithilmar. He carries a sword of immense size which is rumoured to have arcane properties. Certainly no one who has been struck by it has ever lived to tell the tale.",
     "movement": 5,
     "weapon_skill": 8,
@@ -215,7 +215,7 @@
     }
   },
   {
-    "name": "Belandysh, Condemned Champion Of Chen",
+    "name": "Belandysh, Condemned Champion of Chen",
     "description": "Belandysh was once a powerful Chaos Champion and Chieftain to the Tribe of the Rising Eagle, notable for their devotion to Chen, as Tchar is known amongst the Hung. When he turned from Chen’s paths, the Lord of Change blessed Belandysh in punishment, mutating the champion into a living symbol of constant change, gifting Belandysh a powerful blade that would deform his enemies into Chaos Spawn. Now he perfectly represents his former patron and can never be free, save in death. Perhaps that is the way the Master of Transfiguration meant for Belandysh to be after all.\n\nAlso carries: Broadsword of Damnation.\nAlso has: Ride.",
     "movement": 4,
     "weapon_skill": 0,
@@ -302,7 +302,7 @@
     }
   },
   {
-    "name": "Bertha Bestraufrung, high matriarch of the sisterhood",
+    "name": "Bertha Bestraufrung, High Matriarch of the Sisterhood",
     "description": "Years ago, Bertha sought refuge in the strict discipline and devotions of the Sisters of Sigmar. Only the warrior god of the Empire was worthy of her esteem. Only He was constant and faithful. And had not holy Sigmar, in truth, chosen her to be one of his handmaidens?\n\nThe pure blood of the Unberogens runs in Bertha’s veins, as evinced by her long golden plaits and fierce blue eyes, which can freeze a Goblin at twenty paces with an icy glare. Even her voice commands authority, turning strong, hairy-thewed men into trembling wretches.\n\nThe Sisters look up to Bertha as an example of holy womanhood. She rose rapidly through the ranks of the Sisterhood, and on her deathbed the revered Matriarch Cassandra named Bertha her successor, new High Matriarch, and Abedissa of Sigmar’s Rock.\n\nSometimes, as Bertha straps on her Gromril armour in the light of dawn, she reflects on the lost innocence of her youth. Then, angrily, she tightens the studded leather straps tightly over her iron-hard limbs and strides outside to spend hours practising with her great warhammers, preparing herself, as a bride of Sigmar should, for the day of battle.\n\nExtract from the Tome of Heroes\n\nAlso carries: Holy Relic.",
     "movement": 4,
     "weapon_skill": 5,
@@ -479,74 +479,6 @@
     }
   },
   {
-    "name": "Crow Master, The",
-    "description": "The Saga of Simius Gantt\nProminent surgeon and devoted scientist of the Empire, Simius Gantt thrust mind, body and soul into the furthering of his knowledge of the universe and the physical betterment of others. When hearing of the blight that had struck the city of Mordheim his was the first voice that spoke of a 'duty to tend to the ailing'. He undertook a great journey from the lofty towers of Altdorf and set up a modest but well-equipped surgery on the outskirts of the City of the Damned.\n\nAll and sundry came to him, desperate for aid and he would turn none from his door save the daemonic creations that had made their home in the bowels of that cursed place. But Mordheim is dangerous, worse many times over than the most violent battlefield, for it harbours enemies unseen, those that corrupt from within yet without the host's knowledge. As more and more died upon his table, Simius questioned his ability and his calling, developing a morbid fascination with the dead. Unbeknownst to Simius a darker power was at work within him, the shards of the meteorite that blasted Mordheim, the wyrdstone he had been inextricably exposed to was at work within him, changing him...\n\nA day of reckoning came at last, a wandering warlock, grievously wounded, happened upon the surgery. Despite his best efforts Simius could not save him such were his injuries. As the warlock grew cold upon the slab a subconscious urge drove Simius's hand to rummage through the man's belongings for a fee. He was bereft of possessions save for a leather bound book, etched in dried blood.\n\nThe tome contained many scriptures and instruction pertaining to the dead, even detailing arcane rites of resurrection. The warlock was in fact a necromancer and Simius continued his work, devoting each night to the studying of the creature's tome. As time wore on, Simius changed, as did his practice. The lone and badly wounded were fair game to him now and he used his scalpel to snip their life's thread. He would then practice his new found 'art' on the corpses, reciting the ancient resurrection passages in earnest. Simius's skills developed and his transformation from genius to madman was soon complete. Shedding the clothes from the decaying Necromancer and donning them himself he wandered from the surgery and his old life and descended into Mordheim and utter damnation.\n\nAll that remains of the surgery now is a scorched patch of earth, Simius having razed it to ash. Voices whisper his name now, in the shadows and darkness. They call him Crow Master, such is the palpable aura of death that exudes from his very skin, a vicious murder of fell birds accompanying him wherever he goes, harbingers of pain and torture. His services can still be garnered at a price, yet the price is only known at Simius's whim, and is oft not gold nor wyrdstone...\n\nAlso carries: Staff.",
-    "movement": 4,
-    "weapon_skill": 3,
-    "ballistic_skill": 3,
-    "strength": 3,
-    "toughness": 4,
-    "wounds": 3,
-    "initiative": 5,
-    "attacks": 2,
-    "leadership": 8,
-    "armour_save": null,
-    "large": false,
-    "caster": "Wizard",
-    "specials": [
-      {
-        "name": "Mantle of Crows",
-        "description": "The mantle in appearance is a simple shabby cloak but has a hidden malign power. It attracts a murder of crows that circle around Simius distracting his adversaries. Any enemy model in base-to-base contact with Simius at the start of the Hand-to-hand Combat phase suffers a single automatic Strength 2 bit before any blows are struck."
-      },
-      {
-        "name": "Needle and Thread",
-        "description": "A throwback to his surgeon's days, Simius carries a needle and thread. If Simius stuns an opponent in Hand-to-Hand combat and he has no other enemies standing in base-to-base contact, he sews up the mouth of his enemy. Leaders cannot then use their 'leader' ability and spell casters are unable to cast spells for the remainder of the battle."
-      },
-      {
-        "name": "Payment in blood",
-        "description": "Simius is a zealous scientist and his propensity to experiment is seldom slaked. If the warband who hires him loses the battle he may decide to 'abduct' a hapless warrior co experiment on. Roll a D6. lf you roll a 1, Simius abducts the Hero or Henchman with the lowest experience (not hired swords) and that warrior must be struck off the warband roster and for all intents and purposes is slain. Simius disappears without trace after he has collected his fee of course..."
-      },
-      {
-        "name": "Decay of Ages",
-        "description": "Difficulty: 9\n\n*Gesturing to his hapless victim with a bony outstretched finger Simius invokes the Decay of ages. Skin withers and cracks, muscles atrophy, bones become brittle as the victim ages horrifically in seconds.*\n\nThis spell affects a single warrior within 6\" of Simius Gantt. The warrior must pass an immediate toughness test on a D6 or they will lose -1 from all of their characteristics with the exception of Attacks and Wounds. In each subsequent Recovery phase they must pass a Toughness test or will lose a further -1. As soon as they pass the test all characteristics are returned to normal. If any characteristic reaches O the model is taken out of action. Simius cannot cast this spell on more than one model at a time. If he decides to cast it again the effects on the previous victim are undone."
-      },
-      {
-        "name": "Spells",
-        "description": "Simius knows all of the Necromancy spells and also knows an additional spell, specific to him, Decay of Ages."
-      }
-    ],
-    "skills": [
-      "Sorcery",
-      "Dodge"
-    ],
-    "spells": [],
-    "equipment": [],
-    "dramatis_persona": {
-      "hire_fee": {
-        "kind": "gold",
-        "gold": 65,
-        "dice": null,
-        "dice_multiplier": null,
-        "resources": [],
-        "note": ""
-      },
-      "upkeep_fee": {
-        "kind": "gold",
-        "gold": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "resources": [],
-        "note": ""
-      },
-      "rating": 85,
-      "grade": "1b",
-      "race": "Human",
-      "unique_to": "Any warband except Dwarfs, Elves, Sisters of Sigmar and Witch Hunters may hire Simius.",
-      "stays": "always",
-      "payment_note": ""
-    }
-  },
-  {
     "name": "Dark Emissary",
     "description": "Of all the mysteries of Albion perhaps the greatest is the purpose of the enigmatic figures known as Dark Emissaries and Truthsayers. These ancient wizards are erstwhile enemies and their secret battle hints at a greater struggle yet to pass. Dark Emissaries, servants of the Dark Master, a powerful and enigmatic figure are potentates of evil. They ally themselves with evil forces and seek to harness the power of the Ogham Stones for all manner of unknown and nefarious practices. Truthsayers, the druidic warrior-wizards, the benevolent protectors of the Ogham magic grant their aid and wisdom to the followers of Sigmar and his allies, their only purpose to thwart the Dark Master and his lackeys.\n\nDark Emissaries and Truthsayers feature in the scenario The Ogham Stones but if players wish they may be sought out for each battle in Albion in the same manner as Dramatis Persona. There is no hire fee for either character as they have their own agenda for joining the battle.\n\nHowever, wherever there is one the other will surely follow. If a warband successfully finds either a Dark Emissary or Truthsayer and the other warband does not then roil a D6 at the start of that warband's turn, on a roil of 4+ the opposing character appears to fight alongside the warband and is deployed at a random table edge (see 'Surprise Attack' for details). If the opposing warbands are both of 'evil' or 'good' alignment then the Dark Emissary or Truthsayer may not be sought out for the battle.",
     "movement": 4,
@@ -608,7 +540,7 @@
     }
   },
   {
-    "name": "Dijin Katal, The Renegade Assassin",
+    "name": "Dijin Katal, the Renegade Assassin",
     "description": "How many years have I walked the earth? How many plains have I seen that stretch to the horizon? How many cities are there that are crammed with the filth and dregs of this world? And how many dark places have been my refuges? Yet I still miss that dreaded place Clar Karond... my home. I wonder what is happening amongst my kin what devious politics abound. Oh, how I miss the intrigue of a true civilisation. These are strange times. I never desired to travel to this hot insect-infested land of Lustria but now I am here it has a strange hold on me. I have delivered many to the grace of Khaine within this jungle. This jungle seems to cry out for blood. Although my murderous instincts have grown the animal inside is now in sated. What has become of me?\n\nStill, my blades run with the blood of my enemies the only thing that brings me comfort. I have the murderous instinct, which my people have practised for thousands of years and the addiction is strong. That night when I saw the broken bodies of my own kin on the floor in the carnival of horrors I knew that killing was my sole purpose. I also knew that it didn't matter who would be my prey - friend or foe it makes no difference to the unquenchable thirst within. And now my comrades hunt me. Although my thirst for another murder is great in good time soon it shall be quenched. My life is for Khaine.\n\nMy goal? To find some meaning to this mundane existence...\n\nKnown as 'The Hunter in the Shadows', 'The Thrice Cursed Renegade', 'He who Thirsts' and 'Kinslayer', among other things, Dijin Katal as greatly feared and loathed and that's just by his own people. The covens of the Druchii have a price on Katal's head and demand that he be captured alive for the Hag Queen's pleasure. Few know this Druchii's chequered past when they hire him in fact most are not even aware that he is Druchii, such is their ignorance.\n\nAlso carries: Assassin's Cloak.",
     "movement": 5,
     "weapon_skill": 7,
@@ -696,7 +628,7 @@
     }
   },
   {
-    "name": "Drenok Johansen, Wielder Of The Great Axe",
+    "name": "Drenok Johansen, Wielder of the Great Axe",
     "description": "The great sagas of the Norse tribes tell of a mighty warrior known as the Wielder of the Great Axe. Long ago in the icy, inhospitable tundra of the Norse land a young clansman with fire in his eyes and passion in his heart left his clan in search of his father's fate. His father was Johan warrior-prime, Chieftain of the Clan Icefang, possessed by a demon of Khorne. His father had disappeared rumoured to have travelled across the seas. Leaving the clan in a self-imposed exile he was never seen again in the lands of his birth.\n\nAfter many a long year within the realms of the Old World Drenok took ship to the New World in search of his father. Weeks dragged on into months and months into years until finally the day came when the two mortals finally crossed paths. Only then did Drenok truly know fear. For when Drenok looked into the face of his father he saw the Daemon within. A titanic struggle ensued between father and son. The battle was fierce and long, lasting for many hours. With each wound Drenok inflicted upon this demon, his father, anguish and rage consumed his soul. Finally his father fell and the battle was won. But this was no true victory, this was a day of mourning. For Drenok had now lost a part of his soul he could never reclaim. He gazed upon the great axe, which lay at the feet of his father's corpse and realised it to be the legendary axe of the Icefang, his clan. Lifting the mighty axe above his head, his hair braids blowing in the wind he roared in defiance of world. His quest would be to bring honour to the death of his father.",
     "movement": 4,
     "weapon_skill": 6,
@@ -1015,7 +947,7 @@
     }
   },
   {
-    "name": "Johann the knife",
+    "name": "Johann the Knife",
     "description": "Of the many cutthroats and assassins for hire that infest the settlements around Mordheim, Johann the Knife is the most famous. He exhibits his vocation as hired knife-fighter and assassin extraordinaire by the various lethal-looking daggers hanging from his belt, and the mean glint of his eyes. Johann wears dark leather gear, slightly out of fashion, which has never been washed (or so the barmaids say). His long face bears the scars of many a fight, and his unkempt hair is lank and greasy.\n\nJohann’s purse is always heavy with gold, and he takes no trouble to hide it, since only a fool would try to steal it from him. Many have tried, and all have died… very quickly. The craftsmanship and quality of Johann’s daggers is beyond compare, as he has taken them from the bodies of the many wealthy, but unskillful, opponents he has despatched in vicious duels.\n\nAlso carries: Throwing Knives.\nAlso has: Knife Fighter.",
     "movement": 4,
     "weapon_skill": 3,
@@ -1086,7 +1018,7 @@
     }
   },
   {
-    "name": "Khar-mel The Djinn",
+    "name": "Khar-mel the Djinn",
     "description": "Djinn are magical elemental spirits akin to Daemons, that reside in the deep deserts of Araby and the Land of the Dead. They may be summoned by a complicated ritual involving dark pacts and unholy promises. Djinn are creatures born of the elements and may assume many different forms such as horses made of sand, pillars of fire or mighty Arabic warriors comprised of swirling air. As with all Daemons, anyone learning a Djinn's true name will receive great power over it. Djinn are ancient spirits and know many long forgotten secrets, especially from the early days of Nehekhara and for this reason many sorcerers and priests attempt to summon them to learn such forbidden knowledge. Sultan Jaffar was known to have been in prolonged contact with some of the mightiest Djinn, although many surmise that their lies led to his downfall.\n\nKhar-mel is one of the few known Djinn of Araby. She has oft been encountered in the western desert over the centuries. Despite being centuries old, she normally appears as a beautiful arabian woman of about 30 years of age, although she has been known to appear as a swirling cloud of dust or a pillar of fire on occasion.\n\nLike all Djinn, Khar-mel knows many secrets forgotten by mortal man and many sorcerers and priests have tried to summon her to answer their questions. If she does have one weakness it is her thirst for knowledge. A warband who claims that they are undertaking a quest in search of ancient lore may well secure Khar-mel's services.\n\nAlso carries: Scimitar.",
     "movement": 6,
     "weapon_skill": 4,
@@ -1431,7 +1363,7 @@
     }
   },
   {
-    "name": "Maximilian The Mad",
+    "name": "Maximilian the Mad",
     "description": "Maximillian the Mad was a once-respected Warrior Priest and envoy in the thrall of the Grand Theogonist. Roaming the Great Forest with his bands of Flagellants, he acted as the eyes and ears of the Sigmaritic faith, looking for signs of corruption as he marched from town to town. Any that were found were ruthlessly and systematically purged.\n\nThat was until he was commissioned by his overseers to investigate rumours of blasphemy deep within the heart of the Great Forest. What Maximillian discovered there is unrecorded but is said to have driven him beyond the brink of sanity.\n\nNow largely a loner, he continues to rove the paths of the Great Forest, but the religious fervour within his soul combined with the hatred and intolerance of his passion threatens to destroy him and all he encounters.\n\nMaximillian the Mad will readily take up arms to assist those who fight the enemies of Sigmar, although he will demand a tithe to Sigmar for his services.",
     "movement": 4,
     "weapon_skill": 4,
@@ -1492,7 +1424,7 @@
     }
   },
   {
-    "name": "Nicodemus, the cursed pilgrim",
+    "name": "Nicodemus, the Cursed Pilgrim",
     "description": "Nicodemus was a promising apprentice to the mighty wizard Ganthrandir. During one of his master's many absences, Nicodemus felt an irresistible call from one of the ancient artifacts stored in the wizard's laboratory: an exotic magic lantern. Created when the world was but young, this mighty artifact imprisoned the essence of a powerful Daemon. Many times Nicodemus' master had warned him not to touch the dangerous lantern, but the voice in the young wizard's mind was more convincing than even his mentor's: Free me\" it was saying \"and I will grant you your heart's desire - anything you want will be yours! Mine is the power to make it so! Free me... ” Nicodemus knew something of dealing with these denizens from the Realm of Chaos and immediately asked: \"Do you swear it on the name of the Power you serve?\" After a moment of silence, the voice answered: ‘I swear it in the name of my Master!\" So the ambitious but naive young wizard was hooked and proceeded to break the runic seals of the lantern.\n\n\"Free at last!\" boomed the voice of the Daemon as it emerged from its prison in a billowing, many-hued cloud. The smoke then seemed to coalesce into the vague shape of a huge humanoid creature, with a bird-like head atop a long thin neck and vast wings seemingly made of iridescent light. The Daemon looked down on the human, and Nicodemus, controlling his fear, shouted: \"The wish! You must grant me the wish as you swore it!\" The mighty Chaos being smiled enigmatically and asked: \"What is your wish then. manling?\"\n\nFighting hard against all the instincts telling him to flee as far as he could from this unearthly abomination, Nicodemus revealed his wish: \"I want to become the greatest wizard known to Mankind!\"\n\nA few long heartbeats later the fiery gaze of the Daemon left the wizard: \"Granted!\" whispered the Daemon and with one last evil chuckle disappeared back to the netherworld from whence it came.\n\nNicodemus did not perceive any immediate change and wondered how long it would take for the wish to come true. Only one thing was clear, he could not stay there anymore, because his master would certainly not be pleased by his actions. So Nicodemus picked up his things and fled, beginning his wanderings across the Old World.\n\nOnly a few weeks after that fateful day did Nicodemus realise the Daemon's trickery. His body was growing abnormally quickly - he was now an inch taller than the previous week and his body was getting proportionally bigger. The greatest wizard! The cunning Daemon had taken his wish loo literally! Nicodemus had been taught to be extremely careful with the wording of anything related to wish-magic, but the sheer terror generated by the Daemon had overcome his training. .. Now he was doomed to live with his mistake.\n\nFrom that day on the life of Nicodemus has been an uninterrupted quest, a desperate search for a way to negate the curse of unstoppable growth. The only remedy he has stumbled upon is a powerful potion concocted by a wise hermit he met in the World's Edge Mountains. The potion's ability to delay the effects of the Daemon's powers has become a lifeline for the sizeable wizard. Unfortunately for Nicodemus he requires regular infusions of wyrdstone for the potion to take effect. Thus Nicodemus has been drawn to the greatest concentration of this wondrous mineral - Mordheim, City of the Damned.\n\nNicodemus's skills have greatly developed during his time in the dark streets of Mordheim and he is now something of a legend among the many warbands vying for supremacy in the city. Who knows where he will appear next and who will he join in his never ending search for the precious magic stones...",
     "movement": 4,
     "weapon_skill": 3,
@@ -1562,7 +1494,7 @@
     }
   },
   {
-    "name": "Penthesilea, Mark Of The Serpent",
+    "name": "Penthesilea, Mark of the Serpent",
     "description": "'I am the hunter and you are my prey.'\n\nPenthesilea is known as one of the greatest Amazon warriors and is a legend amongst her people. The Amazons were outraged by the oafish menfolk of the Norse settlement of Skeggi when they captured some Amazons in a raid planning to keep them as slaves. Penthesilea led a warband on a night raid against the timber halls of the Norse settlement. Her silent warriors slew the guards and they liberated their captured sisters. Before she could make good her escape, however, Penthesilea was set upon by the Norse Jarl Sigursen the Impaler, he who had led the raid to enslave her sisters. She slew this giant of a man in single combat and held his severed head high causing the rest of the Norse to flee. To further quench her thirst for revenge she kidnapped Sigursen's entire family to be used as slaves and sacrifices to the Serpent God. The battle of Skeggi was a milestone battle for the Amazons. None had accomplished what Penthesilea had. For it was her and her small band of Amazon warriors that had taken the fight straight to the supposedly invulnerable Norse stronghold and rescued their sisters slaying many men in the process. It was her brilliant guerrilla tactics and her ruthlessness that won the day. Since then, the men of the New World settlements live in fear and shudder at the mention of her name. Tales have it that no man has survived an encounter with her and many a mighty warrior's head hangs from her belt its mouth sewn shut as a sign of obedience.\n\nAlso has: Mesmerising dance, Savage Fury, Elixir of life, Weapon Master, Concealment.",
     "movement": 5,
     "weapon_skill": 5,
@@ -1703,6 +1635,74 @@
       "grade": "2a",
       "race": "Undead",
       "unique_to": "Sigmund may be hired by any evil or chaotically aligned warband.",
+      "stays": "always",
+      "payment_note": ""
+    }
+  },
+  {
+    "name": "The Crow Master",
+    "description": "The Saga of Simius Gantt\nProminent surgeon and devoted scientist of the Empire, Simius Gantt thrust mind, body and soul into the furthering of his knowledge of the universe and the physical betterment of others. When hearing of the blight that had struck the city of Mordheim his was the first voice that spoke of a 'duty to tend to the ailing'. He undertook a great journey from the lofty towers of Altdorf and set up a modest but well-equipped surgery on the outskirts of the City of the Damned.\n\nAll and sundry came to him, desperate for aid and he would turn none from his door save the daemonic creations that had made their home in the bowels of that cursed place. But Mordheim is dangerous, worse many times over than the most violent battlefield, for it harbours enemies unseen, those that corrupt from within yet without the host's knowledge. As more and more died upon his table, Simius questioned his ability and his calling, developing a morbid fascination with the dead. Unbeknownst to Simius a darker power was at work within him, the shards of the meteorite that blasted Mordheim, the wyrdstone he had been inextricably exposed to was at work within him, changing him...\n\nA day of reckoning came at last, a wandering warlock, grievously wounded, happened upon the surgery. Despite his best efforts Simius could not save him such were his injuries. As the warlock grew cold upon the slab a subconscious urge drove Simius's hand to rummage through the man's belongings for a fee. He was bereft of possessions save for a leather bound book, etched in dried blood.\n\nThe tome contained many scriptures and instruction pertaining to the dead, even detailing arcane rites of resurrection. The warlock was in fact a necromancer and Simius continued his work, devoting each night to the studying of the creature's tome. As time wore on, Simius changed, as did his practice. The lone and badly wounded were fair game to him now and he used his scalpel to snip their life's thread. He would then practice his new found 'art' on the corpses, reciting the ancient resurrection passages in earnest. Simius's skills developed and his transformation from genius to madman was soon complete. Shedding the clothes from the decaying Necromancer and donning them himself he wandered from the surgery and his old life and descended into Mordheim and utter damnation.\n\nAll that remains of the surgery now is a scorched patch of earth, Simius having razed it to ash. Voices whisper his name now, in the shadows and darkness. They call him Crow Master, such is the palpable aura of death that exudes from his very skin, a vicious murder of fell birds accompanying him wherever he goes, harbingers of pain and torture. His services can still be garnered at a price, yet the price is only known at Simius's whim, and is oft not gold nor wyrdstone...\n\nAlso carries: Staff.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Mantle of Crows",
+        "description": "The mantle in appearance is a simple shabby cloak but has a hidden malign power. It attracts a murder of crows that circle around Simius distracting his adversaries. Any enemy model in base-to-base contact with Simius at the start of the Hand-to-hand Combat phase suffers a single automatic Strength 2 bit before any blows are struck."
+      },
+      {
+        "name": "Needle and Thread",
+        "description": "A throwback to his surgeon's days, Simius carries a needle and thread. If Simius stuns an opponent in Hand-to-Hand combat and he has no other enemies standing in base-to-base contact, he sews up the mouth of his enemy. Leaders cannot then use their 'leader' ability and spell casters are unable to cast spells for the remainder of the battle."
+      },
+      {
+        "name": "Payment in blood",
+        "description": "Simius is a zealous scientist and his propensity to experiment is seldom slaked. If the warband who hires him loses the battle he may decide to 'abduct' a hapless warrior co experiment on. Roll a D6. lf you roll a 1, Simius abducts the Hero or Henchman with the lowest experience (not hired swords) and that warrior must be struck off the warband roster and for all intents and purposes is slain. Simius disappears without trace after he has collected his fee of course..."
+      },
+      {
+        "name": "Decay of Ages",
+        "description": "Difficulty: 9\n\n*Gesturing to his hapless victim with a bony outstretched finger Simius invokes the Decay of ages. Skin withers and cracks, muscles atrophy, bones become brittle as the victim ages horrifically in seconds.*\n\nThis spell affects a single warrior within 6\" of Simius Gantt. The warrior must pass an immediate toughness test on a D6 or they will lose -1 from all of their characteristics with the exception of Attacks and Wounds. In each subsequent Recovery phase they must pass a Toughness test or will lose a further -1. As soon as they pass the test all characteristics are returned to normal. If any characteristic reaches O the model is taken out of action. Simius cannot cast this spell on more than one model at a time. If he decides to cast it again the effects on the previous victim are undone."
+      },
+      {
+        "name": "Spells",
+        "description": "Simius knows all of the Necromancy spells and also knows an additional spell, specific to him, Decay of Ages."
+      }
+    ],
+    "skills": [
+      "Sorcery",
+      "Dodge"
+    ],
+    "spells": [],
+    "equipment": [],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 65,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 85,
+      "grade": "1b",
+      "race": "Human",
+      "unique_to": "Any warband except Dwarfs, Elves, Sisters of Sigmar and Witch Hunters may hire Simius.",
       "stays": "always",
       "payment_note": ""
     }
@@ -2061,7 +2061,7 @@
     }
   },
   {
-    "name": "Veskit, high executioner of clan eshin",
+    "name": "Veskit, High Executioner of Clan Eshin",
     "description": "Veskit was already a talented clan Eshin Assassin when he was entrusted with his most difficult mission. He was hired by Clan Skryre to free one of their oldest and most experienced Warlocks who was being held hostage by a rival clan.\n\nVeskit managed to take the prisoner back, fighting his way through the guards, but at a very high cost. He suffered terrible wounds and would have certainly died, but the Nightmaster of Clan Eshin made a pact with the Warlock Engineers. The Skaven scientist-sorcerers replaced various parts of Veskit’s body with their part technological, part magical implants and made him into a walking arsenal of deadly weapons. Veskit is now more a machine than a living thing, and his thirst for killing has become almost uncontrollable.\n\nWhen news of the wyrdstone came to the hidden fortress of Clan Eshin, the Nightmaster sent Veskit to Mordheim to deter the man-things from exploring the city, which rightfully belonged to the Skaven. From that day on, many adventurers have met their end in the dark allies of Mordheim. Veskit’s unblinking eye misses nothing, and those he hunts on the streets of Mordheim never return to the Gargoyle Gate.",
     "movement": 5,
     "weapon_skill": 5,
@@ -2131,7 +2131,7 @@
     }
   },
   {
-    "name": "William Schäke­stange, Master Bard",
+    "name": "William Schäkestange, Master Bard",
     "description": "Inside and outside of Mordheim, William’s fame as a bard is well known. Having lost his horse shortly upon his arrival to the shadowy city, William replaced his mount with the next cheapest beast of burden: actors. Traveling far on his pantomime horse, William seeks out the underdogs, the dark horses, and further discouraged men of virtue. To him, they are fodder for his greatest play yet, a constant web of excitement and woe. The relationship is not completely one-sided, though, as William is a stirring ally.\n\nUnlike other bards, William does not sing, but his recitations and speeches can turn spines from jelly to steel. And he can do more than support morale. Despite his flowery words and graying temples, the writer is a surprisingly spry fighter. He can duck and weave as fast as any Skaven, and his rapier has seen more than staged fights. But his best asset to any warband is his Pages of Couragio, a tally of daring acts and good luck. Warriors have turned from kittens to lion in hopes of making William’s famous account.",
     "movement": 4,
     "weapon_skill": 5,

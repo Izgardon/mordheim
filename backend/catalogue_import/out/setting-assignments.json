@@ -1485,7 +1485,7 @@
       "how": "mordheimer"
     },
     {
-      "name": "Aenur, the sword of twilight",
+      "name": "Aenur, the Sword of Twilight",
       "setting": "mordheim",
       "how": "mordheimer"
     },
@@ -1495,12 +1495,12 @@
       "how": "mordheimer"
     },
     {
-      "name": "Belandysh, Condemned Champion Of Chen",
+      "name": "Belandysh, Condemned Champion of Chen",
       "setting": "border-town-burning",
       "how": "mordheimer"
     },
     {
-      "name": "Bertha Bestraufrung, high matriarch of the sisterhood",
+      "name": "Bertha Bestraufrung, High Matriarch of the Sisterhood",
       "setting": "mordheim",
       "how": "mordheimer"
     },
@@ -1510,22 +1510,17 @@
       "how": "mordheimer"
     },
     {
-      "name": "Crow Master, The",
-      "setting": "mordheim-1b",
-      "how": "mordheimer"
-    },
-    {
       "name": "Dark Emissary",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
-      "name": "Dijin Katal, The Renegade Assassin",
+      "name": "Dijin Katal, the Renegade Assassin",
       "setting": "lustria",
       "how": "mordheimer"
     },
     {
-      "name": "Drenok Johansen, Wielder Of The Great Axe",
+      "name": "Drenok Johansen, Wielder of the Great Axe",
       "setting": "lustria",
       "how": "mordheimer"
     },
@@ -1545,12 +1540,12 @@
       "how": "mordheimer"
     },
     {
-      "name": "Johann the knife",
+      "name": "Johann the Knife",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
-      "name": "Khar-mel The Djinn",
+      "name": "Khar-mel the Djinn",
       "setting": "mordheim-1b",
       "how": "mordheimer"
     },
@@ -1570,23 +1565,28 @@
       "how": "mordheimer"
     },
     {
-      "name": "Maximilian The Mad",
+      "name": "Maximilian the Mad",
       "setting": "nemesis-crown",
       "how": "mordheimer"
     },
     {
-      "name": "Nicodemus, the cursed pilgrim",
+      "name": "Nicodemus, the Cursed Pilgrim",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
-      "name": "Penthesilea, Mark Of The Serpent",
+      "name": "Penthesilea, Mark of the Serpent",
       "setting": "lustria",
       "how": "mordheimer"
     },
     {
       "name": "Sigmund Spindle, the Harvester of Flesh",
       "setting": "mordheim-2a",
+      "how": "mordheimer"
+    },
+    {
+      "name": "The Crow Master",
+      "setting": "mordheim-1b",
       "how": "mordheimer"
     },
     {
@@ -1615,12 +1615,12 @@
       "how": "mordheimer"
     },
     {
-      "name": "Veskit, high executioner of clan eshin",
+      "name": "Veskit, High Executioner of Clan Eshin",
       "setting": "mordheim",
       "how": "mordheimer"
     },
     {
-      "name": "William Schäke­stange, Master Bard",
+      "name": "William Schäkestange, Master Bard",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
