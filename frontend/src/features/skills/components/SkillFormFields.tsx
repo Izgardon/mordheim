@@ -7,6 +7,7 @@ import {
   fieldId,
   type FormLayout,
 } from "@/features/catalogue/components/form-layout";
+import PrebattleRollFields from "@/features/catalogue/components/PrebattleRollFields";
 
 import type { SkillGroupIndex } from "../skill-groups";
 import type { SkillFormState } from "../hooks/useSkillForm";
@@ -20,7 +21,7 @@ type SkillFormFieldsProps = {
   idSuffix?: string;
 };
 
-/** A skill's name, groups and description, inline on the Skills page or in a dialog. */
+/** A skill's name, groups, description and pre-battle roll, inline or in a dialog. */
 export default function SkillFormFields({
   layout,
   form,
@@ -65,6 +66,12 @@ export default function SkillFormFields({
         value={form.values.description}
         onChange={form.setDescription}
         className={isDialog ? undefined : "sm:col-span-2"}
+      />
+      <PrebattleRollFields
+        layout={layout}
+        idPrefix={`skill${idSuffix}`}
+        values={form.values}
+        onChange={form.setPrebattle}
       />
     </>
   );

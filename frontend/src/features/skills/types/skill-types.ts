@@ -7,11 +7,16 @@ export type Skill = CatalogueBadgeFields & {
   campaign_id?: number | null;
   name: string;
   description: string;
+  /** Its pre-battle roll ("D6"; "" for none) and the rule's words on what the roll does. */
+  prebattle_roll?: string;
+  prebattle_text?: string;
 };
 
 export type SkillCreatePayload = {
   name: string;
   description: string;
+  prebattle_roll?: string;
+  prebattle_text?: string;
   /** The campaign's groups that hold it (a book group's change makes the campaign's version). */
   group_ids?: number[];
   campaign_id: number;
@@ -22,6 +27,8 @@ export type SkillUpdatePayload = {
   campaign_id?: number;
   name?: string;
   description?: string;
+  prebattle_roll?: string;
+  prebattle_text?: string;
   group_ids?: number[];
 };
 

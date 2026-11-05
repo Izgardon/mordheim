@@ -5,6 +5,11 @@ import { bookCampaign } from "@/features/catalogue/api/catalogue-entry-api";
 import { useNameTakenMatches } from "@/features/catalogue/hooks/useNameTakenMatches";
 import { useCatalogueDelete } from "@/features/catalogue/hooks/useCatalogueDelete";
 import { useCatalogueRevert } from "@/features/catalogue/hooks/useCatalogueRevert";
+import {
+  prebattlePayload,
+  prebattleValuesOf,
+  type PrebattleRollValues,
+} from "@/features/catalogue/components/PrebattleRollFields";
 import { useCatalogueCache } from "@/lib/catalogue-queries";
 import { useFieldErrors, type NameMatch } from "@/lib/field-errors";
 
@@ -12,7 +17,7 @@ import { createSkill, updateSkill } from "../api/skills-api";
 
 import type { Skill } from "../types/skill-types";
 
-type SkillFormValues = {
+type SkillFormValues = PrebattleRollValues & {
   name: string;
   description: string;
   /** The skill groups holding it (skill groups, phase 1a); null until changed: the groups list's. */
@@ -22,6 +27,7 @@ type SkillFormValues = {
 const valuesOf = (skill: Skill | null): SkillFormValues => ({
   name: skill?.name ?? "",
   description: skill?.description ?? "",
+  ...prebattleValuesOf(skill ?? undefined),
   groupIds: null,
 });
 
@@ -94,6 +100,7 @@ export function useSkillForm({
     const payload = {
       name: values.name.trim(),
       description: values.description.trim(),
+      ...prebattlePayload(values),
       group_ids: groupIds,
     };
     try {
@@ -133,6 +140,8 @@ export function useSkillForm({
     setName: (name: string) => setValues((prev) => ({ ...prev, name })),
     setDescription: (description: string) => setValues((prev) => ({ ...prev, description })),
     setGroupIds: (groupIds: number[]) => setValues((prev) => ({ ...prev, groupIds })),
+    setPrebattle: (prebattle: PrebattleRollValues) =>
+      setValues((prev) => ({ ...prev, ...prebattle })),
     fieldErrors: fieldErrors.errors,
     nameTaken,
     isSaving: isSaving || deletion.isDeleting,
