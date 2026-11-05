@@ -113,8 +113,11 @@ export default function Overview() {
   const stats = (
     <dl
       className={cn(
-        "m-0 grid border-y border-line",
-        isMobile ? "grid-cols-4" : "[grid-template-columns:repeat(auto-fit,minmax(130px,1fr))]"
+        "m-0 border-y border-line",
+        // a phone's four sit apart as wide as their labels, so a long one (Wyrdstone) never runs on
+        isMobile
+          ? "flex justify-between gap-x-3"
+          : "grid [grid-template-columns:repeat(auto-fit,minmax(130px,1fr))]"
       )}
     >
       {buildStats(players, history, campaign.default_resource_name)
@@ -122,11 +125,11 @@ export default function Overview() {
         .map((stat) => (
           <div
             key={stat.k}
-            className={cn("flex flex-col gap-0.5", isMobile ? "py-2.5" : "py-3.5 pr-4")}
+            className={cn("flex min-w-0 flex-col gap-0.5", isMobile ? "py-2.5" : "py-3.5 pr-4")}
           >
             <dt className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint max-[960px]:text-[10px] max-[960px]:tracking-[0.1em]">
-              <GameIcon name={stat.icon} className="h-3.5 w-3.5 text-accent-text" />
-              {isMobile ? stat.short : stat.k}
+              <GameIcon name={stat.icon} className="h-3.5 w-3.5 shrink-0 text-accent-text" />
+              <span className="truncate">{isMobile ? stat.short : stat.k}</span>
             </dt>
             <dd
               className={cn(
