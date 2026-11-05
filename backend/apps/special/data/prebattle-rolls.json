@@ -10,7 +10,7 @@
     },
     "Hiring Fee": {
       "roll": "D6",
-      "text": "She will only come to the aid of a Sisters of Sigmar warband if their enemy has a higher warband rating. Consult the table below, and roll a D6 to see whether Bertha will aid the warband. A request for Bertha to aid the warband must be made for each battle you wish her to help the warband.\n\nDifference in Warband RatingDice roll required0-49Nil50-996+100-1495+150-1994+200+3+"
+      "text": "She will only come to the aid of a Sisters of Sigmar warband if their enemy has a higher warband rating. Consult the table below, and roll a D6 to see whether Bertha will aid the warband. A request for Bertha to aid the warband must be made for each battle you wish her to help the warband.\n\nDifference in Warband Rating: Dice roll required\n0-49: Nil\n50-99: 6+\n100-149: 5+\n150-199: 4+\n200+: 3+"
     },
     "Maintenance": {
       "roll": "D6",

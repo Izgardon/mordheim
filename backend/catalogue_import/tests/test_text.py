@@ -25,6 +25,18 @@ class CleanTextTests(SimpleTestCase):
         self.assertEqual(text, "Roll a D6:\n\n{{table:1}}\n\nAfter.")
         self.assertEqual(tables, [{"columns": ["D6", "Result"], "rows": [["1-2", "Runner"], ["6", "Passenger\nhit"]]}])
 
+    def test_a_table_left_in_running_text_reads_a_line_a_row(self) -> None:
+        # Bertha's Hiring Fee ran together: "Difference in Warband RatingDice roll required0-49Nil50-996+"
+        raw = (
+            "Roll a D6.<br /><br /><table><thead><tr><th>Difference in Warband Rating</th><th>Dice roll required</th>"
+            "</tr></thead><tbody><tr><td>0-49</td><td>Nil</td></tr><tr><td>50-99</td><td>6+</td></tr></tbody></table>"
+        )
+        self.assertEqual(
+            clean_inline(raw), "Roll a D6.\n\nDifference in Warband Rating: Dice roll required\n0-49: Nil\n50-99: 6+"
+        )
+        profile = "<table><tr><th>Profile</th><th>M</th><th>WS</th></tr><tr><td></td><td>6</td><td>2<br />3</td></tr></table>"  # fmt: skip
+        self.assertEqual(clean_inline(profile), "Profile | M | WS\n| 6 | 2 3")
+
     def test_empty_input_is_empty(self) -> None:
         self.assertEqual(clean_text(None), ("", []))
         self.assertEqual(clean_inline(""), "")

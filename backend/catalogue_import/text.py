@@ -31,10 +31,12 @@ def _tidy(text: str) -> str:
 
 
 def clean_inline(snippet: str | None) -> str:
-    """Plain text from a snippet: Tooltip wrappers, FAQ/errata markers and other tags go, breaks stay."""
+    """Plain text from a snippet: Tooltip wrappers, FAQ/errata markers and other tags go, breaks stay, and a table
+    left in it reads as lines (`_table_lines`)."""
     if not snippet:
         return ""
     text = _SUP.sub("", snippet)
+    text = _TABLE.sub(lambda match: "\n\n" + _table_lines(_parse_table(match.group(1))) + "\n\n", text)
     text = _ADMONITION_HEADING.sub("", text)
     text = _LINE_BREAK.sub("\n", text)
     text = _LIST_ITEM.sub("\n- ", text)
@@ -54,6 +56,14 @@ def _parse_table(body: str) -> Table:
         elif values:
             rows.append(values)
     return {"columns": columns, "rows": rows}
+
+
+def _table_lines(table: Table) -> str:
+    """A table in running text, a line a row (its header first), so its cells don't run together: two cells as
+    "50-99: 6+", more as "M | WS | BS"."""
+    rows = [table["columns"], *table["rows"]] if table["columns"] else table["rows"]
+    lines = [[" ".join(cell.split()) for cell in row] for row in rows if row]
+    return "\n".join((": " if len(cells) == 2 else " | ").join(cells) for cells in lines)
 
 
 def clean_text(snippet: str | None) -> tuple[str, list[Table]]:
