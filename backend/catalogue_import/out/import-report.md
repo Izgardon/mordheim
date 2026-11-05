@@ -776,46 +776,46 @@ List prices the pages differ from: none.
 
 ## Random mutation table
 
-`sources/random-mutations.json` (mordheimer's Power in the Stones, Town Cryer #15) as `out/random-mutations.json`: what each D66 result gives when the D100 serious injury result 100, Mutation, rolls on it. A result matched to a special by what it does names it; * is drummed out of a human mercenary warband.
+`sources/random-mutations.json` (mordheimer's Power in the Stones, Town Cryer #15) as `out/random-mutations.json`: what each D66 result gives when the D100 serious injury result 100, Mutation, rolls on it. A result matched to a special by what it does names it.
 
-| D66 | Result | * | Special | Type | Cost | Setting |
-| --- | --- | --- | --- | --- | --- | --- |
-| 11 | Acid Spray | * | Spit Acid | Bounty of Arkhar | 35 |  |
-| 12 | Atrophy |  | the same | Mutation |  |  |
-| 13 | Beaked | * | the same | Mutation |  |  |
-| 14 | Beweaponed Extremities | * | the same | Mutation |  |  |
-| 15 | Blackblood |  | the same | Mutation | 30 |  |
-| 16 | Brightly Patterned Skin | * | the same | Mutation |  |  |
-| 21 | Burning Body | * | the same | Mutation |  |  |
-| 22 | Cloud of Flies |  | the same | Blessing of Nurgle | 25 |  |
-| 23 | Cloven Hooves | * | Cloven Hoofs | Mutation | 40 |  |
-| 24 | Crystalline Body | * | the same | Mutation | 60 |  |
-| 25 | Elastic Limbs | * | the same | Mutation |  |  |
-| 26 | Enormously Fat |  | the same | Mutation |  |  |
-| 31 | Extra Arm | * | the same | Mutation | 40 |  |
-| 32 | Extremely Thin |  | the same | Mutation |  |  |
-| 33 | Eyestalks | * | Hideous | Mutation | 40 |  |
-| 34 | Fangs | * | the same | Mutation |  |  |
-| 35 | Furry | * | the same | Mutation |  |  |
-| 36 | Great Claw | * | the same | Mutation | 50 |  |
-| 41 | Hideous |  | the same | Mutation | 40 |  |
-| 42 | Horns | * | the same | Mutation |  |  |
-| 43 | Iron Hard Skin | * | Iron-hard Skin | Bounty of Arkhar | 45 |  |
-| 44 | Mace Tail | * | Spiked Tail | Bounty of Arkhar | 50 |  |
-| 45 | Moronic |  | Stupidity | Psychology |  |  |
-| 46 | Plague Bearer | * | the same | Mutation |  |  |
-| 51 | Poisonous Bite |  | the same | Mutation | 50 |  |
-| 52 | Prehensile Tail | * | the same | Mutation | 50 |  |
-| 53 | Regeneration |  | the same | Bounty of Arkhar | 60 |  |
-| 54 | Resilient |  | the same | Mutation |  |  |
-| 55 | Scorpion Tail | * | the same | Mutation | 40 |  |
-| 56 | Skull Face | * | Hideous | Mutation | 40 |  |
-| 61 | Spines | * | the same | Mutation | 35 |  |
-| 62 | Stunted |  | the same | Mutation |  |  |
-| 63 | Suckers | * | the same | Blessing of Nurgle | 25 |  |
-| 64 | Tentacle | * | the same | Mutation | 35 |  |
-| 65 | Warts |  | the same | Mutation |  |  |
-| 66 | Wings | * | the same | Mutation | 45 |  |
+| D66 | Result | Special | Type | Cost | Setting |
+| --- | --- | --- | --- | --- | --- |
+| 11 | Acid Spray | Spit Acid | Bounty of Arkhar | 35 |  |
+| 12 | Atrophy | the same | Mutation |  |  |
+| 13 | Beaked | the same | Mutation |  |  |
+| 14 | Beweaponed Extremities | the same | Mutation |  |  |
+| 15 | Blackblood | the same | Mutation | 30 |  |
+| 16 | Brightly Patterned Skin | the same | Mutation |  |  |
+| 21 | Burning Body | the same | Mutation |  |  |
+| 22 | Cloud of Flies | the same | Blessing of Nurgle | 25 |  |
+| 23 | Cloven Hooves | Cloven Hoofs | Mutation | 40 |  |
+| 24 | Crystalline Body | the same | Mutation | 60 |  |
+| 25 | Elastic Limbs | the same | Mutation |  |  |
+| 26 | Enormously Fat | the same | Mutation |  |  |
+| 31 | Extra Arm | the same | Mutation | 40 |  |
+| 32 | Extremely Thin | the same | Mutation |  |  |
+| 33 | Eyestalks | Hideous | Mutation | 40 |  |
+| 34 | Fangs | the same | Mutation |  |  |
+| 35 | Furry | the same | Mutation |  |  |
+| 36 | Great Claw | the same | Mutation | 50 |  |
+| 41 | Hideous | the same | Mutation | 40 |  |
+| 42 | Horns | the same | Mutation |  |  |
+| 43 | Iron Hard Skin | Iron-hard Skin | Bounty of Arkhar | 45 |  |
+| 44 | Mace Tail | Spiked Tail | Bounty of Arkhar | 50 |  |
+| 45 | Moronic | Stupidity | Psychology |  |  |
+| 46 | Plague Bearer | the same | Mutation |  |  |
+| 51 | Poisonous Bite | the same | Mutation | 50 |  |
+| 52 | Prehensile Tail | the same | Mutation | 50 |  |
+| 53 | Regeneration | the same | Bounty of Arkhar | 60 |  |
+| 54 | Resilient | the same | Mutation |  |  |
+| 55 | Scorpion Tail | the same | Mutation | 40 |  |
+| 56 | Skull Face | Hideous | Mutation | 40 |  |
+| 61 | Spines | the same | Mutation | 35 |  |
+| 62 | Stunted | the same | Mutation |  |  |
+| 63 | Suckers | the same | Blessing of Nurgle | 25 |  |
+| 64 | Tentacle | the same | Mutation | 35 |  |
+| 65 | Warts | the same | Mutation |  |  |
+| 66 | Wings | the same | Mutation | 45 |  |
 
 Kept apart from a family's, the effect differing:
 

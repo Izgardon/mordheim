@@ -1,6 +1,6 @@
 """The random mutation table (random_mutations.py, William, 5 Nov 2026): each D66 result gives one shared special,
-matched by what it does (its name or an alias in William's list), with its * (drummed out of a human mercenary
-warband); a result naming none, or a table that isn't 11-66 once each, stops the build."""
+matched by what it does (its name or an alias in William's list); a result naming none, or a table that isn't 11-66
+once each, stops the build."""
 
 import copy
 import json
@@ -23,16 +23,16 @@ LIST: dict[str, Any] = {
             "apart_from": "Burning Body (Tchar)",
             "why": "S2.",
             "aliases": [],
-        },  # fmt: skip
+        },
     ],
     "apart": [],
 }
 
 
 def table(*names: str) -> dict[str, Any]:
-    results = [{"roll": roll, "name": "Warts", "drummed_out": False} for roll in D66]
+    results = [{"roll": roll, "name": "Warts"} for roll in D66]
     for at, name in enumerate(names):
-        results[at] = {"roll": D66[at], "name": name, "drummed_out": True}
+        results[at] = {"roll": D66[at], "name": name}
     return {"results": results}
 
 
@@ -40,7 +40,7 @@ class RandomMutationTests(SimpleTestCase):
     def setUp(self) -> None:
         self.shared = SharedSpecials(copy.deepcopy(LIST))
 
-    def test_a_result_gives_the_special_its_name_or_alias_names_with_its_star(self) -> None:
+    def test_a_result_gives_the_special_its_name_or_alias_names(self) -> None:
         rows = build_random_mutations(self.shared, table("Acid Spray", "Burning Body"))
 
         self.assertEqual(
@@ -50,20 +50,18 @@ class RandomMutationTests(SimpleTestCase):
                     "roll": 11,
                     "name": "Acid Spray",
                     "special": {"name": "Spit Acid", "type": "Bounty of Arkhar"},
-                    "drummed_out": True,
-                },  # fmt: skip
+                },
                 {
                     "roll": 12,
                     "name": "Burning Body",
                     "special": {"name": "Burning Body", "type": "Mutation"},
-                    "drummed_out": True,
-                },  # fmt: skip
-                {"roll": 13, "name": "Warts", "special": {"name": "Warts", "type": "Mutation"}, "drummed_out": False},
+                },
+                {"roll": 13, "name": "Warts", "special": {"name": "Warts", "type": "Mutation"}},
             ],
         )
         report = render_random(rows, self.shared)
-        self.assertIn("| 11 | Acid Spray | * | Spit Acid | Bounty of Arkhar | 35 |  |", report)
-        self.assertIn("| 12 | Burning Body | * | the same | Mutation |  |  |", report)
+        self.assertIn("| 11 | Acid Spray | Spit Acid | Bounty of Arkhar | 35 |  |", report)
+        self.assertIn("| 12 | Burning Body | the same | Mutation |  |  |", report)
         self.assertIn("- Burning Body and Burning Body (Tchar): S2.", report)
 
     def test_a_result_naming_no_special_or_a_roll_out_of_place_stops_the_build(self) -> None:
@@ -95,5 +93,3 @@ class CommittedRandomMutationTests(SimpleTestCase):
         # kept apart where the effect differs
         self.assertEqual((gives["Burning Body"], gives["Fangs"], gives["Beaked"]), ("Burning Body", "Fangs", "Beaked"))  # fmt: skip
         self.assertEqual(gives["Plague Bearer"], "Plague Bearer")
-        starred = [row["name"] for row in out if row["drummed_out"]]
-        self.assertEqual(len(starred), 24)
