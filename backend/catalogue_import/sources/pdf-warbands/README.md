@@ -82,3 +82,29 @@ check over every file.
    other spells or numbers.
 4. Rebuild (`python -I catalogue_import/build.py`), run `check_pdf.py`, and read the import report's PDF warbands
    section.
+
+## William's rulings (5-6 Nov 2026)
+
+Each answers a question a batch raised; follow them without asking again.
+
+- **Gold rounds up:** half of 35 gc is 18 ("always round up in mordheim for gold").
+- **Profiles stand as printed,** a W2 or I2 included ("some units have 2 wounds"). Flag only what the PDF contradicts or
+  leaves unreadable.
+- **Counts the PDF prints two ways:** take the simpler reading, and flag it ("just keep 0-1 dont complicate it").
+- **"Counts as" lines and "X/Y" pairs** are our item shown under the PDF's name, at the line's price. A cheaper price
+  is only that line's: the Halfling Cook's Cooking Pot is our Helmet ("just a personal label").
+- **An item named like ours that adds a little** is ours, with a `priceRows` row for the warband; flag what ours
+  doesn't cover ("would prefer them being just one item").
+- **Prices printed twice** (on the list and in the item's entry): the entry's, flagged (the Horn of the Wild Hunt,
+  "use 120").
+- **List prices are starting prices.** The app opens them only until the warband's first battle
+  (`list_prices_open`), so a PDF's "starting only" price needs no note or rule. A rule saying list prices hold
+  later (the Bitter Moors' Peasant Labour) stays a rule.
+- **A rule several items carry** is one shared item rule (`itemRules`), never a warband rule (Experimental
+  Technology, the maps' Map).
+- **Item rules:** a stub carries its printed rules, broken into rules. An item of ours with no rules takes the
+  PDF's. Never bring flavour in.
+- **Animals bought through an item** go in the bestiary as `pet`s (the Sorcerous Society's Familiar).
+- **Every "1st free" line** gives one of its item free at hire, not only the dagger.
+- **A shared skill William renames** is renamed at its source (Sign of Sigmar became Righteous Aura).
+- **A warband's minimum of 3 models** is not imported.
