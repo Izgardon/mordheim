@@ -1032,6 +1032,38 @@
     "description": "Any Hero. The model causes fear and may re-roll any Leadership test."
   },
   {
+    "name": "Death before Dishonor",
+    "description": "When a close combat attack would remove this model from the battlefield, it first makes a single close combat attack as normal."
+  },
+  {
+    "name": "Night Fighter",
+    "description": "Shinobi only. The model may run and still stay hidden, as the hiding rules allow."
+  },
+  {
+    "name": "Iaijutsu",
+    "description": "When the model is charged it gains +1 Attack, used only against the charger, which strikes first. Charged by two or more at once, it still gains only +1 Attack. This attack is at the model's Strength with no other modifiers."
+  },
+  {
+    "name": "Last Stand",
+    "description": "The model may re-roll an All Alone test. At the start of its turn, if it is 6\" away from friendly models, it may take +1 WS or +1 BS until the start of its next turn."
+  },
+  {
+    "name": "Tea Ceremony",
+    "description": "After a battle in which this Hero survived and wasn't taken out of action, he may skip searching for rare items and spend 10 gc to choose another Hero and roll a D6: on a 3+ that Hero gains 1 experience."
+  },
+  {
+    "name": "Sabre Trainer",
+    "description": "When a Sabretusk Cub that started the turn within 6\" of this Hero rolls a 1 for Untamed, you may move it 3D6\" towards any model within 12\" of it that it can see, instead of the nearest."
+  },
+  {
+    "name": "Set Traps",
+    "description": "Gnoblars only. The Trapper may set a trap in a turn he does nothing else (not one in which he recovered from being knocked down): place a marker touching him. A model, friend or foe, that moves within 2\" of it rolls a D6, and on a 3+ triggers the trap and takes a S4 hit; the Trapper never triggers his own. If the hit doesn't wound, the model has more than one wound, or the trap isn't triggered, it may finish its move; a model knocked down or stunned is placed 2\" from the marker. The marker is removed either way."
+  },
+  {
+    "name": "Netter (Ogre Hunting Party)",
+    "description": "Gnoblars only. The Hero starts every game with 3 nets. They can't be sold, traded or given to another warrior, and any he doesn't use are gone after the game; he starts the next game with 3 again, at no cost."
+  },
+  {
     "name": "Beastkin",
     "description": "The range of every Beast or Animal Handling skill this Hero has, now or later, is doubled to 12\"."
   },
@@ -1046,6 +1078,30 @@
   {
     "name": "Twistkin",
     "description": "Stormvermin only. When he takes this skill, the Hero must buy one mutation from the Possessed's list in the rulebook at half its listed cost."
+  },
+  {
+    "name": "Stampede",
+    "description": "When this Hero charges an enemy, any other Snotling that charged the same enemy this turn may give up all its attacks to give the Hero +1 Strength for each base Attack given up (extra-hand attacks don't count), until the end of the turn. Several Snotlings may do so, each once a turn, for one Hero only. The Hero's Strength can't go above 10."
+  },
+  {
+    "name": "Achilles' Heel",
+    "description": "The Snotling always causes a critical hit on a wound roll of 6, whatever the opponent's Toughness. With a Stampede charge, a wound roll of 5+ allows the opponent no armour save."
+  },
+  {
+    "name": "Worm",
+    "description": "Scouts and promoted Runts only. In the movement phase he may declare a move through a wall, even a charge at a target he can see or has detected. Roll a D6: on a 2+ he squeezes through and may attack as normal; on a 1 he can't move again this turn and counts as knocked down if attacked in close combat. Not with Stampede."
+  },
+  {
+    "name": "Big Bully",
+    "description": "BigSnotz only, once each. He at once learns one Strength skill. Not with Frustratingly Tiny."
+  },
+  {
+    "name": "Frustratingly Tiny",
+    "description": "Snotlings only. Enemies attacking him in hand-to-hand combat are at -1 to hit, and enemies halve their Initiative to spot him while he is hidden. Not with Big Bully."
+  },
+  {
+    "name": "Mob Master",
+    "description": "While the Hero is within 2\" of a Snotling Mob, he and the Mob are Immune to Psychology, as if he were a second Snotling Mob. With Stampede he also gains +1 to hit for each attack given up, besides the +1 Strength; a natural 1 always misses."
   },
   {
     "name": "Iron Sinews",
@@ -1070,5 +1126,13 @@
   {
     "name": "Practiced Arm",
     "description": "Strigany Heroes only, never the Strigoi Vampire. The Hero may throw two throwing knives a turn, both at the same target, each with +1 to its injury roll."
+  },
+  {
+    "name": "Elven Luck",
+    "description": "Once per game the Wood Elf may re-roll any failed roll."
+  },
+  {
+    "name": "Infiltration (Wood Elves of Athel Loren)",
+    "description": "The Wood Elf is always set up last, anywhere out of the enemy's sight. If both sides have infiltrators, each rolls a D6 and the lowest sets up first."
   }
 ]

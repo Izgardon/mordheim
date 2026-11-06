@@ -1291,6 +1291,46 @@
       "how": "overrides.json"
     },
     {
+      "name": "Death before Dishonor",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Night Fighter",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Iaijutsu",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Last Stand",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Tea Ceremony",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Sabre Trainer",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Set Traps",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Netter (Ogre Hunting Party)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
       "name": "Beastkin",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1307,6 +1347,36 @@
     },
     {
       "name": "Twistkin",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Stampede",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Achilles' Heel",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Worm",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Big Bully",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Frustratingly Tiny",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Mob Master",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
@@ -1338,6 +1408,16 @@
     {
       "name": "Practiced Arm",
       "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Elven Luck",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Infiltration (Wood Elves of Athel Loren)",
+      "setting": "mordheim-2a",
       "how": "overrides.json"
     }
   ],

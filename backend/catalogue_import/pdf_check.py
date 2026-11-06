@@ -37,8 +37,8 @@ PAGE: Spec = {
     "equipmentLists": (list, True),
     "specialEquipment": (list, False),
     "fighters": (list, True),
-    "skillGroup": (dict, True),
-    "specialSkillsList": (list, True),
+    "skillGroup": (dict, False),
+    "specialSkillsList": (list, False),
     "aliases": (list, True),
     "stubs": (list, True),
     "flags": (list, True),
@@ -283,7 +283,10 @@ def check_page(slug: str, page: dict[str, Any], catalogue: Catalogue) -> Found:
     if page["warbandType"] != slug or slug not in catalogue.types:
         problems.append(f"{slug}: warbandType {page['warbandType']!r} is no type of ours named as the file")
     shape(page["warbandRules"], WARBAND_RULES, "warband rules", problems)
-    shape(page["skillGroup"], SKILL_GROUP, "skill group", problems)
+    if ("skillGroup" in page) != ("specialSkillsList" in page):
+        problems.append(f"{slug}: a skill group and its special skills, or neither (no Special column)")
+    elif "skillGroup" in page:
+        shape(page["skillGroup"], SKILL_GROUP, "skill group", problems)
     checks: list[tuple[Any, Spec, str]] = [
         (page["specialRules"], RULE, "warband rule"),
         (page["aliases"], ALIAS, "alias"),
@@ -303,5 +306,12 @@ def check_page(slug: str, page: dict[str, Any], catalogue: Catalogue) -> Found:
     _fighters(slug, page, catalogue, problems)
     _notes(page, problems)
     _items(page, catalogue, found)
-    _skills(page, catalogue, problems)
+    if "skillGroup" in page:
+        _skills(page, catalogue, problems)
+    else:
+        problems += [
+            f"fighter {row['name']}: ticks Special, but the page has no skill group"
+            for row in page["fighters"]
+            if (row.get("skillAccess") or {}).get("special")
+        ]
     return found

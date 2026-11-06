@@ -20,6 +20,11 @@ check over every file.
 | `dwarf-slayer-cult.json` | dwarf-slayer-cult (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Dwarf%20Slayer%20Cult%20v6.pdf | 1-7 (text layer; page 2 as an image) | 6 Nov 2026 |
 | `survivors-of-strigos.json` | survivors-of-strigos (2a, Sylvania) | https://www.broheim.net/downloads/warbands/supplement/sylvania/Survivors%20Of%20Strigos.pdf | 1-6 (text layer; its skill table and Dark Arts are images) | 6 Nov 2026 |
 | `masters-of-horror.json` | masters-of-horror (2a, Sylvania) | https://www.broheim.net/downloads/warbands/supplement/sylvania/Masters%20Of%20Horror.pdf | 1-4 (text layer; its skill table is an image) | 6 Nov 2026 |
+| `ogre-hunting-party.json` | ogre-hunting-party (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Ogre%20Hunting%20Party.pdf | 1-7 (text layer; page 2 as an image) | 6 Nov 2026 |
+| `wood-elves-of-athel-loren.json` | wood-elves-of-athel-loren (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Wood%20Elves%20of%20Athel%20Loren.pdf | 1-5 (text layer) | 6 Nov 2026 |
+| `nipponese-expedition.json` | nipponese-expedition (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf | 1-8 (text layer; page 2, a scan, as an image) | 6 Nov 2026 |
+| `snotlings.json` | snotlings (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Snotlings.pdf | 1-11 (text layer; page 2 as an image) | 6 Nov 2026 |
+| `outlaws-of-stirwood-forest-redux.json` | outlaws-of-stirwood-forest-redux (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Outlaws%20of%20Stirwood%20Forest%2C%20Redux.pdf | 1-6 (pages 2-4 as images) | 6 Nov 2026 |
 
 ## Adding a warband
 
@@ -28,7 +33,10 @@ check over every file.
    heading set as an image), and say which in its flags.
 2. Write `<type-slug>.json` in this shape, its `warbandType` that slug. Name each line's item as we name it or as
    one of its tags (an alias for a spelling of the PDF's own), give each item we lack a stub with the page of its
-   rules, and flag every doubt with its page; leave a number you can't read empty and flag it.
+   rules, and flag every doubt with its page; leave a number you can't read empty and flag it. Check each special
+   skill against all of ours, whatever its name: one that is ours word for word in effect links ours (William, 6 Nov
+   2026), and a "who may take it" line it loses becomes a warband rule. A warband with no Special column has no
+   `skillGroup` or `specialSkillsList`.
 3. A race of the warband's own goes in `apps/races/data/races.json` and `template_answers.RACES_BY_PAGE` (one
    fighter's, `RACES_BY_FIGHTER`); a rule that is a shared special but does something else is kept apart in
    `apps/special/data/shared-specials.json`; a pre-battle roll goes in `apps/special/data/prebattle-rolls.json`; a

@@ -430,5 +430,41 @@
     "initiative": "7",
     "attacks": "4",
     "leadership": "8"
+  },
+  {
+    "name": "Ogre (Ogre Hunting Party)",
+    "movement": "6",
+    "weapon_skill": "6",
+    "ballistic_skill": "4",
+    "strength": "5",
+    "toughness": "5",
+    "wounds": "5",
+    "initiative": "4",
+    "attacks": "5",
+    "leadership": "9"
+  },
+  {
+    "name": "Gnoblar",
+    "movement": "4",
+    "weapon_skill": "5",
+    "ballistic_skill": "6",
+    "strength": "3",
+    "toughness": "4",
+    "wounds": "3",
+    "initiative": "6",
+    "attacks": "4",
+    "leadership": "7"
+  },
+  {
+    "name": "Snotling",
+    "movement": "4",
+    "weapon_skill": "4",
+    "ballistic_skill": "4",
+    "strength": "3",
+    "toughness": "3",
+    "wounds": "2",
+    "initiative": "9",
+    "attacks": "4",
+    "leadership": "6"
   }
 ]

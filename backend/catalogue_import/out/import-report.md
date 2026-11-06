@@ -26,10 +26,10 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 358 |
-| skills | 268 |
-| skill groups | 56 |
-| skill group links | 320 |
+| price rows | 366 |
+| skills | 284 |
+| skill groups | 60 |
+| skill group links | 346 |
 | serious injuries (D66) | 20 |
 | shared specials | 62 |
 | random mutation results (D66) | 36 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 268 | 153 | 75 | 40 |
+| skills | 284 | 153 | 91 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 268 skills, one per name; `out/skill-groups.json` is 56 groups holding them (320 links), the five core groups first.
+`out/skills.json` is 284 skills, one per name; `out/skill-groups.json` is 60 groups holding them (346 links), the five core groups first.
 
 ### Merged by name
 
@@ -397,7 +397,9 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Militant Mootlanders | Militant Mootlanders | skill_group_learners | - | Crude Belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt |
 | Night Goblins | Night Goblins (WEB) | skill_group_learners | - | Hide in Shadows, Fungus Farmer, Infiltrate, Netter, Ride Squig, Sneaky Git |
 | Night Goblins (MIC) | Night Goblins (MIC) | new group | - | Infiltration, Sneaky Git, Netter, Ded Shooty |
+| Nipponese Expedition | Nipponese Expedition | new group | - | Extra Tough, Death before Dishonor, Night Fighter, Iaijutsu, Last Stand, Tea Ceremony |
 | Norse | Norse Explorers (TC13), Norse Explorers (BTB) | intersection | - | Barbarian courage, Berserk charge, Battle Tongue, Shield master, Crushing blow |
+| Ogre Hunting Party | Ogre Hunting Party | new group | - | Crude Belch, Unblinking Eye, Maneater, Bull charge, Bellowing Roar (Ogres), Infiltration, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
 | Ogres | Ogres (group) | skill_group_learners | - | Master of arms, Crude Belch, Maneater, Bull charge, Dog of war, Bellowing Roar (Ogres) |
 | Orcs | Orcs (group) | skill_group_learners | - | ’ard ’ead, Waaagh!, ’ere we go!, Da cunnin’ plan, Well ’ard, ’eadbasher, Proven warrior |
 | Ostlanders | Ostlanders | skill_group_learners | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |
@@ -415,14 +417,16 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Skaven Metal Mongers | Metal Mongers | skill_lists | - | Tail Fighting, Infiltration, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat |
 | Skink | Lizardmen (TC11) | intersection | - | Infiltration (Skink), Great Hunter |
 | Slayer Cult | Dwarf Slayer Cult | new group | - | Ferocious Charge, True Grit, Deathwish, Monster Slayer (Slayer Cult), Berserker (Slayer Cult), Deathblow, Axe Mastery, Thick Skull (Slayer Cult), Songster, Song of Honor, Relentless |
+| Snotlings | Snotlings | new group | - | Stampede, Achilles' Heel, Worm, Big Bully, Frustratingly Tiny, Mob Master |
 | Sons of Hashut | Sons of Hashut | new group | - | Extra Tough, True Grit, Thick Skull, Unlimited Hatred |
 | Survivors of Strigos | Survivors of Strigos | new group | - | Iron Sinews, Great Thirster, Curse of the Revenant, Dark Arts, Light Fingers, Practiced Arm |
 | Tomb Robbers | Arabian Tomb Raiders | intersection | - | Sand worm, Hit and run, Weather tolerant |
 | Undead Vampires | Undead | skill_lists | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
+| Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Unblinking Eye, Resource Hunter, Elven Luck, Infiltration (Wood Elves of Athel Loren) |
 
 ### New groups and skills (`new_skill_groups`)
 
-69 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+85 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -485,16 +489,32 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Alchemist | Masters of Horror | sylvania | Sylvania Supplement |
 | Apt Revitalist | Masters of Horror | sylvania | Sylvania Supplement |
 | Lunatic | Masters of Horror | sylvania | Sylvania Supplement |
+| Death before Dishonor | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
+| Night Fighter | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
+| Iaijutsu | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
+| Last Stand | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
+| Tea Ceremony | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
+| Sabre Trainer | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
+| Set Traps | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
+| Netter (Ogre Hunting Party) | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Beastkin | Skaven Clan Moulder | mordheim-2a | WEB |
 | Hypnotic Musk | Skaven Clan Moulder | mordheim-2a | WEB |
 | Subjugator of Mankind | Skaven Clan Moulder | mordheim-2a | WEB |
 | Twistkin | Skaven Clan Moulder | mordheim-2a | WEB |
+| Stampede | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
+| Achilles' Heel | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
+| Worm | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
+| Big Bully | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
+| Frustratingly Tiny | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
+| Mob Master | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
 | Iron Sinews | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Great Thirster | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Curse of the Revenant | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Dark Arts | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Light Fingers | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Practiced Arm | Survivors of Strigos | sylvania | Sylvania Supplement |
+| Elven Luck | Wood Elves of Athel Loren | mordheim-2a | WEB |
+| Infiltration (Wood Elves of Athel Loren) | Wood Elves of Athel Loren | mordheim-2a | WEB |
 
 mordheimer also lists Combat Master for Dwarf Rangers; left out of the group.
 mordheimer also lists Ferocious Charge for Dwarf Rangers; left out of the group.
@@ -509,24 +529,34 @@ mordheimer also lists Thick Skull for Slayer Cult; left out of the group.
 mordheimer also lists Monster Slayer for Slayer Cult; left out of the group.
 mordheimer also lists Berserker for Slayer Cult; left out of the group.
 mordheimer also lists Crude Belch for Halflings (MIC); left out of the group.
+mordheimer also lists Bellowing Roar for Ogre Hunting Party; left out of the group.
+mordheimer also lists Netter for Ogre Hunting Party; left out of the group.
+mordheimer also lists Scent Hound for Ogre Hunting Party; left out of the group.
+mordheimer also lists Achilles’ Heel for Snotlings; left out of the group.
+mordheimer also lists Infiltration for Wood Elves of Athel Loren; left out of the group.
+mordheimer also lists Excellent Sight for Wood Elves of Athel Loren; left out of the group.
+mordheimer also lists Seeker for Wood Elves of Athel Loren; left out of the group.
 
 Our skills the new groups hold, whose learners change (a skill is learnable by whoever has a group holding it):
 
 | Skill | Before (its rows' who-can) | Now (its groups) |
 | --- | --- | --- |
-| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
-| Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs |
+| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Nipponese Expedition, Guild of Disgraced Engineers |
+| Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Wood Elves of Athel Loren |
 | True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult, Guild of Disgraced Engineers |
 | Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
-| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Metal Mongers, Sea Ghosts |
+| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Ogre Hunting Party, Metal Mongers, Sea Ghosts |
 | Foul Odour | Ostlanders | Ostlanders, Horned Hunters |
 | Hide in Shadows | Hochland Bandits, Shadow Warriors, Night Goblins (WEB) | Hochland Bandits, Horned Hunters, Shadow Warriors, Night Goblins (WEB), Sea Ghosts |
 | Sneaky Git | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Netter | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Virtue of the Impetuous | Bretonnian Knights | Bretonnian Knights, Bretonnian Grail Companions |
 | Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Bretonnian Grail Companions, Dwarf Slayer Cult |
-| Unblinking Eye | Metal Mongers | Druchii, Metal Mongers |
+| Unblinking Eye | Metal Mongers | Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Metal Mongers |
 | Stealthy | Halflings | Halflings, Low Kings, Militant Mootlanders |
+| Crude Belch | Maneaters, Ogre Hunting Party | Maneaters, Ogre Hunting Party, Militant Mootlanders |
+| Maneater | Ogre Hunting Party | Maneaters, Ogre Hunting Party |
+| Fey | Wood Elves of Athel Loren | Wood Elves of Athel Loren, Sea Ghosts |
 
 ## MiM items that need rules (PDF pass)
 
@@ -561,16 +591,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 58 |
-| warband types linked | 64 |
-| fighters (heroes, henchmen) | 387 (197, 190) |
-| henchmen that gain no XP | 59 |
-| henchmen that can't be promoted | 73 |
-| equipment lists | 146 |
-| list lines | 1595 |
-| warband rules | 185 |
+| templates | 63 |
+| warband types linked | 69 |
+| fighters (heroes, henchmen) | 419 (215, 204) |
+| henchmen that gain no XP | 60 |
+| henchmen that can't be promoted | 76 |
+| equipment lists | 160 |
+| list lines | 1749 |
+| warband rules | 207 |
 | upgrades | 77 |
-| the templates' own specials | 461 |
+| the templates' own specials | 515 |
 
 ### List lines
 
@@ -586,7 +616,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-196 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+238 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -610,7 +640,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-42 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+50 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 
@@ -644,6 +674,7 @@ Written values, kept as written:
 | bretonnian-grail-companions | Hedge Knight | ballistic_skill - |
 | bretonnian-grail-companions | Grail Reliquae | ballistic_skill - |
 | skaven-of-clan-moulder | Wolf Rat | strength 3(4) |
+| snotlings | Snotling Wheelo | movement D6 |
 
 Ticked for special skills with no group to name, the tick left out: imperial-outriders: Knight, imperial-outriders: Outrider, imperial-outriders: Scout.
 
@@ -689,8 +720,12 @@ Each of those groups is for everyone or names every warband type its fighters' t
 | witch-hunters | Warrior-Priest | Priest | Prayers of Sigmar |
 | bretonnian-grail-companions | Damsel | Wizard | Grail Magic |
 | druchii | Sorceress | Wizard | Dark Magic (Druchii) |
+| nipponese-expedition | Vim-To Mage | Wizard | Arabian Elemental Magic |
+| outlaws-of-stirwood-forest-redux | Cleric | Priest | Prayers of Sigmar |
+| snotlings | Snotling Shaman | Wizard | Snotling Waaagh! Magic |
 | survivors-of-strigos | Strigoi Vampire | Wizard | Dark Arts |
 | survivors-of-strigos | Seer | Wizard | Charms and Hexes (Strigos) |
+| wood-elves-of-athel-loren | Forest Mage | Wizard | Woodland Incantations |
 
 mordheimer's lore names that differ from ours: Charms & Hexes -> Charms and Hexes; Lady’s Prayers -> Lady's Prayers; Lizardman Magic -> Lizardmen Magic; Necromancy (The Restless Dead) -> Necromancy (Restless Dead); Spells of the Djed’hi -> Spells of the Djedhi.
 
@@ -735,7 +770,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen), Remas' rout re-roll against Dark Elves, a Hung henchman who becomes a hero getting Ride Warhorse, and the Ostermarker captain's starting wardog.
 - Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
 - mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
-- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); skaven-of-clan-moulder: Experience (Rat Ogre).
+- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); skaven-of-clan-moulder: Experience (Rat Ogre); snotlings: Teamwork (Snotling Mob).
 
 ## Shared specials
 
@@ -743,7 +778,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 40 | 5 | 5 | 3 |
+| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 42 | 5 | 5 | 3 |
 | Stupidity | Psychology | the rulebook's Stupidity (snapshot) |  |  | 4 | 0 | 0 | 1 |
 | Immune to Psychology | Psychology | the list's text |  |  | 16 | 1 | 2 | 0 |
 | Immune to Poison | Trait | the list's text |  |  | 14 | 3 | 3 | 2 |
@@ -810,7 +845,7 @@ List prices the pages differ from: none.
 
 ### Merged
 
-- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Bretonnian Grail Companions: Grail Knight (Fearsome); Halflings: Village Ogre; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Skaven of Clan Moulder: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Bretonnian Grail Companions: Grail Knight (Fearsome); Halflings: Village Ogre; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Skaven of Clan Moulder: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
 - Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
 - Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Mad Scientist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Survivors of Strigos: Strigoi Vampire; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
@@ -951,7 +986,7 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-8 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+13 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
@@ -961,8 +996,13 @@ Kept apart from a family's, the effect differing:
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
 | masters-of-horror | masters-of-horror | 7 | 1 | 3 | 11 |
+| nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
+| ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
+| outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
+| snotlings | snotlings | 8 | 2 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
+| wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
 
 ### Bretonnian Grail Companions
 
@@ -1061,6 +1101,51 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Flesh Construct's Cannot Run ("may still charge normally") is our shared May Not Run. It gains experience only on a passed Leadership test, so it gains experience but never becomes a Hero. Both it and the Zombies ("Undead creatures") take our Undead race; Zombies gain no experience.
 - Flag (p4): No group sizes are printed: left open, but the Flesh Construct's is 1, as there may be only one.
 
+### Nipponese Expedition
+
+- Alias (p4): "light armor" is our light armour.
+- Alias (p4): "heavy armor" is our heavy armour.
+- Alias (p4): "war horse" is our warhorse.
+- Stub: Kanabo, 15 gc, Common; its rules are on p3.
+- Stub: Sashimono, 15 gc, Common; its rules are on p3.
+- Stub: Horo, 10 gc, Rare 6; its rules are on p3.
+- Stub: Kusarigama, 20 gc, Rare 8; its rules are on p3.
+- Flag (p1): A Nippon warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p1): No maximum profile is printed, so every warrior takes our Human race.
+- Flag (p2): Page 2 is a scan with no text layer, read from the page image: the skill chart (Hatamoto all six; Vim-To Mage Academic, Speed, Special; Shinobi Combat, Shooting, Speed, Special; Retainer Combat, Shooting, Strength, Special) and the special skills.
+- Flag (p2): The special skills are a new group, Nipponese Expedition. Blessed by the Kami (re-roll the Heroes Serious Injury roll once, the second result stands) is our Extra Tough, word for word in effect.
+- Flag (p3): Four stubs, their rules on p3: Kanabo (Common, 15 gc; S+1, Two-Handed, Concussion), Sashimono (Common, 15 gc; re-roll Leadership tests other than Rout), Horo (Rare 6, 10 gc; +1 armour save against shooting while mounted) and Kusarigama (Rare 8, 20 gc; Two-Handed, Cannot be parried, Chain Strike). The text layer puts the Kanabo's special rules under the Horo.
+- Flag (p4): The Sashimono is 15 gc on the Warrior and Noble lists and 20 gc on the Warrior Monk list: each as printed. The Katana links our Dragon Sword by its tag (the PDF gives it no rules).
+- Flag (p4): The Noble list is the Warrior list plus its own lines, so it repeats the Warrior list's lines. The Ashigaru and Onnabushi buy from the Warrior list ("the Nippon equipment list").
+- Flag (p6): The Vim-To Mage buys from no list: his Tenants of the Order allow only a walking staff (a club) and a dagger, at no price given. His Vim-Toist Magic is our Arabian Elemental Magic, as the PDF says.
+- Flag (p7): No group sizes are printed: left open.
+
+### Ogre Hunting Party
+
+- Alias (p2): "light armor" is our light armour.
+- Alias (p2): "slings" is our sling.
+- Stub: Sharp Stuff, 3 gc, Common; its rules are on p5.
+- Stub: Pigback Mount, 50 gc, Common; its rules are on p5.
+- Flag (p1): An Ogre warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p1): The Ogre maximum (M6 WS6 BS4 S5 T5 W5 I4 A5 Ld9) is unlike our Ogre's (BS5, I6), so the Ogre Hunter takes a new race, Ogre (Ogre Hunting Party). We have no Gnoblar race: the Gnoblar maximum (M4 WS5 BS6 S3 T4 W3 I6 A4 Ld7) is a new race, Gnoblar.
+- Flag (p1): The warrior list says Sabre-Bait, the skill table Sabre-Bait and the fighter's heading Sabre-Baiter: named Sabre-Baiter.
+- Flag (p2): The skill table is ticks (read from the page image): Ogre Hunter Combat, Strength, Special; Trappers Combat, Shooting, Speed, Special; Sabre-Bait Combat, Speed, Special.
+- Flag (p2): Cleaver (counts as Axe) links our Cleaver at 5 gc (ours cuts like an axe); Club links our Club, Mace or Hammer. Ogre Club and Harpoon Crossbow (50 gc, Rare 10) are ours, as the PDF prints them.
+- Flag (p3): Huuuuge is our shared Fear and Large, and the Ogre Hunter's own rule for the rest (All Alone, armour, warband rating).
+- Flag (p3): The Ogre Hunter's Sabre Trainer and the Trappers' Veteran Tracker are skills they start with: templates give no starting skills, so they are rules, and the player adds the Trapper's skill.
+- Flag (p4): No group sizes are printed: left open.
+- Flag (p5): Sharp Stuff (1st free, then 3 gc, Common, Gnoblars only; range 8", S2, No Limit, Thrown Weapon, +1 armour save, Stuff Thrower) and the Pigback Mount (50 gc, Common, Gnoblar Heroes only; M5 WS2 BS- S2 T- W1 I3 A1 Ld5, Like a Mount, Not Like a Mount, Extra Hand) are stubs, their rules on p5.
+- Flag (p6): The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); Scent Hound (hidden enemies spotted at twice his Initiative in inches) is our Unblinking Eye. Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game. Which race may take which skill is a warband rule.
+
+### Outlaws of Stirwood Forest, Redux
+
+- Flag (p2): Pages 2 to 4 are images (choice of warriors, starting experience, skill table, heroes, henchmen and the Forest Cloak's entry), read from the page images; page 2's lists are also in the text layer.
+- Flag (p2): An Outlaw warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum profile is printed, so every warrior takes our Human race.
+- Flag (p2): The skill table has no Special column and the warband has no special skills. Bandit Leader Combat, Shooting, Academic, Strength, Speed; Champion Combat, Shooting, Strength; Cleric Academic, Speed; Petty Thief Combat, Shooting.
+- Flag (p2): Mace and Hammer are two lines, both our Club, Mace or Hammer, shown as Mace and Hammer. List prices as printed: Hunting Arrows 30 gc (ours 25), Forest Cloak 45 gc (the PDF's own entry, p4, and ours: 50 gc, Rare 10).
+- Flag (p3): A Cleric may only be taken instead of a Champion or a Petty Thief: our counts can't tie one fighter's count to another's, so it is his rule.
+- Flag (p3): The Leader rule says "her Leadership" and the Cleric's equipment line names "A Warrior Priest": read as the Bandit Leader and the Cleric. The Cleric casts from our Prayers of Sigmar.
+
 ### Skaven of Clan Moulder
 
 - Stub: Beastwhip, 25 gc, Rare 8; its rules are on p3.
@@ -1074,6 +1159,23 @@ Kept apart from a family's, the effect differing:
 - Flag (p6): It's Alive!: each Rat Ogre must buy a mutation when hired, but upgrades are for heroes only, so it is his rule's text and the player adds the mutation from Boons & Banes.
 - Flag (p6): The Rat Ogre's Stupidity depends on a Clan Moulder Hero within 6", unlike the Skaven's and Clan Pestilens' (a Skaven Hero): kept apart as Stupidity (Clan Moulder Rat Ogre).
 - Flag (p2): The scan's OCR garbles the dotted price lines and every profile: the profiles and the skill table were read from page images (pages 4, 5 and 6); the list prices read cleanly from the OCR.
+
+### Snotlings
+
+- Alias (p3): "light armor" is our light armour.
+- Alias (p9): "power squig" is our familiar.
+- Stub: Pebble, 0 gc, Common; its rules are on p9.
+- Stub: Slingshot, 2 gc, Common; its rules are on p9.
+- Flag (p2): A Snotling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p2): The Bullied Goblin's maximum is our Goblin's. We have no Snotling race: the Snot maximum (M4 WS4 BS4 S3 T3 W2 I9 A4 Ld6) is a new race, Snotling.
+- Flag (p2): The skill table is an image (read from the page image): Bullied Goblin Combat, Shooting, Speed, Special; BigSnotz Combat, Speed, Special; Scout Shooting, Speed, Special; Shaman Speed, Special. The Shaman has no Academic tick.
+- Flag (p3): Dagger/Pointy Stick is our Dagger, shown as Pointy Stick ("counts as dagger"). The Short Bow is 10 gc (ours 5): taken as printed. The Shoota list's blunderbuss line is "0-2" and its pistol "No Brace": both are in the Shoota Team's One Big Gun rule.
+- Flag (p4): The Leader rule says "within 6" of the Chieftain": read as the Bullied Goblin, who leads. The Rigors of Leadership says "+2 experience for surviving a battle", not whether that replaces the usual +1: kept as printed.
+- Flag (p7): The Wheelo's Movement is "Special" (D6" walking, 2D6" running or charging): its profile's M is D6. It is a machine, so it takes no race. Its group is 1, as there may be only one.
+- Flag (p9): Runts come in groups of any size; the other henchmen's group sizes are not printed: left open.
+- Flag (p9): The Pebble (free, Snotling warband only; range 6", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) and the Slingshot (2 gc, Common, Snotling warband only; range 18", S2, fire twice at half range) are stubs, their rules on p9. The Power Squig (20+D6 gc, Rare 8) "acts exactly the same as a Familiar": it links our Familiar, as special equipment for the Shaman.
+- Flag (p10): The special skills are a new group, Snotlings; none is one of ours.
+- Flag (p11): Snotling Waaagh! Magic is a new lore (ours, Waaagh! Magic, is the Orcs' and has other spells). Pebbles of Doom says "any friendly Hero within 6"" without saying one or all: kept as printed.
 
 ### Survivors of Strigos
 
@@ -1094,3 +1196,16 @@ Kept apart from a family's, the effect differing:
 - Flag (p5): Strigany are henchmen (under the Henchmen heading, with no starting experience), up to five. No group sizes are printed: left open.
 - Flag (p5): Ghouls cost 40 gc and Giant Bats 40 gc, as printed. Large is our shared Large.
 - Flag (p6): Charms & Hexes differ from our Charms and Hexes (Scry and Curse are Difficulty 8, ours 6; spell 6 is Cure of Thorns, ours Cure), so the Seer's is a new lore, Charms and Hexes (Strigos), in spells.json.
+
+### Wood Elves of Athel Loren
+
+- Flag (p1): A Wood Elf warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p1): The maximum is the rulebook's (p121), so the Elves take our Elf race.
+- Flag (p2): The skill table's ticks are a symbol font, read from where the text layer places them: Hunt Master Combat, Shooting, Academic, Speed, Special; Waywatcher Combat, Shooting, Speed, Special; Forest Mage Shooting, Academic, Speed, Special.
+- Flag (p2): The starred prices are for starting only (a warband rule). The footnote also says "Heroes only", yet the Scout list, which only henchmen use, has the same starred lines: both lists keep them, with no note.
+- Flag (p2): List prices as printed: Elven Cloak 75 gc (ours 100; the PDF's own entry 75+D6x10, Rare 12), Ithilmar Armour 60 gc (ours 90), Hunting Arrows 35 gc (ours 25), Elven Wine 50 gc (the PDF's entry 50+3D6, Rare 10).
+- Flag (p2): Elven Runestones (50+2D6 gc, Rare 11, Forest Mage only) and the Familiar (20+D6 gc, Rare 8, spell-users only) are on no list: they are special equipment, both ours, the Forest Mage's (the only spell-user).
+- Flag (p3): The Leader rule says "within 6" of the Protector of the Hunt": read as the Hunt Master, who leads.
+- Flag (p4): "Bought in groups of 1-5" stands over the henchmen: Deepwood Scouts and Glade Guard come in groups of 1-5.
+- Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey is our Fey; Excellent Sight is our Unblinking Eye (and also a warband rule for every Elf); Seeker is our Resource Hunter, word for word in effect, its "only one Elven Hero" a warband rule. Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one), and so is Infiltration (theirs has no 12" limit).
+- Flag (p5): Woodland Incantations is a new lore. Lyrics of Feral Infatuation gives no range or duration, and Song of the Sun names no test ("must make a test"): both are kept as printed.

@@ -273,6 +273,9 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("halflings", "ogre"): "Ogre (Halflings)",  # the Halflings PDF's Ogre maximum (p1), unlike our Ogre's
     ("druchii", "elf"): "Elf (Druchii)",  # the Druchii PDF's maximum (p2): T3, our Elf's T4
     ("masters-of-horror", "wulfen"): "Werecreature (Masters of Horror)",  # the Wolfman's maximum (p1)
+    ("ogre-hunting-party", "ogre"): "Ogre (Ogre Hunting Party)",  # its PDF's Ogre maximum (p1): BS4, I4
+    ("ogre-hunting-party", "gnoblar"): "Gnoblar",  # its Gnoblar maximum (p1); we had no Gnoblar race
+    ("snotlings", "snotling"): "Snotling",  # the Snotlings PDF's Snot maximum (p2); we had no Snotling race
 }
 CREATURES = frozenset(
     {

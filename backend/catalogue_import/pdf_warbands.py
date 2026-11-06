@@ -10,7 +10,8 @@ snapshot so the template import builds it the same way. A file's own keys:
 - `stubs`: `{name, type, subtype, rarity, dice, rulesPage}`, items a line names that we lack (William: "yes to
   stubs"): each a bare item, no rules, with one price row for its warband only at the line's price;
 - `skillGroup` (`{name, new}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills, each
-  `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills);
+  `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for a
+  warband with no Special column (the Outlaws of Stirwood Forest, Redux);
 - a fighter's `spellLores`: the lores he casts from, by our spells' lore names;
 - `flags`: `{page, what}`, what the PDF leaves unclear, for William.
 

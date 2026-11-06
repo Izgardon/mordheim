@@ -17695,6 +17695,246 @@
     ]
   },
   {
+    "slug": "kanabo",
+    "name": "Kanabo",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim-2a",
+    "source": "Nicholas ‘Jiro’ Ceccarani",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf",
+    "tags": [
+      "kanabo"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "nipponese-expedition",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "sashimono",
+    "name": "Sashimono",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "Nicholas ‘Jiro’ Ceccarani",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf",
+    "tags": [
+      "sashimono"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "nipponese-expedition",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "horo",
+    "name": "Horo",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "Nicholas ‘Jiro’ Ceccarani",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf",
+    "tags": [
+      "horo"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "nipponese-expedition",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "kusarigama",
+    "name": "Kusarigama",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim-2a",
+    "source": "Nicholas ‘Jiro’ Ceccarani",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf",
+    "tags": [
+      "kusarigama"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "nipponese-expedition",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "sharp-stuff",
+    "name": "Sharp Stuff",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "mordheim-2a",
+    "source": "Dave ‘StyrofoamKing’ Seidman-Joria and Catferret",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Ogre%20Hunting%20Party.pdf",
+    "tags": [
+      "sharp stuff"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 3,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "ogre-hunting-party",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "pigback-mount",
+    "name": "Pigback Mount",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "Dave ‘StyrofoamKing’ Seidman-Joria and Catferret",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Ogre%20Hunting%20Party.pdf",
+    "tags": [
+      "pigback mount"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "ogre-hunting-party",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "beastwhip",
     "name": "Beastwhip",
     "variant": "",
@@ -17807,6 +18047,86 @@
         "warbands": [
           {
             "type": "skaven-of-clan-moulder",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "pebble",
+    "name": "Pebble",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "mordheim-2a",
+    "source": "Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Snotlings.pdf",
+    "tags": [
+      "pebble"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 0,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "snotlings",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "slingshot",
+    "name": "Slingshot",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "mordheim-2a",
+    "source": "Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Snotlings.pdf",
+    "tags": [
+      "slingshot"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 2,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "snotlings",
             "excluded": false
           }
         ],

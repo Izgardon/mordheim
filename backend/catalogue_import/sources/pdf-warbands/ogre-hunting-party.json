@@ -1,0 +1,203 @@
+{
+  "warbandType": "ogre-hunting-party",
+  "name": "Ogre Hunting Party",
+  "source": "Dave ‘StyrofoamKing’ Seidman-Joria and Catferret",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Ogre%20Hunting%20Party.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {"rulename": "Greenskins", "ruleFull": "Gnoblars count as Greenskins. They don't suffer Animosity; Gnoblar henchmen Bicker instead."},
+    {"rulename": "Ideas Above Their Station", "ruleFull": "If the Ogre Hunter is killed, the Gnoblar with the highest Leadership becomes the leader (on a tie, the one with the most experience). A new Ogre Hunter may be bought, and he becomes the leader."},
+    {"rulename": "Distasteful Company", "ruleFull": "The warband may hire only a Hobgoblin Scout, a Gnoblar Botcher or a Ninja Gnoblar. While it has no Ogre Hunter it may also hire an Ogre Bodyguard and an Ogre Slaver; if it hires an Ogre Hunter again, every other Ogre leaves."},
+    {"rulename": "Special Skills", "ruleFull": "Ogres and Gnoblars may take the Ogre Hunting Party skills, but never a skill kept for the other race. Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Set Traps, Infiltration, Netter."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "ogre-equipment-list",
+      "title": "Ogre Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "cleaver", "alias": "", "cost": {"cost": 5}},
+        {"name": "ogre club", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "harpoon crossbow", "alias": "", "cost": {"cost": 50}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "gnoblar-equipment-list",
+      "title": "Gnoblar Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "cleaver", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "Sharp Stuff", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 3}},
+        {"name": "throwing knives", "alias": "", "cost": {"cost": 15, "costSuffix": "Heroes only"}},
+        {"name": "slings", "alias": "", "cost": {"cost": 2, "costSuffix": "Flingers only"}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "rope & hook", "alias": "", "cost": {"cost": 5}},
+        {"name": "Pigback Mount", "alias": "", "cost": {"cost": 50, "costSuffix": "Heroes only"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "ogre-hunter",
+      "type": "hero",
+      "name": "Ogre Hunter",
+      "plural": "Ogre Hunters",
+      "race": "ogre",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 145,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 4, "bs": 3, "s": 4, "t": 4, "w": 3, "i": 3, "a": 2, "ld": 8},
+      "equipmentLists": ["ogre-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Ogre Hunter may use his Leadership when taking Leadership tests."},
+        {"rulename": "Fear", "ruleFull": "The Ogre Hunter causes fear."},
+        {"rulename": "Large", "ruleFull": "The Ogre Hunter is a Large target."},
+        {"rulename": "Huuuuge", "ruleFull": "The Ogre Hunter ignores All Alone tests. He can never have ithilmar, gromril or heavy armour. He adds 20 to the warband rating, plus his experience, instead of 5."},
+        {"rulename": "Slow Witted", "ruleFull": "The Ogre Hunter needs twice the usual experience for each advance."},
+        {"rulename": "Don't Fight with Eating Knives", "ruleFull": "The Ogre Hunter has no free dagger and never fights with one. With no other weapon he fights unarmed, as many attacks as his Attacks, with no -1 Strength penalty; the enemy still has +1 to his armour save. He can't add an unarmed attack to another weapon's."},
+        {"rulename": "Lazy", "ruleFull": "While any Gnoblar Hero is able to search for wyrdstone or rare items, the Ogre Hunter rolls no exploration die and doesn't search. He explores and searches only when no other Gnoblar Hero can (for example, all were taken out of action)."},
+        {"rulename": "Central Figure", "ruleFull": "If the Ogre Hunter is taken out of action, the warband is at once at its Rout level, whatever its casualties."},
+        {"rulename": "Sabre Trainer", "ruleFull": "The Ogre Hunter has the Sabre Trainer skill: when a Sabretusk Cub that started the turn within 6\" of him rolls a 1 for Untamed, you may move it 3D6\" towards any model within 12\" of it that it can see, instead of the nearest."}
+      ]
+    },
+    {
+      "id": "trappers",
+      "type": "hero",
+      "name": "Trapper",
+      "plural": "Trappers",
+      "race": "gnoblar",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 4, "s": 2, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["gnoblar-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Veteran Tracker", "ruleFull": "When hired, a Trapper takes one of these special skills: Infiltration (one Trapper at most), Set Traps, Netter or Scent Hound."}
+      ]
+    },
+    {
+      "id": "sabre-baiter",
+      "type": "hero",
+      "name": "Sabre-Baiter",
+      "plural": "Sabre-Baiters",
+      "race": "gnoblar",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 2, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["gnoblar-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Bait", "ruleFull": "When a model declares a charge against the Sabre-Baiter, he may at once move D6\" directly away from the charger, which fails its charge if he ends out of its reach. Once a turn, and only if he isn't knocked down, stunned or in hand-to-hand combat. Against a charging Sabretusk he moves 2D6\" instead and may move around models in his way, so the Sabretusk may end up charging another model."}
+      ]
+    },
+    {
+      "id": "gnoblar-fighters",
+      "type": "henchman",
+      "name": "Gnoblar Fighter",
+      "plural": "Gnoblar Fighters",
+      "race": "gnoblar",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 2, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["gnoblar-equipment-list"],
+      "specialRules": [
+        {"rulename": "Bicker", "ruleFull": "At the end of your Recovery phase roll a D6 for each Gnoblar henchman not in combat: on a 1 he only hurls insults at the nearest Gnoblar, and may not move, shoot or cast spells this turn. A Gnoblar who gains That Lad's Got Talent loses Bicker."}
+      ]
+    },
+    {
+      "id": "flingers",
+      "type": "henchman",
+      "name": "Flinger",
+      "plural": "Flingers",
+      "race": "gnoblar",
+      "minQty": 0,
+      "maxQty": 7,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 2, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["gnoblar-equipment-list"],
+      "specialRules": [
+        {"rulename": "Bicker", "ruleFull": "At the end of your Recovery phase roll a D6 for each Gnoblar henchman not in combat: on a 1 he only hurls insults at the nearest Gnoblar, and may not move, shoot or cast spells this turn. A Gnoblar who gains That Lad's Got Talent loses Bicker."},
+        {"rulename": "Scrap Slinger", "ruleFull": "A Flinger may throw 3 pieces of Sharp Stuff a turn instead of 1. Not with Knife Thrower, and not with throwing knives."}
+      ]
+    },
+    {
+      "id": "sabretusk-cubs",
+      "type": "henchman",
+      "name": "Sabretusk Cub",
+      "plural": "Sabretusk Cubs",
+      "race": "sabretusk",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 50,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 3, "bs": 0, "s": 4, "t": 4, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. Sabretusks fight with tusks and claws.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "Sabretusks cause fear."},
+        {"rulename": "Animals", "ruleFull": "Sabretusks are animals and never gain experience."},
+        {"rulename": "Untamed", "ruleFull": "Sabretusks don't Bicker. At the start of each turn roll a D6 for each Sabretusk not in combat: on a 1, instead of moving normally, it moves 3D6\" towards the nearest model that isn't a Sabretusk, which counts as a charge. If it charges a model of your warband, move it 1\" away after the combat."},
+        {"rulename": "Charge", "ruleFull": "A Sabretusk has 2 Attacks instead of 1 in a turn it charges."},
+        {"rulename": "Tough Hide", "ruleFull": "Sabretusks have a natural 5+ armour save."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Ogre Hunting Party", "new": true},
+  "specialSkillsList": [
+    {"name": "Crude Belch", "ours": "Crude Belch"},
+    {"name": "Scent Hound", "ours": "Unblinking Eye"},
+    {"name": "Sabre Trainer", "description": "When a Sabretusk Cub that started the turn within 6\" of this Hero rolls a 1 for Untamed, you may move it 3D6\" towards any model within 12\" of it that it can see, instead of the nearest."},
+    {"name": "Maneater", "ours": "Maneater"},
+    {"name": "Bull Charge", "ours": "Bull charge"},
+    {"name": "Bellowing Roar", "ours": "Bellowing Roar (Ogres)"},
+    {"name": "Set Traps", "description": "Gnoblars only. The Trapper may set a trap in a turn he does nothing else (not one in which he recovered from being knocked down): place a marker touching him. A model, friend or foe, that moves within 2\" of it rolls a D6, and on a 3+ triggers the trap and takes a S4 hit; the Trapper never triggers his own. If the hit doesn't wound, the model has more than one wound, or the trap isn't triggered, it may finish its move; a model knocked down or stunned is placed 2\" from the marker. The marker is removed either way."},
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Netter (Ogre Hunting Party)", "pdfName": "Netter", "description": "Gnoblars only. The Hero starts every game with 3 nets. They can't be sold, traded or given to another warrior, and any he doesn't use are gone after the game; he starts the next game with 3 again, at no cost."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 2},
+    {"pdf": "slings", "ours": "sling", "page": 2}
+  ],
+  "stubs": [
+    {"name": "Sharp Stuff", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 5},
+    {"name": "Pigback Mount", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 5}
+  ],
+  "flags": [
+    {"page": 1, "what": "An Ogre warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 1, "what": "The Ogre maximum (M6 WS6 BS4 S5 T5 W5 I4 A5 Ld9) is unlike our Ogre's (BS5, I6), so the Ogre Hunter takes a new race, Ogre (Ogre Hunting Party). We have no Gnoblar race: the Gnoblar maximum (M4 WS5 BS6 S3 T4 W3 I6 A4 Ld7) is a new race, Gnoblar."},
+    {"page": 1, "what": "The warrior list says Sabre-Bait, the skill table Sabre-Bait and the fighter's heading Sabre-Baiter: named Sabre-Baiter."},
+    {"page": 2, "what": "The skill table is ticks (read from the page image): Ogre Hunter Combat, Strength, Special; Trappers Combat, Shooting, Speed, Special; Sabre-Bait Combat, Speed, Special."},
+    {"page": 2, "what": "Cleaver (counts as Axe) links our Cleaver at 5 gc (ours cuts like an axe); Club links our Club, Mace or Hammer. Ogre Club and Harpoon Crossbow (50 gc, Rare 10) are ours, as the PDF prints them."},
+    {"page": 3, "what": "Huuuuge is our shared Fear and Large, and the Ogre Hunter's own rule for the rest (All Alone, armour, warband rating)."},
+    {"page": 3, "what": "The Ogre Hunter's Sabre Trainer and the Trappers' Veteran Tracker are skills they start with: templates give no starting skills, so they are rules, and the player adds the Trapper's skill."},
+    {"page": 4, "what": "No group sizes are printed: left open."},
+    {"page": 5, "what": "Sharp Stuff (1st free, then 3 gc, Common, Gnoblars only; range 8\", S2, No Limit, Thrown Weapon, +1 armour save, Stuff Thrower) and the Pigback Mount (50 gc, Common, Gnoblar Heroes only; M5 WS2 BS- S2 T- W1 I3 A1 Ld5, Like a Mount, Not Like a Mount, Extra Hand) are stubs, their rules on p5."},
+    {"page": 6, "what": "The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); Scent Hound (hidden enemies spotted at twice his Initiative in inches) is our Unblinking Eye. Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game. Which race may take which skill is a warband rule."}
+  ]
+}

@@ -150,6 +150,22 @@ class PdfCheckTests(SimpleTestCase):
             "skill group 'Zealots': no such group of ours", check_page("witch-hunters", page, CATALOGUE).problems
         )
 
+    def test_a_warband_with_no_special_column_has_no_skill_group(self) -> None:
+        # the Outlaws of Stirwood Forest, Redux (PDF p2): no Special column, no special skills
+        page = good_page()
+        del page["skillGroup"], page["specialSkillsList"]
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            ["fighter Captain: ticks Special, but the page has no skill group"],
+        )
+        page["fighters"][0]["skillAccess"]["special"] = False
+        self.assertEqual(check_page("witch-hunters", page, CATALOGUE).problems, [])
+        page["specialSkillsList"] = []
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            ["witch-hunters: a skill group and its special skills, or neither (no Special column)"],
+        )
+
 
 class PdfImportTests(SimpleTestCase):
     templates: ClassVar[dict[str, dict[str, Any]]]

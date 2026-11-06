@@ -1,0 +1,261 @@
+{
+  "warbandType": "nipponese-expedition",
+  "name": "Nipponese Expedition",
+  "source": "Nicholas ‘Jiro’ Ceccarani",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "May Hire", "ruleFull": "The warband may hire the same hired swords as a Human Mercenary warband."},
+    {"rulename": "Strategic Minded", "ruleFull": "The warband may choose to rout after one casualty fewer than normal."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "nippon-warrior-equipment-list",
+      "title": "Nippon Warrior Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "Tanto", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "Wakizashi", "cost": {"cost": 10}},
+        {"name": "katana", "alias": "", "cost": {"cost": 20}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "Yari", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "Naginata", "cost": {"cost": 10}},
+        {"name": "Kanabo", "alias": "", "cost": {"cost": 15}},
+        {"name": "short bow", "alias": "Hankyu", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "Yumi", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "handgun", "alias": "Teppo", "cost": {"cost": 35}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "Sashimono", "alias": "", "cost": {"cost": 15}}
+      ]
+    },
+    {
+      "id": "nippon-noble-equipment-list",
+      "title": "Nippon Noble Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "Tanto", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "Wakizashi", "cost": {"cost": 10}},
+        {"name": "katana", "alias": "", "cost": {"cost": 20}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "Yari", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "Naginata", "cost": {"cost": 10}},
+        {"name": "Kanabo", "alias": "", "cost": {"cost": 15}},
+        {"name": "cathayan longsword", "alias": "Nagamaki", "cost": {"cost": 75}},
+        {"name": "short bow", "alias": "Hankyu", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "Yumi", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "handgun", "alias": "Teppo", "cost": {"cost": 35}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "Sashimono", "alias": "", "cost": {"cost": 15}},
+        {"name": "Horo", "alias": "", "cost": {"cost": 10}},
+        {"name": "barding", "alias": "", "cost": {"cost": 30}},
+        {"name": "horse", "alias": "", "cost": {"cost": 40}},
+        {"name": "war horse", "alias": "", "cost": {"cost": 80}}
+      ]
+    },
+    {
+      "id": "shinobi-equipment-list",
+      "title": "Shinobi Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "Tanto", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "Wakizashi", "cost": {"cost": 10}},
+        {"name": "katana", "alias": "", "cost": {"cost": 20}},
+        {"name": "spear", "alias": "Yari", "cost": {"cost": 10}},
+        {"name": "Kusarigama", "alias": "", "cost": {"cost": 20}},
+        {"name": "fighting claws", "alias": "", "cost": {"cost": 35}},
+        {"name": "sword breaker", "alias": "Sai", "cost": {"cost": 30}},
+        {"name": "throwing stars", "alias": "Shuriken", "cost": {"cost": 15}},
+        {"name": "blow pipe", "alias": "", "cost": {"cost": 25}},
+        {"name": "short bow", "alias": "Hankyu", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "Yumi", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "caltrops", "alias": "", "cost": {"cost": 15}},
+        {"name": "flash powder", "alias": "", "cost": {"cost": 25}},
+        {"name": "lock picks", "alias": "", "cost": {"cost": 15}},
+        {"name": "rope & hook", "alias": "", "cost": {"cost": 5}},
+        {"name": "trip wire", "alias": "", "cost": {"cost": 15}}
+      ]
+    },
+    {
+      "id": "warrior-monk-equipment-list",
+      "title": "Warrior Monk Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "Tanto", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "Wakizashi", "cost": {"cost": 10}},
+        {"name": "katana", "alias": "", "cost": {"cost": 20}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "Yari", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "Naginata", "cost": {"cost": 10}},
+        {"name": "Kanabo", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "Yumi", "cost": {"cost": 10}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "Sashimono", "alias": "", "cost": {"cost": 20}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "hatamoto",
+      "type": "hero",
+      "name": "Hatamoto",
+      "plural": "Hatamoto",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["nippon-noble-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Hatamoto may use his Leadership when taking any Leadership test."},
+        {"rulename": "Ride", "ruleFull": "The Hatamoto has the Ride skill of the Blazing Saddles rules."}
+      ]
+    },
+    {
+      "id": "vim-to-mage",
+      "type": "hero",
+      "name": "Vim-To Mage",
+      "plural": "Vim-To Mages",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": [],
+      "equipment": "A walking staff (a club) and a dagger only; he may never have any other equipment.",
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Arabian Elemental Magic"],
+      "specialRules": [
+        {"rulename": "Tenants of the Order", "ruleFull": "The Vim-To Mage may have only a walking staff (a club) and a dagger, never any other equipment."},
+        {"rulename": "Wizard", "ruleFull": "The Vim-To Mage is a wizard and casts Vim-Toist Magic (Arabian Elemental Magic). He starts with one spell from it."}
+      ]
+    },
+    {
+      "id": "shinobi",
+      "type": "hero",
+      "name": "Shinobi",
+      "plural": "Shinobi",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 15,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["shinobi-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Infiltration", "ruleFull": "The Shinobi is set up after the opposing warband, anywhere on the table out of its sight and more than 12\" from every enemy model. If both sides have infiltrators, each rolls a D6 and the lowest sets up first."},
+        {"rulename": "Loner", "ruleFull": "The Shinobi may never become the warband's leader."}
+      ]
+    },
+    {
+      "id": "retainers",
+      "type": "hero",
+      "name": "Retainer",
+      "plural": "Retainers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["nippon-noble-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Ride", "ruleFull": "A Retainer has the Ride skill of the Blazing Saddles rules."}
+      ]
+    },
+    {
+      "id": "ashigaru",
+      "type": "henchman",
+      "name": "Ashigaru",
+      "plural": "Ashigaru",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["nippon-warrior-equipment-list"],
+      "specialRules": [
+        {"rulename": "Wall of Steel", "ruleFull": "An Ashigaru may wield a spear in both hands; it then gains the Parry rule."}
+      ]
+    },
+    {
+      "id": "onnabushi",
+      "type": "henchman",
+      "name": "Onnabushi",
+      "plural": "Onnabushi",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["nippon-warrior-equipment-list"],
+      "specialRules": [
+        {"rulename": "Wardens of the Castle", "ruleFull": "An Onnabushi inside a building or ruin causes fear. Agree which terrain counts as buildings or ruins before the battle."}
+      ]
+    },
+    {
+      "id": "warrior-monks",
+      "type": "henchman",
+      "name": "Warrior Monk",
+      "plural": "Warrior Monks",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["warrior-monk-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Nipponese Expedition", "new": true},
+  "specialSkillsList": [
+    {"name": "Death before Dishonor", "description": "When a close combat attack would remove this model from the battlefield, it first makes a single close combat attack as normal."},
+    {"name": "Night Fighter", "description": "Shinobi only. The model may run and still stay hidden, as the hiding rules allow."},
+    {"name": "Iaijutsu", "description": "When the model is charged it gains +1 Attack, used only against the charger, which strikes first. Charged by two or more at once, it still gains only +1 Attack. This attack is at the model's Strength with no other modifiers."},
+    {"name": "Last Stand", "description": "The model may re-roll an All Alone test. At the start of its turn, if it is 6\" away from friendly models, it may take +1 WS or +1 BS until the start of its next turn."},
+    {"name": "Tea Ceremony", "description": "After a battle in which this Hero survived and wasn't taken out of action, he may skip searching for rare items and spend 10 gc to choose another Hero and roll a D6: on a 3+ that Hero gains 1 experience."},
+    {"name": "Blessed by the Kami", "ours": "Extra Tough"}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 4},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 4},
+    {"pdf": "war horse", "ours": "warhorse", "page": 4}
+  ],
+  "stubs": [
+    {"name": "Kanabo", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Sashimono", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Horo", "type": "Armour", "subtype": "", "rarity": 6, "dice": null, "rulesPage": 3},
+    {"name": "Kusarigama", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": null, "rulesPage": 3}
+  ],
+  "flags": [
+    {"page": 1, "what": "A Nippon warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 1, "what": "No maximum profile is printed, so every warrior takes our Human race."},
+    {"page": 2, "what": "Page 2 is a scan with no text layer, read from the page image: the skill chart (Hatamoto all six; Vim-To Mage Academic, Speed, Special; Shinobi Combat, Shooting, Speed, Special; Retainer Combat, Shooting, Strength, Special) and the special skills."},
+    {"page": 2, "what": "The special skills are a new group, Nipponese Expedition. Blessed by the Kami (re-roll the Heroes Serious Injury roll once, the second result stands) is our Extra Tough, word for word in effect."},
+    {"page": 3, "what": "Four stubs, their rules on p3: Kanabo (Common, 15 gc; S+1, Two-Handed, Concussion), Sashimono (Common, 15 gc; re-roll Leadership tests other than Rout), Horo (Rare 6, 10 gc; +1 armour save against shooting while mounted) and Kusarigama (Rare 8, 20 gc; Two-Handed, Cannot be parried, Chain Strike). The text layer puts the Kanabo's special rules under the Horo."},
+    {"page": 4, "what": "The Sashimono is 15 gc on the Warrior and Noble lists and 20 gc on the Warrior Monk list: each as printed. The Katana links our Dragon Sword by its tag (the PDF gives it no rules)."},
+    {"page": 4, "what": "The Noble list is the Warrior list plus its own lines, so it repeats the Warrior list's lines. The Ashigaru and Onnabushi buy from the Warrior list (\"the Nippon equipment list\")."},
+    {"page": 6, "what": "The Vim-To Mage buys from no list: his Tenants of the Order allow only a walking staff (a club) and a dagger, at no price given. His Vim-Toist Magic is our Arabian Elemental Magic, as the PDF says."},
+    {"page": 7, "what": "No group sizes are printed: left open."}
+  ]
+}

@@ -688,6 +688,27 @@
     ]
   },
   {
+    "name": "Nipponese Expedition",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "nipponese-expedition",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Extra Tough",
+      "Death before Dishonor",
+      "Night Fighter",
+      "Iaijutsu",
+      "Last Stand",
+      "Tea Ceremony"
+    ]
+  },
+  {
     "name": "Norse",
     "for_everyone": false,
     "warbands": [
@@ -709,6 +730,30 @@
       "Battle Tongue",
       "Shield master",
       "Crushing blow"
+    ]
+  },
+  {
+    "name": "Ogre Hunting Party",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "ogre-hunting-party",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Crude Belch",
+      "Unblinking Eye",
+      "Maneater",
+      "Bull charge",
+      "Bellowing Roar (Ogres)",
+      "Infiltration",
+      "Sabre Trainer",
+      "Set Traps",
+      "Netter (Ogre Hunting Party)"
     ]
   },
   {
@@ -1062,6 +1107,27 @@
     ]
   },
   {
+    "name": "Snotlings",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "snotlings",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Stampede",
+      "Achilles' Heel",
+      "Worm",
+      "Big Bully",
+      "Frustratingly Tiny",
+      "Mob Master"
+    ]
+  },
+  {
     "name": "Sons of Hashut",
     "for_everyone": false,
     "warbands": [
@@ -1137,6 +1203,26 @@
       "Ratswarm Form",
       "Bat Form",
       "Giant Wolf Form"
+    ]
+  },
+  {
+    "name": "Wood Elves of Athel Loren",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "wood-elves-of-athel-loren",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Fey",
+      "Unblinking Eye",
+      "Resource Hunter",
+      "Elven Luck",
+      "Infiltration (Wood Elves of Athel Loren)"
     ]
   }
 ]

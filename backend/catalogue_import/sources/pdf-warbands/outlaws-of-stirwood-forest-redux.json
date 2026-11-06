@@ -1,0 +1,146 @@
+{
+  "warbandType": "outlaws-of-stirwood-forest-redux",
+  "name": "Outlaws of Stirwood Forest, Redux",
+  "source": "Jon Davis (Town Cryer 29), redone 2023",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Outlaws%20of%20Stirwood%20Forest%2C%20Redux.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Bowmen", "ruleFull": "Every warrior may carry only one missile weapon at a time, and must carry a bow of some kind (never a crossbow), even if a skill would let him use other missile weapons. Only the Cleric may go without a bow."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "outlaws-equipment-list",
+      "title": "Outlaws Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "long bow", "alias": "", "cost": {"cost": 15, "costSuffix": "Heroes only"}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "hunting arrows", "alias": "", "cost": {"cost": 30, "costSuffix": "Heroes only"}},
+        {"name": "forest cloak", "alias": "", "cost": {"cost": 45, "costSuffix": "Heroes only"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "bandit-leader",
+      "type": "hero",
+      "name": "Bandit Leader",
+      "plural": "Bandit Leaders",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["outlaws-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Models of the warband within 6\" of the Bandit Leader may use his Leadership instead of their own."}
+      ]
+    },
+    {
+      "id": "champions",
+      "type": "hero",
+      "name": "Champion",
+      "plural": "Champions",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["outlaws-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "cleric",
+      "type": "hero",
+      "name": "Cleric",
+      "plural": "Clerics",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["outlaws-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Prayers of Sigmar"],
+      "specialRules": [
+        {"rulename": "Instead of a Champion or Petty Thief", "ruleFull": "The warband may take a Cleric only in place of one of its Champions or Petty Thieves."},
+        {"rulename": "Disciple of Sigmar", "ruleFull": "The Cleric starts knowing one of the Prayers of Sigmar (rulebook p57). Prayers aren't spells, so he may wear armour. Like a Witch Hunters' Warrior Priest, he may learn neither Sorcery nor Arcane Lore."}
+      ]
+    },
+    {
+      "id": "petty-thieves",
+      "type": "hero",
+      "name": "Petty Thief",
+      "plural": "Petty Thieves",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["outlaws-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": false, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "outlaws",
+      "type": "henchman",
+      "name": "Outlaw",
+      "plural": "Outlaws",
+      "race": "human",
+      "minQty": 0,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["outlaws-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "marksmen",
+      "type": "henchman",
+      "name": "Marksman",
+      "plural": "Marksmen",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 7,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["outlaws-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "Pages 2 to 4 are images (choice of warriors, starting experience, skill table, heroes, henchmen and the Forest Cloak's entry), read from the page images; page 2's lists are also in the text layer."},
+    {"page": 2, "what": "An Outlaw warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum profile is printed, so every warrior takes our Human race."},
+    {"page": 2, "what": "The skill table has no Special column and the warband has no special skills. Bandit Leader Combat, Shooting, Academic, Strength, Speed; Champion Combat, Shooting, Strength; Cleric Academic, Speed; Petty Thief Combat, Shooting."},
+    {"page": 2, "what": "Mace and Hammer are two lines, both our Club, Mace or Hammer, shown as Mace and Hammer. List prices as printed: Hunting Arrows 30 gc (ours 25), Forest Cloak 45 gc (the PDF's own entry, p4, and ours: 50 gc, Rare 10)."},
+    {"page": 3, "what": "A Cleric may only be taken instead of a Champion or a Petty Thief: our counts can't tie one fighter's count to another's, so it is his rule."},
+    {"page": 3, "what": "The Leader rule says \"her Leadership\" and the Cleric's equipment line names \"A Warrior Priest\": read as the Bandit Leader and the Cleric. The Cleric casts from our Prayers of Sigmar."}
+  ]
+}
