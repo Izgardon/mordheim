@@ -92,13 +92,13 @@ class SharedSeedTests(TestCase):
         ]
         frenzy = Special.objects.create(name="Frenzy", type="Animal")
 
-        self.assertIn("Shared specials - Created: 57, Updated: 0, copies archived: 5.", seed())
+        self.assertIn("Shared specials - Created: 62, Updated: 0, copies archived: 5.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         frenzy.refresh_from_db()
         self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 57, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 62, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):

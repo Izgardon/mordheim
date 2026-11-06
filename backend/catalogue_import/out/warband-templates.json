@@ -31551,8 +31551,7 @@
           },
           {
             "name": "Hate Orcs and Goblins",
-            "type": "Warband - Pit Fighters",
-            "description": "All Dwarfs hate Orcs and Goblins. See the psychology section of the Mordheim rules for details on the effects of hatred."
+            "type": "Psychology"
           },
           {
             "name": "Grudgebearers",
@@ -32467,8 +32466,7 @@
           },
           {
             "name": "Hate Orcs and Goblins",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "All Dwarfs hate Orcs and Goblins. See the psychology section of the Mordheim rules for details on the effects of hatred."
+            "type": "Psychology"
           },
           {
             "name": "Grudgebearers",
@@ -34179,8 +34177,7 @@
           },
           {
             "name": "Perfect Killer",
-            "type": "Warband - Skaven",
-            "description": "An Assassin Adept always has an extra -1 modifier to any armour save the enemy has to take against wounds they inflicted (both with shooting and close combat weapons)."
+            "type": "Trait"
           }
         ]
       },

@@ -31,7 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 49 |
 | skill group links | 266 |
 | serious injuries (D66) | 20 |
-| shared specials | 57 |
+| shared specials | 62 |
 | random mutation results (D66) | 36 |
 
 ## mordheimer's contradictions
@@ -505,7 +505,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 1341 |
 | warband rules | 157 |
 | upgrades | 68 |
-| the templates' own specials | 395 |
+| the templates' own specials | 392 |
 
 ### List lines
 
@@ -674,6 +674,11 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Immune to Poison | Trait | the list's text |  |  | 10 | 3 | 3 | 2 |
 | No Pain | Trait | the list's text |  |  | 9 | 1 | 1 | 0 |
 | May Not Run | Trait | the list's text |  |  | 6 | 2 | 0 | 0 |
+| Large Target | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
+| Daemonic Flesh | Trait | the list's text |  |  | 0 | 1 | 1 | 0 |
+| Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
+| Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
+| Hate Orcs and Goblins | Psychology | the list's text |  |  | 2 | 2 | 0 | 0 |
 | Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 3 | 0 | 0 | 0 |
 | Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 4 | 0 | 0 | 0 |
 | Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 3 | 0 | 0 | 0 |
@@ -736,6 +741,11 @@ List prices the pages differ from: none.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
 - No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin.
 - May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Bone Goliath.
+- Large Target: Ogre Bodyguard; Ogre Slave Master.
+- Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
+- Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
+- Pawnbroker: Arabian Merchant; Cathayan Merchant.
+- Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Pathfinder; Runesmith Journeyman.
 - Daemon Soul: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
 - Great Claw: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations.
 - Cloven Hoofs: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
@@ -814,11 +824,7 @@ A hired sword's or dramatis persona's own rule is a row of his own (two owners s
 
 Worded alike, each owner's own row under the name (the shared list could merge them):
 
-- Pawnbroker: Arabian Merchant; Cathayan Merchant.
-- Large Target: Ogre Bodyguard; Ogre Slave Master.
-- Perfect Killer: Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
-- Hate Orcs and Goblins: Dwarf Pathfinder; Runesmith Journeyman.
-- Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
+- none
 
 ## Random mutation table
 

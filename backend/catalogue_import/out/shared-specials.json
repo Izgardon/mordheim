@@ -56,6 +56,46 @@
       "setting": null
     },
     {
+      "name": "Large Target",
+      "type": "Trait",
+      "description": "The model is a Large Target as defined in the shooting rules.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Daemonic Flesh",
+      "type": "Trait",
+      "description": "The model has a base armour save of 5+. This save is never modified, but blessed or magic weapons and spells negate it completely. The model's attacks count as magical.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Perfect Killer",
+      "type": "Trait",
+      "description": "Every attack the model makes, shooting or in close combat, has an extra -1 save modifier.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Pawnbroker",
+      "type": "Trait",
+      "description": "If the model was not taken out of action in the battle, the warband gains an extra 2D6 gold for each item it sells, up to the item's full value.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Hate Orcs and Goblins",
+      "type": "Psychology",
+      "description": "The model hates Orcs and Goblins (see Hatred in the psychology rules).",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
       "name": "Daemon Soul",
       "type": "Mutation",
       "description": "A Daemon lives within the mutant’s soul. This gives him a 4+ save against the effects of spells or prayers.",
