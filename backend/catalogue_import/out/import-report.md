@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 337 |
+| price rows | 341 |
 | skills | 230 |
 | skill groups | 50 |
 | skill group links | 273 |
@@ -506,16 +506,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 51 |
-| warband types linked | 57 |
-| fighters (heroes, henchmen) | 341 (173, 168) |
+| templates | 52 |
+| warband types linked | 58 |
+| fighters (heroes, henchmen) | 346 (177, 169) |
 | henchmen that gain no XP | 52 |
 | henchmen that can't be promoted | 63 |
-| equipment lists | 123 |
-| list lines | 1372 |
-| warband rules | 160 |
+| equipment lists | 126 |
+| list lines | 1400 |
+| warband rules | 161 |
 | upgrades | 68 |
-| the templates' own specials | 401 |
+| the templates' own specials | 403 |
 
 ### List lines
 
@@ -531,7 +531,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-175 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+179 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -885,11 +885,27 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-1 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+2 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
+| grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | halflings | halflings | 8 | 2 | 0 | 6 |
+
+### Grave Robbers
+
+- Alias (p2): "light armor" is our light armour.
+- Alias (p2): "heavy armor" is our heavy armour.
+- Stub: Pry Bar, 10 gc, Common; its rules are on p2.
+- Stub: Hooded Lantern & Rig, 15+1D6 gc, Rare 9; its rules are on p2.
+- Stub: Surgeons Journal, 80+4D6 gc, Rare 11; its rules are on p2.
+- Stub: Finger Pendant, 15 gc, Common; its rules are on p2.
+- Flag (p3): The Graver has no Leader rule printed (only that every warband must have one). William, 6 Nov 2026: "give 1st guy leader", so he leads with the usual Leader rule, worded as the other templates' leaders have it.
+- Flag (p1): No henchmen group size is given for the Thugs (any number may be Thugs): left empty.
+- Flag (p2): The Hooded Lantern & Rig, Surgeons Journal and Finger Pendant are printed under "Miscellaneous equipment: Heroes only" in the henchmen's column: made a third list, which every hero buys from.
+- Flag (p2): The Pry Bar's and Finger Pendant's boxes give "Grave Robbers only" where a rarity goes: read as the warband only, Common. The Hooded Lantern & Rig is Rare 9 at 15+D6 gc and the Surgeons Journal Rare 11 at 80+4D6 gc: the stubs carry those figures.
+- Flag (p2): The Shovel is listed as a Halberd at 10 gc on both lists: linked to our Halberd, shown as Shovel.
+- Flag (p4): The special skills are our Grave Robber group's five as they stand (their wording came with our skills table); nothing new is added.
 
 ### Halflings
 

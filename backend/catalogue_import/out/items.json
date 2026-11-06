@@ -17133,5 +17133,165 @@
         "note": ""
       }
     ]
+  },
+  {
+    "slug": "pry-bar",
+    "name": "Pry Bar",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "sylvania",
+    "source": "Sylvania Supplement",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf",
+    "tags": [
+      "pry bar"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "grave-robbers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "hooded-lantern-and-rig",
+    "name": "Hooded Lantern & Rig",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "sylvania",
+    "source": "Sylvania Supplement",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf",
+    "tags": [
+      "hooded lantern & rig"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "grave-robbers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "surgeons-journal",
+    "name": "Surgeons Journal",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "sylvania",
+    "source": "Sylvania Supplement",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf",
+    "tags": [
+      "surgeons journal"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 80,
+        "dice": 4,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "grave-robbers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "finger-pendant",
+    "name": "Finger Pendant",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "sylvania",
+    "source": "Sylvania Supplement",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf",
+    "tags": [
+      "finger pendant"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "grave-robbers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
   }
 ]

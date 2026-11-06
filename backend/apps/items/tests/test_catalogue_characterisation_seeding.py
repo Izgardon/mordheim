@@ -89,24 +89,24 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 33,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor and the Halflings' Ogre
-                "Item": 339,  # the import's 308 (its 14 animals are beasts') + one Animal item per beast
+                "Item": 343,  # the import's 312 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
                 "Skill": 254,  # the import's 230 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 69,  # the import's 50 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
                 # special.json's 25, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
-                # are Tchar's and Arkhar's), the templates' 404 (the three Night Goblin and Orc Trolls' one
+                # are Tchar's and Arkhar's), the templates' 406 (the three Night Goblin and Orc Trolls' one
                 # Regeneration (Troll); the Undead's and the Restless Dead's No Pain and May not run shared; the
                 # Fighting Ape's Agile (Fighting Ape)) and the hired swords' and personae's own 298 (next step 12;
                 # Sigmund's and Veskit's No Pain; each owner's own, none another's of its name: 43 more than when
                 # Johann the Knife and Penthesilea held Bertha's Hiring Fee), less the 8 copies of Large Target,
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov)
-                "Special": 779,
+                "Special": 781,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
-                "WarbandTemplate": 51,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
+                "WarbandTemplate": 52,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
             },
         )
         for model in BOOK_MODELS:
@@ -155,16 +155,16 @@ class SeedAllTests(TestCase):
 
     def test_the_warband_templates_come_in_whole(self):
         # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
-        self.assertIn("Warband templates import complete. Templates: 51, archived", self.output)
+        self.assertIn("Warband templates import complete. Templates: 52, archived", self.output)
         counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
         self.assertEqual(
             counts,
             {
-                "WarbandTemplateType": 57,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
-                "TemplateFighter": 341,
-                "TemplateList": 123,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs'
-                "TemplateListItem": 1372,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 160,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                "WarbandTemplateType": 58,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
+                "TemplateFighter": 346,
+                "TemplateList": 126,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs'
+                "TemplateListItem": 1400,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
+                "TemplateRule": 161,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15 and the Marauders' 15 and 6 Blessings
                 "TemplateUpgrade": 68,

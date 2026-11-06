@@ -13,6 +13,7 @@ check over every file.
 | File | Warband type | PDF | Pages | Read |
 | --- | --- | --- | --- | --- |
 | `halflings.json` | halflings (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/experimental/Halflings.pdf | 1-4 (text layer) | 5 Nov 2026 |
+| `grave-robbers.json` | grave-robbers (2a, Sylvania) | https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf | 1-4 (text layer) | 5 Nov 2026 |
 
 ## Adding a warband
 

@@ -1,0 +1,173 @@
+{
+  "warbandType": "grave-robbers",
+  "name": "Grave Robbers",
+  "source": "Sylvania Supplement",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Hired Swords",
+      "ruleFull": "The warband may not hire a Bounty Hunter or a Roadwarden, nor any law-enforcer, holy man or follower of Morr."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "pry bar", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "Shovel", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "Shovel", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "miscellaneous-equipment",
+      "title": "Miscellaneous Equipment",
+      "caveat": "",
+      "items": [
+        {"name": "hooded lantern & rig", "alias": "", "cost": {"cost": 15}},
+        {"name": "surgeons journal", "alias": "", "cost": {"cost": 80}},
+        {"name": "finger pendant", "alias": "", "cost": {"cost": 15}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "graver",
+      "type": "hero",
+      "name": "Graver",
+      "plural": "Gravers",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Graver may take Leadership tests on his Leadership."}
+      ]
+    },
+    {
+      "id": "junior-medic",
+      "type": "hero",
+      "name": "Junior Medic",
+      "plural": "Junior Medics",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 2,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Sawbones", "ruleFull": "You may re-roll the Serious Injury roll of one Hero; the second roll stands. Not if the Junior Medic was taken out of action in the battle."}
+      ]
+    },
+    {
+      "id": "grave-robbers",
+      "type": "hero",
+      "name": "Grave Robber",
+      "plural": "Grave Robbers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 4,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "lookouts",
+      "type": "hero",
+      "name": "Lookout",
+      "plural": "Lookouts",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "thugs",
+      "type": "henchman",
+      "name": "Thug",
+      "plural": "Thugs",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["henchmen-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Grave Robber", "new": false},
+  "specialSkillsList": [
+    {"name": "Darkstalker", "ours": "Darkstalker"},
+    {"name": "Instinctual Violence", "ours": "Instinctual Violence"},
+    {"name": "De-animator", "ours": "De-animator"},
+    {"name": "Hardy Constitution", "ours": "Hardy Constitution (Grave Robber)"},
+    {"name": "Body Dealer", "ours": "Body Dealer"}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 2},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 2}
+  ],
+  "stubs": [
+    {"name": "Pry Bar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 2},
+    {"name": "Hooded Lantern & Rig", "type": "Miscellaneous", "subtype": "", "rarity": 9, "dice": 1, "rulesPage": 2},
+    {"name": "Surgeons Journal", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": 4, "rulesPage": 2},
+    {"name": "Finger Pendant", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 2}
+  ],
+  "flags": [
+    {"page": 3, "what": "The Graver has no Leader rule printed (only that every warband must have one). William, 6 Nov 2026: \"give 1st guy leader\", so he leads with the usual Leader rule, worded as the other templates' leaders have it."},
+    {"page": 1, "what": "No henchmen group size is given for the Thugs (any number may be Thugs): left empty."},
+    {"page": 2, "what": "The Hooded Lantern & Rig, Surgeons Journal and Finger Pendant are printed under \"Miscellaneous equipment: Heroes only\" in the henchmen's column: made a third list, which every hero buys from."},
+    {"page": 2, "what": "The Pry Bar's and Finger Pendant's boxes give \"Grave Robbers only\" where a rarity goes: read as the warband only, Common. The Hooded Lantern & Rig is Rare 9 at 15+D6 gc and the Surgeons Journal Rare 11 at 80+4D6 gc: the stubs carry those figures."},
+    {"page": 2, "what": "The Shovel is listed as a Halberd at 10 gc on both lists: linked to our Halberd, shown as Shovel."},
+    {"page": 4, "what": "The special skills are our Grave Robber group's five as they stand (their wording came with our skills table); nothing new is added."}
+  ]
+}
