@@ -1271,6 +1271,41 @@
       "how": "overrides.json"
     },
     {
+      "name": "Absorption",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Adaptation",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Harvester of Souls",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Gladeborn",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Transform",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Take Root",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Poison Sap",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
       "name": "Quiet as a Mouse",
       "setting": "mordheim-2a",
       "how": "overrides.json"

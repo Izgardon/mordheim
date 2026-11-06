@@ -1,0 +1,193 @@
+{
+  "warbandType": "metal-mongers",
+  "name": "Metal Mongers",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {"rulename": "Experimental Technology", "ruleFull": "Weapons made by Skyre Warp Engineers may malfunction. When a missile weapon rolls a 1 to hit, roll a D6 on the Experimental Weapon chart; a malfunctioning weapon's hit is resolved against the firer instead of the target, hitting on a 4+. If the shot takes the firer out of action, roll D6+1 on the chart instead.\n\nD6 | Result\n1 | Scrap: the weapon is removed from the roster. Add a club to the roster, or 3 gc for the scrap metal.\n2-4 | Badly Mangled: add the bits to the parts pile, which counts as one more wyrdstone shard than normal in the post-battle sequence, or try to repair it: on a 3+ on a D6 it works as normal from now on; otherwise it is removed from the roster.\n5-6 | Few Bits Missing: the weapon works as normal."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Wrench", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "Cutlass/Sword", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 15}},
+        {"name": "Spike-jawed Snatcher", "alias": "", "cost": {"cost": 25}},
+        {"name": "poison wind globe", "alias": "", "cost": {"cost": 20}},
+        {"name": "warplock pistol", "alias": "", "cost": {"cost": 35, "braceCost": 70}},
+        {"name": "handgun", "alias": "Warplock rifle", "cost": {"cost": 35}},
+        {"name": "hunting rifle", "alias": "Jezzail", "cost": {"cost": 200}},
+        {"name": "Ratling Gun", "alias": "", "cost": {"cost": 275, "costSuffix": "Forge-Rats only"}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "gas mask", "alias": "", "cost": {"cost": 15}},
+        {"name": "Pneumatic Arm", "alias": "", "cost": {"cost": 140, "costSuffix": "Engineer Adept only"}}
+      ]
+    },
+    {
+      "id": "henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Wrench", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "Cutlass/Sword", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "poison wind globe", "alias": "", "cost": {"cost": 20, "costSuffix": "Technicians only"}},
+        {"name": "gas mask", "alias": "", "cost": {"cost": 15, "costSuffix": "Technicians only"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "engineer-adept",
+      "type": "hero",
+      "name": "Engineer Adept",
+      "plural": "Engineer Adepts",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Engineer Adept may take Leadership tests on his Leadership."}
+      ]
+    },
+    {
+      "id": "black-skaven",
+      "type": "hero",
+      "name": "Black Skaven",
+      "plural": "Black Skaven",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 6, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": ["heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "forge-rats",
+      "type": "hero",
+      "name": "Forge-Rat",
+      "plural": "Forge-Rats",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "pirate-rats",
+      "type": "henchman",
+      "name": "Pirate-Rat",
+      "plural": "Pirate-Rats",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Water-Rat", "ruleFull": "Pirate-Rats are aquatic."}
+      ]
+    },
+    {
+      "id": "technicians",
+      "type": "henchman",
+      "name": "Technician",
+      "plural": "Technicians",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Globadier", "ruleFull": "Technicians are trained with Poison Wind Globes and Gas Masks, and may buy them when recruited."}
+      ]
+    },
+    {
+      "id": "machine-ogre",
+      "type": "henchman",
+      "name": "Machine-Ogre",
+      "plural": "Machine-Ogres",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 100,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 5, "t": 5, "w": 3, "i": 1, "a": 3, "ld": 10},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Jaws and Claws", "ruleFull": "The Machine-Ogre fights with jaws, claws and brute force, and buys no equipment. A Skaven Hero with the Tinker-Rat skill customises it."},
+        {"rulename": "Large", "ruleFull": "Any model may shoot at the Machine-Ogre, even if it isn't the closest model."},
+        {"rulename": "Fear", "ruleFull": "The Machine-Ogre causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Machine-Ogre is immune to psychology."},
+        {"rulename": "Bio Machinery", "ruleFull": "The Machine-Ogre never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Machine-Ogre is not affected by any poison."},
+        {"rulename": "May Not Run", "ruleFull": "The Machine-Ogre may not run."},
+        {"rulename": "Warpstone Heart", "ruleFull": "Before each game the Machine-Ogre needs one wyrdstone shard to power up."},
+        {"rulename": "Warptooth", "ruleFull": "If the Machine-Ogre is more than 18\" from the Engineer Adept at the start of the Movement phase, or the Engineer Adept is taken out of action, it powers down: its Movement and Weapon Skill are 0."},
+        {"rulename": "No Pain", "ruleFull": "The Machine-Ogre treats a stunned result as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "The Machine-Ogre never gains experience."},
+        {"rulename": "Unreliable", "ruleFull": "At the start of each turn roll a D6 to work the Machine-Ogre: on a 2-6 it moves and acts normally; on a 1 roll a D6 on the Malfunction chart.\n\nD6 | Result\n1 | Explodes!: every model within 6\" takes one S5 hit, and the Machine-Ogre is destroyed. No Injury roll for it after the game.\n2 | Malfunctions!: for the rest of the game, at the start of each of your turns it moves randomly (distance and direction by the Warhammer artillery scatter dice), counting as charging any warrior, of either side, in its charge range.\n3 | Shuts Down!: it stops for the rest of the battle, and is hit automatically in close combat.\n4 | Temporary Loss of Control!: it moves in a random direction and attacks any warrior it touches, of either side, counting as charging. If it touches none but warriors are within range of its warpfire projector, it fires at them.\n5-6 | Freezes!: it does nothing this turn, and is hit automatically in close combat."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Skaven Metal Mongers", "new": false},
+  "specialSkillsList": [
+    {"name": "Tail Fighting", "ours": "Tail Fighting"},
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Unblinking Eye", "ours": "Unblinking Eye"},
+    {"name": "Metallic Body", "ours": "Metallic Body"},
+    {"name": "Respirator", "ours": "Respirator"},
+    {"name": "Tinker-Rat", "ours": "Tinker-Rat"}
+  ],
+  "aliases": [],
+  "stubs": [
+    {"name": "Spike-jawed Snatcher", "type": "Weapon", "subtype": "Melee", "rarity": 10, "dice": null, "rulesPage": 7},
+    {"name": "Ratling Gun", "type": "Weapon", "subtype": "Blackpowder", "rarity": 14, "dice": null, "rulesPage": 6},
+    {"name": "Pneumatic Arm", "type": "Miscellaneous", "subtype": "", "rarity": 13, "dice": null, "rulesPage": 7}
+  ],
+  "flags": [
+    {"page": 1, "what": "The warband has 500 warp tokens: read as 500 gc. A Skaven warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
+    {"page": 1, "what": "Skurvey Alliance says only that Riskin Tatter-Ear's hospitality reaches no further than his allies of Clan Skurvey. It names no hired-sword limit, so no rule is made."},
+    {"page": 4, "what": "No maximum profile is printed: the Skaven take our Skaven race; the Machine-Ogre is a construct, with no race. The fighters' headings are a font the text layer garbles: they are named from Choice of Warriors. Their profile rows read Engineer (the Engineer Adept), Mechanic (the Forge-Rats) and Warp Corp (the Technicians)."},
+    {"page": 4, "what": "The skill table's ticks are symbol glyphs, read from where the text layer places them: the Engineer Adept ticks all six."},
+    {"page": 2, "what": "Wrench (counts as club) is our Club, Mace or Hammer shown as Wrench, Cutlass/Sword our Sword shown as Cutlass/Sword, Warplock rifle (counts as Handgun) our Handgun shown as Warplock rifle, and Jezzail (counts as Hochland long rifle) our Hunting Rifle (the Hochland long rifle) shown as Jezzail. The Halberd is 15 gc (ours 10): as printed."},
+    {"page": 5, "what": "Globadier lets Technicians buy Poison Wind Globes and Gas Masks when recruited: both lines are on the Henchmen list, Technicians only, at the Heroes list's prices."},
+    {"page": 5, "what": "The Machine-Ogre's Fear and Unreliable say \"the Rat Ogre\": read as the Machine-Ogre. Its Large, Fear, Immune to Psychology, Immune to Poison, May Not Run and No Pain link the shared rules."},
+    {"page": 6, "what": "The Ratling Gun is a stub at the Heroes list's 275 gc. Its entry prints \"X gold crowns (Forge-Rats and Technicians only)\", Rare 14, and a placeholder \"Text here...\": the line is the Forge-Rats' only, the Technicians' list lacking it. Its rules are on p6 (range 6\"-16\", S3, save -1, Move or fire, Unwieldy, Jeopardous with its misfire chart, Metal Storm). Typed blackpowder, like our Warplock pistol."},
+    {"page": 6, "what": "The Warpfire Projector (Machine-Ogre only; range 6\", S4, save -1, Jet of Flame, Refuel) is the Tinker-Rat chart's 3, on no list: not imported as an item."},
+    {"page": 7, "what": "Experimental Technology is printed under the Pneumatic Arm, but worded for every weapon Skyre Warp Engineers make: a warband rule. The PDF doesn't say which weapons are Skyre-made."},
+    {"page": 7, "what": "The Pneumatic Arm (140 gc, Rare 13, Engineer Adept only; two extra arms, and holds an Unwieldy missile weapon with no second model) and the Spike-jawed Snatcher (25 gc, Rare 10, Skaven only; Capture, Two-handed) are stubs, their rules on p7. The Poison Wind Globe (20 gc, Rare 6) and Gas Mask (15 gc, Rare 6) are ours, the same numbers."},
+    {"page": 3, "what": "The special skills are our Skaven Metal Mongers group's six, the same as the PDF's (our Tail Fighting says knife for its dagger)."}
+  ]
+}

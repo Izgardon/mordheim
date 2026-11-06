@@ -198,6 +198,17 @@ MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
             "note": TWISTKIN,
         }
     ],
+    # the Fen Guard's Variation rule (PDF p1): one when hired, a new one on an advance's double, from the mutation
+    # list "paid for as listed", each named for the tree (a henchman's is the player's to add)
+    "fen-guard": [
+        {
+            "group": "Variations",
+            "names": ["Tentacle", "Extra Arm", "Cloud of Flies", "Hulking Brute", "Spines", "Blackblood", "Beak"],
+            "terms": {"who": {"heroes": True}},
+            "note": "Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), "
+            "Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
+        }
+    ],
 }
 
 # Most warriors where the book gives none; their starting gold reads as 500 gc
@@ -278,6 +289,8 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("ogre-hunting-party", "ogre"): "Ogre (Ogre Hunting Party)",  # its PDF's Ogre maximum (p1): BS4, I4
     ("ogre-hunting-party", "gnoblar"): "Gnoblar",  # its Gnoblar maximum (p1); we had no Gnoblar race
     ("snotlings", "snotling"): "Snotling",  # the Snotlings PDF's Snot maximum (p2); we had no Snotling race
+    ("fen-guard", "dryad"): "Dryad",  # the Fen Guard PDF's Dryad maximum (p1); we had no Dryad race
+    ("fen-guard", "treekin"): "Treekin",  # its Treekin maximum (p1)
 }
 CREATURES = frozenset(
     {

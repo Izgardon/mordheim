@@ -1,0 +1,187 @@
+{
+  "warbandType": "low-kings",
+  "name": "Low Kings",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Underworld Contacts", "ruleFull": "A Hero visiting a bordello, casino, dream parlour or the like (Infamous Haunts) may re-roll any dice rolled there; the second result stands."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "mobsmen-equipment-list",
+      "title": "Mobsmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Club/Mace", "cost": {"cost": 3}},
+        {"name": "Knuckledusters", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 10}},
+        {"name": "Spiked Gauntlet (Low Kings)", "alias": "", "cost": {"cost": 15, "costSuffix": "Enforcer only"}},
+        {"name": "net", "alias": "", "cost": {"cost": 5}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "throwing stars/knives", "alias": "", "cost": {"cost": 15}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "blunderbuss", "alias": "", "cost": {"cost": 30}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "rope & hook", "alias": "", "cost": {"cost": 5}},
+        {"name": "lantern", "alias": "", "cost": {"cost": 10}},
+        {"name": "thief's cloak", "alias": "", "cost": {"cost": 15}},
+        {"name": "lock picks", "alias": "", "cost": {"cost": 15, "costSuffix": "Fence only"}},
+        {"name": "iron strongbox", "alias": "Fence's iron strongbox", "cost": {"cost": 30, "costSuffix": "Fence only"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "racketeer",
+      "type": "hero",
+      "name": "Racketeer",
+      "plural": "Racketeers",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 75,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["mobsmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Racketeer may take Leadership tests on his Leadership."},
+        {"rulename": "Looter", "ruleFull": "If the Racketeer takes any enemy warrior out of action and isn't taken out of action himself, the warband gets one more Treasure, besides any the Cutpurse skill adds. The enemy's Treasures are unaffected."}
+      ]
+    },
+    {
+      "id": "enforcer",
+      "type": "hero",
+      "name": "Enforcer",
+      "plural": "Enforcers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["mobsmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "fence",
+      "type": "hero",
+      "name": "Fence",
+      "plural": "Fences",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 12,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["mobsmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Sham", "ruleFull": "Items bought through the Fence cost their base price, with no random gold modifier, and half that. The first time such an item is used, roll a D6: on a 1 it breaks, a fake, and is useless.\n\nAt the end of each battle, whether or not the Fence fought, roll a D6.\n\nD6 | Result\n1 | Halfling cookbook\n2 | Ithilmar weapon\n3 | Gromril weapon\n4 | Tome of magic or Holy tome\n5 | Hunting rifle or Elven bow\n6 | Brace of duelling pistols"}
+      ]
+    },
+    {
+      "id": "guttersnipes",
+      "type": "hero",
+      "name": "Guttersnipe",
+      "plural": "Guttersnipes",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["mobsmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Tea-Leaf!", "ruleFull": "A Guttersnipe may try to steal one item in the post-battle sequence: a common item on a 2+ on a D6, a Rare item by rolling over its availability on 2D6. A stolen item is used as one bought. If he fails, roll a D6: on a 1-5 he is chased off and escapes; on a 6 he is caught and hanged: remove him from the roster."}
+      ]
+    },
+    {
+      "id": "smugglers",
+      "type": "henchman",
+      "name": "Smuggler",
+      "plural": "Smugglers",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["mobsmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "rapscallions",
+      "type": "henchman",
+      "name": "Rapscallion",
+      "plural": "Rapscallions",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["mobsmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Hide In Shadows", "ruleFull": "While Rapscallions are within 1\" of a wall or other linear obstacle (a hedge, fence, well and the like), an enemy must pass an Initiative test to charge or shoot at them."}
+      ]
+    },
+    {
+      "id": "bruisers",
+      "type": "henchman",
+      "name": "Bruiser",
+      "plural": "Bruisers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["mobsmen-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Low Kings", "new": false},
+  "specialSkillsList": [
+    {"name": "Backstabber", "ours": "Backstabber"},
+    {"name": "Pick Locks", "ours": "Pick Locks"},
+    {"name": "Poisoner", "ours": "Poisoner"},
+    {"name": "Slaver", "ours": "Slaver"},
+    {"name": "Stealthy", "ours": "Stealthy"},
+    {"name": "Cutpurse", "ours": "Cutpurse"}
+  ],
+  "aliases": [
+    {"pdf": "throwing stars/knives", "ours": "throwing knives", "page": 2}
+  ],
+  "stubs": [
+    {"name": "Knuckledusters", "type": "Weapon", "subtype": "Melee", "rarity": 6, "dice": null, "rulesPage": 5},
+    {"name": "Spiked Gauntlet (Low Kings)", "type": "Weapon", "subtype": "Melee", "rarity": 7, "dice": null, "rulesPage": 5}
+  ],
+  "flags": [
+    {"page": 2, "what": "A Criminal Gang needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed. No maximum profile is printed: the gang takes our Human race."},
+    {"page": 2, "what": "The skill table's Special ticks for the Racketeer, Enforcer and Fence are glyphs the text layer drops: the table was read from p2's image."},
+    {"page": 3, "what": "The fighters' headings aren't in the text layer: each is named from Choice of Warriors and his profile row, and priced from the hire line above it."},
+    {"page": 2, "what": "Fence's iron strongbox is \"X gc\" on the list; its entry (p5) prints 30 gc, Rare 10, as our Iron Strongbox: linked at 30 gc, shown as Fence's iron strongbox. The Morning star is 10 gc (ours 15): as printed."},
+    {"page": 5, "what": "Knuckledusters (5 gc, Rare 6; S as user, Pair, Concealable) are a stub; our Brass Knuckles (20 gc, Rare 6; S +1, Pair, Cumbersome) do other things."},
+    {"page": 5, "what": "The Spiked gauntlet (15 gc, Rare 7; Parry, Chain Glove: counts as a hand weapon and a buckler, never as a second weapon or buckler in hand beside a Difficult to use weapon, and usable where a pit fight bars weapons) does more than our Spiked Gauntlet (Parry): a stub of its own, Spiked Gauntlet (Low Kings)."},
+    {"page": 5, "what": "The Thief's cloak (15 gc, Rare 9) is ours, the same numbers."},
+    {"page": 3, "what": "The Fence's chart doesn't say what its result gives (beside Sham, likely the item he has on offer), and calls him \"the Halfling Fence\": kept as printed."},
+    {"page": 3, "what": "Looter and Tea-Leaf! are the Racketeer's and the Guttersnipes' own rules. Our skills of those names are the Militant Mootlanders' and say other things (our Looter adds a Treasure or a Wyrdstone Shard)."},
+    {"page": 4, "what": "The special skills are our Low Kings group's six, the same as the PDF's."}
+  ]
+}

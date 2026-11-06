@@ -6,7 +6,7 @@ from typing import Any, ClassVar
 
 from django.test import SimpleTestCase
 
-from catalogue_import.common import load_json
+from catalogue_import.common import load_json, slugify
 from catalogue_import.pdf_check import Catalogue, check_page, load_catalogue
 from catalogue_import.pdf_warbands import ORIGIN, PDF_SOURCES, put_aliases_right, stub_items, tables_as_html
 from catalogue_import.sources import OUT
@@ -253,7 +253,9 @@ class PdfImportTests(SimpleTestCase):
         types = {row["slug"]: row for row in load_json(OUT / "warband-types.json")}
         for slug, page in FILES.items():
             with self.subTest(file=slug):
-                template = self.templates[slug]
+                # a template is slugged by its name, which may spell its type otherwise (Militant Mootlanders is the
+                # type militiant-mootlanders, the source's spelling)
+                template = self.templates[slugify(page["name"])]
                 self.assertEqual(template["types"], [{"type": slug, "variant": ""}])
                 self.assertEqual(
                     (template["setting"], template["link_url"], len(template["fighters"])),

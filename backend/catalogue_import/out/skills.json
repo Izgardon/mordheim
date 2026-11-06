@@ -1016,6 +1016,34 @@
     "description": "Slayers only. If the Hero's charge fails he may still move his full distance. Only against enemies he can see or has detected."
   },
   {
+    "name": "Absorption",
+    "description": "Every attack against the Hero in the shooting phase is at -1 Strength."
+  },
+  {
+    "name": "Adaptation",
+    "description": "The Hero at once picks a skill from any of the five main skill lists. Each warrior may take this skill only once."
+  },
+  {
+    "name": "Harvester of Souls",
+    "description": "Branchwych only. When you hire a new Hero, the Branchwych may move D3 characteristics or skills, in any mix, to him from a Fen Guard Hero who died in an earlier game, for half the dead Hero's experience in gc more. The new Hero misses his first game on the roster. She must have a Greenwood Scythe."
+  },
+  {
+    "name": "Gladeborn",
+    "description": "The Hero may enter the battle from any forest or swamp terrain feature, in any turn after the first."
+  },
+  {
+    "name": "Transform",
+    "description": "The Hero can take the semblance of an Elf long enough to enter Marienburg: he may now visit post-game locations in the city."
+  },
+  {
+    "name": "Take Root",
+    "description": "The Hero may gain +3 Toughness, but then may not move for the rest of the game."
+  },
+  {
+    "name": "Poison Sap",
+    "description": "Instead of trading after the game, the Hero may make D3-1 batches of Black Lotus, shared among the warband but never sold."
+  },
+  {
     "name": "Quiet as a Mouse",
     "description": "While this Halfling is hidden, an enemy trying to spot him uses half his Initiative in inches, rounded down."
   },

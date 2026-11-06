@@ -423,6 +423,28 @@
     ]
   },
   {
+    "name": "Fen Guard",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "fen-guard",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Absorption",
+      "Adaptation",
+      "Harvester of Souls",
+      "Gladeborn",
+      "Transform",
+      "Take Root",
+      "Poison Sap"
+    ]
+  },
+  {
     "name": "Forest Goblins",
     "for_everyone": false,
     "warbands": [

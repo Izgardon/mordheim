@@ -27,6 +27,10 @@
     "Potions": {
       "roll": "D6",
       "text": "A single hero in the warband who have hired the Witch may partake of such a potion before the battle. Roll a D6 to discover the draught's effect."
+    },
+    "Hot Pot": {
+      "roll": "2D6",
+      "text": "Before each battle the Chef takes a Leadership test. If he passes, his pot holds stew to heal as many Wounds as he passed by, +1 (a roll of 7 against his Ld 8 heals up to 2 Wounds). Friendly models who sup it recover Wounds, none above its maximum."
     }
   },
   "skill": {

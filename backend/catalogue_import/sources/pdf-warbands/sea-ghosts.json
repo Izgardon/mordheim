@@ -1,0 +1,195 @@
+{
+  "warbandType": "sea-ghosts",
+  "name": "Sea Ghosts",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Sea%20Ghosts.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Sundering", "ruleFull": "Every Elf of the warband hates Dark Elves."},
+    {"rulename": "Excellent Sight", "ruleFull": "Every Elf of the warband spots hidden enemies from twice his Initiative in inches."},
+    {"rulename": "Distaste for Poison", "ruleFull": "No warrior of the warband may use poison of any kind."},
+    {"rulename": "Tolerant", "ruleFull": "Unless his rules say otherwise, the warband may hire any hired sword who isn't a Dark Elf, a Skaven or a follower of Chaos, but never an Assassin."},
+    {"rulename": "Magicians", "ruleFull": "A hired Elf Mage may be kept after each battle for 25 gc upkeep."},
+    {"rulename": "Unforgiving", "ruleFull": "In multiplayer games the warband may never ally with Dark Elves, followers of Chaos or Skaven."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "elf-rangers-equipment-list",
+      "title": "Elf Rangers Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "boat hook", "alias": "", "cost": {"cost": 8}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "Sword/Glaive", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "ithilmar weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 x price"}},
+        {"name": "belaying pin", "alias": "", "cost": {"cost": 3}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "longbow", "alias": "", "cost": {"cost": 15}},
+        {"name": "elf bow", "alias": "", "cost": {"cost": 35}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "sea dragon cloak", "alias": "", "cost": {"cost": 50}},
+        {"name": "ithilmar armour", "alias": "", "cost": {"cost": 60}},
+        {"name": "rope & hook", "alias": "", "cost": {"cost": 5}},
+        {"name": "lyre", "alias": "", "cost": {"cost": 15, "costSuffix": "Minstrels only"}},
+        {"name": "elven wine", "alias": "", "cost": {"cost": 30}},
+        {"name": "compass", "alias": "", "cost": {"cost": 45}},
+        {"name": "elven cloak", "alias": "", "cost": {"cost": 75}},
+        {"name": "riverboat", "alias": "", "cost": {"cost": 100, "costSuffix": "One per warband"}}
+      ]
+    },
+    {
+      "id": "feast-master-equipment-list",
+      "title": "Feast-Master Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "Sword/Glaive", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "Spear-stave", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 10}},
+        {"name": "elven cloak", "alias": "", "cost": {"cost": 75}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "wayfinder",
+      "type": "hero",
+      "name": "Wayfinder",
+      "plural": "Wayfinders",
+      "race": "elf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 9},
+      "equipmentLists": ["elf-rangers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Wayfinder may take Leadership tests on his Leadership."},
+        {"rulename": "Navigator", "ruleFull": "Once the Wayfinder captains a vessel of his own he is a Shipmaster, who turns the tide in battles at sea: once a battle, while he is within 6\" of the warband's boat, you may re-roll one dice result."}
+      ]
+    },
+    {
+      "id": "feast-master",
+      "type": "hero",
+      "name": "Feast-Master",
+      "plural": "Feast-Masters",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 90,
+      "startingXp": 14,
+      "statblock": {"m": 5, "ws": 5, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["feast-master-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Immune to Psychology", "ruleFull": "The Feast-Master is immune to psychology."},
+        {"rulename": "Bestial", "ruleFull": "The Feast-Master can never be the warband's leader."},
+        {"rulename": "Talismanic Tattoos", "ruleFull": "The Feast-Master has a special 6+ save that Strength, spells and magical abilities can't modify."},
+        {"rulename": "Shadow Dances of Loec", "ruleFull": "Instead of a new skill, the Feast-Master may learn a Wardancer Dance:\n\nDance | While he performs it\nWhirling Death | +1 to his Injury rolls.\nStorm of Blades | +1 Attack.\nThe Shadows Coil | A special 4+ save that Strength, spells and magic weapons can't modify.\nWoven Mist | 1 Attack fewer, but he always strikes first; against a foe who also strikes first, attacks go in Initiative order.\n\nIn each round of close combat he fights he must perform one Dance he knows if he can, never the same one in two turns running of the same combat."}
+      ]
+    },
+    {
+      "id": "lookouts",
+      "type": "hero",
+      "name": "Lookout",
+      "plural": "Lookouts",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 2, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["elf-rangers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Seeker", "ruleFull": "When you roll on the Exploration chart, the Lookout lets you change one dice by -1 or +1."}
+      ]
+    },
+    {
+      "id": "sea-rangers",
+      "type": "henchman",
+      "name": "Sea Ranger",
+      "plural": "Sea Rangers",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 35,
+      "startingXp": 2,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["elf-rangers-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "minstrels",
+      "type": "henchman",
+      "name": "Minstrel",
+      "plural": "Minstrels",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 45,
+      "startingXp": 2,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["elf-rangers-equipment-list"],
+      "specialRules": [
+        {"rulename": "Songster", "ruleFull": "Any friendly model within 6\" of a Minstrel may re-roll a failed Leadership test, rout tests included, at +1 Leadership."},
+        {"rulename": "Deathdancer", "ruleFull": "A Minstrel promoted to Hero may learn a Wardancer Dance instead of a new skill (the Feast-Master's Shadow Dances of Loec), and then must dance in close combat as the Feast-Master does."}
+      ]
+    },
+    {
+      "id": "wildkin",
+      "type": "henchman",
+      "name": "Wildkin",
+      "plural": "Wildkin",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 60,
+      "startingXp": 2,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 4, "bs": 5, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["elf-rangers-equipment-list"],
+      "specialRules": [
+        {"rulename": "Loner", "ruleFull": "Wildkin are immune to All Alone tests and can never be the warband's leader."},
+        {"rulename": "Animal Charmer", "ruleFull": "A Wildkin controls up to five animals while they stay within 6\" of him. An animal not within 6\" of him in the Movement phase moves D6\" in a random direction; if that takes it into contact with a model, friend or foe, it attacks as if charging."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Sea Ghosts", "new": false},
+  "specialSkillsList": [
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Luck", "ours": "Luck"},
+    {"name": "See in Shadows", "ours": "See in Shadows"},
+    {"name": "Hide in Shadows", "ours": "Hide in Shadows"},
+    {"name": "Powerful Build", "ours": "Powerful Build"},
+    {"name": "Fey", "ours": "Fey"}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 3, "what": "A Sea Elf Rangers warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed. No maximum profile is printed: the Elves take our Elf race."},
+    {"page": 3, "what": "The skill table's Special tick for the Wayfinder is a glyph the text layer drops: the table was read from p3's image."},
+    {"page": 3, "what": "River Boat (\"may include one River Boat\") is read as the list's Riverboat (100 gc): one per warband."},
+    {"page": 3, "what": "Sword/Glaive is our Sword shown as Sword/Glaive; Spear-stave (counts as Halberd) our Halberd shown as Spear-stave. The Feast-Master's Double-handed weapon is 10 gc (15 on the Elf Rangers list): as printed. The Ithilmar weapon is 3 x price."},
+    {"page": 3, "what": "Boat hook (8 gc), Belaying pin (3), Sea Dragon cloak (50), Elven wine (30) and Compass (45) are ours by name (the Pirates' and Dark Elves' items); the PDF prints no rules for them."},
+    {"page": 4, "what": "The Lyre is our Lyre: 15 gc, Rare 8, Minstrels only, as its entry prints. With Lyres the Minstrels raise the warband's most warriors by 1: not imported, the most stays 12."},
+    {"page": 5, "what": "The Wayfinder's profile row reads Shipmaster (his Navigator rule), the Lookouts' Sentinel. The PDF doesn't say how a Wayfinder earns his captaincy."},
+    {"page": 5, "what": "The Wardancer Dances (Whirling Death, Storm of Blades, The Shadows Coil, Woven Mist) are no skills of ours, and a page has one Special group, so they are in the Feast-Master's Shadow Dances of Loec rule; the player notes a Dance learned."},
+    {"page": 6, "what": "Animal Charmer (\"eg. Falcon Charmer\"): the warband has no animals to hire. Kept as printed."},
+    {"page": 6, "what": "The special skills are our Sea Ghosts group's six. Our Hide in Shadows rounds the halved Initiative up, where the PDF says nothing of rounding; our Powerful Build also bars Shadow Weavers. Ours are unchanged."}
+  ]
+}

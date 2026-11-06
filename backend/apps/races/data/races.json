@@ -478,5 +478,29 @@
     "initiative": "9",
     "attacks": "3",
     "leadership": "10"
+  },
+  {
+    "name": "Dryad",
+    "movement": "5",
+    "weapon_skill": "6",
+    "ballistic_skill": "4",
+    "strength": "4",
+    "toughness": "5",
+    "wounds": "4",
+    "initiative": "5",
+    "attacks": "3",
+    "leadership": "10"
+  },
+  {
+    "name": "Treekin",
+    "movement": "6",
+    "weapon_skill": "5",
+    "ballistic_skill": "0",
+    "strength": "5",
+    "toughness": "5",
+    "wounds": "5",
+    "initiative": "2",
+    "attacks": "4",
+    "leadership": "10"
   }
 ]

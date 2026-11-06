@@ -26,10 +26,10 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 376 |
-| skills | 301 |
-| skill groups | 64 |
-| skill group links | 363 |
+| price rows | 387 |
+| skills | 308 |
+| skill groups | 65 |
+| skill group links | 370 |
 | serious injuries (D66) | 20 |
 | shared specials | 62 |
 | random mutation results (D66) | 36 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 301 | 152 | 109 | 40 |
+| skills | 308 | 152 | 116 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 301 skills, one per name; `out/skill-groups.json` is 64 groups holding them (363 links), the five core groups first.
+`out/skills.json` is 308 skills, one per name; `out/skill-groups.json` is 65 groups holding them (370 links), the five core groups first.
 
 ### Merged by name
 
@@ -384,6 +384,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Dwarf Rangers | Dwarf Rangers | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarf Troll Slayers | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Ferocious Charge, Monster Slayer, Berserker, Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarves | Dwarf Treasure Hunters | skill_group_learners | - | Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
+| Fen Guard | Fen Guard | new group | - | Absorption, Adaptation, Harvester of Souls, Gladeborn, Transform, Take Root, Poison Sap |
 | Forest Goblins | Forest Goblins (NC) | intersection | - | Animosity |
 | Grail Companions | Bretonnian Grail Companions | new group | - | Virtue of the Impetuous, Virtue of Noble Disdain (Grail Companions), Virtue of Heroism, Virtue of Stoicism, Virtue of the Penitent, Virtue of the Ideal, Virtue of Audacity, Virtue of Purity (Grail Companions), Virtue of Duty, Virtue of the Joust, Virtue of Confidence, Virtue of Knightly Temper, Virtue of Discipline (Grail Companions), Virtue of Empathy |
 | Grave Robber | Grave Robbers | intersection | - | Darkstalker, Instinctual Violence, De-animator, Hardy Constitution (Grave Robber), Body Dealer |
@@ -430,7 +431,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 ### New groups and skills (`new_skill_groups`)
 
-102 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+109 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -489,6 +490,13 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Songster | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
 | Song of Honor | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
 | Relentless | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
+| Absorption | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
+| Adaptation | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
+| Harvester of Souls | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
+| Gladeborn | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
+| Transform | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
+| Take Root | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
+| Poison Sap | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
 | Quiet as a Mouse | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Crude Belch (Halflings MIC) | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Wizened Halfling | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
@@ -613,16 +621,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 68 |
-| warband types linked | 74 |
-| fighters (heroes, henchmen) | 450 (232, 218) |
-| henchmen that gain no XP | 65 |
-| henchmen that can't be promoted | 81 |
-| equipment lists | 177 |
-| list lines | 1879 |
-| warband rules | 216 |
-| upgrades | 77 |
-| the templates' own specials | 553 |
+| templates | 73 |
+| warband types linked | 79 |
+| fighters (heroes, henchmen) | 481 (249, 232) |
+| henchmen that gain no XP | 66 |
+| henchmen that can't be promoted | 82 |
+| equipment lists | 185 |
+| list lines | 2003 |
+| warband rules | 240 |
+| upgrades | 84 |
+| the templates' own specials | 596 |
 
 ### List lines
 
@@ -638,7 +646,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-256 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+277 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -662,7 +670,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-53 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+54 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 
@@ -743,6 +751,7 @@ Each of those groups is for everyone or names every warband type its fighters' t
 | bretonnian-grail-companions | Damsel | Wizard | Grail Magic |
 | dreamwalkers-cult-of-morr | Priest of Morr | Priest | Funerary Rites |
 | druchii | Sorceress | Wizard | Dark Magic (Druchii) |
+| fen-guard | Branchwych | Wizard | Utterances of the Oak |
 | necrarchs-the-soul-stealers | Necrarch Vampire | Wizard | Necromancy, Dreaded Scrolls of Nagash |
 | nipponese-expedition | Vim-To Mage | Wizard | Arabian Elemental Magic |
 | outlaws-of-stirwood-forest-redux | Cleric | Priest | Prayers of Sigmar |
@@ -777,6 +786,7 @@ Tailored lists of the shared mutations (`MUTATION_UPGRADES`):
 | cult-of-the-posessed | Mutations | 6 | who the-possessed, mutants; later double; at recruit |  |
 | marauders-of-chaos | Mutations | 15 | who marauder-chieftain, seer, champions, condemned | With the Mutant skill. |
 | marauders-of-chaos | Blessings of Nurgle | 6 | who marauder-chieftain, seer, champions, condemned | Mark of Onogal heroes with the Mutant skill, instead of a mutation. |
+| fen-guard | Variations | 7 | who heroes | Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double. |
 | skaven-of-clan-moulder | Mutations | 9 | who stormvermin; at most 1 each | With the Twistkin skill, at half the listed price. |
 
 
@@ -806,12 +816,12 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 47 | 5 | 5 | 3 |
+| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 51 | 5 | 5 | 3 |
 | Stupidity | Psychology | the rulebook's Stupidity (snapshot) |  |  | 4 | 0 | 0 | 1 |
-| Immune to Psychology | Psychology | the list's text |  |  | 21 | 1 | 2 | 0 |
-| Immune to Poison | Trait | the list's text |  |  | 19 | 3 | 3 | 2 |
-| No Pain | Trait | the list's text |  |  | 18 | 1 | 1 | 0 |
-| May Not Run | Trait | the list's text |  |  | 10 | 2 | 0 | 0 |
+| Immune to Psychology | Psychology | the list's text |  |  | 26 | 1 | 2 | 0 |
+| Immune to Poison | Trait | the list's text |  |  | 20 | 3 | 3 | 2 |
+| No Pain | Trait | the list's text |  |  | 19 | 1 | 1 | 0 |
+| May Not Run | Trait | the list's text |  |  | 12 | 2 | 0 | 0 |
 | Large | Trait | the list's text |  |  | 0 | 4 | 0 | 0 |
 | Daemonic Flesh | Trait | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
@@ -820,26 +830,26 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 4 | 0 | 0 | 0 |
 | Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 5 | 0 | 0 | 0 |
 | Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 4 | 0 | 0 | 0 |
-| Tentacle | Mutation | Cult of the Possessed's upgrade | 35 |  | 5 | 0 | 0 | 0 |
-| Blackblood | Mutation | Cult of the Possessed's upgrade | 30 |  | 4 | 0 | 0 | 0 |
-| Spines | Mutation | Cult of the Possessed's upgrade | 35 |  | 4 | 0 | 0 | 0 |
+| Tentacle | Mutation | Cult of the Possessed's upgrade | 35 |  | 6 | 0 | 0 | 0 |
+| Blackblood | Mutation | Cult of the Possessed's upgrade | 30 |  | 5 | 0 | 0 | 0 |
+| Spines | Mutation | Cult of the Possessed's upgrade | 35 |  | 5 | 0 | 0 | 0 |
 | Scorpion Tail | Mutation | Cult of the Possessed's upgrade | 40 |  | 4 | 0 | 0 | 0 |
-| Extra Arm | Mutation | Cult of the Possessed's upgrade | 40 |  | 5 | 0 | 0 | 0 |
+| Extra Arm | Mutation | Cult of the Possessed's upgrade | 40 |  | 6 | 0 | 0 | 0 |
 | Hideous | Mutation | Cult of the Possessed's upgrade; subject made general | 40 |  | 5 | 0 | 0 | 0 |
 | Crystalline Body | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 3 | 0 | 0 | 0 |
-| Hulking Brute | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 3 | 0 | 0 | 0 |
+| Hulking Brute | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 4 | 0 | 0 | 0 |
 | Poisonous Bite | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 3 | 0 | 0 | 0 |
 | Prehensile Tail | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 3 | 0 | 0 | 0 |
 | Scaly Skin | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 3 | 0 | 0 | 0 |
 | Wings | Mutation | the list's text (Mutiny in Marienburg, p161) | 45 |  | 3 | 0 | 0 | 0 |
 | Stream of Corruption | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 3 | 0 | 0 | 0 |
 | Nurgle's Rot | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 50 |  | 2 | 0 | 0 | 0 |
-| Cloud of Flies | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 4 | 0 | 0 | 0 |
+| Cloud of Flies | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 25 |  | 5 | 0 | 0 | 0 |
 | Bloated Foulness | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 40 |  | 2 | 0 | 0 | 0 |
 | Mark of Nurgle | Blessing of Nurgle | Carnival of Chaos's upgrade; subject made general | 35 |  | 1 | 0 | 0 | 0 |
 | Suckers | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 1 | 0 | 0 | 0 |
 | Plague Carrier | Blessing of Nurgle | the list's text (Mutiny in Marienburg, Blessings of Onogal) | 25 |  | 1 | 0 | 0 | 0 |
-| Beak | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 35 |  | 0 | 0 | 0 | 0 |
+| Beak | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 35 |  | 1 | 0 | 0 | 0 |
 | Burning Body | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 40 |  | 0 | 0 | 0 | 0 |
 | Electrical Touch | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 45 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
 | Eye of Tchar | Favour of Tchar | the list's text (Mutiny in Marienburg, p162) | 45 | mutiny-in-marienburg | 0 | 0 | 0 | 0 |
@@ -873,12 +883,12 @@ List prices the pages differ from: none.
 
 ### Merged
 
-- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Bretonnian Grail Companions: Grail Knight (Fearsome); Halflings: Village Ogre; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Necrarchs, the Soul Stealers: Necrarch Vampire (Cause Fear); Necrarchs, the Soul Stealers: Thrall (Cause Fear); Necrarchs, the Soul Stealers: Skeletal Warrior (Cause Fear); Necrarchs, the Soul Stealers: Zombie (Cause Fear); Necrarchs, the Soul Stealers: Abomination (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Skaven of Clan Moulder: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Bretonnian Grail Companions: Grail Knight (Fearsome); Fen Guard: Branchnymph; Fen Guard: Dryad; Fen Guard: Treekin; Halflings: Village Ogre; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire (Cause Fear); Necrarchs, the Soul Stealers: Thrall (Cause Fear); Necrarchs, the Soul Stealers: Skeletal Warrior (Cause Fear); Necrarchs, the Soul Stealers: Zombie (Cause Fear); Necrarchs, the Soul Stealers: Abomination (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Skaven of Clan Moulder: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
 - Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
-- Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Mad Scientist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
-- Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
-- No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin.
-- May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Clan Skryre Rat Ogre; Bone Goliath.
+- Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Fen Guard: Branchwych; Fen Guard: Branchnymph; Fen Guard: Treekin; Masters of Horror: Mad Scientist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Sea Ghosts: Feast-Master; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
+- Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
+- No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin.
+- May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Fen Guard: Treekin; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Clan Skryre Rat Ogre; Bone Goliath.
 - Large: Ogre Bodyguard (Large Target); Clan Skryre Rat Ogre; Bone Goliath; Ogre Slave Master (Large Target).
 - Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
 - Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
@@ -887,25 +897,26 @@ List prices the pages differ from: none.
 - Daemon Soul: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
 - Great Claw: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
 - Cloven Hoofs: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
-- Tentacle: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
-- Blackblood: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
-- Spines: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Tentacle: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Fen Guard: Variations; Skaven of Clan Moulder: Mutations.
+- Blackblood: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Fen Guard: Variations; Skaven of Clan Moulder: Mutations.
+- Spines: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Fen Guard: Variations; Skaven of Clan Moulder: Mutations.
 - Scorpion Tail: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
-- Extra Arm: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Extra Arm: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Fen Guard: Variations; Skaven of Clan Moulder: Mutations.
 - Hideous: Carnival of Chaos: Blessings of Nurgle; Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
 - Crystalline Body: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
-- Hulking Brute: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
+- Hulking Brute: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations; Fen Guard: Variations.
 - Poisonous Bite: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
 - Prehensile Tail: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
 - Scaly Skin: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
 - Wings: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
 - Stream of Corruption: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle.
 - Nurgle's Rot: Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle.
-- Cloud of Flies: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling; Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle.
+- Cloud of Flies: Carnival of Chaos: Plague Bearer; Carnival of Chaos: Nurgling; Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle; Fen Guard: Variations.
 - Bloated Foulness: Carnival of Chaos: Blessings of Nurgle; Marauders of Chaos: Blessings of Nurgle.
 - Mark of Nurgle: Carnival of Chaos: Blessings of Nurgle.
 - Suckers: Marauders of Chaos: Blessings of Nurgle.
 - Plague Carrier: Marauders of Chaos: Blessings of Nurgle.
+- Beak: Fen Guard: Variations.
 
 ### Kept apart
 
@@ -1014,7 +1025,7 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-18 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+23 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
@@ -1022,14 +1033,19 @@ Kept apart from a family's, the effect differing:
 | dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
 | druchii | druchii | 8 | 0 | 2 | 11 |
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 10 |
+| fen-guard | fen-guard | 5 | 1 | 5 | 14 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
+| low-kings | low-kings | 7 | 1 | 2 | 10 |
 | masters-of-horror | masters-of-horror | 7 | 1 | 3 | 11 |
+| metal-mongers | metal-mongers | 6 | 0 | 3 | 12 |
+| militiant-mootlanders | militiant-mootlanders | 7 | 1 | 1 | 11 |
 | necrarchs-the-soul-stealers | necrarchs-the-soul-stealers | 7 | 1 | 2 | 11 |
 | nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
+| sea-ghosts | sea-ghosts | 6 | 0 | 0 | 10 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
 | snotlings | snotlings | 8 | 1 | 2 | 10 |
 | sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
@@ -1103,6 +1119,29 @@ Kept apart from a family's, the effect differing:
 - Flag (p6): The Dwarf Axe (15 gc, Rare 8) is our Dwarf Axe; the PDF adds that one parry is the most a model makes, two Dwarf axes giving a re-roll of a failed parry.
 - Flag (p5): The Rite of Dragonslaying's Sea Dragon Cloak is printed with a 5+ save in close combat and 4+ against missiles, as ours.
 
+### Fen Guard
+
+- Alias (p2): "oaken armour" is our the oaken armour.
+- Stub: Whip, 10 gc, Common; its rules are on p2.
+- Stub: Greenwood Scythe, 60 gc, Rare 10; its rules are on p3.
+- Stub: Iron Bark, 10 gc, Rare 5; its rules are on p3.
+- Stub: Armour of the Willow Wood, 130 gc, Common; its rules are on p2.
+- Stub: Horn of the Wild Hunt, 110 gc, Rare 12; its rules are on p3.
+- Flag (p1): A Glade Warriors warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed.
+- Flag (p1): The Dryad maximum (M5 WS6 BS4 S4 T5 W4 I5 A3 Ld10) and the Treekin maximum (M6 WS5 BS0 S5 T5 W5 I2 A4 Ld10) are new races, Dryad and Treekin.
+- Flag (p1): Hard to Kill is printed among the warband's rules for the Dryads and Spiteborn only: it is their own rule.
+- Flag (p1): Variation is a tailored upgrade list, Variations, for Heroes, each mutation at its listed price (Tentacle 35, Extra Arm 40, Cloud of Flies 25, Hulking Brute 50, Spines 35, Blackblood 30, Beak 35). Henchmen may take one too: upgrades are for heroes, so the player adds it. "possible Nesting Bird (Beak!)" is read as the Beak, offered.
+- Flag (p2): The skill table's ticks are images: read from p2's image. Its columns run Strength before Academic.
+- Flag (p2): The Whip (10 gc, Heroes only) and the Armour of the Willow Wood (130 gc, Heroes only) have no entry in the PDF: stubs with no rules. Our Armour of the Wildwood (MiM) is 130 gc too. The Oaken Armour (150 gc, Heroes only) is our The Oaken Armour (MiM, 150 gc, Rare 12) by name; the PDF prints no rules for it.
+- Flag (p2): Splinters (Throwing Knives) is our Throwing Knives/Stars shown as Splinters, Vine Tendril (Fish Hook Shot) our Fish-hook Shot/Hunting Lasso (MiM) shown as Vine Tendril, Climbing Vine (rope and hook) our Rope & Hook shown as Climbing Vine, Hammer our Club, Mace or Hammer. The list has no dagger.
+- Flag (p2): The Magic Acorn is 100 gc on the list (ours, as the Militant Mootlanders' entry prints, 250 gc, Rare 15); the Healing Herbs 10 gc (ours 20+2D6); the Familiar 20 gc (ours 20+D6, Rare 8). Taken as printed.
+- Flag (p3): The Greenwood Scythe (60 gc, Rare 10, Branchwych only; S as user +1, Two-handed, Treescuttle Venom: +1 to injury rolls) and Iron Bark (10 gc, Rare 5, Fen Guard only; +2 to the armour save, broken the first time a save fails) are stubs, their rules on p3.
+- Flag (p3): The Horn of the Wild Hunt is 110 gc on the list, but its entry, the Horn of the Hunt, prints 120 gc, Rare 12, Branch Nymph only: the stub keeps the list's name and price. Its rules (p3): before each battle the Branchnymph takes a Leadership test, and if she passes a D6 calls Hunting Hounds (D3+1), a Tiger, a Bear, a Great Stag or a Great Eagle for the battle (1: nothing), which count neither for rout nor the most warriors; their profiles and rules are on p6.
+- Flag (p4): The Branchwych's "Special Rules: Leader" prints no distance: the usual Leader rule (6").
+- Flag (p4): The Branchnymph is "Branch Nymph" in the skill table and her Horn's entry: named Branchnymph, as her heading.
+- Flag (p5): The Treekin's Redwood and Slow Growing are printed run together: read as two rules. Its Fear, Immune to Psychology, May Not Run and Large link the shared rules.
+- Flag (p7): Utterances of the Oak is a new lore (spells.json), in our words. Unleash Spites rolls as many dice as the casting roll's total.
+
 ### Grave Robbers
 
 - Alias (p2): "light armor" is our light armour.
@@ -1130,6 +1169,22 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): A Halfling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p4): The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch is named apart from the Mootlanders' (theirs gives -1 to hit for the turn, not a lost first attack). Its Stealthy is the Mootlanders' Stealthy, name and effect, so it links ours; our Stealthy being shared, the PDF heading's "Halfling Thieves Only" is the group's note.
 
+### Low Kings
+
+- Alias (p2): "throwing stars/knives" is our throwing knives.
+- Stub: Knuckledusters, 5 gc, Rare 6; its rules are on p5.
+- Stub: Spiked Gauntlet (Low Kings), 15 gc, Rare 7; its rules are on p5.
+- Flag (p2): A Criminal Gang needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed. No maximum profile is printed: the gang takes our Human race.
+- Flag (p2): The skill table's Special ticks for the Racketeer, Enforcer and Fence are glyphs the text layer drops: the table was read from p2's image.
+- Flag (p3): The fighters' headings aren't in the text layer: each is named from Choice of Warriors and his profile row, and priced from the hire line above it.
+- Flag (p2): Fence's iron strongbox is "X gc" on the list; its entry (p5) prints 30 gc, Rare 10, as our Iron Strongbox: linked at 30 gc, shown as Fence's iron strongbox. The Morning star is 10 gc (ours 15): as printed.
+- Flag (p5): Knuckledusters (5 gc, Rare 6; S as user, Pair, Concealable) are a stub; our Brass Knuckles (20 gc, Rare 6; S +1, Pair, Cumbersome) do other things.
+- Flag (p5): The Spiked gauntlet (15 gc, Rare 7; Parry, Chain Glove: counts as a hand weapon and a buckler, never as a second weapon or buckler in hand beside a Difficult to use weapon, and usable where a pit fight bars weapons) does more than our Spiked Gauntlet (Parry): a stub of its own, Spiked Gauntlet (Low Kings).
+- Flag (p5): The Thief's cloak (15 gc, Rare 9) is ours, the same numbers.
+- Flag (p3): The Fence's chart doesn't say what its result gives (beside Sham, likely the item he has on offer), and calls him "the Halfling Fence": kept as printed.
+- Flag (p3): Looter and Tea-Leaf! are the Racketeer's and the Guttersnipes' own rules. Our skills of those names are the Militant Mootlanders' and say other things (our Looter adds a Treasure or a Wyrdstone Shard).
+- Flag (p4): The special skills are our Low Kings group's six, the same as the PDF's.
+
 ### Masters of Horror
 
 - Alias (p2): "light armor" is our light armour.
@@ -1147,6 +1202,40 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Thrall's race is our Vampire.
 - Flag (p4): The Flesh Construct's Cannot Run ("may still charge normally") is our shared May Not Run. It gains experience only on a passed Leadership test, so it gains experience but never becomes a Hero. Both it and the Zombies ("Undead creatures") take our Undead race; Zombies gain no experience.
 - Flag (p4): No group sizes are printed: left open, but the Flesh Construct's is 1, as there may be only one.
+
+### Metal Mongers
+
+- Stub: Spike-jawed Snatcher, 25 gc, Rare 10; its rules are on p7.
+- Stub: Ratling Gun, 275 gc, Rare 14; its rules are on p6.
+- Stub: Pneumatic Arm, 140 gc, Rare 13; its rules are on p7.
+- Flag (p1): The warband has 500 warp tokens: read as 500 gc. A Skaven warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed.
+- Flag (p1): Skurvey Alliance says only that Riskin Tatter-Ear's hospitality reaches no further than his allies of Clan Skurvey. It names no hired-sword limit, so no rule is made.
+- Flag (p4): No maximum profile is printed: the Skaven take our Skaven race; the Machine-Ogre is a construct, with no race. The fighters' headings are a font the text layer garbles: they are named from Choice of Warriors. Their profile rows read Engineer (the Engineer Adept), Mechanic (the Forge-Rats) and Warp Corp (the Technicians).
+- Flag (p4): The skill table's ticks are symbol glyphs, read from where the text layer places them: the Engineer Adept ticks all six.
+- Flag (p2): Wrench (counts as club) is our Club, Mace or Hammer shown as Wrench, Cutlass/Sword our Sword shown as Cutlass/Sword, Warplock rifle (counts as Handgun) our Handgun shown as Warplock rifle, and Jezzail (counts as Hochland long rifle) our Hunting Rifle (the Hochland long rifle) shown as Jezzail. The Halberd is 15 gc (ours 10): as printed.
+- Flag (p5): Globadier lets Technicians buy Poison Wind Globes and Gas Masks when recruited: both lines are on the Henchmen list, Technicians only, at the Heroes list's prices.
+- Flag (p5): The Machine-Ogre's Fear and Unreliable say "the Rat Ogre": read as the Machine-Ogre. Its Large, Fear, Immune to Psychology, Immune to Poison, May Not Run and No Pain link the shared rules.
+- Flag (p6): The Ratling Gun is a stub at the Heroes list's 275 gc. Its entry prints "X gold crowns (Forge-Rats and Technicians only)", Rare 14, and a placeholder "Text here...": the line is the Forge-Rats' only, the Technicians' list lacking it. Its rules are on p6 (range 6"-16", S3, save -1, Move or fire, Unwieldy, Jeopardous with its misfire chart, Metal Storm). Typed blackpowder, like our Warplock pistol.
+- Flag (p6): The Warpfire Projector (Machine-Ogre only; range 6", S4, save -1, Jet of Flame, Refuel) is the Tinker-Rat chart's 3, on no list: not imported as an item.
+- Flag (p7): Experimental Technology is printed under the Pneumatic Arm, but worded for every weapon Skyre Warp Engineers make: a warband rule. The PDF doesn't say which weapons are Skyre-made.
+- Flag (p7): The Pneumatic Arm (140 gc, Rare 13, Engineer Adept only; two extra arms, and holds an Unwieldy missile weapon with no second model) and the Spike-jawed Snatcher (25 gc, Rare 10, Skaven only; Capture, Two-handed) are stubs, their rules on p7. The Poison Wind Globe (20 gc, Rare 6) and Gas Mask (15 gc, Rare 6) are ours, the same numbers.
+- Flag (p3): The special skills are our Skaven Metal Mongers group's six, the same as the PDF's (our Tail Fighting says knife for its dagger).
+
+### Militant Mootlanders
+
+- Alias (p2): "short sword" is our shortsword.
+- Stub: Wild Mountain Goat, 85 gc, Rare 12; its rules are on p3.
+- Flag (p2): A Halfling Rogues warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed.
+- Flag (p2): The Halfling maximum (M4 WS5 BS7 S3 T3 W3 I9 A4 Ld10) is our Halfling race's.
+- Flag (p4): The fighters' headings aren't in the text layer: each is named from Choice of Warriors and his profile row, and priced from the hire line above it. The Chef's profile row reads Master Chef; he is named Chef, as in Choice of Warriors, the skill table and his Hot Pot rule.
+- Flag (p2): The skill table's ticks read from where the text layer places them: no Hero ticks Combat or Strength.
+- Flag (p2): Cleaver (counts as axe) links our Cleaver (-1 to the armour save, as an axe) at 10 gc. Pitchfork (counts as Trident) is our Trident shown as Pitchfork, Kitchenware (counts as throwing stars) our Throwing Knives/Stars shown as Kitchenware, Club/Mace our Club, Mace or Hammer. Cooking pot/Helmet is our Helmet at 10 gc shown as Cooking pot/Helmet, not our Cooking Pot Helmet (8 gc, a 5+ save against stunning).
+- Flag (p2): Short sword is our Shortsword by name (the Bretonnian Chapel Guard's: Parry, the enemy +1 to his armour save, 7 gc): the PDF prints no rules for it.
+- Flag (p2): The Magic Acorn is 100 gc on the list; its entry (p3) prints 250 gc, Rare 15, as ours: the line keeps 100. Steel cloth is 35 gc on the list (ours 75 gc, Rare 13; the PDF prints no entry).
+- Flag (p3): The special skills are our Militant Mootlanders group's six, worded from this PDF; their names are a heading font the text layer drops, read from p3's image. Two differ: our Looter gives "one additional Treasure or Wyrdstone Shard" (the PDF: one more Treasure), and our Taunt, worded for an Ostlander, also lets him taunt instead of casting a spell and makes him taunt the nearest enemy (the PDF says neither). Ours are unchanged.
+- Flag (p3): The Wild Mountain Goat is a stub: 85 gc, Rare 12, Halflings only, profile M7 WS2 BS0 S2 T3 W1 I4 A1 Ld5. Its rules are on p3: Ride Mountain Goat lets a Hero with the Animal Handling skill and Scale Sheer Surfaces climb while riding, up to twice the mount's Movement.
+- Flag (p4): The Chef's Hot Pot is a Leadership test before each battle: a 2D6 pre-battle roll (prebattle-rolls.json).
+- Flag (p5): Thieves are henchmen here (0-3, 20 gc). Their Infiltration ("See the Skaven special skill"), Pick Locks and Cutpurse are their own rules, worded as the skills. Uneasy Allies' 1 says "Do not add additional Treasures if any Thieves remain": kept as printed.
 
 ### Necrarchs, the Soul Stealers
 
@@ -1225,6 +1314,19 @@ Kept apart from a family's, the effect differing:
 - Flag (p9): Stubs: Blessed Bolts (25 gc, Common; range and Strength as the weapon, +1 S against Undead, mutants, Possessed and other chaotic beings) and the Shield of Sigmar (20 gc, Rare 9; armour save 6, a special 6+ save against all ranged attacks, and no -1 for a shield with heavy armour). Holy Water (5 gc) is our Blessed Water, shown as Holy Water (William, 6 Nov 2026: "yes"), and the Warhammer (15 gc) our Sigmarite Warhammer, shown as Warhammer ("i believe it is the same yes, that warband is in mordheimer"). The Holy Relic is our Holy (Unholy) Relic.
 - Flag (p11): No group sizes are printed.
 - Flag (p12): The special skills are a new group, Protectorate of Sigmar. Protection of Sigmar and Utter Determination are ours, name and effect; our Utter Determination says "Only the Matriarch or the Warrior Priest" (William, 6 Nov 2026: "Just have one utter determination and say matriarch/warrior priest"). Unshakeable Faith (immune to fear) is the Vampire Hunters' Iron Will, one skill named Iron Will in both groups ("yes go for iron will"); it differs from our Fearless (fear and All Alone). Rousing Sermon and Sigmar's Guidance (printed "Sigmars Guidance") are like nothing of ours.
+
+### Sea Ghosts
+
+- Flag (p3): A Sea Elf Rangers warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed. No maximum profile is printed: the Elves take our Elf race.
+- Flag (p3): The skill table's Special tick for the Wayfinder is a glyph the text layer drops: the table was read from p3's image.
+- Flag (p3): River Boat ("may include one River Boat") is read as the list's Riverboat (100 gc): one per warband.
+- Flag (p3): Sword/Glaive is our Sword shown as Sword/Glaive; Spear-stave (counts as Halberd) our Halberd shown as Spear-stave. The Feast-Master's Double-handed weapon is 10 gc (15 on the Elf Rangers list): as printed. The Ithilmar weapon is 3 x price.
+- Flag (p3): Boat hook (8 gc), Belaying pin (3), Sea Dragon cloak (50), Elven wine (30) and Compass (45) are ours by name (the Pirates' and Dark Elves' items); the PDF prints no rules for them.
+- Flag (p4): The Lyre is our Lyre: 15 gc, Rare 8, Minstrels only, as its entry prints. With Lyres the Minstrels raise the warband's most warriors by 1: not imported, the most stays 12.
+- Flag (p5): The Wayfinder's profile row reads Shipmaster (his Navigator rule), the Lookouts' Sentinel. The PDF doesn't say how a Wayfinder earns his captaincy.
+- Flag (p5): The Wardancer Dances (Whirling Death, Storm of Blades, The Shadows Coil, Woven Mist) are no skills of ours, and a page has one Special group, so they are in the Feast-Master's Shadow Dances of Loec rule; the player notes a Dance learned.
+- Flag (p6): Animal Charmer ("eg. Falcon Charmer"): the warband has no animals to hire. Kept as printed.
+- Flag (p6): The special skills are our Sea Ghosts group's six. Our Hide in Shadows rounds the halved Initiative up, where the PDF says nothing of rounding; our Powerful Build also bars Shadow Weavers. Ours are unchanged.
 
 ### Skaven of Clan Moulder
 

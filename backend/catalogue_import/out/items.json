@@ -17415,6 +17415,206 @@
     ]
   },
   {
+    "slug": "whip",
+    "name": "Whip",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "whip"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "greenwood-scythe",
+    "name": "Greenwood Scythe",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "greenwood scythe"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "iron-bark",
+    "name": "Iron Bark",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "iron bark"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "armour-of-the-willow-wood",
+    "name": "Armour of the Willow Wood",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "armour of the willow wood"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 130,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "horn-of-the-wild-hunt",
+    "name": "Horn of the Wild Hunt",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "horn of the wild hunt"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 110,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "pry-bar",
     "name": "Pry Bar",
     "variant": "",
@@ -17575,6 +17775,86 @@
     ]
   },
   {
+    "slug": "knuckledusters",
+    "name": "Knuckledusters",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf",
+    "tags": [
+      "knuckledusters"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "low-kings",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "spiked-gauntlet-low-kings",
+    "name": "Spiked Gauntlet (Low Kings)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf",
+    "tags": [
+      "spiked gauntlet (low kings)"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "low-kings",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "chainsaw-sword",
     "name": "Chainsaw Sword",
     "variant": "",
@@ -17687,6 +17967,166 @@
         "warbands": [
           {
             "type": "masters-of-horror",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "spike-jawed-snatcher",
+    "name": "Spike-jawed Snatcher",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+    "tags": [
+      "spike-jawed snatcher"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "metal-mongers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "ratling-gun",
+    "name": "Ratling Gun",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+    "tags": [
+      "ratling gun"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 275,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 14,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "metal-mongers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "pneumatic-arm",
+    "name": "Pneumatic Arm",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+    "tags": [
+      "pneumatic arm"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 140,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 13,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "metal-mongers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "wild-mountain-goat",
+    "name": "Wild Mountain Goat",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Militiant%20Mootlanders.pdf",
+    "tags": [
+      "wild mountain goat"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 85,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "militiant-mootlanders",
             "excluded": false
           }
         ],

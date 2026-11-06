@@ -17177,6 +17177,795 @@
     "upgrades": []
   },
   {
+    "slug": "fen-guard",
+    "name": "Fen Guard",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "starting_gold": 500,
+    "max_models": 12,
+    "variants": [],
+    "types": [
+      {
+        "type": "fen-guard",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Immune to Drugs and Poison",
+        "description": "Every Fen Guard warrior is immune to drugs and poison, but not to disease.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Fear of Fire",
+        "description": "Active fires, enemies with torches and any flame on the battlefield cause fear in Fen Guard warriors.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Hired Swords",
+        "description": "The warband may hire only Elf hired swords.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Bark Skin",
+        "description": "Fen Guard warriors have a 6+ armour save, added to any armour worn. Strength modifiers can't take it past 6 (weapons with the Cutting Edge rule excepted), but a 'no save' result on a Critical Hit chart removes it. Not against fire attacks.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Hard to Rattle",
+        "description": "Every Fen Guard warrior counts as wearing a helmet: a 4+ save against being stunned. Not against fire attacks.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Forest and Swamp Walk",
+        "description": "Fen Guard warriors move through swamp and forest terrain without penalty.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Grown Weapons",
+        "description": "A Fen Guard warrior's weapons grow from him: he can't be disarmed, and keeps his weapons if captured. Weapons can't be moved from one warrior to another, and one taken from a warrior is lost. Weapons found in the campaign may only be sold.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Regrowth",
+        "description": "A Fen Guard warrior with a serious injury may spend a later skill advance to regrow it, striking it from the roster.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Natural State",
+        "description": "Fen Guard warriors never wear cloaks, boots or armour other than those listed on their starting profile, and never visit a post-game location in Marienburg or any other city.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Untainted",
+        "description": "A warrior who gains an actual mutation rolls on the Serious Injury table (Captured and Sold to the Pits ignored), and the mutation is removed.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Variation",
+        "description": "A warrior may start with one Variation when hired, and may choose a new one when he rolls a double for an advance. Variations are bought from the mutation list at the listed price, and don't count as mutations for other rules (Holy Water): Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), and perhaps Nesting Bird (Beak).",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "dryad-equipment-list",
+        "name": "Dryad Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Whip",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Greenwood Scythe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 60,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "branchwych"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "Splinters",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Fish-hook Shot/Hunting Lasso",
+              "variant": "Mutiny in Marienburg"
+            },
+            "shown_as": "Vine Tendril",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Iron Bark",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Armour of the Willow Wood",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 130,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "The Oaken Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 150,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Rope & Hook",
+              "variant": ""
+            },
+            "shown_as": "Climbing Vine",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Horn of the Wild Hunt",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 110,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "branchnymph"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Familiar",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "branchwych"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Magic Acorn",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 100,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Healing Herbs",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "branchwych",
+        "kind": "hero",
+        "name": "Branchwych",
+        "plural": "Branchwyches",
+        "race": "Dryad",
+        "cost": 125,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 2,
+          "toughness": 3,
+          "wounds": 3,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 9
+        },
+        "skill_types": [
+          "Academic",
+          "Speed",
+          "Fen Guard"
+        ],
+        "spell_types": [
+          {
+            "name": "Utterances of the Oak",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "dryad-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Fen Guard",
+            "description": "Warriors within 6\" of the Branchwych may take Leadership tests on her Leadership."
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "Wizard",
+            "type": "Caster"
+          },
+          {
+            "name": "Eternal",
+            "type": "Warband - Fen Guard",
+            "description": "The Branchwych may ignore any Serious Injury result except Killed by taking a permanent -1 to her starting Wounds; not with 1 starting Wound left. On a Killed result she instead loses D3 starting Wounds for good; at 0 or less she is killed as normal."
+          },
+          {
+            "name": "Feed Upon Magic",
+            "type": "Warband - Fen Guard",
+            "description": "Between battles, by consuming D3 Treasures, the Branchwych gains a permanent +1 to her starting Wounds. Not if she searches for rare items, or was taken out of action in the last battle. Without enough Treasures they are all consumed anyway and she gains nothing."
+          },
+          {
+            "name": "Advancement",
+            "type": "Warband - Fen Guard",
+            "description": "On an advance roll of +1 Wound the Branchwych may pick a new skill from her lists instead."
+          }
+        ]
+      },
+      {
+        "key": "branchnymph",
+        "kind": "hero",
+        "name": "Branchnymph",
+        "plural": "Branchnymphs",
+        "race": "Dryad",
+        "cost": 90,
+        "starting_xp": 14,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 2,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Fen Guard"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "dryad-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Instinctual",
+            "type": "Warband - Fen Guard",
+            "description": "The Branchnymph can never be the warband's leader. Fear of Fire still applies to her."
+          }
+        ]
+      },
+      {
+        "key": "spiteborn",
+        "kind": "hero",
+        "name": "Spiteborn",
+        "plural": "Spiteborn",
+        "race": "Dryad",
+        "cost": 45,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 2,
+          "wounds": 2,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Strength",
+          "Speed",
+          "Fen Guard"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "dryad-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Hard to Kill",
+            "type": "Warband - Fen Guard",
+            "description": "A Spiteborn is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."
+          }
+        ]
+      },
+      {
+        "key": "dryads",
+        "kind": "henchman",
+        "name": "Dryad",
+        "plural": "Dryads",
+        "race": "Dryad",
+        "cost": 60,
+        "starting_xp": 2,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 0,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "dryad-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Root Walk",
+            "type": "Warband - Fen Guard",
+            "description": "Dryads may run only in swamp, dirt or forest terrain; on city terrain they may only walk or charge."
+          },
+          {
+            "name": "Tanglevine",
+            "type": "Warband - Fen Guard",
+            "description": "A warrior in combat with more than one Dryad loses 1 Attack for each Dryad after the first, to a minimum of 1."
+          },
+          {
+            "name": "Hard to Kill",
+            "type": "Warband - Fen Guard",
+            "description": "A Spiteborn is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."
+          }
+        ]
+      },
+      {
+        "key": "treekin",
+        "kind": "henchman",
+        "name": "Treekin",
+        "plural": "Treekin",
+        "race": "Treekin",
+        "cost": 180,
+        "starting_xp": 2,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 3,
+          "ballistic_skill": 0,
+          "strength": 4,
+          "toughness": 4,
+          "wounds": 3,
+          "initiative": 1,
+          "attacks": 2,
+          "leadership": 10
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Unarmed",
+            "type": "Warband - Fen Guard",
+            "description": "Treekin can't use weapons, and fight unarmed with no penalty."
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "May Not Run",
+            "type": "Trait"
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          },
+          {
+            "name": "Redwood",
+            "type": "Warband - Fen Guard",
+            "description": "A Treekin's Bark Skin save is 4+."
+          },
+          {
+            "name": "Slow Growing",
+            "type": "Warband - Fen Guard",
+            "description": "Treekin gain experience at half the normal rate."
+          }
+        ]
+      }
+    ],
+    "upgrades": [
+      {
+        "group": "Variations",
+        "special": {
+          "name": "Tentacle",
+          "type": "Mutation"
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Variations",
+        "special": {
+          "name": "Extra Arm",
+          "type": "Mutation"
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Variations",
+        "special": {
+          "name": "Cloud of Flies",
+          "type": "Blessing of Nurgle"
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Variations",
+        "special": {
+          "name": "Hulking Brute",
+          "type": "Mutation"
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Variations",
+        "special": {
+          "name": "Spines",
+          "type": "Mutation"
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Variations",
+        "special": {
+          "name": "Blackblood",
+          "type": "Mutation"
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Variations",
+        "special": {
+          "name": "Beak",
+          "type": "Favour of Tchar"
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      }
+    ]
+  },
+  {
     "slug": "forest-goblins",
     "name": "Forest Goblins",
     "setting": "nemesis-crown",
@@ -24619,6 +25408,695 @@
     ]
   },
   {
+    "slug": "low-kings",
+    "name": "Low Kings",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf",
+    "starting_gold": 500,
+    "max_models": 15,
+    "variants": [],
+    "types": [
+      {
+        "type": "low-kings",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Underworld Contacts",
+        "description": "A Hero visiting a bordello, casino, dream parlour or the like (Infamous Haunts) may re-roll any dice rolled there; the second result stands.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "mobsmen-equipment-list",
+        "name": "Mobsmen Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Knuckledusters",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Morning Star",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spiked Gauntlet (Low Kings)",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "enforcer"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Net",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 30,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Blunderbuss",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Rope & Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Lantern",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Thief's Cloak",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Lock Picks",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "fence"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Iron Strongbox",
+              "variant": ""
+            },
+            "shown_as": "Fence's iron strongbox",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "fence"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "racketeer",
+        "kind": "hero",
+        "name": "Racketeer",
+        "plural": "Racketeers",
+        "race": "Human",
+        "cost": 75,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Strength",
+          "Speed",
+          "Low Kings"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "mobsmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Low Kings",
+            "description": "Warriors within 6\" of the Racketeer may take Leadership tests on his Leadership."
+          },
+          {
+            "name": "Looter",
+            "type": "Warband - Low Kings",
+            "description": "If the Racketeer takes any enemy warrior out of action and isn't taken out of action himself, the warband gets one more Treasure, besides any the Cutpurse skill adds. The enemy's Treasures are unaffected."
+          }
+        ]
+      },
+      {
+        "key": "enforcer",
+        "kind": "hero",
+        "name": "Enforcer",
+        "plural": "Enforcers",
+        "race": "Human",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Speed",
+          "Low Kings"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "mobsmen-equipment-list"
+        ],
+        "specials": []
+      },
+      {
+        "key": "fence",
+        "kind": "hero",
+        "name": "Fence",
+        "plural": "Fences",
+        "race": "Human",
+        "cost": 55,
+        "starting_xp": 12,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Low Kings"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "mobsmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Sham",
+            "type": "Warband - Low Kings",
+            "description": "Items bought through the Fence cost their base price, with no random gold modifier, and half that. The first time such an item is used, roll a D6: on a 1 it breaks, a fake, and is useless.\n\nAt the end of each battle, whether or not the Fence fought, roll a D6.\n\nD6 | Result\n1 | Halfling cookbook\n2 | Ithilmar weapon\n3 | Gromril weapon\n4 | Tome of magic or Holy tome\n5 | Hunting rifle or Elven bow\n6 | Brace of duelling pistols"
+          }
+        ]
+      },
+      {
+        "key": "guttersnipes",
+        "kind": "hero",
+        "name": "Guttersnipe",
+        "plural": "Guttersnipes",
+        "race": "Human",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Combat",
+          "Speed",
+          "Low Kings"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "mobsmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Tea-Leaf!",
+            "type": "Warband - Low Kings",
+            "description": "A Guttersnipe may try to steal one item in the post-battle sequence: a common item on a 2+ on a D6, a Rare item by rolling over its availability on 2D6. A stolen item is used as one bought. If he fails, roll a D6: on a 1-5 he is chased off and escapes; on a 6 he is caught and hanged: remove him from the roster."
+          }
+        ]
+      },
+      {
+        "key": "smugglers",
+        "kind": "henchman",
+        "name": "Smuggler",
+        "plural": "Smugglers",
+        "race": "Human",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "mobsmen-equipment-list"
+        ],
+        "specials": []
+      },
+      {
+        "key": "rapscallions",
+        "kind": "henchman",
+        "name": "Rapscallion",
+        "plural": "Rapscallions",
+        "race": "Human",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 4,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "mobsmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Hide In Shadows",
+            "type": "Warband - Low Kings",
+            "description": "While Rapscallions are within 1\" of a wall or other linear obstacle (a hedge, fence, well and the like), an enemy must pass an Initiative test to charge or shoot at them."
+          }
+        ]
+      },
+      {
+        "key": "bruisers",
+        "kind": "henchman",
+        "name": "Bruiser",
+        "plural": "Bruisers",
+        "race": "Human",
+        "cost": 30,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "mobsmen-equipment-list"
+        ],
+        "specials": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
     "slug": "lustrian-reavers",
     "name": "Lustrian Reavers",
     "setting": "mordheim-1c",
@@ -30353,6 +31831,1621 @@
             "name": "Unreliable Hirelings",
             "type": "Warband - Merchant Caravans",
             "description": "Blackguards are only hired by the Merchant to serve him by protecting his cargo. They are not much trusted or granted with any responsibilities. Therefore they may never become Heroes. Re-roll all results of ‘The lad’s got talent’ for them."
+          }
+        ]
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "metal-mongers",
+    "name": "Metal Mongers",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+    "starting_gold": 500,
+    "max_models": 20,
+    "variants": [],
+    "types": [
+      {
+        "type": "metal-mongers",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Experimental Technology",
+        "description": "Weapons made by Skyre Warp Engineers may malfunction. When a missile weapon rolls a 1 to hit, roll a D6 on the Experimental Weapon chart; a malfunctioning weapon's hit is resolved against the firer instead of the target, hitting on a 4+. If the shot takes the firer out of action, roll D6+1 on the chart instead.\n\nD6 | Result\n1 | Scrap: the weapon is removed from the roster. Add a club to the roster, or 3 gc for the scrap metal.\n2-4 | Badly Mangled: add the bits to the parts pile, which counts as one more wyrdstone shard than normal in the post-battle sequence, or try to repair it: on a 3+ on a D6 it works as normal from now on; otherwise it is removed from the roster.\n5-6 | Few Bits Missing: the weapon works as normal.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "heroes-equipment-list",
+        "name": "Heroes Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Wrench",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Cutlass/Sword",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spike-jawed Snatcher",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Poison Wind Globe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warplock pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 70,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "Warplock rifle",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Hunting Rifle",
+              "variant": ""
+            },
+            "shown_as": "Jezzail",
+            "cost": 200,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Ratling Gun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 275,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "forge-rats"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Gas Mask",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pneumatic Arm",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 140,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "engineer-adept"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "henchmen-equipment-list",
+        "name": "Henchmen Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Wrench",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Cutlass/Sword",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Poison Wind Globe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "technicians"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Gas Mask",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "technicians"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "engineer-adept",
+        "kind": "hero",
+        "name": "Engineer Adept",
+        "plural": "Engineer Adepts",
+        "race": "Skaven",
+        "cost": 55,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Strength",
+          "Speed",
+          "Skaven Metal Mongers"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Metal Mongers",
+            "description": "Warriors within 6\" of the Engineer Adept may take Leadership tests on his Leadership."
+          }
+        ]
+      },
+      {
+        "key": "black-skaven",
+        "kind": "hero",
+        "name": "Black Skaven",
+        "plural": "Black Skaven",
+        "race": "Skaven",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Speed",
+          "Skaven Metal Mongers"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list"
+        ],
+        "specials": []
+      },
+      {
+        "key": "forge-rats",
+        "kind": "hero",
+        "name": "Forge-Rat",
+        "plural": "Forge-Rats",
+        "race": "Skaven",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Skaven Metal Mongers"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list"
+        ],
+        "specials": []
+      },
+      {
+        "key": "pirate-rats",
+        "kind": "henchman",
+        "name": "Pirate-Rat",
+        "plural": "Pirate-Rats",
+        "race": "Skaven",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "henchmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Water-Rat",
+            "type": "Warband - Metal Mongers",
+            "description": "Pirate-Rats are aquatic."
+          }
+        ]
+      },
+      {
+        "key": "technicians",
+        "kind": "henchman",
+        "name": "Technician",
+        "plural": "Technicians",
+        "race": "Skaven",
+        "cost": 30,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "henchmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Globadier",
+            "type": "Warband - Metal Mongers",
+            "description": "Technicians are trained with Poison Wind Globes and Gas Masks, and may buy them when recruited."
+          }
+        ]
+      },
+      {
+        "key": "machine-ogre",
+        "kind": "henchman",
+        "name": "Machine-Ogre",
+        "plural": "Machine-Ogres",
+        "race": null,
+        "cost": 100,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 5,
+          "toughness": 5,
+          "wounds": 3,
+          "initiative": 1,
+          "attacks": 3,
+          "leadership": 10
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Jaws and Claws",
+            "type": "Warband - Metal Mongers",
+            "description": "The Machine-Ogre fights with jaws, claws and brute force, and buys no equipment. A Skaven Hero with the Tinker-Rat skill customises it."
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          },
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "Bio Machinery",
+            "type": "Warband - Metal Mongers",
+            "description": "The Machine-Ogre never leaves combat."
+          },
+          {
+            "name": "Immune to Poison",
+            "type": "Trait"
+          },
+          {
+            "name": "May Not Run",
+            "type": "Trait"
+          },
+          {
+            "name": "Warpstone Heart",
+            "type": "Warband - Metal Mongers",
+            "description": "Before each game the Machine-Ogre needs one wyrdstone shard to power up."
+          },
+          {
+            "name": "Warptooth",
+            "type": "Warband - Metal Mongers",
+            "description": "If the Machine-Ogre is more than 18\" from the Engineer Adept at the start of the Movement phase, or the Engineer Adept is taken out of action, it powers down: its Movement and Weapon Skill are 0."
+          },
+          {
+            "name": "No Pain",
+            "type": "Trait"
+          },
+          {
+            "name": "No Brain",
+            "type": "Warband - Metal Mongers",
+            "description": "The Machine-Ogre never gains experience."
+          },
+          {
+            "name": "Unreliable",
+            "type": "Warband - Metal Mongers",
+            "description": "At the start of each turn roll a D6 to work the Machine-Ogre: on a 2-6 it moves and acts normally; on a 1 roll a D6 on the Malfunction chart.\n\nD6 | Result\n1 | Explodes!: every model within 6\" takes one S5 hit, and the Machine-Ogre is destroyed. No Injury roll for it after the game.\n2 | Malfunctions!: for the rest of the game, at the start of each of your turns it moves randomly (distance and direction by the Warhammer artillery scatter dice), counting as charging any warrior, of either side, in its charge range.\n3 | Shuts Down!: it stops for the rest of the battle, and is hit automatically in close combat.\n4 | Temporary Loss of Control!: it moves in a random direction and attacks any warrior it touches, of either side, counting as charging. If it touches none but warriors are within range of its warpfire projector, it fires at them.\n5-6 | Freezes!: it does nothing this turn, and is hit automatically in close combat."
+          }
+        ]
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "militant-mootlanders",
+    "name": "Militant Mootlanders",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Militiant%20Mootlanders.pdf",
+    "starting_gold": 500,
+    "max_models": 20,
+    "variants": [],
+    "types": [
+      {
+        "type": "militiant-mootlanders",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Woodland Striders",
+        "description": "Halflings move through any woodland terrain without penalty.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Short Shanks",
+        "description": "A Halfling riding a draft horse, a warhorse or anything larger than a mule or mountain goat moves 2\" less than normal.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Smooth Customers",
+        "description": "Halfling Heroes have +1 when rolling to find Rare items that aren't available only to Halflings.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Spry",
+        "description": "Any warrior of the warband may run or charge while climbing.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Hired Swords",
+        "description": "The warband may hire only Ogres, as bouncers, and other Halflings.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "heroes-equipment-list",
+        "name": "Heroes Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cleaver",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shortsword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Trident",
+              "variant": ""
+            },
+            "shown_as": "Pitchfork",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 30,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sling",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "Kitchenware",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Steel Cloth",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "Cooking pot/Helmet",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Lock Picks",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Thief's Cloak",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Hunting Arrows",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Wild Mountain Goat",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 85,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Magic Acorn",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 100,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "henchmen-equipment-list",
+        "name": "Henchmen Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cleaver",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shortsword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "Cooking pot/Helmet",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "burgermeister",
+        "kind": "hero",
+        "name": "Burgermeister",
+        "plural": "Burgermeisters",
+        "race": "Halfling",
+        "cost": 60,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 5,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 2,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Militant Mootlanders"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Militant Mootlanders",
+            "description": "Warriors within 6\" of the Burgermeister may take Leadership tests on his Leadership."
+          }
+        ]
+      },
+      {
+        "key": "quartermaster",
+        "kind": "hero",
+        "name": "Quartermaster",
+        "plural": "Quartermasters",
+        "race": "Halfling",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Shooting",
+          "Speed",
+          "Militant Mootlanders"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Long Shot",
+            "type": "Warband - Militant Mootlanders",
+            "description": "The Quartermaster adds 2\" to the range of any thrown weapon and 4\" to a sling's."
+          }
+        ]
+      },
+      {
+        "key": "chef",
+        "kind": "hero",
+        "name": "Chef",
+        "plural": "Chefs",
+        "race": "Halfling",
+        "cost": 50,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 2,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Shooting",
+          "Speed",
+          "Militant Mootlanders"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Hot Pot",
+            "type": "Warband - Militant Mootlanders",
+            "description": "Before each battle the Chef takes a Leadership test. If he passes, his pot holds stew to heal as many Wounds as he passed by, +1 (a roll of 7 against his Ld 8 heals up to 2 Wounds). Friendly models who sup it recover Wounds, none above its maximum."
+          }
+        ]
+      },
+      {
+        "key": "raconteurs",
+        "kind": "hero",
+        "name": "Raconteur",
+        "plural": "Raconteurs",
+        "race": "Halfling",
+        "cost": 10,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 4,
+          "strength": 2,
+          "toughness": 2,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Militant Mootlanders"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list"
+        ],
+        "specials": []
+      },
+      {
+        "key": "thieves",
+        "kind": "henchman",
+        "name": "Thief",
+        "plural": "Thieves",
+        "race": "Halfling",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 4,
+          "strength": 2,
+          "toughness": 2,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "henchmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Uneasy Allies",
+            "type": "Warband - Militant Mootlanders",
+            "description": "At the end of each battle, whether or not any Thief fought, roll a D6.\n\nD6 | Result\n1 | Stop Thief!: remove one Thief from the roster, with every Treasure in your stash from earlier games. Add no additional Treasures if any Thieves remain in the warband.\n2-5 | Tax Time: the Thieves take their usual fees when Treasures are sold, as normal.\n6 | Ignorance is Bliss: the Thieves waive their fees, and don't count towards the warband's size when Treasures are sold."
+          },
+          {
+            "name": "Infiltration",
+            "type": "Warband - Militant Mootlanders",
+            "description": "Thieves may infiltrate, as the Infiltration skill: they set up after the enemy warband, anywhere out of its sight and more than 12\" from any enemy model. If both sides infiltrate, each rolls a D6 and the lower sets up first."
+          },
+          {
+            "name": "Pick Locks",
+            "type": "Warband - Militant Mootlanders",
+            "description": "To open a locked door a Thief needs only to pass an Initiative test."
+          },
+          {
+            "name": "Cutpurse",
+            "type": "Warband - Militant Mootlanders",
+            "description": "When the warband rolls for Treasures after the game, it gets one more Treasure for each Thief who fought and wasn't taken out of action."
+          }
+        ]
+      },
+      {
+        "key": "scouts",
+        "kind": "henchman",
+        "name": "Scout",
+        "plural": "Scouts",
+        "race": "Halfling",
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 4,
+          "strength": 2,
+          "toughness": 2,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "henchmen-equipment-list"
+        ],
+        "specials": []
+      },
+      {
+        "key": "cooks",
+        "kind": "henchman",
+        "name": "Cook",
+        "plural": "Cooks",
+        "race": "Halfling",
+        "cost": 40,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 2,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "henchmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Feast",
+            "type": "Warband - Militant Mootlanders",
+            "description": "Before each battle a warband with Cooks gathers one batch of provisions. It may feast only after a battle it won, not one it lost: when it sells Treasures it counts as one size band smaller for each batch eaten (10-12 members count as 7-9). It may eat as many batches as it likes, but never counts as smaller than 1-3 models."
           }
         ]
       }
@@ -43430,6 +46523,799 @@
           "protectorate-of-sigmar-equipment-list"
         ],
         "specials": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "sea-ghosts",
+    "name": "Sea Ghosts",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Sea%20Ghosts.pdf",
+    "starting_gold": 500,
+    "max_models": 12,
+    "variants": [],
+    "types": [
+      {
+        "type": "sea-ghosts",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Sundering",
+        "description": "Every Elf of the warband hates Dark Elves.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Excellent Sight",
+        "description": "Every Elf of the warband spots hidden enemies from twice his Initiative in inches.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Distaste for Poison",
+        "description": "No warrior of the warband may use poison of any kind.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Tolerant",
+        "description": "Unless his rules say otherwise, the warband may hire any hired sword who isn't a Dark Elf, a Skaven or a follower of Chaos, but never an Assassin.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Magicians",
+        "description": "A hired Elf Mage may be kept after each battle for 25 gc upkeep.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Unforgiving",
+        "description": "In multiplayer games the warband may never ally with Dark Elves, followers of Chaos or Skaven.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "elf-rangers-equipment-list",
+        "name": "Elf Rangers Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Boat Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Sword/Glaive",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Ithilmar Weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": null,
+            "cost_note": "3 × price",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Belaying Pins",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Long Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Elf Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sea Dragon Cloak",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 50,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Ithilmar Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 60,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Rope & Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Lyre",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "minstrels"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Elven Wine",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Compass",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 45,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Elven Cloak",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 75,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Riverboat",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 100,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": 1,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "feast-master-equipment-list",
+        "name": "Feast-Master Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Sword/Glaive",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "Spear-stave",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Elven Cloak",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 75,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "wayfinder",
+        "kind": "hero",
+        "name": "Wayfinder",
+        "plural": "Wayfinders",
+        "race": "Elf",
+        "cost": 70,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 9
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Sea Ghosts"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "elf-rangers-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Sea Ghosts",
+            "description": "Warriors within 6\" of the Wayfinder may take Leadership tests on his Leadership."
+          },
+          {
+            "name": "Navigator",
+            "type": "Warband - Sea Ghosts",
+            "description": "Once the Wayfinder captains a vessel of his own he is a Shipmaster, who turns the tide in battles at sea: once a battle, while he is within 6\" of the warband's boat, you may re-roll one dice result."
+          }
+        ]
+      },
+      {
+        "key": "feast-master",
+        "kind": "hero",
+        "name": "Feast-Master",
+        "plural": "Feast-Masters",
+        "race": "Elf",
+        "cost": 90,
+        "starting_xp": 14,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 5,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 6,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Speed",
+          "Sea Ghosts"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "feast-master-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "Bestial",
+            "type": "Warband - Sea Ghosts",
+            "description": "The Feast-Master can never be the warband's leader."
+          },
+          {
+            "name": "Talismanic Tattoos",
+            "type": "Warband - Sea Ghosts",
+            "description": "The Feast-Master has a special 6+ save that Strength, spells and magical abilities can't modify."
+          },
+          {
+            "name": "Shadow Dances of Loec",
+            "type": "Warband - Sea Ghosts",
+            "description": "Instead of a new skill, the Feast-Master may learn a Wardancer Dance:\n\nDance | While he performs it\nWhirling Death | +1 to his Injury rolls.\nStorm of Blades | +1 Attack.\nThe Shadows Coil | A special 4+ save that Strength, spells and magic weapons can't modify.\nWoven Mist | 1 Attack fewer, but he always strikes first; against a foe who also strikes first, attacks go in Initiative order.\n\nIn each round of close combat he fights he must perform one Dance he knows if he can, never the same one in two turns running of the same combat."
+          }
+        ]
+      },
+      {
+        "key": "lookouts",
+        "kind": "hero",
+        "name": "Lookout",
+        "plural": "Lookouts",
+        "race": "Elf",
+        "cost": 30,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 2,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Speed",
+          "Sea Ghosts"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "elf-rangers-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Seeker",
+            "type": "Warband - Sea Ghosts",
+            "description": "When you roll on the Exploration chart, the Lookout lets you change one dice by -1 or +1."
+          }
+        ]
+      },
+      {
+        "key": "sea-rangers",
+        "kind": "henchman",
+        "name": "Sea Ranger",
+        "plural": "Sea Rangers",
+        "race": "Elf",
+        "cost": 35,
+        "starting_xp": 2,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "elf-rangers-equipment-list"
+        ],
+        "specials": []
+      },
+      {
+        "key": "minstrels",
+        "kind": "henchman",
+        "name": "Minstrel",
+        "plural": "Minstrels",
+        "race": "Elf",
+        "cost": 45,
+        "starting_xp": 2,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "elf-rangers-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Songster",
+            "type": "Warband - Sea Ghosts",
+            "description": "Any friendly model within 6\" of a Minstrel may re-roll a failed Leadership test, rout tests included, at +1 Leadership."
+          },
+          {
+            "name": "Deathdancer",
+            "type": "Warband - Sea Ghosts",
+            "description": "A Minstrel promoted to Hero may learn a Wardancer Dance instead of a new skill (the Feast-Master's Shadow Dances of Loec), and then must dance in close combat as the Feast-Master does."
+          }
+        ]
+      },
+      {
+        "key": "wildkin",
+        "kind": "henchman",
+        "name": "Wildkin",
+        "plural": "Wildkin",
+        "race": "Elf",
+        "cost": 60,
+        "starting_xp": 2,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 5,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "elf-rangers-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Loner",
+            "type": "Warband - Sea Ghosts",
+            "description": "Wildkin are immune to All Alone tests and can never be the warband's leader."
+          },
+          {
+            "name": "Animal Charmer",
+            "type": "Warband - Sea Ghosts",
+            "description": "A Wildkin controls up to five animals while they stay within 6\" of him. An animal not within 6\" of him in the Movement phase moves D6\" in a random direction; if that takes it into contact with a model, friend or foe, it attacks as if charging."
+          }
+        ]
       }
     ],
     "upgrades": []

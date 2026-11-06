@@ -1,0 +1,190 @@
+{
+  "warbandType": "fen-guard",
+  "name": "Fen Guard",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Immune to Drugs and Poison", "ruleFull": "Every Fen Guard warrior is immune to drugs and poison, but not to disease."},
+    {"rulename": "Fear of Fire", "ruleFull": "Active fires, enemies with torches and any flame on the battlefield cause fear in Fen Guard warriors."},
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire only Elf hired swords."},
+    {"rulename": "Bark Skin", "ruleFull": "Fen Guard warriors have a 6+ armour save, added to any armour worn. Strength modifiers can't take it past 6 (weapons with the Cutting Edge rule excepted), but a 'no save' result on a Critical Hit chart removes it. Not against fire attacks."},
+    {"rulename": "Hard to Rattle", "ruleFull": "Every Fen Guard warrior counts as wearing a helmet: a 4+ save against being stunned. Not against fire attacks."},
+    {"rulename": "Forest and Swamp Walk", "ruleFull": "Fen Guard warriors move through swamp and forest terrain without penalty."},
+    {"rulename": "Grown Weapons", "ruleFull": "A Fen Guard warrior's weapons grow from him: he can't be disarmed, and keeps his weapons if captured. Weapons can't be moved from one warrior to another, and one taken from a warrior is lost. Weapons found in the campaign may only be sold."},
+    {"rulename": "Regrowth", "ruleFull": "A Fen Guard warrior with a serious injury may spend a later skill advance to regrow it, striking it from the roster."},
+    {"rulename": "Natural State", "ruleFull": "Fen Guard warriors never wear cloaks, boots or armour other than those listed on their starting profile, and never visit a post-game location in Marienburg or any other city."},
+    {"rulename": "Untainted", "ruleFull": "A warrior who gains an actual mutation rolls on the Serious Injury table (Captured and Sold to the Pits ignored), and the mutation is removed."},
+    {"rulename": "Variation", "ruleFull": "A warrior may start with one Variation when hired, and may choose a new one when he rolls a double for an advance. Variations are bought from the mutation list at the listed price, and don't count as mutations for other rules (Holy Water): Vine (Tentacle), Branch (Extra Arm), Thick Leaves (Cloud of Flies), Dense Trunk (Hulking Brute), Thorns (Spines), Spores (Blackblood), and perhaps Nesting Bird (Beak)."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "dryad-equipment-list",
+      "title": "Dryad Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "Whip", "alias": "", "cost": {"cost": 10, "costSuffix": "Heroes only"}},
+        {"name": "Greenwood Scythe", "alias": "", "cost": {"cost": 60, "costSuffix": "Branchwych only"}},
+        {"name": "throwing knives", "alias": "Splinters", "cost": {"cost": 15, "costSuffix": "Heroes only"}},
+        {"name": "fish-hook shot/hunting lasso", "alias": "Vine Tendril", "cost": {"cost": 10, "costSuffix": "Heroes only"}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "Iron Bark", "alias": "", "cost": {"cost": 10, "costSuffix": "Heroes only"}},
+        {"name": "Armour of the Willow Wood", "alias": "", "cost": {"cost": 130, "costSuffix": "Heroes only"}},
+        {"name": "oaken armour", "alias": "", "cost": {"cost": 150, "costSuffix": "Heroes only"}},
+        {"name": "rope & hook", "alias": "Climbing Vine", "cost": {"cost": 5}},
+        {"name": "Horn of the Wild Hunt", "alias": "", "cost": {"cost": 110, "costSuffix": "Branchnymph only"}},
+        {"name": "familiar", "alias": "", "cost": {"cost": 20, "costSuffix": "Branchwych only"}},
+        {"name": "magic acorn", "alias": "", "cost": {"cost": 100}},
+        {"name": "healing herbs", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "branchwych",
+      "type": "hero",
+      "name": "Branchwych",
+      "plural": "Branchwyches",
+      "race": "dryad",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 125,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 2, "t": 3, "w": 3, "i": 3, "a": 1, "ld": 9},
+      "equipmentLists": ["dryad-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Utterances of the Oak"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Branchwych may take Leadership tests on her Leadership."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Branchwych is immune to psychology."},
+        {"rulename": "Wizard", "ruleFull": "The Branchwych is a wizard and starts with two spells from the Utterances of the Oak."},
+        {"rulename": "Eternal", "ruleFull": "The Branchwych may ignore any Serious Injury result except Killed by taking a permanent -1 to her starting Wounds; not with 1 starting Wound left. On a Killed result she instead loses D3 starting Wounds for good; at 0 or less she is killed as normal."},
+        {"rulename": "Feed Upon Magic", "ruleFull": "Between battles, by consuming D3 Treasures, the Branchwych gains a permanent +1 to her starting Wounds. Not if she searches for rare items, or was taken out of action in the last battle. Without enough Treasures they are all consumed anyway and she gains nothing."},
+        {"rulename": "Advancement", "ruleFull": "On an advance roll of +1 Wound the Branchwych may pick a new skill from her lists instead."}
+      ]
+    },
+    {
+      "id": "branchnymph",
+      "type": "hero",
+      "name": "Branchnymph",
+      "plural": "Branchnymphs",
+      "race": "dryad",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 90,
+      "startingXp": 14,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 2, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["dryad-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Immune to Psychology", "ruleFull": "The Branchnymph is immune to psychology."},
+        {"rulename": "Fear", "ruleFull": "The Branchnymph causes fear."},
+        {"rulename": "Instinctual", "ruleFull": "The Branchnymph can never be the warband's leader. Fear of Fire still applies to her."}
+      ]
+    },
+    {
+      "id": "spiteborn",
+      "type": "hero",
+      "name": "Spiteborn",
+      "plural": "Spiteborn",
+      "race": "dryad",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 2, "w": 2, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["dryad-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Hard to Kill", "ruleFull": "A Spiteborn is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."}
+      ]
+    },
+    {
+      "id": "dryads",
+      "type": "henchman",
+      "name": "Dryad",
+      "plural": "Dryads",
+      "race": "dryad",
+      "minQty": 0,
+      "costGc": 60,
+      "startingXp": 2,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 0, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 8},
+      "equipmentLists": ["dryad-equipment-list"],
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "Dryads cause fear."},
+        {"rulename": "Root Walk", "ruleFull": "Dryads may run only in swamp, dirt or forest terrain; on city terrain they may only walk or charge."},
+        {"rulename": "Tanglevine", "ruleFull": "A warrior in combat with more than one Dryad loses 1 Attack for each Dryad after the first, to a minimum of 1."},
+        {"rulename": "Hard to Kill", "ruleFull": "A Dryad is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."}
+      ]
+    },
+    {
+      "id": "treekin",
+      "type": "henchman",
+      "name": "Treekin",
+      "plural": "Treekin",
+      "race": "treekin",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 180,
+      "startingXp": 2,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 6, "ws": 3, "bs": 0, "s": 4, "t": 4, "w": 3, "i": 1, "a": 2, "ld": 10},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Unarmed", "ruleFull": "Treekin can't use weapons, and fight unarmed with no penalty."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Treekin are immune to psychology."},
+        {"rulename": "Fear", "ruleFull": "Treekin cause fear."},
+        {"rulename": "May Not Run", "ruleFull": "Treekin may not run, but may charge as normal."},
+        {"rulename": "Large", "ruleFull": "Any warrior may shoot at a Treekin, even if it isn't the closest model."},
+        {"rulename": "Redwood", "ruleFull": "A Treekin's Bark Skin save is 4+."},
+        {"rulename": "Slow Growing", "ruleFull": "Treekin gain experience at half the normal rate."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Fen Guard", "new": true},
+  "specialSkillsList": [
+    {"name": "Absorption", "description": "Every attack against the Hero in the shooting phase is at -1 Strength."},
+    {"name": "Adaptation", "description": "The Hero at once picks a skill from any of the five main skill lists. Each warrior may take this skill only once."},
+    {"name": "Harvester of Souls", "description": "Branchwych only. When you hire a new Hero, the Branchwych may move D3 characteristics or skills, in any mix, to him from a Fen Guard Hero who died in an earlier game, for half the dead Hero's experience in gc more. The new Hero misses his first game on the roster. She must have a Greenwood Scythe."},
+    {"name": "Gladeborn", "description": "The Hero may enter the battle from any forest or swamp terrain feature, in any turn after the first."},
+    {"name": "Transform", "description": "The Hero can take the semblance of an Elf long enough to enter Marienburg: he may now visit post-game locations in the city."},
+    {"name": "Take Root", "description": "The Hero may gain +3 Toughness, but then may not move for the rest of the game."},
+    {"name": "Poison Sap", "description": "Instead of trading after the game, the Hero may make D3-1 batches of Black Lotus, shared among the warband but never sold."}
+  ],
+  "aliases": [
+    {"pdf": "oaken armour", "ours": "the oaken armour", "page": 2}
+  ],
+  "stubs": [
+    {"name": "Whip", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 2},
+    {"name": "Greenwood Scythe", "type": "Weapon", "subtype": "Melee", "rarity": 10, "dice": null, "rulesPage": 3},
+    {"name": "Iron Bark", "type": "Armour", "subtype": "", "rarity": 5, "dice": null, "rulesPage": 3},
+    {"name": "Armour of the Willow Wood", "type": "Armour", "subtype": "", "rarity": null, "dice": null, "rulesPage": 2},
+    {"name": "Horn of the Wild Hunt", "type": "Miscellaneous", "subtype": "", "rarity": 12, "dice": null, "rulesPage": 3}
+  ],
+  "flags": [
+    {"page": 1, "what": "A Glade Warriors warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
+    {"page": 1, "what": "The Dryad maximum (M5 WS6 BS4 S4 T5 W4 I5 A3 Ld10) and the Treekin maximum (M6 WS5 BS0 S5 T5 W5 I2 A4 Ld10) are new races, Dryad and Treekin."},
+    {"page": 1, "what": "Hard to Kill is printed among the warband's rules for the Dryads and Spiteborn only: it is their own rule."},
+    {"page": 1, "what": "Variation is a tailored upgrade list, Variations, for Heroes, each mutation at its listed price (Tentacle 35, Extra Arm 40, Cloud of Flies 25, Hulking Brute 50, Spines 35, Blackblood 30, Beak 35). Henchmen may take one too: upgrades are for heroes, so the player adds it. \"possible Nesting Bird (Beak!)\" is read as the Beak, offered."},
+    {"page": 2, "what": "The skill table's ticks are images: read from p2's image. Its columns run Strength before Academic."},
+    {"page": 2, "what": "The Whip (10 gc, Heroes only) and the Armour of the Willow Wood (130 gc, Heroes only) have no entry in the PDF: stubs with no rules. Our Armour of the Wildwood (MiM) is 130 gc too. The Oaken Armour (150 gc, Heroes only) is our The Oaken Armour (MiM, 150 gc, Rare 12) by name; the PDF prints no rules for it."},
+    {"page": 2, "what": "Splinters (Throwing Knives) is our Throwing Knives/Stars shown as Splinters, Vine Tendril (Fish Hook Shot) our Fish-hook Shot/Hunting Lasso (MiM) shown as Vine Tendril, Climbing Vine (rope and hook) our Rope & Hook shown as Climbing Vine, Hammer our Club, Mace or Hammer. The list has no dagger."},
+    {"page": 2, "what": "The Magic Acorn is 100 gc on the list (ours, as the Militant Mootlanders' entry prints, 250 gc, Rare 15); the Healing Herbs 10 gc (ours 20+2D6); the Familiar 20 gc (ours 20+D6, Rare 8). Taken as printed."},
+    {"page": 3, "what": "The Greenwood Scythe (60 gc, Rare 10, Branchwych only; S as user +1, Two-handed, Treescuttle Venom: +1 to injury rolls) and Iron Bark (10 gc, Rare 5, Fen Guard only; +2 to the armour save, broken the first time a save fails) are stubs, their rules on p3."},
+    {"page": 3, "what": "The Horn of the Wild Hunt is 110 gc on the list, but its entry, the Horn of the Hunt, prints 120 gc, Rare 12, Branch Nymph only: the stub keeps the list's name and price. Its rules (p3): before each battle the Branchnymph takes a Leadership test, and if she passes a D6 calls Hunting Hounds (D3+1), a Tiger, a Bear, a Great Stag or a Great Eagle for the battle (1: nothing), which count neither for rout nor the most warriors; their profiles and rules are on p6."},
+    {"page": 4, "what": "The Branchwych's \"Special Rules: Leader\" prints no distance: the usual Leader rule (6\")."},
+    {"page": 4, "what": "The Branchnymph is \"Branch Nymph\" in the skill table and her Horn's entry: named Branchnymph, as her heading."},
+    {"page": 5, "what": "The Treekin's Redwood and Slow Growing are printed run together: read as two rules. Its Fear, Immune to Psychology, May Not Run and Large link the shared rules."},
+    {"page": 7, "what": "Utterances of the Oak is a new lore (spells.json), in our words. Unleash Spites rolls as many dice as the casting roll's total."}
+  ]
+}
