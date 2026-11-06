@@ -98,14 +98,19 @@ def _table(ticks: dict[str, Any], specials: list[str]) -> list[str]:
 
 
 def skill_types(
-    page: str, fighter: dict[str, Any], variants: list[dict[str, str]], log: FighterLog
+    page: str,
+    fighter: dict[str, Any],
+    variants: list[dict[str, str]],
+    log: FighterLog,
+    own: list[str] | None = None,
 ) -> tuple[list[str], dict[str, Any]]:
-    """His skill groups (the first variant's table) and, by variant key, the tables that differ from it."""
+    """His skill groups (the first variant's table) and, by variant key, the tables that differ from it. The Special
+    tick names the page's own group (`own`: a PDF page's), else template_answers' for the page."""
     access = fighter.get("skillAccess")
     if not access:
         return [], {}
     name = fighter["name"]
-    specials = SPECIAL_GROUPS_BY_FIGHTER.get((page, name)) or SPECIAL_GROUPS.get(page, [])
+    specials = SPECIAL_GROUPS_BY_FIGHTER.get((page, name)) or own or SPECIAL_GROUPS.get(page, [])
     if isinstance(access, dict):
         tables = {"": {**access, **({"special": True} if name in SPECIAL_ADDED.get(page, []) else {})}}
         keyed = [("", "")]
@@ -216,7 +221,7 @@ def build_fighter(
     hero = fighter["type"] == "hero"
     lores = context["lores"].of(page, fighter["name"])
     specials, leader, large = rules(fighter, context["owner"])
-    base, changes = skill_types(page, fighter, context["variants"], log)
+    base, changes = skill_types(page, fighter, context["variants"], log, context.get("special_groups"))
     stats = profile(page, fighter, log)
     variant_numbers(page, plain(fighter["name"]), stats, changes)
     caster = ("Priest" if all("Prayers" in lore["name"] for lore in lores) else "Wizard") if lores else "No"

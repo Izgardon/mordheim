@@ -103,6 +103,13 @@ def build_upgrades(
     return upgrades, rules
 
 
+def halved(cost: int | None) -> tuple[int | None, str]:
+    """Half a price, and the note for one with no whole half: 35 gc has none ("half of 35 gc")."""
+    if cost is None or cost % 2 == 0:
+        return (None if cost is None else cost // 2), ""
+    return None, f"half of {cost} gc"
+
+
 def mutation_upgrades(
     slug: str, template: dict[str, Any], shared: SharedSpecials, log: UpgradeLog | None = None
 ) -> None:
@@ -123,12 +130,13 @@ def mutation_upgrades(
         added = [entry for entry in entries if entry["name"] not in held | set(line.get("except", []))]
         for entry in added:
             shared.rule("warband", f"{template['name']}: {group}", entry["name"])
+            cost, cost_note = halved(shared.cost_of(entry)) if line.get("half") else (shared.cost_of(entry), "")
             upgrades.append(
                 {
                     "group": group,
                     "special": {"name": entry["name"], "type": entry["type"]},
-                    "cost": shared.cost_of(entry),
-                    "cost_note": "",
+                    "cost": cost,
+                    "cost_note": cost_note,
                     "note": note,
                     "who": who,
                     "max_per_fighter": terms.get("max_per_fighter"),

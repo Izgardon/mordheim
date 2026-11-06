@@ -133,7 +133,8 @@ UPGRADES_AS_RULES: dict[str, frozenset[str]] = {"lizardmen": frozenset({"Poisone
 # said with the group. Each upgrade links the shared special at its price; a page's own group of the name keeps its
 # upgrades and takes the rest after them. Left out: the hired swords who may take a mutation (the Chaos Centaur, the
 # Ungor Trapper: upgrades are for heroes, so a player adds one from Boons & Banes), Twistkin (Clan Moulder isn't
-# seeded) and the god families on the Marauders' Marks.
+# seeded) and the god families on the Marauders' Marks. `half`: each at half its price, one with no whole half (35 gc) at
+# none, its cost note saying so.
 MUTANT_SKILL = "With the Mutant skill."
 MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
     # the generic list's 15 (Mutiny in Marienburg's extended list of the Cult's) on the Cult's terms

@@ -872,3 +872,10 @@ Worded alike, each owner's own row under the name (the shared list could merge t
 Kept apart from a family's, the effect differing:
 
 - Plague Bearer and Plague Carrier: Plague Carrier, and it causes fear too.
+
+## PDF warbands
+
+0 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+
+| Page | Type | Fighters | Aliases | Stubs | Flags |
+| --- | --- | --- | --- | --- | --- |

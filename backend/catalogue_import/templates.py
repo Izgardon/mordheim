@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.common import load_json, slugify
+from catalogue_import.pdf_warbands import is_pdf, link_of, pdf_lores, pdf_types, special_groups
 from catalogue_import.shared_specials import SharedSpecials
 from catalogue_import.snapshot import Snapshot
 from catalogue_import.sources import BACKEND
@@ -37,7 +38,10 @@ class TemplateLog:
 def page_types(
     slug: str, page: dict[str, Any], types: list[dict[str, Any]], resolver: Resolver
 ) -> list[dict[str, str]]:
-    """The types a page serves: William's mapping, else the type whose mordheimer page it is, else by name."""
+    """The types a page serves: a PDF page's own, William's mapping, else the type whose mordheimer page it is, else by
+    name."""
+    if is_pdf(page):
+        return pdf_types(page, types)
     if slug in TEMPLATE_TYPES:
         return [{"type": type_slug, "variant": variant} for type_slug, variant in TEMPLATE_TYPES[slug].items()]
     by_url = [row["slug"] for row in types if row["mordheimer_url"].rstrip("/").rsplit("/", 1)[-1] == slug]
@@ -130,7 +134,7 @@ def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: 
     variants = VARIANTS.get(slug, [])
     owner = f"Warband - {name}"
     lists, list_keys = build_lists(slug, page, context["index"], log.lists)
-    fighter_context = {**context, "variants": variants, "owner": owner}
+    fighter_context = {**context, "variants": variants, "owner": owner, "special_groups": special_groups(page)}
     fighters = [
         build_fighter(slug, fighter, fighter_context, list_keys.get(fighter["name"], []), log.fighters)
         for fighter in page["fighters"]
@@ -146,7 +150,7 @@ def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: 
         "name": name,
         "setting": context["settings"][types[0]["type"]],
         "source": clean_rule(page.get("source")),
-        "link_url": context["urls"].get(types[0]["type"]) or snapshot.manifest.get(slug, ""),
+        "link_url": link_of(page) or context["urls"].get(types[0]["type"]) or snapshot.manifest.get(slug, ""),
         "starting_gold": book.get("startingGc"),
         "max_models": book.get("maxModels") or SIZES.get(slug),
         "variants": [
@@ -173,13 +177,15 @@ def build_templates(
 ) -> list[dict[str, Any]]:
     """Every page's template, by name, its rules that are shared specials linked to them (`shared`) and its tailored
     lists of the shared mutations added; a type two pages claim is reported (the seeder keeps one template a type)."""
+    casters = Lores(snapshot.magic, snapshot.pages, lores, log.fighters)
+    casters.by_fighter.update(pdf_lores({slug: page for slug, page in snapshot.pages.items() if is_pdf(page)}))
     context = {
         "shared": shared,
         "types": types,
         "resolver": resolver,
         "index": ItemIndex(items),
         "races": races,
-        "lores": Lores(snapshot.magic, snapshot.pages, lores, log.fighters),
+        "lores": casters,
         "settings": {row["slug"]: row["setting"] for row in types},
         "urls": {row["slug"]: row["mordheimer_url"] for row in types},
     }
