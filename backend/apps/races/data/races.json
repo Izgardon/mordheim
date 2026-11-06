@@ -394,5 +394,41 @@
     "initiative": "5",
     "attacks": "4",
     "leadership": "7"
+  },
+  {
+    "name": "Grail Knight",
+    "movement": "8",
+    "weapon_skill": "8",
+    "ballistic_skill": "2",
+    "strength": "7",
+    "toughness": "6",
+    "wounds": "4",
+    "initiative": "9",
+    "attacks": "4",
+    "leadership": "10"
+  },
+  {
+    "name": "Elf (Druchii)",
+    "movement": "5",
+    "weapon_skill": "7",
+    "ballistic_skill": "7",
+    "strength": "4",
+    "toughness": "3",
+    "wounds": "3",
+    "initiative": "9",
+    "attacks": "4",
+    "leadership": "10"
+  },
+  {
+    "name": "Werecreature (Masters of Horror)",
+    "movement": "6",
+    "weapon_skill": "4",
+    "ballistic_skill": "3",
+    "strength": "5",
+    "toughness": "4",
+    "wounds": "3",
+    "initiative": "7",
+    "attacks": "4",
+    "leadership": "8"
   }
 ]

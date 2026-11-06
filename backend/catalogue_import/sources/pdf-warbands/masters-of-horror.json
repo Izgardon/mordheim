@@ -1,0 +1,219 @@
+{
+  "warbandType": "masters-of-horror",
+  "name": "Masters of Horror",
+  "source": "Sylvania Supplement",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Masters%20Of%20Horror.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Hired Swords", "ruleFull": "The warband hires the same hired swords as an Undead warband. Zombies and Flesh Constructs can never become Heroes through That Lad's Got Talent."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "the-bitten-equipment-list",
+      "title": "The Bitten Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "miscellaneous-equipment",
+      "title": "Miscellaneous Equipment",
+      "caveat": "",
+      "items": [
+        {"name": "chainsaw sword", "alias": "", "cost": {"cost": 15}},
+        {"name": "repeater pistol", "alias": "", "cost": {"cost": 25}},
+        {"name": "electric trident", "alias": "", "cost": {"cost": 15}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "mad-scientist",
+      "type": "hero",
+      "name": "Mad Scientist",
+      "plural": "Mad Scientists",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Mad Scientist may use his Leadership instead of their own."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Mad Scientist is not affected by psychology, his mind being shattered."}
+      ]
+    },
+    {
+      "id": "thrall",
+      "type": "hero",
+      "name": "Thrall",
+      "plural": "Thralls",
+      "race": "vampire",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "The Thrall causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Thrall is not affected by psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Thrall is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Thrall treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "wolfman",
+      "type": "hero",
+      "name": "Wolfman",
+      "plural": "Wolfmen",
+      "race": "wulfen",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 8,
+      "statblock": {"m": 6, "ws": 3, "bs": 3, "s": 4, "t": 3, "w": 2, "i": 2, "a": 2, "ld": 7},
+      "equipmentLists": [],
+      "equipment": "None. A Wolfman can't carry equipment; he fights with tooth and claw and suffers no penalty for it.",
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "hunchbacks",
+      "type": "hero",
+      "name": "Hunchback",
+      "plural": "Hunchbacks",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "zombies",
+      "type": "henchman",
+      "name": "Zombie",
+      "plural": "Zombies",
+      "race": "undead",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": 0, "s": 3, "t": 4, "w": 1, "i": 1, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. Zombies carry no equipment and suffer no penalty for it.",
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "Zombies cause fear."},
+        {"rulename": "May not Run", "ruleFull": "Zombies may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Zombies are not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "Zombies are not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "Zombies treat a stunned result on the Injury chart as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "Zombies gain no experience."}
+      ]
+    },
+    {
+      "id": "flesh-construct",
+      "type": "henchman",
+      "name": "Flesh Construct",
+      "plural": "Flesh Constructs",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 1,
+      "groupSize": {"min": 1, "max": 1},
+      "costGc": 80,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 3, "bs": 0, "s": 4, "t": 5, "w": 2, "i": 2, "a": 2, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None. Flesh Constructs use no weapons and suffer no penalty for it.",
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "Flesh Constructs cause fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Flesh Constructs are not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "Flesh Constructs are not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "Flesh Constructs treat a stunned result on the Injury chart as knocked down."},
+        {"rulename": "A Bit Unhinged", "ruleFull": "A Flesh Construct gains its experience for surviving a battle only if it passes a Leadership test."},
+        {"rulename": "Its Only a Flesh Wound", "ruleFull": "When a Flesh Construct is taken out of action, roll on the Henchmen Injury table as normal. On a 1-2 it can be repaired for D6x5 gc; if the warband can't pay at once, it misses the next battle and stays on the roster until repaired or abandoned."},
+        {"rulename": "May not Run", "ruleFull": "Flesh Constructs may not run, but may charge normally."}
+      ]
+    },
+    {
+      "id": "the-bitten",
+      "type": "henchman",
+      "name": "Bitten",
+      "plural": "The Bitten",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 6},
+      "equipmentLists": ["the-bitten-equipment-list"],
+      "specialRules": [
+        {"rulename": "Transform", "ruleFull": "Roll a D6 for the Bitten each turn; they don't roll while in combat. A Bitten who transforms drops all his equipment but a dagger and suffers no penalty for fighting unarmed.\n\nD6 | Result\n1 | Madness: stupidity this turn; a transformed Bitten turns back to human form.\n2-5 | Acts as normal.\n6 | Transformed: frenzy and Sprint, until a 1 is rolled."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Masters of Horror", "new": true},
+  "specialSkillsList": [
+    {"name": "Surgeon", "description": "Mad Scientist only. He may re-roll one die of a single injury roll of one of his warriors; the second roll stands."},
+    {"name": "Alchemist", "description": "Mad Scientist only. At the start of each game roll a D6 for his potion:\n\nD6 | Potion\n1 | Potion of Resilience: +1 Toughness for the game.\n2 | Brew of Strength: +1 Strength for the game.\n3-4 | Quicksilver: +1 Movement for the game.\n5 | Backley's Brew: -1 Strength and -1 Initiative until he passes a Toughness test.\n6 | Aberrantius Vigortia: +1 Strength and +1 Toughness. After the battle roll a D6: on a 5+ he is addicted, and in each game he does nothing but brew until he rolls a 6 for his potion."},
+    {"name": "Apt Revitalist", "description": "Mad Scientist only. The warband's Zombies gain experience as human henchmen do."},
+    {"name": "Lunatic", "description": "Any Hero. The model causes fear and may re-roll any Leadership test."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 2}
+  ],
+  "stubs": [
+    {"name": "Chainsaw Sword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2},
+    {"name": "Electric Trident", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2}
+  ],
+  "flags": [
+    {"page": 1, "what": "A Horror warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 1, "what": "The Wolfman's maximum (M6 WS4 BS3 S5 T4 W3 I7 A4 Ld8) is unlike our Werecreature's, so he takes a new race, Werecreature (Masters of Horror). His profile is printed I2 and W2: taken as printed."},
+    {"page": 1, "what": "The special skills are a new group, Masters of Horror: Surgeon, Alchemist and Apt Revitalist the Mad Scientist's, Lunatic any Hero's, so every Hero ticks Special. Alchemist's potion is a D6 pre-battle roll (prebattle-rolls.json)."},
+    {"page": 2, "what": "The skill table is an image (read from it): Mad Scientist Academic, Speed; Thrall, Werewolf and Hunchback Combat, Strength, Speed. It names the Wolfman Werewolf."},
+    {"page": 2, "what": "The Miscellaneous Equipment is Heroes only: a third list every hero but the Wolfman (who carries nothing) buys from."},
+    {"page": 2, "what": "The Chainsaw Sword (15+D6 gc, MoH only; Fear, Shredder) and the Electric Trident (15+D6 gc, MoH only; Zzap!, Shocking, Nail in Boot) are stubs, read as Common and this warband's, their rules on p2."},
+    {"page": 2, "what": "The Repeater Pistol links our Repeater Pistol at the list's 25 gc (the PDF's is 25+3D6, MoH only). The PDF's does other things: range 8\", S4, -2 save, Too Much Tinkering (a D6 each shot, 1 a misfire) and Repeater (up to three shots, each later one at -1 on that roll); ours fires three shots at -1 to hit, Experimental and Quick Reload. Linked as it is."},
+    {"page": 3, "what": "The Leader rule says \"within 6\" of the Necrarch Vampire\" (the page image shows the 6\"; the text layer drops it): read as the Mad Scientist, who leads."},
+    {"page": 3, "what": "The Thrall's race is our Vampire."},
+    {"page": 4, "what": "The Flesh Construct's Cannot Run (\"may still charge normally\") is our shared May Not Run. It gains experience only on a passed Leadership test, so it gains experience but never becomes a Hero. Both it and the Zombies (\"Undead creatures\") take our Undead race; Zombies gain no experience."},
+    {"page": 4, "what": "No group sizes are printed: left open, but the Flesh Construct's is 1, as there may be only one."}
+  ]
+}

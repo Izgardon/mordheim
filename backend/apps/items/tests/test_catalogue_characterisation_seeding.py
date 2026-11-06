@@ -88,12 +88,12 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             self.seeded,
             {
-                "Race": 33,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor and the Halflings' Ogre
-                "Item": 346,  # the import's 315 (its 14 animals are beasts') + one Animal item per beast
+                "Race": 36,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf and the Wolfman
+                "Item": 359,  # the import's 328 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
-                "Skill": 258,  # the import's 234 (one per name) + the 24 hired swords' own skills the book lacks
-                "SkillGroup": 70,  # the import's 51 + a group of his own for each of 19 hired swords
-                "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
+                "Skill": 295,  # the import's 271 (one per name) + the 24 hired swords' own skills the book lacks
+                "SkillGroup": 75,  # the import's 56 + a group of his own for each of 19 hired swords
+                "Spell": 209,  # 203 (the PDFs' Grail Magic, Dark Magic (Druchii), Charms and Hexes (Strigos), Dark Arts) + the Dark Mage's six (BUG-54)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -102,12 +102,13 @@ class SeedAllTests(TestCase):
                 # Sigmund's and Veskit's No Pain; each owner's own, none another's of its name: 43 more than when
                 # Johann the Knife and Penthesilea held Bertha's Hiring Fee), less the 8 copies of Large Target,
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov);
-                # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule")
-                "Special": 792,
+                # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
+                # the second PDF batch's five templates add 46 of their own
+                "Special": 838,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
-                "WarbandTemplate": 53,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
+                "WarbandTemplate": 58,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
             },
         )
         for model in BOOK_MODELS:
@@ -156,16 +157,16 @@ class SeedAllTests(TestCase):
 
     def test_the_warband_templates_come_in_whole(self):
         # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
-        self.assertIn("Warband templates import complete. Templates: 53, archived", self.output)
+        self.assertIn("Warband templates import complete. Templates: 58, archived", self.output)
         counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
         self.assertEqual(
             counts,
             {
-                "WarbandTemplateType": 59,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
-                "TemplateFighter": 353,
-                "TemplateList": 130,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
-                "TemplateListItem": 1436,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 162,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                "WarbandTemplateType": 64,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
+                "TemplateFighter": 387,
+                "TemplateList": 146,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
+                "TemplateListItem": 1595,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
+                "TemplateRule": 184,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin)
                 "TemplateUpgrade": 77,
@@ -206,10 +207,10 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             links,
             {
-                "Fear": (34, 0, 5, 5, 3),  # fighters, upgrades, hired swords, dramatis personae, beasts
+                "Fear": (40, 0, 5, 5, 3),  # fighters, upgrades, hired swords, dramatis personae, beasts
                 "Stupidity": (4, 0, 0, 0, 1),
-                "Immune to Psychology": (11, 0, 1, 2, 0),
-                "Immune to Poison": (10, 0, 3, 3, 2),
+                "Immune to Psychology": (16, 0, 1, 2, 0),
+                "Immune to Poison": (14, 0, 3, 3, 2),
                 "Hideous": (0, 5, 0, 0, 0),  # the Cult's, Blessings, Beastmen's, Marauders' (40 gc), Twistkin's (20)
                 "Cloud of Flies": (
                     2,
@@ -279,7 +280,7 @@ class SeedAllTests(TestCase):
     def test_skaven_and_clan_pestilens_keep_their_own_maximums(self):
         # the 2026-10-28 data audit: races.json held Clan Pestilens' maximums under the name "Skaven" too, and
         # seed_races upserts by name, so the Skaven race had M5 T5 instead of M6 T4
-        self.assertIn("Races import complete. Created: 33, Updated: 0", self.output)
+        self.assertIn("Races import complete. Created: 36, Updated: 0", self.output)
         skaven = {race.name: (race.movement, race.toughness) for race in Race.objects.filter(name__startswith="Skaven")}
         self.assertEqual(skaven, {"Skaven": (6, 4), "Skaven (Clan Pestilens)": (5, 5)})
 
@@ -316,7 +317,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 234, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 271, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)
@@ -476,7 +477,7 @@ class SeedAllTests(TestCase):
         # and nine groups are new, each its warband type's alone
         infiltration = Skill.objects.get(name="Infiltration")
         held_by = set(infiltration.group_links.values_list("group__name", flat=True))
-        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)"})  # fmt: skip
+        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii"})  # fmt: skip
         self.assertTrue(infiltration.description.startswith("A warrior with this skill is always placed"))
         self.assertEqual(set(Skill.objects.get(name="Infiltration (Skink)").group_links.values_list("group__name", flat=True)), {"Skink"})  # fmt: skip
         self.assertTrue(Skill.objects.filter(name="Battle Tongue").exists())

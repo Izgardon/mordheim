@@ -1,0 +1,220 @@
+{
+  "warbandType": "dwarf-slayer-cult",
+  "name": "Dwarf Slayer Cult",
+  "source": "Dave ‘Styrofoam King’ Joria",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Dwarf%20Slayer%20Cult%20v6.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Deathwish", "ruleFull": "Unless his own rules say otherwise, every Slayer is immune to all psychology, Hatred, Frenzy and Stupidity included, and never tests for fighting alone."},
+    {"rulename": "No Armour, No Toys!", "ruleFull": "Slayers may never use armour of any kind, nor a cloak that gives a constant save bonus (Lucky Charms are allowed). They may use no missile weapons but thrown ones, and may never learn magic."},
+    {"rulename": "Hard to Kill", "ruleFull": "Dwarfs go out of action only on a 6 on the Injury chart: 1-2 is knocked down, 3-5 stunned and 6 out of action."},
+    {"rulename": "Hard Head", "ruleFull": "Dwarfs ignore the special rules of maces, clubs and the like."},
+    {"rulename": "Grudgebearers", "ruleFull": "The warband may never include an Elven hired sword or dramatis persona."},
+    {"rulename": "Damnable Luck", "ruleFull": "After the battle, once every injury has been rolled, you may re-roll one Death result for a single Slayer Hero or henchman. The second result stands."},
+    {"rulename": "Only in Victory", "ruleFull": "Slayer Heroes gain exploration dice only if the warband won the scenario, was allied with the winner, or tied; never when it was defeated or routed. This doesn't apply to the Rememberer."},
+    {"rulename": "Record of Valor", "ruleFull": "When a Slayer Hero is taken out of action while the Rememberer is on the table, the warband gets +1 exploration die after the battle. It counts only when an enemy or a hostile NPC took him out, directly or not (a warrior's attack, a fall after being shot, a hostile random event); a Slayer who goes out of action with no one else's doing (walking off a cliff, failing a jump) gives none. A Slayer brought back to the battle loses the die."},
+    {"rulename": "Back-up Records", "ruleFull": "A Bard hired sword in the warband also has Record of Valor. The two don't stack: a Slayer taken out of action gives at most one die, whoever saw it."},
+    {"rulename": "Gromril Weapons", "ruleFull": "Any weapon a Dwarf may buy may be bought as a Gromril weapon (see the rulebook) at three times its cost. That price is only for a starting warband; later Gromril weapons are bought at the rulebook's or the campaign's price."},
+    {"rulename": "The Rite of Trollslaying", "ruleFull": "When a Slayer henchman takes out of action an enemy that was Large and started the game with more than one wound, after the battle he gains enough experience for his next advance (16 if he is at the most) and counts as rolling \"That Lad's Got Talent!\". With six Heroes already, you may roll a henchman advance instead of replacing one."},
+    {"rulename": "The Rite of Dragonslaying", "ruleFull": "When a Slayer takes out of action a Large or gigantic scaled monster (a Hydra, Dragon, Wyvern, Sea Drake, Merwyrm, Turtigon or one of their young, among others) that has Skull of Iron or 4 or more wounds, and is an NPC or rolls a death result, he may take its hide after the battle as a free Sea Dragon Cloak, if he has none. He may wear it, though Slayers wear no armour, but can't sell or give it away, and a lost one can only be won again this way. A henchman also gains the Rite of Trollslaying, and wears the cloak even if he can't be promoted."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "slayer-equipment-list",
+      "title": "Slayer Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "dwarf axe", "alias": "", "cost": {"cost": 15}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "gromril weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 times the cost"}},
+        {"name": "throwing axes", "alias": "", "cost": {"cost": 15}}
+      ]
+    },
+    {
+      "id": "doomseeker-equipment-list",
+      "title": "Doomseeker Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "dwarf axe", "alias": "", "cost": {"cost": 15}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "whirling blades", "alias": "", "cost": {"cost": 30}},
+        {"name": "gromril weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 times the cost"}}
+      ]
+    },
+    {
+      "id": "rememberer-equipment-list",
+      "title": "Rememberer Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "dwarf axe", "alias": "", "cost": {"cost": 15}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "gromril weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 times the cost"}},
+        {"name": "throwing axes", "alias": "", "cost": {"cost": 15}},
+        {"name": "pistols", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "giant-slayer",
+      "type": "hero",
+      "name": "Giant Slayer",
+      "plural": "Giant Slayers",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 85,
+      "startingXp": 20,
+      "statblock": {"m": 3, "ws": 5, "bs": 4, "s": 3, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 9},
+      "equipmentLists": ["slayer-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Giant Slayer may use his Leadership instead of their own."}
+      ]
+    },
+    {
+      "id": "doomseekers",
+      "type": "hero",
+      "name": "Doomseeker",
+      "plural": "Doomseekers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 55,
+      "startingXp": 8,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 9},
+      "equipmentLists": ["doomseeker-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "rememberer",
+      "type": "hero",
+      "name": "Rememberer",
+      "plural": "Rememberers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 0,
+      "statblock": {"m": 3, "ws": 3, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 8},
+      "equipmentLists": ["rememberer-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Rememberer", "ruleFull": "Once per game, a Slayer Hero within 6\" of the Rememberer who is fighting a Large creature or one of Toughness 5 or more may re-roll his failed rolls to hit, once."},
+        {"rulename": "Pick up the Slack", "ruleFull": "If the Rememberer wasn't taken out of action, he may make one rarity or dramatis persona roll for each Slayer Hero taken out of action in the battle, on top of the warband's usual search."},
+        {"rulename": "Not a Slayer", "ruleFull": "The Rememberer isn't a Slayer and the Slayer rules don't apply to him. He may not learn the Slayers Only skills (Deathwish, Ferocious Charge, Monster Slayer, Berserker, Deathblow, Relentless) and may never lead the warband."},
+        {"rulename": "Hate Orcs and Goblins", "ruleFull": "The Rememberer hates Orcs and Goblins, unless he later becomes immune to psychology."}
+      ]
+    },
+    {
+      "id": "trollslayers",
+      "type": "henchman",
+      "name": "Trollslayer",
+      "plural": "Trollslayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["slayer-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "stubbles",
+      "type": "henchman",
+      "name": "Stubble",
+      "plural": "Stubbles",
+      "race": "dwarf",
+      "minQty": 0,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 3, "bs": 2, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 8},
+      "equipmentLists": ["slayer-equipment-list"],
+      "specialRules": [
+        {"rulename": "Skittish", "ruleFull": "As a new Slayer this model lacks Deathwish and takes psychology tests as normal. When it rolls \"That Lad's Got Talent\" it doesn't roll on the Hero advance table: it must learn the Deathwish skill."},
+        {"rulename": "Hate Orcs and Goblins", "ruleFull": "Stubbles hate Orcs and Goblins, unless they later become immune to psychology."}
+      ]
+    },
+    {
+      "id": "axe-hurlers",
+      "type": "henchman",
+      "name": "Axe Hurler",
+      "plural": "Axe Hurlers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 5,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 3, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["slayer-equipment-list"],
+      "specialRules": [
+        {"rulename": "Strong Arm", "ruleFull": "An Axe Hurler throws a thrown weapon extra inches equal to his Strength (S3: +3\")."},
+        {"rulename": "Born Marksmen", "ruleFull": "An Axe Hurler who rolls \"That Lad's Got Talent\" may always pick Shooting as one of his two skill lists, even with no Hero in the warband who has Shooting skills. Even with Weapons Training he may use no missile weapon but a thrown one."},
+        {"rulename": "Skittish", "ruleFull": "As a new Slayer this model lacks Deathwish and takes psychology tests as normal. When it rolls \"That Lad's Got Talent\" it doesn't roll on the Hero advance table: it must learn the Deathwish skill."},
+        {"rulename": "Hate Orcs and Goblins", "ruleFull": "Axe Hurlers hate Orcs and Goblins, unless they later become immune to psychology."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Slayer Cult", "new": true},
+  "specialSkillsList": [
+    {"name": "Deathwish", "description": "Slayers only: Stubbles and Axe Hurlers who become Heroes (see Skittish). The Hero is immune to all psychology and never tests for fighting alone."},
+    {"name": "Ferocious Charge", "ours": "Ferocious Charge"},
+    {"name": "Monster Slayer (Slayer Cult)", "pdfName": "Monster Slayer", "description": "Slayers only. In close combat the Slayer wounds any opponent on a 4+, whatever its Toughness, unless his own Strength, with every modifier, would need a lower roll."},
+    {"name": "Berserker (Slayer Cult)", "pdfName": "Berserker", "description": "Slayers only. In a turn he charges the Slayer adds +1 to his close combat rolls to hit."},
+    {"name": "Deathblow", "description": "Slayers only. When the Hero is taken out of action in hand-to-hand combat, he may at once make any of his attacks he hasn't yet made this turn before he is removed, even if he was knocked down or stunned."},
+    {"name": "Axe Mastery", "description": "In the hand-to-hand phase of a turn he charges, the Hero may re-roll every missed attack he made with an axe or a Dwarf axe. Not with Whirling Blades."},
+    {"name": "True Grit", "ours": "True Grit"},
+    {"name": "Thick Skull (Slayer Cult)", "pdfName": "Thick Skull", "description": "The Hero has a 3+ save on a D6 against being stunned; if he makes it, the stunned result is knocked down instead."},
+    {"name": "Songster", "description": "Rememberer only. A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."},
+    {"name": "Song of Honor", "description": "Rememberer only. After a battle in which one or more of the warband's Slayers died, every Hero and henchman gains +1 experience."},
+    {"name": "Relentless", "description": "Slayers only. If the Hero's charge fails he may still move his full distance. Only against enemies he can see or has detected."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 2}
+  ],
+  "stubs": [
+    {"name": "Throwing Axes", "type": "Weapon", "subtype": "Missile", "rarity": null, "dice": null, "rulesPage": 6},
+    {"name": "Whirling Blades", "type": "Weapon", "subtype": "Melee", "rarity": 9, "dice": null, "rulesPage": 6}
+  ],
+  "flags": [
+    {"page": 1, "what": "The file is v6 but its byline says v5.0. Read as printed."},
+    {"page": 1, "what": "The Slayer and Dwarf rules are warband rules (every fighter's \"Dwarf: see above\" and \"Slayer: see above\"); Deathwish isn't our shared Immune to Psychology, as it also covers fighting alone and says nothing of leaving combat. Hatred of Orcs and Goblins (the Rememberer, Stubbles and Axe Hurlers) links our shared Hate Orcs and Goblins."},
+    {"page": 2, "what": "The skill table's ticks are images: read from p2's image. No fighter has Speed skills."},
+    {"page": 2, "what": "A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "The Gromril weapon is 3 × price, linked to our Gromril Weapon; its starting-warband-only price is the Gromril Weapons rule."},
+    {"page": 3, "what": "No maximum profile is printed: the Dwarfs take our Dwarf race. The Rememberer starts with 0 experience, as printed."},
+    {"page": 5, "what": "The Troll Slayer skills are a new group, Slayer Cult. Ferocious Charge and True Grit are ours; Monster Slayer (\"in close combat\"), Berserker (ours bars it with Ferocious Charge) and Thick Skull (ours adds a 2+ with a helmet) are worded otherwise, so named apart. Ours carry no \"Slayers only\", so the Rememberer's Not a Slayer rule lists the Slayers Only skills."},
+    {"page": 6, "what": "Throwing Axes (15 gc, Common for Slayers, Rare 5 for others; 6\" range, Thrown Weapon, Axe Thrower) and Whirling Blades (30 gc a pair, Rare 9, Slayers only; Cannot be parried, Cutting Edge, Pair, Dance of Doom, Whirlwind of Death) are stubs, their rules on p6. Throwing Axes' Axe Thrower lets a Hero with Shooting skills learn a skill, Axe Thrower, which isn't imported: it waits for the item's rules."},
+    {"page": 6, "what": "The Dwarf Axe (15 gc, Rare 8) is our Dwarf Axe; the PDF adds that one parry is the most a model makes, two Dwarf axes giving a re-roll of a failed parry."},
+    {"page": 5, "what": "The Rite of Dragonslaying's Sea Dragon Cloak is printed with a 5+ save in close combat and 4+ against missiles, as ours."}
+  ]
+}

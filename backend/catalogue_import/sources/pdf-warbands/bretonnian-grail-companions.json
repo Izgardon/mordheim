@@ -1,0 +1,249 @@
+{
+  "warbandType": "bretonnian-grail-companions",
+  "name": "Bretonnian Grail Companions",
+  "source": "WEB",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Bretonnian%20Grail%20CompanionsV0.7.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Knight Virtues",
+      "ruleFull": "A model with Virtuous who gains a skill may roll 3D6 on this table instead of choosing one; he re-rolls a virtue he already has. Virtues never apply to a mount, and don't stack with other skills that give a like bonus.\n\n3D6 | Virtue\n3-4 | Virtue of Noble Disdain\n5 | Virtue of Heroism\n6 | Virtue of Stoicism\n7 | Virtue of the Penitent\n8 | Virtue of the Ideal\n9 | Virtue of the Impetuous Knight\n10 | Virtue of Audacity\n11 | Virtue of Purity\n12 | Virtue of Duty\n13 | Virtue of the Joust\n14 | Virtue of Confidence\n15 | Virtue of Knightly Temper\n16 | Virtue of Discipline\n17-18 | Virtue of Empathy"
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "knight-equipment-list",
+      "title": "Knight Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "lance", "alias": "", "cost": {"cost": 20}},
+        {"name": "longsword", "alias": "", "cost": {"cost": 25}},
+        {"name": "barding", "alias": "", "cost": {"cost": 80}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "warhorse", "alias": "", "cost": {"cost": 80}},
+        {"name": "holy shield", "alias": "", "cost": {"cost": 30}}
+      ]
+    },
+    {
+      "id": "companion-equipment-list",
+      "title": "Companion Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10, "costSuffix": "Pilgrim only"}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10, "costSuffix": "Pilgrim only"}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2, "costSuffix": "Pilgrim only"}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "longbow", "alias": "", "cost": {"cost": 15, "costSuffix": "Hunter only"}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "holy shield", "alias": "", "cost": {"cost": 30}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "horse", "alias": "", "cost": {"cost": 40}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Pegasus", "cost": {"cost": 110}, "availability": "Rare 11 (Grail Knight only)"}
+  ],
+  "fighters": [
+    {
+      "id": "grail-knight",
+      "type": "hero",
+      "name": "Grail Knight",
+      "plural": "Grail Knights",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 125,
+      "startingXp": 24,
+      "statblock": {"m": 4, "ws": 4, "bs": "-", "s": 4, "t": 4, "w": 1, "i": 4, "a": 1, "ld": 9},
+      "equipmentLists": ["knight-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Grail Knight may use his Leadership instead of their own."},
+        {"rulename": "Knight's Vow", "ruleFull": "The knight may never use a ranged weapon, is immune to All Alone tests and never breaks from combat."},
+        {"rulename": "Loyal Steed", "ruleFull": "The Grail Knight starts with a free warhorse (M8 WS3 BS- S3 T- W1 I- A1, no Ld given) that he can never dismount. It makes no injury rolls of its own, can't be traded or sold, never gains experience or abilities, and is lost if he gains a Pegasus. He moves at the warhorse's Movement."},
+        {"rulename": "Lord's Boon", "ruleFull": "When recruited the Grail Knight gains, free, either one set of barding, light armour and holy shield, or heavy armour. These can't be traded or sold and stay his until he dies. If he loses one, any later item of that type costs him twice its usual price."},
+        {"rulename": "Fearsome", "ruleFull": "The Grail Knight causes fear."},
+        {"rulename": "Blessing of the Lady", "ruleFull": "An enemy model that wants to shoot at the Grail Knight must first pass a Leadership test; if it fails it can't shoot at him."},
+        {"rulename": "Virtuous", "ruleFull": "When the Grail Knight gains a skill he may roll on the Knight Virtues table instead of choosing a skill, re-rolling a virtue he already has."},
+        {"rulename": "Honored Dead", "ruleFull": "A Grail Knight who dies after a battle becomes a Grail Reliquae: replace his profile with the Reliquae's and he becomes a henchman. If the warband already has a Grail Reliquae, the new one gains +1 Strength. No new Grail Knight may be recruited to replace him."}
+      ]
+    },
+    {
+      "id": "damsel",
+      "type": "hero",
+      "name": "Damsel",
+      "plural": "Damsels",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 11,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["companion-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Grail Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Damsel is a wizard and casts Grail Magic."}
+      ]
+    },
+    {
+      "id": "knights-of-the-realm",
+      "type": "hero",
+      "name": "Knight of the Realm",
+      "plural": "Knights of the Realm",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 60,
+      "startingXp": 10,
+      "statblock": {"m": 4, "ws": 4, "bs": "-", "s": 4, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["knight-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Knight's Vow", "ruleFull": "The knight may never use a ranged weapon, is immune to All Alone tests and never breaks from combat."},
+        {"rulename": "Lord's Boon", "ruleFull": "Each Knight of the Realm may start with one free warhorse, suit of light armour and holy shield, or heavy armour. These can't be traded or sold and stay his until he dies. If he loses one, any later item of that type costs him twice its usual price."},
+        {"rulename": "Virtuous", "ruleFull": "When the Knight of the Realm gains a skill he may roll on the Knight Virtues table instead of choosing a skill, re-rolling a virtue he already has."},
+        {"rulename": "Skilled Rider", "ruleFull": "Knights of the Realm know how to ride a warhorse."}
+      ]
+    },
+    {
+      "id": "battle-pilgrims",
+      "type": "henchman",
+      "name": "Battle Pilgrim",
+      "plural": "Battle Pilgrims",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["companion-equipment-list"],
+      "specialRules": [
+        {"rulename": "Fanatics", "ruleFull": "At the start of every battle the model hates the opposing warband."},
+        {"rulename": "Commoner", "ruleFull": "This model can never become a Hero: re-roll a \"That Lad's Got Talent\" result."}
+      ]
+    },
+    {
+      "id": "hunters",
+      "type": "henchman",
+      "name": "Hunter",
+      "plural": "Hunters",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["companion-equipment-list"],
+      "specialRules": [
+        {"rulename": "Scouts", "ruleFull": "Each Hunter may be set up up to 1D6\" further out than the warband's deployment zone."},
+        {"rulename": "Commoner", "ruleFull": "This model can never become a Hero: re-roll a \"That Lad's Got Talent\" result."}
+      ]
+    },
+    {
+      "id": "hedge-knights",
+      "type": "henchman",
+      "name": "Hedge Knight",
+      "plural": "Hedge Knights",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": "-", "s": 3, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["knight-equipment-list"],
+      "specialRules": [
+        {"rulename": "Knight's Vow", "ruleFull": "The knight may never use a ranged weapon, is immune to All Alone tests and never breaks from combat."},
+        {"rulename": "Lower-Caste", "ruleFull": "A Hedge Knight may ride a mount in battle only when both Knights of the Realm fight mounted. A Hedge Knight who becomes a Hero uses the Knight of the Realm's skill lists, rolling on the Knight Virtues table when he gains a skill."}
+      ]
+    },
+    {
+      "id": "grail-reliquae",
+      "type": "henchman",
+      "name": "Grail Reliquae",
+      "plural": "Grail Reliquaes",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 1,
+      "groupSize": {"min": 1, "max": 1},
+      "costGc": 75,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": "-", "s": 3, "t": 3, "w": 4, "i": 2, "a": 4, "ld": 10},
+      "equipmentLists": [],
+      "equipment": "None. The Grail Reliquae carries no weapons or armour and attacks with a dagger's profile.",
+      "specialRules": [
+        {"rulename": "Grail Icon", "ruleFull": "Friendly models within 6\" of the Reliquae may re-roll a failed Leadership test. The Reliquae gains no experience and can't run."},
+        {"rulename": "Icon Bearers", "ruleFull": "Each wound the Reliquae suffers also takes 1 from its Movement, Attacks and Leadership. These losses are restored if it survives the battle."},
+        {"rulename": "Fanatics", "ruleFull": "At the start of every battle the model hates the opposing warband."},
+        {"rulename": "Holy Shield", "ruleFull": "The Reliquae has an unmodifiable 5+ save against every non-magical attack."},
+        {"rulename": "Large", "ruleFull": "The Reliquae is Large."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Grail Companions", "new": true},
+  "specialSkillsList": [
+    {"name": "Virtue of Noble Disdain (Grail Companions)", "pdfName": "Virtue of Noble Disdain", "description": "The knight may re-roll failed rolls to hit against enemy henchmen."},
+    {"name": "Virtue of Heroism", "description": "The knight has +1 WS and +1 S when fighting Large models."},
+    {"name": "Virtue of Stoicism", "description": "The knight may re-roll failed Leadership tests."},
+    {"name": "Virtue of the Penitent", "description": "The knight is immune to psychology."},
+    {"name": "Virtue of the Ideal", "description": "In the first round of a combat the knight has +1 WS and +1 A."},
+    {"name": "Virtue of the Impetuous Knight", "ours": "Virtue of the Impetuous"},
+    {"name": "Virtue of Audacity", "description": "The knight may re-roll failed rolls to hit against an opponent with a higher WS than his."},
+    {"name": "Virtue of Purity (Grail Companions)", "pdfName": "Virtue of Purity", "description": "The knight is immune to poison."},
+    {"name": "Virtue of Duty", "description": "The knight has +1 to his rolls to wound while he is outnumbered in combat."},
+    {"name": "Virtue of the Joust", "description": "In the first round of a combat the knight may re-roll failed rolls to wound."},
+    {"name": "Virtue of Confidence", "description": "The knight may re-roll failed rolls to hit against enemy models with a higher Toughness than his."},
+    {"name": "Virtue of Knightly Temper", "description": "In a turn he charges the knight may double his attacks, at -1 to hit."},
+    {"name": "Virtue of Discipline (Grail Companions)", "pdfName": "Virtue of Discipline", "description": "The knight treats a stunned result on the Injury chart as knocked down."},
+    {"name": "Virtue of Empathy", "description": "Friendly models fighting the same enemy model as the knight may use his Toughness when that enemy rolls to wound them."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 2},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 2}
+  ],
+  "stubs": [
+    {"name": "Longsword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Holy Shield", "type": "Armour", "subtype": "", "rarity": 7, "dice": null, "rulesPage": 3},
+    {"name": "Pegasus", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": null, "rulesPage": 3}
+  ],
+  "flags": [
+    {"page": 1, "what": "The manifest gives no setting; our type's is Mordheim 2a, assumed (setting_assumed). Grade 2a matches."},
+    {"page": 1, "what": "A Grail Companion warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "The maximum profiles differ by fighter: Companions' (M4 WS6 BS6 S4 T4 W3 I6 A4 Ld9) is our Human; the Grail Knight's (M8 WS8 BS2 S7 T6 W4 I9 A4 Ld10) is a new race, Grail Knight. The skill table and profiles were read from the PDF's layout text, with no page image."},
+    {"page": 3, "what": "The Longsword is Common, Knights only, 25 gc (Parry, Versatile); the Holy Shield Rare 7, 30 gc (+1 save against magic, else a shield); the Pegasus Rare 11, Grail Knight only, 110 gc (a flying warhorse). Stubs, their rules on p3. The Pegasus sits in a Special equipment list for the Grail Knight."},
+    {"page": 3, "what": "The Lance is 20 gc on the Knight list (ours is 40 gc): taken as printed."},
+    {"page": 4, "what": "The Grail Knight's profile is printed WS4 BS- I4 A1 W1, as low as a Knight of the Realm's, under a maximum of WS8: taken as printed. His warhorse's (M8 WS3 BS- S3 T- W1 I- A1, no Ld) is in Loyal Steed's text; the free warhorse itself isn't imported, templates give no starting items."},
+    {"page": 4, "what": "Lord's Boon's choice is printed \"1 set of barding, light armor and holy shield, or heavy armor\" (Grail Knight) and \"1 free warhorse, suit of light armor and holy shield, or heavy armor\" (Knights of the Realm): which items go together is unclear, so the texts keep the PDF's grouping. Text only; the player adds the items free."},
+    {"page": 4, "what": "Fearsome (\"This model causes Fear\") links our shared Fear."},
+    {"page": 5, "what": "The Damsel casts Grail Magic (p9), a new lore of six spells in spells.json; Virtuous gives no Special list to her (the skill table ticks none)."},
+    {"page": 6, "what": "The Knight Virtues are the Special skills, a new group Grail Companions; rolled on 3D6 (the table is a warband rule). Virtue of Noble Disdain, Purity and Discipline do other things than the Bretonnian Knights' virtues of those names, so they are named apart; Virtue of the Impetuous Knight (+1D3 to his charge) is our Virtue of the Impetuous (+D3\" when charging)."},
+    {"page": 7, "what": "Hedge Knights are henchmen who may become Heroes; Battle Pilgrims and Hunters never may (Commoner). No group sizes are printed: left open."},
+    {"page": 8, "what": "The Grail Reliquae gains no experience; its race is the construct creature type (no maximum), as it isn't a living warrior. Its rule Holy Shield shares the item's name but is its own 5+ save. Large is our shared Large. Honored Dead, printed for it too, is the Grail Knight's rule only (one wording), as it is how a Grail Knight becomes one."}
+  ]
+}

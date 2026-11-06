@@ -15,16 +15,24 @@ check over every file.
 | `halflings.json` | halflings (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/experimental/Halflings.pdf | 1-4 (text layer) | 5 Nov 2026 |
 | `grave-robbers.json` | grave-robbers (2a, Sylvania) | https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf | 1-4 (text layer) | 5 Nov 2026 |
 | `skaven-of-clan-moulder.json` | skaven-of-clan-moulder (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Clan%20Moulder.pdf | 1-7 (a scan, OCR) | 5 Nov 2026 |
+| `bretonnian-grail-companions.json` | bretonnian-grail-companions (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Bretonnian%20Grail%20CompanionsV0.7.pdf | 1-9 (text layer) | 6 Nov 2026 |
+| `druchii.json` | druchii (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/experimental/Druchii.pdf | 1-9 (text layer; pages 2, 3 and 8 as images) | 6 Nov 2026 |
+| `dwarf-slayer-cult.json` | dwarf-slayer-cult (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Dwarf%20Slayer%20Cult%20v6.pdf | 1-7 (text layer; page 2 as an image) | 6 Nov 2026 |
+| `survivors-of-strigos.json` | survivors-of-strigos (2a, Sylvania) | https://www.broheim.net/downloads/warbands/supplement/sylvania/Survivors%20Of%20Strigos.pdf | 1-6 (text layer; its skill table and Dark Arts are images) | 6 Nov 2026 |
+| `masters-of-horror.json` | masters-of-horror (2a, Sylvania) | https://www.broheim.net/downloads/warbands/supplement/sylvania/Masters%20Of%20Horror.pdf | 1-4 (text layer; its skill table is an image) | 6 Nov 2026 |
 
 ## Adding a warband
 
-1. Read the PDF's text (`pdftotext`, in reading order); open a page image only for a table or profile the text
-   garbles, and say which in its flags.
+1. Read the PDF's text (`pdftotext`, in reading order); a profile or table the reading order runs together is
+   usually whole in the `-layout` text. Open a page image only for what neither text has (a table of ticks, a
+   heading set as an image), and say which in its flags.
 2. Write `<type-slug>.json` in this shape, its `warbandType` that slug. Name each line's item as we name it or as
    one of its tags (an alias for a spelling of the PDF's own), give each item we lack a stub with the page of its
    rules, and flag every doubt with its page; leave a number you can't read empty and flag it.
-3. A race of the warband's own goes in `apps/races/data/races.json` and `template_answers.RACES_BY_PAGE`; a rule that
-   is a shared special but does something else is kept apart in `apps/special/data/shared-specials.json`; a pre-battle
-   roll goes in `apps/special/data/prebattle-rolls.json`.
+3. A race of the warband's own goes in `apps/races/data/races.json` and `template_answers.RACES_BY_PAGE` (one
+   fighter's, `RACES_BY_FIGHTER`); a rule that is a shared special but does something else is kept apart in
+   `apps/special/data/shared-specials.json`; a pre-battle roll goes in `apps/special/data/prebattle-rolls.json`; a
+   spell lore we lack goes in `apps/spells/data/spells.json`, named "<lore> (<warband>)" when ours of its name has
+   other spells or numbers.
 4. Rebuild (`python -I catalogue_import/build.py`), run `check_pdf.py`, and read the import report's PDF warbands
    section.

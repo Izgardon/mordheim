@@ -1,0 +1,211 @@
+{
+  "warbandType": "survivors-of-strigos",
+  "name": "Survivors of Strigos",
+  "source": "Sylvania Supplement",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Survivors%20Of%20Strigos.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "The Only Undead", "ruleFull": "The warband doesn't disband if the Strigoi Vampire dies, as he is its only Undead model. It hires hired swords as an Undead warband does."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "chest talon", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "throwing knives", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "throwing knives", "alias": "", "cost": {"cost": 15}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "miscellaneous-equipment",
+      "title": "Miscellaneous Equipment",
+      "caveat": "",
+      "items": [
+        {"name": "black gold wristbands", "alias": "", "cost": {"cost": 35}},
+        {"name": "ring of strigos", "alias": "", "cost": {"cost": 20}},
+        {"name": "unholy relic", "alias": "", "cost": {"cost": 15}},
+        {"name": "cursed book", "alias": "", "cost": {"cost": 50}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "strigoi-vampire",
+      "type": "hero",
+      "name": "Strigoi Vampire",
+      "plural": "Strigoi Vampires",
+      "race": "vampire",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 115,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 4, "bs": 4, "s": 4, "t": 4, "w": 2, "i": 6, "a": 2, "ld": 8},
+      "equipmentLists": [],
+      "equipment": "None. The Strigoi Vampire fights with tooth and claw and suffers no penalty for being unarmed.",
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "spellLores": ["Dark Arts"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Strigoi Vampire may use his Leadership instead of their own."},
+        {"rulename": "Kindred Hatred", "ruleFull": "The Strigoi Vampire hates vampires of every other bloodline."},
+        {"rulename": "Cause Fear", "ruleFull": "The Strigoi Vampire causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Strigoi Vampire is not affected by psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Strigoi Vampire is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Strigoi Vampire treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "seer",
+      "type": "hero",
+      "name": "Seer",
+      "plural": "Seers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 12,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Charms and Hexes (Strigos)"],
+      "specialRules": [
+        {"rulename": "Seeker", "ruleFull": "A Seer who fought in the battle and wasn't taken out of action may change one exploration die by +1 or -1."},
+        {"rulename": "Wizard", "ruleFull": "The Seer has one spell, rolled at random from Charms and Hexes."}
+      ]
+    },
+    {
+      "id": "domnu",
+      "type": "hero",
+      "name": "Domnu",
+      "plural": "Domnu",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "startingXp": 4,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["heroes-equipment-list", "miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Child of Darkness", "ruleFull": "Domnu are immune to Sylvania's Spooky special rule."},
+        {"rulename": "Gypsy Ward", "ruleFull": "A Domnu has a special 5+ save against magical attacks."}
+      ]
+    },
+    {
+      "id": "strigany",
+      "type": "henchman",
+      "name": "Strigany",
+      "plural": "Strigany",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["henchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "ghouls",
+      "type": "henchman",
+      "name": "Ghoul",
+      "plural": "Ghouls",
+      "race": "ghoul",
+      "minQty": 0,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 4, "w": 1, "i": 3, "a": 2, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. Ghouls carry only a few bones as crude weapons.",
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "Ghouls cause fear."}
+      ]
+    },
+    {
+      "id": "giant-bats",
+      "type": "henchman",
+      "name": "Giant Bat",
+      "plural": "Giant Bats",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 3, "bs": 0, "s": 3, "t": 3, "w": 2, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None. Giant Bats fight with their jaws.",
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "Giant Bats are animals and gain no experience."},
+        {"rulename": "Flying", "ruleFull": "Giant Bats fly: they never climb or leap gaps, even when their move ends over open air."},
+        {"rulename": "Large", "ruleFull": "Giant Bats are Large."},
+        {"rulename": "Sonic", "ruleFull": "A Giant Bat needs no line of sight to charge."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Survivors of Strigos", "new": true},
+  "specialSkillsList": [
+    {"name": "Iron Sinews", "description": "Strigoi Vampire only. +1 to his Strength."},
+    {"name": "Great Thirster", "description": "Strigoi Vampire only. Once he has taken a model out of action he is frenzied, until he is knocked down, stunned or taken out of action."},
+    {"name": "Curse of the Revenant", "description": "Strigoi Vampire only, and only once he has Great Thirster. He regains a lost wound on a D6 roll of 5+, one wound a turn at most."},
+    {"name": "Dark Arts", "description": "Strigoi Vampire only. He may take Arcane Lore as an advance and at once roll for a spell on the Dark Arts table. Later he may take spells instead of skills."},
+    {"name": "Light Fingers", "description": "Strigany Heroes only, never the Strigoi Vampire. When the Hero takes an enemy model out of action the warband finds an extra piece of wyrdstone; one piece a game at most."},
+    {"name": "Practiced Arm", "description": "Strigany Heroes only, never the Strigoi Vampire. The Hero may throw two throwing knives a turn, both at the same target, each with +1 to its injury roll."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 2},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 2}
+  ],
+  "stubs": [
+    {"name": "Chest Talon", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Ring of Strigos", "type": "Miscellaneous", "subtype": "", "rarity": 9, "dice": 1, "rulesPage": 3},
+    {"name": "Black Gold Wristbands", "type": "Miscellaneous", "subtype": "", "rarity": 10, "dice": 2, "rulesPage": 3},
+    {"name": "Cursed Book", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": 3, "rulesPage": 3}
+  ],
+  "flags": [
+    {"page": 1, "what": "A Survivors of Strigos warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "The skill table is an image (read from it): Strigoi Vampire Combat, Strength, Speed; Seer Academic, Speed; Domnu Combat, Strength. It has no Special column. The two special lists (the Strigoi's, for him instead of the standard lists, and the Strigany Heroes', which he may not use) are one group, Survivors of Strigos, each skill saying who may take it, and every Hero ticks Special."},
+    {"page": 2, "what": "Dark Arts lets the Strigoi roll on the Dark Arts table (p6, an image: three spells), a new lore in spells.json; he lists it as his lore, though he has no Wizard rule."},
+    {"page": 2, "what": "The prices of the Chest Talon, Black Gold Wristbands, Ring of Strigos and Cursed Book carry an asterisk the PDF never explains: not imported."},
+    {"page": 3, "what": "Stubs, their rules on p3: the Chest Talon (15 gc, \"Strigany only\", read as Common and this warband's; S as user +1, Two-handed, Heart-Pierce), Ring of Strigos (20+D6, Rare 9, Arcane Barrier), Black Gold Wristbands (35+2D6, Rare 10, Quickened) and Cursed Book (50+3D6, Rare 11, Cursed Aura). The Unholy Relic is our Holy (Unholy) Relic."},
+    {"page": 3, "what": "The Miscellaneous Equipment is Heroes only: a third list the Seer and Domnu buy from. The Strigoi Vampire uses no equipment, so he buys from no list."},
+    {"page": 4, "what": "The text layer drops the Leader rule's distance; the page image shows 6\"."},
+    {"page": 4, "what": "Cause Fear, Immune to Psychology, Immune to Poison and No Pain link our shared specials. The Strigoi Vampire's race is our Vampire."},
+    {"page": 5, "what": "Strigany are henchmen (under the Henchmen heading, with no starting experience), up to five. No group sizes are printed: left open."},
+    {"page": 5, "what": "Ghouls cost 40 gc and Giant Bats 40 gc, as printed. Large is our shared Large."},
+    {"page": 6, "what": "Charms & Hexes differ from our Charms and Hexes (Scry and Curse are Difficulty 8, ours 6; spell 6 is Cure of Thorns, ours Cure), so the Seer's is a new lore, Charms and Hexes (Strigos), in spells.json."}
+  ]
+}

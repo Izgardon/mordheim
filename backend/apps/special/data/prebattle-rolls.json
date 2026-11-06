@@ -26,6 +26,10 @@
     }
   },
   "skill": {
+    "Alchemist": {
+      "roll": "D6",
+      "text": "At the start of each game roll a D6 for his potion:\n\nD6 | Potion\n1 | Potion of Resilience: +1 Toughness for the game.\n2 | Brew of Strength: +1 Strength for the game.\n3-4 | Quicksilver: +1 Movement for the game.\n5 | Backley's Brew: -1 Strength and -1 Initiative until he passes a Toughness test.\n6 | Aberrantius Vigortia: +1 Strength and +1 Toughness. After the battle roll a D6: on a 5+ he is addicted, and in each game he does nothing but brew until he rolls a 6 for his potion."
+    },
     "Deathspeaker": {
       "roll": "D3",
       "text": "At the start of the battle, the undead player may deploy D3 Zombies for free. These zombies do not count towards the maximum number of models in the warband, but increase the warband’s rating as normal. Zombies created in this way may not be used as Corpse Bombs. These Zombies only last for the duration of the battle."

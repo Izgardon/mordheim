@@ -892,6 +892,114 @@
     "description": "The warrior is an expert in hand-to-hand combat method of the Imperial duelist, aristocrats famed for their skill in single combat.\n\nAt the end of each Close Combat phase, the Duelist can force any non-large opponent he is fighting one-on-one to pass a Strength test or be pushed 2\" in any direction choosen by the Duelist. If this brings the target in contact with another model, both suffer an automatic Strength 2 hit. If this pushes the opponent off from a high place, then he falls and takes damage as normal. The duelist stays on the elevated area."
   },
   {
+    "name": "Virtue of Noble Disdain (Grail Companions)",
+    "description": "The knight may re-roll failed rolls to hit against enemy henchmen."
+  },
+  {
+    "name": "Virtue of Heroism",
+    "description": "The knight has +1 WS and +1 S when fighting Large models."
+  },
+  {
+    "name": "Virtue of Stoicism",
+    "description": "The knight may re-roll failed Leadership tests."
+  },
+  {
+    "name": "Virtue of the Penitent",
+    "description": "The knight is immune to psychology."
+  },
+  {
+    "name": "Virtue of the Ideal",
+    "description": "In the first round of a combat the knight has +1 WS and +1 A."
+  },
+  {
+    "name": "Virtue of Audacity",
+    "description": "The knight may re-roll failed rolls to hit against an opponent with a higher WS than his."
+  },
+  {
+    "name": "Virtue of Purity (Grail Companions)",
+    "description": "The knight is immune to poison."
+  },
+  {
+    "name": "Virtue of Duty",
+    "description": "The knight has +1 to his rolls to wound while he is outnumbered in combat."
+  },
+  {
+    "name": "Virtue of the Joust",
+    "description": "In the first round of a combat the knight may re-roll failed rolls to wound."
+  },
+  {
+    "name": "Virtue of Confidence",
+    "description": "The knight may re-roll failed rolls to hit against enemy models with a higher Toughness than his."
+  },
+  {
+    "name": "Virtue of Knightly Temper",
+    "description": "In a turn he charges the knight may double his attacks, at -1 to hit."
+  },
+  {
+    "name": "Virtue of Discipline (Grail Companions)",
+    "description": "The knight treats a stunned result on the Injury chart as knocked down."
+  },
+  {
+    "name": "Virtue of Empathy",
+    "description": "Friendly models fighting the same enemy model as the knight may use his Toughness when that enemy rolls to wound them."
+  },
+  {
+    "name": "Fury of Khaine (Druchii)",
+    "description": "If the Dark Elf takes all his opponents out of action he may make a 4\" follow-up move. Reaching another enemy starts a new combat, fought in the next turn, in which he counts as charging."
+  },
+  {
+    "name": "Master of Poisons (Druchii)",
+    "description": "If the Hero doesn't search for rare items he may make D2 doses of Dark Venom instead. It must be used in the next battle and can't be sold or traded to other warbands."
+  },
+  {
+    "name": "Vraithen Master",
+    "description": "The Hero ignores the long range penalty with any crossbow-type weapon. If he didn't move this turn he may shoot a repeater crossbow twice with no penalty, or three times at -1 to hit."
+  },
+  {
+    "name": "Survival of the Fittest",
+    "description": "When the Hero's Serious Injury roll is a death, he takes a Leadership test on his unmodified Leadership (no holy relics or other help). If he passes, he survives but misses the next D3 battles."
+  },
+  {
+    "name": "Excellent Sight",
+    "description": "The Hero spots hidden enemies from twice his Initiative in inches."
+  },
+  {
+    "name": "Deathwish",
+    "description": "Slayers only: Stubbles and Axe Hurlers who become Heroes (see Skittish). The Hero is immune to all psychology and never tests for fighting alone."
+  },
+  {
+    "name": "Monster Slayer (Slayer Cult)",
+    "description": "Slayers only. In close combat the Slayer wounds any opponent on a 4+, whatever its Toughness, unless his own Strength, with every modifier, would need a lower roll."
+  },
+  {
+    "name": "Berserker (Slayer Cult)",
+    "description": "Slayers only. In a turn he charges the Slayer adds +1 to his close combat rolls to hit."
+  },
+  {
+    "name": "Deathblow",
+    "description": "Slayers only. When the Hero is taken out of action in hand-to-hand combat, he may at once make any of his attacks he hasn't yet made this turn before he is removed, even if he was knocked down or stunned."
+  },
+  {
+    "name": "Axe Mastery",
+    "description": "In the hand-to-hand phase of a turn he charges, the Hero may re-roll every missed attack he made with an axe or a Dwarf axe. Not with Whirling Blades."
+  },
+  {
+    "name": "Thick Skull (Slayer Cult)",
+    "description": "The Hero has a 3+ save on a D6 against being stunned; if he makes it, the stunned result is knocked down instead."
+  },
+  {
+    "name": "Songster",
+    "description": "Rememberer only. A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."
+  },
+  {
+    "name": "Song of Honor",
+    "description": "Rememberer only. After a battle in which one or more of the warband's Slayers died, every Hero and henchman gains +1 experience."
+  },
+  {
+    "name": "Relentless",
+    "description": "Slayers only. If the Hero's charge fails he may still move his full distance. Only against enemies he can see or has detected."
+  },
+  {
     "name": "Quiet as a Mouse",
     "description": "While this Halfling is hidden, an enemy trying to spot him uses half his Initiative in inches, rounded down."
   },
@@ -920,6 +1028,22 @@
     "description": "When charged, the Halfling gains one bonus attack, which strikes first."
   },
   {
+    "name": "Surgeon",
+    "description": "Mad Scientist only. He may re-roll one die of a single injury roll of one of his warriors; the second roll stands."
+  },
+  {
+    "name": "Alchemist",
+    "description": "Mad Scientist only. At the start of each game roll a D6 for his potion:\n\nD6 | Potion\n1 | Potion of Resilience: +1 Toughness for the game.\n2 | Brew of Strength: +1 Strength for the game.\n3-4 | Quicksilver: +1 Movement for the game.\n5 | Backley's Brew: -1 Strength and -1 Initiative until he passes a Toughness test.\n6 | Aberrantius Vigortia: +1 Strength and +1 Toughness. After the battle roll a D6: on a 5+ he is addicted, and in each game he does nothing but brew until he rolls a 6 for his potion."
+  },
+  {
+    "name": "Apt Revitalist",
+    "description": "Mad Scientist only. The warband's Zombies gain experience as human henchmen do."
+  },
+  {
+    "name": "Lunatic",
+    "description": "Any Hero. The model causes fear and may re-roll any Leadership test."
+  },
+  {
     "name": "Beastkin",
     "description": "The range of every Beast or Animal Handling skill this Hero has, now or later, is doubled to 12\"."
   },
@@ -934,5 +1058,29 @@
   {
     "name": "Twistkin",
     "description": "Stormvermin only. When he takes this skill, the Hero must buy one mutation from the Possessed's list in the rulebook at half its listed cost."
+  },
+  {
+    "name": "Iron Sinews",
+    "description": "Strigoi Vampire only. +1 to his Strength."
+  },
+  {
+    "name": "Great Thirster",
+    "description": "Strigoi Vampire only. Once he has taken a model out of action he is frenzied, until he is knocked down, stunned or taken out of action."
+  },
+  {
+    "name": "Curse of the Revenant",
+    "description": "Strigoi Vampire only, and only once he has Great Thirster. He regains a lost wound on a D6 roll of 5+, one wound a turn at most."
+  },
+  {
+    "name": "Dark Arts",
+    "description": "Strigoi Vampire only. He may take Arcane Lore as an advance and at once roll for a spell on the Dark Arts table. Later he may take spells instead of skills."
+  },
+  {
+    "name": "Light Fingers",
+    "description": "Strigany Heroes only, never the Strigoi Vampire. When the Hero takes an enemy model out of action the warband finds an extra piece of wyrdstone; one piece a game at most."
+  },
+  {
+    "name": "Practiced Arm",
+    "description": "Strigany Heroes only, never the Strigoi Vampire. The Hero may throw two throwing knives a turn, both at the same target, each with +1 to its injury roll."
   }
 ]

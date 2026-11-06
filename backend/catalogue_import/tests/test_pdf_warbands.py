@@ -182,6 +182,14 @@ class PdfImportTests(SimpleTestCase):
         with self.assertRaisesRegex(ValueError, "the stub 'Sword' is our 'Sword'"):
             stub_items({"witch-hunters": page}, ITEMS, TYPES)
 
+    def test_a_stub_priced_by_its_base_item_has_no_cost_of_its_own(self) -> None:
+        # the Druchii's Darksteel blade (PDF p3): "3 x price", as our Gromril Weapon
+        page = good_page()
+        page["equipmentLists"][0]["items"][2]["cost"] = {"cost": 0, "costPrefix": "3 x price"}
+        [stub] = stub_items({"witch-hunters": page}, ITEMS, TYPES)
+        [row] = stub["availabilities"]
+        self.assertEqual((row["cost"], row["cost_note"], row["rarity"]), (None, "3 × price", 8))
+
     def test_half_a_price_rounds_up(self) -> None:
         # William, 6 Nov 2026: "yes always round up in mordheim for gold"
         self.assertEqual([halved(cost) for cost in (40, 35, None)], [20, 18, None])
@@ -198,6 +206,24 @@ class PdfImportTests(SimpleTestCase):
                 )
                 for stub in page["stubs"]:
                     self.assertEqual(self.items[stub["name"]]["origin"], ORIGIN)
+
+    def test_the_halfling_cook_buys_from_his_own_list_under_his_names(self) -> None:
+        # William, 6 Nov 2026: "do we not add labels to his owning of those items? but yes all items that exist"
+        halflings = self.templates["halflings"]
+        cook = next(fighter for fighter in halflings["fighters"] if fighter["name"] == "Halfling Cook")
+        [key] = cook["lists"]
+        lines = next(row for row in halflings["lists"] if row["key"] == key)["lines"]
+        names = {(line["item"]["name"], line["shown_as"], line["cost"]) for line in lines}
+        self.assertLessEqual(
+            {
+                ("Dagger", "Pairing Knife", 2),
+                ("Tenderiser", "", 3),
+                ("Cleaver", "Meat Cleaver", 5),
+                ("Sword", "Machete", 10),
+                ("Cooking Pot Helmet", "Cooking Pot", 10),
+            },
+            names,
+        )
 
     def test_clan_moulders_twistkin_sells_the_rulebooks_mutations_at_half_price(self) -> None:
         # the Twistkin skill (PDF p4): a Stormvermin buys one of the rulebook's mutations at half its listed cost

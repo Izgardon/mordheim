@@ -1,0 +1,262 @@
+{
+  "warbandType": "druchii",
+  "name": "Druchii",
+  "source": "Mordheimer's Information Centre",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/experimental/Druchii.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Kindred Hatred", "ruleFull": "Dark Elves hate every High Elf warrior, High Elf hired swords included."},
+    {"rulename": "Fey Acuity", "ruleFull": "In the exploration phase, add +1 to the number of wyrdstone pieces or artefacts the warband finds, as long as at least one Hero searched."},
+    {"rulename": "Disdain", "ruleFull": "Dark Elves may never use black powder weapons."},
+    {"rulename": "Slavers", "ruleFull": "When the warband finds prisoners (a roll of 333 in the exploration phase), it may use the Skaven's rules for them."},
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire only these hired swords: Pit Fighter, Ogre Bodyguard, Warlock, Imperial Assassin, Tilean Marksman, Highwayman, Duelist, Witch, Emissary of Chaos, Human Scout, Old Prospector, Dark Elf Assassin, Pathfinder, Nomad Scout, Thief and Shade Scout."},
+    {"rulename": "Naggaroth Prices", "ruleFull": "The Repeater crossbow's list price (20 gc) is for a starting warband only, which needs no roll to find it. Later, bought in Mordheim, it costs what other warbands pay and must be searched for as usual."},
+    {"rulename": "Promoted Henchmen", "ruleFull": "A henchman who becomes a Hero still buys from his henchman list, never the Druchii Heroes list."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "druchii-heroes-equipment-list",
+      "title": "Druchii Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "draich", "alias": "", "cost": {"cost": 25}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "beastlash", "alias": "", "cost": {"cost": 10, "costSuffix": "Beastmaster only"}},
+        {"name": "darksteel blade", "alias": "", "cost": {"cost": 0, "costPrefix": "3 x price"}},
+        {"name": "repeater crossbow", "alias": "", "cost": {"cost": 20}},
+        {"name": "crossbow pistol", "alias": "", "cost": {"cost": 35}},
+        {"name": "throwing knives", "alias": "", "cost": {"cost": 15}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "sea dragon cloak", "alias": "", "cost": {"cost": 30}},
+        {"name": "dark venom", "alias": "", "cost": {"cost": 15}}
+      ]
+    },
+    {
+      "id": "corsairs-equipment-list",
+      "title": "Corsairs Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "repeater crossbow", "alias": "", "cost": {"cost": 20}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "sea dragon cloak", "alias": "", "cost": {"cost": 30}}
+      ]
+    },
+    {
+      "id": "shades-equipment-list",
+      "title": "Shades Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "repeater crossbow", "alias": "", "cost": {"cost": 20}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "throwing knives", "alias": "", "cost": {"cost": 15}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}}
+      ]
+    },
+    {
+      "id": "witch-elves-equipment-list",
+      "title": "Witch Elves Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "black lotus", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "noble",
+      "type": "hero",
+      "name": "Noble",
+      "plural": "Nobles",
+      "race": "elf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 75,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 5, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 9},
+      "equipmentLists": ["druchii-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Noble may use his Leadership instead of their own."}
+      ]
+    },
+    {
+      "id": "lordlings",
+      "type": "hero",
+      "name": "Lordling",
+      "plural": "Lordlings",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["druchii-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "sorceress",
+      "type": "hero",
+      "name": "Sorceress",
+      "plural": "Sorceresses",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["druchii-heroes-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Dark Magic (Druchii)"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Sorceress is a wizard and casts Dark Magic."},
+        {"rulename": "Armoured Casting", "ruleFull": "The Sorceress may wear armour from her list, but can't cast spells while she wears it."}
+      ]
+    },
+    {
+      "id": "beastmaster",
+      "type": "hero",
+      "name": "Beastmaster",
+      "plural": "Beastmasters",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["druchii-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Slavehounds", "ruleFull": "Up to three Slavehounds may accompany the Beastmaster. They are bought as henchmen."}
+      ]
+    },
+    {
+      "id": "corsairs",
+      "type": "henchman",
+      "name": "Corsair",
+      "plural": "Corsairs",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["corsairs-equipment-list"],
+      "specialRules": [
+        {"rulename": "Sea Dragon Cloaks", "ruleFull": "Corsairs may wear Sea Dragon Cloaks though they are not Heroes."}
+      ]
+    },
+    {
+      "id": "shades",
+      "type": "henchman",
+      "name": "Shade",
+      "plural": "Shades",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["shades-equipment-list"],
+      "specialRules": [
+        {"rulename": "Natural Stealth", "ruleFull": "While a Shade is hidden, enemy models use half their Initiative to see whether they spot it."}
+      ]
+    },
+    {
+      "id": "witch-elves",
+      "type": "henchman",
+      "name": "Witch Elf",
+      "plural": "Witch Elves",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 45,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["witch-elves-equipment-list"],
+      "specialRules": [
+        {"rulename": "Frenzy", "ruleFull": "Witch Elves are subject to frenzy."},
+        {"rulename": "Maibd Poison", "ruleFull": "A warband with Witch Elves may buy Black Lotus as a Common item at 5 gc a dose. Lotus bought this way is for Witch Elves only, must be used in the next battle, and can't be sold or traded."}
+      ]
+    },
+    {
+      "id": "slavehounds",
+      "type": "henchman",
+      "name": "Slavehound",
+      "plural": "Slavehounds",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 25,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 7, "ws": 4, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. Slavehounds are animals and need no weapons.",
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "Slavehounds are animals and never gain experience. The warband may have them only if it has a Beastmaster."},
+        {"rulename": "Beastmaster", "ruleFull": "While the Beastmaster is within 6\" and not knocked down, stunned or out of action, a Slavehound may take any Leadership test on his Leadership instead of its own; it can never use the leader's. If the Beastmaster can't fight in a battle, nor can the Slavehounds, and with no Beastmaster they stay in camp."},
+        {"rulename": "Pack Work", "ruleFull": "When a Slavehound knows where an enemy model is (it sees it, or has found it hidden), the Beastmaster and every other Slavehound of the warband may declare a charge against that model even without seeing it, with no Initiative roll."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Druchii", "new": true},
+  "specialSkillsList": [
+    {"name": "Fury of Khaine (Druchii)", "pdfName": "Fury of Khaine", "description": "If the Dark Elf takes all his opponents out of action he may make a 4\" follow-up move. Reaching another enemy starts a new combat, fought in the next turn, in which he counts as charging."},
+    {"name": "Fey Quickness", "ours": "Fey Quickness"},
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Master of Poisons (Druchii)", "pdfName": "Master of Poisons", "description": "If the Hero doesn't search for rare items he may make D2 doses of Dark Venom instead. It must be used in the next battle and can't be sold or traded to other warbands."},
+    {"name": "Vraithen Master", "description": "The Hero ignores the long range penalty with any crossbow-type weapon. If he didn't move this turn he may shoot a repeater crossbow twice with no penalty, or three times at -1 to hit."},
+    {"name": "Survival of the Fittest", "description": "When the Hero's Serious Injury roll is a death, he takes a Leadership test on his unmodified Leadership (no holy relics or other help). If he passes, he survives but misses the next D3 battles."},
+    {"name": "Excellent Sight", "description": "The Hero spots hidden enemies from twice his Initiative in inches."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {"name": "Draich", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": 1, "rulesPage": 7},
+    {"name": "Darksteel Blade", "type": "Weapon", "subtype": "Melee", "rarity": 9, "dice": null, "rulesPage": 7}
+  ],
+  "flags": [
+    {"page": 1, "what": "Most headings (fighters', lists', skills' and items' names) are images the text layer lacks; each fighter was matched by the name in his own text, and pages 2, 3 and 8 were read as images for the skill table, the list titles and the skill names."},
+    {"page": 2, "what": "A Druchii warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "The Druchii maximum (M5 WS7 BS7 S4 T3 W3 I9 A4 Ld10) has T3 where our Elf has T4, so they take a new race, Elf (Druchii)."},
+    {"page": 2, "what": "The skill table has no Strength column: no Druchii Hero learns Strength skills."},
+    {"page": 3, "what": "The Repeater crossbow is 20 gc on the lists (ours is 40 gc), a starting price only (the Naggaroth Prices rule). The Sea Dragon Cloak is 30 gc (ours 50 gc) and Dark Venom 15 gc: taken as printed."},
+    {"page": 3, "what": "The Darksteel blade is \"3 x price\": a stub with no price of its own (3 × price), like our Gromril Weapon, Rare 9, its rules on p7 (Critical Damage, Wicked Edge; heroes only). The Draich is a stub at 25 gc (25+1D6, Rare 8, Strength as user +2, Two-handed, Swift), its rules on p7."},
+    {"page": 3, "what": "The Beastlash links our Beastlash at the list's 10 gc (the PDF prices it 10+D6, Rare 8)."},
+    {"page": 6, "what": "Slavehounds come only with a Beastmaster (0-3, \"if it also includes a Beastmaster\"): our counts can't tie one fighter's to another's, so it is said in their Animals rule."},
+    {"page": 8, "what": "The PDF's Sea Dragon Cloak gives +2 to the save against shooting (5+ with none) and +1 in close combat (6+ with none); ours gives a 5+ save in close combat and 4+ against missiles. Linked to ours as it is."},
+    {"page": 8, "what": "The special skills are a new group, Druchii. Fey Quickness and Infiltration (\"identical to the Skaven skill\") are ours. Fury of Khaine (ours adds no follow-up in the opponent's turn) and Master of Poisons (ours makes D3-1 doses, the PDF D2) are named apart. The blackletter heading reads \"Vraithen Master\", taken as printed."},
+    {"page": 9, "what": "Dark Magic differs from our Dark Elf Magic (Doombolt is Difficulty 8, ours 9; Deathspasm 9, ours 10; spell 4 is Black Blade of Khaine, ours Flamesword), so it is a new lore, Dark Magic (Druchii), in spells.json."}
+  ]
+}

@@ -250,6 +250,7 @@ RACES: dict[str, str | None] = {
     "undead": "Undead",
     "skaven": "Skaven",
     "bull centaur": "Bull Centaur",
+    "vampire": "Vampire",  # the PDFs' (the Strigoi Vampire, the Masters of Horror's Thrall); no snapshot page's
 }
 # Fighters mordheimer gives no race, settled (William, 4 Nov 2026: take recommendations): the Beastmen's Minotaur
 # takes our Minotaur; the Cursed Cavalcade's fighters stay raceless. The review (William, 5 Nov 2026: W10): the
@@ -260,6 +261,8 @@ RACES_BY_FIGHTER: dict[tuple[str, str], str] = {
     ("carnival-of-chaos", "Brute"): "Human",
     ("carnival-of-chaos", "Tainted One"): "Human",
     ("lizardmen", "Kroxigor"): "Kroxigor",
+    # the Grail Companions PDF's Grail Knight maximum (p2); its Companions' is our Human
+    ("bretonnian-grail-companions", "Grail Knight"): "Grail Knight",
 }
 # A warband's own maximum is a race of its own, and the Undead warband's Vampire is our Vampire
 RACES_BY_PAGE: dict[tuple[str, str], str] = {
@@ -268,6 +271,8 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("the-sons-of-hashut", "bull centaur"): "Bull Centaur (Sons of Hashut)",
     ("undead", "undead"): "Vampire",
     ("halflings", "ogre"): "Ogre (Halflings)",  # the Halflings PDF's Ogre maximum (p1), unlike our Ogre's
+    ("druchii", "elf"): "Elf (Druchii)",  # the Druchii PDF's maximum (p2): T3, our Elf's T4
+    ("masters-of-horror", "wulfen"): "Werecreature (Masters of Horror)",  # the Wolfman's maximum (p1)
 }
 CREATURES = frozenset(
     {

@@ -286,6 +286,28 @@
     ]
   },
   {
+    "name": "Druchii",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "druchii",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Fey Quickness",
+      "Infiltration",
+      "Fury of Khaine (Druchii)",
+      "Master of Poisons (Druchii)",
+      "Vraithen Master",
+      "Survival of the Fittest",
+      "Excellent Sight"
+    ]
+  },
+  {
     "name": "Dwarf Exiled Engineers",
     "for_everyone": false,
     "warbands": [
@@ -395,6 +417,35 @@
     "how": "intersection",
     "skills": [
       "Animosity"
+    ]
+  },
+  {
+    "name": "Grail Companions",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "bretonnian-grail-companions",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Virtue of the Impetuous",
+      "Virtue of Noble Disdain (Grail Companions)",
+      "Virtue of Heroism",
+      "Virtue of Stoicism",
+      "Virtue of the Penitent",
+      "Virtue of the Ideal",
+      "Virtue of Audacity",
+      "Virtue of Purity (Grail Companions)",
+      "Virtue of Duty",
+      "Virtue of the Joust",
+      "Virtue of Confidence",
+      "Virtue of Knightly Temper",
+      "Virtue of Discipline (Grail Companions)",
+      "Virtue of Empathy"
     ]
   },
   {
@@ -534,6 +585,25 @@
       "Sweeping blow",
       "Mutant (Marauders of Chaos)",
       "Heart of the warrior"
+    ]
+  },
+  {
+    "name": "Masters of Horror",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "masters-of-horror",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Surgeon",
+      "Alchemist",
+      "Apt Revitalist",
+      "Lunatic"
     ]
   },
   {
@@ -966,6 +1036,32 @@
     ]
   },
   {
+    "name": "Slayer Cult",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dwarf-slayer-cult",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Ferocious Charge",
+      "True Grit",
+      "Deathwish",
+      "Monster Slayer (Slayer Cult)",
+      "Berserker (Slayer Cult)",
+      "Deathblow",
+      "Axe Mastery",
+      "Thick Skull (Slayer Cult)",
+      "Songster",
+      "Song of Honor",
+      "Relentless"
+    ]
+  },
+  {
     "name": "Sons of Hashut",
     "for_everyone": false,
     "warbands": [
@@ -982,6 +1078,27 @@
       "True Grit",
       "Thick Skull",
       "Unlimited Hatred"
+    ]
+  },
+  {
+    "name": "Survivors of Strigos",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "survivors-of-strigos",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Iron Sinews",
+      "Great Thirster",
+      "Curse of the Revenant",
+      "Dark Arts",
+      "Light Fingers",
+      "Practiced Arm"
     ]
   },
   {

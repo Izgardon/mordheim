@@ -104,11 +104,13 @@ def lines_of(page: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
     return found
 
 
-def _stub_cost(slug: str, page: dict[str, Any], name: str) -> int:
+def _stub_cost(slug: str, page: dict[str, Any], name: str) -> tuple[int | None, str]:
+    """The stub's price from the first line naming it: its cost, or none and a note for a line priced by its base
+    item ("3 × price", the Druchii's Darksteel blade)."""
     for _list, line, cost in lines_of(page):
         price = line_price(cost)
-        if loose_key(line) == loose_key(name) and price.cost is not None:
-            return price.cost
+        if loose_key(line) == loose_key(name) and (price.cost is not None or price.cost_note):
+            return price.cost, price.cost_note
     raise ValueError(f"pdf-warbands/{slug}.json: no priced line names the stub {name!r}")
 
 
@@ -126,10 +128,9 @@ def stub_items(
             found, how = index.find(stub["name"])
             if found is not None:
                 raise ValueError(f"pdf-warbands/{slug}.json: the stub {stub['name']!r} is our {found['name']!r} {how}")
-            cost = {"cost": _stub_cost(slug, page, stub["name"]), "dice": stub.get("dice"), "dice_multiplier": None}
-            row = _row(
-                {**cost, "cost_note": ""}, stub.get("rarity"), [{"type": warband["slug"], "excluded": False}], ""
-            )
+            price, note = _stub_cost(slug, page, stub["name"])
+            cost = {"cost": price, "dice": stub.get("dice"), "dice_multiplier": None, "cost_note": note}
+            row = _row(cost, stub.get("rarity"), [{"type": warband["slug"], "excluded": False}], "")
             item = _item(
                 stub["name"],
                 stub["type"],
@@ -202,9 +203,8 @@ def render_pdf(pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]]) ->
             price = prices[stub["name"]]
             rarity = f"Rare {price['rarity']}" if price["rarity"] else "Common"
             dice = f"+{price['dice']}D6" if price["dice"] else ""
-            lines.append(
-                f"- Stub: {stub['name']}, {price['cost']}{dice} gc, {rarity}; its rules are on p{stub['rulesPage']}."
-            )
+            cost = price["cost_note"] if price["cost"] is None else f"{price['cost']}{dice} gc"
+            lines.append(f"- Stub: {stub['name']}, {cost}, {rarity}; its rules are on p{stub['rulesPage']}.")
         for flag in page.get("flags") or []:
             lines.append(f"- Flag (p{flag['page']}): {_cell(flag['what'])}")
     return "\n".join(lines) + "\n"

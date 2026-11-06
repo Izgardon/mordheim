@@ -1116,6 +1116,141 @@
       "how": "overrides.json"
     },
     {
+      "name": "Virtue of Noble Disdain (Grail Companions)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Heroism",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Stoicism",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of the Penitent",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of the Ideal",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Audacity",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Purity (Grail Companions)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Duty",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of the Joust",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Confidence",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Knightly Temper",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Discipline (Grail Companions)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Empathy",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fury of Khaine (Druchii)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Master of Poisons (Druchii)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Vraithen Master",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Survival of the Fittest",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Excellent Sight",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Deathwish",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Monster Slayer (Slayer Cult)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Berserker (Slayer Cult)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Deathblow",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Axe Mastery",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Thick Skull (Slayer Cult)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Songster",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Song of Honor",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Relentless",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
       "name": "Quiet as a Mouse",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1151,6 +1286,26 @@
       "how": "overrides.json"
     },
     {
+      "name": "Surgeon",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Alchemist",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Apt Revitalist",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Lunatic",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
       "name": "Beastkin",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1168,6 +1323,36 @@
     {
       "name": "Twistkin",
       "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Iron Sinews",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Great Thirster",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Curse of the Revenant",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Dark Arts",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Light Fingers",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Practiced Arm",
+      "setting": "sylvania",
       "how": "overrides.json"
     }
   ],
