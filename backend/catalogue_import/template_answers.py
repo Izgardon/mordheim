@@ -263,6 +263,8 @@ RACES_BY_FIGHTER: dict[tuple[str, str], str] = {
     ("lizardmen", "Kroxigor"): "Kroxigor",
     # the Grail Companions PDF's Grail Knight maximum (p2); its Companions' is our Human
     ("bretonnian-grail-companions", "Grail Knight"): "Grail Knight",
+    # the Necrarchs PDF's Necrarch Vampire maximum (p10), unlike our Vampire's; its Thrall is our Vampire
+    ("necrarchs-the-soul-stealers", "Necrarch Vampire"): "Necrarch Vampire",
 }
 # A warband's own maximum is a race of its own, and the Undead warband's Vampire is our Vampire
 RACES_BY_PAGE: dict[tuple[str, str], str] = {

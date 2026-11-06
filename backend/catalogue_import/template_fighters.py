@@ -39,6 +39,12 @@ LARGE_RULES = {"large", "large target", "large monster"}
 OURS = {"large": ("Large", "Trait"), "wizard": ("Wizard", "Caster"), "priest": ("Priest", "Caster")}
 
 
+def is_prayers(lore: str) -> bool:
+    """A lore a priest casts from: prayers, or the Funerary Rites of a Priest of Morr, who "is not a wizard" (the
+    Vampire Hunters of Sylvania's PDF, p11)."""
+    return "Prayers" in lore or lore.startswith("Funerary Rites")
+
+
 @dataclass
 class FighterLog:
     """What the report lists about the fighters."""
@@ -224,7 +230,7 @@ def build_fighter(
     base, changes = skill_types(page, fighter, context["variants"], log, context.get("special_groups"))
     stats = profile(page, fighter, log)
     variant_numbers(page, plain(fighter["name"]), stats, changes)
-    caster = ("Priest" if all("Prayers" in lore["name"] for lore in lores) else "Wizard") if lores else "No"
+    caster = ("Priest" if all(is_prayers(lore["name"]) for lore in lores) else "Wizard") if lores else "No"
     if lores:
         log.casters.append((page, fighter["name"], caster, [lore["name"] for lore in lores]))
     group = fighter.get("groupSize") or {}

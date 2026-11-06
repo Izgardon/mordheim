@@ -157,7 +157,9 @@ class BookLookups:
             (row.type, lookup_key(row.name)): row for row in specials if owner_kind_of(row.type) != GENERAL
         }
         self.shared, self.kept, self.own_names = shared_names({(row.name, row.type): row for row in specials})
-        self.spells = {lookup_key(row.name): row for row in Spell.objects.filter(**book)}
+        spells = list(Spell.objects.filter(**book))
+        self.spells = {lookup_key(row.name): row for row in spells}
+        self.lore_spells = {(row.type, lookup_key(row.name)): row for row in spells}
         self.items: dict[tuple[str, str], Item] = {}
         self.item_names: dict[str, Item] = {}
         for item in Item.objects.filter(**book, archived_at__isnull=True):  # not the items the import dropped
@@ -227,14 +229,16 @@ class BookLookups:
         return True
 
     def spell(self, item: Any, owner: str, lore: str = "") -> Spell | None:
-        """The book's spell of the item's name, else his own, created under `lore` (the entry's `spell_lore`: his
-        spells as his source names them, the Dark Mage's "Dark Magic") or "<own_type> - <name>"."""
+        """The book's spell of the item's name (in `lore`, the entry's `spell_lore`, when he has one: the Dark Mage's
+        Shade Mount is his Dark Magic's, not the Sorcerous Society's Elemental Lore of Air's), else his own, created
+        under `lore` (his spells as his source names them, the Dark Mage's "Dark Magic") or "<own_type> - <name>"."""
         name, fields = spell_fields(item)
         if not name:
             return None
-        spell = self.spells.get(lookup_key(name))
+        lore = lore.strip()
+        spell = self.lore_spells.get((lore, lookup_key(name))) if lore else self.spells.get(lookup_key(name))
         if spell is None:  # his own spell (the Dark Mage's six), as specials and skills are (BUG-54)
-            spell_type = lore.strip() or self.own_type_of(owner)
+            spell_type = lore or self.own_type_of(owner)
             if book_roll_taken(spell_type, fields["roll"]):  # his lore keeps the first on each roll (spells/rolls.py)
                 self.warnings.append(
                     f"  Spell '{name}' ({spell_type}): roll {fields['roll']} is taken, saved with none"
@@ -242,6 +246,7 @@ class BookLookups:
                 fields["roll"] = None
             spell = Spell.objects.create(name=name, type=spell_type, **fields)
             self.spells[lookup_key(name)] = spell
+            self.lore_spells[(spell_type, lookup_key(name))] = spell
             self.warnings.append(f"  Created spell '{name}' ({spell_type}) for '{owner}'")
         return spell
 

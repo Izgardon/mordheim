@@ -25,6 +25,11 @@ check over every file.
 | `nipponese-expedition.json` | nipponese-expedition (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf | 1-8 (text layer; page 2, a scan, as an image) | 6 Nov 2026 |
 | `snotlings.json` | snotlings (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Snotlings.pdf | 1-11 (text layer; page 2 as an image) | 6 Nov 2026 |
 | `outlaws-of-stirwood-forest-redux.json` | outlaws-of-stirwood-forest-redux (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Outlaws%20of%20Stirwood%20Forest%2C%20Redux.pdf | 1-6 (pages 2-4 as images) | 6 Nov 2026 |
+| `necrarchs-the-soul-stealers.json` | necrarchs-the-soul-stealers (2a, Sylvania) | https://www.broheim.net/downloads/lod/LOD1.pdf#page=5 | 5-10 of Letters of the Damned #1 (text layer; the skill table from a page crop) | 6 Nov 2026 |
+| `protectorate-of-sigmar.json` | protectorate-of-sigmar (2a, Mordheim 2a) | https://www.broheim.net/downloads/lod/LOD3.pdf#page=8 | 8-12 of Letters of the Damned #3 (text layer) | 6 Nov 2026 |
+| `sorcerous-society.json` | sorcerous-society (2a, Mordheim 2a) | https://www.broheim.net/downloads/lod/LOD4.pdf#page=6 | 6-13 of Letters of the Damned #4 (text layer) | 6 Nov 2026 |
+| `vampire-hunters-of-sylvania.json` | vampire-hunters-of-sylvania (2a, Sylvania) | https://www.broheim.net/downloads/lod/LOD5.pdf#page=9 | 9-13 of Letters of the Damned #5 (text layer) | 6 Nov 2026 |
+| `dreamwalkers-cult-of-morr.json` | dreamwalkers-cult-of-morr (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Dreamwalkers,%20Cult%20Of%20Morr.pdf | 15-22 (text layer; 1-4 and 23-25 scans of art, 7-14 background) | 6 Nov 2026 |
 
 ## Adding a warband
 
@@ -33,9 +38,9 @@ check over every file.
    heading set as an image), and say which in its flags.
 2. Write `<type-slug>.json` in this shape, its `warbandType` that slug. Name each line's item as we name it or as
    one of its tags (an alias for a spelling of the PDF's own), give each item we lack a stub with the page of its
-   rules, and flag every doubt with its page; leave a number you can't read empty and flag it. Check each special
-   skill and item against all of ours, whatever its name (William, 6 Nov 2026: "keep checking for matching skills
-   and items, just ask me going forward"):
+   rules (one another page declares too is one item, with a price for each), and flag every doubt with its page;
+   leave a number you can't read empty and flag it. Check each special skill and item against all of ours, whatever
+   its name (William, 6 Nov 2026: "keep checking for matching skills and items, just ask me going forward"):
    - both the name and the effect ours: link ours;
    - the effect ours under another name: keep it apart (an item: the line links a stub of its own), and list it in
      the vet file's decisions as a possible match;

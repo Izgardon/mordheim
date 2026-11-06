@@ -466,5 +466,17 @@
     "initiative": "9",
     "attacks": "4",
     "leadership": "6"
+  },
+  {
+    "name": "Necrarch Vampire",
+    "movement": "6",
+    "weapon_skill": "4",
+    "ballistic_skill": "4",
+    "strength": "6",
+    "toughness": "6",
+    "wounds": "4",
+    "initiative": "9",
+    "attacks": "3",
+    "leadership": "10"
   }
 ]

@@ -20,6 +20,7 @@ snapshot so the template import builds it the same way. A file's own keys:
 `check_pdf.py` checks every file against the catalogue (`pdf_check.py`).
 """
 
+from html import escape
 from pathlib import Path
 from typing import Any
 
@@ -47,14 +48,32 @@ def put_aliases_right(page: dict[str, Any]) -> None:
         entry["title"] = names.get(norm_name(entry["title"]), entry["title"])
 
 
+def tables_as_html(text: str) -> str:
+    """A rule's tables, written as lines of cells ("2D6 | Result", then a line a row), as the HTML tables the
+    template import reads (template_text.py), so their rows stay lines rather than join as one wrapped paragraph."""
+    blocks = []
+    for block in text.split("\n\n"):
+        lines = block.split("\n")
+        if len(lines) > 1 and all(" | " in line for line in lines):
+            cells = (
+                "<tr>" + "".join(f"<td>{escape(cell.strip(), quote=False)}</td>" for cell in line.split("|")) + "</tr>"
+                for line in lines
+            )
+            block = f"<table>{''.join(cells)}</table>"
+        blocks.append(block)
+    return "\n\n".join(blocks)
+
+
 def load_pdf_pages(root: Path = PDF_SOURCES) -> dict[str, dict[str, Any]]:
-    """Every file's page by its name (its type's slug), its aliases put right."""
+    """Every file's page by its name (its type's slug), its aliases put right and its rules' tables made HTML."""
     pages = {}
     for path in sorted(root.glob("*.json")):
         page = load_json(path)
         if page.get(TYPE) != path.stem:
             raise ValueError(f"pdf-warbands/{path.name}: its warbandType should be {path.stem!r}")
         put_aliases_right(page)
+        for rule in [*page["specialRules"], *(rule for row in page["fighters"] for rule in row["specialRules"])]:
+            rule["ruleFull"] = tables_as_html(rule["ruleFull"])
         pages[path.stem] = page
     return pages
 
@@ -121,10 +140,13 @@ def stub_items(
     pages: dict[str, dict[str, Any]], items: list[dict[str, Any]], types: list[dict[str, Any]]
 ) -> list[dict[str, Any]]:
     """Each page's stubs as items (out/items.json's shape): no rules, one price row for the page's type at its line's
-    price, with the rarity and dice the PDF prints. A stub that names one of our items stops the build: link it."""
+    price, with the rarity and dice the PDF prints. A stub two pages declare (the Protectorate of Sigmar's Blessed
+    Bolts, which the Vampire Hunters of Sylvania buy too) is one item with a row for each, made from the first. A stub
+    that names one of our items stops the build: link it."""
     index = ItemIndex(items)
     by_slug = {row["slug"]: row for row in types}
-    stubs = []
+    stubs: list[dict[str, Any]] = []
+    made: dict[str, dict[str, Any]] = {}
     for slug, page in pages.items():
         warband = by_slug[page[TYPE]]
         for stub in page.get("stubs") or []:
@@ -134,6 +156,9 @@ def stub_items(
             price, note = _stub_cost(slug, page, stub["name"])
             cost = {"cost": price, "dice": stub.get("dice"), "dice_multiplier": None, "cost_note": note}
             row = _row(cost, stub.get("rarity"), [{"type": warband["slug"], "excluded": False}], "")
+            if loose_key(stub["name"]) in made:
+                made[loose_key(stub["name"])]["availabilities"].append(row)
+                continue
             item = _item(
                 stub["name"],
                 stub["type"],
@@ -143,7 +168,8 @@ def stub_items(
                 link_url=page["sourceLink"],
                 availabilities=[row],
             )
-            stubs.append({**item, "origin": ORIGIN, "needs_rules": True})
+            made[loose_key(stub["name"])] = {**item, "origin": ORIGIN, "needs_rules": True}
+            stubs.append(made[loose_key(stub["name"])])
     return stubs
 
 
@@ -198,13 +224,18 @@ def render_pdf(pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]]) ->
     for slug, page in pages.items():
         counts = [len(page["fighters"]), len(page.get("aliases") or []), len(page.get("stubs") or [])]
         lines.append(f"| {slug} | {page[TYPE]} | {' | '.join(map(str, counts))} | {len(page.get('flags') or [])} |")
-    prices = {item["name"]: item["availabilities"][0] for item in stubs}
+    prices = {
+        (item["name"], warband["type"]): row
+        for item in stubs
+        for row in item["availabilities"]
+        for warband in row["warbands"]
+    }
     for page in pages.values():
         lines += ["", f"### {page['name']}", ""]
         for row in page.get("aliases") or []:
             lines.append(f'- Alias (p{row["page"]}): "{_cell(row["pdf"])}" is our {_cell(row["ours"])}.')
         for stub in page.get("stubs") or []:
-            price = prices[stub["name"]]
+            price = prices[(stub["name"], page[TYPE])]
             rarity = f"Rare {price['rarity']}" if price["rarity"] else "Common"
             dice = f"+{price['dice']}D6" if price["dice"] else ""
             cost = price["cost_note"] if price["cost"] is None else f"{price['cost']}{dice} gc"

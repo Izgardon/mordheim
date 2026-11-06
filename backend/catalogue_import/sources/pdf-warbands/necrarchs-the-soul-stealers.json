@@ -1,0 +1,231 @@
+{
+  "warbandType": "necrarchs-the-soul-stealers",
+  "name": "Necrarchs, the Soul Stealers",
+  "source": "LOD1",
+  "sourceLink": "https://www.broheim.net/downloads/lod/LOD1.pdf#page=5",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Death of the Leader", "ruleFull": "If the Necrarch Vampire dies, the Thrall becomes the leader, with every bonus the leader has, and at once rolls for one spell. No new Necrarch Vampire may be hired, but one of the Acolytes may be made the new Thrall: he keeps his profile and becomes undead (Immune to Poison and Psychology, causes fear, No Pain). If the Necrarch Vampire and the Thrall are destroyed at the same time, the warband is gone."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "necrarch-hero-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "necrarch-henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "necrarch-miscellaneous-equipment",
+      "title": "Miscellaneous Equipment (Heroes only)",
+      "caveat": "",
+      "items": [
+        {"name": "staff of damnation", "alias": "", "cost": {"cost": 25, "costSuffix": "Necrarch Vampire only"}},
+        {"name": "unholy relic", "alias": "", "cost": {"cost": 15}},
+        {"name": "damned book", "alias": "", "cost": {"cost": 45}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "necrarch-vampire",
+      "type": "hero",
+      "name": "Necrarch Vampire",
+      "plural": "Necrarch Vampires",
+      "race": "vampire",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 110,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 2, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["necrarch-hero-equipment-list", "necrarch-miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "spellLores": ["Necromancy", "Dreaded Scrolls of Nagash"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Necrarch Vampire may use his Leadership instead of their own."},
+        {"rulename": "Cause Fear", "ruleFull": "The Necrarch Vampire causes fear."},
+        {"rulename": "Wizard", "ruleFull": "The Necrarch Vampire is a wizard and starts with one spell rolled at random from Necromancy. With Pupil of Nagash he also rolls on the Dreaded Scrolls of Nagash."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Necrarch Vampire is not affected by psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Necrarch Vampire is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Necrarch Vampire treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "thrall",
+      "type": "hero",
+      "name": "Thrall",
+      "plural": "Thralls",
+      "race": "vampire",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["necrarch-hero-equipment-list", "necrarch-miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "The Thrall causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Thrall is not affected by psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Thrall is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Thrall treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "acolytes",
+      "type": "hero",
+      "name": "Acolyte",
+      "plural": "Acolytes",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 35,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["necrarch-henchmen-equipment-list", "necrarch-miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Vassal", "ruleFull": "While the Necrarch Vampire can see an Acolyte who isn't in hand-to-hand combat, he may cast a spell from the Acolyte's place. If that casting rolls a double 1, whatever skills help (Mind Focus and the like), the Acolyte rolls on the Injury chart at +1."}
+      ]
+    },
+    {
+      "id": "skeletal-warriors",
+      "type": "henchman",
+      "name": "Skeletal Warrior",
+      "plural": "Skeletal Warriors",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 20,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["necrarch-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "Skeletal Warriors cause fear."},
+        {"rulename": "May not Run", "ruleFull": "Skeletal Warriors may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Skeletal Warriors are not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "Skeletal Warriors are not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "Skeletal Warriors treat a stunned result as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "Skeletal Warriors gain no experience."}
+      ]
+    },
+    {
+      "id": "zombies",
+      "type": "henchman",
+      "name": "Zombie",
+      "plural": "Zombies",
+      "race": "undead",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 1, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. Zombies carry no equipment and suffer no penalty for it.",
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "Zombies cause fear."},
+        {"rulename": "May not Run", "ruleFull": "Zombies may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Zombies are not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "Zombies are not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "Zombies treat a stunned result on the Injury chart as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "Zombies gain no experience."}
+      ]
+    },
+    {
+      "id": "abomination",
+      "type": "henchman",
+      "name": "Abomination",
+      "plural": "Abominations",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 1,
+      "groupSize": {"min": 1, "max": 1},
+      "costGc": 190,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 3, "bs": 0, "s": 4, "t": 5, "w": 3, "i": 2, "a": 3, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. The Abomination uses no weapons and suffers no penalty for it.",
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "The Abomination causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Abomination is not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Abomination is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Abomination treats a stunned result as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "The Abomination gains no experience."},
+        {"rulename": "Large", "ruleFull": "The Abomination is a Large Target, as the shooting rules define it."},
+        {"rulename": "Powered", "ruleFull": "If the Abomination is taken out of action, the model that did it gains a shard of wyrdstone. The Abomination needs a new shard before it can be animated again."},
+        {"rulename": "Spare Parts", "ruleFull": "The Abomination ignores rolls of 1 and 2 on the post-battle Injury table: it can't be destroyed."}
+      ]
+    },
+    {
+      "id": "waifs",
+      "type": "henchman",
+      "name": "Waif",
+      "plural": "Waifs",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["necrarch-henchmen-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Necrarchs, the Soul Stealers", "new": true, "note": "The Thrall may learn these only once he is a Wizard."},
+  "specialSkillsList": [
+    {"name": "Pupil of Nagash", "description": "The Hero at once rolls for a spell on the Dreaded Scrolls of Nagash, and may roll on them again instead of taking a later skill."},
+    {"name": "Master of the Black Arts", "description": "The range of every spell the Hero casts is increased by half."},
+    {"name": "Pull of Undeath", "description": "Leader only. While the Hero is within 4\" of an undead henchman, that henchman is taken out of action only on a natural 6."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 6}
+  ],
+  "stubs": [
+    {"name": "Staff of Damnation", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 6},
+    {"name": "Damned Book", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": 3, "rulesPage": 6}
+  ],
+  "flags": [
+    {"page": 5, "what": "The warband is the issue's pages 5 to 10 (Letters of the Damned #1); the rest of the issue is other articles."},
+    {"page": 5, "what": "A Necrarch warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 5, "what": "Death of the Leader: the new leader \"may immediately roll on the spell list for one spell\" without naming the list. The Thrall has no lore of his own, so none is set: the player adds it."},
+    {"page": 5, "what": "The special skills are a new group, Necrarchs, the Soul Stealers; none is one of ours. The PDF says the Necrarch Vampire, or the Thrall \"with the Wizard skill\", may use them: the Thrall ticks Special, and the group's note says he may learn them only once he is a Wizard. Pull of Undeath is \"Available only to the Leader\"."},
+    {"page": 6, "what": "The skill table is an image (read from a page crop): Necrarch Academic, Strength, Speed; Thrall Academic, Strength, Speed; Acolyte Academic, Speed. It has no Special column; Special is ticked from the special skills' own text."},
+    {"page": 6, "what": "The Staff of Damnation and the Damned Book carry an asterisk on the list with no footnote. Their New Equipment entries: the Staff of Damnation is \"Necrarch only\", 25 gc, with no rarity printed (read as Common), close combat, Strength as user, Two-Handed and Magic-well (the Necrarch Vampire may store a spell he casts in it and release it in a later shooting phase instead of casting); the Damned Book is 45+3D6 gc, Rare 11, Cursed Aura (enemy models within 2\" are at -1 to hit in close combat). Both are stubs."},
+    {"page": 6, "what": "The Miscellaneous Equipment is \"Heroes Only\": every Hero buys from it. The Unholy Relic is our Holy (Unholy) Relic."},
+    {"page": 7, "what": "Acolytes, though Heroes, buy from the Henchmen Equipment List, as the PDF says."},
+    {"page": 8, "what": "No group sizes are printed. The Abomination is one model (0-1), a construct, so it takes no race."},
+    {"page": 10, "what": "The Racial Maximum is printed for the Necrarch Vampire only (M6 WS4 BS4 S6 T6 W4 I9 A3 Ld10), unlike our Vampire's: it is a new race, Necrarch Vampire. The Thrall takes our Vampire."},
+    {"page": 10, "what": "The Dreaded Scrolls of Nagash are a new lore. Black Breath's one S3 hit falls on \"all models within 2''\" without saying of what; Servants Eternal \"may only be used once\" without saying a game or ever. Both are kept as printed."}
+  ]
+}

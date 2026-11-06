@@ -1,0 +1,224 @@
+{
+  "warbandType": "dreamwalkers-cult-of-morr",
+  "name": "Dreamwalkers, Cult Of Morr",
+  "source": "MFB",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Dreamwalkers,%20Cult%20Of%20Morr.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Chosen of Morr", "ruleFull": "When the warband is made, the Priest of Morr rolls a D6: on a 4+ the warband may hire the Dreamer. Otherwise the Priest rejects him and leads the warband himself; after its next battle the warband may try again, paying the Dreamer's cost as normal. A genuine Dreamer is the leader until he dies, when the Priest leads again. Once a genuine Dreamer has died, the warband may never hire another."},
+    {"rulename": "No Fear of the Dead", "ruleFull": "Warriors of the warband feel no fear when fighting vampires, necromancers and their undead."},
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire any hired sword a Human Mercenary, Witch Hunters or Sisters of Sigmar warband may, but none of a necromantic or chaotic nature."},
+    {"rulename": "Alliances", "ruleFull": "In multiplayer games the warband may never ally with a warband of a necromantic or chaotic nature (Undead, Possessed, Skaven, Beastmen, Dark Elves and the like)."},
+    {"rulename": "Hate Undead", "ruleFull": "Every Hero of the warband hates all vampires, necromancers and undead."},
+    {"rulename": "New Skills", "ruleFull": "A Hero who gains a new skill on an advance chooses from the rulebook's skill lists under the same restrictions as Witch Hunters and Sisters of Sigmar."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "dreamwalkers-equipment-list",
+      "title": "Dreamwalkers Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "rapier", "alias": "", "cost": {"cost": 15, "costSuffix": "Andanti only"}},
+        {"name": "main gauche (dreamwalkers)", "alias": "", "cost": {"cost": 7, "costSuffix": "Andanti only"}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30, "costSuffix": "Andanti only"}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "priest-of-morr-equipment-list",
+      "title": "Priest of Morr Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}}
+      ]
+    },
+    {
+      "id": "morr-worshwishpers-equipment-list",
+      "title": "Morr Worshwishpers Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "ostermark-deaths-heads-equipment-list",
+      "title": "Ostermark Death's Heads Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "priest-of-morr",
+      "type": "hero",
+      "name": "Priest of Morr",
+      "plural": "Priests of Morr",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 9},
+      "equipmentLists": ["priest-of-morr-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Funerary Rites"],
+      "specialRules": [
+        {"rulename": "Leader Without a Dreamer", "ruleFull": "While the warband has no genuine Dreamer, the Priest of Morr leads it (Chosen of Morr): warriors within 6\" of him may use his Leadership instead of their own."},
+        {"rulename": "Funerary Rites", "ruleFull": "The Priest of Morr is no wizard, but chooses a Funerary Rite, using the rules for magic. Instead of a skill from the Academic or Speed lists, an advance may roll a new rite from the Funerary Rites."},
+        {"rulename": "Loner", "ruleFull": "The Priest of Morr never takes All Alone tests."},
+        {"rulename": "Dagger and Scythe", "ruleFull": "The Priest of Morr may carry only a dagger and a scythe as weapons, and may never wear armour."}
+      ]
+    },
+    {
+      "id": "dreamer",
+      "type": "hero",
+      "name": "Dreamer",
+      "plural": "Dreamers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["dreamwalkers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Dreamer may use his Leadership instead of their own."},
+        {"rulename": "Guiding Dream", "ruleFull": "At the start of each battle the Dreamer rolls a D6 on the Guiding Dream table:\n\nD6 | Vision\n1 | Disturbing Vision: the Dreamer has -1\" Movement.\n2-3 | Vision of Truth: choose one of the opponent's Heroes; the Dreamer has +1 to hit him.\n4-5 | Empowering Vision: choose one of the opponent's Heroes; the Dreamer has +1 Strength when fighting him.\n6 | Infuriating Vision: choose one of the opponent's Heroes; the Dreamer is frenzied against him."}
+      ]
+    },
+    {
+      "id": "black-guards",
+      "type": "hero",
+      "name": "Black Guard of Morr",
+      "plural": "Black Guards of Morr",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 55,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["dreamwalkers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Silent Guardian", "ruleFull": "While a Black Guard is hidden, enemies must pass an Initiative test to spot him. He never suffers movement penalties for wearing armour."},
+        {"rulename": "Warhorse", "ruleFull": "With the optional mounted rules or the Blazing Saddles rules, a Black Guard may ride a Warhorse (M8 WS3 BS0 S3 T3 W1 I3 A1 Ld5), paying its cost; his save is then 4+ while mounted."}
+      ]
+    },
+    {
+      "id": "andanti",
+      "type": "hero",
+      "name": "Andanti",
+      "plural": "Andanti",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 6,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["dreamwalkers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Estalian Technique", "ruleFull": "The Andanti may parry with his rapier and his main gauche if he rolls under his Weapon Skill and no higher than his opponent's highest roll to hit, as the normal parry rules."},
+        {"rulename": "Andanti Knowledge", "ruleFull": "The Andanti has +1 to hit in close combat against a vampire."}
+      ]
+    },
+    {
+      "id": "deaths-heads",
+      "type": "henchman",
+      "name": "Death's Head of Ostermark",
+      "plural": "Death's Heads of Ostermark",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["ostermark-deaths-heads-equipment-list"],
+      "specialRules": [
+        {"rulename": "Expert Halberdier", "ruleFull": "A Death's Head may fight with his halberd in one hand and a shield in the other."}
+      ]
+    },
+    {
+      "id": "morr-worshwishpers",
+      "type": "henchman",
+      "name": "Morr Worshwishper",
+      "plural": "Morr Worshwishpers",
+      "race": "human",
+      "minQty": 0,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["morr-worshwishpers-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Dreamwalkers", "new": true},
+  "specialSkillsList": [
+    {"name": "Inspiring Presence", "description": "Dreamer only. Morr Worshwishpers within 12\" of the Dreamer, not 6\", may use his Leadership."},
+    {"name": "Fanatical", "description": "Dreamer only. Once per game, while the Dreamer is not out of action, stunned or knocked down, the warband may re-roll a failed Rout test."},
+    {"name": "Inured to Horror", "description": "The model is immune to fear and never takes All Alone tests."},
+    {"name": "Blessed by Morr", "description": "When fighting Undead, any spell that would affect the model is nullified on a D6 roll of 4+. A nullified spell still affects other models as normal."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {"name": "Main Gauche (Dreamwalkers)", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 18}
+  ],
+  "flags": [
+    {"page": 1, "what": "Pages 1 to 4 and 23 to 25 are scans with no text layer. Looked at as tiny thumbnails: the cover, blank pages and full-page art, no warband data. Pages 7 to 14 are the Lore (background). Page numbers here are the PDF's; the PDF prints its own from 1 on page 7."},
+    {"page": 15, "what": "A Dreamwalkers warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race."},
+    {"page": 15, "what": "Choice of Members says one Andanti, \"no more, no less!\", but his heading (p19) reads 0-1. Choice of Members is taken: exactly one."},
+    {"page": 16, "what": "No Fear of the Dead is the Special Rules' opening paragraph, which has no heading of its own: named here."},
+    {"page": 16, "what": "Chosen of Morr makes the Priest of Morr the leader while there is no Dreamer. Our templates have one leader, the Dreamer, so the Priest's leading is his rule, Leader Without a Dreamer."},
+    {"page": 17, "what": "The skill table's ticks are a symbol font, read from where the layout text places them: Dreamer all six; Black Guard Combat, Shooting, Strength, Special; Priest of Morr Academic, Speed, Special; Andanti Combat, Shooting, Speed, Special."},
+    {"page": 17, "what": "The Rapier is our Rapier, name and effect. The Main Gauche (Parry, armour saves at +1, 7 gc, Andanti only) does more than ours (only the +1 to armour saves), so it is a stub of its own, Main Gauche (Dreamwalkers)."},
+    {"page": 18, "what": "The special skills are a new group, Dreamwalkers; none is ours. Inured to Horror (immune to fear, never takes All Alone tests) is our Fearless under another name: kept apart, a possible match for William. Blessed by Morr is unlike our Protection of Sigmar, working only against Undead and leaving other models affected."},
+    {"page": 18, "what": "The Scythe has an entry (close combat, Strength as user +1, Difficult to use, two-handed) and the Priest of Morr may carry one, but no list prices it: it is on no list. The Priest's own list holds the Dagger alone."},
+    {"page": 19, "what": "A mounted Black Guard's save is \"+4\", read as 4+, as the PDF writes 4+ elsewhere (\"a +4\" for 4+ on p16). The Warhorse isn't on a list (\"paying its cost\"), so it is his rule."},
+    {"page": 20, "what": "Henchmen come in groups of 1-5."},
+    {"page": 22, "what": "The Funerary Rites are ours, rite for rite and Difficulty for Difficulty."}
+  ]
+}

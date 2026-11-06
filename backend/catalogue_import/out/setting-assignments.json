@@ -1181,6 +1181,26 @@
       "how": "overrides.json"
     },
     {
+      "name": "Inspiring Presence",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fanatical",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Inured to Horror",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Blessed by Morr",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
       "name": "Fury of Khaine (Druchii)",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1301,6 +1321,21 @@
       "how": "overrides.json"
     },
     {
+      "name": "Pupil of Nagash",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Master of the Black Arts",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Pull of Undeath",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
       "name": "Death before Dishonor",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1347,6 +1382,21 @@
     },
     {
       "name": "Netter (Ogre Hunting Party)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Unshakeable Faith",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Rousing Sermon",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Sigmar's Guidance",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
@@ -1427,6 +1477,31 @@
     },
     {
       "name": "Practiced Arm",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Iron Will",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Righteous Aura",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Thirst for Vengeance",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Blessing of Morr",
+      "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Touch of Darkness",
       "setting": "sylvania",
       "how": "overrides.json"
     },

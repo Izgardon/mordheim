@@ -8,9 +8,10 @@ from django.test import SimpleTestCase
 
 from catalogue_import.common import load_json
 from catalogue_import.pdf_check import Catalogue, check_page, load_catalogue
-from catalogue_import.pdf_warbands import ORIGIN, PDF_SOURCES, put_aliases_right, stub_items
+from catalogue_import.pdf_warbands import ORIGIN, PDF_SOURCES, put_aliases_right, stub_items, tables_as_html
 from catalogue_import.sources import OUT
 from catalogue_import.template_lists import ItemIndex
+from catalogue_import.template_text import clean_rule
 from catalogue_import.template_upgrades import halved
 from catalogue_import.templates import our_races_and_lores
 
@@ -223,6 +224,27 @@ class PdfImportTests(SimpleTestCase):
         [row] = stub["availabilities"]
         self.assertEqual((row["cost"], row["cost_note"], row["rarity"]), (None, "3 × price", 8))
 
+    def test_a_rules_table_keeps_its_rows_as_lines(self) -> None:
+        # the Dreamwalkers' Guiding Dream (PDF p21), a pre-battle roll whose words hold the table as written
+        text = "Roll a D6:\n\nD6 | Vision\n1 | -1\" Movement.\n2-6 | The opponent's Hero."
+        self.assertEqual(clean_rule(tables_as_html(text)), text)
+        self.assertEqual(tables_as_html("One line | of prose."), "One line | of prose.")
+
+    def test_a_stub_two_pages_declare_is_one_item_with_a_price_for_each(self) -> None:
+        # the Protectorate of Sigmar's Holy Water (5 gc) and Blessed Bolts, which the Vampire Hunters buy too
+        other = good_page()
+        other["warbandType"] = "sisters-of-sigmar"
+        other["equipmentLists"][0]["items"][2]["cost"] = {"cost": 15}
+        types = [*TYPES, {"slug": "sisters-of-sigmar", "setting": "mordheim-1a"}]
+        [stub] = stub_items({"witch-hunters": good_page(), "sisters-of-sigmar": other}, ITEMS, types)
+        self.assertEqual(
+            [(row["cost"], row["warbands"]) for row in stub["availabilities"]],
+            [
+                (10, [{"type": "witch-hunters", "excluded": False}]),
+                (15, [{"type": "sisters-of-sigmar", "excluded": False}]),
+            ],
+        )
+
     def test_half_a_price_rounds_up(self) -> None:
         # William, 6 Nov 2026: "yes always round up in mordheim for gold"
         self.assertEqual([halved(cost) for cost in (40, 35, None)], [20, 18, None])
@@ -271,6 +293,12 @@ class PdfImportTests(SimpleTestCase):
             self.assertIn("Excellent Sight", groups[name]["skills"])
         sight = [row for row in load_json(OUT / "skills.json") if row["name"] == "Excellent Sight"]
         self.assertEqual(len(sight), 1)
+
+    def test_a_priest_of_morr_casts_his_funerary_rites_as_a_priest(self) -> None:
+        # the Vampire Hunters of Sylvania's PDF (p11): "Priests of Morr are not wizards"
+        for slug in ("vampire-hunters-of-sylvania", "dreamwalkers-cult-of-morr"):
+            priest = next(row for row in self.templates[slug]["fighters"] if row["name"] == "Priest of Morr")
+            self.assertEqual(priest["caster"], "Priest", slug)
 
     def test_clan_moulders_twistkin_sells_the_rulebooks_mutations_at_half_price(self) -> None:
         # the Twistkin skill (PDF p4): a Stormvermin buys one of the rulebook's mutations at half its listed cost

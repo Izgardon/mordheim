@@ -17255,6 +17255,46 @@
     ]
   },
   {
+    "slug": "main-gauche-dreamwalkers",
+    "name": "Main Gauche (Dreamwalkers)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim-2a",
+    "source": "MFB",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Dreamwalkers,%20Cult%20Of%20Morr.pdf",
+    "tags": [
+      "main gauche (dreamwalkers)"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 7,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "dreamwalkers-cult-of-morr",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "draich",
     "name": "Draich",
     "variant": "",
@@ -17695,6 +17735,86 @@
     ]
   },
   {
+    "slug": "staff-of-damnation",
+    "name": "Staff of Damnation",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "sylvania",
+    "source": "LOD1",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD1.pdf#page=5",
+    "tags": [
+      "staff of damnation"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "necrarchs-the-soul-stealers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "damned-book",
+    "name": "Damned Book",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "sylvania",
+    "source": "LOD1",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD1.pdf#page=5",
+    "tags": [
+      "damned book"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 45,
+        "dice": 3,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "necrarchs-the-soul-stealers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "kanabo",
     "name": "Kanabo",
     "variant": "",
@@ -17927,6 +18047,198 @@
         "warbands": [
           {
             "type": "ogre-hunting-party",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "holy-water",
+    "name": "Holy Water",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "LOD3",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD3.pdf#page=8",
+    "tags": [
+      "holy water"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "protectorate-of-sigmar",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "vampire-hunters-of-sylvania",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "blessed-bolts",
+    "name": "Blessed Bolts",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "LOD3",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD3.pdf#page=8",
+    "tags": [
+      "blessed bolts"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "protectorate-of-sigmar",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "vampire-hunters-of-sylvania",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "shield-of-sigmar",
+    "name": "Shield of Sigmar",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "LOD3",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD3.pdf#page=8",
+    "tags": [
+      "shield of sigmar"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "protectorate-of-sigmar",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "warhammer",
+    "name": "Warhammer",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim-2a",
+    "source": "LOD3",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD3.pdf#page=8",
+    "tags": [
+      "warhammer"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "protectorate-of-sigmar",
             "excluded": false
           }
         ],
@@ -18175,6 +18487,86 @@
     ]
   },
   {
+    "slug": "wizards-staff",
+    "name": "Wizard's Staff",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim-2a",
+    "source": "LOD4",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD4.pdf#page=6",
+    "tags": [
+      "wizard's staff"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "sorcerous-society",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "familiar-sorcerous-society",
+    "name": "Familiar (Sorcerous Society)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "LOD4",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD4.pdf#page=6",
+    "tags": [
+      "familiar (sorcerous society)"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "sorcerous-society",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "chest-talon",
     "name": "Chest Talon",
     "variant": "",
@@ -18327,6 +18719,126 @@
         "warbands": [
           {
             "type": "survivors-of-strigos",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "scythe",
+    "name": "Scythe",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "sylvania",
+    "source": "LOD5",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD5.pdf#page=9",
+    "tags": [
+      "scythe"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "vampire-hunters-of-sylvania",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "silver-tip-stake",
+    "name": "Silver-tip Stake",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "sylvania",
+    "source": "LOD5",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD5.pdf#page=9",
+    "tags": [
+      "silver-tip stake"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "vampire-hunters-of-sylvania",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "throat-guard",
+    "name": "Throat Guard",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "sylvania",
+    "source": "LOD5",
+    "link_url": "https://www.broheim.net/downloads/lod/LOD5.pdf#page=9",
+    "tags": [
+      "throat guard"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "vampire-hunters-of-sylvania",
             "excluded": false
           }
         ],

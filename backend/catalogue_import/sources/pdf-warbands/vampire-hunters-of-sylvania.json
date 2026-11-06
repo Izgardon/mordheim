@@ -1,0 +1,214 @@
+{
+  "warbandType": "vampire-hunters-of-sylvania",
+  "name": "Vampire Hunters of Sylvania",
+  "source": "LOD5",
+  "sourceLink": "https://www.broheim.net/downloads/lod/LOD5.pdf#page=9",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire hired swords as if it were a Human Mercenary warband."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "vampire-hunters-equipment-list",
+      "title": "Vampire Hunters Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "scythe", "alias": "", "cost": {"cost": 10}},
+        {"name": "silver-tip stake", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "crossbow pistol", "alias": "", "cost": {"cost": 15}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "vampire-hunters-miscellaneous-equipment",
+      "title": "Miscellaneous Equipment (Heroes Only)",
+      "caveat": "",
+      "items": [
+        {"name": "holy water", "alias": "", "cost": {"cost": 10}},
+        {"name": "blessed bolts", "alias": "", "cost": {"cost": 25}},
+        {"name": "holy relic", "alias": "", "cost": {"cost": 15}},
+        {"name": "throat guard", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "priest-of-morr-equipment-list",
+      "title": "Priest of Morr Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "scythe", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "pilgrim-equipment-list",
+      "title": "Pilgrim Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "silver-tip stake", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "villager-equipment-list",
+      "title": "Villager Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "Pitch Fork", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "vampire-hunter",
+      "type": "hero",
+      "name": "Vampire Hunter",
+      "plural": "Vampire Hunters",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["vampire-hunters-equipment-list", "vampire-hunters-miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Vampire Hunter may use his Leadership instead of their own."},
+        {"rulename": "Stake the Vampire!", "ruleFull": "The Vampire Hunter hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he may choose."}
+      ]
+    },
+    {
+      "id": "slayers",
+      "type": "hero",
+      "name": "Slayer",
+      "plural": "Slayers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 25,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["vampire-hunters-equipment-list", "vampire-hunters-miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Stake the Vampire!", "ruleFull": "A Slayer hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he may choose."}
+      ]
+    },
+    {
+      "id": "priest-of-morr",
+      "type": "hero",
+      "name": "Priest of Morr",
+      "plural": "Priests of Morr",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 12,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 9},
+      "equipmentLists": ["priest-of-morr-equipment-list", "vampire-hunters-miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Funerary Rites (Vampire Hunters of Sylvania)"],
+      "specialRules": [
+        {"rulename": "Dagger and Scythe", "ruleFull": "The Priest of Morr may carry only a dagger and a scythe as weapons, and may never wear armour."},
+        {"rulename": "Loner", "ruleFull": "The Priest of Morr never takes All Alone tests."},
+        {"rulename": "Funerary Rites", "ruleFull": "The Priest of Morr is not a wizard, but starts with one Funerary Rite rolled at random."}
+      ]
+    },
+    {
+      "id": "villagers",
+      "type": "henchman",
+      "name": "Villager",
+      "plural": "Villagers",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["villager-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "wolfhounds",
+      "type": "henchman",
+      "name": "Wolfhound",
+      "plural": "Wolfhounds",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 10},
+      "equipmentLists": [],
+      "equipment": "None. A Wolfhound never uses or needs weapons or armour.",
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "Wolfhounds are animals and gain no experience."}
+      ]
+    },
+    {
+      "id": "pilgrims",
+      "type": "henchman",
+      "name": "Pilgrim",
+      "plural": "Pilgrims",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 10},
+      "equipmentLists": ["pilgrim-equipment-list"],
+      "specialRules": [
+        {"rulename": "Fanatical", "ruleFull": "Pilgrims automatically pass every Leadership-based test they take. A Pilgrim may never become the leader."},
+        {"rulename": "Blunt", "ruleFull": "Pilgrims use no bladed or ranged weapons, only maces, hammers and staffs, and the silver-tip stake."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Vampire Hunters of Sylvania", "new": true},
+  "specialSkillsList": [
+    {"name": "Iron Will", "description": "Vampire Hunter and Slayers only. The warrior is immune to fear."},
+    {"name": "Righteous Aura", "description": "Vampire Hunter and Slayers only. In the first round of hand-to-hand combat, Possessed or Undead opponents lose their first attack against the warrior, to a minimum of 1."},
+    {"name": "Thirst for Vengeance", "description": "The warrior hates all Undead, and has +1 Attack in a turn he charges."},
+    {"name": "Blessing of Morr", "description": "The warrior has +1 to all his injury rolls against Undead."},
+    {"name": "Touch of Darkness", "description": "Vampire Hunter and Slayers only. The warrior ignores darkness penalties."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 10}
+  ],
+  "stubs": [
+    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 10},
+    {"name": "Silver-tip Stake", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 10},
+    {"name": "Throat Guard", "type": "Armour", "subtype": "", "rarity": 7, "dice": null, "rulesPage": 10},
+    {"name": "Holy Water", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 10},
+    {"name": "Blessed Bolts", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 10}
+  ],
+  "flags": [
+    {"page": 9, "what": "The warband is the issue's pages 9 to 13 (Letters of the Damned #5); the rest of the issue is other articles."},
+    {"page": 9, "what": "A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race."},
+    {"page": 9, "what": "Choice of Warriors allows up to four Pilgrims and up to four Wolfhounds, but their headings (p12) read 0-5. Choice of Warriors is taken: 0-4 each."},
+    {"page": 9, "what": "The special skills are a new group, Vampire Hunters of Sylvania; none is ours. The Vampire Hunter and Slayers may take them all; the Priest of Morr only Blessing of Morr (printed \"Blessing of Moor\") and Thirst for Vengeance (\"Thirst of Vengeance\" in the heading line), so the other three open with \"Vampire Hunter and Slayers only\". Iron Will (immune to fear) is the Protectorate of Sigmar's Unshakeable Faith under another name, and Righteous Aura our Sign of Sigmar under another: both kept apart, possible matches for William."},
+    {"page": 10, "what": "The skill table, read from the layout text: Vampire Hunter all six; Slayer Combat, Shooting, Strength, Speed, Special; Priest of Morr Academic, Speed, Special."},
+    {"page": 10, "what": "The Crossbow Pistol line (15 gc) carries an asterisk with no footnote; it is our Crossbow pistol at the printed 15 gc."},
+    {"page": 10, "what": "Stubs: the Scythe (10 gc, Common; close combat, Strength as user +1, two-handed), the Silver-tip Stake (Common; close combat, Strength as user, Heart-seeker: +1 to the injury roll when it wounds; its entry says 15 gc, the lists 10 gc, taken from the lists) and the Throat Guard (10 gc, Rare 7, Life Saver: a special 6+ save against every injury roll a Vampire causes, not modified by Strength but lost to criticals that ignore armour; adds no armour save, worn alone or with light or heavy armour). Holy Water (10 gc here, 5 gc for the Protectorate of Sigmar) and Blessed Bolts (\"See Protectorate of Sigmar\") are the Protectorate's stubs, one item each with a price for both warbands."},
+    {"page": 10, "what": "\"Spear (Pitch Fork)\" on the Villager list is our Spear, shown as Pitch Fork."},
+    {"page": 11, "what": "The Priest of Morr \"may only be armed with a Dagger and a Scythe\" and never armour: his own list holds the two at the Vampire Hunters list's prices, and he buys from the Heroes' Miscellaneous list too."},
+    {"page": 12, "what": "No group sizes are printed."},
+    {"page": 13, "what": "Funerary Rites differ from ours in their Difficulties (Sanctity of the Fallen 5, ours 7; Do you know who I am? 9, ours 7; I am death! 7, ours 8): a new lore, Funerary Rites (Vampire Hunters of Sylvania)."}
+  ]
+}

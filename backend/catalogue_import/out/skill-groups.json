@@ -286,6 +286,25 @@
     ]
   },
   {
+    "name": "Dreamwalkers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dreamwalkers-cult-of-morr",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Inspiring Presence",
+      "Fanatical",
+      "Inured to Horror",
+      "Blessed by Morr"
+    ]
+  },
+  {
     "name": "Druchii",
     "for_everyone": false,
     "warbands": [
@@ -648,6 +667,24 @@
     ]
   },
   {
+    "name": "Necrarchs, the Soul Stealers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "necrarchs-the-soul-stealers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "The Thrall may learn these only once he is a Wizard.",
+    "how": "new group",
+    "skills": [
+      "Pupil of Nagash",
+      "Master of the Black Arts",
+      "Pull of Undeath"
+    ]
+  },
+  {
     "name": "Night Goblins",
     "for_everyone": false,
     "warbands": [
@@ -882,6 +919,26 @@
       "Arms master",
       "Body Slam",
       "Grizzled Veteran"
+    ]
+  },
+  {
+    "name": "Protectorate of Sigmar",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "protectorate-of-sigmar",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Utter Determination: the Warrior Priest only.",
+    "how": "new group",
+    "skills": [
+      "Protection of Sigmar",
+      "Utter Determination",
+      "Unshakeable Faith",
+      "Rousing Sermon",
+      "Sigmar's Guidance"
     ]
   },
   {
@@ -1203,6 +1260,26 @@
       "Ratswarm Form",
       "Bat Form",
       "Giant Wolf Form"
+    ]
+  },
+  {
+    "name": "Vampire Hunters of Sylvania",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "vampire-hunters-of-sylvania",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Iron Will",
+      "Righteous Aura",
+      "Thirst for Vengeance",
+      "Blessing of Morr",
+      "Touch of Darkness"
     ]
   },
   {

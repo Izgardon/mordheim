@@ -8,6 +8,10 @@
       "roll": "D6",
       "text": "Before a battle, the Shaman may brew a special batch of Fungus Brew using 1 to 3 Mad Cap Mushrooms, and various other fungi they have collected. The brew must be consumed immediately, and affects a single Night Goblin Warrior henchmen group until the end of the battle. Roll on the Fungus Brew Table once for each Mad Cap Mushroom used in the brewing process. If any of the dice come up with the same result, the batch is ruined and provides no effect other than a nasty headache!\n\nD6 | Result\n1 | Rowdy: Affected by Animosity on a 1 or 2.\n2 | Dizzy: -1 Initiative.\n3 | Fearless: Immune to fear and all alone tests.\n4 | Numbed: +1 Save which may not be reduced below 6+.\n5 | Belligerent: hatred against the opposing warband(s).\n6 | Loony: frenzy, followed by stupidity if it wears off by a Goblin being knocked down or stunned"
     },
+    "Guiding Dream": {
+      "roll": "D6",
+      "text": "At the start of each battle the Dreamer rolls a D6 on the Guiding Dream table:\n\nD6 | Vision\n1 | Disturbing Vision: the Dreamer has -1\" Movement.\n2-3 | Vision of Truth: choose one of the opponent's Heroes; the Dreamer has +1 to hit him.\n4-5 | Empowering Vision: choose one of the opponent's Heroes; the Dreamer has +1 Strength when fighting him.\n6 | Infuriating Vision: choose one of the opponent's Heroes; the Dreamer is frenzied against him."
+    },
     "Hiring Fee (Bertha Bestraufrung, High Matriarch of the Sisterhood)": {
       "roll": "D6",
       "text": "She will only come to the aid of a Sisters of Sigmar warband if their enemy has a higher warband rating. Consult the table below, and roll a D6 to see whether Bertha will aid the warband. A request for Bertha to aid the warband must be made for each battle you wish her to help the warband.\n\nDifference in Warband Rating: Dice roll required\n0-49: Nil\n50-99: 6+\n100-149: 5+\n150-199: 4+\n200+: 3+"

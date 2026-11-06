@@ -1,0 +1,209 @@
+{
+  "warbandType": "protectorate-of-sigmar",
+  "name": "Protectorate Of Sigmar",
+  "source": "LOD3",
+  "sourceLink": "https://www.broheim.net/downloads/lod/LOD3.pdf#page=8",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Death of a Leader", "ruleFull": "If the Warrior Priest falls, the Acolyte with the most experience becomes the leader, with every benefit of the Warrior Priest and his title. He gains no prayer at once: at his next advance he may take a prayer from the list instead of rolling, and later advances are as normal. Once promoted he is a Warrior Priest, so the warband may hire another Acolyte."},
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire hired swords as if it were a Witch Hunters warband."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "protectorate-of-sigmar-equipment-list",
+      "title": "Protectorate of Sigmar Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "longbow", "alias": "", "cost": {"cost": 15}}
+      ]
+    },
+    {
+      "id": "protectorate-miscellaneous-equipment",
+      "title": "Miscellaneous Equipment (Heroes Only)",
+      "caveat": "",
+      "items": [
+        {"name": "holy water", "alias": "", "cost": {"cost": 5}},
+        {"name": "blessed bolts", "alias": "", "cost": {"cost": 25}},
+        {"name": "holy relic", "alias": "", "cost": {"cost": 15}},
+        {"name": "shield of sigmar", "alias": "", "cost": {"cost": 20}},
+        {"name": "warhammer", "alias": "", "cost": {"cost": 15}}
+      ]
+    },
+    {
+      "id": "huntsman-equipment-list",
+      "title": "Huntsman Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "longbow", "alias": "", "cost": {"cost": 15}},
+        {"name": "blessed bolts", "alias": "", "cost": {"cost": 25}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "warrior-priest",
+      "type": "hero",
+      "name": "Warrior Priest",
+      "plural": "Warrior Priests",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["protectorate-of-sigmar-equipment-list", "protectorate-miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "spellLores": ["Prayers of Sigmar"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Warrior Priest may use his Leadership instead of their own."},
+        {"rulename": "Prayers of Sigmar", "ruleFull": "The Warrior Priest starts with one prayer rolled at random from the Prayers of Sigmar."}
+      ]
+    },
+    {
+      "id": "templars",
+      "type": "hero",
+      "name": "Templar",
+      "plural": "Templars",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 45,
+      "startingXp": 12,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["protectorate-of-sigmar-equipment-list", "protectorate-miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Zealous", "ruleFull": "The Templar hates every model of a chaotic warband: Skaven, Possessed, Carnival of Chaos, Beastmen, and any warband with a Daemon in it."}
+      ]
+    },
+    {
+      "id": "huntsman",
+      "type": "hero",
+      "name": "Huntsman",
+      "plural": "Huntsmen",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["huntsman-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Instead of a Templar", "ruleFull": "The Huntsman is taken only in place of one of the two Templars."},
+        {"rulename": "Beastmaster", "ruleFull": "Animals of the warband within 6\" of the Huntsman may use his Leadership. A hostile beast must pass a Leadership test to charge him."}
+      ]
+    },
+    {
+      "id": "acolytes",
+      "type": "hero",
+      "name": "Acolyte",
+      "plural": "Acolytes",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 2,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["protectorate-of-sigmar-equipment-list", "protectorate-miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "archers",
+      "type": "henchman",
+      "name": "Archer",
+      "plural": "Archers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["protectorate-of-sigmar-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "hounds",
+      "type": "henchman",
+      "name": "Hound",
+      "plural": "Hounds",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 4, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None. A Hound never uses weapons or armour and suffers no penalty for it.",
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "Hounds are animals and gain no experience."},
+        {"rulename": "Devoted", "ruleFull": "A Hound within 12\" of the Warrior Priest may re-roll a failed Leadership test."}
+      ]
+    },
+    {
+      "id": "crusaders",
+      "type": "henchman",
+      "name": "Crusader",
+      "plural": "Crusaders",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["protectorate-of-sigmar-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Protectorate of Sigmar", "new": true, "note": "Utter Determination: the Warrior Priest only."},
+  "specialSkillsList": [
+    {"name": "Protection of Sigmar", "ours": "Protection of Sigmar"},
+    {"name": "Unshakeable Faith", "description": "The warrior is immune to fear."},
+    {"name": "Utter Determination", "ours": "Utter Determination"},
+    {"name": "Rousing Sermon", "description": "Warrior Priest only. Declared at the start of his turn: the Warrior Priest and every friendly model within 6\" have +1 Attack in that turn's hand-to-hand combat phase. One Rousing Sermon a game."},
+    {"name": "Sigmar's Guidance", "description": "When the warrior shoots he may choose any target, not only the closest enemy."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 9},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 9}
+  ],
+  "stubs": [
+    {"name": "Holy Water", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 9},
+    {"name": "Blessed Bolts", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 9},
+    {"name": "Shield of Sigmar", "type": "Armour", "subtype": "", "rarity": 9, "dice": null, "rulesPage": 9},
+    {"name": "Warhammer", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 9}
+  ],
+  "flags": [
+    {"page": 8, "what": "The warband is the issue's pages 8 to 12 (Letters of the Damned #3); the rest of the issue is other articles."},
+    {"page": 8, "what": "A Protectorate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race."},
+    {"page": 8, "what": "\"You may chose to replace one Templar with a Huntsman\": our counts can't tie one fighter's count to another's, so it is the Huntsman's rule."},
+    {"page": 9, "what": "The skill table, read from the layout text: Warrior Priest Combat, Academic, Strength, Speed; Templar Combat, Strength, Speed; Acolyte Combat, Academic, Strength, Speed; Huntsman Combat, Shooting. It has no Special column, and the special skills (p12) don't say who may take them: every Hero ticks Special, two skills being the Warrior Priest's only."},
+    {"page": 9, "what": "\"Shield/Buckler 5 gc\" is one line for two items: it is two lines, Shield and Buckler, both 5 gc."},
+    {"page": 9, "what": "The Huntsman buys only the lines marked *: Dagger, Sword, Longbow and Blessed Bolts, his own list."},
+    {"page": 9, "what": "Stubs: Blessed Bolts (25 gc, Common; range and Strength as the weapon, +1 S against Undead, mutants, Possessed and other chaotic beings) and the Shield of Sigmar (20 gc, Rare 9; armour save 6, a special 6+ save against all ranged attacks, and no -1 for a shield with heavy armour). Holy Water (5 gc) and the Warhammer (15 gc) on the Miscellaneous list have no entry of their own; they are stubs too, possible matches for our Blessed Water (10 gc) and Sigmarite Warhammer. The Holy Relic is our Holy (Unholy) Relic."},
+    {"page": 11, "what": "No group sizes are printed."},
+    {"page": 12, "what": "The special skills are a new group, Protectorate of Sigmar. Protection of Sigmar and Utter Determination are ours, name and effect; our Utter Determination's own text says \"Only the Matriarch\", and the group's note says the Warrior Priest. Unshakeable Faith (immune to fear) differs from our Fearless (fear and All Alone). Rousing Sermon and Sigmar's Guidance (printed \"Sigmars Guidance\") are like nothing of ours."}
+  ]
+}

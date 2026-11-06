@@ -1,0 +1,157 @@
+{
+  "warbandType": "sorcerous-society",
+  "name": "Sorcerous Society",
+  "source": "LOD4",
+  "sourceLink": "https://www.broheim.net/downloads/lod/LOD4.pdf#page=6",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Keep it secret, keep it safe!", "ruleFull": "The warband may never hire a hired sword or dramatis persona with the Wizard ability, except the High Elf Mage. Otherwise it hires hired swords as a Human Mercenary warband does."},
+    {"rulename": "The Vagaries of Magic", "ruleFull": "When a wizard of the warband rolls a natural 2 (two 1s) to cast a spell, roll 2D6 on the Magical Failure table:\n\n2D6 | Result\n2 | Aaarrgh!: he mutates into a Spawn of Chaos. Remove him from the roster.\n3 | Gglbddlh: he is stupid. After the battle roll a D6: on a 2+ it ends.\n4 | Magical Shutdown: he can cast no spells for the rest of the battle.\n5-6 | Uh-oh!: the spell is cast on the wizard himself. Any choice it needs (Flight of Zimmeran's, say) is made by the player to his player's left.\n7 | Pooh, nothing at all!: the spell fails, with no other effect.\n8-9 | Magical Explosion: he is thrown D6\" in a random direction and lands knocked down.\n10-11 | Magical Jam: he can't cast a spell in his next shooting phase; he may use missile weapons as normal.\n12 | Wait, what's that?: he mutates, then the change ends. Choose a free mutation for him from the Possessed's mutations (Rulebook p76)."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "sorcerous-society-equipment-list",
+      "title": "Sorcerous Society Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "wizard's staff", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "sorcerous-society-miscellaneous-equipment",
+      "title": "Miscellaneous Equipment (Heroes Only)",
+      "caveat": "",
+      "items": [
+        {"name": "familiar (sorcerous society)", "alias": "", "cost": {"cost": 20}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "magus",
+      "type": "hero",
+      "name": "Magus",
+      "plural": "Magi",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 75,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["sorcerous-society-equipment-list", "sorcerous-society-miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Elemental Lore of Water", "Elemental Lore of Fire", "Elemental Lore of Earth", "Elemental Lore of Air", "Lesser Magic"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Magus may use his Leadership instead of their own."},
+        {"rulename": "Wizard", "ruleFull": "The Magus is a wizard and starts with two spells rolled at random from any one Elemental lore, or from Lesser Magic."}
+      ]
+    },
+    {
+      "id": "companions",
+      "type": "hero",
+      "name": "Companion",
+      "plural": "Companions",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["sorcerous-society-equipment-list", "sorcerous-society-miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": [
+        {"rulename": "Don't look at me!", "ruleFull": "A Companion may never become the leader, and no other model may use his Leadership for a test, including Rout tests once the leader is out of action."},
+        {"rulename": "Body Guard", "ruleFull": "While a Companion is within 2\" of a wizard and not in hand-to-hand combat, he takes all missile fire aimed at the wizard and intercepts any charge at him. He moves at once to do it, even out of sequence or further than he could normally move in a turn, but only along a path he could take (not from another floor of a building)."}
+      ]
+    },
+    {
+      "id": "mages",
+      "type": "hero",
+      "name": "Mage",
+      "plural": "Mages",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["sorcerous-society-equipment-list", "sorcerous-society-miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Elemental Lore of Water", "Elemental Lore of Fire", "Elemental Lore of Earth", "Elemental Lore of Air", "Lesser Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Mage is a wizard and starts with one spell rolled at random from any one Elemental lore, or from Lesser Magic."},
+        {"rulename": "Respect your betters", "ruleFull": "A Mage may never have more spells than the leader. If he does, he at once fights the leader in a Wizard's Duel, another player playing the leader, and the loser leaves the warband."}
+      ]
+    },
+    {
+      "id": "untrained",
+      "type": "henchman",
+      "name": "Untrained",
+      "plural": "Untrained",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["sorcerous-society-equipment-list"],
+      "specialRules": [
+        {"rulename": "Here, hold this", "ruleFull": "Untrained may carry special items, such as holy relics or lucky charms."},
+        {"rulename": "Harnessed", "ruleFull": "An Untrained who rolls The Lad's Got Talent at once gains the Wizard skill. He may give up his extra advance to roll a spell at random, or roll for it as a Hero's advance."}
+      ]
+    },
+    {
+      "id": "grunts",
+      "type": "henchman",
+      "name": "Grunt",
+      "plural": "Grunts",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["sorcerous-society-equipment-list"],
+      "specialRules": [
+        {"rulename": "Prove that Talent!", "ruleFull": "A Grunt who rolls The Lad's Got Talent may become a mundane Hero, or an Untrained instead. So a Grunt who rolls it twice may become a wizard."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {"name": "Wizard's Staff", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 7},
+    {"name": "Familiar (Sorcerous Society)", "type": "Miscellaneous", "subtype": "", "rarity": 9, "dice": 2, "rulesPage": 7}
+  ],
+  "flags": [
+    {"page": 6, "what": "The warband is the issue's pages 6 to 13 (Letters of the Damned #4); the rest of the issue is other articles."},
+    {"page": 6, "what": "A Sorcerous Society warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race."},
+    {"page": 6, "what": "The Magical Failure table (The Vagaries of Magic) is the Border Town Burning supplement's, used with permission, as printed."},
+    {"page": 7, "what": "The skill table, read from the layout text: Magus and Mages Academic, Speed; Companion Combat, Shooting, Strength. It has no Special column and the warband no special skills. The Additional Academic Skills (p8: Scribe, Mind Focus and Magical Aptitude, from the Town Cryer 7/2002 Annual) are ours, already in our Academic group, so there is no skill group."},
+    {"page": 7, "what": "\"Shield/Buckler 5 gc\" is one line for two items: it is two lines, Shield and Buckler, both 5 gc. List prices as printed: Halberd 15 gc (ours 10), Heavy Armour 20 gc (ours 50)."},
+    {"page": 7, "what": "Stubs: the Wizard's Staff (10 gc, Common; close combat, Strength as user, Parry, two-handed, Concussion), and the Familiar (20+2D6 gc, Rare 9; a Dog, Cat, Raven or Viper, each with its own profile and rules, rolling injuries as a henchman and counting towards neither the warband's size nor rout tests). Our Familiar shares the name but does other things (a casting re-roll, ignored in play), so theirs is named apart, Familiar (Sorcerous Society)."},
+    {"page": 8, "what": "The Magus and the Mages roll their spells from \"any one Elemental list, or from the Lesser Magic list\": both lores are set, the five of them, and the player keeps to one."},
+    {"page": 9, "what": "No group sizes are printed."},
+    {"page": 10, "what": "The four Elemental lores (Water, Fire, Earth, Air, pages 10 to 13) are new lores."},
+    {"page": 12, "what": "Jozun's Decay's last line calls it \"Eternal Rot\": read as the same spell."}
+  ]
+}

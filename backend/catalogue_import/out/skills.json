@@ -944,6 +944,22 @@
     "description": "Friendly models fighting the same enemy model as the knight may use his Toughness when that enemy rolls to wound them."
   },
   {
+    "name": "Inspiring Presence",
+    "description": "Dreamer only. Morr Worshwishpers within 12\" of the Dreamer, not 6\", may use his Leadership."
+  },
+  {
+    "name": "Fanatical",
+    "description": "Dreamer only. Once per game, while the Dreamer is not out of action, stunned or knocked down, the warband may re-roll a failed Rout test."
+  },
+  {
+    "name": "Inured to Horror",
+    "description": "The model is immune to fear and never takes All Alone tests."
+  },
+  {
+    "name": "Blessed by Morr",
+    "description": "When fighting Undead, any spell that would affect the model is nullified on a D6 roll of 4+. A nullified spell still affects other models as normal."
+  },
+  {
     "name": "Fury of Khaine (Druchii)",
     "description": "If the Dark Elf takes all his opponents out of action he may make a 4\" follow-up move. Reaching another enemy starts a new combat, fought in the next turn, in which he counts as charging."
   },
@@ -1040,6 +1056,18 @@
     "description": "Any Hero. The model causes fear and may re-roll any Leadership test."
   },
   {
+    "name": "Pupil of Nagash",
+    "description": "The Hero at once rolls for a spell on the Dreaded Scrolls of Nagash, and may roll on them again instead of taking a later skill."
+  },
+  {
+    "name": "Master of the Black Arts",
+    "description": "The range of every spell the Hero casts is increased by half."
+  },
+  {
+    "name": "Pull of Undeath",
+    "description": "Leader only. While the Hero is within 4\" of an undead henchman, that henchman is taken out of action only on a natural 6."
+  },
+  {
     "name": "Death before Dishonor",
     "description": "When a close combat attack would remove this model from the battlefield, it first makes a single close combat attack as normal."
   },
@@ -1078,6 +1106,18 @@
   {
     "name": "Netter (Ogre Hunting Party)",
     "description": "Gnoblars only. The Hero starts every game with 3 nets. They can't be sold, traded or given to another warrior, and any he doesn't use are gone after the game; he starts the next game with 3 again, at no cost."
+  },
+  {
+    "name": "Unshakeable Faith",
+    "description": "The warrior is immune to fear."
+  },
+  {
+    "name": "Rousing Sermon",
+    "description": "Warrior Priest only. Declared at the start of his turn: the Warrior Priest and every friendly model within 6\" have +1 Attack in that turn's hand-to-hand combat phase. One Rousing Sermon a game."
+  },
+  {
+    "name": "Sigmar's Guidance",
+    "description": "When the warrior shoots he may choose any target, not only the closest enemy."
   },
   {
     "name": "Beastkin",
@@ -1142,6 +1182,26 @@
   {
     "name": "Practiced Arm",
     "description": "Strigany Heroes only, never the Strigoi Vampire. The Hero may throw two throwing knives a turn, both at the same target, each with +1 to its injury roll."
+  },
+  {
+    "name": "Iron Will",
+    "description": "Vampire Hunter and Slayers only. The warrior is immune to fear."
+  },
+  {
+    "name": "Righteous Aura",
+    "description": "Vampire Hunter and Slayers only. In the first round of hand-to-hand combat, Possessed or Undead opponents lose their first attack against the warrior, to a minimum of 1."
+  },
+  {
+    "name": "Thirst for Vengeance",
+    "description": "The warrior hates all Undead, and has +1 Attack in a turn he charges."
+  },
+  {
+    "name": "Blessing of Morr",
+    "description": "The warrior has +1 to all his injury rolls against Undead."
+  },
+  {
+    "name": "Touch of Darkness",
+    "description": "Vampire Hunter and Slayers only. The warrior ignores darkness penalties."
   },
   {
     "name": "Elven Luck",

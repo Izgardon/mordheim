@@ -26,10 +26,10 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 367 |
-| skills | 288 |
-| skill groups | 60 |
-| skill group links | 346 |
+| price rows | 381 |
+| skills | 303 |
+| skill groups | 64 |
+| skill group links | 363 |
 | serious injuries (D66) | 20 |
 | shared specials | 62 |
 | random mutation results (D66) | 36 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 288 | 153 | 95 | 40 |
+| skills | 303 | 153 | 110 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 288 skills, one per name; `out/skill-groups.json` is 60 groups holding them (346 links), the five core groups first.
+`out/skills.json` is 303 skills, one per name; `out/skill-groups.json` is 64 groups holding them (363 links), the five core groups first.
 
 ### Merged by name
 
@@ -378,6 +378,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Cavalry | everyone | intersection | - | Cavalry Commander, Trick Riding, Combat Riding, Evade, Running Dismount, Athletic Mount, Horse Archer, Mounted Combat Master |
 | Cursed Cavalcade | Cursed Cavalcade | new group | - | Noblesse Obliges, Torturer, Duelist |
 | Dark Elf | Dark Elves | skill_group_learners | - | Fury of Khaine, Powerful Build, Fey Quickness, Infiltration, Master of Poisons |
+| Dreamwalkers | Dreamwalkers, Cult of Morr | new group | - | Inspiring Presence, Fanatical, Inured to Horror, Blessed by Morr |
 | Druchii | Druchii | new group | - | Fey Quickness, Infiltration, Fury of Khaine (Druchii), Master of Poisons (Druchii), Vraithen Master, Survival of the Fittest, Excellent Sight |
 | Dwarf Exiled Engineers | Guild of Disgraced Engineers | skill_lists | - | True Grit, Thick Skull, Extra Tough, Tunneler, Tinkerer, Quick Thinker, Master Inventor |
 | Dwarf Rangers | Dwarf Rangers | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull |
@@ -395,6 +396,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Masters of Horror | Masters of Horror | new group | - | Surgeon, Alchemist, Apt Revitalist, Lunatic |
 | Merchant Caravans | Merchant Caravans | new group | - | Bribery, Dubious Income, Wholesale, Deal Breaker, Connected |
 | Militant Mootlanders | Militant Mootlanders | skill_group_learners | - | Crude Belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt |
+| Necrarchs, the Soul Stealers | Necrarchs, the Soul Stealers | new group | The Thrall may learn these only once he is a Wizard. | Pupil of Nagash, Master of the Black Arts, Pull of Undeath |
 | Night Goblins | Night Goblins (WEB) | skill_group_learners | - | Hide in Shadows, Fungus Farmer, Infiltrate, Netter, Ride Squig, Sneaky Git |
 | Night Goblins (MIC) | Night Goblins (MIC) | new group | - | Infiltration, Sneaky Git, Netter, Ded Shooty |
 | Nipponese Expedition | Nipponese Expedition | new group | - | Death before Dishonor, Night Fighter, Iaijutsu, Last Stand, Tea Ceremony, Blessed by the Kami |
@@ -406,6 +408,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Pirates | Pirates | intersection | - | Sea Shanty Singer, Sea Legs, Cutlass Master, Booming Voice, Hardy Constitution, Swashbuckler |
 | Pirates (TBMF) | Pirates | skill_lists | - | Captain Blood, Sea Legs (TBMF), Cutlass Master, Treasure Hunter, Swashbuckler |
 | Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
+| Protectorate of Sigmar | Protectorate of Sigmar | new group | Utter Determination: the Warrior Priest only. | Protection of Sigmar, Utter Determination, Unshakeable Faith, Rousing Sermon, Sigmar's Guidance |
 | Restless Dead Lich and Necromancer | The Restless Dead | intersection | - | Corpse Bomb, Deathspeaker, Wraith Touch, Forbidden Rite, Summoner |
 | Saurus | Lizardmen (TC11) | intersection | - | Bellowing Battle Roar, Toughened Hide |
 | Sea Ghosts | Sea Ghosts | skill_group_learners | - | Infiltration, Luck, See in Shadows, Hide in Shadows, Powerful Build, Fey |
@@ -422,11 +425,12 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Survivors of Strigos | Survivors of Strigos | new group | - | Iron Sinews, Great Thirster, Curse of the Revenant, Dark Arts, Light Fingers, Practiced Arm |
 | Tomb Robbers | Arabian Tomb Raiders | intersection | - | Sand worm, Hit and run, Weather tolerant |
 | Undead Vampires | Undead | skill_lists | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
+| Vampire Hunters of Sylvania | Vampire Hunters of Sylvania | new group | - | Iron Will, Righteous Aura, Thirst for Vengeance, Blessing of Morr, Touch of Darkness |
 | Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves of Athel Loren) |
 
 ### New groups and skills (`new_skill_groups`)
 
-89 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+104 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -467,6 +471,10 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Virtue of Knightly Temper | Grail Companions | mordheim-2a | WEB |
 | Virtue of Discipline (Grail Companions) | Grail Companions | mordheim-2a | WEB |
 | Virtue of Empathy | Grail Companions | mordheim-2a | WEB |
+| Inspiring Presence | Dreamwalkers | mordheim-2a | MFB |
+| Fanatical | Dreamwalkers | mordheim-2a | MFB |
+| Inured to Horror | Dreamwalkers | mordheim-2a | MFB |
+| Blessed by Morr | Dreamwalkers | mordheim-2a | MFB |
 | Fury of Khaine (Druchii) | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Master of Poisons (Druchii) | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Vraithen Master | Druchii | mordheim-2a | Mordheimer's Information Centre |
@@ -491,6 +499,9 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Alchemist | Masters of Horror | sylvania | Sylvania Supplement |
 | Apt Revitalist | Masters of Horror | sylvania | Sylvania Supplement |
 | Lunatic | Masters of Horror | sylvania | Sylvania Supplement |
+| Pupil of Nagash | Necrarchs, the Soul Stealers | sylvania | LOD1 |
+| Master of the Black Arts | Necrarchs, the Soul Stealers | sylvania | LOD1 |
+| Pull of Undeath | Necrarchs, the Soul Stealers | sylvania | LOD1 |
 | Death before Dishonor | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
 | Night Fighter | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
 | Iaijutsu | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
@@ -501,6 +512,9 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Sabre Trainer | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Set Traps | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Netter (Ogre Hunting Party) | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
+| Unshakeable Faith | Protectorate of Sigmar | mordheim-2a | LOD3 |
+| Rousing Sermon | Protectorate of Sigmar | mordheim-2a | LOD3 |
+| Sigmar's Guidance | Protectorate of Sigmar | mordheim-2a | LOD3 |
 | Beastkin | Skaven Clan Moulder | mordheim-2a | WEB |
 | Hypnotic Musk | Skaven Clan Moulder | mordheim-2a | WEB |
 | Subjugator of Mankind | Skaven Clan Moulder | mordheim-2a | WEB |
@@ -517,6 +531,11 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Dark Arts | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Light Fingers | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Practiced Arm | Survivors of Strigos | sylvania | Sylvania Supplement |
+| Iron Will | Vampire Hunters of Sylvania | sylvania | LOD5 |
+| Righteous Aura | Vampire Hunters of Sylvania | sylvania | LOD5 |
+| Thirst for Vengeance | Vampire Hunters of Sylvania | sylvania | LOD5 |
+| Blessing of Morr | Vampire Hunters of Sylvania | sylvania | LOD5 |
+| Touch of Darkness | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Elven Luck | Wood Elves of Athel Loren | mordheim-2a | WEB |
 | Seeker (Wood Elves of Athel Loren) | Wood Elves of Athel Loren | mordheim-2a | WEB |
 
@@ -535,6 +554,7 @@ mordheimer also lists Berserker for Slayer Cult; left out of the group.
 mordheimer also lists Crude Belch for Halflings (MIC); left out of the group.
 mordheimer also lists Bellowing Roar for Ogre Hunting Party; left out of the group.
 mordheimer also lists Netter for Ogre Hunting Party; left out of the group.
+mordheimer also lists Sigmar’s Guidance for Protectorate of Sigmar; left out of the group.
 mordheimer also lists Achilles’ Heel for Snotlings; left out of the group.
 mordheimer also lists Seeker for Wood Elves of Athel Loren; left out of the group.
 
@@ -556,6 +576,8 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Stealthy | Halflings | Halflings, Low Kings, Militant Mootlanders |
 | Crude Belch | Maneaters, Ogre Hunting Party | Maneaters, Ogre Hunting Party, Militant Mootlanders |
 | Maneater | Ogre Hunting Party | Maneaters, Ogre Hunting Party |
+| Protection of Sigmar | Sisters of Sigmar | Sisters of Sigmar, Protectorate of Sigmar |
+| Utter Determination | Sisters of Sigmar | Sisters of Sigmar, Protectorate of Sigmar |
 | Fey | Wood Elves of Athel Loren | Wood Elves of Athel Loren, Sea Ghosts |
 
 ## MiM items that need rules (PDF pass)
@@ -591,16 +613,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 63 |
-| warband types linked | 69 |
-| fighters (heroes, henchmen) | 419 (215, 204) |
-| henchmen that gain no XP | 60 |
-| henchmen that can't be promoted | 76 |
-| equipment lists | 160 |
-| list lines | 1749 |
-| warband rules | 204 |
+| templates | 68 |
+| warband types linked | 74 |
+| fighters (heroes, henchmen) | 450 (232, 218) |
+| henchmen that gain no XP | 65 |
+| henchmen that can't be promoted | 81 |
+| equipment lists | 177 |
+| list lines | 1879 |
+| warband rules | 216 |
 | upgrades | 77 |
-| the templates' own specials | 515 |
+| the templates' own specials | 553 |
 
 ### List lines
 
@@ -616,7 +638,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-238 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+253 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -640,7 +662,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-50 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+53 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 
@@ -719,12 +741,18 @@ Each of those groups is for everyone or names every warband type its fighters' t
 | undead | Necromancer | Wizard | Necromancy |
 | witch-hunters | Warrior-Priest | Priest | Prayers of Sigmar |
 | bretonnian-grail-companions | Damsel | Wizard | Grail Magic |
+| dreamwalkers-cult-of-morr | Priest of Morr | Priest | Funerary Rites |
 | druchii | Sorceress | Wizard | Dark Magic (Druchii) |
+| necrarchs-the-soul-stealers | Necrarch Vampire | Wizard | Necromancy, Dreaded Scrolls of Nagash |
 | nipponese-expedition | Vim-To Mage | Wizard | Arabian Elemental Magic |
 | outlaws-of-stirwood-forest-redux | Cleric | Priest | Prayers of Sigmar |
+| protectorate-of-sigmar | Warrior Priest | Priest | Prayers of Sigmar |
 | snotlings | Snotling Shaman | Wizard | Snotling Waaagh! Magic |
+| sorcerous-society | Magus | Wizard | Elemental Lore of Water, Elemental Lore of Fire, Elemental Lore of Earth, Elemental Lore of Air, Lesser Magic |
+| sorcerous-society | Mage | Wizard | Elemental Lore of Water, Elemental Lore of Fire, Elemental Lore of Earth, Elemental Lore of Air, Lesser Magic |
 | survivors-of-strigos | Strigoi Vampire | Wizard | Dark Arts |
 | survivors-of-strigos | Seer | Wizard | Charms and Hexes (Strigos) |
+| vampire-hunters-of-sylvania | Priest of Morr | Priest | Funerary Rites (Vampire Hunters of Sylvania) |
 | wood-elves-of-athel-loren | Forest Mage | Wizard | Woodland Incantations |
 
 mordheimer's lore names that differ from ours: Charms & Hexes -> Charms and Hexes; Lady’s Prayers -> Lady's Prayers; Lizardman Magic -> Lizardmen Magic; Necromancy (The Restless Dead) -> Necromancy (Restless Dead); Spells of the Djed’hi -> Spells of the Djedhi.
@@ -778,12 +806,12 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 42 | 5 | 5 | 3 |
+| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 47 | 5 | 5 | 3 |
 | Stupidity | Psychology | the rulebook's Stupidity (snapshot) |  |  | 4 | 0 | 0 | 1 |
-| Immune to Psychology | Psychology | the list's text |  |  | 16 | 1 | 2 | 0 |
-| Immune to Poison | Trait | the list's text |  |  | 14 | 3 | 3 | 2 |
-| No Pain | Trait | the list's text |  |  | 13 | 1 | 1 | 0 |
-| May Not Run | Trait | the list's text |  |  | 8 | 2 | 0 | 0 |
+| Immune to Psychology | Psychology | the list's text |  |  | 21 | 1 | 2 | 0 |
+| Immune to Poison | Trait | the list's text |  |  | 19 | 3 | 3 | 2 |
+| No Pain | Trait | the list's text |  |  | 18 | 1 | 1 | 0 |
+| May Not Run | Trait | the list's text |  |  | 10 | 2 | 0 | 0 |
 | Large | Trait | the list's text |  |  | 0 | 4 | 0 | 0 |
 | Daemonic Flesh | Trait | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
@@ -845,12 +873,12 @@ List prices the pages differ from: none.
 
 ### Merged
 
-- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Bretonnian Grail Companions: Grail Knight (Fearsome); Halflings: Village Ogre; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Skaven of Clan Moulder: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Bretonnian Grail Companions: Grail Knight (Fearsome); Halflings: Village Ogre; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Necrarchs, the Soul Stealers: Necrarch Vampire (Cause Fear); Necrarchs, the Soul Stealers: Thrall (Cause Fear); Necrarchs, the Soul Stealers: Skeletal Warrior (Cause Fear); Necrarchs, the Soul Stealers: Zombie (Cause Fear); Necrarchs, the Soul Stealers: Abomination (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Skaven of Clan Moulder: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
 - Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
-- Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Mad Scientist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
-- Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Survivors of Strigos: Strigoi Vampire; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
-- No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin.
-- May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Clan Skryre Rat Ogre; Bone Goliath.
+- Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Mad Scientist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
+- Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
+- No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin.
+- May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Clan Skryre Rat Ogre; Bone Goliath.
 - Large: Ogre Bodyguard (Large Target); Clan Skryre Rat Ogre; Bone Goliath; Ogre Slave Master (Large Target).
 - Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
 - Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
@@ -986,22 +1014,27 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-13 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+18 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
 | bretonnian-grail-companions | bretonnian-grail-companions | 7 | 2 | 3 | 12 |
+| dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 1 | 12 |
 | druchii | druchii | 8 | 0 | 2 | 11 |
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 10 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
 | masters-of-horror | masters-of-horror | 7 | 1 | 3 | 11 |
+| necrarchs-the-soul-stealers | necrarchs-the-soul-stealers | 7 | 1 | 2 | 11 |
 | nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
+| protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 4 | 9 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
 | snotlings | snotlings | 8 | 1 | 3 | 10 |
+| sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
+| vampire-hunters-of-sylvania | vampire-hunters-of-sylvania | 6 | 1 | 5 | 11 |
 | wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
 
 ### Bretonnian Grail Companions
@@ -1023,6 +1056,22 @@ Kept apart from a family's, the effect differing:
 - Flag (p6): The Knight Virtues are the Special skills, a new group Grail Companions; rolled on 3D6 (the table is a warband rule). Virtue of Noble Disdain, Purity and Discipline do other things than the Bretonnian Knights' virtues of those names, so they are named apart. Virtue of the Impetuous Knight (+1D3 to his charge) is our Virtue of the Impetuous (+D3" when charging), the same idea by name. Virtue of Knightly Temper (double attacks on the charge at -1 to hit) does what our Ferocious Charge does, but is kept apart (William, 6 Nov 2026: "for Knightly Temper and Excellent sight keep both of those separate as they have a name that inspires a different idea behind it").
 - Flag (p7): Hedge Knights are henchmen who may become Heroes; Battle Pilgrims and Hunters never may (Commoner). No group sizes are printed: left open.
 - Flag (p8): The Grail Reliquae gains no experience; its race is the construct creature type (no maximum), as it isn't a living warrior. Its rule Holy Shield shares the item's name but is its own 5+ save. Large is our shared Large. Honored Dead, printed for it too, is the Grail Knight's rule only (one wording), as it is how a Grail Knight becomes one.
+
+### Dreamwalkers, Cult Of Morr
+
+- Stub: Main Gauche (Dreamwalkers), 7 gc, Common; its rules are on p18.
+- Flag (p1): Pages 1 to 4 and 23 to 25 are scans with no text layer. Looked at as tiny thumbnails: the cover, blank pages and full-page art, no warband data. Pages 7 to 14 are the Lore (background). Page numbers here are the PDF's; the PDF prints its own from 1 on page 7.
+- Flag (p15): A Dreamwalkers warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race.
+- Flag (p15): Choice of Members says one Andanti, "no more, no less!", but his heading (p19) reads 0-1. Choice of Members is taken: exactly one.
+- Flag (p16): No Fear of the Dead is the Special Rules' opening paragraph, which has no heading of its own: named here.
+- Flag (p16): Chosen of Morr makes the Priest of Morr the leader while there is no Dreamer. Our templates have one leader, the Dreamer, so the Priest's leading is his rule, Leader Without a Dreamer.
+- Flag (p17): The skill table's ticks are a symbol font, read from where the layout text places them: Dreamer all six; Black Guard Combat, Shooting, Strength, Special; Priest of Morr Academic, Speed, Special; Andanti Combat, Shooting, Speed, Special.
+- Flag (p17): The Rapier is our Rapier, name and effect. The Main Gauche (Parry, armour saves at +1, 7 gc, Andanti only) does more than ours (only the +1 to armour saves), so it is a stub of its own, Main Gauche (Dreamwalkers).
+- Flag (p18): The special skills are a new group, Dreamwalkers; none is ours. Inured to Horror (immune to fear, never takes All Alone tests) is our Fearless under another name: kept apart, a possible match for William. Blessed by Morr is unlike our Protection of Sigmar, working only against Undead and leaving other models affected.
+- Flag (p18): The Scythe has an entry (close combat, Strength as user +1, Difficult to use, two-handed) and the Priest of Morr may carry one, but no list prices it: it is on no list. The Priest's own list holds the Dagger alone.
+- Flag (p19): A mounted Black Guard's save is "+4", read as 4+, as the PDF writes 4+ elsewhere ("a +4" for 4+ on p16). The Warhorse isn't on a list ("paying its cost"), so it is his rule.
+- Flag (p20): Henchmen come in groups of 1-5.
+- Flag (p22): The Funerary Rites are ours, rite for rite and Difficulty for Difficulty.
 
 ### Druchii
 
@@ -1101,6 +1150,23 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Flesh Construct's Cannot Run ("may still charge normally") is our shared May Not Run. It gains experience only on a passed Leadership test, so it gains experience but never becomes a Hero. Both it and the Zombies ("Undead creatures") take our Undead race; Zombies gain no experience.
 - Flag (p4): No group sizes are printed: left open, but the Flesh Construct's is 1, as there may be only one.
 
+### Necrarchs, the Soul Stealers
+
+- Alias (p6): "light armor" is our light armour.
+- Stub: Staff of Damnation, 25 gc, Common; its rules are on p6.
+- Stub: Damned Book, 45+3D6 gc, Rare 11; its rules are on p6.
+- Flag (p5): The warband is the issue's pages 5 to 10 (Letters of the Damned #1); the rest of the issue is other articles.
+- Flag (p5): A Necrarch warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p5): Death of the Leader: the new leader "may immediately roll on the spell list for one spell" without naming the list. The Thrall has no lore of his own, so none is set: the player adds it.
+- Flag (p5): The special skills are a new group, Necrarchs, the Soul Stealers; none is one of ours. The PDF says the Necrarch Vampire, or the Thrall "with the Wizard skill", may use them: the Thrall ticks Special, and the group's note says he may learn them only once he is a Wizard. Pull of Undeath is "Available only to the Leader".
+- Flag (p6): The skill table is an image (read from a page crop): Necrarch Academic, Strength, Speed; Thrall Academic, Strength, Speed; Acolyte Academic, Speed. It has no Special column; Special is ticked from the special skills' own text.
+- Flag (p6): The Staff of Damnation and the Damned Book carry an asterisk on the list with no footnote. Their New Equipment entries: the Staff of Damnation is "Necrarch only", 25 gc, with no rarity printed (read as Common), close combat, Strength as user, Two-Handed and Magic-well (the Necrarch Vampire may store a spell he casts in it and release it in a later shooting phase instead of casting); the Damned Book is 45+3D6 gc, Rare 11, Cursed Aura (enemy models within 2" are at -1 to hit in close combat). Both are stubs.
+- Flag (p6): The Miscellaneous Equipment is "Heroes Only": every Hero buys from it. The Unholy Relic is our Holy (Unholy) Relic.
+- Flag (p7): Acolytes, though Heroes, buy from the Henchmen Equipment List, as the PDF says.
+- Flag (p8): No group sizes are printed. The Abomination is one model (0-1), a construct, so it takes no race.
+- Flag (p10): The Racial Maximum is printed for the Necrarch Vampire only (M6 WS4 BS4 S6 T6 W4 I9 A3 Ld10), unlike our Vampire's: it is a new race, Necrarch Vampire. The Thrall takes our Vampire.
+- Flag (p10): The Dreaded Scrolls of Nagash are a new lore. Black Breath's one S3 hit falls on "all models within 2''" without saying of what; Servants Eternal "may only be used once" without saying a game or ever. Both are kept as printed.
+
 ### Nipponese Expedition
 
 - Alias (p4): "light armor" is our light armour.
@@ -1146,6 +1212,24 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): A Cleric may only be taken instead of a Champion or a Petty Thief: our counts can't tie one fighter's count to another's, so it is his rule.
 - Flag (p3): The Leader rule says "her Leadership" and the Cleric's equipment line names "A Warrior Priest": read as the Bandit Leader and the Cleric. The Cleric casts from our Prayers of Sigmar.
 
+### Protectorate Of Sigmar
+
+- Alias (p9): "light armor" is our light armour.
+- Alias (p9): "heavy armor" is our heavy armour.
+- Stub: Holy Water, 5 gc, Common; its rules are on p9.
+- Stub: Blessed Bolts, 25 gc, Common; its rules are on p9.
+- Stub: Shield of Sigmar, 20 gc, Rare 9; its rules are on p9.
+- Stub: Warhammer, 15 gc, Common; its rules are on p9.
+- Flag (p8): The warband is the issue's pages 8 to 12 (Letters of the Damned #3); the rest of the issue is other articles.
+- Flag (p8): A Protectorate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race.
+- Flag (p8): "You may chose to replace one Templar with a Huntsman": our counts can't tie one fighter's count to another's, so it is the Huntsman's rule.
+- Flag (p9): The skill table, read from the layout text: Warrior Priest Combat, Academic, Strength, Speed; Templar Combat, Strength, Speed; Acolyte Combat, Academic, Strength, Speed; Huntsman Combat, Shooting. It has no Special column, and the special skills (p12) don't say who may take them: every Hero ticks Special, two skills being the Warrior Priest's only.
+- Flag (p9): "Shield/Buckler 5 gc" is one line for two items: it is two lines, Shield and Buckler, both 5 gc.
+- Flag (p9): The Huntsman buys only the lines marked *: Dagger, Sword, Longbow and Blessed Bolts, his own list.
+- Flag (p9): Stubs: Blessed Bolts (25 gc, Common; range and Strength as the weapon, +1 S against Undead, mutants, Possessed and other chaotic beings) and the Shield of Sigmar (20 gc, Rare 9; armour save 6, a special 6+ save against all ranged attacks, and no -1 for a shield with heavy armour). Holy Water (5 gc) and the Warhammer (15 gc) on the Miscellaneous list have no entry of their own; they are stubs too, possible matches for our Blessed Water (10 gc) and Sigmarite Warhammer. The Holy Relic is our Holy (Unholy) Relic.
+- Flag (p11): No group sizes are printed.
+- Flag (p12): The special skills are a new group, Protectorate of Sigmar. Protection of Sigmar and Utter Determination are ours, name and effect; our Utter Determination's own text says "Only the Matriarch", and the group's note says the Warrior Priest. Unshakeable Faith (immune to fear) differs from our Fearless (fear and All Alone). Rousing Sermon and Sigmar's Guidance (printed "Sigmars Guidance") are like nothing of ours.
+
 ### Skaven of Clan Moulder
 
 - Stub: Beastwhip, 25 gc, Rare 8; its rules are on p3.
@@ -1177,6 +1261,21 @@ Kept apart from a family's, the effect differing:
 - Flag (p10): The special skills are a new group, Snotlings; none is one of ours.
 - Flag (p11): Snotling Waaagh! Magic is a new lore (ours, Waaagh! Magic, is the Orcs' and has other spells). Pebbles of Doom says "any friendly Hero within 6"" without saying one or all: kept as printed.
 
+### Sorcerous Society
+
+- Stub: Wizard's Staff, 10 gc, Common; its rules are on p7.
+- Stub: Familiar (Sorcerous Society), 20+2D6 gc, Rare 9; its rules are on p7.
+- Flag (p6): The warband is the issue's pages 6 to 13 (Letters of the Damned #4); the rest of the issue is other articles.
+- Flag (p6): A Sorcerous Society warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race.
+- Flag (p6): The Magical Failure table (The Vagaries of Magic) is the Border Town Burning supplement's, used with permission, as printed.
+- Flag (p7): The skill table, read from the layout text: Magus and Mages Academic, Speed; Companion Combat, Shooting, Strength. It has no Special column and the warband no special skills. The Additional Academic Skills (p8: Scribe, Mind Focus and Magical Aptitude, from the Town Cryer 7/2002 Annual) are ours, already in our Academic group, so there is no skill group.
+- Flag (p7): "Shield/Buckler 5 gc" is one line for two items: it is two lines, Shield and Buckler, both 5 gc. List prices as printed: Halberd 15 gc (ours 10), Heavy Armour 20 gc (ours 50).
+- Flag (p7): Stubs: the Wizard's Staff (10 gc, Common; close combat, Strength as user, Parry, two-handed, Concussion), and the Familiar (20+2D6 gc, Rare 9; a Dog, Cat, Raven or Viper, each with its own profile and rules, rolling injuries as a henchman and counting towards neither the warband's size nor rout tests). Our Familiar shares the name but does other things (a casting re-roll, ignored in play), so theirs is named apart, Familiar (Sorcerous Society).
+- Flag (p8): The Magus and the Mages roll their spells from "any one Elemental list, or from the Lesser Magic list": both lores are set, the five of them, and the player keeps to one.
+- Flag (p9): No group sizes are printed.
+- Flag (p10): The four Elemental lores (Water, Fire, Earth, Air, pages 10 to 13) are new lores.
+- Flag (p12): Jozun's Decay's last line calls it "Eternal Rot": read as the same spell.
+
 ### Survivors of Strigos
 
 - Alias (p2): "light armor" is our light armour.
@@ -1196,6 +1295,26 @@ Kept apart from a family's, the effect differing:
 - Flag (p5): Strigany are henchmen (under the Henchmen heading, with no starting experience), up to five. No group sizes are printed: left open.
 - Flag (p5): Ghouls cost 40 gc and Giant Bats 40 gc, as printed. Large is our shared Large.
 - Flag (p6): Charms & Hexes differ from our Charms and Hexes (Scry and Curse are Difficulty 8, ours 6; spell 6 is Cure of Thorns, ours Cure), so the Seer's is a new lore, Charms and Hexes (Strigos), in spells.json.
+
+### Vampire Hunters of Sylvania
+
+- Alias (p10): "light armor" is our light armour.
+- Stub: Scythe, 10 gc, Common; its rules are on p10.
+- Stub: Silver-tip Stake, 10 gc, Common; its rules are on p10.
+- Stub: Throat Guard, 10 gc, Rare 7; its rules are on p10.
+- Stub: Holy Water, 10 gc, Common; its rules are on p10.
+- Stub: Blessed Bolts, 25 gc, Common; its rules are on p10.
+- Flag (p9): The warband is the issue's pages 9 to 13 (Letters of the Damned #5); the rest of the issue is other articles.
+- Flag (p9): A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race.
+- Flag (p9): Choice of Warriors allows up to four Pilgrims and up to four Wolfhounds, but their headings (p12) read 0-5. Choice of Warriors is taken: 0-4 each.
+- Flag (p9): The special skills are a new group, Vampire Hunters of Sylvania; none is ours. The Vampire Hunter and Slayers may take them all; the Priest of Morr only Blessing of Morr (printed "Blessing of Moor") and Thirst for Vengeance ("Thirst of Vengeance" in the heading line), so the other three open with "Vampire Hunter and Slayers only". Iron Will (immune to fear) is the Protectorate of Sigmar's Unshakeable Faith under another name, and Righteous Aura our Sign of Sigmar under another: both kept apart, possible matches for William.
+- Flag (p10): The skill table, read from the layout text: Vampire Hunter all six; Slayer Combat, Shooting, Strength, Speed, Special; Priest of Morr Academic, Speed, Special.
+- Flag (p10): The Crossbow Pistol line (15 gc) carries an asterisk with no footnote; it is our Crossbow pistol at the printed 15 gc.
+- Flag (p10): Stubs: the Scythe (10 gc, Common; close combat, Strength as user +1, two-handed), the Silver-tip Stake (Common; close combat, Strength as user, Heart-seeker: +1 to the injury roll when it wounds; its entry says 15 gc, the lists 10 gc, taken from the lists) and the Throat Guard (10 gc, Rare 7, Life Saver: a special 6+ save against every injury roll a Vampire causes, not modified by Strength but lost to criticals that ignore armour; adds no armour save, worn alone or with light or heavy armour). Holy Water (10 gc here, 5 gc for the Protectorate of Sigmar) and Blessed Bolts ("See Protectorate of Sigmar") are the Protectorate's stubs, one item each with a price for both warbands.
+- Flag (p10): "Spear (Pitch Fork)" on the Villager list is our Spear, shown as Pitch Fork.
+- Flag (p11): The Priest of Morr "may only be armed with a Dagger and a Scythe" and never armour: his own list holds the two at the Vampire Hunters list's prices, and he buys from the Heroes' Miscellaneous list too.
+- Flag (p12): No group sizes are printed.
+- Flag (p13): Funerary Rites differ from ours in their Difficulties (Sanctity of the Fallen 5, ours 7; Do you know who I am? 9, ours 7; I am death! 7, ours 8): a new lore, Funerary Rites (Vampire Hunters of Sylvania).
 
 ### Wood Elves of Athel Loren
 
