@@ -63,8 +63,9 @@ check over every file.
      becomes its item's notes (the Sorcerous Society's Familiar names its four pets in the bestiary).
    - an item whose rules William gives: a stub carries them (`rules`: a shared item rule by its name where ours does
      the same, the Ratling Gun's Move or fire; else its own name and text), a rule several items carry is one of the
-     page's `itemRules` (Experimental Technology), and one of our items the warband buys from its own row is a
-     `priceRows` entry (the Low Kings' Spiked Gauntlet, 15 gc, Rare 7, Enforcer only). A line's `note` is said with it.
+     page's `itemRules` (Experimental Technology; its `ours` our items whose own rule it becomes, the Mordheim Map's
+     Map), and one of our items the warband buys from its own row is a `priceRows` entry (the Low Kings' Spiked
+     Gauntlet, 15 gc, Rare 7, Enforcer only).
      One of our Mutiny in Marienburg items with no rules takes the PDF's in `apps/items/data/mim-items.json` (its
      `properties`, `needs_rules` false: the Armour of the Wildwood, the Stromfels Heart).
 

@@ -215,15 +215,11 @@
       {
         "type": "bretonnian-knights",
         "excluded": false
-      },
-      {
-        "type": "knights-of-the-bitter-moors",
-        "excluded": false
       }
     ],
     "large_only": false,
     "note": "",
-    "how": "skill_group_learners",
+    "how": "intersection",
     "skills": [
       "Virtue of Purity",
       "Virtue of Valor",
@@ -615,6 +611,27 @@
       "Hide in Shadows",
       "Master Trapper",
       "Pathfinder (Horned Hunters)"
+    ]
+  },
+  {
+    "name": "Knights of the Bitter Moors",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "knights-of-the-bitter-moors",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Virtue of Purity",
+      "Virtue of Discipline",
+      "Virtue of Noble Disdain",
+      "Virtue of the Impetuous",
+      "Virtue of the Squire",
+      "Virtue of Valour (Knights of the Bitter Moors)"
     ]
   },
   {

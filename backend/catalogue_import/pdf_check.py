@@ -49,7 +49,7 @@ PAGE: Spec = {
 WARBAND_RULES: Spec = {"startingGc": (int, True), "maxModels": (int, True)}
 RULE: Spec = {"rulename": (str, True), "ruleFull": (str, True)}
 LIST: Spec = {"id": (str, True), "title": (str, True), "caveat": (str, True), "items": (list, True)}
-LINE: Spec = {"name": (str, True), "alias": (str, True), "cost": (dict, True), "note": (str, False)}
+LINE: Spec = {"name": (str, True), "alias": (str, True), "cost": (dict, True)}
 COST: Spec = {"cost": (int, True), "costPrefix": (str, False), "costSuffix": (str, False), "braceCost": (int, False)}
 SPECIAL: Spec = {
     "title": (str, True),
@@ -109,6 +109,7 @@ ITEM_RULE: Spec = {
     "summary": (str, False),
     "text": (str, True),
     "tables": (list, False),
+    "ours": (list, False),
     "page": (int, True),
 }
 PRICE_ROW: Spec = {
@@ -293,6 +294,13 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
     found.problems += [f"stub {name!r}: no line names it" for name in sorted(set(stubs.values()) - used)]
     raw_names = {norm_name(name) for _title, name, _cost in lines_of(page)}
     line_names = {norm_name(name) for _title, name, _cost in lines_of(fixed)}
+    ours = {item["name"] for item in catalogue.items.items}
+    for row in page.get("itemRules") or []:
+        found.problems += [
+            f"shared item rule {row['name']!r}: no item of ours {name!r}"
+            for name in row.get("ours") or []
+            if name not in ours
+        ]
     for row in page.get("priceRows") or []:
         if catalogue.items.find(row["name"])[0] is None:
             found.problems.append(f"price row {row['name']!r}: no item of ours (a stub has its own row)")

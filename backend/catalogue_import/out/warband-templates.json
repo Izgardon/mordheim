@@ -15507,12 +15507,6 @@
         "type": ""
       },
       {
-        "title": "Naggaroth Prices",
-        "description": "The Repeater crossbow's list price (20 gc) is for a starting warband only, which needs no roll to find it. Later, bought in Mordheim, it costs what other warbands pay and must be searched for as usual.",
-        "variant": "",
-        "type": ""
-      },
-      {
         "title": "Promoted Henchmen",
         "description": "A henchman who becomes a Hero still buys from his henchman list, never the Druchii Heroes list.",
         "variant": "",
@@ -27527,7 +27521,7 @@
             "brace_cost": null,
             "who": {},
             "warband_max": null,
-            "note": "Before the first battle only; then the usual price and rarity.; Before the first battle only; then the usual price and rarity.",
+            "note": "",
             "variant": ""
           },
           {
@@ -27587,7 +27581,7 @@
             "brace_cost": null,
             "who": {},
             "warband_max": null,
-            "note": "Before the first battle only; then the usual price and rarity.; Before the first battle only; then the usual price and rarity.",
+            "note": "",
             "variant": ""
           }
         ]
@@ -27905,7 +27899,7 @@
           "Combat",
           "Academic",
           "Strength",
-          "Bretonnian Knights"
+          "Knights of the Bitter Moors"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -27968,7 +27962,7 @@
           "Combat",
           "Strength",
           "Speed",
-          "Bretonnian Knights"
+          "Knights of the Bitter Moors"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -28020,7 +28014,7 @@
         "skill_types": [
           "Combat",
           "Speed",
-          "Bretonnian Knights"
+          "Knights of the Bitter Moors"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -37458,7 +37452,7 @@
             "brace_cost": null,
             "who": {},
             "warband_max": null,
-            "note": "100 gc only before the warband's first battle; after it, the usual price and rarity (250 gc, Rare 15).; 100 gc only before the warband's first battle; after it, the usual price and rarity (250 gc, Rare 15).",
+            "note": "",
             "variant": ""
           }
         ]
@@ -66811,12 +66805,6 @@
       {
         "title": "Tolerant",
         "description": "The warband may hire any hired sword who isn't chaotic or evil (no Skaven, Possessed, Beastmen, Dark Elves, Undead and the like).",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "Starting Prices",
-        "description": "The starred prices (Ithilmar weapons at 2 × price, Ithilmar Armour at 60 gc) are for a new warband, with no roll to find them. Later the warband pays the usual price and rolls to find them as usual.",
         "variant": "",
         "type": ""
       }

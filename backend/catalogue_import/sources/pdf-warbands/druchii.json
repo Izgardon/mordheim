@@ -13,7 +13,6 @@
     {"rulename": "Disdain", "ruleFull": "Dark Elves may never use black powder weapons."},
     {"rulename": "Slavers", "ruleFull": "When the warband finds prisoners (a roll of 333 in the exploration phase), it may use the Skaven's rules for them."},
     {"rulename": "Hired Swords", "ruleFull": "The warband may hire only these hired swords: Pit Fighter, Ogre Bodyguard, Warlock, Imperial Assassin, Tilean Marksman, Highwayman, Duelist, Witch, Emissary of Chaos, Human Scout, Old Prospector, Dark Elf Assassin, Pathfinder, Nomad Scout, Thief and Shade Scout."},
-    {"rulename": "Naggaroth Prices", "ruleFull": "The Repeater crossbow's list price (20 gc) is for a starting warband only, which needs no roll to find it. Later, bought in Mordheim, it costs what other warbands pay and must be searched for as usual."},
     {"rulename": "Promoted Henchmen", "ruleFull": "A henchman who becomes a Hero still buys from his henchman list, never the Druchii Heroes list."}
   ],
   "equipmentLists": [
@@ -251,7 +250,7 @@
     {"page": 2, "what": "A Druchii warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
     {"page": 2, "what": "The Druchii maximum (M5 WS7 BS7 S4 T3 W3 I9 A4 Ld10) has T3 where our Elf has T4, so they take a new race, Elf (Druchii)."},
     {"page": 2, "what": "The skill table has no Strength column: no Druchii Hero learns Strength skills."},
-    {"page": 3, "what": "The Repeater crossbow is 20 gc on the lists (ours is 40 gc), a starting price only (the Naggaroth Prices rule). The Sea Dragon Cloak is 30 gc (ours 50 gc) and Dark Venom 15 gc: taken as printed."},
+    {"page": 3, "what": "The Repeater crossbow is 20 gc on the lists (ours is 40 gc), a list price, which the app keeps to the starting warband. The Sea Dragon Cloak is 30 gc (ours 50 gc) and Dark Venom 15 gc: taken as printed."},
     {"page": 3, "what": "The Darksteel blade is \"3 x price\": a stub with no price of its own (3 × price), like our Gromril Weapon, Rare 9, its rules on p7 (Critical Damage, Wicked Edge; heroes only). The Draich is a stub at 25 gc (25+1D6, Rare 8, Strength as user +2, Two-handed, Swift), its rules on p7."},
     {"page": 3, "what": "The Beastlash links our Beastlash at the list's 10 gc (the PDF prices it 10+D6, Rare 8)."},
     {"page": 6, "what": "Slavehounds come only with a Beastmaster (0-3, \"if it also includes a Beastmaster\"): our counts can't tie one fighter's to another's, so it is said in their Animals rule."},

@@ -1104,6 +1104,10 @@
     "description": "When charged, the Halfling gains one bonus attack, which strikes first."
   },
   {
+    "name": "Virtue of Valour (Knights of the Bitter Moors)",
+    "description": "The Knight may re-roll any failed rolls to wound against an enemy with a higher natural Strength than his."
+  },
+  {
     "name": "Surgeon",
     "description": "Mad Scientist only. He may re-roll one die of a single injury roll of one of his warriors; the second roll stands."
   },

@@ -14,11 +14,12 @@ snapshot so the template import builds it the same way. A file's own keys:
   a page's, in its own words where it gives them, or `{name, text, tables}` its own), and needs rules until it has
   one of its own (the Metal Mongers' Ratling Gun); `statblock`, its profile rows (`{profile, m, ws, ...}`: the Night
   Haint's Mortis Engine, the Channel Rats' Wicker Man);
-- `itemRules`: `{name, summary, text, tables, page}`, shared item rules a page brings, which a few items link
-  (William, 6 Nov 2026, of Experimental Technology: "its a shared item rule that a few items will have");
+- `itemRules`: `{name, summary, text, tables, page, ours}`, shared item rules a page brings, which a few items link
+  (William, 6 Nov 2026, of Experimental Technology: "its a shared item rule that a few items will have"); `ours`, our
+  items whose own rule it becomes (the Watchmen's Map, our Mordheim Map's rule for any map: "Make the map rule not
+  unique to the items, give it to both marienburg and mordheim map");
 - `priceRows`: `{name, rarity, dice, note, page}`, a price row for the page's type on one of our items its lines sell
   (the Low Kings' Spiked Gauntlet: William, 6 Nov 2026, "would prefer them being just one item"), at the line's price;
-- a list line's `note`: said with the line (the Militant Mootlanders' Magic Acorn, at 100 gc before the first battle);
 - `skillGroup` (`{name, new, note}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills,
   each `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for
   a warband with no Special column (the Outlaws of Stirwood Forest, Redux). Who of the warband may take a skill opens
@@ -174,6 +175,20 @@ def _stub_rule(slug: str, stub: str, row: dict[str, Any], rules: dict[str, dict[
     if shared is None:
         raise ValueError(f"pdf-warbands/{slug}.json: the stub {stub!r} links {row['rule']!r}, no shared item rule")
     return {"rule": shared["slug"], **{key: row[key] for key in ("summary", "text", "tables") if row.get(key)}}
+
+
+def give_page_rules(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]]) -> None:
+    """Each page's shared item rule linked by our items it names (`ours`), in place of their own rules: the Watchmen's
+    Map is our Mordheim Map's rule."""
+    by_name = {item["name"]: item for item in items}
+    for slug, page in pages.items():
+        for row in page.get("itemRules") or []:
+            for name in row.get("ours") or []:
+                if name not in by_name:
+                    raise ValueError(
+                        f"pdf-warbands/{slug}.json: the shared rule {row['name']!r} names no item {name!r}"
+                    )
+                by_name[name]["rules"] = [{"rule": slugify(row["name"])}]
 
 
 def add_price_rows(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]], types: list[dict[str, Any]]) -> None:

@@ -212,7 +212,7 @@
         }
       ]
     },
-    {"name": "Pneumatic Arm", "type": "Miscellaneous", "subtype": "", "rarity": 13, "dice": null, "rulesPage": 7, "rules": [{"rule": "Experimental Technology"}]}
+    {"name": "Pneumatic Arm", "type": "Miscellaneous", "subtype": "", "rarity": 13, "dice": null, "rulesPage": 7, "rules": [{"name": "Harness", "text": "An Engineer Adept wearing the harness counts as having two extra arms. He may also use it to hold a missile weapon with the Unwieldy trait (the Ratling Gun, a Warpfire Thrower and the like), its power doing away with the need for two models to carry it."}, {"rule": "Experimental Technology"}]}
   ],
   "flags": [
     {"page": 1, "what": "The warband has 500 warp tokens: read as 500 gc. A Skaven warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
@@ -225,7 +225,7 @@
     {"page": 6, "what": "The Ratling Gun is a stub at the Heroes list's 275 gc. Its entry prints \"X gold crowns (Forge-Rats and Technicians only)\", Rare 14, and a placeholder \"Text here...\": the line is the Forge-Rats' only, the Technicians' list lacking it. Typed blackpowder, like our Warplock pistol. Its rules (p6, William, 6 Nov 2026: \"its quite a lot so feel free to break down into rules\"): range 6\"-16\", S3, our Move or fire and Save Modifier, worded for it where ours are the handgun's (its save modifier is -1, theirs -2), and its own Unwieldy (ours is the spear's), Metal Storm and Jeopardous, whose misfires roll on Experimental Technology's chart. It doesn't link Experimental Technology: its rules don't name it."},
     {"page": 6, "what": "The Warpfire Projector (Machine-Ogre only; range 6\", S4, save -1, Jet of Flame, Refuel) is the Tinker-Rat chart's 3, on no list: not imported as an item."},
     {"page": 7, "what": "Experimental Technology, printed under the Pneumatic Arm, is a shared item rule (William, 6 Nov 2026: \"its not a warband rule, its a shared item rule that a few items will have, there specifically the pneumatic arm\"), its Experimental Weapon chart in its text; the Pneumatic Arm links it. No other item of ours names it."},
-    {"page": 7, "what": "The Pneumatic Arm (140 gc, Rare 13, Engineer Adept only; two extra arms, and holds an Unwieldy missile weapon with no second model) still needs its own rules: it carries only Experimental Technology. The Spike-jawed Snatcher (25 gc, Rare 10, Skaven only; Capture, Two-handed) is a stub, its rules on p7. The Poison Wind Globe (20 gc, Rare 6) and Gas Mask (15 gc, Rare 6) are ours, the same numbers."},
+    {"page": 7, "what": "The Pneumatic Arm (140 gc, Rare 13, Engineer Adept only; two extra arms, and holds an Unwieldy missile weapon with no second model) carries its own rule, Harness, besides Experimental Technology. The Spike-jawed Snatcher (25 gc, Rare 10, Skaven only; Capture, Two-handed) is a stub, its rules on p7. The Poison Wind Globe (20 gc, Rare 6) and Gas Mask (15 gc, Rare 6) are ours, the same numbers."},
     {"page": 3, "what": "The special skills are our Skaven Metal Mongers group's six, the same as the PDF's (our Tail Fighting says knife for its dagger)."}
   ]
 }

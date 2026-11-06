@@ -1009,7 +1009,7 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "1a",
-    "description": "The spiked gauntlet counts as an additional hand weapon and a buckler. And no, your Heroes cannot learn to use it!",
+    "description": "The spiked gauntlet counts as an additional hand weapon and a buckler.",
     "strength": "As user",
     "range": "Close Combat",
     "properties": [

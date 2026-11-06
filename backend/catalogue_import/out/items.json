@@ -6256,7 +6256,7 @@
       "spiked gauntlet",
       "spiked gauntlets"
     ],
-    "flavour": "The spiked gauntlet counts as an additional hand weapon and a buckler. And no, your Heroes cannot learn to use it!",
+    "flavour": "The spiked gauntlet counts as an additional hand weapon and a buckler.",
     "range": "Close Combat",
     "strength": "As user",
     "save": "",
@@ -9888,39 +9888,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "name": "",
-        "summary": "Various effects based on D6 roll when purchased",
-        "text": "A map can help a warband find their way through the confusing maze of streets and into areas with rich buildings to loot.\n\nWhen you buy a map, roll a D6:\n\n{{table:1}}",
-        "tables": [
-          {
-            "columns": [
-              "D6",
-              "Result"
-            ],
-            "rows": [
-              [
-                "1",
-                "Fake. The map is a fake, and is completely worthless. It leads you on a fool's errand. Your opponent may automatically choose the next scenario you play."
-              ],
-              [
-                "2-3",
-                "Vague. Though crude, the map is generally accurate (well... parts of it are... perhaps!). You may re-roll any one dice during the next exploration phase if you wish but you must accept the result of the second roll."
-              ],
-              [
-                "4",
-                "Catacomb map. The map shows a way through the catacombs into the city. You may automatically choose the scenario next time you fight a battle."
-              ],
-              [
-                "5",
-                "Accurate. The map is recently made and very detailed. You may re-roll up to three dice during the next exploration phase if you wish. You must accept the result of the second roll."
-              ],
-              [
-                "6",
-                "Master map. This is one of the twelve master maps of Mordheim made for Count von Steinhardt of Ostermark. From now on you may always re-roll one dice when rolling on the Exploration chart as long as the Hero who possesses this map was not taken out of action in the battle."
-              ]
-            ]
-          }
-        ]
+        "rule": "map"
       }
     ],
     "availabilities": [
@@ -14599,7 +14567,7 @@
     "rules": [
       {
         "name": "",
-        "summary": "+1 Toughness and +1 Movement, and a 6+ armour save. Elves only.",
+        "summary": "Elven armour of living wood.",
         "text": "",
         "tables": []
       },
@@ -14626,6 +14594,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 130,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": "Heroes only"
       }
     ]
   },
@@ -14738,7 +14722,7 @@
     "rules": [
       {
         "name": "",
-        "summary": "+1 Toughness, enemies at -1 to hit in close combat, and a 5+ armour save. Elf Rangers only.",
+        "summary": "Armour of living oak.",
         "text": "",
         "tables": []
       },
@@ -14760,6 +14744,22 @@
         "for_everyone": true,
         "warbands": [],
         "note": "Elf Rangers only"
+      },
+      {
+        "label": "",
+        "cost": 150,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": "Heroes only"
       }
     ]
   },
@@ -16007,7 +16007,7 @@
             "excluded": false
           }
         ],
-        "note": "Priest of Stromfels only"
+        "note": "Heroes only"
       }
     ]
   },
@@ -19758,8 +19758,14 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
+      {
+        "name": "Harness",
+        "summary": "",
+        "text": "An Engineer Adept wearing the harness counts as having two extra arms. He may also use it to hold a missile weapon with the Unwieldy trait (the Ratling Gun, a Warpfire Thrower and the like), its power doing away with the need for two models to carry it.",
+        "tables": []
+      },
       {
         "rule": "experimental-technology"
       }
@@ -19902,7 +19908,11 @@
     "statblock": [],
     "notes": "",
     "needs_rules": true,
-    "rules": [],
+    "rules": [
+      {
+        "rule": "map"
+      }
+    ],
     "availabilities": [
       {
         "label": "",

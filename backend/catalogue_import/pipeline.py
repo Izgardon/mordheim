@@ -22,6 +22,7 @@ from catalogue_import.pdf_warbands import (
     add_pages,
     add_price_rows,
     add_skill_groups,
+    give_page_rules,
     load_pdf_pages,
     page_item_rules,
     render_pdf,
@@ -246,6 +247,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     index.update(index_rules(page_rules))
     stubs = stub_items(pdf_pages, items + mim + added, types, index)
     add_price_rows(pdf_pages, items + mim + added, types)  # a page's row on one of our items (Spiked Gauntlet)
+    give_page_rules(pdf_pages, items + mim + added)  # a page's shared rule in place of ours (the Mordheim Map's)
     everything = items + mim + added + stubs
     for rule in page_rules:
         rule["used_by"] = sum({"rule": rule["slug"]} in item["rules"] for item in everything)

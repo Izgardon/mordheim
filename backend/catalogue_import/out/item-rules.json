@@ -290,6 +290,45 @@
     "wordings": 2
   },
   {
+    "slug": "map",
+    "name": "Map",
+    "aliases": [],
+    "summary": "A D6 when bought: a fake, or re-rolls and scenario picks",
+    "text": "A map helps a warband find its way through the streets to the rich buildings worth looting. When you buy one, roll a D6:",
+    "tables": [
+      {
+        "columns": [
+          "D6",
+          "Result"
+        ],
+        "rows": [
+          [
+            "1",
+            "Fake: the map is worthless, and your opponent chooses the next scenario you play."
+          ],
+          [
+            "2-3",
+            "Vague: you may re-roll one dice in the next exploration phase; the second result stands."
+          ],
+          [
+            "4",
+            "Catacomb map: you choose the scenario the next time you fight a battle."
+          ],
+          [
+            "5",
+            "Accurate: you may re-roll up to three dice in the next exploration phase; the second results stand."
+          ],
+          [
+            "6",
+            "Master map: from now on you may re-roll one dice on the Exploration chart, as long as the Hero who has the map wasn't taken out of action in the battle."
+          ]
+        ]
+      }
+    ],
+    "used_by": 2,
+    "wordings": 1
+  },
+  {
     "slug": "move-or-fire",
     "name": "Move or fire",
     "aliases": [

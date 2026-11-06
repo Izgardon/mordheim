@@ -319,8 +319,10 @@ class PdfImportTests(SimpleTestCase):
             (10, 7, [{"type": "witch-hunters", "excluded": False}], "Captain only"),
         )
 
-    def test_low_kings_buy_our_spiked_gauntlet_and_mootlanders_note_their_acorns_price(self) -> None:
-        # William, 6 Nov 2026: one Spiked Gauntlet; the Magic Acorn "is 100 just for the mootlanders on initial buy"
+    def test_low_kings_buy_our_spiked_gauntlet_and_the_maps_share_their_rule(self) -> None:
+        # William, 6 Nov 2026: one Spiked Gauntlet; the Magic Acorn "is 100 just for the mootlanders on initial buy", a
+        # list price, which the app keeps to the starting warband ("i thought all list items were at their starting
+        # only price"); "Make the map rule not unique to the items, give it to both marienburg and mordheim map"
         gauntlet = self.items["Spiked Gauntlet"]
         self.assertIn(
             (15, 7, [{"type": "low-kings", "excluded": False}], "Enforcer only"),
@@ -329,9 +331,11 @@ class PdfImportTests(SimpleTestCase):
         self.assertNotIn("Spiked Gauntlet (Low Kings)", self.items)
         lines = [line for row in self.templates["militant-mootlanders"]["lists"] for line in row["lines"]]
         [acorn] = [line for line in lines if line["item"]["name"] == "Magic Acorn"]
-        self.assertEqual(acorn["cost"], 100)
-        self.assertIn("first battle", acorn["note"])
-        self.assertEqual(self.items["Pneumatic Arm"]["rules"], [{"rule": "experimental-technology"}])
+        self.assertEqual((acorn["cost"], acorn["note"]), (100, ""))
+        self.assertEqual(self.items["Pneumatic Arm"]["rules"][-1], {"rule": "experimental-technology"})
+        self.assertEqual(self.items["Pneumatic Arm"]["rules"][0]["name"], "Harness")
+        for name in ("Mordheim Map", "Marienburg Map"):
+            self.assertEqual(self.items[name]["rules"], [{"rule": "map"}])
 
     def test_half_a_price_rounds_up(self) -> None:
         # William, 6 Nov 2026: "yes always round up in mordheim for gold"

@@ -272,23 +272,23 @@
     },
     {
       "name": "Tea-leaf",
-      "setting": "mordheim",
-      "how": "no match"
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
     },
     {
       "name": "Flan-eater",
-      "setting": "mordheim",
-      "how": "no match"
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
     },
     {
       "name": "Looter",
-      "setting": "mordheim",
-      "how": "no match"
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
     },
     {
       "name": "Taunt (Militant Mootlanders)",
-      "setting": "mordheim",
-      "how": "mordheimer"
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
     },
     {
       "name": "Banditry",
@@ -1378,6 +1378,11 @@
     {
       "name": "Shifty",
       "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Virtue of Valour (Knights of the Bitter Moors)",
+      "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
     },
     {

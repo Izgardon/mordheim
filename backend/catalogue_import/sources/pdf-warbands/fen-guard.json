@@ -170,13 +170,17 @@
     {"name": "Iron Bark", "type": "Armour", "subtype": "", "rarity": 5, "dice": null, "rulesPage": 3},
     {"name": "Horn of the Wild Hunt", "type": "Miscellaneous", "subtype": "", "rarity": 12, "dice": null, "rulesPage": 3}
   ],
+  "priceRows": [
+    {"name": "armour of the wildwood", "rarity": 12, "dice": null, "note": "Heroes only", "page": 2},
+    {"name": "the oaken armour", "rarity": 12, "dice": null, "note": "Heroes only", "page": 2}
+  ],
   "flags": [
     {"page": 1, "what": "A Glade Warriors warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
     {"page": 1, "what": "The Dryad maximum (M5 WS6 BS4 S4 T5 W4 I5 A3 Ld10) and the Treekin maximum (M6 WS5 BS0 S5 T5 W5 I2 A4 Ld10) are new races, Dryad and Treekin."},
     {"page": 1, "what": "Hard to Kill is printed among the warband's rules for the Dryads and Spiteborn only: it is their own rule."},
     {"page": 1, "what": "Variation is a tailored upgrade list, Variations, for Heroes, each mutation at its listed price (Tentacle 35, Extra Arm 40, Cloud of Flies 25, Hulking Brute 50, Spines 35, Blackblood 30, Beak 35). Henchmen may take one too: upgrades are for heroes, so the player adds it. \"possible Nesting Bird (Beak!)\" is read as the Beak, offered."},
     {"page": 2, "what": "The skill table's ticks are images: read from p2's image. Its columns run Strength before Academic."},
-    {"page": 2, "what": "The Whip (10 gc, Heroes only) has no entry in the PDF: a stub with no rules, which Heinrich 'Altdorf' Schmidt carries too (William, 6 Nov 2026: \"sure\"). The Armour of the Willow Wood (130 gc) is our Armour of the Wildwood shown as Armour of the Willow Wood (William: \"yes, keep ours, attached rules if we dont have them\"), and the Oaken Armour (150 gc) our The Oaken Armour; both now carry the rules William gave. Our Armour of the Wildwood's row is the Elves group's, which doesn't hold the Fen Guard, so only their list sells it to them; The Oaken Armour's row is everyone's, noted Elf Rangers only."},
+    {"page": 2, "what": "The Whip (10 gc, Heroes only) has no entry in the PDF: a stub with no rules, which Heinrich 'Altdorf' Schmidt carries too (William, 6 Nov 2026: \"sure\"). The Armour of the Willow Wood (130 gc) is our Armour of the Wildwood shown as Armour of the Willow Wood (William: \"yes, keep ours, attached rules if we dont have them\"), and the Oaken Armour (150 gc) our The Oaken Armour; both now carry the rules William gave. Each has a price row for the Fen Guard too, Heroes only at the list's price, since our rows are the Elves' and the Elf Rangers'."},
     {"page": 2, "what": "Splinters (Throwing Knives) is our Throwing Knives/Stars shown as Splinters, Vine Tendril (Fish Hook Shot) our Fish-hook Shot/Hunting Lasso (MiM) shown as Vine Tendril, Climbing Vine (rope and hook) our Rope & Hook shown as Climbing Vine, Hammer our Club, Mace or Hammer. The list has no dagger."},
     {"page": 2, "what": "The Magic Acorn is 100 gc on the list, but that price is the Militant Mootlanders' before their first battle (William, 6 Nov 2026: \"it is 100 just for the mootlanders on initial buy\"): the line takes our usual 250 gc (Rare 15). The Healing Herbs are 10 gc (ours 20+2D6) and the Familiar 20 gc (ours 20+D6, Rare 8): taken as printed."},
     {"page": 3, "what": "The Greenwood Scythe (60 gc, Rare 10, Branchwych only; S as user +1, Two-handed, Treescuttle Venom: +1 to injury rolls) and Iron Bark (10 gc, Rare 5, Fen Guard only; +2 to the armour save, broken the first time a save fails) are stubs, their rules on p3."},

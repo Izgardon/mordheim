@@ -90,9 +90,9 @@ class SeedAllTests(TestCase):
             {
                 "Race": 45,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit and the Fimir
                 "Item": 399,  # the import's 368 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
-                "ItemRule": 52,  # the import's shared rules, the Metal Mongers' Experimental Technology among them
-                "Skill": 345,  # the import's 321 (one per name) + the 24 hired swords' own skills the book lacks
-                "SkillGroup": 87,  # the import's 68 + a group of his own for each of 19 hired swords
+                "ItemRule": 53,  # the import's shared rules, the Metal Mongers' Experimental Technology and the Watchmen's Map among them
+                "Skill": 346,  # the import's 322 (one per name) + the 24 hired swords' own skills the book lacks
+                "SkillGroup": 88,  # the import's 69 + a group of his own for each of 19 hired swords
                 "Spell": 269,  # 263 (the PDFs' lores) + the Dark Mage's six (BUG-54)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
@@ -166,7 +166,7 @@ class SeedAllTests(TestCase):
                 "TemplateFighter": 537,
                 "TemplateList": 205,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
                 "TemplateListItem": 2220,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 283,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                "TemplateRule": 281,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin),
                 # the Fen Guard's 7 (Variations), the Lords of the Marsh's 15, the Shallows Beasts' 9 and the Underworld
@@ -325,7 +325,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 321, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 322, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)

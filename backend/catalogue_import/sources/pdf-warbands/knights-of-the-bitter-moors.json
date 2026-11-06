@@ -47,11 +47,11 @@
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "bow", "alias": "", "cost": {"cost": 10}},
         {"name": "longbow", "alias": "", "cost": {"cost": 15}},
-        {"name": "light armour", "alias": "", "cost": {"cost": 15}, "note": "Before the first battle only; then the usual price and rarity."},
+        {"name": "light armour", "alias": "", "cost": {"cost": 15}},
         {"name": "shield", "alias": "", "cost": {"cost": 5}},
         {"name": "helmet", "alias": "", "cost": {"cost": 10}},
         {"name": "buckler", "alias": "", "cost": {"cost": 5}},
-        {"name": "horse", "alias": "", "cost": {"cost": 20}, "note": "Before the first battle only; then the usual price and rarity."}
+        {"name": "horse", "alias": "", "cost": {"cost": 20}}
       ]
     },
     {
@@ -191,10 +191,10 @@
       ]
     }
   ],
-  "skillGroup": {"name": "Bretonnian Knights", "new": false},
+  "skillGroup": {"name": "Knights of the Bitter Moors", "new": true},
   "specialSkillsList": [
     {"name": "Virtue of Purity", "ours": "Virtue of Purity"},
-    {"name": "Virtue of Valor", "ours": "Virtue of Valor", "pdfName": "Virtue of Valour"},
+    {"name": "Virtue of Valour (Knights of the Bitter Moors)", "pdfName": "Virtue of Valour", "description": "The Knight may re-roll any failed rolls to wound against an enemy with a higher natural Strength than his."},
     {"name": "Virtue of Discipline", "ours": "Virtue of Discipline"},
     {"name": "Virtue of Noble Disdain", "ours": "Virtue of Noble Disdain"},
     {"name": "Virtue of the Impetuous", "ours": "Virtue of the Impetuous"},
@@ -230,10 +230,10 @@
   "flags": [
     {"page": 1, "what": "A Questing Knight's warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed. The PDF says it reworks the Town Cryer 8 Bretonnian list; this is its own template."},
     {"page": 1, "what": "Lady's Blessing is a pre-battle Leadership test, but a warband rule, not a fighter's, so it is no pre-battle roll in prebattle-rolls.json."},
-    {"page": 2, "what": "The Knights' list prices are as printed (Light armour 15 gc, Heavy armour 25, Helmet 5, Lance 20, Warhorse 40, Barding 30), which Peasant Labour says Knights always pay. The Squires' Light armour (15 gc) and Horse (20 gc) are below the usual, and Squires pay the full price after the start, so those two lines say they are for the starting warband only."},
+    {"page": 2, "what": "The Knights' list prices are as printed (Light armour 15 gc, Heavy armour 25, Helmet 5, Lance 20, Warhorse 40, Barding 30), which Peasant Labour says Knights always pay. The Squires' Light armour (15 gc) and Horse (20 gc) are below the usual: list prices, which the app keeps to the starting warband, as Peasant Labour has the Squires pay full price later."},
     {"page": 2, "what": "Horsemens Hammer is our Horseman's Hammer (12 gc, Rare 10), at the list's 30 gc; Mace and Hammer are our Club, Mace or Hammer, shown as the PDF names them."},
     {"page": 3, "what": "The skill table's ticks are symbol glyphs, read from where the text layer places them and checked on a crop of p3's image. The Questing Knight's text gives him Combat, Strength, Academic and Speed, but the table ticks no Speed: the table is kept. The Squires' text adds Shooting, which the table doesn't tick (Virtue of the Squire opens it): the table is kept."},
-    {"page": 3, "what": "The special skills are our Bretonnian Knights group, as it stands. The PDF's Virtue of Valour is our Virtue of Valor, but the PDF re-rolls missed rolls to wound against an enemy of higher natural Strength, ours failed rolls to hit in hand-to-hand combat: ours is unchanged. The other five match."},
+    {"page": 3, "what": "The special skills are a group of their own (p3, below). The PDF's Virtue of Valour re-rolls missed rolls to wound against an enemy of higher natural Strength, where our Virtue of Valor (Town Cryer 8) re-rolls failed rolls to hit in hand-to-hand combat: theirs is named apart, Virtue of Valour (Knights of the Bitter Moors), in a group of their own, Knights of the Bitter Moors, with our other five."},
     {"page": 4, "what": "\"Knights come with a Warhorse\" (the Questing Knight) and \"a horse\" (a Knight Errant), and the Mounted Yeomen with riding horses, in their cost: each one's rule says so, and no item is given at hire. The Squires' starting skills (Ride: Horse, Animal Handler: Horse and Warhorse) are a rule of theirs."},
     {"page": 4, "what": "\"You may not have more squires in the warband then you have Knights\" is a warband rule, Squires."},
     {"page": 6, "what": "The Field Trebuchet is a stub with its rules and profile (M*, T7, W3); its availability is \"Special\", read as Common, and its build time is its item's note. Artillery's distance is read from \"the number indicated on the scatter die, minus the crews ballistic skill\", kept as printed, though Indirect Fire uses the artillery dice's."}

@@ -195,7 +195,28 @@
         {"name": "Falconry Glove", "text": "A warrior using a hunting bird without a falconry glove rolls on the Serious Injury chart in the post-battle sequence."}
       ]
     },
-    {"name": "Marienburg Map", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 3}
+    {"name": "Marienburg Map", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 3, "rules": [{"rule": "Map"}]}
+  ],
+  "itemRules": [
+    {
+      "name": "Map",
+      "summary": "A D6 when bought: a fake, or re-rolls and scenario picks",
+      "text": "A map helps a warband find its way through the streets to the rich buildings worth looting. When you buy one, roll a D6:",
+      "tables": [
+        {
+          "columns": ["D6", "Result"],
+          "rows": [
+            ["1", "Fake: the map is worthless, and your opponent chooses the next scenario you play."],
+            ["2-3", "Vague: you may re-roll one dice in the next exploration phase; the second result stands."],
+            ["4", "Catacomb map: you choose the scenario the next time you fight a battle."],
+            ["5", "Accurate: you may re-roll up to three dice in the next exploration phase; the second results stand."],
+            ["6", "Master map: from now on you may re-roll one dice on the Exploration chart, as long as the Hero who has the map wasn't taken out of action in the battle."]
+          ]
+        }
+      ],
+      "ours": ["Mordheim Map"],
+      "page": 3
+    }
   ],
   "flags": [
     {"page": 2, "what": "A patrol of Watchmen needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum are printed, so the patrol takes our Human race."},
@@ -203,7 +224,7 @@
     {"page": 3, "what": "The skill table has no Special column, so the patrol has no skill group. Its ticks are read from where the text layer places them: Watch Captain all five; Sergeant Combat, Shooting, Strength, Speed; Private Sleuth Combat, Academic, Speed; Rookie Combat, Shooting, Speed."},
     {"page": 3, "what": "Watch carriage/Stage coach is our Trade Wagon/Stage Coach, Club and Mace/Staff our Club, Mace or Hammer, each shown under the PDF's name; Wardog is our Wardogs."},
     {"page": 3, "what": "The Hunting Bird (25 gc, Rare 12) is a stub with its rules; our Falconer skill (Mutiny in Marienburg) words the same rules, and our Bird of Prey (18\", S4) is another bird. The Sergeants' Falconer is that skill, given as their rule. Our Falconry Glove carries no rules, so the glove's rule from the Hunting Bird's entry is attached."},
-    {"page": 3, "what": "The Marienburg Map (20 gc) prints no rules: a stub. Our Mordheim Map is 20 gc too."},
+    {"page": 3, "what": "The Marienburg Map (20 gc) prints no rules: a stub, its own item, with the Mordheim Map's rule as a shared item rule, Map, worded for any map (William, 6 Nov 2026: \"Make the map rule not unique to the items, give it to both marienburg and mordheim map\")."},
     {"page": 4, "what": "The fighters' headings aren't in the text layer, so each is named from Choice of Warriors and his profile row (Officers' reads Watchman), and each cost is the one in his column: Watch Captain 60 gc, Rookie 15, Private Sleuth 55, Sergeant 35, Officer 25, Sewer Jack 20, Turnkey 35."},
     {"page": 5, "what": "The Turnkeys' Immune to Poison is our shared rule; the Sewer Jacks' Immune to Disease is their own."}
   ]

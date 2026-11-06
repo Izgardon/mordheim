@@ -11,8 +11,7 @@
     {"rulename": "Hate Dark Elves", "ruleFull": "Every warrior of the warband, hired swords excepted, hates Dark Elves."},
     {"rulename": "Excellent Sight", "ruleFull": "Every Elf of the warband spots hidden enemies from twice his Initiative in inches."},
     {"rulename": "Unforgiving", "ruleFull": "In multiplayer games the warband may never ally with a warband of a chaotic nature (Possessed, Skaven, Beastmen, Dark Elves and the like)."},
-    {"rulename": "Tolerant", "ruleFull": "The warband may hire any hired sword who isn't chaotic or evil (no Skaven, Possessed, Beastmen, Dark Elves, Undead and the like)."},
-    {"rulename": "Starting Prices", "ruleFull": "The starred prices (Ithilmar weapons at 2 × price, Ithilmar Armour at 60 gc) are for a new warband, with no roll to find them. Later the warband pays the usual price and rolls to find them as usual."}
+    {"rulename": "Tolerant", "ruleFull": "The warband may hire any hired sword who isn't chaotic or evil (no Skaven, Possessed, Beastmen, Dark Elves, Undead and the like)."}
   ],
   "equipmentLists": [
     {
@@ -162,7 +161,7 @@
     {"page": 1, "what": "A Wood Elf warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
     {"page": 1, "what": "The maximum is the rulebook's (p121), so the Elves take our Elf race."},
     {"page": 2, "what": "The skill table's ticks are a symbol font, read from where the text layer places them: Hunt Master Combat, Shooting, Academic, Speed, Special; Waywatcher Combat, Shooting, Speed, Special; Forest Mage Shooting, Academic, Speed, Special."},
-    {"page": 2, "what": "The starred prices are for starting only (a warband rule). The footnote also says \"Heroes only\", yet the Scout list, which only henchmen use, has the same starred lines: both lists keep them, with no note."},
+    {"page": 2, "what": "The starred prices are list prices, which the app keeps to the starting warband. The footnote also says \"Heroes only\", yet the Scout list, which only henchmen use, has the same starred lines: both lists keep them, with no note."},
     {"page": 2, "what": "List prices as printed: Elven Cloak 75 gc (ours 100; the PDF's own entry 75+D6x10, Rare 12), Ithilmar Armour 60 gc (ours 90), Hunting Arrows 35 gc (ours 25), Elven Wine 50 gc (the PDF's entry 50+3D6, Rare 10)."},
     {"page": 2, "what": "Elven Runestones (50+2D6 gc, Rare 11, Forest Mage only) and the Familiar (20+D6 gc, Rare 8, spell-users only) are on no list: they are special equipment, both ours, the Forest Mage's (the only spell-user)."},
     {"page": 3, "what": "The Leader rule says \"within 6\" of the Protector of the Hunt\": read as the Hunt Master, who leads."},
