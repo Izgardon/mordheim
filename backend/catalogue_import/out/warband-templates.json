@@ -18467,6 +18467,12 @@
     ],
     "rules": [
       {
+        "title": "Special Skills",
+        "description": "Only the Halfling Thief may take Stealthy.",
+        "variant": "",
+        "type": ""
+      },
+      {
         "title": "Pretty Much Human",
         "description": "The warband may hire any hired sword that human mercenaries may hire.",
         "variant": "",
@@ -27190,7 +27196,7 @@
           },
           {
             "item": {
-              "name": "Repeater Pistol",
+              "name": "Repeater Pistol (Masters of Horror)",
               "variant": ""
             },
             "shown_as": "",

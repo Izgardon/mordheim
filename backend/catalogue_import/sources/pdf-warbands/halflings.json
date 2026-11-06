@@ -9,6 +9,10 @@
   },
   "specialRules": [
     {
+      "rulename": "Special Skills",
+      "ruleFull": "Only the Halfling Thief may take Stealthy."
+    },
+    {
       "rulename": "Pretty Much Human",
       "ruleFull": "The warband may hire any hired sword that human mercenaries may hire."
     },
@@ -239,7 +243,7 @@
     {"name": "Quiet as a Mouse", "description": "While this Halfling is hidden, an enemy trying to spot him uses half his Initiative in inches, rounded down."},
     {"name": "Crude Belch (Halflings MIC)", "pdfName": "Crude Belch", "description": "In the first round of a hand-to-hand combat the Halfling may belch over every enemy in base contact with him. Each must take a Leadership test, and one who fails misses his first attack, even if he has only one."},
     {"name": "Wizened Halfling", "description": "Leader only. Halflings within 6\" of him may re-roll a failed Leadership test, taking both the test and the re-roll on his Leadership."},
-    {"name": "Stealthy (Halflings MIC)", "pdfName": "Stealthy", "description": "Halfling Thief only. He may hide even after running, and may run while within 8\" of enemy models if he starts and ends the move hidden."},
+    {"name": "Stealthy", "ours": "Stealthy"},
     {"name": "Skilled Huntsman", "description": "When this Halfling shoots a missile weapon while hidden, roll a D6: on a 3+ he stays hidden that turn. Not with a black powder weapon."},
     {"name": "Layers of Fat", "description": "The Halfling always has a basic 6+ save, whatever the attacker's Strength, on top of any armour he wears."},
     {"name": "Shifty", "description": "When charged, the Halfling gains one bonus attack, which strikes first."}
@@ -256,6 +260,6 @@
     {"page": 1, "what": "The Halflings' Ogre maximum profile (M6 WS5 BS4 S6 T6 W4 I5 A4 Ld7) is unlike our Ogre race's, so the Village Ogre takes a new race, Ogre (Halflings), with it."},
     {"page": 1, "what": "Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one."},
     {"page": 1, "what": "A Halfling warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
-    {"page": 4, "what": "The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch and Stealthy are named apart from the Mootlanders' (Stealthy keeps \"Halfling Thief only\")."}
+    {"page": 4, "what": "The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch is named apart from the Mootlanders' (theirs gives -1 to hit for the turn, not a lost first attack). Its Stealthy is the Mootlanders' Stealthy word for word in effect, so it links ours (William, 6 Nov 2026: \"if the skills already exist word for word i dont care about the name but just keep the one variant\"); the PDF heading's \"Halfling Thieves Only\" is a warband rule, Special Skills."}
   ]
 }

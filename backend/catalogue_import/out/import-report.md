@@ -26,8 +26,8 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 357 |
-| skills | 271 |
+| price rows | 358 |
+| skills | 268 |
 | skill groups | 56 |
 | skill group links | 320 |
 | serious injuries (D66) | 20 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 271 | 153 | 78 | 40 |
+| skills | 268 | 153 | 75 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 271 skills, one per name; `out/skill-groups.json` is 56 groups holding them (320 links), the five core groups first.
+`out/skills.json` is 268 skills, one per name; `out/skill-groups.json` is 56 groups holding them (320 links), the five core groups first.
 
 ### Merged by name
 
@@ -378,15 +378,15 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Cavalry | everyone | intersection | - | Cavalry Commander, Trick Riding, Combat Riding, Evade, Running Dismount, Athletic Mount, Horse Archer, Mounted Combat Master |
 | Cursed Cavalcade | Cursed Cavalcade | new group | - | Noblesse Obliges, Torturer, Duelist |
 | Dark Elf | Dark Elves | skill_group_learners | - | Fury of Khaine, Powerful Build, Fey Quickness, Infiltration, Master of Poisons |
-| Druchii | Druchii | new group | - | Fey Quickness, Infiltration, Fury of Khaine (Druchii), Master of Poisons (Druchii), Vraithen Master, Survival of the Fittest, Excellent Sight |
+| Druchii | Druchii | new group | - | Fey Quickness, Infiltration, Unblinking Eye, Fury of Khaine (Druchii), Master of Poisons (Druchii), Vraithen Master, Survival of the Fittest |
 | Dwarf Exiled Engineers | Guild of Disgraced Engineers | skill_lists | - | True Grit, Thick Skull, Extra Tough, Tunneler, Tinkerer, Quick Thinker, Master Inventor |
 | Dwarf Rangers | Dwarf Rangers | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarf Troll Slayers | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Ferocious Charge, Monster Slayer, Berserker, Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarves | Dwarf Treasure Hunters | skill_group_learners | - | Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Forest Goblins | Forest Goblins (NC) | intersection | - | Animosity |
-| Grail Companions | Bretonnian Grail Companions | new group | - | Virtue of the Impetuous, Virtue of Noble Disdain (Grail Companions), Virtue of Heroism, Virtue of Stoicism, Virtue of the Penitent, Virtue of the Ideal, Virtue of Audacity, Virtue of Purity (Grail Companions), Virtue of Duty, Virtue of the Joust, Virtue of Confidence, Virtue of Knightly Temper, Virtue of Discipline (Grail Companions), Virtue of Empathy |
+| Grail Companions | Bretonnian Grail Companions | new group | - | Virtue of the Impetuous, Ferocious Charge, Virtue of Noble Disdain (Grail Companions), Virtue of Heroism, Virtue of Stoicism, Virtue of the Penitent, Virtue of the Ideal, Virtue of Audacity, Virtue of Purity (Grail Companions), Virtue of Duty, Virtue of the Joust, Virtue of Confidence, Virtue of Discipline (Grail Companions), Virtue of Empathy |
 | Grave Robber | Grave Robbers | intersection | - | Darkstalker, Instinctual Violence, De-animator, Hardy Constitution (Grave Robber), Body Dealer |
-| Halflings (MIC) | Halflings | new group | - | Quiet as a Mouse, Crude Belch (Halflings MIC), Wizened Halfling, Stealthy (Halflings MIC), Skilled Huntsman, Layers of Fat, Shifty |
+| Halflings (MIC) | Halflings | new group | - | Stealthy, Quiet as a Mouse, Crude Belch (Halflings MIC), Wizened Halfling, Skilled Huntsman, Layers of Fat, Shifty |
 | Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump back, Sniper, Throw voice |
 | Horned Hunters | Horned Hunters | new group | - | Animal Friendship, Infiltration, Foul Odour, Hide in Shadows, Master Trapper, Pathfinder (Horned Hunters) |
 | Large Special | everyone, Large units only | skill_lists | - | Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip |
@@ -422,7 +422,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 ### New groups and skills (`new_skill_groups`)
 
-72 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+69 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -460,14 +460,12 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Virtue of Duty | Grail Companions | mordheim-2a | WEB |
 | Virtue of the Joust | Grail Companions | mordheim-2a | WEB |
 | Virtue of Confidence | Grail Companions | mordheim-2a | WEB |
-| Virtue of Knightly Temper | Grail Companions | mordheim-2a | WEB |
 | Virtue of Discipline (Grail Companions) | Grail Companions | mordheim-2a | WEB |
 | Virtue of Empathy | Grail Companions | mordheim-2a | WEB |
 | Fury of Khaine (Druchii) | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Master of Poisons (Druchii) | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Vraithen Master | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Survival of the Fittest | Druchii | mordheim-2a | Mordheimer's Information Centre |
-| Excellent Sight | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Deathwish | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
 | Monster Slayer (Slayer Cult) | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
 | Berserker (Slayer Cult) | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
@@ -480,7 +478,6 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Quiet as a Mouse | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Crude Belch (Halflings MIC) | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Wizened Halfling | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
-| Stealthy (Halflings MIC) | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Skilled Huntsman | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Layers of Fat | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Shifty | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
@@ -512,7 +509,6 @@ mordheimer also lists Thick Skull for Slayer Cult; left out of the group.
 mordheimer also lists Monster Slayer for Slayer Cult; left out of the group.
 mordheimer also lists Berserker for Slayer Cult; left out of the group.
 mordheimer also lists Crude Belch for Halflings (MIC); left out of the group.
-mordheimer also lists Stealthy for Halflings (MIC); left out of the group.
 
 Our skills the new groups hold, whose learners change (a skill is learnable by whoever has a group holding it):
 
@@ -528,7 +524,9 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Sneaky Git | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Netter | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Virtue of the Impetuous | Bretonnian Knights | Bretonnian Knights, Bretonnian Grail Companions |
-| Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayer Cult |
+| Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Bretonnian Grail Companions, Dwarf Slayer Cult |
+| Unblinking Eye | Metal Mongers | Druchii, Metal Mongers |
+| Stealthy | Halflings | Halflings, Low Kings, Militant Mootlanders |
 
 ## MiM items that need rules (PDF pass)
 
@@ -570,7 +568,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | henchmen that can't be promoted | 73 |
 | equipment lists | 146 |
 | list lines | 1595 |
-| warband rules | 184 |
+| warband rules | 185 |
 | upgrades | 77 |
 | the templates' own specials | 461 |
 
@@ -962,7 +960,7 @@ Kept apart from a family's, the effect differing:
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 10 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
-| masters-of-horror | masters-of-horror | 7 | 1 | 2 | 11 |
+| masters-of-horror | masters-of-horror | 7 | 1 | 3 | 11 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
 
@@ -982,7 +980,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): Lord's Boon's choice is printed "1 set of barding, light armor and holy shield, or heavy armor" (Grail Knight) and "1 free warhorse, suit of light armor and holy shield, or heavy armor" (Knights of the Realm): which items go together is unclear, so the texts keep the PDF's grouping. Text only; the player adds the items free.
 - Flag (p4): Fearsome ("This model causes Fear") links our shared Fear.
 - Flag (p5): The Damsel casts Grail Magic (p9), a new lore of six spells in spells.json; Virtuous gives no Special list to her (the skill table ticks none).
-- Flag (p6): The Knight Virtues are the Special skills, a new group Grail Companions; rolled on 3D6 (the table is a warband rule). Virtue of Noble Disdain, Purity and Discipline do other things than the Bretonnian Knights' virtues of those names, so they are named apart; Virtue of the Impetuous Knight (+1D3 to his charge) is our Virtue of the Impetuous (+D3" when charging).
+- Flag (p6): The Knight Virtues are the Special skills, a new group Grail Companions; rolled on 3D6 (the table is a warband rule). Virtue of Noble Disdain, Purity and Discipline do other things than the Bretonnian Knights' virtues of those names, so they are named apart; Virtue of the Impetuous Knight (+1D3 to his charge) is our Virtue of the Impetuous (+D3" when charging), and Virtue of Knightly Temper (double attacks on the charge at -1 to hit) our Ferocious Charge, word for word in effect (William, 6 Nov 2026: "if the skills already exist word for word i dont care about the name but just keep the one variant").
 - Flag (p7): Hedge Knights are henchmen who may become Heroes; Battle Pilgrims and Hunters never may (Commoner). No group sizes are printed: left open.
 - Flag (p8): The Grail Reliquae gains no experience; its race is the construct creature type (no maximum), as it isn't a living warrior. Its rule Holy Shield shares the item's name but is its own 5+ save. Large is our shared Large. Honored Dead, printed for it too, is the Grail Knight's rule only (one wording), as it is how a Grail Knight becomes one.
 
@@ -999,7 +997,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Beastlash links our Beastlash at the list's 10 gc (the PDF prices it 10+D6, Rare 8).
 - Flag (p6): Slavehounds come only with a Beastmaster (0-3, "if it also includes a Beastmaster"): our counts can't tie one fighter's to another's, so it is said in their Animals rule.
 - Flag (p8): The PDF's Sea Dragon Cloak gives +2 to the save against shooting (5+ with none) and +1 in close combat (6+ with none); ours gives a 5+ save in close combat and 4+ against missiles. Linked to ours as it is.
-- Flag (p8): The special skills are a new group, Druchii. Fey Quickness and Infiltration ("identical to the Skaven skill") are ours. Fury of Khaine (ours adds no follow-up in the opponent's turn) and Master of Poisons (ours makes D3-1 doses, the PDF D2) are named apart. The blackletter heading reads "Vraithen Master", taken as printed.
+- Flag (p8): The special skills are a new group, Druchii. Fey Quickness and Infiltration ("identical to the Skaven skill") are ours, and Excellent Sight (hidden enemies spotted at twice his Initiative in inches) is our Unblinking Eye, word for word in effect (William, 6 Nov 2026: "if the skills already exist word for word i dont care about the name but just keep the one variant"). Fury of Khaine (ours adds no follow-up in the opponent's turn) and Master of Poisons (ours makes D3-1 doses, the PDF D2) are named apart. The blackletter heading reads "Vraithen Master", taken as printed.
 - Flag (p9): Dark Magic differs from our Dark Elf Magic (Doombolt is Difficulty 8, ours 9; Deathspasm 9, ours 10; spell 4 is Black Blade of Khaine, ours Flamesword), so it is a new lore, Dark Magic (Druchii), in spells.json.
 
 ### Dwarf Slayer Cult
@@ -1043,20 +1041,21 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): The Halflings' Ogre maximum profile (M6 WS5 BS4 S6 T6 W4 I5 A4 Ld7) is unlike our Ogre race's, so the Village Ogre takes a new race, Ogre (Halflings), with it.
 - Flag (p1): Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one.
 - Flag (p1): A Halfling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
-- Flag (p4): The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch and Stealthy are named apart from the Mootlanders' (Stealthy keeps "Halfling Thief only").
+- Flag (p4): The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch is named apart from the Mootlanders' (theirs gives -1 to hit for the turn, not a lost first attack). Its Stealthy is the Mootlanders' Stealthy word for word in effect, so it links ours (William, 6 Nov 2026: "if the skills already exist word for word i dont care about the name but just keep the one variant"); the PDF heading's "Halfling Thieves Only" is a warband rule, Special Skills.
 
 ### Masters of Horror
 
 - Alias (p2): "light armor" is our light armour.
 - Stub: Chainsaw Sword, 15+1D6 gc, Common; its rules are on p2.
 - Stub: Electric Trident, 15+1D6 gc, Common; its rules are on p2.
+- Stub: Repeater Pistol (Masters of Horror), 25+3D6 gc, Common; its rules are on p2.
 - Flag (p1): A Horror warband needs at least 3 models: our templates hold no minimum, so it is not imported.
-- Flag (p1): The Wolfman's maximum (M6 WS4 BS3 S5 T4 W3 I7 A4 Ld8) is unlike our Werecreature's, so he takes a new race, Werecreature (Masters of Horror). His profile is printed I2 and W2: taken as printed.
+- Flag (p1): The Wolfman's maximum (M6 WS4 BS3 S5 T4 W3 I7 A4 Ld8) is unlike our Werecreature's, so he takes a new race, Werecreature (Masters of Horror).
 - Flag (p1): The special skills are a new group, Masters of Horror: Surgeon, Alchemist and Apt Revitalist the Mad Scientist's, Lunatic any Hero's, so every Hero ticks Special. Alchemist's potion is a D6 pre-battle roll (prebattle-rolls.json).
 - Flag (p2): The skill table is an image (read from it): Mad Scientist Academic, Speed; Thrall, Werewolf and Hunchback Combat, Strength, Speed. It names the Wolfman Werewolf.
 - Flag (p2): The Miscellaneous Equipment is Heroes only: a third list every hero but the Wolfman (who carries nothing) buys from.
 - Flag (p2): The Chainsaw Sword (15+D6 gc, MoH only; Fear, Shredder) and the Electric Trident (15+D6 gc, MoH only; Zzap!, Shocking, Nail in Boot) are stubs, read as Common and this warband's, their rules on p2.
-- Flag (p2): The Repeater Pistol links our Repeater Pistol at the list's 25 gc (the PDF's is 25+3D6, MoH only). The PDF's does other things: range 8", S4, -2 save, Too Much Tinkering (a D6 each shot, 1 a misfire) and Repeater (up to three shots, each later one at -1 on that roll); ours fires three shots at -1 to hit, Experimental and Quick Reload. Linked as it is.
+- Flag (p2): The Repeater Pistol (25+3D6 gc, MoH only; range 8", S4, Save Mod, Too Much Tinkering, Repeater) does other things than our Repeater Pistol, which stays the Gunnery School's, so it is a stub of its own, Repeater Pistol (Masters of Horror), at the list's 25 gc, read as Common and this warband's, its rules on p2 (William, 6 Nov 2026: "keep as 2 separate"). It rolls on the Misfire chart, so it is a blackpowder weapon.
 - Flag (p3): The Leader rule says "within 6" of the Necrarch Vampire" (the page image shows the 6"; the text layer drops it): read as the Mad Scientist, who leads.
 - Flag (p3): The Thrall's race is our Vampire.
 - Flag (p4): The Flesh Construct's Cannot Run ("may still charge normally") is our shared May Not Run. It gains experience only on a passed Leadership test, so it gains experience but never becomes a Hero. Both it and the Zombies ("Undead creatures") take our Undead race; Zombies gain no experience.

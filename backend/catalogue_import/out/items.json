@@ -17655,6 +17655,46 @@
     ]
   },
   {
+    "slug": "repeater-pistol-masters-of-horror",
+    "name": "Repeater Pistol (Masters of Horror)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "setting": "sylvania",
+    "source": "Sylvania Supplement",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Masters%20Of%20Horror.pdf",
+    "tags": [
+      "repeater pistol (masters of horror)"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": 3,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "masters-of-horror",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "beastwhip",
     "name": "Beastwhip",
     "variant": "",

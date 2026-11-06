@@ -932,10 +932,6 @@
     "description": "The knight may re-roll failed rolls to hit against enemy models with a higher Toughness than his."
   },
   {
-    "name": "Virtue of Knightly Temper",
-    "description": "In a turn he charges the knight may double his attacks, at -1 to hit."
-  },
-  {
     "name": "Virtue of Discipline (Grail Companions)",
     "description": "The knight treats a stunned result on the Injury chart as knocked down."
   },
@@ -958,10 +954,6 @@
   {
     "name": "Survival of the Fittest",
     "description": "When the Hero's Serious Injury roll is a death, he takes a Leadership test on his unmodified Leadership (no holy relics or other help). If he passes, he survives but misses the next D3 battles."
-  },
-  {
-    "name": "Excellent Sight",
-    "description": "The Hero spots hidden enemies from twice his Initiative in inches."
   },
   {
     "name": "Deathwish",
@@ -1010,10 +1002,6 @@
   {
     "name": "Wizened Halfling",
     "description": "Leader only. Halflings within 6\" of him may re-roll a failed Leadership test, taking both the test and the re-roll on his Leadership."
-  },
-  {
-    "name": "Stealthy (Halflings MIC)",
-    "description": "Halfling Thief only. He may hide even after running, and may run while within 8\" of enemy models if he starts and ends the move hidden."
   },
   {
     "name": "Skilled Huntsman",

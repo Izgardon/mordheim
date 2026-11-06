@@ -219,7 +219,7 @@
     {"name": "Virtue of Duty", "description": "The knight has +1 to his rolls to wound while he is outnumbered in combat."},
     {"name": "Virtue of the Joust", "description": "In the first round of a combat the knight may re-roll failed rolls to wound."},
     {"name": "Virtue of Confidence", "description": "The knight may re-roll failed rolls to hit against enemy models with a higher Toughness than his."},
-    {"name": "Virtue of Knightly Temper", "description": "In a turn he charges the knight may double his attacks, at -1 to hit."},
+    {"name": "Virtue of Knightly Temper", "ours": "Ferocious Charge"},
     {"name": "Virtue of Discipline (Grail Companions)", "pdfName": "Virtue of Discipline", "description": "The knight treats a stunned result on the Injury chart as knocked down."},
     {"name": "Virtue of Empathy", "description": "Friendly models fighting the same enemy model as the knight may use his Toughness when that enemy rolls to wound them."}
   ],
@@ -242,7 +242,7 @@
     {"page": 4, "what": "Lord's Boon's choice is printed \"1 set of barding, light armor and holy shield, or heavy armor\" (Grail Knight) and \"1 free warhorse, suit of light armor and holy shield, or heavy armor\" (Knights of the Realm): which items go together is unclear, so the texts keep the PDF's grouping. Text only; the player adds the items free."},
     {"page": 4, "what": "Fearsome (\"This model causes Fear\") links our shared Fear."},
     {"page": 5, "what": "The Damsel casts Grail Magic (p9), a new lore of six spells in spells.json; Virtuous gives no Special list to her (the skill table ticks none)."},
-    {"page": 6, "what": "The Knight Virtues are the Special skills, a new group Grail Companions; rolled on 3D6 (the table is a warband rule). Virtue of Noble Disdain, Purity and Discipline do other things than the Bretonnian Knights' virtues of those names, so they are named apart; Virtue of the Impetuous Knight (+1D3 to his charge) is our Virtue of the Impetuous (+D3\" when charging)."},
+    {"page": 6, "what": "The Knight Virtues are the Special skills, a new group Grail Companions; rolled on 3D6 (the table is a warband rule). Virtue of Noble Disdain, Purity and Discipline do other things than the Bretonnian Knights' virtues of those names, so they are named apart; Virtue of the Impetuous Knight (+1D3 to his charge) is our Virtue of the Impetuous (+D3\" when charging), and Virtue of Knightly Temper (double attacks on the charge at -1 to hit) our Ferocious Charge, word for word in effect (William, 6 Nov 2026: \"if the skills already exist word for word i dont care about the name but just keep the one variant\")."},
     {"page": 7, "what": "Hedge Knights are henchmen who may become Heroes; Battle Pilgrims and Hunters never may (Commoner). No group sizes are printed: left open."},
     {"page": 8, "what": "The Grail Reliquae gains no experience; its race is the construct creature type (no maximum), as it isn't a living warrior. Its rule Holy Shield shares the item's name but is its own 5+ save. Large is our shared Large. Honored Dead, printed for it too, is the Grail Knight's rule only (one wording), as it is how a Grail Knight becomes one."}
   ]

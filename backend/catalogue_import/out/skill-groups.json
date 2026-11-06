@@ -300,11 +300,11 @@
     "skills": [
       "Fey Quickness",
       "Infiltration",
+      "Unblinking Eye",
       "Fury of Khaine (Druchii)",
       "Master of Poisons (Druchii)",
       "Vraithen Master",
-      "Survival of the Fittest",
-      "Excellent Sight"
+      "Survival of the Fittest"
     ]
   },
   {
@@ -433,6 +433,7 @@
     "how": "new group",
     "skills": [
       "Virtue of the Impetuous",
+      "Ferocious Charge",
       "Virtue of Noble Disdain (Grail Companions)",
       "Virtue of Heroism",
       "Virtue of Stoicism",
@@ -443,7 +444,6 @@
       "Virtue of Duty",
       "Virtue of the Joust",
       "Virtue of Confidence",
-      "Virtue of Knightly Temper",
       "Virtue of Discipline (Grail Companions)",
       "Virtue of Empathy"
     ]
@@ -481,10 +481,10 @@
     "note": "",
     "how": "new group",
     "skills": [
+      "Stealthy",
       "Quiet as a Mouse",
       "Crude Belch (Halflings MIC)",
       "Wizened Halfling",
-      "Stealthy (Halflings MIC)",
       "Skilled Huntsman",
       "Layers of Fat",
       "Shifty"

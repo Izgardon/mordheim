@@ -1166,11 +1166,6 @@
       "how": "overrides.json"
     },
     {
-      "name": "Virtue of Knightly Temper",
-      "setting": "mordheim-2a",
-      "how": "overrides.json"
-    },
-    {
       "name": "Virtue of Discipline (Grail Companions)",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1197,11 +1192,6 @@
     },
     {
       "name": "Survival of the Fittest",
-      "setting": "mordheim-2a",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Excellent Sight",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
@@ -1262,11 +1252,6 @@
     },
     {
       "name": "Wizened Halfling",
-      "setting": "mordheim-2a",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Stealthy (Halflings MIC)",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },

@@ -49,7 +49,7 @@
       "caveat": "",
       "items": [
         {"name": "chainsaw sword", "alias": "", "cost": {"cost": 15}},
-        {"name": "repeater pistol", "alias": "", "cost": {"cost": 25}},
+        {"name": "Repeater Pistol (Masters of Horror)", "alias": "", "cost": {"cost": 25}},
         {"name": "electric trident", "alias": "", "cost": {"cost": 15}}
       ]
     }
@@ -201,16 +201,17 @@
   ],
   "stubs": [
     {"name": "Chainsaw Sword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2},
-    {"name": "Electric Trident", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2}
+    {"name": "Electric Trident", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2},
+    {"name": "Repeater Pistol (Masters of Horror)", "type": "Weapon", "subtype": "Blackpowder", "rarity": null, "dice": 3, "rulesPage": 2}
   ],
   "flags": [
     {"page": 1, "what": "A Horror warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
-    {"page": 1, "what": "The Wolfman's maximum (M6 WS4 BS3 S5 T4 W3 I7 A4 Ld8) is unlike our Werecreature's, so he takes a new race, Werecreature (Masters of Horror). His profile is printed I2 and W2: taken as printed."},
+    {"page": 1, "what": "The Wolfman's maximum (M6 WS4 BS3 S5 T4 W3 I7 A4 Ld8) is unlike our Werecreature's, so he takes a new race, Werecreature (Masters of Horror)."},
     {"page": 1, "what": "The special skills are a new group, Masters of Horror: Surgeon, Alchemist and Apt Revitalist the Mad Scientist's, Lunatic any Hero's, so every Hero ticks Special. Alchemist's potion is a D6 pre-battle roll (prebattle-rolls.json)."},
     {"page": 2, "what": "The skill table is an image (read from it): Mad Scientist Academic, Speed; Thrall, Werewolf and Hunchback Combat, Strength, Speed. It names the Wolfman Werewolf."},
     {"page": 2, "what": "The Miscellaneous Equipment is Heroes only: a third list every hero but the Wolfman (who carries nothing) buys from."},
     {"page": 2, "what": "The Chainsaw Sword (15+D6 gc, MoH only; Fear, Shredder) and the Electric Trident (15+D6 gc, MoH only; Zzap!, Shocking, Nail in Boot) are stubs, read as Common and this warband's, their rules on p2."},
-    {"page": 2, "what": "The Repeater Pistol links our Repeater Pistol at the list's 25 gc (the PDF's is 25+3D6, MoH only). The PDF's does other things: range 8\", S4, -2 save, Too Much Tinkering (a D6 each shot, 1 a misfire) and Repeater (up to three shots, each later one at -1 on that roll); ours fires three shots at -1 to hit, Experimental and Quick Reload. Linked as it is."},
+    {"page": 2, "what": "The Repeater Pistol (25+3D6 gc, MoH only; range 8\", S4, Save Mod, Too Much Tinkering, Repeater) does other things than our Repeater Pistol, which stays the Gunnery School's, so it is a stub of its own, Repeater Pistol (Masters of Horror), at the list's 25 gc, read as Common and this warband's, its rules on p2 (William, 6 Nov 2026: \"keep as 2 separate\"). It rolls on the Misfire chart, so it is a blackpowder weapon."},
     {"page": 3, "what": "The Leader rule says \"within 6\" of the Necrarch Vampire\" (the page image shows the 6\"; the text layer drops it): read as the Mad Scientist, who leads."},
     {"page": 3, "what": "The Thrall's race is our Vampire."},
     {"page": 4, "what": "The Flesh Construct's Cannot Run (\"may still charge normally\") is our shared May Not Run. It gains experience only on a passed Leadership test, so it gains experience but never becomes a Hero. Both it and the Zombies (\"Undead creatures\") take our Undead race; Zombies gain no experience."},
