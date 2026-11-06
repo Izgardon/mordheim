@@ -108,7 +108,8 @@ def _lines(
 
 
 def _special_lines(slug: str, page: dict[str, Any], index: ItemIndex, log: ListLog) -> list[dict[str, Any]]:
-    """The special equipment as list lines, at the book's price, with who may take each and its limit."""
+    """The special equipment as list lines, at the book's price, with who may take each, its limit and the PDF's
+    name for its item where it is ours by another (`alias`: the Snotlings' Power Squig, our Familiar)."""
     fighters, warband = _fighters(page), [page["name"]]
     lines = []
     for entry in page.get("specialEquipment") or []:
@@ -126,7 +127,7 @@ def _special_lines(slug: str, page: dict[str, Any], index: ItemIndex, log: ListL
         if not who.read:
             log.unread.append((slug, SPECIAL_LIST["name"], title, who.note))
         who.warband_max = entry.get("maxQty") or who.warband_max
-        lines.append(_line(item, price, who))
+        lines.append(_line(item, price, who, _shown_as(plain(entry.get("alias")), title, item, how)))
     return lines
 
 

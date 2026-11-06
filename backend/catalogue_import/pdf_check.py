@@ -48,7 +48,13 @@ RULE: Spec = {"rulename": (str, True), "ruleFull": (str, True)}
 LIST: Spec = {"id": (str, True), "title": (str, True), "caveat": (str, True), "items": (list, True)}
 LINE: Spec = {"name": (str, True), "alias": (str, True), "cost": (dict, True)}
 COST: Spec = {"cost": (int, True), "costPrefix": (str, False), "costSuffix": (str, False), "braceCost": (int, False)}
-SPECIAL: Spec = {"title": (str, True), "cost": (dict, True), "availability": (str, True), "maxQty": (int, False)}
+SPECIAL: Spec = {
+    "title": (str, True),
+    "alias": (str, False),
+    "cost": (dict, True),
+    "availability": (str, True),
+    "maxQty": (int, False),
+}
 FIGHTER: Spec = {
     "id": (str, True),
     "type": (str, True),
@@ -81,6 +87,7 @@ STUB: Spec = {
     "rarity": ((int, type(None)), True),
     "dice": ((int, type(None)), True),
     "rulesPage": (int, True),
+    "note": (str, False),
 }
 FLAG: Spec = {"page": (int, True), "what": (str, True)}
 

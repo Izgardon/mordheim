@@ -17255,46 +17255,6 @@
     ]
   },
   {
-    "slug": "main-gauche-dreamwalkers",
-    "name": "Main Gauche (Dreamwalkers)",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mordheim-2a",
-    "source": "MFB",
-    "link_url": "https://www.broheim.net/downloads/warbands/web/Dreamwalkers,%20Cult%20Of%20Morr.pdf",
-    "tags": [
-      "main gauche (dreamwalkers)"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 7,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "dreamwalkers-cult-of-morr",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "draich",
     "name": "Draich",
     "variant": "",
@@ -18055,62 +18015,6 @@
     ]
   },
   {
-    "slug": "holy-water",
-    "name": "Holy Water",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Miscellaneous",
-    "subtype": "",
-    "setting": "mordheim-2a",
-    "source": "LOD3",
-    "link_url": "https://www.broheim.net/downloads/lod/LOD3.pdf#page=8",
-    "tags": [
-      "holy water"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 5,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "protectorate-of-sigmar",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "vampire-hunters-of-sylvania",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "blessed-bolts",
     "name": "Blessed Bolts",
     "variant": "",
@@ -18195,46 +18099,6 @@
         "dice_multiplier": null,
         "cost_note": "",
         "rarity": 9,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "protectorate-of-sigmar",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "warhammer",
-    "name": "Warhammer",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mordheim-2a",
-    "source": "LOD3",
-    "link_url": "https://www.broheim.net/downloads/lod/LOD3.pdf#page=8",
-    "tags": [
-      "warhammer"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
         "for_everyone": false,
         "warbands": [
           {
@@ -18447,46 +18311,6 @@
     ]
   },
   {
-    "slug": "power-squig",
-    "name": "Power Squig",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Miscellaneous",
-    "subtype": "",
-    "setting": "mordheim-2a",
-    "source": "Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria",
-    "link_url": "https://www.broheim.net/downloads/warbands/web/Snotlings.pdf",
-    "tags": [
-      "power squig"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 20,
-        "dice": 1,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "snotlings",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "wizards-staff",
     "name": "Wizard's Staff",
     "variant": "",
@@ -18544,7 +18368,7 @@
     "strength": "",
     "save": "",
     "statblock": [],
-    "notes": "",
+    "notes": "The familiar is one of four pets in the Bestiary: the Dog, Cat, Raven or Viper Familiar.",
     "needs_rules": true,
     "rules": [],
     "availabilities": [

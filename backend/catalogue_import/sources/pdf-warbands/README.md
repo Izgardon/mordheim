@@ -44,8 +44,9 @@ check over every file.
    - both the name and the effect ours: link ours;
    - the effect ours under another name: keep it apart (an item: the line links a stub of its own), and list it in
      the vet file's decisions as a possible match;
-   - a line that shows our item under the PDF's name (`shown_as`, the Tanto as a Dagger) may stay linked, but list
-     it as a decision too.
+   - a line or special equipment entry that shows our item under the PDF's name (its `alias`, shown as: the Tanto
+     as a Dagger, the Power Squig as our Familiar) may stay linked, but list it as a decision too; a stub's `note`
+     becomes its item's notes (the Sorcerous Society's Familiar names its four pets in the bestiary).
 
    Who of the warband may take a skill opens a new skill's description ("Gnoblars only."); a skill of ours is shared
    with other warbands, so the group's `note` says it instead (at most 200 characters, shown when learning from the

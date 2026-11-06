@@ -646,9 +646,9 @@
       "how": "mordheimer"
     },
     {
-      "name": "Sign of Sigmar",
+      "name": "Righteous Aura",
       "setting": "mordheim",
-      "how": "mordheimer"
+      "how": "overrides.json"
     },
     {
       "name": "Protection of Sigmar",
@@ -1386,7 +1386,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Unshakeable Faith",
+      "name": "Iron Will",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
@@ -1477,16 +1477,6 @@
     },
     {
       "name": "Practiced Arm",
-      "setting": "sylvania",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Iron Will",
-      "setting": "sylvania",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Righteous Aura",
       "setting": "sylvania",
       "how": "overrides.json"
     },

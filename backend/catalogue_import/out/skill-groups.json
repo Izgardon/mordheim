@@ -931,12 +931,12 @@
       }
     ],
     "large_only": false,
-    "note": "Utter Determination: the Warrior Priest only.",
+    "note": "",
     "how": "new group",
     "skills": [
       "Protection of Sigmar",
       "Utter Determination",
-      "Unshakeable Faith",
+      "Iron Will",
       "Rousing Sermon",
       "Sigmar's Guidance"
     ]
@@ -1030,9 +1030,9 @@
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
-      "Sign of Sigmar",
+      "Righteous Aura",
       "Protection of Sigmar",
       "Utter Determination",
       "Righteous Fury",
@@ -1272,11 +1272,11 @@
       }
     ],
     "large_only": false,
-    "note": "",
+    "note": "Iron Will and Righteous Aura: the Vampire Hunter and Slayers only.",
     "how": "new group",
     "skills": [
-      "Iron Will",
       "Righteous Aura",
+      "Iron Will",
       "Thirst for Vengeance",
       "Blessing of Morr",
       "Touch of Darkness"

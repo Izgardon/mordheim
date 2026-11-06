@@ -750,7 +750,7 @@
     "description": "The Shadow Weaver has learned to harness the power of the High Elven runes of power (see Elven Runestones, below) to a degree few mages attain. When using Elven Runestones, the mage is +1 to his dispel roll. In addition, the mage can inscribe the weapons and armour of one of his fellow warriors with Elven runes. One member of the Warband may re-roll a single failed armour save or Parry roll once per battle. After a single battle, the runes lose their glamour and must be redone. This skill may only be taken by Shadow Weavers. (TC10)"
   },
   {
-    "name": "Sign of Sigmar",
+    "name": "Righteous Aura",
     "type": "Sisters of Sigmar",
     "description": "The Sister is favored by the great god Sigmar. Possessed or Undead opponents lose their first attack against the Priestess in the first round of hand-to-hand combat (down to a minimum of 1). (RB 83)"
   },
@@ -762,7 +762,7 @@
   {
     "name": "Utter Determination",
     "type": "Sisters of Sigmar",
-    "description": "Only the Matriarch may have this skill, which allows her to re-roll any failed Rout tests. (RB 83)"
+    "description": "Only the Matriarch or the Warrior Priest may have this skill, which allows her to re-roll any failed Rout tests. (RB 83)"
   },
   {
     "name": "Righteous Fury",

@@ -12785,7 +12785,7 @@
           },
           {
             "item": {
-              "name": "Main Gauche (Dreamwalkers)",
+              "name": "Main Gauche",
               "variant": ""
             },
             "shown_as": "",
@@ -13494,7 +13494,7 @@
         "race": "Human",
         "cost": 40,
         "starting_xp": 6,
-        "min_count": 1,
+        "min_count": 0,
         "max_count": 1,
         "group_min": null,
         "group_max": null,
@@ -42962,10 +42962,10 @@
         "lines": [
           {
             "item": {
-              "name": "Holy Water",
+              "name": "Blessed Water",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Holy Water",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -43022,10 +43022,10 @@
           },
           {
             "item": {
-              "name": "Warhammer",
+              "name": "Sigmarite Warhammer",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Warhammer",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -47233,10 +47233,10 @@
         "lines": [
           {
             "item": {
-              "name": "Power Squig",
+              "name": "Familiar",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Power Squig",
             "cost": 20,
             "cost_note": "",
             "first_free": false,
@@ -54227,10 +54227,10 @@
         "lines": [
           {
             "item": {
-              "name": "Holy Water",
+              "name": "Blessed Water",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Holy Water",
             "cost": 10,
             "cost_note": "",
             "first_free": false,

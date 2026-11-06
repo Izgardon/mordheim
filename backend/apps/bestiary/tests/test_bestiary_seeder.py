@@ -98,7 +98,7 @@ class BestiarySeederBeastTests(TestCase):
 
 
 class CommittedBestiaryTests(TestCase):
-    """The committed files: 31 beasts, each with its Animal item."""
+    """The committed files: 35 beasts, each with its Animal item."""
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -109,19 +109,21 @@ class CommittedBestiaryTests(TestCase):
     def beasts(self) -> dict[str, BestiaryEntry]:
         return {beast.name: beast for beast in BestiaryEntry.objects.select_related("animal_item")}
 
-    def test_the_book_holds_14_mounts_6_pets_and_11_creatures_each_with_its_item(self):
+    def test_the_book_holds_14_mounts_10_pets_and_11_creatures_each_with_its_item(self):
         beasts = self.beasts()
 
-        self.assertEqual(Counter(beast.kind for beast in beasts.values()), {"mount": 14, "creature": 11, "pet": 6})
-        self.assertEqual(Item.objects.filter(type="Animal").count(), 31)
+        self.assertEqual(Counter(beast.kind for beast in beasts.values()), {"mount": 14, "creature": 11, "pet": 10})
+        self.assertEqual(Item.objects.filter(type="Animal").count(), 35)
         self.assertEqual({beast.animal_item.subtype for beast in beasts.values() if beast.kind == "pet"}, {"Pet"})
         self.assertIn("Wardogs", beasts)
         self.assertNotIn("Wardog", beasts)  # Mutiny in Marienburg's duplicate with an empty profile
 
-    def test_the_shop_sells_all_but_three_marienburg_creatures(self):
+    def test_the_shop_sells_all_but_three_marienburg_creatures_and_the_sorcerous_societys_familiars(self):
         unsold = sorted(name for name, beast in self.beasts().items() if not beast.available_in_shop)
 
-        self.assertEqual(unsold, ["Giant Rat", "Wild Dog", "Wyvern"])
+        # the familiars come as the Sorcerous Society's Familiar (Sorcerous Society) item (William, 6 Nov 2026)
+        familiars = ["Cat Familiar", "Dog Familiar", "Raven Familiar", "Viper Familiar"]
+        self.assertEqual(unsold, sorted(["Giant Rat", "Wild Dog", "Wyvern", *familiars]))
         self.assertEqual(Item.objects.filter(type="Animal", listed=True).count(), 28)
         rat = self.beasts()["Giant Rat"].animal_item
         self.assertEqual(list(rat.availabilities.values_list("cost", "rarity", "cost_note")), [(0, 9, "15 warptokens")])  # fmt: skip
@@ -151,9 +153,10 @@ class CommittedBestiaryTests(TestCase):
     def test_every_item_has_its_setting_the_imports_animals_theirs_and_marienburgs_beasts_marienburg(self):
         settings = {name: beast.animal_item.campaign_type.slug for name, beast in self.beasts().items() if beast.animal_item.campaign_type}  # fmt: skip
 
-        self.assertEqual(len(settings), 31)
+        self.assertEqual(len(settings), 35)
         self.assertEqual({settings[name] for name in ("Dragon Turtle", "Geckamand", "Lizard-Hawk", "Tiger", "Wyvern")}, {"mutiny-in-marienburg"})  # fmt: skip
         self.assertEqual((settings["Warhorse"], settings["Chaos Steed"]), ("mordheim", "mordheim-1b"))
+        self.assertEqual(settings["Viper Familiar"], "mordheim-2a")
         steed = self.beasts()["Chaos Steed"].animal_item
         self.assertTrue(steed.rule_links.exists())
         self.assertEqual(steed.subtype, "Mount")
@@ -163,5 +166,5 @@ class CommittedBestiaryTests(TestCase):
 
         output = run("seed_bestiary")
 
-        self.assertIn("Entries created: 0, updated: 31. Items created: 0, updated: 31.", output)
+        self.assertIn("Entries created: 0, updated: 35. Items created: 0, updated: 35.", output)
         self.assertEqual(sorted(Item.objects.filter(type="Animal").values_list("id", "bestiary_entry_id")), before)

@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
                 "Race": 40,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling and the Necrarch Vampire
                 "Item": 381,  # the import's 350 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
-                "Skill": 327,  # the import's 303 (one per name) + the 24 hired swords' own skills the book lacks
+                "Skill": 325,  # the import's 301 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 83,  # the import's 64 + a group of his own for each of 19 hired swords
                 "Spell": 257,  # 251 (the PDFs' lores) + the Dark Mage's six (BUG-54)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
@@ -104,8 +104,8 @@ class SeedAllTests(TestCase):
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov);
                 # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
                 # the second PDF batch's five templates add 46 of their own, the third's five 54
-                "Special": 930,
-                "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
+                "Special": 938,
+                "BestiaryEntry": 35,  # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 11 creatures (17 from MiM)
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
                 "WarbandTemplate": 68,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
@@ -317,7 +317,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 303, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 301, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)

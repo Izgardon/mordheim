@@ -118,5 +118,45 @@
     "name": "Thick Skinned (War Boar)",
     "type": "Animal",
     "description": "The thick skin and matted fur of the boar makes him very hard to wound. Boars confer an additional + 1 bonus to the rider's armour save (making +2 total)."
+  },
+  {
+    "name": "Wizard's Familiar (Sorcerous Society)",
+    "type": "Animal",
+    "description": "A wizard may have only one familiar. It is equipment, but alive: taken out of action, it rolls for injury as a henchman. It counts towards neither the warband's size nor its Rout tests. If it dies or leaves, the wizard may search for another by the rarity rules."
+  },
+  {
+    "name": "Small Target (Familiar)",
+    "type": "Animal",
+    "description": "Models shooting at a familiar have -1 BS."
+  },
+  {
+    "name": "Loyal (Dog Familiar)",
+    "type": "Animal",
+    "description": "Within 6\" of its wizard the Dog is immune to fear."
+  },
+  {
+    "name": "Sniff (Dog Familiar)",
+    "type": "Animal",
+    "description": "The warband may roll one more exploration dice, and may use it in place of one rolled for a surviving Hero."
+  },
+  {
+    "name": "Go for the Eyes! (Cat Familiar)",
+    "type": "Animal",
+    "description": "If both its attacks wound in one round, the enemy is blinded and can't fight back until his next turn. If only one wounds, he has -1 WS and -1 BS until the start of his next turn."
+  },
+  {
+    "name": "Fly (Raven Familiar)",
+    "type": "Animal",
+    "description": "The Raven may fly up to 12\" anywhere on the table."
+  },
+  {
+    "name": "I see you! (Raven Familiar)",
+    "type": "Animal",
+    "description": "Spells may be cast on models within range of either the wizard or the Raven: a 12\" spell reaches models within 12\" of either."
+  },
+  {
+    "name": "Poison (Viper Familiar)",
+    "type": "Animal",
+    "description": "A 6 to hit wounds automatically, with no armour save. Any other hit on a target that poison affects is at S4; on one immune to poison, at S2."
   }
 ]

@@ -294,6 +294,18 @@ class PdfImportTests(SimpleTestCase):
         sight = [row for row in load_json(OUT / "skills.json") if row["name"] == "Excellent Sight"]
         self.assertEqual(len(sight), 1)
 
+    def test_an_item_ours_by_another_name_shows_the_pdfs(self) -> None:
+        # William, 6 Nov 2026: the Power Squig is our Familiar (special equipment), Holy Water our Blessed Water and
+        # the Warhammer our Sigmarite Warhammer, each shown under the PDF's name
+        def shown(slug: str) -> set[tuple[str, str]]:
+            rows = self.templates[slug]["lists"]
+            return {(line["item"]["name"], line["shown_as"]) for row in rows for line in row["lines"]}
+
+        self.assertIn(("Familiar", "Power Squig"), shown("snotlings"))
+        self.assertLessEqual(
+            {("Blessed Water", "Holy Water"), ("Sigmarite Warhammer", "Warhammer")}, shown("protectorate-of-sigmar")
+        )
+
     def test_a_priest_of_morr_casts_his_funerary_rites_as_a_priest(self) -> None:
         # the Vampire Hunters of Sylvania's PDF (p11): "Priests of Morr are not wizards"
         for slug in ("vampire-hunters-of-sylvania", "dreamwalkers-cult-of-morr"):

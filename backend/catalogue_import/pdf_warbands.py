@@ -7,8 +7,9 @@ snapshot so the template import builds it the same way. A file's own keys:
   the template's setting and grade are the type's;
 - `aliases`: `{pdf, ours, page}`, a line's name as the PDF spells it and our item's name or tag it means
   ("Doubled-handed weapon" is a Double-handed weapon), put right as the file loads;
-- `stubs`: `{name, type, subtype, rarity, dice, rulesPage}`, items a line names that we lack (William: "yes to
-  stubs"): each a bare item, no rules, with one price row for its warband only at the line's price;
+- `stubs`: `{name, type, subtype, rarity, dice, rulesPage, note}`, items a line names that we lack (William: "yes to
+  stubs"): each a bare item, no rules, with one price row for its warband only at the line's price, and `note` its
+  item's notes (the Sorcerous Society's Familiar names its pets in the bestiary);
 - `skillGroup` (`{name, new, note}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills,
   each `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for
   a warband with no Special column (the Outlaws of Stirwood Forest, Redux). Who of the warband may take a skill opens
@@ -168,7 +169,8 @@ def stub_items(
                 link_url=page["sourceLink"],
                 availabilities=[row],
             )
-            made[loose_key(stub["name"])] = {**item, "origin": ORIGIN, "needs_rules": True}
+            note = stub.get("note") or ""
+            made[loose_key(stub["name"])] = {**item, "notes": note, "origin": ORIGIN, "needs_rules": True}
             stubs.append(made[loose_key(stub["name"])])
     return stubs
 

@@ -38,11 +38,11 @@
       "title": "Miscellaneous Equipment (Heroes Only)",
       "caveat": "",
       "items": [
-        {"name": "holy water", "alias": "", "cost": {"cost": 5}},
+        {"name": "blessed water", "alias": "Holy Water", "cost": {"cost": 5}},
         {"name": "blessed bolts", "alias": "", "cost": {"cost": 25}},
         {"name": "holy relic", "alias": "", "cost": {"cost": 15}},
         {"name": "shield of sigmar", "alias": "", "cost": {"cost": 20}},
-        {"name": "warhammer", "alias": "", "cost": {"cost": 15}}
+        {"name": "sigmarite warhammer", "alias": "Warhammer", "cost": {"cost": 15}}
       ]
     },
     {
@@ -177,10 +177,10 @@
       "specialRules": []
     }
   ],
-  "skillGroup": {"name": "Protectorate of Sigmar", "new": true, "note": "Utter Determination: the Warrior Priest only."},
+  "skillGroup": {"name": "Protectorate of Sigmar", "new": true},
   "specialSkillsList": [
     {"name": "Protection of Sigmar", "ours": "Protection of Sigmar"},
-    {"name": "Unshakeable Faith", "description": "The warrior is immune to fear."},
+    {"name": "Iron Will", "pdfName": "Unshakeable Faith", "description": "The warrior is immune to fear."},
     {"name": "Utter Determination", "ours": "Utter Determination"},
     {"name": "Rousing Sermon", "description": "Warrior Priest only. Declared at the start of his turn: the Warrior Priest and every friendly model within 6\" have +1 Attack in that turn's hand-to-hand combat phase. One Rousing Sermon a game."},
     {"name": "Sigmar's Guidance", "description": "When the warrior shoots he may choose any target, not only the closest enemy."}
@@ -190,10 +190,8 @@
     {"pdf": "heavy armor", "ours": "heavy armour", "page": 9}
   ],
   "stubs": [
-    {"name": "Holy Water", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 9},
     {"name": "Blessed Bolts", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 9},
-    {"name": "Shield of Sigmar", "type": "Armour", "subtype": "", "rarity": 9, "dice": null, "rulesPage": 9},
-    {"name": "Warhammer", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 9}
+    {"name": "Shield of Sigmar", "type": "Armour", "subtype": "", "rarity": 9, "dice": null, "rulesPage": 9}
   ],
   "flags": [
     {"page": 8, "what": "The warband is the issue's pages 8 to 12 (Letters of the Damned #3); the rest of the issue is other articles."},
@@ -202,8 +200,8 @@
     {"page": 9, "what": "The skill table, read from the layout text: Warrior Priest Combat, Academic, Strength, Speed; Templar Combat, Strength, Speed; Acolyte Combat, Academic, Strength, Speed; Huntsman Combat, Shooting. It has no Special column, and the special skills (p12) don't say who may take them: every Hero ticks Special, two skills being the Warrior Priest's only."},
     {"page": 9, "what": "\"Shield/Buckler 5 gc\" is one line for two items: it is two lines, Shield and Buckler, both 5 gc."},
     {"page": 9, "what": "The Huntsman buys only the lines marked *: Dagger, Sword, Longbow and Blessed Bolts, his own list."},
-    {"page": 9, "what": "Stubs: Blessed Bolts (25 gc, Common; range and Strength as the weapon, +1 S against Undead, mutants, Possessed and other chaotic beings) and the Shield of Sigmar (20 gc, Rare 9; armour save 6, a special 6+ save against all ranged attacks, and no -1 for a shield with heavy armour). Holy Water (5 gc) and the Warhammer (15 gc) on the Miscellaneous list have no entry of their own; they are stubs too, possible matches for our Blessed Water (10 gc) and Sigmarite Warhammer. The Holy Relic is our Holy (Unholy) Relic."},
+    {"page": 9, "what": "Stubs: Blessed Bolts (25 gc, Common; range and Strength as the weapon, +1 S against Undead, mutants, Possessed and other chaotic beings) and the Shield of Sigmar (20 gc, Rare 9; armour save 6, a special 6+ save against all ranged attacks, and no -1 for a shield with heavy armour). Holy Water (5 gc) is our Blessed Water, shown as Holy Water (William, 6 Nov 2026: \"yes\"), and the Warhammer (15 gc) our Sigmarite Warhammer, shown as Warhammer (\"i believe it is the same yes, that warband is in mordheimer\"). The Holy Relic is our Holy (Unholy) Relic."},
     {"page": 11, "what": "No group sizes are printed."},
-    {"page": 12, "what": "The special skills are a new group, Protectorate of Sigmar. Protection of Sigmar and Utter Determination are ours, name and effect; our Utter Determination's own text says \"Only the Matriarch\", and the group's note says the Warrior Priest. Unshakeable Faith (immune to fear) differs from our Fearless (fear and All Alone). Rousing Sermon and Sigmar's Guidance (printed \"Sigmars Guidance\") are like nothing of ours."}
+    {"page": 12, "what": "The special skills are a new group, Protectorate of Sigmar. Protection of Sigmar and Utter Determination are ours, name and effect; our Utter Determination says \"Only the Matriarch or the Warrior Priest\" (William, 6 Nov 2026: \"Just have one utter determination and say matriarch/warrior priest\"). Unshakeable Faith (immune to fear) is the Vampire Hunters' Iron Will, one skill named Iron Will in both groups (\"yes go for iron will\"); it differs from our Fearless (fear and All Alone). Rousing Sermon and Sigmar's Guidance (printed \"Sigmars Guidance\") are like nothing of ours."}
   ]
 }

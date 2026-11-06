@@ -26,8 +26,8 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 381 |
-| skills | 303 |
+| price rows | 376 |
+| skills | 301 |
 | skill groups | 64 |
 | skill group links | 363 |
 | serious injuries (D66) | 20 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 303 | 153 | 110 | 40 |
+| skills | 301 | 152 | 109 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 303 skills, one per name; `out/skill-groups.json` is 64 groups holding them (363 links), the five core groups first.
+`out/skills.json` is 301 skills, one per name; `out/skill-groups.json` is 64 groups holding them (363 links), the five core groups first.
 
 ### Merged by name
 
@@ -408,12 +408,12 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Pirates | Pirates | intersection | - | Sea Shanty Singer, Sea Legs, Cutlass Master, Booming Voice, Hardy Constitution, Swashbuckler |
 | Pirates (TBMF) | Pirates | skill_lists | - | Captain Blood, Sea Legs (TBMF), Cutlass Master, Treasure Hunter, Swashbuckler |
 | Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
-| Protectorate of Sigmar | Protectorate of Sigmar | new group | Utter Determination: the Warrior Priest only. | Protection of Sigmar, Utter Determination, Unshakeable Faith, Rousing Sermon, Sigmar's Guidance |
+| Protectorate of Sigmar | Protectorate of Sigmar | new group | - | Protection of Sigmar, Utter Determination, Iron Will, Rousing Sermon, Sigmar's Guidance |
 | Restless Dead Lich and Necromancer | The Restless Dead | intersection | - | Corpse Bomb, Deathspeaker, Wraith Touch, Forbidden Rite, Summoner |
 | Saurus | Lizardmen (TC11) | intersection | - | Bellowing Battle Roar, Toughened Hide |
 | Sea Ghosts | Sea Ghosts | skill_group_learners | - | Infiltration, Luck, See in Shadows, Hide in Shadows, Powerful Build, Fey |
 | Shadow Warriors | Shadow Warriors | skill_group_learners | - | See in Shadows, Hide in Shadows, Sniper (Shadow Warriors), Powerful Build, Master of Runes |
-| Sisters of Sigmar | Sisters of Sigmar | intersection | - | Sign of Sigmar, Protection of Sigmar, Utter Determination, Righteous Fury, Absolute Faith |
+| Sisters of Sigmar | Sisters of Sigmar | skill_group_learners | - | Righteous Aura, Protection of Sigmar, Utter Determination, Righteous Fury, Absolute Faith |
 | Skaven | Skaven | skill_group_learners | - | Black Hunger, Tail Fighting, Wall Runner, Infiltration, Art of Silent Death |
 | Skaven Clan Moulder | Skaven of Clan Moulder | new group | - | Black Hunger, Beastkin, Hypnotic Musk, Subjugator of Mankind, Twistkin |
 | Skaven Clan Pestilens | Skaven of Clan Pestilens (TC29) | skill_group_learners | - | Black Hunger, Censer Bearer, Rotten Body, Contagious, Ignore Pain |
@@ -425,12 +425,12 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Survivors of Strigos | Survivors of Strigos | new group | - | Iron Sinews, Great Thirster, Curse of the Revenant, Dark Arts, Light Fingers, Practiced Arm |
 | Tomb Robbers | Arabian Tomb Raiders | intersection | - | Sand worm, Hit and run, Weather tolerant |
 | Undead Vampires | Undead | skill_lists | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
-| Vampire Hunters of Sylvania | Vampire Hunters of Sylvania | new group | - | Iron Will, Righteous Aura, Thirst for Vengeance, Blessing of Morr, Touch of Darkness |
+| Vampire Hunters of Sylvania | Vampire Hunters of Sylvania | new group | Iron Will and Righteous Aura: the Vampire Hunter and Slayers only. | Righteous Aura, Iron Will, Thirst for Vengeance, Blessing of Morr, Touch of Darkness |
 | Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves of Athel Loren) |
 
 ### New groups and skills (`new_skill_groups`)
 
-104 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+102 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -512,7 +512,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Sabre Trainer | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Set Traps | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Netter (Ogre Hunting Party) | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
-| Unshakeable Faith | Protectorate of Sigmar | mordheim-2a | LOD3 |
+| Iron Will | Protectorate of Sigmar | mordheim-2a | LOD3 |
 | Rousing Sermon | Protectorate of Sigmar | mordheim-2a | LOD3 |
 | Sigmar's Guidance | Protectorate of Sigmar | mordheim-2a | LOD3 |
 | Beastkin | Skaven Clan Moulder | mordheim-2a | WEB |
@@ -531,8 +531,6 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Dark Arts | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Light Fingers | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Practiced Arm | Survivors of Strigos | sylvania | Sylvania Supplement |
-| Iron Will | Vampire Hunters of Sylvania | sylvania | LOD5 |
-| Righteous Aura | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Thirst for Vengeance | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Blessing of Morr | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Touch of Darkness | Vampire Hunters of Sylvania | sylvania | LOD5 |
@@ -554,6 +552,7 @@ mordheimer also lists Berserker for Slayer Cult; left out of the group.
 mordheimer also lists Crude Belch for Halflings (MIC); left out of the group.
 mordheimer also lists Bellowing Roar for Ogre Hunting Party; left out of the group.
 mordheimer also lists Netter for Ogre Hunting Party; left out of the group.
+mordheimer also lists Unshakeable Faith for Protectorate of Sigmar; left out of the group.
 mordheimer also lists Sigmar’s Guidance for Protectorate of Sigmar; left out of the group.
 mordheimer also lists Achilles’ Heel for Snotlings; left out of the group.
 mordheimer also lists Seeker for Wood Elves of Athel Loren; left out of the group.
@@ -578,6 +577,7 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Maneater | Ogre Hunting Party | Maneaters, Ogre Hunting Party |
 | Protection of Sigmar | Sisters of Sigmar | Sisters of Sigmar, Protectorate of Sigmar |
 | Utter Determination | Sisters of Sigmar | Sisters of Sigmar, Protectorate of Sigmar |
+| Righteous Aura | Vampire Hunters of Sylvania | Sisters of Sigmar, Vampire Hunters of Sylvania |
 | Fey | Wood Elves of Athel Loren | Wood Elves of Athel Loren, Sea Ghosts |
 
 ## MiM items that need rules (PDF pass)
@@ -638,7 +638,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-253 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+256 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -1019,7 +1019,7 @@ Kept apart from a family's, the effect differing:
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
 | bretonnian-grail-companions | bretonnian-grail-companions | 7 | 2 | 3 | 12 |
-| dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 1 | 12 |
+| dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
 | druchii | druchii | 8 | 0 | 2 | 11 |
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 10 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
@@ -1029,12 +1029,12 @@ Kept apart from a family's, the effect differing:
 | nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
-| protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 4 | 9 |
+| protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
-| snotlings | snotlings | 8 | 1 | 3 | 10 |
+| snotlings | snotlings | 8 | 1 | 2 | 10 |
 | sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
-| vampire-hunters-of-sylvania | vampire-hunters-of-sylvania | 6 | 1 | 5 | 11 |
+| vampire-hunters-of-sylvania | vampire-hunters-of-sylvania | 6 | 1 | 4 | 11 |
 | wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
 
 ### Bretonnian Grail Companions
@@ -1059,15 +1059,13 @@ Kept apart from a family's, the effect differing:
 
 ### Dreamwalkers, Cult Of Morr
 
-- Stub: Main Gauche (Dreamwalkers), 7 gc, Common; its rules are on p18.
 - Flag (p1): Pages 1 to 4 and 23 to 25 are scans with no text layer. Looked at as tiny thumbnails: the cover, blank pages and full-page art, no warband data. Pages 7 to 14 are the Lore (background). Page numbers here are the PDF's; the PDF prints its own from 1 on page 7.
 - Flag (p15): A Dreamwalkers warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race.
-- Flag (p15): Choice of Members says one Andanti, "no more, no less!", but his heading (p19) reads 0-1. Choice of Members is taken: exactly one.
 - Flag (p16): No Fear of the Dead is the Special Rules' opening paragraph, which has no heading of its own: named here.
 - Flag (p16): Chosen of Morr makes the Priest of Morr the leader while there is no Dreamer. Our templates have one leader, the Dreamer, so the Priest's leading is his rule, Leader Without a Dreamer.
 - Flag (p17): The skill table's ticks are a symbol font, read from where the layout text places them: Dreamer all six; Black Guard Combat, Shooting, Strength, Special; Priest of Morr Academic, Speed, Special; Andanti Combat, Shooting, Speed, Special.
-- Flag (p17): The Rapier is our Rapier, name and effect. The Main Gauche (Parry, armour saves at +1, 7 gc, Andanti only) does more than ours (only the +1 to armour saves), so it is a stub of its own, Main Gauche (Dreamwalkers).
-- Flag (p18): The special skills are a new group, Dreamwalkers; none is ours. Inured to Horror (immune to fear, never takes All Alone tests) is our Fearless under another name: kept apart, a possible match for William. Blessed by Morr is unlike our Protection of Sigmar, working only against Undead and leaving other models affected.
+- Flag (p17): The Rapier and the Main Gauche (7 gc, Andanti only; Parry, the enemy's armour save at +1) are ours, name and effect.
+- Flag (p18): The special skills are a new group, Dreamwalkers; none is ours. Inured to Horror (immune to fear, never takes All Alone tests) does what our Fearless does, under another name: kept apart beside it (William, 6 Nov 2026: "add both as it sounds cool"). Blessed by Morr is unlike our Protection of Sigmar, working only against Undead and leaving other models affected.
 - Flag (p18): The Scythe has an entry (close combat, Strength as user +1, Difficult to use, two-handed) and the Priest of Morr may carry one, but no list prices it: it is on no list. The Priest's own list holds the Dagger alone.
 - Flag (p19): A mounted Black Guard's save is "+4", read as 4+, as the PDF writes 4+ elsewhere ("a +4" for 4+ on p16). The Warhorse isn't on a list ("paying its cost"), so it is his rule.
 - Flag (p20): Henchmen come in groups of 1-5.
@@ -1179,7 +1177,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): A Nippon warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p1): No maximum profile is printed, so every warrior takes our Human race.
 - Flag (p2): Page 2 is a scan with no text layer, read from the page image: the skill chart (Hatamoto all six; Vim-To Mage Academic, Speed, Special; Shinobi Combat, Shooting, Speed, Special; Retainer Combat, Shooting, Strength, Special) and the special skills.
-- Flag (p2): The special skills are a new group, Nipponese Expedition. Blessed by the Kami (re-roll the Heroes Serious Injury roll once, the second result stands) does what our Extra Tough does, under another name, so it is kept apart, a possible match for William.
+- Flag (p2): The special skills are a new group, Nipponese Expedition. Blessed by the Kami (re-roll the Heroes Serious Injury roll once, the second result stands) does what our Extra Tough does, under another name, so it is kept apart (William, 6 Nov 2026: "sep").
 - Flag (p3): Four stubs, their rules on p3: Kanabo (Common, 15 gc; S+1, Two-Handed, Concussion), Sashimono (Common, 15 gc; re-roll Leadership tests other than Rout), Horo (Rare 6, 10 gc; +1 armour save against shooting while mounted) and Kusarigama (Rare 8, 20 gc; Two-Handed, Cannot be parried, Chain Strike). The text layer puts the Kanabo's special rules under the Horo.
 - Flag (p4): The Sashimono is 15 gc on the Warrior and Noble lists and 20 gc on the Warrior Monk list: each as printed. The Katana links our Dragon Sword by its tag (the PDF gives it no rules).
 - Flag (p4): The Noble list is the Warrior list plus its own lines, so it repeats the Warrior list's lines. The Ashigaru and Onnabushi buy from the Warrior list ("the Nippon equipment list").
@@ -1201,7 +1199,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Ogre Hunter's Sabre Trainer and the Trappers' Veteran Tracker are skills they start with: templates give no starting skills, so they are rules, and the player adds the Trapper's skill.
 - Flag (p4): No group sizes are printed: left open.
 - Flag (p5): Sharp Stuff (1st free, then 3 gc, Common, Gnoblars only; range 8", S2, No Limit, Thrown Weapon, +1 armour save, Stuff Thrower) and the Pigback Mount (50 gc, Common, Gnoblar Heroes only; M5 WS2 BS- S2 T- W1 I3 A1 Ld5, Like a Mount, Not Like a Mount, Extra Hand) are stubs, their rules on p5.
-- Flag (p6): The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); being shared, which race may take them is the group's note, while Set Traps and Netter open with "Gnoblars only". Scent Hound (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, under another name, so it is kept apart, a possible match for William. Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game.
+- Flag (p6): The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); being shared, which race may take them is the group's note, while Set Traps and Netter open with "Gnoblars only". Scent Hound (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, under another name, so it is kept apart (William, 6 Nov 2026: "sep"). Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game.
 
 ### Outlaws of Stirwood Forest, Redux
 
@@ -1216,19 +1214,17 @@ Kept apart from a family's, the effect differing:
 
 - Alias (p9): "light armor" is our light armour.
 - Alias (p9): "heavy armor" is our heavy armour.
-- Stub: Holy Water, 5 gc, Common; its rules are on p9.
 - Stub: Blessed Bolts, 25 gc, Common; its rules are on p9.
 - Stub: Shield of Sigmar, 20 gc, Rare 9; its rules are on p9.
-- Stub: Warhammer, 15 gc, Common; its rules are on p9.
 - Flag (p8): The warband is the issue's pages 8 to 12 (Letters of the Damned #3); the rest of the issue is other articles.
 - Flag (p8): A Protectorate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race.
 - Flag (p8): "You may chose to replace one Templar with a Huntsman": our counts can't tie one fighter's count to another's, so it is the Huntsman's rule.
 - Flag (p9): The skill table, read from the layout text: Warrior Priest Combat, Academic, Strength, Speed; Templar Combat, Strength, Speed; Acolyte Combat, Academic, Strength, Speed; Huntsman Combat, Shooting. It has no Special column, and the special skills (p12) don't say who may take them: every Hero ticks Special, two skills being the Warrior Priest's only.
 - Flag (p9): "Shield/Buckler 5 gc" is one line for two items: it is two lines, Shield and Buckler, both 5 gc.
 - Flag (p9): The Huntsman buys only the lines marked *: Dagger, Sword, Longbow and Blessed Bolts, his own list.
-- Flag (p9): Stubs: Blessed Bolts (25 gc, Common; range and Strength as the weapon, +1 S against Undead, mutants, Possessed and other chaotic beings) and the Shield of Sigmar (20 gc, Rare 9; armour save 6, a special 6+ save against all ranged attacks, and no -1 for a shield with heavy armour). Holy Water (5 gc) and the Warhammer (15 gc) on the Miscellaneous list have no entry of their own; they are stubs too, possible matches for our Blessed Water (10 gc) and Sigmarite Warhammer. The Holy Relic is our Holy (Unholy) Relic.
+- Flag (p9): Stubs: Blessed Bolts (25 gc, Common; range and Strength as the weapon, +1 S against Undead, mutants, Possessed and other chaotic beings) and the Shield of Sigmar (20 gc, Rare 9; armour save 6, a special 6+ save against all ranged attacks, and no -1 for a shield with heavy armour). Holy Water (5 gc) is our Blessed Water, shown as Holy Water (William, 6 Nov 2026: "yes"), and the Warhammer (15 gc) our Sigmarite Warhammer, shown as Warhammer ("i believe it is the same yes, that warband is in mordheimer"). The Holy Relic is our Holy (Unholy) Relic.
 - Flag (p11): No group sizes are printed.
-- Flag (p12): The special skills are a new group, Protectorate of Sigmar. Protection of Sigmar and Utter Determination are ours, name and effect; our Utter Determination's own text says "Only the Matriarch", and the group's note says the Warrior Priest. Unshakeable Faith (immune to fear) differs from our Fearless (fear and All Alone). Rousing Sermon and Sigmar's Guidance (printed "Sigmars Guidance") are like nothing of ours.
+- Flag (p12): The special skills are a new group, Protectorate of Sigmar. Protection of Sigmar and Utter Determination are ours, name and effect; our Utter Determination says "Only the Matriarch or the Warrior Priest" (William, 6 Nov 2026: "Just have one utter determination and say matriarch/warrior priest"). Unshakeable Faith (immune to fear) is the Vampire Hunters' Iron Will, one skill named Iron Will in both groups ("yes go for iron will"); it differs from our Fearless (fear and All Alone). Rousing Sermon and Sigmar's Guidance (printed "Sigmars Guidance") are like nothing of ours.
 
 ### Skaven of Clan Moulder
 
@@ -1249,7 +1245,6 @@ Kept apart from a family's, the effect differing:
 - Alias (p3): "light armor" is our light armour.
 - Stub: Pebble, 0 gc, Common; its rules are on p9.
 - Stub: Slingshot, 2 gc, Common; its rules are on p9.
-- Stub: Power Squig, 20+1D6 gc, Rare 8; its rules are on p9.
 - Flag (p2): A Snotling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p2): The Bullied Goblin's maximum is our Goblin's. We have no Snotling race: the Snot maximum (M4 WS4 BS4 S3 T3 W2 I9 A4 Ld6) is a new race, Snotling.
 - Flag (p2): The skill table is an image (read from the page image): Bullied Goblin Combat, Shooting, Speed, Special; BigSnotz Combat, Speed, Special; Scout Shooting, Speed, Special; Shaman Speed, Special. The Shaman has no Academic tick.
@@ -1257,7 +1252,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Leader rule says "within 6" of the Chieftain": read as the Bullied Goblin, who leads. The Rigors of Leadership says "+2 experience for surviving a battle", not whether that replaces the usual +1: kept as printed.
 - Flag (p7): The Wheelo's Movement is "Special" (D6" walking, 2D6" running or charging): its profile's M is D6. It is a machine, so it takes no race. Its group is 1, as there may be only one.
 - Flag (p9): Runts come in groups of any size; the other henchmen's group sizes are not printed: left open.
-- Flag (p9): The Pebble (free, Snotling warband only; range 6", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) and the Slingshot (2 gc, Common, Snotling warband only; range 18", S2, fire twice at half range) are stubs, their rules on p9. The Power Squig (20+D6 gc, Rare 8, special equipment for the Shaman) "acts exactly the same as a Familiar", but by another name, so it is a stub of its own, a possible match for our Familiar (William, 6 Nov 2026: "keep checking for matching skills and items, just ask me going forward").
+- Flag (p9): The Pebble (free, Snotling warband only; range 6", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) and the Slingshot (2 gc, Common, Snotling warband only; range 18", S2, fire twice at half range) are stubs, their rules on p9. The Power Squig (20+D6 gc, Rare 8, special equipment for the Shaman) "acts exactly the same as a Familiar": it is our Familiar, shown as Power Squig (William, 6 Nov 2026: "yes").
 - Flag (p10): The special skills are a new group, Snotlings; none is one of ours.
 - Flag (p11): Snotling Waaagh! Magic is a new lore (ours, Waaagh! Magic, is the Orcs' and has other spells). Pebbles of Doom says "any friendly Hero within 6"" without saying one or all: kept as printed.
 
@@ -1270,7 +1265,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p6): The Magical Failure table (The Vagaries of Magic) is the Border Town Burning supplement's, used with permission, as printed.
 - Flag (p7): The skill table, read from the layout text: Magus and Mages Academic, Speed; Companion Combat, Shooting, Strength. It has no Special column and the warband no special skills. The Additional Academic Skills (p8: Scribe, Mind Focus and Magical Aptitude, from the Town Cryer 7/2002 Annual) are ours, already in our Academic group, so there is no skill group.
 - Flag (p7): "Shield/Buckler 5 gc" is one line for two items: it is two lines, Shield and Buckler, both 5 gc. List prices as printed: Halberd 15 gc (ours 10), Heavy Armour 20 gc (ours 50).
-- Flag (p7): Stubs: the Wizard's Staff (10 gc, Common; close combat, Strength as user, Parry, two-handed, Concussion), and the Familiar (20+2D6 gc, Rare 9; a Dog, Cat, Raven or Viper, each with its own profile and rules, rolling injuries as a henchman and counting towards neither the warband's size nor rout tests). Our Familiar shares the name but does other things (a casting re-roll, ignored in play), so theirs is named apart, Familiar (Sorcerous Society).
+- Flag (p7): Stubs: the Wizard's Staff (10 gc, Common; close combat, Strength as user, Parry, two-handed, Concussion), and the Familiar (20+2D6 gc, Rare 9; a Dog, Cat, Raven or Viper, each with its own profile and rules, rolling injuries as a henchman and counting towards neither the warband's size nor rout tests). Our Familiar shares the name but does other things (a casting re-roll, ignored in play), so theirs is named apart, Familiar (Sorcerous Society). Its four animals are pets in the Bestiary, each with its profile and rules: the Dog, Cat, Raven and Viper Familiars (William, 6 Nov 2026: "yes, add to the bestiary as pets all 4"). Their BS is printed "-" (kept as 0), the Viper's S "2/4*" (kept as 2, its Poison giving S4), and the Cat's Go for the Eyes! counts "both attacks" though its A is 1: all as printed.
 - Flag (p8): The Magus and the Mages roll their spells from "any one Elemental list, or from the Lesser Magic list": both lores are set, the five of them, and the player keeps to one.
 - Flag (p9): No group sizes are printed.
 - Flag (p10): The four Elemental lores (Water, Fire, Earth, Air, pages 10 to 13) are new lores.
@@ -1302,15 +1297,14 @@ Kept apart from a family's, the effect differing:
 - Stub: Scythe, 10 gc, Common; its rules are on p10.
 - Stub: Silver-tip Stake, 10 gc, Common; its rules are on p10.
 - Stub: Throat Guard, 10 gc, Rare 7; its rules are on p10.
-- Stub: Holy Water, 10 gc, Common; its rules are on p10.
 - Stub: Blessed Bolts, 25 gc, Common; its rules are on p10.
 - Flag (p9): The warband is the issue's pages 9 to 13 (Letters of the Damned #5); the rest of the issue is other articles.
 - Flag (p9): A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported. No maximum is printed, so the warriors take our Human race.
 - Flag (p9): Choice of Warriors allows up to four Pilgrims and up to four Wolfhounds, but their headings (p12) read 0-5. Choice of Warriors is taken: 0-4 each.
-- Flag (p9): The special skills are a new group, Vampire Hunters of Sylvania; none is ours. The Vampire Hunter and Slayers may take them all; the Priest of Morr only Blessing of Morr (printed "Blessing of Moor") and Thirst for Vengeance ("Thirst of Vengeance" in the heading line), so the other three open with "Vampire Hunter and Slayers only". Iron Will (immune to fear) is the Protectorate of Sigmar's Unshakeable Faith under another name, and Righteous Aura our Sign of Sigmar under another: both kept apart, possible matches for William.
+- Flag (p9): The special skills are a new group, Vampire Hunters of Sylvania. The Vampire Hunter and Slayers may take them all; the Priest of Morr only Blessing of Morr (printed "Blessing of Moor") and Thirst for Vengeance ("Thirst of Vengeance" in the heading line), so Touch of Darkness opens with "Vampire Hunter and Slayers only", and the group's note says it of Iron Will and Righteous Aura, which other groups share. Righteous Aura is our Righteous Aura, the Sisters of Sigmar's skill once named Sign of Sigmar (William, 6 Nov 2026: "yes but rename to righteous aura as the base"). Iron Will (immune to fear) is one skill with the Protectorate of Sigmar's Unshakeable Faith, named Iron Will in both groups ("yes go for iron will").
 - Flag (p10): The skill table, read from the layout text: Vampire Hunter all six; Slayer Combat, Shooting, Strength, Speed, Special; Priest of Morr Academic, Speed, Special.
 - Flag (p10): The Crossbow Pistol line (15 gc) carries an asterisk with no footnote; it is our Crossbow pistol at the printed 15 gc.
-- Flag (p10): Stubs: the Scythe (10 gc, Common; close combat, Strength as user +1, two-handed), the Silver-tip Stake (Common; close combat, Strength as user, Heart-seeker: +1 to the injury roll when it wounds; its entry says 15 gc, the lists 10 gc, taken from the lists) and the Throat Guard (10 gc, Rare 7, Life Saver: a special 6+ save against every injury roll a Vampire causes, not modified by Strength but lost to criticals that ignore armour; adds no armour save, worn alone or with light or heavy armour). Holy Water (10 gc here, 5 gc for the Protectorate of Sigmar) and Blessed Bolts ("See Protectorate of Sigmar") are the Protectorate's stubs, one item each with a price for both warbands.
+- Flag (p10): Stubs: the Scythe (10 gc, Common; close combat, Strength as user +1, two-handed), the Silver-tip Stake (Common; close combat, Strength as user, Heart-seeker: +1 to the injury roll when it wounds; its entry says 15 gc, the lists 10 gc, taken from the lists) and the Throat Guard (10 gc, Rare 7, Life Saver: a special 6+ save against every injury roll a Vampire causes, not modified by Strength but lost to criticals that ignore armour; adds no armour save, worn alone or with light or heavy armour). Blessed Bolts ("See Protectorate of Sigmar") is the Protectorate's stub, one item with a price for both warbands. Holy Water (10 gc here, 5 gc for the Protectorate) is our Blessed Water, shown as Holy Water (William, 6 Nov 2026: "yes").
 - Flag (p10): "Spear (Pitch Fork)" on the Villager list is our Spear, shown as Pitch Fork.
 - Flag (p11): The Priest of Morr "may only be armed with a Dagger and a Scythe" and never armour: his own list holds the two at the Vampire Hunters list's prices, and he buys from the Heroes' Miscellaneous list too.
 - Flag (p12): No group sizes are printed.

@@ -316,6 +316,7 @@
     "Ostlanders": { "warbands": [{ "type": "ostlanders" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
     "Sea Ghosts": { "warbands": [{ "type": "sea-ghosts" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
     "Shadow Warriors": { "warbands": [{ "type": "shadow-warriors" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Sisters of Sigmar": { "warbands": [{ "type": "sisters-of-sigmar" }], "why": "the warband the list is named after: its Righteous Aura (Sign of Sigmar until William, 6 Nov 2026: \"rename to righteous aura as the base\") shares its name with mordheimer's Vampire Hunters of Sylvania skill, which would open the list to them" },
     "Skaven": { "warbands": [{ "type": "skaven" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
     "Skaven Clan Pestilens": { "warbands": [{ "type": "skaven-of-clan-pestilens-tc29" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" }
   },
@@ -467,6 +468,7 @@
       "Sniper (Shadow Warriors)": "mordheim-1b",
       "Protection of Sigmar (Sisters of Sigmar)": "mordheim",
       "Utter Determination (Sisters of Sigmar)": "mordheim",
+      "Righteous Aura (Sisters of Sigmar)": "mordheim",
       "Infiltration (Skaven)": "mordheim",
       "Infiltration (Skaven Metal Mongers)": "mordheim",
       "Infiltration (Strigany)": "mordheim",
