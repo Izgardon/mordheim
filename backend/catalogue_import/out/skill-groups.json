@@ -418,27 +418,6 @@
     ]
   },
   {
-    "name": "Halflings",
-    "for_everyone": false,
-    "warbands": [
-      {
-        "type": "halflings",
-        "excluded": false
-      }
-    ],
-    "large_only": false,
-    "note": "",
-    "how": "skill_group_learners",
-    "skills": [
-      "Crude Belch",
-      "Stealthy",
-      "Tea-leaf",
-      "Flan-eater",
-      "Looter",
-      "Taunt"
-    ]
-  },
-  {
     "name": "Hochland Bandits",
     "for_everyone": false,
     "warbands": [
@@ -553,6 +532,27 @@
       "Wholesale",
       "Deal Breaker",
       "Connected"
+    ]
+  },
+  {
+    "name": "Militant Mootlanders",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "militiant-mootlanders",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "skill_group_learners",
+    "skills": [
+      "Crude Belch",
+      "Stealthy",
+      "Tea-leaf",
+      "Flan-eater",
+      "Looter",
+      "Taunt"
     ]
   },
   {

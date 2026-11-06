@@ -430,6 +430,12 @@ class SeedAllTests(TestCase):
         self.assertFalse(skaven.for_everyone)
         self.assertTrue(skaven.warband_links.exists())
         self.assertIn("Tail Fighting", skaven.skill_links.values_list("skill__name", flat=True))
+        # William, 6 Nov 2026: "the MiM group is called militant mootlanders and should have their own skills"
+        moot = SkillGroup.objects.get(name="Militant Mootlanders")
+        learners = list(moot.warband_links.values_list("warband_type__slug", "warband_type__name", "warband_group"))
+        self.assertEqual(learners, [("militiant-mootlanders", "Militant Mootlanders", None)])  # the slug the source's
+        self.assertIn("Tea-leaf", moot.skill_links.values_list("skill__name", flat=True))
+        self.assertFalse(SkillGroup.objects.filter(name="Halflings").exists())  # the 2a Halflings learn none of it
 
     def test_williams_skill_list_decisions_are_seeded(self):
         # the fees and skill lists step: the import's skills with his decisions, each list's decision now its group's
