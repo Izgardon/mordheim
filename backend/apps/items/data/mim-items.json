@@ -576,7 +576,8 @@
     "description": "Glove used by falconers to handle hunting birds.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [249],
+    "needs_rules": false,
     "single_use": false,
     "availabilities": [
       {
@@ -913,7 +914,9 @@
     "description": "Cursed trinket of Stromfels; transforms wearer into Harbinger under conditions.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "statblock": [{"profile": "Harbinger", "m": "6", "ws": "5", "bs": "0", "s": "5", "t": "6", "w": "4", "i": "4", "a": "4", "ld": "8"}],
+    "properties": [245],
+    "needs_rules": false,
     "single_use": false,
     "availabilities": [
       {
@@ -928,10 +931,11 @@
     "type": "Miscellaneous",
     "subtype": "Charm",
     "grade": "2b",
-    "description": "Enchanted carved ivory; grants 4+ save vs attacks from aquatic models.",
+    "description": "Enchanted carved ivory.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [248],
+    "needs_rules": false,
     "single_use": false,
     "availabilities": [
       {
@@ -948,7 +952,8 @@
     "description": "Necklace of shark teeth used by Mutant-Priest of Stromfels; enables special recruitment/hex rules.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [246, 247],
+    "needs_rules": false,
     "single_use": false,
     "availabilities": [
       {

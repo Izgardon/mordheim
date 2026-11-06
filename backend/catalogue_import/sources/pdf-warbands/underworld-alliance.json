@@ -1,0 +1,259 @@
+{
+  "warbandType": "underworld-alliance",
+  "name": "Underworld Alliance",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Underworld%20Alliance.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {"rulename": "An Alliance of Inconvenience", "ruleFull": "The warband has two leaders: only Skaven may use the Slum Lord's Leadership, and only Goblins the Goblin Bully's. The warband tests for rout as normal (25% out of action), but takes two rout tests, one for each leader; if one fails, every warrior of his race routs with him. The Warpstone Troll belongs to both sides and routs only when both have."},
+    {"rulename": "Who'z da Boss!", "ruleFull": "After a game the warband won, instead of the leader's +1 experience, roll a D6:\n\nD6 | Result\n1 | Neither: they were too busy fighting each other to learn anything.\n2-3 | Cunning but Brutal!: the Goblin Bully gains it.\n4-5 | Sneaky but Stabby!: the Slum Lord gains it.\n6 | A rare moment of comradery: both gain +1 experience."},
+    {"rulename": "Warpstone for Breakfast", "ruleFull": "A Hero may start the campaign with one of these mutations, a leader with two, paying each one's price: Poisonous Bite, Extra Arm, Hulking Brute, Regeneration, Suckers, Elastic Arms, Vestigial Twin or Cloud of Flies. On an advance roll of a double, a warrior may buy one instead."},
+    {"rulename": "Factional Jealousy", "ruleFull": "A warrior of one race never intercepts a charge meant for a warrior of the other."},
+    {"rulename": "Glory Hogz", "ruleFull": "Once a battle, if one side has routed, roll 2D6 at the start of your turn: on a double, the routed side rejoins the battle at a random table edge. Warriors taken out of action before that rout don't return, so the returning side is already taking rout tests."},
+    {"rulename": "Power Grab", "ruleFull": "If one race has more warriors than the other at the start of a game, its warriors have +1 Leadership and the other's -1."},
+    {"rulename": "Plenty More Where That Came From", "ruleFull": "If one of the two leaders dies, another Hero of his race takes command, with the dead leader's title and special rules (Goblin Bully or Slum Lord), so a new Hero of the new leader's old type may be bought."},
+    {"rulename": "Jealousy", "ruleFull": "If one leader takes an Academic skill, the other's next skill must be an Academic skill too."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "greenskin-equipment-list",
+      "title": "Greenskin Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "squig prodder", "alias": "", "cost": {"cost": 15}},
+        {"name": "ball and chain", "alias": "", "cost": {"cost": 15, "costSuffix": "Heroes only"}},
+        {"name": "man-catcher", "alias": "", "cost": {"cost": 25, "costSuffix": "Goblin Bully only"}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "blowpipe", "alias": "", "cost": {"cost": 25}},
+        {"name": "throwing stars", "alias": "", "cost": {"cost": 15, "costSuffix": "Heroes only"}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "skaven-equipment-list",
+      "title": "Skaven Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "weeping blades", "alias": "", "cost": {"cost": 50, "costSuffix": "Heroes only"}},
+        {"name": "man-catcher", "alias": "", "cost": {"cost": 25, "costSuffix": "Slum Lord only"}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "throwing stars", "alias": "", "cost": {"cost": 15, "costSuffix": "Heroes only"}},
+        {"name": "blowpipe", "alias": "", "cost": {"cost": 25}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "miscellaneous-items",
+      "title": "Miscellaneous Items (Heroes)",
+      "caveat": "",
+      "items": [
+        {"name": "mad cap mushrooms", "alias": "Madcap Mushrooms", "cost": {"cost": 15}},
+        {"name": "black lotus", "alias": "", "cost": {"cost": 10}},
+        {"name": "warpstone amulet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "goblin-bully",
+      "type": "hero",
+      "name": "Goblin Bully",
+      "plural": "Goblin Bullies",
+      "race": "goblin",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["greenskin-equipment-list", "miscellaneous-items"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors of his own race within 6\" of him may use his Leadership instead of their own."},
+        {"rulename": "One Upmanship", "ruleFull": "The Goblin Bully re-rolls every to-hit roll in a combat the Slum Lord fights in too."}
+      ]
+    },
+    {
+      "id": "slum-lord",
+      "type": "hero",
+      "name": "Slum Lord",
+      "plural": "Slum Lords",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["skaven-equipment-list", "miscellaneous-items"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors of his own race within 6\" of him may use his Leadership instead of their own."},
+        {"rulename": "Sneaky Snark", "ruleFull": "When the Goblin Bully takes an enemy out of action in a combat the Slum Lord fights in too, roll a D6: on a 4+ the Slum Lord stole the kill, and gains its experience."}
+      ]
+    },
+    {
+      "id": "stinky-gits",
+      "type": "hero",
+      "name": "Stinky Git",
+      "plural": "Stinky Gits",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": ["greenskin-equipment-list", "miscellaneous-items"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Disgusting", "ruleFull": "A Stinky Git is not affected by poison attacks, and shrugs off any disease on a 4+, tested when he first catches it."}
+      ]
+    },
+    {
+      "id": "slave-champions",
+      "type": "hero",
+      "name": "Slave Champion",
+      "plural": "Slave Champions",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {"m": 6, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": ["skaven-equipment-list", "miscellaneous-items"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Tunnel Rat", "ruleFull": "A Slave Champion may re-roll any characteristic test in a scenario set in the sewers or anywhere else underground."}
+      ]
+    },
+    {
+      "id": "skaven-slaves",
+      "type": "henchman",
+      "name": "Skaven Slave",
+      "plural": "Skaven Slaves",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 10,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": ["skaven-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "boglars",
+      "type": "henchman",
+      "name": "Boglar",
+      "plural": "Boglars",
+      "race": "gnoblar",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 2, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["greenskin-equipment-list"],
+      "specialRules": [
+        {"rulename": "Largely Insignificant", "ruleFull": "Boglars count towards the warband's number of warriors, but not for rout tests: neither for the warband's size nor as warriors lost."},
+        {"rulename": "Bicker", "ruleFull": "At the start of each turn, roll a D6 for each Boglar within 2\" of another and not in close combat: on a 1 he bickers with the other, and does nothing else that turn."},
+        {"rulename": "Regeneration", "ruleFull": "Whenever an enemy inflicts a wound on a Boglar, roll a D6: on a 5+ the wound is ignored. Not against wounds from fire or fire magic."}
+      ]
+    },
+    {
+      "id": "sewer-squigs",
+      "type": "henchman",
+      "name": "Sewer Squig",
+      "plural": "Sewer Squigs",
+      "race": "squig",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": "2D6", "ws": 4, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. Squigs never use or need weapons or armour.",
+      "specialRules": [
+        {"rulename": "Movement", "ruleFull": "A Sewer Squig moves 2D6-1\" each turn on land. In water it swims 2D6\" each movement phase, which water's penalties don't reduce; it isn't aquatic."}
+      ]
+    },
+    {
+      "id": "giant-rats",
+      "type": "henchman",
+      "name": "Giant Rat",
+      "plural": "Giant Rats",
+      "race": "giant rat",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. Giant Rats never use armour or weapons.",
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "Giant Rats are animals and gain no experience."}
+      ]
+    },
+    {
+      "id": "warpstone-troll",
+      "type": "henchman",
+      "name": "Warpstone Troll",
+      "plural": "Warpstone Trolls",
+      "race": "troll",
+      "minQty": 0,
+      "maxQty": 1,
+      "groupSize": {"min": 1, "max": 1},
+      "costGc": 250,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 3, "bs": 2, "s": 4, "t": 4, "w": 3, "i": 2, "a": 4, "ld": 7},
+      "equipmentLists": [],
+      "equipment": "None. A Warpstone Troll needs no weapons to fight.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Warpstone Troll causes fear."},
+        {"rulename": "Stupidity", "ruleFull": "A Warpstone Troll is subject to stupidity."},
+        {"rulename": "Regeneration", "ruleFull": "Whenever an enemy inflicts a wound on a Warpstone Troll, roll a D6: on a 4+ the wound is ignored. Not against wounds from fire or fire magic."},
+        {"rulename": "Mutates", "ruleFull": "A Warpstone Troll wounded 3 or more times in a game, but not taken out of action, rolls on the Random Mutation chart."},
+        {"rulename": "Vomit Attack", "ruleFull": "Instead of its normal attacks, a Warpstone Troll may make one vomit attack on an enemy in hand-to-hand combat: it hits automatically at Strength 5 and ignores armour saves."},
+        {"rulename": "Large Target", "ruleFull": "A Warpstone Troll is a Large Target, as the shooting rules define it."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Underworld Alliance", "new": true},
+  "specialSkillsList": [
+    {"name": "Wyrdstone Addict", "description": "The warrior may eat a wyrdstone shard after a battle to roll on the Warp Touch chart, and is immune to attacks from Tainted weapons."},
+    {"name": "Toss Me!", "description": "While in base contact with the Warpstone Troll, the Hero may be thrown 2D6\" in a direction you choose, and lands safely if he passes an Initiative test. Thrown at an enemy warrior, it counts as a diving charge, but if he fails the test he and his target each take a S3 hit. On a double 1 for the distance, the troll bites him instead, and he is taken out of action."},
+    {"name": "Stuff 'em with Green", "description": "After a game the Hero may feed 1 wyrdstone shard to one squig or giant rat. In the next battle, secretly nominate it: when it charges or is charged, you may make it explode in a shower of wyrdstone, wounding every model within 2\" on a 4+. The blast hurts the undead too and counts as a tainted attack, and the animal is lost for good."},
+    {"name": "Ha! Watch This", "description": "Once a round, when a Hero of your warband of the other race, in the same combat, fails an attack, the warrior gains one extra attack with a weapon of his choice."},
+    {"name": "Infiltration", "ours": "Infiltration"}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "An Underworld warband needs at least 4 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
+    {"page": 1, "what": "The warband has two leaders, the Goblin Bully and the Slum Lord, each with Leader for his own race only (An Alliance of Inconvenience); the template marks both as leaders."},
+    {"page": 1, "what": "Warpstone for Breakfast is a tailored upgrade list, for Heroes at each mutation's price: Poisonous Bite 50, Extra Arm 40, Hulking Brute 50, Regeneration 60, Suckers 25, Elastic Limbs 40, Vestigial Twin 60, Cloud of Flies 25. The PDF's \"Elastic Arms\" is read as our Elastic Limbs. A leader may take two, so the list sets no limit for each fighter."},
+    {"page": 2, "what": "The skill table's ticks are symbol glyphs, read from where the text layer places them: Bully Combat, Shooting, Academic, Speed, Special; Slum Lord Combat, Academic, Strength, Speed, Special; Slave Champion Combat, Speed, Special; Stinky Git Shooting, Speed, Special. The leaders' starred Academic ticks are the warband rule Jealousy."},
+    {"page": 2, "what": "The Man Catcher is \"Leader only\" on both lists: the Goblin Bully's on the Greenskin list, the Slum Lord's on the Skaven list. Light Armor is our Light Armour, Madcap Mushrooms our Mad Cap Mushrooms (30 gc) at the list's 15 gc. The Miscellaneous Items \"available to all heroes\" are a list every Hero buys from."},
+    {"page": 2, "what": "The special skills are a new group, Underworld Alliance. Infiltration (\"same as the skaven skill\") is ours."},
+    {"page": 3, "what": "The Slum Lord's profile row and rules call him the Slave King: one fighter, named the Slum Lord as Choice of Warriors names him."},
+    {"page": 4, "what": "Boglars have no maximum printed, and \"share characteristics\" of the Gnoblars and trolls: they take our Gnoblar race. Their Regeneration (5+) and the Warpstone Troll's (4+) are each kept apart from our shared Regeneration, and from the Trolls' (who also never roll for injury)."},
+    {"page": 4, "what": "Sewer Squigs are 0-5 in their heading but \"up to 4\" in Choice of Warriors: the heading is kept. Skaven Slaves use the Skaven list, Boglars the Greenskin list."},
+    {"page": 5, "what": "The Warpstone Troll is one model (0-1). The PDF mentions its upkeep but prints no price: not imported. Its Large Target is our Large."}
+  ]
+}

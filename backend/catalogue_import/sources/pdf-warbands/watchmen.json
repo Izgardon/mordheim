@@ -1,0 +1,210 @@
+{
+  "warbandType": "watchmen",
+  "name": "Watchmen",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Watchmen.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Constabulary", "ruleFull": "The patrol represents one constabulary, chosen with its Watch Captain: the City Watch, the River Watch or the Marsh Watch."},
+    {"rulename": "Black Caps", "ruleFull": "A City Watch patrol may requisition one Watch Carriage with two horses before every battle."},
+    {"rulename": "Secretariat", "ruleFull": "A River Watch patrol may commandeer a River Boat before the start of every battle."},
+    {"rulename": "Fenland Striders", "ruleFull": "A Marsh Watch patrol's Heroes and Officers re-roll failed Initiative tests when fighting on causeways, jetties and gangplanks, or crossing a marsh."},
+    {"rulename": "Jurisdiction", "ruleFull": "An enemy warrior taken out of action in close combat by the patrol is placed under arrest when the Injury chart roll is a natural 6, unless the patrol routed: instead of rolling on the Serious Injury chart, he goes quietly. The equipment of an arrested warrior can't be kept by his warband unless it was impounded under the campaign's objectives, and confiscated items can't be sold or traded."},
+    {"rulename": "Interrogation", "ruleFull": "Instead of searching for a rare item after a battle, the patrol's leader may interrogate a Hero held under arrest: on a passed Leadership test the patrol gains 1 Campaign Point and the Hero's warband loses 1. Each suspect may be interrogated once."},
+    {"rulename": "Fanatical", "ruleFull": "A Hero of the Watch who reaches 30 experience becomes a Knight of Purity, and automatically passes every Leadership-based test."},
+    {"rulename": "Whistling", "ruleFull": "In the recovery phase the patrol may blow its whistles: D3+1 Watch Officers arrive D3 turns later, in a recovery phase, unless the game has ended, and once they arrive the patrol may whistle again. They carry clubs, are deployed within 6\" of a random table edge after compulsory moves and charges, and don't count for rout tests."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "watchmen-equipment-list",
+      "title": "Watchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club", "cost": {"cost": 3}},
+        {"name": "boat hook", "alias": "", "cost": {"cost": 8}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "blunderbuss", "alias": "", "cost": {"cost": 30}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "lantern", "alias": "", "cost": {"cost": 10}},
+        {"name": "falconry glove", "alias": "", "cost": {"cost": 10, "costSuffix": "Sergeants only"}},
+        {"name": "Hunting Bird", "alias": "", "cost": {"cost": 25, "costSuffix": "Sergeants only"}},
+        {"name": "wardog", "alias": "", "cost": {"cost": 25}},
+        {"name": "stage coach", "alias": "Watch carriage/Stage coach", "cost": {"cost": 100}},
+        {"name": "riverboat", "alias": "", "cost": {"cost": 100}}
+      ]
+    },
+    {
+      "id": "private-sleuth-equipment-list",
+      "title": "Private Sleuth Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Staff", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "lock picks", "alias": "", "cost": {"cost": 15}},
+        {"name": "Marienburg Map", "alias": "", "cost": {"cost": 20}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "watch-captain",
+      "type": "hero",
+      "name": "Watch Captain",
+      "plural": "Watch Captains",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["watchmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Watch Captain may use his Leadership instead of their own."}
+      ]
+    },
+    {
+      "id": "sergeants",
+      "type": "hero",
+      "name": "Sergeant",
+      "plural": "Sergeants",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["watchmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Falconer", "ruleFull": "A Sergeant has the animal handling skill Falconer, so he may use a hunting bird."}
+      ]
+    },
+    {
+      "id": "private-sleuth",
+      "type": "hero",
+      "name": "Private Sleuth",
+      "plural": "Private Sleuths",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 12,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["private-sleuth-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Scryer", "ruleFull": "The Sleuth may re-roll any roll in close combat; the second result stands. If she wasn't put out of action in the battle, roll two dice for her in the exploration phase and pick either as the result."},
+        {"rulename": "Hypnotist", "ruleFull": "At the start of the combat phase, the Sleuth may try to entrance one living warrior in base contact who isn't immune to psychology: he must pass a Leadership test or be entranced. An entranced warrior may not attack in close combat, and counts as knocked down when he is attacked. The trance ends when he or the Sleuth is attacked, or when she ends it."}
+      ]
+    },
+    {
+      "id": "rookies",
+      "type": "hero",
+      "name": "Rookie",
+      "plural": "Rookies",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 2, "t": 2, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["watchmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "officers",
+      "type": "henchman",
+      "name": "Officer",
+      "plural": "Officers",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["watchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "turnkeys",
+      "type": "henchman",
+      "name": "Turnkey",
+      "plural": "Turnkeys",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["watchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Immune to Poison", "ruleFull": "Turnkeys are not affected by any poison."}
+      ]
+    },
+    {
+      "id": "sewer-jacks",
+      "type": "henchman",
+      "name": "Sewer Jack",
+      "plural": "Sewer Jacks",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["watchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Immune to Disease", "ruleFull": "Sewer Jacks are not affected by any disease."},
+        {"rulename": "Tunnel Rat", "ruleFull": "A Sewer Jack may re-roll any characteristic test in a scenario set in the sewers or anywhere else underground."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Hunting Bird",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 12,
+      "dice": null,
+      "rulesPage": 3,
+      "range": "24\"",
+      "strength": "3",
+      "rules": [
+        {"name": "Falconer", "text": "Only a Hero with the animal handling skill Falconer may use a hunting bird, and he supervises a single one unless a rule says otherwise. He may use it as a missile weapon, rolling to hit with his Ballistic Skill, and in hand-to-hand combat, where it strikes first with a single attack using his Weapon Skill. Each hit is a Strength 3 hit, and after attacking it flies back to him."},
+        {"name": "Flies Away", "text": "If the Hero is taken out of action, the bird flies away and returns after the battle. It can't be attacked or slain, but if the Hero is slain it is lost with him, like any other equipment."},
+        {"name": "Falconry Glove", "text": "A warrior using a hunting bird without a falconry glove rolls on the Serious Injury chart in the post-battle sequence."}
+      ]
+    },
+    {"name": "Marienburg Map", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 3}
+  ],
+  "flags": [
+    {"page": 2, "what": "A patrol of Watchmen needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum are printed, so the patrol takes our Human race."},
+    {"page": 2, "what": "The Watch Captain chooses the patrol's constabulary, the City Watch, River Watch or Marsh Watch, and each has a rule (Black Caps p1, Secretariat p1, Fenland Striders p5): each is a warband rule naming its constabulary, as the template has no variants for them. The Watch Carriage and the River Boat they requisition before each battle are no items given."},
+    {"page": 3, "what": "The skill table has no Special column, so the patrol has no skill group. Its ticks are read from where the text layer places them: Watch Captain all five; Sergeant Combat, Shooting, Strength, Speed; Private Sleuth Combat, Academic, Speed; Rookie Combat, Shooting, Speed."},
+    {"page": 3, "what": "Watch carriage/Stage coach is our Trade Wagon/Stage Coach, Club and Mace/Staff our Club, Mace or Hammer, each shown under the PDF's name; Wardog is our Wardogs."},
+    {"page": 3, "what": "The Hunting Bird (25 gc, Rare 12) is a stub with its rules; our Falconer skill (Mutiny in Marienburg) words the same rules, and our Bird of Prey (18\", S4) is another bird. The Sergeants' Falconer is that skill, given as their rule. Our Falconry Glove carries no rules, so the glove's rule from the Hunting Bird's entry is attached."},
+    {"page": 3, "what": "The Marienburg Map (20 gc) prints no rules: a stub. Our Mordheim Map is 20 gc too."},
+    {"page": 4, "what": "The fighters' headings aren't in the text layer, so each is named from Choice of Warriors and his profile row (Officers' reads Watchman), and each cost is the one in his column: Watch Captain 60 gc, Rookie 15, Private Sleuth 55, Sergeant 35, Officer 25, Sewer Jack 20, Turnkey 35."},
+    {"page": 5, "what": "The Turnkeys' Immune to Poison is our shared rule; the Sewer Jacks' Immune to Disease is their own."}
+  ]
+}

@@ -24,6 +24,10 @@
       "roll": "D6",
       "text": "The warrior survives, but his wound will prevent him from fighting if you roll a 1 on a D6 at the start of any battle. Roll at the start of each battle from now on."
     },
+    "Petru's Potions": {
+      "roll": "D6",
+      "text": "Before a battle, one Hero of the warband may drink one of the Petru's potions. Roll a D6:\n\nD6 | Result\n1 | Debilitating: -1 Toughness for the whole of the next battle, until he rolls a 6 on a D6 in a recovery phase.\n2-3 | Strength: +1 Strength until he rolls a 1 on a D6 in a recovery phase.\n4-5 | Resilience: +1 Toughness until he rolls a 1 on a D6 in a recovery phase.\n6 | Fortitude: +1 Wound for the whole battle; once lost, it can't be restored."
+    },
     "Potions": {
       "roll": "D6",
       "text": "A single hero in the warband who have hired the Witch may partake of such a potion before the battle. Roll a D6 to discover the draught's effect."

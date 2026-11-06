@@ -35,6 +35,14 @@ check over every file.
 | `metal-mongers.json` | metal-mongers (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf | 1-7 (text layer) | 6 Nov 2026 |
 | `low-kings.json` | low-kings (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf | 1-5 (text layer; page 2 as an image) | 6 Nov 2026 |
 | `fen-guard.json` | fen-guard (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf | 1-7 (text layer; page 2 as an image) | 6 Nov 2026 |
+| `call-of-the-night-haint.json` | call-of-the-night-haint (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Call%20Of%20The%20Night%20Haint.pdf | 1-6 (text layer) | 6 Nov 2026 |
+| `channel-rats.json` | channel-rats (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Channel%20Rats.pdf | 1-8 (text layer; page 4 as an image) | 6 Nov 2026 |
+| `guild-of-disgraced-engineers.json` | guild-of-disgraced-engineers (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Guild%20Of%20Disgraced%20Engineers.pdf | 1-6 (text layer) | 6 Nov 2026 |
+| `knights-of-the-bitter-moors.json` | knights-of-the-bitter-moors (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Knights%20Of%20The%20Bitter%20Moors.pdf | 1-6 (text layer; the skill table from a page crop) | 6 Nov 2026 |
+| `lords-of-the-marsh.json` | lords-of-the-marsh (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Lords%20Of%20The%20Marsh.pdf | 1-4 (text layer) | 6 Nov 2026 |
+| `shallows-beasts.json` | shallows-beasts (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Shallows%20Beasts.pdf | 1-5 (text layer) | 6 Nov 2026 |
+| `underworld-alliance.json` | underworld-alliance (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Underworld%20Alliance.pdf | 1-5 (text layer) | 6 Nov 2026 |
+| `watchmen.json` | watchmen (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Watchmen.pdf | 1-5 (text layer) | 6 Nov 2026 |
 
 ## Adding a warband
 
@@ -43,7 +51,8 @@ check over every file.
    heading set as an image), and say which in its flags.
 2. Write `<type-slug>.json` in this shape, its `warbandType` that slug. Name each line's item as we name it or as
    one of its tags (an alias for a spelling of the PDF's own), give each item we lack a stub with the page of its
-   rules (one another page declares too is one item, with a price for each), and flag every doubt with its page;
+   rules, carrying them and its profile rows (`statblock`) where the PDF prints them (one another page declares too
+   is one item, with a price for each, made from the lower grade's), and flag every doubt with its page;
    leave a number you can't read empty and flag it. Check each special skill and item against all of ours, whatever
    its name (William, 6 Nov 2026: "keep checking for matching skills and items, just ask me going forward"):
    - both the name and the effect ours: link ours;
@@ -56,6 +65,11 @@ check over every file.
      the same, the Ratling Gun's Move or fire; else its own name and text), a rule several items carry is one of the
      page's `itemRules` (Experimental Technology), and one of our items the warband buys from its own row is a
      `priceRows` entry (the Low Kings' Spiked Gauntlet, 15 gc, Rare 7, Enforcer only). A line's `note` is said with it.
+     One of our Mutiny in Marienburg items with no rules takes the PDF's in `apps/items/data/mim-items.json` (its
+     `properties`, `needs_rules` false: the Armour of the Wildwood, the Stromfels Heart).
+
+   A skill two pages share is one skill with the same
+   words in both groups, so its limit moves to the group's note (the Slayer Cult's and the Channel Rats' Songster).
 
    Who of the warband may take a skill opens a new skill's description ("Gnoblars only."); a skill of ours is shared
    with other warbands, so the group's `note` says it instead (at most 200 characters, shown when learning from the

@@ -184,7 +184,7 @@
       ]
     }
   ],
-  "skillGroup": {"name": "Slayer Cult", "new": true},
+  "skillGroup": {"name": "Slayer Cult", "new": true, "note": "Songster: the Rememberer only."},
   "specialSkillsList": [
     {"name": "Deathwish", "description": "Slayers only: Stubbles and Axe Hurlers who become Heroes (see Skittish). The Hero is immune to all psychology and never tests for fighting alone."},
     {"name": "Ferocious Charge", "ours": "Ferocious Charge"},
@@ -194,7 +194,7 @@
     {"name": "Axe Mastery", "description": "In the hand-to-hand phase of a turn he charges, the Hero may re-roll every missed attack he made with an axe or a Dwarf axe. Not with Whirling Blades."},
     {"name": "True Grit", "ours": "True Grit"},
     {"name": "Thick Skull (Slayer Cult)", "pdfName": "Thick Skull", "description": "The Hero has a 3+ save on a D6 against being stunned; if he makes it, the stunned result is knocked down instead."},
-    {"name": "Songster", "description": "Rememberer only. A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."},
+    {"name": "Songster", "description": "A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."},
     {"name": "Song of Honor", "description": "Rememberer only. After a battle in which one or more of the warband's Slayers died, every Hero and henchman gains +1 experience."},
     {"name": "Relentless", "description": "Slayers only. If the Hero's charge fails he may still move his full distance. Only against enemies he can see or has detected."}
   ],

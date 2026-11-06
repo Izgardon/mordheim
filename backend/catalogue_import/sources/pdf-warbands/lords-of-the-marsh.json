@@ -1,0 +1,180 @@
+{
+  "warbandType": "lords-of-the-marsh",
+  "name": "Lords of the Marsh",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Lords%20Of%20The%20Marsh.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Mutations", "ruleFull": "A Fimir Hero may start the campaign with one mutation from the Corrupted Characters chapter, paying its price."},
+    {"rulename": "From the Mist", "ruleFull": "Fimir see and move normally through any fog, magical mist included."},
+    {"rulename": "Mystic Mist", "ruleFull": "The warband starts each battle wreathed in mist, cast with its talismans: Mystic Mist, difficulty 7. While it holds, missile attacks at the mist-wreathed Fimir have a further -1 to hit, and Young Nobles and Shearls aren't subject to stupidity. Once cast it lasts until the start of the shooting phase in the player's next turn."},
+    {"rulename": "Cold-blooded", "ruleFull": "Fimir roll 3D6 for Leadership tests and discard the highest dice."},
+    {"rulename": "Aquatic", "ruleFull": "Fimir move through water terrain with no penalty, and count as in cover while they are in the water."},
+    {"rulename": "Swamp Striders", "ruleFull": "Fimir move through swamp and marshland terrain with no penalty."},
+    {"rulename": "Scaly Skin", "ruleFull": "Fimir have a 6+ armour save, 5+ for Fimir Warriors. Strength modifiers can't take it past 6, but a 'no save' result on a Critical Hit chart removes it. Light armour adds +1 to it, and other armour adds too."},
+    {"rulename": "Cyclopean Fiends", "ruleFull": "A Hero re-rolls a Blinded in One Eye result on the Serious Injury chart. If it comes again, he is blinded for good."},
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire only a Slaver, Highwayman, Swashbuckler, Bog Hunter or Whaler."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "fimir-heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Staff", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "man-catcher", "alias": "", "cost": {"cost": 25}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "wyrdstone pendulum", "alias": "", "cost": {"cost": 25}}
+      ]
+    },
+    {
+      "id": "daemon-fimm-armour",
+      "title": "Heroes Equipment List (armour only)",
+      "caveat": "",
+      "items": [
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}}
+      ]
+    },
+    {
+      "id": "fimir-henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "draich",
+      "type": "hero",
+      "name": "Draich",
+      "plural": "Draichs",
+      "race": "fimir",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 110,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 8},
+      "equipmentLists": ["fimir-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": false, "special": false},
+      "spellLores": ["Chaos Rituals"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Draich may use his Leadership instead of their own."},
+        {"rulename": "Wizard", "ruleFull": "The Draich is a wizard with two spells: one from the Chaos Rituals, and one from the Rituals of Dhar (the Bazaar of Books, in Infamous Haunts)."},
+        {"rulename": "Mind Focus", "ruleFull": "When the Draich uses a spell or prayer he may re-roll one dice of the difficulty roll."},
+        {"rulename": "Fear", "ruleFull": "The Draich causes fear."},
+        {"rulename": "Large", "ruleFull": "The Draich is a Large Target, as the shooting rules define it."},
+        {"rulename": "Craven", "ruleFull": "The model is subject to fear unless it is protected by Mystic Mist."}
+      ]
+    },
+    {
+      "id": "daemon-fimm",
+      "type": "hero",
+      "name": "Daemon-Fimm",
+      "plural": "Daemon-Fimm",
+      "race": "fimir",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 100,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 0, "s": 4, "t": 4, "w": 2, "i": 4, "a": 2, "ld": 7},
+      "equipmentLists": ["daemon-fimm-armour"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "The Daemon-Fimm causes fear."},
+        {"rulename": "Daemon Soul", "ruleFull": "The Daemon-Fimm has a 4+ save against the effects of spells and prayers."}
+      ]
+    },
+    {
+      "id": "young-nobles",
+      "type": "hero",
+      "name": "Young Noble",
+      "plural": "Young Nobles",
+      "race": "fimir",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "startingXp": 4,
+      "statblock": {"m": 5, "ws": 3, "bs": 1, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["fimir-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Spiked Tail", "ruleFull": "The Young Noble makes an extra tail attack in each hand-to-hand combat phase, at his Strength +1."},
+        {"rulename": "Craven", "ruleFull": "The model is subject to fear unless it is protected by Mystic Mist."},
+        {"rulename": "Stupidity", "ruleFull": "Young Nobles are subject to stupidity unless they are protected by Mystic Mist."}
+      ]
+    },
+    {
+      "id": "shearls",
+      "type": "henchman",
+      "name": "Shearl",
+      "plural": "Shearls",
+      "race": "fimir",
+      "minQty": 0,
+      "costGc": 55,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 1, "s": 4, "t": 3, "w": 2, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["fimir-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Craven", "ruleFull": "The model is subject to fear unless it is protected by Mystic Mist."},
+        {"rulename": "Stupidity", "ruleFull": "Shearls are subject to stupidity unless they are protected by Mystic Mist."}
+      ]
+    },
+    {
+      "id": "fimir-warriors",
+      "type": "henchman",
+      "name": "Fimir Warrior",
+      "plural": "Fimir Warriors",
+      "race": "fimir",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 180,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 6, "ws": 4, "bs": 2, "s": 4, "t": 5, "w": 3, "i": 2, "a": 3, "ld": 7},
+      "equipmentLists": ["fimir-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Fimir Warrior causes fear."},
+        {"rulename": "Large", "ruleFull": "A Fimir Warrior is a Large Target, as the shooting rules define it."},
+        {"rulename": "Spiked Tail", "ruleFull": "A Fimir Warrior makes an extra tail attack in each hand-to-hand combat phase, at his Strength +1."},
+        {"rulename": "Stupidity", "ruleFull": "Fimir Warriors are subject to stupidity."},
+        {"rulename": "Monstrous", "ruleFull": "On the henchmen's Injury chart a Fimir Warrior dies only on a 1; a 2-6 leaves him unhurt. He counts as 2 models towards the warband's maximum."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "The PDF calls the warband a Fimir Ambush Party. It needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
+    {"page": 2, "what": "The Fimir maximum (M6 WS6 BS3 S5 T6 W5 I6 A5 Ld9) is a new race, Fimir; we had none."},
+    {"page": 1, "what": "Mutations is a tailored upgrade list, Mutations: the Corrupted Characters' mutations (our Mutation family) for Heroes, one each, at its price."},
+    {"page": 1, "what": "Mystic Mist is printed as a spell (difficulty 7) the warband casts \"using potent talismans\", and \"the warband begins the battle wreathed in mist\": the PDF names no caster and no casting roll's timing, so it is a warband rule as printed. Craven and the Young Nobles' and Shearls' Stupidity hold only outside it; Stupidity links our shared Stupidity, so the Mystic Mist rule says it lifts it."},
+    {"page": 2, "what": "Scaly Skin (6+, the Fimir Warriors' 5+) is a warband rule, unlike our shared Scaly Skin (5+)."},
+    {"page": 3, "what": "The skill table has no Special column, so the warband has no skill group. Its ticks are read from where the text layer places them: Draich Combat, Academic; Daemon-Fimm and Young Noble Combat, Strength, Speed."},
+    {"page": 3, "what": "The Draich's Wizard rule takes one spell from the Chaos Rituals (ours) and one from the Rituals of Dhar, which we lack and the PDF doesn't print: only the Chaos Rituals are set. He is equipped with \"weapons\" from the Heroes list: he buys from the whole list."},
+    {"page": 3, "what": "Daemon-Fimm \"cannot be equipped with weapons\" and wear armour from the Heroes list: they buy from that list's three armours only. The PDF doesn't say whether they fight unarmed without penalty. Daemon Soul and Spiked Tail link our shared mutations, which say the same."},
+    {"page": 4, "what": "The henchmen's costs are read from each one's column: Shearls 55 gc, Fimir Warriors 180 gc. Monstrous makes a Fimir Warrior count as 2 models towards the maximum: not imported, the most stays 12."}
+  ]
+}

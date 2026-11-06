@@ -283,6 +283,23 @@ class PdfImportTests(SimpleTestCase):
         self.assertEqual(stub["rules"][2], {"rule": "parry", "text": "Parries a ranged attack too."})  # its own words
         self.assertFalse(stub["needs_rules"])
 
+    def test_a_stub_carries_its_profile_and_one_two_grades_share_is_the_lower_grades(self) -> None:
+        # the Night Haint's Mortis Engine rows; the 2b Night Haint's Scythe is the 2a Vampire Hunters' item
+        later = good_page()
+        later["warbandType"] = "sisters-of-sigmar"
+        later["stubs"][0]["statblock"] = [{"profile": "Pry Bar", "m": "-", "t": 6}]
+        types = [
+            {"slug": "witch-hunters", "setting": "mutiny-in-marienburg", "broheim_grade": "2b"},
+            {"slug": "sisters-of-sigmar", "setting": "sylvania", "broheim_grade": "2a"},
+        ]
+        [stub] = stub_items({"witch-hunters": good_page(), "sisters-of-sigmar": later}, ITEMS, types)
+        self.assertEqual(
+            (stub["setting"], stub["statblock"]), ("sylvania", [{"profile": "Pry Bar", "m": "-", "t": "6"}])
+        )
+        self.assertEqual(
+            [row["warbands"][0]["type"] for row in stub["availabilities"]], ["sisters-of-sigmar", "witch-hunters"]
+        )
+
     def test_a_page_brings_a_shared_item_rule_and_a_price_row_on_one_of_ours(self) -> None:
         # Experimental Technology (Metal Mongers p7: "a shared item rule that a few items will have") and the Low
         # Kings' row on our Spiked Gauntlet ("would prefer them being just one item"), at the line's price

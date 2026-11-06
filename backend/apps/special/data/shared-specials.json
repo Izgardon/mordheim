@@ -556,6 +556,24 @@
       "rule": "Agile",
       "owners": [{"warband": "The Cursed Cavalcade", "fighter": "Fighting Ape"}],
       "why": "The Scale Sheer Surfaces, Acrobat and Dodge skills and a diving charge from up to 10\" high; the Grace of Shornaal is +1 to Initiative tests."
+    },
+    {
+      "name": "Mer-creature (Fishmen)",
+      "rule": "Mer-creature",
+      "owners": [{"warband": "Shallows Beasts", "fighter": "Fishman"}],
+      "why": "No Movement penalty on land; the Favour of Tchar is -1 Movement there."
+    },
+    {
+      "name": "Regeneration (Boglar)",
+      "rule": "Regeneration",
+      "owners": [{"warband": "Underworld Alliance", "fighter": "Boglar"}],
+      "why": "Each wound ignored on a 5+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once."
+    },
+    {
+      "name": "Regeneration (Warpstone Troll)",
+      "rule": "Regeneration",
+      "owners": [{"warband": "Underworld Alliance", "fighter": "Warpstone Troll"}],
+      "why": "Each wound ignored on a 4+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once, and the Trolls never roll for injury."
     }
   ]
 }

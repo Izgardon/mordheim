@@ -209,6 +209,58 @@ MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
             "Thorns (Spines), Spores (Blackblood), Nesting Bird (Beak). One when hired, a new one on an advance's double.",
         }
     ],
+    # the Lords of the Marsh PDF's Mutations (p1): "Any Fimir Hero may start the campaign with a single mutation from
+    # the mutations in the Corrupted Characters chapter if they pay the appropriate cost"
+    "lords-of-the-marsh": [
+        {
+            "group": "Mutations",
+            "family": "Mutation",
+            "terms": {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
+            "note": "A Fimir Hero may start the campaign with one.",
+        }
+    ],
+    # the Shallows Beasts PDF's Aquatic Mutants (p1): "Any Hero may start the campaign with a single mutation from the
+    # following ... blackblood, great claw, tentacle, prehensile tail, beak, electrical touch, mer-creature, suckers, or
+    # eye stalks (counts as hideous)"
+    "shallows-beasts": [
+        {
+            "group": "Aquatic Mutants",
+            "names": [
+                "Blackblood",
+                "Great Claw",
+                "Tentacle",
+                "Prehensile Tail",
+                "Beak",
+                "Electrical Touch",
+                "Mer-creature",
+                "Suckers",
+                "Hideous",
+            ],
+            "terms": {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
+            "note": "A Hero may start the campaign with one. Eye stalks count as Hideous.",
+        }
+    ],
+    # the Underworld Alliance PDF's Warpstone for Breakfast (p1): "Any Hero may start the campaign with a single
+    # mutation (leaders may start with two) ... Poisonous Bite, Extra Arm, Hulking Brute, Regeneration, Suckers, Elastic
+    # Arms, Vestigial Twin, Cloud of flies", and one instead of a skill on an advance's double; Elastic Arms is read as
+    # our Elastic Limbs
+    "underworld-alliance": [
+        {
+            "group": "Warpstone for Breakfast",
+            "names": [
+                "Poisonous Bite",
+                "Extra Arm",
+                "Hulking Brute",
+                "Regeneration",
+                "Suckers",
+                "Elastic Limbs",
+                "Vestigial Twin",
+                "Cloud of Flies",
+            ],
+            "terms": {"who": {"heroes": True}},
+            "note": "A Hero may start the campaign with one, a leader two, and may buy one on an advance's double.",
+        }
+    ],
 }
 
 # Most warriors where the book gives none; their starting gold reads as 500 gc
@@ -291,6 +343,11 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("snotlings", "snotling"): "Snotling",  # the Snotlings PDF's Snot maximum (p2); we had no Snotling race
     ("fen-guard", "dryad"): "Dryad",  # the Fen Guard PDF's Dryad maximum (p1); we had no Dryad race
     ("fen-guard", "treekin"): "Treekin",  # its Treekin maximum (p1)
+    # the Night Haint PDF's Wraith and Spirit maximums (p1), the Cairn Wraith's and the other spirits'; we had neither
+    ("call-of-the-night-haint", "wraith"): "Wraith",
+    ("call-of-the-night-haint", "spirit"): "Spirit",
+    ("lords-of-the-marsh", "fimir"): "Fimir",  # the Lords of the Marsh PDF's Fimir maximum (p2); we had no Fimir
+    ("underworld-alliance", "gnoblar"): "Gnoblar",  # its Boglars, Gnoblar kin, with no maximum printed (p4)
 }
 CREATURES = frozenset(
     {

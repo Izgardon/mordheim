@@ -312,6 +312,7 @@
     "Dwarves": { "warbands": [{ "type": "dwarf-treasure-hunters" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
     "Dwarf Troll Slayers": { "warbands": [{ "type": "dwarf-treasure-hunters" }, { "type": "dwarf-rangers" }, { "type": "pit-fighters" }, { "type": "pit-fighters-old" }], "why": "the warband the list is named after, plus the warbands whose templates' fighters learn from it (William, 4 Nov 2026: take recommendations)" },
     "Low Kings": { "warbands": [{ "type": "low-kings" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
+    "Bretonnian Knights": { "warbands": [{ "type": "bretonnian-knights" }, { "type": "knights-of-the-bitter-moors" }], "why": "the warband the list is named after, and the Knights of the Bitter Moors, whose PDF gives these virtues as its special skills (p3)" },
     "Militant Mootlanders": { "warbands": [{ "type": "militiant-mootlanders" }], "why": "Mutiny in Marienburg's Militant Mootlanders' own skills, not the Halflings' (William, 6 Nov 2026: \"the MiM group is called militant mootlanders and should have their own skills\")" },
     "Night Goblins": { "warbands": [{ "type": "night-goblins-web" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
     "Ogres": { "warbands": [{ "group": "ogres" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },

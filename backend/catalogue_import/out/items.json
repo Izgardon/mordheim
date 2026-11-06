@@ -3751,6 +3751,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 8,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "channel-rats",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -7472,6 +7488,22 @@
         "warbands": [
           {
             "type": "pirates",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 45,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "channel-rats",
             "excluded": false
           }
         ],
@@ -12670,6 +12702,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 3,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "channel-rats",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -13142,6 +13190,22 @@
         "warbands": [
           {
             "type": "battle-monks-of-cathay",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "channel-rats",
             "excluded": false
           }
         ],
@@ -15124,12 +15188,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
         "summary": "Glove used by falconers to handle hunting birds.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Falconry",
+        "summary": "",
+        "text": "A warrior using a hunting bird must wear a falconry glove: one who uses a bird without it rolls on the Serious Injury chart in the post-battle sequence.",
         "tables": []
       }
     ],
@@ -15892,14 +15962,33 @@
     "range": "",
     "strength": "",
     "save": "",
-    "statblock": [],
+    "statblock": [
+      {
+        "profile": "Harbinger",
+        "m": "6",
+        "ws": "5",
+        "bs": "0",
+        "s": "5",
+        "t": "6",
+        "w": "4",
+        "i": "4",
+        "a": "4",
+        "ld": "8"
+      }
+    ],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
         "summary": "Cursed trinket of Stromfels; transforms wearer into Harbinger under conditions.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Harbinger",
+        "summary": "",
+        "text": "A Hero with the Stromfels Heart becomes Stromfels' Harbinger by visiting an Altar to Stromfels: if three or more captives were sacrificed when rolling on the Ceremony of Sacrifice chart in the post-battle sequence, he transforms. The Harbinger is immune to psychology and can't carry weapons. It has the mutations Blackblood, Prehensile Tail, Tentacle, Mer-creature, Eyestalks (Hideous) and Suckers, and a Massive Beak (the Mordheim Annual, p35). While transformed, the Hero has the Harbinger's profile. If the Harbinger is taken out of action, the Heart is lost and the transformation reversed.",
         "tables": []
       }
     ],
@@ -15939,12 +16028,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Enchanted carved ivory; grants 4+ save vs attacks from aquatic models.",
+        "summary": "Enchanted carved ivory.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Scrimshaw Bauble",
+        "summary": "",
+        "text": "A Hero wearing a Scrimshaw Bauble has a special 4+ save against attacks by aquatic models. Armour never modifies it, and critical hits never negate it.",
         "tables": []
       }
     ],
@@ -15979,12 +16074,24 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
         "summary": "Necklace of shark teeth used by Mutant-Priest of Stromfels; enables special recruitment/hex rules.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Stromfels Luck",
+        "summary": "",
+        "text": "Instead of searching for a rare item after a battle, the Mutant-Priest may go into the city to recruit sailors to the cult. Roll 2D6: 2, the City Watch arrests him: roll on the Conviction chart; 3-6, nothing happens; 7-9, one Wrecker joins; 10-11, D3 Wreckers join; 12, three Wreckers join. Recruited Wreckers form a new henchman group at no cost; their equipment is paid for as normal.",
+        "tables": []
+      },
+      {
+        "name": "Stromfels Guest",
+        "summary": "",
+        "text": "While the Mutant-Priest wears the necklace, an enemy warrior he takes control of with the Chaos Ritual Lure of Chaos becomes Stromfels' guest. Unless the Priest is taken out of action, which destroys the necklace, or the warband routs, a guest still under his control when the game ends is captured by the warband.",
         "tables": []
       }
     ],
@@ -17443,166 +17550,6 @@
     ]
   },
   {
-    "slug": "whip",
-    "name": "Whip",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
-    "tags": [
-      "whip"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "fen-guard",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "greenwood-scythe",
-    "name": "Greenwood Scythe",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
-    "tags": [
-      "greenwood scythe"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 60,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "fen-guard",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "iron-bark",
-    "name": "Iron Bark",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Armour",
-    "subtype": "",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
-    "tags": [
-      "iron bark"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "fen-guard",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "horn-of-the-wild-hunt",
-    "name": "Horn of the Wild Hunt",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Miscellaneous",
-    "subtype": "",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
-    "tags": [
-      "horn of the wild hunt"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 120,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 12,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "fen-guard",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "pry-bar",
     "name": "Pry Bar",
     "variant": "",
@@ -17763,46 +17710,6 @@
     ]
   },
   {
-    "slug": "knuckledusters",
-    "name": "Knuckledusters",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf",
-    "tags": [
-      "knuckledusters"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 5,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "low-kings",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "chainsaw-sword",
     "name": "Chainsaw Sword",
     "variant": "",
@@ -17915,231 +17822,6 @@
         "warbands": [
           {
             "type": "masters-of-horror",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "spike-jawed-snatcher",
-    "name": "Spike-jawed Snatcher",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
-    "tags": [
-      "spike-jawed snatcher"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "metal-mongers",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "ratling-gun",
-    "name": "Ratling Gun",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Blackpowder",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
-    "tags": [
-      "ratling gun"
-    ],
-    "flavour": "",
-    "range": "6\"-16\"",
-    "strength": "3",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": false,
-    "rules": [
-      {
-        "rule": "move-or-fire",
-        "text": "The ratling gun may not move and fire in the same turn, whatever other rules say (Nimble included)."
-      },
-      {
-        "rule": "save-modifier",
-        "summary": "-1 armour save modifier",
-        "text": "A warrior wounded by the ratling gun takes his armour save at -1."
-      },
-      {
-        "name": "Unwieldy",
-        "summary": "",
-        "text": "It takes two models to carry the ratling gun, and it may not fire while any enemy model is within 6\" of the firer.",
-        "tables": []
-      },
-      {
-        "name": "Metal Storm",
-        "summary": "",
-        "text": "Name a target and roll 2D6 for the number of shots. Spread them evenly between the target and other models within 6\" of it, friend or foe, then roll to hit and to wound for each. Once fired, the ratling gun can't be used again that game.",
-        "tables": []
-      },
-      {
-        "name": "Jeopardous",
-        "summary": "",
-        "text": "If the 2D6 for its shots is a double, the ratling gun misfires: roll a D6. The Experimental Weapon chart is Experimental Technology's.",
-        "tables": [
-          {
-            "columns": [
-              "D6",
-              "Misfire"
-            ],
-            "rows": [
-              [
-                "1",
-                "Boom!: the firer is taken out of action, and every model within 6\" of him takes a S4 hit on a 4+. Then roll D6-1 on the Experimental Weapon chart."
-              ],
-              [
-                "2",
-                "Blam!: the firer takes a S4 hit on a 4+. Then roll a D6 on the Experimental Weapon chart."
-              ],
-              [
-                "3",
-                "Boing!: roll a D6 on the Experimental Weapon chart."
-              ],
-              [
-                "4",
-                "Ping!: the ratling gun can't be used for the rest of the game."
-              ],
-              [
-                "5",
-                "Clunk!: the firer misses this shooting phase, and may try again next turn."
-              ],
-              [
-                "6",
-                "Roar!: every model, friend or foe, within 16\" of the firer and in his line of sight takes 2 automatic hits from it."
-              ]
-            ]
-          }
-        ]
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 275,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 14,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "metal-mongers",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "pneumatic-arm",
-    "name": "Pneumatic Arm",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Miscellaneous",
-    "subtype": "",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
-    "tags": [
-      "pneumatic arm"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "rule": "experimental-technology"
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 140,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 13,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "metal-mongers",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "wild-mountain-goat",
-    "name": "Wild Mountain Goat",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Miscellaneous",
-    "subtype": "",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Militiant%20Mootlanders.pdf",
-    "tags": [
-      "wild mountain goat"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 85,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 12,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "militiant-mootlanders",
             "excluded": false
           }
         ],
@@ -19040,6 +18722,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "call-of-the-night-haint",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -19116,6 +18814,1107 @@
         "warbands": [
           {
             "type": "vampire-hunters-of-sylvania",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "spirit-knife",
+    "name": "Spirit Knife",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Call%20Of%20The%20Night%20Haint.pdf",
+    "tags": [
+      "spirit knife"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "1-enemy-armour-save"
+      },
+      {
+        "name": "Spectral Touch",
+        "summary": "",
+        "text": "Each to-hit roll of 6 with the Spirit Knife inflicts 1 more wound at once; the hit itself is rolled to wound as normal.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "call-of-the-night-haint",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "mortis-engine",
+    "name": "Mortis Engine",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Vehicles",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Call%20Of%20The%20Night%20Haint.pdf",
+    "tags": [
+      "mortis engine"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [
+      {
+        "profile": "Engine",
+        "m": "-",
+        "ws": "-",
+        "bs": "-",
+        "s": "-",
+        "t": "6",
+        "w": "4",
+        "i": "-",
+        "a": "-",
+        "ld": "-"
+      },
+      {
+        "profile": "Requilary",
+        "m": "-",
+        "ws": "-",
+        "bs": "-",
+        "s": "-",
+        "t": "6",
+        "w": "3",
+        "i": "-",
+        "a": "-",
+        "ld": "7"
+      },
+      {
+        "profile": "Nightmare",
+        "m": "6",
+        "ws": "-",
+        "bs": "-",
+        "s": "-",
+        "t": "3",
+        "w": "1",
+        "i": "-",
+        "a": "-",
+        "ld": "-"
+      }
+    ],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Undead",
+        "summary": "",
+        "text": "The Mortis Engine follows the rules for the undead: it is immune to psychology, poison and disease, and causes fear.",
+        "tables": []
+      },
+      {
+        "name": "Ethereal",
+        "summary": "",
+        "text": "The Mortis Engine follows the Night Haint's rule for Ethereal models.",
+        "tables": []
+      },
+      {
+        "rule": "wagon"
+      },
+      {
+        "name": "Spectral Nightmares",
+        "summary": "",
+        "text": "Four ghostly Nightmares pull the Mortis Engine. When it is hit, roll on the Out of Control table only if a Nightmare fails its Ethereal save.",
+        "tables": []
+      },
+      {
+        "name": "Passengers",
+        "summary": "",
+        "text": "The Corpse Master must drive the Mortis Engine, and no other model may ride in it. While he drives it, he has all its special rules.",
+        "tables": []
+      },
+      {
+        "name": "Storage",
+        "summary": "",
+        "text": "The Mortis Engine carries any number of corpses without slowing.",
+        "tables": []
+      },
+      {
+        "name": "Cursed Wagon",
+        "summary": "",
+        "text": "The Mortis Engine can never be captured by another warband, and always routs with the spirit host.",
+        "tables": []
+      },
+      {
+        "name": "Conduit of Death",
+        "summary": "",
+        "text": "Once a battle, the Corpse Master may feed as many corpses to the Requilary as a ritual needs to perform one Ritual of the Requilary:",
+        "tables": [
+          {
+            "columns": [
+              "Corpses",
+              "Ritual"
+            ],
+            "rows": [
+              [
+                "1",
+                "Spirit Bomb: an explosion builds around the engine, Strength 1 with a 1\" radius; each turn it is left to build adds 1 to its Strength and 1\" to its radius, so five turns make a Strength 5, 5\" blast."
+              ],
+              [
+                "2",
+                "Spirit Nexus: Ethereal models may be summoned up to 12\" from the Mortis Engine."
+              ],
+              [
+                "3",
+                "Terrifying Visage: an enemy must pass a fear test to shoot at a friendly model within 6\" of the Mortis Engine."
+              ],
+              [
+                "4",
+                "The Purple Wind: Necromancers, Priests of Morr and Amethyst Wizards within 12\" of the Mortis Engine have +2 to their casting rolls, and every other wizard -2."
+              ],
+              [
+                "5",
+                "Return from the Brink: once a game, one Ethereal model taken out of action may be summoned again."
+              ],
+              [
+                "6",
+                "Unholy Flight: the Mortis Engine may fly (see the flying rules)."
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 195,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "call-of-the-night-haint",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "wicker-man",
+    "name": "Wicker Man",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Channel%20Rats.pdf",
+    "tags": [
+      "wicker man"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [
+      {
+        "profile": "Wicker Man",
+        "m": "4",
+        "ws": "2",
+        "bs": "0",
+        "s": "4",
+        "t": "4",
+        "w": "1",
+        "i": "1",
+        "a": "1",
+        "ld": "5"
+      }
+    ],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Golem",
+        "summary": "",
+        "text": "A Wicker Man follows the Petru's commands. Only the Petru may buy one.",
+        "tables": []
+      },
+      {
+        "name": "Zombified",
+        "summary": "",
+        "text": "A Wicker Man has all the special rules of a zombie: it causes fear, may not run, gains no experience and so on.",
+        "tables": []
+      },
+      {
+        "name": "Construct",
+        "summary": "",
+        "text": "A Wicker Man ignores any result on the Injury chart on a 4+ and fights on, so it may take more damage than its 1 Wound suggests. This is no armour save, so the attack's Strength doesn't modify it. Not against wounds from magic or magic weapons.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "channel-rats",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "scuttling-hand",
+    "name": "Scuttling Hand",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Channel%20Rats.pdf",
+    "tags": [
+      "scuttling hand"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [
+      {
+        "profile": "Scuttling Hand",
+        "m": "3",
+        "ws": "1",
+        "bs": "0",
+        "s": "1",
+        "t": "1",
+        "w": "1",
+        "i": "4",
+        "a": "1",
+        "ld": "7"
+      }
+    ],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Immune to Psychology",
+        "summary": "",
+        "text": "A Scuttling Hand is not affected by psychology.",
+        "tables": []
+      },
+      {
+        "name": "Dodge",
+        "summary": "",
+        "text": "A Scuttling Hand has the Dodge skill.",
+        "tables": []
+      },
+      {
+        "name": "Scale Sheer Surfaces",
+        "summary": "",
+        "text": "A Scuttling Hand has the Scale Sheer Surfaces skill.",
+        "tables": []
+      },
+      {
+        "name": "Silent Move",
+        "summary": "",
+        "text": "A Scuttling Hand always stays hidden unless it attacks an enemy warrior.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "channel-rats",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "whip",
+    "name": "Whip",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "whip"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "greenwood-scythe",
+    "name": "Greenwood Scythe",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "greenwood scythe"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "iron-bark",
+    "name": "Iron Bark",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "iron bark"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "horn-of-the-wild-hunt",
+    "name": "Horn of the Wild Hunt",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+    "tags": [
+      "horn of the wild hunt"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 120,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "book-of-bad-ideas",
+    "name": "Book of Bad Ideas",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Guild%20Of%20Disgraced%20Engineers.pdf",
+    "tags": [
+      "book of bad ideas"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Blueprints",
+        "summary": "",
+        "text": "The Book of Bad Ideas holds the Inventions' blueprints: the Expelled Engineer needs it to make one (Inventor).",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "guild-of-disgraced-engineers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "cinderblast-bomb",
+    "name": "Cinderblast Bomb",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Guild%20Of%20Disgraced%20Engineers.pdf",
+    "tags": [
+      "cinderblast bomb"
+    ],
+    "flavour": "",
+    "range": "2-8\"",
+    "strength": "6 (under the hole), 3 in the area",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Blast Charge",
+        "summary": "",
+        "text": "The Cinderblast Bomb's blast is a small blast template: a model hit directly takes D3 Strength 6 hits, and every other model under the template one Strength 3 hit.",
+        "tables": []
+      },
+      {
+        "name": "Scatter",
+        "summary": "",
+        "text": "If the Sapper misses his roll to hit, the charge scatters D6\" from him in a random direction.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 45,
+        "dice": 3,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "guild-of-disgraced-engineers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "field-trebuchet",
+    "name": "Field Trebuchet",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Knights%20Of%20The%20Bitter%20Moors.pdf",
+    "tags": [
+      "field trebuchet"
+    ],
+    "flavour": "",
+    "range": "12\"-48\"",
+    "strength": "Special",
+    "save": "",
+    "statblock": [
+      {
+        "profile": "Trebuchet",
+        "m": "*",
+        "ws": "-",
+        "bs": "-",
+        "s": "-",
+        "t": "7",
+        "w": "3",
+        "i": "-",
+        "a": "-",
+        "ld": "-"
+      }
+    ],
+    "notes": "Takes D3+1 games to build, unless it is bought at the start of the campaign.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Hard to Fire",
+        "summary": "",
+        "text": "With two crewmen the Trebuchet fires every other turn, with four every turn. The usual shooting rules apply, but no Shooting skills.",
+        "tables": []
+      },
+      {
+        "name": "Large Target",
+        "summary": "",
+        "text": "The Trebuchet may always be targeted by enemy shooting.",
+        "tables": []
+      },
+      {
+        "name": "Constructed",
+        "summary": "",
+        "text": "The Trebuchet starts a game as 4 small crates, carried by 4 warriors who aren't Knights, and only Men-at-Arms may work it. Where they find a spot, they spend D3 turns setting it up; once set up it can't move, but may swivel on the spot. Taking it down takes 1 turn, and only the Bretonnian henchmen and Squires may do it.",
+        "tables": []
+      },
+      {
+        "name": "Ammo for All Occasions",
+        "summary": "",
+        "text": "Declare the ammunition before each shot; each game the Trebuchet has 2 shots of each kind. Boulders: a S5 hit on a model at the template's centre and a S4 hit on every other model under it; 2-4 on the Injury chart is stunned, and it causes Bludgeoning critical hits. Flaming Shot: S3, and a model under the template catches fire on a 4+. Boiling Oil Canister: a S4 hit, with no armour save, on every model under the template.",
+        "tables": []
+      },
+      {
+        "rule": "explosive-radius",
+        "text": "Where the shot lands, place the small blast template: every model under it takes the ammunition's damage."
+      },
+      {
+        "name": "Artillery",
+        "summary": "",
+        "text": "The Trebuchet is a siege weapon: it uses the scatter dice and artillery dice, not its crew's Ballistic Skill. Declare where the shot should land (no line of sight needed) and roll both: the shot is off target by the number on the scatter dice minus the crew's Ballistic Skill. A hit is a direct hit, unless the Trebuchet can't see the target.",
+        "tables": []
+      },
+      {
+        "name": "Indirect Fire",
+        "summary": "",
+        "text": "The Trebuchet may fire at a target it can't see. Roll the scatter and artillery dice as normal, but a hit marker still goes off target: the shot moves in the direction of the hit marker's small arrow, by the artillery dice's number minus the crew's Ballistic Skill.",
+        "tables": []
+      },
+      {
+        "name": "Misfires",
+        "summary": "",
+        "text": "On a misfire on the artillery dice, roll a D6:",
+        "tables": [
+          {
+            "columns": [
+              "D6",
+              "Result"
+            ],
+            "rows": [
+              [
+                "1",
+                "Destroyed!: the Trebuchet collapses; every crewman must pass an Initiative test or be taken out of action by the debris, and it is destroyed."
+              ],
+              [
+                "2-3",
+                "Disabled: it suffers a wound, which heals only when it is taken down and rebuilt, and it can't fire this turn or next."
+              ],
+              [
+                "4-6",
+                "May Not Shoot: it may not fire this turn."
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 175,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "knights-of-the-bitter-moors",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "knuckledusters",
+    "name": "Knuckledusters",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf",
+    "tags": [
+      "knuckledusters"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "low-kings",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "spike-jawed-snatcher",
+    "name": "Spike-jawed Snatcher",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+    "tags": [
+      "spike-jawed snatcher"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "metal-mongers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "ratling-gun",
+    "name": "Ratling Gun",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+    "tags": [
+      "ratling gun"
+    ],
+    "flavour": "",
+    "range": "6\"-16\"",
+    "strength": "3",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "move-or-fire",
+        "text": "The ratling gun may not move and fire in the same turn, whatever other rules say (Nimble included)."
+      },
+      {
+        "rule": "save-modifier",
+        "summary": "-1 armour save modifier",
+        "text": "A warrior wounded by the ratling gun takes his armour save at -1."
+      },
+      {
+        "name": "Unwieldy",
+        "summary": "",
+        "text": "It takes two models to carry the ratling gun, and it may not fire while any enemy model is within 6\" of the firer.",
+        "tables": []
+      },
+      {
+        "name": "Metal Storm",
+        "summary": "",
+        "text": "Name a target and roll 2D6 for the number of shots. Spread them evenly between the target and other models within 6\" of it, friend or foe, then roll to hit and to wound for each. Once fired, the ratling gun can't be used again that game.",
+        "tables": []
+      },
+      {
+        "name": "Jeopardous",
+        "summary": "",
+        "text": "If the 2D6 for its shots is a double, the ratling gun misfires: roll a D6. The Experimental Weapon chart is Experimental Technology's.",
+        "tables": [
+          {
+            "columns": [
+              "D6",
+              "Misfire"
+            ],
+            "rows": [
+              [
+                "1",
+                "Boom!: the firer is taken out of action, and every model within 6\" of him takes a S4 hit on a 4+. Then roll D6-1 on the Experimental Weapon chart."
+              ],
+              [
+                "2",
+                "Blam!: the firer takes a S4 hit on a 4+. Then roll a D6 on the Experimental Weapon chart."
+              ],
+              [
+                "3",
+                "Boing!: roll a D6 on the Experimental Weapon chart."
+              ],
+              [
+                "4",
+                "Ping!: the ratling gun can't be used for the rest of the game."
+              ],
+              [
+                "5",
+                "Clunk!: the firer misses this shooting phase, and may try again next turn."
+              ],
+              [
+                "6",
+                "Roar!: every model, friend or foe, within 16\" of the firer and in his line of sight takes 2 automatic hits from it."
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 275,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 14,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "metal-mongers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "pneumatic-arm",
+    "name": "Pneumatic Arm",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+    "tags": [
+      "pneumatic arm"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "experimental-technology"
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 140,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 13,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "metal-mongers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "wild-mountain-goat",
+    "name": "Wild Mountain Goat",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Militiant%20Mootlanders.pdf",
+    "tags": [
+      "wild mountain goat"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 85,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "militiant-mootlanders",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "hunting-bird",
+    "name": "Hunting Bird",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Watchmen.pdf",
+    "tags": [
+      "hunting bird"
+    ],
+    "flavour": "",
+    "range": "24\"",
+    "strength": "3",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Falconer",
+        "summary": "",
+        "text": "Only a Hero with the animal handling skill Falconer may use a hunting bird, and he supervises a single one unless a rule says otherwise. He may use it as a missile weapon, rolling to hit with his Ballistic Skill, and in hand-to-hand combat, where it strikes first with a single attack using his Weapon Skill. Each hit is a Strength 3 hit, and after attacking it flies back to him.",
+        "tables": []
+      },
+      {
+        "name": "Flies Away",
+        "summary": "",
+        "text": "If the Hero is taken out of action, the bird flies away and returns after the battle. It can't be attacked or slain, but if the Hero is slain it is lost with him, like any other equipment.",
+        "tables": []
+      },
+      {
+        "name": "Falconry Glove",
+        "summary": "",
+        "text": "A warrior using a hunting bird without a falconry glove rolls on the Serious Injury chart in the post-battle sequence.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "watchmen",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "marienburg-map",
+    "name": "Marienburg Map",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mutiny-in-marienburg",
+    "source": "Mutiny in Marienburg",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Watchmen.pdf",
+    "tags": [
+      "marienburg map"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "watchmen",
             "excluded": false
           }
         ],

@@ -215,11 +215,15 @@
       {
         "type": "bretonnian-knights",
         "excluded": false
+      },
+      {
+        "type": "knights-of-the-bitter-moors",
+        "excluded": false
       }
     ],
     "large_only": false,
     "note": "",
-    "how": "intersection",
+    "how": "skill_group_learners",
     "skills": [
       "Virtue of Purity",
       "Virtue of Valor",
@@ -227,6 +231,26 @@
       "Virtue of Noble Disdain",
       "Virtue of the Impetuous",
       "Virtue of the Squire"
+    ]
+  },
+  {
+    "name": "Call of the Night Haint",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "call-of-the-night-haint",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Spirits only.",
+    "how": "new group",
+    "skills": [
+      "Wight Walk",
+      "Traumatic Passing",
+      "Possession",
+      "The Key and the Gate",
+      "Siren Song"
     ]
   },
   {
@@ -245,6 +269,27 @@
       "Athletic Mount",
       "Horse Archer",
       "Mounted Combat Master"
+    ]
+  },
+  {
+    "name": "Channel Rats",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "channel-rats",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Bull Rush",
+      "Infiltration",
+      "Prize-fighter",
+      "Knowledge of Myths and Legends",
+      "Animal Charmer",
+      "Songster"
     ]
   },
   {
@@ -1169,7 +1214,7 @@
       }
     ],
     "large_only": false,
-    "note": "",
+    "note": "Songster: the Rememberer only.",
     "how": "new group",
     "skills": [
       "Ferocious Charge",
@@ -1282,6 +1327,26 @@
       "Ratswarm Form",
       "Bat Form",
       "Giant Wolf Form"
+    ]
+  },
+  {
+    "name": "Underworld Alliance",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "underworld-alliance",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Infiltration",
+      "Wyrdstone Addict",
+      "Toss Me!",
+      "Stuff 'em with Green",
+      "Ha! Watch This"
     ]
   },
   {

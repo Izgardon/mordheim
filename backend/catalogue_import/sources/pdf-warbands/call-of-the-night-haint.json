@@ -1,0 +1,299 @@
+{
+  "warbandType": "call-of-the-night-haint",
+  "name": "Call of the Night Haint",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Call%20Of%20The%20Night%20Haint.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "No Skin, No Service", "ruleFull": "Ethereal models may not enter settlements, unless a rule says they may."},
+    {"rulename": "Requilary", "ruleFull": "Every Ethereal member of the warband starts the battle inside the Requilary. At the start of each turn, take a Leadership test on the highest Leadership the warband has (the Requilary has a Leadership of its own); for each point it is passed by, one warrior may be deployed within 6\" of the Mortis Engine. Where the Mortis Engine can't be brought (underground, the pit of blood and the like), the Corpse Master carries it on his back and can't run.\n\nIf the Requilary is destroyed, the warband routs at once, and every model within D6+6\" takes a Strength 5 hit; a magic user takes D3 such hits. The Cairn Wraith makes a new Requilary and misses D3 games doing it."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "night-haint-equipment-list",
+      "title": "Night Haint Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Spirit Knife", "alias": "", "cost": {"cost": 20, "costSuffix": "Cairn Wraith, Tomb Banshee and Malignant Spirits only"}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "Scythe", "alias": "", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 15}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 25}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50, "costSuffix": "Malignant Spirits only"}},
+        {"name": "Mortis Engine", "alias": "", "cost": {"cost": 195}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "cairn-wraith",
+      "type": "hero",
+      "name": "Cairn Wraith",
+      "plural": "Cairn Wraiths",
+      "race": "wraith",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 110,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 2, "s": 3, "t": 2, "w": 3, "i": 2, "a": 1, "ld": 8},
+      "equipmentLists": ["night-haint-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Necromancy (Call of the Night Haint)"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Cairn Wraith may use his Leadership instead of their own."},
+        {"rulename": "Ethereal", "ruleFull": "The model has an unmodifiable 4+ save against every attack, taken after the to-hit roll. It can't be used with Dodge or Step Aside, and is no use against magical attacks (spells, prayers, artefacts). A missile that misses because of the save passes through and hits the next closest target directly behind.\n\nTerrain doesn't hinder the model, and it may take a Leadership test in the movement phase: if it passes, it may move through any terrain and over water. If it starts its next turn inside a terrain piece, it takes another Leadership test in the movement phase, and if it fails it is taken out of action at once.\n\nOnce the warband is made, every item costs an Ethereal model double. When the warband finds an item, roll a D6: on a 5+ Ethereal and other models may both use it; on a 1-4 only the others may (mark it on the roster)."},
+        {"rulename": "Causes Fear", "ruleFull": "The Cairn Wraith causes fear."},
+        {"rulename": "May not run", "ruleFull": "The Cairn Wraith may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Cairn Wraith is not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Cairn Wraith is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Cairn Wraith treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Wizard", "ruleFull": "The Cairn Wraith is a wizard and starts with one spell from the Necromancy list (the Night Haint's, where Revenants take the Zombies' place)."},
+        {"rulename": "Warrior Wizard", "ruleFull": "The Cairn Wraith may wear armour and cast spells with no penalty."},
+        {"rulename": "Death Was Merely the Beginning", "ruleFull": "When the Cairn Wraith rolls 11-15 (Dead) on the Serious Injury chart, he may return to the warband for his hiring cost plus twice his experience points, but only while the warband has a Requilary. If the Requilary and the Cairn Wraith are both destroyed in one round, the warband is disbanded."}
+      ]
+    },
+    {
+      "id": "tomb-banshee",
+      "type": "hero",
+      "name": "Tomb Banshee",
+      "plural": "Tomb Banshees",
+      "race": "spirit",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 2, "bs": 0, "s": 2, "t": 2, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["night-haint-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Ethereal", "ruleFull": "The model has an unmodifiable 4+ save against every attack, taken after the to-hit roll. It can't be used with Dodge or Step Aside, and is no use against magical attacks (spells, prayers, artefacts). A missile that misses because of the save passes through and hits the next closest target directly behind.\n\nTerrain doesn't hinder the model, and it may take a Leadership test in the movement phase: if it passes, it may move through any terrain and over water. If it starts its next turn inside a terrain piece, it takes another Leadership test in the movement phase, and if it fails it is taken out of action at once.\n\nOnce the warband is made, every item costs an Ethereal model double. When the warband finds an item, roll a D6: on a 5+ Ethereal and other models may both use it; on a 1-4 only the others may (mark it on the roster)."},
+        {"rulename": "Causes Fear", "ruleFull": "The Tomb Banshee causes fear."},
+        {"rulename": "May not run", "ruleFull": "The Tomb Banshee may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Tomb Banshee is not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Tomb Banshee is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Tomb Banshee treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Ghostly Howl", "ruleFull": "Enemies within 6\" of the Tomb Banshee have -D6 Leadership when they take fear tests."}
+      ]
+    },
+    {
+      "id": "malignant-spirits",
+      "type": "hero",
+      "name": "Malignant Spirit",
+      "plural": "Malignant Spirits",
+      "race": "spirit",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "startingXp": 0,
+      "statblock": {"m": 5, "ws": 3, "bs": 0, "s": 3, "t": 2, "w": 2, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["night-haint-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Ethereal", "ruleFull": "The model has an unmodifiable 4+ save against every attack, taken after the to-hit roll. It can't be used with Dodge or Step Aside, and is no use against magical attacks (spells, prayers, artefacts). A missile that misses because of the save passes through and hits the next closest target directly behind.\n\nTerrain doesn't hinder the model, and it may take a Leadership test in the movement phase: if it passes, it may move through any terrain and over water. If it starts its next turn inside a terrain piece, it takes another Leadership test in the movement phase, and if it fails it is taken out of action at once.\n\nOnce the warband is made, every item costs an Ethereal model double. When the warband finds an item, roll a D6: on a 5+ Ethereal and other models may both use it; on a 1-4 only the others may (mark it on the roster)."},
+        {"rulename": "Causes Fear", "ruleFull": "Malignant Spirits cause fear."},
+        {"rulename": "May not run", "ruleFull": "Malignant Spirits may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Malignant Spirits are not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "Malignant Spirits are not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "Malignant Spirits treat a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Violent Entry", "ruleFull": "A Malignant Spirit that charges in the turn it is summoned has +1 to hit and +1 Strength."}
+      ]
+    },
+    {
+      "id": "corpse-master",
+      "type": "hero",
+      "name": "Corpse Master",
+      "plural": "Corpse Masters",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 25,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["night-haint-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Gofer", "ruleFull": "As the warband's only living member, the Corpse Master may visit D3+1 places in a settlement rather than 1."},
+        {"rulename": "Magical Void", "ruleFull": "The Corpse Master has a 4+ save against enemy spells and magic weapons."},
+        {"rulename": "Guardian of the Requilary", "ruleFull": "The Corpse Master never moves more than 6\" from the Requilary of his own will."}
+      ]
+    },
+    {
+      "id": "revenants",
+      "type": "henchman",
+      "name": "Revenant",
+      "plural": "Revenants",
+      "race": "undead",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 1, "a": 1, "ld": 5},
+      "equipmentLists": ["night-haint-equipment-list"],
+      "specialRules": [
+        {"rulename": "Causes Fear", "ruleFull": "Revenants cause fear."},
+        {"rulename": "May not run", "ruleFull": "Revenants may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Revenants are not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "Revenants are not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "Revenants treat a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Spectral Ascension", "ruleFull": "A Revenant who rolls The Lad's Got Talent becomes Ethereal once he is a Hero."}
+      ]
+    },
+    {
+      "id": "mourngul",
+      "type": "henchman",
+      "name": "Mourngul",
+      "plural": "Mournguls",
+      "race": "spirit",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 210,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 3, "bs": 0, "s": 5, "t": 5, "w": 3, "i": 2, "a": 3, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None. The Mourngul fights with its claws and fangs.",
+      "specialRules": [
+        {"rulename": "Ethereal", "ruleFull": "The model has an unmodifiable 4+ save against every attack, taken after the to-hit roll. It can't be used with Dodge or Step Aside, and is no use against magical attacks (spells, prayers, artefacts). A missile that misses because of the save passes through and hits the next closest target directly behind.\n\nTerrain doesn't hinder the model, and it may take a Leadership test in the movement phase: if it passes, it may move through any terrain and over water. If it starts its next turn inside a terrain piece, it takes another Leadership test in the movement phase, and if it fails it is taken out of action at once.\n\nOnce the warband is made, every item costs an Ethereal model double. When the warband finds an item, roll a D6: on a 5+ Ethereal and other models may both use it; on a 1-4 only the others may (mark it on the roster)."},
+        {"rulename": "Large", "ruleFull": "The Mourngul is a Large Target, as the shooting rules define it."},
+        {"rulename": "Causes Fear", "ruleFull": "The Mourngul causes fear."},
+        {"rulename": "May not run", "ruleFull": "The Mourngul may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Mourngul is not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Mourngul is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Mourngul treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "The Mourngul gains no experience."},
+        {"rulename": "Nightmare Birth", "ruleFull": "The Mourngul may be summoned only once a Large model has been taken out of action, and is deployed where that model fell."},
+        {"rulename": "Ravening Onslaught", "ruleFull": "Each to-hit roll of 6 gives the Mourngul another attack, and each 6 rolled for those gives another."},
+        {"rulename": "Haunter of the Dark", "ruleFull": "The Mourngul's Ethereal save is 3+."}
+      ]
+    },
+    {
+      "id": "spirit-hosts",
+      "type": "henchman",
+      "name": "Spirit Host",
+      "plural": "Spirit Hosts",
+      "race": "spirit",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 3, "ws": 2, "bs": 0, "s": 2, "t": 2, "w": 3, "i": 2, "a": 3, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None. Spirit Hosts fight with spectral claws and daggers.",
+      "specialRules": [
+        {"rulename": "Ethereal", "ruleFull": "The model has an unmodifiable 4+ save against every attack, taken after the to-hit roll. It can't be used with Dodge or Step Aside, and is no use against magical attacks (spells, prayers, artefacts). A missile that misses because of the save passes through and hits the next closest target directly behind.\n\nTerrain doesn't hinder the model, and it may take a Leadership test in the movement phase: if it passes, it may move through any terrain and over water. If it starts its next turn inside a terrain piece, it takes another Leadership test in the movement phase, and if it fails it is taken out of action at once.\n\nOnce the warband is made, every item costs an Ethereal model double. When the warband finds an item, roll a D6: on a 5+ Ethereal and other models may both use it; on a 1-4 only the others may (mark it on the roster)."},
+        {"rulename": "Large", "ruleFull": "Spirit Hosts are Large Targets, as the shooting rules define them."},
+        {"rulename": "Causes Fear", "ruleFull": "Spirit Hosts cause fear."},
+        {"rulename": "May not run", "ruleFull": "Spirit Hosts may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Spirit Hosts are not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "Spirit Hosts are not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "Spirit Hosts treat a stunned result on the Injury chart as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "Spirit Hosts gain no experience."},
+        {"rulename": "Spectral Touch", "ruleFull": "Each to-hit roll of 6 a Spirit Host makes inflicts 1 more wound at once; the hit itself is rolled to wound as normal."}
+      ]
+    },
+    {
+      "id": "poltergeists",
+      "type": "henchman",
+      "name": "Poltergeist",
+      "plural": "Poltergeists",
+      "race": "spirit",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 1, "bs": 1, "s": 1, "t": 1, "w": 1, "i": 1, "a": 1, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None. Poltergeists fight unarmed with no penalty.",
+      "specialRules": [
+        {"rulename": "Incorporeal", "ruleFull": "A wounded Poltergeist doesn't roll for injury: it is taken out of action at once."},
+        {"rulename": "Ethereal", "ruleFull": "The model has an unmodifiable 4+ save against every attack, taken after the to-hit roll. It can't be used with Dodge or Step Aside, and is no use against magical attacks (spells, prayers, artefacts). A missile that misses because of the save passes through and hits the next closest target directly behind.\n\nTerrain doesn't hinder the model, and it may take a Leadership test in the movement phase: if it passes, it may move through any terrain and over water. If it starts its next turn inside a terrain piece, it takes another Leadership test in the movement phase, and if it fails it is taken out of action at once.\n\nOnce the warband is made, every item costs an Ethereal model double. When the warband finds an item, roll a D6: on a 5+ Ethereal and other models may both use it; on a 1-4 only the others may (mark it on the roster)."},
+        {"rulename": "Silent Move", "ruleFull": "Poltergeists always stay hidden unless they charge an enemy warrior."},
+        {"rulename": "Cause Ruckus", "ruleFull": "A Poltergeist may make a shooting attack with a range of 6\" and no penalties: two shots at Strength 1."},
+        {"rulename": "Causes Fear", "ruleFull": "Poltergeists cause fear."},
+        {"rulename": "May not run", "ruleFull": "Poltergeists may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Poltergeists are not affected by psychology."},
+        {"rulename": "Immune to Poison", "ruleFull": "Poltergeists are not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "Poltergeists treat a stunned result on the Injury chart as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "Poltergeists gain no experience."},
+        {"rulename": "Ignored", "ruleFull": "Poltergeists taken out of action don't count towards rout tests."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Call of the Night Haint", "new": true, "note": "Spirits only."},
+  "specialSkillsList": [
+    {"name": "Wight Walk", "description": "Ethereal models only. The Hero may use his Ethereal ability to charge through walls, and can't be intercepted, passing through any warrior in his path."},
+    {"name": "Traumatic Passing", "description": "Each time the Hero takes an enemy out of action on a roll of a 6, a Poltergeist is summoned in the enemy's place."},
+    {"name": "Possession", "description": "Ethereal models only. When the Hero charges, instead of attacking he may try to possess his opponent: each player rolls a D6 and adds his model's Leadership. If the Hero's total is higher, he controls the opponent for its turn: remove the Hero, and the possessed model moves, charges and acts as normal but can't run; if it was in combat with the Hero's warband, they move 1\" apart. At the start of the enemy's turn the Hero reappears in base contact and may be attacked as normal. If he fails, he may not attack in that round of combat. Never against magical or daemonic models."},
+    {"name": "The Key and the Gate", "description": "Cairn Wraith only. Warriors may be summoned from the Cairn Wraith rather than the Requilary: follow the summoning rules, but deploy the model 6\" from him."},
+    {"name": "Siren Song", "description": "Tomb Banshee only. In combat the Banshee may charm one enemy, who must pass a Leadership test on 3D6, discarding the lowest dice. If he fails, he can't attack the Banshee and is hit automatically in close combat; once he passes, he doesn't test again that game. She charms one enemy at a time, and never one immune to psychology."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Spirit Knife",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 8,
+      "dice": null,
+      "rulesPage": 3,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {"rule": "+1 Enemy armour save"},
+        {"name": "Spectral Touch", "text": "Each to-hit roll of 6 with the Spirit Knife inflicts 1 more wound at once; the hit itself is rolled to wound as normal."}
+      ]
+    },
+    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 2},
+    {
+      "name": "Mortis Engine",
+      "type": "Miscellaneous",
+      "subtype": "Vehicles",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 3,
+      "statblock": [
+        {"profile": "Engine", "m": "-", "ws": "-", "bs": "-", "s": "-", "t": 6, "w": 4, "i": "-", "a": "-", "ld": "-"},
+        {"profile": "Requilary", "m": "-", "ws": "-", "bs": "-", "s": "-", "t": 6, "w": 3, "i": "-", "a": "-", "ld": 7},
+        {"profile": "Nightmare", "m": 6, "ws": "-", "bs": "-", "s": "-", "t": 3, "w": 1, "i": "-", "a": "-", "ld": "-"}
+      ],
+      "rules": [
+        {"name": "Undead", "text": "The Mortis Engine follows the rules for the undead: it is immune to psychology, poison and disease, and causes fear."},
+        {"name": "Ethereal", "text": "The Mortis Engine follows the Night Haint's rule for Ethereal models."},
+        {"rule": "Wagon"},
+        {"name": "Spectral Nightmares", "text": "Four ghostly Nightmares pull the Mortis Engine. When it is hit, roll on the Out of Control table only if a Nightmare fails its Ethereal save."},
+        {"name": "Passengers", "text": "The Corpse Master must drive the Mortis Engine, and no other model may ride in it. While he drives it, he has all its special rules."},
+        {"name": "Storage", "text": "The Mortis Engine carries any number of corpses without slowing."},
+        {"name": "Cursed Wagon", "text": "The Mortis Engine can never be captured by another warband, and always routs with the spirit host."},
+        {"name": "Conduit of Death", "text": "Once a battle, the Corpse Master may feed as many corpses to the Requilary as a ritual needs to perform one Ritual of the Requilary:", "tables": [{"columns": ["Corpses", "Ritual"], "rows": [["1", "Spirit Bomb: an explosion builds around the engine, Strength 1 with a 1\" radius; each turn it is left to build adds 1 to its Strength and 1\" to its radius, so five turns make a Strength 5, 5\" blast."], ["2", "Spirit Nexus: Ethereal models may be summoned up to 12\" from the Mortis Engine."], ["3", "Terrifying Visage: an enemy must pass a fear test to shoot at a friendly model within 6\" of the Mortis Engine."], ["4", "The Purple Wind: Necromancers, Priests of Morr and Amethyst Wizards within 12\" of the Mortis Engine have +2 to their casting rolls, and every other wizard -2."], ["5", "Return from the Brink: once a game, one Ethereal model taken out of action may be summoned again."], ["6", "Unholy Flight: the Mortis Engine may fly (see the flying rules)."]]}]}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 1, "what": "A Night Haint warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
+    {"page": 1, "what": "The Wraith maximum (M5 WS6 BS4 S4 T3 W5 I5 A3 Ld10) is a new race, Wraith, the Cairn Wraith's. The Spirit maximum (M5 WS5 BS0 S4 T3 W4 I5 A3 Ld9) is a new race, Spirit, for the Banshee and the Malignant Spirits; the Mourngul, Spirit Hosts and Poltergeists gain no experience and have no maximum printed, so they take Spirit too. The Corpse Master is Human, as the PDF says; the Revenants take our Undead."},
+    {"page": 1, "what": "Ethereal is printed among the warband's rules; it is each Ethereal fighter's own rule, worded for any model. The Requilary's summoning: \"for each point your pass by you may deploy that many members\" is read as one warrior for each point passed by."},
+    {"page": 2, "what": "The skill table's ticks are symbol glyphs, read from where the text layer places them. The special skills are \"Spirits may choose to use\", so the group's note says Spirits only; the Corpse Master, who is no Spirit, ticks Special in the table and keeps it."},
+    {"page": 2, "what": "The list prints the Bow at 15 gc and the Crossbow at 10 gc (ours 10 and 25), perhaps swapped, and Light Armour at 25 gc (ours 20): as printed. Its Dagger is \"Free\\2gc\", read as 1st free/2."},
+    {"page": 2, "what": "The Spirit Knife is 25 gc on the list but 20 gc in its entry (p3): the line is 20, the entry's (William: \"use 120\" for the Fen Guard's Horn). Its starred \"Ethereal Heroes only\" is the Cairn Wraith, Tomb Banshee and Malignant Spirits. Its Spectral Touch names \"a Spirit Dagger\"."},
+    {"page": 2, "what": "The Mortis Engine is 125 gc on the list but 195 gc in its entry (p3): the line is 195, the entry's. No rarity is printed: Common."},
+    {"page": 2, "what": "The Scythe prints no rules: it is the Vampire Hunters of Sylvania's Scythe stub, one item with a price row for each warband."},
+    {"page": 3, "what": "The Mortis Engine is a stub with its rules (Wagon our shared rule) and profile rows: Engine T6 W4, Requilary T6 W3 Ld7, Nightmare M6 T3 W1. The PDF doesn't say how the warband gets the corpses its rituals need. The Purple Wind's -2 is printed without a range: read with the +2's 12\"."},
+    {"page": 4, "what": "The Cairn Wraith's rules list no Leader, though he must lead the warband: he is given Leader (6\")."},
+    {"page": 4, "what": "His Wizard rule takes \"one spell from the Necromancy list\", its Zombies read as Revenants: the PDF's revised list (p6) is a new lore, Necromancy (Call of the Night Haint). Death Was Merely the Beginning: \"rolls 11-15 Dead on the serious injury table\" kept as printed."},
+    {"page": 4, "what": "Traumatic Passing: \"takes an enemy OOA on a roll of a 6\" doesn't say which roll; kept as printed. The Key and the Gate: \"deploy the model 6\\\" from the Cairn Wraith\" kept as printed (the Requilary's is within 6\")."},
+    {"page": 5, "what": "The Poltergeists' Cause Ruckus isn't named among their Special Rules but is printed under them: theirs. The Mourngul's Haunter of the Dark is \"Hainter of the Dark\" in its list of rules."},
+    {"page": 5, "what": "Revenants: Spectral Ascension is read as the henchman roll The Lad's Got Talent, so they gain experience and may be promoted."}
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "warbandType": "guild-of-disgraced-engineers",
+  "name": "Guild of Disgraced Engineers",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Guild%20Of%20Disgraced%20Engineers.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Hard to Kill", "ruleFull": "A Dwarf is taken out of action only on a 6 on the Injury chart: 1-2 is knocked down, 3-5 stunned and 6 out of action."},
+    {"rulename": "Hard Head", "ruleFull": "Dwarfs ignore the special rules of clubs, maces and the like."},
+    {"rulename": "Armour", "ruleFull": "Dwarfs never suffer movement penalties for wearing armour."},
+    {"rulename": "Field Test", "ruleFull": "The Engineer and the Apprentice Engineers may use any weapon or armour made from the Inventions, and so must a henchman promoted by The Lad's Got Talent. The Sapper wears only the armour ones."},
+    {"rulename": "Death of a Leader", "ruleFull": "If the Expelled Engineer dies, an Apprentice Engineer takes the Book of Bad Ideas and the title of Engineer: he takes the Inventor rule, and the warband may hire a new Apprentice."},
+    {"rulename": "Inventions", "ruleFull": "The Engineer makes inventions from the blueprints in the Book of Bad Ideas (Inventor). Each needs its components, and a difficulty test passed: a roll of 2 on that test is a critical failure, and every component is lost.\n\nEvery invention is experimental: a to-hit roll of 1 with it means a roll on the Experimental Weapons chart. One that doesn't roll to hit rolls a D6 each time it is used, and on a 1 it still works but rolls on the chart.\n\nInvention | Difficulty | Components | What it does\nMaster Key | 8 | Blunderbuss, Handgun | Once a game the handgun fires a small blast template. It opens doors by itself, and the template reaches on through the hole where the door was. Not against large gates.\nGolden Gun | 10 | Double-barrelled Hunting Rifle, Flash Powder | Counts as a double-barrelled long rifle, with Payday: the Dwarf loads gold down the barrel, each 5 gc a +1 Strength slug (25 gc is S5), at most 30 gc at a time.\nBoom Hammer | 10 | Double-handed hammer, Superior Black Powder | Strength as user +2, Strike Last. Full Steam: once per combat the Dwarf may attack at a further +2 Strength (+4 in all), and the next time he is attacked the enemy has +1 to hit.\nPara-Pillow | 10 | 5 Cathayan silks, 2 Rope and Hooks | The Dwarf may leap off a tall building and glide down, as the Wings mutation describes.\nLaunching Vertical Assistance Rope | 7 | Pistol, Rope and Hook | He passes every climbing and diving test on a 3+.\nSiege Breaker | 11 | Treasure Cart, Powder Keg, 10 Belaying Pins, Superior Black Powder, Gromril hammer | A cart that 2 crew move at half speed and 4 at full. Set against a wall or barred door, roll a D6: 1, She's Gonna Blow!: it explodes, a S4 hit on every model within 4\"; 2-4, Here's Johnny!: a hole big enough to shoot through (a second such result counts as 5-6); 5-6, Party Time!: the door is destroyed, or a wall holed 1\" wide, enough for models that aren't Large to pass.\nStand and Deliver | 7 | Handgun, Spear | Counts as a handgun and a spear, with Point Blank: in the first round of combat he strikes first, with a rifle shot and a spear attack.\nRepeaterbuss | 10 | 4 Blunderbusses, Repeater Handgun | Fires 4 blunderbuss shots at once, each rolling for misfire.\nEscape Pod | 8 | Any armour, Toughened Leathers, a sacrificial goat (for the grease) | Counts as the armour it is made from, with Greasy Escape: after a failed armour save the Dwarf may launch himself D6\" out of his armour, leaving combat with no hits against him. The armour is found after the game, and the pod must be greased again (a goat).\nHug Thrower | 6 | Crossbow, Net | Range 30\", Move or Fire: it launches a net at a crossbow's full range, and the enemy has -1 to his Strength tests to escape it. On a to-hit roll of 1 the net wraps around the Dwarf.\nFull Metal Jacket | 12 | Handheld Mortar, Heavy Armour, Net | Range 24\": a stronger hug launcher firing an armoured straitjacket, the victim at -2 Strength to escape the net. A model hit in water sinks and is out of action, aquatic or not. A Large model hit is blinded, and moves 2D6\" in a random direction each turn until it frees itself.\nAuto-Stand | 10 | Heavy Armour, Superior Black Powder | While he wears the armour the Dwarf has the Jump Up skill.\nBack Off Armour | 12 | Heavy Armour, Powder Keg | Counts as heavy armour, with Get Off!: once a game every model in base contact takes a S3 hit and is knocked back D6\". A new powder keg must be bought after each use.\nDeath Roller | 12 | Cart, 6 Axes, 6 Swords, Steam Engine, Armoured Plating | A cart with a steam engine's and armoured plating's rules, which causes D6 impact hits on any model in its way, at a Strength equal to the distance it moved that turn.\nGoblin Hewer | 12 | 12 Axes, 6 Rope and Hooks, Bolt Thrower | Troll Slayer engineer only. An artillery weapon: range 6-26\", Strength 4; Hard to Fire, Cumbersome Movement, Reload!, Aim!, Broadside Shooting and Carve 'em Up, below.\n\nThe Goblin Hewer's rules. Hard to Fire: a crew of two fires it (one if he is Large), only one of whom needs the Artillery Expert skill; the usual shooting rules apply, but no Shooting skills. Cumbersome Movement: one crewman moves it at half his Movement, two at their full Movement, never running. Reload!: it fires only after a full turn of the crew preparing it (mark it loaded), and may still need to aim. Aim!: it may not move and fire in a turn, and pivoting counts as moving, so it shoots only at a target in a straight line from its nozzle (1\" leeway). Broadside Shooting: a shot at a building, or a boat of a barge's size or larger, within 10\" hits automatically. Carve 'em Up: each time it fires, nominate a target and roll 2D6 for its shots, spread them evenly between the target and another model within 6\" of it (friend or foe), then roll to hit and to wound for each."},
+    {"rulename": "Experimental Weapons Chart", "ruleFull": "An invention that goes wrong rolls a D6:\n\nD6 | Result\n1 | Scrap: it is beyond repair and leaves the roster; add a club to the roster or 3 gc for the scrap.\n2-4 | Badly Mangled: either add its bits to the parts pile, counting as one item used to build it, or try to repair it: on a D6 roll of 3+ it works again; on anything else it is useless and leaves the roster.\n5-6 | Few Bits Missing: the Engineer has the parts to fix it, and it works as normal."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "dwarf-engineer-equipment-list",
+      "title": "Dwarf Engineer Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "dwarf axe", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "gromril weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 x price"}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 25}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "repeater pistol", "alias": "", "cost": {"cost": 25}},
+        {"name": "repeater handgun", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "gromril armour", "alias": "", "cost": {"cost": 75}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "Book of Bad Ideas", "alias": "", "cost": {"cost": 50, "costSuffix": "Expelled Engineer only"}},
+        {"name": "rope & hook", "alias": "", "cost": {"cost": 5}},
+        {"name": "superior black powder", "alias": "", "cost": {"cost": 20}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Cinderblast Bomb", "alias": "", "cost": {"cost": 45}, "availability": "Rare 10 Sapper only"}
+  ],
+  "fighters": [
+    {
+      "id": "expelled-engineer",
+      "type": "hero",
+      "name": "Expelled Engineer",
+      "plural": "Expelled Engineers",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 85,
+      "startingXp": 20,
+      "statblock": {"m": 3, "ws": 4, "bs": 5, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-engineer-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Expelled Engineer may use his Leadership instead of their own."},
+        {"rulename": "Inventor", "ruleFull": "In the trading phase, instead of searching for rare items or visiting a location, the Engineer may try to make a new invention from the Book of Bad Ideas. He needs the book and the invention's components, and must pass its difficulty test."}
+      ]
+    },
+    {
+      "id": "sapper",
+      "type": "hero",
+      "name": "Sapper",
+      "plural": "Sappers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 8,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 8},
+      "equipmentLists": ["dwarf-engineer-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Make Explosives", "ruleFull": "After a battle, instead of searching for rare items, the Sapper may make explosives: pick what and pay before he takes a Leadership test. If he passes, he makes up to two Blast Charges at 9 gc each, up to two doses of Flash Powder at 11 gc each, a Fire Bomb at 21 gc or a Cinderblast Bomb at 27 gc."},
+        {"rulename": "Tunnel Rat", "ruleFull": "The Sapper re-rolls characteristic tests underground."}
+      ]
+    },
+    {
+      "id": "apprentice-engineers",
+      "type": "hero",
+      "name": "Apprentice Engineer",
+      "plural": "Apprentice Engineers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 0,
+      "statblock": {"m": 3, "ws": 3, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["dwarf-engineer-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Assistant", "ruleFull": "Each Apprentice who works on an invention after the battle adds +1 to the Expelled Engineer's roll to make it. Or an Apprentice may search for rare items in the Engineer's place, with any bonus to rarity rolls the Engineer has."}
+      ]
+    },
+    {
+      "id": "thunderers",
+      "type": "henchman",
+      "name": "Thunderer",
+      "plural": "Thunderers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 50,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 3, "bs": 4, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 8},
+      "equipmentLists": ["dwarf-engineer-equipment-list"],
+      "specialRules": [
+        {"rulename": "Properly Used", "ruleFull": "With the optional misfire rules, when a Thunderer rolls a 1 he rolls again: on a 3+ the misfire is ignored, so the shot still misses but the weapon doesn't explode."}
+      ]
+    },
+    {
+      "id": "beardlings",
+      "type": "henchman",
+      "name": "Beardling",
+      "plural": "Beardlings",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 2, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["dwarf-engineer-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "gyrocopter",
+      "type": "henchman",
+      "name": "Gyrocopter",
+      "plural": "Gyrocopters",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 1,
+      "groupSize": {"min": 1, "max": 1},
+      "costGc": 100,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": "2D6", "ws": "-", "bs": "-", "s": "-", "t": 5, "w": 3, "i": "-", "a": "-", "ld": "-"},
+      "equipmentLists": [],
+      "equipment": "None. The Gyrocopter is a machine.",
+      "specialRules": [
+        {"rulename": "Fly", "ruleFull": "The Gyrocopter flies, as the flying rules describe."},
+        {"rulename": "Transport", "ruleFull": "The Gyrocopter starts with 1 seat for a passenger; the Tinkerer skill's customisation may add more."},
+        {"rulename": "Full Steam Ahead!", "ruleFull": "The Gyrocopter may burst forward in a straight line: roll a D6. On a 6 roll on the Engine Malfunction chart; otherwise add the roll to its move. A warrior with the Driver skill may re-roll an Engine Malfunction result, and the new result stands. A Gyrocopter with a steam engine hit with a Draft Creature result is hit in the engine, which has Toughness 6; if it is wounded, roll on the Engine Malfunction chart."},
+        {"rulename": "Engine Malfunction", "ruleFull": "D6 | Result\n1 | Kaboom!: the engine explodes. The hull takes D6 wounds, every model within 4\" of the bow takes a S5 flaming hit, and the Gyrocopter, now on fire, swerves 45 degrees in a random direction and crash-lands straight down: D3 more S5 hits to the hull, and D3 S5 hits to anyone beneath.\n2 | Dangerous Overpressure!: it takes 1 wound, plunges 6\" forward and lands, taking damage if it hits anything.\n3-4 | Emergency Vent: models within 4\" of the bow take D3 S2 flaming hits, and it lands at once in the nearest free space below. It can't move next turn.\n5 | Minor Leak: it lands at once in the nearest free space below, and can't move next turn.\n6 | Valve Locked: it moves only 2D3\" this turn, and can't turn."},
+        {"rulename": "Customisation", "ruleFull": "A Hero with the Tinkerer skill may roll 2D6 on this chart after a battle to improve the Gyrocopter:\n\n2D6 | Result\n2 | That Didn't Go Well!: roll again (re-rolling That Didn't Go Well! and Breakthrough!), and lower that characteristic, or lose that upgrade, instead.\n3 | Bomber: in its movement phase it may drop a bomb: roll an artillery dice and move a small blast template that far back along its path; every model under it takes a S4 hit. On a misfire the Gyrocopter and its steam engine take the hit instead. Each bomb is bought for 25 gc.\n4 | Every Gear and Gizmo: +2 Movement.\n5 | Room for Activities: +1 passenger.\n6 | Stabilisers: when an Engine Malfunction or Wheel Damage result halts it or makes it land, it may first glide up to 2D6\" in any direction.\n7 | More Reliable: one re-roll on the Engine Malfunction table. Re-roll this result if it comes again.\n8 | Steam Cloud: -1 to hit it with missile weapons. Once only: re-roll it after.\n9 | Weapons Mount: it may buy any swivel-mounted artillery weapon, worked by the pilot while it is stationary or by a passenger, without taking a seat.\n10 | Reinforced Hull: +4 Armour Save.\n11 | Steel Propellers: +1 Wound.\n12 | Breakthrough!: roll D3 more times on this chart, ignoring further Breakthrough! results."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Dwarf Exiled Engineers", "new": false},
+  "specialSkillsList": [
+    {"name": "True Grit", "ours": "True Grit"},
+    {"name": "Thick Skull", "ours": "Thick Skull"},
+    {"name": "Extra Tough", "ours": "Extra Tough"},
+    {"name": "Tunneler", "ours": "Tunneler"},
+    {"name": "Tinkerer", "ours": "Tinkerer"},
+    {"name": "Quick Thinker", "ours": "Quick Thinker"},
+    {"name": "Master Inventor", "ours": "Master Inventor"}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Book of Bad Ideas",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 1,
+      "rules": [
+        {"name": "Blueprints", "text": "The Book of Bad Ideas holds the Inventions' blueprints: the Expelled Engineer needs it to make one (Inventor)."}
+      ]
+    },
+    {
+      "name": "Cinderblast Bomb",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "rarity": 10,
+      "dice": 3,
+      "rulesPage": 2,
+      "range": "2-8\"",
+      "strength": "6 (under the hole), 3 in the area",
+      "rules": [
+        {"name": "Blast Charge", "text": "The Cinderblast Bomb's blast is a small blast template: a model hit directly takes D3 Strength 6 hits, and every other model under the template one Strength 3 hit."},
+        {"name": "Scatter", "text": "If the Sapper misses his roll to hit, the charge scatters D6\" from him in a random direction."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 1, "what": "The PDF is titled The Guild of Exiled Engineers and calls the warband Dwarf Engineers. It needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
+    {"page": 1, "what": "The skill table's ticks are symbol glyphs, read from where the text layer places them: Engineer Shooting, Strength, Academic, Special; Sapper Combat, Strength, Academic, Special; Apprentice Shooting, Strength, Special. The Dwarf maximum is our Dwarf race."},
+    {"page": 1, "what": "Field Test: \"Lads that get talent will also be forced to partake\" is read as a henchman promoted by The Lad's Got Talent."},
+    {"page": 2, "what": "Make Explosives' prices (Blast Charge 9 gc, Flash Powder 11, Fire Bomb 21, Cinderblast Bomb 27) stay in the Sapper's rule; we have no Blast Charge item. The Cinderblast Bomb's entry (45+3D6 gc, Rare 10, Sapper only) is on no list, so it is the warband's special equipment, a stub with its rules."},
+    {"page": 3, "what": "The list has no dagger and no 1st free line. Prices as printed: Handgun 25 gc (ours 35), Repeater Pistol 25 (ours 30), Repeater Handgun 50 (ours 60), Gromril Armour 75 (ours 150), Superiour Black Powder 20 (our Superior Blackpowder, 30). Two Handed Weapon is our Double-handed weapon, Rope and Hook our Rope & Hook."},
+    {"page": 3, "what": "The Gyrocopter, \"100 Gold Crowns to build\", is a henchman of one: a machine, no race and no experience. Its Fly and Transport print no words beyond Space (1 seat, improved via Tinker): each is kept short."},
+    {"page": 4, "what": "The special skills are our Dwarf Exiled Engineers group, as it stands: True Grit, Thick Skull, Extra Tough, Tunneler, Tinkerer, Quick Thinker and Master Inventor all match the PDF."},
+    {"page": 4, "what": "The Customisation chart (2D6, for the Tinkerer skill) is the Gyrocopter's rule. Reinforced Hull's \"+4 Armour Save\" is kept as printed; Stabilizers names a Wheel Damage result the Gyrocopter has no chart for."},
+    {"page": 5, "what": "The Inventions are made, not bought, so they are no items: one warband rule holds each with its difficulty, components and effect. The difficulty test's dice aren't printed (a roll of 2 is a critical failure). Their Experimental Weapons chart (p6) is the Metal Mongers' Experimental Technology chart; with no items to carry it, it is a warband rule here."},
+    {"page": 6, "what": "The Goblin Hewer is \"Troll Slayer engineer only\": kept as printed, though the warband has no such fighter."}
+  ]
+}

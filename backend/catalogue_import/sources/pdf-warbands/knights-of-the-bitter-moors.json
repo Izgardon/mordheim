@@ -1,0 +1,241 @@
+{
+  "warbandType": "knights-of-the-bitter-moors",
+  "name": "Knights of the Bitter Moors",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Knights%20Of%20The%20Bitter%20Moors.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Peasant Labour", "ruleFull": "The Questing Knight and Knights Errant always pay the starting warband's prices for horses and armour. Squires and the peasantry pay the full price, so armour and horses bought for a Knight may never be passed to them when the warband reallocates its equipment."},
+    {"rulename": "Hired Swords", "ruleFull": "Bretonnians count as Humans and may hire any hired sword Humans may, except those who use black powder, magic or poison. Runes are allowed."},
+    {"rulename": "Lady's Blessing", "ruleFull": "Before each game, take a Leadership test on the leader's Leadership. If it is passed, every enemy model must roll a 4+ on a D6 each time it wants to fire a black powder weapon, or it may not fire it; and any enemy model must roll a 4+ before it shoots at the Questing Knight or a Knight Errant, whatever its weapon."},
+    {"rulename": "Squires", "ruleFull": "The warband may never have more Squires than Knights."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "knights-equipment-list",
+      "title": "Knights Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 5}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "lance", "alias": "", "cost": {"cost": 20}},
+        {"name": "horseman's hammer", "alias": "", "cost": {"cost": 30}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 15}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 25}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 5}},
+        {"name": "warhorse", "alias": "", "cost": {"cost": 40}},
+        {"name": "barding", "alias": "", "cost": {"cost": 30}}
+      ]
+    },
+    {
+      "id": "squires-equipment-list",
+      "title": "Squires Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 5}},
+        {"name": "axe", "alias": "", "cost": {"cost": 3}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "longbow", "alias": "", "cost": {"cost": 15}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 15}, "note": "Before the first battle only; then the usual price and rarity."},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "horse", "alias": "", "cost": {"cost": 20}, "note": "Before the first battle only; then the usual price and rarity."}
+      ]
+    },
+    {
+      "id": "men-at-arms-equipment-list",
+      "title": "Men-at-Arms Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 5}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "Field Trebuchet", "alias": "", "cost": {"cost": 175}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "bowmen-equipment-list",
+      "title": "Bowmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 5}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "longbow", "alias": "", "cost": {"cost": 15}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "questing-knight",
+      "type": "hero",
+      "name": "Questing Knight",
+      "plural": "Questing Knights",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 90,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["knights-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Questing Knight may use his Leadership instead of their own."},
+        {"rulename": "Knights Virtue", "ruleFull": "A Knight never panics and breaks from combat, so he takes no Leadership test for being all alone."},
+        {"rulename": "Ride", "ruleFull": "A Knight has the Ride skill for a horse or a warhorse (Blazing Saddles). He comes with his mount in his cost: a warhorse for the leader, a horse otherwise."},
+        {"rulename": "Righteous Charge", "ruleFull": "When the Questing Knight charges mounted with at least one other model within 2\" of him, every friendly mounted warrior charging within 4\", the Questing Knight too, has +1 to hit, causes fear and is immune to psychology for the first round of combat."}
+      ]
+    },
+    {
+      "id": "knights-errant",
+      "type": "hero",
+      "name": "Knight Errant",
+      "plural": "Knights Errant",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 55,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["knights-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Ride", "ruleFull": "A Knight has the Ride skill for a horse or a warhorse (Blazing Saddles). He comes with his mount in his cost: a warhorse for the leader, a horse otherwise."},
+        {"rulename": "Knights Virtue", "ruleFull": "A Knight never panics and breaks from combat, so he takes no Leadership test for being all alone."}
+      ]
+    },
+    {
+      "id": "squires",
+      "type": "hero",
+      "name": "Squire",
+      "plural": "Squires",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["squires-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Starting Skills", "ruleFull": "A Squire starts with the skills Ride: Horse and Animal Handler: Horse and Warhorse."},
+        {"rulename": "Knighted", "ruleFull": "A Squire who reaches 20 experience has finished his apprenticeship and becomes a Knight Errant, with all that comes with it: the Knights' skill lists and equipment list, Knights Virtue and Ride: Warhorse."}
+      ]
+    },
+    {
+      "id": "men-at-arms",
+      "type": "henchman",
+      "name": "Man-at-Arms",
+      "plural": "Men-at-Arms",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["men-at-arms-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "bowmen",
+      "type": "henchman",
+      "name": "Bowman",
+      "plural": "Bowmen",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["bowmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "mounted-yeomen",
+      "type": "henchman",
+      "name": "Mounted Yeoman",
+      "plural": "Mounted Yeomen",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 50,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["men-at-arms-equipment-list"],
+      "specialRules": [
+        {"rulename": "Mounted or Nothin'", "ruleFull": "Mounted Yeomen come with riding horses, in their cost, and the skill Ride: Horse. If a Yeoman's horse is killed, it must be bought again before the group fights again."},
+        {"rulename": "Smarts", "ruleFull": "The Field Trebuchet and the Mounted Yeomen never take the field in the same game: one or the other."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Bretonnian Knights", "new": false},
+  "specialSkillsList": [
+    {"name": "Virtue of Purity", "ours": "Virtue of Purity"},
+    {"name": "Virtue of Valor", "ours": "Virtue of Valor", "pdfName": "Virtue of Valour"},
+    {"name": "Virtue of Discipline", "ours": "Virtue of Discipline"},
+    {"name": "Virtue of Noble Disdain", "ours": "Virtue of Noble Disdain"},
+    {"name": "Virtue of the Impetuous", "ours": "Virtue of the Impetuous"},
+    {"name": "Virtue of the Squire", "ours": "Virtue of the Squire"}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Field Trebuchet",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 6,
+      "note": "Takes D3+1 games to build, unless it is bought at the start of the campaign.",
+      "range": "12\"-48\"",
+      "strength": "Special",
+      "statblock": [
+        {"profile": "Trebuchet", "m": "*", "ws": "-", "bs": "-", "s": "-", "t": 7, "w": 3, "i": "-", "a": "-", "ld": "-"}
+      ],
+      "rules": [
+        {"name": "Hard to Fire", "text": "With two crewmen the Trebuchet fires every other turn, with four every turn. The usual shooting rules apply, but no Shooting skills."},
+        {"name": "Large Target", "text": "The Trebuchet may always be targeted by enemy shooting."},
+        {"name": "Constructed", "text": "The Trebuchet starts a game as 4 small crates, carried by 4 warriors who aren't Knights, and only Men-at-Arms may work it. Where they find a spot, they spend D3 turns setting it up; once set up it can't move, but may swivel on the spot. Taking it down takes 1 turn, and only the Bretonnian henchmen and Squires may do it."},
+        {"name": "Ammo for All Occasions", "text": "Declare the ammunition before each shot; each game the Trebuchet has 2 shots of each kind. Boulders: a S5 hit on a model at the template's centre and a S4 hit on every other model under it; 2-4 on the Injury chart is stunned, and it causes Bludgeoning critical hits. Flaming Shot: S3, and a model under the template catches fire on a 4+. Boiling Oil Canister: a S4 hit, with no armour save, on every model under the template."},
+        {"rule": "Explosive Radius", "text": "Where the shot lands, place the small blast template: every model under it takes the ammunition's damage."},
+        {"name": "Artillery", "text": "The Trebuchet is a siege weapon: it uses the scatter dice and artillery dice, not its crew's Ballistic Skill. Declare where the shot should land (no line of sight needed) and roll both: the shot is off target by the number on the scatter dice minus the crew's Ballistic Skill. A hit is a direct hit, unless the Trebuchet can't see the target."},
+        {"name": "Indirect Fire", "text": "The Trebuchet may fire at a target it can't see. Roll the scatter and artillery dice as normal, but a hit marker still goes off target: the shot moves in the direction of the hit marker's small arrow, by the artillery dice's number minus the crew's Ballistic Skill."},
+        {"name": "Misfires", "text": "On a misfire on the artillery dice, roll a D6:", "tables": [{"columns": ["D6", "Result"], "rows": [["1", "Destroyed!: the Trebuchet collapses; every crewman must pass an Initiative test or be taken out of action by the debris, and it is destroyed."], ["2-3", "Disabled: it suffers a wound, which heals only when it is taken down and rebuilt, and it can't fire this turn or next."], ["4-6", "May Not Shoot: it may not fire this turn."]]}]}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 1, "what": "A Questing Knight's warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed. The PDF says it reworks the Town Cryer 8 Bretonnian list; this is its own template."},
+    {"page": 1, "what": "Lady's Blessing is a pre-battle Leadership test, but a warband rule, not a fighter's, so it is no pre-battle roll in prebattle-rolls.json."},
+    {"page": 2, "what": "The Knights' list prices are as printed (Light armour 15 gc, Heavy armour 25, Helmet 5, Lance 20, Warhorse 40, Barding 30), which Peasant Labour says Knights always pay. The Squires' Light armour (15 gc) and Horse (20 gc) are below the usual, and Squires pay the full price after the start, so those two lines say they are for the starting warband only."},
+    {"page": 2, "what": "Horsemens Hammer is our Horseman's Hammer (12 gc, Rare 10), at the list's 30 gc; Mace and Hammer are our Club, Mace or Hammer, shown as the PDF names them."},
+    {"page": 3, "what": "The skill table's ticks are symbol glyphs, read from where the text layer places them and checked on a crop of p3's image. The Questing Knight's text gives him Combat, Strength, Academic and Speed, but the table ticks no Speed: the table is kept. The Squires' text adds Shooting, which the table doesn't tick (Virtue of the Squire opens it): the table is kept."},
+    {"page": 3, "what": "The special skills are our Bretonnian Knights group, as it stands. The PDF's Virtue of Valour is our Virtue of Valor, but the PDF re-rolls missed rolls to wound against an enemy of higher natural Strength, ours failed rolls to hit in hand-to-hand combat: ours is unchanged. The other five match."},
+    {"page": 4, "what": "\"Knights come with a Warhorse\" (the Questing Knight) and \"a horse\" (a Knight Errant), and the Mounted Yeomen with riding horses, in their cost: each one's rule says so, and no item is given at hire. The Squires' starting skills (Ride: Horse, Animal Handler: Horse and Warhorse) are a rule of theirs."},
+    {"page": 4, "what": "\"You may not have more squires in the warband then you have Knights\" is a warband rule, Squires."},
+    {"page": 6, "what": "The Field Trebuchet is a stub with its rules and profile (M*, T7, W3); its availability is \"Special\", read as Common, and its build time is its item's note. Artillery's distance is read from \"the number indicated on the scatter die, minus the crews ballistic skill\", kept as printed, though Indirect Fire uses the artillery dice's."}
+  ]
+}

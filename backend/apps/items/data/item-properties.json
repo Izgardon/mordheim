@@ -1456,5 +1456,35 @@
     "name": "The Oaken Armour",
     "description": "The wearer has +1 Toughness, and enemy models are at -1 to hit him in close combat.",
     "type": "Armour"
+  },
+  {
+    "id": 245,
+    "name": "Harbinger",
+    "description": "A Hero with the Stromfels Heart becomes Stromfels' Harbinger by visiting an Altar to Stromfels: if three or more captives were sacrificed when rolling on the Ceremony of Sacrifice chart in the post-battle sequence, he transforms. The Harbinger is immune to psychology and can't carry weapons. It has the mutations Blackblood, Prehensile Tail, Tentacle, Mer-creature, Eyestalks (Hideous) and Suckers, and a Massive Beak (the Mordheim Annual, p35). While transformed, the Hero has the Harbinger's profile. If the Harbinger is taken out of action, the Heart is lost and the transformation reversed.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 246,
+    "name": "Stromfels Luck",
+    "description": "Instead of searching for a rare item after a battle, the Mutant-Priest may go into the city to recruit sailors to the cult. Roll 2D6: 2, the City Watch arrests him: roll on the Conviction chart; 3-6, nothing happens; 7-9, one Wrecker joins; 10-11, D3 Wreckers join; 12, three Wreckers join. Recruited Wreckers form a new henchman group at no cost; their equipment is paid for as normal.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 247,
+    "name": "Stromfels Guest",
+    "description": "While the Mutant-Priest wears the necklace, an enemy warrior he takes control of with the Chaos Ritual Lure of Chaos becomes Stromfels' guest. Unless the Priest is taken out of action, which destroys the necklace, or the warband routs, a guest still under his control when the game ends is captured by the warband.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 248,
+    "name": "Scrimshaw Bauble",
+    "description": "A Hero wearing a Scrimshaw Bauble has a special 4+ save against attacks by aquatic models. Armour never modifies it, and critical hits never negate it.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 249,
+    "name": "Falconry",
+    "description": "A warrior using a hunting bird must wear a falconry glove: one who uses a bird without it rolls on the Serious Injury chart in the post-battle sequence.",
+    "type": "Miscellaneous"
   }
 ]

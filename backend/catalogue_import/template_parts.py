@@ -103,6 +103,8 @@ def _lines(
             log.read.append((slug, plain(entry["name"]), plain(note)))
         elif note:
             log.unread.append((slug, plain(raw["title"]), plain(entry["name"]), who.note))
+        if entry.get("note"):  # a PDF line's own note: a price for the starting warband only (pdf_warbands.py)
+            who.note = "; ".join(filter(None, [who.note, entry["note"]]))
         shown_as = _shown_as(plain(entry.get("alias")), plain(entry["name"]), item, how)
         log.shown_as += bool(shown_as)
         # a PDF line's own note, said with it (the Militant Mootlanders' Magic Acorn: its price before the first battle)

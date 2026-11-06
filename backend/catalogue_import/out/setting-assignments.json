@@ -1186,6 +1186,51 @@
       "how": "overrides.json"
     },
     {
+      "name": "Wight Walk",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Traumatic Passing",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Possession",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "The Key and the Gate",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Siren Song",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Prize-fighter",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Knowledge of Myths and Legends",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Animal Charmer",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Songster",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
       "name": "Inspiring Presence",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1257,11 +1302,6 @@
     },
     {
       "name": "Thick Skull (Slayer Cult)",
-      "setting": "mordheim-2a",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Songster",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
@@ -1518,6 +1558,26 @@
     {
       "name": "Practiced Arm",
       "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Wyrdstone Addict",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Toss Me!",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Stuff 'em with Green",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Ha! Watch This",
+      "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
     },
     {

@@ -1,0 +1,270 @@
+{
+  "warbandType": "channel-rats",
+  "name": "Channel Rats",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Channel%20Rats.pdf",
+  "warbandRules": {
+    "startingGc": 600,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Water Caravan", "ruleFull": "The warband must include one Riverboat or River Barge. In a campaign with no rivers it takes a Wagon and two horses instead, and the Tinker's Rigger becomes Handyman, so that he repairs the wagon."},
+    {"rulename": "Lucky White Heather", "ruleFull": "Instead of searching for a rare item after a battle, one Hero may try to con or rob a Hero of another warband. Roll a D6:\n\nD6 | Result\n1 | He pushes his luck and is lynched: roll on the Serious Injury chart for him.\n2-5 | The other warband must buy a fake lucky charm for D6 gold crowns.\n6 | He steals an item: choose one belonging to one of the other warband's Heroes."},
+    {"rulename": "Shadowy Traditions", "ruleFull": "Instead of searching for a rare item after a battle, the Petru may ask the Old Father to receive one of his family: on a passed Leadership test, one of the warband's other Heroes visits the Old Father in the post-battle sequence; if the test fails, the Petru misses the next battle.\n\nThe visiting Hero must be human, and neither the leader nor a spellcaster; one with mutations has -1 to the roll. Roll a D6 on the Father-in-Darkness chart:\n\nD6 | Result\n1-3 | Unworthy Son: the Old Father drains him. Remove him from the roster.\n4 | Fortunate Son: nothing happens.\n5 | Favourite Son: he becomes a Blood-swain, with +1 Initiative and +1 Attack. A Blood-swain who visits again adds +1 to the roll.\n6 | Son-in-darkness: he becomes a Surrogate Vampire, with +1 Movement, +1 Toughness, +1 Wound, +1 Initiative and +1 Attack (a Blood-swain's increases don't add to these). He treats a stunned result on the Injury chart as knocked down, causes fear, is immune to poison and is subject to Red Thirst."},
+    {"rulename": "Red Thirst", "ruleFull": "Roll a D6 for each Surrogate Vampire at the start of each turn: on a 1 he must test for stupidity that turn; on a 2-5 nothing happens; on a 6 he is subject to frenzy that turn."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "strigany-equipment-list",
+      "title": "Strigany Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "boat hook", "alias": "", "cost": {"cost": 8}},
+        {"name": "sword", "alias": "Cutlass/Sword", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "belaying pin", "alias": "", "cost": {"cost": 3}},
+        {"name": "net", "alias": "", "cost": {"cost": 5}},
+        {"name": "fish-hook shot", "alias": "", "cost": {"cost": 10}},
+        {"name": "throwing knives", "alias": "", "cost": {"cost": 15}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "blunderbuss", "alias": "", "cost": {"cost": 30, "costSuffix": "Tinker only"}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "toughened leathers", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "rope & hook", "alias": "", "cost": {"cost": 5}},
+        {"name": "rabbit's foot", "alias": "Rabbits foot", "cost": {"cost": 5, "costSuffix": "Heroes only"}},
+        {"name": "compass", "alias": "", "cost": {"cost": 45, "costSuffix": "Tinker only"}},
+        {"name": "telescope", "alias": "", "cost": {"cost": 75, "costSuffix": "Tinker only"}},
+        {"name": "riverboat", "alias": "", "cost": {"cost": 100}},
+        {"name": "river barge", "alias": "", "cost": {"cost": 200}}
+      ]
+    },
+    {
+      "id": "petru-equipment-list",
+      "title": "Petru Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Staff", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "Cutlass/Sword", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "rabbit's foot", "alias": "Rabbits foot", "cost": {"cost": 5}},
+        {"name": "lucky charm", "alias": "", "cost": {"cost": 10}},
+        {"name": "tarot cards", "alias": "", "cost": {"cost": 50}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Wicker Man", "alias": "", "cost": {"cost": 50}, "availability": "Rare 12 Petru only"},
+    {"title": "Scuttling Hand", "alias": "", "cost": {"cost": 40}, "availability": "Rare 11"}
+  ],
+  "fighters": [
+    {
+      "id": "domnu",
+      "type": "hero",
+      "name": "Domnu",
+      "plural": "Domnus",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 3, "a": 2, "ld": 8},
+      "equipmentLists": ["strigany-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Domnu may use his Leadership instead of their own."},
+        {"rulename": "Prize-fighter", "ruleFull": "The Domnu suffers no penalty for fighting unarmed, and has +1 Attack when he does."},
+        {"rulename": "Bear Hug", "ruleFull": "If the Domnu hits the same enemy with both his unarmed attacks in a round of combat, he may make one Bear Hug attack instead of resolving them: each player rolls a D6 and adds his warrior's Strength. If the Domnu's total is higher or equal, the enemy takes one automatic wound with no armour save; if the enemy's is higher, he breaks the hold and takes no damage."}
+      ]
+    },
+    {
+      "id": "petru",
+      "type": "hero",
+      "name": "Petru",
+      "plural": "Petrus",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 2, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["petru-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Charms and Hexes", "Necromancy"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Petru is a wizard and starts with two spells from Charms and Hexes."},
+        {"rulename": "Necromancy", "ruleFull": "Instead of a new skill, the Petru may roll a new spell at random from Necromancy."},
+        {"rulename": "Petru's Potions", "ruleFull": "Before a battle, one Hero of the warband may drink one of the Petru's potions. Roll a D6:\n\nD6 | Result\n1 | Debilitating: -1 Toughness for the whole of the next battle, until he rolls a 6 on a D6 in a recovery phase.\n2-3 | Strength: +1 Strength until he rolls a 1 on a D6 in a recovery phase.\n4-5 | Resilience: +1 Toughness until he rolls a 1 on a D6 in a recovery phase.\n6 | Fortitude: +1 Wound for the whole battle; once lost, it can't be restored."}
+      ]
+    },
+    {
+      "id": "tinker",
+      "type": "hero",
+      "name": "Tinker",
+      "plural": "Tinkers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 12,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["strigany-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Grifter", "ruleFull": "As a merchant does, the Tinker lets the warband arrange trading deals with other warbands."},
+        {"rulename": "Rigger", "ruleFull": "While the warband's boat or barge is stationary and hasn't moved in the last turn, the Tinker in contact with it may repair one damaged location (a paddle, a mast). He does nothing else that turn, and the vessel may not move. No repair while an enemy model is in contact with the Tinker or the vessel."}
+      ]
+    },
+    {
+      "id": "truants",
+      "type": "hero",
+      "name": "Truant",
+      "plural": "Truants",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["strigany-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Spry", "ruleFull": "A Truant may run or charge while climbing."},
+        {"rulename": "Taunt", "ruleFull": "In the shooting phase, instead of shooting, a Truant may taunt one enemy he can see, with line of sight as for shooting. The enemy takes a Leadership test: if he fails, he must spend his next movement phase trying to reach close combat with the Truant."}
+      ]
+    },
+    {
+      "id": "gypsies",
+      "type": "henchman",
+      "name": "Gypsy",
+      "plural": "Gypsies",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["strigany-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "dead-eyes",
+      "type": "henchman",
+      "name": "Dead-eye",
+      "plural": "Dead-eyes",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 50,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["strigany-equipment-list"],
+      "specialRules": [
+        {"rulename": "Dead Eye Shot", "ruleFull": "A Dead-eye ignores to-hit modifiers for cover when he shoots or throws his weapon."},
+        {"rulename": "Target Practice", "ruleFull": "A Dead-eye may fire one missile attack when he is charged, at -1 to hit for standing and shooting."},
+        {"rulename": "Weapons Expert", "ruleFull": "A Dead-eye may use any missile weapon he comes across, not only those of the warband's lists."}
+      ]
+    },
+    {
+      "id": "fugitives",
+      "type": "henchman",
+      "name": "Fugitive",
+      "plural": "Fugitives",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["strigany-equipment-list"],
+      "specialRules": [
+        {"rulename": "Charismatic", "ruleFull": "A model of the opposite sex (Sisters of Sigmar, Amazons, Kislev Rangers and the like) must pass a Leadership test to charge a Fugitive."}
+      ]
+    },
+    {
+      "id": "vagabonds",
+      "type": "henchman",
+      "name": "Vagabond",
+      "plural": "Vagabonds",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["strigany-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Channel Rats", "new": true},
+  "specialSkillsList": [
+    {"name": "Prize-fighter", "description": "The Hero suffers no penalty for fighting unarmed, and has +1 Attack when he does."},
+    {"name": "Knowledge of Myths and Legends", "description": "In the exploration phase, if the Hero wasn't taken out of action, you may re-roll one dice; the second result stands, even if it is worse."},
+    {"name": "Animal Charmer", "description": "The Hero controls up to five animals while they stay within 6\" of him. An animal not within 6\" of him in the movement phase moves D6\" in a random direction, and if that brings it into contact with a model, friend or foe, it attacks as if charging."},
+    {"name": "Bull Rush", "ours": "Bull Rush"},
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Songster", "description": "A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."}
+  ],
+  "aliases": [],
+  "priceRows": [
+    {"name": "belaying pin", "rarity": null, "dice": null, "page": 4},
+    {"name": "boat hook", "rarity": null, "dice": null, "page": 4},
+    {"name": "fish-hook shot", "rarity": 7, "dice": null, "page": 4},
+    {"name": "compass", "rarity": 9, "dice": null, "page": 4}
+  ],
+  "stubs": [
+    {
+      "name": "Wicker Man",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 12,
+      "dice": null,
+      "rulesPage": 4,
+      "statblock": [
+        {"profile": "Wicker Man", "m": 4, "ws": 2, "bs": 0, "s": 4, "t": 4, "w": 1, "i": 1, "a": 1, "ld": 5}
+      ],
+      "rules": [
+        {"name": "Golem", "text": "A Wicker Man follows the Petru's commands. Only the Petru may buy one."},
+        {"name": "Zombified", "text": "A Wicker Man has all the special rules of a zombie: it causes fear, may not run, gains no experience and so on."},
+        {"name": "Construct", "text": "A Wicker Man ignores any result on the Injury chart on a 4+ and fights on, so it may take more damage than its 1 Wound suggests. This is no armour save, so the attack's Strength doesn't modify it. Not against wounds from magic or magic weapons."}
+      ]
+    },
+    {
+      "name": "Scuttling Hand",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 11,
+      "dice": null,
+      "rulesPage": 4,
+      "statblock": [
+        {"profile": "Scuttling Hand", "m": 3, "ws": 1, "bs": 0, "s": 1, "t": 1, "w": 1, "i": 4, "a": 1, "ld": 7}
+      ],
+      "rules": [
+        {"name": "Immune to Psychology", "text": "A Scuttling Hand is not affected by psychology."},
+        {"name": "Dodge", "text": "A Scuttling Hand has the Dodge skill."},
+        {"name": "Scale Sheer Surfaces", "text": "A Scuttling Hand has the Scale Sheer Surfaces skill."},
+        {"name": "Silent Move", "text": "A Scuttling Hand always stays hidden unless it attacks an enemy warrior."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 3, "what": "The PDF calls the warband River Strigany. It starts with 600 gold crowns. A Strigany warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
+    {"page": 3, "what": "The skill table's ticks are read from where the text layer places them: Domnu Combat, Shooting, Strength, Speed, Special; Petru Academic, Speed, Special; Tinker Shooting, Academic, Speed, Special; Truant Combat, Strength, Speed, Special."},
+    {"page": 3, "what": "Water Caravan's \"must include one Riverboat or River Barge\" is a warband rule: a template can't require an item. Cutlass/Sword is our Sword and Mace/Staff our Club, Mace or Hammer, each shown under the PDF's name; Rabbits foot is our Rabbit's Foot (10 gc, Rare 5) at the list's 5 gc. The River Barge and Riverboat are ours."},
+    {"page": 4, "what": "The special equipment's headings are a display font the text layer drops: p4 was opened as an image. The Wicker Man (the Golem, 50 gc, Rare 12, the Petru only) and the Scuttling Hand (40 gc, Rare 11) are on no list, so they are the warband's special equipment, each a stub with its profile and rules."},
+    {"page": 4, "what": "The Belaying Pin, Boat Hook, Fish-hook Shot and Compass are ours by name, rules and numbers (the Pirates' and the Battle Monks'), and \"only available to the River Strigany\": each gets a price row for the Channel Rats at its entry's rarity."},
+    {"page": 5, "what": "The fighters' headings aren't in the text layer, so each is named from Choice of Warriors and his profile row (Domnu, Mystic for the Petru, Tinker, Youngblood for the Truant), and each cost is the one in his column."},
+    {"page": 5, "what": "The Petru's Potions is named Petru's Potions, apart from the Witch's Potions pre-battle roll; it is a D6 pre-battle roll in prebattle-rolls.json. His Wizard rule takes Charms and Hexes, ours with the same six spells and difficulties (p8), and his Necromancy rule our Necromancy."},
+    {"page": 5, "what": "The Domnu's Prize-fighter is his own rule and one of the special skills too. The PDF doesn't say what the Petru's \"secret pouch of spell ingredients\" does: left out."},
+    {"page": 7, "what": "\"Weapons Expert: See page 122 of the Mordheim Rulebook\" is printed under the Dead-eye's rules: his own rule, worded as our Weapons Expert skill."},
+    {"page": 7, "what": "The special skills are a new group, Channel Rats. Bull Rush and Infiltration are ours, name and effect. Songster is the Slayer Cult's, one skill in both groups: its \"Rememberer only\" moves to the Slayer Cult's group note. The PDF's Songster has no \"no more than 10\". Animal Charmer is the Sea Ghosts' Wildkin's rule too, there not a skill."}
+  ]
+}

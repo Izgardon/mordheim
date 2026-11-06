@@ -94,6 +94,7 @@ STUB: Spec = {
     "strength": (str, False),
     "save": (str, False),
     "rules": (list, False),
+    "statblock": (list, False),
     "note": (str, False),
 }
 STUB_RULE: Spec = {

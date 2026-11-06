@@ -948,6 +948,42 @@
     "description": "Friendly models fighting the same enemy model as the knight may use his Toughness when that enemy rolls to wound them."
   },
   {
+    "name": "Wight Walk",
+    "description": "Ethereal models only. The Hero may use his Ethereal ability to charge through walls, and can't be intercepted, passing through any warrior in his path."
+  },
+  {
+    "name": "Traumatic Passing",
+    "description": "Each time the Hero takes an enemy out of action on a roll of a 6, a Poltergeist is summoned in the enemy's place."
+  },
+  {
+    "name": "Possession",
+    "description": "Ethereal models only. When the Hero charges, instead of attacking he may try to possess his opponent: each player rolls a D6 and adds his model's Leadership. If the Hero's total is higher, he controls the opponent for its turn: remove the Hero, and the possessed model moves, charges and acts as normal but can't run; if it was in combat with the Hero's warband, they move 1\" apart. At the start of the enemy's turn the Hero reappears in base contact and may be attacked as normal. If he fails, he may not attack in that round of combat. Never against magical or daemonic models."
+  },
+  {
+    "name": "The Key and the Gate",
+    "description": "Cairn Wraith only. Warriors may be summoned from the Cairn Wraith rather than the Requilary: follow the summoning rules, but deploy the model 6\" from him."
+  },
+  {
+    "name": "Siren Song",
+    "description": "Tomb Banshee only. In combat the Banshee may charm one enemy, who must pass a Leadership test on 3D6, discarding the lowest dice. If he fails, he can't attack the Banshee and is hit automatically in close combat; once he passes, he doesn't test again that game. She charms one enemy at a time, and never one immune to psychology."
+  },
+  {
+    "name": "Prize-fighter",
+    "description": "The Hero suffers no penalty for fighting unarmed, and has +1 Attack when he does."
+  },
+  {
+    "name": "Knowledge of Myths and Legends",
+    "description": "In the exploration phase, if the Hero wasn't taken out of action, you may re-roll one dice; the second result stands, even if it is worse."
+  },
+  {
+    "name": "Animal Charmer",
+    "description": "The Hero controls up to five animals while they stay within 6\" of him. An animal not within 6\" of him in the movement phase moves D6\" in a random direction, and if that brings it into contact with a model, friend or foe, it attacks as if charging."
+  },
+  {
+    "name": "Songster",
+    "description": "A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."
+  },
+  {
     "name": "Inspiring Presence",
     "description": "Dreamer only. Morr Worshwishpers within 12\" of the Dreamer, not 6\", may use his Leadership."
   },
@@ -1006,10 +1042,6 @@
   {
     "name": "Thick Skull (Slayer Cult)",
     "description": "The Hero has a 3+ save on a D6 against being stunned; if he makes it, the stunned result is knocked down instead."
-  },
-  {
-    "name": "Songster",
-    "description": "Rememberer only. A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."
   },
   {
     "name": "Song of Honor",
@@ -1214,6 +1246,22 @@
   {
     "name": "Practiced Arm",
     "description": "Strigany Heroes only, never the Strigoi Vampire. The Hero may throw two throwing knives a turn, both at the same target, each with +1 to its injury roll."
+  },
+  {
+    "name": "Wyrdstone Addict",
+    "description": "The warrior may eat a wyrdstone shard after a battle to roll on the Warp Touch chart, and is immune to attacks from Tainted weapons."
+  },
+  {
+    "name": "Toss Me!",
+    "description": "While in base contact with the Warpstone Troll, the Hero may be thrown 2D6\" in a direction you choose, and lands safely if he passes an Initiative test. Thrown at an enemy warrior, it counts as a diving charge, but if he fails the test he and his target each take a S3 hit. On a double 1 for the distance, the troll bites him instead, and he is taken out of action."
+  },
+  {
+    "name": "Stuff 'em with Green",
+    "description": "After a game the Hero may feed 1 wyrdstone shard to one squig or giant rat. In the next battle, secretly nominate it: when it charges or is charged, you may make it explode in a shower of wyrdstone, wounding every model within 2\" on a 4+. The blast hurts the undead too and counts as a tainted attack, and the animal is lost for good."
+  },
+  {
+    "name": "Ha! Watch This",
+    "description": "Once a round, when a Hero of your warband of the other race, in the same combat, fails an attack, the warrior gains one extra attack with a weapon of his choice."
   },
   {
     "name": "Thirst for Vengeance",

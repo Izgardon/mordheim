@@ -56,7 +56,8 @@ class BookRollTests(TestCase):
         call_command("seed_spells_and_special", stdout=StringIO())
         rolls = list(Spell.objects.filter(campaign=None, roll__isnull=False).values_list("type", "roll"))
         self.assertEqual(len(rolls), len(set(rolls)))
-        self.assertIsNone(Spell.objects.get(name="Living Horror").roll)
+        # the Restless Dead's Living Horror; the Night Haint's Necromancy has one of its own, on a 6
+        self.assertIsNone(Spell.objects.get(name="Living Horror", type="Necromancy (Restless Dead)").roll)
 
     def test_a_hired_swords_own_spell_on_a_taken_roll_has_none(self):
         lookups = BookLookups("Hired Sword")

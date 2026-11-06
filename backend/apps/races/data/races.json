@@ -502,5 +502,41 @@
     "initiative": "2",
     "attacks": "4",
     "leadership": "10"
+  },
+  {
+    "name": "Wraith",
+    "movement": "5",
+    "weapon_skill": "6",
+    "ballistic_skill": "4",
+    "strength": "4",
+    "toughness": "3",
+    "wounds": "5",
+    "initiative": "5",
+    "attacks": "3",
+    "leadership": "10"
+  },
+  {
+    "name": "Spirit",
+    "movement": "5",
+    "weapon_skill": "5",
+    "ballistic_skill": "0",
+    "strength": "4",
+    "toughness": "3",
+    "wounds": "4",
+    "initiative": "5",
+    "attacks": "3",
+    "leadership": "9"
+  },
+  {
+    "name": "Fimir",
+    "movement": "6",
+    "weapon_skill": "6",
+    "ballistic_skill": "3",
+    "strength": "5",
+    "toughness": "6",
+    "wounds": "5",
+    "initiative": "6",
+    "attacks": "5",
+    "leadership": "9"
   }
 ]

@@ -12,7 +12,8 @@ snapshot so the template import builds it the same way. A file's own keys:
   item's notes (the Sorcerous Society's Familiar names its pets in the bestiary). A stub whose rules William gives
   carries them (`range`, `strength`, `save` and `rules`: `{rule, summary, text}` a shared item rule by name, ours or
   a page's, in its own words where it gives them, or `{name, text, tables}` its own), and needs rules until it has
-  one of its own (the Metal Mongers' Ratling Gun);
+  one of its own (the Metal Mongers' Ratling Gun); `statblock`, its profile rows (`{profile, m, ws, ...}`: the Night
+  Haint's Mortis Engine, the Channel Rats' Wicker Man);
 - `itemRules`: `{name, summary, text, tables, page}`, shared item rules a page brings, which a few items link
   (William, 6 Nov 2026, of Experimental Technology: "its a shared item rule that a few items will have");
 - `priceRows`: `{name, rarity, dice, note, page}`, a price row for the page's type on one of our items its lines sell
@@ -200,13 +201,15 @@ def stub_items(
     """Each page's stubs as items (out/items.json's shape): the rules it carries (`rules`: the shared ones by the
     index of their names), one price row for the page's type at its line's
     price, with the rarity and dice the PDF prints. A stub two pages declare (the Protectorate of Sigmar's Blessed
-    Bolts, which the Vampire Hunters of Sylvania buy too) is one item with a row for each, made from the first. A stub
-    that names one of our items stops the build: link it."""
+    Bolts, which the Vampire Hunters of Sylvania buy too) is one item with a row for each, made from the first by
+    grade, then in the pages' order (the 2a Vampire Hunters' Scythe keeps its setting when the 2b Night Haint buy it
+    too). A stub that names one of our items stops the build: link it."""
     index = ItemIndex(items)
     by_slug = {row["slug"]: row for row in types}
     stubs: list[dict[str, Any]] = []
     made: dict[str, dict[str, Any]] = {}
-    for slug, page in pages.items():
+    in_order = sorted(pages.items(), key=lambda pair: by_slug[pair[1][TYPE]].get("broheim_grade") or "")
+    for slug, page in in_order:
         warband = by_slug[page[TYPE]]
         for stub in page.get("stubs") or []:
             found, how = index.find(stub["name"])
@@ -236,6 +239,7 @@ def stub_items(
             made[loose_key(stub["name"])] = {
                 **item,
                 "save": stub.get("save") or "",
+                "statblock": [{key: str(value) for key, value in row.items()} for row in stub.get("statblock") or []],
                 "notes": note,
                 "origin": ORIGIN,
                 "needs_rules": needs,

@@ -1,0 +1,194 @@
+{
+  "warbandType": "shallows-beasts",
+  "name": "Shallows Beasts",
+  "source": "Mutiny in Marienburg",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Shallows%20Beasts.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Aquatic Mutants", "ruleFull": "A Hero may start the campaign with one of these mutations, paying its price: Blackblood, Great Claw, Tentacle, Prehensile Tail, Beak, Electrical Touch, Mer-creature, Suckers or Eye Stalks (Hideous)."},
+    {"rulename": "Seafaring", "ruleFull": "Warriors of the warband have +2 Strength when they row a boat."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "stromfels-heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club/Mace/Staff", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "boat hook", "alias": "", "cost": {"cost": 8}},
+        {"name": "sword", "alias": "Cutlass/Sword", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "trident", "alias": "", "cost": {"cost": 15}},
+        {"name": "belaying pin", "alias": "", "cost": {"cost": 3}},
+        {"name": "net", "alias": "", "cost": {"cost": 5}},
+        {"name": "throwing knives", "alias": "", "cost": {"cost": 15}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "scrimshaw bauble", "alias": "", "cost": {"cost": 40}},
+        {"name": "compass", "alias": "", "cost": {"cost": 45}},
+        {"name": "telescope", "alias": "", "cost": {"cost": 75}},
+        {"name": "shark-tooth necklace", "alias": "", "cost": {"cost": 25, "costSuffix": "Mutant-Priest only"}},
+        {"name": "stromfels heart", "alias": "", "cost": {"cost": 40}}
+      ]
+    },
+    {
+      "id": "stromfels-henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club/Mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "boat hook", "alias": "", "cost": {"cost": 8}},
+        {"name": "sword", "alias": "Cutlass/Sword", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "belaying pin", "alias": "", "cost": {"cost": 3}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "buccaneer",
+      "type": "hero",
+      "name": "Buccaneer",
+      "plural": "Buccaneers",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 85,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 4, "t": 4, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["stromfels-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Buccaneer may use his Leadership instead of their own."},
+        {"rulename": "Swashbuckler", "ruleFull": "At the end of any close combat phase in which he is still in base contact with an enemy, the Buccaneer may take a Leadership test. If he passes, he may make a normal move away (not a run or a charge) and the enemy strikes no blows at him; if he fails, he stays in the combat and fights as normal in the next turn."}
+      ]
+    },
+    {
+      "id": "mutant-priest",
+      "type": "hero",
+      "name": "Mutant-Priest",
+      "plural": "Mutant-Priests",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 75,
+      "startingXp": 14,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 4, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["stromfels-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Chaos Rituals"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Mutant-Priest is a wizard and uses the Chaos Rituals."},
+        {"rulename": "Prayers", "ruleFull": "The Mutant-Priest may use the Prayers of Manann (the Miracle Workers chapter). Instead of a new skill, after an advance roll of a double, he may receive a Mark of Manann."},
+        {"rulename": "Bite Attack", "ruleFull": "The Mutant-Priest has a bite attack at his own Strength, with no penalty for not using a weapon. It always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons."}
+      ]
+    },
+    {
+      "id": "renegades",
+      "type": "hero",
+      "name": "Renegade",
+      "plural": "Renegades",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 10,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["stromfels-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "foundlings",
+      "type": "hero",
+      "name": "Foundling",
+      "plural": "Foundlings",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["stromfels-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Blessed Child", "ruleFull": "A Foundling may re-roll any advance roll; the re-roll stands."}
+      ]
+    },
+    {
+      "id": "wreckers",
+      "type": "henchman",
+      "name": "Wrecker",
+      "plural": "Wreckers",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["stromfels-henchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "fishmen",
+      "type": "henchman",
+      "name": "Fishman",
+      "plural": "Fishmen",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["stromfels-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Mer-creature", "ruleFull": "Fishmen are aquatic: they can be submerged in water without harm, treat impassable obstacles such as deep rivers, lakes or open sea as difficult terrain, and ignore the penalties for slow-moving rivers and ponds."}
+      ]
+    },
+    {
+      "id": "swampers",
+      "type": "henchman",
+      "name": "Swamper",
+      "plural": "Swampers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["stromfels-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Swamp Striders", "ruleFull": "Swampers move through swamp and marshland terrain with no penalty."},
+        {"rulename": "Marsh Born", "ruleFull": "Swampers re-roll failed Initiative tests when crossing marshland or fighting on slippery jetties."},
+        {"rulename": "Herb Lore", "ruleFull": "At the start of the recovery phase, a Swamper may tend a model in base contact with him, himself included: on a 4+ it regains 1 wound. He may not move in a turn he does this."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "The PDF calls the warband Stromfels Reavers, or the Cult of Stromfels. It needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum are printed, so it takes our Human race."},
+    {"page": 2, "what": "The skill table has no Special column, so the warband has no skill group. Its ticks are read from where the text layer places them: Buccaneer all five; Mutant-Priest Combat, Academic, Speed; Renegade Combat, Shooting, Strength, Speed; Foundling Combat, Speed."},
+    {"page": 1, "what": "Aquatic Mutants is a tailored upgrade list, Aquatic Mutants, one each for Heroes at its price: Blackblood 30, Great Claw 50, Tentacle 35, Prehensile Tail 50, Beak 35, Electrical Touch 45, Mer-creature 25, Suckers 25, Hideous 40 (\"eye stalks (counts as hideous)\"). The heroes' costs say \"+ the cost of mutation\"."},
+    {"page": 2, "what": "Club/Mace/Staff and Club/Mace are our Club, Mace or Hammer, and Cutlass/Sword our Sword, each shown under the PDF's name."},
+    {"page": 3, "what": "The fighters' headings aren't in the text layer, so each is named from Choice of Warriors and his profile row (Fishmen's reads Mermen), and each cost is the one in his column: Buccaneer 85 gc, Mutant-Priest 75, Renegade 35, Foundling 20, Wrecker 20, Swamper 25, Fishman 30."},
+    {"page": 3, "what": "The Mutant-Priest is a wizard of the Chaos Rituals (ours) and may also use the Prayers of Manann and take a Mark of Manann (the Miracle Workers chapter), which we lack: only the Chaos Rituals are set, and his Prayers rule is kept as printed."},
+    {"page": 3, "what": "The Mutant-Priest's Bite Attack does what our shared Beak mutation does, under another name: kept his own rule."},
+    {"page": 4, "what": "The Fishmen's Mer-creatures is our shared Mer-creature but for its \"on land its Movement is reduced by 1\": kept apart, as Mer-creature (Fishmen)."},
+    {"page": 5, "what": "The Stromfels Heart, Shark-tooth Necklace and Scrimshaw Bauble are our MiM items, with the same prices and rarities. Ours carry no rules, so the PDF's are attached, in our words; the Scrimshaw Bauble's rule has no name, as the PDF gives none."},
+    {"page": 5, "what": "Our Stromfels Heart's price row says \"Priest of Stromfels only\"; the PDF's entry says \"Stromfels Reavers only\" and lets any Hero use it: ours is unchanged. The Harbinger's Massive Beak (Mordheim Annual p35), the Altar to Stromfels, the Ceremony of Sacrifice and the Conviction chart are Mutiny in Marienburg rules we don't have."}
+  ]
+}
