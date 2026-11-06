@@ -36,12 +36,12 @@
         {"name": "fish-hook shot/hunting lasso", "alias": "Vine Tendril", "cost": {"cost": 10, "costSuffix": "Heroes only"}},
         {"name": "shield", "alias": "", "cost": {"cost": 5}},
         {"name": "Iron Bark", "alias": "", "cost": {"cost": 10, "costSuffix": "Heroes only"}},
-        {"name": "Armour of the Willow Wood", "alias": "", "cost": {"cost": 130, "costSuffix": "Heroes only"}},
+        {"name": "armour of the wildwood", "alias": "Armour of the Willow Wood", "cost": {"cost": 130, "costSuffix": "Heroes only"}},
         {"name": "oaken armour", "alias": "", "cost": {"cost": 150, "costSuffix": "Heroes only"}},
         {"name": "rope & hook", "alias": "Climbing Vine", "cost": {"cost": 5}},
-        {"name": "Horn of the Wild Hunt", "alias": "", "cost": {"cost": 110, "costSuffix": "Branchnymph only"}},
+        {"name": "Horn of the Wild Hunt", "alias": "", "cost": {"cost": 120, "costSuffix": "Branchnymph only"}},
         {"name": "familiar", "alias": "", "cost": {"cost": 20, "costSuffix": "Branchwych only"}},
-        {"name": "magic acorn", "alias": "", "cost": {"cost": 100}},
+        {"name": "magic acorn", "alias": "", "cost": {"cost": 250}},
         {"name": "healing herbs", "alias": "", "cost": {"cost": 10}}
       ]
     }
@@ -168,7 +168,6 @@
     {"name": "Whip", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 2},
     {"name": "Greenwood Scythe", "type": "Weapon", "subtype": "Melee", "rarity": 10, "dice": null, "rulesPage": 3},
     {"name": "Iron Bark", "type": "Armour", "subtype": "", "rarity": 5, "dice": null, "rulesPage": 3},
-    {"name": "Armour of the Willow Wood", "type": "Armour", "subtype": "", "rarity": null, "dice": null, "rulesPage": 2},
     {"name": "Horn of the Wild Hunt", "type": "Miscellaneous", "subtype": "", "rarity": 12, "dice": null, "rulesPage": 3}
   ],
   "flags": [
@@ -177,11 +176,11 @@
     {"page": 1, "what": "Hard to Kill is printed among the warband's rules for the Dryads and Spiteborn only: it is their own rule."},
     {"page": 1, "what": "Variation is a tailored upgrade list, Variations, for Heroes, each mutation at its listed price (Tentacle 35, Extra Arm 40, Cloud of Flies 25, Hulking Brute 50, Spines 35, Blackblood 30, Beak 35). Henchmen may take one too: upgrades are for heroes, so the player adds it. \"possible Nesting Bird (Beak!)\" is read as the Beak, offered."},
     {"page": 2, "what": "The skill table's ticks are images: read from p2's image. Its columns run Strength before Academic."},
-    {"page": 2, "what": "The Whip (10 gc, Heroes only) and the Armour of the Willow Wood (130 gc, Heroes only) have no entry in the PDF: stubs with no rules. Our Armour of the Wildwood (MiM) is 130 gc too. The Oaken Armour (150 gc, Heroes only) is our The Oaken Armour (MiM, 150 gc, Rare 12) by name; the PDF prints no rules for it."},
+    {"page": 2, "what": "The Whip (10 gc, Heroes only) has no entry in the PDF: a stub with no rules, which Heinrich 'Altdorf' Schmidt carries too (William, 6 Nov 2026: \"sure\"). The Armour of the Willow Wood (130 gc) is our Armour of the Wildwood shown as Armour of the Willow Wood (William: \"yes, keep ours, attached rules if we dont have them\"), and the Oaken Armour (150 gc) our The Oaken Armour; both now carry the rules William gave. Our Armour of the Wildwood's row is the Elves group's, which doesn't hold the Fen Guard, so only their list sells it to them; The Oaken Armour's row is everyone's, noted Elf Rangers only."},
     {"page": 2, "what": "Splinters (Throwing Knives) is our Throwing Knives/Stars shown as Splinters, Vine Tendril (Fish Hook Shot) our Fish-hook Shot/Hunting Lasso (MiM) shown as Vine Tendril, Climbing Vine (rope and hook) our Rope & Hook shown as Climbing Vine, Hammer our Club, Mace or Hammer. The list has no dagger."},
-    {"page": 2, "what": "The Magic Acorn is 100 gc on the list (ours, as the Militant Mootlanders' entry prints, 250 gc, Rare 15); the Healing Herbs 10 gc (ours 20+2D6); the Familiar 20 gc (ours 20+D6, Rare 8). Taken as printed."},
+    {"page": 2, "what": "The Magic Acorn is 100 gc on the list, but that price is the Militant Mootlanders' before their first battle (William, 6 Nov 2026: \"it is 100 just for the mootlanders on initial buy\"): the line takes our usual 250 gc (Rare 15). The Healing Herbs are 10 gc (ours 20+2D6) and the Familiar 20 gc (ours 20+D6, Rare 8): taken as printed."},
     {"page": 3, "what": "The Greenwood Scythe (60 gc, Rare 10, Branchwych only; S as user +1, Two-handed, Treescuttle Venom: +1 to injury rolls) and Iron Bark (10 gc, Rare 5, Fen Guard only; +2 to the armour save, broken the first time a save fails) are stubs, their rules on p3."},
-    {"page": 3, "what": "The Horn of the Wild Hunt is 110 gc on the list, but its entry, the Horn of the Hunt, prints 120 gc, Rare 12, Branch Nymph only: the stub keeps the list's name and price. Its rules (p3): before each battle the Branchnymph takes a Leadership test, and if she passes a D6 calls Hunting Hounds (D3+1), a Tiger, a Bear, a Great Stag or a Great Eagle for the battle (1: nothing), which count neither for rout nor the most warriors; their profiles and rules are on p6."},
+    {"page": 3, "what": "The Horn of the Wild Hunt is 110 gc on the list, but its entry, the Horn of the Hunt, prints 120 gc, Rare 12, Branch Nymph only: the stub keeps the list's name, at the entry's 120 gc (William, 6 Nov 2026: \"use 120\"). Its rules (p3): before each battle the Branchnymph takes a Leadership test, and if she passes a D6 calls Hunting Hounds (D3+1), a Tiger, a Bear, a Great Stag or a Great Eagle for the battle (1: nothing), which count neither for rout nor the most warriors; their profiles and rules are on p6."},
     {"page": 4, "what": "The Branchwych's \"Special Rules: Leader\" prints no distance: the usual Leader rule (6\")."},
     {"page": 4, "what": "The Branchnymph is \"Branch Nymph\" in the skill table and her Horn's entry: named Branchnymph, as her heading."},
     {"page": 5, "what": "The Treekin's Redwood and Slow Growing are printed run together: read as two rules. Its Fear, Immune to Psychology, May Not Run and Large link the shared rules."},

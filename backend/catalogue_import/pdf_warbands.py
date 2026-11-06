@@ -9,7 +9,15 @@ snapshot so the template import builds it the same way. A file's own keys:
   ("Doubled-handed weapon" is a Double-handed weapon), put right as the file loads;
 - `stubs`: `{name, type, subtype, rarity, dice, rulesPage, note}`, items a line names that we lack (William: "yes to
   stubs"): each a bare item, no rules, with one price row for its warband only at the line's price, and `note` its
-  item's notes (the Sorcerous Society's Familiar names its pets in the bestiary);
+  item's notes (the Sorcerous Society's Familiar names its pets in the bestiary). A stub whose rules William gives
+  carries them (`range`, `strength`, `save` and `rules`: `{rule, summary, text}` a shared item rule by name, ours or
+  a page's, in its own words where it gives them, or `{name, text, tables}` its own), and needs rules until it has
+  one of its own (the Metal Mongers' Ratling Gun);
+- `itemRules`: `{name, summary, text, tables, page}`, shared item rules a page brings, which a few items link
+  (William, 6 Nov 2026, of Experimental Technology: "its a shared item rule that a few items will have");
+- `priceRows`: `{name, rarity, dice, note, page}`, a price row for the page's type on one of our items its lines sell
+  (the Low Kings' Spiked Gauntlet: William, 6 Nov 2026, "would prefer them being just one item"), at the line's price;
+- a list line's `note`: said with the line (the Militant Mootlanders' Magic Acorn, at 100 gc before the first battle);
 - `skillGroup` (`{name, new, note}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills,
   each `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for
   a warband with no Special column (the Outlaws of Stirwood Forest, Redux). Who of the warband may take a skill opens
@@ -25,7 +33,7 @@ from html import escape
 from pathlib import Path
 from typing import Any
 
-from catalogue_import.common import load_json, loose_key, norm_name
+from catalogue_import.common import load_json, loose_key, norm_name, slugify
 from catalogue_import.sources import SOURCES
 from catalogue_import.template_lists import ItemIndex, line_price
 from catalogue_import.warband_items import _item, _row
@@ -134,13 +142,63 @@ def _stub_cost(slug: str, page: dict[str, Any], name: str) -> tuple[int | None, 
         price = line_price(cost)
         if loose_key(line) == loose_key(name) and (price.cost is not None or price.cost_note):
             return price.cost, price.cost_note
-    raise ValueError(f"pdf-warbands/{slug}.json: no priced line names the stub {name!r}")
+    raise ValueError(f"pdf-warbands/{slug}.json: no priced line names {name!r}")
+
+
+def page_item_rules(pages: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    """The shared item rules the pages bring (`itemRules`), in out/item-rules.json's shape: one rule, which several
+    items link (the Metal Mongers' Experimental Technology, its Experimental Weapon chart a table)."""
+    return [
+        {
+            "slug": slugify(row["name"]),
+            "name": row["name"],
+            "aliases": [],
+            "summary": row.get("summary") or "",
+            "text": row["text"],
+            "tables": row.get("tables") or [],
+            "used_by": 0,
+            "wordings": 1,
+        }
+        for page in pages.values()
+        for row in page.get("itemRules") or []
+    ]
+
+
+def _stub_rule(slug: str, stub: str, row: dict[str, Any], rules: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    """A stub's rule as an item's rules hold it: a shared rule linked by name, in the item's own words where it gives
+    them (the Ratling Gun's Save Modifier is -1, ours the handgun's -2), or its own rule."""
+    if "rule" not in row:
+        return {"name": row["name"], "summary": "", "text": row["text"], "tables": row.get("tables") or []}
+    shared = rules.get(norm_name(row["rule"]))
+    if shared is None:
+        raise ValueError(f"pdf-warbands/{slug}.json: the stub {stub!r} links {row['rule']!r}, no shared item rule")
+    return {"rule": shared["slug"], **{key: row[key] for key in ("summary", "text", "tables") if row.get(key)}}
+
+
+def add_price_rows(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]], types: list[dict[str, Any]]) -> None:
+    """Each page's `priceRows` added to our items: a row for the page's type at its line's price, with the rarity,
+    dice and note the PDF prints (the Low Kings' Spiked Gauntlet, 15 gc, Rare 7, Enforcer only)."""
+    index = ItemIndex(items)
+    by_slug = {row["slug"]: row for row in types}
+    for slug, page in pages.items():
+        for entry in page.get("priceRows") or []:
+            item, _how = index.find(entry["name"])
+            if item is None:
+                raise ValueError(f"pdf-warbands/{slug}.json: the price row's {entry['name']!r} is no item of ours")
+            price, note = _stub_cost(slug, page, entry["name"])
+            cost = {"cost": price, "dice": entry.get("dice"), "dice_multiplier": None, "cost_note": note}
+            warbands = [{"type": by_slug[page[TYPE]]["slug"], "excluded": False}]
+            item["availabilities"].append(_row(cost, entry.get("rarity"), warbands, entry.get("note") or ""))
 
 
 def stub_items(
-    pages: dict[str, dict[str, Any]], items: list[dict[str, Any]], types: list[dict[str, Any]]
+    pages: dict[str, dict[str, Any]],
+    items: list[dict[str, Any]],
+    types: list[dict[str, Any]],
+    rules: dict[str, dict[str, Any]] | None = None,
 ) -> list[dict[str, Any]]:
-    """Each page's stubs as items (out/items.json's shape): no rules, one price row for the page's type at its line's
+    """Each page's stubs as items (out/items.json's shape): the rules it carries (`rules`: the shared ones by the
+    index of their names), one price row for the page's type at its line's
     price, with the rarity and dice the PDF prints. A stub two pages declare (the Protectorate of Sigmar's Blessed
     Bolts, which the Vampire Hunters of Sylvania buy too) is one item with a row for each, made from the first. A stub
     that names one of our items stops the build: link it."""
@@ -160,6 +218,7 @@ def stub_items(
             if loose_key(stub["name"]) in made:
                 made[loose_key(stub["name"])]["availabilities"].append(row)
                 continue
+            own = [_stub_rule(slug, stub["name"], entry, rules or {}) for entry in stub.get("rules") or []]
             item = _item(
                 stub["name"],
                 stub["type"],
@@ -167,10 +226,20 @@ def stub_items(
                 warband["setting"],
                 page["source"],
                 link_url=page["sourceLink"],
+                range=stub.get("range") or "",
+                strength=stub.get("strength") or "",
+                rules=own,
                 availabilities=[row],
             )
             note = stub.get("note") or ""
-            made[loose_key(stub["name"])] = {**item, "notes": note, "origin": ORIGIN, "needs_rules": True}
+            needs = not any("rule" not in entry for entry in own)  # until it has a rule of its own
+            made[loose_key(stub["name"])] = {
+                **item,
+                "save": stub.get("save") or "",
+                "notes": note,
+                "origin": ORIGIN,
+                "needs_rules": needs,
+            }
             stubs.append(made[loose_key(stub["name"])])
     return stubs
 
@@ -242,6 +311,12 @@ def render_pdf(pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]]) ->
             dice = f"+{price['dice']}D6" if price["dice"] else ""
             cost = price["cost_note"] if price["cost"] is None else f"{price['cost']}{dice} gc"
             lines.append(f"- Stub: {stub['name']}, {cost}, {rarity}; its rules are on p{stub['rulesPage']}.")
+        for row in page.get("itemRules") or []:
+            lines.append(f"- Shared item rule (p{row['page']}): {_cell(row['name'])}.")
+        for row in page.get("priceRows") or []:
+            rarity = f"Rare {row['rarity']}" if row.get("rarity") else "Common"
+            note = f", {_cell(row['note'])}" if row.get("note") else ""
+            lines.append(f"- Price row (p{row['page']}): our {_cell(row['name'])} for {page[TYPE]}, {rarity}{note}.")
         for flag in page.get("flags") or []:
             lines.append(f"- Flag (p{flag['page']}): {_cell(flag['what'])}")
     return "\n".join(lines) + "\n"

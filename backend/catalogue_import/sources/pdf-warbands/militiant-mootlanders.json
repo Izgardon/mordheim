@@ -23,7 +23,7 @@
         {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "mace", "alias": "Club/Mace", "cost": {"cost": 3}},
         {"name": "cleaver", "alias": "", "cost": {"cost": 10}},
-        {"name": "short sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "Short sword", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "trident", "alias": "Pitchfork", "cost": {"cost": 15}},
         {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
@@ -36,12 +36,12 @@
         {"name": "steel cloth", "alias": "", "cost": {"cost": 35}},
         {"name": "shield", "alias": "", "cost": {"cost": 5}},
         {"name": "buckler", "alias": "", "cost": {"cost": 5}},
-        {"name": "helmet", "alias": "Cooking pot/Helmet", "cost": {"cost": 10}},
+        {"name": "helmet", "alias": "Cooking pot", "cost": {"cost": 10}},
         {"name": "lock picks", "alias": "", "cost": {"cost": 15}},
         {"name": "thief's cloak", "alias": "", "cost": {"cost": 15}},
         {"name": "hunting arrows", "alias": "", "cost": {"cost": 35}},
         {"name": "Wild Mountain Goat", "alias": "", "cost": {"cost": 85}},
-        {"name": "magic acorn", "alias": "", "cost": {"cost": 100}}
+        {"name": "magic acorn", "alias": "", "cost": {"cost": 100}, "note": "100 gc only before the warband's first battle; after it, the usual price and rarity (250 gc, Rare 15)."}
       ]
     },
     {
@@ -52,13 +52,13 @@
         {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "mace", "alias": "Club/Mace", "cost": {"cost": 3}},
         {"name": "cleaver", "alias": "", "cost": {"cost": 10}},
-        {"name": "short sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "Short sword", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "short bow", "alias": "", "cost": {"cost": 5}},
         {"name": "light armour", "alias": "", "cost": {"cost": 20}},
         {"name": "shield", "alias": "", "cost": {"cost": 5}},
         {"name": "buckler", "alias": "", "cost": {"cost": 5}},
-        {"name": "helmet", "alias": "Cooking pot/Helmet", "cost": {"cost": 10}}
+        {"name": "helmet", "alias": "Cooking pot", "cost": {"cost": 10}}
       ]
     }
   ],
@@ -188,11 +188,9 @@
     {"name": "Tea-Leaf!", "ours": "Tea-leaf"},
     {"name": "Flan-eater", "ours": "Flan-eater"},
     {"name": "Looter", "ours": "Looter"},
-    {"name": "Taunt", "ours": "Taunt"}
+    {"name": "Taunt", "ours": "Taunt (Militant Mootlanders)"}
   ],
-  "aliases": [
-    {"pdf": "short sword", "ours": "shortsword", "page": 2}
-  ],
+  "aliases": [],
   "stubs": [
     {"name": "Wild Mountain Goat", "type": "Miscellaneous", "subtype": "", "rarity": 12, "dice": null, "rulesPage": 3}
   ],
@@ -201,10 +199,10 @@
     {"page": 2, "what": "The Halfling maximum (M4 WS5 BS7 S3 T3 W3 I9 A4 Ld10) is our Halfling race's."},
     {"page": 4, "what": "The fighters' headings aren't in the text layer: each is named from Choice of Warriors and his profile row, and priced from the hire line above it. The Chef's profile row reads Master Chef; he is named Chef, as in Choice of Warriors, the skill table and his Hot Pot rule."},
     {"page": 2, "what": "The skill table's ticks read from where the text layer places them: no Hero ticks Combat or Strength."},
-    {"page": 2, "what": "Cleaver (counts as axe) links our Cleaver (-1 to the armour save, as an axe) at 10 gc. Pitchfork (counts as Trident) is our Trident shown as Pitchfork, Kitchenware (counts as throwing stars) our Throwing Knives/Stars shown as Kitchenware, Club/Mace our Club, Mace or Hammer. Cooking pot/Helmet is our Helmet at 10 gc shown as Cooking pot/Helmet, not our Cooking Pot Helmet (8 gc, a 5+ save against stunning)."},
-    {"page": 2, "what": "Short sword is our Shortsword by name (the Bretonnian Chapel Guard's: Parry, the enemy +1 to his armour save, 7 gc): the PDF prints no rules for it."},
-    {"page": 2, "what": "The Magic Acorn is 100 gc on the list; its entry (p3) prints 250 gc, Rare 15, as ours: the line keeps 100. Steel cloth is 35 gc on the list (ours 75 gc, Rare 13; the PDF prints no entry)."},
-    {"page": 3, "what": "The special skills are our Militant Mootlanders group's six, worded from this PDF; their names are a heading font the text layer drops, read from p3's image. Two differ: our Looter gives \"one additional Treasure or Wyrdstone Shard\" (the PDF: one more Treasure), and our Taunt, worded for an Ostlander, also lets him taunt instead of casting a spell and makes him taunt the nearest enemy (the PDF says neither). Ours are unchanged."},
+    {"page": 2, "what": "Cleaver (counts as axe) links our Cleaver (-1 to the armour save, as an axe) at 10 gc. Pitchfork (counts as Trident) is our Trident shown as Pitchfork, Kitchenware (counts as throwing stars) our Throwing Knives/Stars shown as Kitchenware, Club/Mace our Club, Mace or Hammer. Cooking pot/Helmet is our Helmet at 10 gc, shown as Cooking pot (William, 6 Nov 2026: \"the halfling cooks cooking pot is still just a regular helmet, just a cheaper initial price, should just be a personal label\")."},
+    {"page": 2, "what": "Short sword is our Sword, shown as Short sword (William, 6 Nov 2026: \"short sword is just a sword i think?\"), not the Bretonnian Chapel Guard's Shortsword."},
+    {"page": 2, "what": "The Magic Acorn is 100 gc on the list; its entry (p3) prints 250 gc, Rare 15, as ours. The 100 is the Militant Mootlanders' price before their first battle (William, 6 Nov 2026: \"it is 100 just for the mootlanders on initial buy\"): the line keeps 100 and its note says so. Steel cloth is 35 gc on the list (ours 75 gc, Rare 13; the PDF prints no entry)."},
+    {"page": 3, "what": "The special skills are our Militant Mootlanders group's six, worded from this PDF; their names are a heading font the text layer drops, read from p3's image. Our Looter gives \"one additional Treasure or Wyrdstone Shard\" (the PDF: one more Treasure) and is kept (William, 6 Nov 2026: \"just keep ours\"). Our Taunt is worded for the Ostlanders (\"the Ostlander has learned...\"), so the group's Taunt is its own, Taunt (Militant Mootlanders), in our skills data's MiM wording (William: \"sure unless its specific\"; overrides.json skill_splits)."},
     {"page": 3, "what": "The Wild Mountain Goat is a stub: 85 gc, Rare 12, Halflings only, profile M7 WS2 BS0 S2 T3 W1 I4 A1 Ld5. Its rules are on p3: Ride Mountain Goat lets a Hero with the Animal Handling skill and Scale Sheer Surfaces climb while riding, up to twice the mount's Movement."},
     {"page": 4, "what": "The Chef's Hot Pot is a Leadership test before each battle: a 2D6 pre-battle roll (prebattle-rolls.json)."},
     {"page": 5, "what": "Thieves are henchmen here (0-3, 20 gc). Their Infiltration (\"See the Skaven special skill\"), Pick Locks and Cutpurse are their own rules, worded as the skills. Uneasy Allies' 1 says \"Do not add additional Treasures if any Thieves remain\": kept as printed."}

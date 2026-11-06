@@ -65,7 +65,9 @@ def _fighters(page: dict[str, Any]) -> list[Fighter]:
     ]
 
 
-def _line(item: dict[str, Any], price: Price, who: Who, shown_as: str = "", variant: str = "") -> dict[str, Any]:
+def _line(
+    item: dict[str, Any], price: Price, who: Who, shown_as: str = "", variant: str = "", note: str = ""
+) -> dict[str, Any]:
     return {
         "item": {"name": item["name"], "variant": item["variant"]},
         "shown_as": shown_as,
@@ -75,7 +77,7 @@ def _line(item: dict[str, Any], price: Price, who: Who, shown_as: str = "", vari
         "brace_cost": price.brace_cost or who.brace_cost,
         "who": who.who,
         "warband_max": who.warband_max,
-        "note": who.note,
+        "note": "; ".join(filter(None, [who.note, note])),
         "variant": variant,
     }
 
@@ -103,7 +105,9 @@ def _lines(
             log.unread.append((slug, plain(raw["title"]), plain(entry["name"]), who.note))
         shown_as = _shown_as(plain(entry.get("alias")), plain(entry["name"]), item, how)
         log.shown_as += bool(shown_as)
-        lines.append(_line(item, line_price(entry.get("cost")), who, shown_as))
+        # a PDF line's own note, said with it (the Militant Mootlanders' Magic Acorn: its price before the first battle)
+        own_note = plain(entry.get("note") or "")
+        lines.append(_line(item, line_price(entry.get("cost")), who, shown_as, note=own_note))
     return lines
 
 

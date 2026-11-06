@@ -287,6 +287,10 @@
     "Infiltration (Skink)": {
       "name": "Infiltration (Skink)",
       "why": "its rule differs from the other five lists' Infiltration, which keeps the name (William, 4 Nov 2026: \"i agree with recs\")"
+    },
+    "Taunt (Militant Mootlanders)": {
+      "name": "Taunt (Militant Mootlanders)",
+      "why": "the Ostlanders' Taunt, which keeps the name, is worded for the Ostlander; the Militant Mootlanders' is MiM's, for a Halfling (William, 6 Nov 2026: \"sure unless its specific\")"
     }
   },
   "skill_wordings": {

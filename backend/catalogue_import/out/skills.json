@@ -228,8 +228,8 @@
     "description": "The Hero is an expert in finding valuables on a victim before moving on. If the Hero takes any warriors of the enemy warband out of action (and he was not taken out of action himself), the Hero's warband receives one additional Treasure or Wyrdstone Shard. This does not affect the opposing warband's number of Treasures.  (MiM)"
   },
   {
-    "name": "Taunt",
-    "description": "After years of baiting opponents into drunken brawls the Ostlander has learned some of most vile insults in the Empire. During the shooting phase the warrior may choose to taunt one enemy instead of shooting with a missile weapon or casting a spell. The warrior must be able to see the enemy and taunting follows all the LOS rules for shooting (you must taunt the nearest opponent, etc.). The player should insult the enemy model in some manner whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian.). The enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the warrior who taunted him. (A02 13)"
+    "name": "Taunt (Militant Mootlanders)",
+    "description": "After years of baiting persecutors into drunken brawls, this Halfling has learned some of the vilest insults in the Empire. During the Shooting phase, the Halfling may choose to taunt one enemy instead of shooting with a missile weapon. The Hero must be able to see the enemy and taunting requires a line of sight as it would for shooting. The player should insult the enemy warrior whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian!) and the enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the Halfling who taunted him.  (MiM)"
   },
   {
     "name": "Banditry",
@@ -398,6 +398,10 @@
   {
     "name": "Foul Odour",
     "description": "Ostlanders are one and all prodigious drinkers and none too hygienic! This warrior rises head and shoulders above the rest. After a lifetime of drinking, liquor has little effect on him any more... not that this stops him from consuming massive quantities! His unwashed clothes and sweat reek of alcohol and all living enemies (not Undead or Possessed) are at -1 to hit him in hand-to-hand combat. In addition, the warrior cannot carry any open flames (torch, lantern, etc.) and fire attacks made against him are resolved at +1 Strength as his beer soaked clothing burns readily. (A02 13)"
+  },
+  {
+    "name": "Taunt",
+    "description": "After years of baiting opponents into drunken brawls the Ostlander has learned some of most vile insults in the Empire. During the shooting phase the warrior may choose to taunt one enemy instead of shooting with a missile weapon or casting a spell. The warrior must be able to see the enemy and taunting follows all the LOS rules for shooting (you must taunt the nearest opponent, etc.). The player should insult the enemy model in some manner whenever possible (perhaps his hat looks like a strangled parrot or his mother was a Bretonnian.). The enemy then takes a Leadership test. If he passes, nothing happens but if he fails he must spend his next movement phase trying to get into close combat with the warrior who taunted him. (A02 13)"
   },
   {
     "name": "Animal Friendship",

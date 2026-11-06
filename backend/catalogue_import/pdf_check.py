@@ -8,7 +8,8 @@ their types); each stat a whole number from 0 to 10 or written ("D6", "3(4)", "-
 whole numbers; its counts and group sizes (min no more than max, a hero with no group size); its starting gold and most
 models; every list a fighter names there, and every list someone's; every line's note read into who may take it; and
 every item, alias, skill group, skill, race, spell lore and warband type it names matched to our catalogue, or a
-declared stub that matches nothing of ours.
+declared stub that matches nothing of ours; a stub's rules a shared item rule of ours (or a page's) or its own name and
+text; and a price row's item ours and named by a line.
 """
 
 import copy
@@ -41,12 +42,14 @@ PAGE: Spec = {
     "specialSkillsList": (list, False),
     "aliases": (list, True),
     "stubs": (list, True),
+    "itemRules": (list, False),
+    "priceRows": (list, False),
     "flags": (list, True),
 }
 WARBAND_RULES: Spec = {"startingGc": (int, True), "maxModels": (int, True)}
 RULE: Spec = {"rulename": (str, True), "ruleFull": (str, True)}
 LIST: Spec = {"id": (str, True), "title": (str, True), "caveat": (str, True), "items": (list, True)}
-LINE: Spec = {"name": (str, True), "alias": (str, True), "cost": (dict, True)}
+LINE: Spec = {"name": (str, True), "alias": (str, True), "cost": (dict, True), "note": (str, False)}
 COST: Spec = {"cost": (int, True), "costPrefix": (str, False), "costSuffix": (str, False), "braceCost": (int, False)}
 SPECIAL: Spec = {
     "title": (str, True),
@@ -87,7 +90,32 @@ STUB: Spec = {
     "rarity": ((int, type(None)), True),
     "dice": ((int, type(None)), True),
     "rulesPage": (int, True),
+    "range": (str, False),
+    "strength": (str, False),
+    "save": (str, False),
+    "rules": (list, False),
     "note": (str, False),
+}
+STUB_RULE: Spec = {
+    "rule": (str, False),
+    "name": (str, False),
+    "summary": (str, False),
+    "text": (str, False),
+    "tables": (list, False),
+}
+ITEM_RULE: Spec = {
+    "name": (str, True),
+    "summary": (str, False),
+    "text": (str, True),
+    "tables": (list, False),
+    "page": (int, True),
+}
+PRICE_ROW: Spec = {
+    "name": (str, True),
+    "rarity": ((int, type(None)), True),
+    "dice": ((int, type(None)), True),
+    "note": (str, False),
+    "page": (int, True),
 }
 FLAG: Spec = {"page": (int, True), "what": (str, True)}
 
@@ -103,6 +131,7 @@ class Catalogue:
     races: set[str]
     lores: set[str]
     types: set[str]
+    item_rules: set[str] = field(default_factory=set)  # shared item rules' names and aliases, norm names
 
 
 def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set[str]) -> Catalogue:
@@ -125,6 +154,8 @@ def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set
         races,
         lores,
         {row["slug"] for row in load_json(OUT / "warband-types.json")},
+        {norm_name(name) for row in load_json(OUT / "item-rules.json") for name in [row["name"], *row["aliases"]]}
+        | {norm_name(row["name"]) for page in pages.values() for row in page.get("itemRules") or []},
     )
 
 
@@ -236,6 +267,11 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
             found.problems.append(f"stub {stub['name']!r}: our {item['name']!r} ({how or 'its name'}), link it")
         if stub["type"] not in STUB_TYPES:
             found.problems.append(f"stub {stub['name']!r}: type {stub['type']!r}")
+        for rule in _each(stub.get("rules") or [], STUB_RULE, f"stub {stub['name']} rule", found.problems):
+            if "rule" in rule and ("name" in rule or norm_name(rule["rule"]) not in catalogue.item_rules):
+                found.problems.append(f"stub {stub['name']!r}: {rule['rule']!r} is no shared item rule of ours")
+            elif "rule" not in rule and not (rule.get("name") and rule.get("text")):
+                found.problems.append(f"stub {stub['name']!r}: a rule is a shared one's name, or its own name and text")
     for row in page["aliases"]:
         if catalogue.items.find(row["ours"])[0] is None:
             found.problems.append(f"alias {row['pdf']!r}: no item of ours is {row['ours']!r}")
@@ -255,6 +291,12 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
     found.stubs = sorted(used)
     found.problems += [f"stub {name!r}: no line names it" for name in sorted(set(stubs.values()) - used)]
     raw_names = {norm_name(name) for _title, name, _cost in lines_of(page)}
+    line_names = {norm_name(name) for _title, name, _cost in lines_of(fixed)}
+    for row in page.get("priceRows") or []:
+        if catalogue.items.find(row["name"])[0] is None:
+            found.problems.append(f"price row {row['name']!r}: no item of ours (a stub has its own row)")
+        elif norm_name(row["name"]) not in line_names:
+            found.problems.append(f"price row {row['name']!r}: no line names it")
     found.problems += [
         f"alias {row['pdf']!r}: no line" for row in page["aliases"] if norm_name(row["pdf"]) not in raw_names
     ]
@@ -304,6 +346,8 @@ def check_page(slug: str, page: dict[str, Any], catalogue: Catalogue) -> Found:
         (page["specialRules"], RULE, "warband rule"),
         (page["aliases"], ALIAS, "alias"),
         (page["stubs"], STUB, "stub"),
+        (page.get("itemRules") or [], ITEM_RULE, "shared item rule"),
+        (page.get("priceRows") or [], PRICE_ROW, "price row"),
         (page["flags"], FLAG, "flag"),
         (page.get("specialEquipment") or [], SPECIAL, "special equipment"),
     ]

@@ -8,7 +8,15 @@ from django.test import SimpleTestCase
 
 from catalogue_import.common import load_json, slugify
 from catalogue_import.pdf_check import Catalogue, check_page, load_catalogue
-from catalogue_import.pdf_warbands import ORIGIN, PDF_SOURCES, put_aliases_right, stub_items, tables_as_html
+from catalogue_import.pdf_warbands import (
+    ORIGIN,
+    PDF_SOURCES,
+    add_price_rows,
+    page_item_rules,
+    put_aliases_right,
+    stub_items,
+    tables_as_html,
+)
 from catalogue_import.sources import OUT
 from catalogue_import.template_lists import ItemIndex
 from catalogue_import.template_text import clean_rule
@@ -74,7 +82,7 @@ def good_page() -> dict[str, Any]:
 
 
 CATALOGUE = Catalogue(
-    ItemIndex(ITEMS), {"Combat": {"Brave"}}, {"brave"}, {"Human"}, {"Lesser Magic"}, {"witch-hunters"}
+    ItemIndex(ITEMS), {"Combat": {"Brave"}}, {"brave"}, {"Human"}, {"Lesser Magic"}, {"witch-hunters"}, {"parry"}
 )
 
 
@@ -184,6 +192,22 @@ class PdfCheckTests(SimpleTestCase):
             ["witch-hunters: a skill group and its special skills, or neither (no Special column)"],
         )
 
+    def test_a_stubs_rules_are_shared_ones_or_its_own_and_a_price_row_is_on_one_of_ours(self) -> None:
+        # the Metal Mongers' Ratling Gun (PDF p6) and the Low Kings' Spiked Gauntlet (p5; William, 6 Nov 2026)
+        page = good_page()
+        page["stubs"][0]["rules"] = [{"rule": "Parry"}, {"name": "Jab", "text": "+1 Attack."}, {"rule": "Feint"}]
+        page["priceRows"] = [
+            {"name": "sword", "rarity": 7, "dice": None, "note": "", "page": 5},
+            {"name": "pry bar", "rarity": 7, "dice": None, "page": 5},
+        ]
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            [
+                "stub 'Pry Bar': 'Feint' is no shared item rule of ours",
+                "price row 'pry bar': no item of ours (a stub has its own row)",
+            ],
+        )
+
 
 class PdfImportTests(SimpleTestCase):
     templates: ClassVar[dict[str, dict[str, Any]]]
@@ -245,6 +269,53 @@ class PdfImportTests(SimpleTestCase):
             ],
         )
 
+    def test_a_stub_carries_the_rules_william_gives_linking_the_shared_ones(self) -> None:
+        # the Ratling Gun (Metal Mongers p6): "its quite a lot so feel free to break down into rules"
+        page = good_page()
+        page["stubs"][0].update(range='6"-16"', strength="3", rules=[{"rule": "Parry"}])
+        rules = {"parry": {"slug": "parry"}}
+        [stub] = stub_items({"witch-hunters": page}, ITEMS, TYPES, rules)
+        self.assertEqual((stub["range"], stub["rules"], stub["needs_rules"]), ('6"-16"', [{"rule": "parry"}], True))
+        page["stubs"][0]["rules"].append({"name": "Metal Storm", "text": "2D6 shots."})
+        page["stubs"][0]["rules"].append({"rule": "Parry", "text": "Parries a ranged attack too."})
+        [stub] = stub_items({"witch-hunters": page}, ITEMS, TYPES, rules)
+        self.assertEqual(stub["rules"][1], {"name": "Metal Storm", "summary": "", "text": "2D6 shots.", "tables": []})
+        self.assertEqual(stub["rules"][2], {"rule": "parry", "text": "Parries a ranged attack too."})  # its own words
+        self.assertFalse(stub["needs_rules"])
+
+    def test_a_page_brings_a_shared_item_rule_and_a_price_row_on_one_of_ours(self) -> None:
+        # Experimental Technology (Metal Mongers p7: "a shared item rule that a few items will have") and the Low
+        # Kings' row on our Spiked Gauntlet ("would prefer them being just one item"), at the line's price
+        page = good_page()
+        page["itemRules"] = [{"name": "Experimental Technology", "text": "A 1 to hit malfunctions.", "page": 7}]
+        page["priceRows"] = [{"name": "sword", "rarity": 7, "dice": None, "note": "Captain only", "page": 5}]
+        put_aliases_right(page)
+        [rule] = page_item_rules({"witch-hunters": page})
+        self.assertEqual(
+            (rule["slug"], rule["text"], rule["tables"]), ("experimental-technology", page["itemRules"][0]["text"], [])
+        )
+        items: list[dict[str, Any]] = [{**item, "availabilities": []} for item in ITEMS]
+        add_price_rows({"witch-hunters": page}, items, TYPES)
+        [row] = items[1]["availabilities"]
+        self.assertEqual(
+            (row["cost"], row["rarity"], row["warbands"], row["note"]),
+            (10, 7, [{"type": "witch-hunters", "excluded": False}], "Captain only"),
+        )
+
+    def test_low_kings_buy_our_spiked_gauntlet_and_mootlanders_note_their_acorns_price(self) -> None:
+        # William, 6 Nov 2026: one Spiked Gauntlet; the Magic Acorn "is 100 just for the mootlanders on initial buy"
+        gauntlet = self.items["Spiked Gauntlet"]
+        self.assertIn(
+            (15, 7, [{"type": "low-kings", "excluded": False}], "Enforcer only"),
+            [(row["cost"], row["rarity"], row["warbands"], row["note"]) for row in gauntlet["availabilities"]],
+        )
+        self.assertNotIn("Spiked Gauntlet (Low Kings)", self.items)
+        lines = [line for row in self.templates["militant-mootlanders"]["lists"] for line in row["lines"]]
+        [acorn] = [line for line in lines if line["item"]["name"] == "Magic Acorn"]
+        self.assertEqual(acorn["cost"], 100)
+        self.assertIn("first battle", acorn["note"])
+        self.assertEqual(self.items["Pneumatic Arm"]["rules"], [{"rule": "experimental-technology"}])
+
     def test_half_a_price_rounds_up(self) -> None:
         # William, 6 Nov 2026: "yes always round up in mordheim for gold"
         self.assertEqual([halved(cost) for cost in (40, 35, None)], [20, 18, None])
@@ -277,7 +348,7 @@ class PdfImportTests(SimpleTestCase):
                 ("Tenderiser", "", 3),
                 ("Cleaver", "Meat Cleaver", 5),
                 ("Sword", "Machete", 10),
-                ("Cooking Pot Helmet", "Cooking Pot", 10),
+                ("Helmet", "Cooking Pot", 10),  # William, 6 Nov 2026: "still just a regular helmet"
             },
             names,
         )

@@ -6273,6 +6273,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "low-kings",
+            "excluded": false
+          }
+        ],
+        "note": "Enforcer only"
       }
     ]
   },
@@ -14512,15 +14528,21 @@
     "flavour": "",
     "range": "",
     "strength": "",
-    "save": "+? (see rules)",
+    "save": "6+",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Elven armour crafted from living wood; provides armour save.",
+        "summary": "+1 Toughness and +1 Movement, and a 6+ armour save. Elves only.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Armour of the Wildwood",
+        "summary": "",
+        "text": "The wearer has +1 Toughness and +1 Movement.",
         "tables": []
       }
     ],
@@ -14645,15 +14667,21 @@
     "flavour": "",
     "range": "",
     "strength": "",
-    "save": "+? (see rules)",
+    "save": "5+",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Heavy oaken armour for Elf Rangers.",
+        "summary": "+1 Toughness, enemies at -1 to hit in close combat, and a 5+ armour save. Elf Rangers only.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "The Oaken Armour",
+        "summary": "",
+        "text": "The wearer has +1 Toughness, and enemy models are at -1 to hit him in close combat.",
         "tables": []
       }
     ],
@@ -17535,46 +17563,6 @@
     ]
   },
   {
-    "slug": "armour-of-the-willow-wood",
-    "name": "Armour of the Willow Wood",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Armour",
-    "subtype": "",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
-    "tags": [
-      "armour of the willow wood"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 130,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "fen-guard",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "horn-of-the-wild-hunt",
     "name": "Horn of the Wild Hunt",
     "variant": "",
@@ -17598,7 +17586,7 @@
     "availabilities": [
       {
         "label": "",
-        "cost": 110,
+        "cost": 120,
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
@@ -17815,46 +17803,6 @@
     ]
   },
   {
-    "slug": "spiked-gauntlet-low-kings",
-    "name": "Spiked Gauntlet (Low Kings)",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf",
-    "tags": [
-      "spiked gauntlet (low kings)"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "low-kings",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "chainsaw-sword",
     "name": "Chainsaw Sword",
     "variant": "",
@@ -18028,13 +17976,74 @@
       "ratling gun"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "6\"-16\"",
+    "strength": "3",
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "move-or-fire",
+        "text": "The ratling gun may not move and fire in the same turn, whatever other rules say (Nimble included)."
+      },
+      {
+        "rule": "save-modifier",
+        "summary": "-1 armour save modifier",
+        "text": "A warrior wounded by the ratling gun takes his armour save at -1."
+      },
+      {
+        "name": "Unwieldy",
+        "summary": "",
+        "text": "It takes two models to carry the ratling gun, and it may not fire while any enemy model is within 6\" of the firer.",
+        "tables": []
+      },
+      {
+        "name": "Metal Storm",
+        "summary": "",
+        "text": "Name a target and roll 2D6 for the number of shots. Spread them evenly between the target and other models within 6\" of it, friend or foe, then roll to hit and to wound for each. Once fired, the ratling gun can't be used again that game.",
+        "tables": []
+      },
+      {
+        "name": "Jeopardous",
+        "summary": "",
+        "text": "If the 2D6 for its shots is a double, the ratling gun misfires: roll a D6. The Experimental Weapon chart is Experimental Technology's.",
+        "tables": [
+          {
+            "columns": [
+              "D6",
+              "Misfire"
+            ],
+            "rows": [
+              [
+                "1",
+                "Boom!: the firer is taken out of action, and every model within 6\" of him takes a S4 hit on a 4+. Then roll D6-1 on the Experimental Weapon chart."
+              ],
+              [
+                "2",
+                "Blam!: the firer takes a S4 hit on a 4+. Then roll a D6 on the Experimental Weapon chart."
+              ],
+              [
+                "3",
+                "Boing!: roll a D6 on the Experimental Weapon chart."
+              ],
+              [
+                "4",
+                "Ping!: the ratling gun can't be used for the rest of the game."
+              ],
+              [
+                "5",
+                "Clunk!: the firer misses this shooting phase, and may try again next turn."
+              ],
+              [
+                "6",
+                "Roar!: every model, friend or foe, within 16\" of the firer and in his line of sight takes 2 automatic hits from it."
+              ]
+            ]
+          }
+        ]
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -18074,7 +18083,11 @@
     "statblock": [],
     "notes": "",
     "needs_rules": true,
-    "rules": [],
+    "rules": [
+      {
+        "rule": "experimental-technology"
+      }
+    ],
     "availabilities": [
       {
         "label": "",

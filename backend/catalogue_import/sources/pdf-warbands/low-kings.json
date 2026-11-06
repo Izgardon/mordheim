@@ -23,7 +23,7 @@
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
         {"name": "morning star", "alias": "", "cost": {"cost": 10}},
-        {"name": "Spiked Gauntlet (Low Kings)", "alias": "", "cost": {"cost": 15, "costSuffix": "Enforcer only"}},
+        {"name": "spiked gauntlet", "alias": "", "cost": {"cost": 15, "costSuffix": "Enforcer only"}},
         {"name": "net", "alias": "", "cost": {"cost": 5}},
         {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
         {"name": "throwing stars/knives", "alias": "", "cost": {"cost": 15}},
@@ -169,8 +169,10 @@
     {"pdf": "throwing stars/knives", "ours": "throwing knives", "page": 2}
   ],
   "stubs": [
-    {"name": "Knuckledusters", "type": "Weapon", "subtype": "Melee", "rarity": 6, "dice": null, "rulesPage": 5},
-    {"name": "Spiked Gauntlet (Low Kings)", "type": "Weapon", "subtype": "Melee", "rarity": 7, "dice": null, "rulesPage": 5}
+    {"name": "Knuckledusters", "type": "Weapon", "subtype": "Melee", "rarity": 6, "dice": null, "rulesPage": 5}
+  ],
+  "priceRows": [
+    {"name": "spiked gauntlet", "rarity": 7, "dice": null, "note": "Enforcer only", "page": 5}
   ],
   "flags": [
     {"page": 2, "what": "A Criminal Gang needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed. No maximum profile is printed: the gang takes our Human race."},
@@ -178,7 +180,7 @@
     {"page": 3, "what": "The fighters' headings aren't in the text layer: each is named from Choice of Warriors and his profile row, and priced from the hire line above it."},
     {"page": 2, "what": "Fence's iron strongbox is \"X gc\" on the list; its entry (p5) prints 30 gc, Rare 10, as our Iron Strongbox: linked at 30 gc, shown as Fence's iron strongbox. The Morning star is 10 gc (ours 15): as printed."},
     {"page": 5, "what": "Knuckledusters (5 gc, Rare 6; S as user, Pair, Concealable) are a stub; our Brass Knuckles (20 gc, Rare 6; S +1, Pair, Cumbersome) do other things."},
-    {"page": 5, "what": "The Spiked gauntlet (15 gc, Rare 7; Parry, Chain Glove: counts as a hand weapon and a buckler, never as a second weapon or buckler in hand beside a Difficult to use weapon, and usable where a pit fight bars weapons) does more than our Spiked Gauntlet (Parry): a stub of its own, Spiked Gauntlet (Low Kings)."},
+    {"page": 5, "what": "The Spiked gauntlet is our Spiked Gauntlet, an additional hand weapon and a buckler with Parry (William, 6 Nov 2026: \"i think all spiked gauntlets count as a buckler no? would prefer them being just one item\"), and the Low Kings have a price row of their own on it: 15 gc, Rare 7, Enforcer only. Ours doesn't say what the PDF's Chain Glove adds: usable in a pit fight that bars weapons, and never counting as a second weapon or buckler in hand beside a Difficult to use weapon. Ours also says Heroes can't learn to use it (worded for the Pit Fighters), where the Enforcer is a Hero."},
     {"page": 5, "what": "The Thief's cloak (15 gc, Rare 9) is ours, the same numbers."},
     {"page": 3, "what": "The Fence's chart doesn't say what its result gives (beside Sham, likely the item he has on offer), and calls him \"the Halfling Fence\": kept as printed."},
     {"page": 3, "what": "Looter and Tea-Leaf! are the Racketeer's and the Guttersnipes' own rules. Our skills of those names are the Militant Mootlanders' and say other things (our Looter adds a Treasure or a Wyrdstone Shard)."},

@@ -1,5 +1,6 @@
 """Our 62 Mutiny in Marienburg items: their current thin text kept, their restrictions read as warband lists where
-they name warbands, and every one flagged for the PDF pass."""
+they name warbands, and every one flagged for the PDF pass but those whose rules William has given (`needs_rules`
+false: the Armour of the Wildwood and The Oaken Armour, 6 Nov 2026)."""
 
 import re
 from dataclasses import dataclass, field
@@ -120,7 +121,7 @@ def mim_item(
         "save": clean_inline(item.get("save")),
         "statblock": item.get("statblock") or [],
         "notes": "",
-        "needs_rules": True,
+        "needs_rules": item.get("needs_rules", True),  # false once its rules are in (William, 6 Nov 2026)
         "rules": _rules(item, properties, index, log),
         "availabilities": [_availability(item, row, reader, log) for row in item.get("availabilities") or []],
     }

@@ -56,7 +56,7 @@
         {"name": "bow", "alias": "", "cost": {"cost": 10, "costSuffix": "Not Halfling Warriors"}},
         {"name": "light armour", "alias": "", "cost": {"cost": 20}},
         {"name": "buckler", "alias": "", "cost": {"cost": 5}},
-        {"name": "cooking pot helmet", "alias": "Cooking Pot", "cost": {"cost": 10}},
+        {"name": "helmet", "alias": "Cooking Pot", "cost": {"cost": 10}},
         {"name": "hunting arrows", "alias": "", "cost": {"cost": 35, "costSuffix": "Halfling Elder and Halfling Scouts only"}}
       ]
     },
@@ -250,8 +250,8 @@
   ],
   "stubs": [],
   "flags": [
-    {"page": 1, "what": "The Adventurer list's names in brackets are the Halfling Cook's (\"Halfling Cooks only\"; William, 6 Nov 2026: \"do we not add labels to his owning of those items? but yes all items that exist\"): he buys from a list of his own, the Adventurer list with those five lines his. Three link our Halfling Cook items at the line's price: Tenderiser 3 gc, Cleaver shown as Meat Cleaver 5 gc, Cooking Pot Helmet shown as Cooking Pot 10 gc. We have no Pairing Knife or Machete, so those lines are the Dagger shown as Pairing Knife and the Sword shown as Machete. The other heroes keep the Adventurer list."},
-    {"page": 1, "what": "Our Cooking Pot Helmet gives a Master Chef an unmodified 5+ save against being stunned; the Helmet the PDF pairs it with gives 4+. Linked as it is. Our Tenderiser (stuns on 2-4) and Cleaver (-1 to the armour save) do what the Mace/Hammer and Axe do. Our items' own prices (Cleaver 3 gc, Cooking Pot Helmet 8 gc) are not the line's; the line's is used."},
+    {"page": 1, "what": "The Adventurer list's names in brackets are the Halfling Cook's (\"Halfling Cooks only\"; William, 6 Nov 2026: \"do we not add labels to his owning of those items? but yes all items that exist\"): he buys from a list of his own, the Adventurer list with those five lines his. Two link our Halfling Cook items at the line's price: Tenderiser 3 gc and Cleaver shown as Meat Cleaver 5 gc. The Cooking Pot is our Helmet shown as Cooking Pot, at 10 gc (William, 6 Nov 2026: \"the halfling cooks cooking pot is still just a regular helmet, just a cheaper initial price, should just be a personal label like the mootlanders\"). We have no Pairing Knife or Machete, so those lines are the Dagger shown as Pairing Knife and the Sword shown as Machete. The other heroes keep the Adventurer list."},
+    {"page": 1, "what": "Our Tenderiser (stuns on 2-4) and Cleaver (-1 to the armour save) do what the Mace/Hammer and Axe do. Our Cleaver's own price (3 gc) is not the line's; the line's is used."},
     {"page": 1, "what": "Hunting Arrows are 35 gc on the Adventurer list (the rulebook's are 25 gc): taken as printed."},
     {"page": 1, "what": "The Halflings' Ogre maximum profile (M6 WS5 BS4 S6 T6 W4 I5 A4 Ld7) is unlike our Ogre race's, so the Village Ogre takes a new race, Ogre (Halflings), with it."},
     {"page": 1, "what": "Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one."},

@@ -2,8 +2,8 @@
 
 One file per warband, written by hand from its Broheim PDF (William, 5 Nov 2026: "lets begin adding warbands in via
 their pdfs"), in the snapshot's page shape (`../testwarbands-2026-10-31/warbands/*.json`) plus the keys
-`catalogue_import/pdf_warbands.py` describes: `warbandType`, `aliases`, `stubs`, `skillGroup` and
-`specialSkillsList`, a fighter's `spellLores`, and `flags`. Rule text is in our own words with every number, roll,
+`catalogue_import/pdf_warbands.py` describes: `warbandType`, `aliases`, `stubs`, `itemRules`, `priceRows`,
+`skillGroup` and `specialSkillsList`, a fighter's `spellLores`, and `flags`. Rule text is in our own words with every number, roll,
 range, test and condition kept, and no flavour; the PDFs and their extracted text are never committed.
 
 The template import builds each file as a book template of its type (`pipeline.py` loads them beside the snapshot);
@@ -52,6 +52,10 @@ check over every file.
    - a line or special equipment entry that shows our item under the PDF's name (its `alias`, shown as: the Tanto
      as a Dagger, the Power Squig as our Familiar) may stay linked, but list it as a decision too; a stub's `note`
      becomes its item's notes (the Sorcerous Society's Familiar names its four pets in the bestiary).
+   - an item whose rules William gives: a stub carries them (`rules`: a shared item rule by its name where ours does
+     the same, the Ratling Gun's Move or fire; else its own name and text), a rule several items carry is one of the
+     page's `itemRules` (Experimental Technology), and one of our items the warband buys from its own row is a
+     `priceRows` entry (the Low Kings' Spiked Gauntlet, 15 gc, Rare 7, Enforcer only). A line's `note` is said with it.
 
    Who of the warband may take a skill opens a new skill's description ("Gnoblars only."); a skill of ours is shared
    with other warbands, so the group's `note` says it instead (at most 200 characters, shown when learning from the

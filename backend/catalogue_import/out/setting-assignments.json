@@ -286,7 +286,7 @@
       "how": "no match"
     },
     {
-      "name": "Taunt",
+      "name": "Taunt (Militant Mootlanders)",
       "setting": "mordheim",
       "how": "mordheimer"
     },
@@ -499,6 +499,11 @@
       "name": "Foul Odour",
       "setting": "mordheim",
       "how": "overrides.json"
+    },
+    {
+      "name": "Taunt",
+      "setting": "mordheim",
+      "how": "mordheimer"
     },
     {
       "name": "Animal Friendship",

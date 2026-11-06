@@ -20,8 +20,10 @@ from catalogue_import.own_rules import own_rules
 from catalogue_import.pdf_warbands import (
     PDF_SOURCES,
     add_pages,
+    add_price_rows,
     add_skill_groups,
     load_pdf_pages,
+    page_item_rules,
     render_pdf,
     stub_items,
 )
@@ -239,8 +241,14 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     seed = [row for row in load_json(item_data / "standard-items.json") if isinstance(row, dict)]
     added = template_items(overrides, snapshot.pages, seed, sources.properties, types, groups, index)
     pdf_pages = load_pdf_pages(package / "sources" / PDF_SOURCES.name)  # the warbands read from their PDFs
-    stubs = stub_items(pdf_pages, items + mim + added, types)
+    page_rules = page_item_rules(pdf_pages)  # shared item rules a page brings (Experimental Technology)
+    shared = sorted(shared + page_rules, key=lambda rule: rule["slug"])
+    index.update(index_rules(page_rules))
+    stubs = stub_items(pdf_pages, items + mim + added, types, index)
+    add_price_rows(pdf_pages, items + mim + added, types)  # a page's row on one of our items (Spiked Gauntlet)
     everything = items + mim + added + stubs
+    for rule in page_rules:
+        rule["used_by"] = sum({"rule": rule["slug"]} in item["rules"] for item in everything)
     add_notes(everything, overrides.get("item_notes", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue([item["name"] for item in everything], [row["name"] for row in sources.our_skills])

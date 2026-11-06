@@ -17429,10 +17429,10 @@
           },
           {
             "item": {
-              "name": "Armour of the Willow Wood",
+              "name": "Armour of the Wildwood",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Armour of the Willow Wood",
             "cost": 130,
             "cost_note": "",
             "first_free": false,
@@ -17482,7 +17482,7 @@
               "variant": ""
             },
             "shown_as": "",
-            "cost": 110,
+            "cost": 120,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,
@@ -17520,7 +17520,7 @@
               "variant": ""
             },
             "shown_as": "",
-            "cost": 100,
+            "cost": 250,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,
@@ -20674,7 +20674,7 @@
           },
           {
             "item": {
-              "name": "Cooking Pot Helmet",
+              "name": "Helmet",
               "variant": ""
             },
             "shown_as": "Cooking Pot",
@@ -25543,7 +25543,7 @@
           },
           {
             "item": {
-              "name": "Spiked Gauntlet (Low Kings)",
+              "name": "Spiked Gauntlet",
               "variant": ""
             },
             "shown_as": "",
@@ -31852,14 +31852,7 @@
         "variant": ""
       }
     ],
-    "rules": [
-      {
-        "title": "Experimental Technology",
-        "description": "Weapons made by Skyre Warp Engineers may malfunction. When a missile weapon rolls a 1 to hit, roll a D6 on the Experimental Weapon chart; a malfunctioning weapon's hit is resolved against the firer instead of the target, hitting on a 4+. If the shot takes the firer out of action, roll D6+1 on the chart instead.\n\nD6 | Result\n1 | Scrap: the weapon is removed from the roster. Add a club to the roster, or 3 gc for the scrap metal.\n2-4 | Badly Mangled: add the bits to the parts pile, which counts as one more wyrdstone shard than normal in the post-battle sequence, or try to repair it: on a 3+ on a D6 it works as normal from now on; otherwise it is removed from the roster.\n5-6 | Few Bits Missing: the weapon works as normal.",
-        "variant": "",
-        "type": ""
-      }
-    ],
+    "rules": [],
     "lists": [
       {
         "key": "heroes-equipment-list",
@@ -32683,10 +32676,10 @@
           },
           {
             "item": {
-              "name": "Shortsword",
+              "name": "Sword",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Short sword",
             "cost": 10,
             "cost_note": "",
             "first_free": false,
@@ -32881,7 +32874,7 @@
               "name": "Helmet",
               "variant": ""
             },
-            "shown_as": "Cooking pot/Helmet",
+            "shown_as": "Cooking pot",
             "cost": 10,
             "cost_note": "",
             "first_free": false,
@@ -32963,7 +32956,7 @@
             "brace_cost": null,
             "who": {},
             "warband_max": null,
-            "note": "",
+            "note": "100 gc only before the warband's first battle; after it, the usual price and rarity (250 gc, Rare 15).",
             "variant": ""
           }
         ]
@@ -33020,10 +33013,10 @@
           },
           {
             "item": {
-              "name": "Shortsword",
+              "name": "Sword",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Short sword",
             "cost": 10,
             "cost_note": "",
             "first_free": false,
@@ -33113,7 +33106,7 @@
               "name": "Helmet",
               "variant": ""
             },
-            "shown_as": "Cooking pot/Helmet",
+            "shown_as": "Cooking pot",
             "cost": 10,
             "cost_note": "",
             "first_free": false,

@@ -1444,5 +1444,17 @@
     "name": "-1 Save",
     "description": "Target gets -1 to armour save.",
     "type": "Weapon"
+  },
+  {
+    "id": 243,
+    "name": "Armour of the Wildwood",
+    "description": "The wearer has +1 Toughness and +1 Movement.",
+    "type": "Armour"
+  },
+  {
+    "id": 244,
+    "name": "The Oaken Armour",
+    "description": "The wearer has +1 Toughness, and enemy models are at -1 to hit him in close combat.",
+    "type": "Armour"
   }
 ]

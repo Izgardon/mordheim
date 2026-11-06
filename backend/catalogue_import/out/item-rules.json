@@ -186,6 +186,16 @@
     "wordings": 3
   },
   {
+    "slug": "experimental-technology",
+    "name": "Experimental Technology",
+    "aliases": [],
+    "summary": "A 1 to hit with a missile weapon rolls on the Experimental Weapon chart",
+    "text": "Weapons made by Skyre Warp Engineers may malfunction. When a missile weapon rolls a 1 to hit, roll a D6 on the Experimental Weapon chart; a malfunctioning weapon's hit is resolved against the firer instead of the target, hitting on a 4+. If the shot takes the firer out of action, roll D6+1 on the chart instead.\n\nD6 | Experimental Weapon chart\n1 | Scrap: the weapon is removed from the roster. Add a club to the roster, or 3 gc for the scrap metal.\n2-4 | Badly Mangled: add the bits to the parts pile, which counts as one more wyrdstone shard than normal in the post-battle sequence, or try to repair it: on a 3+ on a D6 it works as normal from now on; otherwise it is removed from the roster.\n5-6 | Few Bits Missing: the weapon works as normal.",
+    "tables": [],
+    "used_by": 1,
+    "wordings": 1
+  },
+  {
     "slug": "explosive-radius",
     "name": "Explosive Radius",
     "aliases": [],

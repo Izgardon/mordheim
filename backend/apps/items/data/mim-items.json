@@ -308,12 +308,13 @@
     "subtype": "Body Armour",
     "grade": "3a",
     "single_use": false,
-    "description": "Elven armour crafted from living wood; provides armour save.",
+    "description": "+1 Toughness and +1 Movement, and a 6+ armour save. Elves only.",
     "strength": null,
     "range": null,
-    "save": "+? (see rules)",
+    "save": "6+",
     "statblock": null,
-    "properties": [],
+    "properties": [243],
+    "needs_rules": false,
     "availabilities": [
       {
         "cost": 130,
@@ -367,12 +368,13 @@
     "subtype": "Body Armour",
     "grade": "3a",
     "single_use": false,
-    "description": "Heavy oaken armour for Elf Rangers.",
+    "description": "+1 Toughness, enemies at -1 to hit in close combat, and a 5+ armour save. Elf Rangers only.",
     "strength": null,
     "range": null,
-    "save": "+? (see rules)",
+    "save": "5+",
     "statblock": null,
-    "properties": [],
+    "properties": [244],
+    "needs_rules": false,
     "availabilities": [
       {
         "cost": 150,
