@@ -890,5 +890,33 @@
   {
     "name": "Duelist",
     "description": "The warrior is an expert in hand-to-hand combat method of the Imperial duelist, aristocrats famed for their skill in single combat.\n\nAt the end of each Close Combat phase, the Duelist can force any non-large opponent he is fighting one-on-one to pass a Strength test or be pushed 2\" in any direction choosen by the Duelist. If this brings the target in contact with another model, both suffer an automatic Strength 2 hit. If this pushes the opponent off from a high place, then he falls and takes damage as normal. The duelist stays on the elevated area."
+  },
+  {
+    "name": "Quiet as a Mouse",
+    "description": "While this Halfling is hidden, an enemy trying to spot him uses half his Initiative in inches, rounded down."
+  },
+  {
+    "name": "Crude Belch (Halflings MIC)",
+    "description": "In the first round of a hand-to-hand combat the Halfling may belch over every enemy in base contact with him. Each must take a Leadership test, and one who fails misses his first attack, even if he has only one."
+  },
+  {
+    "name": "Wizened Halfling",
+    "description": "Leader only. Halflings within 6\" of him may re-roll a failed Leadership test, taking both the test and the re-roll on his Leadership."
+  },
+  {
+    "name": "Stealthy (Halflings MIC)",
+    "description": "Halfling Thief only. He may hide even after running, and may run while within 8\" of enemy models if he starts and ends the move hidden."
+  },
+  {
+    "name": "Skilled Huntsman",
+    "description": "When this Halfling shoots a missile weapon while hidden, roll a D6: on a 3+ he stays hidden that turn. Not with a black powder weapon."
+  },
+  {
+    "name": "Layers of Fat",
+    "description": "The Halfling always has a basic 6+ save, whatever the attacker's Strength, on top of any armour he wears."
+  },
+  {
+    "name": "Shifty",
+    "description": "When charged, the Halfling gains one bonus attack, which strikes first."
   }
 ]

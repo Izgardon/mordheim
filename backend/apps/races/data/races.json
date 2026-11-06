@@ -382,5 +382,17 @@
     "initiative": "1",
     "attacks": "3",
     "leadership": "8"
+  },
+  {
+    "name": "Ogre (Halflings)",
+    "movement": "6",
+    "weapon_skill": "5",
+    "ballistic_skill": "4",
+    "strength": "6",
+    "toughness": "6",
+    "wounds": "4",
+    "initiative": "5",
+    "attacks": "4",
+    "leadership": "7"
   }
 ]

@@ -244,6 +244,7 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("black-dwarfs", "bull centaur"): "Bull Centaur (Black Dwarfs)",
     ("the-sons-of-hashut", "bull centaur"): "Bull Centaur (Sons of Hashut)",
     ("undead", "undead"): "Vampire",
+    ("halflings", "ogre"): "Ogre (Halflings)",  # the Halflings PDF's Ogre maximum (p1), unlike our Ogre's
 }
 CREATURES = frozenset(
     {

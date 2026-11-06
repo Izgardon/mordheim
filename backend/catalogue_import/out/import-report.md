@@ -27,9 +27,9 @@ Answers go into `overrides.json`; the next build applies them.
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
 | price rows | 337 |
-| skills | 223 |
-| skill groups | 49 |
-| skill group links | 266 |
+| skills | 230 |
+| skill groups | 50 |
+| skill group links | 273 |
 | serious injuries (D66) | 20 |
 | shared specials | 62 |
 | random mutation results (D66) | 36 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 223 | 153 | 30 | 40 |
+| skills | 230 | 153 | 37 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 223 skills, one per name; `out/skill-groups.json` is 49 groups holding them (266 links), the five core groups first.
+`out/skills.json` is 230 skills, one per name; `out/skill-groups.json` is 50 groups holding them (273 links), the five core groups first.
 
 ### Merged by name
 
@@ -384,6 +384,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Dwarves | Dwarf Treasure Hunters | skill_group_learners | - | Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Forest Goblins | Forest Goblins (NC) | intersection | - | Animosity |
 | Grave Robber | Grave Robbers | intersection | - | Darkstalker, Instinctual Violence, De-animator, Hardy Constitution (Grave Robber), Body Dealer |
+| Halflings (MIC) | Halflings | new group | - | Quiet as a Mouse, Crude Belch (Halflings MIC), Wizened Halfling, Stealthy (Halflings MIC), Skilled Huntsman, Layers of Fat, Shifty |
 | Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump back, Sniper, Throw voice |
 | Horned Hunters | Horned Hunters | new group | - | Animal Friendship, Infiltration, Foul Odour, Hide in Shadows, Master Trapper, Pathfinder (Horned Hunters) |
 | Large Special | everyone, Large units only | skill_lists | - | Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip |
@@ -415,7 +416,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 ### New groups and skills (`new_skill_groups`)
 
-24 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+31 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -443,11 +444,20 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Noblesse Obliges | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
 | Torturer | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
 | Duelist | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
+| Quiet as a Mouse | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
+| Crude Belch (Halflings MIC) | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
+| Wizened Halfling | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
+| Stealthy (Halflings MIC) | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
+| Skilled Huntsman | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
+| Layers of Fat | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
+| Shifty | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 
 mordheimer also lists Combat Master for Dwarf Rangers; left out of the group.
 mordheimer also lists Ferocious Charge for Dwarf Rangers; left out of the group.
 mordheimer also lists Monster Slayer for Dwarf Rangers; left out of the group.
 mordheimer also lists Berserker for Dwarf Rangers; left out of the group.
+mordheimer also lists Crude Belch for Halflings (MIC); left out of the group.
+mordheimer also lists Stealthy for Halflings (MIC); left out of the group.
 
 Our skills the new groups hold, whose learners change (a skill is learnable by whoever has a group holding it):
 
@@ -496,16 +506,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 50 |
-| warband types linked | 56 |
-| fighters (heroes, henchmen) | 333 (169, 164) |
-| henchmen that gain no XP | 51 |
-| henchmen that can't be promoted | 62 |
-| equipment lists | 120 |
-| list lines | 1341 |
-| warband rules | 157 |
+| templates | 51 |
+| warband types linked | 57 |
+| fighters (heroes, henchmen) | 341 (173, 168) |
+| henchmen that gain no XP | 52 |
+| henchmen that can't be promoted | 63 |
+| equipment lists | 123 |
+| list lines | 1372 |
+| warband rules | 160 |
 | upgrades | 68 |
-| the templates' own specials | 392 |
+| the templates' own specials | 401 |
 
 ### List lines
 
@@ -521,7 +531,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-172 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+175 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -545,7 +555,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-35 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+36 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 
@@ -668,7 +678,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 32 | 5 | 5 | 3 |
+| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 33 | 5 | 5 | 3 |
 | Stupidity | Psychology | the rulebook's Stupidity (snapshot) |  |  | 4 | 0 | 0 | 1 |
 | Immune to Psychology | Psychology | the list's text |  |  | 11 | 1 | 2 | 0 |
 | Immune to Poison | Trait | the list's text |  |  | 10 | 3 | 3 | 2 |
@@ -735,7 +745,7 @@ List prices the pages differ from: none.
 
 ### Merged
 
-- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Halflings: Village Ogre; Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
 - Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
 - Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
@@ -875,7 +885,19 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-0 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+1 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
+| halflings | halflings | 8 | 2 | 0 | 6 |
+
+### Halflings
+
+- Alias (p1): "doubled-handed weapon" is our double-handed weapon.
+- Alias (p1): "rope and hook" is our rope & hook.
+- Flag (p1): The Adventurer list's names in brackets (Pairing Knife, Tenderiser, Meat Cleaver, Machete, Cooking Pot) carry the note "Halfling Cooks only": read as the Cook's own names for the Dagger, Mace/Hammer, Axe, Sword and Helmet, so nothing is imported for them. If they are lines only the Cook may buy, say so.
+- Flag (p1): Hunting Arrows are 35 gc on the Adventurer list (the rulebook's are 25 gc): taken as printed.
+- Flag (p1): The Halflings' Ogre maximum profile (M6 WS5 BS4 S6 T6 W4 I5 A4 Ld7) is unlike our Ogre race's, so the Village Ogre takes a new race, Ogre (Halflings), with it.
+- Flag (p1): Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one.
+- Flag (p1): A Halfling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p4): The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch and Stealthy are named apart from the Mootlanders' (Stealthy keeps "Halfling Thief only").

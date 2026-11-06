@@ -418,6 +418,28 @@
     ]
   },
   {
+    "name": "Halflings (MIC)",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "halflings",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Quiet as a Mouse",
+      "Crude Belch (Halflings MIC)",
+      "Wizened Halfling",
+      "Stealthy (Halflings MIC)",
+      "Skilled Huntsman",
+      "Layers of Fat",
+      "Shifty"
+    ]
+  },
+  {
     "name": "Hochland Bandits",
     "for_everyone": false,
     "warbands": [

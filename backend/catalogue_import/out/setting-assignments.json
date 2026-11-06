@@ -1114,6 +1114,41 @@
       "name": "Duelist",
       "setting": "mordheim-1c",
       "how": "overrides.json"
+    },
+    {
+      "name": "Quiet as a Mouse",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Crude Belch (Halflings MIC)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Wizened Halfling",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Stealthy (Halflings MIC)",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Skilled Huntsman",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Layers of Fat",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Shifty",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
     }
   ],
   "hired_swords": [
