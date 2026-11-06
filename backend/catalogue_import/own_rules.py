@@ -1,6 +1,6 @@
 """The hired swords' and dramatis personae's own rules (the coordinator, 5 Nov 2026: two owners share a rule only
 through the shared specials list): an owner's rule that is no shared special, kept apart by William's list or one of
-the book's general specials (`apps/special/data/special.json`: Large, Wizard, a mount's rules) is his own, a row of
+the book's general specials (`apps/special/data/special.json`: Wizard, a mount's rules) is his own, a row of
 his own that his seeder creates (apps/core/book_lookups.py), never another owner's of the name.
 
 A name two or more owners' own rules hold, worded differently, is named for each owner, as the rules kept apart are:

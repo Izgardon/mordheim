@@ -103,11 +103,10 @@ def build_upgrades(
     return upgrades, rules
 
 
-def halved(cost: int | None) -> tuple[int | None, str]:
-    """Half a price, and the note for one with no whole half: 35 gc has none ("half of 35 gc")."""
-    if cost is None or cost % 2 == 0:
-        return (None if cost is None else cost // 2), ""
-    return None, f"half of {cost} gc"
+def halved(cost: int | None) -> int | None:
+    """Half a price, rounded up as gold always is (William, 6 Nov 2026: "yes always round up in mordheim for gold"):
+    35 gc halves to 18, as the app halves a sale price (apps/warbands/services/prices.py: half_up)."""
+    return None if cost is None else (cost + 1) // 2
 
 
 def mutation_upgrades(
@@ -130,13 +129,13 @@ def mutation_upgrades(
         added = [entry for entry in entries if entry["name"] not in held | set(line.get("except", []))]
         for entry in added:
             shared.rule("warband", f"{template['name']}: {group}", entry["name"])
-            cost, cost_note = halved(shared.cost_of(entry)) if line.get("half") else (shared.cost_of(entry), "")
+            cost = halved(shared.cost_of(entry)) if line.get("half") else shared.cost_of(entry)
             upgrades.append(
                 {
                     "group": group,
                     "special": {"name": entry["name"], "type": entry["type"]},
                     "cost": cost,
-                    "cost_note": cost_note,
+                    "cost_note": "",
                     "note": note,
                     "who": who,
                     "max_per_fighter": terms.get("max_per_fighter"),

@@ -15666,6 +15666,212 @@
         ]
       },
       {
+        "key": "halfling-cook-equipment-list",
+        "name": "Halfling Cook Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "Pairing Knife",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Tenderiser",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cleaver",
+              "variant": ""
+            },
+            "shown_as": "Meat Cleaver",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Machete",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true,
+              "fighters": [
+                "halfling-warriors"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true,
+              "fighters": [
+                "halfling-warriors"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "except": [
+                "halfling-warriors"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cooking Pot Helmet",
+              "variant": ""
+            },
+            "shown_as": "Cooking Pot",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Hunting Arrows",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "halfling-elder",
+                "halfling-scouts"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
         "key": "halfling-thief-equipment-list",
         "name": "Halfling Thief Equipment List",
         "note": "",
@@ -16052,7 +16258,7 @@
         "variant_changes": {},
         "fixed_kit": "",
         "lists": [
-          "adventurer-equipment-list"
+          "halfling-cook-equipment-list"
         ],
         "specials": [
           {
@@ -36900,8 +37106,8 @@
           "name": "Tentacle",
           "type": "Mutation"
         },
-        "cost": null,
-        "cost_note": "half of 35 gc",
+        "cost": 18,
+        "cost_note": "",
         "note": "With the Twistkin skill, at half the listed price.",
         "who": {
           "fighters": [
@@ -36936,8 +37142,8 @@
           "name": "Spines",
           "type": "Mutation"
         },
-        "cost": null,
-        "cost_note": "half of 35 gc",
+        "cost": 18,
+        "cost_note": "",
         "note": "With the Twistkin skill, at half the listed price.",
         "who": {
           "fighters": [

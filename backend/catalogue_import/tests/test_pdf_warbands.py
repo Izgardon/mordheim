@@ -182,8 +182,9 @@ class PdfImportTests(SimpleTestCase):
         with self.assertRaisesRegex(ValueError, "the stub 'Sword' is our 'Sword'"):
             stub_items({"witch-hunters": page}, ITEMS, TYPES)
 
-    def test_half_a_price_has_no_whole_half_of_an_odd_one(self) -> None:
-        self.assertEqual([halved(cost) for cost in (40, 35, None)], [(20, ""), (None, "half of 35 gc"), (None, "")])
+    def test_half_a_price_rounds_up(self) -> None:
+        # William, 6 Nov 2026: "yes always round up in mordheim for gold"
+        self.assertEqual([halved(cost) for cost in (40, 35, None)], [20, 18, None])
 
     def test_each_file_is_a_template_of_its_type_with_its_stubs(self) -> None:
         types = {row["slug"]: row for row in load_json(OUT / "warband-types.json")}
@@ -204,7 +205,7 @@ class PdfImportTests(SimpleTestCase):
         prices = {row["special"]["name"]: (row["cost"], row["cost_note"]) for row in upgrades}
         self.assertEqual(prices["Daemon Soul"], (10, ""))
         self.assertEqual(prices["Great Claw"], (25, ""))
-        self.assertEqual(prices["Tentacle"], (None, "half of 35 gc"))
+        self.assertEqual((prices["Tentacle"], prices["Spines"]), ((18, ""), (18, "")))
         self.assertEqual(len(prices), 9)
         self.assertEqual(
             {(str(row["who"]), row["max_per_fighter"]) for row in upgrades}, {("{'fighters': ['stormvermin']}", 1)}

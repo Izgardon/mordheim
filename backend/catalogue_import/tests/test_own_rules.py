@@ -32,7 +32,7 @@ class OwnRulesTests(SimpleTestCase):
             owner("Bertha", ("Hiring Fee", "Roll a D6."), ("Loner", "Alone.")),
             owner("Johann", ("Hiring Fee", "One portion of Crimson Shade."), ("Loner", "alone. ")),
         ]
-        personae = [owner("Max", ("Fear", "Aura.")), owner("Ana", ("Cause Fear", "Fear."), ("Large", "Big."))]
+        personae = [owner("Max", ("Fear", "Aura.")), owner("Ana", ("Cause Fear", "Fear."), ("Wizard", "Casts."))]
 
         rules = own_rules(self.shared, swords, personae)
 
@@ -46,7 +46,7 @@ class OwnRulesTests(SimpleTestCase):
         report = rules.render()
         self.assertIn("- Hiring Fee: Bertha; Johann.", report)
         self.assertIn("(the shared list could merge them):\n\n- Loner: Bertha; Johann.", report)
-        # a shared name, the rule William's list keeps Max's apart and the book's general Large are no own rules
+        # a shared name, the rule William's list keeps Max's apart and the book's general Wizard are no own rules
         self.assertEqual(set(rules.held), {"hiring fee", "loner"})
 
 

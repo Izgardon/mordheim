@@ -5,7 +5,7 @@ Sword - <name>" (or "Dramatis Persona - <name>"), his spells under his `spell_lo
 the review, 5 Nov 2026: D3); his special skills are the book's of their names (created when it
 lacks one) in a skill group of that name, which his skill access names (skill groups, phase 1a). A special of a shared
 special's name or alias is the shared one (Fear for "Cause Fear"), unless William's list keeps that owner's apart under
-a name of its own (special/shared.py). Any other special is the book's general one of its name (Large, Wizard), else
+a name of its own (special/shared.py). Any other special is the book's general one of its name (Wizard), else
 the owner's own, never another owner's of the name (the coordinator, 5 Nov 2026: two owners share a rule only through
 the shared specials list), named for him where others word it otherwise ("Hiring Fee (Johann the Knife)").
 """
@@ -150,7 +150,7 @@ class BookLookups:
         # not a warband template fighter's own rules ("Warband - Mercenaries"): they stay the template's; nor the
         # injury tables' specials, worded for the injury: the Old Prospector keeps his own Hardened
         specials = list(Special.objects.filter(**book).exclude(owner_kind=WARBAND).exclude(type=INJURY))
-        # a general special (Large, Wizard, a mount's rule) by name; an owner's own only by his type and its name, so
+        # a general special (Wizard, a mount's rule) by name; an owner's own only by his type and its name, so
         # no owner takes another's rule of the name (two share one only through the shared specials list)
         self.specials = {lookup_key(row.name): row for row in specials if owner_kind_of(row.type) == GENERAL}
         self.own_specials = {

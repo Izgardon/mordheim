@@ -516,8 +516,8 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | fighters (heroes, henchmen) | 353 (180, 173) |
 | henchmen that gain no XP | 55 |
 | henchmen that can't be promoted | 66 |
-| equipment lists | 129 |
-| list lines | 1424 |
+| equipment lists | 130 |
+| list lines | 1436 |
 | warband rules | 162 |
 | upgrades | 77 |
 | the templates' own specials | 415 |
@@ -536,7 +536,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-181 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+185 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -691,7 +691,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Immune to Poison | Trait | the list's text |  |  | 10 | 3 | 3 | 2 |
 | No Pain | Trait | the list's text |  |  | 9 | 1 | 1 | 0 |
 | May Not Run | Trait | the list's text |  |  | 6 | 2 | 0 | 0 |
-| Large Target | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
+| Large | Trait | the list's text |  |  | 0 | 4 | 0 | 0 |
 | Daemonic Flesh | Trait | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
 | Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
@@ -758,7 +758,7 @@ List prices the pages differ from: none.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
 - No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin.
 - May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Bone Goliath.
-- Large Target: Ogre Bodyguard; Ogre Slave Master.
+- Large: Ogre Bodyguard (Large Target); Clan Skryre Rat Ogre; Bone Goliath; Ogre Slave Master (Large Target).
 - Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
 - Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
 - Pawnbroker: Arabian Merchant; Cathayan Merchant.
@@ -898,7 +898,7 @@ Kept apart from a family's, the effect differing:
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
-| halflings | halflings | 8 | 2 | 0 | 6 |
+| halflings | halflings | 8 | 2 | 0 | 7 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
 
 ### Grave Robbers
@@ -920,7 +920,8 @@ Kept apart from a family's, the effect differing:
 
 - Alias (p1): "doubled-handed weapon" is our double-handed weapon.
 - Alias (p1): "rope and hook" is our rope & hook.
-- Flag (p1): The Adventurer list's names in brackets (Pairing Knife, Tenderiser, Meat Cleaver, Machete, Cooking Pot) carry the note "Halfling Cooks only": read as the Cook's own names for the Dagger, Mace/Hammer, Axe, Sword and Helmet, so nothing is imported for them. If they are lines only the Cook may buy, say so.
+- Flag (p1): The Adventurer list's names in brackets are the Halfling Cook's ("Halfling Cooks only"; William, 6 Nov 2026: "do we not add labels to his owning of those items? but yes all items that exist"): he buys from a list of his own, the Adventurer list with those five lines his. Three link our Halfling Cook items at the line's price: Tenderiser 3 gc, Cleaver shown as Meat Cleaver 5 gc, Cooking Pot Helmet shown as Cooking Pot 10 gc. We have no Pairing Knife or Machete, so those lines are the Dagger shown as Pairing Knife and the Sword shown as Machete. The other heroes keep the Adventurer list.
+- Flag (p1): Our Cooking Pot Helmet gives a Master Chef an unmodified 5+ save against being stunned; the Helmet the PDF pairs it with gives 4+. Linked as it is. Our Tenderiser (stuns on 2-4) and Cleaver (-1 to the armour save) do what the Mace/Hammer and Axe do. Our items' own prices (Cleaver 3 gc, Cooking Pot Helmet 8 gc) are not the line's; the line's is used.
 - Flag (p1): Hunting Arrows are 35 gc on the Adventurer list (the rulebook's are 25 gc): taken as printed.
 - Flag (p1): The Halflings' Ogre maximum profile (M6 WS5 BS4 S6 T6 W4 I5 A4 Ld7) is unlike our Ogre race's, so the Village Ogre takes a new race, Ogre (Halflings), with it.
 - Flag (p1): Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one.
@@ -935,7 +936,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): The warband is designed for the updated Blazing Saddles mounted rules (2002 Mordheim Annual) and says it is overcosted without them: a note, not imported.
 - Flag (p3): The Wolf Rat Mount (90 wt, Rare 11) has a profile (M9 WS3 BS0 S3(4) T3 W1 I4 A1 Ld4) and Poisoned Attack. Our mounts are bestiary animals, so the stub is a plain item with neither; it sits in a Special equipment list every fighter with a list buys from, as the snapshot's special equipment does.
 - Flag (p3): The Warplock Pistol is Rare 11, Skaven only, 35 wt (70 for a brace): linked to our Warplock pistol.
-- Flag (p4): Twistkin's mutation costs half the listed price: a Mutations upgrade list for Stormvermin at half each shared mutation's price; a 35 gc mutation's half (17.5) has no price, its note says so.
+- Flag (p4): Twistkin's mutation costs half the listed price: a Mutations upgrade list for Stormvermin at half each shared mutation's price, rounded up (William, 6 Nov 2026: "yes always round up in mordheim for gold"), so the 35 gc Tentacle and Spines are 18.
 - Flag (p5): Master Handler's starting skills (Ride Wolf Rat and one Beast Handling skill of the player's choice) are in his rule's text only: our templates give start skills only through a variant.
 - Flag (p6): It's Alive!: each Rat Ogre must buy a mutation when hired, but upgrades are for heroes only, so it is his rule's text and the player adds the mutation from Boons & Banes.
 - Flag (p6): The Rat Ogre's Stupidity depends on a Clan Moulder Hero within 6", unlike the Skaven's and Clan Pestilens' (a Skaven Hero): kept apart as Stupidity (Clan Moulder Rat Ogre).

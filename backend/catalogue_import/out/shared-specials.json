@@ -56,10 +56,12 @@
       "setting": null
     },
     {
-      "name": "Large Target",
+      "name": "Large",
       "type": "Trait",
-      "description": "The model is a Large Target as defined in the shooting rules.",
-      "aliases": [],
+      "description": "This unit is treated as a Large Target. They may always be shot at with ranged weapons with a +1 modifier to hit.",
+      "aliases": [
+        "Large Target"
+      ],
       "cost": null,
       "setting": null
     },

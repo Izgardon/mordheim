@@ -155,8 +155,10 @@ class SharedLookupTests(TestCase):
         again = BookLookups("Dramatis Persona").special({"name": "Hiring Fee", "description": "Again."}, "Johann the Knife")  # fmt: skip
         self.assertEqual(again, his)  # a second run finds his own
         large = BookLookups("Hired Sword").special({"name": "Large", "description": "Big."}, "Ogre Bodyguard")
+        target = BookLookups("Hired Sword").special({"name": "Large Target", "description": "Big."}, "Slave Master")
         assert large is not None
-        self.assertEqual((large.type, large.owner_kind), ("Trait", GENERAL))  # a general special still by name
+        self.assertEqual((large.type, large.owner_kind), ("Trait", GENERAL))
+        self.assertEqual(target, large)  # Large Target is Large (William, 6 Nov 2026: "yes same rule")
 
     def test_no_pain_is_one_rule_for_the_model_but_sigmunds_and_veskits_ignore_knocked_down_too(self):
         goliath = BookLookups("Hired Sword").special({"name": "No Pain", "description": "Bone Goliaths treat ..."}, "Bone Goliath")  # fmt: skip

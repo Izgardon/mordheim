@@ -206,7 +206,7 @@
     {"page": 1, "what": "The warband is designed for the updated Blazing Saddles mounted rules (2002 Mordheim Annual) and says it is overcosted without them: a note, not imported."},
     {"page": 3, "what": "The Wolf Rat Mount (90 wt, Rare 11) has a profile (M9 WS3 BS0 S3(4) T3 W1 I4 A1 Ld4) and Poisoned Attack. Our mounts are bestiary animals, so the stub is a plain item with neither; it sits in a Special equipment list every fighter with a list buys from, as the snapshot's special equipment does."},
     {"page": 3, "what": "The Warplock Pistol is Rare 11, Skaven only, 35 wt (70 for a brace): linked to our Warplock pistol."},
-    {"page": 4, "what": "Twistkin's mutation costs half the listed price: a Mutations upgrade list for Stormvermin at half each shared mutation's price; a 35 gc mutation's half (17.5) has no price, its note says so."},
+    {"page": 4, "what": "Twistkin's mutation costs half the listed price: a Mutations upgrade list for Stormvermin at half each shared mutation's price, rounded up (William, 6 Nov 2026: \"yes always round up in mordheim for gold\"), so the 35 gc Tentacle and Spines are 18."},
     {"page": 5, "what": "Master Handler's starting skills (Ride Wolf Rat and one Beast Handling skill of the player's choice) are in his rule's text only: our templates give start skills only through a variant."},
     {"page": 6, "what": "It's Alive!: each Rat Ogre must buy a mutation when hired, but upgrades are for heroes only, so it is his rule's text and the player adds the mutation from Boons & Banes."},
     {"page": 6, "what": "The Rat Ogre's Stupidity depends on a Clan Moulder Hero within 6\", unlike the Skaven's and Clan Pestilens' (a Skaven Hero): kept apart as Stupidity (Clan Moulder Rat Ogre)."},
