@@ -1166,6 +1166,11 @@
       "how": "overrides.json"
     },
     {
+      "name": "Virtue of Knightly Temper",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
       "name": "Virtue of Discipline (Grail Companions)",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1192,6 +1197,11 @@
     },
     {
       "name": "Survival of the Fittest",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Excellent Sight",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
@@ -1316,6 +1326,16 @@
       "how": "overrides.json"
     },
     {
+      "name": "Blessed by the Kami",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Scent Hound",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
       "name": "Sabre Trainer",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1416,7 +1436,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Infiltration (Wood Elves of Athel Loren)",
+      "name": "Seeker (Wood Elves of Athel Loren)",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     }

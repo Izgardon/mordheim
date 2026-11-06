@@ -150,6 +150,23 @@ class PdfCheckTests(SimpleTestCase):
             "skill group 'Zealots': no such group of ours", check_page("witch-hunters", page, CATALOGUE).problems
         )
 
+    def test_a_new_group_may_note_who_takes_its_shared_skills(self) -> None:
+        # William, 6 Nov 2026: a shared skill's "who may take it" is the group's note, as "Vampire only" is
+        page = good_page()
+        page["skillGroup"]["note"] = "Brave: the Captain only."
+        self.assertEqual(check_page("witch-hunters", page, CATALOGUE).problems, [])
+        page["skillGroup"]["note"] = "x" * 201
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            ["skill group 'Zealots': its note is over 200 characters"],
+        )
+        page["skillGroup"] = {"name": "Combat", "new": False, "note": "Brave: the Captain only."}
+        page["specialSkillsList"] = [{"name": "Brave", "ours": "Brave"}]
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            ["skill group 'Combat': only a new group takes a note"],
+        )
+
     def test_a_warband_with_no_special_column_has_no_skill_group(self) -> None:
         # the Outlaws of Stirwood Forest, Redux (PDF p2): no Special column, no special skills
         page = good_page()
@@ -240,6 +257,20 @@ class PdfImportTests(SimpleTestCase):
             },
             names,
         )
+
+    def test_a_group_notes_who_takes_its_shared_skills_and_a_skill_may_be_in_two_groups(self) -> None:
+        # William, 6 Nov 2026: the Ogre Hunting Party's race limits on our skills are its group's note, and
+        # Excellent Sight, kept apart from our Unblinking Eye ("keep both of those separate"), is the Druchii's and
+        # the Wood Elves' both
+        groups = {row["name"]: row for row in load_json(OUT / "skill-groups.json")}
+        self.assertEqual(
+            groups["Ogre Hunting Party"]["note"],
+            "Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration.",
+        )
+        for name in ("Druchii", "Wood Elves of Athel Loren"):
+            self.assertIn("Excellent Sight", groups[name]["skills"])
+        sight = [row for row in load_json(OUT / "skills.json") if row["name"] == "Excellent Sight"]
+        self.assertEqual(len(sight), 1)
 
     def test_clan_moulders_twistkin_sells_the_rulebooks_mutations_at_half_price(self) -> None:
         # the Twistkin skill (PDF p4): a Stormvermin buys one of the rulebook's mutations at half its listed cost

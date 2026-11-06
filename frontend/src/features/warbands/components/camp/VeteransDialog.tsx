@@ -228,7 +228,7 @@ export default function VeteransDialog({
           lines={[]}
           prices={{}}
           onPrice={() => undefined}
-          freeItem={fighter.free_item}
+          freeItems={fighter.free_items}
           gold={camp.gold}
         />
       ) : null}

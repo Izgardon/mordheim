@@ -34,9 +34,17 @@ check over every file.
 2. Write `<type-slug>.json` in this shape, its `warbandType` that slug. Name each line's item as we name it or as
    one of its tags (an alias for a spelling of the PDF's own), give each item we lack a stub with the page of its
    rules, and flag every doubt with its page; leave a number you can't read empty and flag it. Check each special
-   skill against all of ours, whatever its name: one that is ours word for word in effect links ours (William, 6 Nov
-   2026), and a "who may take it" line it loses becomes a warband rule. A warband with no Special column has no
-   `skillGroup` or `specialSkillsList`.
+   skill and item against all of ours, whatever its name (William, 6 Nov 2026: "keep checking for matching skills
+   and items, just ask me going forward"):
+   - both the name and the effect ours: link ours;
+   - the effect ours under another name: keep it apart (an item: the line links a stub of its own), and list it in
+     the vet file's decisions as a possible match;
+   - a line that shows our item under the PDF's name (`shown_as`, the Tanto as a Dagger) may stay linked, but list
+     it as a decision too.
+
+   Who of the warband may take a skill opens a new skill's description ("Gnoblars only."); a skill of ours is shared
+   with other warbands, so the group's `note` says it instead (at most 200 characters, shown when learning from the
+   group). Neither is a warband rule. A warband with no Special column has no `skillGroup` or `specialSkillsList`.
 3. A race of the warband's own goes in `apps/races/data/races.json` and `template_answers.RACES_BY_PAGE` (one
    fighter's, `RACES_BY_FIGHTER`); a rule that is a shared special but does something else is kept apart in
    `apps/special/data/shared-specials.json`; a pre-battle roll goes in `apps/special/data/prebattle-rolls.json`; a

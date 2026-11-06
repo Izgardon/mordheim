@@ -89,9 +89,9 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 39,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar and the Snotling
-                "Item": 368,  # the import's 337 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
+                "Item": 369,  # the import's 338 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
-                "Skill": 308,  # the import's 284 (one per name; three PDF skills link ours, William 6 Nov) + the 24 hired swords' own skills the book lacks
+                "Skill": 312,  # the import's 288 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 79,  # the import's 60 + a group of his own for each of 19 hired swords
                 "Spell": 221,  # 215 (the PDFs' Grail Magic, Dark Magic (Druchii), Charms and Hexes (Strigos), Dark Arts, Woodland Incantations, Snotling Waaagh! Magic) + the Dark Mage's six (BUG-54)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
@@ -166,7 +166,7 @@ class SeedAllTests(TestCase):
                 "TemplateFighter": 419,
                 "TemplateList": 160,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
                 "TemplateListItem": 1749,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 207,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                "TemplateRule": 204,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin)
                 "TemplateUpgrade": 77,
@@ -317,7 +317,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 284, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 288, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)
@@ -477,7 +477,7 @@ class SeedAllTests(TestCase):
         # and nine groups are new, each its warband type's alone
         infiltration = Skill.objects.get(name="Infiltration")
         held_by = set(infiltration.group_links.values_list("group__name", flat=True))
-        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party"})  # fmt: skip
+        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren"})  # fmt: skip
         self.assertTrue(infiltration.description.startswith("A warrior with this skill is always placed"))
         self.assertEqual(set(Skill.objects.get(name="Infiltration (Skink)").group_links.values_list("group__name", flat=True)), {"Skink"})  # fmt: skip
         self.assertTrue(Skill.objects.filter(name="Battle Tongue").exists())

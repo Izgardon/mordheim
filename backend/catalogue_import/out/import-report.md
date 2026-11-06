@@ -26,8 +26,8 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 366 |
-| skills | 284 |
+| price rows | 367 |
+| skills | 288 |
 | skill groups | 60 |
 | skill group links | 346 |
 | serious injuries (D66) | 20 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 284 | 153 | 91 | 40 |
+| skills | 288 | 153 | 95 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 284 skills, one per name; `out/skill-groups.json` is 60 groups holding them (346 links), the five core groups first.
+`out/skills.json` is 288 skills, one per name; `out/skill-groups.json` is 60 groups holding them (346 links), the five core groups first.
 
 ### Merged by name
 
@@ -378,15 +378,15 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Cavalry | everyone | intersection | - | Cavalry Commander, Trick Riding, Combat Riding, Evade, Running Dismount, Athletic Mount, Horse Archer, Mounted Combat Master |
 | Cursed Cavalcade | Cursed Cavalcade | new group | - | Noblesse Obliges, Torturer, Duelist |
 | Dark Elf | Dark Elves | skill_group_learners | - | Fury of Khaine, Powerful Build, Fey Quickness, Infiltration, Master of Poisons |
-| Druchii | Druchii | new group | - | Fey Quickness, Infiltration, Unblinking Eye, Fury of Khaine (Druchii), Master of Poisons (Druchii), Vraithen Master, Survival of the Fittest |
+| Druchii | Druchii | new group | - | Fey Quickness, Infiltration, Fury of Khaine (Druchii), Master of Poisons (Druchii), Vraithen Master, Survival of the Fittest, Excellent Sight |
 | Dwarf Exiled Engineers | Guild of Disgraced Engineers | skill_lists | - | True Grit, Thick Skull, Extra Tough, Tunneler, Tinkerer, Quick Thinker, Master Inventor |
 | Dwarf Rangers | Dwarf Rangers | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarf Troll Slayers | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Ferocious Charge, Monster Slayer, Berserker, Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Dwarves | Dwarf Treasure Hunters | skill_group_learners | - | Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull |
 | Forest Goblins | Forest Goblins (NC) | intersection | - | Animosity |
-| Grail Companions | Bretonnian Grail Companions | new group | - | Virtue of the Impetuous, Ferocious Charge, Virtue of Noble Disdain (Grail Companions), Virtue of Heroism, Virtue of Stoicism, Virtue of the Penitent, Virtue of the Ideal, Virtue of Audacity, Virtue of Purity (Grail Companions), Virtue of Duty, Virtue of the Joust, Virtue of Confidence, Virtue of Discipline (Grail Companions), Virtue of Empathy |
+| Grail Companions | Bretonnian Grail Companions | new group | - | Virtue of the Impetuous, Virtue of Noble Disdain (Grail Companions), Virtue of Heroism, Virtue of Stoicism, Virtue of the Penitent, Virtue of the Ideal, Virtue of Audacity, Virtue of Purity (Grail Companions), Virtue of Duty, Virtue of the Joust, Virtue of Confidence, Virtue of Knightly Temper, Virtue of Discipline (Grail Companions), Virtue of Empathy |
 | Grave Robber | Grave Robbers | intersection | - | Darkstalker, Instinctual Violence, De-animator, Hardy Constitution (Grave Robber), Body Dealer |
-| Halflings (MIC) | Halflings | new group | - | Stealthy, Quiet as a Mouse, Crude Belch (Halflings MIC), Wizened Halfling, Skilled Huntsman, Layers of Fat, Shifty |
+| Halflings (MIC) | Halflings | new group | Stealthy: the Halfling Thief only. | Stealthy, Quiet as a Mouse, Crude Belch (Halflings MIC), Wizened Halfling, Skilled Huntsman, Layers of Fat, Shifty |
 | Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump back, Sniper, Throw voice |
 | Horned Hunters | Horned Hunters | new group | - | Animal Friendship, Infiltration, Foul Odour, Hide in Shadows, Master Trapper, Pathfinder (Horned Hunters) |
 | Large Special | everyone, Large units only | skill_lists | - | Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip |
@@ -397,9 +397,9 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Militant Mootlanders | Militant Mootlanders | skill_group_learners | - | Crude Belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt |
 | Night Goblins | Night Goblins (WEB) | skill_group_learners | - | Hide in Shadows, Fungus Farmer, Infiltrate, Netter, Ride Squig, Sneaky Git |
 | Night Goblins (MIC) | Night Goblins (MIC) | new group | - | Infiltration, Sneaky Git, Netter, Ded Shooty |
-| Nipponese Expedition | Nipponese Expedition | new group | - | Extra Tough, Death before Dishonor, Night Fighter, Iaijutsu, Last Stand, Tea Ceremony |
+| Nipponese Expedition | Nipponese Expedition | new group | - | Death before Dishonor, Night Fighter, Iaijutsu, Last Stand, Tea Ceremony, Blessed by the Kami |
 | Norse | Norse Explorers (TC13), Norse Explorers (BTB) | intersection | - | Barbarian courage, Berserk charge, Battle Tongue, Shield master, Crushing blow |
-| Ogre Hunting Party | Ogre Hunting Party | new group | - | Crude Belch, Unblinking Eye, Maneater, Bull charge, Bellowing Roar (Ogres), Infiltration, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
+| Ogre Hunting Party | Ogre Hunting Party | new group | Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration. | Crude Belch, Maneater, Bull charge, Bellowing Roar (Ogres), Infiltration, Scent Hound, Sabre Trainer, Set Traps, Netter (Ogre Hunting Party) |
 | Ogres | Ogres (group) | skill_group_learners | - | Master of arms, Crude Belch, Maneater, Bull charge, Dog of war, Bellowing Roar (Ogres) |
 | Orcs | Orcs (group) | skill_group_learners | - | ’ard ’ead, Waaagh!, ’ere we go!, Da cunnin’ plan, Well ’ard, ’eadbasher, Proven warrior |
 | Ostlanders | Ostlanders | skill_group_learners | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |
@@ -422,11 +422,11 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Survivors of Strigos | Survivors of Strigos | new group | - | Iron Sinews, Great Thirster, Curse of the Revenant, Dark Arts, Light Fingers, Practiced Arm |
 | Tomb Robbers | Arabian Tomb Raiders | intersection | - | Sand worm, Hit and run, Weather tolerant |
 | Undead Vampires | Undead | skill_lists | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
-| Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Unblinking Eye, Resource Hunter, Elven Luck, Infiltration (Wood Elves of Athel Loren) |
+| Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves of Athel Loren) |
 
 ### New groups and skills (`new_skill_groups`)
 
-85 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+89 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -464,12 +464,14 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Virtue of Duty | Grail Companions | mordheim-2a | WEB |
 | Virtue of the Joust | Grail Companions | mordheim-2a | WEB |
 | Virtue of Confidence | Grail Companions | mordheim-2a | WEB |
+| Virtue of Knightly Temper | Grail Companions | mordheim-2a | WEB |
 | Virtue of Discipline (Grail Companions) | Grail Companions | mordheim-2a | WEB |
 | Virtue of Empathy | Grail Companions | mordheim-2a | WEB |
 | Fury of Khaine (Druchii) | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Master of Poisons (Druchii) | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Vraithen Master | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Survival of the Fittest | Druchii | mordheim-2a | Mordheimer's Information Centre |
+| Excellent Sight | Druchii | mordheim-2a | Mordheimer's Information Centre |
 | Deathwish | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
 | Monster Slayer (Slayer Cult) | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
 | Berserker (Slayer Cult) | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
@@ -494,6 +496,8 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Iaijutsu | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
 | Last Stand | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
 | Tea Ceremony | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
+| Blessed by the Kami | Nipponese Expedition | mordheim-2a | Nicholas ‘Jiro’ Ceccarani |
+| Scent Hound | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Sabre Trainer | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Set Traps | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Netter (Ogre Hunting Party) | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
@@ -514,7 +518,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Light Fingers | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Practiced Arm | Survivors of Strigos | sylvania | Sylvania Supplement |
 | Elven Luck | Wood Elves of Athel Loren | mordheim-2a | WEB |
-| Infiltration (Wood Elves of Athel Loren) | Wood Elves of Athel Loren | mordheim-2a | WEB |
+| Seeker (Wood Elves of Athel Loren) | Wood Elves of Athel Loren | mordheim-2a | WEB |
 
 mordheimer also lists Combat Master for Dwarf Rangers; left out of the group.
 mordheimer also lists Ferocious Charge for Dwarf Rangers; left out of the group.
@@ -531,28 +535,24 @@ mordheimer also lists Berserker for Slayer Cult; left out of the group.
 mordheimer also lists Crude Belch for Halflings (MIC); left out of the group.
 mordheimer also lists Bellowing Roar for Ogre Hunting Party; left out of the group.
 mordheimer also lists Netter for Ogre Hunting Party; left out of the group.
-mordheimer also lists Scent Hound for Ogre Hunting Party; left out of the group.
 mordheimer also lists Achilles’ Heel for Snotlings; left out of the group.
-mordheimer also lists Infiltration for Wood Elves of Athel Loren; left out of the group.
-mordheimer also lists Excellent Sight for Wood Elves of Athel Loren; left out of the group.
 mordheimer also lists Seeker for Wood Elves of Athel Loren; left out of the group.
 
 Our skills the new groups hold, whose learners change (a skill is learnable by whoever has a group holding it):
 
 | Skill | Before (its rows' who-can) | Now (its groups) |
 | --- | --- | --- |
-| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Nipponese Expedition, Guild of Disgraced Engineers |
-| Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Wood Elves of Athel Loren |
+| Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
+| Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs |
 | True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult, Guild of Disgraced Engineers |
 | Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
-| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Ogre Hunting Party, Metal Mongers, Sea Ghosts |
+| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Metal Mongers, Sea Ghosts |
 | Foul Odour | Ostlanders | Ostlanders, Horned Hunters |
 | Hide in Shadows | Hochland Bandits, Shadow Warriors, Night Goblins (WEB) | Hochland Bandits, Horned Hunters, Shadow Warriors, Night Goblins (WEB), Sea Ghosts |
 | Sneaky Git | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Netter | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Virtue of the Impetuous | Bretonnian Knights | Bretonnian Knights, Bretonnian Grail Companions |
-| Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Bretonnian Grail Companions, Dwarf Slayer Cult |
-| Unblinking Eye | Metal Mongers | Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Metal Mongers |
+| Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayer Cult |
 | Stealthy | Halflings | Halflings, Low Kings, Militant Mootlanders |
 | Crude Belch | Maneaters, Ogre Hunting Party | Maneaters, Ogre Hunting Party, Militant Mootlanders |
 | Maneater | Ogre Hunting Party | Maneaters, Ogre Hunting Party |
@@ -598,7 +598,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | henchmen that can't be promoted | 76 |
 | equipment lists | 160 |
 | list lines | 1749 |
-| warband rules | 207 |
+| warband rules | 204 |
 | upgrades | 77 |
 | the templates' own specials | 515 |
 
@@ -1000,7 +1000,7 @@ Kept apart from a family's, the effect differing:
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
-| snotlings | snotlings | 8 | 2 | 2 | 10 |
+| snotlings | snotlings | 8 | 1 | 3 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
 | wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
 
@@ -1020,7 +1020,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): Lord's Boon's choice is printed "1 set of barding, light armor and holy shield, or heavy armor" (Grail Knight) and "1 free warhorse, suit of light armor and holy shield, or heavy armor" (Knights of the Realm): which items go together is unclear, so the texts keep the PDF's grouping. Text only; the player adds the items free.
 - Flag (p4): Fearsome ("This model causes Fear") links our shared Fear.
 - Flag (p5): The Damsel casts Grail Magic (p9), a new lore of six spells in spells.json; Virtuous gives no Special list to her (the skill table ticks none).
-- Flag (p6): The Knight Virtues are the Special skills, a new group Grail Companions; rolled on 3D6 (the table is a warband rule). Virtue of Noble Disdain, Purity and Discipline do other things than the Bretonnian Knights' virtues of those names, so they are named apart; Virtue of the Impetuous Knight (+1D3 to his charge) is our Virtue of the Impetuous (+D3" when charging), and Virtue of Knightly Temper (double attacks on the charge at -1 to hit) our Ferocious Charge, word for word in effect (William, 6 Nov 2026: "if the skills already exist word for word i dont care about the name but just keep the one variant").
+- Flag (p6): The Knight Virtues are the Special skills, a new group Grail Companions; rolled on 3D6 (the table is a warband rule). Virtue of Noble Disdain, Purity and Discipline do other things than the Bretonnian Knights' virtues of those names, so they are named apart. Virtue of the Impetuous Knight (+1D3 to his charge) is our Virtue of the Impetuous (+D3" when charging), the same idea by name. Virtue of Knightly Temper (double attacks on the charge at -1 to hit) does what our Ferocious Charge does, but is kept apart (William, 6 Nov 2026: "for Knightly Temper and Excellent sight keep both of those separate as they have a name that inspires a different idea behind it").
 - Flag (p7): Hedge Knights are henchmen who may become Heroes; Battle Pilgrims and Hunters never may (Commoner). No group sizes are printed: left open.
 - Flag (p8): The Grail Reliquae gains no experience; its race is the construct creature type (no maximum), as it isn't a living warrior. Its rule Holy Shield shares the item's name but is its own 5+ save. Large is our shared Large. Honored Dead, printed for it too, is the Grail Knight's rule only (one wording), as it is how a Grail Knight becomes one.
 
@@ -1037,7 +1037,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Beastlash links our Beastlash at the list's 10 gc (the PDF prices it 10+D6, Rare 8).
 - Flag (p6): Slavehounds come only with a Beastmaster (0-3, "if it also includes a Beastmaster"): our counts can't tie one fighter's to another's, so it is said in their Animals rule.
 - Flag (p8): The PDF's Sea Dragon Cloak gives +2 to the save against shooting (5+ with none) and +1 in close combat (6+ with none); ours gives a 5+ save in close combat and 4+ against missiles. Linked to ours as it is.
-- Flag (p8): The special skills are a new group, Druchii. Fey Quickness and Infiltration ("identical to the Skaven skill") are ours, and Excellent Sight (hidden enemies spotted at twice his Initiative in inches) is our Unblinking Eye, word for word in effect (William, 6 Nov 2026: "if the skills already exist word for word i dont care about the name but just keep the one variant"). Fury of Khaine (ours adds no follow-up in the opponent's turn) and Master of Poisons (ours makes D3-1 doses, the PDF D2) are named apart. The blackletter heading reads "Vraithen Master", taken as printed.
+- Flag (p8): The special skills are a new group, Druchii. Fey Quickness and Infiltration ("identical to the Skaven skill") are ours. Excellent Sight (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, but is kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); it is one skill with the Wood Elves' Excellent Sight. Fury of Khaine (ours adds no follow-up in the opponent's turn) and Master of Poisons (ours makes D3-1 doses, the PDF D2) are named apart. The blackletter heading reads "Vraithen Master", taken as printed.
 - Flag (p9): Dark Magic differs from our Dark Elf Magic (Doombolt is Difficulty 8, ours 9; Deathspasm 9, ours 10; spell 4 is Black Blade of Khaine, ours Flamesword), so it is a new lore, Dark Magic (Druchii), in spells.json.
 
 ### Dwarf Slayer Cult
@@ -1081,7 +1081,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): The Halflings' Ogre maximum profile (M6 WS5 BS4 S6 T6 W4 I5 A4 Ld7) is unlike our Ogre race's, so the Village Ogre takes a new race, Ogre (Halflings), with it.
 - Flag (p1): Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one.
 - Flag (p1): A Halfling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
-- Flag (p4): The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch is named apart from the Mootlanders' (theirs gives -1 to hit for the turn, not a lost first attack). Its Stealthy is the Mootlanders' Stealthy word for word in effect, so it links ours (William, 6 Nov 2026: "if the skills already exist word for word i dont care about the name but just keep the one variant"); the PDF heading's "Halfling Thieves Only" is a warband rule, Special Skills.
+- Flag (p4): The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch is named apart from the Mootlanders' (theirs gives -1 to hit for the turn, not a lost first attack). Its Stealthy is the Mootlanders' Stealthy, name and effect, so it links ours; our Stealthy being shared, the PDF heading's "Halfling Thieves Only" is the group's note.
 
 ### Masters of Horror
 
@@ -1113,7 +1113,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): A Nippon warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p1): No maximum profile is printed, so every warrior takes our Human race.
 - Flag (p2): Page 2 is a scan with no text layer, read from the page image: the skill chart (Hatamoto all six; Vim-To Mage Academic, Speed, Special; Shinobi Combat, Shooting, Speed, Special; Retainer Combat, Shooting, Strength, Special) and the special skills.
-- Flag (p2): The special skills are a new group, Nipponese Expedition. Blessed by the Kami (re-roll the Heroes Serious Injury roll once, the second result stands) is our Extra Tough, word for word in effect.
+- Flag (p2): The special skills are a new group, Nipponese Expedition. Blessed by the Kami (re-roll the Heroes Serious Injury roll once, the second result stands) does what our Extra Tough does, under another name, so it is kept apart, a possible match for William.
 - Flag (p3): Four stubs, their rules on p3: Kanabo (Common, 15 gc; S+1, Two-Handed, Concussion), Sashimono (Common, 15 gc; re-roll Leadership tests other than Rout), Horo (Rare 6, 10 gc; +1 armour save against shooting while mounted) and Kusarigama (Rare 8, 20 gc; Two-Handed, Cannot be parried, Chain Strike). The text layer puts the Kanabo's special rules under the Horo.
 - Flag (p4): The Sashimono is 15 gc on the Warrior and Noble lists and 20 gc on the Warrior Monk list: each as printed. The Katana links our Dragon Sword by its tag (the PDF gives it no rules).
 - Flag (p4): The Noble list is the Warrior list plus its own lines, so it repeats the Warrior list's lines. The Ashigaru and Onnabushi buy from the Warrior list ("the Nippon equipment list").
@@ -1135,7 +1135,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Ogre Hunter's Sabre Trainer and the Trappers' Veteran Tracker are skills they start with: templates give no starting skills, so they are rules, and the player adds the Trapper's skill.
 - Flag (p4): No group sizes are printed: left open.
 - Flag (p5): Sharp Stuff (1st free, then 3 gc, Common, Gnoblars only; range 8", S2, No Limit, Thrown Weapon, +1 armour save, Stuff Thrower) and the Pigback Mount (50 gc, Common, Gnoblar Heroes only; M5 WS2 BS- S2 T- W1 I3 A1 Ld5, Like a Mount, Not Like a Mount, Extra Hand) are stubs, their rules on p5.
-- Flag (p6): The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); Scent Hound (hidden enemies spotted at twice his Initiative in inches) is our Unblinking Eye. Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game. Which race may take which skill is a warband rule.
+- Flag (p6): The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); being shared, which race may take them is the group's note, while Set Traps and Netter open with "Gnoblars only". Scent Hound (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, under another name, so it is kept apart, a possible match for William. Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game.
 
 ### Outlaws of Stirwood Forest, Redux
 
@@ -1163,9 +1163,9 @@ Kept apart from a family's, the effect differing:
 ### Snotlings
 
 - Alias (p3): "light armor" is our light armour.
-- Alias (p9): "power squig" is our familiar.
 - Stub: Pebble, 0 gc, Common; its rules are on p9.
 - Stub: Slingshot, 2 gc, Common; its rules are on p9.
+- Stub: Power Squig, 20+1D6 gc, Rare 8; its rules are on p9.
 - Flag (p2): A Snotling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p2): The Bullied Goblin's maximum is our Goblin's. We have no Snotling race: the Snot maximum (M4 WS4 BS4 S3 T3 W2 I9 A4 Ld6) is a new race, Snotling.
 - Flag (p2): The skill table is an image (read from the page image): Bullied Goblin Combat, Shooting, Speed, Special; BigSnotz Combat, Speed, Special; Scout Shooting, Speed, Special; Shaman Speed, Special. The Shaman has no Academic tick.
@@ -1173,7 +1173,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Leader rule says "within 6" of the Chieftain": read as the Bullied Goblin, who leads. The Rigors of Leadership says "+2 experience for surviving a battle", not whether that replaces the usual +1: kept as printed.
 - Flag (p7): The Wheelo's Movement is "Special" (D6" walking, 2D6" running or charging): its profile's M is D6. It is a machine, so it takes no race. Its group is 1, as there may be only one.
 - Flag (p9): Runts come in groups of any size; the other henchmen's group sizes are not printed: left open.
-- Flag (p9): The Pebble (free, Snotling warband only; range 6", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) and the Slingshot (2 gc, Common, Snotling warband only; range 18", S2, fire twice at half range) are stubs, their rules on p9. The Power Squig (20+D6 gc, Rare 8) "acts exactly the same as a Familiar": it links our Familiar, as special equipment for the Shaman.
+- Flag (p9): The Pebble (free, Snotling warband only; range 6", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) and the Slingshot (2 gc, Common, Snotling warband only; range 18", S2, fire twice at half range) are stubs, their rules on p9. The Power Squig (20+D6 gc, Rare 8, special equipment for the Shaman) "acts exactly the same as a Familiar", but by another name, so it is a stub of its own, a possible match for our Familiar (William, 6 Nov 2026: "keep checking for matching skills and items, just ask me going forward").
 - Flag (p10): The special skills are a new group, Snotlings; none is one of ours.
 - Flag (p11): Snotling Waaagh! Magic is a new lore (ours, Waaagh! Magic, is the Orcs' and has other spells). Pebbles of Doom says "any friendly Hero within 6"" without saying one or all: kept as printed.
 
@@ -1207,5 +1207,5 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): Elven Runestones (50+2D6 gc, Rare 11, Forest Mage only) and the Familiar (20+D6 gc, Rare 8, spell-users only) are on no list: they are special equipment, both ours, the Forest Mage's (the only spell-user).
 - Flag (p3): The Leader rule says "within 6" of the Protector of the Hunt": read as the Hunt Master, who leads.
 - Flag (p4): "Bought in groups of 1-5" stands over the henchmen: Deepwood Scouts and Glade Guard come in groups of 1-5.
-- Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey is our Fey; Excellent Sight is our Unblinking Eye (and also a warband rule for every Elf); Seeker is our Resource Hunter, word for word in effect, its "only one Elven Hero" a warband rule. Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one), and so is Infiltration (theirs has no 12" limit).
+- Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: "match it to ours drop theirs"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); Seeker's "only one Elven Hero" opens its description, and it is named Seeker (Wood Elves of Athel Loren), as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: "separate yes").
 - Flag (p5): Woodland Incantations is a new lore. Lyrics of Feral Infatuation gives no range or duration, and Song of the Sun names no test ("must make a test"): both are kept as printed.

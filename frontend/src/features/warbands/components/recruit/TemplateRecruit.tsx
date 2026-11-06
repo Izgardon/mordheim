@@ -41,7 +41,7 @@ export type TemplateHire = {
  * The rest of a hire once Recruit as picked a template fighter: his name (a group's models,
  * warning past its size), the kit from his lists, a hero's upgrades (before and after the first
  * battle: the book sells them on recruitment), and the tally. The server fills his type,
- * race, profile, skills, spells, rules and starting XP, and gives the free dagger.
+ * race, profile, skills, spells, rules and starting XP, and gives the "1st free" items.
  */
 export default function TemplateRecruit({
   fighter,
@@ -156,7 +156,7 @@ export default function TemplateRecruit({
         lines={lines}
         prices={prices}
         onPrice={(key, value) => setPrices({ ...prices, [key]: value })}
-        freeItem={fighter.free_item}
+        freeItems={fighter.free_items}
         upgrades={bought.picks}
         onUpgradePrice={bought.setPrice}
         gold={gold}

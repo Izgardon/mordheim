@@ -10,8 +10,7 @@
   "specialRules": [
     {"rulename": "Greenskins", "ruleFull": "Gnoblars count as Greenskins. They don't suffer Animosity; Gnoblar henchmen Bicker instead."},
     {"rulename": "Ideas Above Their Station", "ruleFull": "If the Ogre Hunter is killed, the Gnoblar with the highest Leadership becomes the leader (on a tie, the one with the most experience). A new Ogre Hunter may be bought, and he becomes the leader."},
-    {"rulename": "Distasteful Company", "ruleFull": "The warband may hire only a Hobgoblin Scout, a Gnoblar Botcher or a Ninja Gnoblar. While it has no Ogre Hunter it may also hire an Ogre Bodyguard and an Ogre Slaver; if it hires an Ogre Hunter again, every other Ogre leaves."},
-    {"rulename": "Special Skills", "ruleFull": "Ogres and Gnoblars may take the Ogre Hunting Party skills, but never a skill kept for the other race. Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Set Traps, Infiltration, Netter."}
+    {"rulename": "Distasteful Company", "ruleFull": "The warband may hire only a Hobgoblin Scout, a Gnoblar Botcher or a Ninja Gnoblar. While it has no Ogre Hunter it may also hire an Ogre Bodyguard and an Ogre Slaver; if it hires an Ogre Hunter again, every other Ogre leaves."}
   ],
   "equipmentLists": [
     {
@@ -168,10 +167,10 @@
       ]
     }
   ],
-  "skillGroup": {"name": "Ogre Hunting Party", "new": true},
+  "skillGroup": {"name": "Ogre Hunting Party", "new": true, "note": "Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration."},
   "specialSkillsList": [
     {"name": "Crude Belch", "ours": "Crude Belch"},
-    {"name": "Scent Hound", "ours": "Unblinking Eye"},
+    {"name": "Scent Hound", "description": "The Hero spots hidden enemies from twice his Initiative in inches."},
     {"name": "Sabre Trainer", "description": "When a Sabretusk Cub that started the turn within 6\" of this Hero rolls a 1 for Untamed, you may move it 3D6\" towards any model within 12\" of it that it can see, instead of the nearest."},
     {"name": "Maneater", "ours": "Maneater"},
     {"name": "Bull Charge", "ours": "Bull charge"},
@@ -198,6 +197,6 @@
     {"page": 3, "what": "The Ogre Hunter's Sabre Trainer and the Trappers' Veteran Tracker are skills they start with: templates give no starting skills, so they are rules, and the player adds the Trapper's skill."},
     {"page": 4, "what": "No group sizes are printed: left open."},
     {"page": 5, "what": "Sharp Stuff (1st free, then 3 gc, Common, Gnoblars only; range 8\", S2, No Limit, Thrown Weapon, +1 armour save, Stuff Thrower) and the Pigback Mount (50 gc, Common, Gnoblar Heroes only; M5 WS2 BS- S2 T- W1 I3 A1 Ld5, Like a Mount, Not Like a Mount, Extra Hand) are stubs, their rules on p5."},
-    {"page": 6, "what": "The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); Scent Hound (hidden enemies spotted at twice his Initiative in inches) is our Unblinking Eye. Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game. Which race may take which skill is a warband rule."}
+    {"page": 6, "what": "The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); being shared, which race may take them is the group's note, while Set Traps and Netter open with \"Gnoblars only\". Scent Hound (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, under another name, so it is kept apart, a possible match for William. Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game."}
   ]
 }

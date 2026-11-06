@@ -1,14 +1,15 @@
 """The skill groups our rows lack (phase 1a, overrides.json ``new_skill_groups``) and the build of every group.
 
 A new group is open to its warband type only (``type``), or to the types it names (``types``; a list that is exactly a
-group's members is stored as that group). Its skills are ours by name (``skills``) and new ones (``new_skills``,
-title-cased; ``{"name", "rule"}`` names a new skill apart from the mordheimer skill whose rules it takes, "Pathfinder
-(Horned Hunters)") whose rules come from mordheimer's ``Rules`` (the entry naming the group's warband) or from a source
-file in ``sources/`` (``source``), each given a setting the way our rows are (assignments.py: mordheimer's for its
-name, else overrides.json's ``setting_assignments`` by "Name (Group)", else Mordheim's). A new name that a skill we have
-already holds (one of ours, or a hired sword's or dramatis persona's own special skill, which their seeder makes) is
-left out of the group and reported, never merged. mordheimer skills naming the group's warband that the group leaves
-out are reported too.
+group's members is stored as that group), with the note shown when learning from it (``note``: who of the warband may
+take its shared skills, "Gnoblars only: Infiltration"). Its skills are ours by name (``skills``) and new ones
+(``new_skills``, title-cased; ``{"name", "rule"}`` names a new skill apart from the mordheimer skill whose rules it
+takes, "Pathfinder (Horned Hunters)") whose rules come from mordheimer's ``Rules`` (the entry naming the group's
+warband) or from a source file in ``sources/`` (``source``), each given a setting the way our rows are (assignments.py:
+mordheimer's for its name, else overrides.json's ``setting_assignments`` by "Name (Group)", else Mordheim's). A new
+name that a skill we have already holds (one of ours, or a hired sword's or dramatis persona's own special skill, which
+their seeder makes) is left out of the group and reported, never merged. mordheimer skills naming the group's warband
+that the group leaves out are reported too.
 """
 
 from collections.abc import Callable
@@ -102,7 +103,7 @@ class NewGroups:
                     "name": name,
                     **self.build.access_of(frozenset(slugs)),
                     "large_only": False,
-                    "note": "",
+                    "note": str(decision.get("note") or ""),
                     "how": "new group",
                     "skills": skills,
                 }

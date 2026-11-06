@@ -9,10 +9,6 @@
   },
   "specialRules": [
     {
-      "rulename": "Special Skills",
-      "ruleFull": "Only the Halfling Thief may take Stealthy."
-    },
-    {
       "rulename": "Pretty Much Human",
       "ruleFull": "The warband may hire any hired sword that human mercenaries may hire."
     },
@@ -238,7 +234,7 @@
       ]
     }
   ],
-  "skillGroup": {"name": "Halflings (MIC)", "new": true},
+  "skillGroup": {"name": "Halflings (MIC)", "new": true, "note": "Stealthy: the Halfling Thief only."},
   "specialSkillsList": [
     {"name": "Quiet as a Mouse", "description": "While this Halfling is hidden, an enemy trying to spot him uses half his Initiative in inches, rounded down."},
     {"name": "Crude Belch (Halflings MIC)", "pdfName": "Crude Belch", "description": "In the first round of a hand-to-hand combat the Halfling may belch over every enemy in base contact with him. Each must take a Leadership test, and one who fails misses his first attack, even if he has only one."},
@@ -260,6 +256,6 @@
     {"page": 1, "what": "The Halflings' Ogre maximum profile (M6 WS5 BS4 S6 T6 W4 I5 A4 Ld7) is unlike our Ogre race's, so the Village Ogre takes a new race, Ogre (Halflings), with it."},
     {"page": 1, "what": "Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one."},
     {"page": 1, "what": "A Halfling warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
-    {"page": 4, "what": "The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch is named apart from the Mootlanders' (theirs gives -1 to hit for the turn, not a lost first attack). Its Stealthy is the Mootlanders' Stealthy word for word in effect, so it links ours (William, 6 Nov 2026: \"if the skills already exist word for word i dont care about the name but just keep the one variant\"); the PDF heading's \"Halfling Thieves Only\" is a warband rule, Special Skills."}
+    {"page": 4, "what": "The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch is named apart from the Mootlanders' (theirs gives -1 to hit for the turn, not a lost first attack). Its Stealthy is the Mootlanders' Stealthy, name and effect, so it links ours; our Stealthy being shared, the PDF heading's \"Halfling Thieves Only\" is the group's note."}
   ]
 }

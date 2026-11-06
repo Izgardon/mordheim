@@ -34,7 +34,7 @@ const ROW = "flex min-h-9 items-center gap-2.5 border-t border-line py-1 first:b
 
 /**
  * What the hire costs, as the store's basket tallies it: his cost (each member's, for a group),
- * each item picked at its price, each upgrade picked (a hero's) and the free dagger. Every price
+ * each item picked at its price, each upgrade picked (a hero's) and the "1st free" items. Every price
  * can be changed; the total and the gold left follow, and the server writes what the tally says.
  */
 export default function HireTally({
@@ -46,7 +46,7 @@ export default function HireTally({
   lines,
   prices,
   onPrice,
-  freeItem,
+  freeItems,
   gold,
   upgrades = [],
   onUpgradePrice,
@@ -61,7 +61,8 @@ export default function HireTally({
   lines: TemplateLine[];
   prices: Record<string, string>;
   onPrice: (key: string, value: string) => void;
-  freeItem: { id: number; name: string } | null;
+  /** One of each item his lists mark "1st free" (the Dagger, Sharp Stuff). */
+  freeItems: { id: number; name: string }[];
   gold: number;
   /** A hero's upgrades picked, each at its price (the second and later of a group at double). */
   upgrades?: UpgradePick[];
@@ -122,15 +123,15 @@ export default function HireTally({
             ) : null}
           </li>
         ))}
-        {freeItem ? (
-          <li className={ROW}>
+        {freeItems.map((item) => (
+          <li key={`free-${item.id}`} className={ROW}>
             <span className="flex-1 text-[13px] text-ink">
-              {freeItem.name}
+              {item.name}
               {each ? ` ×${members}` : ""}
             </span>
             <span className="text-xs font-semibold text-good">free</span>
           </li>
-        ) : null}
+        ))}
       </ul>
       <p className="m-0 flex flex-wrap items-baseline gap-x-3 border-t border-line pt-2 text-[13px] text-text2">
         <span>

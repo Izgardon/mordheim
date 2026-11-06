@@ -300,11 +300,11 @@
     "skills": [
       "Fey Quickness",
       "Infiltration",
-      "Unblinking Eye",
       "Fury of Khaine (Druchii)",
       "Master of Poisons (Druchii)",
       "Vraithen Master",
-      "Survival of the Fittest"
+      "Survival of the Fittest",
+      "Excellent Sight"
     ]
   },
   {
@@ -433,7 +433,6 @@
     "how": "new group",
     "skills": [
       "Virtue of the Impetuous",
-      "Ferocious Charge",
       "Virtue of Noble Disdain (Grail Companions)",
       "Virtue of Heroism",
       "Virtue of Stoicism",
@@ -444,6 +443,7 @@
       "Virtue of Duty",
       "Virtue of the Joust",
       "Virtue of Confidence",
+      "Virtue of Knightly Temper",
       "Virtue of Discipline (Grail Companions)",
       "Virtue of Empathy"
     ]
@@ -478,7 +478,7 @@
       }
     ],
     "large_only": false,
-    "note": "",
+    "note": "Stealthy: the Halfling Thief only.",
     "how": "new group",
     "skills": [
       "Stealthy",
@@ -700,12 +700,12 @@
     "note": "",
     "how": "new group",
     "skills": [
-      "Extra Tough",
       "Death before Dishonor",
       "Night Fighter",
       "Iaijutsu",
       "Last Stand",
-      "Tea Ceremony"
+      "Tea Ceremony",
+      "Blessed by the Kami"
     ]
   },
   {
@@ -742,15 +742,15 @@
       }
     ],
     "large_only": false,
-    "note": "",
+    "note": "Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Infiltration.",
     "how": "new group",
     "skills": [
       "Crude Belch",
-      "Unblinking Eye",
       "Maneater",
       "Bull charge",
       "Bellowing Roar (Ogres)",
       "Infiltration",
+      "Scent Hound",
       "Sabre Trainer",
       "Set Traps",
       "Netter (Ogre Hunting Party)"
@@ -1219,10 +1219,10 @@
     "how": "new group",
     "skills": [
       "Fey",
-      "Unblinking Eye",
-      "Resource Hunter",
+      "Infiltration",
       "Elven Luck",
-      "Infiltration (Wood Elves of Athel Loren)"
+      "Excellent Sight",
+      "Seeker (Wood Elves of Athel Loren)"
     ]
   }
 ]

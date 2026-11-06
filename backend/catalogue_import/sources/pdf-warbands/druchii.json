@@ -239,7 +239,7 @@
     {"name": "Master of Poisons (Druchii)", "pdfName": "Master of Poisons", "description": "If the Hero doesn't search for rare items he may make D2 doses of Dark Venom instead. It must be used in the next battle and can't be sold or traded to other warbands."},
     {"name": "Vraithen Master", "description": "The Hero ignores the long range penalty with any crossbow-type weapon. If he didn't move this turn he may shoot a repeater crossbow twice with no penalty, or three times at -1 to hit."},
     {"name": "Survival of the Fittest", "description": "When the Hero's Serious Injury roll is a death, he takes a Leadership test on his unmodified Leadership (no holy relics or other help). If he passes, he survives but misses the next D3 battles."},
-    {"name": "Excellent Sight", "ours": "Unblinking Eye"}
+    {"name": "Excellent Sight", "description": "The Hero spots hidden enemies from twice his Initiative in inches."}
   ],
   "aliases": [],
   "stubs": [
@@ -256,7 +256,7 @@
     {"page": 3, "what": "The Beastlash links our Beastlash at the list's 10 gc (the PDF prices it 10+D6, Rare 8)."},
     {"page": 6, "what": "Slavehounds come only with a Beastmaster (0-3, \"if it also includes a Beastmaster\"): our counts can't tie one fighter's to another's, so it is said in their Animals rule."},
     {"page": 8, "what": "The PDF's Sea Dragon Cloak gives +2 to the save against shooting (5+ with none) and +1 in close combat (6+ with none); ours gives a 5+ save in close combat and 4+ against missiles. Linked to ours as it is."},
-    {"page": 8, "what": "The special skills are a new group, Druchii. Fey Quickness and Infiltration (\"identical to the Skaven skill\") are ours, and Excellent Sight (hidden enemies spotted at twice his Initiative in inches) is our Unblinking Eye, word for word in effect (William, 6 Nov 2026: \"if the skills already exist word for word i dont care about the name but just keep the one variant\"). Fury of Khaine (ours adds no follow-up in the opponent's turn) and Master of Poisons (ours makes D3-1 doses, the PDF D2) are named apart. The blackletter heading reads \"Vraithen Master\", taken as printed."},
+    {"page": 8, "what": "The special skills are a new group, Druchii. Fey Quickness and Infiltration (\"identical to the Skaven skill\") are ours. Excellent Sight (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, but is kept apart (William, 6 Nov 2026: \"keep both of those separate as they have a name that inspires a different idea behind it\"); it is one skill with the Wood Elves' Excellent Sight. Fury of Khaine (ours adds no follow-up in the opponent's turn) and Master of Poisons (ours makes D3-1 doses, the PDF D2) are named apart. The blackletter heading reads \"Vraithen Master\", taken as printed."},
     {"page": 9, "what": "Dark Magic differs from our Dark Elf Magic (Doombolt is Difficulty 8, ours 9; Deathspasm 9, ours 10; spell 4 is Black Blade of Khaine, ours Flamesword), so it is a new lore, Dark Magic (Druchii), in spells.json."}
   ]
 }

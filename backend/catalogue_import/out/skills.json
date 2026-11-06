@@ -932,6 +932,10 @@
     "description": "The knight may re-roll failed rolls to hit against enemy models with a higher Toughness than his."
   },
   {
+    "name": "Virtue of Knightly Temper",
+    "description": "In a turn he charges the knight may double his attacks, at -1 to hit."
+  },
+  {
     "name": "Virtue of Discipline (Grail Companions)",
     "description": "The knight treats a stunned result on the Injury chart as knocked down."
   },
@@ -954,6 +958,10 @@
   {
     "name": "Survival of the Fittest",
     "description": "When the Hero's Serious Injury roll is a death, he takes a Leadership test on his unmodified Leadership (no holy relics or other help). If he passes, he survives but misses the next D3 battles."
+  },
+  {
+    "name": "Excellent Sight",
+    "description": "The Hero spots hidden enemies from twice his Initiative in inches."
   },
   {
     "name": "Deathwish",
@@ -1052,6 +1060,14 @@
     "description": "After a battle in which this Hero survived and wasn't taken out of action, he may skip searching for rare items and spend 10 gc to choose another Hero and roll a D6: on a 3+ that Hero gains 1 experience."
   },
   {
+    "name": "Blessed by the Kami",
+    "description": "After a game in which this Hero was taken out of action, he may re-roll his roll on the Heroes Serious Injury chart once. The second roll stands, even if it is worse."
+  },
+  {
+    "name": "Scent Hound",
+    "description": "The Hero spots hidden enemies from twice his Initiative in inches."
+  },
+  {
     "name": "Sabre Trainer",
     "description": "When a Sabretusk Cub that started the turn within 6\" of this Hero rolls a 1 for Untamed, you may move it 3D6\" towards any model within 12\" of it that it can see, instead of the nearest."
   },
@@ -1132,7 +1148,7 @@
     "description": "Once per game the Wood Elf may re-roll any failed roll."
   },
   {
-    "name": "Infiltration (Wood Elves of Athel Loren)",
-    "description": "The Wood Elf is always set up last, anywhere out of the enemy's sight. If both sides have infiltrators, each rolls a D6 and the lowest sets up first."
+    "name": "Seeker (Wood Elves of Athel Loren)",
+    "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."
   }
 ]

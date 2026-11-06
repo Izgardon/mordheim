@@ -3,7 +3,7 @@
 Everything is validated first and every error is reported at once, keyed by entry ("create.0.name",
 "update.2.xp", "dismiss.1"). Then, in one transaction, the dismissals, updates and creates run through the
 same services as the per-unit endpoints (dismissals first, so they free places under the caps), then the
-stash takes and purchases (batch_items.py), the item a hire from the warband's template gets free, and the
+stash takes and purchases (batch_items.py), the items a hire from the warband's template gets free, and the
 template's upgrades bought onto its heroes (apps/warband_templates/services/upgrades.py: the hire dialog's for a
 create, the store's for a hero on the roster). A create naming a `fighter_key` is filled from that template fighter
 first (apps/warband_templates/services/hiring.py). Any refusal on the way (a cap, a unit changed in another tab since
@@ -43,7 +43,7 @@ class BatchPlan:
     errors: FieldErrors = field(default_factory=dict)
     versions: dict[int, tuple[int, datetime]] = field(default_factory=dict)  # unit id -> (update index, updated_at)
     lines: ItemLines = field(default_factory=ItemLines)
-    free_items: dict[int, int] = field(default_factory=dict)  # create index -> the item a template hire gets free
+    free_items: dict[int, list[int]] = field(default_factory=dict)  # create index -> a template hire's free items
     upgrades: UpgradeLines = field(default_factory=UpgradeLines)  # upgrades bought onto its heroes (phase 3)
     created_ids: list[int] = field(default_factory=list)  # set by apply_batch
 

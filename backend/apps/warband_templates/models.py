@@ -209,9 +209,10 @@ class TemplateList(models.Model):
 
 class TemplateListItem(models.Model):
     """A line of an equipment list: an item at its list price. `cost` null: see `cost_note` ("3 × price"). `shown_as`:
-    the list's own name for the item ("Jambiya" for a Dagger). `first_free`: the "1st free" dagger. `who` narrows who
-    may take it, by fighter key: `{}` everyone, `{"heroes": true}`, `{"fighters": [...]}` (with or without heroes),
-    `{"except": [...]}`; others still may, with a warning. `warband_max`: at most this many in the warband (a
+    the list's own name for the item ("Jambiya" for a Dagger). `first_free`: "1st free", every hire gets one of its
+    item free (the Dagger, the Gnoblars' Sharp Stuff). `who` narrows who may take it, by fighter key: `{}` everyone,
+    `{"heroes": true}`, `{"fighters": [...]}` (with or without heroes), `{"except": [...]}`; others still may, with a
+    warning. `warband_max`: at most this many in the warband (a
     warning). `variant`: blank for every variant, else the one it is for (the Kurgan's bows)."""
 
     equipment_list = models.ForeignKey(TemplateList, related_name="lines", on_delete=models.CASCADE)

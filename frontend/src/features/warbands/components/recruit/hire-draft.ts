@@ -7,7 +7,7 @@ import type { TemplateFighter, TemplateLine, TemplateList } from "../../types/hi
  * A hire from the warband's template (the templates plan, phase 2) as the Add hero, Add group and
  * camp's Recruit forms hold it: the fighter picked, the kit picked from his lists while list
  * prices are open, and the tally's prices, which the player may change. The server fills the
- * rest from the fighter and adds the free dagger; these helpers only shape what is sent and what
+ * rest from the fighter and adds the "1st free" items; these helpers only shape what is sent and what
  * warns.
  */
 

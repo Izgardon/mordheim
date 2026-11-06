@@ -1,7 +1,8 @@
 """Hiring from the warband's template (the templates plan, phase 2): a roster Save's create naming a fighter is filled
 from him (the variant applied) under what it sent, writes a Recruit row at the price sent and a Buy row per item at its
-price, gives the "1st free" Dagger to every hire of a fighter whose lists have one (every member of a group, and a
-member who joins later pays nothing for it), and an unknown fighter is refused; a unit typed by hand gets nothing."""
+price, gives one of each item his lists mark "1st free" (the Dagger, Sharp Stuff), each once, to every hire of a
+fighter (every member of a group, and a member who joins later pays nothing for them), and an unknown fighter is
+refused; a unit typed by hand gets nothing."""
 
 from typing import Any
 
@@ -110,6 +111,20 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
         )
         body = self.get_as(self.player, f"/api/warbands/{self.warband.id}/henchmen-groups/{group.id}/").json()
         self.assertEqual(body["hire_cost"], 30)  # a member who joins pays the group's price and the axe, not the dagger
+
+    def test_every_1st_free_line_gives_its_item_once(self) -> None:
+        # William, 6 Nov 2026: the Gnoblars' list marks both the Dagger and Sharp Stuff "1st free"
+        sharp = make_entry(ITEMS, "Sharp Stuff", cost=3)
+        TemplateListItem.objects.create(equipment_list=self.made.kit, item=sharp, cost=3, first_free=True, position=9)
+        TemplateListItem.objects.create(
+            equipment_list=self.made.kit, item=self.dagger, cost=2, first_free=True, position=10
+        )
+        self.assertEqual(
+            self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Grot"}]}).status_code, 200
+        )
+        hero = Hero.objects.get(warband=self.warband, name="Grot")
+        self.assertEqual(sorted(hero.hero_items.values_list("item__name", "cost")), [("Dagger", 0), ("Sharp Stuff", 0)])
+        self.assertEqual([action for action, _price, _ in self.ledger()], [LedgerAction.RECRUIT])
 
     def test_no_list_no_priced_dagger_and_no_key_get_nothing_free(self) -> None:
         TemplateListItem.objects.filter(item=self.dagger).update(first_free=False)

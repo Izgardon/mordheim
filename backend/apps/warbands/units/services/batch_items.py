@@ -38,7 +38,7 @@ class ItemLine:
 class ItemLines:
     purchases: list[ItemLine] = field(default_factory=list)
     stash_takes: list[ItemLine] = field(default_factory=list)
-    free: list[ItemLine] = field(default_factory=list)  # the item each template hire gets free (a Dagger)
+    free: list[ItemLine] = field(default_factory=list)  # the items each template hire gets free (a Dagger)
 
     @property
     def all(self) -> list[ItemLine]:
@@ -78,15 +78,17 @@ def _validated(body: Mapping[str, Any], creates: int, unit_ids: set[int], errors
     return lines
 
 
-def _free(free: Mapping[int, int]) -> list[ItemLine]:
-    """The item each template hire gets free, by create index: one copy at 0 gc (a group's for every member)."""
+def _free(free: Mapping[int, Sequence[int]]) -> list[ItemLine]:
+    """The items each template hire gets free, by create index: one copy of each at 0 gc (a group's for every
+    member)."""
     return [
         ItemLine(
-            f"create.{index}.free",
+            f"create.{index}.free.{n}",
             {"item_id": item_id, "create_index": index, "quantity": 1, "price": 0, "is_buying": True},
             price=0,
         )
-        for index, item_id in free.items()
+        for index, items in free.items()
+        for n, item_id in enumerate(items)
     ]
 
 
@@ -96,10 +98,10 @@ def plan_lines(
     creates: int,
     unit_ids: set[int],
     errors: FieldErrors,
-    free: Mapping[int, int] | None = None,
+    free: Mapping[int, Sequence[int]] | None = None,
 ) -> ItemLines:
     """Validate the body's `purchases` and `stash_takes`, recording errors, and add the free items (`free`: create
-    index -> item id); nothing is written."""
+    index -> item ids); nothing is written."""
     lines = _validated(body, creates, unit_ids, errors)
     lines.free = _free(free or {})
     wanted = {line.data["item_id"] for line in lines.all}

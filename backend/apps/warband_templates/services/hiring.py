@@ -7,9 +7,10 @@ leader, rules (his specials), the skills his variant gives him (the Hung's heroe
 for a group its size, gains-XP (no level-ups) and promotable. The unit remembers the key; nothing links it to the
 template after, so a later template edit touches nothing on the roster.
 
-Every hire of a fighter whose lists have the "1st free" Dagger gets one free, before and after the first battle (a
-group: every member, as its loadout, so a member who joins later carries it at no cost). A fighter with no list gets
-none, nor one whose list prices the dagger instead. A unit typed by hand (no key) gets nothing.
+Every hire of a fighter gets one of each item his lists mark "1st free" at no cost, each item once (William, 6 Nov 2026:
+the Dagger, and the Gnoblars' Sharp Stuff too), before and after the first battle (a group: every member, as its
+loadout, so a member who joins later carries them at no cost). A fighter with no list gets none, nor one whose list
+prices the item instead. A unit typed by hand (no key) gets nothing.
 """
 
 from typing import TYPE_CHECKING, Any
@@ -59,9 +60,9 @@ def unit_body(kind_key: str, fighter: TemplateFighter) -> dict[str, Any]:
     return {**body, **group}
 
 
-def free_items(fighters: list[TemplateFighter], variant: str) -> dict[str, int]:
-    """Fighter key -> the item a hire of his gets free: the first "1st free" line of his lists for the variant (one
-    query)."""
+def free_items(fighters: list[TemplateFighter], variant: str) -> dict[str, list[int]]:
+    """Fighter key -> the items a hire of his gets free: the item of each "1st free" line of his lists for the
+    variant, in his lists' order, each item once (one query)."""
     lines = (
         TemplateListItem.objects.filter(
             first_free=True, equipment_list__fighter_links__fighter__in=fighters, variant__in=("", variant)
@@ -69,17 +70,19 @@ def free_items(fighters: list[TemplateFighter], variant: str) -> dict[str, int]:
         .order_by("equipment_list__position", "position", "id")
         .values_list("equipment_list__fighter_links__fighter__key", "item_id")
     )
-    found: dict[str, int] = {}
+    found: dict[str, list[int]] = {}
     for key, item_id in lines:
-        found.setdefault(key, item_id)
+        items = found.setdefault(key, [])
+        if item_id not in items:
+            items.append(item_id)
     return found
 
 
 def fill_from_template(
     kind: "UnitKindSpec", warband: Warband, entries: list[dict[str, Any]], errors: FieldErrors
-) -> dict[int, int]:
+) -> dict[int, list[int]]:
     """Fill, in place, each create entry naming a `fighter_key` from that fighter of the warband's template (three
-    queries, only when one does); an unknown key, or a hero's key sent as a group, is an error on the entry. The item
+    queries, only when one does); an unknown key, or a hero's key sent as a group, is an error on the entry. The items
     each filled create gets free, by its index."""
     keyed = [(index, entry) for index, entry in enumerate(entries) if entry.get("fighter_key")]
     wanted = FIGHTER_KINDS.get(kind.key)
@@ -92,7 +95,7 @@ def fill_from_template(
     variant = warband_variant(warband, found) if found is not None else ""
     fighters = {row.key: apply_variant(row, variant) for row in found.fighters.all()} if found is not None else {}
     free = free_items(list(fighters.values()), variant) if fighters else {}
-    given: dict[int, int] = {}
+    given: dict[int, list[int]] = {}
     for index, entry in keyed:
         fighter = fighters.get(str(entry["fighter_key"]))
         if fighter is None or fighter.kind != wanted:

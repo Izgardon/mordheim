@@ -86,7 +86,7 @@ const fighter = (key: string, name: string, cost: number, extra: Partial<Templat
     have: { count: 0, groups: 0 },
     off_lines: [],
     off_upgrades: [],
-    free_item: { id: 10, name: "Dagger" },
+    free_items: [{ id: 10, name: "Dagger" }],
     ...extra,
   }) satisfies TemplateFighter;
 
@@ -202,6 +202,28 @@ describe("Recruiting from the warband's template", () => {
         create: [{ fighter_key: "champions", name: null, price: 35 }],
       })
     );
+  });
+
+  it("gives one of each item his lists mark 1st free, and charges for none", async () => {
+    // William, 6 Nov 2026: the Gnoblars' list marks both the Dagger and Sharp Stuff "1st free"
+    const base = answer(true);
+    const gnoblar = fighter("champions", "Champion", 35, {
+      free_items: [
+        { id: 10, name: "Dagger" },
+        { id: 11, name: "Sharp Stuff" },
+      ],
+    });
+    fakeApi.on("GET /warbands/9/template/", {
+      ...base,
+      template: base.template && { ...base.template, fighters: [gnoblar] },
+    });
+    renderForm();
+    const user = setupUser();
+    await user.click(await screen.findByRole("radio", { name: /Champion/ }));
+    const tally = screen.getByRole("list", { name: "Tally" });
+    expect(within(tally).getAllByText("free")).toHaveLength(2);
+    expect(within(tally).getByText("Sharp Stuff")).toBeInTheDocument();
+    expect(screen.getByText("Gold 74 → 39 gc")).toBeInTheDocument();
   });
 
   it("keeps the hand-typed recruit for someone not in the template", async () => {

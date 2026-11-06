@@ -70,7 +70,8 @@ FIGHTER: Spec = {
     "specialRules": (list, True),
 }
 GROUP: Spec = {"min": (int, True), "max": (int, True)}
-SKILL_GROUP: Spec = {"name": (str, True), "new": (bool, True)}
+SKILL_GROUP: Spec = {"name": (str, True), "new": (bool, True), "note": (str, False)}
+NOTE_MAX = 200  # a group's learn_note
 SKILL: Spec = {"name": (str, True), "description": (str, False), "ours": (str, False), "pdfName": (str, False)}
 ALIAS: Spec = {"pdf": (str, True), "ours": (str, True), "page": (int, True)}
 STUB: Spec = {
@@ -261,6 +262,11 @@ def _skills(page: dict[str, Any], catalogue: Catalogue, problems: list[str]) -> 
             problems.append(f"special skill {row['name']!r}: no skill of ours {row['ours']!r}")
         elif "description" in row and norm_name(row["name"]) in catalogue.skills:
             problems.append(f"special skill {row['name']!r}: one of our skills holds the name, use it or name it apart")
+    note = group.get("note") or ""
+    if note and not group["new"]:
+        problems.append(f"skill group {group['name']!r}: only a new group takes a note")
+    if len(note) > NOTE_MAX:
+        problems.append(f"skill group {group['name']!r}: its note is over {NOTE_MAX} characters")
     if group["new"] and group["name"] in catalogue.groups:
         problems.append(f"skill group {group['name']!r}: we have it already")
     elif not group["new"]:

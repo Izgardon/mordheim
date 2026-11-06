@@ -89,7 +89,7 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
         warriors = self.fighter(body, "warriors")
         self.assertEqual(warriors["off_lines"], [lines["Sword"]["id"]])
         self.assertEqual(self.fighter(body, "captain")["off_lines"], [])
-        self.assertEqual(warriors["free_item"], {"id": self.dagger.id, "name": "Dagger"})
+        self.assertEqual(warriors["free_items"], [{"id": self.dagger.id, "name": "Dagger"}])
 
     def test_upgrades_say_their_later_price_and_who_they_are_for(self) -> None:
         TemplateUpgrade.objects.filter(template=self.made.template).update(

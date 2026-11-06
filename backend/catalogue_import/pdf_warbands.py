@@ -9,9 +9,11 @@ snapshot so the template import builds it the same way. A file's own keys:
   ("Doubled-handed weapon" is a Double-handed weapon), put right as the file loads;
 - `stubs`: `{name, type, subtype, rarity, dice, rulesPage}`, items a line names that we lack (William: "yes to
   stubs"): each a bare item, no rules, with one price row for its warband only at the line's price;
-- `skillGroup` (`{name, new}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills, each
-  `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for a
-  warband with no Special column (the Outlaws of Stirwood Forest, Redux);
+- `skillGroup` (`{name, new, note}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills,
+  each `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for
+  a warband with no Special column (the Outlaws of Stirwood Forest, Redux). Who of the warband may take a skill opens
+  a new skill's description ("Gnoblars only."); for one of ours, which other warbands share, it is the new group's
+  `note` (William, 6 Nov 2026), shown when learning from it;
 - a fighter's `spellLores`: the lores he casts from, by our spells' lore names;
 - `flags`: `{page, what}`, what the PDF leaves unclear, for William.
 
@@ -152,6 +154,7 @@ def _new_group(slug: str, page: dict[str, Any]) -> tuple[dict[str, Any], list[di
     new = [row for row in skills if "description" in row]
     decision = {
         "type": page[TYPE],
+        "note": page["skillGroup"].get("note") or "",
         "skills": [row["ours"] for row in skills if "ours" in row],
         "new_skills": [{"name": row["name"], "rule": row["name"]} for row in new],
         "source": source,

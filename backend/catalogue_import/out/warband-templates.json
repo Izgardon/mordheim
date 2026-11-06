@@ -18467,12 +18467,6 @@
     ],
     "rules": [
       {
-        "title": "Special Skills",
-        "description": "Only the Halfling Thief may take Stealthy.",
-        "variant": "",
-        "type": ""
-      },
-      {
         "title": "Pretty Much Human",
         "description": "The warband may hire any hired sword that human mercenaries may hire.",
         "variant": "",
@@ -34482,12 +34476,6 @@
         "description": "The warband may hire only a Hobgoblin Scout, a Gnoblar Botcher or a Ninja Gnoblar. While it has no Ogre Hunter it may also hire an Ogre Bodyguard and an Ogre Slaver; if it hires an Ogre Hunter again, every other Ogre leaves.",
         "variant": "",
         "type": ""
-      },
-      {
-        "title": "Special Skills",
-        "description": "Ogres and Gnoblars may take the Ogre Hunting Party skills, but never a skill kept for the other race. Ogres only: Maneater, Bull Charge, Bellowing Roar (the leader only). Gnoblars only: Set Traps, Infiltration, Netter.",
-        "variant": "",
-        "type": ""
       }
     ],
     "lists": [
@@ -44696,7 +44684,7 @@
         "lines": [
           {
             "item": {
-              "name": "Familiar",
+              "name": "Power Squig",
               "variant": ""
             },
             "shown_as": "",
@@ -51646,12 +51634,6 @@
       {
         "title": "Starting Prices",
         "description": "The starred prices (Ithilmar weapons at 2 × price, Ithilmar Armour at 60 gc) are for a new warband, with no roll to find them. Later the warband pays the usual price and rolls to find them as usual.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "Special Skills",
-        "description": "Only one Hero of the warband may have Seeker.",
         "variant": "",
         "type": ""
       }

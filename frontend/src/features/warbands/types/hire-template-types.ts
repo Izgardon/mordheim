@@ -37,8 +37,8 @@ export type TemplateFighter = Omit<BookFighter, "variant_changes"> & {
   off_lines: number[];
   /** The template's upgrades he isn't meant to take (dimmed, still pickable). */
   off_upgrades: number[];
-  /** The Dagger every hire of his gets free. */
-  free_item: { id: number; name: string } | null;
+  /** One of each item his lists mark "1st free" (the Dagger, Sharp Stuff): every hire of his gets them free. */
+  free_items: { id: number; name: string }[];
 };
 
 export type WarbandTemplate = {

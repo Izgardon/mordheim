@@ -12,8 +12,7 @@
     {"rulename": "Excellent Sight", "ruleFull": "Every Elf of the warband spots hidden enemies from twice his Initiative in inches."},
     {"rulename": "Unforgiving", "ruleFull": "In multiplayer games the warband may never ally with a warband of a chaotic nature (Possessed, Skaven, Beastmen, Dark Elves and the like)."},
     {"rulename": "Tolerant", "ruleFull": "The warband may hire any hired sword who isn't chaotic or evil (no Skaven, Possessed, Beastmen, Dark Elves, Undead and the like)."},
-    {"rulename": "Starting Prices", "ruleFull": "The starred prices (Ithilmar weapons at 2 × price, Ithilmar Armour at 60 gc) are for a new warband, with no roll to find them. Later the warband pays the usual price and rolls to find them as usual."},
-    {"rulename": "Special Skills", "ruleFull": "Only one Hero of the warband may have Seeker."}
+    {"rulename": "Starting Prices", "ruleFull": "The starred prices (Ithilmar weapons at 2 × price, Ithilmar Armour at 60 gc) are for a new warband, with no roll to find them. Later the warband pays the usual price and rolls to find them as usual."}
   ],
   "equipmentLists": [
     {
@@ -153,9 +152,9 @@
   "specialSkillsList": [
     {"name": "Fey", "ours": "Fey"},
     {"name": "Elven Luck", "description": "Once per game the Wood Elf may re-roll any failed roll."},
-    {"name": "Excellent Sight", "ours": "Unblinking Eye"},
-    {"name": "Seeker", "ours": "Resource Hunter"},
-    {"name": "Infiltration (Wood Elves of Athel Loren)", "pdfName": "Infiltration", "description": "The Wood Elf is always set up last, anywhere out of the enemy's sight. If both sides have infiltrators, each rolls a D6 and the lowest sets up first."}
+    {"name": "Excellent Sight", "description": "The Hero spots hidden enemies from twice his Initiative in inches."},
+    {"name": "Seeker (Wood Elves of Athel Loren)", "pdfName": "Seeker", "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."},
+    {"name": "Infiltration", "ours": "Infiltration"}
   ],
   "aliases": [],
   "stubs": [],
@@ -168,7 +167,7 @@
     {"page": 2, "what": "Elven Runestones (50+2D6 gc, Rare 11, Forest Mage only) and the Familiar (20+D6 gc, Rare 8, spell-users only) are on no list: they are special equipment, both ours, the Forest Mage's (the only spell-user)."},
     {"page": 3, "what": "The Leader rule says \"within 6\" of the Protector of the Hunt\": read as the Hunt Master, who leads."},
     {"page": 4, "what": "\"Bought in groups of 1-5\" stands over the henchmen: Deepwood Scouts and Glade Guard come in groups of 1-5."},
-    {"page": 5, "what": "The special skills are a new group, Wood Elves of Athel Loren. Fey is our Fey; Excellent Sight is our Unblinking Eye (and also a warband rule for every Elf); Seeker is our Resource Hunter, word for word in effect, its \"only one Elven Hero\" a warband rule. Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one), and so is Infiltration (theirs has no 12\" limit)."},
+    {"page": 5, "what": "The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: \"match it to ours drop theirs\"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: \"keep both of those separate as they have a name that inspires a different idea behind it\"); Seeker's \"only one Elven Hero\" opens its description, and it is named Seeker (Wood Elves of Athel Loren), as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: \"separate yes\")."},
     {"page": 5, "what": "Woodland Incantations is a new lore. Lyrics of Feral Infatuation gives no range or duration, and Song of the Sun names no test (\"must make a test\"): both are kept as printed."}
   ]
 }
