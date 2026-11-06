@@ -17293,5 +17293,125 @@
         "note": ""
       }
     ]
+  },
+  {
+    "slug": "beastwhip",
+    "name": "Beastwhip",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim-2a",
+    "source": "WEB",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Clan%20Moulder.pdf",
+    "tags": [
+      "beastwhip"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-moulder",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "thingcatcher",
+    "name": "Thingcatcher",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mordheim-2a",
+    "source": "WEB",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Clan%20Moulder.pdf",
+    "tags": [
+      "thingcatcher"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-moulder",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "wolf-rat-mount",
+    "name": "Wolf Rat Mount",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "WEB",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Clan%20Moulder.pdf",
+    "tags": [
+      "wolf rat mount"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 90,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-moulder",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
   }
 ]

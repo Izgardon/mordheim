@@ -132,10 +132,22 @@ UPGRADES_AS_RULES: dict[str, frozenset[str]] = {"lizardmen": frozenset({"Poisone
 # order, less `except`; or `names`), its terms (UPGRADE_TERMS' shape; none given: the page's own group's) and a note
 # said with the group. Each upgrade links the shared special at its price; a page's own group of the name keeps its
 # upgrades and takes the rest after them. Left out: the hired swords who may take a mutation (the Chaos Centaur, the
-# Ungor Trapper: upgrades are for heroes, so a player adds one from Boons & Banes), Twistkin (Clan Moulder isn't
-# seeded) and the god families on the Marauders' Marks. `half`: each at half its price, one with no whole half (35 gc) at
-# none, its cost note saying so.
+# Ungor Trapper: upgrades are for heroes, so a player adds one from Boons & Banes), the Clan Moulder Rat Ogre's
+# mutation at hire (a henchman's) and the god families on the Marauders' Marks. `half`: each at half its price, one
+# with no whole half (35 gc) at none, its cost note saying so.
 MUTANT_SKILL = "With the Mutant skill."
+TWISTKIN = "With the Twistkin skill, at half the listed price."
+RULEBOOK_MUTATIONS = [
+    "Daemon Soul",
+    "Great Claw",
+    "Cloven Hoofs",
+    "Tentacle",
+    "Blackblood",
+    "Spines",
+    "Scorpion Tail",
+    "Extra Arm",
+    "Hideous",
+]
 MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
     # the generic list's 15 (Mutiny in Marienburg's extended list of the Cult's) on the Cult's terms
     "cult-of-the-posessed": [{"group": "Mutations", "family": "Mutation"}],
@@ -174,6 +186,17 @@ MUTATION_UPGRADES: dict[str, list[dict[str, Any]]] = {
             "terms": {"who": {"fighters": ["marauder-chieftain", "seer", "champions", "condemned"]}},
             "note": "Mark of Onogal heroes with the Mutant skill, instead of a mutation.",
         },
+    ],
+    # the Twistkin skill (Stormvermin only, PDF p4): "must buy a Mutation from the list in the Mordheim Rulebook (see
+    # Possessed Warband) at half the listed cost", once, when he takes the skill
+    "skaven-of-clan-moulder": [
+        {
+            "group": "Mutations",
+            "names": RULEBOOK_MUTATIONS,
+            "half": True,
+            "terms": {"who": {"fighters": ["stormvermin"]}, "max_per_fighter": 1},
+            "note": TWISTKIN,
+        }
     ],
 }
 

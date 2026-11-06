@@ -1,0 +1,215 @@
+{
+  "warbandType": "skaven-of-clan-moulder",
+  "name": "Skaven of Clan Moulder",
+  "source": "WEB",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Clan%20Moulder.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {
+      "rulename": "Goading",
+      "ruleFull": "At the very start of the Clan Moulder turn, before any model moves, the Packmaster and each Apprentice may each try to goad one beast model, or one henchman group of beasts (Giant Rats, Wolf Rats or Rat Ogres), of their own warband within 6\" of him as the turn begins. A group can be goaded only if at least half its members are within 6\".\n\nRoll 2D6 as for casting a spell: the goad works on a score equal to or above the beast's Difficulty, which is 6 for a Giant Rat, 8 for a Wolf Rat and 10 for a Rat Ogre. When it works, roll a D6 on the table below; on a double 6 pick the result instead of rolling.\n\nWhen it fails, the beast or group must take a Stupidity test at once. If that test is failed with a double 1 the beasts turn on the goader: move them into base contact with him and resolve one attack against him from each beast he targeted. They return to the Moulder player's control at the start of his next turn.\n\nD6 | Result\n1-2 | Yelp: the beast or group must run in the Movement phase, at up to triple its Movement instead of double, even if enemy models are within 8\" at the start of the move.\n3-4 | Growl: if an enemy is in its line of sight the beast or group must charge it (the Moulder player picks among several), at triple its Movement instead of double. The usual charge rules apply, but the charge can't be intercepted.\n5-6 | Roar!: until the start of the next Moulder turn the beast or group is subject to frenzy and hates every model of the opposing warband."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Club", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "beastwhip", "alias": "", "cost": {"cost": 25, "costSuffix": "Packmaster and Apprentices only"}},
+        {"name": "thingcatcher", "alias": "", "cost": {"cost": 20, "costSuffix": "Packmaster and Apprentices only"}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "warplock pistol", "alias": "", "cost": {"cost": 35, "braceCost": 70}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Wolf Rat Mount", "cost": {"cost": 90}, "availability": "Rare 11"}
+  ],
+  "fighters": [
+    {
+      "id": "packmaster",
+      "type": "hero",
+      "name": "Packmaster",
+      "plural": "Packmasters",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 75,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Packmaster may take Leadership tests on his Leadership."},
+        {"rulename": "Master Handler", "ruleFull": "The Packmaster may goad (see Goading). He starts any one-off game or campaign with the Ride Wolf Rat skill and one more Beast Handling skill, for Giant Rats or for Wolf Rats."},
+        {"rulename": "Poke 'em in the Squidgy Bits", "ruleFull": "When he goads, the Packmaster gets the benefits of both a Beastwhip and a Thingcatcher if he carries both."}
+      ]
+    },
+    {
+      "id": "stormvermin",
+      "type": "hero",
+      "name": "Stormvermin",
+      "plural": "Stormvermin",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 6},
+      "equipmentLists": ["heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "apprentices",
+      "type": "hero",
+      "name": "Apprentice",
+      "plural": "Apprentices",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 4,
+      "statblock": {"m": 5, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Novice Handler", "ruleFull": "An Apprentice may goad (see Goading), but in a goad he takes the benefit of a Beastwhip or of a Thingcatcher, not both."},
+        {"rulename": "Heir to Power", "ruleFull": "If the Packmaster is slain, one of the Apprentices must succeed him as Leader and counts as a Packmaster in every way from then on; a new Apprentice may be hired in his place. If the Packmaster and every Apprentice die at once, or the warband has no Apprentice when the Packmaster dies, the warband disbands."}
+      ]
+    },
+    {
+      "id": "clanrats",
+      "type": "henchman",
+      "name": "Clanrat",
+      "plural": "Clanrats",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 5,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["henchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "giant-rats",
+      "type": "henchman",
+      "name": "Giant Rat",
+      "plural": "Giant Rats",
+      "race": "giant rat",
+      "minQty": 0,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. Giant Rats never use weapons or armour.",
+      "specialRules": [
+        {"rulename": "Pack Size", "ruleFull": "Any number of Giant Rats may be recruited, within the warband's most models."},
+        {"rulename": "Experience", "ruleFull": "Giant Rats are animals and gain no experience."}
+      ]
+    },
+    {
+      "id": "wolf-rats",
+      "type": "henchman",
+      "name": "Wolf Rat",
+      "plural": "Wolf Rats",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 3,
+      "groupSize": {"min": 1, "max": 5},
+      "costGc": 30,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 9, "ws": 3, "bs": 0, "s": "3(4)", "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. Wolf Rats never use weapons or armour.",
+      "specialRules": [
+        {"rulename": "Poisoned Attack", "ruleFull": "A Wolf Rat's attacks are at Strength 4 but do not modify armour saves."},
+        {"rulename": "Experience", "ruleFull": "Wolf Rats are animals and gain no experience."}
+      ]
+    },
+    {
+      "id": "rat-ogres",
+      "type": "henchman",
+      "name": "Rat Ogre",
+      "plural": "Rat Ogres",
+      "race": "rat ogre",
+      "minQty": 0,
+      "maxQty": 2,
+      "groupSize": {"min": 1, "max": 1},
+      "costGc": 200,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 3, "bs": 3, "s": 5, "t": 5, "w": 3, "i": 4, "a": 3, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. Rat Ogres never use weapons or armour.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "Rat Ogres cause fear."},
+        {"rulename": "Stupidity", "ruleFull": "A Rat Ogre is subject to stupidity unless a Clan Moulder Hero is within 6\" of it."},
+        {"rulename": "Experience", "ruleFull": "Rat Ogres gain no experience."},
+        {"rulename": "Large Target", "ruleFull": "Rat Ogres are Large Targets, as the shooting rules define them."},
+        {"rulename": "It's Alive!", "ruleFull": "When hired, each Rat Ogre must buy one mutation from the Possessed's list in the rulebook, at its listed price."},
+        {"rulename": "Hard to Handle", "ruleFull": "Rat Ogres are hired one at a time and never form a henchman group, even when you hire more than one."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Skaven Clan Moulder", "new": true},
+  "specialSkillsList": [
+    {"name": "Black Hunger", "ours": "Black Hunger"},
+    {"name": "Beastkin", "description": "The range of every Beast or Animal Handling skill this Hero has, now or later, is doubled to 12\"."},
+    {"name": "Hypnotic Musk", "description": "An enemy animal or beast must pass a Leadership test to charge this Hero, unless the charge is the result of goading. Ridden mounts are not affected."},
+    {"name": "Subjugator of Mankind", "description": "If this Hero, armed with a Thingcatcher, takes an enemy model out of action, that model does not roll for injury after the battle but counts as having rolled Captured on the Serious Injury chart. Large creatures such as Ogres can't be caught this way; animals can."},
+    {"name": "Twistkin", "description": "Stormvermin only. When he takes this skill, the Hero must buy one mutation from the Possessed's list in the rulebook at half its listed cost."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {"name": "Beastwhip", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": null, "rulesPage": 3},
+    {"name": "Thingcatcher", "type": "Weapon", "subtype": "Melee", "rarity": 9, "dice": null, "rulesPage": 3},
+    {"name": "Wolf Rat Mount", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": null, "rulesPage": 3}
+  ],
+  "flags": [
+    {"page": 1, "what": "The warband is designed for the updated Blazing Saddles mounted rules (2002 Mordheim Annual) and says it is overcosted without them: a note, not imported."},
+    {"page": 3, "what": "The Wolf Rat Mount (90 wt, Rare 11) has a profile (M9 WS3 BS0 S3(4) T3 W1 I4 A1 Ld4) and Poisoned Attack. Our mounts are bestiary animals, so the stub is a plain item with neither; it sits in a Special equipment list every fighter with a list buys from, as the snapshot's special equipment does."},
+    {"page": 3, "what": "The Warplock Pistol is Rare 11, Skaven only, 35 wt (70 for a brace): linked to our Warplock pistol."},
+    {"page": 4, "what": "Twistkin's mutation costs half the listed price: a Mutations upgrade list for Stormvermin at half each shared mutation's price; a 35 gc mutation's half (17.5) has no price, its note says so."},
+    {"page": 5, "what": "Master Handler's starting skills (Ride Wolf Rat and one Beast Handling skill of the player's choice) are in his rule's text only: our templates give start skills only through a variant."},
+    {"page": 6, "what": "It's Alive!: each Rat Ogre must buy a mutation when hired, but upgrades are for heroes only, so it is his rule's text and the player adds the mutation from Boons & Banes."},
+    {"page": 6, "what": "The Rat Ogre's Stupidity depends on a Clan Moulder Hero within 6\", unlike the Skaven's and Clan Pestilens' (a Skaven Hero): kept apart as Stupidity (Clan Moulder Rat Ogre)."},
+    {"page": 2, "what": "The scan's OCR garbles the dotted price lines and every profile: the profiles and the skill table were read from page images (pages 4, 5 and 6); the list prices read cleanly from the OCR."}
+  ]
+}

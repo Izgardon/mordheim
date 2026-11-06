@@ -26,10 +26,10 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 341 |
-| skills | 230 |
-| skill groups | 50 |
-| skill group links | 273 |
+| price rows | 344 |
+| skills | 234 |
+| skill groups | 51 |
+| skill group links | 278 |
 | serious injuries (D66) | 20 |
 | shared specials | 62 |
 | random mutation results (D66) | 36 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 230 | 153 | 37 | 40 |
+| skills | 234 | 153 | 41 | 40 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 230 skills, one per name; `out/skill-groups.json` is 50 groups holding them (273 links), the five core groups first.
+`out/skills.json` is 234 skills, one per name; `out/skill-groups.json` is 51 groups holding them (278 links), the five core groups first.
 
 ### Merged by name
 
@@ -407,6 +407,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Shadow Warriors | Shadow Warriors | skill_group_learners | - | See in Shadows, Hide in Shadows, Sniper (Shadow Warriors), Powerful Build, Master of Runes |
 | Sisters of Sigmar | Sisters of Sigmar | intersection | - | Sign of Sigmar, Protection of Sigmar, Utter Determination, Righteous Fury, Absolute Faith |
 | Skaven | Skaven | skill_group_learners | - | Black Hunger, Tail Fighting, Wall Runner, Infiltration, Art of Silent Death |
+| Skaven Clan Moulder | Skaven of Clan Moulder | new group | - | Black Hunger, Beastkin, Hypnotic Musk, Subjugator of Mankind, Twistkin |
 | Skaven Clan Pestilens | Skaven of Clan Pestilens (TC29) | skill_group_learners | - | Black Hunger, Censer Bearer, Rotten Body, Contagious, Ignore Pain |
 | Skaven Metal Mongers | Metal Mongers | skill_lists | - | Tail Fighting, Infiltration, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat |
 | Skink | Lizardmen (TC11) | intersection | - | Infiltration (Skink), Great Hunter |
@@ -416,7 +417,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 ### New groups and skills (`new_skill_groups`)
 
-31 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+35 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -451,6 +452,10 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Skilled Huntsman | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Layers of Fat | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Shifty | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
+| Beastkin | Skaven Clan Moulder | mordheim-2a | WEB |
+| Hypnotic Musk | Skaven Clan Moulder | mordheim-2a | WEB |
+| Subjugator of Mankind | Skaven Clan Moulder | mordheim-2a | WEB |
+| Twistkin | Skaven Clan Moulder | mordheim-2a | WEB |
 
 mordheimer also lists Combat Master for Dwarf Rangers; left out of the group.
 mordheimer also lists Ferocious Charge for Dwarf Rangers; left out of the group.
@@ -506,16 +511,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 52 |
-| warband types linked | 58 |
-| fighters (heroes, henchmen) | 346 (177, 169) |
-| henchmen that gain no XP | 52 |
-| henchmen that can't be promoted | 63 |
-| equipment lists | 126 |
-| list lines | 1400 |
-| warband rules | 161 |
-| upgrades | 68 |
-| the templates' own specials | 403 |
+| templates | 53 |
+| warband types linked | 59 |
+| fighters (heroes, henchmen) | 353 (180, 173) |
+| henchmen that gain no XP | 55 |
+| henchmen that can't be promoted | 66 |
+| equipment lists | 129 |
+| list lines | 1424 |
+| warband rules | 162 |
+| upgrades | 77 |
+| the templates' own specials | 415 |
 
 ### List lines
 
@@ -531,7 +536,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-179 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+181 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -555,7 +560,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-36 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+39 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 
@@ -584,6 +589,7 @@ Written values, kept as written:
 | tomb-guardians-old | Tomb Scorpion | ballistic_skill - |
 | tomb-guardians-old | Stone Golem | ballistic_skill - |
 | tomb-guardians | Tomb Scorpion | ballistic_skill -, strength 2* |
+| skaven-of-clan-moulder | Wolf Rat | strength 3(4) |
 
 Ticked for special skills with no group to name, the tick left out: imperial-outriders: Knight, imperial-outriders: Outrider, imperial-outriders: Scout.
 
@@ -650,6 +656,7 @@ Tailored lists of the shared mutations (`MUTATION_UPGRADES`):
 | cult-of-the-posessed | Mutations | 6 | who the-possessed, mutants; later double; at recruit |  |
 | marauders-of-chaos | Mutations | 15 | who marauder-chieftain, seer, champions, condemned | With the Mutant skill. |
 | marauders-of-chaos | Blessings of Nurgle | 6 | who marauder-chieftain, seer, champions, condemned | Mark of Onogal heroes with the Mutant skill, instead of a mutation. |
+| skaven-of-clan-moulder | Mutations | 9 | who stormvermin; at most 1 each | With the Twistkin skill, at half the listed price. |
 
 
 Lines for one variant only:
@@ -670,7 +677,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen), Remas' rout re-roll against Dark Elves, a Hung henchman who becomes a hero getting Ride Warhorse, and the Ostermarker captain's starting wardog.
 - Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
 - mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
-- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian).
+- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); skaven-of-clan-moulder: Experience (Rat Ogre).
 
 ## Shared specials
 
@@ -678,7 +685,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 33 | 5 | 5 | 3 |
+| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 34 | 5 | 5 | 3 |
 | Stupidity | Psychology | the rulebook's Stupidity (snapshot) |  |  | 4 | 0 | 0 | 1 |
 | Immune to Psychology | Psychology | the list's text |  |  | 11 | 1 | 2 | 0 |
 | Immune to Poison | Trait | the list's text |  |  | 10 | 3 | 3 | 2 |
@@ -689,15 +696,15 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
 | Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
 | Hate Orcs and Goblins | Psychology | the list's text |  |  | 2 | 2 | 0 | 0 |
-| Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 3 | 0 | 0 | 0 |
-| Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 4 | 0 | 0 | 0 |
-| Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 3 | 0 | 0 | 0 |
-| Tentacle | Mutation | Cult of the Possessed's upgrade | 35 |  | 4 | 0 | 0 | 0 |
-| Blackblood | Mutation | Cult of the Possessed's upgrade | 30 |  | 3 | 0 | 0 | 0 |
-| Spines | Mutation | Cult of the Possessed's upgrade | 35 |  | 3 | 0 | 0 | 0 |
-| Scorpion Tail | Mutation | Cult of the Possessed's upgrade | 40 |  | 3 | 0 | 0 | 0 |
-| Extra Arm | Mutation | Cult of the Possessed's upgrade | 40 |  | 4 | 0 | 0 | 0 |
-| Hideous | Mutation | Cult of the Possessed's upgrade; subject made general | 40 |  | 4 | 0 | 0 | 0 |
+| Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 4 | 0 | 0 | 0 |
+| Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 5 | 0 | 0 | 0 |
+| Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 4 | 0 | 0 | 0 |
+| Tentacle | Mutation | Cult of the Possessed's upgrade | 35 |  | 5 | 0 | 0 | 0 |
+| Blackblood | Mutation | Cult of the Possessed's upgrade | 30 |  | 4 | 0 | 0 | 0 |
+| Spines | Mutation | Cult of the Possessed's upgrade | 35 |  | 4 | 0 | 0 | 0 |
+| Scorpion Tail | Mutation | Cult of the Possessed's upgrade | 40 |  | 4 | 0 | 0 | 0 |
+| Extra Arm | Mutation | Cult of the Possessed's upgrade | 40 |  | 5 | 0 | 0 | 0 |
+| Hideous | Mutation | Cult of the Possessed's upgrade; subject made general | 40 |  | 5 | 0 | 0 | 0 |
 | Crystalline Body | Mutation | the list's text (Mutiny in Marienburg, p160) | 60 |  | 3 | 0 | 0 | 0 |
 | Hulking Brute | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 3 | 0 | 0 | 0 |
 | Poisonous Bite | Mutation | the list's text (Mutiny in Marienburg, p160) | 50 |  | 3 | 0 | 0 | 0 |
@@ -745,7 +752,7 @@ List prices the pages differ from: none.
 
 ### Merged
 
-- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Halflings: Village Ogre; Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Halflings: Village Ogre; Skaven of Clan Moulder: Rat Ogre; Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog.
 - Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Cold One (Stupid).
 - Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog.
@@ -756,15 +763,15 @@ List prices the pages differ from: none.
 - Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
 - Pawnbroker: Arabian Merchant; Cathayan Merchant.
 - Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Pathfinder; Runesmith Journeyman.
-- Daemon Soul: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
-- Great Claw: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations.
-- Cloven Hoofs: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
-- Tentacle: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations.
-- Blackblood: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
-- Spines: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
-- Scorpion Tail: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
-- Extra Arm: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations.
-- Hideous: Carnival of Chaos: Blessings of Nurgle; Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations.
+- Daemon Soul: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Great Claw: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Cloven Hoofs: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Tentacle: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Blackblood: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Spines: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Scorpion Tail: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Extra Arm: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
+- Hideous: Carnival of Chaos: Blessings of Nurgle; Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Skaven of Clan Moulder: Mutations.
 - Crystalline Body: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
 - Hulking Brute: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
 - Poisonous Bite: Beastmen Raiders: Mutations; Cult of the Possessed: Mutations; Marauders of Chaos: Mutations.
@@ -785,6 +792,7 @@ List prices the pages differ from: none.
 | --- | --- | --- |
 | Fear (Maximilian) | Maximilian the Mad | His warband's models within 3" of him are immune to fear. |
 | Stupidity (Rat Ogre) | Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre | Not stupid while a Skaven Hero is within 6". |
+| Stupidity (Clan Moulder Rat Ogre) | Skaven of Clan Moulder: Rat Ogre | Not stupid while a Clan Moulder Hero is within 6". |
 | Stupidity (Cold One Beasthounds) | Dark Elves: Cold One Beasthound | Tests on the Beastmaster's Leadership within 6" of him. |
 | Immune to Psychology (Plague Bearers) | Carnival of Chaos: Plague Bearer | Automatically passes every Leadership-based test, rout tests included. |
 | Immune to Psychology (Nurglings) | Carnival of Chaos: Nurgling | Automatically passes every Leadership-based test, rout tests included. |
@@ -885,12 +893,13 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-2 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+3 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | halflings | halflings | 8 | 2 | 0 | 6 |
+| skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
 
 ### Grave Robbers
 
@@ -917,3 +926,17 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one.
 - Flag (p1): A Halfling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p4): The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch and Stealthy are named apart from the Mootlanders' (Stealthy keeps "Halfling Thief only").
+
+### Skaven of Clan Moulder
+
+- Stub: Beastwhip, 25 gc, Rare 8; its rules are on p3.
+- Stub: Thingcatcher, 20 gc, Rare 9; its rules are on p3.
+- Stub: Wolf Rat Mount, 90 gc, Rare 11; its rules are on p3.
+- Flag (p1): The warband is designed for the updated Blazing Saddles mounted rules (2002 Mordheim Annual) and says it is overcosted without them: a note, not imported.
+- Flag (p3): The Wolf Rat Mount (90 wt, Rare 11) has a profile (M9 WS3 BS0 S3(4) T3 W1 I4 A1 Ld4) and Poisoned Attack. Our mounts are bestiary animals, so the stub is a plain item with neither; it sits in a Special equipment list every fighter with a list buys from, as the snapshot's special equipment does.
+- Flag (p3): The Warplock Pistol is Rare 11, Skaven only, 35 wt (70 for a brace): linked to our Warplock pistol.
+- Flag (p4): Twistkin's mutation costs half the listed price: a Mutations upgrade list for Stormvermin at half each shared mutation's price; a 35 gc mutation's half (17.5) has no price, its note says so.
+- Flag (p5): Master Handler's starting skills (Ride Wolf Rat and one Beast Handling skill of the player's choice) are in his rule's text only: our templates give start skills only through a variant.
+- Flag (p6): It's Alive!: each Rat Ogre must buy a mutation when hired, but upgrades are for heroes only, so it is his rule's text and the player adds the mutation from Boons & Banes.
+- Flag (p6): The Rat Ogre's Stupidity depends on a Clan Moulder Hero within 6", unlike the Skaven's and Clan Pestilens' (a Skaven Hero): kept apart as Stupidity (Clan Moulder Rat Ogre).
+- Flag (p2): The scan's OCR garbles the dotted price lines and every profile: the profiles and the skill table were read from page images (pages 4, 5 and 6); the list prices read cleanly from the OCR.

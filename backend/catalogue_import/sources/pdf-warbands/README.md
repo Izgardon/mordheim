@@ -14,6 +14,7 @@ check over every file.
 | --- | --- | --- | --- | --- |
 | `halflings.json` | halflings (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/experimental/Halflings.pdf | 1-4 (text layer) | 5 Nov 2026 |
 | `grave-robbers.json` | grave-robbers (2a, Sylvania) | https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf | 1-4 (text layer) | 5 Nov 2026 |
+| `skaven-of-clan-moulder.json` | skaven-of-clan-moulder (2a, Mordheim 2a) | https://www.broheim.net/downloads/warbands/web/Clan%20Moulder.pdf | 1-7 (a scan, OCR) | 5 Nov 2026 |
 
 ## Adding a warband
 

@@ -36070,6 +36070,941 @@
     "upgrades": []
   },
   {
+    "slug": "skaven-of-clan-moulder",
+    "name": "Skaven of Clan Moulder",
+    "setting": "mordheim-2a",
+    "source": "WEB",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Clan%20Moulder.pdf",
+    "starting_gold": 500,
+    "max_models": 20,
+    "variants": [],
+    "types": [
+      {
+        "type": "skaven-of-clan-moulder",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Goading",
+        "description": "At the very start of the Clan Moulder turn, before any model moves, the Packmaster and each Apprentice may each try to goad one beast model, or one henchman group of beasts (Giant Rats, Wolf Rats or Rat Ogres), of their own warband within 6\" of him as the turn begins. A group can be goaded only if at least half its members are within 6\".\n\nRoll 2D6 as for casting a spell: the goad works on a score equal to or above the beast's Difficulty, which is 6 for a Giant Rat, 8 for a Wolf Rat and 10 for a Rat Ogre. When it works, roll a D6 on the table below; on a double 6 pick the result instead of rolling.\n\nWhen it fails, the beast or group must take a Stupidity test at once. If that test is failed with a double 1 the beasts turn on the goader: move them into base contact with him and resolve one attack against him from each beast he targeted. They return to the Moulder player's control at the start of his next turn.\n\nD6 | Result 1-2 | Yelp: the beast or group must run in the Movement phase, at up to triple its Movement instead of double, even if enemy models are within 8\" at the start of the move. 3-4 | Growl: if an enemy is in its line of sight the beast or group must charge it (the Moulder player picks among several), at triple its Movement instead of double. The usual charge rules apply, but the charge can't be intercepted. 5-6 | Roar!: until the start of the next Moulder turn the beast or group is subject to frenzy and hates every model of the opposing warband.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "heroes-equipment-list",
+        "name": "Heroes Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Mace/Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Flail",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Beastwhip",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "packmaster",
+                "apprentices"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Thingcatcher",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "packmaster",
+                "apprentices"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sling",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warplock pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 70,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Heavy Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 50,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "henchmen-equipment-list",
+        "name": "Henchmen Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sling",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "special-equipment",
+        "name": "Special equipment",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Wolf Rat Mount",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 90,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "packmaster",
+        "kind": "hero",
+        "name": "Packmaster",
+        "plural": "Packmasters",
+        "race": "Skaven",
+        "cost": 75,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Strength",
+          "Speed",
+          "Skaven Clan Moulder"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "Warriors within 6\" of the Packmaster may take Leadership tests on his Leadership."
+          },
+          {
+            "name": "Master Handler",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "The Packmaster may goad (see Goading). He starts any one-off game or campaign with the Ride Wolf Rat skill and one more Beast Handling skill, for Giant Rats or for Wolf Rats."
+          },
+          {
+            "name": "Poke 'em in the Squidgy Bits",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "When he goads, the Packmaster gets the benefits of both a Beastwhip and a Thingcatcher if he carries both."
+          }
+        ]
+      },
+      {
+        "key": "stormvermin",
+        "kind": "hero",
+        "name": "Stormvermin",
+        "plural": "Stormvermin",
+        "race": "Skaven",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Speed",
+          "Skaven Clan Moulder"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list",
+          "special-equipment"
+        ],
+        "specials": []
+      },
+      {
+        "key": "apprentices",
+        "kind": "hero",
+        "name": "Apprentice",
+        "plural": "Apprentices",
+        "race": "Skaven",
+        "cost": 25,
+        "starting_xp": 4,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [
+          "Combat",
+          "Academic",
+          "Speed",
+          "Skaven Clan Moulder"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "heroes-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Novice Handler",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "An Apprentice may goad (see Goading), but in a goad he takes the benefit of a Beastwhip or of a Thingcatcher, not both."
+          },
+          {
+            "name": "Heir to Power",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "If the Packmaster is slain, one of the Apprentices must succeed him as Leader and counts as a Packmaster in every way from then on; a new Apprentice may be hired in his place. If the Packmaster and every Apprentice die at once, or the warband has no Apprentice when the Packmaster dies, the warband disbands."
+          }
+        ]
+      },
+      {
+        "key": "clanrats",
+        "kind": "henchman",
+        "name": "Clanrat",
+        "plural": "Clanrats",
+        "race": "Skaven",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "henchmen-equipment-list",
+          "special-equipment"
+        ],
+        "specials": []
+      },
+      {
+        "key": "giant-rats",
+        "kind": "henchman",
+        "name": "Giant Rat",
+        "plural": "Giant Rats",
+        "race": null,
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 2,
+          "ballistic_skill": 0,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "None. Giant Rats never use weapons or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Pack Size",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "Any number of Giant Rats may be recruited, within the warband's most models."
+          },
+          {
+            "name": "Experience",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "Giant Rats are animals and gain no experience."
+          }
+        ]
+      },
+      {
+        "key": "wolf-rats",
+        "kind": "henchman",
+        "name": "Wolf Rat",
+        "plural": "Wolf Rats",
+        "race": null,
+        "cost": 30,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 9,
+          "weapon_skill": 3,
+          "ballistic_skill": 0,
+          "strength": "3(4)",
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "None. Wolf Rats never use weapons or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Poisoned Attack",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "A Wolf Rat's attacks are at Strength 4 but do not modify armour saves."
+          },
+          {
+            "name": "Experience",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "Giant Rats are animals and gain no experience."
+          }
+        ]
+      },
+      {
+        "key": "rat-ogres",
+        "kind": "henchman",
+        "name": "Rat Ogre",
+        "plural": "Rat Ogres",
+        "race": null,
+        "cost": 200,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": 1,
+        "group_max": 1,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 5,
+          "toughness": 5,
+          "wounds": 3,
+          "initiative": 4,
+          "attacks": 3,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "None. Rat Ogres never use weapons or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Stupidity (Clan Moulder Rat Ogre)",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "A Rat Ogre is subject to stupidity unless a Clan Moulder Hero is within 6\" of it."
+          },
+          {
+            "name": "Experience (Rat Ogre)",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "Rat Ogres gain no experience."
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          },
+          {
+            "name": "It's Alive!",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "When hired, each Rat Ogre must buy one mutation from the Possessed's list in the rulebook, at its listed price."
+          },
+          {
+            "name": "Hard to Handle",
+            "type": "Warband - Skaven of Clan Moulder",
+            "description": "Rat Ogres are hired one at a time and never form a henchman group, even when you hire more than one."
+          }
+        ]
+      }
+    ],
+    "upgrades": [
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Daemon Soul",
+          "type": "Mutation"
+        },
+        "cost": 10,
+        "cost_note": "",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Great Claw",
+          "type": "Mutation"
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Cloven Hoofs",
+          "type": "Mutation"
+        },
+        "cost": 20,
+        "cost_note": "",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Tentacle",
+          "type": "Mutation"
+        },
+        "cost": null,
+        "cost_note": "half of 35 gc",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Blackblood",
+          "type": "Mutation"
+        },
+        "cost": 15,
+        "cost_note": "",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Spines",
+          "type": "Mutation"
+        },
+        "cost": null,
+        "cost_note": "half of 35 gc",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Scorpion Tail",
+          "type": "Mutation"
+        },
+        "cost": 20,
+        "cost_note": "",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Extra Arm",
+          "type": "Mutation"
+        },
+        "cost": 20,
+        "cost_note": "",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Mutations",
+        "special": {
+          "name": "Hideous",
+          "type": "Mutation"
+        },
+        "cost": 20,
+        "cost_note": "",
+        "note": "With the Twistkin skill, at half the listed price.",
+        "who": {
+          "fighters": [
+            "stormvermin"
+          ]
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      }
+    ]
+  },
+  {
     "slug": "skaven-of-clan-pestilens",
     "name": "Skaven of Clan Pestilens",
     "setting": "mordheim-1b",

@@ -434,6 +434,12 @@
       "why": "Not stupid while a Skaven Hero is within 6\"."
     },
     {
+      "name": "Stupidity (Clan Moulder Rat Ogre)",
+      "rule": "Stupidity",
+      "owners": [{"warband": "Skaven of Clan Moulder", "fighter": "Rat Ogre"}],
+      "why": "Not stupid while a Clan Moulder Hero is within 6\"."
+    },
+    {
       "name": "Stupidity (Cold One Beasthounds)",
       "rule": "Stupidity",
       "owners": [{"warband": "Dark Elves", "fighter": "Cold One Beasthound"}],

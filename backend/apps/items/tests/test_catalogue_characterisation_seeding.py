@@ -89,24 +89,24 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 33,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor and the Halflings' Ogre
-                "Item": 343,  # the import's 312 (its 14 animals are beasts') + one Animal item per beast
+                "Item": 346,  # the import's 315 (its 14 animals are beasts') + one Animal item per beast
                 "ItemRule": 51,  # the import's shared rules
-                "Skill": 254,  # the import's 230 (one per name) + the 24 hired swords' own skills the book lacks
-                "SkillGroup": 69,  # the import's 50 + a group of his own for each of 19 hired swords
+                "Skill": 258,  # the import's 234 (one per name) + the 24 hired swords' own skills the book lacks
+                "SkillGroup": 70,  # the import's 51 + a group of his own for each of 19 hired swords
                 "Spell": 188,  # 182 + the Dark Mage's six (BUG-54)
                 # special.json's 25, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
-                # are Tchar's and Arkhar's), the templates' 406 (the three Night Goblin and Orc Trolls' one
+                # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
                 # Regeneration (Troll); the Undead's and the Restless Dead's No Pain and May not run shared; the
                 # Fighting Ape's Agile (Fighting Ape)) and the hired swords' and personae's own 298 (next step 12;
                 # Sigmund's and Veskit's No Pain; each owner's own, none another's of its name: 43 more than when
                 # Johann the Knife and Penthesilea held Bertha's Hiring Fee), less the 8 copies of Large Target,
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov)
-                "Special": 781,
+                "Special": 793,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
-                "WarbandTemplate": 52,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
+                "WarbandTemplate": 53,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
             },
         )
         for model in BOOK_MODELS:
@@ -155,19 +155,19 @@ class SeedAllTests(TestCase):
 
     def test_the_warband_templates_come_in_whole(self):
         # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
-        self.assertIn("Warband templates import complete. Templates: 52, archived", self.output)
+        self.assertIn("Warband templates import complete. Templates: 53, archived", self.output)
         counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
         self.assertEqual(
             counts,
             {
-                "WarbandTemplateType": 58,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
-                "TemplateFighter": 346,
-                "TemplateList": 126,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs'
-                "TemplateListItem": 1400,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 161,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                "WarbandTemplateType": 59,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
+                "TemplateFighter": 353,
+                "TemplateList": 129,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs'
+                "TemplateListItem": 1424,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
+                "TemplateRule": 162,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
-                # Cult's other 6, the Court's 3, the Beastmen's 15 and the Marauders' 15 and 6 Blessings
-                "TemplateUpgrade": 68,
+                # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin)
+                "TemplateUpgrade": 77,
             },
         )
         mercenaries = WarbandTemplate.objects.get(slug="mercenaries")
@@ -205,11 +205,11 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             links,
             {
-                "Fear": (33, 0, 5, 5, 3),  # fighters, upgrades, hired swords, dramatis personae, beasts
+                "Fear": (34, 0, 5, 5, 3),  # fighters, upgrades, hired swords, dramatis personae, beasts
                 "Stupidity": (4, 0, 0, 0, 1),
                 "Immune to Psychology": (11, 0, 1, 2, 0),
                 "Immune to Poison": (10, 0, 3, 3, 2),
-                "Hideous": (0, 4, 0, 0, 0),  # the Cult's, the Blessings of Nurgle, the Beastmen's and Marauders', 40 gc
+                "Hideous": (0, 5, 0, 0, 0),  # the Cult's, Blessings, Beastmen's, Marauders' (40 gc), Twistkin's (20)
                 "Cloud of Flies": (
                     2,
                     2,
@@ -220,7 +220,7 @@ class SeedAllTests(TestCase):
             },
         )
         hideous = TemplateUpgrade.objects.filter(special__name="Hideous").values_list("cost", flat=True)
-        self.assertEqual(set(hideous), {40})
+        self.assertEqual(set(hideous), {40, 20})
         # the review (5 Nov 2026): a Carnival Tainted One read "The mutant causes fear." too
         self.assertEqual(book.get(name="Hideous").description, "The model causes fear.")
         apart = book.filter(name__regex=r"^(Fear|Stupidity|Immune to (Psychology|Poison)) \(")
@@ -230,6 +230,7 @@ class SeedAllTests(TestCase):
             {
                 "Fear (Maximilian)": "dramatis_persona",
                 "Stupidity (Rat Ogre)": "warband",  # the Skaven's and Clan Pestilens' one row
+                "Stupidity (Clan Moulder Rat Ogre)": "warband",  # unless a Clan Moulder Hero is within 6"
                 "Stupidity (Cold One Beasthounds)": "warband",
                 "Immune to Psychology (Plague Bearers)": "warband",
                 "Immune to Psychology (Nurglings)": "warband",  # their own text (the review, 5 Nov 2026: W6)
@@ -314,7 +315,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 230, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 234, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)

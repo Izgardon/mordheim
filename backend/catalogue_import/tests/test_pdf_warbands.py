@@ -197,3 +197,15 @@ class PdfImportTests(SimpleTestCase):
                 )
                 for stub in page["stubs"]:
                     self.assertEqual(self.items[stub["name"]]["origin"], ORIGIN)
+
+    def test_clan_moulders_twistkin_sells_the_rulebooks_mutations_at_half_price(self) -> None:
+        # the Twistkin skill (PDF p4): a Stormvermin buys one of the rulebook's mutations at half its listed cost
+        upgrades = self.templates["skaven-of-clan-moulder"]["upgrades"]
+        prices = {row["special"]["name"]: (row["cost"], row["cost_note"]) for row in upgrades}
+        self.assertEqual(prices["Daemon Soul"], (10, ""))
+        self.assertEqual(prices["Great Claw"], (25, ""))
+        self.assertEqual(prices["Tentacle"], (None, "half of 35 gc"))
+        self.assertEqual(len(prices), 9)
+        self.assertEqual(
+            {(str(row["who"]), row["max_per_fighter"]) for row in upgrades}, {("{'fighters': ['stormvermin']}", 1)}
+        )

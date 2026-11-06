@@ -918,5 +918,21 @@
   {
     "name": "Shifty",
     "description": "When charged, the Halfling gains one bonus attack, which strikes first."
+  },
+  {
+    "name": "Beastkin",
+    "description": "The range of every Beast or Animal Handling skill this Hero has, now or later, is doubled to 12\"."
+  },
+  {
+    "name": "Hypnotic Musk",
+    "description": "An enemy animal or beast must pass a Leadership test to charge this Hero, unless the charge is the result of goading. Ridden mounts are not affected."
+  },
+  {
+    "name": "Subjugator of Mankind",
+    "description": "If this Hero, armed with a Thingcatcher, takes an enemy model out of action, that model does not roll for injury after the battle but counts as having rolled Captured on the Serious Injury chart. Large creatures such as Ogres can't be caught this way; animals can."
+  },
+  {
+    "name": "Twistkin",
+    "description": "Stormvermin only. When he takes this skill, the Hero must buy one mutation from the Possessed's list in the rulebook at half its listed cost."
   }
 ]

@@ -1149,6 +1149,26 @@
       "name": "Shifty",
       "setting": "mordheim-2a",
       "how": "overrides.json"
+    },
+    {
+      "name": "Beastkin",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hypnotic Musk",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Subjugator of Mankind",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Twistkin",
+      "setting": "mordheim-2a",
+      "how": "overrides.json"
     }
   ],
   "hired_swords": [

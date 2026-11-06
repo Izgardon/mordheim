@@ -888,6 +888,26 @@
     ]
   },
   {
+    "name": "Skaven Clan Moulder",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "skaven-of-clan-moulder",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Black Hunger",
+      "Beastkin",
+      "Hypnotic Musk",
+      "Subjugator of Mankind",
+      "Twistkin"
+    ]
+  },
+  {
     "name": "Skaven Clan Pestilens",
     "for_everyone": false,
     "warbands": [
