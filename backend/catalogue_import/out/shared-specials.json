@@ -525,5 +525,307 @@
       "rule": "No Pain",
       "name": "No Pain (Veskit)"
     }
+  ],
+  "own_names": [
+    {
+      "owner": "Arabian Merchant",
+      "rule": "Haggle",
+      "name": "Haggle (Arabian Merchant)"
+    },
+    {
+      "owner": "Cathayan Merchant",
+      "rule": "Haggle",
+      "name": "Haggle (Cathayan Merchant)"
+    },
+    {
+      "owner": "Arabian Merchant",
+      "rule": "Marketeer",
+      "name": "Marketeer (Arabian Merchant)"
+    },
+    {
+      "owner": "Cathayan Merchant",
+      "rule": "Marketeer",
+      "name": "Marketeer (Cathayan Merchant)"
+    },
+    {
+      "owner": "Dwarf Troll Slayer",
+      "rule": "Deathwish",
+      "name": "Deathwish (Dwarf Troll Slayer)"
+    },
+    {
+      "owner": "Dwarf Slayer Pirate",
+      "rule": "Deathwish",
+      "name": "Deathwish (Dwarf Slayer Pirate)"
+    },
+    {
+      "owner": "Dwarf Troll Slayer",
+      "rule": "Hard to Kill",
+      "name": "Hard to Kill (Dwarf Troll Slayer)"
+    },
+    {
+      "owner": "Dwarf Pathfinder",
+      "rule": "Hard to Kill",
+      "name": "Hard to Kill (Dwarf Pathfinder)"
+    },
+    {
+      "owner": "Dwarf Treasure Hunter",
+      "rule": "Hard to Kill",
+      "name": "Hard to Kill (Dwarf Treasure Hunter)"
+    },
+    {
+      "owner": "Runesmith Journeyman",
+      "rule": "Hard to Kill",
+      "name": "Hard to Kill (Runesmith Journeyman)"
+    },
+    {
+      "owner": "Dwarf Slayer Pirate",
+      "rule": "Hard to Kill",
+      "name": "Hard to Kill (Dwarf Slayer Pirate)"
+    },
+    {
+      "owner": "Dwarf Troll Slayer",
+      "rule": "Hard Head",
+      "name": "Hard Head (Dwarf Troll Slayer)"
+    },
+    {
+      "owner": "Dwarf Pathfinder",
+      "rule": "Hard Head",
+      "name": "Hard Head (Dwarf Pathfinder)"
+    },
+    {
+      "owner": "Dwarf Treasure Hunter",
+      "rule": "Hard Head",
+      "name": "Hard Head (Dwarf Treasure Hunter)"
+    },
+    {
+      "owner": "Runesmith Journeyman",
+      "rule": "Hard Head",
+      "name": "Hard Head (Runesmith Journeyman)"
+    },
+    {
+      "owner": "Dwarf Slayer Pirate",
+      "rule": "Hard Head",
+      "name": "Hard Head (Dwarf Slayer Pirate)"
+    },
+    {
+      "owner": "Elf Ranger",
+      "rule": "Excellent Sight",
+      "name": "Excellent Sight (Elf Ranger)"
+    },
+    {
+      "owner": "Shadow Warrior",
+      "rule": "Excellent Sight",
+      "name": "Excellent Sight (Shadow Warrior)"
+    },
+    {
+      "owner": "Ungor Trapper",
+      "rule": "Excellent Sight",
+      "name": "Excellent Sight (Ungor Trapper)"
+    },
+    {
+      "owner": "Dijin Katal, the Renegade Assassin",
+      "rule": "Excellent Sight",
+      "name": "Excellent Sight (Dijin Katal, the Renegade Assassin)"
+    },
+    {
+      "owner": "Highwayman",
+      "rule": "Expert Rider",
+      "name": "Expert Rider (Highwayman)"
+    },
+    {
+      "owner": "Roadwarden",
+      "rule": "Expert Rider",
+      "name": "Expert Rider (Roadwarden)"
+    },
+    {
+      "owner": "The Headless Horseman",
+      "rule": "Expert Rider",
+      "name": "Expert Rider (The Headless Horseman)"
+    },
+    {
+      "owner": "Bard",
+      "rule": "Songster",
+      "name": "Songster (Bard)"
+    },
+    {
+      "owner": "William Schäkestange, Master Bard",
+      "rule": "Songster",
+      "name": "Songster (William Schäkestange, Master Bard)"
+    },
+    {
+      "owner": "Big Game Hunter",
+      "rule": "Set Traps",
+      "name": "Set Traps (Big Game Hunter)"
+    },
+    {
+      "owner": "Ungor Trapper",
+      "rule": "Set Traps",
+      "name": "Set Traps (Ungor Trapper)"
+    },
+    {
+      "owner": "Chameleon Skink",
+      "rule": "Infiltrator",
+      "name": "Infiltrator (Chameleon Skink)"
+    },
+    {
+      "owner": "Halfling Thief",
+      "rule": "Infiltrator",
+      "name": "Infiltrator (Halfling Thief)"
+    },
+    {
+      "owner": "Dark Elf Assassin",
+      "rule": "Kindred Hatred",
+      "name": "Kindred Hatred (Dark Elf Assassin)"
+    },
+    {
+      "owner": "Dijin Katal, the Renegade Assassin",
+      "rule": "Kindred Hatred",
+      "name": "Kindred Hatred (Dijin Katal, the Renegade Assassin)"
+    },
+    {
+      "owner": "Dwarf Pathfinder",
+      "rule": "Explorer",
+      "name": "Explorer (Dwarf Pathfinder)"
+    },
+    {
+      "owner": "Tomb Robber",
+      "rule": "Explorer",
+      "name": "Explorer (Tomb Robber)"
+    },
+    {
+      "owner": "Elf Mage",
+      "rule": "Wanderer",
+      "name": "Wanderer (Elf Mage)"
+    },
+    {
+      "owner": "Aenur, the Sword of Twilight",
+      "rule": "Wanderer",
+      "name": "Wanderer (Aenur, the Sword of Twilight)"
+    },
+    {
+      "owner": "Dijin Katal, the Renegade Assassin",
+      "rule": "Wanderer",
+      "name": "Wanderer (Dijin Katal, the Renegade Assassin)"
+    },
+    {
+      "owner": "The Headless Horseman",
+      "rule": "Wanderer",
+      "name": "Wanderer (The Headless Horseman)"
+    },
+    {
+      "owner": "Gaoler",
+      "rule": "Hatred",
+      "name": "Hatred (Gaoler)"
+    },
+    {
+      "owner": "Wolf Priest of Ulric",
+      "rule": "Hatred",
+      "name": "Hatred (Wolf Priest of Ulric)"
+    },
+    {
+      "owner": "Grave Robber",
+      "rule": "Hatred",
+      "name": "Hatred (Grave Robber)"
+    },
+    {
+      "owner": "Kislev Ranger",
+      "rule": "Loner",
+      "name": "Loner (Kislev Ranger)"
+    },
+    {
+      "owner": "Priest of Morr",
+      "rule": "Loner",
+      "name": "Loner (Priest of Morr)"
+    },
+    {
+      "owner": "Hobgoblin Scout",
+      "rule": "Loner",
+      "name": "Loner (Hobgoblin Scout)"
+    },
+    {
+      "owner": "The Dark Jester in Mordheim",
+      "rule": "Loner",
+      "name": "Loner (The Dark Jester in Mordheim)"
+    },
+    {
+      "owner": "Warrior Priest of Sigmar",
+      "rule": "Prayers",
+      "name": "Prayers (Warrior Priest of Sigmar)"
+    },
+    {
+      "owner": "Wolf Priest of Ulric",
+      "rule": "Prayers",
+      "name": "Prayers (Wolf Priest of Ulric)"
+    },
+    {
+      "owner": "Swordsmith",
+      "rule": "Master Craftsman",
+      "name": "Master Craftsman (Swordsmith)"
+    },
+    {
+      "owner": "The Foole",
+      "rule": "Master Craftsman",
+      "name": "Master Craftsman (The Foole)"
+    },
+    {
+      "owner": "Chaos Fury",
+      "rule": "Daemonic Instability",
+      "name": "Daemonic Instability (Chaos Fury)"
+    },
+    {
+      "owner": "Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne",
+      "rule": "Daemonic Instability",
+      "name": "Daemonic Instability (Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne)"
+    },
+    {
+      "owner": "Chaos Fury",
+      "rule": "Fly",
+      "name": "Fly (Chaos Fury)"
+    },
+    {
+      "owner": "Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne",
+      "rule": "Fly",
+      "name": "Fly (Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne)"
+    },
+    {
+      "owner": "Bertha Bestraufrung, High Matriarch of the Sisterhood",
+      "rule": "Hiring Fee",
+      "name": "Hiring Fee (Bertha Bestraufrung, High Matriarch of the Sisterhood)"
+    },
+    {
+      "owner": "Johann the Knife",
+      "rule": "Hiring Fee",
+      "name": "Hiring Fee (Johann the Knife)"
+    },
+    {
+      "owner": "Penthesilea, Mark of the Serpent",
+      "rule": "Hiring Fee",
+      "name": "Hiring Fee (Penthesilea, Mark of the Serpent)"
+    },
+    {
+      "owner": "Bertha Bestraufrung, High Matriarch of the Sisterhood",
+      "rule": "Spells",
+      "name": "Spells (Bertha Bestraufrung, High Matriarch of the Sisterhood)"
+    },
+    {
+      "owner": "Nicodemus, the Cursed Pilgrim",
+      "rule": "Spells",
+      "name": "Spells (Nicodemus, the Cursed Pilgrim)"
+    },
+    {
+      "owner": "The Crow Master",
+      "rule": "Spells",
+      "name": "Spells (The Crow Master)"
+    },
+    {
+      "owner": "Dark Emissary",
+      "rule": "Alignment",
+      "name": "Alignment (Dark Emissary)"
+    },
+    {
+      "owner": "Truthsayer",
+      "rule": "Alignment",
+      "name": "Alignment (Truthsayer)"
+    }
   ]
 }

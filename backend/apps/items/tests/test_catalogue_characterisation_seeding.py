@@ -98,9 +98,10 @@ class SeedAllTests(TestCase):
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 395 (the three Night Goblin and Orc Trolls' one
                 # Regeneration (Troll); the Undead's and the Restless Dead's No Pain and May not run shared; the
-                # Fighting Ape's Agile (Fighting Ape)) and the hired swords' and personae's own 255 (next step 12;
-                # Sigmund's and Veskit's No Pain)
-                "Special": 735,
+                # Fighting Ape's Agile (Fighting Ape)) and the hired swords' and personae's own 298 (next step 12;
+                # Sigmund's and Veskit's No Pain; each owner's own, none another's of its name: 43 more than when
+                # Johann the Knife and Penthesilea held Bertha's Hiring Fee)
+                "Special": 778,
                 "BestiaryEntry": 31,  # 14 mounts, 6 pets, 11 creatures (17 from Mutiny in Marienburg); no hired swords
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)

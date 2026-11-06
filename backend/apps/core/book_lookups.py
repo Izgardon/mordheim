@@ -5,7 +5,9 @@ Sword - <name>" (or "Dramatis Persona - <name>"), his spells under his `spell_lo
 the review, 5 Nov 2026: D3); his special skills are the book's of their names (created when it
 lacks one) in a skill group of that name, which his skill access names (skill groups, phase 1a). A special of a shared
 special's name or alias is the shared one (Fear for "Cause Fear"), unless William's list keeps that owner's apart under
-a name of its own (special/shared.py).
+a name of its own (special/shared.py). Any other special is the book's general one of its name (Large, Wizard), else
+the owner's own, never another owner's of the name (the coordinator, 5 Nov 2026: two owners share a rule only through
+the shared specials list), named for him where others word it otherwise ("Hiring Fee (Johann the Knife)").
 """
 
 import re
@@ -18,7 +20,7 @@ from apps.core.seeding import parse_int
 from apps.items.models import Item
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
 from apps.special.categories import book_category
-from apps.special.kinds import INJURY, WARBAND, book_kind, owner_kind_of
+from apps.special.kinds import GENERAL, INJURY, WARBAND, book_kind, owner_kind_of
 from apps.special.models import Special
 from apps.special.shared import read_shared
 from apps.spells.models import Spell
@@ -107,18 +109,22 @@ def spell_fields(spell_item):
 
 def shared_names(
     book: dict[tuple[str, str], Special],
-) -> tuple[dict[str, tuple[str, Special | None]], dict[tuple[str, str], str]]:
+) -> tuple[dict[str, tuple[str, Special | None]], dict[tuple[str, str], str], dict[tuple[str, str], str]]:
     """From the import's out/shared-specials.json: each shared special's name and alias -> its name and its book row
-    of the name and type (None until seed_spells_and_special seeds it), and (owner, his rule) -> the name of the rule
-    kept his own."""
+    of the name and type (None until seed_spells_and_special seeds it), (owner, his rule) -> the name of the rule kept
+    his own, and (owner, his rule) -> the name of his own rule that others word otherwise ("Hiring Fee (Johann the
+    Knife)", catalogue_import/own_rules.py)."""
     data = read_shared()
     names = {
         lookup_key(name): (entry["name"], book.get((entry["name"], entry["type"])))
         for entry in data["specials"]
         for name in (entry["name"], *entry["aliases"])
     }
-    kept = {(lookup_key(line["owner"]), lookup_key(line["rule"])): line["name"] for line in data["apart"]}
-    return names, kept
+
+    def by_owner(lines: list[dict[str, Any]]) -> dict[tuple[str, str], str]:
+        return {(lookup_key(line["owner"]), lookup_key(line["rule"])): line["name"] for line in lines}
+
+    return names, by_owner(data["apart"]), by_owner(data.get("own_names", []))
 
 
 @dataclass
@@ -144,8 +150,13 @@ class BookLookups:
         # not a warband template fighter's own rules ("Warband - Mercenaries"): they stay the template's; nor the
         # injury tables' specials, worded for the injury: the Old Prospector keeps his own Hardened
         specials = list(Special.objects.filter(**book).exclude(owner_kind=WARBAND).exclude(type=INJURY))
-        self.specials = {lookup_key(row.name): row for row in specials}
-        self.shared, self.kept = shared_names({(row.name, row.type): row for row in specials})
+        # a general special (Large, Wizard, a mount's rule) by name; an owner's own only by his type and its name, so
+        # no owner takes another's rule of the name (two share one only through the shared specials list)
+        self.specials = {lookup_key(row.name): row for row in specials if owner_kind_of(row.type) == GENERAL}
+        self.own_specials = {
+            (row.type, lookup_key(row.name)): row for row in specials if owner_kind_of(row.type) != GENERAL
+        }
+        self.shared, self.kept, self.own_names = shared_names({(row.name, row.type): row for row in specials})
         self.spells = {lookup_key(row.name): row for row in Spell.objects.filter(**book)}
         self.items: dict[tuple[str, str], Item] = {}
         self.item_names: dict[str, Item] = {}
@@ -169,24 +180,27 @@ class BookLookups:
         return found
 
     def special(self, item: Any, owner: str) -> Special | None:
-        """The shared special the item's name means (special/shared.py), or the book's special of its name, or of the
-        name William's list keeps the owner's apart under ("Immune to Psychology (Belandysh)"), made the owner's when
-        the book lacks it: its kind and category the book's classification gives the name (Boons & Banes,
+        """The shared special the item's name means (special/shared.py), or the book's general special of its name or
+        of the name William's list keeps the owner's apart under ("Immune to Psychology (Belandysh)"), else the owner's
+        own of that name, or of his name for a rule others word otherwise ("Hiring Fee (Johann the Knife)"), made when
+        the book lacks it: its kind and category the book's classification gives the rule's name (Boons & Banes,
         special/categories.py) and its owner kind its type (special/kinds.py), each corrected on a row seeded before."""
         name, description = name_and_description(item)
         if not name:
             return None
-        kept = self.kept.get((lookup_key(owner), lookup_key(name)))
+        owned = (lookup_key(owner), lookup_key(name))
+        kept = self.kept.get(owned)
         shared = None if kept else self.shared.get(lookup_key(name))
         if shared is not None:
             shared_name, row = shared
             if row is None:
                 self.warnings.append(f"  Special '{name}' not found for '{owner}': {shared_name} isn't seeded yet")
             return row
-        special: Special = self._own(Special, self.specials, kept or name, description, owner, "special")
+        special = self._special(kept or self.own_names.get(owned) or name, description, owner)
+        classified = kept or name  # one named for its owner is classified as the rule it is ("Hiring Fee")
         fields = {
-            "kind": book_kind(special.name, special.kind),
-            "category": book_category(special.name, special.type),
+            "kind": book_kind(classified, special.kind),
+            "category": book_category(classified, special.type),
             "owner_kind": owner_kind_of(special.type),
         }
         changed = [field for field, value in fields.items() if getattr(special, field) != value]
@@ -202,7 +216,10 @@ class BookLookups:
         named = [(name, description) for name, description in map(name_and_description, items) if name]
         if not named:
             return False
-        skills = [self._own(Skill, self.skills, name, description, owner, "skill") for name, description in named]
+        skills = [
+            self._own(Skill, self.skills, lookup_key(name), name, description, owner, "skill")
+            for name, description in named
+        ]
         group, _created = SkillGroup.objects.get_or_create(campaign=None, name=self.own_type_of(owner))
         SkillGroupSkill.objects.bulk_create(
             [SkillGroupSkill(group=group, skill=skill) for skill in skills], ignore_conflicts=True
@@ -256,12 +273,22 @@ class BookLookups:
                 links.quantities[item.id] = parse_int(line.get("quantity"), 1)
         return links
 
+    def _special(self, name: str, description: str, owner: str) -> Special:
+        """The book's general special of the name, else the owner's own (never another owner's of the name)."""
+        general = self.specials.get(lookup_key(name))
+        if general is not None:
+            filled: Special = _filled(general, description)
+            return filled
+        own: Special = self._own(
+            Special, self.own_specials, (self.own_type_of(owner), lookup_key(name)), name, description, owner, "special"
+        )
+        return own
+
     def _own(
-        self, model: type[Model], cache: dict[str, Any], name: str, description: str, owner: str, noun: str
+        self, model: type[Model], cache: dict[Any, Any], key: Any, name: str, description: str, owner: str, noun: str
     ) -> Any:
-        """The book's entry of the name, its description filled in when it has none; created as the owner's when the
-        book lacks it."""
-        key = lookup_key(name)
+        """The cached entry of the key, its description filled in when it has none; created as the owner's when the
+        book lacks it (a skill is the book's of its name: his group holds it)."""
         row = cache.get(key)
         if row is None:
             kind = self.own_type_of(owner)
@@ -269,7 +296,13 @@ class BookLookups:
             row = model._default_manager.create(name=name, description=description, campaign=None, **typed)
             cache[key] = row
             self.warnings.append(f"  Created {noun} '{name}' ({kind}) for '{owner}'")
-        elif description and not row.description:
-            row.description = description
-            row.save(update_fields=["description"])
-        return row
+            return row
+        return _filled(row, description)
+
+
+def _filled(row: Any, description: str) -> Any:
+    """The row, its description filled in from the owner's when it has none."""
+    if description and not row.description:
+        row.description = description
+        row.save(update_fields=["description"])
+    return row

@@ -138,6 +138,26 @@ class SharedLookupTests(TestCase):
         assert mount is not None
         self.assertEqual((mount.name, mount.type), ("Immune to Psychology (Nightmare)", "Animal"))
 
+    def test_an_owners_own_rule_is_never_another_owners_of_its_name(self):
+        # Johann the Knife and Penthesilea held Bertha's Hiring Fee (the coordinator, 5 Nov 2026): two owners share a
+        # rule only through the shared list, and one others word otherwise is named for its owner
+        bertha = "Bertha Bestraufrung, High Matriarch of the Sisterhood"
+        lookups = BookLookups("Dramatis Persona")
+        hers = lookups.special({"name": "Hiring Fee", "description": "Roll a D6."}, bertha)
+        his = lookups.special({"name": "Hiring Fee", "description": "Crimson Shade."}, "Johann the Knife")
+        unlisted = BookLookups("Hired Sword").special({"name": "Hiring Fee", "description": "Gold."}, "Ogre Bodyguard")
+
+        assert hers is not None and his is not None and unlisted is not None
+        self.assertEqual((hers.name, hers.type), (f"Hiring Fee ({bertha})", f"Dramatis Persona - {bertha}"))
+        johann = ("Hiring Fee (Johann the Knife)", "Dramatis Persona - Johann the Knife", "Crimson Shade.")
+        self.assertEqual((his.name, his.type, his.description, his.kind, his.owner_kind), (*johann, TRAIT, DRAMATIS_PERSONA))  # fmt: skip
+        self.assertEqual((unlisted.name, unlisted.type), ("Hiring Fee", "Hired Sword - Ogre Bodyguard"))
+        again = BookLookups("Dramatis Persona").special({"name": "Hiring Fee", "description": "Again."}, "Johann the Knife")  # fmt: skip
+        self.assertEqual(again, his)  # a second run finds his own
+        large = BookLookups("Hired Sword").special({"name": "Large", "description": "Big."}, "Ogre Bodyguard")
+        assert large is not None
+        self.assertEqual((large.type, large.owner_kind), ("Trait", GENERAL))  # a general special still by name
+
     def test_no_pain_is_one_rule_for_the_model_but_sigmunds_and_veskits_ignore_knocked_down_too(self):
         goliath = BookLookups("Hired Sword").special({"name": "No Pain", "description": "Bone Goliaths treat ..."}, "Bone Goliath")  # fmt: skip
         sigmund = "Sigmund Spindle, the Harvester of Flesh"

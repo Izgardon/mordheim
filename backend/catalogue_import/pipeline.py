@@ -16,6 +16,7 @@ from catalogue_import.injuries import build_serious_injuries
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, mim_item
 from catalogue_import.new_groups import SkillGroups, build_skill_groups
+from catalogue_import.own_rules import own_rules
 from catalogue_import.personae import Catalogue, build_personae, put_names_right
 from catalogue_import.random_mutations import build_random_mutations, render_random
 from catalogue_import.report import ReportData, render_report
@@ -244,6 +245,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     one_rule = load_shared()  # the shared specials (William, 5 Nov 2026)
     templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log, one_rule)
     shared_specials = build_shared(one_rule, sources.our_hired_swords, sources.our_personae, snapshot.injuries)
+    own = own_rules(one_rule, sources.our_hired_swords, sources.our_personae)  # each owner's own (5 Nov 2026)
+    shared_specials["own_names"] = own.names()
     random_mutations = build_random_mutations(one_rule)  # the random mutation table (William, 5 Nov 2026)
     injuries = build_serious_injuries(snapshot.injuries)
     counts = {
@@ -310,6 +313,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         + render_templates(templates, template_log, grouped.groups, groups)
         + "\n"
         + render_shared(one_rule)
+        + own.render()
         + "\n"
         + render_random(random_mutations, one_rule),
     }

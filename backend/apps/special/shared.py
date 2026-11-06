@@ -19,8 +19,9 @@ SHARED_OUT = Path(settings.BASE_DIR) / "catalogue_import" / "out" / "shared-spec
 
 
 def read_shared(path: Path = SHARED_OUT) -> dict[str, list[dict[str, Any]]]:
-    """`specials` (name, type, description, aliases) and `apart` (owner, rule, name: the hired swords', dramatis
-    personae's and beasts' rules kept their own)."""
+    """`specials` (name, type, description, aliases), `apart` (owner, rule, name: the hired swords', dramatis
+    personae's and beasts' rules kept their own) and `own_names` (owner, rule, name: a hired sword's or dramatis
+    persona's own rule that others word otherwise, named for him: catalogue_import/own_rules.py)."""
     with path.open(encoding="utf-8") as handle:
         data: dict[str, list[dict[str, Any]]] = json.load(handle)
     return data

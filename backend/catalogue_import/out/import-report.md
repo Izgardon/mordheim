@@ -784,6 +784,41 @@ List prices the pages differ from: none.
 | No Pain (Veskit) | Veskit, High Executioner of Clan Eshin | Ignores knocked down results too: only losing his last wound takes him out of action. |
 | Agile (Fighting Ape) | The Cursed Cavalcade: Fighting Ape | The Scale Sheer Surfaces, Acrobat and Dodge skills and a diving charge from up to 10" high; the Grace of Shornaal is +1 to Initiative tests. |
 
+### Own rules of one name
+
+A hired sword's or dramatis persona's own rule is a row of his own (two owners share one only through the shared list). Where other owners' rules of its name are worded otherwise, it is named for him:
+
+- Haggle: Arabian Merchant; Cathayan Merchant.
+- Marketeer: Arabian Merchant; Cathayan Merchant.
+- Deathwish: Dwarf Troll Slayer; Dwarf Slayer Pirate.
+- Hard to Kill: Dwarf Troll Slayer; Dwarf Pathfinder; Dwarf Treasure Hunter; Runesmith Journeyman; Dwarf Slayer Pirate.
+- Hard Head: Dwarf Troll Slayer; Dwarf Pathfinder; Dwarf Treasure Hunter; Runesmith Journeyman; Dwarf Slayer Pirate.
+- Excellent Sight: Elf Ranger; Shadow Warrior; Ungor Trapper; Dijin Katal, the Renegade Assassin.
+- Expert Rider: Highwayman; Roadwarden; The Headless Horseman.
+- Songster: Bard; William Schäkestange, Master Bard.
+- Set Traps: Big Game Hunter; Ungor Trapper.
+- Infiltrator: Chameleon Skink; Halfling Thief.
+- Kindred Hatred: Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
+- Explorer: Dwarf Pathfinder; Tomb Robber.
+- Wanderer: Elf Mage; Aenur, the Sword of Twilight; Dijin Katal, the Renegade Assassin; The Headless Horseman.
+- Hatred: Gaoler; Wolf Priest of Ulric; Grave Robber.
+- Loner: Kislev Ranger; Priest of Morr; Hobgoblin Scout; The Dark Jester in Mordheim.
+- Prayers: Warrior Priest of Sigmar; Wolf Priest of Ulric.
+- Master Craftsman: Swordsmith; The Foole.
+- Daemonic Instability: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
+- Fly: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
+- Hiring Fee: Bertha Bestraufrung, High Matriarch of the Sisterhood; Johann the Knife; Penthesilea, Mark of the Serpent.
+- Spells: Bertha Bestraufrung, High Matriarch of the Sisterhood; Nicodemus, the Cursed Pilgrim; The Crow Master.
+- Alignment: Dark Emissary; Truthsayer.
+
+Worded alike, each owner's own row under the name (the shared list could merge them):
+
+- Pawnbroker: Arabian Merchant; Cathayan Merchant.
+- Large Target: Ogre Bodyguard; Ogre Slave Master.
+- Perfect Killer: Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
+- Hate Orcs and Goblins: Dwarf Pathfinder; Runesmith Journeyman.
+- Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
+
 ## Random mutation table
 
 `sources/random-mutations.json` (mordheimer's Power in the Stones, Town Cryer #15) as `out/random-mutations.json`: what each D66 result gives when the D100 serious injury result 100, Mutation, rolls on it. A result matched to a special by what it does names it.
