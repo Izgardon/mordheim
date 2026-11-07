@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import { DEFAULT_CUSTOM_UNIT_DRAFT } from "@/features/battles/components/prebattle/prebattle-types";
 
-import { customUnitFromDraft, draftWithStat, makeCustomUnitKey } from "./custom-unit-draft";
+import {
+  customUnitFromDraft,
+  draftWithStat,
+  makeCustomUnitKey,
+  typedBattleStat,
+} from "./custom-unit-draft";
 
 describe("custom-unit-draft", () => {
   it("keeps two digits per stat, and a leading minus for the armour save", () => {
@@ -10,6 +15,12 @@ describe("custom-unit-draft", () => {
     expect(
       draftWithStat(DEFAULT_CUSTOM_UNIT_DRAFT, "armour_save", "-1-2x3").stats.armour_save
     ).toBe("-12");
+    // a pasted row's save reads as the battle holds it
+    expect(["5+", "-", "4"].map((typed) => typedBattleStat("armour_save", typed))).toEqual([
+      "5",
+      "-",
+      "4",
+    ]);
   });
 
   it("builds a temporary unit with trimmed names and parsed stats", () => {

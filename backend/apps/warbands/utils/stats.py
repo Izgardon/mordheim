@@ -1,5 +1,6 @@
 """Characteristics as the books print them (William, 3 Nov 2026: "allow free text instead of nums as a lot of units
-will require them"): a whole number from 0 to 10, or a written value such as "1(2)", "5*", "2D6" or "-".
+will require them"): a whole number from 0 to 10, or a written value such as "1(2)", "5*", "2D6" or "-". Every
+profile form sends its boxes as typed and the server reads them (`read_text_stat`, William, 7 Nov 2026).
 
 The field holds the number the app does sums with: the whole number a written value starts with ("1(2)" is 1, "5*" is
 5), or none at all ("D6", "2D6", "-"; "-" is not 0, William). `written_stats` (keyed by field) holds what the book
@@ -49,29 +50,32 @@ def shown_stat(number: int | None, written: str | None) -> str:
     return f"{'' if number is None else number}{written or ''}" or "-"
 
 
+def read_text_stat(text: str) -> Stat:
+    """A stat typed in a box (William, 7 Nov 2026: "always be set to written mode ... and parse in backend to whether
+    its just a number or something more"): a whole number from 0 to 10 is the stat, anything else is written. A
+    number past 10 ("12", "12*"; the Tilean Hunting Hawk's M12) is written whole, with no number to sum, as the
+    template seeding keeps it, so a profile read back saves unchanged. ValueError for an empty box or one too long."""
+    text = " ".join(text.split())
+    if not text:
+        raise ValueError(STAT_ERROR)
+    if text.isdigit() and int(text) <= MAX_STAT:
+        return Stat(int(text), None)
+    if len(text) > MAX_WRITTEN:
+        raise ValueError(WRITTEN_TOO_LONG)
+    stat = split_written(text)
+    return stat if stat.number is None or stat.number <= MAX_STAT else Stat(None, text)
+
+
 def read_stat(value: Any) -> Stat:
-    """A stat as sent: 4, "4", "1(2)", "D6", "-". ValueError (STAT_ERROR or WRITTEN_TOO_LONG) for anything else."""
-    if isinstance(value, bool):
+    """A stat as sent: a number from 0 to 10 (4), or text (`read_text_stat`: "4", "1(2)", "D6", "-", "12"). ValueError
+    (STAT_ERROR or WRITTEN_TOO_LONG) for anything else."""
+    if isinstance(value, str):
+        return read_text_stat(value)
+    if isinstance(value, bool) or not isinstance(value, int | float) or not float(value).is_integer():
         raise ValueError(STAT_ERROR)
-    if isinstance(value, int):
-        stat = Stat(value, None)
-    elif isinstance(value, float) and value.is_integer():
-        stat = Stat(int(value), None)
-    elif isinstance(value, str):
-        text = " ".join(value.split())
-        if not text:
-            raise ValueError(STAT_ERROR)
-        if text.isdigit():
-            stat = Stat(int(text), None)
-        elif len(text) > MAX_WRITTEN:
-            raise ValueError(WRITTEN_TOO_LONG)
-        else:
-            stat = split_written(text)
-    else:
+    if not 0 <= value <= MAX_STAT:
         raise ValueError(STAT_ERROR)
-    if stat.number is not None and not 0 <= stat.number <= MAX_STAT:
-        raise ValueError(STAT_ERROR)
-    return stat
+    return Stat(int(value), None)
 
 
 def stat_values(source: Any) -> dict[str, Any]:

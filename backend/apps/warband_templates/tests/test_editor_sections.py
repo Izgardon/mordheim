@@ -139,6 +139,17 @@ class FighterTests(EditorTestCase):
             [("Leader", "aura"), ("Lantern Bearer", "aura")],
         )
 
+    def test_a_profile_read_back_saves_unchanged(self) -> None:
+        # the Tilean Hunting Hawk's M12 is written (no number to sum), as the seeding keeps it
+        typed = {"movement": "12", "weapon_skill": "4", "attacks": "2(4)"}
+        first = self.saved("fighters/captain/", fighter_body(name="Hawk", **typed))
+        version = WarbandTemplate.objects.get(pk=first["template"]["id"])
+        self.saved("fighters/captain/", fighter_body(name="Hawk", **typed), template=version)
+
+        hawk = version.fighters.get(key="captain")
+        self.assertEqual((hawk.movement, hawk.weapon_skill, hawk.attacks), (None, 4, 2))
+        self.assertEqual(hawk.written_stats, {"movement": "12", "attacks": "(4)"})
+
     def test_unknown_lists_keys_and_unordered_counts_are_refused(self) -> None:
         for changes in (
             {"lists": ["nope"]},

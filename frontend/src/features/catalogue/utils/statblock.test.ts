@@ -7,7 +7,6 @@ import {
   readItemStatblock,
   statInputs,
   statNumbers,
-  isWritten,
   numberOnly,
   profileInputs,
   statShown,
@@ -88,24 +87,36 @@ describe("written stats", () => {
     ]);
   });
 
-  it("sends a plain number as a number, a written value as typed, an empty box as 0", () => {
-    expect([statToSend("4"), statToSend(" 1(2) "), statToSend("-"), statToSend("")]).toEqual([
-      4,
-      "1(2)",
-      "-",
-      0,
-    ]);
+  it("sends each box as typed for the server to read, an empty box as 0", () => {
+    const sent = ["4", " 1(2) ", "-", "12", ""].map(statToSend);
+    expect(sent).toEqual(["4", "1(2)", "-", "12", 0]);
   });
 
-  it("edits a profile's written values as they show, and turns them back into numbers", () => {
+  it("edits a profile's written values as they show, and reads the number one starts with", () => {
     const inputs = profileInputs({
+      movement: null,
       attacks: 2,
       weapon_skill: null,
       strength: null,
-      written_stats: { attacks: "(2)", weapon_skill: "D6" },
+      written_stats: { movement: "12", attacks: "(2)", weapon_skill: "D6" },
     });
-    expect([inputs.attacks, inputs.weapon_skill, inputs.strength]).toEqual(["2(2)", "D6", ""]);
-    expect([isWritten("1(2)"), isWritten("4"), isWritten("")]).toEqual([true, false, false]);
+    const shown = [inputs.movement, inputs.attacks, inputs.weapon_skill, inputs.strength];
+    expect(shown).toEqual(["12", "2(2)", "D6", ""]);
     expect([numberOnly("1(2)"), numberOnly("D6"), numberOnly("4")]).toEqual(["1", "", "4"]);
+  });
+
+  it("saves a profile read back as it was read", () => {
+    const written = { movement: "12", attacks: "(2)", weapon_skill: "D6" };
+    const inputs = profileInputs({
+      movement: null,
+      attacks: 2,
+      weapon_skill: null,
+      written_stats: written,
+    });
+    expect([inputs.movement, inputs.attacks, inputs.weapon_skill].map(statToSend)).toEqual([
+      "12",
+      "2(2)",
+      "D6",
+    ]);
   });
 });

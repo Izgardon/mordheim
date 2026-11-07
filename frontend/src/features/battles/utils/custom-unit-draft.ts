@@ -17,23 +17,24 @@ export function makeCustomUnitKey() {
   return `custom:${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 }
 
-/** The draft with one stat typed in: two digits, and a leading minus for the armour save. */
+/**
+ * A battle's stat box as typed (a battle holds numbers only): two digits, and a leading minus for
+ * the armour save ("5+" is 5, "-" no save).
+ */
+export function typedBattleStat(key: StatKey, value: string) {
+  if (key !== "armour_save") return value.replace(/[^\d]/g, "").slice(0, 2);
+  const normalized = value.replace(/[^\d-]/g, "");
+  const digits = normalized.replace(/-/g, "").slice(0, 2);
+  return normalized.startsWith("-") ? `-${digits}` : digits;
+}
+
+/** The draft with one stat typed in (`typedBattleStat`). */
 export function draftWithStat(
   draft: CustomUnitDraft,
   key: StatKey,
   value: string
 ): CustomUnitDraft {
-  if (key === "armour_save") {
-    const normalized = value.replace(/[^\d-]/g, "");
-    const hasLeadingMinus = normalized.startsWith("-");
-    const digits = normalized.replace(/-/g, "");
-    const nextValue = hasLeadingMinus ? `-${digits.slice(0, 2)}` : digits.slice(0, 2);
-    return { ...draft, stats: { ...draft.stats, armour_save: nextValue } };
-  }
-  return {
-    ...draft,
-    stats: { ...draft.stats, [key]: value.replace(/[^\d]/g, "").slice(0, 2) },
-  };
+  return { ...draft, stats: { ...draft.stats, [key]: typedBattleStat(key, value) } };
 }
 
 /** The temporary unit a draft describes, under `key`. */

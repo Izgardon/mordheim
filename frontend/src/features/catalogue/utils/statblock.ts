@@ -42,13 +42,10 @@ export const statShown = (number: number | null | undefined, written?: string): 
   return written ? `${number}${written}` : number;
 };
 
-/** Whether a stat box holds a written value rather than a plain number (or nothing yet). */
-export const isWritten = (value: unknown) => !/^\d*$/.test(String(value ?? "").trim());
-
 /** A stat box's text as a plain number: the one a written value starts with, else empty. */
 export const numberOnly = (value: unknown) => {
   const text = String(value ?? "").trim();
-  return isWritten(text) ? String(writtenNumber(text) ?? "") : text;
+  return /^\d*$/.test(text) ? text : String(writtenNumber(text) ?? "");
 };
 
 /** A stored profile's stats as its form edits them: a written value as written. */
@@ -65,11 +62,13 @@ export const statInput = (number: number | null | undefined, written?: string) =
   return shown === "–" ? "" : String(shown);
 };
 
-/** A stat as a save sends it: a plain number as a number, a written value as typed, empty as 0. */
+/**
+ * A stat as a save sends it: as typed, for the server to read as a number or a written value
+ * (William: "parse in backend to whether its just a number or something more"); empty as 0.
+ */
 export function statToSend(value: unknown): number | string {
   const text = String(value ?? "").trim();
-  if (!text) return 0;
-  return /^\d+$/.test(text) ? Number(text) : text;
+  return text || 0;
 }
 
 /** A profile's stats as a save sends them (`statToSend`), keyed by field. */

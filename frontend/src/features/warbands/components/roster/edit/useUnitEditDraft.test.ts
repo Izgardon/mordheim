@@ -24,17 +24,20 @@ describe("statsPayload", () => {
     });
     expect(stats).toMatchObject({
       movement: 0,
-      weapon_skill: 4,
+      weapon_skill: "4",
       ballistic_skill: 0,
-      strength: 3,
+      strength: "3",
       toughness: 0,
       leadership: 0,
       armour_save: null,
     });
   });
 
-  it("keeps a typed save", () => {
-    expect(statsPayload({ armour_save: "5" }).armour_save).toBe(5);
+  it("sends a typed save as typed for the server to read, a dash as none", () => {
+    const saves = ["5", " 4+ ", "-"].map(
+      (typed) => statsPayload({ armour_save: typed }).armour_save
+    );
+    expect(saves).toEqual(["5", "4+", null]);
   });
 });
 
@@ -50,7 +53,7 @@ describe("statsPayload with written values", () => {
       attacks: "1(2)",
       weapon_skill: "D6",
       strength: "-",
-      toughness: 3,
+      toughness: "3",
     });
   });
 });
@@ -72,6 +75,6 @@ describe("useUnitEditDraft's save", () => {
     const body = fakeApi.bodyOf("POST /warbands/9/heroes/batch/") as {
       update: Record<string, unknown>[];
     };
-    expect([body.update[0].strength, body.update[0].attacks]).toEqual([4, "2(2)"]);
+    expect([body.update[0].strength, body.update[0].attacks]).toEqual(["4", "2(2)"]);
   });
 });

@@ -16,8 +16,6 @@ type NumberInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & 
   inputSize?: "sm" | "default" | "lg";
   /** Only as wide as its number needs, instead of filling its column. */
   compact?: boolean;
-  /** + above the box and − below it, for a row of narrow boxes (a profile). */
-  vertical?: boolean;
 };
 
 const HEIGHT = { sm: "h-9", default: "h-9 md:h-11", lg: "h-10 md:h-12" } as const;
@@ -39,7 +37,6 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       allowEmpty = false,
       inputSize = "default",
       compact = false,
-      vertical = false,
       value,
       onChange,
       onFocus,
@@ -84,10 +81,8 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
         className={cn(
           "flex shrink-0 items-center justify-center border border-strong bg-page text-accent-text transition-colors hover:bg-raised disabled:cursor-not-allowed disabled:opacity-60",
           // the field comes first in the page, so a label around it names the field, not a button
-          (direction === "down") === !vertical ? "order-1" : "order-3",
-          vertical
-            ? cn("h-9 w-full min-[961px]:h-6", direction === "down" ? "border-t-0" : "border-b-0")
-            : cn("w-9 min-[961px]:w-8", direction === "down" ? "border-r-0" : "border-l-0"),
+          direction === "down" ? "order-1 border-r-0" : "order-3 border-l-0",
+          "w-9 min-[961px]:w-8",
           buttonClassName
         )}
       >
@@ -103,8 +98,8 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
       <div
         className={cn(
           "flex items-stretch",
-          vertical ? "w-10 flex-col" : HEIGHT[inputSize],
-          !vertical && (compact ? "w-fit shrink-0" : "w-full"),
+          HEIGHT[inputSize],
+          compact ? "w-fit shrink-0" : "w-full",
           containerClassName
         )}
       >
@@ -129,8 +124,8 @@ const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
           }}
           className={cn(
             "order-2 min-h-0 appearance-none !px-1 text-center font-mono tabular-nums [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
-            vertical ? "h-8 w-full md:h-8" : "h-full md:h-full",
-            !vertical && (compact ? "w-14" : "min-w-0 flex-1"),
+            "h-full md:h-full",
+            compact ? "w-14" : "min-w-0 flex-1",
             className
           )}
           {...props}

@@ -1,16 +1,17 @@
 import type { ReactNode } from "react";
 import { Check } from "lucide-react";
 
-import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { ChipLabel } from "@/components/ui/chip";
+import { StatBoxes } from "@/components/ui/stat-boxes";
 import { StatStrip } from "@/components/ui/stat-strip";
 import {
-  STAT_FIELDS,
+  BATTLE_STAT_BOXES,
   type PrebattleUnit,
   type UnitOverride,
 } from "@/features/battles/components/prebattle/prebattle-types";
 import type { PrebattleConfig } from "@/features/battles/hooks/usePrebattleConfig";
+import { typedBattleStat } from "@/features/battles/utils/custom-unit-draft";
 import { cn } from "@/lib/utils";
 
 import { STAT_SHORT, statValues, distinctType, writtenShown } from "../battle/battle-units";
@@ -37,28 +38,27 @@ function Tick({ on }: { on: boolean }) {
 
 function StatEditor({ unit, config }: { unit: PrebattleUnit; config: PrebattleConfig }) {
   const override = config.overrides[unit.key]?.stats ?? {};
+  const values = Object.fromEntries(
+    BATTLE_STAT_BOXES.map(({ key }) => {
+      const value = override[key] ?? unit.stats[key];
+      return [key, value === null || value === undefined ? "" : String(value)];
+    })
+  );
   return (
     <div className="flex flex-col gap-2 border-t border-line pt-2">
-      <div className="grid grid-cols-5 gap-1.5 min-[560px]:grid-cols-10">
-        {STAT_FIELDS.map((field) => {
-          const value = override[field.key] ?? unit.stats[field.key];
-          return (
-            <label
-              key={field.key}
-              className="flex flex-col items-center gap-1 text-[10px] font-bold text-faint"
-            >
-              {field.key === "armour_save" ? "Sv" : field.label}
-              <NumberInput
-                inputSize="sm"
-                aria-label={`${unit.displayName} ${field.label}`}
-                value={value === null || value === undefined ? "" : String(value)}
-                onChange={(event) => config.updateOverrideStat(unit, field.key, event.target.value)}
-                className="px-1 text-center font-mono"
-              />
-            </label>
-          );
-        })}
-      </div>
+      <StatBoxes
+        numeric
+        fields={BATTLE_STAT_BOXES}
+        values={values}
+        name={(label) => `${unit.displayName} ${label}`}
+        onChange={(patch) => {
+          for (const { key } of BATTLE_STAT_BOXES) {
+            const typed = patch[key];
+            if (typed !== undefined)
+              config.updateOverrideStat(unit, key, typedBattleStat(key, typed));
+          }
+        }}
+      />
       <div className="flex gap-2">
         <Button variant="ghost" size="sm" onClick={() => config.clearUnitOverride(unit.key)}>
           Reset to the roster

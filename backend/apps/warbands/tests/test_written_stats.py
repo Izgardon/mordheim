@@ -34,8 +34,14 @@ class ReadStatTests(RosterTestCase):
             with self.subTest(text=text):
                 self.assertEqual(read_stat(text), Stat(None, text))
 
+    def test_a_typed_number_past_10_is_written_whole_with_no_number(self):
+        # William, 7 Nov 2026: every box is written, and the server decides; the Tilean Hunting Hawk's M12
+        for text in ("11", "12", "12*", "15(2)"):
+            with self.subTest(text=text):
+                self.assertEqual(read_stat(text), Stat(None, text))
+
     def test_anything_else_is_refused(self):
-        for value in ("", "  ", "11", "12*", -1, True, None, ["4"]):
+        for value in ("", "  ", 11, -1, 4.5, True, None, ["4"]):
             with self.subTest(value=value), self.assertRaisesMessage(ValueError, STAT_ERROR):
                 read_stat(value)
         with self.assertRaisesMessage(ValueError, WRITTEN_TOO_LONG):
@@ -77,10 +83,26 @@ class WrittenStatWriteTests(RosterTestCase):
 
         self.assertEqual((body["weapon_skill"], body["written_stats"]), (None, {"weapon_skill": "-"}))
 
+    def test_each_box_is_sent_as_typed_and_the_server_reads_it(self):
+        # William, 7 Nov 2026: "always be set to written mode ... and parse in backend"
+        for kind in KINDS:
+            with self.subTest(kind=kind.key):
+                unit = make_unit(kind, self.warband)
+                typed = {"movement": "12", "weapon_skill": "4", "attacks": "2(4)", "toughness": "3+", "leadership": "-"}  # fmt: skip
+
+                body = self.patch(kind, unit, typed).json()
+                again = self.patch(kind, unit, typed).json()
+
+                stats = [body[field] for field in typed]
+                self.assertEqual(stats, [None, 4, 2, 3, None])
+                written = {"movement": "12", "attacks": "(4)", "toughness": "+", "leadership": "-"}
+                self.assertEqual(body["written_stats"], written)
+                self.assertEqual(([again[field] for field in typed], again["written_stats"]), (stats, written))
+
     def test_a_bad_stat_is_a_400_naming_it(self):
         unit = make_unit(HERO, self.warband, attacks=1)
 
-        response = self.patch(HERO, unit, {"attacks": "11", "strength": "a very long value"})
+        response = self.patch(HERO, unit, {"attacks": 11, "strength": "a very long value"})
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.json()["attacks"], [STAT_ERROR])

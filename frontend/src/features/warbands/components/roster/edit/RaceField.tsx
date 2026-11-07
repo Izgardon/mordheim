@@ -1,29 +1,24 @@
 import { useState } from "react";
 import { toast } from "sonner";
 
-import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SearchSelect } from "@/components/ui/search-select";
+import { StatBoxes } from "@/components/ui/stat-boxes";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { raceOption, warnedLast } from "@/features/catalogue/search-options";
+import { STAT_FIELDS, type StatKey } from "@/features/catalogue/utils/statblock";
 import { createRace } from "@/features/races/api/races-api";
 import type { Race, RaceCreatePayload } from "@/features/races/types/race-types";
 import { useCatalogue, useCatalogueCache } from "@/lib/catalogue-queries";
 import { getErrorMessage } from "@/lib/get-error-message";
 
-const MAXIMUMS = [
-  ["M", "movement"],
-  ["WS", "weapon_skill"],
-  ["BS", "ballistic_skill"],
-  ["S", "strength"],
-  ["T", "toughness"],
-  ["W", "wounds"],
-  ["I", "initiative"],
-  ["A", "attacks"],
-  ["Ld", "leadership"],
-] as const;
+/** A race's maximums, always numbers: a human's to start with. */
+type Maximums = Record<StatKey, string>;
 const HUMAN = [4, 6, 6, 4, 4, 3, 6, 4, 9];
+const humanMaximums = () =>
+  Object.fromEntries(STAT_FIELDS.map(({ key }, i) => [key, String(HUMAN[i])])) as Maximums;
+const digits = (value: string) => value.replace(/\D/g, "").slice(0, 2);
 
 /**
  * The unit's race (its profile maximums) on the searchable select, its maximums as the subtitle,
@@ -46,14 +41,16 @@ export default function RaceField({
   const options = warnedLast(races.map((race) => raceOption(race, settings)));
   const current = races.find((race) => race.id === value);
   const cache = useCatalogueCache();
-  const [custom, setCustom] = useState<{ name: string; max: number[] } | null>(null);
+  const [custom, setCustom] = useState<{ name: string; max: Maximums } | null>(null);
   const [saving, setSaving] = useState(false);
 
   const create = async () => {
     if (!custom?.name.trim()) return;
     setSaving(true);
     try {
-      const body = Object.fromEntries(MAXIMUMS.map(([, field], i) => [field, custom.max[i]]));
+      const body = Object.fromEntries(
+        STAT_FIELDS.map(({ key }) => [key, Number(custom.max[key]) || 0])
+      );
       const race = await createRace({
         ...(body as Omit<RaceCreatePayload, "name" | "campaign_id">),
         name: custom.name.trim(),
@@ -89,7 +86,7 @@ export default function RaceField({
             canCreate
               ? {
                   label: (typed) => `Add “${typed}” as a custom race`,
-                  onCreate: (typed) => setCustom({ name: typed, max: [...HUMAN] }),
+                  onCreate: (typed) => setCustom({ name: typed, max: humanMaximums() }),
                 }
               : undefined
           }
@@ -106,26 +103,17 @@ export default function RaceField({
             onChange={(event) => setCustom({ ...custom, name: event.target.value })}
           />
           <span className="text-[11px] text-faint">Maximums</span>
-          <div className="grid grid-cols-9 gap-1">
-            {MAXIMUMS.map(([key], i) => (
-              <label
-                key={key}
-                className="flex flex-col items-center gap-0.5 text-[10px] text-faint"
-              >
-                {key}
-                <NumberInput
-                  inputSize="sm"
-                  className="px-0.5 text-center font-mono"
-                  value={String(custom.max[i])}
-                  onChange={(event) => {
-                    const max = [...custom.max];
-                    max[i] = Number(event.target.value) || 0;
-                    setCustom({ ...custom, max });
-                  }}
-                />
-              </label>
-            ))}
-          </div>
+          <StatBoxes
+            numeric
+            fields={STAT_FIELDS}
+            values={custom.max}
+            name={(stat) => `${stat} maximum`}
+            className="grid-cols-9"
+            onChange={(patch) => {
+              const typed = Object.entries(patch).map(([key, value]) => [key, digits(value ?? "")]);
+              setCustom({ ...custom, max: { ...custom.max, ...Object.fromEntries(typed) } });
+            }}
+          />
           <div className="flex gap-2">
             <Button
               size="sm"

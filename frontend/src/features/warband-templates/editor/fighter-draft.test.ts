@@ -5,7 +5,7 @@ import { makeEditorTemplate } from "@/test/template-editor-fixtures";
 import { fighterDraft, fighterInput } from "./fighter-draft";
 
 describe("a fighter's save", () => {
-  it("sends his profile as written, an empty most as any, and his rules picked or written", () => {
+  it("sends his profile as typed, an empty most as any, and his rules picked or written", () => {
     const [champion] = makeEditorTemplate().fighters;
     const draft = fighterDraft(champion);
     draft.stats = { ...draft.stats, attacks: "1(2)", movement: "D6" };
@@ -21,7 +21,7 @@ describe("a fighter's save", () => {
       },
     ];
     const sent = fighterInput(draft);
-    expect([sent.attacks, sent.movement, sent.strength]).toEqual(["1(2)", "D6", 3]);
+    expect([sent.attacks, sent.movement, sent.strength]).toEqual(["1(2)", "D6", "3"]);
     expect(sent.max_count).toBeNull();
     expect(sent.group_min).toBeNull(); // a hero is never a group
     expect(sent.rules).toEqual([

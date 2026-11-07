@@ -1,10 +1,9 @@
-import { useId, useState } from "react";
+import { useId } from "react";
 
-import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
+import { StatBoxes } from "@/components/ui/stat-boxes";
 import { STAT_KEYS } from "@/components/ui/stat-strip";
 import { Switch } from "@/components/ui/switch";
-import { isWritten, numberOnly } from "@/features/catalogue/utils/statblock";
 
 import { STAT_FIELDS, type UnitEditDraft } from "./useUnitEditDraft";
 
@@ -45,10 +44,12 @@ export function EditXpField({ form }: { form: UnitEditDraft }) {
   );
 }
 
+/** The ten boxes: each label's field ("WS": weapon_skill), the save last. */
+const PROFILE_BOXES = STAT_KEYS.map((key) => ({ key: STAT_FIELDS[key], label: key }));
+
 /**
- * The profile as small boxes, each a vertical stepper (an empty one saves as 0). Written values
- * turns the nine characteristics into text boxes, for one the book writes ("1(2)", "D6", "-");
- * it starts on when one is written, and turning it off keeps each one's number.
+ * The profile as type boxes (an empty one saves as 0): each characteristic a number or the value
+ * as the book writes it ("1(2)", "D6", "-"), which the server reads, and the save.
  */
 export default function EditProfile({
   form,
@@ -59,60 +60,20 @@ export default function EditProfile({
   unitLabel: string;
 }) {
   const { draft, set } = form;
-  const [written, setWritten] = useState(() =>
-    STAT_KEYS.some((key) => key !== "Sv" && isWritten(draft[STAT_FIELDS[key]]))
+  const values = Object.fromEntries(
+    PROFILE_BOXES.map(({ key }) => [key, String(draft[key] ?? "")])
   );
-  const writeNumbers = (on: boolean) => {
-    if (!on) {
-      for (const key of STAT_KEYS) {
-        if (key !== "Sv" && isWritten(draft[STAT_FIELDS[key]]))
-          set(STAT_FIELDS[key], numberOnly(draft[STAT_FIELDS[key]]));
-      }
-    }
-    setWritten(on);
-  };
   return (
     <fieldset className="m-0 flex min-w-0 flex-col gap-1 border-0 p-0">
       <legend className={`${LABEL} pb-1`}>Profile</legend>
-      <div className="grid grid-cols-5 justify-items-start gap-1 min-[520px]:flex min-[520px]:flex-wrap">
-        {STAT_KEYS.map((key) => (
-          <label
-            key={key}
-            className="flex flex-col items-center gap-0.5 text-[10px] font-bold text-faint"
-          >
-            {key}
-            {written && key !== "Sv" ? (
-              <Input
-                inputSize="sm"
-                maxLength={8}
-                aria-label={`${key} for ${unitLabel}`}
-                className="w-11 px-0.5 text-center font-mono text-sm md:h-9"
-                value={String(draft[STAT_FIELDS[key]] ?? "")}
-                onChange={(event) => set(STAT_FIELDS[key], event.target.value)}
-              />
-            ) : (
-              <NumberInput
-                vertical
-                inputSize="sm"
-                min={0}
-                max={10}
-                aria-label={`${key} for ${unitLabel}`}
-                className="text-sm"
-                value={String(draft[STAT_FIELDS[key]] ?? "")}
-                onChange={(event) => set(STAT_FIELDS[key], event.target.value)}
-              />
-            )}
-          </label>
-        ))}
-      </div>
-      <Switch
-        look="plain"
-        className="min-h-5 self-start text-xs"
-        checked={written}
-        onCheckedChange={writeNumbers}
-      >
-        Written values
-      </Switch>
+      <StatBoxes
+        fields={PROFILE_BOXES}
+        values={values}
+        name={(stat) => `${stat} for ${unitLabel}`}
+        onChange={(patch) => {
+          for (const [key, value] of Object.entries(patch)) set(key, value);
+        }}
+      />
     </fieldset>
   );
 }

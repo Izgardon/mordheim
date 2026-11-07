@@ -55,16 +55,15 @@ export type EditLists = { skills: Named[]; specials: Named[]; spells: Named[] };
 type Draft = Record<string, unknown>;
 
 /**
- * The profile a save sends: a stat as a number, or as written ("1(2)", "D6": the server reads
- * it), an empty box as 0; an empty save is none.
+ * The profile a save sends: each box as typed ("4", "1(2)", "D6": the server reads it), an empty
+ * box as 0; the save as typed ("4+", "4"), empty or a dash for none.
  */
 export function statsPayload(draft: Record<string, unknown>) {
   return Object.fromEntries(
     Object.values(STAT_FIELDS).map((field) => {
-      const value = draft[field];
-      const empty = value === "" || value === null || value === undefined;
-      if (field === "armour_save") return [field, empty ? null : Number(value) || null];
-      return [field, statToSend(value)];
+      if (field !== "armour_save") return [field, statToSend(draft[field])];
+      const save = String(draft[field] ?? "").trim();
+      return [field, save === "" || save === "-" ? null : save];
     })
   );
 }

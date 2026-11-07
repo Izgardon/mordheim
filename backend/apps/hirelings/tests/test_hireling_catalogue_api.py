@@ -153,3 +153,14 @@ class HirelingWriteBoundsTests(CatalogueTestCase):
                 stats = (created.data["weapon_skill"], created.data["attacks"], created.data["strength"])
                 self.assertEqual(stats, (None, 1, 4))
                 self.assertEqual(created.data["written_stats"], {"weapon_skill": "D6", "attacks": "(2)"})
+
+    def test_each_box_is_read_as_typed(self):
+        # William, 7 Nov 2026: the form sends every box as typed and the server decides
+        for kind in (HIRED_SWORDS, DRAMATIS_PERSONAE):
+            with self.subTest(kind=kind.key):
+                created = self.create_as(self.owner, kind, "Typed one", strength="4", movement="12", attacks="2(4)")
+
+                self.assertEqual(created.status_code, 201, created.data)
+                stats = (created.data["strength"], created.data["movement"], created.data["attacks"])
+                self.assertEqual(stats, (4, None, 2))
+                self.assertEqual(created.data["written_stats"], {"movement": "12", "attacks": "(4)"})

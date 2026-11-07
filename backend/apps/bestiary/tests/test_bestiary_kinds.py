@@ -109,6 +109,15 @@ class BestiaryKindWriteTests(CatalogueTestCase):
         self.assertEqual(created.status_code, 201, created.data)
         self.assertEqual([created.data[key] for key in ("kind", *BEAST_FIELDS)], ["mount", True, False, 20, True])
 
+    def test_each_stat_is_read_as_typed(self):
+        # William, 7 Nov 2026: the form sends every box as typed and the server decides
+        created = self.create("Spawn", kind="creature", strength="4", movement="2D6", attacks="D6+1", toughness="12")
+
+        self.assertEqual(created.status_code, 201, created.data)
+        stats = [created.data[field] for field in ("strength", "movement", "attacks", "toughness")]
+        self.assertEqual(stats, [4, None, None, None])
+        self.assertEqual(created.data["written_stats"], {"movement": "2D6", "attacks": "D6+1", "toughness": "12"})
+
     def test_a_beast_without_a_profile_keeps_its_stats_at_zero(self):
         created = self.create("Raven", kind="pet", has_profile=False, armour_save=6, movement=8)
 

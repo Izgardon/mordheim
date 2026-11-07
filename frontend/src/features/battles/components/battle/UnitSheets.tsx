@@ -6,7 +6,9 @@ import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { SectionedSelect, sectionsOf } from "@/components/ui/sectioned-select";
+import { StatBoxes } from "@/components/ui/stat-boxes";
 import {
+  BATTLE_STAT_BOXES,
   STAT_FIELDS,
   type UnitOverride,
   type UnitStats,
@@ -15,6 +17,7 @@ import CustomUnitFields from "@/features/battles/components/shared/CustomUnitFie
 import type { CustomUnitDraftState } from "@/features/battles/hooks/useCustomUnitDraft";
 import type { NeutralGroupInput } from "@/features/battles/hooks/useBattleScreen";
 import type { BattleNeutralGroup, BattleUnitStats } from "@/features/battles/types/battle-types";
+import { typedBattleStat } from "@/features/battles/utils/custom-unit-draft";
 import { STAT_FIELDS as PROFILE_FIELDS } from "@/features/catalogue/utils/statblock";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -123,28 +126,21 @@ export function EditStatsSheet({
           )}
         />
       </div>
-      <div className="grid grid-cols-5 gap-1.5">
-        {STAT_FIELDS.map((field) => (
-          <label
-            key={field.key}
-            className="flex flex-col items-center gap-1 text-[10px] font-bold text-faint"
-          >
-            {field.key === "armour_save" ? "Sv" : field.label}
-            <NumberInput
-              inputSize="sm"
-              aria-label={field.label}
-              value={values[field.key] ?? ""}
-              onChange={(event) =>
-                setValues({
-                  ...values,
-                  [field.key]: event.target.value.replace(/[^\d]/g, "").slice(0, 2),
-                })
-              }
-              className="px-1 text-center font-mono"
-            />
-          </label>
-        ))}
-      </div>
+      <StatBoxes
+        numeric
+        fields={BATTLE_STAT_BOXES}
+        values={values}
+        className="min-[520px]:grid-cols-5"
+        onChange={(patch) =>
+          setValues((current) => {
+            const typed = BATTLE_STAT_BOXES.flatMap(({ key }) => {
+              const value = patch[key];
+              return value === undefined ? [] : [[key, typedBattleStat(key, value)]];
+            });
+            return { ...current, ...Object.fromEntries(typed) };
+          })
+        }
+      />
       <p className="m-0 text-xs text-muted-foreground">
         A henchmen group changes for every member. Keep a change for good in the Aftermath.
       </p>

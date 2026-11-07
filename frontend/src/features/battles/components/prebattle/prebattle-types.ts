@@ -131,6 +131,12 @@ export const STAT_FIELDS: StatField[] = [
   { key: "armour_save", label: "AS", input: "number" },
 ];
 
+/** A battle's ten stat boxes (Edit stats, a temporary unit): "Sv" reads better than "AS". */
+export const BATTLE_STAT_BOXES = STAT_FIELDS.map(({ key, label }) => ({
+  key,
+  label: key === "armour_save" ? "Sv" : label,
+}));
+
 export const DEFAULT_STATS: UnitStats = {
   movement: 0,
   weapon_skill: 0,
