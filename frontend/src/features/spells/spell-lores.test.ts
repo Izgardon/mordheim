@@ -7,7 +7,7 @@ import { describe, expect, it } from "vitest";
 
 import { spell } from "@/test/catalogue-fixtures";
 
-import { difficultyRange, loreRowId, spellLores } from "./spell-lores";
+import { loreRowId, spellLores } from "./spell-lores";
 
 const LESSER = "Lesser Magic";
 const DEAD = "Necromancy (Restless Dead)";
@@ -35,12 +35,10 @@ describe("the lores", () => {
     expect(names(lores)).toEqual([LESSER, DEAD]);
     expect(names(lores[0].spells)).toEqual([fires.name, arrows.name, curse.name]);
     expect(names(lores[1].spells)).toEqual([awakening.name, visage.name, horror.name]);
-    expect(lores.map(({ matches, total, difficulty }) => ({ matches, total, difficulty }))).toEqual(
-      [
-        { matches: 3, total: 3, difficulty: "7–8" },
-        { matches: 3, total: 3, difficulty: "6–8" },
-      ]
-    );
+    expect(lores.map(({ matches, total }) => ({ matches, total }))).toEqual([
+      { matches: 3, total: 3 },
+      { matches: 3, total: 3 },
+    ]);
   });
 
   it("while searching keep only the lores with a match, and in them only the matches", () => {
@@ -65,13 +63,6 @@ describe("the lores", () => {
 });
 
 describe("a lore's row", () => {
-  it("reads its difficulties lowest to highest, past the ones cast automatically", () => {
-    expect(difficultyRange([awakening, visage, horror])).toBe("6–8");
-    expect(difficultyRange([fires])).toBe("7");
-    expect(difficultyRange([awakening])).toBe("Auto");
-    expect(difficultyRange([spell({ dc: null })])).toBe("");
-  });
-
   it("has a DOM key apart from the spells' ids", () => {
     expect(loreRowId(DEAD)).toBe("lore-necromancy-restless-dead");
   });

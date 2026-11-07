@@ -28,7 +28,7 @@ type TemplateDetailProps = {
 };
 
 /**
- * An open row of the Warbands page: the template's starting gold and most warriors, its variant
+ * An open row of the Warbands page: the template's starting gold and warband size, its variant
  * switch (the type's own variant first), its rule pills (the warband sheet's rules modal), its
  * heroes and henchmen, and, beside them, its equipment lists and upgrades.
  */
@@ -88,7 +88,7 @@ export default function TemplateDetail({
       <FactLine
         facts={[
           { label: "Starting gold", value: `${terms.gold} gc` },
-          { label: "Most warriors", value: terms.mostWarriors },
+          { label: "Warband size", value: terms.mostWarriors },
         ]}
       />
       {template.variants.length ? (

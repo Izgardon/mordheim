@@ -181,6 +181,13 @@ const MERCENARIES: WarbandTemplate = {
 
 const row = (name: string) =>
   screen.findByRole("button", { name: (label) => label.startsWith(name) });
+/** The rows' names, in the page's order. */
+const rowNames = () =>
+  [
+    ...document.querySelectorAll<HTMLElement>('li[id^="ref-"] > button > span > span:first-child'),
+  ].map((name) => name.textContent);
+const param = (app: ReturnType<typeof renderApp>, key: string) =>
+  new URLSearchParams(app.location().search).get(key);
 const tags = (label: string) =>
   within(screen.getByRole("article", { name: "Champion" })).getByText(label).parentElement
     ?.textContent;
@@ -205,13 +212,61 @@ afterEach(() => {
 describe("The Warbands page", () => {
   it("is a row per warband type in play with a template", async () => {
     renderApp(PAGE);
-    // a variant's own starting gold (Marienburg's 600 gc in the book)
-    expect(await row("Middenheimers")).toHaveTextContent("MiddenheimersMercenaries600 gc15");
-    expect(await row("Reiklanders")).toHaveTextContent("ReiklandersMercenaries500 gc15");
+    // William, 7 Nov 2026: "drop starting gold and most warriors ... add Setting column"
+    expect(await row("Middenheimers")).toHaveTextContent("MiddenheimersMercenariesMordheim");
+    expect(await row("Reiklanders")).toHaveTextContent("ReiklandersMercenariesMordheim");
     expect(
       screen.queryByRole("button", { name: (label) => label.startsWith("Ostermarkers") })
     ).toBeNull();
     expect(screen.getByText("2 warband types")).toBeInTheDocument();
+    expect(screen.queryByText("Starting gold")).toBeNull();
+    expect(screen.queryByText("Most warriors")).toBeNull();
+  });
+
+  it("filters by setting and sorts by name or setting from the headings", async () => {
+    const setting = (id: number, slug: string, name: string) => ({
+      id,
+      slug,
+      name,
+      grade: "1a",
+      grade_label: "Official",
+      sort_order: id,
+      always_on: id === 1,
+      warband_types: 0,
+    });
+    fakeApi.on("GET /settings/", {
+      settings: [setting(1, "mordheim", "Mordheim 1a"), setting(6, "lustria", "Lustria")],
+      presets: [],
+    });
+    const lizardmen = {
+      ...MERCENARIES,
+      id: 2,
+      name: "Lizardmen",
+      slug: "lizardmen",
+      setting_id: 6,
+      types: [{ ...type(20, "Lizardmen", ""), setting_id: 6 }],
+    };
+    fakeApi.on(`GET /warband-templates/?campaign_id=${CAMPAIGN_ID}`, [MERCENARIES, lizardmen]);
+    const user = setupUser();
+    const app = renderApp(PAGE);
+
+    expect(await row("Lizardmen")).toHaveTextContent("LizardmenLustria");
+    expect(rowNames()).toEqual(["Lizardmen", "Middenheimers", "Reiklanders"]);
+
+    await user.click(screen.getByRole("button", { name: "Sort by Setting" }));
+    expect(rowNames()).toEqual(["Middenheimers", "Reiklanders", "Lizardmen"]);
+    expect(param(app, "sort")).toBe("setting");
+    await user.click(screen.getByRole("button", { name: "Sort by Setting" }));
+    expect(rowNames()).toEqual(["Lizardmen", "Reiklanders", "Middenheimers"]);
+    await user.click(screen.getByRole("button", { name: "Sort by Warband" }));
+    expect(rowNames()).toEqual(["Lizardmen", "Middenheimers", "Reiklanders"]);
+
+    const settings = screen.getByRole("group", { name: "Setting" });
+    await user.click(within(settings).getByRole("button", { name: "Lustria" }));
+    expect(rowNames()).toEqual(["Lizardmen"]);
+    expect(screen.getByText("1 warband type")).toBeInTheDocument();
+    await user.click(within(settings).getByRole("button", { name: "Mordheim" }));
+    expect(rowNames()).toEqual(["Middenheimers", "Reiklanders"]);
   });
 
   it("opens to the template in its type's variant, and the switch shows another's", async () => {
@@ -294,7 +349,7 @@ describe("Making and editing templates on the Warbands page", () => {
     const user = setupUser();
     renderApp(PAGE);
     const lizardmen = await row("Lizardmen (2b)");
-    expect(lizardmen).toHaveTextContent("Lizardmen (2b)No template––");
+    expect(lizardmen).toHaveTextContent("Lizardmen (2b)No templateMordheim");
     expect(
       screen.queryByRole("button", { name: (label) => label.startsWith("Khemri") })
     ).toBeNull();

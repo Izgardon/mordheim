@@ -2,8 +2,8 @@ import { useParams } from "react-router-dom";
 
 import { SpecialIcon } from "@/components/ui/game-icons";
 import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import { ALL_SETTINGS, entrySettingKey, settingKeyLabel } from "@/features/reference/in-play";
-import { ReferenceDetail } from "@/features/reference/ReferenceDetail";
+import { ALL_SETTINGS, entrySettingName } from "@/features/reference/in-play";
+import { FactLine, ReferenceDetail } from "@/features/reference/ReferenceDetail";
 import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
 import {
   ReferenceList,
@@ -20,18 +20,15 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { SPECIAL_KIND_LABELS, boonBaneRows, categoryOf, type CategoryFilter } from "../boons-banes";
 import { specialCost } from "../special-cost";
 
-const COLUMNS = [
-  { label: "Type", className: "w-[200px] shrink-0" },
-  { label: "Price", className: "w-[72px] shrink-0" },
-  { label: "Setting", className: "w-[130px] shrink-0" },
-];
+// William, 7 Nov 2026: "Boons and Banes drop setting and price"; an open row shows them
+const COLUMNS = [{ label: "Type", className: "w-[200px] shrink-0" }];
 
 /**
  * Boons & Banes (William, 5 Nov 2026: "having a page could be helpful"): the general rules and the
  * warbands' in play in the campaign, as the Boons & Banes pickers offer them (a hired sword's and a
- * dramatis persona's own show with them), each with its category's icon in its kind's colour, its
- * type, its price where a list sells it and its setting, searched by name, type or rules and
- * filtered by category and setting. A row opens to its rules; `?open=` lands on one (Search
+ * dramatis persona's own show with them), each with its category's icon in its kind's colour and
+ * its type, searched by name, type or rules and filtered by category and setting. A row opens to
+ * its price where a list sells it, its setting and its rules; `?open=` lands on one (Search
  * everything's links). Read only: specials have no catalogue Edit.
  */
 export default function BoonsBanes() {
@@ -101,11 +98,10 @@ export default function BoonsBanes() {
         isEmpty={!specials.isLoading && rows.length === 0}
         empty="No boons or banes match."
       >
-        {specials.isLoading ? <ReferenceRowBones cells={3} /> : null}
+        {specials.isLoading ? <ReferenceRowBones cells={1} /> : null}
         {shown.rows.map((special) => {
           const key = String(special.id);
           const price = specialCost(special);
-          const source = settingKeyLabel(entrySettingKey(special, settings), settings);
           const kind = [special.kind ? SPECIAL_KIND_LABELS[special.kind] : "", special.type]
             .filter(Boolean)
             .join(" · ");
@@ -122,33 +118,20 @@ export default function BoonsBanes() {
                 </span>
               }
               sub={isMobile ? special.type || undefined : undefined}
-              aside={
-                <>
-                  {price ? (
-                    <span className="font-mono text-[13px] font-bold text-ink">{price}</span>
-                  ) : null}
-                  <span className="text-xs text-muted-foreground">{source}</span>
-                </>
-              }
-              cells={
-                isMobile
-                  ? undefined
-                  : [
-                      special.type,
-                      <span key="price" className="font-mono font-bold text-ink">
-                        {price}
-                      </span>,
-                      source,
-                    ]
-              }
+              cells={isMobile ? undefined : [special.type]}
             >
               <ReferenceDetail title={special.name} kind={kind} isMobile={isMobile}>
+                <FactLine
+                  facts={[
+                    ...(price ? [{ label: "Price", value: price }] : []),
+                    { label: "Setting", value: entrySettingName(special, settings) },
+                  ]}
+                />
                 {special.description ? (
                   <p className="m-0 max-w-[72ch] whitespace-pre-line text-sm leading-relaxed text-text2">
                     {special.description}
                   </p>
-                ) : null}
-              </ReferenceDetail>
+                ) : null}              </ReferenceDetail>
             </ReferenceRow>
           );
         })}

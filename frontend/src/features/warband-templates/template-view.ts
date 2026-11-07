@@ -25,6 +25,11 @@ export type TemplateTypeRow = {
   /** The warband type: a rule for one type shows on its row only. */
   typeId: number | null;
   /**
+   * Where it comes from, for the Setting column, filter and sort: the type's setting (a template
+   * serving no type, the template's), and the campaign that owns it (null: the book).
+   */
+  setting: { setting_id: number | null; campaign_id: number | null };
+  /**
    * The line under the name: the template's name where it serves several types (Mercenaries,
    * Tileans) or shares the type with another template; "No template", "No warband type".
    */
@@ -57,12 +62,20 @@ export function typeRows(
           name: type.name,
           source_code: type.source_code,
           variant: type.variant,
+          setting: { setting_id: type.setting_id, campaign_id: type.campaign_id },
         },
       }))
     ),
     ...inPlayOnly(warbandTypes)
       .filter((type) => !served.has(type.id))
-      .map((type) => ({ template: null, type: { ...type, variant: "" } })),
+      .map((type) => ({
+        template: null,
+        type: {
+          ...type,
+          variant: "",
+          setting: { setting_id: type.setting?.id ?? null, campaign_id: type.campaign_id },
+        },
+      })),
   ];
   const named = new Map<string, number>();
   const templatesOf = new Map<number, number>();
@@ -80,6 +93,7 @@ export function typeRows(
     template,
     variant: type.variant,
     typeId: type.id as number | null,
+    setting: type.setting,
     sub: !template
       ? NO_TEMPLATE
       : live(template).length > 1 || (templatesOf.get(type.id) ?? 0) > 1
@@ -94,6 +108,7 @@ export function typeRows(
       template: template as WarbandTemplateSummary | null,
       variant: "",
       typeId: null,
+      setting: { setting_id: template.setting_id, campaign_id: template.campaign_id },
       sub: NO_TYPE,
     }));
   return [...typed, ...typeless].sort(

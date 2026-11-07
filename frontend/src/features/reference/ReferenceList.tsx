@@ -1,20 +1,52 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
-import { ChevronDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-/** A web column after the name: its heading and the width class its cells share. */
-export type ReferenceColumn = { label: string; className: string };
+/** A sortable column's heading: which way the list sorts by it (null: not by it) and its click. */
+export type ColumnSort = { direction: "asc" | "desc" | null; onSort: () => void };
 
-const ColumnsContext = createContext<ReferenceColumn[]>([]);
+/** A web column after the name: its heading, the width class its cells share, and its sort. */
+export type ReferenceColumn = { label: string; className: string; sort?: ColumnSort };
+
+const NO_COLUMNS: ReferenceColumn[] = [];
+const ColumnsContext = createContext<ReferenceColumn[]>(NO_COLUMNS);
 
 const HEAD = "py-2.5 text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
+
+const SORT_ICONS = { asc: ArrowUp, desc: ArrowDown, none: ArrowUpDown };
+
+/** A heading's text, or a button sorting the list by its column when it has a sort. */
+function HeadLabel({ label, sort }: { label?: string; sort?: ColumnSort }) {
+  if (!sort) return <>{label}</>;
+  const Icon = SORT_ICONS[sort.direction ?? "none"];
+  return (
+    <button
+      type="button"
+      onClick={sort.onSort}
+      aria-label={`Sort by ${label}`}
+      aria-pressed={sort.direction !== null}
+      className={cn(
+        "inline-flex items-center gap-1 uppercase hover:text-head",
+        sort.direction && "text-text2"
+      )}
+    >
+      {label}
+      <Icon className="h-3 w-3" aria-hidden="true" />
+    </button>
+  );
+}
 
 type ReferenceListProps = {
   /** The first column's heading on the web ("Item"); with `columns`, a header row shows. */
   nameLabel?: string;
-  /** The web's columns after the name; a phone shows each row's `aside` instead. */
+  /** The name column's sort, where the list sorts by more than one column. */
+  nameSort?: ColumnSort;
+  /**
+   * The web's columns after the name (none: the name's heading alone); a phone leaves them out
+   * and shows each row's `aside` instead.
+   */
   columns?: ReferenceColumn[];
   /** Shown in place of the rows when there are none. */
   empty?: ReactNode;
@@ -25,21 +57,24 @@ type ReferenceListProps = {
 /** The reference pages' list: one bordered box of rows, with a header row on the web. */
 export function ReferenceList({
   nameLabel,
-  columns = [],
+  nameSort,
+  columns,
   empty,
   children,
   isEmpty,
 }: ReferenceListProps) {
   return (
-    <ColumnsContext.Provider value={columns}>
+    <ColumnsContext.Provider value={columns ?? NO_COLUMNS}>
       <div className="border border-border bg-surface">
-        {columns.length ? (
+        {columns ? (
           <div className="flex items-center gap-3 border-b border-border bg-rail px-4">
             {/* pl: a row's chevron (14px) and its gap (12px) */}
-            <span className={cn(HEAD, "min-w-0 flex-1 pl-[26px]")}>{nameLabel}</span>
+            <span className={cn(HEAD, "min-w-0 flex-1 pl-[26px]")}>
+              <HeadLabel label={nameLabel} sort={nameSort} />
+            </span>
             {columns.map((column) => (
               <span key={column.label} className={cn(HEAD, column.className)}>
-                {column.label}
+                <HeadLabel label={column.label} sort={column.sort} />
               </span>
             ))}
           </div>

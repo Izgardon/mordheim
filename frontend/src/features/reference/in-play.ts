@@ -60,6 +60,15 @@ export const settingKeyLabel = (key: string, settings: Map<number, Setting>) =>
   settingKeyOption(key, settings).label;
 
 /**
+ * A row's setting as an open row or the Warbands page's column names it: the setting's own name
+ * ("Mordheim 1b", "Lustria"), else "Mordheim" (a book entry not graded yet) or "This campaign".
+ */
+export function entrySettingName(row: SettingRow, settings: Map<number, Setting>) {
+  const setting = row.setting_id != null ? settings.get(row.setting_id) : undefined;
+  return setting?.name ?? settingKeyLabel(entrySettingKey(row, settings), settings);
+}
+
+/**
  * The Setting filter's options for these Setting filter keys: All settings, then each one once in
  * the book's order (Mordheim first, its grades as one), the campaign's own last.
  */

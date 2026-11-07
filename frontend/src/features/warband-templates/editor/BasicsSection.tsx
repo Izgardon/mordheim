@@ -81,7 +81,7 @@ function TypesField({
 /**
  * Basics: the name, the warband types it serves (a new type of the campaign's own can be added
  * from the picker), the setting, the book's starting gold (a warband gets the campaign's plus the
- * difference from 500), the most warriors and the variants with their own terms.
+ * difference from 500), the warband size and the variants with their own terms.
  */
 export default function BasicsSection({ answer, campaignId, save }: SectionProps) {
   const { template } = answer;
@@ -138,7 +138,7 @@ export default function BasicsSection({ answer, campaignId, save }: SectionProps
           onChange={(gold) => set({ gold })}
         />
         <NumberField
-          label="Most warriors"
+          label="Warband size"
           value={draft.size}
           placeholder="15"
           onChange={(size) => set({ size })}

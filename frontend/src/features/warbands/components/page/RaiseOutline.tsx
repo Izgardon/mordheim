@@ -35,8 +35,8 @@ function Fighters({ title, fighters }: { title: string; fighters: OutlineFighter
 
 /**
  * The raise screen's outline of the type's template (the templates plan, "Raising a warband"):
- * the variant to pick when the type presets none, the gold the warband gets and its most
- * warriors, each fighter with his cost and how many, and the warband rule pills. Nothing is hired
+ * the variant to pick when the type presets none, the gold the warband gets and its warband
+ * size, each fighter with his cost and how many, and the warband rule pills. Nothing is hired
  * here. A type with no template shows nothing.
  */
 export default function RaiseOutline({
@@ -83,7 +83,7 @@ export default function RaiseOutline({
           Starting gold <span className="font-mono font-bold text-head">{outline.gold} gc</span>
         </span>
         <span>
-          Most warriors{" "}
+          Warband size{" "}
           <span className="font-mono font-bold text-head">{outline.most_warriors}</span>
         </span>
       </div>

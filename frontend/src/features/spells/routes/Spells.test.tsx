@@ -93,14 +93,19 @@ describe("The Spells page", () => {
     const app = renderApp(PAGE);
 
     const lesser = await loreRow(LESSER);
-    expect(lesser).toHaveTextContent(`${LESSER}37–8`);
-    expect(await loreRow(DEAD)).toHaveTextContent(`${DEAD}36–8`);
+    // William, 7 Nov 2026: "Spells - drop spells and difficulty column"
+    expect(lesser.textContent).toBe(LESSER);
+    expect((await loreRow(DEAD)).textContent).toBe(DEAD);
+    expect(screen.queryByText("Difficulty")).toBeNull();
     expect(queryLoreRow("Spells of the Djedhi")).toBeNull();
     expect(screen.getByText("2 lores, 6 spells")).toBeInTheDocument();
     expect(screen.queryByRole("group", { name: "Lore" })).toBeNull();
 
     await user.click(await loreRow(DEAD));
     expect(await loreRow(DEAD)).toHaveAttribute("aria-expanded", "true");
+    // its spells' setting in the open row (William, 7 Nov 2026: "others should exist in the
+    // expanded part")
+    expect(screen.getByText("Setting").parentElement).toHaveTextContent("SettingMordheim");
     expect(tableRows(DEAD)).toEqual([
       "D6SpellDifficulty",
       "1Spell of AwakeningAuto",
@@ -131,7 +136,7 @@ describe("The Spells page", () => {
     const search = screen.getByRole("searchbox", { name: "Search spells" });
 
     await user.type(search, "fires");
-    expect(await loreRow(LESSER)).toHaveTextContent(`${LESSER}1 of 37–8`);
+    expect((await loreRow(LESSER)).textContent).toBe(LESSER);
     expect(queryLoreRow(DEAD)).toBeNull();
     expect(screen.getByText("1 spell in 1 lore")).toBeInTheDocument();
     await user.click(await loreRow(LESSER));
@@ -143,7 +148,7 @@ describe("The Spells page", () => {
 
     await user.clear(search);
     await user.type(search, "restless");
-    expect(await loreRow(DEAD)).toHaveTextContent(`${DEAD}3 of 36–8`);
+    expect((await loreRow(DEAD)).textContent).toBe(DEAD);
     expect(queryLoreRow(LESSER)).toBeNull();
 
     await user.type(search, " nothing");

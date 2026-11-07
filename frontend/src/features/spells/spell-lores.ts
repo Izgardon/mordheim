@@ -17,16 +17,6 @@ export function difficultyLabel(spell: Spell) {
   return isNumber(dc) ? `Difficulty ${dc}` : dc;
 }
 
-/** A lore's difficulties, lowest to highest ("5–10"); "Auto" when none of its spells need a roll. */
-export function difficultyRange(spells: Spell[]) {
-  const all = spells.map(difficultyOf).filter(Boolean);
-  const numbers = all.filter(isNumber).map(Number);
-  if (!numbers.length) return all[0] ?? "";
-  const low = Math.min(...numbers);
-  const high = Math.max(...numbers);
-  return low === high ? String(low) : `${low}–${high}`;
-}
-
 /** The DOM key of a lore's row ("lore-lesser-magic"), apart from the spells' ids. */
 export const loreRowId = (name: string) =>
   `lore-${name
@@ -41,8 +31,6 @@ export type SpellLore = {
   /** How many of its spells match the search (all of them with none). */
   matches: number;
   total: number;
-  /** Its difficulties: "5–10". */
-  difficulty: string;
 };
 
 const byRoll = (a: Spell, b: Spell) =>
@@ -71,7 +59,6 @@ export function spellLores(spells: Spell[], query: string, openId: string | null
         spells: sorted.filter((spell) => matching.includes(spell) || String(spell.id) === openId),
         matches: matching.length,
         total: sorted.length,
-        difficulty: difficultyRange(sorted),
       };
     })
     .filter((lore) => lore.spells.length > 0);

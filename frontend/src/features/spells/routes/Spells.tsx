@@ -2,9 +2,10 @@ import { useMemo } from "react";
 import { useOutletContext, useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
-import { inPlayOnly } from "@/features/reference/in-play";
+import { entrySettingName, inPlayOnly } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
@@ -20,11 +21,11 @@ import { loreOf, loreRowId, spellLores, type SpellLore } from "../spell-lores";
 const counted = (count: number, noun: string) => `${count} ${noun}${count === 1 ? "" : "s"}`;
 
 /**
- * Spells (design E's reference layout): a row per lore in play in the campaign, with its spell
- * count and difficulties, opening to its D6 table; a spell's row opens to its rules. The search
- * (name, lore or rules) keeps the lores with a match, each with only its matches. `?lore=` opens a
- * lore, `?open=` a spell in its lore (Search everything's links). Custom spells are added and
- * edited as before.
+ * Spells (design E's reference layout): a row per lore in play in the campaign, opening across
+ * the list's width to its spells' settings and its D6 table; a spell's row opens to its rules.
+ * The search (name, lore or rules) keeps the lores with a match, each with only its matches.
+ * `?lore=` opens a lore, `?open=` a spell in its lore (Search everything's links). Custom spells
+ * are added and edited as before.
  */
 export default function Spells() {
   const { id } = useParams();
@@ -32,6 +33,7 @@ export default function Spells() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
   const spells = useCatalogue("spells", campaignId);
+  const settings = useSettingsById();
   const params = useReferenceParams(!spells.isLoading);
   const capabilities = campaignCapabilities(campaign);
 
@@ -53,8 +55,11 @@ export default function Spells() {
   const pickSpell = (lore: string, spellId: string) =>
     params.isOpen(spellId) ? closeSpell(lore) : params.set({ open: spellId, lore: null });
 
-  const count = (lore: SpellLore) =>
-    searching ? `${lore.matches} of ${lore.total}` : String(lore.total);
+  // its spells' settings, named in its open row (William, 7 Nov 2026: "others should exist in the
+  // expanded part")
+  const loreSettings = (lore: SpellLore) => [
+    ...new Set(lore.spells.map((spell) => entrySettingName(spell, settings))),
+  ];
 
   const addButton = capabilities.edit_catalogue ? (
     <SpellFormDialog
@@ -102,18 +107,12 @@ export default function Spells() {
       {spells.error ? <p className="m-0 text-sm text-danger">{spells.error}</p> : null}
       <ReferenceList
         nameLabel="Lore"
-        columns={
-          isMobile
-            ? undefined
-            : [
-                { label: "Spells", className: "w-[96px] shrink-0" },
-                { label: "Difficulty", className: "w-[120px] shrink-0" },
-              ]
-        }
+        // William, 7 Nov 2026: "Spells - drop spells and difficulty column"
+        columns={isMobile ? undefined : []}
         isEmpty={!spells.isLoading && lores.length === 0}
         empty="No spells match."
       >
-        {spells.isLoading ? <ReferenceRowBones cells={2} /> : null}
+        {spells.isLoading ? <ReferenceRowBones cells={0} /> : null}
         {lores.map((lore) => (
           <ReferenceRow
             key={lore.name}
@@ -121,31 +120,12 @@ export default function Spells() {
             open={openLore === lore.name}
             onToggle={() => toggleLore(lore.name)}
             name={lore.name}
-            sub={isMobile && lore.difficulty ? `Difficulty ${lore.difficulty}` : undefined}
-            aside={
-              <>
-                <span className="font-mono text-[13px] font-bold text-ink">{count(lore)}</span>
-                <span className="text-xs text-muted-foreground">
-                  {lore.total === 1 ? "spell" : "spells"}
-                </span>
-              </>
-            }
-            cells={
-              isMobile
-                ? undefined
-                : [
-                    <span key="count" className="font-mono">
-                      {count(lore)}
-                    </span>,
-                    <span key="dc" className="font-mono">
-                      {lore.difficulty || "–"}
-                    </span>,
-                  ]
-            }
+            cells={isMobile ? undefined : []}
           >
             <LoreSpells
               campaignId={campaignId}
               lore={lore}
+              settingNames={loreSettings(lore)}
               openId={params.openId}
               onPick={(spellId) => pickSpell(lore.name, spellId)}
               onClose={() => closeSpell(lore.name)}

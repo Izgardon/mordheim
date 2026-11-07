@@ -26,7 +26,7 @@ type WarbandProps = {
   onSaved: (patch: Partial<Warband>) => void;
 };
 
-/** Your warband's name and the most units it keeps, edited together. */
+/** Your warband's name and its warband size, edited together. */
 function WarbandDetails({ warband, canEdit, onSaved }: WarbandProps) {
   const maxUnits = warband.max_units ?? 15;
   const [editing, setEditing] = useState(false);
@@ -48,7 +48,7 @@ function WarbandDetails({ warband, canEdit, onSaved }: WarbandProps) {
     const parsed = Number(limit);
     if (!trimmed) return setError("Name your warband.");
     if (!Number.isInteger(parsed) || parsed < 1) {
-      return setError("The most units is a whole number, at least 1.");
+      return setError("The warband size is a whole number, at least 1.");
     }
     setSaving(true);
     setError("");
@@ -84,7 +84,7 @@ function WarbandDetails({ warband, canEdit, onSaved }: WarbandProps) {
                 onChange={(event) => setName(event.target.value)}
               />
             </Field>
-            <Field label="Most units" htmlFor="settings-warband-max">
+            <Field label="Warband size" htmlFor="settings-warband-max">
               <NumberInput
                 id="settings-warband-max"
                 min={1}
@@ -112,7 +112,7 @@ function WarbandDetails({ warband, canEdit, onSaved }: WarbandProps) {
           </div>
           <div className="flex flex-col gap-0.5">
             <dt className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
-              Most units
+              Warband size
             </dt>
             <dd className="m-0 font-mono text-[15px] text-ink">{maxUnits}</dd>
           </div>

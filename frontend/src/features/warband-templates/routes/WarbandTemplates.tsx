@@ -2,23 +2,38 @@ import { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
+import { useSettingsById } from "@/features/campaigns/api/settings-queries";
 import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
+import { ALL_SETTINGS } from "@/features/reference/in-play";
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
-import { FilterRow, ReferenceSearch } from "@/features/reference/ReferenceFilters";
-import { ReferenceList, ReferenceRow } from "@/features/reference/ReferenceList";
+import { FilterRow, ReferenceChips, ReferenceSearch } from "@/features/reference/ReferenceFilters";
+import { ReferenceList, ReferenceRow, type ColumnSort } from "@/features/reference/ReferenceList";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
 import { useWarbandTypes } from "@/features/warbands/api/warband-types-queries";
-import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { useWarbandTemplates } from "../api/template-queries";
 import MakeTemplateDialog from "../components/MakeTemplateDialog";
 import TemplateDetail from "../components/TemplateDetail";
 import TemplateEditor from "../editor/TemplateEditor";
-import { termsFor, typeRows, type TemplateTypeRow } from "../template-view";
+import { typeRows, type TemplateTypeRow } from "../template-view";
+import {
+  nextSort,
+  parseSort,
+  rowSettingLabel,
+  shownWarbandRows,
+  sortParam,
+  warbandSettingOptions,
+  type WarbandSortKey,
+} from "../warband-rows";
 
 const counted = (count: number) => `${count} warband type${count === 1 ? "" : "s"}`;
+
+const SORT_OPTIONS: { id: WarbandSortKey; label: string }[] = [
+  { id: "name", label: "Name" },
+  { id: "setting", label: "Setting" },
+];
 
 type Making = { forType?: { id: number; name: string } } | null;
 
@@ -34,10 +49,12 @@ function NoTemplate({ row, onMake }: { row: TemplateTypeRow; onMake: () => void 
 }
 
 /**
- * Reference → Warbands (the templates plan, phases 1b and 4): each warband type in play, opening
- * in place to its template (gold, most warriors, variants, rules, fighters, lists, upgrades), or
- * to Make a template where it has none. Those who edit the catalogue edit a template in the
- * editor (a drawer on the web, a sheet on a phone).
+ * Reference → Warbands (the templates plan, phases 1b and 4): each warband type in play with its
+ * setting (William, 7 Nov 2026: "drop starting gold and most warriors ... add Setting column and
+ * make it filterable/sortable"), searched, filtered by setting (Mordheim's grades as one) and
+ * sorted by name or setting (`?sort=`), opening in place to its template (gold, warband size,
+ * variants, rules, fighters, lists, upgrades), or to Make a template where it has none. Those
+ * who edit the catalogue edit a template in the editor (a drawer on the web, a sheet on a phone).
  */
 export default function WarbandTemplates() {
   const { id } = useParams();
@@ -46,17 +63,22 @@ export default function WarbandTemplates() {
   const templates = useWarbandTemplates(campaignId);
   const types = useWarbandTypes(campaignId);
   const capabilities = useCampaignCapabilities(campaignId);
+  const settings = useSettingsById();
   const params = useReferenceParams(!templates.isLoading);
   const [editing, setEditing] = useState<number | null>(null);
   const [making, setMaking] = useState<Making>(null);
   const canEdit = capabilities.edit_catalogue;
 
   const rows = useMemo(() => typeRows(templates.data, types.data), [templates.data, types.data]);
-  const shown = rows.filter((row) =>
-    matchesSearchQuery(params.query, row.typeName, row.template?.name ?? "")
-  );
-  const figures = (row: TemplateTypeRow) =>
-    row.template ? termsFor(row.template, row.variant) : { gold: "–", mostWarriors: "–" };
+  const setting = params.get("setting", ALL_SETTINGS);
+  const sort = parseSort(params.get("sort"));
+  const settingOptions = warbandSettingOptions(rows, settings);
+  const shown = shownWarbandRows(rows, { query: params.query, setting, sort, settings });
+  const sortBy = (key: WarbandSortKey) => params.set({ sort: sortParam(nextSort(sort, key)) });
+  const sorting = (key: WarbandSortKey): ColumnSort => ({
+    direction: sort.key === key ? (sort.descending ? "desc" : "asc") : null,
+    onSort: () => sortBy(key),
+  });
 
   return (
     <ReferencePage
@@ -74,33 +96,52 @@ export default function WarbandTemplates() {
         ) : null
       }
       filters={
-        <FilterRow isMobile={isMobile}>
-          <ReferenceSearch
-            value={params.query}
-            onChange={params.setQuery}
-            placeholder="Search warbands"
-            label="Search warbands"
-            isMobile={isMobile}
-          />
-        </FilterRow>
+        <>
+          <FilterRow isMobile={isMobile}>
+            <ReferenceSearch
+              value={params.query}
+              onChange={params.setQuery}
+              placeholder="Search warbands"
+              label="Search warbands"
+              isMobile={isMobile}
+            />
+          </FilterRow>
+          {settingOptions.length > 2 ? (
+            <ReferenceChips
+              label="Setting"
+              options={settingOptions}
+              value={setting}
+              onChange={(next) => params.set({ setting: next === ALL_SETTINGS ? null : next })}
+              isMobile={isMobile}
+            />
+          ) : null}
+          {isMobile ? (
+            // the web sorts from the column headings
+            <ReferenceChips
+              label="Sort"
+              options={SORT_OPTIONS}
+              value={sort.key}
+              onChange={(key) => params.set({ sort: sortParam({ key, descending: false }) })}
+              isMobile
+            />
+          ) : null}
+        </>
       }
       summary={isMobile ? undefined : counted(shown.length)}
     >
       {templates.error ? <p className="m-0 text-sm text-danger">{templates.error}</p> : null}
       <ReferenceList
         nameLabel="Warband"
+        nameSort={sorting("name")}
         columns={
           isMobile
             ? undefined
-            : [
-                { label: "Starting gold", className: "w-[120px] shrink-0" },
-                { label: "Most warriors", className: "w-[120px] shrink-0" },
-              ]
+            : [{ label: "Setting", className: "w-[200px] shrink-0", sort: sorting("setting") }]
         }
         isEmpty={!templates.isLoading && shown.length === 0}
         empty="No warbands match."
       >
-        {templates.isLoading ? <ReferenceRowBones cells={2} /> : null}
+        {templates.isLoading ? <ReferenceRowBones cells={1} /> : null}
         {shown.map((row) => (
           <ReferenceRow
             key={row.id}
@@ -111,22 +152,11 @@ export default function WarbandTemplates() {
             sub={row.sub}
             dim={!row.template}
             aside={
-              <span className="font-mono text-[13px] font-bold text-ink">
-                {row.template ? `${figures(row).gold} gc` : "–"}
+              <span className="text-xs text-muted-foreground">
+                {rowSettingLabel(row, settings)}
               </span>
             }
-            cells={
-              isMobile
-                ? undefined
-                : [
-                    <span key="gold" className="font-mono">
-                      {row.template ? `${figures(row).gold} gc` : "–"}
-                    </span>,
-                    <span key="size" className="font-mono">
-                      {figures(row).mostWarriors}
-                    </span>,
-                  ]
-            }
+            cells={isMobile ? undefined : [rowSettingLabel(row, settings)]}
           >
             {row.template ? (
               <TemplateDetail

@@ -71,11 +71,15 @@ const beak = special({ id: 6, name: "Beak", type: "Favour of Tchar", in_play: fa
 
 const row = (name: string) =>
   screen.findByRole("button", { name: (label) => label.startsWith(name) });
-/** Each row's text: its name, type, price and setting. */
+/** Each row's text: its name and type. */
 const names = () =>
   [...document.querySelectorAll<HTMLElement>('li[id^="ref-"] > button')].map(
     (button) => button.textContent ?? ""
   );
+/** An open row's figure: "Price35 gc". */
+const fact = (label: string) =>
+  screen.getByRole("term", { name: (_, term) => term.textContent === label }).parentElement
+    ?.textContent;
 
 let scrolledTo: string[] = [];
 
@@ -100,24 +104,28 @@ afterEach(() => {
 });
 
 describe("The Boons & Banes page", () => {
-  it("lists the general rules in play with type, price and setting", async () => {
+  it("lists the general rules in play with their type, an open row showing its price and setting", async () => {
     const user = setupUser();
     renderApp(PAGE);
 
-    expect(await row("Spiked Tail")).toHaveTextContent("Spiked TailMutation35 gcMordheim");
-    expect(names()).toEqual([
-      "FearPsychologyMordheim",
-      "Old Battle WoundInjuryMordheim",
-      "Spiked TailMutation35 gcMordheim",
-    ]);
+    // William, 7 Nov 2026: "Boons and Banes drop setting and price"
+    expect(await row("Spiked Tail")).toHaveTextContent("Spiked TailMutation");
+    expect(names()).toEqual(["FearPsychology", "Old Battle WoundInjury", "Spiked TailMutation"]);
     expect(screen.getByText("3 boons and banes shown")).toBeInTheDocument();
     expect(screen.queryByText("Crazed")).toBeNull();
     expect(screen.queryByRole("button", { name: "Add" })).toBeNull();
+    expect(screen.queryByText("Price")).toBeNull();
+    expect(screen.queryByText("Setting")).toBeNull();
 
     await user.click(await row("Old Battle Wound"));
     expect(await row("Old Battle Wound")).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByText("Roll a D6 before each battle.")).toBeInTheDocument();
     expect(screen.getByText("Bane · Injury")).toBeInTheDocument();
+    expect(fact("Setting")).toBe("SettingMordheim");
+    expect(screen.queryByText("Price")).toBeNull(); // no list sells it
+
+    await user.click(await row("Spiked Tail"));
+    expect(fact("Price")).toBe("Price35 gc");
   });
 
   it("searches names, types and rules, and filters by category", async () => {
@@ -127,10 +135,10 @@ describe("The Boons & Banes page", () => {
     const search = screen.getByRole("searchbox", { name: "Search boons and banes" });
 
     await user.type(search, "battle");
-    expect(names()).toEqual(["Old Battle WoundInjuryMordheim"]);
+    expect(names()).toEqual(["Old Battle WoundInjury"]);
     await user.clear(search);
     await user.type(search, "psychology");
-    expect(names()).toEqual(["FearPsychologyMordheim"]);
+    expect(names()).toEqual(["FearPsychology"]);
     await user.clear(search);
 
     const categories = screen.getByRole("group", { name: "Category" });
@@ -138,7 +146,7 @@ describe("The Boons & Banes page", () => {
       "Mutation1"
     );
     await user.click(within(categories).getByRole("button", { name: /Injury/ }));
-    expect(names()).toEqual(["Old Battle WoundInjuryMordheim"]);
+    expect(names()).toEqual(["Old Battle WoundInjury"]);
     // one setting in play: no Setting filter
     expect(screen.queryByRole("group", { name: "Setting" })).toBeNull();
   });
@@ -169,10 +177,13 @@ describe("The Boons & Banes page", () => {
     const user = setupUser();
     renderApp(PAGE);
 
-    expect(await row("Beak")).toHaveTextContent("BeakFavour of TcharMutiny in Marienburg");
+    expect(await row("Beak")).toHaveTextContent("BeakFavour of Tchar");
+    await user.click(await row("Beak"));
+    expect(fact("Setting")).toBe("SettingMutiny in Marienburg");
+    await user.click(await row("Beak")); // an open row stays whatever the filters
     const settings = await screen.findByRole("group", { name: "Setting" });
     await user.click(within(settings).getByRole("button", { name: "Mordheim" }));
-    expect(names()).toEqual(["Old Battle WoundInjuryMordheim", "Spiked TailMutation35 gcMordheim"]);
+    expect(names()).toEqual(["Old Battle WoundInjury", "Spiked TailMutation"]);
   });
 
   it("lands a link's ?open= on its row, open and scrolled to", async () => {

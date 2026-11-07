@@ -200,7 +200,7 @@ def size_warnings(warband: Warband, group: dict[str, Any], units: WarbandUnits) 
         message = f"{group['name']} has {members} members; its maximum is {most}."
         warnings.append({"code": "group_over_size", "message": message, "members": members, "max_size": most})
     if units.unit_count > warband.max_units:
-        message = f"The warband has {units.unit_count} models; its maximum is {warband.max_units}."
+        message = f"The warband has {units.unit_count} models; its warband size is {warband.max_units}."
         sizes = {"units": units.unit_count, "max_units": warband.max_units}
         warnings.append({"code": "warband_over_size", "message": message, **sizes})
     return warnings

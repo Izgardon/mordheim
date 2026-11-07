@@ -94,6 +94,11 @@ describe("The Skills page", () => {
     expect(screen.getByText("+1 to critical hits.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Edit skill Web of Steel" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Edit skill group" })).toBeInTheDocument();
+    // each skill's setting in the open row (William, 7 Nov 2026: "others should exist in the
+    // expanded part"): the book's not graded yet are Mordheim's
+    expect(screen.getByRole("heading", { name: "Web of Steel" }).parentElement).toHaveTextContent(
+      "Web of SteelMordheim"
+    );
 
     // a skill in several groups shows under each
     await user.click(await groupRow("Speed"));

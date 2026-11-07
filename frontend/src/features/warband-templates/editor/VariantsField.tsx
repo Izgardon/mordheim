@@ -18,7 +18,7 @@ const BLANK: VariantDraft = {
 };
 
 /**
- * The variants and their own terms (starting gold, most warriors, the bonus to find rare items):
+ * The variants and their own terms (starting gold, warband size, the bonus to find rare items):
  * a saved variant's key stays as it is, since rules, list lines and warbands name it; one taken
  * out says what goes with it.
  */
@@ -41,7 +41,7 @@ export default function VariantsField({
       {variants.map((variant, index) => (
         <div
           key={variant.isNew ? `new-${index}` : variant.key}
-          className="grid grid-cols-2 items-end gap-2 border-t border-line pt-2 first:border-t-0 first:pt-0 min-[620px]:grid-cols-[1fr_1fr_80px_80px_70px_auto]"
+          className="grid grid-cols-2 items-end gap-2 border-t border-line pt-2 first:border-t-0 first:pt-0 min-[620px]:grid-cols-[1fr_1fr_80px_104px_70px_auto]"
         >
           <Field label="Name">
             <Input
@@ -71,7 +71,7 @@ export default function VariantsField({
             onChange={(gold) => set(index, { gold })}
           />
           <NumberField
-            label="Most"
+            label="Warband size"
             value={variant.size}
             placeholder="—"
             onChange={(size) => set(index, { size })}
