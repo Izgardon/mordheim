@@ -92,9 +92,7 @@ export default function HirelingIdentityFields({
       <RaceFields form={form} open={open} />
       <div className="flex flex-wrap items-end gap-3">
         <CasterField values={values} onChange={change} className="flex flex-1 flex-col gap-1.5" />
-        <div className="pb-2">
-          <LargeTargetField values={values} onChange={change} />
-        </div>
+        <LargeTargetField values={values} onChange={change} />
       </div>
       <DescriptionField values={values} onChange={change} id="hireling-description" />
     </>

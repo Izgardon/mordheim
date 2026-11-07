@@ -32,9 +32,7 @@ export default function BestiaryEntryFormFields({ form }: { form: BestiaryEntryF
       <BeastProfileFields form={form} />
       <div className="flex flex-wrap items-end gap-3">
         <CasterField values={values} onChange={change} className="flex flex-1 flex-col gap-1.5" />
-        <div className="pb-2">
-          <LargeTargetField values={values} onChange={change} />
-        </div>
+        <LargeTargetField values={values} onChange={change} />
       </div>
       <DescriptionField values={values} onChange={change} id="bestiary-desc" />
       <BestiaryLinksFields links={form.links} />

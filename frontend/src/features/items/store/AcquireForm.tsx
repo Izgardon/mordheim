@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Dices, Minus, Plus } from "lucide-react";
 
 import { NumberInput } from "@/components/ui/number-input";
+import { CheckboxField } from "@/components/ui/checkbox";
 import { Chip } from "@/components/ui/chip";
 import DiceEntry from "@/components/ui/dice-entry";
 import { IconButton } from "@/components/ui/icon-button";
@@ -147,15 +148,14 @@ export default function AcquireForm(props: AcquireFormProps) {
             />
           </div>
         ) : null}
-        <label className="ml-auto flex min-h-10 items-center gap-2 text-[13px] text-ink">
-          <input
-            type="checkbox"
-            checked={free}
-            onChange={(event) => setFree(event.target.checked)}
-            className="h-4 w-4 accent-[var(--color-accent)]"
-          />
+        <CheckboxField
+          inline
+          labelClassName="ml-auto text-[13px]"
+          checked={free}
+          onChange={(event) => setFree(event.target.checked)}
+        >
           Free
-        </label>
+        </CheckboxField>
       </div>
       {free ? (
         <Input

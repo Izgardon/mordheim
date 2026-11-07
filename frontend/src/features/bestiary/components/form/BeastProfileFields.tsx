@@ -1,12 +1,11 @@
 import { NumberInput } from "@/components/ui/number-input";
+import { CheckboxField } from "@/components/ui/checkbox";
 import { FieldError } from "@/components/ui/field-error";
 import { Label } from "@/components/ui/label";
 
 import { StatsField } from "./bestiary-core-fields";
 
 import type { BestiaryEntryFormState } from "../../hooks/useBestiaryEntryForm";
-
-const CHECKBOX_CLASS = "h-4 w-4 accent-[var(--color-accent)]";
 
 /**
  * The beast's profile and what its kind adds: "Has a profile" (off, the stats hide and are saved
@@ -16,15 +15,12 @@ export default function BeastProfileFields({ form }: { form: BestiaryEntryFormSt
   const { values, change, fieldErrors } = form;
   return (
     <div className="flex flex-col gap-3">
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          checked={values.has_profile}
-          onChange={(event) => change({ has_profile: event.target.checked })}
-          className={CHECKBOX_CLASS}
-        />
+      <CheckboxField
+        checked={values.has_profile}
+        onChange={(event) => change({ has_profile: event.target.checked })}
+      >
         Has a profile
-      </label>
+      </CheckboxField>
       {values.has_profile ? (
         <div className="flex flex-col gap-1">
           <StatsField values={values} onChange={change} />
@@ -52,15 +48,12 @@ export default function BeastProfileFields({ form }: { form: BestiaryEntryFormSt
       ) : null}
 
       {values.kind === "creature" ? (
-        <label className="flex items-center gap-2 text-sm">
-          <input
-            type="checkbox"
-            checked={values.gains_xp}
-            onChange={(event) => change({ gains_xp: event.target.checked })}
-            className={CHECKBOX_CLASS}
-          />
+        <CheckboxField
+          checked={values.gains_xp}
+          onChange={(event) => change({ gains_xp: event.target.checked })}
+        >
           Gains experience
-        </label>
+        </CheckboxField>
       ) : null}
     </div>
   );

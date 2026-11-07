@@ -1,6 +1,5 @@
-import { Checkbox } from "@components/checkbox";
+import { CheckboxField } from "@components/checkbox";
 import { Input } from "@components/input";
-import { Label } from "@components/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/select";
 
 import {
@@ -98,14 +97,13 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
         {values.type === "Armour" ? text("save", "Save", "6+") : null}
       </div>
       {values.type === "Miscellaneous" ? (
-        <div className="flex items-center gap-2">
-          <Checkbox
-            id={`item-single-use${idSuffix}`}
-            checked={values.singleUse}
-            onChange={(event) => form.setSingleUse(event.target.checked)}
-          />
-          <Label htmlFor={`item-single-use${idSuffix}`}>Single use</Label>
-        </div>
+        <CheckboxField
+          id={`item-single-use${idSuffix}`}
+          checked={values.singleUse}
+          onChange={(event) => form.setSingleUse(event.target.checked)}
+        >
+          Single use
+        </CheckboxField>
       ) : null}
       {longText("flavour", "Flavour")}
       <RulesField

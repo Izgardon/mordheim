@@ -1,3 +1,4 @@
+import { CheckboxField } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -108,16 +109,15 @@ export function StatsField({ values, onChange }: CoreFieldProps) {
   );
 }
 
+/** Large target, beside the caster's select in the row and lined up with it. */
 export function LargeTargetField({ values, onChange }: CoreFieldProps) {
   return (
-    <label className="flex items-center gap-2 text-sm">
-      <input
-        type="checkbox"
-        checked={values.large}
-        onChange={(e) => onChange({ large: e.target.checked })}
-        className="h-4 w-4 accent-[var(--color-accent)]"
-      />
+    <CheckboxField
+      inline
+      checked={values.large}
+      onChange={(e) => onChange({ large: e.target.checked })}
+    >
       Large target
-    </label>
+    </CheckboxField>
   );
 }

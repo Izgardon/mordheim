@@ -1,3 +1,4 @@
+import { CheckboxField } from "@/components/ui/checkbox";
 import PriceRowsField from "@/features/items/components/PriceRowsField";
 
 import type { BestiaryEntryFormState } from "../../hooks/useBestiaryEntryForm";
@@ -12,15 +13,12 @@ export default function ShopFields({ form }: { form: BestiaryEntryFormState }) {
   const sold = values.available_in_shop;
   return (
     <div className="flex flex-col gap-3">
-      <label className="flex items-center gap-2 text-sm">
-        <input
-          type="checkbox"
-          checked={sold}
-          onChange={(event) => form.setAvailableInShop(event.target.checked)}
-          className="h-4 w-4 accent-[var(--color-accent)]"
-        />
+      <CheckboxField
+        checked={sold}
+        onChange={(event) => form.setAvailableInShop(event.target.checked)}
+      >
         Available in the shop
-      </label>
+      </CheckboxField>
       {sold ? (
         <PriceRowsField
           campaignId={form.campaignId}

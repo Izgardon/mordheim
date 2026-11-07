@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { CheckboxField } from "@/components/ui/checkbox";
 import DiceEntry from "@/components/ui/dice-entry";
 import {
   mountRollResult,
@@ -98,18 +99,16 @@ export default function InjuriesTab(props: InjuriesTabProps) {
             ) : null}
             {offer ? (
               <div className="flex basis-full flex-wrap items-center gap-x-3 gap-y-1.5 border border-accent-line bg-panel px-3 py-2">
-                <label className="flex min-h-10 flex-1 cursor-pointer items-center gap-2.5 text-[13px] text-ink">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 accent-[var(--color-accent)]"
-                    checked={Boolean(row.missingGames)}
-                    onChange={(event) =>
-                      onChange(withMissingTicked(draft, row, event.target.checked, games))
-                    }
-                  />
+                <CheckboxField
+                  labelClassName="min-h-10 flex-1 gap-2.5 text-[13px]"
+                  checked={Boolean(row.missingGames)}
+                  onChange={(event) =>
+                    onChange(withMissingTicked(draft, row, event.target.checked, games))
+                  }
+                >
                   Misses {missDice ? `${missDice} games` : `${games} game${games === 1 ? "" : "s"}`}
                   , set at Ready
-                </label>
+                </CheckboxField>
                 {missDice ? (
                   <DiceEntry
                     dice={missDice}

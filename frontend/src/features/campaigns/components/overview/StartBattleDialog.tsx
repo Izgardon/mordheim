@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
@@ -115,12 +116,10 @@ export default function StartBattleDialog({
                   form.fighting(player) && "opacity-60"
                 )}
               >
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={chosen.has(player.id)}
                   disabled={you || form.fighting(player)}
                   onChange={() => form.toggleUser(player.id)}
-                  className="h-4 w-4 accent-[var(--color-accent)]"
                 />
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span className="truncate text-sm font-bold text-ink">

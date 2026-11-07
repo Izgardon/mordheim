@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import type { ReactNode } from "react";
 
+import { CheckboxField } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { SearchMultiSelect, type SearchOption } from "@/components/ui/search-select";
 import {
@@ -87,15 +88,12 @@ export default function SkillGroupFormDialog(props: SkillGroupFormDialogProps) {
         value={form.values.who}
         onChange={(who) => form.set("who", who)}
       />
-      <label className="flex items-center gap-2 text-sm text-ink">
-        <input
-          type="checkbox"
-          checked={form.values.large_only}
-          onChange={(event) => form.set("large_only", event.target.checked)}
-          className="h-4 w-4 accent-[var(--color-accent)]"
-        />
+      <CheckboxField
+        checked={form.values.large_only}
+        onChange={(event) => form.set("large_only", event.target.checked)}
+      >
         Large units only
-      </label>
+      </CheckboxField>
       <CatalogueField
         layout="dialog"
         label="Note when learning"

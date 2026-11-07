@@ -1,3 +1,4 @@
+import { CheckboxField } from "@/components/ui/checkbox";
 import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -101,15 +102,14 @@ export default function HirelingTermsFields({ form }: { form: HirelingProfileFor
         <legend className="mb-1.5 text-sm font-medium">Skill groups</legend>
         <div className="flex flex-wrap gap-3">
           {skillTypes.map((type) => (
-            <label key={type} className="flex items-center gap-1.5 text-sm">
-              <input
-                type="checkbox"
-                checked={values.available_skill_types.includes(type)}
-                onChange={(event) => form.toggleSkillType(type, event.target.checked)}
-                className="h-4 w-4 accent-[var(--color-accent)]"
-              />
+            <CheckboxField
+              key={type}
+              labelClassName="gap-1.5"
+              checked={values.available_skill_types.includes(type)}
+              onChange={(event) => form.toggleSkillType(type, event.target.checked)}
+            >
               {type}
-            </label>
+            </CheckboxField>
           ))}
         </div>
       </fieldset>
