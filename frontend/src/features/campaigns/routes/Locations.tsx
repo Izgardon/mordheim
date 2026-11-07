@@ -8,10 +8,11 @@ import { campaignCapabilities } from "../capabilities";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
 /**
- * The campaign's Locations page (`/campaigns/:id/locations`): where those with `manage_locations`
- * add, edit and remove the locations (William, 7 Nov 2026: "shouldn't be able to edit locations
- * in the location sidebar within warband"); every member reads them here too. The warband page's
- * Locations panel reads them and sends heroes. Shown while the campaign has Locations switched on.
+ * The campaign's Locations page (`/campaigns/:id/locations`, the nav's Locations): where those with
+ * `manage_locations` add, edit and remove the locations (William, 7 Nov 2026: "shouldn't be able
+ * to edit locations in the location sidebar within warband"); every member reads them here too,
+ * two to a row on the web. The warband page's Locations panel rolls on them and sends heroes.
+ * Shown while the campaign has Locations switched on.
  */
 export default function Locations() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
@@ -32,7 +33,7 @@ export default function Locations() {
         </header>
       )}
       {campaign.enable_locations ? (
-        <div className="flex w-full max-w-[760px] flex-col gap-3">
+        <div className="flex w-full flex-col gap-3">
           <LocationsList
             campaignId={campaign.id}
             warbandId={0}
@@ -40,6 +41,7 @@ export default function Locations() {
             canSend={false}
             canManage={campaignCapabilities(campaign).manage_locations}
             enabled
+            page
           />
         </div>
       ) : (

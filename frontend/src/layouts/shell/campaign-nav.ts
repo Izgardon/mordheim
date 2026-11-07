@@ -49,8 +49,9 @@ export const SEARCH_LINK: NavLink = { label: "Search everything", path: "search"
 export const BATTLES_ICON = Swords;
 
 /**
- * "My warband": the warband, the Encampment page and the warband page's Locations panel, the last
- * two when the campaign has them switched on.
+ * "My warband": the warband, the Encampment page and the campaign's Locations page (William, 7 Nov
+ * 2026: "clicking locations in nav takes you there"), the last two when the campaign has them
+ * switched on.
  */
 export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
   return [
@@ -58,9 +59,7 @@ export function warbandLinks(campaign: CampaignNavFlags): NavLink[] {
     ...(campaign.enable_encampments
       ? [{ label: "Encampment", path: "encampments", icon: Tent }]
       : []),
-    ...(campaign.enable_locations
-      ? [{ label: "Locations", path: "warband?panel=locations", icon: Map }]
-      : []),
+    ...(campaign.enable_locations ? [{ label: "Locations", path: "locations", icon: Map }] : []),
   ];
 }
 

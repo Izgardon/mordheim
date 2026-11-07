@@ -6,6 +6,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { useCampaignLocations } from "@/features/campaigns/api/campaign-queries";
 import type { CampaignLocation } from "@/features/campaigns/types/campaign-types";
+import { cn } from "@/lib/utils";
 
 import { useLocationRemoval } from "../../hooks/campaign/useLocationRemoval";
 import type { WarbandHero } from "../../types/warband-types";
@@ -24,6 +25,11 @@ type LocationsListProps = {
   enabled: boolean;
   /** Searched for this at first (Explore's "Read and roll" names the location it found). */
   initialSearch?: string;
+  /**
+   * The Locations page: the cards two to a row on the web, each with its whole text and no roll
+   * (William, 7 Nov 2026: "remove the roll boxes on the edit page").
+   */
+  page?: boolean;
 };
 
 /** The card being edited, or "new" while one is added. */
@@ -31,7 +37,8 @@ type Editing = number | "new" | null;
 
 /**
  * The campaign's locations (design E): search, area chips built from the areas in use, an area
- * tag and flags on each, a D6 roll for those with results, Send a hero for your warband, and,
+ * tag and flags on each, Roll D6 for those with results (not on the page), Send a hero for your
+ * warband, and,
  * where they are managed, Add location and Edit and Remove on each, the form in place of the card.
  */
 export default function LocationsList(props: LocationsListProps) {
@@ -105,7 +112,12 @@ export default function LocationsList(props: LocationsListProps) {
           {all.length ? "No location matches." : "No locations yet."}
         </p>
       ) : null}
-      <ul className="m-0 flex list-none flex-col gap-2 p-0">
+      <ul
+        className={cn(
+          "m-0 list-none p-0",
+          props.page ? "grid items-start gap-3 min-[960px]:grid-cols-2" : "flex flex-col gap-2"
+        )}
+      >
         {shown.map((location) =>
           editing === location.id ? (
             <li key={location.id} className="border border-accent-line bg-surface px-3.5 py-3">
@@ -118,6 +130,7 @@ export default function LocationsList(props: LocationsListProps) {
               warbandId={props.warbandId}
               heroes={props.heroes}
               canSend={props.canSend}
+              onPage={Boolean(props.page)}
               sending={sending === location.id}
               onToggleSend={() => setSending(sending === location.id ? null : location.id)}
               onEdit={canManage ? () => setEditing(location.id) : undefined}

@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import { SidePanel } from "@/components/ui/side-panel";
-import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
 
 import type { WarbandHero } from "../../types/warband-types";
 import LocationsList from "./LocationsList";
@@ -20,14 +19,13 @@ type LocationsPanelProps = {
 };
 
 /**
- * The warband page's Locations panel: the campaign's locations to read, roll and Send a hero to.
- * It never edits them (William, 7 Nov 2026: "shouldn't be able to edit locations in the location
- * sidebar within warband"); with `manage_locations`, Edit locations goes to the campaign's
- * Locations page, where they are added, edited and removed.
+ * The warband page's Locations panel: the campaign's locations to read, roll a D6 on and Send a
+ * hero to. It never edits them (William, 7 Nov 2026: "shouldn't be able to edit locations in the
+ * location sidebar within warband"); Go to page opens the campaign's Locations page, where those
+ * with `manage_locations` add, edit and remove them.
  */
 export default function LocationsPanel(props: LocationsPanelProps) {
   const { campaignId } = props;
-  const canManage = useCampaignCapabilities(campaignId).manage_locations;
 
   return (
     <SidePanel
@@ -36,11 +34,9 @@ export default function LocationsPanel(props: LocationsPanelProps) {
       kicker="Campaign"
       title="Locations"
     >
-      {canManage ? (
-        <Button asChild variant="secondary" className="self-start">
-          <Link to={`/campaigns/${campaignId}/locations`}>Edit locations</Link>
-        </Button>
-      ) : null}
+      <Button asChild variant="secondary" className="self-start">
+        <Link to={`/campaigns/${campaignId}/locations`}>Go to page</Link>
+      </Button>
       <LocationsList
         campaignId={campaignId}
         warbandId={props.warbandId}

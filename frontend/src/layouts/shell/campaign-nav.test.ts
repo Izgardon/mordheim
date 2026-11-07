@@ -7,6 +7,7 @@ import {
   campaignSectionTitle,
   isBattlePath,
   mobileNavActiveId,
+  warbandLinks,
 } from "./campaign-nav";
 
 describe("isBattlePath", () => {
@@ -48,5 +49,18 @@ describe("the campaign's Account page", () => {
     expect(campaignSectionTitle("/campaigns/1/account")).toBe("Account");
     expect(mobileNavActiveId("/campaigns/1/account")).toBe("me");
     expect(mobileNavActiveId("/campaigns/1/settings")).toBe("me");
+  });
+});
+
+describe("My warband's links", () => {
+  it("open the Locations page from Locations (William, 7 Nov 2026: 'clicking locations in nav takes you there')", () => {
+    const links = warbandLinks({ enable_encampments: true, enable_locations: true });
+    expect(links.map((link) => [link.label, link.path])).toEqual([
+      ["Warband", "warband"],
+      ["Encampment", "encampments"],
+      ["Locations", "locations"],
+    ]);
+    expect(mobileNavActiveId("/campaigns/1/locations")).toBe("warband");
+    expect(warbandLinks({ enable_encampments: false, enable_locations: false })).toHaveLength(1);
   });
 });

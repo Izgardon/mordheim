@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import DiceEntry from "@/components/ui/dice-entry";
 import type { CampaignLocation } from "@/features/campaigns/types/campaign-types";
+import { rollDie } from "@/lib/dice";
 import { cn } from "@/lib/utils";
 
 import type { WarbandHero } from "../../types/warband-types";
@@ -20,15 +20,16 @@ const d6Results = (location: CampaignLocation) => [
 const hasD6 = (location: CampaignLocation) => d6Results(location).some((entry) => entry?.trim());
 
 /**
- * One location in the Locations panel: its name, area and text, a D6 roll when it has results
- * (rolled, or the die typed in), Send a hero (your warband), and Edit and Remove for those who
- * manage locations.
+ * One location: its name, area and text, Roll D6 when it has results (the panel's; William, 7 Nov
+ * 2026: "in the side draw just have a Roll d6 button"), Send a hero (your warband), and Edit and
+ * Remove for those who manage locations. On the Locations page it shows its whole text and no roll.
  */
 export default function LocationCard({
   location,
   warbandId,
   heroes,
   canSend,
+  onPage,
   sending,
   onToggleSend,
   onEdit,
@@ -38,6 +39,7 @@ export default function LocationCard({
   warbandId: number;
   heroes: WarbandHero[];
   canSend: boolean;
+  onPage: boolean;
   /** Send a hero is open on this card (one card at a time). */
   sending: boolean;
   onToggleSend: () => void;
@@ -67,33 +69,25 @@ export default function LocationCard({
             ) : null}
           </span>
           {location.content ? (
-            <span className="line-clamp-3 text-[13px] text-text2">{location.content}</span>
+            <span
+              className={cn(
+                "text-[13px] text-text2",
+                onPage ? "whitespace-pre-line" : "line-clamp-3"
+              )}
+            >
+              {location.content}
+            </span>
           ) : null}
-          {hasD6(location) ? (
-            <div className="flex flex-wrap items-center gap-1.5">
-              <span className="border border-border px-[7px] py-px text-[11px] font-bold text-muted-foreground">
-                D6 roll
-              </span>
-              <DiceEntry
-                dice="D6"
-                size="sm"
-                className="gap-1.5"
-                total={rolled}
-                onFaces={([face]) => setRolled(face)}
-                onChange={([face]) => (face === null ? setRolled(null) : undefined)}
-                button={(roll) => (
-                  <button
-                    type="button"
-                    className="text-xs font-bold text-accent-text hover:underline"
-                    onClick={roll}
-                  >
-                    {rolled ? "Roll again" : "Roll D6"}
-                  </button>
-                )}
-              />
-            </div>
+          {!onPage && hasD6(location) ? (
+            <button
+              type="button"
+              className="self-start text-xs font-bold text-accent-text hover:underline"
+              onClick={() => setRolled(rollDie(6))}
+            >
+              Roll D6
+            </button>
           ) : null}
-          {rolled ? (
+          {!onPage && rolled ? (
             <p className="m-0 border-l-2 border-accent-line pl-2.5 text-[13px] text-ink">
               <span className="mr-1.5 font-mono font-bold text-accent-hi">{rolled}</span>
               {d6Results(location)[rolled - 1]?.trim() || "Nothing listed for this roll."}

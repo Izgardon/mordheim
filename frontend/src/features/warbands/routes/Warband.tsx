@@ -76,7 +76,7 @@ export default function Warband() {
     ) : (
       <>
         <CreateWarband campaignId={campaignId} onCreated={sheet.showCreated} />
-        {/* the rail's Locations opens here too: the list (and managing it) needs no warband */}
+        {/* Search everything's locations open here too: the list needs no warband */}
         <LocationsPanel
           campaignId={campaignId}
           warbandId={0}

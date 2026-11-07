@@ -1,3 +1,8 @@
+/**
+ * A location's D6 (William, 7 Nov 2026: "in the side draw just have a Roll d6 button, dont need the
+ * d6 roll pill there"): the panel's card rolls with one Roll D6 button and has no roll boxes; the
+ * Locations page's card has no roll at all.
+ */
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -26,13 +31,14 @@ const well: CampaignLocation = {
   d6_6: "A shard glints below.",
 };
 
-const show = () =>
+const show = (location: CampaignLocation, onPage = false) =>
   render(
     <LocationCard
-      location={well}
+      location={location}
       warbandId={1}
       heroes={[]}
       canSend={false}
+      onPage={onPage}
       sending={false}
       onToggleSend={vi.fn()}
     />
@@ -43,20 +49,32 @@ describe("LocationCard", () => {
     vi.mocked(rollDie).mockReset();
   });
 
-  it("reads the D6 typed in as it reads the roll, and Roll again replaces it", async () => {
+  it("rolls a D6 with one button, with no roll boxes, and Roll D6 again replaces the result", async () => {
     const user = setupUser();
-    show();
-    await user.type(screen.getByLabelText("D6 rolled"), "4");
+    show(well);
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(screen.queryByText("D6 roll")).toBeNull();
+
+    vi.mocked(rollDie).mockReturnValueOnce(4);
+    await user.click(screen.getByRole("button", { name: "Roll D6" }));
+    expect(rollDie).toHaveBeenCalledWith(6);
     expect(screen.getByText("A rope, still knotted.")).toBeInTheDocument();
-    expect(rollDie).not.toHaveBeenCalled();
 
-    vi.mocked(rollDie).mockReturnValueOnce(6);
-    await user.click(screen.getByRole("button", { name: "Roll again" }));
-    expect(screen.getByText("A shard glints below.")).toBeInTheDocument();
-    expect(screen.getByLabelText("D6 rolled")).toHaveValue("6");
+    vi.mocked(rollDie).mockReturnValueOnce(2);
+    await user.click(screen.getByRole("button", { name: "Roll D6" }));
+    expect(screen.queryByText("A rope, still knotted.")).toBeNull();
+    expect(screen.getByText("Nothing listed for this roll.")).toBeInTheDocument();
+  });
 
-    await user.clear(screen.getByLabelText("D6 rolled"));
-    expect(screen.queryByText("A shard glints below.")).toBeNull();
-    expect(screen.getByRole("button", { name: "Roll D6" })).toBeInTheDocument();
+  it("has no Roll D6 without results, nor on the Locations page", () => {
+    const blank = { ...well, d6_1: "", d6_4: "", d6_6: "" };
+    const { unmount } = show(blank);
+    expect(screen.queryByRole("button", { name: "Roll D6" })).toBeNull();
+    unmount();
+
+    show(well, true);
+    expect(screen.getByText("A shaft into the dark.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Roll/ })).toBeNull();
+    expect(screen.queryByRole("textbox")).toBeNull();
   });
 });

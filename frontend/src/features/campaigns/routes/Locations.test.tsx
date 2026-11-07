@@ -108,6 +108,16 @@ describe("The Locations page", () => {
     expect(screen.queryByRole("button", { name: /^(Edit|Remove) / })).toBeNull();
   });
 
+  it("has no roll on a location with D6 results (William: remove the roll boxes)", async () => {
+    fakeApi.on(`GET ${LOCATIONS}`, [{ ...docks, d6_1: "Nothing but rats.", d6_6: "Treasure." }]);
+    openAs("owner");
+
+    expect(await screen.findByText("The Docks")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /^Roll/ })).toBeNull();
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(screen.queryByText("D6 roll")).toBeNull();
+  });
+
   it("says so while Locations are switched off", async () => {
     openAs("owner", false);
 
