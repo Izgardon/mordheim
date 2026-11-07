@@ -107,20 +107,28 @@ class WarbandLog(models.Model):
 class WarbandResource(models.Model):
     """A counter (wyrdstone shards, treasure, ...). Every warband has one default resource (`is_default`): named as
     its campaign's settings name it (`default_resource_name`), listed first, never deleted and renamed only by the
-    campaign; a Wyrdstone fee pays from it (apps/hirelings/fees.py)."""
+    campaign; a Wyrdstone fee pays from it (apps/hirelings/fees.py). While its campaign has campaign points on, a
+    warband also holds Campaign points (`is_campaign_points`, listed next, never renamed or deleted), kept but hidden
+    while they are off (services/campaign_points.py)."""
 
     warband = models.ForeignKey(Warband, related_name="resources", on_delete=models.CASCADE)
     name = models.CharField(max_length=120)
     amount = models.IntegerField(default=0)
     is_default = models.BooleanField(default=False)
+    is_campaign_points = models.BooleanField(default=False)
 
     class Meta:
         db_table = "warband_resources"
-        ordering = ("-is_default", "id")
+        ordering = ("-is_default", "-is_campaign_points", "id")
         constraints = [
             models.UniqueConstraint(fields=["warband", "name"], name="unique_warband_resource"),
             models.UniqueConstraint(
                 fields=["warband"], condition=models.Q(is_default=True), name="one_default_resource_per_warband"
+            ),
+            models.UniqueConstraint(
+                fields=["warband"],
+                condition=models.Q(is_campaign_points=True),
+                name="one_campaign_points_per_warband",
             ),
         ]
 

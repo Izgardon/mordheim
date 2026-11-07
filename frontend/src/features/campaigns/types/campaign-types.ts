@@ -21,6 +21,8 @@ export type CampaignSummary = {
   enable_locations?: boolean;
   /** The name of every warband's default resource ("Wyrdstone" unless renamed). */
   default_resource_name?: string;
+  /** Every warband holds Campaign points while on (hidden, their amounts kept, while off). */
+  enable_campaign_points?: boolean;
   /** The settings in play (grading phase 1): the ones ticked, the always-on Mordheim among them. */
   setting_ids?: number[];
   player_count: number;
@@ -77,6 +79,7 @@ export type CampaignUpdatePayload = {
   setting_ids?: number[];
   /** Renames every warband's default resource. */
   default_resource_name?: string;
+  enable_campaign_points?: boolean;
 };
 
 /** A PATCH's answer: the campaign, and what went ahead with a warning (a rename that merged). */

@@ -5,6 +5,7 @@ from typing import Any
 from django.db import transaction
 
 from apps.core.catalogue.cache import bump
+from apps.warbands.services.campaign_points import give_campaign_points
 
 from ..errors import Refused
 from ..in_play import set_settings
@@ -23,6 +24,7 @@ SETTINGS_FIELDS = (
     "henchmen_level_thresholds",
     "hired_sword_level_thresholds",
     "default_resource_name",
+    "enable_campaign_points",
 )
 
 
@@ -57,12 +59,15 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
             bump(campaign.id)  # no catalogue.changed: the pages read the lists again on campaign.updated
         if not settings_updates:
             return []
-        settings, _ = CampaignSettings.objects.get_or_create(campaign=campaign)
+        # locked: a warband raised meanwhile gets the default resource's name and its campaign points either way
+        settings, _ = CampaignSettings.objects.select_for_update().get_or_create(campaign=campaign)
         old_resource = settings.default_resource_name or DEFAULT_RESOURCE_NAME
         for field, value in settings_updates.items():
             setattr(settings, field, value)
         settings.save(update_fields=list(settings_updates))
         if old_gold is not None and validated.get(starting_gold.ADJUST_FLAG):
             starting_gold.adjust_warbands(campaign, old_gold, settings_updates["starting_gold"])
+        if settings_updates.get("enable_campaign_points"):  # on: every warband holds them (William, 7 Nov 2026)
+            give_campaign_points(campaign.warbands.values_list("id", flat=True))
         renamed = settings_updates.get("default_resource_name", old_resource)
         return rename_default_resources(campaign, renamed) if renamed != old_resource else []

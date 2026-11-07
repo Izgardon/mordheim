@@ -108,6 +108,18 @@ describe("writeCampaignAnswer", () => {
     expect(invalidate).toHaveBeenCalledWith({ queryKey: key, exact: true });
   });
 
+  it("reads the warbands again when campaign points are switched (their resources change)", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(key, { ...campaign, enable_campaign_points: false });
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+
+    writeCampaignAnswer(queryClient, 7, { ...campaign, enable_campaign_points: false });
+    expect(invalidate).not.toHaveBeenCalled();
+    writeCampaignAnswer(queryClient, 7, { ...campaign, enable_campaign_points: true });
+
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ["campaign", 7, "warband"] });
+  });
+
   it("keeps the reader's role and unread count when an event leaves them out, and reads the flags again on an archive", () => {
     const queryClient = createTestQueryClient();
     queryClient.setQueryData(key, { ...campaign, chat_unread: 3 });

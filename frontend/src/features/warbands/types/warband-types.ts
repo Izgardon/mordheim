@@ -121,6 +121,11 @@ export type WarbandResource = {
    * it, first; it is never deleted, and only the campaign's settings rename it.
    */
   is_default: boolean;
+  /**
+   * Campaign points: every warband holds them while the campaign has them on (the server leaves
+   * them out while off), next after the default; never renamed or deleted.
+   */
+  is_campaign_points?: boolean;
 };
 
 /** One of the warband's own rules: its title is the pill, its description what the pill opens. */

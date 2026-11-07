@@ -115,6 +115,8 @@ class CampaignSettings(models.Model):
     )
     # the name of every warband's default resource (WarbandResource.is_default): a rename renames them all
     default_resource_name = models.CharField(max_length=120, default=DEFAULT_RESOURCE_NAME)
+    # every warband holds a Campaign points counter (WarbandResource.is_campaign_points), hidden while off
+    enable_campaign_points = models.BooleanField(default=False)
 
     class Meta:
         db_table = "campaign_settings"

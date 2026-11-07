@@ -17,6 +17,7 @@ from django.db.models import Case, IntegerField, Value, When
 
 from apps.hirelings.fees import match_counter
 from apps.warbands.models import WarbandResource
+from apps.warbands.services.campaign_points import SHOWN
 
 
 @dataclass(frozen=True)
@@ -74,8 +75,10 @@ def sent_lines(lines: Iterable[dict[str, Any]]) -> list[ResourceLine]:
 
 
 def locked_counters(warband_id: int) -> list[WarbandResource]:
-    """The warband's counters, locked until the caller's transaction ends: one query."""
-    return list(WarbandResource.objects.select_for_update().filter(warband_id=warband_id).order_by("id"))
+    """The warband's counters it may pay from (not campaign points its campaign has off), locked until the
+    caller's transaction ends: one query."""
+    rows = WarbandResource.objects.select_for_update(of=("self",)).filter(SHOWN, warband_id=warband_id)
+    return list(rows.order_by("id"))
 
 
 def _counter(line: ResourceLine, counters: Sequence[WarbandResource]) -> WarbandResource | None:

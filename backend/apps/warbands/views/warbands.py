@@ -18,6 +18,7 @@ from apps.warbands.serializers import (
     WarbandUpdateSerializer,
 )
 from apps.warbands.services import ledger
+from apps.warbands.services.campaign_points import CAMPAIGN_POINTS
 from apps.warbands.services.types import load_types, picked_types
 
 from .base import WarbandScopedView
@@ -55,13 +56,16 @@ class WarbandListCreateView(APIView):
         if template is not None:
             serializer.validated_data.setdefault("max_units", template_size(template, variant))
         with transaction.atomic():
-            # locked: a rename of the default resource renames this warband's too, before or after (one at a time)
+            # locked: a rename of the default resource, or campaign points switched on, reaches this warband too,
+            # before or after (one at a time)
             settings = CampaignSettings.objects.select_for_update().filter(campaign_id=campaign_id).first()
             warband = serializer.save(user=request.user, template_variant=variant)
             warband.counts_as.set(counts_as)
             # the one everyone starts with (William, 3 Nov 2026), named as the campaign names it
             name = settings.default_resource_name if settings else DEFAULT_RESOURCE_NAME
             WarbandResource.objects.create(warband=warband, name=name, amount=0, is_default=True)
+            if settings and settings.enable_campaign_points:  # William, 7 Nov 2026: "another mandatory resource"
+                WarbandResource.objects.create(warband=warband, name=CAMPAIGN_POINTS, is_campaign_points=True)
             starting_gold = raise_gold(abs(settings.starting_gold) if settings else 500, template, variant)
             ledger.record(warband, LedgerAction.STARTING_GOLD, starting_gold, "Starting Gold")
             if template is not None:

@@ -72,7 +72,10 @@ function CampaignName({ campaign }: { campaign: CampaignSummary }) {
   );
 }
 
-/** The Encampments page and Locations, switched on or off for everyone; each saves as it flips. */
+/**
+ * The Encampments page, Locations and Campaign points (every warband's resource while on),
+ * switched on or off for everyone; each saves as it flips.
+ */
 function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
   const { saving, error, save } = useCampaignSave(campaign.id, "Couldn't save that.");
   const features = [
@@ -85,6 +88,11 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
       key: "enable_locations" as const,
       label: "Locations",
       on: Boolean(campaign.enable_locations),
+    },
+    {
+      key: "enable_campaign_points" as const,
+      label: "Campaign points",
+      on: Boolean(campaign.enable_campaign_points),
     },
   ];
   return (
@@ -107,7 +115,8 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
 }
 
 /**
- * Settings → Campaign (`edit_settings`, the owner): its name and the pages switched on, the content
+ * Settings → Campaign (`edit_settings`, the owner): its name, the pages and campaign points switched
+ * on, the content
  * in play (grade presets and settings), then the warband rules (starting gold, the default
  * resource, limits, the death roll and the level-ups).
  */

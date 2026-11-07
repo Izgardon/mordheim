@@ -6,6 +6,7 @@ from django.db.models.functions import Cast, Greatest, Least
 
 from apps.warbands.models import LedgerAction, Warband, WarbandResource, WarbandTrade
 from apps.warbands.services import ledger
+from apps.warbands.services.campaign_points import resource_rows
 
 MAX_AMOUNT = 2_147_483_647  # WarbandResource.amount is a 32-bit integer column
 
@@ -23,8 +24,9 @@ def change_resource(
     name: str | None = None,
 ) -> WarbandResource | None:
     """Set the amount, or add `delta` to the stored amount (a concurrent change isn't lost), stopping at 0 and at
-    the column's limit, and rename it when `name` is given. None when the warband has no such resource."""
-    rows = WarbandResource.objects.filter(id=resource_id, warband=warband)
+    the column's limit, and rename it when `name` is given. None when the warband has no such resource (or it is
+    campaign points its campaign has off)."""
+    rows = resource_rows(warband).filter(id=resource_id)
     if name is not None and not rows.update(name=name):
         return None
     if delta is not None:
@@ -44,7 +46,7 @@ def sell_resource(
     """POST resources/<id>/sell/: take `quantity` off the resource and write its "Sell" ledger row (the price
     the player gave) in one transaction. None when there is no such resource; ResourceShortage when it holds
     less than `quantity`."""
-    rows = WarbandResource.objects.filter(id=resource_id, warband=warband)
+    rows = resource_rows(warband).filter(id=resource_id)
     name = rows.values_list("name", flat=True).first()
     if name is None:
         return None
