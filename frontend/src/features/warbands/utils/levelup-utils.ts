@@ -125,10 +125,10 @@ export const buildLevelUpPayload = (opts: {
   nameKey?: "hero" | "group";
 }) => {
   const roll1: LevelUpRollData | undefined =
-    opts.roll2d6Total !== null ? { dice: "2d6", result: { total: opts.roll2d6Total } } : undefined;
+    opts.roll2d6Total !== null ? { dice: "2D6", result: { total: opts.roll2d6Total } } : undefined;
   const roll2: LevelUpRollData | undefined =
     opts.roll1d6Total !== null && opts.roll1d6Total !== undefined
-      ? { dice: "1d6", result: { total: opts.roll1d6Total } }
+      ? { dice: "D6", result: { total: opts.roll1d6Total } }
       : undefined;
 
   return {

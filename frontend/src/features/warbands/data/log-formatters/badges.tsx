@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import needIcon from "@/assets/icons/need.webp";
 import greedIcon from "@/assets/icons/greed.webp";
+import { capitalDice } from "@/lib/dice";
 
 import type { WarbandLog } from "../../types/warband-types";
 
@@ -18,7 +19,7 @@ export const payloadOf = <T,>(log: WarbandLog) => (log.payload ?? {}) as T;
 export const renderDiceBadge = (dice?: string) => (
   <span className="inline-flex items-center gap-1 align-middle leading-none">
     <img src={needIcon} alt="" className="relative top-[1px] h-4 w-4" />
-    {dice ? <span>{dice}</span> : null}
+    {dice ? <span>{capitalDice(dice)}</span> : null}
   </span>
 );
 

@@ -3,6 +3,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
+import { capitalDice } from "@/lib/dice";
 
 import { warbandLogsQuery } from "../../api/economy-queries";
 import { LOG_FORMATTERS } from "../../data/log-formatters";
@@ -63,9 +64,13 @@ export function BackstoryTab({
   );
 }
 
-const describe = (log: WarbandLog) =>
-  LOG_FORMATTERS[`${log.feature}:${log.entry_type}`]?.(log) ??
-  formatLogMessage(log.feature, log.entry_type, log.payload ?? {});
+/** A log line, its dice in capitals however it was stored ("2d6" reads "2D6"). */
+const describe = (log: WarbandLog) => {
+  const line =
+    LOG_FORMATTERS[`${log.feature}:${log.entry_type}`]?.(log) ??
+    formatLogMessage(log.feature, log.entry_type, log.payload ?? {});
+  return typeof line === "string" ? capitalDice(line) : line;
+};
 
 /** The warband log, newest first, a page at a time, filtered by feature. */
 export function LogTab({ campaignId, warbandId }: { campaignId: number; warbandId: number }) {

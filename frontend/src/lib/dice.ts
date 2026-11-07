@@ -18,3 +18,14 @@ export function diceSides(dice: Dice) {
   const [count, sides] = dice.split("D");
   return Array.from({ length: Number(count || 1) }, () => Number(sides));
 }
+
+const DICE_TOKEN = /\b(\d*)d(\d+)\b/gi;
+
+/**
+ * Text with its dice as the rules write them (William, 7 Nov 2026: "capitalise"): "2d6" is "2D6",
+ * "1d6" and "d6" are "D6", "d66" is "D66". For log lines stored before they were written so.
+ */
+export const capitalDice = (text: string) =>
+  text.replace(DICE_TOKEN, (_, count: string, sides: string) =>
+    count === "1" ? `D${sides}` : `${count}D${sides}`
+  );

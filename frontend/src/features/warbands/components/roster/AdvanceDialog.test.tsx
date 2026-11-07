@@ -81,7 +81,7 @@ describe("The advance dialog", () => {
       payload: {
         hero: "Aldric Voss",
         advance: { id: "WS", label: "Weapon Skill" },
-        roll1: { dice: "2d6", result: { total: 7 } },
+        roll1: { dice: "2D6", result: { total: 7 } },
       },
     });
   });
@@ -118,8 +118,8 @@ describe("The advance dialog", () => {
     expect(fakeApi.bodyOf(LEVEL_UP)).toMatchObject({
       payload: {
         advance: { id: "S" },
-        roll1: { dice: "2d6", result: { total: 6 } },
-        roll2: { dice: "1d6", result: { total: 5 } },
+        roll1: { dice: "2D6", result: { total: 6 } },
+        roll2: { dice: "D6", result: { total: 5 } },
       },
     });
   });

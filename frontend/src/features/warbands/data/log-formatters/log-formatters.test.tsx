@@ -1,6 +1,8 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 
+import { capitalDice } from "@/lib/dice";
+
 import { LOG_FORMATTERS } from ".";
 
 import type { WarbandLog } from "../../types/warband-types";
@@ -225,5 +227,36 @@ describe("log formatters, by feature", () => {
     expect(textOf(log("trade", "completed", trade))).toBe(
       "Traded with Rats: sent 30 gc, Sword x 2; received nothing"
     );
+  });
+
+  it("write a level-up's and a roll's dice in capitals, however they were stored (William: 'capitalise')", () => {
+    const stored = {
+      hero: "Aldric",
+      advance: { id: "S", label: "+1 Strength" },
+      roll1: { dice: "2d6", result: { total: 6 } },
+      roll2: { dice: "1d6", result: { total: 2 } },
+    };
+    expect(textOf(log("advance", "hero", stored))).toBe(
+      "Aldric levelled up with a roll of 6 (2D6), followed by a 2 (D6) and gained a +1 Strength"
+    );
+    const group = {
+      group: "Marksmen",
+      advance: "+1 BS",
+      roll1: { dice: "2d6", result: { total: 9 } },
+    };
+    expect(textOf(log("advance", "henchmen", group))).toBe(
+      "Marksmen levelled up with a roll of 9 (2D6) and gained +1 BS"
+    );
+    const roll = { warband: "Reiklanders", dice: "1d6", rolls: [3], total: 3 };
+    expect(textOf(log("dice_roll", "dice_roll", roll))).toContain("rolled 3 (D6)");
+  });
+});
+
+describe("capitalDice", () => {
+  it("writes each die in capitals, a single die without its 1, and leaves other words alone", () => {
+    expect(capitalDice("rolled 2d6, then 1d6 and a d66 (D3)")).toBe(
+      "rolled 2D6, then D6 and a D66 (D3)"
+    );
+    expect(capitalDice("Dead, d6_1, 3d4f, Sword")).toBe("Dead, d6_1, 3d4f, Sword");
   });
 });

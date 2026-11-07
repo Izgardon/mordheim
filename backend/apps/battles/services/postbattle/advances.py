@@ -44,9 +44,9 @@ def _payload(name_key: str, name: str, advance: dict[str, Any]) -> dict[str, Any
     payload: dict[str, Any] = {name_key: name, "advance": {"id": advance["id"], "label": advance["label"]}}
     rolls = advance.get("rolls") or []
     if len(rolls) >= 2:
-        payload["roll1"] = {"dice": "2d6", "result": {"total": rolls[0] + rolls[1]}}
+        payload["roll1"] = {"dice": "2D6", "result": {"total": rolls[0] + rolls[1]}}
     if len(rolls) == 3:
-        payload["roll2"] = {"dice": "1d6", "result": {"total": rolls[2]}}
+        payload["roll2"] = {"dice": "D6", "result": {"total": rolls[2]}}
     return payload
 
 

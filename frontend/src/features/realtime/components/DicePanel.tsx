@@ -12,7 +12,7 @@ import { warbandLogsQuery } from "@/features/warbands/api/economy-queries";
 import { markLedgerStale } from "@/features/warbands/api/warband-cache";
 import { createWarbandLog } from "@/features/warbands/api/warbands-api";
 import { useAppStore } from "@/stores/app-store";
-import { rollDie as rollDieOf } from "@/lib/dice";
+import { capitalDice, rollDie as rollDieOf } from "@/lib/dice";
 
 const DICE = ["D3", "D6", "D8", "D10", "D12", "D20", "D66", "D100"] as const;
 type Die = (typeof DICE)[number];
@@ -177,7 +177,7 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
               return (
                 <div key={entry.id} className="flex items-baseline gap-3 border-t border-line py-2">
                   <span className="w-16 shrink-0 font-mono text-xs text-faint">
-                    {String(payload.dice ?? "")}
+                    {capitalDice(String(payload.dice ?? ""))}
                   </span>
                   <span className="flex-1 text-[13px] text-text2">
                     {String(payload.reason ?? "")}

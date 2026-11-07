@@ -22,6 +22,10 @@ class AftermathAdvanceTests(RosterTestCase):
         self.assertEqual((hero.strength, hero.level_up), (4, 0))
         self.assertEqual((hero.pending_skills, hero.skills.count()), (1, 0))  # picked later, from the card
         self.assertNotIn("advance_skipped", [warning["code"] for warning in answer.get("warnings", [])])
+        # the log writes its dice in capitals (William, 7 Nov 2026: "capitalise")
+        rolls = self.warband.logs.filter(feature="advance").order_by("id").values_list("payload", flat=True)
+        dice = [(payload["roll1"]["dice"], payload.get("roll2", {}).get("dice")) for payload in rolls]
+        self.assertEqual(dice, [("2D6", "D6"), ("2D6", None)])
 
     def test_a_group_takes_its_advance_once_and_leaves_the_lads_got_talent_for_its_card(self):
         marksmen = make_unit(HENCHMEN, self.warband, weapon_skill=3, members=("Alpha", "Beta"))

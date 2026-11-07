@@ -79,8 +79,8 @@ describe("buildLevelUpPayload", () => {
     ).toEqual({
       hero: "Brother Hal",
       advance: { id: "Ld", label: "Leadership" },
-      roll1: { dice: "2d6", result: { total: 8 } },
-      roll2: { dice: "1d6", result: { total: 5 } },
+      roll1: { dice: "2D6", result: { total: 8 } },
+      roll2: { dice: "D6", result: { total: 5 } },
     });
   });
 
