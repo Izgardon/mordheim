@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Switch } from "@/components/ui/switch";
 import type { TemplateVariant } from "@/features/warband-templates/types/template-types";
@@ -10,6 +11,7 @@ import { matchesSearchQuery } from "@/lib/matches-search-query";
 import { cn } from "@/lib/utils";
 
 import { useWhoCan } from "../api/who-can-queries";
+import ItemFormDialog from "../components/ItemFormDialog";
 import type { ShownItem } from "../components/ItemInfo";
 import { isSold } from "../utils/item-listing";
 import { hisLine, hisRow, rareBonusFor, type HisList, type HisUpgrades } from "./his-list";
@@ -22,6 +24,8 @@ export type StoreListProps = {
   campaignId: number;
   warbandId: number;
   canBuy: boolean;
+  /** `edit_catalogue`, as Wargear's Add item: Add item makes a campaign item here. */
+  canAddItem?: boolean;
   recipients: Recipient[];
   firstKey: string | null;
   searchers: { id: number; name: string; spent: boolean }[];
@@ -47,7 +51,9 @@ export type StoreListProps = {
  * can't usually buy is hidden; off: it shows with the server's reason, "Not usually available to
  * Skaven.", and can still be bought), His list when buying for a unit from the template (on: only
  * his lists' items, as they name them, at the store's price; both on: his items the warband can
- * usually buy), category chips, a hero's Upgrades (his template's), and a row per item.
+ * usually buy), category chips, a hero's Upgrades (his template's), and a row per item. Add item
+ * (William, 7 Nov 2026: "Store has button to add a new item that opens the the create item modal")
+ * makes a campaign item and opens its row, found by its name, ready to buy.
  */
 export default function StoreList(props: StoreListProps) {
   const catalogue = useCatalogue("items", props.campaignId);
@@ -113,6 +119,21 @@ export default function StoreList(props: StoreListProps) {
             <Switch checked={onlyHis} onCheckedChange={setOnlyHis}>
               His list
             </Switch>
+          ) : null}
+          {props.canAddItem ? (
+            <ItemFormDialog
+              mode="create"
+              campaignId={props.campaignId}
+              onCreated={(item) => {
+                setQuery(item.name);
+                setOpenId(item.id);
+              }}
+              trigger={
+                <Button variant="secondary" className={props.isMobile ? "ml-auto min-h-11" : ""}>
+                  Add item
+                </Button>
+              }
+            />
           ) : null}
         </div>
       </div>

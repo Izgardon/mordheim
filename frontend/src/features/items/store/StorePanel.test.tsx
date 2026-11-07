@@ -1,14 +1,17 @@
 /**
  * The store: a click on an item's name shows its details above the basket (the price row the
- * warband sees), while Get still opens its acquire form without them.
+ * warband sees), while Get still opens its acquire form without them; and Add item, whose new
+ * item opens in the list ready to buy.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { catalogueListKey } from "@/lib/catalogue-queries";
 import { queryKeys } from "@/lib/query-keys";
+import { campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
+import { pickOption } from "@/test/select";
 import { setupUser } from "@/test/user-event";
 import {
   makeTemplateAnswer,
@@ -356,5 +359,73 @@ describe("StorePanel, Upgrades for a hero from the template", () => {
         { upgrades: [{ unit_id: 5, upgrade_id: 1, price: 90 }] },
       ])
     );
+  });
+});
+
+// William, 7 Nov 2026: "Store has button to add a new item that opens the the create item modal"
+describe("StorePanel, Add item", () => {
+  function renderWith(campaign: ReturnType<typeof campaignSummary>) {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(queryKeys.campaign.detail(CAMPAIGN), campaign);
+    queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [lance]);
+    queryClient.setQueryData(catalogueListKey(CAMPAIGN, "item-rules"), []);
+    queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), whoCan);
+    renderWithQueryClient(
+      <StorePanel
+        open
+        onOpenChange={vi.fn()}
+        campaignId={CAMPAIGN}
+        warband={{ id: WARBAND, name: "Clan Eshin", gold: 100 }}
+        heroes={[]}
+        henchmenGroups={[]}
+        hirelings={[]}
+        canBuy
+        opening={{}}
+      />,
+      { queryClient }
+    );
+  }
+
+  it("is only for whoever may add to the catalogue, as Wargear's Add item", () => {
+    renderWith(campaignSummary({ id: CAMPAIGN, role: "player", permissions: [] }));
+    expect(screen.queryByRole("button", { name: "Add item" })).toBeNull();
+  });
+
+  it("opens the item dialog, and the new campaign item opens in the store, ready to buy", async () => {
+    const rope = makeItem({
+      id: 300,
+      campaign_id: CAMPAIGN,
+      name: "Rope and Hook",
+      type: "Miscellaneous",
+      subtype: "",
+      availabilities: [{ ...lance.availabilities![0], id: 31, cost: 5, rarity: null }],
+    });
+    fakeApi.on("POST /items/", rope);
+    fakeApi.on(`GET /warbands/${WARBAND}/who-can/`, {
+      ...whoCan,
+      items: [
+        ...whoCan.items,
+        { item_id: 300, availability_id: 31, options: [31], can_buy: true, reason: "" },
+      ],
+    });
+    const user = setupUser();
+    renderWith(campaignSummary({ id: CAMPAIGN }));
+
+    await user.click(screen.getByRole("button", { name: "Add item" }));
+    const form = await screen.findByRole("dialog", { name: "Add Wargear" });
+    await user.type(within(form).getByRole("textbox", { name: /Name/ }), "Rope and Hook");
+    await pickOption(user, within(form).getByRole("combobox", { name: "Type" }), "Miscellaneous");
+    await user.type(within(form).getByLabelText("Cost (gc)"), "5");
+    await user.click(within(form).getByRole("button", { name: "Add item" }));
+
+    expect(fakeApi.bodyOf("POST /items/")).toMatchObject({
+      name: "Rope and Hook",
+      campaign_id: CAMPAIGN,
+    });
+    expect(await screen.findByLabelText("Price each for Rope and Hook")).toBeInTheDocument();
+    expect(screen.getByRole("searchbox", { name: "Search the store" })).toHaveValue(
+      "Rope and Hook"
+    );
+    expect(names()).toEqual(["Rope and Hook"]);
   });
 });

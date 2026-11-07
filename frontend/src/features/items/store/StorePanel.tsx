@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 
 import { SidePanel } from "@/components/ui/side-panel";
+import { useCampaignCapabilities } from "@/features/campaigns/capabilities";
 import { useWarbandHireTemplate } from "@/features/warbands/api/warband-template-queries";
 import type { TemplateUpgrade } from "@/features/warbands/types/hire-template-types";
 import type {
@@ -44,6 +45,7 @@ type StorePanelProps = {
  * was clicked above the basket, and the basket with Buy all. Opened
  * from a unit, the header says "Buying for <name>" and that unit's button comes first. The basket
  * is the warband's one (Wargear's Get this item shares it), kept for the session until bought.
+ * Whoever may add to the catalogue (Wargear's Add item) gets Add item in the list.
  */
 export default function StorePanel(props: StorePanelProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -61,6 +63,7 @@ export default function StorePanel(props: StorePanelProps) {
     spent: hero.trading_action === false,
   }));
   const details = useShownItem(props.open);
+  const canAddItem = useCampaignCapabilities(props.campaignId).edit_catalogue;
   // the template the roster reads ahead: His list for a unit recruited from it, the variant's rare bonus
   const template = useWarbandHireTemplate(props.campaignId, warband.id, props.open).data;
   const his = hisListFor(template, { heroes, henchmenGroups }, firstKey);
@@ -136,6 +139,7 @@ export default function StorePanel(props: StorePanelProps) {
         campaignId={props.campaignId}
         warbandId={warband.id}
         canBuy={props.canBuy}
+        canAddItem={canAddItem}
         recipients={recipients}
         firstKey={firstKey}
         searchers={searchers}
