@@ -10,7 +10,10 @@ export type AccessDraft = {
   excluded: boolean;
 };
 
-/** A who-can list as a form edits it: everyone (minus the excluded lines), or the lines named. */
+/**
+ * A who-can list as a form edits it: everyone (minus the excluded lines), or the lines named
+ * (Exclude and Include, `WhoCanMode`).
+ */
 export type WhoCanDraft = { forEveryone: boolean; lines: AccessDraft[] };
 
 export const everyone = (): WhoCanDraft => ({ forEveryone: true, lines: [] });
@@ -49,9 +52,37 @@ export const linesPayload = (draft: WhoCanDraft): AccessLineInput[] =>
   }));
 
 /**
- * A line added to the list: once each (adding it again moves it), included unless the list is for
- * everyone (then the only lines that say anything are the excluded ones).
+ * Exclude (William, 7 Nov 2026: "Exclude (default on) and Include"): everyone but the lines
+ * added, everyone with none; Include: only the lines added, no one with none. It is the list's
+ * `for_everyone`, and each line it adds is excluded or included to match.
  */
+export type WhoCanMode = "exclude" | "include";
+
+export const modeOf = (draft: WhoCanDraft): WhoCanMode =>
+  draft.forEveryone ? "exclude" : "include";
+
+/** The list in `mode`, every line saying what the mode says (a mixed list's lines too). */
+export const withMode = (draft: WhoCanDraft, mode: WhoCanMode): WhoCanDraft => ({
+  forEveryone: mode === "exclude",
+  lines: draft.lines.map((line) => ({ ...line, excluded: mode === "exclude" })),
+});
+
+/**
+ * Lines that say the opposite of the mode, kept from before the toggle (an include and an
+ * exclude together): they load, show and save as they are until the mode is switched.
+ */
+export const isMixed = (draft: WhoCanDraft) =>
+  draft.lines.some((line) => line.excluded !== draft.forEveryone);
+
+/** Who the list lets in, under the toggle: "Everyone except these", "Only these", "No one". */
+export function whoCanMeaning(draft: WhoCanDraft) {
+  if (draft.forEveryone) {
+    return draft.lines.some((line) => line.excluded) ? "Everyone except these" : "Everyone";
+  }
+  return draft.lines.some((line) => !line.excluded) ? "Only these" : "No one";
+}
+
+/** A line added to the list: once each (adding it again moves it), as the mode says. */
 export function addLine(draft: WhoCanDraft, line: Omit<AccessDraft, "excluded">): WhoCanDraft {
   const rest = draft.lines.filter((entry) => !(entry.kind === line.kind && entry.id === line.id));
   return { ...draft, lines: [...rest, { ...line, excluded: draft.forEveryone }] };
@@ -60,11 +91,4 @@ export function addLine(draft: WhoCanDraft, line: Omit<AccessDraft, "excluded">)
 export const removeLine = (draft: WhoCanDraft, index: number): WhoCanDraft => ({
   ...draft,
   lines: draft.lines.filter((_, at) => at !== index),
-});
-
-export const toggleExcluded = (draft: WhoCanDraft, index: number): WhoCanDraft => ({
-  ...draft,
-  lines: draft.lines.map((line, at) =>
-    at === index ? { ...line, excluded: !line.excluded } : line
-  ),
 });
