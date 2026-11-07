@@ -1,6 +1,7 @@
 import { X } from "lucide-react";
 
 import { Button } from "@components/button";
+import { DiceInput } from "@components/dice-input";
 import { FieldError } from "@components/field-error";
 import { Input } from "@components/input";
 import { Label } from "@components/label";
@@ -28,37 +29,61 @@ type PriceRowsFieldProps = {
 };
 
 const FIELD = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
+/** The note fills the row the label and cost note leave it. */
+const NOTE_SPAN = ["sm:col-span-3", "sm:col-span-2", "sm:col-span-1"];
+const SERVER_FIELD: Partial<Record<PriceRowField, string>> = {
+  multiplier: "dice_multiplier",
+  costNote: "cost_note",
+};
 
 /**
- * An item's price rows (the items rebuild): each one's cost, dice ("25 + 2D6", "200 + D6×25"),
- * rarity (blank: Common), a label naming a variant row ("Brace"), a note shown when buying
- * ("Heroes only"), a cost note, and who may buy it. The item form and a beast's shop prices share it.
+ * An item's price rows (the items rebuild): each one's cost, dice as one unit ("[2] D6", its
+ * multiplier behind a ×), rarity (blank: Common), a note shown when buying ("Heroes only"), and
+ * who may buy it. A row's label ("Brace") and cost note show only where it already holds one
+ * (William: "leave current data as is"). The item form and a beast's shop prices share it.
  */
 export default function PriceRowsField(props: PriceRowsFieldProps) {
   const { rows, onChange, path, idPrefix } = props;
   const update = (index: number, patch: Partial<PriceRowDraft>) =>
     onChange(rows.map((row, at) => (at === index ? { ...row, ...patch } : row)));
+  const id = (field: PriceRowField, index: number) => `${idPrefix}-${field}-${index}`;
+  const errorOf = (index: number, field: PriceRowField) =>
+    props.errorOf(`${path}.${index}.${SERVER_FIELD[field] ?? field}`);
   const text = (index: number, field: PriceRowField, label: string, placeholder?: string) => {
-    const id = `${idPrefix}-${field}-${index}`;
-    const serverField =
-      field === "multiplier" ? "dice_multiplier" : field === "costNote" ? "cost_note" : field;
-    const error = props.errorOf(`${path}.${index}.${serverField}`);
+    const error = errorOf(index, field);
     return (
-      <label className={FIELD} htmlFor={id}>
+      <label className={FIELD} htmlFor={id(field, index)}>
         {label}
         <Input
-          id={id}
+          id={id(field, index)}
           inputSize="sm"
           value={rows[index][field]}
           placeholder={placeholder}
           aria-invalid={Boolean(error)}
-          inputMode={
-            ["cost", "dice", "multiplier", "rarity"].includes(field) ? "numeric" : undefined
-          }
+          inputMode={["cost", "rarity"].includes(field) ? "numeric" : undefined}
           onChange={(event) => update(index, { [field]: event.target.value })}
         />
         <FieldError message={error} />
       </label>
+    );
+  };
+  const dice = (index: number) => {
+    const row = rows[index];
+    const errors = [errorOf(index, "dice"), errorOf(index, "multiplier")];
+    return (
+      <div className={FIELD}>
+        <label htmlFor={id("dice", index)}>+ Dice</label>
+        <DiceInput
+          id={id("dice", index)}
+          label={`Dice for price ${index + 1}`}
+          count={row.dice}
+          multiplier={row.multiplier}
+          invalid={errors.some(Boolean)}
+          onCountChange={(count) => update(index, { dice: count })}
+          onMultiplierChange={(multiplier) => update(index, { multiplier })}
+        />
+        <FieldError message={errors.find(Boolean)} />
+      </div>
     );
   };
 
@@ -93,16 +118,17 @@ export default function PriceRowsField(props: PriceRowsFieldProps) {
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            <div className="grid grid-cols-2 items-start gap-3 sm:grid-cols-[1fr_auto_1fr]">
               {text(index, "cost", "Cost (gc)")}
-              {text(index, "dice", "+ D6s")}
-              {text(index, "multiplier", "× each pip", "1")}
+              {dice(index)}
               {text(index, "rarity", "Rarity", "Common")}
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
-              {text(index, "label", "Label")}
-              {text(index, "note", "Note when buying")}
-              {text(index, "costNote", "Cost note")}
+              {row.holds.label ? text(index, "label", "Label") : null}
+              <div className={NOTE_SPAN[Number(row.holds.label) + Number(row.holds.costNote)]}>
+                {text(index, "note", "Note when buying")}
+              </div>
+              {row.holds.costNote ? text(index, "costNote", "Cost note") : null}
             </div>
             <WhoCanField
               campaignId={props.campaignId}

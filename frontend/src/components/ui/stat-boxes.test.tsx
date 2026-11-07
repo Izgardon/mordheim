@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
+
+import { setupUser } from "@/test/user-event";
 
 import { pastedStats, StatBoxes } from "./stat-boxes";
 
@@ -63,6 +64,7 @@ function Row({ start = {} }: { start?: Record<string, string> }) {
 
 describe("StatBoxes", () => {
   it("is ten type boxes with no steppers, each taking a number or a written value", async () => {
+    const userEvent = setupUser();
     render(<Row />);
 
     expect(screen.queryByRole("button")).toBeNull();

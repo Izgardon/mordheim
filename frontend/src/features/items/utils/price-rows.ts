@@ -19,9 +19,15 @@ export type PriceRowDraft = {
   rarity: string;
   note: string;
   who: WhoCanDraft;
+  /**
+   * The label and cost note a row held when it was read, which the form keeps showing (William,
+   * 7 Nov 2026: "we only need the Note when buying for custom items going forward and leave
+   * current data as is"); a new row offers neither.
+   */
+  holds: { label: boolean; costNote: boolean };
 };
 
-export type PriceRowField = Exclude<keyof PriceRowDraft, "key" | "who">;
+export type PriceRowField = Exclude<keyof PriceRowDraft, "key" | "who" | "holds">;
 
 let nextKey = 1;
 
@@ -35,6 +41,7 @@ export const blankPriceRow = (): PriceRowDraft => ({
   rarity: "",
   note: "",
   who: everyone(),
+  holds: { label: false, costNote: false },
 });
 
 const text = (value: number | null | undefined) => (value == null ? "" : String(value));
@@ -50,6 +57,7 @@ export const priceRowsOf = (rows: ItemAvailability[] | null | undefined): PriceR
     rarity: text(row.rarity),
     note: row.note ?? "",
     who: draftOf(row),
+    holds: { label: Boolean(row.label?.trim()), costNote: Boolean(row.cost_note?.trim()) },
   }));
 
 const numberOrNull = (value: string) => (value.trim() ? Number(value) : null);
@@ -67,7 +75,9 @@ export const priceRowsPayload = (rows: PriceRowDraft[]): AvailabilityPayload[] =
     warbands: linesPayload(row.who),
   }));
 
-export const PRICE_HINT = "Needs a price of 0 or more, or a cost note.";
+export const PRICE_HINT = "Needs a price of 0 or more.";
+/** A row that holds a cost note may stand on it alone. */
+export const PRICE_OR_NOTE_HINT = "Needs a price of 0 or more, or a cost note.";
 export const RARITY_HINT = "Blank for Common, else a rarity from 2 to 20.";
 export const DICE_HINT = "Blank, or 1 to 20 dice.";
 export const MULTIPLIER_HINT = "Blank, or 1 or more.";
@@ -94,7 +104,7 @@ export function priceRowProblems(rows: PriceRowDraft[], prefix: string) {
   rows.forEach((row, index) => {
     const at = `${prefix}.${index}`;
     if (row.cost.trim() ? !whole(row.cost, 0, 2_147_483_647) : !row.costNote.trim()) {
-      fields[`${at}.cost`] = PRICE_HINT;
+      fields[`${at}.cost`] = row.holds.costNote ? PRICE_OR_NOTE_HINT : PRICE_HINT;
     }
     if (row.rarity.trim() && !whole(row.rarity, 2, 20)) fields[`${at}.rarity`] = RARITY_HINT;
     if (row.dice.trim() && !whole(row.dice, 1, 20)) fields[`${at}.dice`] = DICE_HINT;
