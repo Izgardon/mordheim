@@ -4,6 +4,8 @@ import { Plus } from "lucide-react";
 import { Input } from "@components/input";
 import { cn } from "@/lib/utils";
 
+import { useFloating } from "./floating";
+
 type ActionSearchInputProps = Omit<React.ComponentPropsWithoutRef<"input">, "type"> & {
   onAction?: () => void;
   actionLabel?: string;
@@ -22,14 +24,18 @@ type ActionSearchDropdownProps = {
   children: React.ReactNode;
 };
 
-/** The suggestions under an ActionSearchInput; a click outside both closes it. */
+/**
+ * The suggestions under an ActionSearchInput, floating over the page and out of a modal
+ * (`useFloating`); a click outside both closes it.
+ */
 export function ActionSearchDropdown({
   open,
   onClose,
   className,
   children,
 }: ActionSearchDropdownProps) {
-  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const dropdownRef = React.useRef<HTMLDivElement | null>(null);
+  const floating = useFloating(open, { maxHeight: 240, gap: 4 });
 
   React.useEffect(() => {
     if (!open || !onClose) {
@@ -53,15 +59,20 @@ export function ActionSearchDropdown({
   }
 
   return (
-    <div
-      ref={dropdownRef}
-      className={cn(
-        "absolute left-0 right-0 top-full z-20 mt-1 overflow-hidden border border-strong bg-surface",
-        className
-      )}
-    >
-      {children}
-    </div>
+    <>
+      {floating.origin}
+      <div
+        ref={(node) => {
+          dropdownRef.current = node;
+          // the search box and its + button: what the list hangs under
+          floating.anchorRef.current = node?.parentElement ?? null;
+        }}
+        style={floating.style}
+        className={cn("z-20 overflow-hidden border border-strong bg-surface", className)}
+      >
+        {children}
+      </div>
+    </>
   );
 }
 

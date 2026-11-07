@@ -3,6 +3,8 @@ import { Plus, Search } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+import { useFloating } from "./floating";
+
 /** One row of a searchable select: a title, a muted subtitle, and a warning that greys it. */
 export type SearchOption = {
   id: string | number;
@@ -82,6 +84,8 @@ export function SearchCombobox(props: SearchComboboxProps) {
   const rowId = (index: number) => `${listId}-${index}`;
 
   const activeId = listOpen && count ? rowId(current) : undefined;
+  // a drop-down list floats over the page (and out of a modal), an inline one stays in the flow
+  const floating = useFloating(open && !inline);
 
   React.useEffect(() => {
     if (activeId) document.getElementById(activeId)?.scrollIntoView?.({ block: "nearest" });
@@ -116,7 +120,12 @@ export function SearchCombobox(props: SearchComboboxProps) {
 
   let lastGroup: string | undefined;
   return (
-    <div className={cn("relative flex min-w-0 flex-col", props.className)}>
+    <div
+      ref={(node) => {
+        floating.anchorRef.current = node;
+      }}
+      className={cn("relative flex min-w-0 flex-col", props.className)}
+    >
       <label className="flex min-h-9 items-center gap-2 border border-strong bg-page px-2.5 text-muted-foreground focus-within:ring-2 focus-within:ring-inset focus-within:ring-ring">
         <Search className="h-4 w-4 shrink-0" aria-hidden="true" />
         <input
@@ -149,15 +158,21 @@ export function SearchCombobox(props: SearchComboboxProps) {
           )}
         />
       </label>
+      {listOpen && !inline ? floating.origin : null}
       {listOpen ? (
         <ul
           id={listId}
           role="listbox"
           aria-label={props.label}
+          style={inline ? undefined : floating.style}
           className={cn(
-            "m-0 flex max-h-72 list-none flex-col overflow-y-auto border border-t-0 border-strong bg-panel p-0",
-            !inline &&
-              "absolute left-0 right-0 top-full z-30 shadow-[0_16px_40px_var(--color-shadow)]"
+            "m-0 flex list-none flex-col overflow-y-auto border border-strong bg-panel p-0",
+            inline
+              ? "max-h-72 border-t-0"
+              : cn(
+                  "z-30 shadow-[0_16px_40px_var(--color-shadow)]",
+                  floating.up ? "border-b-0" : "border-t-0"
+                )
           )}
         >
           {props.loading && !shown.length ? (
