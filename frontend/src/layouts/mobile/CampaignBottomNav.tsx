@@ -5,7 +5,7 @@ import { Flag, Search, Shield, Swords, UserRound } from "lucide-react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
-import { REFERENCE_LINKS, SEARCH_LINK, mobileNavActiveId } from "../shell/campaign-nav";
+import { REFERENCE_SECTIONS, SEARCH_LINK, mobileNavActiveId } from "../shell/campaign-nav";
 import { BottomBar, BottomBarButton, BottomBarLink } from "./BottomBar";
 import { SheetLinkRow, SheetRows } from "./SheetRows";
 
@@ -24,8 +24,9 @@ type CampaignBottomNavProps = {
 
 /**
  * The phone's bottom nav (design E): Campaign, Warband, Battle, Reference, Me. Flat; the current
- * item takes the accent and an inset top line. Reference and Me open sheets: the reference pages,
- * and you (the campaign's settings and your account; William: "just show Settings and account in
+ * item takes the accent and an inset top line. Reference and Me open sheets: the References and
+ * Rules sections, each under its heading (William: "on mobile just clearly delineate the 2 sections
+ * in the dropdown but still keep as one navbar button"), and you (the campaign's settings and your account; William: "just show Settings and account in
  * the Me modal on mobile, not the my warband stuff").
  */
 export default function CampaignBottomNav({
@@ -92,21 +93,27 @@ export default function CampaignBottomNav({
         kicker={campaign.name}
         title="Reference"
       >
-        <SheetRows>
-          <SheetLinkRow
-            to={`${base}/${SEARCH_LINK.path}`}
-            label={SEARCH_LINK.label}
-            onNavigate={close}
-          />
-          {REFERENCE_LINKS.map((link) => (
-            <SheetLinkRow
-              key={link.path}
-              to={`${base}/${link.path}`}
-              label={link.label}
-              onNavigate={close}
-            />
+        <div className="flex flex-col gap-4">
+          {REFERENCE_SECTIONS.map((section, index) => (
+            <SheetRows key={section.title} label={section.title}>
+              {index === 0 ? (
+                <SheetLinkRow
+                  to={`${base}/${SEARCH_LINK.path}`}
+                  label={SEARCH_LINK.label}
+                  onNavigate={close}
+                />
+              ) : null}
+              {section.links.map((link) => (
+                <SheetLinkRow
+                  key={link.path}
+                  to={`${base}/${link.path}`}
+                  label={link.label}
+                  onNavigate={close}
+                />
+              ))}
+            </SheetRows>
           ))}
-        </SheetRows>
+        </div>
       </BottomSheet>
 
       <BottomSheet

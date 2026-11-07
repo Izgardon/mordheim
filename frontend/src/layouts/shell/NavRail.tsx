@@ -10,7 +10,7 @@ import {
   BATTLES_ICON,
   isAftermathPath,
   OVERVIEW_LINK,
-  REFERENCE_LINKS,
+  REFERENCE_SECTIONS,
   SEARCH_LINK,
   warbandLinks,
   type NavLink,
@@ -22,7 +22,7 @@ const CURRENT = "bg-raised text-head shadow-[inset_2px_0_0_var(--color-accent)]"
 
 function RailSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col gap-0.5">
+    <div role="group" aria-label={title} className="flex flex-col gap-0.5">
       <h2 className="px-2.5 pb-1.5 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
         {title}
       </h2>
@@ -138,23 +138,27 @@ export default function NavRail({ campaign, userName, tools, onRejoinBattle }: N
         ))}
       </RailSection>
 
-      <RailSection title="Reference">
-        <RailLink
-          to={to(SEARCH_LINK)}
-          label={SEARCH_LINK.label}
-          icon={SEARCH_LINK.icon}
-          current={isCurrent(SEARCH_LINK.path)}
-        />
-        {REFERENCE_LINKS.map((link) => (
-          <RailLink
-            key={link.path}
-            to={to(link)}
-            label={link.label}
-            current={isCurrent(link.path)}
-            indent
-          />
-        ))}
-      </RailSection>
+      {REFERENCE_SECTIONS.map((section, index) => (
+        <RailSection key={section.title} title={section.title}>
+          {index === 0 ? (
+            <RailLink
+              to={to(SEARCH_LINK)}
+              label={SEARCH_LINK.label}
+              icon={SEARCH_LINK.icon}
+              current={isCurrent(SEARCH_LINK.path)}
+            />
+          ) : null}
+          {section.links.map((link) => (
+            <RailLink
+              key={link.path}
+              to={to(link)}
+              label={link.label}
+              current={isCurrent(link.path)}
+              indent
+            />
+          ))}
+        </RailSection>
+      ))}
 
       <div className="mt-auto flex flex-col gap-0.5 border-t border-line pt-3.5">
         <RailLink

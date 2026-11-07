@@ -12,9 +12,11 @@ export type NavLink = {
   icon?: LucideIcon;
 };
 
-/** The reference pages, in the rail's order (design E). */
+/**
+ * The References section (William, 7 Nov 2026: "split references section into references and
+ * rules"): the catalogue's pages, in the rail's order (design E).
+ */
 export const REFERENCE_LINKS: NavLink[] = [
-  { label: "Rules", path: "rules" },
   { label: "Warbands", path: "warband-templates" },
   { label: "Wargear", path: "items" },
   { label: "Skills", path: "skills" },
@@ -23,11 +25,25 @@ export const REFERENCE_LINKS: NavLink[] = [
   { label: "Bestiary", path: "bestiary" },
   { label: "Hired swords", path: "hired-swords" },
   { label: "Dramatis personae", path: "dramatis-personae" },
+];
+
+/** The Rules section: the rulebook and the campaign's house rules. */
+export const RULES_LINKS: NavLink[] = [
+  { label: "Rules", path: "rules" },
   { label: "House rules", path: "house-rules" },
 ];
 
+/**
+ * The rail's and the Reference sheet's two sections, References (Search everything at its head)
+ * then Rules; on a phone they share one navbar button.
+ */
+export const REFERENCE_SECTIONS: { title: string; links: NavLink[] }[] = [
+  { title: "References", links: REFERENCE_LINKS },
+  { title: "Rules", links: RULES_LINKS },
+];
+
 export const OVERVIEW_LINK: NavLink = { label: "Overview", path: "", icon: LayoutGrid };
-/** Search everything: the rail's first Reference row, the Reference sheet's first. */
+/** Search everything: the first row of References, in the rail and the Reference sheet. */
 export const SEARCH_LINK: NavLink = { label: "Search everything", path: "search", icon: Search };
 export const BATTLES_ICON = Swords;
 
@@ -56,7 +72,9 @@ const SECTION_TITLES: Record<string, string> = {
   account: "Account",
   battles: "Battle",
   search: "Search everything",
-  ...Object.fromEntries(REFERENCE_LINKS.map((link) => [link.path, link.label])),
+  ...Object.fromEntries(
+    [...REFERENCE_LINKS, ...RULES_LINKS].map((link) => [link.path, link.label])
+  ),
 };
 
 const parts = (pathname: string) => pathname.split("/").filter(Boolean);
@@ -92,6 +110,7 @@ export function mobileNavActiveId(pathname: string): MobileNavId {
   if (current === "settings" || current === "account") return "me";
   if (["warband", "warbands", "encampments", "locations"].includes(current)) return "warband";
   if (current === SEARCH_LINK.path) return "reference";
-  if (REFERENCE_LINKS.some((link) => link.path === current)) return "reference";
+  if (REFERENCE_SECTIONS.some(({ links }) => links.some((link) => link.path === current)))
+    return "reference";
   return "campaign";
 }

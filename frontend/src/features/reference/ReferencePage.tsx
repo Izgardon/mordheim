@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { Switch } from "@/components/ui/switch";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
-import { REFERENCE_LINKS } from "@/layouts/shell/campaign-nav";
+import { REFERENCE_SECTIONS, SEARCH_LINK } from "@/layouts/shell/campaign-nav";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import ArchivedEntries, { type ArchivedOptions } from "./ArchivedEntries";
@@ -26,15 +26,9 @@ type ReferencePageProps = {
   children: ReactNode;
 };
 
-/** Every reference section, then Search everything: what the phone's Section picker offers. */
-export const REFERENCE_SECTIONS = [
-  ...REFERENCE_LINKS,
-  { label: "Search everything", path: "search" },
-];
-
 /**
- * The phone's Section picker (design E): the reference sections sit behind it, at the top of each
- * reference page, beside the page's own buttons.
+ * The phone's Section picker (design E): the References and the Rules pages, each under its
+ * heading, then Search everything, at the top of each reference page beside its own buttons.
  */
 export function SectionPicker({ current, actions }: { current: string; actions?: ReactNode }) {
   const navigate = useNavigate();
@@ -49,11 +43,16 @@ export function SectionPicker({ current, actions }: { current: string; actions?:
           onChange={(event) => navigate(`/campaigns/${id}/${event.target.value}`)}
           className="min-h-10 min-w-0 border border-border bg-surface px-2 text-sm text-ink"
         >
-          {REFERENCE_SECTIONS.map((link) => (
-            <option key={link.path} value={link.path}>
-              {link.label}
-            </option>
+          {REFERENCE_SECTIONS.map((section) => (
+            <optgroup key={section.title} label={section.title}>
+              {section.links.map((link) => (
+                <option key={link.path} value={link.path}>
+                  {link.label}
+                </option>
+              ))}
+            </optgroup>
           ))}
+          <option value={SEARCH_LINK.path}>{SEARCH_LINK.label}</option>
         </select>
       </label>
       {actions ? <div className="flex shrink-0 gap-2">{actions}</div> : null}

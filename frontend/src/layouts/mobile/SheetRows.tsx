@@ -23,10 +23,10 @@ function RowContent({ label, detail, danger = false }: RowContentProps) {
   );
 }
 
-/** A sheet's list. */
+/** A sheet's list; with a `label`, a headed group of its own. */
 export function SheetRows({ label, children }: { label?: string; children: ReactNode }) {
   return (
-    <div className="flex flex-col">
+    <div role={label ? "group" : undefined} aria-label={label} className="flex flex-col">
       {label ? (
         <h3 className="px-1 pb-1.5 pt-2 font-sans text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
           {label}

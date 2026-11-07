@@ -77,6 +77,36 @@ describe("the Me sheet", () => {
   });
 });
 
+describe("the Reference sheet", () => {
+  it("is still one button, its sheet showing References (Search everything first) apart from Rules", async () => {
+    fakeApi.on(`GET ${BASE}/`, campaignSummary());
+    const user = setupUser();
+    renderApp(`${BASE}/house-rules`);
+
+    const button = within(await bottomNav()).getByRole("button", { name: "Reference" });
+    expect(button).toHaveAttribute("aria-current", "page");
+    await user.click(button);
+
+    const sheet = await screen.findByRole("dialog", { name: "Reference" });
+    const names = (group: string) =>
+      within(within(sheet).getByRole("group", { name: group }))
+        .getAllByRole("link")
+        .map((link) => link.textContent);
+    expect(names("References")).toEqual([
+      "Search everything",
+      "Warbands",
+      "Wargear",
+      "Skills",
+      "Spells",
+      "Boons & Banes",
+      "Bestiary",
+      "Hired swords",
+      "Dramatis personae",
+    ]);
+    expect(names("Rules")).toEqual(["Rules", "House rules"]);
+  });
+});
+
 const player = (id: number, name: string, warband: string): CampaignPlayer => ({
   id,
   name,
