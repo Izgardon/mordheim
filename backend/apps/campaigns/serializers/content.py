@@ -1,4 +1,4 @@
-"""House rules, encampments, locations and chat messages."""
+"""House rules, campaign rules, encampments, locations and chat messages."""
 
 from rest_framework import serializers
 
@@ -8,11 +8,13 @@ from apps.users.names import display_name
 from ..access import CAMPAIGN_RULES
 from ..effects import EFFECT_KEYS
 from ..models import (
+    MAX_CAMPAIGN_RULE_TEXT,
     CampaignEncampment,
     CampaignHouseRule,
     CampaignLocation,
     CampaignMembership,
     CampaignMessage,
+    CampaignRule,
 )
 
 
@@ -34,6 +36,28 @@ class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
         if value and value not in EFFECT_KEYS:
             raise serializers.ValidationError(f"Unknown effect: {value}.")
         return value
+
+
+class CampaignRuleSerializer(serializers.ModelSerializer):
+    """A campaign rule (models.CampaignRule): read, and written by POST campaign-rules/ and PATCH
+    campaign-rules/<id>/ (a PATCH may send either field); its place changes only through PUT campaign-rules/order/."""
+
+    campaign_id = serializers.IntegerField(read_only=True)
+    title = serializers.CharField(max_length=160, trim_whitespace=True)
+    body = serializers.CharField(
+        max_length=MAX_CAMPAIGN_RULE_TEXT, allow_blank=True, required=False, trim_whitespace=True
+    )
+
+    class Meta:
+        model = CampaignRule
+        fields = ("id", "campaign_id", "title", "body", "order")
+        read_only_fields = ("order",)
+
+
+class CampaignRuleOrderSerializer(serializers.Serializer):
+    """PUT campaign-rules/order/: every rule's id, in its new order."""
+
+    ids = serializers.ListField(child=serializers.IntegerField(), max_length=500)
 
 
 class CampaignEncampmentSerializer(serializers.ModelSerializer):

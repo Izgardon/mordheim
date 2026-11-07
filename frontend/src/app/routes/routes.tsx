@@ -34,6 +34,7 @@ const WarbandTemplates = lazy(
   () => import("../../features/warband-templates/routes/WarbandTemplates")
 );
 const HouseRules = lazy(() => import("../../features/rules/routes/HouseRules"));
+const CampaignRules = lazy(() => import("../../features/rules/routes/CampaignRules"));
 const SearchEverything = lazy(() => import("../../features/search/routes/SearchEverything"));
 const CampaignSettings = lazy(() => import("../../features/campaigns/routes/CampaignSettings"));
 const Encampments = lazy(() => import("../../features/campaigns/routes/Encampments"));
@@ -118,6 +119,7 @@ export const routes: RouteObject[] = [
                   { path: "rules", element: <Rules /> },
                   { path: "warband-templates", element: <WarbandTemplates /> },
                   { path: "house-rules", element: <HouseRules /> },
+                  { path: "campaign-rules", element: <CampaignRules /> },
                   { path: "search", element: <SearchEverything /> },
                   // Locations is a panel of the warband page now.
                   {

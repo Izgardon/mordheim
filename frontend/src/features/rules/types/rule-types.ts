@@ -29,6 +29,21 @@ export type CommonRule = {
   effect_key: string | null;
 };
 
+/**
+ * One of the campaign's own rules, not a house rule (William, 7 Nov 2026: "more flavourful rulings
+ * on how the campaign works"): its title, body and place in the list. Its owner and admins write
+ * them (`manage_campaign_rules`).
+ */
+export type CampaignRule = {
+  id: number;
+  campaign_id: number;
+  title: string;
+  body: string;
+  order: number;
+};
+
+export type CampaignRulePayload = { title: string; body: string };
+
 export type HouseRulePayload = {
   title: string;
   description: string;

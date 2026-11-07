@@ -20,6 +20,7 @@ const nothing: SearchSources = {
   personae: [],
   rules: [],
   houseRules: [],
+  campaignRules: [],
   locations: [],
   campaign: undefined,
   myWarbandId: null,
@@ -56,5 +57,33 @@ describe("Search everything's Boons & Banes", () => {
       ["Spiked Tail", "Mutation", "boons-banes?open=1"],
     ]);
     expect(searchEverything("crazed", { ...nothing, specials })).toEqual([]);
+  });
+});
+
+describe("Search everything's campaign rules", () => {
+  it("finds a campaign rule by its title or its text, each opening its row", () => {
+    const campaignRules = [
+      {
+        id: 3,
+        campaign_id: 1,
+        title: "The Comet's Fall",
+        body: "Each night a shard falls.",
+        order: 0,
+      },
+      {
+        id: 4,
+        campaign_id: 1,
+        title: "Curfew",
+        body: "No warband leaves after the bell.",
+        order: 1,
+      },
+    ];
+
+    const groups = searchEverything("bell", { ...nothing, campaignRules });
+
+    expect(groups.map((group) => group.label)).toEqual(["Campaign rules"]);
+    expect(groups[0].hits.map((hit) => [hit.title, hit.to])).toEqual([
+      ["Curfew", "campaign-rules?open=4"],
+    ]);
   });
 });

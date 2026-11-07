@@ -21,7 +21,7 @@ const links = (group: HTMLElement) =>
     .map((link) => link.textContent);
 
 describe("the rail's References and Rules", () => {
-  it("are two sections, Search everything heading References and the rulebook with the house rules under Rules", () => {
+  it("are two sections, Search everything heading References and the rulebook with the house rules and the campaign rules under Rules", () => {
     renderRail(`${BASE}/house-rules`);
 
     const references = screen.getByRole("group", { name: "References" });
@@ -40,7 +40,7 @@ describe("the rail's References and Rules", () => {
       "Dramatis personae",
     ]);
     expect(within(rules).getByRole("heading", { name: "Rules" })).toBeInTheDocument();
-    expect(links(rules)).toEqual(["Rules", "House rules"]);
+    expect(links(rules)).toEqual(["Rules", "House rules", "Campaign rules"]);
     expect(within(rules).getByRole("link", { name: "Rules" })).toHaveAttribute(
       "href",
       `${BASE}/rules`

@@ -26,6 +26,8 @@ export const CAMPAIGN_CAPABILITIES = [
   "restore",
   "remove_posts",
   "leave",
+  // the campaign's own rules, not house rules: its owner and admins (William, 7 Nov 2026)
+  "manage_campaign_rules",
   // One code for adding and editing the whole catalogue, and one for deleting (decisions 4, 5).
   "edit_catalogue",
   "delete_catalogue",

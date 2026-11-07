@@ -139,6 +139,7 @@ ROLE_RULES: Mapping[str, Rule] = {
     "restore": owner_of_archived,
     "remove_posts": staff,  # remove chat posts, "removed by admin" (decision 8, CAMP-NEW-06)
     "leave": not_owner,  # the owner hands over first; alone, leaving archives (decision 4, services/leaving)
+    "manage_campaign_rules": staff,  # the campaign's own rules: its owner and admins (William, 7 Nov 2026: "admin only")
 }
 CODE_RULES: Mapping[str, Rule] = {
     **{code: has(code) for code in PERMISSION_CODES},

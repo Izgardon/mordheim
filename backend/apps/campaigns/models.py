@@ -243,6 +243,29 @@ class CampaignHouseRule(models.Model):
         return f"{self.campaign_id}:{self.title}"
 
 
+MAX_CAMPAIGN_RULE_TEXT = 8000  # as a warband rule's (warbands/models/warband.py MAX_RULE_TEXT)
+
+
+class CampaignRule(models.Model):
+    """One of the campaign's own rules, not a house rule (William, 7 Nov 2026: "campaign wide rules that are not house
+    rules, kind of like warband rules ... admin only", "more flavourful rulings on how the campaign works"): a title,
+    its body, and its place in the list. Its owner and admins write and order them; every member reads them."""
+
+    campaign = models.ForeignKey(Campaign, related_name="campaign_rules", on_delete=models.CASCADE)
+    title = models.CharField(max_length=160)
+    body = models.TextField(blank=True, default="")
+    order = models.PositiveIntegerField(default=0)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = "campaign_rule"
+        ordering = ["order", "id"]
+
+    def __str__(self):
+        return f"{self.campaign_id}:{self.title}"
+
+
 class CampaignEncampment(models.Model):
     campaign = models.ForeignKey(Campaign, related_name="encampments", on_delete=models.CASCADE)
     name = models.CharField(max_length=160)

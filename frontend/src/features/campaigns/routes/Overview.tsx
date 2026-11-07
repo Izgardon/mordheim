@@ -7,6 +7,7 @@ import { SectionHead } from "@/components/ui/section-title";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useYourOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import OpenBounties from "@/features/bounties/components/OpenBounties";
+import CampaignRulesSection from "@/features/rules/components/CampaignRulesSection";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
@@ -61,9 +62,10 @@ function Section({
 
 /**
  * The campaign overview (design E): who is ready (in the web bar), Start battle and Report a
- * result, the stats, the standings, the latest battles with their moments, the chronicle and the
- * open bounties; what waits on you (stuck battles, results to answer) above them. While you have
- * a battle, Start battle takes you there. On a phone the sections are tabs, Standings first.
+ * result, the stats, the standings, the latest battles with their moments, the chronicle, the
+ * open bounties and the campaign rules; what waits on you (stuck battles, results to answer) above
+ * them. While you have a battle, Start battle takes you there. On a phone the sections are tabs,
+ * Standings first, with the campaign rules under them.
  */
 export default function Overview() {
   const { id } = useParams();
@@ -83,6 +85,10 @@ export default function Overview() {
   if (playersQuery.isLoading || historyQuery.isLoading) return <OverviewSkeleton />;
 
   const standings = buildStandings(players, history);
+  const capabilities = campaignCapabilities(campaign);
+  const rules = (
+    <CampaignRulesSection campaignId={campaignId} canManage={capabilities.manage_campaign_rules} />
+  );
   const battlesHref = `/campaigns/${campaignId}/battles`;
   const standingsTable = (
     <StandingsTable
@@ -156,10 +162,7 @@ export default function Overview() {
         onReportResult={() => openBattleDialog("report_result")}
         onExport={onExport}
       />
-      <OverviewNotices
-        campaignId={campaignId}
-        managesBattles={campaignCapabilities(campaign).manage_battles}
-      />
+      <OverviewNotices campaignId={campaignId} managesBattles={capabilities.manage_battles} />
       {stats}
       {isMobile ? (
         <>
@@ -199,6 +202,7 @@ export default function Overview() {
               {allLink}
             </>
           ) : null}
+          {rules}
         </>
       ) : (
         <div className={OVERVIEW_BODY}>
@@ -212,6 +216,7 @@ export default function Overview() {
             {/* the chronicle scrolls inside its own box, so the bounties under it stay in reach */}
             <Chronicle campaignId={campaignId} isMobile={false} />
             <OpenBounties campaignId={campaignId} isMobile={false} />
+            {rules}
           </aside>
         </div>
       )}

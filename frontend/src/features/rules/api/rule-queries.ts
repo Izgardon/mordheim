@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 // api
+import { listCampaignRules } from "./campaign-rules-api";
 import { listCommonRules, listHouseRules } from "./rules-api";
 
 // other
@@ -13,6 +14,16 @@ export function useHouseRules(campaignId: number) {
   return useQuery({
     queryKey: queryKeys.campaign.houseRules(campaignId),
     queryFn: () => listHouseRules(campaignId),
+    staleTime: CAMPAIGN_LIST_STALE_TIME_MS,
+    enabled: isCampaignId(campaignId),
+  });
+}
+
+/** The campaign's own rules in their order, cached under the campaign as its house rules are. */
+export function useCampaignRules(campaignId: number) {
+  return useQuery({
+    queryKey: queryKeys.campaign.campaignRules(campaignId),
+    queryFn: () => listCampaignRules(campaignId),
     staleTime: CAMPAIGN_LIST_STALE_TIME_MS,
     enabled: isCampaignId(campaignId),
   });

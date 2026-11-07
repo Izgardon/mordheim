@@ -27,10 +27,11 @@ export const REFERENCE_LINKS: NavLink[] = [
   { label: "Dramatis personae", path: "dramatis-personae" },
 ];
 
-/** The Rules section: the rulebook and the campaign's house rules. */
+/** The Rules section: the rulebook, the campaign's house rules and its own campaign rules. */
 export const RULES_LINKS: NavLink[] = [
   { label: "Rules", path: "rules" },
   { label: "House rules", path: "house-rules" },
+  { label: "Campaign rules", path: "campaign-rules" },
 ];
 
 /**

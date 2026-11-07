@@ -29,6 +29,9 @@ from .views import (
     CampaignPermissionsView,
     CampaignPlayersView,
     CampaignRestoreView,
+    CampaignRuleDetailView,
+    CampaignRuleOrderView,
+    CampaignRulesView,
     CampaignSearchView,
     CampaignTopKillersView,
     JoinCampaignView,
@@ -146,6 +149,21 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/rules/<int:rule_id>/",
         CampaignHouseRuleDetailView.as_view(),
         name="campaigns-house-rules-detail",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/campaign-rules/",
+        CampaignRulesView.as_view(),
+        name="campaigns-campaign-rules",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/campaign-rules/order/",
+        CampaignRuleOrderView.as_view(),
+        name="campaigns-campaign-rules-order",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/campaign-rules/<int:rule_id>/",
+        CampaignRuleDetailView.as_view(),
+        name="campaigns-campaign-rules-detail",
     ),
     path(
         "campaigns/<int:campaign_id>/messages/",

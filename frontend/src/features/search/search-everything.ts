@@ -7,7 +7,7 @@ import { kindOf } from "@/features/items/store/store-items";
 import type { Item } from "@/features/items/types/item-types";
 import type { RuleEntry } from "@/features/rules/rules-index";
 import { ruleSnippet } from "@/features/rules/rules-index";
-import type { HouseRule } from "@/features/rules/types/rule-types";
+import type { CampaignRule, HouseRule } from "@/features/rules/types/rule-types";
 import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
@@ -41,6 +41,7 @@ export type SearchSources = {
   personae: HirelingProfile[];
   rules: RuleEntry[];
   houseRules: HouseRule[];
+  campaignRules: CampaignRule[];
   locations: CampaignLocation[];
   campaign: CampaignSearchAnswer | undefined;
   /** Your warband: its links go to `warband` rather than `warbands/:id`. */
@@ -81,8 +82,8 @@ const words = (text?: string | null) => (text ?? "").replace(/\s+/g, " ").trim()
 
 /**
  * Search everything: one search over the reference (items, skills, spells, Boons & Banes, beasts,
- * hired swords, dramatis personae), the rulebook's text and the house rules, and this campaign's
- * warbands, units and locations; grouped by kind, empty groups left out.
+ * hired swords, dramatis personae), the rulebook's text, the house rules and the campaign rules,
+ * and this campaign's warbands, units and locations; grouped by kind, empty groups left out.
  */
 export function searchEverything(query: string, sources: SearchSources): SearchGroup[] {
   const needle = query.trim().toLowerCase();
@@ -235,6 +236,24 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
         meta: "House rule",
         snippet,
         to: `house-rules?open=${entry.id}`,
+      })),
+    },
+    {
+      id: "campaign-rules",
+      label: "Campaign rules",
+      hits: ranked(
+        sources.campaignRules.map((rule) => ({
+          entry: rule,
+          name: rule.title,
+          text: words(rule.body),
+        })),
+        needle
+      ).map(({ entry, snippet }) => ({
+        key: `campaign-rule-${entry.id}`,
+        title: entry.title,
+        meta: "Campaign rule",
+        snippet,
+        to: `campaign-rules?open=${entry.id}`,
       })),
     },
     {

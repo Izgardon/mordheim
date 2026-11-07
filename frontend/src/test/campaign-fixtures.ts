@@ -106,6 +106,7 @@ export function capabilitiesFor(
     restore: false,
     remove_posts: isStaff,
     leave: !isOwner,
+    manage_campaign_rules: isStaff,
     edit_catalogue: holds("edit_catalogue"),
     delete_catalogue: holds("delete_catalogue"),
     manage_rules: holds("manage_rules"),

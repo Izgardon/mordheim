@@ -1,6 +1,7 @@
 """Campaign views, one module per concern; every view under campaigns/<id>/ derives from CampaignScopedView
 (views/base.py) except the players list (PERF-41)."""
 
+from .campaign_rules import CampaignRuleDetailView, CampaignRuleOrderView, CampaignRulesView
 from .campaigns import (
     CampaignArchiveView,
     CampaignDetailView,
@@ -68,6 +69,9 @@ __all__ = [
     "CampaignPermissionsView",
     "CampaignPlayersView",
     "CampaignRestoreView",
+    "CampaignRuleDetailView",
+    "CampaignRuleOrderView",
+    "CampaignRulesView",
     "CampaignSearchView",
     "CampaignTopKillersView",
     "JoinCampaignView",

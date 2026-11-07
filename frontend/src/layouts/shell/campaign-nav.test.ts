@@ -28,12 +28,17 @@ describe("isBattlePath", () => {
 describe("References and Rules", () => {
   it("are two sections that share the phone's Reference button", () => {
     expect(REFERENCE_SECTIONS.map((section) => section.title)).toEqual(["References", "Rules"]);
-    expect(RULES_LINKS.map((link) => link.path)).toEqual(["rules", "house-rules"]);
+    expect(RULES_LINKS.map((link) => link.path)).toEqual([
+      "rules",
+      "house-rules",
+      "campaign-rules",
+    ]);
     expect(REFERENCE_LINKS.map((link) => link.path)).not.toContain("rules");
-    for (const path of ["rules", "house-rules", "items", "bestiary", "search"]) {
+    for (const path of ["rules", "house-rules", "campaign-rules", "items", "bestiary", "search"]) {
       expect(mobileNavActiveId(`/campaigns/1/${path}`)).toBe("reference");
     }
     expect(campaignSectionTitle("/campaigns/1/house-rules")).toBe("House rules");
+    expect(campaignSectionTitle("/campaigns/1/campaign-rules")).toBe("Campaign rules");
     expect(campaignSectionTitle("/campaigns/1/items")).toBe("Wargear");
   });
 });

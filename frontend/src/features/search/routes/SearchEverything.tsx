@@ -9,7 +9,7 @@ import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogu
 import { inPlayOnly } from "@/features/reference/in-play";
 import { SectionPicker } from "@/features/reference/ReferencePage";
 import { referenceSpecials } from "@/features/special/boons-banes";
-import { useHouseRules } from "@/features/rules/api/rule-queries";
+import { useCampaignRules, useHouseRules } from "@/features/rules/api/rule-queries";
 import { ruleEntries } from "@/features/rules/rules-index";
 import { myWarbandQuery } from "@/features/warbands/api/warband-queries";
 import { useCatalogue } from "@/lib/catalogue-queries";
@@ -93,9 +93,10 @@ function ResultGroup({
 
 /**
  * Search everything (`/campaigns/:id/search?q=`): one field over the reference
- * (items, skills, spells, Boons & Banes, beasts, hired swords, dramatis personae), the rulebook's text and the
- * house rules, searched here from the lists the pages already load, and this campaign's warbands
- * and units (the server's `search/`) and locations. Results are grouped by kind with counts; each
+ * (items, skills, spells, Boons & Banes, beasts, hired swords, dramatis personae), the rulebook's
+ * text, the house rules and the campaign rules, searched here from the lists the pages already
+ * load, and this campaign's warbands and units (the server's `search/`) and locations. Results
+ * are grouped by kind with counts; each
  * opens its page with its row open, or the warband page for a warband or unit. `/` or Ctrl+K
  * opens it from anywhere in a campaign on the web.
  */
@@ -116,6 +117,7 @@ export default function SearchEverything() {
   const hiredSwords = useCatalogue("hired-swords", campaignId);
   const personae = useCatalogue("dramatis-personae", campaignId);
   const houseRules = useHouseRules(campaignId);
+  const campaignRules = useCampaignRules(campaignId);
   const withLocations = Boolean(campaign?.enable_locations);
   const locations = useCampaignLocations(campaignId, { enabled: withLocations });
   const mine = useQuery(myWarbandQuery(campaignId));
@@ -138,6 +140,7 @@ export default function SearchEverything() {
             personae: inPlayOnly(personae.data),
             rules,
             houseRules: houseRules.data ?? [],
+            campaignRules: campaignRules.data ?? [],
             locations: withLocations ? (locations.data ?? []) : [],
             campaign: server.data,
             myWarbandId: mine.data?.id ?? null,
@@ -147,6 +150,7 @@ export default function SearchEverything() {
       beasts.data,
       hiredSwords.data,
       houseRules.data,
+      campaignRules.data,
       items.data,
       locations.data,
       mine.data?.id,

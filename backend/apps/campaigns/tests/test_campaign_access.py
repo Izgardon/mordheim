@@ -26,6 +26,7 @@ from apps.campaigns.models import (
     CampaignHouseRule,
     CampaignLocation,
     CampaignMessage,
+    CampaignRule,
 )
 from apps.campaigns.views.base import CampaignScopedView
 from apps.items.models import Item
@@ -74,6 +75,11 @@ MATRIX: list[tuple[str, str, dict[str, Any] | None, tuple[int, int, int, int]]] 
     ("POST", "rules/", {"title": "No running"}, (403, 201, 201, 201)),
     ("PATCH", "rules/{rule}/", {"title": "Walk"}, (403, 200, 200, 200)),
     ("DELETE", "rules/{rule}/", None, (403, 204, 204, 204)),
+    ("GET", "campaign-rules/", None, OK_ALL),
+    ("POST", "campaign-rules/", {"title": "Curfew"}, (403, 403, 201, 201)),  # its owner and admins
+    ("PATCH", "campaign-rules/{campaign_rule}/", {"title": "Bell"}, (403, 403, 200, 200)),
+    ("PUT", "campaign-rules/order/", {"ids": ["{campaign_rule}"]}, (403, 403, 200, 200)),
+    ("DELETE", "campaign-rules/{campaign_rule}/", None, (403, 403, 204, 204)),
     ("GET", "messages/", None, OK_ALL),
     ("POST", "messages/", {"body": "Hi"}, (201, 201, 201, 201)),
     ("DELETE", "messages/{message}/", None, (403, 403, 204, 204)),
@@ -94,6 +100,7 @@ REPRESENTATIVE: dict[str, tuple[str, str, dict[str, Any] | None]] = {
     "archive": ("POST", "archive/", {}),
     "restore": ("POST", "restore/", {}),
     "leave": ("POST", "leave/", {}),
+    "manage_campaign_rules": ("POST", "campaign-rules/", {"title": "Curfew"}),
     "remove_posts": ("DELETE", "messages/{message}/", None),
     "edit_catalogue": ("POST", "/api/skills/", {"campaign_id": "{campaign}", "name": "Dodge"}),
     "delete_catalogue": ("DELETE", "/api/items/{item}/", None),  # an item nothing holds
@@ -140,6 +147,7 @@ class CampaignAccessFixture(CampaignTestCase):
             "camp": CampaignEncampment.objects.create(campaign=campaign, name="Old Camp").id,
             "place": CampaignLocation.objects.create(campaign=campaign, name="Old Ruin").id,
             "rule": CampaignHouseRule.objects.create(campaign=campaign, title="Old rule").id,
+            "campaign_rule": CampaignRule.objects.create(campaign=campaign, title="Old ruling").id,
             "item": Item.objects.create(campaign=campaign, name="Lucky Charm", type="Miscellaneous").id,
         }
 
@@ -151,12 +159,16 @@ class CampaignAccessFixture(CampaignTestCase):
         filled = template.format(**self.refs)
         return filled if filled.startswith("/") else self.url(filled)
 
+    def filled(self, value: Any) -> Any:
+        """A body value with the records' ids put in (inside a list too: a reorder's ids)."""
+        if isinstance(value, str):
+            return value.format(**self.refs)
+        return [self.filled(entry) for entry in value] if isinstance(value, list) else value
+
     def status_of(self, user: Any, method: str, template: str, body: dict[str, Any] | None = None) -> int:
         """The request's status, with everything it wrote rolled back."""
         self.client.force_authenticate(user=user)  # None: anonymous
-        data = {
-            key: value.format(**self.refs) if isinstance(value, str) else value for key, value in (body or {}).items()
-        }
+        data = {key: self.filled(value) for key, value in (body or {}).items()}
         with transaction.atomic():
             response = getattr(self.client, method.lower())(self.path(template), data, format="json")
             transaction.set_rollback(True)

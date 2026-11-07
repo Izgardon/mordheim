@@ -20,6 +20,7 @@ from apps.campaigns.models import (
     CampaignMembership,
     CampaignMessage,
     CampaignRole,
+    CampaignRule,
     PivotalMoment,
 )
 from apps.core.testing import count_get_queries
@@ -44,6 +45,7 @@ BUDGETS: dict[str, tuple[str, str, int]] = {
     "encampments": ("player", "encampments/", 2),  # the feature flag comes with the membership
     "locations": ("player", "locations/", 2),
     "house rules": ("player", "rules/", 2),
+    "campaign rules": ("player", "campaign-rules/", 2),
     "active battles": ("owner", "active-battles/", 3),
 }
 # The overview's list requests on every mount (players, completed trades, the history with its moments)
@@ -66,6 +68,7 @@ class CampaignQueryBudgetTests(CampaignTestCase):
             CampaignEncampment.objects.create(campaign=campaign, name=f"Camp {user.first_name}", owner=user)
             CampaignLocation.objects.create(campaign=campaign, name=f"Ruin {user.first_name}")
         CampaignHouseRule.objects.create(campaign=campaign, title="No running")
+        CampaignRule.objects.create(campaign=campaign, title="Curfew")
         Hero.objects.create(warband=cls.warband, name="Abbess", unit_type="Matriarch", kills=3)
         Hero.objects.create(warband=cls.rival_warband, name="Grey Seer", unit_type="Seer", kills=2)
         ended = cls._battle(Battle.STATUS_ENDED)
