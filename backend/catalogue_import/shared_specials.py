@@ -29,7 +29,10 @@ from catalogue_import.sources import BACKEND
 from catalogue_import.template_text import clean_rule
 
 SHARED_DATA = BACKEND / "apps" / "special" / "data" / "shared-specials.json"
-BEASTS = [BACKEND / "apps" / "bestiary" / "data" / name for name in ("bestiary.json", "mim-bestiary.json")]
+BEASTS = [
+    BACKEND / "apps" / "bestiary" / "data" / name
+    for name in ("bestiary.json", "mim-bestiary.json", "btb-bestiary.json")
+]
 PSYCHOLOGY = "psychology"
 OWNER_KINDS = {
     "warband": "warband",

@@ -19,6 +19,7 @@ from django.db.models import Model
 
 from apps.campaigns.models import CampaignType
 from apps.warbands.models import WarbandGroup, WarbandType
+from apps.warbands.utils.stats import read_stat
 
 # The catalogue import's generated files (backend/catalogue_import/out/), which the seeders read in place: settings,
 # warband types and groups, items and their shared rules, skills and skill groups, and the settings and who-can lists
@@ -116,6 +117,32 @@ def read_stats(values: Mapping[str, Any], label: str) -> dict[str, int]:
     if problems:
         raise CommandError(f"{label}: {', '.join(problems)}.")
     return stats
+
+
+def read_written_stats(values: Mapping[str, Any], label: str) -> dict[str, Any]:
+    """A seeded profile's nine characteristics as a written stat block holds them (apps/warbands/utils/stats.py): a
+    whole number, or as the book writes it ("-", "5*", "special"), its number (none for "-") and its text in
+    `written_stats`. A missing or blank stat, or one no written value can hold, stops the seeder as `read_stats`
+    does."""
+    stats: dict[str, Any] = {}
+    written: dict[str, str] = {}
+    problems: list[str] = []
+    for field in STAT_FIELDS:
+        value = values.get(field)
+        if value is None or not str(value).strip():
+            problems.append(f"{field} is missing")
+            continue
+        try:
+            stat = read_stat(value)
+        except ValueError:
+            problems.append(f"{field} is {value!r}")
+            continue
+        stats[field] = stat.number
+        if stat.written:
+            written[field] = stat.written
+    if problems:
+        raise CommandError(f"{label}: {', '.join(problems)}.")
+    return {**stats, "written_stats": written}
 
 
 class SettingAssignments:

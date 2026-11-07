@@ -9,6 +9,7 @@ copy-on-write makes): the seeders read and write the book only (BUG-17). Small, 
 """
 
 import re
+from collections import Counter
 from contextlib import redirect_stdout
 from io import StringIO
 
@@ -21,6 +22,7 @@ from rest_framework.test import APIClient
 
 from apps.bestiary.models import BestiaryEntry
 from apps.campaigns.models import Campaign, CampaignHouseRule, CampaignType
+from apps.core.seeding import STAT_FIELDS
 from apps.hirelings.fees import make_fee
 from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordItem, HiredSwordSkill
 from apps.items.models import Item, ItemAvailability, ItemRule
@@ -89,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 45,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit and the Fimir
-                "Item": 399,  # the import's 368 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
+                "Item": 427,  # the import's 368 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 53,  # the import's shared rules, the Metal Mongers' Experimental Technology and the Watchmen's Map among them
                 "Skill": 346,  # the import's 322 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 88,  # the import's 69 + a group of his own for each of 19 hired swords
@@ -104,8 +106,11 @@ class SeedAllTests(TestCase):
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov);
                 # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
                 # the second PDF batch's five templates add 46 of their own, the third's five 54, the fifth's five 43, the sixth's eight 83
-                "Special": 1064,
-                "BestiaryEntry": 35,  # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 11 creatures (17 from MiM)
+                # Border Town Burning's Beasts of the East add 31 of their own to special.json (William, 7 Nov 2026)
+                "Special": 1095,
+                # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
+                # Town Burning's Beasts of the East)
+                "BestiaryEntry": 63,
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
                 "WarbandTemplate": 81,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
@@ -123,10 +128,11 @@ class SeedAllTests(TestCase):
                     elif model is Skill:  # but the ones a hired sword's seeding makes (his "Hired Sword - …" group)
                         own = {"group_links__group__name__startswith": "Hired Sword - "}
                         self.assertFalse(ungraded.exclude(**own).exists())
-                    elif model is Special:  # only Mutiny in Marienburg's families' ones the random table lacks
+                    elif model is Special:  # Mutiny in Marienburg's families' ones the random table lacks, and the
+                        # Beasts of the East's own (Border Town Burning)
                         graded = Special.objects.filter(campaign_type__isnull=False)
-                        self.assertEqual(set(graded.values_list("campaign_type__slug", flat=True)), {"mutiny-in-marienburg"})  # fmt: skip
-                        self.assertEqual(graded.count(), 10)
+                        slugs = Counter(graded.values_list("campaign_type__slug", flat=True))
+                        self.assertEqual(slugs, {"mutiny-in-marienburg": 10, "border-town-burning": 31})
                     else:  # the rest count as Mordheim's until they get theirs
                         self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
@@ -209,10 +215,16 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             links,
             {
-                "Fear": (62, 0, 5, 5, 3),  # fighters, upgrades, hired swords, dramatis personae, beasts
-                "Stupidity": (8, 0, 0, 0, 1),
+                "Fear": (
+                    62,
+                    0,
+                    5,
+                    5,
+                    17,
+                ),  # fighters, upgrades, hired swords, dramatis personae, beasts (14 of the East)
+                "Stupidity": (8, 0, 0, 0, 2),
                 "Immune to Psychology": (33, 0, 1, 2, 0),
-                "Immune to Poison": (28, 0, 3, 3, 2),
+                "Immune to Poison": (28, 0, 3, 3, 8),
                 "Hideous": (
                     0,
                     7,
@@ -225,8 +237,8 @@ class SeedAllTests(TestCase):
                     4,
                     0,
                     0,
-                    0,
-                ),  # the Plague Bearer's and the Nurgling's, the Carnival's, Marauders', Fen Guard's and Underworld Alliance's
+                    1,
+                ),  # the Plague Bearer's and the Nurgling's, the Carnival's, Marauders', Fen Guard's and Underworld Alliance's, the Plaguebearer of the East's
             },
         )
         hideous = TemplateUpgrade.objects.filter(special__name="Hideous").values_list("cost", flat=True)
@@ -248,6 +260,8 @@ class SeedAllTests(TestCase):
                 "Immune to Psychology (Belandysh)": "dramatis_persona",
                 "Immune to Psychology (Ippan Shu)": "dramatis_persona",
                 "Immune to Psychology (Nightmare)": "general",  # a mount's book rule, typed Animal
+                # the daemons', plants' and Terracotta Soldier's of the East: every Leadership-based test passed
+                "Immune to Psychology (Beasts of the East)": "general",
                 "Immune to Poison (Plague Bearers)": "warband",
                 "Immune to Poison (Nurglings)": "warband",
             },
@@ -277,6 +291,45 @@ class SeedAllTests(TestCase):
         self.assertEqual(rules("Gnoblar Fighter"), {"Weapons/Armour (Gnoblar)", "Largely Insignificant (Gnoblar)", "Bicker (Gnoblar)"})  # fmt: skip
         charge = Special.objects.get(campaign__isnull=True, name="Ferocious Charge (Temple Dog)").description
         self.assertIn("+1 Strength", charge)  # the Temple Dog's own, not the boar's +2S
+
+    def test_border_town_burning_brings_its_beasts_of_the_east(self):
+        # William, 7 Nov 2026: "add more to bestiary" (mordheimer's Beasts of the East, read 7 Nov 2026): 28 creatures
+        # met in battle, never sold, each its profile as printed, the shared rules linked, its own rules ours
+        book = BestiaryEntry.objects.filter(campaign__isnull=True)
+        beasts = book.filter(animal_item__campaign_type__slug="border-town-burning")
+        self.assertEqual(beasts.count(), 28)
+        self.assertEqual(
+            set(beasts.values_list("kind", "available_in_shop", "has_profile")), {("creature", False, True)}
+        )
+        self.assertEqual(book.filter(name__in=("Bear", "Bear (Border Town Burning)")).count(), 2)  # MiM's is its own
+
+        def rules(beast: str) -> set[str]:
+            return set(beasts.get(name=beast).bestiary_entry_specials.values_list("special__name", flat=True))
+
+        ogre = beasts.get(name="Dragon Ogre")
+        profile = [getattr(ogre, field) for field in STAT_FIELDS]
+        self.assertEqual((profile, ogre.large), ([7, 4, 2, 5, 4, 4, 2, 3, 8], True))
+        self.assertEqual(
+            rules("Dragon Ogre"), {"Fear", "Large", "Scaly Skin (Dragon Ogre)", "Storm Rage (Dragon Ogre)"}
+        )
+        kit = ogre.bestiary_entry_items.values_list("item__name", "quantity")
+        self.assertEqual(list(kit), [("Double-handed weapon", 1)])
+        daemonic = {"Fear", "Immune to Poison", "Immune to Psychology (Beasts of the East)", "Daemonic Aura (Beasts of the East)"}  # fmt: skip
+        self.assertEqual(rules("Plaguebearer"), daemonic | {"Cloud of Flies"})  # the Blessing of Nurgle, the same rule
+        self.assertEqual(rules("Hydra"), {"Fear", "Loss of Heads (Hydra)", "Regeneration (Hydra)", "No Pain", "Gigantic Monster (Beasts of the East)"})  # fmt: skip
+        written = {name: beasts.get(name=name).written_stats for name in ("Hydra", "Giant", "Man-eating Oak")}
+        self.assertEqual(
+            written,
+            {
+                "Hydra": {"attacks": "*"},
+                "Giant": {"attacks": "special"},
+                "Man-eating Oak": {"movement": "-", "ballistic_skill": "-", "leadership": "-"},
+            },
+        )
+        champion = beasts.get(name="Champion of Chaos").bestiary_entry_skills.values_list("skill__name", flat=True)
+        self.assertEqual(set(champion), {"Step Aside", "Mighty Blow", "Resilient", "Sweeping blow"})
+        own = Special.objects.filter(campaign__isnull=True, bestiary_entry_specials__bestiary_entry__in=beasts, type="Animal")  # fmt: skip
+        self.assertEqual(set(own.exclude(name="Animal").values_list("campaign_type__slug", flat=True)), {"border-town-burning"})  # fmt: skip
 
     def test_the_lizardmens_oversized_jaws_and_poison_glands_are_body(self):
         # William, 5 Nov 2026: two of the Sacred markings are bodily (data/special-categories.json), not auras

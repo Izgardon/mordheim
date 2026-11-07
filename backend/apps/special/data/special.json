@@ -158,5 +158,191 @@
     "name": "Poison (Viper Familiar)",
     "type": "Animal",
     "description": "A 6 to hit wounds automatically, with no armour save. Any other hit on a target that poison affects is at S4; on one immune to poison, at S2."
+  },
+  {
+    "name": "Woodland Dwelling (Bear)",
+    "type": "Animal",
+    "description": "The model suffers no movement penalty for moving through wooded areas.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Weapons/Armour (Bestigor)",
+    "type": "Animal",
+    "description": "Roll a D6 for the model's weapons and armour: 1-2 a sword and a dagger; 3-5 a halberd, a dagger and light armour; 6 a double-handed axe and heavy armour.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Immune to Psychology (Beasts of the East)",
+    "type": "Animal",
+    "description": "The model is immune to psychology, never leaves combat and automatically passes every Leadership-based test it must take.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Daemonic Aura (Beasts of the East)",
+    "type": "Animal",
+    "description": "The model has a natural 5+ armour save, which magic weapons and spells negate. Its attacks count as magical.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Magical Resistance (Bloodletter)",
+    "type": "Animal",
+    "description": "On a D6 roll of 4+ the model ignores a magical effect: a spell, a magic weapon and the like, but not another daemon's attacks.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Frenzy (Bloodletter)",
+    "type": "Animal",
+    "description": "The model is subject to frenzy.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Mark of Chaos (Champion of Chaos)",
+    "type": "Animal",
+    "description": "Roll a D6 for the model's mark: 1-2 the Mark of Chaos Undivided, 3 the Mark of Tchar, 4 the Mark of Arkhar, 5 the Mark of Onogal, 6 the Mark of Shornaal. Each works as the Marauders of Chaos warband list gives it to the leader.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Scaly Skin (Chaos Dragon)",
+    "type": "Animal",
+    "description": "The model's scales give it a 3+ armour save.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Fly (Beasts of the East)",
+    "type": "Animal",
+    "description": "The model triples its Movement when running and ignores terrain when moving.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Breath Weapons (Chaos Dragon)",
+    "type": "Animal",
+    "description": "Every turn the model uses both of its breath weapons, each with the Small Flame Template (Mordheim Annual 2002, p34): one head breathes fire at Strength 4, the other corrosive gas at Strength 2 with a -3 save modifier.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Gigantic Monster (Beasts of the East)",
+    "type": "Animal",
+    "description": "Any model may shoot at the model with +2 to hit, even when it isn't the closest target. Each knocked down result it suffers instead takes 1 Attack from it until its next Recovery phase, several results taking one each. Whatever the scenario, a Hero or Henchman gains +1 Experience for each wound he inflicts on it.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Regeneration (Chaos Troll)",
+    "type": "Animal",
+    "description": "Whenever an enemy wounds the model, roll a D6: on a 4+ the wound is ignored. A wound caused by fire or fire-based magic can't be ignored this way.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Vomit Attack (Chaos Troll)",
+    "type": "Animal",
+    "description": "Instead of its normal attacks, the model may make a single attack against one opponent in hand-to-hand combat, which hits automatically at Strength 5 and ignores armour saves.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Mark of Chaos (Daemon Prince)",
+    "type": "Animal",
+    "description": "Roll a D6 for the model's mark: 1 the Mark of Tchar, 2-3 the Mark of Arkhar, 4 the Mark of Onogal, 5-6 the Mark of Shornaal.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Aura of Slaanesh (Daemonette)",
+    "type": "Animal",
+    "description": "Each model in hand-to-hand combat with the model has -1 Leadership, to a minimum of 2.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Scaly Skin (Dragon Ogre)",
+    "type": "Animal",
+    "description": "The model's scales give it a natural 5+ save.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Storm Rage (Dragon Ogre)",
+    "type": "Animal",
+    "description": "The model is immune to every attack and spell based on lightning (such as the Lizardmen's Chotec's Wrath), and becomes subject to frenzy when one hits it.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Attacks (Giant)",
+    "type": "Animal",
+    "description": "Roll a D6 for the attack the model makes: 1-2 Grab-it!: the nearest model must pass an Initiative test, or the Giant bites his head off and the warrior is removed from his warband's roster; 3-6 Tree Strike: a single attack that causes D6 wounds if it hits.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Fire of Tzeentch (Horror)",
+    "type": "Animal",
+    "description": "In its shooting phase roll 2D6: on a 6+ the nearest model within 12\" is hit at Strength 1. While the model is in hand-to-hand combat, the hit goes to one opponent in base contact, picked at random.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Loss of Heads (Hydra)",
+    "type": "Animal",
+    "description": "The model has as many Attacks as it has Wounds left.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Regeneration (Hydra)",
+    "type": "Animal",
+    "description": "Whenever an enemy wounds the model, roll a D6: on a 4+ the wound is ignored.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Weapons/Armour (Monkey Warrior)",
+    "type": "Animal",
+    "description": "The model fights unarmed or with makeshift weapons such as branches or stones, with no penalty for either.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Lightning Speed (Monkey Warrior)",
+    "type": "Animal",
+    "description": "The model triples its Movement when running or charging, and may run even with enemy models within 8\".",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "May Not Run (Terracotta Soldier)",
+    "type": "Animal",
+    "description": "The model may not run, nor double its Movement when charging.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Stone Skin (Terracotta Soldier)",
+    "type": "Animal",
+    "description": "The model has a 5+ armour save, which neither an attack's Strength nor any other save modifier changes.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Weakness (Terracotta Soldier)",
+    "type": "Animal",
+    "description": "After each turn of hand-to-hand combat with the model, a Hero who can gain experience and wounded it in that turn's hand-to-hand combat step may take a Leadership test: if he passes, he has found a weakness, and the model rolls on the Injury table at once.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Ferocious Charge (Wild Boar)",
+    "type": "Animal",
+    "description": "The model has +1 Strength when it charges.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Thick Skin (Wild Boar)",
+    "type": "Animal",
+    "description": "The model has a 6+ armour save.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Keen Senses (Ymir)",
+    "type": "Animal",
+    "description": "The model spots hidden enemies from twice its Initiative in inches.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Rover (Ymir)",
+    "type": "Animal",
+    "description": "The model ignores every penalty for difficult terrain and harsh weather.",
+    "setting": "border-town-burning"
+  },
+  {
+    "name": "Thick Fur (Ymir)",
+    "type": "Animal",
+    "description": "The model has a 5+ armour save.",
+    "setting": "border-town-burning"
   }
 ]

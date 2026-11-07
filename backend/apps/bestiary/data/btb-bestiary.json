@@ -1,0 +1,954 @@
+[
+  {
+    "name": "Bear (Border Town Burning)",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Marauders, Norse and Mercenary warbands; one of the warband's Heroes must have the Bear Handler skill. Fights with claws and teeth.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 2,
+    "initiative": 2,
+    "attacks": 2,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Animal",
+      "Fear",
+      "Woodland Dwelling (Bear)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Bestigor",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Beastmen, Marauders, Norse and Possessed warbands.",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Weapons/Armour (Bestigor)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Bloodletter",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by a warband whose leader bears the Mark of Arkhar.",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Immune to Poison",
+      "Immune to Psychology (Beasts of the East)",
+      "Daemonic Aura (Beasts of the East)",
+      "Magical Resistance (Bloodletter)",
+      "Frenzy (Bloodletter)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Double-handed weapon",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Carnivorous Plant",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Rooted to the ground: no warband may ally with it. Fights with animated branches.",
+    "movement": "-",
+    "weapon_skill": 2,
+    "ballistic_skill": "-",
+    "strength": 2,
+    "toughness": 1,
+    "wounds": 2,
+    "initiative": 1,
+    "attacks": 3,
+    "leadership": "-",
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Immune to Psychology (Beasts of the East)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Champion of Chaos",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by the Scion of Chaos.",
+    "movement": 4,
+    "weapon_skill": 7,
+    "ballistic_skill": 3,
+    "strength": 5,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 6,
+    "attacks": 4,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Mark of Chaos (Champion of Chaos)"
+    ],
+    "skills": [
+      "Step Aside",
+      "Mighty Blow",
+      "Resilient",
+      "Sweeping Blow"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Great Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Chaos Armour",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Chaos Dragon",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "No warband may ally with it. Fights with two heads, teeth and claws.",
+    "movement": 6,
+    "weapon_skill": 6,
+    "ballistic_skill": 0,
+    "strength": 6,
+    "toughness": 6,
+    "wounds": 6,
+    "initiative": 3,
+    "attacks": 6,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Scaly Skin (Chaos Dragon)",
+      "Fly (Beasts of the East)",
+      "Breath Weapons (Chaos Dragon)",
+      "No Pain",
+      "Gigantic Monster (Beasts of the East)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Chaos Marauder",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Marauders, Norse, Carnival of Chaos and Possessed warbands.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Chaos Ogre",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Maneaters, Chaos Dwarfs, Marauders, Norse, Carnival of Chaos and Possessed warbands.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 2,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 2,
+    "attacks": 4,
+    "leadership": 7,
+    "armour_save": null,
+    "large": true,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Large Target"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Club, Mace or Hammer",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Chaos Troll",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Maneaters, Chaos Dwarfs, Dark Elves, Marauders, Norse, Carnival of Chaos and Possessed warbands. Needs no weapons to fight.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 1,
+    "strength": 5,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 1,
+    "attacks": 3,
+    "leadership": 4,
+    "armour_save": null,
+    "large": true,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Stupidity",
+      "Regeneration (Chaos Troll)",
+      "Vomit Attack (Chaos Troll)",
+      "Large Target"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Daemon Prince",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by the Scion of Chaos, whose warband forfeits D3 campaign points for every battle he fights.",
+    "movement": 8,
+    "weapon_skill": 8,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 4,
+    "initiative": 7,
+    "attacks": 5,
+    "leadership": 8,
+    "armour_save": null,
+    "large": true,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Immune to Poison",
+      "Immune to Psychology (Beasts of the East)",
+      "Daemonic Aura (Beasts of the East)",
+      "Large Target",
+      "Fly (Beasts of the East)",
+      "Mark of Chaos (Daemon Prince)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 2
+      }
+    ]
+  },
+  {
+    "name": "Daemonette",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by a warband whose leader bears the Mark of Shornaal.",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Immune to Poison",
+      "Immune to Psychology (Beasts of the East)",
+      "Daemonic Aura (Beasts of the East)",
+      "Aura of Slaanesh (Daemonette)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Dragon Ogre",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by the Scion of Chaos when the warband's leader bears a Mark of the Dark Gods.",
+    "movement": 7,
+    "weapon_skill": 4,
+    "ballistic_skill": 2,
+    "strength": 5,
+    "toughness": 4,
+    "wounds": 4,
+    "initiative": 2,
+    "attacks": 3,
+    "leadership": 8,
+    "armour_save": null,
+    "large": true,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Large Target",
+      "Scaly Skin (Dragon Ogre)",
+      "Storm Rage (Dragon Ogre)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Double-handed weapon",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Giant",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Orcs & Goblins, Beastmen and warbands with the Lure of Fortune. Its trees, stones and other huge makeshift weapons count as a club.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 7,
+    "toughness": 6,
+    "wounds": 6,
+    "initiative": 3,
+    "attacks": "special",
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Attacks (Giant)",
+      "No Pain",
+      "Gigantic Monster (Beasts of the East)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Club, Mace or Hammer",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Goblin",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Chaos Dwarfs and Orc & Goblin warbands.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Spear",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Gor",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Beastmen, Marauders, Norse and Possessed warbands.",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Guard",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by the Celestial Protectorate and Merchant Caravans.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dragon Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Heavy Armour",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Horror",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by a warband whose leader bears the Mark of Tchar.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Immune to Poison",
+      "Immune to Psychology (Beasts of the East)",
+      "Daemonic Aura (Beasts of the East)",
+      "Fire of Tzeentch (Horror)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Hydra",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Chaos Dwarfs, Dark Elves and Marauders; one of the warband's Heroes must have the Beastmaster skill. Fights with its many heads and teeth.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 5,
+    "toughness": 6,
+    "wounds": 5,
+    "initiative": 3,
+    "attacks": "5*",
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Loss of Heads (Hydra)",
+      "Regeneration (Hydra)",
+      "No Pain",
+      "Gigantic Monster (Beasts of the East)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Man-eating Oak",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Rooted to the ground: no warband may ally with it. Fights with animated branches.",
+    "movement": "-",
+    "weapon_skill": 3,
+    "ballistic_skill": "-",
+    "strength": 4,
+    "toughness": 5,
+    "wounds": 4,
+    "initiative": 2,
+    "attacks": 4,
+    "leadership": "-",
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Immune to Psychology (Beasts of the East)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Monkey Warrior",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by the Silent Threat.",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Weapons/Armour (Monkey Warrior)",
+      "Lightning Speed (Monkey Warrior)"
+    ],
+    "skills": [
+      "Scale Sheer Surfaces"
+    ],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Ogre",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by the Lure of Fortune and Maneaters.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 2,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 2,
+    "attacks": 3,
+    "leadership": 7,
+    "armour_save": null,
+    "large": true,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Large Target"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Ogre Club",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Orc",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Chaos Dwarfs and Orc & Goblin warbands.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Plaguebearer",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by a warband whose leader bears the Mark of Onogal, and by Carnival of Chaos warbands.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 2,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Immune to Poison",
+      "Immune to Psychology (Beasts of the East)",
+      "Daemonic Aura (Beasts of the East)",
+      "Cloud of Flies"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Terracotta Soldier",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by the Damned Shall Burn and Battle Monks of Cathay.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Immune to Psychology (Beasts of the East)",
+      "Immune to Poison",
+      "No Pain",
+      "May Not Run (Terracotta Soldier)",
+      "Stone Skin (Terracotta Soldier)",
+      "Weakness (Terracotta Soldier)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Ungor",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Beastmen, Marauders, Norse and Possessed warbands.",
+    "movement": 5,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Spear",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Warrior of Chaos",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Marauders, Norse, Carnival of Chaos and Possessed warbands.",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Chaos Armour",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Wild Boar",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Maneaters and Orc warbands; one of the warband's Heroes must have the Boar Handler skill.",
+    "movement": 7,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 3,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Animal",
+      "Ferocious Charge (Wild Boar)",
+      "Thick Skin (Wild Boar)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Ymir",
+    "kind": "creature",
+    "setting": "border-town-burning",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "May be allied by Beastmen, Norse and Marauders of Chaos; except in a Beastmen warband, one of the warband's Heroes must have the Beastmaster skill. Fights with great sharp claws.",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 1,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 2,
+    "leadership": 4,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Animal",
+      "Fear",
+      "Keen Senses (Ymir)",
+      "Rover (Ymir)",
+      "Thick Fur (Ymir)"
+    ],
+    "skills": [
+      "Scale Sheer Surfaces"
+    ],
+    "spells": [],
+    "equipment": []
+  }
+]

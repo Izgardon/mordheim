@@ -1,11 +1,12 @@
-"""Seed the book's bestiary from JSON (`apps/bestiary/data/bestiary.json` and Mutiny in Marienburg's
-`mim-bestiary.json`): the beasts, each a mount, a pet or a creature (`kind`), with whether it has a profile
-(`has_profile`: off, its stats are kept at 0 and its save empty), gains XP, what it adds to a rider's rating
+"""Seed the book's bestiary from JSON (`apps/bestiary/data/bestiary.json`, Mutiny in Marienburg's
+`mim-bestiary.json` and Border Town Burning's Beasts of the East, `btb-bestiary.json`): the beasts, each a mount, a pet
+or a creature (`kind`), with its profile (a stat as the book writes it, "-" or "5*", kept as written), whether it has
+one (`has_profile`: off, its stats are kept at 0 and its save empty), gains XP, what it adds to a rider's rating
 (`rating_bonus`) and whether the shop sells it (`available_in_shop`); their skills, specials, spells and equipment;
 and every beast's Animal item, listed when it is sold. A beast the catalogue import has (`out/items.json`, the items
 rebuild) takes its item's text, rules, setting and price rows from there; any other keeps the prices of its
-`shop_item` (open to everyone, a "unique to" text as the note) and its setting by its file and grade. Hired swords
-and dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
+`shop_item` (open to everyone, a "unique to" text as the note) and its `setting`, else its setting by its file and
+grade. Hired swords and dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
 
 Links resolve against the book only (BUG-17), by name with apostrophes straightened. The run is all or nothing: an
 entry without a known kind, or with a rating bonus that isn't a whole number from 0, stops it.
@@ -29,14 +30,18 @@ from apps.bestiary.models import (
 from apps.bestiary.writes import NO_PROFILE
 from apps.core.book_lookups import BookLookups
 from apps.core.catalogue.cache import bump
-from apps.core.seeding import clean, parse_armour_save, read_json_list, read_stats, upsert_global
+from apps.core.seeding import clean, parse_armour_save, read_json_list, read_written_stats, upsert_global
 from apps.items.importing import ImportedItems, legacy_rows, mordheim_part
 from apps.items.models import Item
 from apps.items.writes import replace_availabilities
 from apps.special.models import Special
 from apps.special.prebattle import SPECIAL, mark_book_rolls
 
-DEFAULT_JSON_PATHS = [Path("apps/bestiary/data/bestiary.json"), Path("apps/bestiary/data/mim-bestiary.json")]
+DEFAULT_JSON_PATHS = [
+    Path("apps/bestiary/data/bestiary.json"),
+    Path("apps/bestiary/data/mim-bestiary.json"),
+    Path("apps/bestiary/data/btb-bestiary.json"),
+]
 MIM = "mutiny-in-marienburg"
 
 
@@ -66,7 +71,7 @@ def _upsert_entry(data: dict[str, Any], name: str, kind: str) -> tuple[BestiaryE
         "gains_xp": bool(data.get("gains_xp", False)),
         "rating_bonus": _rating_bonus(data, name),
         "available_in_shop": bool(data.get("available_in_shop", False)),
-        **read_stats(data, f"Bestiary entry '{name}'"),  # fail loudly (BUG-54)
+        **read_written_stats(data, f"Bestiary entry '{name}'"),  # as written ("-", "5*"); fail loudly (BUG-54)
         **({} if has_profile else NO_PROFILE),
     }
     return upsert_global(BestiaryEntry, {"name": name}, defaults)
@@ -112,7 +117,9 @@ class ItemSource:
             self.imported.apply(item, found, keep=("type", "subtype"))
             return
         shop = data.get("shop_item") or {}
-        setting = MIM if path.name.startswith("mim-") else mordheim_part(clean(shop.get("grade")) or "1a")
+        setting = clean(data.get("setting")) or (
+            MIM if path.name.startswith("mim-") else mordheim_part(clean(shop.get("grade")) or "1a")
+        )
         fields = {"flavour": entry.description, "campaign_type_id": self.imported.settings.get(setting)}
         Item.objects.filter(pk=item.pk).update(**fields)
         replace_availabilities(item, legacy_rows(shop.get("availabilities", [])))
