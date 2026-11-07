@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 
 // routing
-import { Navigate, Outlet, type RouteObject } from "react-router-dom";
+import { Outlet, type RouteObject } from "react-router-dom";
 
 // components
 import ScrollToTop from "../../components/ScrollToTop";
@@ -38,6 +38,7 @@ const CampaignRules = lazy(() => import("../../features/rules/routes/CampaignRul
 const SearchEverything = lazy(() => import("../../features/search/routes/SearchEverything"));
 const CampaignSettings = lazy(() => import("../../features/campaigns/routes/CampaignSettings"));
 const Encampments = lazy(() => import("../../features/campaigns/routes/Encampments"));
+const Locations = lazy(() => import("../../features/campaigns/routes/Locations"));
 
 function RootLayout() {
   return (
@@ -121,11 +122,8 @@ export const routes: RouteObject[] = [
                   { path: "house-rules", element: <HouseRules /> },
                   { path: "campaign-rules", element: <CampaignRules /> },
                   { path: "search", element: <SearchEverything /> },
-                  // Locations is a panel of the warband page now.
-                  {
-                    path: "locations",
-                    element: <Navigate to="../warband?panel=locations" replace />,
-                  },
+                  // Where the locations are edited; the warband page's panel only reads them.
+                  { path: "locations", element: <Locations /> },
                   { path: "encampments", element: <Encampments /> },
                   { path: "settings", element: <CampaignSettings /> },
                   // Account inside the campaign's shell, so the rail or bottom nav stays.

@@ -1,16 +1,16 @@
 /**
- * Locations are managed from the Locations panel (William, 1 Nov 2026), no longer in settings:
- * with `manage_locations`, Add location, and Edit and Remove on each (Remove after a confirm);
- * without it, the list only.
+ * The warband page's Locations panel only reads the locations (William, 7 Nov 2026: "shouldn't be
+ * able to edit locations in the location sidebar within warband"): no Add, Edit or Remove for
+ * anyone; with `manage_locations`, Edit locations goes to the campaign's Locations page.
  */
-import { screen, waitFor, within } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { CampaignLocation } from "@/features/campaigns/types/campaign-types";
 import { campaignFor } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
-import { setupUser } from "@/test/user-event";
 
 import LocationsPanel from "./LocationsPanel";
 
@@ -37,65 +37,38 @@ function renderPanel(role: "owner" | "player") {
   fakeApi.on("GET /campaigns/1/", campaignFor(role, { enable_locations: true }));
   fakeApi.on("GET /campaigns/1/locations/", [docks]);
   return renderWithQueryClient(
-    <LocationsPanel
-      campaignId={1}
-      warbandId={0}
-      heroes={[]}
-      canEdit={false}
-      open
-      onOpenChange={() => undefined}
-    />
+    <MemoryRouter>
+      <LocationsPanel
+        campaignId={1}
+        warbandId={0}
+        heroes={[]}
+        canEdit={false}
+        open
+        onOpenChange={() => undefined}
+      />
+    </MemoryRouter>
   );
 }
+
+const noEditing = () => {
+  expect(screen.queryByRole("button", { name: "Add location" })).toBeNull();
+  expect(screen.queryByRole("button", { name: /^(Edit|Remove) / })).toBeNull();
+};
 
 beforeEach(() => {
   fakeApi.reset();
 });
 
 describe("LocationsPanel", () => {
-  it("lets a player with manage_locations add a location from the panel", async () => {
-    const user = setupUser();
-    fakeApi.on("POST /campaigns/1/locations/", (body: object) => ({
-      ...docks,
-      ...body,
-      id: 9,
-    }));
+  it("never edits a location; one who manages them is sent to the Locations page", async () => {
     renderPanel("owner");
 
-    await user.click(await screen.findByRole("button", { name: "Add location" }));
-    const form = screen.getByRole("form", { name: "Add a location" });
-    await user.type(within(form).getByLabelText("Name"), "The Pit");
-    await user.type(within(form).getByLabelText("Area"), "River");
-    await user.click(within(form).getByRole("button", { name: "Add location" }));
-
-    expect(await screen.findByText("The Pit")).toBeInTheDocument();
-    expect(fakeApi.bodyOf("POST /campaigns/1/locations/")).toMatchObject({
-      name: "The Pit",
-      area: "River",
-    });
-    expect(screen.queryByRole("form")).toBeNull();
-  });
-
-  it("edits and removes a location, the removal after a confirm", async () => {
-    const user = setupUser();
-    fakeApi.on("PATCH /campaigns/1/locations/4/", (body: object) => ({ ...docks, ...body }));
-    fakeApi.on("DELETE /campaigns/1/locations/4/", null);
-    renderPanel("owner");
-
-    await user.click(await screen.findByRole("button", { name: "Edit The Docks" }));
-    const form = screen.getByRole("form", { name: "Edit The Docks" });
-    await user.clear(within(form).getByLabelText("Name"));
-    await user.type(within(form).getByLabelText("Name"), "The Old Docks");
-    await user.click(within(form).getByRole("button", { name: "Save changes" }));
-    expect(await screen.findByText("The Old Docks")).toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "Remove The Old Docks" }));
-    const confirm = await screen.findByRole("dialog", { name: "Remove the location" });
-    expect(confirm).toHaveTextContent("It leaves the Locations panel for everyone");
-    await user.click(within(confirm).getByRole("button", { name: "Remove" }));
-
-    await waitFor(() => expect(screen.queryByText("The Old Docks")).toBeNull());
-    expect(fakeApi.calls()).toContain("DELETE /campaigns/1/locations/4/");
+    expect(await screen.findByText("The Docks")).toBeInTheDocument();
+    expect(await screen.findByRole("link", { name: "Edit locations" })).toHaveAttribute(
+      "href",
+      "/campaigns/1/locations"
+    );
+    noEditing();
   });
 
   it("shows a player without manage_locations the list only", async () => {
@@ -103,7 +76,7 @@ describe("LocationsPanel", () => {
 
     expect(await screen.findByText("The Docks")).toBeInTheDocument();
     await waitFor(() => expect(fakeApi.calls()).toContain("GET /campaigns/1/"));
-    expect(screen.queryByRole("button", { name: "Add location" })).toBeNull();
-    expect(screen.queryByRole("button", { name: /^(Edit|Remove) / })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Edit locations" })).toBeNull();
+    noEditing();
   });
 });
