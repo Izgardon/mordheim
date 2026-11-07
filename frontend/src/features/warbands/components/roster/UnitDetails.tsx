@@ -34,7 +34,6 @@ type UnitDetailsProps = {
   onBuyAgain: (item: Item) => void;
   /** Add item: the unit's loadout. */
   onLoadout: () => void;
-  onAdvance?: () => void;
   campaignId: number;
   warbandId: number;
   /** Makes a pick an advance left for later: the entry joins its list, one pick fewer. */
@@ -118,13 +117,7 @@ export default function UnitDetails(props: UnitDetailsProps) {
 
   return (
     <div className="flex flex-col gap-3 border-t border-line pt-3">
-      <UnitXp
-        entry={entry}
-        campaign={campaign}
-        canEdit={canEdit}
-        onXp={props.onXp}
-        onAdvance={props.onAdvance}
-      />
+      <UnitXp entry={entry} campaign={campaign} canEdit={canEdit} onXp={props.onXp} />
       <div className="grid gap-x-6 gap-y-4 min-[960px]:[grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
         {showItems ? (
           <div className="flex flex-col gap-2">

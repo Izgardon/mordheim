@@ -27,39 +27,21 @@ function StripBones() {
   );
 }
 
-/** A unit card while loading: a hero's card in the grid, or a henchmen group's row. */
-function UnitBones({ row = false }: { row?: boolean }) {
-  const title = (
-    <div className="flex flex-col gap-2 py-1">
-      <Bone className="h-4 w-36" />
-      <Bone className="h-2.5 w-20" />
-    </div>
-  );
-  const buttons = (
-    <div className="flex gap-1.5">
-      <Bone className="h-9 w-9" />
-      <Bone className="h-9 w-9" />
-    </div>
-  );
+/** A unit card while loading, in its section's grid. */
+function UnitBones() {
   return (
     <div className="flex min-w-0 flex-col gap-3 border border-border bg-surface p-3.5 pl-[18px]">
-      {row ? (
-        <div className="grid gap-x-6 gap-y-2.5 min-[720px]:grid-cols-[minmax(0,1fr)_minmax(0,380px)]">
-          {title}
-          <div className="flex flex-col gap-2">
-            <div className="flex justify-end">{buttons}</div>
-            <StripBones />
-          </div>
+      <div className="flex items-start justify-between gap-2.5">
+        <div className="flex flex-col gap-2 py-1">
+          <Bone className="h-4 w-36" />
+          <Bone className="h-2.5 w-20" />
         </div>
-      ) : (
-        <>
-          <div className="flex items-start justify-between gap-2.5">
-            {title}
-            {buttons}
-          </div>
-          <StripBones />
-        </>
-      )}
+        <div className="flex gap-1.5">
+          <Bone className="h-9 w-9" />
+          <Bone className="h-9 w-9" />
+        </div>
+      </div>
+      <StripBones />
       <Bone className="h-3 w-40" />
     </div>
   );
@@ -80,7 +62,7 @@ function SectionBones({ divided, children }: { divided?: boolean; children: Reac
 
 /**
  * The warband page while it loads (design E): the header with Store and Stash, the info line
- * beside the resources, the tabs, then the roster: hero cards in their grid, henchmen as rows, a
+ * beside the resources, the tabs, then the roster: heroes' and henchmen's cards in their grids, a
  * hairline between the sections.
  */
 export default function WarbandSkeleton() {
@@ -113,9 +95,9 @@ export default function WarbandSkeleton() {
           </div>
         </SectionBones>
         <SectionBones divided>
-          <div className="flex flex-col gap-2.5">
-            <UnitBones row />
-            <UnitBones row />
+          <div className={ROSTER_HEROES}>
+            <UnitBones />
+            <UnitBones />
           </div>
         </SectionBones>
       </div>

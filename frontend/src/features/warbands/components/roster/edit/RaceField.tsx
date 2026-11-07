@@ -70,9 +70,13 @@ export default function RaceField({
     <>
       <div className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
         <span className="flex min-h-5 items-center">Race</span>
+        {/* one line, as tall as the fields beside it (William, 7 Nov 2026: "align race input in
+            create custom unit visually its off and maybe too tall still?") */}
         <SearchSelect
           label="Race"
           className="flex-1"
+          inputClassName="h-[34px]"
+          oneLine
           placeholder="Search races"
           emptyText="No race matches."
           options={options}

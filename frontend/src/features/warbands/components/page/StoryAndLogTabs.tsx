@@ -8,7 +8,7 @@ import { warbandLogsQuery } from "../../api/economy-queries";
 import { LOG_FORMATTERS } from "../../data/log-formatters";
 import { formatLogMessage } from "../../data/log-translations";
 import { useBackstory } from "../../hooks/warband/useBackstory";
-import { formatTradeDate } from "../../utils/warband-utils";
+import { formatTradeDate, logFeatureLabel } from "../../utils/warband-utils";
 import type { Warband, WarbandLog } from "../../types/warband-types";
 
 /** The warband's story: read, or edited in place by those who may. */
@@ -80,7 +80,7 @@ export function LogTab({ campaignId, warbandId }: { campaignId: number; warbandI
         <div role="group" aria-label="Filter the log" className="flex flex-wrap gap-1.5">
           {["", ...features].map((name) => (
             <Chip key={name || "all"} pressed={feature === name} onClick={() => setFeature(name)}>
-              {name ? name.replace(/_/g, " ") : "All"}
+              {name ? logFeatureLabel(name) : "All"}
             </Chip>
           ))}
         </div>

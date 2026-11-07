@@ -233,3 +233,12 @@ export const groupItemsById = <T extends { id: number; name: string }>(
       return acc;
     }, {})
   );
+
+/**
+ * A log filter's label: "hero_special" reads "Hero special" (William, 7 Nov 2026: "warband log
+ * capital letters on filters").
+ */
+export const logFeatureLabel = (feature: string): string => {
+  const words = feature.replace(/_/g, " ").trim();
+  return words.charAt(0).toUpperCase() + words.slice(1);
+};

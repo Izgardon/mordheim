@@ -1,6 +1,6 @@
 /**
  * The warband page's layout, shared by the page and its loading skeleton: the info line beside
- * the resources, and the roster's sections (a hairline between them) with heroes and hired swords
+ * the resources, and the roster's sections (a hairline between them) with every unit
  * in a grid, whose rows leave room for the Advance ready badge on a card's top edge.
  */
 export const WARBAND_INFO =

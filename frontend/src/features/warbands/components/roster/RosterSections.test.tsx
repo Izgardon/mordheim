@@ -13,7 +13,7 @@ import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import { campaignSummary } from "@/test/campaign-fixtures";
 import { makeTemplateAnswer } from "@/test/template-fixtures";
-import { makeHero } from "@/test/warband-fixtures";
+import { makeHero, makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 
 import type { WarbandHero } from "../../types/warband-types";
 import RosterSections from "./RosterSections";
@@ -172,5 +172,60 @@ describe("Make a template for a type with none (the templates plan, phase 4)", (
     renderRoster();
     await waitFor(() => expect(fakeApi.countOf("GET /warbands/9/template/")).toBe(1));
     expect(screen.queryByRole("button", { name: /^Make a template/ })).toBeNull();
+  });
+});
+
+describe("The roster's cards (William, 7 Nov 2026)", () => {
+  const renderCards = (onAdvance = vi.fn()) =>
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
+        <RosterSections
+          warbandId={9}
+          campaign={null}
+          heroes={[makeHero({ id: 5, name: "Konrad Adler", xp: 2, level_up: 1 })]}
+          henchmenGroups={[makeVeteranHenchmenGroup({ id: 21, warband_id: 9 })]}
+          hirelings={[]}
+          resources={[]}
+          canEdit
+          canCreateRace={false}
+          onLoadout={vi.fn()}
+          onHire={vi.fn()}
+          onAdvance={onAdvance}
+          onBuyAgain={vi.fn()}
+          renderEdit={() => null}
+        />
+      </MemoryRouter>
+    );
+  const cardIn = (section: string) =>
+    within(screen.getByRole("region", { name: section })).getAllByRole("article")[0];
+
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /warbands/9/template/", NO_TEMPLATE);
+  });
+
+  // "henchmen card blocks same as hero/hs not full width on warband page"
+  it("puts a henchmen group's card in the heroes' grid, with its members and loadout", () => {
+    renderCards();
+
+    const group = cardIn("Henchmen");
+    expect(group.parentElement?.className).toBe(cardIn("Heroes").parentElement?.className);
+    expect(within(group).getByText(/^Each carries/)).toBeInTheDocument();
+    expect(within(group).getByText(/^Loadout /)).toBeInTheDocument();
+  });
+
+  // "remove advance btn next to xp bar": Advance ready on the card's top edge stays
+  it("offers a waiting advance on the card's top edge only, not by the XP bar", async () => {
+    const onAdvance = vi.fn();
+    const user = setupUser();
+    renderCards(onAdvance);
+    const hero = cardIn("Heroes");
+
+    await user.click(within(hero).getByRole("button", { name: "Open Konrad Adler" }));
+
+    expect(within(hero).getByText("Experience")).toBeInTheDocument();
+    expect(within(hero).queryByRole("button", { name: "Advance" })).toBeNull();
+    await user.click(within(hero).getByRole("button", { name: "Advance ready" }));
+    expect(onAdvance).toHaveBeenCalledTimes(1);
   });
 });

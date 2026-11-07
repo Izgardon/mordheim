@@ -1,16 +1,23 @@
 /**
  * The warband's resources: the campaign's default resource comes first, with no icon, then its
  * campaign points; their ⋮ offers only Sell (the campaign names them, and they are never deleted);
- * the rest keep Rename, Sell and Delete, and a Wyrdstone-named one keeps its icon.
+ * the rest keep Rename, Sell and Delete, and a Wyrdstone-named one keeps its icon. Add resource
+ * takes a name only.
  */
-import { screen, within } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { screen, waitFor, within } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 
 import type { WarbandResource } from "../../types/warband-types";
 import WarbandResources from "./WarbandResources";
+
+vi.mock("@/lib/api-client", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api-client")>()),
+  apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
+}));
 
 const resource = (
   id: number,
@@ -68,5 +75,31 @@ describe("WarbandResources", () => {
 
     const items = await screen.findAllByRole("menuitem");
     expect(items.map((item) => item.textContent)).toEqual(["Rename", "Sell", "Delete"]);
+  });
+});
+
+describe("Add resource", () => {
+  beforeEach(() => fakeApi.reset());
+
+  // William, 7 Nov 2026: "add resource should just be name not amount"
+  it("asks only for a name, and the new resource starts at 0", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /warbands/9/resources/", (body: { name: string }) => resource(7, body.name));
+    renderResources();
+
+    await user.click(screen.getByRole("button", { name: "Add resource" }));
+    const form = screen.getByRole("form", { name: "Add resource" });
+    expect(
+      within(form)
+        .getAllByRole("textbox")
+        .map((field) => field.getAttribute("aria-label"))
+    ).toEqual(["Resource name"]);
+    expect(within(form).queryByRole("spinbutton")).toBeNull();
+    await user.type(within(form).getByLabelText("Resource name"), " Amber ");
+    await user.click(within(form).getByRole("button", { name: "Add" }));
+
+    await waitFor(() => expect(screen.queryByRole("form", { name: "Add resource" })).toBeNull());
+    expect(fakeApi.calls()).toEqual(["POST /warbands/9/resources/"]);
+    expect(fakeApi.bodyOf("POST /warbands/9/resources/")).toEqual({ name: "Amber" });
   });
 });

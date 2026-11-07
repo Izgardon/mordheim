@@ -50,7 +50,7 @@ type RosterSectionsProps = {
   onBuyAgain: (entry: RosterUnit, item: Item) => void;
 };
 
-/** The roster tab: heroes as cards in a grid, henchmen and hired swords as rows (design E). */
+/** The roster tab: heroes, henchmen and hired swords as cards in one grid shape (design E). */
 export default function RosterSections(props: RosterSectionsProps) {
   const { warbandId, campaign, canEdit } = props;
   const actions = useUnitActions(warbandId);
@@ -82,7 +82,7 @@ export default function RosterSections(props: RosterSectionsProps) {
       />
     ) : null;
 
-  const card = (entry: RosterUnit, layout: "hero" | "row") => {
+  const card = (entry: RosterUnit) => {
     const key = unitKey(entry);
     const open = cards.openKey === key;
     const editing = open && cards.editKey === key;
@@ -92,7 +92,6 @@ export default function RosterSections(props: RosterSectionsProps) {
         entry={entry}
         campaign={campaign}
         warbandId={warbandId}
-        layout={layout}
         open={open}
         editing={editing}
         canEdit={canEdit}
@@ -116,7 +115,6 @@ export default function RosterSections(props: RosterSectionsProps) {
             onSellItem={(itemId, price) => actions.sellItem(entry, itemId, price)}
             onBuyAgain={(item) => props.onBuyAgain(entry, item)}
             onLoadout={() => props.onLoadout(entry)}
-            onAdvance={() => props.onAdvance(entry)}
             campaignId={campaign?.id ?? 0}
             warbandId={warbandId}
             onPick={(pick) => actions.pickLater(entry, pick)}
@@ -155,7 +153,7 @@ export default function RosterSections(props: RosterSectionsProps) {
         form={recruitForm("hero", heroes)}
         extra={makeTemplate}
       >
-        <div className={ROSTER_HEROES}>{heroes.map((entry) => card(entry, "hero"))}</div>
+        <div className={ROSTER_HEROES}>{heroes.map((entry) => card(entry))}</div>
       </RosterSection>
       <RosterSection
         title="Henchmen"
@@ -165,7 +163,9 @@ export default function RosterSections(props: RosterSectionsProps) {
         onAdd={() => cards.setRecruiting("henchmen_group")}
         form={recruitForm("henchmen_group", groups)}
       >
-        <div className="flex flex-col gap-2.5">{groups.map((entry) => card(entry, "row"))}</div>
+        {/* cards in the heroes' grid (William, 7 Nov 2026: "henchmen card blocks same as hero/hs
+            not full width on warband page") */}
+        <div className={ROSTER_HEROES}>{groups.map((entry) => card(entry))}</div>
       </RosterSection>
       <RosterSection
         title="Hired swords"
@@ -177,7 +177,7 @@ export default function RosterSections(props: RosterSectionsProps) {
       >
         {/* cards in the heroes' grid (William: "make hired sword cards on web the same as hero
             cards in terms of shape, rather than full width") */}
-        <div className={ROSTER_HEROES}>{hired.map((entry) => card(entry, "hero"))}</div>
+        <div className={ROSTER_HEROES}>{hired.map((entry) => card(entry))}</div>
       </RosterSection>
     </div>
   );

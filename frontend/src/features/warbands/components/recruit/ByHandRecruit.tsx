@@ -15,6 +15,8 @@ import type { WarbandResource } from "../../types/warband-types";
 import RaceField from "../roster/edit/RaceField";
 
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
+// the race's label line too (RaceField), so the fields line up
+const LABEL_TEXT = "flex min-h-5 items-center";
 const SUBMIT: Record<UnitKindKey, string> = {
   hero: "Recruit",
   henchmen_group: "Recruit",
@@ -73,7 +75,7 @@ export default function ByHandRecruit({
   const set = (change: Partial<RecruitDraft>) => setDraft((current) => ({ ...current, ...change }));
   const text = (label: string, key: "name" | "type") => (
     <label htmlFor={`${ids}-${key}`} className={LABEL}>
-      {label}
+      <span className={LABEL_TEXT}>{label}</span>
       <Input
         id={`${ids}-${key}`}
         inputSize="sm"
@@ -85,7 +87,7 @@ export default function ByHandRecruit({
   );
   const number = (label: string, key: "cost" | "count" | "xp", min = 0, max?: number) => (
     <label htmlFor={`${ids}-${key}`} className={LABEL}>
-      {label}
+      <span className={LABEL_TEXT}>{label}</span>
       <NumberInput
         id={`${ids}-${key}`}
         inputSize="sm"

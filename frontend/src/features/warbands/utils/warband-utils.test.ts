@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { buildAvailableSkillsPayload, parseAvailableSkills } from "./warband-utils";
+import {
+  buildAvailableSkillsPayload,
+  logFeatureLabel,
+  parseAvailableSkills,
+} from "./warband-utils";
 
 describe("available skills", () => {
   it("turns the form's checkboxes into full type names, dropping the Spc flag", () => {
@@ -36,5 +40,16 @@ describe("available skills", () => {
       Sp: false,
       Spc: false,
     });
+  });
+});
+
+describe("the log's filters", () => {
+  // William, 7 Nov 2026: "warband log capital letters on filters"
+  it("are capitalised, with spaces for underscores", () => {
+    expect(["personnel", "hero_special", "loadout"].map(logFeatureLabel)).toEqual([
+      "Personnel",
+      "Hero special",
+      "Loadout",
+    ]);
   });
 });

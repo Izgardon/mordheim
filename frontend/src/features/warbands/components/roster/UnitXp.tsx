@@ -1,6 +1,5 @@
 import { Minus, Plus } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { formatFee } from "@/features/hirelings/fees";
@@ -11,22 +10,21 @@ import XpTrack from "./XpTrack";
 
 /**
  * An open card's experience, across its full width: the XP track with − and + (a point
- * each, which the server counts half at half rate), Advance when one waits, and a hired
- * sword's upkeep.
+ * each, which the server counts half at half rate), and a hired sword's upkeep. A waiting
+ * advance is the card's Advance ready, on its top edge only (William, 7 Nov 2026: "remove advance
+ * btn next to xp bar").
  */
 export default function UnitXp({
   entry,
   campaign,
   canEdit,
   onXp,
-  onAdvance,
 }: {
   entry: RosterUnit;
   campaign: CampaignSummary | null;
   canEdit: boolean;
   /** XP added (negative: taken away). */
   onXp: (change: number) => void;
-  onAdvance?: () => void;
 }) {
   const xp = xpInfo(entry, campaign);
   return (
@@ -52,11 +50,6 @@ export default function UnitXp({
             <IconButton aria-label="One XP more" className="h-9 w-9" onClick={() => onXp(1)}>
               <Plus aria-hidden="true" />
             </IconButton>
-          ) : null}
-          {xp.advanceReady && canEdit && onAdvance ? (
-            <Button size="sm" onClick={onAdvance}>
-              Advance
-            </Button>
           ) : null}
         </div>
       ) : (

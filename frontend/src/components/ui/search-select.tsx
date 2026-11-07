@@ -44,22 +44,48 @@ function OptionText({ option, clamp = false }: { option: SearchOption; clamp?: b
   );
 }
 
+/** An option on one line, as tall as an input: its title, then its warning or subtitle, cut short. */
+function OptionLine({ option }: { option: SearchOption }) {
+  const after = option.warning ?? option.subtitle;
+  return (
+    <span
+      title={[option.title, after].filter(Boolean).join(" · ")}
+      className="flex min-w-0 items-baseline gap-2"
+    >
+      <span className="shrink-0 text-[13px] font-bold text-ink">{option.title}</span>
+      {after ? (
+        <span
+          className={cn(
+            "truncate text-[11px]",
+            option.warning ? "font-semibold text-danger" : "font-medium text-muted-foreground"
+          )}
+        >
+          {after}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
 /**
- * Picks one entry (a race, a skill group, a warband type): the value shows its title and subtitle,
- * pressing it opens the search in its place, and `clearLabel` adds a × that empties it. A pick
- * closes the list, also where the field stays empty for the next pick (the editor's types).
+ * Picks one entry (a race, a skill group, a warband type): the value shows its title and subtitle
+ * (`oneLine`: on one line, as tall as an input), pressing it opens the search in its place, and
+ * `clearLabel` adds a × that empties it. A pick closes the list, also where the field stays empty
+ * for the next pick (the editor's types).
  */
 export function SearchSelect({
   value,
   onChange,
   clearLabel,
   disabled,
+  oneLine = false,
   ...picker
 }: PickerProps & {
   value: SearchOption | null;
   onChange: (option: SearchOption | null) => void;
   clearLabel?: string;
   disabled?: boolean;
+  oneLine?: boolean;
 }) {
   const [searching, setSearching] = React.useState(false);
   if (!disabled && (searching || !value)) {
@@ -88,7 +114,13 @@ export function SearchSelect({
         onClick={() => setSearching(true)}
         className="flex min-w-0 flex-1 items-center justify-between gap-2 px-2.5 py-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:opacity-60"
       >
-        {value ? <OptionText option={value} /> : <span className="text-sm text-faint">None</span>}
+        {!value ? (
+          <span className="text-sm text-faint">None</span>
+        ) : oneLine ? (
+          <OptionLine option={value} />
+        ) : (
+          <OptionText option={value} />
+        )}
         <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
       </button>
       {clearLabel && value && !disabled ? (

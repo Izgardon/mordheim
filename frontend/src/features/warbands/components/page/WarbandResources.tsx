@@ -37,8 +37,9 @@ const defaultFirst = (resources: WarbandResource[]) => [
 
 /**
  * The warband's resources (design E): the default resource first, with no icon, then campaign
- * points, then the rest; − and + inline, Add resource (its name and amount open in the button's
- * place), and Rename, Delete, Sell (the default and campaign points only sell).
+ * points, then the rest; − and + inline, Add resource (its name, starting at 0, opens in the
+ * button's place: William, 7 Nov 2026, "add resource should just be name not amount"), and
+ * Rename, Delete, Sell (the default and campaign points only sell).
  */
 export default function WarbandResources({
   warbandId,
@@ -57,14 +58,12 @@ export default function WarbandResources({
   const [editing, setEditing] = useState<Editing>(null);
   const [text, setText] = useState("");
   const [price, setPrice] = useState("");
-  const [amount, setAmount] = useState("");
   const onError = (error: unknown) => toast.error(getErrorMessage(error));
   const done = { onSuccess: () => setEditing(null), onError };
 
   const submit = () => {
     if (!editing) return;
-    if (editing.kind === "add")
-      create.mutate({ name: text.trim(), amount: Math.max(0, Number(amount) || 0) }, done);
+    if (editing.kind === "add") create.mutate(text.trim(), done);
     else if (editing.kind === "rename")
       rename.mutate({ resourceId: editing.resource.id, name: text.trim() }, done);
     else
@@ -164,7 +163,6 @@ export default function WarbandResources({
           type="button"
           onClick={() => {
             setText("");
-            setAmount("");
             setEditing({ kind: "add" });
           }}
           className="ml-auto min-h-8 border border-dashed border-strong px-2.5 text-xs font-bold text-accent-text"
@@ -207,16 +205,6 @@ export default function WarbandResources({
               onChange={(event) => setText(event.target.value)}
             />
           )}
-          {editing.kind === "add" ? (
-            <NumberInput
-              compact
-              inputSize="sm"
-              min={0}
-              aria-label="Amount"
-              value={amount}
-              onChange={(event) => setAmount(event.target.value)}
-            />
-          ) : null}
           {editing.kind === "sell" ? (
             <NumberInput
               compact
