@@ -73,9 +73,10 @@ type WargearDetailProps = {
 };
 
 /**
- * An item's card in Wargear (the items rebuild): the flavour, the figures, each rule tagged
- * "shared rule" or "this item" with its D6 tables, who can buy each price row (the warband's own
- * picked out), where it comes from with a link to its page, and Get this item and Edit.
+ * An item's card in Wargear (the items rebuild): the flavour, the figures, each rule (a shared one
+ * tagged "shared rule", the item's own unnamed one under the item's name) with its D6 tables, who
+ * can buy each price row (the warband's own picked out), where it comes from with a link to its
+ * page, and Get this item and Edit.
  */
 export default function WargearDetail(props: WargearDetailProps) {
   const { item, offer, setting } = props;

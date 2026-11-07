@@ -74,6 +74,27 @@ describe("ItemInfo", () => {
     expect(info).not.toHaveTextContent("A long pole with an axe head.");
   });
 
+  it("titles a shared rule with its name and tag, the item's own by its name or, unnamed, the item's", () => {
+    // William, 7 Nov 2026: "on items with their own rule can we change the Rule title to the items
+    // name and drop the this item pill"
+    const blessed = makeItem({
+      ...halberd,
+      rules: [
+        ...(halberd.rules ?? []),
+        { id: 3, rule_id: null, shared: false, name: "", summary: "", text: "Thrown.", table: [] },
+      ],
+    });
+    render(<ItemInfo item={blessed} availability={row} onClose={vi.fn()} />);
+
+    const info = screen.getByRole("region", { name: "Halberd" });
+    expect(
+      within(info)
+        .getAllByRole("heading", { level: 3 })
+        .map((heading) => heading.textContent)
+    ).toEqual(["Halberd", "Two-handedshared rule", "Hooked", "Halberd"]);
+    expect(info).not.toHaveTextContent("this item");
+  });
+
   it("closes from its close button", () => {
     const onClose = vi.fn();
     render(<ItemInfo item={halberd} availability={null} onClose={onClose} />);

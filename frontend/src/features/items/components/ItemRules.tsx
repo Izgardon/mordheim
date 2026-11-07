@@ -37,7 +37,8 @@ export function itemFacts(item: Item, row: ItemAvailability | null) {
 
 /**
  * An item's rules as its Wargear card reads them: a beast's profile or a vehicle's statblock, each
- * rule tagged "shared rule" or "this item" with its summary and D6 tables, and a beast's specials.
+ * rule (a shared one tagged "shared rule", the item's own unnamed one under the item's name) with
+ * its summary and D6 tables, and a beast's specials.
  */
 export default function ItemRules({ item }: { item: Item }) {
   const beast = beastOf(item);
@@ -50,7 +51,7 @@ export default function ItemRules({ item }: { item: Item }) {
       {item.rules?.length || beast?.specials?.length ? (
         <div className="flex flex-col gap-2.5">
           {(item.rules ?? []).map((rule) => (
-            <ItemRuleBlock key={rule.id} rule={rule} />
+            <ItemRuleBlock key={rule.id} rule={rule} itemName={item.name} />
           ))}
           {(beast?.specials ?? []).map((special) => (
             <RuleBlock key={`special-${special.id}`} name={special.name}>

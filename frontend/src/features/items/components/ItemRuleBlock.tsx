@@ -44,28 +44,33 @@ export function RuleTableView({ table }: { table: RuleTable }) {
 }
 
 /**
- * One of an item's rules on its card: its name tagged "shared rule" or "this item", its summary,
- * and its text with its D6 tables where they stand.
+ * One of an item's rules on its card: a shared rule's name tagged "shared rule", the item's own
+ * under its own name or, unnamed, the item's (William, 7 Nov 2026: "on items with their own rule
+ * can we change the Rule title to the items name and drop the this item pill"), its summary, and
+ * its text with its D6 tables where they stand.
  */
-export default function ItemRuleBlock({ rule }: { rule: ItemRuleLink }) {
+export default function ItemRuleBlock({
+  rule,
+  itemName,
+}: {
+  rule: ItemRuleLink;
+  itemName: string;
+}) {
   const parts = ruleParts(rule);
   const summary = rule.text && rule.summary ? rule.summary : "";
   return (
     <RuleBlock
       name={
-        <span className="flex flex-wrap items-baseline gap-2">
-          {ruleName(rule)}
-          <span
-            className={cn(
-              "border px-1.5 font-mono text-[10px] font-normal uppercase tracking-wider",
-              rule.shared
-                ? "border-accent-line text-accent-text"
-                : "border-line text-muted-foreground"
-            )}
-          >
-            {rule.shared ? "shared rule" : "this item"}
+        rule.shared ? (
+          <span className="flex flex-wrap items-baseline gap-2">
+            {ruleName(rule)}
+            <span className="border border-accent-line px-1.5 font-mono text-[10px] font-normal uppercase tracking-wider text-accent-text">
+              shared rule
+            </span>
           </span>
-        </span>
+        ) : (
+          rule.name.trim() || itemName
+        )
       }
     >
       {summary ? <span className="block font-semibold text-ink">{summary}</span> : null}
