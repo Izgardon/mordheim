@@ -120,52 +120,59 @@ export default function CampaignRules() {
           </div>
         </form>
       ) : null}
-      <ReferenceList
-        isEmpty={!rules.isPending && shown.length === 0}
-        empty={all.length ? "No campaign rules match." : "No campaign rules yet."}
-      >
-        {rules.isPending ? <ReferenceRowBones /> : null}
-        {shown.map((rule) => {
-          const key = String(rule.id);
-          const place = all.findIndex((entry) => entry.id === rule.id);
-          return (
-            <ReferenceRow
-              key={key}
-              id={key}
-              open={params.isOpen(key)}
-              onToggle={() => params.toggle(key)}
-              name={rule.title}
-            >
-              <div className={isMobile ? "flex flex-col gap-3" : "flex flex-col gap-3 px-3 pb-4"}>
-                {rule.body ? (
-                  <p className="m-0 whitespace-pre-line text-[13px] text-text2">{rule.body}</p>
-                ) : null}
-                {canManage ? (
-                  <div className="flex flex-wrap gap-2">
-                    <EditCampaignRuleDialog rule={rule} writes={writes} onDeleted={params.close} />
-                    <Button
-                      variant="ghost"
-                      className="min-h-10"
-                      disabled={place <= 0 || writes.reorder.isPending}
-                      onClick={() => move(rule.id, -1)}
-                    >
-                      Move up
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      className="min-h-10"
-                      disabled={place >= all.length - 1 || writes.reorder.isPending}
-                      onClick={() => move(rule.id, 1)}
-                    >
-                      Move down
-                    </Button>
-                  </div>
-                ) : null}
-              </div>
-            </ReferenceRow>
-          );
-        })}
-      </ReferenceList>
+      {/* while the first rule is being added the empty list says nothing */}
+      {adding && !rules.isPending && !all.length ? null : (
+        <ReferenceList
+          isEmpty={!rules.isPending && shown.length === 0}
+          empty={all.length ? "No campaign rules match." : "No campaign rules yet."}
+        >
+          {rules.isPending ? <ReferenceRowBones /> : null}
+          {shown.map((rule) => {
+            const key = String(rule.id);
+            const place = all.findIndex((entry) => entry.id === rule.id);
+            return (
+              <ReferenceRow
+                key={key}
+                id={key}
+                open={params.isOpen(key)}
+                onToggle={() => params.toggle(key)}
+                name={rule.title}
+              >
+                <div className={isMobile ? "flex flex-col gap-3" : "flex flex-col gap-3 px-3 pb-4"}>
+                  {rule.body ? (
+                    <p className="m-0 whitespace-pre-line text-[13px] text-text2">{rule.body}</p>
+                  ) : null}
+                  {canManage ? (
+                    <div className="flex flex-wrap gap-2">
+                      <EditCampaignRuleDialog
+                        rule={rule}
+                        writes={writes}
+                        onDeleted={params.close}
+                      />
+                      <Button
+                        variant="ghost"
+                        className="min-h-10"
+                        disabled={place <= 0 || writes.reorder.isPending}
+                        onClick={() => move(rule.id, -1)}
+                      >
+                        Move up
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="min-h-10"
+                        disabled={place >= all.length - 1 || writes.reorder.isPending}
+                        onClick={() => move(rule.id, 1)}
+                      >
+                        Move down
+                      </Button>
+                    </div>
+                  ) : null}
+                </div>
+              </ReferenceRow>
+            );
+          })}
+        </ReferenceList>
+      )}
     </ReferencePage>
   );
 }

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { Switch } from "@/components/ui/switch";
 import { useCatalogueSearchParams } from "@/features/catalogue/hooks/useCatalogueSearchParams";
-import { REFERENCE_SECTIONS, SEARCH_LINK } from "@/layouts/shell/campaign-nav";
+import { REFERENCE_SECTIONS, RULES_LINKS, SEARCH_LINK } from "@/layouts/shell/campaign-nav";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import ArchivedEntries, { type ArchivedOptions } from "./ArchivedEntries";
@@ -60,11 +60,15 @@ export function SectionPicker({ current, actions }: { current: string; actions?:
   );
 }
 
+/** The eyebrow over a page's title: its section's, "Rules" for the Rules section's pages. */
+const eyebrowOf = (section: string) =>
+  RULES_LINKS.some((link) => link.path === section) ? "Rules" : "Reference";
+
 /**
- * The reference pages' one layout (design E, E-Web-Items and E-Mobile-Items): "Reference" and the
- * title with the page's buttons (on a phone the Section picker instead, the shell's top bar naming
- * the page), the filters, a summary line with Show archived (the archived entries, while shown), and
- * the list of rows that open in place.
+ * The reference pages' one layout (design E, E-Web-Items and E-Mobile-Items): "Reference" (or
+ * "Rules") and the title with the page's buttons (on a phone the Section picker instead, the
+ * shell's top bar naming the page), the filters, a summary line with Show archived (the archived
+ * entries, while shown), and the list of rows that open in place.
  */
 export default function ReferencePage(props: ReferencePageProps) {
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -79,7 +83,7 @@ export default function ReferencePage(props: ReferencePageProps) {
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div className="flex flex-col gap-1.5">
             <span className="text-xs font-semibold uppercase tracking-[0.08em] text-faint">
-              Reference
+              {eyebrowOf(props.section)}
             </span>
             <h1 className="m-0 font-display text-[40px] font-semibold leading-tight text-head">
               {props.title}

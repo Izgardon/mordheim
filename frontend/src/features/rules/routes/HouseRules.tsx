@@ -87,48 +87,51 @@ export default function HouseRules() {
           onCommonRulesApplied={page.onCommonRulesApplied}
         />
       ) : null}
-      <ReferenceList
-        isEmpty={!page.isLoading && rows.length === 0}
-        empty={page.rules.length ? "No house rules match." : "No house rules yet."}
-      >
-        {page.isLoading ? <ReferenceRowBones /> : null}
-        {rows.map((rule) => {
-          const key = String(rule.id);
-          return (
-            <ReferenceRow
-              key={key}
-              id={key}
-              open={params.isOpen(key)}
-              onToggle={() => params.toggle(key)}
-              name={rule.title}
-              sub={kindOf(rule)}
-            >
-              <div className={isMobile ? "flex flex-col gap-2" : "flex flex-col gap-2 px-3 pb-4"}>
-                <RulesPanel
-                  detail={{ name: rule.title, kind: kindOf(rule), text: rule.description }}
-                  onClose={params.close}
-                />
-                {canManage ? (
-                  <EditHouseRuleDialog
-                    campaignId={campaignId}
-                    rule={rule}
-                    onUpdated={page.onUpdated}
-                    onDeleted={(ruleId) => {
-                      page.onDeleted(ruleId);
-                      params.close();
-                    }}
-                    trigger={
-                      <Button variant="secondary" className="min-h-10 self-start">
-                        Edit house rule
-                      </Button>
-                    }
+      {/* while the first rule is being added the empty list says nothing */}
+      {canManage && page.isFormOpen && !page.isLoading && !page.rules.length ? null : (
+        <ReferenceList
+          isEmpty={!page.isLoading && rows.length === 0}
+          empty={page.rules.length ? "No house rules match." : "No house rules yet."}
+        >
+          {page.isLoading ? <ReferenceRowBones /> : null}
+          {rows.map((rule) => {
+            const key = String(rule.id);
+            return (
+              <ReferenceRow
+                key={key}
+                id={key}
+                open={params.isOpen(key)}
+                onToggle={() => params.toggle(key)}
+                name={rule.title}
+                sub={kindOf(rule)}
+              >
+                <div className={isMobile ? "flex flex-col gap-2" : "flex flex-col gap-2 px-3 pb-4"}>
+                  <RulesPanel
+                    detail={{ name: rule.title, kind: kindOf(rule), text: rule.description }}
+                    onClose={params.close}
                   />
-                ) : null}
-              </div>
-            </ReferenceRow>
-          );
-        })}
-      </ReferenceList>
+                  {canManage ? (
+                    <EditHouseRuleDialog
+                      campaignId={campaignId}
+                      rule={rule}
+                      onUpdated={page.onUpdated}
+                      onDeleted={(ruleId) => {
+                        page.onDeleted(ruleId);
+                        params.close();
+                      }}
+                      trigger={
+                        <Button variant="secondary" className="min-h-10 self-start">
+                          Edit house rule
+                        </Button>
+                      }
+                    />
+                  ) : null}
+                </div>
+              </ReferenceRow>
+            );
+          })}
+        </ReferenceList>
+      )}
     </ReferencePage>
   );
 }

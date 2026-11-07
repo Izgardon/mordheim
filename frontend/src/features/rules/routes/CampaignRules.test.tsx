@@ -134,4 +134,22 @@ describe("The Campaign rules page", () => {
       body: curfew.body,
     });
   });
+
+  it("is under the Rules eyebrow, and hides its empty line while the first rule is added", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("admin"));
+    fakeApi.on(`GET ${RULES}`, []);
+    const user = setupUser();
+    renderApp(PAGE);
+
+    const heading = await screen.findByRole("heading", { level: 1, name: "Campaign rules" });
+    expect(heading.previousElementSibling).toHaveTextContent(/^Rules$/);
+    expect(await screen.findByText("No campaign rules yet.")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Add campaign rule" }));
+
+    expect(screen.getByRole("form", { name: "Add a campaign rule" })).toBeInTheDocument();
+    expect(screen.queryByText("No campaign rules yet.")).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.getByText("No campaign rules yet.")).toBeInTheDocument();
+  });
 });
