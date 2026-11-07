@@ -147,7 +147,7 @@ export default function WargearDetail(props: WargearDetailProps) {
         </DetailSection>
       ) : null}
       {item.notes ? (
-        <DetailSection title="Notes">
+        <DetailSection title="Rule notes">
           <span className="whitespace-pre-line text-[13px] text-text2">{item.notes}</span>
         </DetailSection>
       ) : null}

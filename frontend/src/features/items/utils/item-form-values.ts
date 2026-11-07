@@ -25,16 +25,15 @@ import {
  */
 export const ITEM_TYPE_OPTIONS = ["Weapon", "Armour", "Miscellaneous"];
 
-/** Each type's subtypes (the Wargear filter's too): an Animal item's is its beast's kind. */
+/**
+ * The subtypes a type picks from (the Wargear filter's too): an Animal item's is its beast's kind.
+ * Any other type writes its own ("Poisons and Drugs" for a miscellaneous item).
+ */
 export const ITEM_SUBTYPE_OPTIONS: Record<string, string[]> = {
   Weapon: ["Melee", "Ranged", "Blackpowder"],
   Armour: ["Armour", "Shield", "Helmet", "Barding"],
   Animal: ["Mount", "Pet", "Creature"],
 };
-
-/** Weapons, armour and animals have a subtype; miscellaneous items don't. */
-export const hasSubtype = (type: string) =>
-  type === "Weapon" || type === "Armour" || type === "Animal";
 
 /** One D6 row as the form edits it. */
 export type TableRowDraft = { roll: string; result: string };
@@ -54,6 +53,10 @@ export type RuleDraft = PrebattleRollValues & {
   kept: RuleTable[];
 };
 
+/**
+ * What the item form edits. The variant (telling two book items of one name apart) and the search
+ * words have no box (William, 7 Nov 2026: "remove search words box"): they are sent back as read.
+ */
 export type ItemFormValues = {
   name: string;
   variant: string;
@@ -159,7 +162,7 @@ export function itemPayload(values: ItemFormValues): ItemWritePayload {
     name: values.name.trim(),
     variant: values.variant.trim(),
     type: values.type.trim(),
-    subtype: hasSubtype(values.type) ? values.subtype.trim() : "",
+    subtype: values.subtype.trim(),
     single_use: values.type === "Miscellaneous" ? values.singleUse : false,
     flavour: values.flavour.trim(),
     strength: values.strength.trim() || null,

@@ -8,7 +8,7 @@ import {
   TEXTAREA,
 } from "@/features/catalogue/components/form-layout";
 
-import { hasSubtype, type ItemTextField } from "../utils/item-form-values";
+import type { ItemTextField } from "../utils/item-form-values";
 import PriceRowsField from "./PriceRowsField";
 import RulesField from "./RulesField";
 
@@ -21,9 +21,10 @@ type ItemFormFieldsProps = {
 };
 
 /**
- * A house item's fields (the items rebuild): name, variant, type and figures; its flavour; its
- * rules, shared or its own, with D6 tables; its price rows with who may buy each; and where it
- * comes from (source, link, search words, notes).
+ * A house item's fields (the items rebuild): name, type and subtype (picked for weapons, armour
+ * and animals, written for the rest) and figures; its rules, shared or its own, with D6 tables;
+ * its price rows with who may buy each; where it comes from (source, link); and its rule notes and
+ * flavour side by side at the foot (William, 7 Nov 2026).
  */
 export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsProps) {
   const { values } = form;
@@ -75,7 +76,7 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
             <SelectContent>{options(form.typeOptions)}</SelectContent>
           </Select>
         </CatalogueField>
-        {hasSubtype(values.type) ? (
+        {form.subtypeOptions.length ? (
           <CatalogueField layout="dialog" label="Subtype" htmlFor={id("subtype")}>
             <Select
               value={values.subtype}
@@ -88,7 +89,8 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
             </Select>
           </CatalogueField>
         ) : (
-          text("variant", "Variant (optional)")
+          // William, 7 Nov 2026: "miscellaneous adjacent box should be called Subtype not variant"
+          text("subtype", "Subtype")
         )}
       </div>
       <div className="grid gap-4 sm:grid-cols-3">
@@ -105,7 +107,6 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
           Single use
         </CheckboxField>
       ) : null}
-      {longText("flavour", "Flavour")}
       <RulesField
         rules={values.rules}
         shared={form.shared}
@@ -125,8 +126,10 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
         {text("source", "Source")}
         {text("linkUrl", "Link", "https://…")}
       </div>
-      {text("tags", "Search words", "scimitar, blade")}
-      {longText("notes", "Notes")}
+      <div className="grid gap-4 sm:grid-cols-2">
+        {longText("notes", "Rule notes")}
+        {longText("flavour", "Flavour")}
+      </div>
     </>
   );
 }
