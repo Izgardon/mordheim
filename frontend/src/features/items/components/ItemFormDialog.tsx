@@ -10,7 +10,10 @@ import {
 import { useControllableOpen } from "@/features/catalogue/hooks/useControllableOpen";
 
 import { useItemForm } from "../hooks/useItemForm";
+import { useItemFormMode } from "../hooks/useItemFormMode";
+import { hidesAnError } from "../utils/item-form-mode";
 import ItemFormFields from "./ItemFormFields";
+import ItemFormModeToggle from "./ItemFormModeToggle";
 
 import type { Item } from "../types/item-types";
 
@@ -37,7 +40,10 @@ type ItemFormDialogEditProps = ItemFormDialogBaseProps & {
 
 type ItemFormDialogProps = ItemFormDialogCreateProps | ItemFormDialogEditProps;
 
-/** The warband pages' Add item dialog (and an edit mode, with Delete). */
+/**
+ * The warband pages' Add item dialog (and an edit mode, with Delete), in Simple or Advanced. A
+ * refusal under a field Simple hides shows Advanced, so it is never out of sight.
+ */
 export default function ItemFormDialog(props: ItemFormDialogProps) {
   const { mode, trigger } = props;
   const item = props.mode === "edit" ? props.item : null;
@@ -51,6 +57,8 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
     onDeleted: props.mode === "edit" ? props.onDeleted : undefined,
   });
   const { load } = form;
+  const view = useItemFormMode(item, dialog.open);
+  const shown = hidesAnError(form.fieldErrors) ? "advanced" : view.mode;
 
   useEffect(() => {
     if (item && dialog.open) {
@@ -64,6 +72,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       dialog={dialog}
       editing={item}
       title={mode === "create" ? "Add Wargear" : "Edit Wargear"}
+      headerAside={<ItemFormModeToggle mode={shown} onChange={view.choose} />}
       noun="item"
       trigger={trigger}
       defaultTrigger={mode === "create" ? <Button>Add item</Button> : editEntryTrigger("Edit item")}
@@ -71,7 +80,7 @@ export default function ItemFormDialog(props: ItemFormDialogProps) {
       canDelete={props.mode === "edit" && props.canDelete}
       onReset={() => load(item)}
     >
-      <ItemFormFields form={form} idSuffix={`-${mode}`} />
+      <ItemFormFields form={form} idSuffix={`-${mode}`} advanced={shown === "advanced"} />
     </CatalogueFormDialog>
   );
 }

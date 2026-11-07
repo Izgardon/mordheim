@@ -18,15 +18,21 @@ type ItemFormFieldsProps = {
   form: ItemFormState;
   /** The dialog's ids say which mode it is in ("-create"). */
   idSuffix?: string;
+  /** Advanced: every price row with who may buy it, the source and link, rule notes, flavour. */
+  advanced?: boolean;
 };
 
 /**
  * A house item's fields (the items rebuild): name, type and subtype (picked for weapons, armour
  * and animals, written for the rest) and figures; its rules, shared or its own, with D6 tables;
- * its price rows with who may buy each; where it comes from (source, link); and its rule notes and
- * flavour side by side at the foot (William, 7 Nov 2026).
+ * one price (Simple), or its price rows with who may buy each, where it comes from (source, link)
+ * and its rule notes and flavour side by side at the foot (Advanced; William, 7 Nov 2026).
  */
-export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsProps) {
+export default function ItemFormFields({
+  form,
+  idSuffix = "",
+  advanced = true,
+}: ItemFormFieldsProps) {
   const { values } = form;
   const id = (name: string) => `item-${name}${idSuffix}`;
   const options = (list: string[]) =>
@@ -121,15 +127,20 @@ export default function ItemFormFields({ form, idSuffix = "" }: ItemFormFieldsPr
         errorOf={form.errorOf}
         path="availabilities"
         idPrefix={`item-price${idSuffix}`}
+        simple={!advanced}
       />
-      <div className="grid gap-4 sm:grid-cols-2">
-        {text("source", "Source")}
-        {text("linkUrl", "Link", "https://…")}
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {longText("notes", "Rule notes")}
-        {longText("flavour", "Flavour")}
-      </div>
+      {advanced ? (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {text("source", "Source")}
+            {text("linkUrl", "Link", "https://…")}
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {longText("notes", "Rule notes")}
+            {longText("flavour", "Flavour")}
+          </div>
+        </>
+      ) : null}
     </>
   );
 }

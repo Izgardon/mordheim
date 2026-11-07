@@ -26,6 +26,8 @@ type CatalogueFormDialogProps = {
   /** The entry being edited (Delete with `canDelete`, or Revert); none when adding. */
   editing?: CatalogueEntryLike | null;
   title: string;
+  /** Beside the title (the item form's Simple / Advanced). */
+  headerAside?: ReactNode;
   /** "item", "skill": the confirm reads "Delete item" (a kind that can be edited). */
   noun?: string;
   /** The caller's trigger, none (`null`), or the default one (`undefined`). */
@@ -66,6 +68,7 @@ export function CatalogueFormDialog({
   dialog,
   editing,
   title,
+  headerAside,
   noun = "entry",
   trigger,
   defaultTrigger,
@@ -98,8 +101,13 @@ export function CatalogueFormDialog({
     <Dialog open={dialog.open} onOpenChange={handleOpenChange}>
       {triggerNode !== null ? <DialogTrigger asChild>{triggerNode}</DialogTrigger> : null}
       <DialogContent className="max-w-[750px]">
-        <DialogHeader>
+        <DialogHeader
+          className={
+            headerAside ? "flex-row flex-wrap items-center justify-between gap-3" : undefined
+          }
+        >
           <DialogTitle>{title}</DialogTitle>
+          {headerAside}
         </DialogHeader>
         <div className="space-y-4">
           {children}

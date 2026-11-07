@@ -26,6 +26,8 @@ type PriceRowsFieldProps = {
   path: string;
   idPrefix: string;
   label?: string;
+  /** The item form's Simple: the first row's cost, dice and rarity only (the rest kept as they are). */
+  simple?: boolean;
 };
 
 const FIELD = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
@@ -40,7 +42,8 @@ const SERVER_FIELD: Partial<Record<PriceRowField, string>> = {
  * An item's price rows (the items rebuild): each one's cost, dice as one unit ("[2] D6", its
  * multiplier behind a ×), rarity (blank: Common), a note shown when buying ("Heroes only"), and
  * who may buy it. A row's label ("Brace") and cost note show only where it already holds one
- * (William: "leave current data as is"). The item form and a beast's shop prices share it.
+ * (William: "leave current data as is"). The item form and a beast's shop prices share it; the
+ * item form's Simple shows only one price's cost, dice and rarity.
  */
 export default function PriceRowsField(props: PriceRowsFieldProps) {
   const { rows, onChange, path, idPrefix } = props;
@@ -86,22 +89,33 @@ export default function PriceRowsField(props: PriceRowsFieldProps) {
       </div>
     );
   };
+  const figures = (index: number) => (
+    <div className="grid grid-cols-2 items-start gap-3 sm:grid-cols-[1fr_auto_1fr]">
+      {text(index, "cost", "Cost (gc)")}
+      {dice(index)}
+      {text(index, "rarity", "Rarity", "Common")}
+    </div>
+  );
+  const { simple = false } = props;
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <Label>{props.label ?? "Prices"}</Label>
-        <Button
-          type="button"
-          variant="secondary"
-          size="sm"
-          onClick={() => onChange([...rows, blankPriceRow()])}
-        >
-          Add a price
-        </Button>
+        <Label>{props.label ?? (simple ? "Price" : "Prices")}</Label>
+        {simple && rows.length ? null : (
+          <Button
+            type="button"
+            variant="secondary"
+            size="sm"
+            onClick={() => onChange([...rows, blankPriceRow()])}
+          >
+            Add a price
+          </Button>
+        )}
       </div>
       <FieldError message={props.errorOf(path)} />
-      {rows.map((row, index) => {
+      {simple && rows.length ? figures(0) : null}
+      {(simple ? [] : rows).map((row, index) => {
         const [preview] = priceRowsPayload([row]);
         return (
           <div key={row.key} className="space-y-3 border border-border bg-surface p-3">
@@ -118,11 +132,7 @@ export default function PriceRowsField(props: PriceRowsFieldProps) {
                 <X className="h-4 w-4" aria-hidden="true" />
               </button>
             </div>
-            <div className="grid grid-cols-2 items-start gap-3 sm:grid-cols-[1fr_auto_1fr]">
-              {text(index, "cost", "Cost (gc)")}
-              {dice(index)}
-              {text(index, "rarity", "Rarity", "Common")}
-            </div>
+            {figures(index)}
             <div className="grid gap-3 sm:grid-cols-3">
               {row.holds.label ? text(index, "label", "Label") : null}
               <div className={NOTE_SPAN[Number(row.holds.label) + Number(row.holds.costNote)]}>
