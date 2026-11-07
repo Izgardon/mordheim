@@ -1,4 +1,6 @@
 import { FieldError } from "@/components/ui/field-error";
+import { Label } from "@/components/ui/label";
+import { NumberInput } from "@/components/ui/number-input";
 import { CatalogueNameField } from "@/features/catalogue/components/form-layout";
 
 import BeastKindField from "./BeastKindField";
@@ -11,7 +13,8 @@ import type { BestiaryEntryFormState } from "../../hooks/useBestiaryEntryForm";
 
 /**
  * A beast's fields (the plan's mock): its kind and name (with a taken name's matches), the profile
- * and what its kind adds, caster and size, fluff, what it knows and carries, and the shop.
+ * and what its kind adds, its rating, caster and size, fluff, what it knows and carries, and the
+ * shop.
  */
 export default function BestiaryEntryFormFields({ form }: { form: BestiaryEntryFormState }) {
   const { values, change } = form;
@@ -30,6 +33,18 @@ export default function BestiaryEntryFormFields({ form }: { form: BestiaryEntryF
         required
       />
       <BeastProfileFields form={form} />
+      <div className="flex max-w-xs flex-col gap-1.5">
+        <Label htmlFor="bestiary-rating">Rating</Label>
+        <NumberInput
+          id="bestiary-rating"
+          min={0}
+          step={1}
+          value={values.rating}
+          onChange={(event) => change({ rating: event.target.value })}
+          aria-invalid={Boolean(form.fieldErrors.rating)}
+        />
+        <FieldError message={form.fieldErrors.rating} />
+      </div>
       <div className="flex flex-wrap items-end gap-3">
         <CasterField values={values} onChange={change} className="flex flex-1 flex-col gap-1.5" />
         <LargeTargetField values={values} onChange={change} />

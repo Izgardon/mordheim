@@ -13,7 +13,9 @@ class BestiaryEntry(WrittenStatBlock, CatalogueEntry):
 
     `has_profile` off: the beast has no stat line (most pets); its stats are kept at 0 and its save empty, and the
     pages hide them rather than show zeros. `gains_xp` is for creatures, `rating_bonus` for mounts (what the rider's
-    rating gains: a horse 3, a warhorse 5).
+    rating gains: a horse 3, a warhorse 5). `rating` is the beast's own rating, a whole number or none (William,
+    7 Nov 2026: "bestiary creatures need rating ... Just add field for now, will become clear when seeding"): the
+    seeds leave it empty and nothing counts it yet.
     """
 
     campaign = models.ForeignKey(
@@ -29,6 +31,7 @@ class BestiaryEntry(WrittenStatBlock, CatalogueEntry):
     has_profile = models.BooleanField(default=True)
     gains_xp = models.BooleanField(default=False)
     rating_bonus = models.PositiveSmallIntegerField(null=True, blank=True)
+    rating = models.PositiveSmallIntegerField(null=True, blank=True)
     available_in_shop = models.BooleanField(default=False)
     armour_save = models.SmallIntegerField(null=True, blank=True)
     large = models.BooleanField(default=False)

@@ -29,6 +29,7 @@ const SHOWN_FIELDS = [
   "kind",
   "armour_save",
   "rating_bonus",
+  "rating",
   "item_entries",
   "item.availabilities",
   "item.availabilities.*.cost",

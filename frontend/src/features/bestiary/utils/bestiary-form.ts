@@ -49,14 +49,15 @@ export function bestiaryCorePayload(values: BestiaryCoreValues) {
 
 /**
  * What the bestiary form edits: the beast's kind, profile and shop flag, a mount's rating bonus
- * (text, blank for none) and whether a creature gains experience. The item's prices are the shop
- * section's own rows.
+ * and the beast's own rating (text, blank for none) and whether a creature gains experience. The
+ * item's prices are the shop section's own rows.
  */
 export type BestiaryEntryValues = BestiaryCoreValues & {
   kind: BeastKind;
   has_profile: boolean;
   gains_xp: boolean;
   rating_bonus: string;
+  rating: string;
   available_in_shop: boolean;
 };
 
@@ -75,6 +76,7 @@ export function bestiaryValuesOf(
       has_profile: true,
       gains_xp: false,
       rating_bonus: "",
+      rating: "",
       available_in_shop: false,
     };
   }
@@ -83,6 +85,7 @@ export function bestiaryValuesOf(
     has_profile: entry.has_profile,
     gains_xp: entry.gains_xp,
     rating_bonus: text(entry.rating_bonus),
+    rating: text(entry.rating),
     available_in_shop: entry.available_in_shop,
     name: entry.name,
     description: entry.description ?? "",
@@ -106,12 +109,14 @@ export function bestiaryPayload(
   prices: BestiaryAvailabilityWrite[]
 ): BestiaryEntryWrite {
   const bonus = values.rating_bonus.trim();
+  const rating = values.rating.trim();
   return {
     kind: values.kind,
     ...bestiaryCorePayload(values),
     has_profile: values.has_profile,
     gains_xp: values.kind === "creature" && values.gains_xp,
     rating_bonus: values.kind === "mount" && bonus ? Number(bonus) : null,
+    rating: rating ? Number(rating) : null,
     available_in_shop: values.available_in_shop,
     item: { availabilities: prices },
     ...links,

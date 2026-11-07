@@ -16,7 +16,7 @@ from apps.warbands.utils.stats import WrittenStatsSerializer
 
 from .models import BestiaryEntry, BestiaryEntryItem
 
-BEAST_FIELDS = ("has_profile", "gains_xp", "rating_bonus", "available_in_shop")
+BEAST_FIELDS = ("has_profile", "gains_xp", "rating_bonus", "rating", "available_in_shop")
 
 
 class AnimalItemSerializer(serializers.ModelSerializer):

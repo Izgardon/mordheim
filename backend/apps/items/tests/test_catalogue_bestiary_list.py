@@ -37,6 +37,7 @@ DEFAULT_KEYS = [
     "has_profile",
     "gains_xp",
     "rating_bonus",
+    "rating",  # the beast's own rating (William, 7 Nov 2026)
     "available_in_shop",
     "item",  # the beast's Animal item: its id, grade and prices (the bestiary rewrite step 3)
     *BADGES,  # CAT-NEW-03, PR C

@@ -35,12 +35,13 @@ import { shopLine } from "../utils/beast-shop";
 
 const PLURAL: Record<BeastKind, string> = { mount: "Mounts", pet: "Pets", creature: "Creatures" };
 
-/** "Creature · Large · Wizard": a beast's kind and what marks it out. */
+/** "Creature · Large · Wizard · Rating 40": a beast's kind, what marks it out and its rating. */
 const kindLine = (entry: BestiaryEntrySummary) =>
   [
     beastKindLabel(entry.kind),
     entry.large ? "Large" : "",
     entry.caster && entry.caster !== "No" ? entry.caster : "",
+    entry.rating !== null && entry.rating !== undefined ? `Rating ${entry.rating}` : "",
   ]
     .filter(Boolean)
     .join(" · ");
