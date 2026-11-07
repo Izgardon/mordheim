@@ -18,7 +18,8 @@ const BLANK: VariantDraft = {
 };
 
 /**
- * The variants and their own terms (starting gold, warband size, the bonus to find rare items):
+ * The variants and their own terms (starting gold, warband size, the rare search bonus: William,
+ * 7 Nov 2026, "yeah rename it"):
  * a saved variant's key stays as it is, since rules, list lines and warbands name it; one taken
  * out says what goes with it.
  */
@@ -77,7 +78,7 @@ export default function VariantsField({
             onChange={(size) => set(index, { size })}
           />
           <NumberField
-            label="Rare"
+            label="Rare search bonus"
             value={variant.bonus}
             placeholder="0"
             onChange={(bonus) => set(index, { bonus })}

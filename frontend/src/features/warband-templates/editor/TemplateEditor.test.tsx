@@ -182,6 +182,13 @@ describe("The template editor", () => {
     }
   });
 
+  it("names each variant's bonus the Rare search bonus (William, 7 Nov 2026)", async () => {
+    renderWithQueryClient(<Harness />);
+    const basics = await screen.findByRole("region", { name: "Basics" });
+    expect(within(basics).getAllByRole("textbox", { name: "Rare search bonus" })).toHaveLength(2);
+    expect(within(basics).queryByRole("textbox", { name: "Rare" })).toBeNull();
+  });
+
   it('asks "Discard changes?" before it closes with a section changed and not saved', async () => {
     const user = setupUser();
     renderWithQueryClient(<Harness />);
