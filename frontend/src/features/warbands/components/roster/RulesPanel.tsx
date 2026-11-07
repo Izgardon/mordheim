@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { ROW_SELECT, SectionedSelect } from "@/components/ui/sectioned-select";
 import type { Item } from "@/features/items/types/item-types";
+import PsychologyRuleLink from "@/features/rules/components/PsychologyRuleLink";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { placeOf, unitSections } from "./unit-sections";
@@ -19,6 +20,8 @@ export type BoxDetail = {
   /** Rule names (an item's rules). */
   rules?: string[];
   item?: Item;
+  /** A boon or bane: a psychology one links its part of the Rules page ("Fear in the rules"). */
+  special?: boolean;
 };
 
 type RulesPanelProps = {
@@ -62,6 +65,7 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
       {detail.text ? (
         <p className="whitespace-pre-line text-[13px] text-text2">{detail.text}</p>
       ) : null}
+      {detail.special ? <PsychologyRuleLink specialName={detail.name} /> : null}
       {itemActions && detail.item ? (
         <div className="flex flex-wrap items-center gap-2 border-t border-line pt-2">
           <SectionedSelect

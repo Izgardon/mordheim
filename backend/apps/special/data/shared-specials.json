@@ -4,15 +4,19 @@
     {
       "name": "Fear",
       "type": "Psychology",
-      "psychology": "Fear",
-      "first_line": "This model causes fear.",
+      "text": "The model causes fear.",
       "aliases": ["Cause Fear", "Causes Fear", "Fearsome"]
     },
-    {"name": "Stupidity", "type": "Psychology", "psychology": "Stupidity", "aliases": ["Stupid", "Moronic"]},
+    {
+      "name": "Stupidity",
+      "type": "Psychology",
+      "text": "The model is subject to stupidity.",
+      "aliases": ["Stupid", "Moronic"]
+    },
     {
       "name": "Immune to Psychology",
       "type": "Psychology",
-      "text": "Not affected by psychology (such as fear) and never leaves combat.",
+      "text": "The model is immune to psychology and never leaves combat.",
       "aliases": []
     },
     {"name": "Immune to Poison", "type": "Trait", "text": "Not affected by any poison.", "aliases": []},
@@ -55,7 +59,7 @@
     {
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
-      "text": "The model hates Orcs and Goblins (see Hatred in the psychology rules).",
+      "text": "The model hates Orcs and Goblins.",
       "aliases": []
     },
     {"name": "Daemon Soul", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 20, "aliases": []},

@@ -31,13 +31,22 @@ class SharedSeedTests(TestCase):
         families = ("Mutation", "Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar", "Grace of Shornaal")
         rows = {row.name: row for row in Special.objects.filter(type__in=("Psychology", "Trait", *families))}
         fear, poison, immune = rows["Fear"], rows["Immune to Poison"], rows["Immune to Psychology"]
-        self.assertTrue(fear.description.startswith("This model causes fear.\n\nFear is a natural reaction"))
-        charged = "\n\na) If the model is charged by a warrior or a creature which causes fear.\n\n"  # no markdown
-        self.assertIn(charged, fear.description)
+        # a psychology special says only what the model is (William, 7 Nov 2026: "fear skill doesn't need to describe
+        # how fear works"); the pages link the Rules page's part on it
+        psychology = {row.name: row.description for row in rows.values() if row.type == "Psychology"}
+        self.assertEqual(
+            psychology,
+            {
+                "Fear": "The model causes fear.",
+                "Stupidity": "The model is subject to stupidity.",
+                "Immune to Psychology": "The model is immune to psychology and never leaves combat.",
+                "Hate Orcs and Goblins": "The model hates Orcs and Goblins.",
+            },
+        )
         self.assertEqual((fear.type, fear.owner_kind, fear.kind, fear.category), ("Psychology", GENERAL, BOON, AURA))
         self.assertEqual((rows["Stupidity"].kind, poison.type, poison.kind), (BANE, "Trait", BOON))
         self.assertEqual((poison.category, poison.description), (BODY, "Not affected by any poison."))
-        self.assertEqual(immune.description, "Not affected by psychology (such as fear) and never leaves combat.")
+        self.assertEqual(immune.type, "Psychology")
         claw, flies, rot = rows["Great Claw"], rows["Cloud of Flies"], rows["Nurgle's Rot"]
         self.assertEqual((claw.owner_kind, claw.kind, claw.category), (GENERAL, BOON, MUTATION))
         self.assertTrue(flies.description.startswith("The model is surrounded by a cloud of flies"))

@@ -847,8 +847,8 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the rulebook's Fear (snapshot), after a first line |  |  | 62 | 5 | 5 | 3 |
-| Stupidity | Psychology | the rulebook's Stupidity (snapshot) |  |  | 8 | 0 | 0 | 1 |
+| Fear | Psychology | the list's text |  |  | 62 | 5 | 5 | 3 |
+| Stupidity | Psychology | the list's text |  |  | 8 | 0 | 0 | 1 |
 | Immune to Psychology | Psychology | the list's text |  |  | 33 | 1 | 2 | 0 |
 | Immune to Poison | Trait | the list's text |  |  | 28 | 3 | 3 | 2 |
 | No Pain | Trait | the list's text |  |  | 26 | 1 | 1 | 0 |

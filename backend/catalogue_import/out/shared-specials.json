@@ -3,7 +3,7 @@
     {
       "name": "Fear",
       "type": "Psychology",
-      "description": "This model causes fear.\n\nFear is a natural reaction to huge or unnerving creatures. A model must take a fear test (ie, test against his Leadership) in the following situations. Note that creatures that cause fear can ignore these tests.\n\na) If the model is charged by a warrior or a creature which causes fear.\n\nIf a warrior is charged by an enemy that he fears then he must take a test to overcome that fear. Test when the charge is declared and is determined to be within range. If the test is passed the model may fight as normal. If it is failed, the model must roll 6s to score hits in that round of combat.\n\nb) If the model wishes to charge a fear-causing enemy.\n\nIf a warrior wishes to charge an enemy that it fears then it must take a test to overcome this. If it fails the model may not charge and must remain stationary for the turn. Treat this as a failed charge.",
+      "description": "The model causes fear.",
       "aliases": [
         "Cause Fear",
         "Causes Fear",
@@ -15,7 +15,7 @@
     {
       "name": "Stupidity",
       "type": "Psychology",
-      "description": "Many large and powerful creatures, as well as some of the more unhinged individuals in Mordheim, are unfortunately rather stupid.\n\nModels that are stupid test at the start of their turn to see if they overcome their stupidity. Make a test for each model affected by stupidity. If you pass the test by rolling their Leadership value or less on 2D6 then all is well – the creatures behave reasonably intelligently and the player may move and fight with them as normal.\n\nIf the test is failed all is not well. Until the start of his next turn (when it takes a new Stupidity test) the model will not cast spells or fight in hand-to-hand combat (though his opponent will still have to roll to hit him as normal).\n\nIf a model who fails a Stupidity test is not in hand-to-hand combat, roll a D6.\n\nD6 | Result\n1-3 | The warrior moves directly forward at half speed in a shambling manner. He will not charge an enemy (stop his movement 1\" away from any enemy he would have come into contact with). He can fall down from the edge of a sheer drop (see the Falling rules) or hit an obstacle, in which case he stops. The model will not shoot this turn.\n4-6 | The warrior stands inactive and drools a bit during this turn. He may do nothing else, as drooling is so demanding.\n\nRegardless of whether the test is passed or failed, the result applies until the start of the model's following turn (when it takes a new Stupidity test).",
+      "description": "The model is subject to stupidity.",
       "aliases": [
         "Stupid",
         "Moronic"
@@ -26,7 +26,7 @@
     {
       "name": "Immune to Psychology",
       "type": "Psychology",
-      "description": "Not affected by psychology (such as fear) and never leaves combat.",
+      "description": "The model is immune to psychology and never leaves combat.",
       "aliases": [],
       "cost": null,
       "setting": null
@@ -92,7 +92,7 @@
     {
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
-      "description": "The model hates Orcs and Goblins (see Hatred in the psychology rules).",
+      "description": "The model hates Orcs and Goblins.",
       "aliases": [],
       "cost": null,
       "setting": null

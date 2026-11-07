@@ -186,6 +186,19 @@ describe("The Boons & Banes page", () => {
     expect(names()).toEqual(["Old Battle WoundInjury", "Spiked TailMutation"]);
   });
 
+  it("links a psychology special to its part of the Rules page, and no other", async () => {
+    const user = setupUser();
+    renderApp(PAGE);
+
+    await user.click(await row("Fear"));
+    expect(screen.getByRole("link", { name: "Fear in the rules" })).toHaveAttribute(
+      "href",
+      `/campaigns/${CAMPAIGN_ID}/rules?open=leadership-psychology-fear`
+    );
+    await user.click(await row("Old Battle Wound"));
+    expect(screen.queryByRole("link", { name: /in the rules$/ })).toBeNull();
+  });
+
   it("lands a link's ?open= on its row, open and scrolled to", async () => {
     renderApp(`${PAGE}?open=${tail.id}`);
 

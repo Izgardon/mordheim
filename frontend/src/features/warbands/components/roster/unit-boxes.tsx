@@ -75,6 +75,7 @@ export function entryBoxes(unit: RosterUnit, list: PendingList, entries: Entry[]
         name: entry.name,
         kind: line,
         text: entry.description,
+        special: list === "specials",
         boxKind: BOX_KIND[list],
         icon: entryIcon(list, entry),
       };

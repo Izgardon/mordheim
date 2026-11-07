@@ -1,9 +1,10 @@
 """Shared specials (William, 5 Nov 2026): one general special for a rule many owners hold under names of their own, from
 William's list `apps/special/data/shared-specials.json`, into `out/shared-specials.json` for seed_spells_and_special:
 
-- Fear, Stupidity and Immune to Psychology (typed Psychology) and Immune to Poison (Trait): the snapshot's psychology
-  entry of its `psychology` name, cleaned as the templates' rules are and after its `first_line`, else the list's
-  `text`;
+- Fear, Stupidity, Immune to Psychology and Hate Orcs and Goblins (typed Psychology) and Immune to Poison (Trait): the
+  list's `text`, a psychology special's saying only what the model is (William, 7 Nov 2026: "fear skill doesn't need
+  to describe how fear works"; the pages link the Rules page's part on it), or else the snapshot's psychology entry of
+  its `psychology` name, cleaned as the templates' rules are and after its `first_line`;
 - one for each of the Cult of the Possessed's mutations and the Blessings of Nurgle: the upgrade of its name on the
   template that sells it (`upgrade_of`), its `subject` made general ("The Tainted One" -> "The model"), at that
   upgrade's price;

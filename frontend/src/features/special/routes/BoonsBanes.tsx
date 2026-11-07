@@ -14,6 +14,7 @@ import {
 import ReferencePage from "@/features/reference/ReferencePage";
 import { ReferenceRowBones } from "@/features/reference/ReferenceSkeleton";
 import { useReferenceParams } from "@/features/reference/useReferenceParams";
+import PsychologyRuleLink from "@/features/rules/components/PsychologyRuleLink";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { useMediaQuery } from "@/lib/use-media-query";
 
@@ -28,8 +29,9 @@ const COLUMNS = [{ label: "Type", className: "w-[200px] shrink-0" }];
  * warbands' in play in the campaign, as the Boons & Banes pickers offer them (a hired sword's and a
  * dramatis persona's own show with them), each with its category's icon in its kind's colour and
  * its type, searched by name, type or rules and filtered by category and setting. A row opens to
- * its price where a list sells it, its setting and its rules; `?open=` lands on one (Search
- * everything's links). Read only: specials have no catalogue Edit.
+ * its price where a list sells it, its setting and its rules (a psychology special's with its
+ * part of the Rules page); `?open=` lands on one (Search everything's links). Read only: specials
+ * have no catalogue Edit.
  */
 export default function BoonsBanes() {
   const { id } = useParams();
@@ -131,7 +133,9 @@ export default function BoonsBanes() {
                   <p className="m-0 max-w-[72ch] whitespace-pre-line text-sm leading-relaxed text-text2">
                     {special.description}
                   </p>
-                ) : null}              </ReferenceDetail>
+                ) : null}
+                <PsychologyRuleLink specialName={special.name} />
+              </ReferenceDetail>
             </ReferenceRow>
           );
         })}
