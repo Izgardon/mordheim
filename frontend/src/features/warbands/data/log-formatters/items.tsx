@@ -9,6 +9,8 @@ type ItemCopies = { item?: string; quantity?: number };
 
 type ItemSalePayload = ItemCopies & { price?: number; source_type?: string; source_name?: string };
 
+type ResourceSalePayload = { resource?: string; quantity?: number; price?: number };
+
 type ItemMovePayload = ItemCopies & {
   source_type?: string;
   source_name?: string | null;
@@ -66,6 +68,12 @@ const sold = (log: WarbandLog) => {
   );
 };
 
+/** A resource sale, plainly: "Sold 3 Wyrdstone for 65 gc". */
+const resourceSold = (log: WarbandLog) => {
+  const { resource, quantity, price } = payloadOf<ResourceSalePayload>(log);
+  return `Sold ${Number(quantity ?? 1)} ${resource || "resource"} for ${Number(price ?? 0)} gc`;
+};
+
 const moved = (log: WarbandLog) => {
   const payload = payloadOf<ItemMovePayload>(log);
   const from = placeOf({ type: payload.source_type, name: payload.source_name });
@@ -81,9 +89,10 @@ const tradeCompleted = (log: WarbandLog) => {
   return `Traded with ${partner}: sent ${sideOf(payload.sent)}; received ${sideOf(payload.received)}`;
 };
 
-/** Entries the server writes for item sales, moves and discards, and completed trades. */
+/** Entries the server writes for item and resource sales, moves and discards, and trades. */
 export const ITEM_FORMATTERS: Record<string, LogFormatter> = {
   "items:sold": sold,
+  "resources:sold": resourceSold,
   "items:moved": moved,
   "items:discarded": discarded,
   "trade:completed": tradeCompleted,

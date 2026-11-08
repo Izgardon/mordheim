@@ -150,6 +150,7 @@ export default function Warband() {
           warbandId={warbandId}
           resources={warband.resources ?? []}
           canEdit={canEdit}
+          pricing={{ table: campaign?.wyrdstone_prices, band: warband.size_band ?? 0 }}
         />
       </div>
       <WarbandRules

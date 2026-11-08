@@ -24,6 +24,7 @@ SETTINGS_FIELDS = (
     "henchmen_level_thresholds",
     "hired_sword_level_thresholds",
     "default_resource_name",
+    "wyrdstone_prices",
     "enable_campaign_points",
 )
 

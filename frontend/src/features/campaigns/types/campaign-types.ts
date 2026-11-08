@@ -21,6 +21,12 @@ export type CampaignSummary = {
   enable_locations?: boolean;
   /** The name of every warband's default resource ("Wyrdstone" unless renamed). */
   default_resource_name?: string;
+  /**
+   * What selling the default resource fetches in all: a row for 1 to 7 shards and then 8 or
+   * more, each with a price for each warband size band (1-3 warriors up to 16+). The book's
+   * until Settings changes it.
+   */
+  wyrdstone_prices?: number[][];
   /** Every warband holds Campaign points while on (hidden, their amounts kept, while off). */
   enable_campaign_points?: boolean;
   /** The settings in play (grading phase 1): the ones ticked, the always-on Mordheim among them. */
@@ -79,6 +85,8 @@ export type CampaignUpdatePayload = {
   setting_ids?: number[];
   /** Renames every warband's default resource. */
   default_resource_name?: string;
+  /** The whole table: eight rows of six prices. */
+  wyrdstone_prices?: number[][];
   enable_campaign_points?: boolean;
 };
 

@@ -130,6 +130,7 @@ describe("log formatters, by feature", () => {
         "loadout:stash_item",
         "loadout:hireling_item",
         "items:sold",
+        "resources:sold",
         "items:moved",
         "items:discarded",
         "trade:completed",
@@ -202,6 +203,9 @@ describe("log formatters, by feature", () => {
         log("items", "sold", { ...sale, quantity: 1, source_type: "hero", source_name: "Aldric" })
       )
     ).toBe("Sold Sword from Aldric(10 gc)");
+    expect(
+      textOf(log("resources", "sold", { resource: "Wyrdstone", quantity: 3, price: 65 }))
+    ).toBe("Sold 3 Wyrdstone for 65 gc");
     const move = {
       item: "Rope",
       quantity: 1,

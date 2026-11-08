@@ -12,6 +12,7 @@ from apps.warbands.services.summary import WarbandUnits, load_warband_units
 from apps.warbands.units.companions import beast_kind
 from apps.warbands.units.kinds import HERO, HIRELING
 from apps.warbands.units.services.create import cap_limit
+from apps.warbands.utils.wyrdstone_prices import size_band
 
 from ..services.types import types_of
 from .types import WarbandTypeBriefSerializer
@@ -76,6 +77,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     hirelings = serializers.SerializerMethodField()
     henchmen_groups = serializers.SerializerMethodField()
     unit_count = serializers.SerializerMethodField()
+    size_band = serializers.SerializerMethodField()  # the wyrdstone sell prices' column for unit_count
     hero_count = serializers.SerializerMethodField()
     max_heroes = serializers.SerializerMethodField()
     hireling_count = serializers.SerializerMethodField()
@@ -120,6 +122,9 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
     def get_unit_count(self, obj) -> int:
         return self._units(obj).unit_count
 
+    def get_size_band(self, obj) -> int:
+        return size_band(self._units(obj).unit_count)
+
     def get_hero_count(self, obj) -> int:
         return self._units(obj).hero_count
 
@@ -144,6 +149,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
             "henchmen_groups",
             "unit_count",
             "max_units",
+            "size_band",
             "hero_count",
             "max_heroes",
             "hireling_count",

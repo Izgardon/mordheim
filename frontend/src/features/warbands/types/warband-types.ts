@@ -71,6 +71,7 @@ export type Warband = {
   template_variant?: string;
   /** From the summary (the sheet merges it in): see `WarbandRosterCounts`. */
   unit_count?: number;
+  size_band?: number;
   hero_count?: number;
   max_heroes?: number;
   hireling_count?: number;
@@ -89,11 +90,13 @@ export type Warband = {
  * The server's roster counts (decision 12). `unit_count` is the warband size: heroes, living
  * henchmen and blood-pacted hired swords (warn only past `max_units`). `hero_count` and
  * `hireling_count` count what the hard caps count: living heroes, and living hired swords
- * without a blood pact.
+ * without a blood pact. `size_band` is the wyrdstone sell prices' column for `unit_count` (0 for
+ * 1-3 warriors, up to 5 for 16+).
  */
 export type WarbandRosterCounts = {
   unit_count?: number;
   max_units?: number;
+  size_band?: number;
   hero_count?: number;
   max_heroes?: number;
   hireling_count?: number;

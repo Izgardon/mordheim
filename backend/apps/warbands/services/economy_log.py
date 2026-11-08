@@ -1,9 +1,10 @@
 """The warband log entries the server writes for economy changes, in the same transaction (ECON-CQ-02).
 
-Feature "items": "sold", "moved" and "discarded"; feature "trade": "completed" (one entry per side). Payloads
-name things as the screen shows them, so the log reads the same after a unit is renamed or an item leaves:
+Feature "items": "sold", "moved" and "discarded"; feature "resources": "sold"; feature "trade": "completed" (one
+entry per side). Payloads name things as the screen shows them, so the log reads the same after a unit is renamed or
+an item leaves:
 
-- sold: {item, quantity, price, source_type, source_name}
+- sold: {item, quantity, price, source_type, source_name}; a resource's: {resource, quantity, price}
 - moved: {item, quantity, source_type, source_name, target_type, target_name}
 - discarded: {item, quantity}
 - completed: {partner, sent: {gold, items: [{item, quantity}]}, received: {gold, items: [...]}}
@@ -41,6 +42,10 @@ def log_sale(warband: Warband, item: str, quantity: int, price: int, source: tup
     source_type, source_name = source
     payload = {"item": item, "quantity": quantity, "price": price}
     write(warband, "items", "sold", payload | {"source_type": source_type, "source_name": source_name})
+
+
+def log_resource_sale(warband: Warband, resource: str, quantity: int, price: int) -> None:
+    write(warband, "resources", "sold", {"resource": resource, "quantity": quantity, "price": price})
 
 
 def log_move(

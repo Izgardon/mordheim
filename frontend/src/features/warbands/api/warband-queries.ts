@@ -43,6 +43,7 @@ const SUMMARY_FIELDS = [
   // The roster counts (decision 12): a saved summary must not be shadowed by the stale one.
   "unit_count",
   "max_units",
+  "size_band",
   "hero_count",
   "max_heroes",
   "hireling_count",

@@ -7,6 +7,7 @@ from django.db import models
 
 from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS
 from apps.warbands.utils.hero_level import HERO_LEVEL_THRESHOLDS
+from apps.warbands.utils.wyrdstone_prices import get_default_wyrdstone_prices
 
 ROLE_SLUGS = ["owner", "admin", "player"]
 # Publication grades, lowest first: a grade's rank is its place here, which every "up to" preset compares
@@ -116,6 +117,8 @@ class CampaignSettings(models.Model):
     )
     # the name of every warband's default resource (WarbandResource.is_default): a rename renames them all
     default_resource_name = models.CharField(max_length=120, default=DEFAULT_RESOURCE_NAME)
+    # what selling shards of the default resource fetches, by shards and warband size (warbands/utils/wyrdstone_prices)
+    wyrdstone_prices = models.JSONField(default=get_default_wyrdstone_prices)
     # every warband holds a Campaign points counter (WarbandResource.is_campaign_points), hidden while off
     enable_campaign_points = models.BooleanField(default=False)
 

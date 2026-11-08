@@ -5,7 +5,7 @@ from django.db.models import BigIntegerField, F, Value
 from django.db.models.functions import Cast, Greatest, Least
 
 from apps.warbands.models import LedgerAction, Warband, WarbandResource, WarbandTrade
-from apps.warbands.services import ledger
+from apps.warbands.services import economy_log, ledger
 from apps.warbands.services.campaign_points import resource_rows
 
 MAX_AMOUNT = 2_147_483_647  # WarbandResource.amount is a 32-bit integer column
@@ -44,8 +44,8 @@ def sell_resource(
     warband: Warband, resource_id: int, quantity: int, price: int
 ) -> tuple[WarbandResource, WarbandTrade] | None:
     """POST resources/<id>/sell/: take `quantity` off the resource and write its "Sell" ledger row (the price
-    the player gave) in one transaction. None when there is no such resource; ResourceShortage when it holds
-    less than `quantity`."""
+    the player gave) and its log line ("Sold 3 Wyrdstone for 65 gc") in one transaction. None when there is no
+    such resource; ResourceShortage when it holds less than `quantity`."""
     rows = resource_rows(warband).filter(id=resource_id)
     name = rows.values_list("name", flat=True).first()
     if name is None:
@@ -57,4 +57,5 @@ def sell_resource(
         if not rows.filter(amount__gte=quantity).update(amount=F("amount") - quantity):
             raise ResourceShortage(f"Not enough {name} to sell.")  # rolls the gold back
         resource = rows.get()  # after the guarded UPDATE, which keeps the row locked until commit
+        economy_log.log_resource_sale(warband, name, quantity, price)
     return resource, trade

@@ -12,6 +12,7 @@ import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 
 import type { WarbandResource } from "../../types/warband-types";
+import { BOOK_WYRDSTONE_PRICES } from "../../utils/wyrdstone-prices";
 import WarbandResources from "./WarbandResources";
 
 vi.mock("@/lib/api-client", async (importOriginal) => ({
@@ -40,8 +41,13 @@ const resources = [
   resource(3, "Warpstone", true),
 ];
 
+// a warband of 7-9 warriors (the server's size band 2), on the book's table
+const pricing = { table: BOOK_WYRDSTONE_PRICES.map((row) => [...row]), band: 2 };
+
 const renderResources = (canEdit = true) =>
-  renderWithQueryClient(<WarbandResources warbandId={9} resources={resources} canEdit={canEdit} />);
+  renderWithQueryClient(
+    <WarbandResources warbandId={9} resources={resources} canEdit={canEdit} pricing={pricing} />
+  );
 
 describe("WarbandResources", () => {
   it("lists the default resource first, with no icon, then campaign points", () => {
@@ -75,6 +81,64 @@ describe("WarbandResources", () => {
 
     const items = await screen.findAllByRole("menuitem");
     expect(items.map((item) => item.textContent)).toEqual(["Rename", "Sell", "Delete"]);
+  });
+});
+
+describe("Sell", () => {
+  beforeEach(() => fakeApi.reset());
+
+  const openSell = async (user: ReturnType<typeof setupUser>, name: string) => {
+    await user.click(screen.getByRole("button", { name: `${name} actions` }));
+    await user.click(await screen.findByRole("menuitem", { name: "Sell" }));
+  };
+  const field = (name: string) => screen.getByRole("spinbutton", { name });
+
+  // William, 7 Nov 2026: "a table of sell prices for number of shards depending on size of warband"
+  it("prices the default resource from the table at the warband's band, which can be changed", async () => {
+    const user = setupUser();
+    fakeApi.on("POST /warbands/9/resources/3/sell/", {
+      resource: { ...resources[3], amount: 0 },
+      trade: { id: 1, action: "Sell", description: "Warpstone x 3", price: 72, children: [] },
+      summary: {},
+    });
+    renderResources();
+
+    await openSell(user, "Warpstone");
+    const band = screen.getByRole("combobox", { name: "Warband size" });
+    expect(band).toHaveDisplayValue("7-9 warriors");
+    expect(field("Price in gold")).toHaveValue(35);
+
+    await user.clear(field("How many"));
+    await user.type(field("How many"), "3");
+    expect(field("Price in gold")).toHaveValue(65);
+
+    await user.selectOptions(band, "4-6 warriors");
+    expect(field("Price in gold")).toHaveValue(70);
+
+    await user.clear(field("Price in gold"));
+    await user.type(field("Price in gold"), "72");
+    await user.click(screen.getByRole("button", { name: "Sell" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /warbands/9/resources/3/sell/")).toEqual({
+        quantity: 3,
+        price: 72,
+      })
+    );
+  });
+
+  it("sells another resource as before: no band, the price as typed", async () => {
+    const user = setupUser();
+    renderResources();
+
+    await openSell(user, "Amber");
+
+    expect(screen.queryByRole("combobox", { name: "Warband size" })).toBeNull();
+    expect(field("Price in gold")).toHaveValue(null);
+    await user.type(field("Price in gold"), "12");
+    await user.clear(field("How many"));
+    await user.type(field("How many"), "1");
+    expect(field("Price in gold")).toHaveValue(12);
   });
 });
 

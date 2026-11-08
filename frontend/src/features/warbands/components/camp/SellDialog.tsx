@@ -5,15 +5,20 @@ import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { ModalSheet } from "@/components/ui/modal-sheet";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { cn } from "@/lib/utils";
 
 import { useResourceSale } from "../../api/economy-queries";
+import { useResourceSaleNumbers } from "../../hooks/warband/useResourceSaleNumbers";
+import SizeBandSelect from "../page/SizeBandSelect";
 import type { OpenCamp } from "./camp-types";
 
 const fieldLabel = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 
 /**
- * Camp's Sell (design E): which resource, how many and the gold received. The sale goes through
- * the warband's resource sale (gold and its ledger row at once) and camp notes it.
+ * Camp's Sell (design E): which resource, how many and the gold received; the default resource is
+ * priced from the campaign's table at the warband's size band, which the player may change. The
+ * sale goes through the warband's resource sale (gold and its ledger row at once) and camp notes
+ * it.
  */
 export default function SellDialog({
   camp,
@@ -27,14 +32,17 @@ export default function SellDialog({
   const resources = camp.postgame.resources;
   const sale = useResourceSale(camp.warbandId);
   const [resourceId, setResourceId] = useState<number | null>(null);
-  const [quantity, setQuantity] = useState("1");
-  const [price, setPrice] = useState("");
   const resource = resources.find((entry) => entry.id === resourceId) ?? resources[0];
-  const gold = Number(price) || 0;
+  const priced = Boolean(resource?.is_default);
+  const pricing = {
+    table: camp.campaign?.wyrdstone_prices,
+    band: camp.postgame.sheet?.summary.size_band ?? 0,
+  };
+  const numbers = useResourceSaleNumbers(pricing, priced);
+  const { count, gold } = numbers;
 
   const sell = () => {
     if (!resource) return;
-    const count = Math.max(1, Number(quantity) || 1);
     sale.mutate(
       { resourceId: resource.id, quantity: count, price: gold },
       {
@@ -42,7 +50,7 @@ export default function SellDialog({
           const record = camp.draft.camp ?? {};
           const sold = [...(record.sold ?? []), { name: resource.name, quantity: count, gold }];
           void camp.save({ ...camp.draft, camp: { ...record, sold } });
-          setPrice("");
+          numbers.reset();
           onClose();
         },
         onError: (error) => toast.error("Couldn't sell.", { description: getErrorMessage(error) }),
@@ -75,7 +83,10 @@ export default function SellDialog({
             Resource
             <select
               value={resource?.id ?? ""}
-              onChange={(event) => setResourceId(Number(event.target.value))}
+              onChange={(event) => {
+                setResourceId(Number(event.target.value));
+                numbers.reset();
+              }}
               className="min-h-11 border border-strong bg-page px-2.5 text-sm text-ink"
             >
               {resources.map((entry) => (
@@ -89,19 +100,34 @@ export default function SellDialog({
             How many
             <NumberInput
               className="font-mono"
-              value={quantity}
-              onChange={(event) => setQuantity(event.target.value)}
+              value={numbers.quantity}
+              onChange={(event) => numbers.setQuantity(event.target.value)}
             />
           </label>
+          {priced ? (
+            <label className={fieldLabel}>
+              Warband size
+              <SizeBandSelect
+                className="min-h-11"
+                value={numbers.band}
+                onChange={numbers.setBand}
+              />
+            </label>
+          ) : null}
           <label className={fieldLabel}>
             For (gc)
             <NumberInput
               className="font-mono"
-              value={price}
-              onChange={(event) => setPrice(event.target.value)}
+              value={numbers.price}
+              onChange={(event) => numbers.setPrice(event.target.value)}
             />
           </label>
-          <span className="col-span-full flex items-end pb-2.5 text-[13px] text-text2 min-[600px]:col-span-1">
+          <span
+            className={cn(
+              "col-span-full flex items-end pb-2.5 text-[13px] text-text2",
+              !priced && "min-[600px]:col-span-1"
+            )}
+          >
             Gold {camp.gold} →{" "}
             <span className="ml-1 font-mono font-bold text-head">{camp.gold + gold} gc</span>
           </span>

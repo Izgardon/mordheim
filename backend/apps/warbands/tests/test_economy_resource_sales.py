@@ -6,10 +6,21 @@ resource was gone and no gold came in.
 
 from typing import Any
 
+from django.test import SimpleTestCase
+
 from apps.warbands.models import WarbandResource
 from apps.warbands.services.summary import warband_gold
+from apps.warbands.utils.wyrdstone_prices import size_band
 
-from .roster_support import RosterTestCase, trade_rows
+from .roster_support import HENCHMEN, HERO, RosterTestCase, log_rows, make_unit, trade_rows
+
+
+class SizeBandTests(SimpleTestCase):
+    """The wyrdstone sell prices' column for a warband's size (William, 8 Nov 2026: the rulebook's table)."""
+
+    def test_every_band_edge(self):
+        edges = {0: 0, 1: 0, 3: 0, 4: 1, 6: 1, 7: 2, 9: 2, 10: 3, 12: 3, 13: 4, 15: 4, 16: 5, 40: 5}
+        self.assertEqual({warriors: size_band(warriors) for warriors in edges}, edges)
 
 
 class ResourceSaleTests(RosterTestCase):
@@ -52,6 +63,33 @@ class ResourceSaleTests(RosterTestCase):
 
         last = self._sell(quantity=1, price=0)
         self.assertEqual((last.json()["resource"]["amount"], last.json()["trade"]["description"]), (0, "Wyrdstone"))
+
+    def test_a_sale_leaves_a_plain_log_line(self):
+        # the Log reads "Sold 3 Wyrdstone for 65 gc", worded from the payload
+        self.shards.amount = 5
+        self.shards.save()
+
+        self._sell(quantity=3, price=65)
+        self._sell(quantity=9, price=1)  # more than is left: nothing sold, nothing logged
+
+        self.assertEqual(
+            log_rows(self.warband),
+            [("resources", "sold", {"resource": "Wyrdstone", "quantity": 3, "price": 65}, None)],
+        )
+
+    def test_the_summary_gives_the_warbands_size_band(self):
+        # the warriors the "of 15" figure counts: here 3 heroes and a group of 6, the 7-9 band
+        self.assertEqual(self._summary()["size_band"], 0)
+        for name in ("Captain", "Champion", "Youngblood"):
+            make_unit(HERO, self.warband, name=name)
+        make_unit(HENCHMEN, self.warband, members=tuple(f"Warrior {n}" for n in range(6)))
+
+        summary = self._summary()
+
+        self.assertEqual((summary["unit_count"], summary["size_band"]), (9, 2))
+
+    def _summary(self) -> Any:
+        return self.client.get(f"/api/warbands/{self.warband.id}/summary/").json()
 
     def test_selling_more_than_held_sells_nothing(self):
         response = self._sell(quantity=4, price=10)

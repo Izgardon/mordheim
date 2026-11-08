@@ -8,10 +8,18 @@ from apps.warbands.services.campaign_points import CAMPAIGN_POINTS
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
+from apps.warbands.utils.wyrdstone_prices import SHARD_ROWS, SIZE_BANDS
 
 from ..models import GRADES, Campaign, CampaignType
 
 SMALLINT_MAX = 32767  # the settings' PositiveSmallIntegerField columns (BUG-76)
+
+
+def wyrdstone_prices_field(**kwargs: Any) -> Any:
+    """The wyrdstone sell prices: a row of gold for each band for 1 to 7 shards and then 8 or more."""
+    price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE)
+    row = serializers.ListField(child=price, min_length=len(SIZE_BANDS), max_length=len(SIZE_BANDS))
+    return serializers.ListField(child=row, min_length=SHARD_ROWS, max_length=SHARD_ROWS, **kwargs)
 
 
 def setting_ids_field() -> Any:
@@ -46,6 +54,7 @@ class CampaignSerializer(serializers.ModelSerializer):
     enable_encampments = serializers.BooleanField(source="settings.enable_encampments", read_only=True)
     enable_locations = serializers.BooleanField(source="settings.enable_locations", read_only=True)
     default_resource_name = serializers.CharField(source="settings.default_resource_name", read_only=True)
+    wyrdstone_prices = wyrdstone_prices_field(source="settings.wyrdstone_prices", read_only=True)
     enable_campaign_points = serializers.BooleanField(source="settings.enable_campaign_points", read_only=True)
     setting_ids = serializers.SerializerMethodField()  # the settings in play (grading phase 1)
 
@@ -70,6 +79,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "enable_encampments",
             "enable_locations",
             "default_resource_name",
+            "wyrdstone_prices",
             "enable_campaign_points",
             "setting_ids",
             "in_progress",
@@ -153,6 +163,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
     setting_ids = setting_ids_field()  # the settings in play, replacing them
     adjust_existing_warbands = serializers.BooleanField(required=False)  # with a new starting_gold (BUG-78)
     default_resource_name = serializers.CharField(required=False, max_length=120)  # renames every warband's
+    wyrdstone_prices = wyrdstone_prices_field(required=False)  # the whole table (William, 8 Nov 2026)
     enable_campaign_points = serializers.BooleanField(required=False)  # William, 7 Nov 2026
 
     def validate_default_resource_name(self, value):

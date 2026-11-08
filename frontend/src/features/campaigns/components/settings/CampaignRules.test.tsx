@@ -3,7 +3,7 @@
  * (William, 7 Nov 2026: "hired sword max level up options in settings"; "just like the hero and
  * henchman one does"), saved together with one PATCH. Hired swords reset to the book's hero table.
  */
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { DEFAULT_HERO_LEVEL_THRESHOLDS } from "@/features/warbands/utils/level-thresholds";
@@ -50,9 +50,10 @@ describe("Level-ups", () => {
     const user = setupUser();
     renderWithQueryClient(<CampaignRules campaign={campaign} />);
     const field = screen.getByRole("textbox", { name: "Hired swords" });
-    const resets = screen.getAllByRole("button", { name: "Reset" });
+    // the Reset beside the field (the wyrdstone sell prices have one too)
+    const reset = within(field.parentElement as HTMLElement).getByRole("button", { name: "Reset" });
 
-    await user.click(resets[2]);
+    await user.click(reset);
     expect(field).toHaveValue(DEFAULT_HERO_LEVEL_THRESHOLDS.join(", "));
 
     await user.clear(field);

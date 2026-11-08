@@ -17,7 +17,12 @@ import {
   useResourceRename,
   useResourceSale,
 } from "../../api/economy-queries";
+import {
+  useResourceSaleNumbers,
+  type SalePricing,
+} from "../../hooks/warband/useResourceSaleNumbers";
 import type { WarbandResource } from "../../types/warband-types";
+import SizeBandSelect from "./SizeBandSelect";
 
 type Editing = { kind: "add" } | { kind: "rename" | "sell"; resource: WarbandResource } | null;
 
@@ -39,16 +44,19 @@ const defaultFirst = (resources: WarbandResource[]) => [
  * The warband's resources (design E): the default resource first, with no icon, then campaign
  * points, then the rest; − and + inline, Add resource (its name, starting at 0, opens in the
  * button's place: William, 7 Nov 2026, "add resource should just be name not amount"), and
- * Rename, Delete, Sell (the default and campaign points only sell).
+ * Rename, Delete, Sell (the default and campaign points only sell). Selling the default resource
+ * prices it from the campaign's table at the warband's size band, which the player may change.
  */
 export default function WarbandResources({
   warbandId,
   resources,
   canEdit,
+  pricing,
 }: {
   warbandId: number;
   resources: WarbandResource[];
   canEdit: boolean;
+  pricing: SalePricing;
 }) {
   const change = useResourceChange(warbandId);
   const create = useResourceCreate(warbandId);
@@ -57,7 +65,8 @@ export default function WarbandResources({
   const sell = useResourceSale(warbandId);
   const [editing, setEditing] = useState<Editing>(null);
   const [text, setText] = useState("");
-  const [price, setPrice] = useState("");
+  const priced = editing?.kind === "sell" && editing.resource.is_default;
+  const sale = useResourceSaleNumbers(pricing, priced);
   const onError = (error: unknown) => toast.error(getErrorMessage(error));
   const done = { onSuccess: () => setEditing(null), onError };
 
@@ -68,7 +77,7 @@ export default function WarbandResources({
       rename.mutate({ resourceId: editing.resource.id, name: text.trim() }, done);
     else
       sell.mutate(
-        { resourceId: editing.resource.id, quantity: Number(text) || 1, price: Number(price) || 0 },
+        { resourceId: editing.resource.id, quantity: sale.count, price: sale.gold },
         done
       );
   };
@@ -136,8 +145,7 @@ export default function WarbandResources({
                     <DropdownMenu.Item
                       className={MENU_ITEM}
                       onSelect={() => {
-                        setText("1");
-                        setPrice("");
+                        sale.reset();
                         setEditing({ kind: "sell", resource });
                       }}
                     >
@@ -191,8 +199,8 @@ export default function WarbandResources({
               min={1}
               max={editing.resource.amount}
               aria-label="How many"
-              value={text}
-              onChange={(event) => setText(event.target.value)}
+              value={sale.quantity}
+              onChange={(event) => sale.setQuantity(event.target.value)}
             />
           ) : (
             <Input
@@ -205,6 +213,9 @@ export default function WarbandResources({
               onChange={(event) => setText(event.target.value)}
             />
           )}
+          {priced ? (
+            <SizeBandSelect className="h-9" value={sale.band} onChange={sale.setBand} />
+          ) : null}
           {editing.kind === "sell" ? (
             <NumberInput
               compact
@@ -212,8 +223,8 @@ export default function WarbandResources({
               inputSize="sm"
               placeholder="gc"
               className="w-24"
-              value={price}
-              onChange={(event) => setPrice(event.target.value)}
+              value={sale.price}
+              onChange={(event) => sale.setPrice(event.target.value)}
             />
           ) : null}
           <Button size="sm" type="submit">
