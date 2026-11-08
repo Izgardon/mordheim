@@ -28,13 +28,18 @@ type RollControlProps = {
   /** After the result line's total: "Found", "Not found". */
   verdict?: ReactNode;
   disabled?: boolean;
-  /** "lg" for a phone: a taller button and boxes. */
-  size?: "default" | "lg";
+  /** "lg" for a phone: a taller button and boxes; "sm" for one of a card's actions. */
+  size?: keyof typeof BOX;
+  /** An outlined button, for a roll that isn't the main action where it sits (a location's). */
+  quiet?: boolean;
   className?: string;
 };
 
 const FACE =
   "box-border inline-flex items-center justify-center border border-strong bg-page font-mono font-bold text-head";
+/** The boxes at each size, as DiceEntry draws them. */
+const BOX = { sm: "h-9 w-9 text-base", default: "h-10 w-10 text-lg", lg: "h-12 w-12 text-xl" };
+const ENTRY = { sm: "sm", default: "md", lg: "lg" } as const;
 
 /**
  * A roll the app makes or the table made, taken once (William, 7 Nov 2026: "roll button to search
@@ -54,6 +59,7 @@ export default function RollControl({
   verdict,
   disabled = false,
   size = "default",
+  quiet = false,
   className,
 }: RollControlProps) {
   const sides = diceSides(dice);
@@ -70,13 +76,12 @@ export default function RollControl({
   }, [revealed]);
 
   const total = (faces ?? []).reduce((sum, face) => sum + face, 0) + bonus;
-  const box = size === "lg" ? "h-12 w-12 text-xl" : "h-10 w-10 text-lg";
   const typed = typing ? (
     <div ref={boxes}>
       <DiceEntry
         dice={dice}
         button={null}
-        size={size === "lg" ? "lg" : "md"}
+        size={ENTRY[size]}
         disabled={disabled}
         onChange={(next) =>
           setHalfTyped(next.some((face) => face !== null) && next.some((face) => face === null))
@@ -97,7 +102,7 @@ export default function RollControl({
             readOnly
             aria-label={boxName(sides, index)}
             value={face}
-            className={cn(FACE, "p-0 text-center", box)}
+            className={cn(FACE, "p-0 text-center", BOX[size])}
           />
         ))}
       </span>
@@ -107,8 +112,8 @@ export default function RollControl({
     <div className={cn("flex flex-col items-start gap-2", className)}>
       {above ? (typed ?? shown) : null}
       <Button
-        size={size === "lg" ? "lg" : "default"}
-        variant={locked ? "secondary" : "primary"}
+        size={size}
+        variant={locked || quiet ? "secondary" : "primary"}
         disabled={locked || disabled || (typing && halfTyped)}
         onClick={() => onResult(sides.map((die) => rollDie(die)))}
         className={cn(

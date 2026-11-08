@@ -1,7 +1,7 @@
 /**
- * A location's D6 (William, 7 Nov 2026: "in the side draw just have a Roll d6 button, dont need the
- * d6 roll pill there"): the panel's card rolls with one Roll D6 button and has no roll boxes; the
- * Locations page's card has no roll at all.
+ * A location's D6: the panel's card has the shared roll control's one box above Roll D6, rolled
+ * there or typed in, then locked as Rolled beside the location's result for it; the Locations
+ * page's card has no roll at all.
  */
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -49,21 +49,31 @@ describe("LocationCard", () => {
     vi.mocked(rollDie).mockReset();
   });
 
-  it("rolls a D6 with one button, with no roll boxes, and Roll D6 again replaces the result", async () => {
+  it("rolls a D6 into its box above Roll D6, shows the result and locks as Rolled", async () => {
     const user = setupUser();
     show(well);
-    expect(screen.queryByRole("textbox")).toBeNull();
-    expect(screen.queryByText("D6 roll")).toBeNull();
+    const box = screen.getByLabelText("D6 rolled");
+    expect(box.compareDocumentPosition(screen.getByRole("button", { name: "Roll D6" }))).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
 
     vi.mocked(rollDie).mockReturnValueOnce(4);
     await user.click(screen.getByRole("button", { name: "Roll D6" }));
     expect(rollDie).toHaveBeenCalledWith(6);
+    expect(screen.getByLabelText("D6 rolled")).toHaveValue("4");
     expect(screen.getByText("A rope, still knotted.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Rolled" })).toBeDisabled();
+    expect(screen.queryByRole("button", { name: "Roll D6" })).toBeNull();
+  });
 
-    vi.mocked(rollDie).mockReturnValueOnce(2);
-    await user.click(screen.getByRole("button", { name: "Roll D6" }));
-    expect(screen.queryByText("A rope, still knotted.")).toBeNull();
+  it("takes the die rolled at the table, typed in its box", async () => {
+    const user = setupUser();
+    show(well);
+    await user.type(screen.getByLabelText("D6 rolled"), "2");
+    expect(screen.getByLabelText("D6 rolled")).toHaveValue("2");
     expect(screen.getByText("Nothing listed for this roll.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Rolled" })).toBeDisabled();
+    expect(rollDie).not.toHaveBeenCalled();
   });
 
   it("has no Roll D6 without results, nor on the Locations page", () => {

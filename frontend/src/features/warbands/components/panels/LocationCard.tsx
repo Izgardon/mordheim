@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import RollControl from "@/components/ui/roll-control";
 import type { CampaignLocation } from "@/features/campaigns/types/campaign-types";
-import { rollDie } from "@/lib/dice";
 import { cn } from "@/lib/utils";
 
 import type { WarbandHero } from "../../types/warband-types";
@@ -20,9 +20,10 @@ const d6Results = (location: CampaignLocation) => [
 const hasD6 = (location: CampaignLocation) => d6Results(location).some((entry) => entry?.trim());
 
 /**
- * One location: its name, area and text, Roll D6 when it has results (the panel's; William, 7 Nov
- * 2026: "in the side draw just have a Roll d6 button"), Send a hero (your warband), and Edit and
- * Remove for those who manage locations. On the Locations page it shows its whole text and no roll.
+ * One location: its name, area and text, a D6 when it has results (the panel's: the shared roll
+ * control's box above Roll D6, rolled here or typed in, then locked as Rolled, with the location's
+ * result for it), Send a hero (your warband), and Edit and Remove for those who manage locations.
+ * On the Locations page it shows its whole text and no roll.
  */
 export default function LocationCard({
   location,
@@ -79,13 +80,16 @@ export default function LocationCard({
             </span>
           ) : null}
           {!onPage && hasD6(location) ? (
-            <button
-              type="button"
-              className="self-start text-xs font-bold text-accent-text hover:underline"
-              onClick={() => setRolled(rollDie(6))}
-            >
-              Roll D6
-            </button>
+            <RollControl
+              dice="D6"
+              lockedLabel="Rolled"
+              entry="above"
+              size="sm"
+              quiet
+              faces={rolled === null ? null : [rolled]}
+              onResult={([face]) => setRolled(face)}
+              className="pt-0.5"
+            />
           ) : null}
           {!onPage && rolled ? (
             <p className="m-0 border-l-2 border-accent-line pl-2.5 text-[13px] text-ink">

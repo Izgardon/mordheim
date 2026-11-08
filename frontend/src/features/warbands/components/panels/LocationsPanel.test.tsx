@@ -2,8 +2,7 @@
  * The warband page's Locations panel only reads the locations (William, 7 Nov 2026: "shouldn't be
  * able to edit locations in the location sidebar within warband"): no Add, Edit or Remove for
  * anyone, and Go to page for everyone opens the campaign's Locations page. A location with D6
- * results has one Roll D6 button and no roll boxes (William: "in the side draw just have a Roll d6
- * button, dont need the d6 roll pill there").
+ * results has the shared roll control: a die box above Roll D6, locked as Rolled once rolled.
  */
 import { MemoryRouter } from "react-router-dom";
 import { screen, within } from "@testing-library/react";
@@ -92,17 +91,19 @@ describe("LocationsPanel", () => {
     noEditing();
   });
 
-  it("rolls with one Roll D6 button on a location with results, with no roll boxes", async () => {
+  it("rolls with a die box and Roll D6 on a location with results, locked once rolled", async () => {
     const user = setupUser();
     renderPanel("player");
 
     const card = (await screen.findByText("The Pit")).closest("li") as HTMLElement;
     const docksCard = screen.getByText("The Docks").closest("li") as HTMLElement;
     expect(within(docksCard).queryByRole("button", { name: "Roll D6" })).toBeNull();
-    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(within(docksCard).queryByRole("textbox")).toBeNull();
+    expect(within(card).getByLabelText("D6 rolled")).toBeInTheDocument();
 
     await user.click(within(card).getByRole("button", { name: "Roll D6" }));
 
     expect(within(card).getByText("A shard of wyrdstone in the mud.")).toBeInTheDocument();
+    expect(within(card).getByRole("button", { name: "Rolled" })).toBeDisabled();
   });
 });
