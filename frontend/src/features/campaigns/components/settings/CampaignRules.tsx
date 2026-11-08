@@ -147,8 +147,8 @@ function ThresholdField(props: {
 
 /**
  * The warband rules (`edit_settings`): starting gold, the default resource, the most heroes and
- * hired swords, the table a hero's death is rolled on, and the XP at which heroes and henchmen
- * level up. Each saves on its own; a settings answer resets the drafts.
+ * hired swords, the table a hero's death is rolled on, and the XP at which heroes, henchmen and
+ * hired swords level up. Each saves on its own; a settings answer resets the drafts.
  */
 export default function CampaignRules({ campaign }: { campaign: CampaignSummary }) {
   const { limits, deathRoll, levelUps } = useWarbandRulesForm(campaign);
@@ -217,7 +217,6 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
               label="Heroes"
               value={levelUps.heroText}
               placeholder="2, 4, 6, 8, 11, 14…"
-              hint="Hired swords level on this table too."
               error={levelUps.errors.hero}
               onChange={levelUps.setHeroText}
               onReset={levelUps.resetHero}
@@ -230,6 +229,17 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
               error={levelUps.errors.henchmen}
               onChange={levelUps.setHenchmenText}
               onReset={levelUps.resetHenchmen}
+            />
+            {/* William, 7 Nov 2026: "hired sword max level up options in settings (exp points
+                and max)"; "just like the hero and henchman one does" */}
+            <ThresholdField
+              id="settings-hired-sword-thresholds"
+              label="Hired swords"
+              value={levelUps.hiredSwordText}
+              placeholder="2, 4, 6, 8, 11, 14…"
+              error={levelUps.errors.hiredSword}
+              onChange={levelUps.setHiredSwordText}
+              onReset={levelUps.resetHiredSword}
             />
             <Button
               variant="secondary"

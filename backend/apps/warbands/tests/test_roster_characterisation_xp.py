@@ -28,7 +28,7 @@ class RosterXpCharacterisationTests(RosterTestCase):
         return response.json()
 
     def test_xp_gain_counts_default_thresholds_crossed(self):
-        # hero table 2, 4, 6, ... (hired swords too, decision 8); henchmen 2, 5, 9, 14
+        # hero table 2, 4, 6, ... (hired swords' own table starts as it); henchmen 2, 5, 9, 14
         expected = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 3}
         for kind in KINDS:
             with self.subTest(kind=kind.key):
@@ -38,13 +38,14 @@ class RosterXpCharacterisationTests(RosterTestCase):
                 unit.refresh_from_db()
                 self.assertEqual(unit.level_up, 1 + expected[kind.key])
 
-    def test_each_kind_reads_its_campaign_table_and_hirelings_read_the_hero_table(self):
+    def test_each_kind_reads_its_own_campaign_table(self):
         self.set_thresholds(
             hero_level_thresholds=[3, 7],
             henchmen_level_thresholds=[1, 3, 7],
             hired_sword_level_thresholds=[7],
         )
-        expected = {HERO.key: 2, HENCHMEN.key: 3, HIRELING.key: 2}  # hired swords read the hero table (decision 8)
+        # hired swords read their own table (William, 7 Nov 2026: "just like the hero and henchman one does")
+        expected = {HERO.key: 2, HENCHMEN.key: 3, HIRELING.key: 1}
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband)

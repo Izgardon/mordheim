@@ -32,11 +32,11 @@ class PostbattleXpTests(RosterTestCase):
         group.refresh_from_db()
         self.assertEqual((hero.level_up, group.level_up), (1, 1))  # default tables: 2, 4, ... and 2, 5, ...
 
-    def test_henchmen_use_their_table_and_hirelings_the_hero_table(self):
+    def test_henchmen_and_hirelings_use_their_own_tables(self):
         # BATL-TEST-02: both used to fall back to the default henchmen table (one level-up at 2). Hired
-        # swords advance like heroes and ignore the old hired-sword setting (decision 8).
+        # swords level on their own table (William, 7 Nov 2026: "just like the hero and henchman one does").
         self.set_thresholds(
-            henchmen_level_thresholds=[3], hero_level_thresholds=[1, 2, 3], hired_sword_level_thresholds=[7]
+            henchmen_level_thresholds=[3], hero_level_thresholds=[1, 2, 3], hired_sword_level_thresholds=[2, 7]
         )
         group = make_unit(HENCHMEN, self.warband, members=("Alpha",))
         sword = make_unit(HIRELING, self.warband)
@@ -45,7 +45,15 @@ class PostbattleXpTests(RosterTestCase):
 
         group.refresh_from_db()
         sword.refresh_from_db()
-        self.assertEqual((group.level_up, sword.level_up), (1, 3))
+        self.assertEqual((group.level_up, sword.level_up), (1, 1))
+
+    def test_hirelings_level_on_the_hero_table_until_the_campaign_sets_theirs(self):
+        sword = make_unit(HIRELING, self.warband)
+
+        self.play_battle({f"hireling:{sword.id}": 6})
+
+        sword.refresh_from_db()
+        self.assertEqual(sword.level_up, 3)  # the book's hero table: 2, 4, 6, ...
 
     def test_half_rate_units_gain_half_the_xp(self):
         # ROST-TEST-05 and decision 6: an odd award leaves half a point

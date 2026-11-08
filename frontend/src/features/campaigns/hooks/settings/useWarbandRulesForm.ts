@@ -56,7 +56,12 @@ export function useWarbandRulesForm(campaign: CampaignSummary) {
   );
   const [heroText, setHeroText] = useState("");
   const [henchmenText, setHenchmenText] = useState("");
-  const [thresholdErrors, setThresholdErrors] = useState({ hero: "", henchmen: "" });
+  const [hiredSwordText, setHiredSwordText] = useState("");
+  const [thresholdErrors, setThresholdErrors] = useState({
+    hero: "",
+    henchmen: "",
+    hiredSword: "",
+  });
   const limits = useSaveAction(campaign.id, "Unable to save warband limits.");
   const deathRoll = useSaveAction(campaign.id, "Unable to save hero death roll.");
   const levelUps = useSaveAction(campaign.id, "Unable to save level ups.");
@@ -67,6 +72,7 @@ export function useWarbandRulesForm(campaign: CampaignSummary) {
     hero_death_roll,
     hero_level_thresholds,
     henchmen_level_thresholds,
+    hired_sword_level_thresholds,
   } = campaign;
 
   // A change to any of the card's settings resets every draft (a cached answer keeps unchanged
@@ -77,7 +83,8 @@ export function useWarbandRulesForm(campaign: CampaignSummary) {
     setHeroDeathRoll(hero_death_roll ?? "d66");
     setHeroText(formatThresholdList(heroThresholds(hero_level_thresholds)));
     setHenchmenText(formatThresholdList(henchmenThresholds(henchmen_level_thresholds)));
-    setThresholdErrors({ hero: "", henchmen: "" });
+    setHiredSwordText(formatThresholdList(heroThresholds(hired_sword_level_thresholds)));
+    setThresholdErrors({ hero: "", henchmen: "", hiredSword: "" });
     resetLevelUpsError("");
   }, [
     max_heroes,
@@ -85,6 +92,7 @@ export function useWarbandRulesForm(campaign: CampaignSummary) {
     hero_death_roll,
     hero_level_thresholds,
     henchmen_level_thresholds,
+    hired_sword_level_thresholds,
     resetLevelUpsError,
   ]);
 
@@ -102,14 +110,20 @@ export function useWarbandRulesForm(campaign: CampaignSummary) {
   const saveLevelUps = async () => {
     const hero = parseThresholdText(heroText);
     const henchmen = parseThresholdText(henchmenText);
-    setThresholdErrors({ hero: hero.error, henchmen: henchmen.error });
+    const hiredSword = parseThresholdText(hiredSwordText);
+    setThresholdErrors({
+      hero: hero.error,
+      henchmen: henchmen.error,
+      hiredSword: hiredSword.error,
+    });
     levelUps.setError("");
-    if (hero.error || henchmen.error) {
+    if (hero.error || henchmen.error || hiredSword.error) {
       return;
     }
     await levelUps.save({
       hero_level_thresholds: hero.values,
       henchmen_level_thresholds: henchmen.values,
+      hired_sword_level_thresholds: hiredSword.values,
     });
   };
 
@@ -138,8 +152,12 @@ export function useWarbandRulesForm(campaign: CampaignSummary) {
       setHeroText,
       henchmenText,
       setHenchmenText,
+      hiredSwordText,
+      setHiredSwordText,
       resetHero: () => setHeroText(formatThresholdList(DEFAULT_HERO_LEVEL_THRESHOLDS)),
       resetHenchmen: () => setHenchmenText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS)),
+      // the book's: hired swords level as heroes do
+      resetHiredSword: () => setHiredSwordText(formatThresholdList(DEFAULT_HERO_LEVEL_THRESHOLDS)),
       heroCount: heroThresholds(hero_level_thresholds).length,
       henchmenCount: henchmenThresholds(henchmen_level_thresholds).length,
       errors: { ...thresholdErrors, save: levelUps.error },

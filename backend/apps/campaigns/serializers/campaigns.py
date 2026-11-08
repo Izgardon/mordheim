@@ -175,7 +175,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
 
     def validate_hired_sword_level_thresholds(self, value):
         try:
-            return normalize_henchmen_level_thresholds(value)
+            return normalize_hero_level_thresholds(value)
         except ValueError as exc:
             raise serializers.ValidationError(str(exc)) from exc
 

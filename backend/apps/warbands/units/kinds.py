@@ -265,7 +265,9 @@ HIRELING = UnitKindSpec(
         "hireling_spells", HirelingSpell, "spell", "spell_ids", log_entry="hireling_spell", kept=("dc_change",)
     ),
     has_members=False,
-    thresholds_setting="hero_level_thresholds",  # hired swords advance like heroes (decision 8)
+    # their own table, the hero table to begin with (William, 7 Nov 2026: "hired sword max level up options in
+    # settings"; "Yes just like the hero and henchman one does")
+    thresholds_setting="hired_sword_level_thresholds",
     count_level_ups=count_new_level_ups,
     has_no_level_ups=True,
     stat_advances=STAT_FIELD_BY_ADVANCE,

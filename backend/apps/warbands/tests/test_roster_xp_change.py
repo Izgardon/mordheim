@@ -45,7 +45,7 @@ class XpChangeTests(RosterTestCase):
         self.assertEqual(self._change(HERO, unit, -1)["xp"], 0.0)
 
     def test_a_threshold_is_reached_only_on_whole_xp(self):
-        # default tables: heroes 2, 4, ...; henchmen 2, 5, ...; hired swords as heroes (decision 8)
+        # default tables: heroes 2, 4, ...; henchmen 2, 5, ...; hired swords as heroes until the campaign sets theirs
         hero = make_unit(HERO, self.warband, half_rate=True, xp=Decimal("1.0"))
         first = self._change(HERO, hero, 1)
         self.assertEqual((first["xp"], first["level_up"]), (1.5, 0))

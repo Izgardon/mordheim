@@ -43,7 +43,7 @@ const reasonText = (reasons?: { label: string; xp: number }[]) =>
 
 /**
  * The Experience tab's rows from the draft: each unit's XP before the battle (its sheet), what it
- * earns (half for a slow learner), why, its table (hired swords use the hero table, decision 8)
+ * earns (half for a slow learner), why, its table (a hired sword's own, William, 7 Nov 2026)
  * and the advances already rolled.
  */
 export function buildXpRows(
@@ -54,6 +54,10 @@ export function buildXpRows(
 ): XpRow[] {
   const heroTable = normalizeThresholdList(
     campaign?.hero_level_thresholds,
+    DEFAULT_HERO_LEVEL_THRESHOLDS
+  );
+  const hiredSwordTable = normalizeThresholdList(
+    campaign?.hired_sword_level_thresholds,
     DEFAULT_HERO_LEVEL_THRESHOLDS
   );
   const groupTable = normalizeThresholdList(
@@ -100,7 +104,7 @@ export function buildXpRows(
         group: false,
         canGainXp: !noXp,
         reasons,
-        thresholds: heroTable,
+        thresholds: result.unit_kind === "hero" ? heroTable : hiredSwordTable,
         advances: result.advances ?? [],
       })
     );
