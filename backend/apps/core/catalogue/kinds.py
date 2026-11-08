@@ -37,6 +37,7 @@ from apps.spells.models import Spell
 from apps.spells.serializers import SpellCreateSerializer
 from apps.warband_templates.models import (
     TemplateFighter,
+    TemplateFighterSkill,
     TemplateFighterSpecial,
     TemplateListItem,
     TemplateUpgrade,
@@ -132,8 +133,8 @@ def _listed_by_hirelings(links: str, target: str) -> tuple[Holder, ...]:
 
 
 def _held_by_templates(model: type[Model], target: str, template: str) -> Holder:
-    """A warband template's child rows holding `target` (a list line's item, a fighter's race or rule, an upgrade's
-    special); `template` is the path from a row to its template."""
+    """A warband template's child rows holding `target` (a list line's item, a fighter's race, rule or starting skill,
+    an upgrade's special); `template` is the path from a row to its template."""
     return Holder(
         model=model,
         field=target,
@@ -205,7 +206,12 @@ SKILLS = CatalogueKindSpec(
     versioned=True,
     filters={"search": NAME_AND_TYPE["search"]},
     lists=("skills", "skill_groups"),  # a write may move it into or out of groups
-    holders=_copies("skills", _linked_by(BestiaryEntrySkill, "skill"), *_listed_by_hirelings("skill_links", "skill")),
+    holders=_copies(
+        "skills",
+        _linked_by(BestiaryEntrySkill, "skill"),
+        *_listed_by_hirelings("skill_links", "skill"),
+        _held_by_templates(TemplateFighterSkill, "skill", "fighter__template"),  # a fighter's starting skills
+    ),
     followers=(Move(SkillGroupSkill, "skill", "group__campaign_id", ("group_id",)),),  # the campaign's groups' links
     hooks=SkillHooks(),
 )
@@ -353,6 +359,7 @@ WARBAND_TEMPLATES = CatalogueKindSpec(  # written by the template editor's own r
         "lists__lines",
         "fighters",
         "fighters__special_links",
+        "fighters__skill_links",
         "fighters__list_links",
         "upgrades",
     ),

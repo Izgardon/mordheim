@@ -83,6 +83,7 @@ const fighter = (key: string, name: string, cost: number, extra: Partial<Templat
     fixed_kit: "",
     lists: ["mercenary"],
     rules: [],
+    skills: [],
     have: { count: 0, groups: 0 },
     off_lines: [],
     off_upgrades: [],

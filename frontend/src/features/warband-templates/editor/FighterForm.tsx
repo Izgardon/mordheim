@@ -10,7 +10,7 @@ import RaceField from "@/features/races/components/RaceField";
 import type { TemplateFighter, WarbandTemplate } from "../types/template-types";
 import { CAPTION, Field, FORM_BOX, NumberField, SaveRow } from "./editor-ui";
 import { fighterDraft, type FighterDraft } from "./fighter-draft";
-import { SkillTypesField, SpellTypesField } from "./FighterAccess";
+import { SkillTypesField, SpellTypesField, StartingSkillsField } from "./FighterAccess";
 import FighterFlags from "./FighterFlags";
 import FighterProfile from "./FighterProfile";
 import RulePicker from "./RulePicker";
@@ -39,9 +39,10 @@ const variantNote = (template: WarbandTemplate, fighter: TemplateFighter | null)
 };
 
 /**
- * One fighter's form: his name and figures, his profile as written, his skill groups and spell
- * lores, his flags (a henchman's group size, gains XP and promotable), fixed kit, the lists he
- * buys from and his rules (picked or written). Taking him out leaves units recruited as him.
+ * One fighter's form: his name and figures, his profile as written, his skill groups, the skills
+ * he starts with and his spell lores, his flags (a henchman's group size, gains XP and
+ * promotable), fixed kit, the lists he buys from and his rules (picked or written). Taking him
+ * out leaves units recruited as him.
  */
 export default function FighterForm(props: FighterFormProps) {
   const { template, fighter } = props;
@@ -135,6 +136,12 @@ export default function FighterForm(props: FighterFormProps) {
         campaignId={props.campaignId}
         value={draft.skillTypes}
         onChange={(skillTypes) => set({ skillTypes })}
+      />
+      <StartingSkillsField
+        campaignId={props.campaignId}
+        value={draft.skillIds}
+        saved={fighter?.skills ?? []}
+        onChange={(skillIds) => set({ skillIds })}
       />
       <SpellTypesField
         campaignId={props.campaignId}

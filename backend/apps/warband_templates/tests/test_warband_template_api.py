@@ -11,6 +11,7 @@ from django.test.utils import CaptureQueriesContext
 from apps.battles.models import Battle
 from apps.campaigns.models import CampaignSettings
 from apps.items.tests.catalogue_support import ITEMS, CatalogueTestCase, make_entry
+from apps.skills.models import Skill
 from apps.warband_templates.models import (
     HENCHMAN,
     TemplateFighter,
@@ -152,14 +153,16 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
             )
             TemplateFighterList.objects.create(fighter=fighter, equipment_list=self.made.kit)
             fighter.special_links.create(special=self.made.rule)
+            fighter.skill_links.create(skill=Skill.objects.get(campaign=None, name="Sprint"))
             hero = Hero.objects.create(warband=self.warband, name=f"Hero {number}", fighter_key="captain")
             HeroItem.objects.create(hero=hero, item=self.book_sword)
             group = HenchmenGroup.objects.create(warband=self.warband, name=f"Group {number}", fighter_key=fighter.key)
             Henchman.objects.create(group=group, name="Lad")
             WarbandRule.objects.create(warband=self.warband, title=f"Rule {number}")
-        # the warband and membership, list prices, the template, its rules, lists, lines, fighters, their rules and
-        # lists, its upgrades, the heroes and groups by fighter, the limited items held, the warband's rule titles
-        self.assertEqual((few, count()), (15, 15))
+        # the warband and membership, list prices, the template, its rules, lists, lines, fighters, their rules,
+        # starting skills and lists, its upgrades, the heroes and groups by fighter, the limited items held, the
+        # warband's rule titles
+        self.assertEqual((few, count()), (16, 16))
 
 
 class RaiseOutlineTests(CatalogueTestCase):

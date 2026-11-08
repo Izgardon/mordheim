@@ -93,6 +93,9 @@ export type TemplateSpecial = {
   description: string;
 };
 
+/** A skill a fighter starts with: the skill's name and rules. */
+export type TemplateSkill = { id: number; name: string; description: string };
+
 export type TemplateSpellType = { name: string; note: string };
 
 /**
@@ -103,7 +106,7 @@ export type VariantChange = {
   skill_types?: string[];
   stats?: Partial<Record<StatKey, number | string>>;
   max_count?: number | null;
-  skills?: { id: number; name: string }[];
+  skills?: { id: number; name: string; description?: string }[];
 };
 
 export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
@@ -133,6 +136,8 @@ export type TemplateFighter = Omit<CatalogueProfile, "armour_save"> & {
   /** The keys of the lists he buys from. */
   lists: string[];
   rules: TemplateSpecial[];
+  /** The skills he starts with (the Senior Gunnery Officer's Hunter): every hire of his has them. */
+  skills: TemplateSkill[];
 };
 
 export type TemplateUpgrade = {

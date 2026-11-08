@@ -168,12 +168,13 @@ const MERCENARIES: WarbandTemplate = {
       variant_changes: {
         middenheim: {
           skill_types: ["Combat", "Strength", "Speed"],
-          skills: [{ id: 2, name: "Ride [Animal]" }],
+          skills: [{ id: 2, name: "Ride [Animal]", description: "Rides the animal." }],
         },
       },
       fixed_kit: "",
       lists: ["mercenary-equipment"],
       rules: [],
+      skills: [{ id: 5, name: "Hunter", description: "Fires each turn." }],
     },
   ],
   upgrades: [],
@@ -278,7 +279,10 @@ describe("The Warbands page", () => {
       "35 gc · 0–2"
     );
     expect(tags("Skills")).toBe("SkillsCombatStrengthSpeed");
-    expect(tags("Starts with")).toBe("Starts withRide [Animal]");
+    // the skills he starts with, his own then his variant's, each opened to read (William, 7 Nov 2026)
+    const champion = within(screen.getByRole("article", { name: "Champion" }));
+    const starts = champion.getByText("Starts with: Hunter, Ride [Animal]").closest("details");
+    expect(starts).toHaveTextContent("HunterFires each turn.Ride [Animal]Rides the animal.");
     expect(screen.getByRole("button", { name: "Middenheim" })).toHaveAttribute(
       "aria-pressed",
       "true"
@@ -289,9 +293,7 @@ describe("The Warbands page", () => {
 
     await user.click(screen.getByRole("button", { name: "Reikland" }));
     expect(tags("Skills")).toBe("SkillsCombatShootingStrength");
-    expect(
-      within(screen.getByRole("article", { name: "Champion" })).queryByText("Starts with")
-    ).toBeNull();
+    expect(champion.getByText("Starts with: Hunter")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Reiklander Special rules" }));
     expect(
       await screen.findByRole("article", { name: "Reiklander Special rules" })

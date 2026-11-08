@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { makeEditorTemplate } from "@/test/template-editor-fixtures";
+import { makeEditorFighter, makeEditorTemplate } from "@/test/template-editor-fixtures";
 
 import { fighterDraft, fighterInput } from "./fighter-draft";
 
@@ -28,6 +28,12 @@ describe("a fighter's save", () => {
       { special_id: 40 },
       { name: "Lantern Bearer", description: "Sees far.", kind: "boon", category: "body" },
     ]);
+  });
+
+  it("sends the skills he starts with by id, none for a new fighter", () => {
+    const champion = makeEditorFighter({ skills: [{ id: 5, name: "Hunter", description: "" }] });
+    expect(fighterInput(fighterDraft(champion)).skill_ids).toEqual([5]);
+    expect(fighterInput(fighterDraft(null)).skill_ids).toEqual([]);
   });
 
   it("starts a new henchman in groups of 1–5", () => {

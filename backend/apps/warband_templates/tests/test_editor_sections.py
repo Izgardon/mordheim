@@ -1,7 +1,8 @@
 """The editor's sections, each saved on its own (the templates plan, phase 4): Basics, Fighters, Lists, Rules and
 Upgrades, refusing only what breaks the data (an unknown item, list or fighter, a missing name)."""
 
-from apps.items.tests.catalogue_support import ITEMS, make_entry
+from apps.items.tests.catalogue_support import ITEMS, SKILLS, make_entry
+from apps.skills.models import Skill
 from apps.special.kinds import WARBAND
 from apps.special.models import Special
 from apps.warband_templates.models import (
@@ -138,6 +139,24 @@ class FighterTests(EditorTestCase):
             [(rule["name"], rule["category"]) for rule in row["rules"]],
             [("Leader", "aura"), ("Lantern Bearer", "aura")],
         )
+
+    def test_a_save_writes_the_skills_he_starts_with_in_order_as_the_campaigns_current_ones(self) -> None:
+        # William, 7 Nov 2026: a fighter starts with a skill as one he'd learned ("yes please do that")
+        hunter = make_entry(SKILLS, "Hunter")
+        book_sprint = Skill.objects.get(campaign=None, name="Sprint")
+        sprint = make_entry(SKILLS, "Sprint", campaign=self.campaign, replaces=book_sprint)
+        body = self.saved("fighters/captain/", fighter_body(name="Captain", skill_ids=[book_sprint.id, hunter.id]))
+        version = WarbandTemplate.objects.get(pk=body["template"]["id"])
+        captain = version.fighters.get(key="captain")
+        self.assertEqual([link.skill_id for link in captain.skill_links.all()], [sprint.id, hunter.id])
+        row = next(row for row in body["template"]["fighters"] if row["key"] == "captain")
+        self.assertEqual([skill["name"] for skill in row["skills"]], ["Sprint", "Hunter"])
+        # none sent: he starts with none
+        self.saved("fighters/captain/", fighter_body(name="Captain"), template=version)
+        self.assertFalse(captain.skill_links.exists())
+        elsewhere = make_entry(SKILLS, "Lurk", campaign=self.elsewhere)
+        refused = self.save("fighters/captain/", fighter_body(skill_ids=[elsewhere.id]), template=version)
+        self.assertEqual(refused.status_code, 400)
 
     def test_a_profile_read_back_saves_unchanged(self) -> None:
         # the Tilean Hunting Hawk's M12 is written (no number to sum), as the seeding keeps it

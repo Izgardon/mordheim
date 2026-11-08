@@ -164,9 +164,20 @@ export function inVariant(fighter: TemplateFighter, variant: string): TemplateFi
 export const skillsFor = (fighter: TemplateFighter, variant: string) =>
   fighter.variant_changes[variant]?.skill_types ?? fighter.skill_types;
 
-/** The skills the variant gives him from the start: the Hung's heroes' Ride [Animal]. */
-export const startSkillsFor = (fighter: TemplateFighter, variant: string) =>
-  (fighter.variant_changes[variant]?.skills ?? []).map((skill) => skill.name);
+/**
+ * The skills he starts with in the variant, each once: his own (the Senior Gunnery Officer's
+ * Hunter, with its rules), then those the variant gives him (the Hung's heroes' Ride [Animal]).
+ */
+export function startSkillsFor(
+  fighter: Pick<TemplateFighter, "skills" | "variant_changes">,
+  variant: string
+): { id: number; name: string; description?: string }[] {
+  const own = fighter.skills;
+  const given = (fighter.variant_changes[variant]?.skills ?? []).filter(
+    (skill) => !own.some((held) => held.id === skill.id)
+  );
+  return [...own, ...given];
+}
 
 /** A list's lines in the variant: every variant's and its own (the Kurgan's bows). */
 export const linesFor = <Line extends Pick<TemplateLine, "variant">>(

@@ -59,6 +59,39 @@ export function SkillTypesField({
   );
 }
 
+/** The skills he starts with (the Senior Gunnery Officer's Hunter): every hire of his has them. */
+export function StartingSkillsField({
+  campaignId,
+  value,
+  saved,
+  onChange,
+}: {
+  campaignId: number;
+  value: number[];
+  /** The skills he was saved with, named while the campaign's skills load. */
+  saved: { id: number; name: string }[];
+  onChange: (ids: number[]) => void;
+}) {
+  const skills = useCatalogue("skills", campaignId).data;
+  const names = new Map<number, string>(saved.map((skill) => [skill.id, skill.name]));
+  skills.forEach((skill) => names.set(skill.id, skill.name));
+  return (
+    <div className="flex min-w-0 flex-col gap-1.5">
+      <span className={CAPTION}>Starts with</span>
+      <SearchMultiSelect
+        values={value.map((id) => ({ id, title: names.get(id) ?? "" }))}
+        options={[...skills]
+          .sort((a, b) => a.name.localeCompare(b.name))
+          .map((skill) => ({ id: skill.id, title: skill.name }))}
+        addLabel="Skill"
+        placeholder="Search skills"
+        emptyText="No skill by that name."
+        onChange={(next) => onChange(next.map((option) => Number(option.id)))}
+      />
+    </div>
+  );
+}
+
 /** The lores he casts from (each with its note, kept as it is: "with the Mark of Tchar"). */
 export function SpellTypesField({
   campaignId,

@@ -130,8 +130,8 @@ class TemplateFighter(WrittenStatBlock):
     group names ("Combat", "Skaven"); `spell_types` the lores he casts from, `[{"name", "note"}]` ("with the Mark of
     Tchar the Eagle"). `variant_changes` holds, by variant key, what differs: his skill groups, and his profile as
     `stats` written as the book writes them (`{"middenheim": {"skill_types": [...], "stats": {"strength": 4}}}`), and
-    skills he has from the start as `skills`, `[{"id", "name"}]` (the Hung's heroes' Ride [Animal]); `fixed_kit` what
-    an animal carries ("None")."""
+    skills a variant gives him from the start as `skills`, `[{"id", "name"}]` (the Hung's heroes' Ride [Animal]),
+    besides those he always starts with (`skill_links`); `fixed_kit` what an animal carries ("None")."""
 
     template = models.ForeignKey(WarbandTemplate, related_name="fighters", on_delete=models.CASCADE)
     key = models.SlugField(max_length=80)
@@ -187,6 +187,23 @@ class TemplateFighterSpecial(models.Model):
 
     def __str__(self) -> str:
         return f"{self.fighter_id}:{self.special_id}"
+
+
+class TemplateFighterSkill(models.Model):
+    """A skill the fighter starts with (William, 7 Nov 2026: "yes please do that"), the Senior Gunnery Officer's
+    Hunter: every hire of his has it as a real skill on the roster, the same as one he learned."""
+
+    fighter = models.ForeignKey(TemplateFighter, related_name="skill_links", on_delete=models.CASCADE)
+    skill = models.ForeignKey("skills.Skill", related_name="template_fighter_links", on_delete=models.RESTRICT)
+    position = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        db_table = "template_fighter_skill"
+        ordering = ["position", "id"]
+        constraints = [models.UniqueConstraint(fields=["fighter", "skill"], name="template_fighter_skill_once")]
+
+    def __str__(self) -> str:
+        return f"{self.fighter_id}:{self.skill_id}"
 
 
 class TemplateList(models.Model):

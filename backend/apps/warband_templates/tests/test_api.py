@@ -10,10 +10,12 @@ from django.test.utils import CaptureQueriesContext
 from apps.campaigns.models import CampaignType
 from apps.core.catalogue import versions
 from apps.core.catalogue.kinds import WARBAND_TEMPLATES
-from apps.items.tests.catalogue_support import CatalogueTestCase
+from apps.items.tests.catalogue_support import SKILLS, CatalogueTestCase, make_entry
+from apps.skills.models import Skill
 from apps.warband_templates.models import (
     TemplateFighter,
     TemplateFighterList,
+    TemplateFighterSkill,
     TemplateListItem,
     TemplateUpgrade,
     WarbandTemplate,
@@ -29,6 +31,7 @@ LIST = "/api/warband-templates/"
 class WarbandTemplateApiTests(CatalogueTestCase):
     made: Made
     khemri: CampaignType
+    hunter: Skill
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -37,6 +40,8 @@ class WarbandTemplateApiTests(CatalogueTestCase):
         cls.khemri = CampaignType.objects.create(slug="khemri", name="Khemri", grade="1b")
         ostermarkers = WarbandType.objects.create(name="Ostermarkers", slug="ostermarkers", campaign_type=cls.khemri)
         WarbandTemplateType.objects.create(template=cls.made.template, warband_type=ostermarkers)
+        cls.hunter = make_entry(SKILLS, "Hunter", description="Reloads.")
+        TemplateFighterSkill.objects.create(fighter=cls.made.captain, skill=cls.hunter)  # he starts with it
 
     def get(self, url: str, user: Any = None) -> Any:
         self.client.force_authenticate(user=user or self.player)
@@ -102,7 +107,24 @@ class WarbandTemplateApiTests(CatalogueTestCase):
         captain = body["fighters"][0]
         self.assertEqual((captain["key"], captain["race"], captain["lists"]), ("captain", "Human", ["kit"]))
         self.assertEqual([rule["name"] for rule in captain["rules"]], ["Leader"])
+        self.assertEqual(captain["skills"], [{"id": self.hunter.id, "name": "Hunter", "description": "Reloads."}])
         self.assertEqual((body["upgrades"][0]["name"], body["upgrades"][0]["who_text"]), ("Tentacle", "Warriors only"))
+
+    def test_a_skill_a_variant_gives_him_carries_its_rules(self) -> None:
+        ride = make_entry(SKILLS, "Ride [Animal]", description="Rides the animal.")
+        TemplateFighter.objects.filter(pk=self.made.captain.pk).update(
+            variant_changes={"middenheim": {"skill_types": ["Combat"], "skills": [{"id": ride.id, "name": ride.name}]}}
+        )
+        captain = self.get(f"{LIST}{self.made.template.id}/").json()["fighters"][0]
+        self.assertEqual(
+            captain["variant_changes"],
+            {
+                "middenheim": {
+                    "skill_types": ["Combat"],
+                    "skills": [{"id": ride.id, "name": "Ride [Animal]", "description": "Rides the animal."}],
+                }
+            },
+        )
 
     def test_who_may_take_a_line_is_the_servers_wording(self) -> None:
         # the templates plan, phase 3: one wording, plural names, as the hire screens read it
@@ -130,7 +152,8 @@ class WarbandTemplateApiTests(CatalogueTestCase):
             )
             TemplateFighterList.objects.create(fighter=fighter, equipment_list=self.made.kit)
             fighter.special_links.create(special=self.made.rule)
-        self.assertEqual((few, count()), (9, 9))  # the template, then one query for each kind of its rows
+            fighter.skill_links.create(skill=self.hunter)
+        self.assertEqual((few, count()), (10, 10))  # the template, then one query for each kind of its rows
 
     def test_a_campaigns_list_reads_in_the_same_queries_however_many_templates_it_holds(self) -> None:
         def count() -> int:

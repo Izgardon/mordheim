@@ -10,6 +10,7 @@ from apps.campaigns.in_play import with_in_play
 from .models import (
     TemplateFighter,
     TemplateFighterList,
+    TemplateFighterSkill,
     TemplateFighterSpecial,
     TemplateList,
     TemplateListItem,
@@ -36,10 +37,11 @@ def template_rows(rows: QuerySet[WarbandTemplate] | None = None, campaign_id: in
 
 def template_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[Any]:
     """The templates with everything the whole template shows: its types, rules, lists with their lines' items,
-    fighters with their races, lists and rules, and upgrades with their specials (one query each)."""
+    fighters with their races, lists, rules and starting skills, and upgrades with their specials (one query each)."""
     lines = TemplateListItem.objects.select_related("item")
     fighters = TemplateFighter.objects.select_related("race").prefetch_related(
         Prefetch("special_links", queryset=TemplateFighterSpecial.objects.select_related("special")),
+        Prefetch("skill_links", queryset=TemplateFighterSkill.objects.select_related("skill")),
         Prefetch("list_links", queryset=TemplateFighterList.objects.select_related("equipment_list")),
     )
     return rows.prefetch_related(

@@ -5,6 +5,7 @@ from typing import Any
 
 from rest_framework import serializers
 
+from apps.skills.models import Skill
 from apps.warbands.models.shared import STAT_FIELDS
 
 from .models import (
@@ -97,6 +98,14 @@ class TemplateSpecialSerializer(serializers.Serializer):
     description = serializers.CharField(source="special.description")
 
 
+class TemplateSkillSerializer(serializers.Serializer):
+    """A skill a fighter starts with: the skill's name and rules."""
+
+    id = serializers.IntegerField(source="skill.id")
+    name = serializers.CharField(source="skill.name")
+    description = serializers.CharField(source="skill.description")
+
+
 class TemplateLineSerializer(serializers.ModelSerializer):
     """A list line, with the reason anyone it isn't meant for sees it dimmed (`who_text`, "Gaolers only": the
     serializer's `fighters` context, by key)."""
@@ -138,9 +147,14 @@ class TemplateListSerializer(serializers.ModelSerializer):
 
 
 class TemplateFighterSerializer(serializers.ModelSerializer):
+    """A fighter: his figures, profile as written, skill groups, lores, lists, rules and the skills he starts with,
+    and what each variant changes on him, a skill it gives him carrying its rules from the `skill_texts` context."""
+
     race = serializers.SerializerMethodField()
     lists = serializers.SerializerMethodField()
+    variant_changes = serializers.SerializerMethodField()
     rules = TemplateSpecialSerializer(source="special_links", many=True, read_only=True)
+    skills = TemplateSkillSerializer(source="skill_links", many=True, read_only=True)
 
     class Meta:
         model = TemplateFighter
@@ -171,6 +185,7 @@ class TemplateFighterSerializer(serializers.ModelSerializer):
             "fixed_kit",
             "lists",
             "rules",
+            "skills",
         )
 
     def get_race(self, fighter: TemplateFighter) -> str | None:
@@ -178,6 +193,25 @@ class TemplateFighterSerializer(serializers.ModelSerializer):
 
     def get_lists(self, fighter: TemplateFighter) -> list[str]:
         return [link.equipment_list.key for link in fighter.list_links.all()]
+
+    def get_variant_changes(self, fighter: TemplateFighter) -> dict[str, Any]:
+        texts: dict[int, str] = self.context.get("skill_texts") or {}
+        changes: dict[str, Any] = {}
+        for variant, change in (fighter.variant_changes or {}).items():
+            skills = [{**skill, "description": texts.get(skill["id"], "")} for skill in change.get("skills") or []]
+            changes[variant] = {**change, "skills": skills} if skills else change
+        return changes
+
+
+def variant_skill_texts(fighters: list[TemplateFighter]) -> dict[int, str]:
+    """The rules of the skills the fighters' variants give them, by id (one query, only when one gives any)."""
+    ids = {
+        skill["id"]
+        for fighter in fighters
+        for change in (fighter.variant_changes or {}).values()
+        for skill in change.get("skills") or []
+    }
+    return dict(Skill.objects.filter(pk__in=ids).values_list("id", "description")) if ids else {}
 
 
 class TemplateUpgradeSerializer(serializers.ModelSerializer):
@@ -221,7 +255,7 @@ class WarbandTemplateDetailSerializer(WarbandTemplateSerializer):
 
     rules = TemplateRuleSerializer(many=True, read_only=True)
     lists = serializers.SerializerMethodField()
-    fighters = TemplateFighterSerializer(many=True, read_only=True)
+    fighters = serializers.SerializerMethodField()
     upgrades = serializers.SerializerMethodField()
 
     class Meta(WarbandTemplateSerializer.Meta):
@@ -232,6 +266,11 @@ class WarbandTemplateDetailSerializer(WarbandTemplateSerializer):
 
     def get_lists(self, template: WarbandTemplate) -> Any:
         return TemplateListSerializer(template.lists.all(), many=True, context=self._with_fighters(template)).data
+
+    def get_fighters(self, template: WarbandTemplate) -> Any:
+        fighters = list(template.fighters.all())
+        context = {**self.context, "skill_texts": variant_skill_texts(fighters)}
+        return TemplateFighterSerializer(fighters, many=True, context=context).data
 
     def get_upgrades(self, template: WarbandTemplate) -> Any:
         return TemplateUpgradeSerializer(template.upgrades.all(), many=True, context=self._with_fighters(template)).data

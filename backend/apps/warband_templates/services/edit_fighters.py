@@ -3,7 +3,8 @@
 A fighter's `key` is what a unit remembers it was recruited as (`fighter_key`), so it is made once, unique in the
 template, and never changes; a house version copies the keys, so units keep pointing at the right fighter. A save
 sends the whole fighter: his figures and profile as written, his skill groups and spell lores, the lists he buys from
-(by key) and his rules (specials picked or written: own_specials.py). His variant changes are copied with the template
+(by key), his rules (specials picked or written: own_specials.py) and the skills he starts with (picked: every hire of
+his gets them). His variant changes are copied with the template
 and kept as they are. Taking him out leaves the units recruited as him as they are, and takes his key out of the lists'
 and upgrades' who."""
 
@@ -20,6 +21,7 @@ from ..models import (
     HERO,
     TemplateFighter,
     TemplateFighterList,
+    TemplateFighterSkill,
     TemplateFighterSpecial,
     TemplateList,
     TemplateListItem,
@@ -104,7 +106,7 @@ def _fill(fighter: TemplateFighter, data: dict[str, Any]) -> None:
 
 
 def _write_links(template: WarbandTemplate, fighter: TemplateFighter, data: dict[str, Any]) -> None:
-    """His lists (by key, each of the template's) and his rules, in the order sent."""
+    """His lists (by key, each of the template's), his rules and the skills he starts with, in the order sent."""
     lists = dict(TemplateList.objects.filter(template=template).values_list("key", "id"))
     unknown = [key for key in data["lists"] if key not in lists]
     if unknown:
@@ -118,6 +120,11 @@ def _write_links(template: WarbandTemplate, fighter: TemplateFighter, data: dict
     TemplateFighterSpecial.objects.bulk_create(
         TemplateFighterSpecial(fighter=fighter, special_id=special_id, position=n)
         for n, special_id in enumerate(special_ids)
+    )
+    TemplateFighterSkill.objects.filter(fighter=fighter).delete()
+    TemplateFighterSkill.objects.bulk_create(
+        TemplateFighterSkill(fighter=fighter, skill_id=skill_id, position=n)
+        for n, skill_id in enumerate(data["skill_ids"])
     )
 
 

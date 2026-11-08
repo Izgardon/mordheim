@@ -12,6 +12,7 @@ from ..hire_serializers import WarbandTemplateHireSerializer
 from ..models import (
     TemplateFighter,
     TemplateFighterList,
+    TemplateFighterSkill,
     TemplateFighterSpecial,
     TemplateList,
     TemplateListItem,
@@ -34,10 +35,11 @@ from .resolve import (
 
 def hire_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[WarbandTemplate]:
     """The templates with what the hire screens show: rules, lists with their lines' items, fighters with their
-    races, rules and lists, and upgrades with their specials (one query each)."""
+    races, rules, starting skills and lists, and upgrades with their specials (one query each)."""
     lines = TemplateListItem.objects.select_related("item")
     fighters = TemplateFighter.objects.select_related("race").prefetch_related(
         Prefetch("special_links", queryset=TemplateFighterSpecial.objects.select_related("special")),
+        Prefetch("skill_links", queryset=TemplateFighterSkill.objects.select_related("skill")),
         Prefetch("list_links", queryset=TemplateFighterList.objects.select_related("equipment_list")),
     )
     return rows.prefetch_related(
@@ -56,7 +58,7 @@ def _missing_rules(warband: Warband, template: WarbandTemplate, variant: str) ->
 
 
 def warband_template(warband: Warband) -> dict[str, Any]:
-    """The warband's template with its variant applied, and whether list prices are still open (thirteen queries with
+    """The warband's template with its variant applied, and whether list prices are still open (fourteen queries with
     a template, two without)."""
     open_now = list_prices_open(warband.id)
     template = hire_details(templates_for_type(warband.campaign_id, warband.warband_type_id)).first()

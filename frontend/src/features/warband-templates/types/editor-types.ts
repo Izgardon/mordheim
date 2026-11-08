@@ -73,6 +73,8 @@ export type FighterInput = {
   fixed_kit: string;
   lists: string[];
   rules: RuleInput[];
+  /** The skills he starts with, in order. */
+  skill_ids: number[];
 };
 
 export type LineInput = {

@@ -3,9 +3,10 @@ group, camp's Recruit for a new group) is filled from that fighter of the warban
 
 What the fighter gives goes under what the recruit sent, so the dialog's name, type, race, cost and starting XP win:
 his type (the fighter's name), race, profile (written values as written), skill groups, spell lores, caster, Large,
-leader, rules (his specials), the skills his variant gives him (the Hung's heroes' Ride [Animal]), starting XP, and
-for a group its size, gains-XP (no level-ups) and promotable. The unit remembers the key; nothing links it to the
-template after, so a later template edit touches nothing on the roster.
+leader, rules (his specials), the skills he starts with (the Senior Gunnery Officer's Hunter; William, 7 Nov 2026:
+"yes please do that") and those his variant gives him (the Hung's heroes' Ride [Animal]) as real skills, a group's
+for every member, starting XP, and for a group its size, gains-XP (no level-ups) and promotable. The unit remembers
+the key; nothing links it to the template after, so a later template edit touches nothing on the roster.
 
 Every hire of a fighter gets one of each item his lists mark "1st free" at no cost, each item once (William, 6 Nov 2026:
 the Dagger, and the Gnoblars' Sharp Stuff too), before and after the first battle (a group: every member, as its
@@ -21,7 +22,7 @@ from apps.warbands.models import Warband
 from apps.warbands.units.errors import FieldErrors
 from apps.warbands.utils.stats import stat_inputs
 
-from ..models import HENCHMAN, HERO, TemplateFighter, TemplateFighterSpecial, TemplateListItem
+from ..models import HENCHMAN, HERO, TemplateFighter, TemplateFighterSkill, TemplateFighterSpecial, TemplateListItem
 from .resolve import apply_variant, start_skills, templates_for_type, warband_variant
 
 if TYPE_CHECKING:
@@ -43,9 +44,10 @@ def unit_body(kind_key: str, fighter: TemplateFighter) -> dict[str, Any]:
         **stat_inputs(fighter),
         "special_ids": [link.special_id for link in fighter.special_links.all()],
     }
-    skills = [int(entry["id"]) for entry in start_skills(fighter) if entry.get("id")]
+    skills = [link.skill_id for link in fighter.skill_links.all()]  # his own, then those his variant gives
+    skills += [int(entry["id"]) for entry in start_skills(fighter) if entry.get("id")]
     if skills:
-        body["skill_ids"] = skills
+        body["skill_ids"] = list(dict.fromkeys(skills))
     if kind_key == "hero":
         return {
             **body,
@@ -81,7 +83,7 @@ def free_items(fighters: list[TemplateFighter], variant: str) -> dict[str, list[
 def fill_from_template(
     kind: "UnitKindSpec", warband: Warband, entries: list[dict[str, Any]], errors: FieldErrors
 ) -> dict[int, list[int]]:
-    """Fill, in place, each create entry naming a `fighter_key` from that fighter of the warband's template (three
+    """Fill, in place, each create entry naming a `fighter_key` from that fighter of the warband's template (four
     queries, only when one does); an unknown key, or a hero's key sent as a group, is an error on the entry. The items
     each filled create gets free, by its index."""
     keyed = [(index, entry) for index, entry in enumerate(entries) if entry.get("fighter_key")]
@@ -89,8 +91,11 @@ def fill_from_template(
     if not keyed or wanted is None:
         return {}
     specials = Prefetch("special_links", queryset=TemplateFighterSpecial.objects.order_by("position", "id"))
+    skills = Prefetch("skill_links", queryset=TemplateFighterSkill.objects.order_by("position", "id"))
     rows = templates_for_type(warband.campaign_id, warband.warband_type_id)
-    template = rows.prefetch_related(Prefetch("fighters", queryset=TemplateFighter.objects.prefetch_related(specials)))
+    template = rows.prefetch_related(
+        Prefetch("fighters", queryset=TemplateFighter.objects.prefetch_related(specials, skills))
+    )
     found = template.first()
     variant = warband_variant(warband, found) if found is not None else ""
     fighters = {row.key: apply_variant(row, variant) for row in found.fighters.all()} if found is not None else {}

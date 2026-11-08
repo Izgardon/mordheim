@@ -1,13 +1,13 @@
 """Hiring from the warband's template (the templates plan, phase 2): a roster Save's create naming a fighter is filled
 from him (the variant applied) under what it sent, writes a Recruit row at the price sent and a Buy row per item at its
 price, gives one of each item his lists mark "1st free" (the Dagger, Sharp Stuff), each once, to every hire of a
-fighter (every member of a group, and a member who joins later pays nothing for them), and an unknown fighter is
-refused; a unit typed by hand gets nothing."""
+fighter (every member of a group, and a member who joins later pays nothing for them), gives him the skills he starts
+with as real skills, and an unknown fighter is refused; a unit typed by hand gets nothing."""
 
 from typing import Any
 
 from apps.items.tests.catalogue_support import ITEMS, SKILLS, CatalogueTestCase, make_entry
-from apps.warband_templates.models import TemplateFighter, TemplateListItem
+from apps.warband_templates.models import TemplateFighter, TemplateFighterSkill, TemplateListItem
 from apps.warbands.models import HenchmenGroup, Hero, LedgerAction, WarbandTrade
 
 from .support import Made, make_template
@@ -87,6 +87,38 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
             self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Otto"}]}).status_code, 200
         )
         self.assertEqual(list(Hero.objects.get(name="Otto").hero_skills.values_list("skill_id", flat=True)), [ride.id])
+
+    def test_a_hire_starts_with_his_skills_and_a_hand_typed_unit_with_none(self) -> None:
+        # William, 7 Nov 2026, of a fighter whose rule only named a skill (the Senior Gunnery Officer's Hunter): he
+        # should start with the skill itself, as one he'd learned: "yes please do that"
+        hunter, ride = make_entry(SKILLS, "Hunter"), make_entry(SKILLS, "Ride [Animal]")
+        TemplateFighterSkill.objects.create(fighter=self.made.captain, skill=hunter, position=0)
+        TemplateFighterSkill.objects.create(fighter=self.made.captain, skill=ride, position=1)
+        TemplateFighterSkill.objects.create(fighter=self.made.warriors, skill=hunter)
+        TemplateFighter.objects.filter(pk=self.made.captain.pk).update(
+            variant_changes={"reikland": {"skills": [{"id": ride.id, "name": "Ride [Animal]"}]}}  # his already: once
+        )
+        self.warband.template_variant = "reikland"
+        self.warband.save()
+        heroes = {"create": [{"fighter_key": "captain", "name": "Karl"}, {"name": "Typed", "unit_type": "Captain"}]}
+        self.assertEqual(self.batch("heroes", heroes).status_code, 200)
+        group = {"create": [{"fighter_key": "warriors", "name": "Lads", "henchmen": [{"name": "A"}]}]}
+        self.assertEqual(self.batch("henchmen-groups", group).status_code, 200)
+        karl = Hero.objects.get(warband=self.warband, name="Karl")
+        self.assertEqual(sorted(karl.hero_skills.values_list("skill__name", flat=True)), ["Hunter", "Ride [Animal]"])
+        self.assertFalse(Hero.objects.get(warband=self.warband, name="Typed").hero_skills.exists())
+        lads = HenchmenGroup.objects.get(warband=self.warband, name="Lads")
+        self.assertEqual(list(lads.henchmen_group_skills.values_list("skill_id", flat=True)), [hunter.id])
+        body = self.get_as(self.player, f"/api/warbands/{self.warband.id}/heroes/{karl.id}/").json()
+        self.assertEqual(sorted(skill["name"] for skill in body["skills"]), ["Hunter", "Ride [Animal]"])
+
+    def test_a_hire_starts_with_the_campaigns_version_of_his_skill(self) -> None:
+        hunter = make_entry(SKILLS, "Hunter")
+        own = make_entry(SKILLS, "Hunter", campaign=self.campaign, replaces=hunter)
+        TemplateFighterSkill.objects.create(fighter=self.made.captain, skill=hunter)
+        self.assertEqual(self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Ada"}]}).status_code, 200)
+        hero = Hero.objects.get(warband=self.warband, name="Ada")
+        self.assertEqual(list(hero.hero_skills.values_list("skill_id", flat=True)), [own.id])
 
     def test_a_group_buys_one_loadout_and_every_member_gets_the_dagger(self) -> None:
         create = {"fighter_key": "warriors", "name": "Lads", "henchmen": [{"name": "A"}, {"name": "B"}]}

@@ -1,6 +1,7 @@
 """seed_warband_templates on a small out/warband-templates.json: a template upserted by slug with its child rows written
-afresh, its fighters' own rules as warband specials and ours reused, its written stats as units hold them, a dropped
-template and a rule no template holds archived, and a name the book lacks stopping the run."""
+afresh, its fighters' own rules as warband specials and ours reused, the skills they start with linked to the book's,
+its written stats as units hold them, a dropped template and a rule no template holds archived, and a name the book
+lacks stopping the run."""
 
 import json
 from io import StringIO
@@ -58,6 +59,7 @@ def fighter(**fields: Any) -> dict[str, Any]:
         "variant_changes": {"middenheim": {"skill_types": ["Combat"], "skills": ["Ride [Animal]"]}},
         "fixed_kit": "",
         "lists": ["kit"],
+        "skills": ["Hunter"],
         "specials": [
             {"name": "Leader", "type": "Warband - Mercenaries", "description": "Leads."},
             {"name": "Large", "type": "Trait"},
@@ -127,6 +129,7 @@ class SeedWarbandTemplatesTests(TestCase):
     dagger: Item
     large: Special
     ride: Skill
+    hunter: Skill
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -138,6 +141,7 @@ class SeedWarbandTemplatesTests(TestCase):
         cls.dagger = Item.objects.create(name="Dagger", type="Weapon", campaign_type=mordheim)
         cls.large = Special.objects.create(name="Large", type="Trait")
         cls.ride = Skill.objects.create(name="Ride [Animal]")
+        cls.hunter = Skill.objects.create(name="Hunter")
 
     def test_a_template_is_written_with_its_types_rules_lists_fighters_and_upgrades(self) -> None:
         output = seed(template())
@@ -161,6 +165,7 @@ class SeedWarbandTemplatesTests(TestCase):
         self.assertEqual((captain.race_id, captain.attacks, captain.leadership), (self.human.id, 1, None))
         self.assertEqual(captain.written_stats, {"attacks": "(2)", "leadership": "12"})
         self.assertEqual([link.equipment_list.key for link in captain.list_links.all()], ["kit"])
+        self.assertEqual([link.skill_id for link in captain.skill_links.all()], [self.hunter.id])  # he starts with it
         rules = {link.special.name: link.special for link in captain.special_links.select_related("special")}
         self.assertEqual(rules["Large"].id, self.large.id)
         self.assertEqual((rules["Leader"].owner_kind, rules["Leader"].description), (WARBAND, "Leads."))
@@ -190,4 +195,7 @@ class SeedWarbandTemplatesTests(TestCase):
         missing = template(lists=[{"key": "kit", "name": "Kit", "note": "", "lines": [{**template()["lists"][0]["lines"][0], "item": {"name": "Halberd", "variant": ""}}]}])  # fmt: skip
         with self.assertRaisesRegex(CommandError, "Mercenaries, Kit: item \\('Halberd', ''\\) isn't seeded"):
             seed(missing)
+        self.assertFalse(WarbandTemplate.objects.exists())
+        with self.assertRaisesRegex(CommandError, "Mercenaries, Captain: skill 'Sniper' isn't seeded"):
+            seed(template(fighters=[fighter(skills=["Sniper"])]))
         self.assertFalse(WarbandTemplate.objects.exists())

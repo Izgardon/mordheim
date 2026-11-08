@@ -29,6 +29,8 @@ export type FighterDraft = {
   fixedKit: string;
   lists: string[];
   rules: RuleDraft[];
+  /** The skills he starts with, in order. */
+  skillIds: number[];
 };
 
 const BLANK_STATS = profileInputs({
@@ -71,6 +73,7 @@ export function fighterDraft(
       fixedKit: "",
       lists: [],
       rules: [],
+      skillIds: [],
     };
   }
   return {
@@ -101,6 +104,7 @@ export function fighterDraft(
       category: rule.category,
       description: rule.description,
     })),
+    skillIds: fighter.skills.map((skill) => skill.id),
   };
 }
 
@@ -128,6 +132,7 @@ export function fighterInput(draft: FighterDraft): FighterInput {
     promotable: henchman ? draft.promotable : true,
     fixed_kit: draft.fixedKit.trim(),
     lists: draft.lists,
+    skill_ids: draft.skillIds,
     rules: draft.rules.map((rule) =>
       rule.special_id !== null
         ? { special_id: rule.special_id }

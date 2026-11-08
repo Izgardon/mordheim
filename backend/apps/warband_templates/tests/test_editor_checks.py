@@ -8,6 +8,7 @@ from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
 from apps.campaigns.models import CampaignSettings
+from apps.skills.models import Skill
 from apps.warband_templates.models import TemplateFighter, TemplateFighterList, WarbandTemplate, WarbandTemplateType
 from apps.warbands.models import Hero
 
@@ -122,12 +123,13 @@ class EditorQueryTests(EditorTestCase):
             )
             fighter.list_links.create(equipment_list=fighter.template.lists.get())
             fighter.special_links.create(special=self.made.rule)
+            fighter.skill_links.create(skill=Skill.objects.get(campaign=None, name="Sprint"))
 
     def test_the_editor_reads_in_the_same_queries_however_much_the_template_holds(self) -> None:
         url = f"{self.at('editor/')}?campaign_id={self.campaign.id}"
         few = self.count(url)
         self.grow()
-        self.assertEqual((few, self.count(url)), (14, 14))
+        self.assertEqual((few, self.count(url)), (15, 15))
 
     def test_a_section_save_takes_the_same_queries_however_much_the_template_holds(self) -> None:
         version_id = self.saved("fighters/captain/", fighter_body(name="Captain"))["template"]["id"]

@@ -3,7 +3,7 @@ what a delete answers when it archives or removes an entry instead.
 
 Units' copies (items, skills, spells, specials), stash rows, the skills, specials, spells and equipment of bestiary
 entries, hired swords and dramatis personae, the races of units, hired swords and dramatis personae, and the items,
-races and specials a warband template's lists, fighters and upgrades name reference
+races, specials and skills a warband template's lists, fighters and upgrades name reference
 the catalogue with RESTRICT: a delete never takes them with it. The kinds
 registry names those tables (`holders`, kinds.py). Counted within one campaign: a book entry is held across
 campaigns, a campaign's entry only in its own. What holds an entry's twin counts for the entry: a beast's usage is

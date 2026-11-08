@@ -8,6 +8,7 @@ import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
+import { skill } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import {
@@ -110,6 +111,36 @@ describe("The template editor", () => {
       lists: ["kit"],
       rules: [{ special_id: 40 }],
     });
+  });
+
+  it("picks the skills a fighter starts with and saves them in order", async () => {
+    // William, 7 Nov 2026: a fighter starts with a skill as one he'd learned ("yes please do that")
+    const hunter = { id: 5, name: "Hunter", description: "Fires each turn." };
+    fakeApi.on(`GET /skills/?campaign_id=${CAMPAIGN_ID}`, [
+      skill({ id: 5, name: "Hunter" }),
+      skill({ id: 3, name: "Leap" }),
+    ]);
+    fakeApi.on(
+      EDITOR,
+      makeEditorAnswer({
+        template: makeEditorTemplate({ fighters: [makeEditorFighter({ skills: [hunter] })] }),
+      })
+    );
+    fakeApi.on("PUT /warband-templates/1/fighters/champions/", () => makeEditorAnswer());
+    const user = setupUser();
+    renderWithQueryClient(<Harness />);
+    await user.click(await screen.findByRole("button", { name: /^Fighters/ }));
+    await user.click(screen.getByRole("button", { name: /^Champion/ }));
+    expect(screen.getByRole("button", { name: "Remove Hunter" })).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Skill" }));
+    await user.type(screen.getByRole("combobox", { name: "Skill" }), "Leap{Enter}");
+    await user.click(screen.getByRole("button", { name: "Save fighter" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("PUT /warband-templates/1/fighters/champions/")).toMatchObject({
+        skill_ids: [5, 3],
+      })
+    );
   });
 
   it("saves the rules whole when one is added, for one variant", async () => {

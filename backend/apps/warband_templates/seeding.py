@@ -30,6 +30,7 @@ from apps.warbands.utils.stats import MAX_STAT, Stat, read_stat
 from .models import (
     TemplateFighter,
     TemplateFighterList,
+    TemplateFighterSkill,
     TemplateFighterSpecial,
     TemplateList,
     TemplateListItem,
@@ -123,13 +124,16 @@ class BookRows:
     def item(self, ref: Mapping[str, str], owner: str) -> int:
         return self._found(self.items, (ref["name"], ref.get("variant", "")), "item", owner)
 
+    def skill(self, name: str, owner: str) -> int:
+        return self._found(self.skills, name, "skill", owner)
+
     def variant_changes(self, changes: Mapping[str, Any], owner: str) -> dict[str, Any]:
         """A fighter's `variant_changes` as stored: the skills a variant gives him, named in the import, linked to the
         book's skill of that name (`{"id", "name"}`)."""
         stored: dict[str, Any] = {}
         for variant, change in changes.items():
             skills = change.get("skills")
-            linked = [{"id": self._found(self.skills, name, "skill", owner), "name": name} for name in skills or []]
+            linked = [{"id": self.skill(name, owner), "name": name} for name in skills or []]
             stored[variant] = {**change, "skills": linked} if skills else dict(change)
         return stored
 
@@ -217,7 +221,8 @@ def write_lists(template: WarbandTemplate, entries: list[dict[str, Any]], book: 
 def write_fighters(
     template: WarbandTemplate, entries: list[dict[str, Any]], lists: dict[str, int], book: BookRows
 ) -> None:
-    """The template's fighters, the lists each buys from and his rules."""
+    """The template's fighters, the lists each buys from, his rules and the skills he starts with (the book's of their
+    names)."""
     owner = template.name
     fighters = TemplateFighter.objects.bulk_create(
         TemplateFighter(
@@ -240,6 +245,11 @@ def write_fighters(
         TemplateFighterSpecial(fighter=fighter, position=n, special_id=book.special(special, owner))
         for fighter, row in zip(fighters, entries, strict=True)
         for n, special in enumerate(row["specials"])
+    )
+    TemplateFighterSkill.objects.bulk_create(
+        TemplateFighterSkill(fighter=fighter, position=n, skill_id=book.skill(name, f"{owner}, {row['name']}"))
+        for fighter, row in zip(fighters, entries, strict=True)
+        for n, name in enumerate(row.get("skills") or [])
     )
 
 

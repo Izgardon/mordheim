@@ -1,19 +1,27 @@
 """Warband templates through the catalogue framework (apps/core/catalogue): a campaign's version copies every child
 row with its links between them, Revert takes it back, a book template is removed for one campaign, a campaign's own
-is deleted, and the items, races and specials a template holds count as used."""
+is deleted, and the items, races, specials and starting skills a template holds count as used."""
 
 from django.db import transaction
 
 from apps.core.catalogue import archive, merge, versions
-from apps.core.catalogue.kinds import ITEMS, RACES, SPECIALS, WARBAND_TEMPLATES
+from apps.core.catalogue.kinds import ITEMS, RACES, SKILLS, SPECIALS, WARBAND_TEMPLATES
 from apps.core.catalogue.usage import count_usage
 from apps.core.models import CatalogueRemoval, RevertedVersion
 from apps.items.models import Item
 from apps.items.tests.catalogue_support import ITEMS as ITEM_KIND
 from apps.items.tests.catalogue_support import RACES as RACE_KIND
+from apps.items.tests.catalogue_support import SKILLS as SKILL_KIND
 from apps.items.tests.catalogue_support import CatalogueTestCase, make_entry
 from apps.races.models import Race
-from apps.warband_templates.models import TemplateFighter, TemplateFighterList, TemplateListItem, WarbandTemplate
+from apps.skills.models import Skill
+from apps.warband_templates.models import (
+    TemplateFighter,
+    TemplateFighterList,
+    TemplateFighterSkill,
+    TemplateListItem,
+    WarbandTemplate,
+)
 from apps.warbands.models import WarbandType
 
 from .support import Made, make_template
@@ -56,6 +64,18 @@ class TemplateVersionTests(CatalogueTestCase):
         self.assertEqual(version.upgrades.get().special_id, self.made.mutation.id)
         book_lists = TemplateFighterList.objects.filter(fighter__template=self.made.template)
         self.assertEqual({row.equipment_list_id for row in book_lists}, {self.made.kit.pk})
+
+    def test_a_version_copies_the_skills_a_fighter_starts_with_as_the_campaigns_current_ones(self):
+        # William, 7 Nov 2026, of a fighter whose rule only named a skill: "yes please do that" (start with the skill)
+        hunter, sprint = make_entry(SKILL_KIND, "Hunter"), Skill.objects.get(campaign=None, name="Sprint")
+        for n, skill in enumerate((hunter, sprint)):
+            TemplateFighterSkill.objects.create(fighter=self.made.captain, skill=skill, position=n)
+        with transaction.atomic():
+            own_sprint = versions.editable(SKILLS, sprint, self.campaign.id)
+        version = self.edit()
+        captain = version.fighters.get(key="captain")
+        self.assertEqual([link.skill_id for link in captain.skill_links.all()], [hunter.id, own_sprint.id])
+        self.assertEqual([link.skill_id for link in self.made.captain.skill_links.all()], [hunter.id, sprint.id])
 
     def test_a_version_lists_the_campaigns_version_of_an_item(self):
         with transaction.atomic():
@@ -126,6 +146,21 @@ class TemplateUsageTests(CatalogueTestCase):
         ):
             with self.subTest(kind=kind.key, entry=entry_id):
                 self.assertEqual(count_usage(kind, entry_id, self.campaign.id)["warband_templates"], 1)
+
+    def test_a_campaigns_template_holds_the_skills_its_fighters_start_with_and_they_follow_the_skill(self):
+        hunter = make_entry(SKILL_KIND, "Hunter")
+        own = TemplateFighterSkill.objects.create(fighter=self.own.captain, skill=hunter)
+        book = TemplateFighterSkill.objects.create(fighter=self.book.captain, skill=hunter)
+        self.assertEqual(count_usage(SKILLS, hunter.pk, self.campaign.id)["warband_templates"], 1)
+        with transaction.atomic():
+            version = versions.editable(SKILLS, hunter, self.campaign.id)
+        own.refresh_from_db()
+        book.refresh_from_db()
+        self.assertEqual((own.skill_id, book.skill_id), (version.id, hunter.id))
+        with transaction.atomic():
+            versions.revert(SKILLS, version, self.campaign.id)
+        own.refresh_from_db()
+        self.assertEqual(own.skill_id, hunter.id)
 
     def test_a_book_template_counts_in_no_campaign(self):
         self.assertEqual(count_usage(ITEMS, self.book_axe.pk, self.campaign.id)["warband_templates"], 0)

@@ -35,7 +35,8 @@ function facts(fighter: TemplateFighter) {
 
 /**
  * A template's fighter: his name, cost and how many of him, his profile as written, his skill
- * groups in the variant, his lores and lists, and his rules (opened to read).
+ * groups in the variant, his lores and lists, and the skills he starts with and his rules (each
+ * opened to read).
  */
 export default function TemplateFighterCard({
   fighter,
@@ -50,6 +51,7 @@ export default function TemplateFighterCard({
     .map((key) => template.lists.find((entry) => entry.key === key)?.name)
     .filter((name): name is string => Boolean(name));
   const name = fighter.kind === "henchman" && fighter.plural ? fighter.plural : fighter.name;
+  const starts = startSkillsFor(fighter, variant);
   return (
     <article
       aria-label={fighter.name}
@@ -64,7 +66,20 @@ export default function TemplateFighterCard({
       <p className="m-0 text-xs text-muted-foreground">{facts(fighter).join(" · ")}</p>
       <ProfileStrip profile={{ ...fighter, armour_save: null }} />
       <Tags label="Skills" names={skillsFor(fighter, variant)} />
-      <Tags label="Starts with" names={startSkillsFor(fighter, variant)} />
+      {starts.length ? (
+        <details className="group">
+          <summary className="cursor-pointer text-xs font-semibold text-accent-text">
+            Starts with: {starts.map((skill) => skill.name).join(", ")}
+          </summary>
+          <div className="mt-2 flex flex-col gap-2.5">
+            {starts.map((skill) => (
+              <RuleBlock key={skill.id} name={skill.name}>
+                {skill.description}
+              </RuleBlock>
+            ))}
+          </div>
+        </details>
+      ) : null}
       <Tags label="Spells" names={fighter.spell_types.map(spellLabel)} />
       <Tags label="Lists" names={lists} />
       {fighter.rules.length ? (
