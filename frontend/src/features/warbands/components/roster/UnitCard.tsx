@@ -6,13 +6,13 @@ import { Card } from "@/components/ui/card";
 import { ChipLabel } from "@/components/ui/chip";
 import { GameIcon } from "@/components/ui/game-icons";
 import { IconButton } from "@/components/ui/icon-button";
-import { StatStrip } from "@/components/ui/stat-strip";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { cn } from "@/lib/utils";
 
 import { useItemLabel } from "../../hooks/units/useItemLabel";
 import UnitBadges from "./UnitBadges";
 import UnitLines from "./UnitLines";
+import UnitProfile from "./UnitProfile";
 import {
   isCreature,
   isGroup,
@@ -214,7 +214,11 @@ export default function UnitCard(props: UnitCardProps) {
             ))}
           </div>
         ) : null}
-        <StatStrip values={stats.values} highlighted={stats.highlighted} />
+        <UnitProfile
+          values={stats.values}
+          highlighted={stats.highlighted}
+          notes={open ? unit.notes : undefined}
+        />
         {/* closed: his items, skills, spells and boons & banes, a line each, and his XP */}
         {open ? null : (
           <UnitLines

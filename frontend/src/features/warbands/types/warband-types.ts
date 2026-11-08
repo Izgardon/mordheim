@@ -219,6 +219,8 @@ export type WarbandHero = UnitCompanionFields &
     level_up?: number | null;
     level_up_history?: LevelUpHistoryEntry[];
     deeds?: string | null;
+    /** The player's notes, beside the profile on the open card (William, 8 Nov 2026). */
+    notes?: string;
     is_leader?: boolean | null;
     trading_action?: boolean | null;
     armour_save: number | null;
@@ -301,6 +303,8 @@ export type WarbandHireling = UnitCompanionFields &
     level_up?: number | null;
     level_up_history?: LevelUpHistoryEntry[];
     deeds?: string | null;
+    /** The player's notes, beside the profile on the open card (William, 8 Nov 2026). */
+    notes?: string;
     armour_save: number | null;
     large: boolean | null;
     caster: HeroCaster | null;
@@ -355,6 +359,7 @@ export type WarbandHeroPayload = {
   xp_change?: number;
   level_up?: number | null;
   deeds?: string | null;
+  notes?: string;
   is_leader?: boolean | null;
   trading_action?: boolean | null;
   /** A save the client couldn't read is sent as typed, for the server's message (decision 11). */
@@ -396,6 +401,7 @@ export type WarbandHirelingPayload = {
   xp_change?: number;
   level_up?: number | null;
   deeds?: string | null;
+  notes?: string;
   /** An integer field server-side; the edit form sends the raw input string ("5"), which DRF also accepts. */
   armour_save?: number | string | null;
   large?: boolean | null;
@@ -554,6 +560,8 @@ export type HenchmenGroup = UnitCompanionFields &
     level_up?: number | null;
     level_up_history?: LevelUpHistoryEntry[];
     deeds?: string | null;
+    /** The player's notes, beside the profile on the open card (William, 8 Nov 2026). */
+    notes?: string;
     armour_save: number | null;
     large: boolean | null;
     half_rate: boolean | null;
@@ -608,6 +616,7 @@ export type HenchmenGroupPayload = {
   level_up?: number | null;
   max_size?: number | null;
   deeds?: string | null;
+  notes?: string;
   /** An integer field server-side; the edit form sends the raw input string ("5"), which DRF also accepts. */
   armour_save?: number | string | null;
   large?: boolean | null;

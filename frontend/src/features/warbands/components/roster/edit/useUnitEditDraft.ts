@@ -79,6 +79,7 @@ function initialDraft(entry: RosterUnit): Draft {
     half_rate: Boolean(unit.half_rate),
     missing_games: unit.missing_games ?? 0,
     missing_reason: unit.missing_reason ?? "",
+    notes: unit.notes ?? "",
     large: Boolean(unit.large),
     armour_save: unit.armour_save ?? "",
     ...Object.fromEntries(

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import EditNotes from "./edit/EditNotes";
 import EditUnitFields from "./edit/EditUnitFields";
 import { useUnitEditDraft, type UnitEditDraft } from "./edit/useUnitEditDraft";
 import { isGroup, unitName, type RosterUnit } from "./unit-view";
@@ -47,9 +48,9 @@ function MissingGames({ form, onDone }: { form: UnitEditDraft; onDone: () => voi
 /**
  * One unit's edit form (design E): inline in its open card on the web, a bottom sheet on a
  * phone. Saved alone through the batch save; Duplicate and Dismiss go the same way. Every action
- * sits at the bottom: Save, Cancel and Duplicate on the left, Missing games and Dismiss on the
- * right. Cancel or closing the sheet with changes unsaved asks "Discard changes?" first (William:
- * a form of more than 8 inputs).
+ * sits at the bottom: Save, Cancel and Duplicate on the left, Notes, Missing games and Dismiss on
+ * the right. Cancel or closing the sheet with changes unsaved asks "Discard changes?" first
+ * (William: a form of more than 8 inputs).
  */
 export default function EditUnitForm({
   entry,
@@ -75,7 +76,9 @@ export default function EditUnitForm({
   const discard = useDiscardChanges({ dirty: changed, onClose });
   const [confirmDismiss, setConfirmDismiss] = useState(false);
   const [missingOpen, setMissingOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
   const { saving } = form;
+  const hasNotes = String(draft.notes ?? "").trim() !== "";
   const dismissLabel = isGroup(entry)
     ? "Disband group"
     : entry.kind === "hireling"
@@ -91,6 +94,15 @@ export default function EditUnitForm({
   );
   const right = (
     <div className="ml-auto flex flex-wrap items-center gap-2">
+      {/* notes take no room until opened (William, 8 Nov 2026); the dot: he has some */}
+      <Button variant="ghost" aria-expanded={notesOpen} onClick={() => setNotesOpen((o) => !o)}>
+        Notes
+        {hasNotes ? (
+          <span className="h-1.5 w-1.5 shrink-0 bg-primary">
+            <span className="sr-only">(written)</span>
+          </span>
+        ) : null}
+      </Button>
       <Button variant="ghost" aria-expanded={missingOpen} onClick={() => setMissingOpen((o) => !o)}>
         {missing ? `Missing · ${missing} ${missing === 1 ? "game" : "games"}` : "Missing games"}
       </Button>
@@ -116,6 +128,7 @@ export default function EditUnitForm({
         canCreateRace={canCreateRace}
         onAddItem={onAddItem}
       />
+      {notesOpen ? <EditNotes form={form} onDone={() => setNotesOpen(false)} /> : null}
       {missingOpen ? <MissingGames form={form} onDone={() => setMissingOpen(false)} /> : null}
     </>
   );

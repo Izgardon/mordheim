@@ -170,6 +170,7 @@ HERO_DETAIL = {
     "race": RACE,
     "kills": "int",
     "deeds": "str",
+    "notes": "str",  # the player's notes (William, 8 Nov 2026)
     "dead": "bool",
     "items": [ITEM_DETAIL],
     "skills": [SKILL_DETAIL],
@@ -205,6 +206,7 @@ HENCHMEN_DETAIL = {
     "updated_at": "str",
     "race": RACE,
     "deeds": "str",
+    "notes": "str",  # the player's notes (William, 8 Nov 2026)
     "items": [{**ITEM_DETAIL, "carriers": "int"}],
     "skills": [SKILL_DETAIL],
     "specials": [SPECIAL_DETAIL],
@@ -241,6 +243,7 @@ HIRELING_DETAIL = {
     "race": RACE,
     "kills": "int",
     "deeds": "str",
+    "notes": "str",  # the player's notes (William, 8 Nov 2026)
     "items": [ITEM_DETAIL],
     "skills": [SKILL_DETAIL],
     "specials": [SPECIAL_DETAIL],
