@@ -15,12 +15,6 @@ const REASON: Record<GapReason, string> = {
   short: "joined without it",
 };
 
-/** "Each carries Sword, Light Armour, Sling" (or "Each carries nothing"). */
-export const eachCarries = (
-  group: Pick<HenchmenGroup, "items">,
-  name: (item: Item) => string = (item) => item.name
-) => `Each carries ${group.items.length ? group.items.map(name).join(", ") : "nothing"}`;
-
 /** "Loadout 45 gc each · 180 gc": one member's loadout, then the copies the group holds. */
 export const loadoutLine = (group: Pick<HenchmenGroup, "loadout_each" | "loadout_total">) =>
   `Loadout ${group.loadout_each ?? 0} gc each · ${group.loadout_total ?? 0} gc`;

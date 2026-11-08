@@ -11,10 +11,9 @@ import type { CampaignSummary } from "@/features/campaigns/types/campaign-types"
 import { cn } from "@/lib/utils";
 
 import { useItemLabel } from "../../hooks/units/useItemLabel";
-import { eachCarries, loadoutLine } from "../../units/loadout";
 import UnitBadges from "./UnitBadges";
+import UnitLines from "./UnitLines";
 import {
-  gearSummary,
   isCreature,
   isGroup,
   KIND_TRIM,
@@ -57,14 +56,13 @@ const CONTROLS = "button, a, input, select, textarea, label, [role=switch], [rol
  */
 const ADVANCE =
   "advance-pop absolute left-1/2 top-0 z-10 inline-flex min-h-[28px] -translate-x-1/2 -translate-y-1/2 items-center gap-1.5 whitespace-nowrap border border-primary bg-primary px-3 text-[11px] font-bold uppercase tracking-[0.12em] text-primary-foreground shadow-[0_4px_14px_var(--color-shadow)]";
-const XP_TEXT = "shrink-0 font-mono text-xs text-muted-foreground";
 
 /**
  * One unit of the roster (design E), the same card for every kind in the roster's grids (William,
  * 7 Nov 2026: "henchmen card blocks same as hero/hs not full width on warband page"): closed it
- * shows the profile and its gear (a group's members and what each carries), open its boxes across
- * the grid. The whole head (name, badges, profile, gear line) opens and closes it, not just the
- * arrow.
+ * shows the profile and a line for each of his lists (a group's members, and what each carries),
+ * open its boxes across the grid. The whole head (name, badges, profile, lines) opens and closes
+ * it, not just the arrow.
  */
 export default function UnitCard(props: UnitCardProps) {
   const { entry, campaign, open, canEdit } = props;
@@ -89,7 +87,6 @@ export default function UnitCard(props: UnitCardProps) {
   }
   const { unit } = entry;
   const xp = xpInfo(entry, campaign);
-  const xpText = xp ? xp.text : "No XP";
   const stats = statValues(entry);
   const creature = isCreature(entry);
   const members = isGroup(entry) ? liveMembers(entry.unit) : [];
@@ -175,25 +172,6 @@ export default function UnitCard(props: UnitCardProps) {
     </button>
   );
 
-  // closed: what it carries and its XP (a group's: what each member carries, then its loadout)
-  const gear =
-    isGroup(entry) && !creature ? (
-      <div className="flex flex-col gap-1">
-        <div className="flex items-baseline justify-between gap-3">
-          <span className="text-[13px] text-text2">
-            {eachCarries(entry.unit, (item) => itemLabel(entry.unit, item))}
-          </span>
-          <span className={XP_TEXT}>{xpText}</span>
-        </div>
-        <span className="font-mono text-xs text-muted-foreground">{loadoutLine(entry.unit)}</span>
-      </div>
-    ) : (
-      <div className="flex items-baseline justify-between gap-3">
-        <span className="text-[13px] text-text2">{gearSummary(creature ? [] : unit.items)}</span>
-        <span className={XP_TEXT}>{xpText}</span>
-      </div>
-    );
-
   return (
     <Card
       as="article"
@@ -237,7 +215,14 @@ export default function UnitCard(props: UnitCardProps) {
           </div>
         ) : null}
         <StatStrip values={stats.values} highlighted={stats.highlighted} />
-        {open ? null : gear}
+        {/* closed: his items, skills, spells and boons & banes, a line each, and his XP */}
+        {open ? null : (
+          <UnitLines
+            entry={entry}
+            itemName={(item) => itemLabel(unit, item)}
+            xpText={xp ? xp.text : "No XP"}
+          />
+        )}
       </div>
       {props.children}
     </Card>

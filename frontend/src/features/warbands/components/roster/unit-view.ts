@@ -106,9 +106,6 @@ export function statValues({ unit }: RosterUnit) {
   return { values, highlighted };
 }
 
-export const gearSummary = (items: Item[], name: (item: Item) => string = (item) => item.name) =>
-  items.length ? items.map(name).join(", ") : "No gear";
-
 /** The kind's XP table in the campaign (the XP each advance comes at), cleaned as the level info reads it. */
 export const xpTable = (kind: UnitKindKey, campaign: CampaignSummary | null) => {
   const fallback =
