@@ -434,9 +434,11 @@ table thead th {
     --color-kind-skill: #2f5f8f;
     --color-kind-special: #7a5c12;
     --color-kind-spell: #6a4a9e;
-    --color-metal-gold: #8a6a1c;
+    /* gold yellower and bronze a redder brown, so the two read apart on the light card (William:
+       "yes" to pushing them apart); both AA as text on it, 5.2:1 and 7.6:1 */
+    --color-metal-gold: #7c6812;
     --color-metal-silver: #5f666f;
-    --color-metal-bronze: #8a4f2a;
+    --color-metal-bronze: #7f3d26;
     --color-scrim: rgba(43, 33, 26, 0.45);
     --color-shadow: rgba(43, 33, 26, 0.18);
 
