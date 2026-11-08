@@ -31,14 +31,22 @@ def book_kind(name: str, default: str = TRAIT) -> str:
 # (the book's specials, the injury tables', a campaign's own) shows in the Boons & Banes pickers; a hired sword's or a
 # dramatis persona's own rule, which their seeders create under "Hired Sword - <name>" or "Dramatis Persona - <name>"
 # when the book lacks it (core/book_lookups.py), shows only with them. A warband template fighter's own rule is the
-# third kind (the templates plan, question 27), seeded under "Warband - <template>". Who holds it is its link rows:
-# several may.
-GENERAL, HIRED_SWORD, DRAMATIS_PERSONA, WARBAND = "general", "hired_sword", "dramatis_persona", "warband"
+# third kind (the templates plan, question 27), seeded under "Warband - <template>". A book special only beasts hold
+# is a beast's (William, 7 Nov 2026: "keep bestiary rules from displaying on the boons and banes page"), set once the
+# seeders have linked it (owners.py). Who holds it is its link rows: several may.
+GENERAL, HIRED_SWORD, DRAMATIS_PERSONA, WARBAND, BEAST = (
+    "general",
+    "hired_sword",
+    "dramatis_persona",
+    "warband",
+    "beast",
+)
 OWNER_KIND_CHOICES = (
     (GENERAL, "General"),
     (HIRED_SWORD, "Hired sword"),
     (DRAMATIS_PERSONA, "Dramatis persona"),
     (WARBAND, "Warband"),
+    (BEAST, "Beast"),
 )
 OWNER_TYPES = {"Hired Sword": HIRED_SWORD, "Dramatis Persona": DRAMATIS_PERSONA, "Warband": WARBAND}  # seeded types
 

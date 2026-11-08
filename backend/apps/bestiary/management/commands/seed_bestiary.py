@@ -35,6 +35,7 @@ from apps.items.importing import ImportedItems, legacy_rows, mordheim_part
 from apps.items.models import Item
 from apps.items.writes import replace_availabilities
 from apps.special.models import Special
+from apps.special.owners import mark_beast_rules
 from apps.special.prebattle import SPECIAL, mark_book_rolls
 
 DEFAULT_JSON_PATHS = [
@@ -160,6 +161,7 @@ class Command(BaseCommand):
         with transaction.atomic():
             counts = self._seed(paths, lookups, ItemSource())
             mark_book_rolls(Special, SPECIAL)  # a beast's own specials' pre-battle rolls (special/prebattle.py)
+            mark_beast_rules()  # a rule only beasts hold leaves Boons & Banes (special/owners.py)
             bump(None)  # every cached catalogue list shows the book (PERF-13)
 
         for warning in lookups.warnings:

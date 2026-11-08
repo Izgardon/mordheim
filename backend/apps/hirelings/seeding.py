@@ -44,6 +44,7 @@ from apps.core.seeding import (
 from apps.races.models import Race
 from apps.skills.models import Skill
 from apps.special.models import Special
+from apps.special.owners import mark_beast_rules
 from apps.special.prebattle import SKILL, SPECIAL, mark_book_rolls
 
 from .fees import Fee, clean_fee, make_fee
@@ -185,6 +186,7 @@ def seed_profiles(spec: SeedSpec, paths: list[Path]) -> tuple[Counter[str], list
                 run.seed(data)
         mark_book_rolls(Special, SPECIAL)  # his own specials' and skills' pre-battle rolls (special/prebattle.py)
         mark_book_rolls(Skill, SKILL)
+        mark_beast_rules()  # a beast's rule he holds too is general (special/owners.py)
         bump(None)  # every cached catalogue list shows the book (PERF-13)
     return run.counts, run.lookups.warnings
 

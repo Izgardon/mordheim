@@ -67,6 +67,8 @@ const crazed = special({
 const fear = special({ id: 4, name: "Fear", type: "Psychology", description: "Causes fear." });
 // left out: a hired sword's own rule, and a setting not ticked
 const nimble = special({ id: 5, name: "Nimble", type: "Hired Sword", owner_kind: "hired_sword" });
+// and a beast's own (William, 7 Nov 2026: "keep bestiary rules from displaying on the boons and banes page")
+const attacks = special({ id: 7, name: "Attacks (Giant)", type: "Animal", owner_kind: "beast" });
 const beak = special({ id: 6, name: "Beak", type: "Favour of Tchar", in_play: false });
 
 const row = (name: string) =>
@@ -91,7 +93,15 @@ beforeEach(() => {
   fakeApi.on("GET /auth/me/", RAIDER);
   fakeApi.on("GET /notifications/", []);
   fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignSummary());
-  fakeApi.on(`GET /special/?campaign_id=${CAMPAIGN_ID}`, [wound, tail, crazed, fear, nimble, beak]);
+  fakeApi.on(`GET /special/?campaign_id=${CAMPAIGN_ID}`, [
+    wound,
+    tail,
+    crazed,
+    fear,
+    nimble,
+    beak,
+    attacks,
+  ]);
   scrolledTo = [];
   vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(function (this: Element) {
     scrolledTo.push(this.id);
@@ -113,6 +123,7 @@ describe("The Boons & Banes page", () => {
     expect(names()).toEqual(["FearPsychology", "Old Battle WoundInjury", "Spiked TailMutation"]);
     expect(screen.getByText("3 boons and banes shown")).toBeInTheDocument();
     expect(screen.queryByText("Crazed")).toBeNull();
+    expect(screen.queryByText("Attacks (Giant)")).toBeNull();
     expect(screen.queryByRole("button", { name: "Add" })).toBeNull();
     expect(screen.queryByText("Price")).toBeNull();
     expect(screen.queryByText("Setting")).toBeNull();

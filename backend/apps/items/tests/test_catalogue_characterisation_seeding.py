@@ -259,9 +259,9 @@ class SeedAllTests(TestCase):
                 "Immune to Psychology (Plague Cart)": "warband",
                 "Immune to Psychology (Belandysh)": "dramatis_persona",
                 "Immune to Psychology (Ippan Shu)": "dramatis_persona",
-                "Immune to Psychology (Nightmare)": "general",  # a mount's book rule, typed Animal
+                "Immune to Psychology (Nightmare)": "beast",  # a mount's book rule only beasts hold (7 Nov 2026)
                 # the daemons', plants' and Terracotta Soldier's of the East: every Leadership-based test passed
-                "Immune to Psychology (Beasts of the East)": "general",
+                "Immune to Psychology (Beasts of the East)": "beast",
                 "Immune to Poison (Plague Bearers)": "warband",
                 "Immune to Poison (Nurglings)": "warband",
             },
@@ -291,6 +291,11 @@ class SeedAllTests(TestCase):
         self.assertEqual(rules("Gnoblar Fighter"), {"Weapons/Armour (Gnoblar)", "Largely Insignificant (Gnoblar)", "Bicker (Gnoblar)"})  # fmt: skip
         charge = Special.objects.get(campaign__isnull=True, name="Ferocious Charge (Temple Dog)").description
         self.assertIn("+1 Strength", charge)  # the Temple Dog's own, not the boar's +2S
+        # only beasts hold them: off Boons & Banes (William, 7 Nov 2026: "keep bestiary rules from displaying on the
+        # boons and banes page"); the shared ones they hold stay general
+        kinds = dict(animal.values_list("name", "owner_kind"))
+        self.assertEqual({kinds["Save (Temple Dog)"], kinds["Animal"], kinds["Battle Schooled"]}, {"beast"})
+        self.assertEqual(Special.objects.get(campaign__isnull=True, name="Fear").owner_kind, "general")
 
     def test_border_town_burning_brings_its_beasts_of_the_east(self):
         # William, 7 Nov 2026: "add more to bestiary" (mordheimer's Beasts of the East, read 7 Nov 2026): 28 creatures

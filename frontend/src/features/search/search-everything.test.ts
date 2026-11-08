@@ -40,6 +40,7 @@ describe("Search everything's Boons & Banes", () => {
       special({ id: 1, name: "Spiked Tail", description: "A tail with spikes." }),
       special({ id: 2, name: "Scorpion Tail", description: "A venomous tail." }),
       special({ id: 3, name: "Tail Whip", owner_kind: "hired_sword" }),
+      special({ id: 6, name: "Tail Sweep (Hydra)", type: "Animal", owner_kind: "beast" }),
       special({ id: 4, name: "Tailed Beast", in_play: false }),
       special({
         id: 5,

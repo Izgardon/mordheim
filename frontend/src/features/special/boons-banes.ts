@@ -31,8 +31,9 @@ export const categoryOf = (special: Special): SpecialCategory => special.categor
 
 /**
  * The Boons & Banes the reference lists: the general rules in play in the campaign, as the pickers
- * offer. A warband's, hired sword's or dramatis persona's own rules show with them (the Warbands
- * page, the hired swords).
+ * offer. A warband's, hired sword's, dramatis persona's or beast's own rules show with them (the
+ * Warbands page, the hired swords, the Bestiary; William, 7 Nov 2026: "keep bestiary rules from
+ * displaying on the boons and banes page, show on beast for sure").
  */
 export const referenceSpecials = (specials: Special[]) =>
   inPlayOnly(specials).filter((special) => !special.owner_kind || special.owner_kind === "general");
