@@ -190,12 +190,6 @@
     "setting": "border-town-burning"
   },
   {
-    "name": "Frenzy (Bloodletter)",
-    "type": "Animal",
-    "description": "The model is subject to frenzy.",
-    "setting": "border-town-burning"
-  },
-  {
     "name": "Mark of Chaos (Champion of Chaos)",
     "type": "Animal",
     "description": "Roll a D6 for the model's mark: 1-2 the Mark of Chaos Undivided, 3 the Mark of Tchar, 4 the Mark of Arkhar, 5 the Mark of Onogal, 6 the Mark of Shornaal. Each works as the Marauders of Chaos warband list gives it to the leader.",

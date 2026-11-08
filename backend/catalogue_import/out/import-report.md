@@ -31,7 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 69 |
 | skill group links | 392 |
 | serious injuries (D66) | 20 |
-| shared specials | 62 |
+| shared specials | 66 |
 | random mutation results (D66) | 36 |
 
 ## mordheimer's contradictions
@@ -652,7 +652,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 2220 |
 | warband rules | 281 |
 | upgrades | 116 |
-| the templates' own specials | 679 |
+| the templates' own specials | 673 |
 
 ### List lines
 
@@ -839,7 +839,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen), Remas' rout re-roll against Dark Elves, a Hung henchman who becomes a hero getting Ride Warhorse, and the Ostermarker captain's starting wardog.
 - Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
 - mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
-- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Hang the Bandit! (Initiate); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); skaven-of-clan-moulder: Experience (Rat Ogre); snotlings: Teamwork (Snotling Mob).
+- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); skaven-of-clan-moulder: Experience (Rat Ogre); snotlings: Teamwork (Snotling Mob).
 
 ## Shared specials
 
@@ -857,7 +857,11 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Daemonic Flesh | Trait | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
 | Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
-| Hate Orcs and Goblins | Psychology | the list's text |  |  | 5 | 2 | 0 | 0 |
+| Hate Orcs and Goblins | Psychology | the list's text |  |  | 5 | 3 | 0 | 0 |
+| Frenzy | Psychology | the list's text |  |  | 3 | 0 | 1 | 1 |
+| Hate High Elves | Psychology | the list's text |  |  | 0 | 1 | 1 | 0 |
+| Hate Bandits and Outlaws | Psychology | the list's text |  |  | 2 | 0 | 0 | 0 |
+| Hate Spellcasters | Psychology | the list's text |  |  | 2 | 0 | 0 | 0 |
 | Daemon Soul | Mutation | Cult of the Possessed's upgrade | 20 |  | 6 | 0 | 0 | 0 |
 | Great Claw | Mutation | Cult of the Possessed's upgrade | 50 |  | 7 | 0 | 0 | 0 |
 | Cloven Hoofs | Mutation | Cult of the Possessed's upgrade | 40 |  | 5 | 0 | 0 | 0 |
@@ -924,7 +928,11 @@ List prices the pages differ from: none.
 - Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
 - Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
 - Pawnbroker: Arabian Merchant; Cathayan Merchant.
-- Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Slayer Cult: Rememberer; Dwarf Slayer Cult: Stubble; Dwarf Slayer Cult: Axe Hurler; Dwarf Pathfinder; Runesmith Journeyman.
+- Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Slayer Cult: Rememberer; Dwarf Slayer Cult: Stubble; Dwarf Slayer Cult: Axe Hurler; Dwarf Pathfinder; Dwarf Treasure Hunter (Hates Orcs & Goblins); Runesmith Journeyman.
+- Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Druchii: Witch Elf; Sigmund Spindle, the Harvester of Flesh (Maddened); Bloodletter.
+- Hate High Elves: Dark Elf Assassin (Kindred Hatred); Dijin Katal, the Renegade Assassin (Kindred Hatred).
+- Hate Bandits and Outlaws: Horned Hunters: Horned Hunter (Hang the Bandit!); Horned Hunters: Initiate (Hang the Bandit!).
+- Hate Spellcasters: Witch Hunters: Witch Hunter Captain (Burn the Witch!); Witch Hunters: Witch Hunter (Burn the Witch!).
 - Daemon Soul: Cult of the Possessed: Mutations; Lords of the Marsh: Daemon-Fimm; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Lords of the Marsh: Mutations; Skaven of Clan Moulder: Mutations.
 - Great Claw: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Court of the Profane Pleasures: Mutations; Marauders of Chaos: Mutations; Lords of the Marsh: Mutations; Shallows Beasts: Aquatic Mutants; Skaven of Clan Moulder: Mutations.
 - Cloven Hoofs: Cult of the Possessed: Mutations; Beastmen Raiders: Mutations; Marauders of Chaos: Mutations; Lords of the Marsh: Mutations; Skaven of Clan Moulder: Mutations.
@@ -984,6 +992,9 @@ List prices the pages differ from: none.
 | Mer-creature (Fishmen) | Shallows Beasts: Fishman | No Movement penalty on land; the Favour of Tchar is -1 Movement there. |
 | Regeneration (Boglar) | Underworld Alliance: Boglar | Each wound ignored on a 5+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once. |
 | Regeneration (Warpstone Troll) | Underworld Alliance: Warpstone Troll | Each wound ignored on a 4+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once, and the Trolls never roll for injury. |
+| Berserkers (Red Toof Goblin) | Forest Goblins: Red Toof Goblin | Frenzy, and immune to animosity in a turn he begins within charge range of an enemy. |
+| Kindred Hatred (Strigoi Vampire) | Survivors of Strigos: Strigoi Vampire | Hates vampires of every other bloodline, not High Elves. |
+| Hatred | Bretonnian Chapel Guard: Battle Pilgrim | Hates every enemy: an open-ended target no shared row names, kept his own and worded short. |
 
 ### Own rules of one name
 
@@ -999,7 +1010,6 @@ A hired sword's or dramatis persona's own rule is a row of his own (two owners s
 - Songster: Bard; William Schäkestange, Master Bard.
 - Set Traps: Big Game Hunter; Ungor Trapper.
 - Infiltrator: Chameleon Skink; Halfling Thief.
-- Kindred Hatred: Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
 - Explorer: Dwarf Pathfinder; Tomb Robber.
 - Wanderer: Elf Mage; Aenur, the Sword of Twilight; Dijin Katal, the Renegade Assassin; The Headless Horseman.
 - Hatred: Gaoler; Wolf Priest of Ulric; Grave Robber.

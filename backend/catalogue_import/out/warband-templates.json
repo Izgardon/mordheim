@@ -1427,8 +1427,7 @@
         "specials": [
           {
             "name": "Frenzy",
-            "type": "Warband - Amazons (Mordheim)",
-            "description": "Totem Warriors are utterly fanatical, blood crazed individuals. They are also totally out of their heads on dangerous, psychedelic, herbal concoctions prepared by their sisters. Totem Warriors are mad berserkers who care little about danger or the prospect of death. They are subject to the rules for frenzy."
+            "type": "Psychology"
           }
         ]
       },
@@ -7258,7 +7257,7 @@
           {
             "name": "Hatred",
             "type": "Warband - Bretonnian Chapel Guard",
-            "description": "Battle Pilgrims suffer Hatred against all of their enemies, seeing them as enemies and heretics to the true Lady’s cause."
+            "description": "The model hates every enemy model."
           },
           {
             "name": "Stubborn",
@@ -16526,8 +16525,7 @@
         "specials": [
           {
             "name": "Frenzy",
-            "type": "Warband - Druchii",
-            "description": "Witch Elves are subject to frenzy."
+            "type": "Psychology"
           },
           {
             "name": "Maibd Poison",
@@ -20349,7 +20347,7 @@
             "description": "Red Toof Boyz are subject to the rules for Animosity."
           },
           {
-            "name": "Berserkers",
+            "name": "Berserkers (Red Toof Goblin)",
             "type": "Warband - Forest Goblins",
             "description": "Forest Goblins of the Red Toof tribe allow themselves to be bitten by all sorts of poisonous wildlife before entering battle. The mingling venom drives them into frothing convulsions, making them extremely ferocious. Red Toof Boyz are affected by the rules for Frenzy as described in the Mordheim rulebook. In addition, if they begin their turn within charge range of an enemy, they are immune to animosity for that turn."
           }
@@ -25271,9 +25269,8 @@
             "description": "Any warrior within 6\" of the Horned Hunter may use his Leadership value when taking Leadership tests."
           },
           {
-            "name": "Hang the Bandit!",
-            "type": "Warband - Horned Hunters",
-            "description": "A Horned Hunter hates all Bandits and Outlaws."
+            "name": "Hate Bandits and Outlaws",
+            "type": "Psychology"
           }
         ]
       },
@@ -25384,9 +25381,8 @@
             "description": "A warrior with this skill is always placed on the battlefield after the opposing warband and can be placed anywhere on the table as long as it is out of sight of the opposing warband and more than 12\" away from any enemy model.\n\nIf both players have models which infiltrate, roll a D6 for each, and the lowest roll sets up first."
           },
           {
-            "name": "Hang the Bandit! (Initiate)",
-            "type": "Warband - Horned Hunters",
-            "description": "Taal’s Initiates hate all Bandits and Outlaws."
+            "name": "Hate Bandits and Outlaws",
+            "type": "Psychology"
           },
           {
             "name": "Strictures (Initiate)",
@@ -43627,9 +43623,8 @@
         ],
         "specials": [
           {
-            "name": "Berserkers",
-            "type": "Warband - Norse Explorers",
-            "description": "Berserkers are subject to frenzy as detailed in the Psychology section of the Mordheim rulebook."
+            "name": "Frenzy",
+            "type": "Psychology"
           }
         ]
       },
@@ -58199,7 +58194,7 @@
             "description": "Warriors within 6\" of the Strigoi Vampire may use his Leadership instead of their own."
           },
           {
-            "name": "Kindred Hatred",
+            "name": "Kindred Hatred (Strigoi Vampire)",
             "type": "Warband - Survivors of Strigos",
             "description": "The Strigoi Vampire hates vampires of every other bloodline."
           },
@@ -66538,9 +66533,8 @@
             "description": "Any warrior within 6\" of the Witch Hunter Captain may use his Leadership value when taking Leadership tests."
           },
           {
-            "name": "Burn the Witch!",
-            "type": "Warband - Witch Hunters",
-            "description": "A Witch Hunter Captain hates all models who can cast spells."
+            "name": "Hate Spellcasters",
+            "type": "Psychology"
           }
         ]
       },
@@ -66586,9 +66580,8 @@
         ],
         "specials": [
           {
-            "name": "Burn the Witch!",
-            "type": "Warband - Witch Hunters",
-            "description": "A Witch Hunter Captain hates all models who can cast spells."
+            "name": "Hate Spellcasters",
+            "type": "Psychology"
           }
         ]
       },

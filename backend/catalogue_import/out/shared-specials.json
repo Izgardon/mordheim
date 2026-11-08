@@ -93,7 +93,52 @@
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
       "description": "The model hates Orcs and Goblins.",
-      "aliases": [],
+      "aliases": [
+        "Hates Orcs & Goblins",
+        "Hates Orcs and Goblins",
+        "Hate Orcs & Goblins"
+      ],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Frenzy",
+      "type": "Psychology",
+      "description": "The model is subject to frenzy.",
+      "aliases": [
+        "Berserkers",
+        "Maddened"
+      ],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Hate High Elves",
+      "type": "Psychology",
+      "description": "The model hates High Elves.",
+      "aliases": [
+        "Kindred Hatred"
+      ],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Hate Bandits and Outlaws",
+      "type": "Psychology",
+      "description": "The model hates Bandits and Outlaws.",
+      "aliases": [
+        "Hang the Bandit!"
+      ],
+      "cost": null,
+      "setting": null
+    },
+    {
+      "name": "Hate Spellcasters",
+      "type": "Psychology",
+      "description": "The model hates every model that can cast spells.",
+      "aliases": [
+        "Burn the Witch!"
+      ],
       "cost": null,
       "setting": null
     },
@@ -713,16 +758,6 @@
       "owner": "Halfling Thief",
       "rule": "Infiltrator",
       "name": "Infiltrator (Halfling Thief)"
-    },
-    {
-      "owner": "Dark Elf Assassin",
-      "rule": "Kindred Hatred",
-      "name": "Kindred Hatred (Dark Elf Assassin)"
-    },
-    {
-      "owner": "Dijin Katal, the Renegade Assassin",
-      "rule": "Kindred Hatred",
-      "name": "Kindred Hatred (Dijin Katal, the Renegade Assassin)"
     },
     {
       "owner": "Dwarf Pathfinder",

@@ -60,7 +60,31 @@
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
       "text": "The model hates Orcs and Goblins.",
-      "aliases": []
+      "aliases": ["Hates Orcs & Goblins", "Hates Orcs and Goblins", "Hate Orcs & Goblins"]
+    },
+    {
+      "name": "Frenzy",
+      "type": "Psychology",
+      "text": "The model is subject to frenzy.",
+      "aliases": ["Berserkers", "Maddened"]
+    },
+    {
+      "name": "Hate High Elves",
+      "type": "Psychology",
+      "text": "The model hates High Elves.",
+      "aliases": ["Kindred Hatred"]
+    },
+    {
+      "name": "Hate Bandits and Outlaws",
+      "type": "Psychology",
+      "text": "The model hates Bandits and Outlaws.",
+      "aliases": ["Hang the Bandit!"]
+    },
+    {
+      "name": "Hate Spellcasters",
+      "type": "Psychology",
+      "text": "The model hates every model that can cast spells.",
+      "aliases": ["Burn the Witch!"]
     },
     {"name": "Daemon Soul", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 20, "aliases": []},
     {"name": "Great Claw", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 50, "aliases": []},
@@ -578,6 +602,25 @@
       "rule": "Regeneration",
       "owners": [{"warband": "Underworld Alliance", "fighter": "Warpstone Troll"}],
       "why": "Each wound ignored on a 4+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once, and the Trolls never roll for injury."
+    },
+    {
+      "name": "Berserkers (Red Toof Goblin)",
+      "rule": "Berserkers",
+      "owners": [{"warband": "Forest Goblins", "fighter": "Red Toof Goblin"}],
+      "why": "Frenzy, and immune to animosity in a turn he begins within charge range of an enemy."
+    },
+    {
+      "name": "Kindred Hatred (Strigoi Vampire)",
+      "rule": "Kindred Hatred",
+      "owners": [{"warband": "Survivors of Strigos", "fighter": "Strigoi Vampire"}],
+      "why": "Hates vampires of every other bloodline, not High Elves."
+    },
+    {
+      "name": "Hatred",
+      "rule": "Hatred",
+      "owners": [{"warband": "Bretonnian Chapel Guard", "fighter": "Battle Pilgrim"}],
+      "text": "The model hates every enemy model.",
+      "why": "Hates every enemy: an open-ended target no shared row names, kept his own and worded short."
     }
   ]
 }

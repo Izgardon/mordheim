@@ -41,6 +41,10 @@ class SharedSeedTests(TestCase):
                 "Stupidity": "The model is subject to stupidity.",
                 "Immune to Psychology": "The model is immune to psychology and never leaves combat.",
                 "Hate Orcs and Goblins": "The model hates Orcs and Goblins.",
+                "Frenzy": "The model is subject to frenzy.",
+                "Hate High Elves": "The model hates High Elves.",
+                "Hate Bandits and Outlaws": "The model hates Bandits and Outlaws.",
+                "Hate Spellcasters": "The model hates every model that can cast spells.",
             },
         )
         self.assertEqual((fear.type, fear.owner_kind, fear.kind, fear.category), ("Psychology", GENERAL, BOON, AURA))
@@ -98,16 +102,18 @@ class SharedSeedTests(TestCase):
             Special.objects.create(name="Immune to Psychology (Mount)", type="Animal"),  # the Nightmare's kept apart
             # a Troll's rule seeded under the mutation's name: the template seeding names it Regeneration (Troll) now
             Special.objects.create(name="Regeneration", type="Warband - Orc Mob", owner_kind=WARBAND),
+            # the Druchii Witch Elf's, before Frenzy was shared (William, 7 Nov 2026: "yes")
+            Special.objects.create(name="Frenzy", type="Warband - Druchii", owner_kind=WARBAND),
         ]
-        frenzy = Special.objects.create(name="Frenzy", type="Animal")
+        animosity = Special.objects.create(name="Animosity", type="Animal")
 
-        self.assertIn("Shared specials - Created: 62, Updated: 0, copies archived: 5.", seed())
+        self.assertIn("Shared specials - Created: 66, Updated: 0, copies archived: 6.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
-        frenzy.refresh_from_db()
-        self.assertIsNone(frenzy.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 62, copies archived: 0.", seed())
+        animosity.refresh_from_db()
+        self.assertIsNone(animosity.archived_at)
+        self.assertIn("Shared specials - Created: 0, Updated: 66, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):

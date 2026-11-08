@@ -107,7 +107,9 @@ class SeedAllTests(TestCase):
                 # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
                 # the second PDF batch's five templates add 46 of their own, the third's five 54, the fifth's five 43, the sixth's eight 83
                 # Border Town Burning's Beasts of the East add 31 of their own to special.json (William, 7 Nov 2026)
-                "Special": 1095,
+                # Frenzy, Hate High Elves, Hate Bandits and Outlaws and Hate Spellcasters shared (William, 7 Nov 2026):
+                # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4
+                "Special": 1088,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,
@@ -132,7 +134,8 @@ class SeedAllTests(TestCase):
                         # Beasts of the East's own (Border Town Burning)
                         graded = Special.objects.filter(campaign_type__isnull=False)
                         slugs = Counter(graded.values_list("campaign_type__slug", flat=True))
-                        self.assertEqual(slugs, {"mutiny-in-marienburg": 10, "border-town-burning": 31})
+                        # the Bloodletter's Frenzy is the shared one now (William, 7 Nov 2026)
+                        self.assertEqual(slugs, {"mutiny-in-marienburg": 10, "border-town-burning": 30})
                     else:  # the rest count as Mordheim's until they get theirs
                         self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
@@ -271,6 +274,58 @@ class SeedAllTests(TestCase):
         self.assertEqual([text.split(" are ")[0] for text in texts], ["Nurglings", "Nurglings"])
         rat_ogres = book.get(name="Stupidity (Rat Ogre)").template_fighter_links.values_list("fighter__template__slug", flat=True)  # fmt: skip
         self.assertEqual(sorted(rat_ogres), ["skaven", "skaven-of-clan-pestilens"])
+
+    def test_frenzy_and_hatred_are_shared_and_a_rule_that_changes_them_stays_its_owners(self):
+        # William, 7 Nov 2026: "yes" (Frenzy and Hatred shared as Fear is): one short line each, linking the Rules
+        # page's part on it; a Hatred row per target several owners share
+        book = Special.objects.filter(campaign__isnull=True, archived_at__isnull=True)
+        names = ("Frenzy", "Hate Orcs and Goblins", "Hate High Elves", "Hate Bandits and Outlaws", "Hate Spellcasters")
+        links = {
+            row.name: (
+                row.template_fighter_links.count(),
+                row.hired_sword_specials.count(),
+                row.dramatis_persona_specials.count(),
+                row.bestiary_entry_specials.count(),
+            )
+            for row in book.filter(name__in=names, type="Psychology")
+        }
+        self.assertEqual(
+            links,
+            {
+                "Frenzy": (3, 0, 1, 1),  # Totem Warrior, Berserker, Witch Elf; Sigmund's Maddened; the Bloodletter
+                "Hate Orcs and Goblins": (5, 3, 0, 0),  # the Dwarf Treasure Hunter's Hates Orcs & Goblins now too
+                "Hate High Elves": (0, 1, 1, 0),  # the Dark Elf Assassin's and Dijin Katal's Kindred Hatred
+                "Hate Bandits and Outlaws": (2, 0, 0, 0),  # the Horned Hunters' Hang the Bandit!
+                "Hate Spellcasters": (2, 0, 0, 0),  # the Witch Hunters' Burn the Witch!
+            },
+        )
+        kept = (
+            "Berserkers (Red Toof Goblin)",
+            "Kindred Hatred (Strigoi Vampire)",
+            "Burn the Witch",
+            "Religious Fervour",
+        )
+        owners = dict(book.filter(name__in=kept).values_list("name", "owner_kind"))
+        self.assertEqual(
+            owners,
+            {
+                "Berserkers (Red Toof Goblin)": "warband",  # immune to animosity too
+                "Kindred Hatred (Strigoi Vampire)": "warband",  # other vampires, not High Elves
+                "Burn the Witch": "hired_sword",  # won't work for a band with a spellcaster
+                "Religious Fervour": "dramatis_persona",  # Maximilian must always end his turn closer to the enemy
+            },
+        )
+        pilgrim = book.get(name="Hatred", type="Warband - Bretonnian Chapel Guard")
+        self.assertEqual(pilgrim.description, "The model hates every enemy model.")  # open-ended, worded short
+        merged = (
+            "Berserkers",
+            "Maddened",
+            "Kindred Hatred",
+            "Hang the Bandit!",
+            "Burn the Witch!",
+            "Hates Orcs & Goblins",
+        )
+        self.assertFalse(book.filter(name__in=merged).exists())
 
     def test_a_rule_one_beast_holds_is_named_for_it(self):
         # the review (5 Nov 2026: W7): a book rule typed Animal that one beast holds reads "<rule> (<beast>)" in the

@@ -62,14 +62,17 @@ def _shared_rule(special: dict[str, str], fighter: dict[str, Any], name: str, sh
     """A fighter's rule as William's list has it: the shared special it is (its name and type, no text, for the seeder
     to find in the book), or kept his own, named as the list names it and typed as its first owner has it, so owners
     in two templates (the Skaven's and Clan Pestilens' Rat Ogres) hold one row, worded as the first has it (in his own
-    template `_specials_once` does that); an owner who words it differently, beyond his name, stops the build. Our
-    Large, Wizard and Priest, and his other rules, stay."""
+    template `_specials_once` does that); an owner who words it differently, beyond his name, stops the build. A line
+    with a `text` words it so (the Chapel Guard's open-ended Hatred, worded short). Our Large, Wizard and Priest, and
+    his other rules, stay."""
     found = shared.rule("warband", f"{name}: {fighter['name']}", special["name"]) if "description" in special else None
     if found is None:
         return special
     how, line = found
     if how == "shared":
         return {"name": line["name"], "type": line["type"]}
+    if "text" in line:  # worded by the list (an open-ended Hatred, worded short)
+        return {"name": line["name"], "type": special["type"], "description": line["text"]}
     gist = _gist(special["description"], fighter["name"], fighter["plural"])
     kind, wording, first = shared.kept.setdefault(line["name"], (special["type"], special["description"], gist))
     if first != gist:
