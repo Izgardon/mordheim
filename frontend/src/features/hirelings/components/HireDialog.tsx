@@ -27,6 +27,8 @@ type HireDialogProps = {
   heroes: WarbandHero[];
   /** The entry being hired; null when closed. */
   entry: HirelingProfile | null;
+  /** Why the warband can't usually hire him (the server's who-can): a warning, never a block. */
+  warning?: string;
   onClose: () => void;
   /** After the hire: the new hireling's id (his card opens in Edit). */
   onHired?: (unitId: number) => void;
@@ -100,6 +102,9 @@ export default function HireDialog(props: HireDialogProps) {
     >
       {entry ? (
         <div className="flex flex-col gap-3">
+          {props.warning ? (
+            <p className="m-0 text-sm font-semibold text-danger">{props.warning}</p>
+          ) : null}
           <p className="m-0 text-sm text-text2">
             Hire fee {formatFee(entry.hire_fee)}, upkeep {formatFee(entry.upkeep_fee)}.
           </p>

@@ -1,3 +1,6 @@
+import { useSearchParams } from "react-router-dom";
+
+import HireDrawer from "@/features/hirelings/components/hire/HireDrawer";
 import { recipientKey } from "@/features/items/store/useStoreBasket";
 import StorePanel, { type StoreOpening } from "@/features/items/store/StorePanel";
 
@@ -41,9 +44,20 @@ type WarbandPanelsProps = {
   placeSearch?: string;
 };
 
-/** The warband page's panels (design E): a unit's loadout, the stash, the store and locations. */
+/**
+ * The warband page's panels (design E): a unit's loadout, the stash, the store, locations and
+ * the hire drawer.
+ */
 export default function WarbandPanels(props: WarbandPanelsProps) {
   const { campaignId, warband, units, actions, loadoutFor } = props;
+  const [searchParams, setSearchParams] = useSearchParams();
+  /** Out of the hire drawer onto the roster: a new card in Edit, or the form for someone else. */
+  const leaveHire = (change: Record<string, string>) => {
+    const params = new URLSearchParams(searchParams);
+    params.delete("panel");
+    Object.entries(change).forEach(([key, value]) => params.set(key, value));
+    setSearchParams(params, { replace: true });
+  };
   const sellFromStash = (item: WarbandItemSummary) =>
     actions.sellItem(null, item.id, item.suggested_sale_price ?? 0);
   const current = loadoutFor
@@ -95,6 +109,16 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
         open={props.panel === "locations"}
         onOpenChange={(open) => props.setPanel(open ? "locations" : null)}
         initialSearch={props.placeSearch}
+      />
+      <HireDrawer
+        campaignId={campaignId}
+        warband={warband}
+        heroes={props.heroes}
+        canHire={props.canEdit}
+        open={props.panel === "hire"}
+        onOpenChange={(open) => props.setPanel(open ? "hire" : null)}
+        onHired={(id) => leaveHire({ unit: `hireling-${id}`, edit: "1" })}
+        onByHand={() => leaveHire({ recruit: "hireling" })}
       />
     </>
   );

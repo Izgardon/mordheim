@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useOutletContext, useParams, useSearchParams } from "react-router-dom";
+import { useOutletContext, useParams, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 
 import { useAuth } from "@/features/auth/hooks/use-auth";
@@ -33,7 +33,6 @@ import { useWarbandSheet } from "../hooks/warband/useWarbandSheet";
 export default function Warband() {
   const { id, warbandId: warbandParam } = useParams();
   const campaignId = Number(id);
-  const navigate = useNavigate();
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -97,8 +96,8 @@ export default function Warband() {
     ...sheet.henchmenGroups.map((unit) => ({ kind: "henchmen_group" as const, unit })),
     ...sheet.hirelings.map((unit) => ({ kind: "hireling" as const, unit })),
   ];
-  // the hire picker (the catalogue, with the custom hire), as the roster's Hire
-  const hire = () => navigate(`/campaigns/${campaignId}/hired-swords?warband=${warbandId}`);
+  // the hire drawer (William, 7 Nov 2026: "should open a side draw")
+  const hire = () => setPanel("hire");
   const postgame = {
     campaignId,
     campaign,

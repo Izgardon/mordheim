@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { GameIcon, type GameIconName } from "@/components/ui/game-icons";
 import { MoreMenu, type MoreMenuEntry } from "@/components/ui/more-menu";
 
-export type WarbandPanel = "store" | "stash" | "locations" | "loadout";
+export type WarbandPanel = "store" | "stash" | "locations" | "loadout" | "hire";
 
 type WarbandHeaderProps = {
   kicker: string;
