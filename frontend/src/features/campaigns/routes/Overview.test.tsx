@@ -208,3 +208,20 @@ describe("Start a battle's players", () => {
     await waitFor(() => expect(fakeApi.countOf(`GET ${BASE}/players/`)).toBe(reads + 1));
   });
 });
+
+// William, 8 Nov 2026: "lets move the campaign rules underneath the info bar like in the warband
+// page but on overview"
+describe("the overview's campaign rules", () => {
+  it("sit right under the info bar, and only there", async () => {
+    fakeApi.on(`GET ${BASE}/campaign-rules/`, [
+      { id: 4, campaign_id: CAMPAIGN_ID, title: "Curfew", body: "No warband leaves.", order: 0 },
+    ]);
+    renderApp(BASE);
+
+    const rules = await screen.findByRole("region", { name: "Campaign rules" });
+    expect(rules.previousElementSibling?.tagName).toBe("DL");
+    expect(rules.previousElementSibling).toHaveTextContent("Heroes lost");
+    expect(within(rules).getByRole("button", { name: "Curfew" })).toBeVisible();
+    expect(screen.getAllByRole("region", { name: "Campaign rules" })).toHaveLength(1);
+  });
+});
