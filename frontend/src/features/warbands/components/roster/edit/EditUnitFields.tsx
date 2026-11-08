@@ -1,6 +1,7 @@
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
+import { StatLabelSpace } from "@/components/ui/stat-boxes";
 import { Switch } from "@/components/ui/switch";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
@@ -145,6 +146,8 @@ export default function EditUnitFields({
               warbandId={warbandId}
               value={draft.available_skills as Record<string, boolean>}
               onChange={(next) => set("available_skills", next)}
+              // beside the profile: the pills on the boxes' line (William, 8 Nov 2026)
+              lead={<StatLabelSpace className="hidden min-[720px]:flex" />}
             />
           ) : null}
           {"available_spell_types" in draft && (caster !== "No" || lores.length) ? (

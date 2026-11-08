@@ -35,6 +35,23 @@ type StatBoxesProps<K extends string> = {
 
 const ROW = { 9: "min-[520px]:grid-cols-9", 10: "min-[520px]:grid-cols-10" } as const;
 
+/** Each box's label line ("WS") and the gap under it, above the box. */
+const LABEL_LINE = "text-[10px] font-bold leading-[15px]";
+const LABEL_GAP = "gap-0.5";
+
+/**
+ * A blank line as tall as the boxes' labels and the gap under them: a field beside a profile row
+ * starts its own row with one, so that row lines up with the boxes.
+ */
+export function StatLabelSpace({ className }: { className?: string }) {
+  return (
+    <span aria-hidden="true" className={cn("flex flex-col", LABEL_GAP, className)}>
+      <span className={LABEL_LINE}>&nbsp;</span>
+      <span />
+    </span>
+  );
+}
+
 /**
  * A profile row as plain type boxes (William, 7 Nov 2026: "these should just be type boxes"),
  * each taking a number or the value as the book writes it ("2(4)", "D6", "3+", "-"), which the
@@ -55,7 +72,7 @@ export function StatBoxes<K extends string>({
       {fields.map((field, index) => (
         <label
           key={field.key}
-          className="flex min-w-0 flex-col items-center gap-0.5 text-[10px] font-bold text-faint"
+          className={cn("flex min-w-0 flex-col items-center text-faint", LABEL_GAP, LABEL_LINE)}
         >
           {field.label}
           <Input

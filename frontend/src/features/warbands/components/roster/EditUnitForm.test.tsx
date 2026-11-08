@@ -3,7 +3,7 @@
  * "edit form should have a button to edit the notes rather than taking up room normally"); the
  * button shows a dot when he has some, and the notes save with the form.
  */
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fakeApi } from "@/test/fake-api";
@@ -92,5 +92,35 @@ describe("The Edit form's notes", () => {
 
     const body = fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/") as Batch;
     expect(body.update[0]).toMatchObject({ id: group.id, notes: "" });
+  });
+});
+
+/**
+ * Beside the profile, skill access's pills sit on the stat boxes' line (William, 8 Nov 2026: "can
+ * we also align the pills here on these lines"): the two captions alike, a blank line as tall as
+ * the boxes' labels over the pills while the two sit side by side, and pills as tall as the boxes.
+ */
+describe("The Edit form's profile and skill access", () => {
+  beforeEach(() => fakeApi.reset());
+
+  it("line up, caption by caption and the pills on the boxes' line", () => {
+    renderForm({ kind: "hero", unit: makeHero({ id: 5, available_skills: [] }) });
+
+    const caption = screen.getByText("Skill access");
+    expect(screen.getByText("Profile")).toHaveClass(...caption.className.split(" "));
+
+    const pills = screen.getByRole("group", { name: "Skill access" });
+    const space = pills.previousElementSibling as HTMLElement;
+    const label = screen.getByText("WS");
+    expect(space).toHaveAttribute("aria-hidden", "true");
+    expect(space).toHaveClass("hidden", "min-[720px]:flex", "gap-0.5");
+    expect(label).toHaveClass("gap-0.5", "text-[10px]", "leading-[15px]");
+    expect(space.firstElementChild).toHaveClass("text-[10px]", "leading-[15px]");
+
+    const box = screen.getByRole("textbox", { name: "WS for Captain Aldric" });
+    expect(box).toHaveClass("h-8", "md:h-9");
+    for (const pill of within(pills).getAllByRole("button")) {
+      expect(pill).toHaveClass("min-h-8", "md:min-h-9");
+    }
   });
 });

@@ -8,6 +8,8 @@ import { Switch } from "@/components/ui/switch";
 import { STAT_FIELDS, type UnitEditDraft } from "./useUnitEditDraft";
 
 const LABEL = "text-xs font-bold text-muted-foreground";
+/** The profile's and skill access's captions, level beside each other. */
+export const CAPTION = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 
 /**
  * Experience on the form's first row: half rate as a thin toggle in its label line, the box as
@@ -65,7 +67,7 @@ export default function EditProfile({
   );
   return (
     <fieldset className="m-0 flex min-w-0 flex-col gap-1 border-0 p-0">
-      <legend className={`${LABEL} pb-1`}>Profile</legend>
+      <legend className={`${CAPTION} pb-1.5`}>Profile</legend>
       <StatBoxes
         fields={PROFILE_BOXES}
         values={values}

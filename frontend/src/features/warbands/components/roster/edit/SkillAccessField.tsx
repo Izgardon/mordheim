@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 import { Chip } from "@/components/ui/chip";
 import { SearchMultiSelect, type SearchOption } from "@/components/ui/search-select";
 import { useWhoCan } from "@/features/items/api/who-can-queries";
@@ -5,9 +7,12 @@ import { isCore, useSkillGroups } from "@/features/skills/skill-groups";
 import type { SkillGroup } from "@/features/skills/types/skill-types";
 
 import { skillAbbrevToType } from "../../../utils/warband-utils";
+import { CAPTION } from "./EditProfile";
 
 const STANDARD = Object.entries(skillAbbrevToType);
 const isStandard = (key: string) => key in skillAbbrevToType || key === "Spc";
+/** As tall as the profile's boxes (William: "align the pills here on these lines"). */
+const PILL = "min-h-8 md:min-h-9";
 
 /**
  * Skill access (design E): the five core skill groups and Special, which opens the campaign's
@@ -20,11 +25,14 @@ export default function SkillAccessField({
   warbandId,
   value,
   onChange,
+  lead,
 }: {
   campaignId: number;
   warbandId: number;
   value: Record<string, boolean>;
   onChange: (next: Record<string, boolean>) => void;
+  /** Above the pills, under the caption: what lines them up with a profile row beside them. */
+  lead?: ReactNode;
 }) {
   const groups = useSkillGroups(campaignId);
   const open = useWhoCan(campaignId, warbandId).skillGroupIds;
@@ -48,26 +56,33 @@ export default function SkillAccessField({
 
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
-        Skill access
-      </span>
-      <div role="group" aria-label="Skill access" className="flex flex-wrap gap-1.5">
-        {STANDARD.map(([key, name]) => (
-          <Chip key={key} pressed={Boolean(value[key])} onClick={() => toggle(key)}>
-            {coreName(name)}
+      <span className={CAPTION}>Skill access</span>
+      <div className="flex flex-col">
+        {lead}
+        <div role="group" aria-label="Skill access" className="flex flex-wrap gap-1.5">
+          {STANDARD.map(([key, name]) => (
+            <Chip
+              key={key}
+              className={PILL}
+              pressed={Boolean(value[key])}
+              onClick={() => toggle(key)}
+            >
+              {coreName(name)}
+            </Chip>
+          ))}
+          <Chip
+            className={PILL}
+            pressed={Boolean(value.Spc)}
+            onClick={() => {
+              if (!value.Spc) return onChange({ ...value, Spc: true });
+              const next: Record<string, boolean> = { ...value, Spc: false };
+              for (const key of Object.keys(next)) if (!isStandard(key)) delete next[key];
+              onChange(next);
+            }}
+          >
+            Special
           </Chip>
-        ))}
-        <Chip
-          pressed={Boolean(value.Spc)}
-          onClick={() => {
-            if (!value.Spc) return onChange({ ...value, Spc: true });
-            const next: Record<string, boolean> = { ...value, Spc: false };
-            for (const key of Object.keys(next)) if (!isStandard(key)) delete next[key];
-            onChange(next);
-          }}
-        >
-          Special
-        </Chip>
+        </div>
       </div>
       {value.Spc ? (
         <SearchMultiSelect
