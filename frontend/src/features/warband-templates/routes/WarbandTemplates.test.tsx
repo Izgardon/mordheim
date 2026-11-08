@@ -236,7 +236,10 @@ describe("The Warbands page", () => {
       warband_types: 0,
     });
     fakeApi.on("GET /settings/", {
-      settings: [setting(1, "mordheim", "Mordheim 1a"), setting(6, "lustria", "Lustria")],
+      settings: [
+        setting(1, "mordheim", "Mordheim 1a"),
+        { ...setting(6, "lustria", "Lustria"), grade: "1b" },
+      ],
       presets: [],
     });
     const lizardmen = {
@@ -261,6 +264,15 @@ describe("The Warbands page", () => {
     expect(rowNames()).toEqual(["Lizardmen", "Reiklanders", "Middenheimers"]);
     await user.click(screen.getByRole("button", { name: "Sort by Warband" }));
     expect(rowNames()).toEqual(["Lizardmen", "Middenheimers", "Reiklanders"]);
+    // William, 8 Nov 2026: "on warbands table can we also show grade"
+    expect(await row("Lizardmen")).toHaveTextContent("LizardmenLustria1b");
+    expect(await row("Reiklanders")).toHaveTextContent("ReiklandersMercenariesMordheim–");
+    await user.click(screen.getByRole("button", { name: "Sort by Grade" }));
+    expect(rowNames()).toEqual(["Lizardmen", "Middenheimers", "Reiklanders"]); // none last
+    expect(param(app, "sort")).toBe("grade");
+    await user.click(screen.getByRole("button", { name: "Sort by Grade" }));
+    expect(rowNames()).toEqual(["Reiklanders", "Middenheimers", "Lizardmen"]);
+    await user.click(screen.getByRole("button", { name: "Sort by Warband" }));
 
     const settings = screen.getByRole("group", { name: "Setting" });
     await user.click(within(settings).getByRole("button", { name: "Lustria" }));

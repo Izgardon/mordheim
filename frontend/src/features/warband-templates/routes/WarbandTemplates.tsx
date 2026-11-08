@@ -21,6 +21,7 @@ import { typeRows, type TemplateTypeRow } from "../template-view";
 import {
   nextSort,
   parseSort,
+  rowGrade,
   rowSettingLabel,
   shownWarbandRows,
   sortParam,
@@ -33,7 +34,12 @@ const counted = (count: number) => `${count} warband type${count === 1 ? "" : "s
 const SORT_OPTIONS: { id: WarbandSortKey; label: string }[] = [
   { id: "name", label: "Name" },
   { id: "setting", label: "Setting" },
+  { id: "grade", label: "Grade" },
 ];
+
+/** A phone row's setting, and its grade where the setting's name doesn't already say it. */
+const asideLabel = (setting: string, grade: string) =>
+  grade && !setting.endsWith(grade) ? `${setting} · ${grade}` : setting;
 
 type Making = { forType?: { id: number; name: string } } | null;
 
@@ -51,10 +57,11 @@ function NoTemplate({ row, onMake }: { row: TemplateTypeRow; onMake: () => void 
 /**
  * Reference → Warbands (the templates plan, phases 1b and 4): each warband type in play with its
  * setting (William, 7 Nov 2026: "drop starting gold and most warriors ... add Setting column and
- * make it filterable/sortable"), searched, filtered by setting (Mordheim's grades as one) and
- * sorted by name or setting (`?sort=`), opening in place to its template (gold, warband size,
- * variants, rules, fighters, lists, upgrades), or to Make a template where it has none. Those
- * who edit the catalogue edit a template in the editor (a drawer on the web, a sheet on a phone).
+ * make it filterable/sortable") and grade (William, 8 Nov 2026), searched, filtered by setting
+ * (Mordheim's grades as one) and sorted by name, setting or grade (`?sort=`), opening in place
+ * to its template (gold, warband size, variants, rules, fighters, lists, upgrades), or to Make a
+ * template where it has none. Those who edit the catalogue edit a template in the editor (a
+ * drawer on the web, a sheet on a phone).
  */
 export default function WarbandTemplates() {
   const { id } = useParams();
@@ -136,12 +143,16 @@ export default function WarbandTemplates() {
         columns={
           isMobile
             ? undefined
-            : [{ label: "Setting", className: "w-[200px] shrink-0", sort: sorting("setting") }]
+            : [
+                { label: "Setting", className: "w-[200px] shrink-0", sort: sorting("setting") },
+                // William, 8 Nov 2026: "on warbands table can we also show grade"
+                { label: "Grade", className: "w-[80px] shrink-0", sort: sorting("grade") },
+              ]
         }
         isEmpty={!templates.isLoading && shown.length === 0}
         empty="No warbands match."
       >
-        {templates.isLoading ? <ReferenceRowBones cells={1} /> : null}
+        {templates.isLoading ? <ReferenceRowBones cells={2} /> : null}
         {shown.map((row) => (
           <ReferenceRow
             key={row.id}
@@ -153,10 +164,14 @@ export default function WarbandTemplates() {
             dim={!row.template}
             aside={
               <span className="text-xs text-muted-foreground">
-                {rowSettingLabel(row, settings)}
+                {asideLabel(rowSettingLabel(row, settings), rowGrade(row, settings))}
               </span>
             }
-            cells={isMobile ? undefined : [rowSettingLabel(row, settings)]}
+            cells={
+              isMobile
+                ? undefined
+                : [rowSettingLabel(row, settings), rowGrade(row, settings) || "–"]
+            }
           >
             {row.template ? (
               <TemplateDetail

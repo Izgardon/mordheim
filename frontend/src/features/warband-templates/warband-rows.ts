@@ -9,17 +9,17 @@ import { matchesSearchQuery } from "@/lib/matches-search-query";
 
 import type { TemplateTypeRow } from "./template-view";
 
-/** What the Warbands page sorts by: the name or the setting, each either way (`?sort=-setting`). */
-export type WarbandSortKey = "name" | "setting";
+/** What the Warbands page sorts by: name, setting or grade, each either way (`?sort=-grade`). */
+export type WarbandSortKey = "name" | "setting" | "grade";
 export type WarbandSort = { key: WarbandSortKey; descending: boolean };
 
 export const DEFAULT_SORT: WarbandSort = { key: "name", descending: false };
 
-/** `?sort=`: "setting", "-name"; anything else is by name. */
+/** `?sort=`: "setting", "-grade", "-name"; anything else is by name. */
 export function parseSort(param: string): WarbandSort {
   const descending = param.startsWith("-");
   const key = descending ? param.slice(1) : param;
-  return key === "setting" ? { key, descending } : { key: "name", descending };
+  return key === "setting" || key === "grade" ? { key, descending } : { key: "name", descending };
 }
 
 export const sortParam = (sort: WarbandSort) =>
@@ -38,6 +38,20 @@ export const rowSettingKey = (row: TemplateTypeRow, settings: Map<number, Settin
 /** The Setting column: the setting's own name ("Mordheim 1b"), "Mordheim", or "This campaign". */
 export const rowSettingLabel = (row: TemplateTypeRow, settings: Map<number, Setting>) =>
   entrySettingName(row.setting, settings);
+
+/**
+ * The Grade column (William, 8 Nov 2026: "on warbands table can we also show grade"): its
+ * setting's grade, 1a to 3; "" for a campaign's own or a book type not graded yet.
+ */
+export const rowGrade = (row: TemplateTypeRow, settings: Map<number, Setting>) =>
+  (row.setting.setting_id != null ? settings.get(row.setting.setting_id)?.grade : undefined) ?? "";
+
+/** Grades in order, 1a < 1b < 1c < 2a < 2b < 3 (as they read), a row with none last. */
+function byGrade(a: TemplateTypeRow, b: TemplateTypeRow, settings: Map<number, Setting>) {
+  const [first, second] = [rowGrade(a, settings), rowGrade(b, settings)];
+  if (!first || !second) return Number(!first) - Number(!second);
+  return first.localeCompare(second);
+}
 
 /** Where a row's setting sorts: the book's order (Mordheim's grades first), the campaign's own last. */
 function settingOrder(row: TemplateTypeRow, settings: Map<number, Setting>) {
@@ -62,7 +76,7 @@ type WarbandFilters = {
 
 /**
  * The rows the Warbands page shows: those the search (type or template name) and the Setting
- * filter keep, by name or by setting (then name), either way.
+ * filter keep, by name, by setting or by grade (then name), either way.
  */
 export function shownWarbandRows(
   rows: TemplateTypeRow[],
@@ -75,11 +89,12 @@ export function shownWarbandRows(
   );
   const byName = (a: TemplateTypeRow, b: TemplateTypeRow) =>
     a.typeName.localeCompare(b.typeName) || a.id.localeCompare(b.id);
-  const compare =
-    sort.key === "setting"
-      ? (a: TemplateTypeRow, b: TemplateTypeRow) =>
-          settingOrder(a, settings) - settingOrder(b, settings) || byName(a, b)
-      : byName;
+  const compare = {
+    name: byName,
+    setting: (a: TemplateTypeRow, b: TemplateTypeRow) =>
+      settingOrder(a, settings) - settingOrder(b, settings) || byName(a, b),
+    grade: (a: TemplateTypeRow, b: TemplateTypeRow) => byGrade(a, b, settings) || byName(a, b),
+  }[sort.key];
   const sorted = [...kept].sort(compare);
   return sort.descending ? sorted.reverse() : sorted;
 }

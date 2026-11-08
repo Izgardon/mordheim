@@ -1,7 +1,8 @@
 /**
  * The Warbands page's Setting column (William, 7 Nov 2026: "add Setting column and make it
- * filterable/sortable"): each row's setting, the Setting filter (Mordheim's grades as one) and the
- * sort by name or by setting, either way.
+ * filterable/sortable") and Grade column (William, 8 Nov 2026: "on warbands table can we also
+ * show grade"): each row's setting and grade, the Setting filter (Mordheim's grades as one) and the
+ * sort by name, setting or grade, either way.
  */
 import { describe, expect, it } from "vitest";
 
@@ -13,17 +14,24 @@ import {
   DEFAULT_SORT,
   nextSort,
   parseSort,
+  rowGrade,
   rowSettingLabel,
   shownWarbandRows,
   sortParam,
   warbandSettingOptions,
 } from "./warband-rows";
 
-const setting = (id: number, slug: string, name: string, sortOrder: number): Setting => ({
+const setting = (
+  id: number,
+  slug: string,
+  name: string,
+  sortOrder: number,
+  grade = "1a"
+): Setting => ({
   id,
   slug,
   name,
-  grade: "1a",
+  grade,
   grade_label: "Official",
   sort_order: sortOrder,
   always_on: false,
@@ -110,6 +118,37 @@ describe("the Setting column", () => {
       "Skaven",
     ]);
     expect(shown("mordheim", { key: "name", descending: true })).toEqual(["Skaven", "Ostlanders"]);
+  });
+
+  it("shows each row's grade and sorts by grade, 1a to 3, a row with none last", () => {
+    // William, 8 Nov 2026: "on warbands table can we also show grade"
+    const graded = new Map(
+      [
+        setting(1, "mordheim", "Mordheim 1a", 1, "1a"),
+        setting(7, "grade-3", "Grade 3", 0, "3"),
+        setting(6, "lustria", "Lustria", 6, "1b"),
+      ].map((entry) => [entry.id, entry])
+    );
+    const rows = [
+      row("Skaven", 1),
+      row("Fimir", 7),
+      row("Lizardmen", 6),
+      row("House Wolves", null, 7),
+      row("Amazons", 6),
+    ];
+    expect(rows.map((entry) => rowGrade(entry, graded))).toEqual(["1a", "3", "1b", "", "1b"]);
+    const sorted = (descending: boolean) =>
+      names(
+        shownWarbandRows(rows, {
+          query: "",
+          setting: ALL_SETTINGS,
+          sort: { key: "grade", descending },
+          settings: graded,
+        })
+      );
+    expect(sorted(false)).toEqual(["Skaven", "Amazons", "Lizardmen", "Fimir", "House Wolves"]);
+    expect(sorted(true)).toEqual(["House Wolves", "Fimir", "Lizardmen", "Amazons", "Skaven"]);
+    expect(parseSort("-grade")).toEqual({ key: "grade", descending: true });
   });
 
   it("keeps the sort in ?sort=, a heading's click turning it round", () => {
