@@ -1,52 +1,22 @@
-import { CheckboxField } from "@/components/ui/checkbox";
 import { FieldError } from "@/components/ui/field-error";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { NumberInput } from "@/components/ui/number-input";
+import { useCampaignResources } from "@/features/campaigns/api/campaign-resources";
 import { OptionField } from "@/features/bestiary/components/form/bestiary-core-fields";
 
+import { HIRE_KINDS, UPKEEP_KINDS } from "../../fees";
 import FeeEditor from "../fees/FeeEditor";
-import { HIRELING_SKILL_TYPES } from "../../utils/hireling-form";
+import { takesHerosPlace } from "../../utils/hireling-form";
 
 import type { HirelingProfileFormState } from "../../hooks/useHirelingProfileForm";
-import type { HirelingProfileValues } from "../../utils/hireling-form";
 import type { HirelingStays } from "../../types/hireling-catalogue-types";
-
-type TextKey = keyof Pick<HirelingProfileValues, "rating" | "payment_note">;
-
-/** One labelled input of the terms, with the server's refusal under it. */
-function TermField({
-  form,
-  field,
-  label,
-  numeric = false,
-}: {
-  form: HirelingProfileFormState;
-  field: TextKey;
-  label: string;
-  numeric?: boolean;
-}) {
-  const id = `hireling-${field.replace(/_/g, "-")}`;
-  const error = form.fieldErrors[field];
-  return (
-    <div className="flex min-w-[140px] flex-1 flex-col gap-1.5">
-      <Label htmlFor={id}>{label}</Label>
-      <Input
-        id={id}
-        type={numeric ? "number" : "text"}
-        min={numeric ? 0 : undefined}
-        value={form.values[field]}
-        onChange={(event) => form.change({ [field]: event.target.value })}
-        aria-invalid={Boolean(error)}
-      />
-      <FieldError message={error} />
-    </div>
-  );
-}
 
 const STAYS: { value: HirelingStays; label: string }[] = [
   { value: "always", label: "Until dismissed" },
   { value: "one_battle", label: "One battle" },
 ];
+
+const CAPTION = "text-xs font-bold text-muted-foreground";
 
 /** A dramatis persona's terms: how long he stays, and what he is paid in. */
 function PersonaTerms({ form }: { form: HirelingProfileFormState }) {
@@ -62,57 +32,82 @@ function PersonaTerms({ form }: { form: HirelingProfileFormState }) {
         }
         className="flex min-w-[140px] flex-1 flex-col gap-1.5"
       />
-      <TermField form={form} field="payment_note" label="Paid in" />
+      <label className={`flex min-w-[160px] flex-[2] flex-col gap-1.5 ${CAPTION}`}>
+        Paid in
+        <Input
+          id="hireling-payment-note"
+          value={form.values.payment_note}
+          onChange={(event) => form.change({ payment_note: event.target.value })}
+          aria-invalid={Boolean(form.fieldErrors.payment_note)}
+        />
+        <FieldError message={form.fieldErrors.payment_note} />
+      </label>
     </div>
   );
 }
 
 /**
- * The hire terms: the fee and the upkeep, each a structured fee (gold, dice, resources, a note, or
- * a hero's place, his rules, none), the rating, the skill groups, and a dramatis persona's terms.
+ * The hire fee and the upkeep (William, 7 Nov 2026): each the gold and dice on one line with at
+ * most one of the campaign's resources, and the line it reads as; no upkeep for one who takes a
+ * hero's place ("upkeep section should disappear if take a heroes place is selected above and it
+ * should never be an option in upkeep"). Then the rating on one compact row ("rating line doesn't
+ * need to be that big") and a dramatis persona's terms.
  */
-export default function HirelingTermsFields({ form }: { form: HirelingProfileFormState }) {
+export default function HirelingTermsFields({
+  form,
+  open,
+}: {
+  form: HirelingProfileFormState;
+  open: boolean;
+}) {
   const { values } = form;
-  // The usual groups, and any the entry already learns from (a hired sword's own group).
-  const skillTypes = [
-    ...HIRELING_SKILL_TYPES,
-    ...values.available_skill_types.filter((type) => !HIRELING_SKILL_TYPES.includes(type)),
-  ];
+  const resources = useCampaignResources(form.campaignId, open).data;
   return (
     <>
-      <FeeEditor
-        label="Hire fee"
-        idPrefix="hireling-hire-fee"
-        value={values.hire_fee}
-        onChange={(hire_fee) => form.change({ hire_fee })}
-      />
-      <FieldError message={form.fieldErrors.hire_fee} />
-      <FeeEditor
-        label="Upkeep"
-        idPrefix="hireling-upkeep-fee"
-        value={values.upkeep_fee}
-        onChange={(upkeep_fee) => form.change({ upkeep_fee })}
-      />
-      <FieldError message={form.fieldErrors.upkeep_fee} />
-      <div className="flex flex-wrap gap-3">
-        <TermField form={form} field="rating" label="Rating" numeric />
+      <div className="flex flex-col gap-1">
+        <FeeEditor
+          label="Hire fee"
+          reads="Hire"
+          idPrefix="hireling-hire-fee"
+          kinds={HIRE_KINDS}
+          resources={resources}
+          value={values.hire_fee}
+          onChange={(hire_fee) => form.change({ hire_fee })}
+        />
+        <FieldError message={form.fieldErrors.hire_fee} />
+      </div>
+      {takesHerosPlace(values) ? null : (
+        <div className="flex flex-col gap-1">
+          <FeeEditor
+            label="Upkeep"
+            reads="Upkeep"
+            idPrefix="hireling-upkeep-fee"
+            kinds={UPKEEP_KINDS}
+            resources={resources}
+            value={values.upkeep_fee}
+            onChange={(upkeep_fee) => form.change({ upkeep_fee })}
+          />
+          <FieldError message={form.fieldErrors.upkeep_fee} />
+        </div>
+      )}
+      <div className="flex flex-col gap-1">
+        <label className="flex items-center gap-2 text-sm font-medium text-ink">
+          Rating
+          <span className="text-text2">+</span>
+          <NumberInput
+            compact
+            id="hireling-rating"
+            inputSize="sm"
+            min={0}
+            className="w-20 font-mono"
+            value={values.rating}
+            onChange={(event) => form.change({ rating: event.target.value })}
+            aria-invalid={Boolean(form.fieldErrors.rating)}
+          />
+        </label>
+        <FieldError message={form.fieldErrors.rating} />
       </div>
       {form.config.hasPersonaTerms ? <PersonaTerms form={form} /> : null}
-      <fieldset className="flex flex-col gap-1.5">
-        <legend className="mb-1.5 text-sm font-medium">Skill groups</legend>
-        <div className="flex flex-wrap gap-3">
-          {skillTypes.map((type) => (
-            <CheckboxField
-              key={type}
-              labelClassName="gap-1.5"
-              checked={values.available_skill_types.includes(type)}
-              onChange={(event) => form.toggleSkillType(type, event.target.checked)}
-            >
-              {type}
-            </CheckboxField>
-          ))}
-        </div>
-      </fieldset>
     </>
   );
 }

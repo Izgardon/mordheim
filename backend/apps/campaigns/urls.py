@@ -28,6 +28,7 @@ from .views import (
     CampaignOwnershipView,
     CampaignPermissionsView,
     CampaignPlayersView,
+    CampaignResourcesView,
     CampaignRestoreView,
     CampaignRuleDetailView,
     CampaignRuleOrderView,
@@ -80,6 +81,7 @@ urlpatterns = [
         CampaignTopKillersView.as_view(),
         name="campaigns-top-killers",
     ),
+    path("campaigns/<int:campaign_id>/resources/", CampaignResourcesView.as_view(), name="campaigns-resources"),
     path(
         "campaigns/<int:campaign_id>/encampments/",
         CampaignEncampmentsView.as_view(),

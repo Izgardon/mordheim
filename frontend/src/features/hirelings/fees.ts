@@ -33,6 +33,10 @@ export const FEE_KINDS: { value: FeeKind; label: string }[] = [
   { value: "none", label: "None" },
 ];
 
+/** A hire fee's kinds; an upkeep never takes a hero's place (William, 7 Nov 2026). */
+export const HIRE_KINDS: FeeKind[] = FEE_KINDS.map((kind) => kind.value);
+export const UPKEEP_KINDS: FeeKind[] = HIRE_KINDS.filter((kind) => kind !== "replaces_hero");
+
 export const blankFee = (): Fee => ({
   kind: "gold",
   gold: null,
@@ -57,6 +61,24 @@ export function formatFee(raw: Fee | null | undefined) {
     ...fee.resources.map((line) => `${line.amount} ${line.resource}`),
   ].filter(Boolean);
   return parts.join(" + ") || "-";
+}
+
+/**
+ * A fee as the form's line under it reads it (William, 7 Nov 2026: "Hire fee should have a line
+ * displaying what it would look like"): "30 + D6 gc and 1 Wyrdstone", "2D6×5 gc", "1 Treasure".
+ */
+export function feeReads(raw: Fee | null | undefined) {
+  const fee = feeOf(raw);
+  if (fee.kind !== "gold") return formatFee(fee);
+  const dice = fee.dice
+    ? `${fee.dice === 1 ? "" : fee.dice}D6${fee.dice_multiplier ? `×${fee.dice_multiplier}` : ""}`
+    : "";
+  const gold = [fee.gold !== null ? String(fee.gold) : "", dice].filter(Boolean).join(" + ");
+  const parts = [
+    gold ? `${gold} gc` : "",
+    ...fee.resources.map((line) => `${line.amount} ${line.resource}`),
+  ];
+  return parts.filter(Boolean).join(" and ") || "-";
 }
 
 const key = (name: string) => name.trim().toLowerCase().replace(/\s+/g, " ");

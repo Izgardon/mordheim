@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { feeDraftOf, feeFromDraft } from "./components/fees/fee-draft";
-import { blankFee, feeGold, formatFee, matchCounter, type Fee } from "./fees";
+import { blankFee, feeGold, feeReads, formatFee, matchCounter, type Fee } from "./fees";
 
 const fee = (change: Partial<Fee>): Fee => ({ ...blankFee(), ...change });
 
@@ -17,6 +17,17 @@ describe("structured fees", () => {
     expect(formatFee(fee({ kind: "replaces_hero" }))).toBe("Takes a hero's place");
     expect(formatFee(fee({ kind: "none" }))).toBe("None");
     expect(formatFee(undefined)).toBe("-");
+  });
+
+  it("reads a fee as the form's line under it does (William, 7 Nov 2026)", () => {
+    const wyrdstone = [{ resource: "Wyrdstone", amount: 1 }];
+    expect(feeReads(fee({ gold: 30, dice: 1, resources: wyrdstone }))).toBe(
+      "30 + D6 gc and 1 Wyrdstone"
+    );
+    expect(feeReads(fee({ dice: 2, dice_multiplier: 5 }))).toBe("2D6×5 gc");
+    expect(feeReads(fee({ resources: wyrdstone }))).toBe("1 Wyrdstone");
+    expect(feeReads(fee({ kind: "special" }))).toBe("See his rules");
+    expect(feeReads(fee({}))).toBe("-");
   });
 
   it("asks its gold, plus the roll times the multiplier, and nothing when it isn't gold", () => {

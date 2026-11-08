@@ -204,3 +204,31 @@ class FeeField(serializers.Field):
 
     def to_representation(self, value: Any) -> dict[str, Any]:
         return fee_payload(value)
+
+
+GOLD_NAMES = ("gold", "gc", "gold crown", "gold crowns")  # the fee's own gold, never one of its resources
+
+
+def is_gold(name: str) -> bool:
+    return _key(name) in GOLD_NAMES
+
+
+class CatalogueFeeField(FeeField):
+    """A hired sword's or dramatis persona's hire fee or upkeep as the catalogue's form writes it (William, 7 Nov 2026:
+    "only 1 resource should be allowed and also only a resource should be allowed"): gold and dice with at most one
+    resource on top, never gold; an upkeep (`upkeep=True`) never takes a hero's place ("it should never be an option in
+    upkeep"). A stored fee with several resources (the import's, an older write) is kept while a write leaves it out."""
+
+    def __init__(self, *, upkeep: bool = False, **kwargs: Any) -> None:
+        self.upkeep = upkeep
+        super().__init__(**kwargs)
+
+    def to_internal_value(self, data: Any) -> Fee:
+        fee = super().to_internal_value(data)
+        if len(fee["resources"]) > 1:
+            raise serializers.ValidationError("A fee takes one resource on top of its gold.")
+        if any(is_gold(line["resource"]) for line in fee["resources"]):
+            raise serializers.ValidationError("Gold is the fee's own gold, not one of its resources.")
+        if self.upkeep and fee["kind"] == "replaces_hero":
+            raise serializers.ValidationError("An upkeep doesn't take a hero's place.")
+        return fee

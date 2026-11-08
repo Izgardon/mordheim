@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { NumberInput } from "@/components/ui/number-input";
 import FeeEditor from "@/features/hirelings/components/fees/FeeEditor";
 import { feeFromDraft } from "@/features/hirelings/components/fees/fee-draft";
-import { matchCounter } from "@/features/hirelings/fees";
+import { HIRE_KINDS, UPKEEP_KINDS, matchCounter } from "@/features/hirelings/fees";
+import { useCampaignResources } from "@/features/campaigns/api/campaign-resources";
 
 import { blankRecruit, useRecruit, type RecruitDraft } from "../../hooks/units/useRecruit";
 import type { UnitKindKey } from "../../types/units";
 import type { WarbandResource } from "../../types/warband-types";
-import RaceField from "../roster/edit/RaceField";
+import RaceField from "@/features/races/components/RaceField";
 
 const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
 // the race's label line too (RaceField), so the fields line up
@@ -71,6 +72,7 @@ export default function ByHandRecruit({
   const changed = useDirtySince(draft).dirty;
   useReportDirty(kind === "hireling" && changed); // a hired sword's, with his fees, is a long form
   const ids = useId();
+  const campaignResources = useCampaignResources(campaignId, kind === "hireling").data;
   const { recruit, saving } = useRecruit(kind, warbandId, existingIds);
   const set = (change: Partial<RecruitDraft>) => setDraft((current) => ({ ...current, ...change }));
   const text = (label: string, key: "name" | "type") => (
@@ -128,18 +130,26 @@ export default function ByHandRecruit({
           <div className="flex flex-col gap-1.5">
             <FeeEditor
               label="Hire fee paid"
+              reads="Paid"
+              kinds={HIRE_KINDS}
+              resources={campaignResources}
               idPrefix="recruit-fee"
               value={draft.fee}
               onChange={(fee) => set({ fee })}
             />
             <FeeLines draft={draft} counters={resources} />
           </div>
-          <FeeEditor
-            label="Upkeep"
-            idPrefix="recruit-upkeep"
-            value={draft.upkeep}
-            onChange={(upkeep) => set({ upkeep })}
-          />
+          {draft.fee.kind === "replaces_hero" ? null : (
+            <FeeEditor
+              label="Upkeep"
+              reads="Upkeep"
+              kinds={UPKEEP_KINDS}
+              resources={campaignResources}
+              idPrefix="recruit-upkeep"
+              value={draft.upkeep}
+              onChange={(upkeep) => set({ upkeep })}
+            />
+          )}
         </div>
       ) : null}
       <div className="flex flex-wrap gap-2">

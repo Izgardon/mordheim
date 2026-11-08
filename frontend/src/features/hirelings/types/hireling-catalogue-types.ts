@@ -87,8 +87,9 @@ export type HirelingProfileWrite = {
   caster: string;
   race_id: number | null;
   race_label: string;
-  hire_fee: Fee;
-  upkeep_fee: Fee;
+  /** Left out: the stored fee stays (one the form keeps as it is). */
+  hire_fee?: Fee;
+  upkeep_fee?: Fee;
   rating: number | null;
   available_skill_types: string[];
   skill_ids: number[];

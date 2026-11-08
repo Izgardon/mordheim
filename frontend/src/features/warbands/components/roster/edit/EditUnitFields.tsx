@@ -10,7 +10,7 @@ import XpTrack from "../XpTrack";
 import EditGroupModels from "./EditGroupModels";
 import EditLists from "./EditLists";
 import EditProfile, { EditXpField } from "./EditProfile";
-import RaceField from "./RaceField";
+import RaceField from "@/features/races/components/RaceField";
 import RaceMaxWarning from "./RaceMaxWarning";
 import SkillAccessField from "./SkillAccessField";
 import SpellLoresField from "./SpellLoresField";

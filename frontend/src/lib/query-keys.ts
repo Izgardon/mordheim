@@ -57,6 +57,8 @@ export const queryKeys = {
     encampments: (campaignId: number) => ["campaign", campaignId, "encampments"] as const,
     /** The campaign's locations (the warband page's panel, settings, Search everything). */
     locations: (campaignId: number) => ["campaign", campaignId, "locations"] as const,
+    /** The resources its warbands hold, by name (a fee's resource picker; the server's list). */
+    resources: (campaignId: number) => ["campaign", campaignId, "resources"] as const,
     houseRules: (campaignId: number) => ["campaign", campaignId, "rules"] as const,
     /** Its own rules, not house rules (the overview, the Campaign rules page, Search everything). */
     campaignRules: (campaignId: number) => ["campaign", campaignId, "campaign-rules"] as const,

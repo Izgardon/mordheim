@@ -5,10 +5,7 @@ import { useDirtySince, useReportDirty } from "@/components/ui/discard-changes";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
-import { SearchSelect } from "@/components/ui/search-select";
-import { useSettingsById } from "@/features/campaigns/api/settings-queries";
-import { raceOption } from "@/features/catalogue/search-options";
-import { useCatalogue } from "@/lib/catalogue-queries";
+import RaceField from "@/features/races/components/RaceField";
 
 import type { TemplateFighter, WarbandTemplate } from "../types/template-types";
 import { CAPTION, Field, FORM_BOX, NumberField, SaveRow } from "./editor-ui";
@@ -51,11 +48,8 @@ export default function FighterForm(props: FighterFormProps) {
   const [draft, setDraft] = useState<FighterDraft>(() => fighterDraft(fighter, props.kind));
   useReportDirty(useDirtySince(draft).dirty);
   const [deleting, setDeleting] = useState(false);
-  const races = useCatalogue("races", props.campaignId);
-  const settings = useSettingsById();
   const set = (patch: Partial<FighterDraft>) => setDraft((current) => ({ ...current, ...patch }));
   const henchman = draft.kind === "henchman";
-  const race = races.data.find((row) => row.id === draft.raceId);
   const label = draft.name || (henchman ? "the henchman" : "the hero");
   const toggleList = (key: string) =>
     set({
@@ -127,15 +121,15 @@ export default function FighterForm(props: FighterFormProps) {
           </>
         ) : null}
       </div>
-      <Field label="Race">
-        <SearchSelect
-          label="Race"
-          value={race ? raceOption(race, settings) : null}
-          options={races.data.map((row) => raceOption(row, settings))}
-          clearLabel="No race"
-          onChange={(option) => set({ raceId: option ? Number(option.id) : null })}
-        />
-      </Field>
+      {/* the shared race field, with Add new (William, 7 Nov 2026: "probably need this in custom
+          unit form and templates if it's there too") */}
+      <RaceField
+        campaignId={props.campaignId}
+        value={draft.raceId}
+        canCreate
+        captionClassName={CAPTION}
+        onChange={(raceId) => set({ raceId })}
+      />
       <FighterProfile stats={draft.stats} label={label} onChange={(stats) => set({ stats })} />
       <SkillTypesField
         campaignId={props.campaignId}

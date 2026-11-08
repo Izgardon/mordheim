@@ -39,6 +39,7 @@ from .overview import (
     CampaignSearchView,
     CampaignTopKillersView,
 )
+from .resources import CampaignResourcesView
 
 __all__ = [
     "CampaignActiveBattleCancelView",
@@ -68,6 +69,7 @@ __all__ = [
     "CampaignOwnershipView",
     "CampaignPermissionsView",
     "CampaignPlayersView",
+    "CampaignResourcesView",
     "CampaignRestoreView",
     "CampaignRuleDetailView",
     "CampaignRuleOrderView",

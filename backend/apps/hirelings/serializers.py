@@ -35,7 +35,7 @@ from apps.warbands.access_lines import (
 from apps.warbands.utils.armour_save import BEST_ARMOUR_SAVE, WORST_ARMOUR_SAVE
 from apps.warbands.utils.stats import WrittenStatsSerializer
 
-from .fees import FeeField
+from .fees import CatalogueFeeField, FeeField, make_fee
 from .models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword
 
 STAT_FIELDS = (
@@ -151,8 +151,8 @@ class HirelingProfileWriteSerializer(WrittenStatsSerializer, serializers.ModelSe
         min_value=BEST_ARMOUR_SAVE, max_value=WORST_ARMOUR_SAVE, allow_null=True, required=False
     )
     race_id = CatalogueEntryField(source="race", queryset=Race.objects.all(), allow_null=True, required=False)
-    hire_fee = FeeField(required=False)
-    upkeep_fee = FeeField(required=False)
+    hire_fee = CatalogueFeeField(required=False)
+    upkeep_fee = CatalogueFeeField(upkeep=True, required=False)
     rating = _cost()
     available_skill_types = serializers.ListField(child=serializers.CharField(max_length=80), required=False)
     skill_ids = CatalogueIdsField(rows=Skill.objects.all(), required=False)
@@ -171,6 +171,15 @@ class HirelingProfileWriteSerializer(WrittenStatsSerializer, serializers.ModelSe
     def validate_warbands(self, lines: list[dict[str, Any]]) -> list[dict[str, Any]]:
         refuse_unknown_lines(lines, self.context["campaign_id"])  # the book's or the campaign's types (SEC-07)
         return unique_lines(lines)
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        """One who takes a hero's place keeps no upkeep (William, 7 Nov 2026: "upkeep section should disappear if take a
+        heroes place is selected"), whichever fee the write sends: the hire fee sent, else the one he has."""
+        attrs = super().validate(attrs)
+        hire = attrs.get("hire_fee") or getattr(self.instance, "hire_fee", None) or {}
+        if hire.get("kind") == "replaces_hero" and ({"hire_fee", "upkeep_fee"} & set(attrs)):
+            attrs["upkeep_fee"] = make_fee("none")
+        return attrs
 
 
 class HiredSwordWriteSerializer(HirelingProfileWriteSerializer):

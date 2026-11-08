@@ -7,6 +7,7 @@ import {
   feeFromDraft,
   type FeeDraft,
 } from "@/features/hirelings/components/fees/fee-draft";
+import { blankFee } from "@/features/hirelings/fees";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { isWarbandQuery, useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
@@ -64,7 +65,11 @@ export function useRecruit(kind: UnitKindKey, warbandId: number, existingIds: nu
       price: paid.gold ?? 0,
       // no counter named: the server pays each from the resource of its name
       resources: paid.resources,
-      upkeep_fee: feeFromDraft(draft.upkeep),
+      // none for one who takes a hero's place (William, 7 Nov 2026)
+      upkeep_fee:
+        paid.kind === "replaces_hero"
+          ? { ...blankFee(), kind: "none" }
+          : feeFromDraft(draft.upkeep),
     });
     toastServerWarnings(answer.warnings);
     const xp = whole(draft.xp);
