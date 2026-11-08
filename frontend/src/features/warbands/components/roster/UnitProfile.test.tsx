@@ -2,7 +2,7 @@
  * An open card shows a unit's notes beside his profile (William, 8 Nov 2026: "have them displayed
  * in detailed card view, inline with the stats line which should become half width"): each half
  * the card on the web, as tall as the profile, clipped with a chevron that shows them in full and
- * folds them again. Without notes the profile keeps the whole width; a closed card shows none.
+ * folds them again. The box is there even without notes; a closed card shows none.
  */
 import { screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -73,11 +73,13 @@ describe("An open card's notes", () => {
     expect(strip()).toHaveClass("self-start");
   });
 
-  it("show no box, and the profile its whole width, without notes", () => {
+  // William, 8 Nov 2026: "the notes section should always be there even if empty"
+  it("keep their box beside the half-width profile when there are none", () => {
     renderCard({ kind: "hero", unit: makeHero({ notes: "  " }) });
 
-    expect(screen.queryByRole("note")).not.toBeInTheDocument();
-    expect(strip().parentElement).not.toHaveClass("grid");
+    const notes = screen.getByRole("note", { name: "Notes" });
+    expect(notes).toHaveTextContent(/^Notes$/);
+    expect(strip().parentElement).toHaveClass("grid", "min-[960px]:grid-cols-2");
   });
 
   it("aren't on a closed card", () => {

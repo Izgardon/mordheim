@@ -217,7 +217,7 @@ export default function UnitCard(props: UnitCardProps) {
         <UnitProfile
           values={stats.values}
           highlighted={stats.highlighted}
-          notes={open ? unit.notes : undefined}
+          notes={open ? (unit.notes ?? "") : undefined}
         />
         {/* closed: his items, skills, spells and boons & banes, a line each, and his XP */}
         {open ? null : (

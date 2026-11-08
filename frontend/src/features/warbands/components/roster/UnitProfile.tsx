@@ -76,10 +76,11 @@ export function UnitNotes({ text }: { text: string }) {
 }
 
 /**
- * The profile under a unit's name. An open card with notes (William, 8 Nov 2026: "have them
+ * The profile under a unit's name. An open card shows his notes (William, 8 Nov 2026: "have them
  * displayed in detailed card view, inline with the stats line which should become half width")
- * shows them beside it on the web, each half the card, and under it on a phone; without notes
- * the profile keeps the whole width.
+ * beside it on the web, each half the card, and under it on a phone, the box there even when
+ * empty ("the notes section should always be there even if empty"); a closed card shows the
+ * profile alone, its whole width.
  */
 export default function UnitProfile({
   values,
@@ -88,11 +89,11 @@ export default function UnitProfile({
 }: {
   values: Partial<Record<StatKey, string | number>>;
   highlighted?: ReadonlyArray<StatKey>;
-  /** The unit's notes, shown only on an open card. */
+  /** The unit's notes on an open card ("" for none, still shown); undefined on a closed one. */
   notes?: string;
 }) {
-  const text = notes?.trim() ?? "";
-  if (!text) return <StatStrip values={values} highlighted={highlighted} />;
+  if (notes === undefined) return <StatStrip values={values} highlighted={highlighted} />;
+  const text = notes.trim();
   return (
     <div className="grid gap-2 min-[960px]:grid-cols-2 min-[960px]:gap-3">
       <StatStrip values={values} highlighted={highlighted} className="self-start" />
