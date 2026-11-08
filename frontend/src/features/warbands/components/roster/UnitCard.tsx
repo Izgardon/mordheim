@@ -17,6 +17,7 @@ import {
   gearSummary,
   isCreature,
   isGroup,
+  KIND_TRIM,
   liveMembers,
   memberName,
   statValues,
@@ -68,6 +69,7 @@ const XP_TEXT = "shrink-0 font-mono text-xs text-muted-foreground";
 export default function UnitCard(props: UnitCardProps) {
   const { entry, campaign, open, canEdit } = props;
   const itemLabel = useItemLabel(campaign?.id ?? 0, props.warbandId);
+  const trim = KIND_TRIM[entry.kind];
   // editing: no head (name, type, profile), straight into the form (William); on a phone the form
   // is a sheet, which portals out of the card
   if (props.editing) {
@@ -76,7 +78,10 @@ export default function UnitCard(props: UnitCardProps) {
         as="article"
         id={unitDomId(entry)}
         expanded
-        className="col-span-full flex min-w-0 scroll-mt-24 flex-col p-3.5 pl-[18px] max-[960px]:hidden"
+        className={cn(
+          "col-span-full flex min-w-0 scroll-mt-24 flex-col p-3.5 max-[960px]:hidden",
+          trim.stripe
+        )}
       >
         {props.children}
       </Card>
@@ -149,7 +154,10 @@ export default function UnitCard(props: UnitCardProps) {
       className="flex min-w-0 flex-col gap-0.5 text-left"
     >
       <span className="flex flex-wrap items-center gap-2 font-display text-[19px] font-semibold text-head">
-        {unitName(unit)}
+        <span className="inline-flex items-baseline gap-2">
+          <span aria-hidden="true" className={trim.gem} />
+          {unitName(unit)}
+        </span>
         {"is_leader" in unit && unit.is_leader ? (
           <Crown className="h-[15px] w-[15px] text-accent-text" aria-label="Leader" />
         ) : null}
@@ -160,9 +168,9 @@ export default function UnitCard(props: UnitCardProps) {
           </ChipLabel>
         ) : null}
       </span>
-      <span className="text-[13px] text-muted-foreground">
+      <span className={cn("text-[13px]", trim.text)}>
         {unitTypeLine(entry)}
-        {countText ? <span className="ml-1.5 font-mono text-accent-text">{countText}</span> : null}
+        {countText ? <span className="ml-1.5 font-mono">{countText}</span> : null}
       </span>
     </button>
   );
@@ -192,7 +200,8 @@ export default function UnitCard(props: UnitCardProps) {
       id={unitDomId(entry)}
       expanded={open}
       className={cn(
-        "flex min-w-0 scroll-mt-24 flex-col gap-3 p-3.5 pl-[18px]",
+        "flex min-w-0 scroll-mt-24 flex-col gap-3 p-3.5",
+        trim.stripe,
         open && "col-span-full"
       )}
     >

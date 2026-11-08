@@ -40,6 +40,26 @@ const KIND_WORD: Record<RosterUnit["kind"], string> = {
   hireling: "Hired sword",
 };
 
+// a 3px stripe, the content where the 1px border left it; the gem's lower point on the baseline
+const STRIPE = "border-l-[3px] pl-4";
+const GEM = "inline-block h-[7px] w-[7px] shrink-0 -translate-y-[1.5px] rotate-45";
+const trim = (stripe: string, gem: string, text: string) => ({
+  stripe: `${STRIPE} ${stripe}`,
+  gem: `${GEM} ${gem}`,
+  text,
+});
+
+/**
+ * A roster card's trim in its kind's metal (William, 7 Nov 2026: "heroes gold HS silver hench
+ * bronze"; mockup C): a stripe down its left edge, a gem (a 7px square turned 45°) before its
+ * name, and its type line. A dramatis persona is a hired sword here.
+ */
+export const KIND_TRIM: Record<RosterUnit["kind"], ReturnType<typeof trim>> = {
+  hero: trim("border-l-metal-gold", "bg-metal-gold", "text-metal-gold"),
+  henchmen_group: trim("border-l-metal-bronze", "bg-metal-bronze", "text-metal-bronze"),
+  hireling: trim("border-l-metal-silver", "bg-metal-silver", "text-metal-silver"),
+};
+
 /**
  * The line under a card's name: its type, or what it is when the type is the name already (a
  * dramatis persona hired as himself, a hero with no name), so the card never prints it twice.

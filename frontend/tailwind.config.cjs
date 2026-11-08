@@ -94,6 +94,11 @@ module.exports = {
   				special: 'var(--color-kind-special)',
   				spell: 'var(--color-kind-spell)'
   			},
+  			metal: {
+  				gold: 'var(--color-metal-gold)',
+  				silver: 'var(--color-metal-silver)',
+  				bronze: 'var(--color-metal-bronze)'
+  			},
   			good: {
   				DEFAULT: 'var(--color-good)',
   				bg: 'var(--color-good-bg)',
