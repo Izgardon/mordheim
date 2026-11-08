@@ -20,10 +20,46 @@ const d6Results = (location: CampaignLocation) => [
 const hasD6 = (location: CampaignLocation) => d6Results(location).some((entry) => entry?.trim());
 
 /**
+ * The Locations page's D6 table (William, 7 Nov 2026: "yes if it is a d6 location"): each result
+ * and what it gives, as the panel's result line reads them after a roll. Read only.
+ */
+function LocationResults({ location }: { location: CampaignLocation }) {
+  return (
+    <table
+      aria-label={`${location.name}: D6 results`}
+      className="mt-1 w-full border-collapse text-[13px]"
+    >
+      <thead>
+        <tr>
+          <th scope="col" className="w-10 px-2 py-1 text-left text-[11px] font-bold text-faint">
+            D6
+          </th>
+          <th scope="col" className="sr-only">
+            Result
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {d6Results(location).map((result, index) => (
+          <tr key={index} className="border-t border-line align-baseline">
+            <th scope="row" className="px-2 py-1 text-left font-mono font-bold text-accent-hi">
+              {index + 1}
+            </th>
+            <td className={cn("py-1 pr-2", result?.trim() ? "text-ink" : "text-faint")}>
+              {result?.trim() || "Nothing listed"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+/**
  * One location: its name, area and text, a D6 when it has results (the panel's: the shared roll
  * control's box above Roll D6, rolled here or typed in, then locked as Rolled, with the location's
  * result for it), Send a hero (your warband), and Edit and Remove for those who manage locations.
- * On the Locations page it shows its whole text and no roll.
+ * On the Locations page it shows its whole text and, for a D6 location, its results; no roll.
  */
 export default function LocationCard({
   location,
@@ -79,6 +115,7 @@ export default function LocationCard({
               {location.content}
             </span>
           ) : null}
+          {onPage && hasD6(location) ? <LocationResults location={location} /> : null}
           {!onPage && hasD6(location) ? (
             <RollControl
               dice="D6"

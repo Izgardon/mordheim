@@ -118,6 +118,30 @@ describe("The Locations page", () => {
     expect(screen.queryByText("D6 roll")).toBeNull();
   });
 
+  // William, 7 Nov 2026: "yes if it is a d6 location"
+  it("lists a D6 location's results under its text, and nothing for one without", async () => {
+    const pit = { ...docks, id: 5, name: "The Pit", d6_1: "Nothing but rats.", d6_6: "Treasure." };
+    fakeApi.on(`GET ${LOCATIONS}`, [docks, pit]);
+    openAs("player");
+
+    const table = await screen.findByRole("table", { name: "The Pit: D6 results" });
+    const rows = within(table)
+      .getAllByRole("row")
+      .slice(1)
+      .map((row) => row.textContent);
+    expect(rows).toEqual([
+      "1Nothing but rats.",
+      "2Nothing listed",
+      "3Nothing listed",
+      "4Nothing listed",
+      "5Nothing listed",
+      "6Treasure.",
+    ]);
+    expect(screen.queryByRole("table", { name: "The Docks: D6 results" })).toBeNull();
+    expect(screen.getAllByRole("table")).toHaveLength(1);
+    expect(screen.queryByRole("button", { name: /^Roll/ })).toBeNull();
+  });
+
   it("says so while Locations are switched off", async () => {
     openAs("owner", false);
 
