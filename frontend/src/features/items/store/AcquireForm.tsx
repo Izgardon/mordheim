@@ -1,16 +1,11 @@
 import { useState } from "react";
-import { Dices, Minus, Plus } from "lucide-react";
 
-import { NumberInput } from "@/components/ui/number-input";
-import { CheckboxField } from "@/components/ui/checkbox";
 import { Chip } from "@/components/ui/chip";
-import DiceEntry from "@/components/ui/dice-entry";
-import { IconButton } from "@/components/ui/icon-button";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 
 import type { Item, ItemAvailability } from "../types/item-types";
-import { diceLabel, isCommon, priceLabel, rarityLabel, rolledPrice } from "../utils/item-prices";
+import { isCommon, priceLabel, rarityLabel, rolledPrice } from "../utils/item-prices";
+import AddToBasket from "./AddToBasket";
+import PriceFields from "./PriceFields";
 import RareSearch, { type StoreSearch } from "./RareSearch";
 import type { BasketLine, Recipient } from "./useStoreBasket";
 
@@ -31,14 +26,17 @@ type AcquireFormProps = {
   onPick: (line: Omit<BasketLine, "id">) => void;
 };
 
-const LABEL = "flex flex-col gap-1 text-xs font-bold text-muted-foreground";
+/** The hero a recipient key names ("heroes:5"), else null. */
+const heroOf = (key: string | null) =>
+  key?.startsWith("heroes:") ? Number(key.slice("heroes:".length)) : null;
 
 /**
  * Getting one item (design E, the items rebuild): the price row (a choice when the warband may use
  * several: "Brace"), its note ("Heroes only") shown and never checked; the price each, prefilled
- * and editable, a price with dice ("25 + 2D6") rolled with the button or typed in its boxes and
- * sent with its row so the server adds the roll; Free, for an item found or given; for a rare item
- * the search; then one button per recipient with its total, which puts the item in the basket.
+ * and editable, a price with dice ("25 + 2D6") rolled or typed and sent with its row so the server
+ * adds the roll; Free, for an item found or given; for a rare item the search beside the price
+ * (layout D), then one button per recipient with its total, which puts the item in the basket. A
+ * rare item's buttons wait until it was found, or No search is ticked, or it is free.
  */
 export default function AcquireForm(props: AcquireFormProps) {
   const { item, rows } = props;
@@ -49,14 +47,13 @@ export default function AcquireForm(props: AcquireFormProps) {
   const [rolled, setRolled] = useState<number | null>(null);
   const [free, setFree] = useState(false);
   const [reason, setReason] = useState("");
-  const [bonus, setBonus] = useState(props.startBonus ?? 0);
   const [search, setSearch] = useState<StoreSearch | null>(null);
-  const [skipped, setSkipped] = useState(false);
+  const [noSearch, setNoSearch] = useState(false);
   if (!row) return null;
   const rare = !isCommon(row.rarity);
   const each = Math.max(0, Math.trunc(Number(price) || 0));
   const needsRoll = Boolean(row.dice) && rolled === null && !edited && !free;
-  const cleared = (!rare || free || skipped || Boolean(search?.found)) && !needsRoll;
+  const cleared = (!rare || free || noSearch || Boolean(search?.found)) && !needsRoll;
 
   const pickRow = (next: ItemAvailability) => {
     setRowId(next.id);
@@ -64,7 +61,7 @@ export default function AcquireForm(props: AcquireFormProps) {
     setEdited(false);
     setRolled(null);
     setSearch(null);
-    setSkipped(false);
+    setNoSearch(false);
   };
   const take = (faces: number[]) => {
     const pips = faces.reduce((sum, value) => sum + value, 0);
@@ -84,10 +81,25 @@ export default function AcquireForm(props: AcquireFormProps) {
       diceRoll: rolled,
       rowPrice: !edited && !free && row.cost != null,
     });
-  const changeBonus = (next: number) => {
-    setBonus(Math.max(-3, Math.min(10, next)));
-    setSearch(null);
-  };
+  const fields = (
+    <PriceFields
+      item={item}
+      row={row}
+      price={price}
+      rolled={rolled}
+      free={free}
+      reason={reason}
+      isMobile={props.isMobile}
+      inColumn={rare}
+      onPrice={(text) => {
+        setPrice(text);
+        setEdited(true);
+      }}
+      onRoll={take}
+      onFree={setFree}
+      onReason={setReason}
+    />
+  );
 
   return (
     <div className="flex flex-col gap-3 border border-accent-line bg-surface p-3.5">
@@ -105,145 +117,35 @@ export default function AcquireForm(props: AcquireFormProps) {
           {[row.label, row.cost_note, row.note].filter(Boolean).join(" · ")}
         </p>
       ) : null}
-      <div className="flex flex-wrap items-end gap-x-3.5 gap-y-2.5">
-        <label className={LABEL}>
-          {props.isMobile ? "Price each" : "Price each (gc)"}
-          <NumberInput
-            aria-label={`Price each for ${item.name}`}
-            className={cn("font-mono", props.isMobile ? "h-11 w-24" : "w-[110px]")}
-            value={price}
-            disabled={free}
-            onChange={(event) => {
-              setPrice(event.target.value);
-              setEdited(true);
-            }}
-          />
-        </label>
-        {row.dice ? (
-          <div className="flex min-h-10 items-center gap-2">
-            {props.isMobile ? null : (
-              <span className="font-mono text-[13px] text-text2">
-                {row.cost ?? 0} + {diceLabel(row)}
-              </span>
-            )}
-            <DiceEntry
-              key={row.id}
-              dice={`${row.dice}D6`}
-              size="sm"
-              className="flex-nowrap"
-              total={rolled}
-              disabled={free}
-              onFaces={take}
-              button={(roll) => (
-                <button
-                  type="button"
-                  onClick={roll}
-                  disabled={free}
-                  className="flex min-h-9 items-center gap-1.5 border border-strong px-2.5 text-xs font-bold text-ink disabled:opacity-50"
-                >
-                  <Dices className="h-3.5 w-3.5" aria-hidden="true" />
-                  {rolled === null ? "Roll it" : "Roll again"}
-                </button>
-              )}
-            />
-          </div>
-        ) : null}
-        <CheckboxField
-          inline
-          labelClassName="ml-auto text-[13px]"
-          checked={free}
-          onChange={(event) => setFree(event.target.checked)}
-        >
-          Free
-        </CheckboxField>
-      </div>
-      {free ? (
-        <Input
-          aria-label="Why it is free"
-          placeholder="Why it is free"
-          value={reason}
-          maxLength={500}
-          onChange={(event) => setReason(event.target.value)}
+      {rare ? (
+        <RareSearch
+          key={row.id}
+          warbandId={props.warbandId}
+          item={item}
+          rarity={row.rarity ?? 2}
+          startBonus={props.startBonus ?? 0}
+          searchers={props.searchers}
+          firstHeroId={heroOf(props.firstKey)}
+          search={search}
+          disabled={free}
+          isMobile={props.isMobile}
+          price={fields}
+          onSearch={setSearch}
         />
-      ) : null}
-      {rare && !free ? (
-        <div className="flex flex-col gap-2 border-t border-line pt-2.5">
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span className="text-xs font-bold text-muted-foreground">
-              Rare {row.rarity} · search on 2D6
-            </span>
-            <div
-              role="group"
-              aria-label="Search bonus"
-              className="ml-auto flex items-center gap-1.5"
-            >
-              <span className="text-xs font-bold text-muted-foreground">Bonus</span>
-              <IconButton
-                aria-label="Lower the bonus"
-                className={props.isMobile ? "h-10 w-10" : "h-8 w-8"}
-                disabled={bonus <= -3}
-                onClick={() => changeBonus(bonus - 1)}
-              >
-                <Minus aria-hidden="true" />
-              </IconButton>
-              <span className="min-w-[30px] text-center font-mono text-sm font-bold text-head">
-                {bonus > 0 ? `+${bonus}` : bonus}
-              </span>
-              <IconButton
-                aria-label="Raise the bonus"
-                className={props.isMobile ? "h-10 w-10" : "h-8 w-8"}
-                disabled={bonus >= 10}
-                onClick={() => changeBonus(bonus + 1)}
-              >
-                <Plus aria-hidden="true" />
-              </IconButton>
-            </div>
-          </div>
-          <RareSearch
-            warbandId={props.warbandId}
-            item={item}
-            rarity={row.rarity ?? 2}
-            bonus={bonus}
-            searchers={props.searchers}
-            search={search}
-            skipped={skipped}
-            isMobile={props.isMobile}
-            onSearch={(next) => {
-              setSearch(next);
-              setSkipped(false);
-            }}
-            onSkip={() => {
-              setSkipped(true);
-              setSearch(null);
-            }}
-          />
-        </div>
-      ) : null}
-      {cleared ? (
-        <div className="flex flex-wrap gap-1.5">
-          {props.recipients.map((recipient) => {
-            const mine = recipient.key === props.firstKey;
-            const total = free ? "free" : `${each * recipient.count} gc`;
-            const count = recipient.count > 1 ? ` ×${recipient.count}` : "";
-            return (
-              <button
-                key={recipient.key}
-                type="button"
-                onClick={() => pick(recipient)}
-                className={cn(
-                  "border px-3 text-[13px] font-bold",
-                  props.isMobile ? "min-h-11" : "min-h-[38px]",
-                  mine
-                    ? "border-primary bg-primary text-on-accent"
-                    : "border-accent-line bg-page text-accent-hi hover:bg-accent-soft"
-                )}
-              >
-                {recipient.label}
-                {count} · {total}
-              </button>
-            );
-          })}
-        </div>
+      ) : (
+        fields
+      )}
+      {rare || cleared ? (
+        <AddToBasket
+          recipients={props.recipients}
+          firstKey={props.firstKey}
+          each={each}
+          free={free}
+          isMobile={props.isMobile}
+          noSearch={rare ? { checked: noSearch, onChange: setNoSearch } : null}
+          enabled={cleared}
+          onAdd={pick}
+        />
       ) : null}
     </div>
   );

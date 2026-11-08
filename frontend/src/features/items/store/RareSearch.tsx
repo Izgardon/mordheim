@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 
-import DiceEntry from "@/components/ui/dice-entry";
-import { rollDice } from "@/lib/dice";
+import { Chip } from "@/components/ui/chip";
+import { IconButton } from "@/components/ui/icon-button";
+import RollControl from "@/components/ui/roll-control";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
@@ -20,56 +22,74 @@ export type StoreSearch = {
   found: boolean;
 };
 
-/** "Aldric rolled 4 + 3, +1 bonus = 8. Found one." */
-export function searchText(search: StoreSearch) {
-  const bonus = search.bonus ? `, ${search.bonus > 0 ? "+" : ""}${search.bonus} bonus` : "";
-  const who = search.heroId === null ? "Rolled" : `${search.who} rolled`;
-  return `${who} ${search.dice.join(" + ")}${bonus} = ${search.total}. ${search.found ? "Found one." : "None found."}`;
-}
+type Searcher = { id: number | null; who: string };
 
-/**
- * A rare item's search (design E): boxes for the 2D6 rolled at the table, then one button per hero
- * (a hero whose trading action is spent still searches, with the server's warning) and No hero,
- * then Buy without searching. Each search takes the dice typed in, else rolls 2D6 here, and is
- * saved at once (today's rarity roll: the hero spends his trading action and the roll is logged);
- * the result line says whether one was found.
- */
-export default function RareSearch(props: {
+const NO_HERO: Searcher = { id: null, who: "No hero" };
+const LABEL = "text-xs font-bold text-muted-foreground";
+
+type RareSearchProps = {
   warbandId: number;
   item: Item;
   rarity: number;
-  bonus: number;
+  /** Where the bonus starts: the warband's variant's (Marienburg +1, the Kurgan -1). */
+  startBonus: number;
   searchers: { id: number; name: string; spent: boolean }[];
+  /** The hero the store was opened for: he searches unless another is picked. */
+  firstHeroId: number | null;
   search: StoreSearch | null;
-  skipped: boolean;
+  /** Nothing to search for (the item is free). */
+  disabled: boolean;
   isMobile: boolean;
+  /** The price each and Free, under Who searches. */
+  price: ReactNode;
   onSearch: (search: StoreSearch) => void;
-  onSkip: () => void;
-}) {
-  const queryClient = useQueryClient();
-  const [saving, setSaving] = useState(false);
-  /** The 2D6 typed in, until a search takes them. */
-  const [typed, setTyped] = useState<(number | null)[]>([null, null]);
-  const { search } = props;
-  const entered = typed.every((face) => face !== null) ? (typed as number[]) : null;
-  const halfTyped = !entered && typed.some((face) => face !== null);
+};
 
-  const searchWith = async (heroId: number | null, who: string) => {
-    const dice = entered ?? rollDice(2);
-    const total = dice[0] + dice[1] + props.bonus;
-    const found = total >= props.rarity;
+/**
+ * A rare item's search (layout D, William, 7 Nov 2026: "i like 2 divided and without numbers but
+ * also need an option to add bonus which i want to have +- buttons. i also want the roll button to
+ * search to be prominent and blocked once searched"): on the left who searches (the heroes, a hero
+ * whose trading action is spent still searching with the server's warning, and No hero) above the
+ * price; on the right, under the rarity, what the search needs, the bonus (from the variant's,
+ * −3 to +10) and Roll to search, its dice rolled here or typed in. The search is saved at once
+ * (the hero spends his trading action and the roll is logged), then the button is locked as
+ * Searched and the other searchers grey out: one search for the item.
+ */
+export default function RareSearch(props: RareSearchProps) {
+  const queryClient = useQueryClient();
+  const { search, searchers } = props;
+  const [picked, setPicked] = useState<Searcher | null>(() => {
+    if (search) return { id: search.heroId, who: search.who };
+    const first = searchers.find((hero) => hero.id === props.firstHeroId);
+    if (first) return { id: first.id, who: first.name };
+    return searchers.length ? null : NO_HERO;
+  });
+  const [bonus, setBonus] = useState(search?.bonus ?? props.startBonus);
+  const [saving, setSaving] = useState(false);
+  const shut = Boolean(search) || saving || props.disabled;
+
+  const take = async (dice: number[]) => {
+    if (!picked) return;
+    const roll = dice.reduce((sum, face) => sum + face, 0);
+    const found = roll + bonus >= props.rarity;
     setSaving(true);
     try {
       await saveRarityRoll(queryClient, props.warbandId, {
         item_id: props.item.id,
-        hero_id: heroId,
-        roll: dice[0] + dice[1],
-        modifier: props.bonus,
+        hero_id: picked.id,
+        roll,
+        modifier: bonus,
         rarity: `Rare ${props.rarity}`,
         success: found,
       });
-      props.onSearch({ heroId, who, dice, bonus: props.bonus, total, found });
-      setTyped([null, null]);
+      props.onSearch({
+        heroId: picked.id,
+        who: picked.who,
+        dice,
+        bonus,
+        total: roll + bonus,
+        found,
+      });
     } catch (error) {
       toast.error("Couldn't save the search.", { description: getErrorMessage(error) });
     } finally {
@@ -77,66 +97,100 @@ export default function RareSearch(props: {
     }
   };
 
-  const button = cn(
-    "border px-3 text-[13px] font-semibold disabled:opacity-50",
-    props.isMobile ? "min-h-10" : "min-h-9"
-  );
+  const chip = (searcher: Searcher, label: ReactNode, title?: string) => {
+    const mine = picked !== null && picked.id === searcher.id;
+    return (
+      <Chip
+        key={searcher.id ?? "none"}
+        pressed={mine}
+        title={title}
+        disabled={search ? !mine : shut}
+        onClick={() => (search ? undefined : setPicked(searcher))}
+        className={props.isMobile ? "min-h-10" : undefined}
+      >
+        {label}
+      </Chip>
+    );
+  };
+  const step = props.isMobile ? "h-10 w-10" : "h-8 w-8";
+
   return (
-    <>
-      <div className="flex flex-wrap gap-1.5">
-        <DiceEntry
-          dice="2D6"
-          size={props.isMobile ? "md" : "sm"}
-          className="mr-1"
-          total={entered ? entered[0] + entered[1] : null}
-          disabled={saving}
-          onChange={setTyped}
-          onFaces={setTyped}
-          button={null}
-        />
-        {props.searchers.map((hero) => (
-          <button
-            key={hero.id}
-            type="button"
-            disabled={saving || halfTyped}
-            title={hero.spent ? "His trading action is spent: he can still search" : undefined}
-            onClick={() => void searchWith(hero.id, hero.name)}
-            className={cn(button, "border-accent-line bg-page text-accent-hi hover:bg-accent-soft")}
-          >
-            {hero.name}
-            {hero.spent ? (
-              <span className="ml-1 text-xs font-normal text-faint">(spent)</span>
-            ) : null}
-          </button>
-        ))}
-        <button
-          type="button"
-          disabled={saving || halfTyped}
-          onClick={() => void searchWith(null, "No hero")}
-          className={cn(button, "border-accent-line bg-page text-accent-hi hover:bg-accent-soft")}
-        >
-          No hero
-        </button>
-        <button
-          type="button"
-          disabled={saving}
-          onClick={props.onSkip}
-          className={cn(button, "border-border text-muted-foreground hover:text-ink")}
-        >
-          {props.isMobile ? "Skip search" : "Buy without searching"}
-        </button>
+    <div
+      className={cn(
+        "grid",
+        props.isMobile ? "grid-cols-1 gap-3" : "grid-cols-[minmax(0,1fr)_auto] gap-y-3"
+      )}
+    >
+      <div className={cn("flex min-w-0 flex-col gap-3", !props.isMobile && "pr-4")}>
+        <div role="group" aria-label="Who searches" className="flex flex-col gap-1.5">
+          <span className={LABEL}>Who searches</span>
+          <div className="flex flex-wrap gap-1.5">
+            {searchers.map((hero) =>
+              chip(
+                { id: hero.id, who: hero.name },
+                <>
+                  {hero.name}
+                  {hero.spent ? (
+                    <span className="text-xs font-normal text-faint">(spent)</span>
+                  ) : null}
+                </>,
+                hero.spent ? "His trading action is spent: he can still search" : undefined
+              )
+            )}
+            {chip(NO_HERO, NO_HERO.who)}
+          </div>
+        </div>
+        {props.price}
       </div>
-      {search || props.skipped ? (
-        <span
-          role="status"
-          className={cn(
-            "text-[13px] font-bold",
-            props.skipped || search?.found ? "text-good" : "text-danger"
-          )}
-        >
-          {props.skipped || !search ? "Buying without a search" : searchText(search)}
-        </span>
-      ) : null}
-    </>
+      <div
+        className={cn(
+          "flex flex-col gap-2.5",
+          props.isMobile ? "border-t border-line pt-3" : "items-end border-l border-line pl-4"
+        )}
+      >
+        <span className="text-[13px] font-bold text-head">Need {props.rarity}+ on 2D6</span>
+        <div role="group" aria-label="Search bonus" className="flex items-center gap-1.5">
+          <span className={LABEL}>Bonus</span>
+          <IconButton
+            aria-label="Lower the bonus"
+            className={step}
+            disabled={shut || bonus <= -3}
+            onClick={() => setBonus(bonus - 1)}
+          >
+            <Minus aria-hidden="true" />
+          </IconButton>
+          <span className="min-w-[30px] text-center font-mono text-sm font-bold text-head">
+            {bonus > 0 ? `+${bonus}` : bonus}
+          </span>
+          <IconButton
+            aria-label="Raise the bonus"
+            className={step}
+            disabled={shut || bonus >= 10}
+            onClick={() => setBonus(bonus + 1)}
+          >
+            <Plus aria-hidden="true" />
+          </IconButton>
+        </div>
+        <RollControl
+          dice="2D6"
+          label="Roll to search"
+          lockedLabel="Searched"
+          bonus={bonus}
+          entry="link"
+          faces={search?.dice ?? null}
+          onResult={(dice) => void take(dice)}
+          verdict={
+            search ? (
+              <span className={cn("font-bold", search.found ? "text-good" : "text-danger")}>
+                {search.found ? "Found" : "Not found"}
+              </span>
+            ) : null
+          }
+          disabled={!picked || saving || props.disabled}
+          size={props.isMobile ? "lg" : "default"}
+          className={props.isMobile ? "items-stretch" : "items-end"}
+        />
+      </div>
+    </div>
   );
 }

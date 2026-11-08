@@ -1,12 +1,13 @@
 /**
  * The store: a click on an item's name shows its details above the basket (the price row the
- * warband sees), while Get still opens its acquire form without them; and Add item, whose new
- * item opens in the list ready to buy.
+ * warband sees), while Get still opens its acquire form without them; a rare item bought once a
+ * search found it; and Add item, whose new item opens in the list ready to buy.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { catalogueListKey } from "@/lib/catalogue-queries";
+import { rollDie } from "@/lib/dice";
 import { queryKeys } from "@/lib/query-keys";
 import { campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
@@ -27,6 +28,10 @@ import StorePanel from "./StorePanel";
 vi.mock("@/lib/api-client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api-client")>()),
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
+}));
+vi.mock("@/lib/dice", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/dice")>()),
+  rollDie: vi.fn(),
 }));
 
 const CAMPAIGN = 7;
@@ -72,7 +77,7 @@ const whoCan: WhoCan = {
   special_skill_ids: [],
 };
 
-function renderStore() {
+function renderStore(heroes: ReturnType<typeof makeHero>[] = []) {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [lance]);
   queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN, WARBAND), whoCan);
@@ -82,7 +87,7 @@ function renderStore() {
       onOpenChange={vi.fn()}
       campaignId={CAMPAIGN}
       warband={{ id: WARBAND, name: "Clan Eshin", gold: 100 }}
-      heroes={[]}
+      heroes={heroes}
       henchmenGroups={[]}
       hirelings={[]}
       canBuy
@@ -119,6 +124,47 @@ describe("StorePanel", () => {
 
     expect(screen.getByLabelText("Price each for Lance")).toBeInTheDocument();
     expect(screen.queryByRole("region", { name: "Lance" })).not.toBeInTheDocument();
+  });
+
+  it("buys a rare item once a hero's search found it", async () => {
+    fakeApi.on(`POST /warbands/${WARBAND}/rarity-rolls/`, { hero_id: 4, warnings: [] });
+    fakeApi.on(`POST /warbands/${WARBAND}/purchases/`, {
+      target_type: "stash",
+      target_id: null,
+      updated_at: null,
+      items: null,
+      stash_item: null,
+      trade: null,
+      summary: {},
+      warnings: [],
+    });
+    vi.mocked(rollDie).mockReturnValueOnce(5).mockReturnValueOnce(3);
+    const user = setupUser();
+    renderStore([makeHero({ id: 4, name: "Aldric" })]);
+
+    await user.click(screen.getByRole("button", { name: "Get" }));
+    const searchers = within(screen.getByRole("group", { name: "Who searches" }));
+    await user.click(searchers.getByRole("button", { name: "Aldric" }));
+    await user.click(screen.getByRole("button", { name: "Roll to search" }));
+    expect(await screen.findByRole("status")).toHaveTextContent("5 3 = 8 Found");
+    expect(fakeApi.bodyOf(`POST /warbands/${WARBAND}/rarity-rolls/`)).toMatchObject({
+      hero_id: 4,
+      roll: 8,
+      rarity: "Rare 8",
+      success: true,
+    });
+    await user.click(screen.getByRole("button", { name: "Stash · 40 gc" }));
+    await user.click(screen.getByRole("button", { name: "Buy all" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf(`POST /warbands/${WARBAND}/purchases/`)).toMatchObject({
+        item_id: 201,
+        quantity: 1,
+        availability_id: 21,
+        is_buying: true,
+        target_type: "stash",
+      })
+    );
   });
 });
 
