@@ -168,6 +168,8 @@ export default function UnitDetails(props: UnitDetailsProps) {
         />
       ) : selected ? (
         <RulesPanel
+          // a box of its own: another box's sale price and Sell state never carry over (William, 8 Nov 2026)
+          key={`${open?.row}:${open?.index}:${selected.item?.id ?? selected.name}`}
           detail={selected}
           onClose={() => setOpen(null)}
           itemActions={
