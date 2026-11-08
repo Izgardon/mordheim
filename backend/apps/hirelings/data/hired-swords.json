@@ -17,10 +17,6 @@
     "caster": "No",
     "specials": [
       {
-        "name": "Haggle",
-        "description": "A Merchant has the Haggle skill."
-      },
-      {
         "name": "Pawnbroker",
         "description": "The Merchant is skilled in finding the best price for sold items and as such gains an extra 2D6 gold per item that the warband sells (up to its full value) if he was not taken out of action in the battle."
       },
@@ -29,7 +25,9 @@
         "description": "The Merchant has many useful contacts in the black market underworld and foreign traders to locate many special items. After each battle (if he wasn’t taken out of action) the Merchant can visit one of three markets: the Black Market, Foreign Wares and the Fencer, in search of items for the warband. Roll a D6 on the relevant table to see what items are on offer."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Haggle"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -1089,13 +1087,11 @@
       {
         "name": "Chameleon Skin",
         "description": "Because of the Chameleon Skink's unique camouflage he is very difficult to detect, therefore foes halve their Initiative when trying to detect him when Hidden. In addition Chameleon Skinks are at -2 to hit with missile fire."
-      },
-      {
-        "name": "Infiltrator",
-        "description": "The Chameleon Skink has the Infiltrate skill."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Infiltration"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -1522,10 +1518,6 @@
         "description": "Hostile magic spells will not affect the Elf on a D6 roll of a 4+."
       },
       {
-        "name": "Sorcery",
-        "description": "The Elf Mage counts as having the skill Sorcery."
-      },
-      {
         "name": "Wanderer",
         "description": "An Elf Mage is a wanderer, and will only stay with a warband for the duration of a single battle. A warband who used an Elf Mage in their last battle may not seek out another until they have fought at least one battle without one."
       },
@@ -1534,7 +1526,9 @@
         "description": "Elf Mages are magicians and have three spells generated at random from the Spells of the Djed'hi list."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Sorcery"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -1635,10 +1629,6 @@
     "caster": "No",
     "specials": [
       {
-        "name": "Infiltrator",
-        "description": "The Halfling Thief has the Infiltrate skill."
-      },
-      {
         "name": "Pick Locks",
         "description": "A Thief knows how to open doors that others find impossible, using special tools of the trade and heavily guarded techniques. When testing to open a locked door, the Thief just needs to make an Initiative test in order to be successful."
       },
@@ -1651,7 +1641,9 @@
         "description": "At the end of each game (whether or not the Halfling Thief actually took part), roll a D6 and consult the chart to determine the Halfling's upkeep requirements."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Infiltration"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -2022,17 +2014,12 @@
       {
         "name": "Old Coot",
         "description": "The Prospector has staked his claim and won't share. Other warbands cannot search for Wyrdstone/Treasure in the same area as the claim has already been staked."
-      },
-      {
-        "name": "Wyrdstone Hunter",
-        "description": "The Old Prospector has the Wyrdstone Hunter skill."
-      },
-      {
-        "name": "Resilient",
-        "description": "The Old Prospector has the Resilient skill."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Wyrdstone Hunter",
+      "Resilient"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -2297,13 +2284,11 @@
       {
         "name": "Bitter Enemies",
         "description": "If the last fight was against Dark Elves or a warband containing a Dark Elf Hired Sword, the upkeep cost is waived for that game."
-      },
-      {
-        "name": "Infiltration",
-        "description": "A Shadow Warrior can infiltrate."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Infiltration"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -2481,15 +2466,13 @@
         "description": "The Tomb Robber allows your warband to modify a single dice roll on the Exploration chart by -1/+1."
       },
       {
-        "name": "Traps",
-        "description": "The Tomb Robber has the Trap Expert skill."
-      },
-      {
         "name": "Excellent Reflexes",
         "description": "The Tomb Robber has a special save of 5+ against any attack made against him, be it shooting, close combat, traps or spells. If the Tomb Robber gains the Dodge skill this save increases to a 4+ special save."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Trap Expert"
+    ],
     "spells": [],
     "equipment": [
       {
@@ -3100,10 +3083,6 @@
     "caster": "No",
     "specials": [
       {
-        "name": "Ride",
-        "description": "A Hobgoblin Scout has the Ride Giant Wolf skill."
-      },
-      {
         "name": "Loner",
         "description": "The Scout has become so used to being alone on the Steppes that it has become accustomed to its own company. The Scout may never use the warband leaders Ld for any tests. In addition, the Scout never counts as all alone and may operate independently throughout the game."
       },
@@ -3112,7 +3091,9 @@
         "description": "Due to the treacherous treatment the Hobgoblins have shown towards their greenskin cousins, the Hobgoblin is subject to the hatred of all greenskin races (Orcs & Goblins and Black Orcs) and a warband that hires the Scout may never take any other greenskin Hired Swords."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Ride [Animal]"
+    ],
     "spells": [],
     "equipment": [
       {

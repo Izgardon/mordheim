@@ -258,4 +258,5 @@ def build_fighter(
         "fixed_kit": plain(fighter.get("equipment")),
         "lists": lists,
         "specials": specials,
+        "skills": [],  # the skills he starts with (pointer_rules.py)
     }

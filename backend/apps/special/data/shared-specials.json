@@ -562,12 +562,6 @@
       "why": "The Lizardmen's Scaly Skin, a Skink's 6+; the mutation's is 5+."
     },
     {
-      "name": "Resilient (Old Prospector)",
-      "rule": "Resilient",
-      "owners": [{"hired_sword": "Old Prospector"}],
-      "why": "The Resilient skill: -1 Strength to every hit against him in close combat; the mutation is +1 Toughness."
-    },
-    {
       "name": "No Pain (Sigmund)",
       "rule": "No Pain",
       "owners": [{"dramatis_persona": "Sigmund Spindle, the Harvester of Flesh"}],

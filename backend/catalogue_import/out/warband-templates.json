@@ -644,7 +644,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "eagle-warriors",
@@ -686,7 +687,8 @@
         "lists": [
           "heroines-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "piranha-warriors",
@@ -728,7 +730,8 @@
         "lists": [
           "heroines-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "amazon-warriors",
@@ -765,7 +768,8 @@
         "lists": [
           "henchwomen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "jaguar-warriors",
@@ -808,7 +812,8 @@
             "type": "Warband - Amazons (Lustria)",
             "description": "A Jaguar has lived her life in the deepest parts and can move through jungle terrain without penalty."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -1342,7 +1347,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "champion",
@@ -1383,7 +1389,8 @@
         "lists": [
           "heroines-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "totem-warrior",
@@ -1429,7 +1436,8 @@
             "name": "Frenzy",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "amazon-warriors",
@@ -1466,7 +1474,8 @@
         "lists": [
           "henchwomen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "scouts",
@@ -1509,7 +1518,8 @@
             "type": "Warband - Amazons (Mordheim)",
             "description": "A Scout may deploy twice the distance onto the battlefield than other warriors and may start the battle Hiding."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -1902,7 +1912,8 @@
             "type": "Warband - Arabian Tomb Raiders",
             "description": "The Sheikh is the leader of the Warband and any Tomb Raiders within 6\" may use his Leadership characteristic for any Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "champion",
@@ -1944,7 +1955,8 @@
         "lists": [
           "warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "mystic",
@@ -1995,7 +2007,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bedouin",
@@ -2038,7 +2051,8 @@
             "type": "Warband - Arabian Tomb Raiders",
             "description": "Add +1 to your search for Equipping/Trading result. Note that you only get +1 even if you have two Bedouins."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "nomad-warriors",
@@ -2075,7 +2089,8 @@
         "lists": [
           "warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "slaves",
@@ -2118,7 +2133,8 @@
             "type": "Warband - Arabian Tomb Raiders",
             "description": "A Slave may gain experience, but if he rolls Lad’s got Talent, the leader executes the Slave, and he is removed from the roster. The rest of the group may then re-roll their advance."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -2878,7 +2894,8 @@
             "type": "Warband - Averlander Mercenaries",
             "description": "Any warrior within 6\" of the Captain may use his Leadership characteristic when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sergeant",
@@ -2919,7 +2936,8 @@
         "lists": [
           "mountainguard-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "bergjaeger",
@@ -2965,7 +2983,8 @@
             "type": "Warband - Averlander Mercenaries",
             "description": "Bergjaeger are expert trappers and hunters and these skills can be put to great use in the ruins of Mordheim. A Bergjaeger may set a trap if he spends a turn doing nothing else (he may not set traps if he’s just recovered from being Knocked Down). Place a marker in base contact with the Bergjager. When a model, friend or foe, moves within 2\" of the marker he risks setting off the trap – roll a D6. On a score of 3+ he has triggered the trap and suffers a S4 hit (note that the Bergjager won’t trigger his own traps). If the trap did not wound the model or it didn’t trigger, the ‘victim’ may finish his move otherwise he is placed knocked Down or Stunned 2\" from the marker. Regardless whether the trap was triggered or not, the marker is removed."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "youngblood",
@@ -3006,7 +3025,8 @@
         "lists": [
           "mountainguard-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "mountainguard",
@@ -3043,7 +3063,8 @@
         "lists": [
           "mountainguard-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "marksmen",
@@ -3080,7 +3101,8 @@
         "lists": [
           "marksman-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "halfling-scouts",
@@ -3123,7 +3145,8 @@
             "type": "Warband - Averlander Mercenaries",
             "description": "A Halfling that is promoted to hero through the “The lad’s got talent” advance may not choose Strength skills as one of his two skill lists. Halflings are not known for their great strength!"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -3584,15 +3607,13 @@
             "description": "Any warrior within 6“ of the Emissary may use his Leadership when taking Ld tests."
           },
           {
-            "name": "Ride Horse",
-            "type": "Warband - Battle Monks of Cathay",
-            "description": "The Emissary is trained in riding Horses."
-          },
-          {
             "name": "Decree",
             "type": "Warband - Battle Monks of Cathay",
             "description": "When the Emissary dies, a new one must be hired as soon as possible. Until you have done so, no other warriors and/or equipment may be bought. The new Emissary will then reclaim Leadership of the warband."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -3635,7 +3656,8 @@
         "lists": [
           "soldier-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "dragon-monks",
@@ -3689,7 +3711,8 @@
             "type": "Warband - Battle Monks of Cathay",
             "description": "Dragon Monks have become masters of the Cathayan art of open-hand fighting. In hand-to-hand combat, if fighting unarmed, they will cause a critical hit on a roll 'to wound' of 5-6 instead of a 6. If the Dragon Monk wields a quarter staff, only the unarmed attacks will cause a critical hit on 5+."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "soldiers",
@@ -3726,7 +3749,8 @@
         "lists": [
           "soldier-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "warrior-monks",
@@ -3769,7 +3793,8 @@
             "type": "Warband - Battle Monks of Cathay",
             "description": "Monks suffer no penalties whatsoever for fighting unarmed and they receive +1 Attack when doing so."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "raging-peasants",
@@ -3830,7 +3855,8 @@
             "type": "Warband - Battle Monks of Cathay",
             "description": "When a Peasant is wounded, do not roll for injury. The model is immediately taken out of action."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -4176,7 +4202,8 @@
             "type": "Warband - Beastmen Raiders",
             "description": "Any Warrior within 6\" of the Beastman Chieftain may use his Leadership characteristic when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "beastmen-shaman",
@@ -4227,7 +4254,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bestigors",
@@ -4268,7 +4296,8 @@
         "lists": [
           "beastmen-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "centigor",
@@ -4325,7 +4354,8 @@
             "type": "Warband - Beastmen Raiders",
             "description": "As well as their weapons, Centigors use their hooves and sheer size to crush their enemies. This counts as an additional attack, which does not benefit from weapon bonuses or penalties..."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "ungor",
@@ -4368,7 +4398,8 @@
             "type": "Warband - Beastmen Raiders",
             "description": "Ungor are on the lowest rung of Beastmen society and regardless of how much Experience they accrue they will never acquire a position of authority. If an Ungor rolls ‘That lad’s got talent’ it must be re-rolled."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "gor",
@@ -4405,7 +4436,8 @@
         "lists": [
           "beastmen-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "warhounds-of-chaos",
@@ -4446,7 +4478,8 @@
             "type": "Warband - Beastmen Raiders",
             "description": "Chaos Hounds are animals and never gain Experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "minotaur",
@@ -4502,7 +4535,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -5350,7 +5384,8 @@
             "name": "Priest",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bull-centaur",
@@ -5397,7 +5432,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "gaolers",
@@ -5446,7 +5482,8 @@
             "type": "Warband - Black Dwarfs",
             "description": "Gaolers are known for their brutality. The dreaded sight of them and the very thought of being captured causes fear in Humans."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "informers",
@@ -5490,7 +5527,8 @@
             "type": "Warband - Black Dwarfs",
             "description": "Informers have had their will broken by their masters. Informers may never become Heroes. Re-roll all results of ‘The lad’s got talent’ for them."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "chaos-dwarfs",
@@ -5528,7 +5566,8 @@
           "chaos-dwarf-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -6011,7 +6050,8 @@
             "type": "Warband - Black Orcs",
             "description": "If any Henchman fails his Animosity test within 6” of the Boss, the player may opt to have the boss stamp his authority (and clenched fist) on the situation.\n\nThe misbehaving Henchman will receive an automatic hit at the strength of the Orc player’s choosing. If the Henchman is still on his feet after his slap, he may add a number equal to the strength of the slap to his subsequent roll to determine the effects of Animosity.\n\nE.g. The player decides that the Boss will hit a misbehaving Henchman with a S2 slap. If the slap fails to Knock Down, Stun or Out of Action the Henchman, then he adds +2 to the Animosity Effect roll."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "black-orcs",
@@ -6060,7 +6100,8 @@
             "type": "Warband - Black Orcs",
             "description": "Model starts with a natural 6+ Armour Black Orc Save. This save may be combined with other equipment to improve it."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "younguns",
@@ -6107,7 +6148,8 @@
             "type": "Warband - Black Orcs",
             "description": "One Young’un may be upgraded to a Black Orc Young’un for 10gc. This upgrade allows him to take the ‘Proven Warrior’ skill upgrade, thus making him a fully-fledged Black Orc Warrior."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "orc-boyz",
@@ -6150,7 +6192,8 @@
             "type": "Warband - Black Orcs",
             "description": "At the start of every turn, every Orc Boy must take a Ld Test for Animosity"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "orc-shootaz",
@@ -6198,7 +6241,8 @@
             "type": "Warband - Black Orcs",
             "description": "A warband may not hire more Shootaz than they have Boyz. If a boy dies and the Shootaz outnumber the Boyz, the next hire must be a boy so that the balance is restored."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "orc-nuttaz",
@@ -6251,7 +6295,8 @@
             "type": "Warband - Black Orcs",
             "description": "Nuttaz must always run or charge their maximum distance towards the nearest opponent they can see. Friendly models do not block line of sight. Additionally they fight with an extra attack whilst in combat. This does not appear on their profile nor does it count towards the racial maximum. If no enemy is visible they are moved under the player’s control. They can never use any form of armour or ranged weapons. Nuttaz are also too unstable for other Boyz and can never have the Leader ability or use their Ld stat for rout tests, excepting them as being the only models left on the board."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "troll",
@@ -6319,7 +6364,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -7049,15 +7095,13 @@
             "description": "The Questing Knight has the following rules from above apply to him; Chivalry, Lord’s Boon and Virtue of Purity."
           },
           {
-            "name": "Ride",
-            "type": "Warband - Bretonnian Chapel Guard",
-            "description": "A Questing Knight starts with the skill Ride Warhorse."
-          },
-          {
             "name": "Vow of Poverty",
             "type": "Warband - Bretonnian Chapel Guard",
             "description": "May not take a Lance."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -7109,7 +7153,8 @@
             "type": "Warband - Bretonnian Chapel Guard",
             "description": "The Damsel starts with one prayer from the Lady's Prayers list, and can learn additional prayers as outlined in the Magic section."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "knight-errant",
@@ -7167,7 +7212,8 @@
             "type": "Warband - Bretonnian Chapel Guard",
             "description": "During each Movement Phase, after declaring charges, a Knight Errant that is not in combat and did not charge this turn must charge an opposing standing warrior (not knocked down or stunned) that is within range if they are able.\n\nLikewise, a Knight Errant that declared a charge against a knocked down or stunned opponent will be compelled to charge a viable standing opponent instead. If you wish, you may choose to have the Knight take a leadership test (they may use their Leader's Leadership if they are within range); if the test is passed, they may move as normal or charge their original target.\n\nWhen making a compelled charge, the Knight Errant automatically passes all fear tests or any other psychology tests that would prevent them from charging."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "squires",
@@ -7211,7 +7257,8 @@
             "type": "Warband - Bretonnian Chapel Guard",
             "description": "When a Squire rolls \"The Lad's Got Talent\", you may choose one of two options when promoting him to a hero: to have him remain a Squire, or to have him become a Knight Errant. (Note: in this manner, you may have more than three Knights Errant in your Warband).\n\nIf you choose to keep him a Squire, he may choose two skill lists from following lists: Combat, Academic, Strength, or Speed. He retains his normal Squire equipment tables.\n\nIf you choose to make him a Knight Errant, he immediately gains the following rules/bonuses instead of receiving an immediate advancement: ‘Knight’, ‘Vain’ and ‘Impetuous’. The new knight may learn Special Skills, in addition to two other skill sets, but must immediately switch his equipment to Knight Equipment list. The new knight may never use missile weapons."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "battle-pilgrims",
@@ -7269,7 +7316,8 @@
             "type": "Warband - Bretonnian Chapel Guard",
             "description": "Battle Pilgrims may be given a Holy Relic, regardless of the fact that henchman are not normally allowed to take Miscellaneous items. If a Battle Pilgrim owns a Holy Relic, he gains the ability Frenzy (Reminder: when frenzied, he is immune to Hatred.) It is possible to give a Holy Relic to Battle Pilgrim that is a part of a larger henchman group. If you do not have enough Holy Relics for every member of the group, the Pilgrim with the relic will break off and form his own individual henchman group."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bowmen",
@@ -7312,7 +7360,8 @@
             "type": "Warband - Bretonnian Chapel Guard",
             "description": "Battle Pilgrims are peasants, and while they are not stupid, there is a glass ceiling to what they can attain in Bretonnian society. Low Caste henchmen learn experience and advance as normal, but reroll any results of \"The Lad's Got Talent\", and may never become heroes."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -7991,7 +8040,8 @@
             "type": "Warband - Bretonnian Grail Companions",
             "description": "A Grail Knight who dies after a battle becomes a Grail Reliquae: replace his profile with the Reliquae's and he becomes a henchman. If the warband already has a Grail Reliquae, the new one gains +1 Strength. No new Grail Knight may be recruited to replace him."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "damsel",
@@ -8043,7 +8093,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "knights-of-the-realm",
@@ -8107,7 +8158,8 @@
             "type": "Warband - Bretonnian Grail Companions",
             "description": "Knights of the Realm know how to ride a warhorse."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "battle-pilgrims",
@@ -8156,7 +8208,8 @@
             "type": "Warband - Bretonnian Grail Companions",
             "description": "This model can never become a Hero: re-roll a \"That Lad's Got Talent\" result."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "hunters",
@@ -8205,7 +8258,8 @@
             "type": "Warband - Bretonnian Grail Companions",
             "description": "This model can never become a Hero: re-roll a \"That Lad's Got Talent\" result."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "hedge-knights",
@@ -8254,7 +8308,8 @@
             "type": "Warband - Bretonnian Grail Companions",
             "description": "A Hedge Knight may ride a mount in battle only when both Knights of the Realm fight mounted. A Hedge Knight who becomes a Hero uses the Knight of the Realm's skill lists, rolling on the Knight Virtues table when he gains a skill."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "grail-reliquae",
@@ -8314,7 +8369,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -9054,7 +9110,8 @@
             "type": "Warband - Bretonnians",
             "description": "A Questing Knight is a chivalrous warrior who is superior to ordinary warriors. He will never panic and break from combat and so does not have to pass a Leadership test for being all alone."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "knights-errant",
@@ -9101,7 +9158,8 @@
             "type": "Warband - Bretonnians",
             "description": "A Questing Knight is a chivalrous warrior who is superior to ordinary warriors. He will never panic and break from combat and so does not have to pass a Leadership test for being all alone."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "squires",
@@ -9141,7 +9199,8 @@
         "lists": [
           "squires-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "men-at-arms",
@@ -9178,7 +9237,8 @@
         "lists": [
           "men-at-arms-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "bowmen",
@@ -9215,7 +9275,8 @@
         "lists": [
           "bowmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -9583,7 +9644,8 @@
             "type": "Warband - Call of the Night Haint",
             "description": "When the Cairn Wraith rolls 11-15 (Dead) on the Serious Injury chart, he may return to the warband for his hiring cost plus twice his experience points, but only while the warband has a Requilary. If the Requilary and the Cairn Wraith are both destroyed in one round, the warband is disbanded."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "tomb-banshee",
@@ -9655,7 +9717,8 @@
             "type": "Warband - Call of the Night Haint",
             "description": "Enemies within 6\" of the Tomb Banshee have -D6 Leadership when they take fear tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "malignant-spirits",
@@ -9728,7 +9791,8 @@
             "type": "Warband - Call of the Night Haint",
             "description": "A Malignant Spirit that charges in the turn it is summoned has +1 to hit and +1 Strength."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "corpse-master",
@@ -9785,7 +9849,8 @@
             "type": "Warband - Call of the Night Haint",
             "description": "The Corpse Master never moves more than 6\" from the Requilary of his own will."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "revenants",
@@ -9848,7 +9913,8 @@
             "type": "Warband - Call of the Night Haint",
             "description": "A Revenant who rolls The Lad's Got Talent becomes Ethereal once he is a Hero."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "mourngul",
@@ -9933,7 +9999,8 @@
             "type": "Warband - Call of the Night Haint",
             "description": "The Mourngul's Ethereal save is 3+."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "spirit-hosts",
@@ -10008,7 +10075,8 @@
             "type": "Warband - Call of the Night Haint",
             "description": "Each to-hit roll of 6 a Spirit Host makes inflicts 1 more wound at once; the hit itself is rolled to wound as normal."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "poltergeists",
@@ -10094,7 +10162,8 @@
             "type": "Warband - Call of the Night Haint",
             "description": "Poltergeists taken out of action don't count towards rout tests."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -10477,7 +10546,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "brutes",
@@ -10518,12 +10588,9 @@
         "lists": [
           "brute-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Unnatural Strength",
-            "type": "Warband - Carnival of Chaos",
-            "description": "Brutes start the game with the Strongman skill from the Strength skill list in the Mordheim rulebook."
-          }
+        "specials": [],
+        "skills": [
+          "Strongman"
         ]
       },
       {
@@ -10570,7 +10637,8 @@
             "type": "Warband - Carnival of Chaos",
             "description": "Tainted Ones must start the game with one or more Blessings of Nurgle. See the Blessings of Nurgle that follow."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "plague-bearers",
@@ -10643,7 +10711,8 @@
             "type": "Warband - Carnival of Chaos",
             "description": "Plague Bearers are bound to the world by Dark Sorcery that is highly volatile and unstable. If taken out of action a Plague Bearer is banished and effectively destroyed on a D6 roll of 1-3 (do not roll for injury). In addition, if the warband routs then every Plague Bearer in the warband must take an immediate Leadership test. If this test is failed, then the Plague Bearer counts as destroyed."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "nurglings",
@@ -10713,7 +10782,8 @@
             "type": "Warband - Carnival of Chaos",
             "description": "Plague Bearers are bound to the world by Dark Sorcery that is highly volatile and unstable. If taken out of action a Plague Bearer is banished and effectively destroyed on a D6 roll of 1-3 (do not roll for injury). In addition, if the warband routs then every Plague Bearer in the warband must take an immediate Leadership test. If this test is failed, then the Plague Bearer counts as destroyed."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "brethren",
@@ -10750,7 +10820,8 @@
         "lists": [
           "carnival-of-chaos-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "plague-cart",
@@ -10801,7 +10872,8 @@
             "type": "Warband - Carnival of Chaos",
             "description": "The Plague Cart and Guardian are considered Daemonic and don’t know the concept of fear. The Plague Cart automatically passes any Leadership-based test it is required to take."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -11521,7 +11593,8 @@
             "type": "Warband - Channel Rats",
             "description": "If the Domnu hits the same enemy with both his unarmed attacks in a round of combat, he may make one Bear Hug attack instead of resolving them: each player rolls a D6 and adds his warrior's Strength. If the Domnu's total is higher or equal, the enemy takes one automatic wound with no armour save; if the enemy's is higher, he breaks the hold and takes no damage."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "petru",
@@ -11587,7 +11660,8 @@
             "type": "Warband - Channel Rats",
             "description": "Before a battle, one Hero of the warband may drink one of the Petru's potions. Roll a D6:\n\nD6 | Result\n1 | Debilitating: -1 Toughness for the whole of the next battle, until he rolls a 6 on a D6 in a recovery phase.\n2-3 | Strength: +1 Strength until he rolls a 1 on a D6 in a recovery phase.\n4-5 | Resilience: +1 Toughness until he rolls a 1 on a D6 in a recovery phase.\n6 | Fortitude: +1 Wound for the whole battle; once lost, it can't be restored."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "tinker",
@@ -11641,7 +11715,8 @@
             "type": "Warband - Channel Rats",
             "description": "While the warband's boat or barge is stationary and hasn't moved in the last turn, the Tinker in contact with it may repair one damaged location (a paddle, a mast). He does nothing else that turn, and the vessel may not move. No repair while an enemy model is in contact with the Tinker or the vessel."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "truants",
@@ -11695,7 +11770,8 @@
             "type": "Warband - Channel Rats",
             "description": "In the shooting phase, instead of shooting, a Truant may taunt one enemy he can see, with line of sight as for shooting. The enemy takes a Leadership test: if he fails, he must spend his next movement phase trying to reach close combat with the Truant."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "gypsies",
@@ -11733,7 +11809,8 @@
           "strigany-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "dead-eyes",
@@ -11787,7 +11864,8 @@
             "type": "Warband - Channel Rats",
             "description": "A Dead-eye may use any missile weapon he comes across, not only those of the warband's lists."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "fugitives",
@@ -11831,7 +11909,8 @@
             "type": "Warband - Channel Rats",
             "description": "A model of the opposite sex (Sisters of Sigmar, Amazons, Kislev Rangers and the like) must pass a Leadership test to charge a Fugitive."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "vagabonds",
@@ -11869,7 +11948,8 @@
           "strigany-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -12340,7 +12420,8 @@
             "type": "Warband - Court of the Profane Pleasures",
             "description": "Whenever the Whipmaster suffers an unsaved wound, they will be subject to the rules of Frenzy until the end of their next turn — this Frenzy is not negated by being Knocked Down or Stunned."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slaaneshi-danseuse",
@@ -12384,7 +12465,8 @@
             "type": "Warband - Court of the Profane Pleasures",
             "description": "An enemy wishing to attack a Danseuse in melee combat or with a missile attack must pass a Leadership test to do so before making its attacks. On a failure, the model must re-roll any successful hits."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slaaneshi-flesh-merchant",
@@ -12433,7 +12515,8 @@
             "type": "Warband - Court of the Profane Pleasures",
             "description": "Any captives the warband gains through combat results or exploration can be turned into Wretches at no cost. This is achieved via lobotomy, torture and other acts of depravity."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slaaneshi-priest-of-obscene",
@@ -12486,7 +12569,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slaaneshi-devout",
@@ -12534,7 +12618,8 @@
             "name": "Immune to Psychology",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slaaneshi-chaos-hounds",
@@ -12575,7 +12660,8 @@
             "type": "Warband - Court of the Profane Pleasures",
             "description": "Chaos Hounds are animals and never gain any experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slaaneshi-beastmen",
@@ -12613,7 +12699,8 @@
           "court-of-pleasures-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "slaaneshi-wretches",
@@ -12657,7 +12744,8 @@
             "type": "Warband - Court of the Profane Pleasures",
             "description": "Wretches are Immune to all psychology and All Alone tests if within 6\" of a friendly Hero. Wretches can’t become Heroes. If you roll The Lad’s Got Talent result on the chart, and then roll it again, the model receives a Serious Injury as if it were a Hero (roll it immediately)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "cultists",
@@ -12695,7 +12783,8 @@
           "court-of-pleasures-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -13204,7 +13293,8 @@
             "type": "Warband - Cult of the Possessed",
             "description": "The Magister has the ability to use magic and casts spells like any other magicians, and the Magister starts with one spells generated at random from the Chaos Rituals In addition the Magister may learn a new Spell instead of a new skill."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "the-possessed",
@@ -13253,7 +13343,8 @@
             "type": "Warband - Cult of the Possessed",
             "description": "Possessed may start the game with one or more mutations each. See the Mutations list for costs."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "mutants",
@@ -13299,7 +13390,8 @@
             "type": "Warband - Cult of the Possessed",
             "description": "Mutants must start the game with one or more mutations each. See the Mutations list for the cost."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "darksouls",
@@ -13342,7 +13434,8 @@
             "type": "Warband - Cult of the Possessed",
             "description": "Darksouls have been driven insane by daemonic possession and know no fear. They automatically pass any Leadership tests they are required to take."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "beastmen",
@@ -13379,7 +13472,8 @@
         "lists": [
           "darksouls-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "brethren",
@@ -13416,7 +13510,8 @@
         "lists": [
           "possessed-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -14147,7 +14242,8 @@
             "type": "Warband - Dark Elves",
             "description": "Any models in the warband within 6\" of the High Born may use his Leadership instead of their own."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "beastmaster",
@@ -14194,7 +14290,8 @@
             "type": "Warband - Dark Elves",
             "description": "The Beastmaster may be accompanied by up to two Cold One Beasthounds, these are bought as henchmen and follow all rules for listed for them."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "fellblades",
@@ -14241,7 +14338,8 @@
             "type": "Warband - Dark Elves",
             "description": "Fellblades live by a strict code of close quarter fighting. Fellblades may not use missile weapons of any sort."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dark-elf-sorceress",
@@ -14292,7 +14390,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "corsairs",
@@ -14329,7 +14428,8 @@
         "lists": [
           "dark-elf-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "shades",
@@ -14372,7 +14472,8 @@
             "type": "Warband - Dark Elves",
             "description": "The first thing that Dark Elf Scouts master is the art of moving without being seen or heard. If a Dark Elf is Hiding, enemy models suffer -1 to their Initiative value for determining if they can detect him."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "cold-one-beasthounds",
@@ -14432,7 +14533,8 @@
             "name": "Fear",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -15213,7 +15315,8 @@
             "type": "Warband - Dreamwalkers, Cult Of Morr",
             "description": "The Priest of Morr may carry only a dagger and a scythe as weapons, and may never wear armour."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dreamer",
@@ -15268,7 +15371,8 @@
             "type": "Warband - Dreamwalkers, Cult Of Morr",
             "description": "At the start of each battle the Dreamer rolls a D6 on the Guiding Dream table:\n\nD6 | Vision\n1 | Disturbing Vision: the Dreamer has -1\" Movement.\n2-3 | Vision of Truth: choose one of the opponent's Heroes; the Dreamer has +1 to hit him.\n4-5 | Empowering Vision: choose one of the opponent's Heroes; the Dreamer has +1 Strength when fighting him.\n6 | Infuriating Vision: choose one of the opponent's Heroes; the Dreamer is frenzied against him."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "black-guards",
@@ -15321,7 +15425,8 @@
             "type": "Warband - Dreamwalkers, Cult Of Morr",
             "description": "With the optional mounted rules or the Blazing Saddles rules, a Black Guard may ride a Warhorse (M8 WS3 BS0 S3 T3 W1 I3 A1 Ld5), paying its cost; his save is then 4+ while mounted."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "andanti",
@@ -15374,7 +15479,8 @@
             "type": "Warband - Dreamwalkers, Cult Of Morr",
             "description": "The Andanti has +1 to hit in close combat against a vampire."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "deaths-heads",
@@ -15417,7 +15523,8 @@
             "type": "Warband - Dreamwalkers, Cult Of Morr",
             "description": "A Death's Head may fight with his halberd in one hand and a shield in the other."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "morr-worshwishpers",
@@ -15454,7 +15561,8 @@
         "lists": [
           "morr-worshwishpers-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -16254,7 +16362,8 @@
             "type": "Warband - Druchii",
             "description": "Warriors within 6\" of the Noble may use his Leadership instead of their own."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "lordlings",
@@ -16296,7 +16405,8 @@
         "lists": [
           "druchii-heroes-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "sorceress",
@@ -16352,7 +16462,8 @@
             "type": "Warband - Druchii",
             "description": "The Sorceress may wear armour from her list, but can't cast spells while she wears it."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "beastmaster",
@@ -16399,7 +16510,8 @@
             "type": "Warband - Druchii",
             "description": "Up to three Slavehounds may accompany the Beastmaster. They are bought as henchmen."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "corsairs",
@@ -16442,7 +16554,8 @@
             "type": "Warband - Druchii",
             "description": "Corsairs may wear Sea Dragon Cloaks though they are not Heroes."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "shades",
@@ -16485,7 +16598,8 @@
             "type": "Warband - Druchii",
             "description": "While a Shade is hidden, enemy models use half their Initiative to see whether they spot it."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "witch-elves",
@@ -16532,7 +16646,8 @@
             "type": "Warband - Druchii",
             "description": "A warband with Witch Elves may buy Black Lotus as a Common item at 5 gc a dose. Lotus bought this way is for Witch Elves only, must be used in the next battle, and can't be sold or traded."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slavehounds",
@@ -16583,7 +16698,8 @@
             "type": "Warband - Druchii",
             "description": "When a Slavehound knows where an enemy model is (it sees it, or has found it hidden), the Beastmaster and every other Slavehound of the warband may declare a charge against that model even without seeing it, with no Initiative roll."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -17106,7 +17222,8 @@
             "type": "Warband - Dwarf Rangers",
             "description": "A Runesmith knows one minor rune (see list at the end of this warband list), determined randomly when the warband is first created. He may inscribe the rune on an item carried by one of the warriors of his warband, and (if successful, see below) the item will gain a bonus from the rune for that game. When a Runesmith advances and rolls a skill on the Hero Advance table, he may choose to learn a new rune instead of learning a skill (exactly like a spellcaster advancing and learning a new spell)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "apprentice-runesmith",
@@ -17155,7 +17272,8 @@
             "type": "Warband - Dwarf Rangers",
             "description": "An Apprentice Runesmith helps his master fashion runic items, doing all the boring grunge-work that makes his master more efficient in his efforts. An Apprentice Runesmith in the warband allows a Master Runesmith to inscribe on two items before each game, instead of only one."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dwarf-troll-slayers",
@@ -17202,7 +17320,8 @@
             "type": "Warband - Dwarf Rangers",
             "description": "Troll Slayers seek an honourable death in combat. They are completely immune to all psychology and never need to test if fighting alone."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dwarf-longbeards",
@@ -17245,7 +17364,8 @@
             "type": "Warband - Dwarf Rangers",
             "description": "Dwarf Longbeards have seen just about everything in their long careers and they know it. They are used to fighting by themselves against impossible odds and it hasn’t killed them yet. On top of all this they are just generally more set in their ways than other Dwarfs and they’re not about to let a bunch of weedy goblins drive them off!\n\nA Dwarf Longbeard may reroll any failed Leadership test he is required to take. Remember that you can never reroll a reroll, so the result of this second roll must always be accepted."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dwarf-clansmen",
@@ -17282,7 +17402,8 @@
         "lists": [
           "dwarf-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "dwarf-crossbowmen",
@@ -17319,7 +17440,8 @@
         "lists": [
           "crossbowmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "beardlings",
@@ -17356,7 +17478,8 @@
         "lists": [
           "dwarf-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -18001,7 +18124,8 @@
             "type": "Warband - Dwarf Slayer Cult",
             "description": "Warriors within 6\" of the Giant Slayer may use his Leadership instead of their own."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "doomseekers",
@@ -18042,7 +18166,8 @@
         "lists": [
           "doomseeker-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "rememberer",
@@ -18104,7 +18229,8 @@
             "name": "Hate Orcs and Goblins",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "trollslayers",
@@ -18141,7 +18267,8 @@
         "lists": [
           "slayer-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "stubbles",
@@ -18188,7 +18315,8 @@
             "name": "Hate Orcs and Goblins",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "axe-hurlers",
@@ -18245,7 +18373,8 @@
             "name": "Hate Orcs and Goblins",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -18786,7 +18915,8 @@
             "type": "Warband - Dwarf Treasure Hunters",
             "description": "Any models in the warband within 6\" of the Dwarf Noble may use his Leadership instead of their own."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dwarf-engineer",
@@ -18833,7 +18963,8 @@
             "type": "Warband - Dwarf Treasure Hunters",
             "description": "A Dwarf Engineer is a master of mechanical devices. By using stronger construction materials and time-tested secrets of Dwarf engineering, a Dwarf Engineer can increase the distance the warband's missile weapons can shoot. Missile weapons bought from the warband's basic equipment lists have their range increased by 3\" for pistols and 6\" for crossbows and handguns. Range increases only apply in battles in which the Engineer takes part (though they do apply even if he is yet to enter the battlefield or has already been taken out of action in this battle). He has no effect on the equipment of Hired Swords."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dwarf-troll-slayer",
@@ -18890,7 +19021,8 @@
             "type": "Warband - Dwarf Treasure Hunters",
             "description": "Slayers may never carry or use missile weapons or any form of armour."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dwarf-clansmen",
@@ -18927,7 +19059,8 @@
         "lists": [
           "dwarf-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "dwarf-thunderers",
@@ -18964,7 +19097,8 @@
         "lists": [
           "dwarf-thunderer-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "beardlings",
@@ -19001,7 +19135,8 @@
         "lists": [
           "dwarf-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -19451,7 +19586,8 @@
             "type": "Warband - Fen Guard",
             "description": "On an advance roll of +1 Wound the Branchwych may pick a new skill from her lists instead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "branchnymph",
@@ -19506,7 +19642,8 @@
             "type": "Warband - Fen Guard",
             "description": "The Branchnymph can never be the warband's leader. Fear of Fire still applies to her."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "spiteborn",
@@ -19553,7 +19690,8 @@
             "type": "Warband - Fen Guard",
             "description": "A Spiteborn is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dryads",
@@ -19610,7 +19748,8 @@
             "type": "Warband - Fen Guard",
             "description": "A Spiteborn is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "treekin",
@@ -19677,7 +19816,8 @@
             "type": "Warband - Fen Guard",
             "description": "Treekin gain experience at half the normal rate."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -20156,12 +20296,10 @@
             "name": "Leader",
             "type": "Warband - Forest Goblins",
             "description": "Any warrior within 6\" of the Chieftain may use his Leadership characteristic when taking Leadership tests."
-          },
-          {
-            "name": "Ride Spiders",
-            "type": "Warband - Forest Goblins",
-            "description": "The Chieftain can ride Giant Spiders and the Gigantic Spider as detailed in the ‘Blazing Saddles’ article."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -20210,7 +20348,8 @@
             "type": "Warband - Forest Goblins",
             "description": "Braves are subject to the rules for Animosity."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "shaman",
@@ -20260,7 +20399,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "forest-goblins",
@@ -20303,7 +20443,8 @@
             "type": "Warband - Forest Goblins",
             "description": "Braves are subject to the rules for Animosity."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "red-toof-goblins",
@@ -20351,7 +20492,8 @@
             "type": "Warband - Forest Goblins",
             "description": "Forest Goblins of the Red Toof tribe allow themselves to be bitten by all sorts of poisonous wildlife before entering battle. The mingling venom drives them into frothing convulsions, making them extremely ferocious. Red Toof Boyz are affected by the rules for Frenzy as described in the Mordheim rulebook. In addition, if they begin their turn within charge range of an enemy, they are immune to animosity for that turn."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sluggas",
@@ -20399,7 +20541,8 @@
             "type": "Warband - Forest Goblins",
             "description": "In the shooting phase, the Sluggas may throw thrown weapons up to three times. This may not be combined with Quick Shot if they should be promoted to hero status."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "gigantic-spider",
@@ -20463,7 +20606,8 @@
             "type": "Warband - Forest Goblins",
             "description": "The Forest Goblin Chieftain, may ride the Gigantic Spider. He gains +1 armour save, and shall move at the Gigantic Spider’s rate of 6. Shooting attacks hit the Chieftain on a die roll of 1-2, and the Gigantic Spider on a 3-6. In close combat, the opponent may choose which to hit. The Gigantic Spider no longer has to check for stupidity if it is being ridden, as the Chieftain is directing its actions."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -20983,7 +21127,8 @@
             "type": "Warband - Grave Robbers",
             "description": "Warriors within 6\" of the Graver may take Leadership tests on his Leadership."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "junior-medic",
@@ -21031,7 +21176,8 @@
             "type": "Warband - Grave Robbers",
             "description": "You may re-roll the Serious Injury roll of one Hero; the second roll stands. Not if the Junior Medic was taken out of action in the battle."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "grave-robbers",
@@ -21074,7 +21220,8 @@
           "heroes-equipment-list",
           "miscellaneous-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "lookouts",
@@ -21116,7 +21263,8 @@
           "heroes-equipment-list",
           "miscellaneous-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "thugs",
@@ -21153,7 +21301,8 @@
         "lists": [
           "henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -21579,7 +21728,8 @@
             "type": "Warband - Guild of Disgraced Engineers",
             "description": "In the trading phase, instead of searching for rare items or visiting a location, the Engineer may try to make a new invention from the Book of Bad Ideas. He needs the book and the invention's components, and must pass its difficulty test."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sapper",
@@ -21633,7 +21783,8 @@
             "type": "Warband - Guild of Disgraced Engineers",
             "description": "The Sapper re-rolls characteristic tests underground."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "apprentice-engineers",
@@ -21681,7 +21832,8 @@
             "type": "Warband - Guild of Disgraced Engineers",
             "description": "Each Apprentice who works on an invention after the battle adds +1 to the Expelled Engineer's roll to make it. Or an Apprentice may search for rare items in the Engineer's place, with any bonus to rarity rolls the Engineer has."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "thunderers",
@@ -21725,7 +21877,8 @@
             "type": "Warband - Guild of Disgraced Engineers",
             "description": "With the optional misfire rules, when a Thunderer rolls a 1 he rolls again: on a 3+ the misfire is ignored, so the shot still misses but the weapon doesn't explode."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "beardlings",
@@ -21763,7 +21916,8 @@
           "dwarf-engineer-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "gyrocopter",
@@ -21824,7 +21978,8 @@
             "type": "Warband - Guild of Disgraced Engineers",
             "description": "A Hero with the Tinkerer skill may roll 2D6 on this chart after a battle to improve the Gyrocopter:\n\n2D6 | Result\n2 | That Didn't Go Well!: roll again (re-rolling That Didn't Go Well! and Breakthrough!), and lower that characteristic, or lose that upgrade, instead.\n3 | Bomber: in its movement phase it may drop a bomb: roll an artillery dice and move a small blast template that far back along its path; every model under it takes a S4 hit. On a misfire the Gyrocopter and its steam engine take the hit instead. Each bomb is bought for 25 gc.\n4 | Every Gear and Gizmo: +2 Movement.\n5 | Room for Activities: +1 passenger.\n6 | Stabilisers: when an Engine Malfunction or Wheel Damage result halts it or makes it land, it may first glide up to 2D6\" in any direction.\n7 | More Reliable: one re-roll on the Engine Malfunction table. Re-roll this result if it comes again.\n8 | Steam Cloud: -1 to hit it with missile weapons. Once only: re-roll it after.\n9 | Weapons Mount: it may buy any swivel-mounted artillery weapon, worked by the pilot while it is stationary or by a passenger, without taking a seat.\n10 | Reinforced Hull: +4 Armour Save.\n11 | Steel Propellers: +1 Wound.\n12 | Breakthrough!: roll D3 more times on this chart, ignoring further Breakthrough! results."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -22497,12 +22652,10 @@
             "name": "Leader",
             "type": "Warband - Gunnery School of Nuln",
             "description": "Any models in the warband within 12\" of the Senior Gunnery Officer may use his Leadership value when using Leadership tests."
-          },
-          {
-            "name": "Hunter",
-            "type": "Warband - Gunnery School of Nuln",
-            "description": "The warrior is an expert at getting his weapon loaded and ready. He may fire each turn with a handgun or Hochland long rifle."
           }
+        ],
+        "skills": [
+          "Hunter"
         ]
       },
       {
@@ -22551,7 +22704,8 @@
             "type": "Warband - Gunnery School of Nuln",
             "description": "The Instructors know every trick in the book when it comes to working with black powder weapons. While there is an Instructor in the warband all Pistol weapons receive a +3” range bonus and all other black powder weapons receive a +6” range bonus."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "senior-student",
@@ -22593,7 +22747,8 @@
         "lists": [
           "equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "underclassmen",
@@ -22634,7 +22789,8 @@
         "lists": [
           "equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "sons-of-the-guns",
@@ -22671,7 +22827,8 @@
         "lists": [
           "equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "marksmen",
@@ -22708,12 +22865,9 @@
         "lists": [
           "marksman-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Quick Reload",
-            "type": "Warband - Gunnery School of Nuln",
-            "description": "Marksmen trained at the Gunnery School are forced to practice many drills day after day, including those that teach them to load their weapons for speed under high-pressure conditions. Marksmen have the Hunter skill from the Mordheim rulebook. A Marksman who becomes a Hero gains no further effect from taking the Hunter skill in addition to this."
-          }
+        "specials": [],
+        "skills": [
+          "Hunter"
         ]
       },
       {
@@ -22757,7 +22911,8 @@
             "type": "Warband - Gunnery School of Nuln",
             "description": "Experts with pistols in close quarters; they have an uncanny ability to turn what should have missed its target into a success. When using pistols in close combat, they may re-roll any missed to-hit rolls with the pistol in the first round of combat."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -23558,7 +23713,8 @@
             "type": "Warband - Halflings",
             "description": "Warriors within 6\" of the Halfling Elder may take Leadership tests on his Leadership."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "halfling-cook",
@@ -23605,7 +23761,8 @@
             "type": "Warband - Halflings",
             "description": "Roll a D6: on a 5+ the warband counts as one size smaller when it sells treasure or wyrdstone."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "halfling-thief",
@@ -23663,7 +23820,8 @@
             "type": "Warband - Halflings",
             "description": "If the Halfling Thief fought in the battle and was not taken out of action, the warband finds +1 treasure on top of its usual find."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "halfling-youths",
@@ -23704,7 +23862,8 @@
         "lists": [
           "adventurer-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "halfling-scouts",
@@ -23741,7 +23900,8 @@
         "lists": [
           "adventurer-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "halfling-warriors",
@@ -23778,7 +23938,8 @@
         "lists": [
           "adventurer-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "piggies",
@@ -23819,7 +23980,8 @@
             "type": "Warband - Halflings",
             "description": "Piggies are animals and never gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "village-ogre",
@@ -23880,7 +24042,8 @@
             "type": "Warband - Halflings",
             "description": "While the warband has a Village Ogre no Ogre Bodyguard joins it, and one hired before the Village Ogre arrived leaves."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -24439,7 +24602,8 @@
             "type": "Warband - Hochland Bandits",
             "description": "Any warrior within 6\" of the Bandit Prince may use his Leadership characteristic when taking any Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "footpads",
@@ -24487,7 +24651,8 @@
             "type": "Warband - Hochland Bandits",
             "description": "Enemy warriors often find it difficult to detect a Footpad until he strikes. If an enemy warrior wishes to charge a Footpad that he cannot see (but was not declared as Hidden), he must subtract 1 from his Initiative before making his Initiative test. Note that a roll of ‘6’ always fails when rolling to charge a Footpad that the warrior cannot see. Also, models halve their Initiative when checking the range to see if they can detect a Footpad who has been declared as Hiding."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "duelist",
@@ -24540,7 +24705,8 @@
             "type": "Warband - Hochland Bandits",
             "description": "A Duelist must be prepared to fight an opponent with any weapon at any time, so a working knowledge of even exotic weapons is critical for his survival. The weapons in the Bandit equipment chart merely represent the weapons a Duelist may start with. A Duelist may use any close combat or missile weapon that the warband members can get hold of."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "huckster",
@@ -24592,7 +24758,8 @@
             "type": "Warband - Hochland Bandits",
             "description": "In between games the player may choose to have the huckster run a con on the local inhabitants of the region. Roll a D6: On a result of 2-6, the con is successful and the warband gains 2D6 gold (the huckster keeps the rest). However, on a result of 1 the huckster’s con has backfired and he is on the run (he misses the next game and no gold is received by the warband)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "thugs",
@@ -24629,7 +24796,8 @@
         "lists": [
           "bandit-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "looters",
@@ -24672,7 +24840,8 @@
             "type": "Warband - Hochland Bandits",
             "description": "Normally when a warrior is killed or his wounds cause him to leave the warband and he is taken off the warband’s roster, all of his equipment is lost. However, some unscrupulous individuals will stoop to robbing a dead or incapacitated warrior, thereby gaining his equipment for themselves. When rolling for warriors who were taken Out of Action at the end of a battle, the Bandit player may roll a D6 for any warriors who are to be removed from their warband’s roster. On a roll of 4+ the looter has taken all of the warrior’s equipment — it is the Bandit player’s to keep. Failure indicates that the Looter either didn’t notice the warrior going down, or he didn’t get the opportunity to rob the body. Obviously any warrior can only be looted once, but multiple Looters allow the Bandit player multiple chances that his warband members got the equipment off of each downed warrior. Note also that warriors to be looted can be from any warband participating in the game, including the Bandit warband — Bandits are certainly not above looting their own dead!"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "blackhearts",
@@ -24715,7 +24884,8 @@
             "type": "Warband - Hochland Bandits",
             "description": "Blackhearts are not as put off by the evils of the world when they come across them… in fact persons of this nature are often more uncomfortable around situations where warmth and love are in abundance! Blackhearts are immune to Fear, and never have to take All-Alone tests (they prefer to work alone anyway…)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "poachers",
@@ -24758,7 +24928,8 @@
             "type": "Warband - Hochland Bandits",
             "description": "Poachers are experts at finding new game or safe campsites for the warband. In the game this is represented by allowing the warband to reroll one D6 for each Poacher in the Exploration phase. Poachers are not as good as Elf Rangers for scouting, but they are often darned close!"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "gutterscum",
@@ -24801,7 +24972,8 @@
             "type": "Warband - Hochland Bandits",
             "description": "Gutterscum have turned to a life of crime because they lack the ability to fit into normal society. They lack both the ambition and the capacity for self-improvement. Gutterscum do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -25272,7 +25444,8 @@
             "name": "Hate Bandits and Outlaws",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "priest-of-taal",
@@ -25331,7 +25504,8 @@
             "type": "Warband - Horned Hunters",
             "description": "Priests of Taal may never wear heavy armour."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "initiates",
@@ -25389,7 +25563,8 @@
             "type": "Warband - Horned Hunters",
             "description": "Taal’s Initiates may never wear armour."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "drunken-gang",
@@ -25432,7 +25607,8 @@
             "type": "Warband - Horned Hunters",
             "description": "The militia are blasted out of their tiny minds on Rotfire moonshine and cheap ale. As such, they automatically pass all Leadership-based tests they are required to take."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "zealots",
@@ -25475,7 +25651,8 @@
             "type": "Warband - Horned Hunters",
             "description": "Zealots may never wear armour."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "warhounds",
@@ -25516,7 +25693,8 @@
             "type": "Warband - Horned Hunters",
             "description": "Warhounds are animals and thus do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -25914,12 +26092,10 @@
             "name": "Leader",
             "type": "Warband - Imperial Outriders",
             "description": "Any warrior within 6” of the Knight may use his Leadership characteristic when taking a Leadership test."
-          },
-          {
-            "name": "Ride",
-            "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -25962,12 +26138,9 @@
           "imperial-outriders-equipment-list",
           "outrider-missile-weapon-list"
         ],
-        "specials": [
-          {
-            "name": "Ride",
-            "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
-          }
+        "specials": [],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -26010,12 +26183,9 @@
           "imperial-outriders-equipment-list",
           "scout-missile-weapon-list"
         ],
-        "specials": [
-          {
-            "name": "Ride",
-            "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
-          }
+        "specials": [],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -26054,12 +26224,9 @@
           "imperial-outriders-equipment-list",
           "outrider-missile-weapon-list"
         ],
-        "specials": [
-          {
-            "name": "Ride",
-            "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
-          }
+        "specials": [],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -26097,17 +26264,10 @@
         "lists": [
           "imperial-outriders-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Ride (Hussar)",
-            "type": "Warband - Imperial Outriders",
-            "description": "Horsemen have the Ride skill as detailed in the Blazing Saddles article."
-          },
-          {
-            "name": "Combat Riding",
-            "type": "Warband - Imperial Outriders",
-            "description": "Horsemen have the Combat Riding skill as detailed in the Blazing Saddles article."
-          }
+        "specials": [],
+        "skills": [
+          "Ride [Animal]",
+          "Combat Riding"
         ]
       },
       {
@@ -26146,17 +26306,10 @@
           "imperial-outriders-equipment-list",
           "scout-missile-weapon-list"
         ],
-        "specials": [
-          {
-            "name": "Ride",
-            "type": "Warband - Imperial Outriders",
-            "description": "The Knight has the Ride skill as detailed in the Blazing Saddles article."
-          },
-          {
-            "name": "Horse Handling",
-            "type": "Warband - Imperial Outriders",
-            "description": "Grooms have the Animal Handling skill as detailed in the Blazing Saddles article."
-          }
+        "specials": [],
+        "skills": [
+          "Ride [Animal]",
+          "[Animal] Handler"
         ]
       }
     ],
@@ -26815,7 +26968,8 @@
             "type": "Warband - Kislevites",
             "description": "When the Kislevite warband is first created, the Druzhina Captain is allowed to purchase one item from the Kislevite Warrior equipment list at half the normal cost. This item represents a treasured family heirloom that has been passed down through the generations. Losing an ancestral item is considered very disrespectful and if the item is ever lost (e.g. from a Robbed result on the Serious Injury chart), the Captain MUST replace it with a finely-made substitute as quickly as possible or risk being haunted by the angry spirits of his ancestors. To replace an ancestral item, the Captain must purchase the same item of equipment at 150% of its normal price. This higher cost represents the fine detail and valuable materials used in the item’s manufacture. Until the item is replaced, the Captain suffers a -1 penalty to all tests and rolls to hit."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "esaul",
@@ -26856,7 +27010,8 @@
         "lists": [
           "kislev-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "bear-tamer",
@@ -26903,7 +27058,8 @@
             "type": "Warband - Kislevites",
             "description": "A Kislevite Warband that includes a Bear Tamer is allowed to purchase a Bear as a henchman. This bear has been trained to follow the Tamer’s commands, and so will automatically pass its stupidity tests when within 6\" of the Bear Tamer (even if the Tamer has been Knocked Down or Stunned)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "youths",
@@ -26944,7 +27100,8 @@
         "lists": [
           "kislev-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "warriors",
@@ -26981,7 +27138,8 @@
         "lists": [
           "kislev-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "cossacks",
@@ -27024,7 +27182,8 @@
             "type": "Warband - Kislevites",
             "description": "Years of bitter struggle against the forces of Chaos have left their mark on the Cossack people. Cossacks are subject to hatred against all forces of Chaos (e.g. members of any warband the players would apply the Ancient Enemies special rule to)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "streltsi",
@@ -27067,7 +27226,8 @@
             "type": "Warband - Kislevites",
             "description": "A Streltsi warrior armed with both halberd and handgun may use the halberd as a gun-rest. The warrior receives a +1 on his ‘to hit’ roll with the handgun, as long as he did not move that turn (this applies even if the warrior has a skill that allows him to move and shoot with his handgun – he must not move if he is to rest the gun)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "trained-bear",
@@ -27131,7 +27291,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -27929,6 +28090,9 @@
             "type": "Warband - Knights of the Bitter Moors",
             "description": "When the Questing Knight charges mounted with at least one other model within 2\" of him, every friendly mounted warrior charging within 4\", the Questing Knight too, has +1 to hit, causes fear and is immune to psychology for the first round of combat."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -27982,6 +28146,9 @@
             "type": "Warband - Knights of the Bitter Moors",
             "description": "A Knight never panics and breaks from combat, so he takes no Leadership test for being all alone."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -28025,15 +28192,14 @@
         ],
         "specials": [
           {
-            "name": "Starting Skills",
-            "type": "Warband - Knights of the Bitter Moors",
-            "description": "A Squire starts with the skills Ride: Horse and Animal Handler: Horse and Warhorse."
-          },
-          {
             "name": "Knighted",
             "type": "Warband - Knights of the Bitter Moors",
             "description": "A Squire who reaches 20 experience has finished his apprenticeship and becomes a Knight Errant, with all that comes with it: the Knights' skill lists and equipment list, Knights Virtue and Ride: Warhorse."
           }
+        ],
+        "skills": [
+          "Ride [Animal]",
+          "[Animal] Handler"
         ]
       },
       {
@@ -28071,7 +28237,8 @@
         "lists": [
           "men-at-arms-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "bowmen",
@@ -28108,7 +28275,8 @@
         "lists": [
           "bowmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "mounted-yeomen",
@@ -28156,6 +28324,9 @@
             "type": "Warband - Knights of the Bitter Moors",
             "description": "The Field Trebuchet and the Mounted Yeomen never take the field in the same game: one or the other."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       }
     ],
@@ -28654,7 +28825,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "saurus-totem-warrior",
@@ -28695,7 +28867,8 @@
         "lists": [
           "saurus-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "skink-great-crests",
@@ -28736,7 +28909,8 @@
         "lists": [
           "skinks-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "skink-braves",
@@ -28773,7 +28947,8 @@
         "lists": [
           "skinks-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "saurus-braves",
@@ -28810,7 +28985,8 @@
         "lists": [
           "saurus-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "kroxigor",
@@ -28869,7 +29045,8 @@
             "type": "Warband - Lizardmen",
             "description": "Kroxigor are slow-witted creatures that never learn from their mistakes. The Kroxigor doesn’t gain experience."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -29442,7 +29619,8 @@
             "type": "Warband - Lords of the Marsh",
             "description": "The model is subject to fear unless it is protected by Mystic Mist."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "daemon-fimm",
@@ -29492,7 +29670,8 @@
             "name": "Daemon Soul",
             "type": "Mutation"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "young-nobles",
@@ -29547,7 +29726,8 @@
             "name": "Stupidity",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "shearls",
@@ -29594,7 +29774,8 @@
             "name": "Stupidity",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "fimir-warriors",
@@ -29653,7 +29834,8 @@
             "type": "Warband - Lords of the Marsh",
             "description": "On the henchmen's Injury chart a Fimir Warrior dies only on a 1; a 2-6 leaves him unhurt. He counts as 2 models towards the warband's maximum."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -30327,7 +30509,8 @@
             "type": "Warband - Low Kings",
             "description": "If the Racketeer takes any enemy warrior out of action and isn't taken out of action himself, the warband gets one more Treasure, besides any the Cutpurse skill adds. The enemy's Treasures are unaffected."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "enforcer",
@@ -30370,7 +30553,8 @@
         "lists": [
           "mobsmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "fence",
@@ -30419,7 +30603,8 @@
             "type": "Warband - Low Kings",
             "description": "Items bought through the Fence cost their base price, with no random gold modifier, and half that. The first time such an item is used, roll a D6: on a 1 it breaks, a fake, and is useless.\n\nAt the end of each battle, whether or not the Fence fought, roll a D6.\n\nD6 | Result\n1 | Halfling cookbook\n2 | Ithilmar weapon\n3 | Gromril weapon\n4 | Tome of magic or Holy tome\n5 | Hunting rifle or Elven bow\n6 | Brace of duelling pistols"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "guttersnipes",
@@ -30466,7 +30651,8 @@
             "type": "Warband - Low Kings",
             "description": "A Guttersnipe may try to steal one item in the post-battle sequence: a common item on a 2+ on a D6, a Rare item by rolling over its availability on 2D6. A stolen item is used as one bought. If he fails, roll a D6: on a 1-5 he is chased off and escapes; on a 6 he is caught and hanged: remove him from the roster."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "smugglers",
@@ -30503,7 +30689,8 @@
         "lists": [
           "mobsmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "rapscallions",
@@ -30546,7 +30733,8 @@
             "type": "Warband - Low Kings",
             "description": "While Rapscallions are within 1\" of a wall or other linear obstacle (a hedge, fence, well and the like), an enemy must pass an Initiative test to charge or shoot at them."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bruisers",
@@ -30583,7 +30771,8 @@
         "lists": [
           "mobsmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -31177,7 +31366,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "Cannot be taken out of Action unless the model is already Knocked Down or Stunned. Treat Out of Action as Stunned if the Conqueror is standing when receiving the Wound.\n\nIn addition, the first time a Conqueror suffers a Dead result on the Serious Injury Chart, treat it as Multiple Injuries instead. This ability can save the Conqueror only one time."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "saurus-slayer",
@@ -31235,7 +31425,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "Saurus-Slayers may purchase the following special equipment:\n\n- Lizardmen Skin Cloak: Grants 6+ Ward save, separate from Armour Save that is not reduced by enemy strength or other modifiers. (10 gc)\n- Skull Mask: Causes Fear. (15 gc)\n- Upgrade any sword into a Lizardman Sword: +1 to wound rolls due to Poison. (30 gc)\n- Trophy Slann Holy Headdress: +2 bonus to armour saves. (35 gc)"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "reaver-beastmaster",
@@ -31288,7 +31479,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "If your Warband includes a Beastmaster, you may include up to 2 War Beasts from the list below. These count towards the maximum size of the Warband. They must be bought when the Warband is created but can be replaced if killed. The War Beasts can use the Ld of the Beastmaster if they are within 6” of the Beastmaster."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "jungle-shadow",
@@ -31356,7 +31548,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "Jungle Shadow automatically passes all climbing, jumping and falling off ledges tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "trapmaster",
@@ -31414,7 +31607,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "The Trapmaster starts each game with 1 Trap and can buy up to 5 further of the following Traps before the start of the game at the cost of 5 GC each. Each trap is one use only. Traps are used in the Shooting Phase instead of shooting, 1 trap at a time, and cannot be used in Melee combat. When you use a trap, put 2 1” diameter Trap counters (one false, one real) anywhere within 3” of the Trapmaster, but at least 3” away from any other models. Any model that moves within 2” of the counter must flip it over. If it is a false one, nothing happens. If it is a real one, the model suffers D3 S5 Hits immediately. Traps do not cause Criticals. Remove the counters when the trap is sprung."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "prospects",
@@ -31458,7 +31652,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "Re-roll any Lad’s Got Talent results on Henchmen Advancement table. When promoted, you can then hire a new Prospect as the model no longer counts as one of them."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "estalian-warhound",
@@ -31504,7 +31699,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "All the War Beasts are subject to the rules of Animals and may not gain experience. They suffer injuries exactly as Henchmen (if taken out of action they are dead on a roll of 1-2 on D6)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "barbary-monkey",
@@ -31550,7 +31746,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "All the War Beasts are subject to the rules of Animals and may not gain experience. They suffer injuries exactly as Henchmen (if taken out of action they are dead on a roll of 1-2 on D6)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "tilean-hunting-hawk",
@@ -31596,7 +31793,8 @@
             "type": "Warband - Lustrian Reavers",
             "description": "All the War Beasts are subject to the rules of Animals and may not gain experience. They suffer injuries exactly as Henchmen (if taken out of action they are dead on a roll of 1-2 on D6)."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -32157,7 +32355,8 @@
             "type": "Warband - Maneaters",
             "description": "Any warrior within 6“ of the Captain may use his Leadership when taking Ld tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "youngbloods",
@@ -32199,7 +32398,8 @@
           "ogre-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "mountain-guide",
@@ -32252,7 +32452,8 @@
             "type": "Warband - Maneaters",
             "description": "Mountain Guides are Ogre Hunters. They become used to the solitude of the highest peaks in the Mountains of Mourn. A Mountain Guide hunts the slopes alone and will never claim a Gnoblar or take one as a pet. They are immune to all alone tests and may never become the warband leader."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bulls",
@@ -32296,7 +32497,8 @@
             "type": "Warband - Maneaters",
             "description": "Ogres learn to use their vast bulk in a charge, trampling the enemy to the ground. When charging, Bulls may attempt a single attack with a +1 ‘to hit’ modifier rather than making their normal attacks. If successful the enemy model is automatically knocked down."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "half-growns",
@@ -32334,7 +32536,8 @@
           "ogre-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "sabretusks",
@@ -32394,7 +32597,8 @@
             "type": "Warband - Maneaters",
             "description": "Sabretusks are animals and thus do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -32973,7 +33177,8 @@
             "type": "Warband - Marauders of Chaos",
             "description": "Any Warrior within 6“ of the Marauder Chieftain may use his Leadership instead of his own when taking Ld tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "seer",
@@ -33047,7 +33252,8 @@
             "type": "Warband - Marauders of Chaos",
             "description": "The Seer gets a Mark of Chaos when hired to determine the kind of magic he uses. He can have the Mark of the Serpent, the Mark of the Crow, the Mark of the Eagle, the Mark of Arkhar or the Mark of Chaos Undivided."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "champions",
@@ -33094,7 +33300,8 @@
         "lists": [
           "hero-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "condemned",
@@ -33159,7 +33366,8 @@
             "type": "Warband - Marauders of Chaos",
             "description": "Once all variable attributes are set, the Condemned may use weapons, armour and miscellaneous equipment as usual. But, if he has 90 Experience and still variable attributes, his patron could not save him from his former god's wrath and his soul and body are lost. He turns into a terrifying Spawn of Chaos. If the warband already consists of a spawn, the doomed warrior wanders off into the wastes, never to be seen again."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "chaos-marauders",
@@ -33196,7 +33404,8 @@
         "lists": [
           "henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "warhounds-of-chaos",
@@ -33241,7 +33450,8 @@
             "type": "Warband - Marauders of Chaos",
             "description": "Warhounds are animals and thus do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "spawn-of-chaos",
@@ -33305,7 +33515,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -34264,7 +34475,8 @@
             "name": "Immune to Psychology",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "thrall",
@@ -34324,7 +34536,8 @@
             "name": "No Pain",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "wolfman",
@@ -34364,7 +34577,8 @@
         "variant_changes": {},
         "fixed_kit": "None. A Wolfman can't carry equipment; he fights with tooth and claw and suffers no penalty for it.",
         "lists": [],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "hunchbacks",
@@ -34407,7 +34621,8 @@
           "heroes-equipment-list",
           "miscellaneous-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "zombies",
@@ -34468,7 +34683,8 @@
             "type": "Warband - Masters of Horror",
             "description": "Zombies gain no experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "flesh-construct",
@@ -34534,7 +34750,8 @@
             "name": "May Not Run",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "the-bitten",
@@ -34577,7 +34794,8 @@
             "type": "Warband - Masters of Horror",
             "description": "Roll a D6 for the Bitten each turn; they don't roll while in combat. A Bitten who transforms drops all his equipment but a dagger and suffers no penalty for fighting unarmed.\n\nD6 | Result\n1 | Madness: stupidity this turn; a transformed Bitten turns back to human form.\n2-5 | Acts as normal.\n6 | Transformed: frenzy and Sprint, until a 1 is rolled."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -35200,7 +35418,8 @@
             "type": "Warband - Mercenaries",
             "description": "Any warrior within 6\" of the Mercenary Captain may use his Leadership characteristic when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "champions",
@@ -35259,7 +35478,8 @@
         "lists": [
           "mercenary-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "youngbloods",
@@ -35308,7 +35528,8 @@
         "lists": [
           "mercenary-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "warriors",
@@ -35345,7 +35566,8 @@
         "lists": [
           "mercenary-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "marksmen",
@@ -35388,7 +35610,8 @@
         "lists": [
           "marksman-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "swordsmen",
@@ -35431,7 +35654,8 @@
             "type": "Warband - Mercenaries",
             "description": "Swordsmen are so skilled with their weapons that they may re-roll any failed hits when charging. Note that this only applies when they are armed with normal swords, and not with doublehanded swords or any other weapons."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -36047,7 +36271,8 @@
             "type": "Warband - Merchant Caravans",
             "description": "A Merchant is always the warband's leader. Refer to the special rules for when using a Merchant."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "apprentice",
@@ -36089,7 +36314,8 @@
         "lists": [
           "hero-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "knights-vanguard",
@@ -36138,15 +36364,13 @@
             "description": "If the Knights Vanguard is charged, he will ‘strike first’ against those that charged that turn. As the charger(s) will also normally ‘strike first’ (for charging), the order of attack between the charger(s) and the Knights Vanguard will be determined by comparing Initiative values."
           },
           {
-            "name": "Ride Warhorse",
-            "type": "Warband - Merchant Caravans",
-            "description": "The Knights Vanguard is trained in riding Warhorses."
-          },
-          {
             "name": "Hirelings",
             "type": "Warband - Merchant Caravans",
             "description": "The Knights Vanguard is a hireling, paid by the Merchant and therefore can never become the warband's leader."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -36202,7 +36426,8 @@
             "type": "Warband - Merchant Caravans",
             "description": "The Magician is a hireling, paid by the Merchant. He can never become the warband's leader."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sell-swords",
@@ -36239,7 +36464,8 @@
         "lists": [
           "henchman-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "marksmen",
@@ -36276,7 +36502,8 @@
         "lists": [
           "henchman-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "blackguards",
@@ -36324,7 +36551,8 @@
             "type": "Warband - Merchant Caravans",
             "description": "Blackguards are only hired by the Merchant to serve him by protecting his cargo. They are not much trusted or granted with any responsibilities. Therefore they may never become Heroes. Re-roll all results of ‘The lad’s got talent’ for them."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -36801,7 +37029,8 @@
             "type": "Warband - Metal Mongers",
             "description": "Warriors within 6\" of the Engineer Adept may take Leadership tests on his Leadership."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "black-skaven",
@@ -36844,7 +37073,8 @@
         "lists": [
           "heroes-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "forge-rats",
@@ -36887,7 +37117,8 @@
         "lists": [
           "heroes-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "pirate-rats",
@@ -36930,7 +37161,8 @@
             "type": "Warband - Metal Mongers",
             "description": "Pirate-Rats are aquatic."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "technicians",
@@ -36973,7 +37205,8 @@
             "type": "Warband - Metal Mongers",
             "description": "Technicians are trained with Poison Wind Globes and Gas Masks, and may buy them when recruited."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "machine-ogre",
@@ -37063,7 +37296,8 @@
             "type": "Warband - Metal Mongers",
             "description": "At the start of each turn roll a D6 to work the Machine-Ogre: on a 2-6 it moves and acts normally; on a 1 roll a D6 on the Malfunction chart.\n\nD6 | Result\n1 | Explodes!: every model within 6\" takes one S5 hit, and the Machine-Ogre is destroyed. No Injury roll for it after the game.\n2 | Malfunctions!: for the rest of the game, at the start of each of your turns it moves randomly (distance and direction by the Warhammer artillery scatter dice), counting as charging any warrior, of either side, in its charge range.\n3 | Shuts Down!: it stops for the rest of the battle, and is hit automatically in close combat.\n4 | Temporary Loss of Control!: it moves in a random direction and attacks any warrior it touches, of either side, counting as charging. If it touches none but warriors are within range of its warpfire projector, it fires at them.\n5-6 | Freezes!: it does nothing this turn, and is hit automatically in close combat."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -37658,7 +37892,8 @@
             "type": "Warband - Militant Mootlanders",
             "description": "Warriors within 6\" of the Burgermeister may take Leadership tests on his Leadership."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "quartermaster",
@@ -37705,7 +37940,8 @@
             "type": "Warband - Militant Mootlanders",
             "description": "The Quartermaster adds 2\" to the range of any thrown weapon and 4\" to a sling's."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "chef",
@@ -37752,7 +37988,8 @@
             "type": "Warband - Militant Mootlanders",
             "description": "Before each battle the Chef takes a Leadership test. If he passes, his pot holds stew to heal as many Wounds as he passed by, +1 (a roll of 7 against his Ld 8 heals up to 2 Wounds). Friendly models who sup it recover Wounds, none above its maximum."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "raconteurs",
@@ -37794,7 +38031,8 @@
         "lists": [
           "heroes-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "thieves",
@@ -37838,11 +38076,6 @@
             "description": "At the end of each battle, whether or not any Thief fought, roll a D6.\n\nD6 | Result\n1 | Stop Thief!: remove one Thief from the roster, with every Treasure in your stash from earlier games. Add no additional Treasures if any Thieves remain in the warband.\n2-5 | Tax Time: the Thieves take their usual fees when Treasures are sold, as normal.\n6 | Ignorance is Bliss: the Thieves waive their fees, and don't count towards the warband's size when Treasures are sold."
           },
           {
-            "name": "Infiltration",
-            "type": "Warband - Militant Mootlanders",
-            "description": "Thieves may infiltrate, as the Infiltration skill: they set up after the enemy warband, anywhere out of its sight and more than 12\" from any enemy model. If both sides infiltrate, each rolls a D6 and the lower sets up first."
-          },
-          {
             "name": "Pick Locks",
             "type": "Warband - Militant Mootlanders",
             "description": "To open a locked door a Thief needs only to pass an Initiative test."
@@ -37852,6 +38085,9 @@
             "type": "Warband - Militant Mootlanders",
             "description": "When the warband rolls for Treasures after the game, it gets one more Treasure for each Thief who fought and wasn't taken out of action."
           }
+        ],
+        "skills": [
+          "Infiltration"
         ]
       },
       {
@@ -37889,7 +38125,8 @@
         "lists": [
           "henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "cooks",
@@ -37932,7 +38169,8 @@
             "type": "Warband - Militant Mootlanders",
             "description": "Before each battle a warband with Cooks gathers one batch of provisions. It may feast only after a battle it won, not one it lost: when it sells Treasures it counts as one size band smaller for each batch eaten (10-12 members count as 7-9). It may eat as many batches as it likes, but never counts as smaller than 1-3 models."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -38233,7 +38471,8 @@
             "type": "Warband - Mootlanders",
             "description": "Any warrior within 6\" of the Moot Elder may use his Leadership characteristic when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "master-chef",
@@ -38281,7 +38520,8 @@
             "type": "Warband - Mootlanders",
             "description": "Any Halfling models within 6\" of a Halfling Master Chef may re-roll any failed hits in combat (once per turn)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "halfling-thieves",
@@ -38328,7 +38568,8 @@
             "type": "Warband - Mootlanders",
             "description": "Halfling Thieves can hide in the slightest shadow or piece of cover. Halfling thieves always have a -1 to hit modifier when being shot at, this adds to any other modifiers."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "warriors",
@@ -38365,7 +38606,8 @@
         "lists": [
           "mootlander-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "scouts",
@@ -38408,7 +38650,8 @@
             "type": "Warband - Mootlanders",
             "description": "Halfling Scouts can spot hidden enemies at twice their Initiative value in inches."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -38870,7 +39113,8 @@
             "name": "No Pain",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "thrall",
@@ -38930,7 +39174,8 @@
             "name": "No Pain",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "acolytes",
@@ -38977,7 +39222,8 @@
             "type": "Warband - Necrarchs, the Soul Stealers",
             "description": "While the Necrarch Vampire can see an Acolyte who isn't in hand-to-hand combat, he may cast a spell from the Acolyte's place. If that casting rolls a double 1, whatever skills help (Mind Focus and the like), the Acolyte rolls on the Injury chart at +1."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "skeletal-warriors",
@@ -39040,7 +39286,8 @@
             "type": "Warband - Necrarchs, the Soul Stealers",
             "description": "Skeletal Warriors gain no experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "zombies",
@@ -39101,7 +39348,8 @@
             "type": "Warband - Necrarchs, the Soul Stealers",
             "description": "Skeletal Warriors gain no experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "abomination",
@@ -39172,7 +39420,8 @@
             "type": "Warband - Necrarchs, the Soul Stealers",
             "description": "The Abomination ignores rolls of 1 and 2 on the post-battle Injury table: it can't be destroyed."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "waifs",
@@ -39209,7 +39458,8 @@
         "lists": [
           "necrarch-henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -39667,7 +39917,8 @@
             "type": "Warband - Nehekhara Tomb Guards",
             "description": "The Mummy Prince is undead and follow all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "liche-priest",
@@ -39721,7 +39972,8 @@
             "type": "Warband - Nehekhara Tomb Guards",
             "description": "The Mummy Prince is undead and follow all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "mummy-warriors",
@@ -39768,7 +40020,8 @@
             "type": "Warband - Nehekhara Tomb Guards",
             "description": "The Mummy Prince is undead and follow all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "skeleton-soldiers",
@@ -39811,7 +40064,8 @@
             "type": "Warband - Nehekhara Tomb Guards",
             "description": "The Skeletons are undead and follow all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "tomb-guards",
@@ -39854,7 +40108,8 @@
             "type": "Warband - Nehekhara Tomb Guards",
             "description": "The Tomb Guards are undead and follow all rules for the Undead, note that Tomb Guards do gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "tomb-scorpions",
@@ -39905,7 +40160,8 @@
             "type": "Warband - Nehekhara Tomb Guards",
             "description": "The Scorpions attacks their stinging tails. The attack is made at Strength 4, however if the warrior that is hit is immune to Poison the Strength of the hit is reduced to 1."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "stone-golem",
@@ -39977,7 +40233,8 @@
             "type": "Warband - Nehekhara Tomb Guards",
             "description": "The Stone Golem cannot run and is not considered to be an Undead model."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -40255,7 +40512,8 @@
             "type": "Warband - Night Goblins",
             "description": "Any warrior within 6\" of the Orc Boss may use his Leadership characteristic when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "shaman",
@@ -40306,7 +40564,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bosses",
@@ -40348,7 +40607,8 @@
         "lists": [
           "night-goblin-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "night-goblins",
@@ -40385,7 +40645,8 @@
         "lists": [
           "night-goblin-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "fanatics",
@@ -40443,7 +40704,8 @@
             "type": "Warband - Night Goblins",
             "description": "The Fanatic is hyperactive and will strike first in combat ignoring penalties or bonuses for weapons or initiative order."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "cave-squigs",
@@ -40494,7 +40756,8 @@
             "type": "Warband - Night Goblins",
             "description": "Cave Squigs are animals of a sort and so do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "troll",
@@ -40562,7 +40825,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "snotling-mob-consists-of-5-snotlings",
@@ -40618,7 +40882,8 @@
             "type": "Warband - Night Goblins",
             "description": "Nobody cares about the Snotlings. The whole mob counts as a single model for the purposes of rout tests, maximum warband size and calculating income. An enemy hero will only gain experience for taking the last Snotling Out of Action."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -41211,7 +41476,8 @@
             "type": "Warband - Night Goblins (web)",
             "description": "The Boss is so big, compared to other Night Goblins that is, that they may choose Strength skills. If the Boss dies, the promoted leader will gain this rule. No other member of the warband except the current leader may ever use Strength skills."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "squig-herder",
@@ -41263,7 +41529,8 @@
             "type": "Warband - Night Goblins (web)",
             "description": "During the recovery phase, any out of control Cave Squigs or Great Squigs in the herder's control range (6”, or 12” with a Squig Prodder) will stop running amok, and may be controlled normally, if the Herder can pass a Leadership test."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "goonz",
@@ -41305,7 +41572,8 @@
         "lists": [
           "hero-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "shaman",
@@ -41361,7 +41629,8 @@
             "type": "Warband - Night Goblins (web)",
             "description": "Before a battle, the Shaman may brew a special batch of Fungus Brew using 1 to 3 Mad Cap Mushrooms, and various other fungi they have collected. The brew must be consumed immediately, and affects a single Night Goblin Warrior henchmen group until the end of the battle. Roll on the Fungus Brew Table once for each Mad Cap Mushroom used in the brewing process. If any of the dice come up with the same result, the batch is ruined and provides no effect other than a nasty headache!\n\nD6 | Result\n1 | Rowdy: Affected by Animosity on a 1 or 2.\n2 | Dizzy: -1 Initiative.\n3 | Fearless: Immune to fear and all alone tests.\n4 | Numbed: +1 Save which may not be reduced below 6+.\n5 | Belligerent: hatred against the opposing warband(s).\n6 | Loony: frenzy, followed by stupidity if it wears off by a Goblin being knocked down or stunned"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "night-goblin-warriors",
@@ -41404,7 +41673,8 @@
             "type": "Warband - Night Goblins (web)",
             "description": "Night Goblins are subject to the rules for Animosity."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "night-goblin-fanatics",
@@ -41452,7 +41722,8 @@
             "type": "Warband - Night Goblins (web)",
             "description": "Fanatics are so far gone from reality that they are not subject to the rules for Animosity. Fanatics must re-roll results of “Lad's Got Talent.”"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "cave-squigs",
@@ -41508,7 +41779,8 @@
             "type": "Warband - Night Goblins (web)",
             "description": "Cave Squigs are animals of a sort and so do not gain experience, or climb ladders. They can move to higher levels or over obstacles using the normal climb rules, just imagine it as a particularly high bounce."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "snotlings",
@@ -41564,7 +41836,8 @@
             "type": "Warband - Night Goblins (web)",
             "description": "Nobody cares about the Snotlings. All Snotlings in the warband count as 1 model for rout tests purposes and warband maintenance costs. Each Snotling is worth half an experience point, rounded down at the end of the battle. Snotlings may be ignored for shooting priority purposes. Snotlings never gain experience, they usually don't last long enough, and if they do they're too stupid to learn anything of value!"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "great-squig",
@@ -41623,7 +41896,8 @@
             "type": "Warband - Night Goblins (web)",
             "description": "Great Squigs are animals of a sort and so do not gain experience, or climb ladders. They can move up to higher levels or over obstacles using the normal climb rules, just imagine it as a particularly high bounce."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "troll",
@@ -41691,7 +41965,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -42748,12 +43023,10 @@
             "name": "Leader",
             "type": "Warband - Nipponese Expedition",
             "description": "Warriors within 6\" of the Hatamoto may use his Leadership when taking any Leadership test."
-          },
-          {
-            "name": "Ride",
-            "type": "Warband - Nipponese Expedition",
-            "description": "The Hatamoto has the Ride skill of the Blazing Saddles rules."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -42808,7 +43081,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "shinobi",
@@ -42861,7 +43135,8 @@
             "type": "Warband - Nipponese Expedition",
             "description": "The Shinobi may never become the warband's leader."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "retainers",
@@ -42903,12 +43178,9 @@
         "lists": [
           "nippon-noble-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Ride",
-            "type": "Warband - Nipponese Expedition",
-            "description": "The Hatamoto has the Ride skill of the Blazing Saddles rules."
-          }
+        "specials": [],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -42952,7 +43224,8 @@
             "type": "Warband - Nipponese Expedition",
             "description": "An Ashigaru may wield a spear in both hands; it then gains the Parry rule."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "onnabushi",
@@ -42995,7 +43268,8 @@
             "type": "Warband - Nipponese Expedition",
             "description": "An Onnabushi inside a building or ruin causes fear. Agree which terrain counts as buildings or ruins before the battle."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "warrior-monks",
@@ -43032,7 +43306,8 @@
         "lists": [
           "warrior-monk-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -43580,7 +43855,8 @@
             "type": "Warband - Norse Explorers",
             "description": "Any Warrior within 6“ of the Jarl may use his Leadership instead of his own when taking Ld tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "berserkers",
@@ -43626,7 +43902,8 @@
             "name": "Frenzy",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "wulfen",
@@ -43676,7 +43953,8 @@
             "type": "Warband - Norse Explorers",
             "description": "Wulfen are ravenous beasts and therefore immune to psychology. Also despite being greatly revered by their barbarian kinsmen, Wulfen are too feral and uncontrolled to become the leader of the warband."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bondsmen",
@@ -43718,7 +43996,8 @@
         "lists": [
           "hero-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "marauders",
@@ -43755,7 +44034,8 @@
         "lists": [
           "henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "hunters",
@@ -43792,7 +44072,8 @@
         "lists": [
           "hunters-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "wolves",
@@ -43838,7 +44119,8 @@
             "type": "Warband - Norse Explorers",
             "description": "Wolves are feral animals that only respond to the strongest in their pack – the Wulfen. In the event that no Wulfen is included in the warband due to a death or an injury, the wolves cannot be used until the creature is replaced."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -44310,12 +44592,10 @@
             "name": "Central Figure",
             "type": "Warband - Ogre Hunting Party",
             "description": "If the Ogre Hunter is taken out of action, the warband is at once at its Rout level, whatever its casualties."
-          },
-          {
-            "name": "Sabre Trainer",
-            "type": "Warband - Ogre Hunting Party",
-            "description": "The Ogre Hunter has the Sabre Trainer skill: when a Sabretusk Cub that started the turn within 6\" of him rolls a 1 for Untamed, you may move it 3D6\" towards any model within 12\" of it that it can see, instead of the nearest."
           }
+        ],
+        "skills": [
+          "Sabre Trainer"
         ]
       },
       {
@@ -44364,7 +44644,8 @@
             "type": "Warband - Ogre Hunting Party",
             "description": "When hired, a Trapper takes one of these special skills: Infiltration (one Trapper at most), Set Traps, Netter or Scent Hound."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sabre-baiter",
@@ -44411,7 +44692,8 @@
             "type": "Warband - Ogre Hunting Party",
             "description": "When a model declares a charge against the Sabre-Baiter, he may at once move D6\" directly away from the charger, which fails its charge if he ends out of its reach. Once a turn, and only if he isn't knocked down, stunned or in hand-to-hand combat. Against a charging Sabretusk he moves 2D6\" instead and may move around models in his way, so the Sabretusk may end up charging another model."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "gnoblar-fighters",
@@ -44454,7 +44736,8 @@
             "type": "Warband - Ogre Hunting Party",
             "description": "At the end of your Recovery phase roll a D6 for each Gnoblar henchman not in combat: on a 1 he only hurls insults at the nearest Gnoblar, and may not move, shoot or cast spells this turn. A Gnoblar who gains That Lad's Got Talent loses Bicker."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "flingers",
@@ -44502,7 +44785,8 @@
             "type": "Warband - Ogre Hunting Party",
             "description": "A Flinger may throw 3 pieces of Sharp Stuff a turn instead of 1. Not with Knife Thrower, and not with throwing knives."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sabretusk-cubs",
@@ -44562,7 +44846,8 @@
             "type": "Warband - Ogre Hunting Party",
             "description": "Sabretusks have a natural 5+ armour save."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -45005,7 +45290,8 @@
             "type": "Warband - Orc Mob",
             "description": "Any warrior within 6\" of the Orc Boss may use his Leadership characteristic when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "orc-shaman",
@@ -45060,7 +45346,8 @@
             "type": "Warband - Orc Mob",
             "description": "An Orc Shaman may never wear armour."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "orc-big-uns",
@@ -45102,7 +45389,8 @@
         "lists": [
           "orc-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "orc-boyz",
@@ -45145,7 +45433,8 @@
             "type": "Warband - Orc Mob",
             "description": "Orc Boyz are subject to the rules for Animosity (see Special Rules for details)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "goblin-warriors",
@@ -45198,7 +45487,8 @@
             "type": "Warband - Orc Mob",
             "description": "Goblins may gain experience but if they happen to roll ‘That Lad’s got talent’ they are immediately killed by their Orc overlords for becoming too ‘mouthy’ (remove the Gobbo from the roster)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "cave-squigs",
@@ -45254,7 +45544,8 @@
             "type": "Warband - Orc Mob",
             "description": "Cave Squigs are animals of a sort and so do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "troll",
@@ -45322,7 +45613,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -46013,7 +46305,8 @@
             "type": "Warband - Ostlander Mercenaries",
             "description": "Any warrior within 6\" of the Elder may use his Leadership characteristic when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "blood-brothers",
@@ -46054,7 +46347,8 @@
         "lists": [
           "ostlander-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "priest-of-taal",
@@ -46113,7 +46407,8 @@
             "type": "Warband - Ostlander Mercenaries",
             "description": "Priests of Taal may never wear heavy armour."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "kin",
@@ -46150,7 +46445,8 @@
         "lists": [
           "ostlander-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "jaeger",
@@ -46187,7 +46483,8 @@
         "lists": [
           "jaeger-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "ruffians",
@@ -46240,7 +46537,8 @@
             "type": "Warband - Ostlander Mercenaries",
             "description": "Ruffians never use missile weapons, as their depth perception leaves a bit to be desired, even if they gain an Advance roll which would otherwise allow them to do so."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "ogre",
@@ -46296,7 +46594,8 @@
             "type": "Warband - Ostlander Mercenaries",
             "description": "Although Ogres are capable of earning experience and bettering themselves they are not the smartest of creatures. Ogres only gain advances at half the rate of everyone else (ie, they must accrue twice as much experience as normal to get an advance)."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -46614,7 +46913,8 @@
             "type": "Warband - Outlaws of Stirwood Forest",
             "description": "Any models in the warband within 6\" of the Bandit Leader may use her Leadership instead of their own."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "champions",
@@ -46655,7 +46955,8 @@
         "lists": [
           "outlaws-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "cleric",
@@ -46705,7 +47006,8 @@
             "type": "Warband - Outlaws of Stirwood Forest",
             "description": "The Cleric has devoted his life in the constant service to Sigmar and as such he would start a campaign knowing one of the Prayers of Sigmar. As with a Witch-Hunter’s Warrior Priest, he is also subject to some of the restrictions of being a follower of the Lord Sigmar and may learn neither Sorcery nor Arcane Lore."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "petty-thieves",
@@ -46746,7 +47048,8 @@
         "lists": [
           "outlaws-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "marksmen",
@@ -46783,7 +47086,8 @@
         "lists": [
           "outlaws-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "outlaws",
@@ -46820,7 +47124,8 @@
         "lists": [
           "outlaws-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -47136,7 +47441,8 @@
             "type": "Warband - Outlaws of Stirwood Forest, Redux",
             "description": "Models of the warband within 6\" of the Bandit Leader may use his Leadership instead of their own."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "champions",
@@ -47177,7 +47483,8 @@
         "lists": [
           "outlaws-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "cleric",
@@ -47233,7 +47540,8 @@
             "type": "Warband - Outlaws of Stirwood Forest, Redux",
             "description": "The Cleric starts knowing one of the Prayers of Sigmar (rulebook p57). Prayers aren't spells, so he may wear armour. Like a Witch Hunters' Warrior Priest, he may learn neither Sorcery nor Arcane Lore."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "petty-thieves",
@@ -47273,7 +47581,8 @@
         "lists": [
           "outlaws-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "outlaws",
@@ -47310,7 +47619,8 @@
         "lists": [
           "outlaws-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "marksmen",
@@ -47347,7 +47657,8 @@
         "lists": [
           "outlaws-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -48113,7 +48424,8 @@
             "type": "Warband - Pirates",
             "description": "Any pirate within 6\" of the Captain may use his Leadership characteristic when taking any Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "ships-mates",
@@ -48156,7 +48468,8 @@
         "lists": [
           "pirate-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "cabin-boys",
@@ -48199,7 +48512,8 @@
         "lists": [
           "pirate-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "crew",
@@ -48236,7 +48550,8 @@
         "lists": [
           "pirate-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "gunners",
@@ -48279,7 +48594,8 @@
             "type": "Warband - Pirates",
             "description": "Gunners are known to be amongst the bravest of pirates, given their close proximity to blackpowder weapons, but even among themselves they stand in awe of any Gunner who takes a Swivel Gun into battle. Usually they stand in awe quite far away from him – even they can’t be sure when one might blow! If a Pirate Warband includes a Swivel Gun, the Gunner wielding it will always be considered an individual and can never have anyone else with him. Since a Pirate Warband may only have one Swivel Gun, if a Gunner is equipped with one then he must either be a new Gunner, or split from an existing unit. If the latter, he retains all Experience and Skills he had previously."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "boatswains",
@@ -48320,7 +48636,8 @@
             "type": "Warband - Pirates",
             "description": "Boatswains are highly trained in using their ropes, as they are the ones who maintain the complex network of rigging throughout the ship. They may re-roll failed Initiative tests Leaping over Gaps, Jumping Down, and performing a Diving Charge, as well as the normal test for Climbing Up or Down that a Rope allows."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "swabbies",
@@ -48383,7 +48700,8 @@
             "type": "Warband - Pirates",
             "description": "The rest of the crew barely notice if any Swabbies run away or go Out of Action – they know they’ll find them later on and give them 30 lashes if they’re lucky! Any Swabbies who are running away or have been taken out of action do not count towards the need to take a Rout test for the warband."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -49048,12 +49366,10 @@
             "name": "Leader",
             "type": "Warband - Pit Fighters",
             "description": "Any models in the Warband within 6\" of the King may use his Leadership instead of their own."
-          },
-          {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           }
+        ],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -49097,11 +49413,6 @@
         ],
         "specials": [
           {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          },
-          {
             "name": "Hard to Kill",
             "type": "Warband - Pit Fighters",
             "description": "Dwarfs are tough, resilient individuals who can only be taken out of action on a roll of a 6 instead of 5-6 when rolling on the Injury chart. Treat a roll of 1-2 as knocked down, 3-5 as stunned, and 6 as out of action."
@@ -49125,6 +49436,9 @@
             "type": "Warband - Pit Fighters",
             "description": "Troll Slayers seek an honourable death in combat. They are completely immune to all psychology"
           }
+        ],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -49167,12 +49481,9 @@
         "lists": [
           "pit-fighter"
         ],
-        "specials": [
-          {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          }
+        "specials": [],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -49210,12 +49521,9 @@
         "lists": [
           "pit-fighter"
         ],
-        "specials": [
-          {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          }
+        "specials": [],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -49255,15 +49563,13 @@
         ],
         "specials": [
           {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          },
-          {
             "name": "Evade",
             "type": "Warband - Pit Fighters",
             "description": "Pursuers are agile and athletic, well adept at avoiding the heavier Pit Fighters’ charges. When an enemy charges a Pursuer he may choose to try and evade. On a successful Initiative test it is considered a failed charge and the normal rules apply"
           }
+        ],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -49303,11 +49609,6 @@
         ],
         "specials": [
           {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          },
-          {
             "name": "Fear",
             "type": "Psychology"
           },
@@ -49325,6 +49626,9 @@
             "type": "Warband - Pit Fighters",
             "description": "Although Ogres are capable of earning experience and bettering themselves, they are not the smartest creatures. Ogres only gain advances at half the rate of everyone else (ie, they must accrue twice as much experience as normal to get an advance)."
           }
+        ],
+        "skills": [
+          "Pit Fighter"
         ]
       }
     ],
@@ -49963,12 +50267,10 @@
             "name": "Leader",
             "type": "Warband - Pit Fighters (old)",
             "description": "Any models in the warband within 6\" of the King may use his Leadership instead of their own."
-          },
-          {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           }
+        ],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -50012,11 +50314,6 @@
         ],
         "specials": [
           {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          },
-          {
             "name": "Hard to Kill",
             "type": "Warband - Pit Fighters (old)",
             "description": "Dwarfs are tough, resilient individuals who can only be taken out of action on a roll of 6 instead of 5–6 when rolling on the injury chart. Treat a roll of 1–2 as knocked down, 3–5 as stunned, and 6 as out of action."
@@ -50040,6 +50337,9 @@
             "type": "Warband - Pit Fighters (old)",
             "description": "Troll Slayers seek an honourable death in combat. They are completely immune to all psychology and never need to test if fighting alone."
           }
+        ],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -50081,12 +50381,9 @@
         "lists": [
           "pit-fighters-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          }
+        "specials": [],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -50128,7 +50425,8 @@
         "lists": [
           "pit-fighters-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "ogre-pit-fighter",
@@ -50167,11 +50465,6 @@
         ],
         "specials": [
           {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          },
-          {
             "name": "Fear",
             "type": "Psychology"
           },
@@ -50189,6 +50482,9 @@
             "type": "Warband - Pit Fighters (old)",
             "description": "Although Ogres are capable of earning experience and bettering themselves they are not the smartest creatures. Ogres only gain advances at half the rate of everyone else (i.e., they must accrue twice as much experience as normal to get an advance)."
           }
+        ],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -50226,12 +50522,9 @@
         "lists": [
           "pursuer-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          }
+        "specials": [],
+        "skills": [
+          "Pit Fighter"
         ]
       },
       {
@@ -50269,17 +50562,10 @@
         "lists": [
           "pit-fighters-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Pit Fighter",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
-          },
-          {
-            "name": "Arms Master",
-            "type": "Warband - Pit Fighters (old)",
-            "description": "The Pit Fighter may now ignore all ‘difficult to use’ rules for all weapons. This enables him to combine certain types of weapons, he can combine a Morning Star with buckler, or even a Morning Star with a Morning Star. (TC 21)"
-          }
+        "specials": [],
+        "skills": [
+          "Pit Fighter",
+          "Arms master"
         ]
       }
     ],
@@ -50741,7 +51027,8 @@
             "type": "Warband - Protectorate Of Sigmar",
             "description": "The Warrior Priest starts with one prayer rolled at random from the Prayers of Sigmar."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "templars",
@@ -50790,7 +51077,8 @@
             "type": "Warband - Protectorate Of Sigmar",
             "description": "The Templar hates every model of a chaotic warband: Skaven, Possessed, Carnival of Chaos, Beastmen, and any warband with a Daemon in it."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "huntsman",
@@ -50842,7 +51130,8 @@
             "type": "Warband - Protectorate Of Sigmar",
             "description": "Animals of the warband within 6\" of the Huntsman may use his Leadership. A hostile beast must pass a Leadership test to charge him."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "acolytes",
@@ -50886,7 +51175,8 @@
           "protectorate-of-sigmar-equipment-list",
           "protectorate-miscellaneous-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "archers",
@@ -50923,7 +51213,8 @@
         "lists": [
           "protectorate-of-sigmar-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "hounds",
@@ -50969,7 +51260,8 @@
             "type": "Warband - Protectorate Of Sigmar",
             "description": "A Hound within 12\" of the Warrior Priest may re-roll a failed Leadership test."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "crusaders",
@@ -51006,7 +51298,8 @@
         "lists": [
           "protectorate-of-sigmar-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -51557,7 +51850,8 @@
             "type": "Warband - Sea Ghosts",
             "description": "Once the Wayfinder captains a vessel of his own he is a Shipmaster, who turns the tide in battles at sea: once a battle, while he is within 6\" of the warband's boat, you may re-roll one dice result."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "feast-master",
@@ -51618,7 +51912,8 @@
             "type": "Warband - Sea Ghosts",
             "description": "Instead of a new skill, the Feast-Master may learn a Wardancer Dance:\n\nDance | While he performs it\nWhirling Death | +1 to his Injury rolls.\nStorm of Blades | +1 Attack.\nThe Shadows Coil | A special 4+ save that Strength, spells and magic weapons can't modify.\nWoven Mist | 1 Attack fewer, but he always strikes first; against a foe who also strikes first, attacks go in Initiative order.\n\nIn each round of close combat he fights he must perform one Dance he knows if he can, never the same one in two turns running of the same combat."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "lookouts",
@@ -51666,7 +51961,8 @@
             "type": "Warband - Sea Ghosts",
             "description": "When you roll on the Exploration chart, the Lookout lets you change one dice by -1 or +1."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sea-rangers",
@@ -51703,7 +51999,8 @@
         "lists": [
           "elf-rangers-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "minstrels",
@@ -51751,7 +52048,8 @@
             "type": "Warband - Sea Ghosts",
             "description": "A Minstrel promoted to Hero may learn a Wardancer Dance instead of a new skill (the Feast-Master's Shadow Dances of Loec), and then must dance in close combat as the Feast-Master does."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "wildkin",
@@ -51799,7 +52097,8 @@
             "type": "Warband - Sea Ghosts",
             "description": "A Wildkin controls up to five animals while they stay within 6\" of him. An animal not within 6\" of him in the Movement phase moves D6\" in a random direction; if that takes it into contact with a model, friend or foe, it attacks as if charging."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -52175,7 +52474,8 @@
             "type": "Warband - Shadow Warriors",
             "description": "Any warrior within 6\" of the Shadow Master may use his Leadership characteristic when taking any Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "shadow-walkers",
@@ -52217,7 +52517,8 @@
         "lists": [
           "shadow-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "shadow-weaver",
@@ -52269,7 +52570,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "shadow-warriors",
@@ -52306,7 +52608,8 @@
         "lists": [
           "shadow-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "shadow-warrior-novices",
@@ -52343,7 +52646,8 @@
         "lists": [
           "shadow-warrior-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -52885,7 +53189,8 @@
             "type": "Warband - Shallows Beasts",
             "description": "At the end of any close combat phase in which he is still in base contact with an enemy, the Buccaneer may take a Leadership test. If he passes, he may make a normal move away (not a run or a charge) and the enemy strikes no blows at him; if he fails, he stays in the combat and fights as normal in the next turn."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "mutant-priest",
@@ -52946,7 +53251,8 @@
             "type": "Warband - Shallows Beasts",
             "description": "The Mutant-Priest has a bite attack at his own Strength, with no penalty for not using a weapon. It always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "renegades",
@@ -52988,7 +53294,8 @@
         "lists": [
           "stromfels-heroes-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "foundlings",
@@ -53034,7 +53341,8 @@
             "type": "Warband - Shallows Beasts",
             "description": "A Foundling may re-roll any advance roll; the re-roll stands."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "wreckers",
@@ -53071,7 +53379,8 @@
         "lists": [
           "stromfels-henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "fishmen",
@@ -53114,7 +53423,8 @@
             "type": "Warband - Shallows Beasts",
             "description": "Fishmen are aquatic: they can be submerged in water without harm, treat impassable obstacles such as deep rivers, lakes or open sea as difficult terrain, and ignore the penalties for slow-moving rivers and ponds."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "swampers",
@@ -53167,7 +53477,8 @@
             "type": "Warband - Shallows Beasts",
             "description": "At the start of the recovery phase, a Swamper may tend a model in base contact with him, himself included: on a 4+ it regains 1 wound. He may not move in a turn he does this."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -53640,7 +53951,8 @@
             "type": "Warband - Sisters of Sigmar",
             "description": "The Sigmarite Matriarch is a servant of Sigmar and may use the Prayers of Sigmar as detailed in the Magic section and the Sigmarite Matriarchs start with one prayer generated at random. In addition the Sigmarite Matriarchs may learn a new Prayer instead of a new skill."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "augur",
@@ -53692,7 +54004,8 @@
             "type": "Warband - Sisters of Sigmar",
             "description": "An Augur can re-roll any failed characteristic tests (climbing, resisting spells or any other reason), and any rolls to hit in close combat or shooting. You must accept the second result. In addition, an Augur can use her Blessed Sight to help the Sisterhood when they are searching the city for wyrdstone. If the Augur is not put out of action in the battle, you may roll two dice for her in the exploration phase and pick either dice as the result."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sister-superior",
@@ -53735,7 +54048,8 @@
         "lists": [
           "sisters-of-sigmar-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "sigmarite-sister",
@@ -53772,7 +54086,8 @@
         "lists": [
           "sisters-of-sigmar-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "novices",
@@ -53809,7 +54124,8 @@
         "lists": [
           "sisters-of-sigmar-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -54229,7 +54545,8 @@
             "name": "Perfect Killer",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "black-skaven",
@@ -54272,7 +54589,8 @@
         "lists": [
           "skaven-hero-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "eshin-sorcerer",
@@ -54324,7 +54642,8 @@
             "type": "Warband - Skaven",
             "description": "The Eshin Sorcerer has the ability to use magic and casts spells like any other magicians, and the Eshin Sorcerer starts with one spells generated at random from the Magic of the Horned Rat. In addition the Eshin Sorcerer may learn a new Spell instead of a new skill."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "night-runners",
@@ -54365,7 +54684,8 @@
         "lists": [
           "skaven-henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "verminkin",
@@ -54402,7 +54722,8 @@
         "lists": [
           "skaven-henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "giant-rats",
@@ -54453,7 +54774,8 @@
             "type": "Warband - Skaven",
             "description": "Giant Rats are animals and do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "rat-ogre",
@@ -54507,7 +54829,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -54988,6 +55311,9 @@
             "type": "Warband - Skaven of Clan Moulder",
             "description": "When he goads, the Packmaster gets the benefits of both a Beastwhip and a Thingcatcher if he carries both."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -55031,7 +55357,8 @@
           "heroes-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "apprentices",
@@ -55085,7 +55412,8 @@
             "type": "Warband - Skaven of Clan Moulder",
             "description": "If the Packmaster is slain, one of the Apprentices must succeed him as Leader and counts as a Packmaster in every way from then on; a new Apprentice may be hired in his place. If the Packmaster and every Apprentice die at once, or the warband has no Apprentice when the Packmaster dies, the warband disbands."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "clanrats",
@@ -55123,7 +55451,8 @@
           "henchmen-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "giant-rats",
@@ -55169,7 +55498,8 @@
             "type": "Warband - Skaven of Clan Moulder",
             "description": "Giant Rats are animals and gain no experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "wolf-rats",
@@ -55215,7 +55545,8 @@
             "type": "Warband - Skaven of Clan Moulder",
             "description": "Giant Rats are animals and gain no experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "rat-ogres",
@@ -55279,7 +55610,8 @@
             "type": "Warband - Skaven of Clan Moulder",
             "description": "Rat Ogres are hired one at a time and never form a henchman group, even when you hire more than one."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -55828,7 +56160,8 @@
             "type": "Warband - Skaven of Clan Pestilens",
             "description": "Any warrior within 6\" of the Plague Priest may use his Leadership instead of his own."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "pestilens-sorcerer",
@@ -55880,7 +56213,8 @@
             "type": "Warband - Skaven of Clan Pestilens",
             "description": "The Pestilens Sorcerer is a spellcaster and may cast spells from the Horned Rat spell list."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "plague-monks",
@@ -55923,7 +56257,8 @@
         "lists": [
           "heroes-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "monk-initiates",
@@ -55965,7 +56300,8 @@
         "lists": [
           "heroes-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "plague-novices",
@@ -56002,7 +56338,8 @@
         "lists": [
           "henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "giant-rats",
@@ -56043,7 +56380,8 @@
             "type": "Warband - Skaven of Clan Pestilens",
             "description": "Giant Rats are animals and do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "rat-ogre",
@@ -56097,7 +56435,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -56655,7 +56994,8 @@
             "type": "Warband - Snotlings",
             "description": "The Hero gains +2 experience for surviving a battle."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bigsnotz",
@@ -56708,7 +57048,8 @@
             "type": "Warband - Snotlings",
             "description": "The Hero gains +2 experience for surviving a battle."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "snotling-scouts",
@@ -56771,7 +57112,8 @@
             "type": "Warband - Snotlings",
             "description": "A Snotling Scout may always run, even with enemies within 8\" at the start of the turn."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "snotling-shaman",
@@ -56837,7 +57179,8 @@
             "type": "Warband - Snotlings",
             "description": "Each time the Shaman tries to cast a spell, whether it works or not, roll a D6: on a 1-2 he and every model in base contact with him take a S5 magical hit. With a familiar not yet used this turn he may re-roll it, keeping the second result. No roll when he only rolls to keep a spell going."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "shoota-teams",
@@ -56896,7 +57239,8 @@
             "type": "Warband - Snotlings",
             "description": "When a Shoota Team fires a missile weapon other than a pebble or slingshot, it is knocked back D6\" at once. Hitting solid terrain, it takes a S2 hit; hitting another model, both take a S2 hit. Firing a pistol in combat, it moves the D6\" directly away from its opponent and leaves the combat, with no free attack against it. Knocked off a building's top, it tests for falling as normal."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "snotling-mobs",
@@ -56955,7 +57299,8 @@
             "type": "Warband - Snotlings",
             "description": "When a Snotling Mob starts a turn within 2\" of another Snotling Mob, both are Immune to Psychology for the rest of that turn, an opponent's turn included."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "wheelo",
@@ -57021,7 +57366,8 @@
             "type": "Warband - Snotlings",
             "description": "Weapons Training fits one weapon to the Wheelo: an axe gives its Impact Hits -1 to the armour save; a club gives them Concussion; a spear deals one Impact Hit to a model that charges it, before attacks; a morning star makes its first round of Impact Hits each game S5. Sprint lets it run or charge 3D6\" instead of 2D6\". Mighty Blow gives the crew +1 to wound in combat, not its Impact Hits."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "runts",
@@ -57080,7 +57426,8 @@
             "type": "Warband - Snotlings",
             "description": "A group of Runts may hold any number of them."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -57471,7 +57818,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "companions",
@@ -57524,7 +57872,8 @@
             "type": "Warband - Sorcerous Society",
             "description": "While a Companion is within 2\" of a wizard and not in hand-to-hand combat, he takes all missile fire aimed at the wizard and intercepts any charge at him. He moves at once to do it, even out of sequence or further than he could normally move in a turn, but only along a path he could take (not from another floor of a building)."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "mages",
@@ -57596,7 +57945,8 @@
             "type": "Warband - Sorcerous Society",
             "description": "A Mage may never have more spells than the leader. If he does, he at once fights the leader in a Wizard's Duel, another player playing the leader, and the loser leaves the warband."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "untrained",
@@ -57644,7 +57994,8 @@
             "type": "Warband - Sorcerous Society",
             "description": "An Untrained who rolls The Lad's Got Talent at once gains the Wizard skill. He may give up his extra advance to roll a spell at random, or roll for it as a Hero's advance."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "grunts",
@@ -57687,7 +58038,8 @@
             "type": "Warband - Sorcerous Society",
             "description": "A Grunt who rolls The Lad's Got Talent may become a mundane Hero, or an Untrained instead. So a Grunt who rolls it twice may become a wizard."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -58214,7 +58566,8 @@
             "name": "No Pain",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "seer",
@@ -58271,7 +58624,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "domnu",
@@ -58324,7 +58678,8 @@
             "type": "Warband - Survivors of Strigos",
             "description": "A Domnu has a special 5+ save against magical attacks."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "strigany",
@@ -58361,7 +58716,8 @@
         "lists": [
           "henchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "ghouls",
@@ -58401,7 +58757,8 @@
             "name": "Fear",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "giant-bats",
@@ -58456,7 +58813,8 @@
             "type": "Warband - Survivors of Strigos",
             "description": "A Giant Bat needs no line of sight to charge."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -59278,12 +59636,10 @@
             "name": "Leader",
             "type": "Warband - The Cursed Cavalcade",
             "description": "Any warrior of the Cavalcade Warband within 6\" of the Aristocrat may use his Leadership value when taking Leadership tests."
-          },
-          {
-            "name": "Expert Horseman",
-            "type": "Warband - The Cursed Cavalcade",
-            "description": "the Aristocrat has the Ride (Nightmare) skill."
           }
+        ],
+        "skills": [
+          "Ride [Animal]"
         ]
       },
       {
@@ -59328,12 +59684,9 @@
           "heroes-equipment-list",
           "special-equipment"
         ],
-        "specials": [
-          {
-            "name": "Expert Swordsman",
-            "type": "Warband - The Cursed Cavalcade",
-            "description": "As imperial nobles, the Companions have been taught the way of the sword since an early age. Companions all have Expert Swordsman Skill."
-          }
+        "specials": [],
+        "skills": [
+          "Expert Swordsman"
         ]
       },
       {
@@ -59386,7 +59739,8 @@
             "type": "Warband - The Cursed Cavalcade",
             "description": "When hiring a Twisted Scholar, if you did not upgrade it to a Wizard, you may pay 10 additional GC to make it a Chronicler. A Chronicler has in-depth knowledge of the city of Mordheim and may reroll an extra dice during Exploration phase and may decide which of the two dice to keep."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "cursed-piper",
@@ -59433,7 +59787,8 @@
             "type": "Warband - The Cursed Cavalcade",
             "description": "The Piper plays the Danse Macabre in combat. During the shooting phase the Cursed Piper can direct the cursed melody of is flute against one enemy model he can see within 6” from the Piper. The enemy model must take a Ld test.\n\nIf failed, the warrior is cursed by the Danse Macabre loses control of his body and forced to dance under the Piper’s will. The Piper can move the enemy model in any direction he wishes also out of close combat or force him to fall from height.\n\nAt the beginning of the enemy’s turn, in the recovery phase the warrior will have to pass a Ld test or will continue to be under the Pipers’ control and cannot shoot, charge or cast spells. If engaged in close combat the model cannot attack (it is too busy dancing!).\n\nOnly one enemy warrior at time can be controlled by the Danse Macabre. If the Piper targets another warrior the previous one is immediately free from the curse."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "thrall",
@@ -59471,7 +59826,8 @@
           "thralls-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "captured-thrall",
@@ -59520,7 +59876,8 @@
             "type": "Warband - The Cursed Cavalcade",
             "description": "Captured Thralls cannot earn experience points, and therefore cannot gain any advancement."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "great-bear",
@@ -59570,7 +59927,8 @@
             "type": "Warband - The Cursed Cavalcade",
             "description": "Great Bears are animals and thus do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "wild-beast",
@@ -59616,7 +59974,8 @@
             "type": "Warband - The Cursed Cavalcade",
             "description": "Great Bears are animals and thus do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "fighting-ape",
@@ -59667,6 +60026,11 @@
             "type": "Warband - The Cursed Cavalcade",
             "description": "Fighitng Apes are animals and thus do not gain experience, but can still climb and enter buildings as normal."
           }
+        ],
+        "skills": [
+          "Scale Sheer Surfaces",
+          "Acrobat",
+          "Dodge"
         ]
       }
     ],
@@ -60007,7 +60371,8 @@
             "type": "Warband - The Restless Dead",
             "description": "If a Liche gets an advance roll of +1 Wound, they may instead pick a new skill from their available lists."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "necromancer",
@@ -60068,7 +60433,8 @@
             "type": "Warband - The Restless Dead",
             "description": "As an Apprentice, the Necromancer spends much of their time running errands for their Liche masters and over the years get exceptionally good at it. When a Necromancer searches for rare items, they roll 3D6 and pick the two highest."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "grave-guard",
@@ -60139,7 +60505,8 @@
             "type": "Warband - The Restless Dead",
             "description": "Grave Guards may not search for rare items."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "zombies",
@@ -60200,7 +60567,8 @@
             "type": "Warband - The Restless Dead",
             "description": "Zombies never gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "skeletons",
@@ -60263,7 +60631,8 @@
             "type": "Warband - The Restless Dead",
             "description": "Zombies never gain experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "wights",
@@ -60326,7 +60695,8 @@
             "type": "Warband - The Restless Dead",
             "description": "Wights may gain experience, however Wights promoted to become Heroes by rolling The lad's got talent will be unable to search for rare items in the same way as Grave Guards. They must choose the Combat and Strength skill lists if promoted. Wights also gain Wight Blades if they become Heroes."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "scarecrows",
@@ -60403,7 +60773,8 @@
             "type": "Warband - The Restless Dead",
             "description": "Powerful constructs such as scarecrows require much more concentration from their summoners than normal skeletons or zombies to remain animated. The scarecrow is controlled by either the Liche or the Necromancer (note down on the warband roster which), but each may only control one at a time, so only a warband with both a Liche and a Necromancer may ever take two Scarecrows. If the Liche or the Necromancer is for some reason unable to participate in a battle, their Scarecrow will also be unable to participate.\n\nWhenever the scarecrow's controller loses a wound he must pass an unmodified Leadership test or the magical bond is broken and the scarecrow is immediately taken out of action."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -60981,7 +61352,8 @@
             "type": "Warband - The Sons of Hashut",
             "description": "Chaos Dwarf spellcasters are wizards and can learn a random spell from the Chaos Dwarf spell list."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "bull-centaur",
@@ -61027,7 +61399,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "chaos-dwarf-champion",
@@ -61069,7 +61442,8 @@
         "lists": [
           "chaos-dwarf-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "chaos-dwarf-warriors",
@@ -61106,7 +61480,8 @@
         "lists": [
           "chaos-dwarf-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "blunderbuss-chaos-dwarfs",
@@ -61143,7 +61518,8 @@
         "lists": [
           "blunderbusser-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "hobgoblins",
@@ -61191,7 +61567,8 @@
             "type": "Warband - The Sons of Hashut",
             "description": "Hobgoblins count as half the number of troops if the band has to make a rout check. For example, in a band made of 12 miniatures, if 2 Hobgoblin miniatures and 1 Chaos Dwarf miniature are out of action, the total would be two miniatures out of action (1/2 + 1/2 +1 =2). Also, Hobgoblins cannot be heroes, just reroll the “Lad's got talent” roll."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -61806,7 +62183,8 @@
             "type": "Warband - Tileans",
             "description": "Any warrior within 6\" of the Captain may use his Leadership characteristic when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "champions",
@@ -61858,7 +62236,8 @@
         "lists": [
           "tilean-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "youngbloods",
@@ -61917,7 +62296,8 @@
         "lists": [
           "tilean-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "warriors",
@@ -61954,7 +62334,8 @@
         "lists": [
           "tilean-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "marksmen",
@@ -61991,7 +62372,8 @@
         "lists": [
           "marksman-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "duelists",
@@ -62034,7 +62416,8 @@
             "type": "Warband - Tileans",
             "description": "Duellists are adept at fighting using their billowing cloaks to swirl at an enemy distracting him and warding off blows. The Duellist counts as using a buckler in close combat."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -62527,7 +62910,8 @@
             "type": "Warband - Tomb Guardians",
             "description": "The Tomb Lord is undead and follows all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "liche-priest",
@@ -62582,7 +62966,8 @@
             "type": "Warband - Tomb Guardians",
             "description": "The Tomb Lord is undead and follows all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "acolytes",
@@ -62629,7 +63014,8 @@
             "type": "Warband - Tomb Guardians",
             "description": "The Tomb Lord is undead and follows all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "skeleton-warriors",
@@ -62673,7 +63059,8 @@
             "type": "Warband - Tomb Guardians",
             "description": "Skeletons are undead and follow all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "tomb-guardians",
@@ -62717,7 +63104,8 @@
             "type": "Warband - Tomb Guardians",
             "description": "The Tomb Guards are undead and follow all rules for the Undead."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "tomb-scorpions",
@@ -62768,7 +63156,8 @@
             "type": "Warband - Tomb Guardians",
             "description": "Scorpions attack using the poisonous sting in their tails. This attack is worked out exactly as if the scorpion was attacking with Black Lotus."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -63071,7 +63460,8 @@
             "name": "No Pain",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "necromancer",
@@ -63121,7 +63511,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dregs",
@@ -63161,7 +63552,8 @@
         "lists": [
           "undead-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "ghouls",
@@ -63201,7 +63593,8 @@
             "name": "Fear",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "dire-wolves",
@@ -63267,7 +63660,8 @@
             "name": "No Pain",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "zombies",
@@ -63328,7 +63722,8 @@
             "type": "Warband - Undead",
             "description": "Zombies never gain experience. They do not learn from their mistakes. What did you expect?"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -63926,7 +64321,8 @@
             "type": "Warband - Underworld Alliance",
             "description": "The Goblin Bully re-rolls every to-hit roll in a combat the Slum Lord fights in too."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slum-lord",
@@ -63981,7 +64377,8 @@
             "type": "Warband - Underworld Alliance",
             "description": "When the Goblin Bully takes an enemy out of action in a combat the Slum Lord fights in too, roll a D6: on a 4+ the Slum Lord stole the kill, and gains its experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "stinky-gits",
@@ -64029,7 +64426,8 @@
             "type": "Warband - Underworld Alliance",
             "description": "A Stinky Git is not affected by poison attacks, and shrugs off any disease on a 4+, tested when he first catches it."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slave-champions",
@@ -64077,7 +64475,8 @@
             "type": "Warband - Underworld Alliance",
             "description": "A Slave Champion may re-roll any characteristic test in a scenario set in the sewers or anywhere else underground."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "skaven-slaves",
@@ -64114,7 +64513,8 @@
         "lists": [
           "skaven-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "boglars",
@@ -64167,7 +64567,8 @@
             "type": "Warband - Underworld Alliance",
             "description": "Whenever an enemy inflicts a wound on a Boglar, roll a D6: on a 5+ the wound is ignored. Not against wounds from fire or fire magic."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sewer-squigs",
@@ -64208,7 +64609,8 @@
             "type": "Warband - Underworld Alliance",
             "description": "A Sewer Squig moves 2D6-1\" each turn on land. In water it swims 2D6\" each movement phase, which water's penalties don't reduce; it isn't aquatic."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "giant-rats",
@@ -64249,7 +64651,8 @@
             "type": "Warband - Underworld Alliance",
             "description": "Giant Rats are animals and gain no experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "warpstone-troll",
@@ -64312,7 +64715,8 @@
             "name": "Large",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": [
@@ -64951,7 +65355,8 @@
             "type": "Warband - Vampire Hunters of Sylvania",
             "description": "The Vampire Hunter hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he may choose."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "slayers",
@@ -65001,7 +65406,8 @@
             "type": "Warband - Vampire Hunters of Sylvania",
             "description": "The Vampire Hunter hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he may choose."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "priest-of-morr",
@@ -65064,7 +65470,8 @@
             "type": "Warband - Vampire Hunters of Sylvania",
             "description": "The Priest of Morr is not a wizard, but starts with one Funerary Rite rolled at random."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "villagers",
@@ -65101,7 +65508,8 @@
         "lists": [
           "villager-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "wolfhounds",
@@ -65142,7 +65550,8 @@
             "type": "Warband - Vampire Hunters of Sylvania",
             "description": "Wolfhounds are animals and gain no experience."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "pilgrims",
@@ -65190,7 +65599,8 @@
             "type": "Warband - Vampire Hunters of Sylvania",
             "description": "Pilgrims use no bladed or ranged weapons, only maces, hammers and staffs, and the silver-tip stake."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -65737,7 +66147,8 @@
             "type": "Warband - Watchmen",
             "description": "Warriors within 6\" of the Watch Captain may use his Leadership instead of their own."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sergeants",
@@ -65779,12 +66190,9 @@
         "lists": [
           "watchmen-equipment-list"
         ],
-        "specials": [
-          {
-            "name": "Falconer",
-            "type": "Warband - Watchmen",
-            "description": "A Sergeant has the animal handling skill Falconer, so he may use a hunting bird."
-          }
+        "specials": [],
+        "skills": [
+          "Falconer"
         ]
       },
       {
@@ -65837,7 +66245,8 @@
             "type": "Warband - Watchmen",
             "description": "At the start of the combat phase, the Sleuth may try to entrance one living warrior in base contact who isn't immune to psychology: he must pass a Leadership test or be entranced. An entranced warrior may not attack in close combat, and counts as knocked down when he is attacked. The trance ends when he or the Sleuth is attacked, or when she ends it."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "rookies",
@@ -65878,7 +66287,8 @@
         "lists": [
           "watchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "officers",
@@ -65915,7 +66325,8 @@
         "lists": [
           "watchmen-equipment-list"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "turnkeys",
@@ -65957,7 +66368,8 @@
             "name": "Immune to Poison",
             "type": "Trait"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "sewer-jacks",
@@ -66005,7 +66417,8 @@
             "type": "Warband - Watchmen",
             "description": "A Sewer Jack may re-roll any characteristic test in a scenario set in the sewers or anywhere else underground."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -66536,7 +66949,8 @@
             "name": "Hate Spellcasters",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "witch-hunters",
@@ -66583,7 +66997,8 @@
             "name": "Hate Spellcasters",
             "type": "Psychology"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "warrior-priest",
@@ -66635,7 +67050,8 @@
             "type": "Warband - Witch Hunters",
             "description": "The Warrior-Priest is a servant of Sigmar and may use the Prayers of Sigmar as detailed in the Magic section and the Warrior-Priest start with one prayer generated at random. In addition the Warrior-Priest may learn a new Prayer instead of a new skill."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "flagellants",
@@ -66678,7 +67094,8 @@
             "type": "Warband - Witch Hunters",
             "description": "Flagellants are convinced that the end of the world is nigh, and nothing in this world holds any terror for them. Flagellants automatically pass all Leadership-based tests they are required to take. A Flagellant may never become a warband leader."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "zealots",
@@ -66715,7 +67132,8 @@
         "lists": [
           "zealot-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       },
       {
         "key": "war-hounds",
@@ -66756,7 +67174,8 @@
             "type": "Warband - Witch Hunters",
             "description": "War hounds are animals and thus do not gain experience."
           }
-        ]
+        ],
+        "skills": []
       }
     ],
     "upgrades": []
@@ -67317,7 +67736,8 @@
             "type": "Warband - Wood Elves of Athel Loren",
             "description": "Warriors within 6\" of the Hunt Master may use his Leadership when taking Leadership tests."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "waywatchers",
@@ -67371,7 +67791,8 @@
             "type": "Warband - Wood Elves of Athel Loren",
             "description": "While a Waywatcher is hidden, every enemy model must pass an extra Initiative test to spot him."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "forest-mage",
@@ -67424,7 +67845,8 @@
             "name": "Wizard",
             "type": "Caster"
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "deepwood-scouts",
@@ -67468,7 +67890,8 @@
             "type": "Warband - Wood Elves of Athel Loren",
             "description": "When more than one Deepwood Scout shoots at the same target, they have +1 to their injury rolls."
           }
-        ]
+        ],
+        "skills": []
       },
       {
         "key": "glade-guard",
@@ -67506,7 +67929,8 @@
           "wood-elf-scout-equipment-list",
           "special-equipment"
         ],
-        "specials": []
+        "specials": [],
+        "skills": []
       }
     ],
     "upgrades": []

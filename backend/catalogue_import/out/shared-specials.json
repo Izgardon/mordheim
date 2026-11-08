@@ -598,11 +598,6 @@
       "name": "Scaly Skin (Chameleon Skink)"
     },
     {
-      "owner": "Old Prospector",
-      "rule": "Resilient",
-      "name": "Resilient (Old Prospector)"
-    },
-    {
       "owner": "Sigmund Spindle, the Harvester of Flesh",
       "rule": "No Pain",
       "name": "No Pain (Sigmund)"
@@ -614,16 +609,6 @@
     }
   ],
   "own_names": [
-    {
-      "owner": "Arabian Merchant",
-      "rule": "Haggle",
-      "name": "Haggle (Arabian Merchant)"
-    },
-    {
-      "owner": "Cathayan Merchant",
-      "rule": "Haggle",
-      "name": "Haggle (Cathayan Merchant)"
-    },
     {
       "owner": "Arabian Merchant",
       "rule": "Marketeer",
@@ -748,16 +733,6 @@
       "owner": "Ungor Trapper",
       "rule": "Set Traps",
       "name": "Set Traps (Ungor Trapper)"
-    },
-    {
-      "owner": "Chameleon Skink",
-      "rule": "Infiltrator",
-      "name": "Infiltrator (Chameleon Skink)"
-    },
-    {
-      "owner": "Halfling Thief",
-      "rule": "Infiltrator",
-      "name": "Infiltrator (Halfling Thief)"
     },
     {
       "owner": "Dwarf Pathfinder",

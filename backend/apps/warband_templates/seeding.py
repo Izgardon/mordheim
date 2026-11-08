@@ -249,7 +249,7 @@ def write_fighters(
     TemplateFighterSkill.objects.bulk_create(
         TemplateFighterSkill(fighter=fighter, position=n, skill_id=book.skill(name, f"{owner}, {row['name']}"))
         for fighter, row in zip(fighters, entries, strict=True)
-        for n, name in enumerate(row.get("skills") or [])
+        for n, name in enumerate(row["skills"])
     )
 
 

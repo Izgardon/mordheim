@@ -29,7 +29,7 @@ from catalogue_import.pdf_warbands import (
     stub_items,
 )
 from catalogue_import.personae import Catalogue, build_personae, put_names_right
-from catalogue_import.pointer_rules import render_pointers, resolve_pointers
+from catalogue_import.pointer_rules import check_answers, render_pointers, resolve_pointers
 from catalogue_import.random_mutations import build_random_mutations, render_random
 from catalogue_import.report import ReportData, render_report
 from catalogue_import.rules import build_shared_rules, index_rules
@@ -267,7 +267,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     template_log = TemplateLog()
     one_rule = load_shared()  # the shared specials (William, 5 Nov 2026)
     templates = build_templates(snapshot, types, resolver, everything, *our_races_and_lores(), template_log, one_rule)
-    pointers = resolve_pointers(templates, sources.our_personae, grouped.skills)  # the rule, not "See ..." (7 Nov)
+    check_answers(templates, sources.our_personae)
+    pointers = resolve_pointers(templates, sources.our_personae, grouped.skills)  # the skill he starts with (7 Nov)
     shared_specials = build_shared(one_rule, sources.our_hired_swords, sources.our_personae, snapshot.injuries)
     own = own_rules(one_rule, sources.our_hired_swords, sources.our_personae)  # each owner's own (5 Nov 2026)
     shared_specials["own_names"] = own.names()

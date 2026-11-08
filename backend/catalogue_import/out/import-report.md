@@ -652,7 +652,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 2220 |
 | warband rules | 281 |
 | upgrades | 116 |
-| the templates' own specials | 671 |
+| the templates' own specials | 650 |
 
 ### List lines
 
@@ -985,7 +985,6 @@ List prices the pages differ from: none.
 | Scaly Skin (Cold One Beasthounds) | Dark Elves: Cold One Beasthound | A 6+ armour save; the mutation's is 5+, and armour adds to it. |
 | Scaly Skin (Kroxigor) | Lizardmen: Kroxigor | A natural 4+ save; the mutation's is 5+. |
 | Scaly Skin (Chameleon Skink) | Chameleon Skink | The Lizardmen's Scaly Skin, a Skink's 6+; the mutation's is 5+. |
-| Resilient (Old Prospector) | Old Prospector | The Resilient skill: -1 Strength to every hit against him in close combat; the mutation is +1 Toughness. |
 | No Pain (Sigmund) | Sigmund Spindle, the Harvester of Flesh | Ignores knocked down results too: only losing his last wound takes him out of action. |
 | No Pain (Veskit) | Veskit, High Executioner of Clan Eshin | Ignores knocked down results too: only losing his last wound takes him out of action. |
 | Agile (Fighting Ape) | The Cursed Cavalcade: Fighting Ape | The Scale Sheer Surfaces, Acrobat and Dodge skills and a diving charge from up to 10" high; the Grace of Shornaal is +1 to Initiative tests. |
@@ -1000,7 +999,6 @@ List prices the pages differ from: none.
 
 A hired sword's or dramatis persona's own rule is a row of his own (two owners share one only through the shared list). Where other owners' rules of its name are worded otherwise, it is named for him:
 
-- Haggle: Arabian Merchant; Cathayan Merchant.
 - Marketeer: Arabian Merchant; Cathayan Merchant.
 - Deathwish: Dwarf Troll Slayer; Dwarf Slayer Pirate.
 - Hard to Kill: Dwarf Troll Slayer; Dwarf Pathfinder; Dwarf Treasure Hunter; Runesmith Journeyman; Dwarf Slayer Pirate.
@@ -1009,7 +1007,6 @@ A hired sword's or dramatis persona's own rule is a row of his own (two owners s
 - Expert Rider: Highwayman; Roadwarden; The Headless Horseman.
 - Songster: Bard; William Schäkestange, Master Bard.
 - Set Traps: Big Game Hunter; Ungor Trapper.
-- Infiltrator: Chameleon Skink; Halfling Thief.
 - Explorer: Dwarf Pathfinder; Tomb Robber.
 - Wanderer: Elf Mage; Aenur, the Sword of Twilight; Dijin Katal, the Renegade Assassin; The Headless Horseman.
 - Hatred: Gaoler; Wolf Priest of Ulric; Grave Robber.
@@ -1603,26 +1600,57 @@ Kept apart from a family's, the effect differing:
 - Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: "match it to ours drop theirs"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); Seeker's "only one Elven Hero" opens its description, and it is named Seeker (Wood Elves of Athel Loren), as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: "separate yes").
 - Flag (p5): Woodland Incantations is a new lore. Lyrics of Feral Infatuation gives no range or duration, and Song of the Sun names no test ("must make a test"): both are kept as printed.
 
-## Pointer rules
+## Pointer rules and starting skills
 
-A fighter's or dramatis persona's own rule whose whole text pointed elsewhere takes the rule it points to (William, 7 Nov 2026: "it should just say the rule there!"; catalogue_import/pointer_rules.py):
+A fighter's or dramatis persona's own rule that only pointed to a skill, or said he has one, is now the skill, which he starts with as one he'd learned (William, 7 Nov 2026: "yes please do that"; catalogue_import/pointer_rules.py), and the rule goes; a rule that says more keeps its text:
 
-- Gunnery School of Nuln: Senior Gunnery Officer: Hunter, from our Hunter skill.
+- Battle Monks of Cathay: Emissary: Ride Horse, starts with Ride [Animal].
+- Bretonnian Chapel Guard: Questing Knight: Ride, starts with Ride [Animal].
+- Carnival of Chaos: Brute: Unnatural Strength, starts with Strongman.
+- Forest Goblins: Chieftain: Ride Spiders, starts with Ride [Animal].
+- Gunnery School of Nuln: Senior Gunnery Officer: Hunter, starts with Hunter.
+- Gunnery School of Nuln: Marksmen: Quick Reload, starts with Hunter.
+- Imperial Outriders: Knight: Ride, starts with Ride [Animal].
+- Imperial Outriders: Outrider: Ride, starts with Ride [Animal].
+- Imperial Outriders: Scout: Ride, starts with Ride [Animal].
+- Imperial Outriders: Chasseur: Ride, starts with Ride [Animal].
+- Imperial Outriders: Hussar: Ride (Hussar), starts with Ride [Animal].
+- Imperial Outriders: Hussar: Combat Riding, starts with Combat Riding.
+- Imperial Outriders: Groom: Ride, starts with Ride [Animal].
+- Imperial Outriders: Groom: Horse Handling, starts with [Animal] Handler.
+- Knights of the Bitter Moors: Questing Knight: Ride, keeps the rule and starts with Ride [Animal].
+- Knights of the Bitter Moors: Knight Errant: Ride, keeps the rule and starts with Ride [Animal].
+- Knights of the Bitter Moors: Squire: Starting Skills, starts with Ride [Animal], [Animal] Handler.
+- Knights of the Bitter Moors: Mounted Yeoman: Mounted or Nothin', keeps the rule and starts with Ride [Animal].
+- Merchant Caravans: Knights Vanguard: Ride Warhorse, starts with Ride [Animal].
+- Militant Mootlanders: Thief: Infiltration, starts with Infiltration.
+- Nipponese Expedition: Hatamoto: Ride, starts with Ride [Animal].
+- Nipponese Expedition: Retainer: Ride, starts with Ride [Animal].
+- Ogre Hunting Party: Ogre Hunter: Sabre Trainer, starts with Sabre Trainer.
+- Pit Fighters: Pit King: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters: Dwarf Troll Slayer: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters: Pit Veteran: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters: Pit Fighter: Pit Fighter (Pit Fighter), starts with Pit Fighter.
+- Pit Fighters: Pursuer: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters: Ogre Pit Fighter: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters (old): Pit King: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters (old): Dwarf Troll Slayer: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters (old): Pit Veteran: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters (old): Ogre Pit Fighter: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters (old): Pursuer: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters (old): Pit Fighter: Pit Fighter, starts with Pit Fighter.
+- Pit Fighters (old): Pit Fighter: Arms Master, starts with Arms master.
+- Skaven of Clan Moulder: Packmaster: Master Handler, keeps the rule and starts with Ride [Animal].
+- The Cursed Cavalcade: Aristocrat: Expert Horseman, starts with Ride [Animal].
+- The Cursed Cavalcade: Companion: Expert Swordsman, starts with Expert Swordsman.
+- The Cursed Cavalcade: Fighting Ape: Agile (Fighting Ape), keeps the rule and starts with Scale Sheer Surfaces, Acrobat, Dodge.
+- Watchmen: Sergeant: Falconer, starts with Falconer.
+- Grand Master Ippan Shu: Parry Missiles, keeps the rule and starts with Dodge.
+- Maximilian the Mad: Strongman, starts with Strongman.
+
+A rule pointing to another fighter's entry takes that rule:
+
 - Orc Mob: Cave Squig: Not Orcs (Cave Squig), from the Goblin Warriors entry's Not Orcs.
-- Pit Fighters: Pit King: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters: Dwarf Troll Slayer: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters: Pit Veteran: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters: Pit Fighter: Pit Fighter (Pit Fighter), from our Pit Fighter skill.
-- Pit Fighters: Pursuer: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters: Ogre Pit Fighter: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters (old): Pit King: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters (old): Dwarf Troll Slayer: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters (old): Pit Veteran: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters (old): Ogre Pit Fighter: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters (old): Pursuer: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters (old): Pit Fighter: Pit Fighter, from our Pit Fighter skill.
-- Pit Fighters (old): Pit Fighter: Arms Master, from our Arms Master skill.
-- Maximilian the Mad: Strongman, from our Strongman skill.
 
 Left pointing (nothing to take the rule from):
 

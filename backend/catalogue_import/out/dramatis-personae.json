@@ -734,7 +734,8 @@
       "Art of Silent Death",
       "Strike to Injure",
       "Step Aside",
-      "Mighty Blow"
+      "Mighty Blow",
+      "Dodge"
     ],
     "spells": [],
     "equipment": [],
@@ -1393,13 +1394,11 @@
       {
         "name": "Fear",
         "description": "His reputation is such that he causes fear as per the rulebook. Any models from the warband hiring him that are within 3” of him are also immune to fear. Note: models wishing to charge a fear causing enemy outside 3” still need to pass a fear test as normal."
-      },
-      {
-        "name": "Strongman",
-        "description": "The warrior is capable of great feats of strength. He may use a double-handed weapon without the usual penalty of always striking last. Work out order of battle as you would with other weapons."
       }
     ],
-    "skills": [],
+    "skills": [
+      "Strongman"
+    ],
     "spells": [],
     "equipment": [],
     "dramatis_persona": {

@@ -110,8 +110,10 @@ class SeedAllTests(TestCase):
                 # Frenzy, Hate High Elves, Hate Bandits and Outlaws and Hate Spellcasters shared (William, 7 Nov 2026):
                 # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4; a
                 # pointer rule takes the rule it points to (William, 7 Nov 2026), so the Cave Squig holds the Goblin
-                # Warriors' Not Orcs and the Pit Fighters' Pit Fighter its skill's one row: 2 fewer
-                "Special": 1086,
+                # Warriors' Not Orcs and the Pit Fighters' Pit Fighter its skill's one row: 2 fewer; a rule that only
+                # named a skill is the skill he starts with (William, 7 Nov 2026: "yes please do that"): the
+                # templates' 21, the hired swords' 9 and Maximilian's Strongman fewer
+                "Special": 1055,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,
@@ -329,14 +331,21 @@ class SeedAllTests(TestCase):
         )
         self.assertFalse(book.filter(name__in=merged).exists())
 
-    def test_a_rule_that_only_pointed_to_a_skill_says_the_skill(self):
-        # William, 7 Nov 2026: "the unit has the hunter skill and we just reference the skills page, it should just
-        # say the rule there!" (catalogue_import/pointer_rules.py)
+    def test_a_rule_that_only_named_a_skill_is_the_skill_he_starts_with(self):
+        # William, 7 Nov 2026, of the Senior Gunnery Officer's Hunter ("See Shooting Skills."): should he start with
+        # the skill itself, as one he'd learned? "yes please do that" (catalogue_import/pointer_rules.py)
         officer = TemplateFighter.objects.get(template__slug="gunnery-school-of-nuln", name="Senior Gunnery Officer")
-        hunter = officer.special_links.get(special__name="Hunter").special
-        skill = Skill.objects.get(campaign__isnull=True, name="Hunter")
-        self.assertEqual(hunter.description, skill.description)
+        hunter = Skill.objects.get(campaign__isnull=True, name="Hunter")
+        self.assertEqual([link.skill_id for link in officer.skill_links.all()], [hunter.id])
+        self.assertFalse(officer.special_links.filter(special__name="Hunter").exists())
         self.assertFalse(Special.objects.filter(description__istartswith="See Shooting Skills").exists())
+        maximilian = DramatisPersona.objects.get(campaign__isnull=True, name="Maximilian the Mad")
+        self.assertIn("Strongman", maximilian.skill_links.values_list("skill__name", flat=True))
+        self.assertFalse(maximilian.special_links.filter(special__name="Strongman").exists())
+        prospector = HiredSword.objects.get(campaign__isnull=True, name="Old Prospector")
+        self.assertEqual(
+            set(prospector.skill_links.values_list("skill__name", flat=True)), {"Wyrdstone Hunter", "Resilient"}
+        )
 
     def test_a_rule_one_beast_holds_is_named_for_it(self):
         # the review (5 Nov 2026: W7): a book rule typed Animal that one beast holds reads "<rule> (<beast>)" in the

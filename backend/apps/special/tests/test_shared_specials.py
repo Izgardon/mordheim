@@ -201,10 +201,8 @@ class SharedLookupTests(TestCase):
         own = BookLookups("Dramatis Persona").special({"name": "Regeneration", "description": "4+."}, BELANDYSH)
         skink = BookLookups("Hired Sword").special({"name": "Scaly Skin", "description": "6+."}, "Chameleon Skink")
         rot = BookLookups("Hired Sword").special("Neiglish Rot", "Anyone")  # MiM's name for Nurgle's Rot
-        skill = BookLookups("Hired Sword").special({"name": "Resilient", "description": "The skill."}, "Old Prospector")
 
-        assert own is not None and skink is not None and rot is not None and skill is not None
-        self.assertEqual((skill.name, skill.type), ("Resilient (Old Prospector)", "Hired Sword - Old Prospector"))
+        assert own is not None and skink is not None and rot is not None
         self.assertEqual((own.name, own.category), ("Regeneration (Belandysh)", BODY))
         self.assertEqual((skink.name, skink.type), ("Scaly Skin (Chameleon Skink)", "Hired Sword - Chameleon Skink"))
         self.assertEqual((rot.name, rot.type, rot.category), ("Nurgle's Rot", "Blessing of Nurgle", MUTATION))
