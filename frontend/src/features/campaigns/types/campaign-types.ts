@@ -163,6 +163,34 @@ export type CampaignBattleHistoryEntry = {
   moments?: CampaignBattleMoment[];
 };
 
+/**
+ * One unit put out of action in a round of a battle's fight (William, 7 Nov 2026: "battles: just
+ * do put out of action"): a warband's unit or a neutral creature (`warband_id` null), and who took
+ * him out where a kill was recorded with it.
+ */
+export type BattleRecordOut = {
+  name: string;
+  warband_id: number | null;
+  warband_name: string;
+  by: string | null;
+};
+
+/** What the Aftermath recorded for one of a warband's units: its serious injuries and death. */
+export type BattleRecordUnit = {
+  name: string;
+  unit_kind: "hero" | "henchman" | "hireling";
+  group_name: string;
+  /** Each serious injury's result in the order rolled ("Nervous Condition", "Survives"). */
+  results: string[];
+  dead: boolean;
+};
+
+/** GET battle-history/<battle>/record/: the battle round by round, then each warband's aftermath. */
+export type BattleRecord = {
+  rounds: { round: number; out_of_action: BattleRecordOut[] }[];
+  aftermath: { warband_id: number; warband_name: string; units: BattleRecordUnit[] }[];
+};
+
 export type CampaignChronicleKind =
   | "death"
   | "level"

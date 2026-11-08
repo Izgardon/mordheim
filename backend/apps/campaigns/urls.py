@@ -5,6 +5,7 @@ from .views import (
     CampaignActiveBattlesView,
     CampaignArchiveView,
     CampaignBattleHistoryView,
+    CampaignBattleRecordView,
     CampaignChatReadView,
     CampaignChronicleView,
     CampaignCommonRulesView,
@@ -55,6 +56,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battle-history/",
         CampaignBattleHistoryView.as_view(),
         name="campaigns-battle-history",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/battle-history/<int:battle_id>/record/",
+        CampaignBattleRecordView.as_view(),
+        name="campaigns-battle-record",
     ),
     path(
         "campaigns/<int:campaign_id>/chronicle/",

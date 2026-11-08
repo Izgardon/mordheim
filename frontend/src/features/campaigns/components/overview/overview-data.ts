@@ -1,6 +1,9 @@
 import type { GameIconName } from "@/components/ui/game-icons";
 
 import type {
+  BattleRecord,
+  BattleRecordOut,
+  BattleRecordUnit,
   CampaignBattleHistoryEntry,
   CampaignBattleMoment,
   CampaignPlayer,
@@ -139,4 +142,49 @@ export function momentParts(moment: CampaignBattleMoment) {
     name,
     after: moment.detail.slice(at + name.length),
   };
+}
+
+/** One group of an open battle's record: its turn's units out of action and moments, or the After. */
+export type RecordGroup = {
+  label: string;
+  outs: BattleRecordOut[];
+  moments: CampaignBattleMoment[];
+  aftermath: BattleRecord["aftermath"];
+};
+
+/**
+ * The Battles page's open battle (William, 7 Nov 2026: "battles: just do put out of action, can
+ * then also show what happened to units in that battle after if they got injuries or died"): each
+ * turn's units put out of action, then its pivotal moments; the moments from kills logged after
+ * the fight ("During"); then After, each warband's injuries and deaths and the result moments.
+ */
+export function recordGroups(record: BattleRecord, moments: CampaignBattleMoment[] = []) {
+  const turns = new Map<number, RecordGroup>();
+  const turn = (round: number) => {
+    const found = turns.get(round) ?? {
+      label: `Turn ${round}`,
+      outs: [],
+      moments: [],
+      aftermath: [],
+    };
+    turns.set(round, found);
+    return found;
+  };
+  for (const { round, out_of_action } of record.rounds) turn(round).outs.push(...out_of_action);
+  for (const moment of moments) if (moment.round) turn(moment.round).moments.push(moment);
+  const during = moments.filter((moment) => !moment.round && moment.tag === "During");
+  const results = moments.filter((moment) => !moment.round && moment.tag !== "During");
+  const groups = [...turns.entries()].sort(([a], [b]) => a - b).map(([, group]) => group);
+  if (during.length) groups.push({ label: "During", outs: [], moments: during, aftermath: [] });
+  if (record.aftermath.length || results.length) {
+    groups.push({ label: "After", outs: [], moments: results, aftermath: record.aftermath });
+  }
+  return groups;
+}
+
+/** What the Aftermath did to a unit: its results in order, "Dead" added when none says it. */
+export function aftermathText(unit: BattleRecordUnit) {
+  const results =
+    unit.dead && !unit.results.includes("Dead") ? [...unit.results, "Dead"] : unit.results;
+  return results.join(", ");
 }

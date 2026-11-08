@@ -2,6 +2,7 @@ import { useQuery, type QueryClient, type QueryKey } from "@tanstack/react-query
 
 // api
 import {
+  getBattleRecord,
   listCampaignActiveBattles,
   listCampaignBattleHistory,
   listCampaignChronicle,
@@ -54,6 +55,15 @@ export function useCampaignBattleHistory(campaignId: number) {
   return useQuery({
     queryKey: queryKeys.campaign.battleHistory(campaignId),
     queryFn: () => listCampaignBattleHistory(campaignId),
+    ...listOptions(campaignId),
+  });
+}
+
+/** One ended battle's record, read when its row opens on the Battles page. */
+export function useBattleRecord(campaignId: number, battleId: number) {
+  return useQuery({
+    queryKey: queryKeys.campaign.battleRecord(campaignId, battleId),
+    queryFn: () => getBattleRecord(campaignId, battleId),
     ...listOptions(campaignId),
   });
 }

@@ -4,6 +4,7 @@ import { socketIdHeaders } from "@/lib/realtime/socket-headers";
 
 // types
 import type {
+  BattleRecord,
   CampaignBattleHistoryEntry,
   CampaignChronicleEntry,
   CampaignChronicleFilter,
@@ -75,6 +76,11 @@ export function listCampaignPlayerNames(campaignId: number) {
 
 export function listCampaignBattleHistory(campaignId: number) {
   return apiRequest<CampaignBattleHistoryEntry[]>(`/campaigns/${campaignId}/battle-history/`, {});
+}
+
+/** One ended battle round by round, then what its Aftermath did to each warband's units. */
+export function getBattleRecord(campaignId: number, battleId: number) {
+  return apiRequest<BattleRecord>(`/campaigns/${campaignId}/battle-history/${battleId}/record/`);
 }
 
 /** The chronicle: the newest entries of one kind, or of every kind ("all"). */

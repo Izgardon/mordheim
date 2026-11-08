@@ -41,6 +41,9 @@ export const queryKeys = {
     /** Members' ids and names only (`players/?fields=basic`), for name pickers (PERF-41). */
     playerNames: (campaignId: number) => ["campaign", campaignId, "players", "basic"] as const,
     battleHistory: (campaignId: number) => ["campaign", campaignId, "battle-history"] as const,
+    /** One ended battle round by round and its aftermath (the Battles page's open row). */
+    battleRecord: (campaignId: number, battleId: number) =>
+      ["campaign", campaignId, "battle-history", battleId, "record"] as const,
     chronicle: (campaignId: number, kind: string) =>
       ["campaign", campaignId, "chronicle", kind] as const,
     /** The open bounties, with your warband's gold (`bounty.changed` writes each one in). */

@@ -5,7 +5,9 @@ from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.battles.models import Battle
 from apps.battles.services.broadcast import ALL
+from apps.battles.services.record import battle_record
 from apps.battles.views.responses import broadcast_response, response_with_snapshot
 from apps.core.throttling import BATTLE_WRITE_THROTTLE_CLASSES
 from apps.users.names import display_name
@@ -44,6 +46,18 @@ class CampaignPlayersView(APIView):
 class CampaignBattleHistoryView(CampaignScopedView):
     def get(self, request, campaign_id):
         return Response(battle_history_payload(campaign_id))
+
+
+class CampaignBattleRecordView(CampaignScopedView):
+    """GET: one ended battle round by round, then each warband's aftermath (the Battles page's open row, any member;
+    battles/services/record.py)."""
+
+    def get(self, request, campaign_id, battle_id):
+        battle = Battle.objects.filter(campaign_id=campaign_id, id=battle_id, status=Battle.STATUS_ENDED)
+        found = battle.only("id", "neutral_groups_json").first()
+        if found is None:
+            return Response({"detail": "Not found"}, status=404)
+        return Response(battle_record(found))
 
 
 class CampaignChronicleView(CampaignScopedView):
