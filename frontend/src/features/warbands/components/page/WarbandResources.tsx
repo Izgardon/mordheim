@@ -44,8 +44,9 @@ const defaultFirst = (resources: WarbandResource[]) => [
  * The warband's resources (design E): the default resource first, with no icon, then campaign
  * points, then the rest; − and + inline, Add resource (its name, starting at 0, opens in the
  * button's place: William, 7 Nov 2026, "add resource should just be name not amount"), and
- * Rename, Delete, Sell (the default and campaign points only sell). Selling the default resource
- * prices it from the campaign's table at the warband's size band, which the player may change.
+ * Rename, Delete, Sell (the default only sells; campaign points have no menu, William, 8 Nov 2026:
+ * "it isnt sellable, just the +-"). Selling the default resource prices it from the campaign's
+ * table at the warband's size band, which the player may change.
  */
 export default function WarbandResources({
   warbandId,
@@ -116,52 +117,54 @@ export default function WarbandResources({
               >
                 <Plus aria-hidden="true" />
               </IconButton>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <IconButton
-                    aria-label={`${resource.name} actions`}
-                    look="plain"
-                    className="h-8 w-8"
-                  >
-                    <EllipsisVertical aria-hidden="true" />
-                  </IconButton>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Portal>
-                  <DropdownMenu.Content
-                    align="end"
-                    className="z-[70] min-w-[160px] border border-border bg-panel p-1"
-                  >
-                    {isFixed(resource) ? null : (
+              {resource.is_campaign_points ? null : (
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <IconButton
+                      aria-label={`${resource.name} actions`}
+                      look="plain"
+                      className="h-8 w-8"
+                    >
+                      <EllipsisVertical aria-hidden="true" />
+                    </IconButton>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Portal>
+                    <DropdownMenu.Content
+                      align="end"
+                      className="z-[70] min-w-[160px] border border-border bg-panel p-1"
+                    >
+                      {isFixed(resource) ? null : (
+                        <DropdownMenu.Item
+                          className={MENU_ITEM}
+                          onSelect={() => {
+                            setText(resource.name);
+                            setEditing({ kind: "rename", resource });
+                          }}
+                        >
+                          Rename
+                        </DropdownMenu.Item>
+                      )}
                       <DropdownMenu.Item
                         className={MENU_ITEM}
                         onSelect={() => {
-                          setText(resource.name);
-                          setEditing({ kind: "rename", resource });
+                          sale.reset();
+                          setEditing({ kind: "sell", resource });
                         }}
                       >
-                        Rename
+                        Sell
                       </DropdownMenu.Item>
-                    )}
-                    <DropdownMenu.Item
-                      className={MENU_ITEM}
-                      onSelect={() => {
-                        sale.reset();
-                        setEditing({ kind: "sell", resource });
-                      }}
-                    >
-                      Sell
-                    </DropdownMenu.Item>
-                    {isFixed(resource) ? null : (
-                      <DropdownMenu.Item
-                        className={`${MENU_ITEM} text-danger`}
-                        onSelect={() => remove.mutate(resource.id, { onError })}
-                      >
-                        Delete
-                      </DropdownMenu.Item>
-                    )}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Portal>
-              </DropdownMenu.Root>
+                      {isFixed(resource) ? null : (
+                        <DropdownMenu.Item
+                          className={`${MENU_ITEM} text-danger`}
+                          onSelect={() => remove.mutate(resource.id, { onError })}
+                        >
+                          Delete
+                        </DropdownMenu.Item>
+                      )}
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Portal>
+                </DropdownMenu.Root>
+              )}
             </>
           ) : null}
         </div>

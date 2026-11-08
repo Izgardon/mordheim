@@ -16,9 +16,9 @@ const fieldLabel = "flex flex-col gap-1 text-xs font-bold text-muted-foreground"
 
 /**
  * Camp's Sell (design E): which resource, how many and the gold received; the default resource is
- * priced from the campaign's table at the warband's size band, which the player may change. The
- * sale goes through the warband's resource sale (gold and its ledger row at once) and camp notes
- * it.
+ * priced from the campaign's table at the warband's size band, which the player may change, and
+ * campaign points aren't offered (William, 8 Nov 2026: "it isnt sellable"). The sale goes through
+ * the warband's resource sale (gold and its ledger row at once) and camp notes it.
  */
 export default function SellDialog({
   camp,
@@ -29,7 +29,7 @@ export default function SellDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const resources = camp.postgame.resources;
+  const resources = camp.postgame.resources.filter((entry) => !entry.is_campaign_points);
   const sale = useResourceSale(camp.warbandId);
   const [resourceId, setResourceId] = useState<number | null>(null);
   const resource = resources.find((entry) => entry.id === resourceId) ?? resources[0];

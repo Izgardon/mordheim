@@ -1,11 +1,11 @@
 """Campaign points (William, 7 Nov 2026: "campaign points campaign wide setting - if enabled adds another mandatory
 resource called campaign points"): a campaign setting, off at first, that the campaign's settings change. On, every
-warband holds Campaign points (at 0, listed after the default resource, never renamed or deleted, changed like any
+warband holds Campaign points (at 0, listed after the default resource, never renamed, deleted or sold, changed like any
 resource), a warband raised later too; off, they are hidden with their amounts kept, and on again they come back."""
 
 from typing import Any
 
-from apps.warbands.models import Warband, WarbandResource
+from apps.warbands.models import LedgerAction, Warband, WarbandResource, WarbandTrade
 from apps.warbands.units.services.fee_payments import locked_counters
 
 from .campaign_support import CampaignTestCase, make_user
@@ -59,7 +59,8 @@ class CampaignPointsTests(CampaignTestCase):
         flags = self.get_as(self.player, f"/api/warbands/{self.warband.id}/resources/").json()[1]
         self.assertEqual((flags["is_default"], flags["is_campaign_points"]), (False, True))
 
-    def test_they_change_and_sell_like_any_resource_but_are_never_renamed_or_deleted(self):
+    def test_they_change_like_any_resource_but_are_never_sold_renamed_or_deleted(self):
+        # William, 8 Nov 2026: "campaign points resource when on shouldnt have any menu options as it isnt sellable"
         self.switch(True)
         points = self.points(self.warband)
 
@@ -69,10 +70,14 @@ class CampaignPointsTests(CampaignTestCase):
         deleted = self.delete_as(self.player, self.resource_url(points))
 
         self.assertEqual((added.status_code, added.json()["amount"]), (200, 3))
-        self.assertEqual((sold.status_code, sold.json()["resource"]["amount"]), (200, 2))
+        self.assertEqual(
+            (sold.status_code, sold.json()),
+            (400, {"detail": "Campaign points can't be sold.", "code": "campaign_points"}),
+        )
         self.assertEqual((renamed.status_code, renamed.json()["code"]), (400, "campaign_points"))
         self.assertEqual((deleted.status_code, deleted.json()["code"]), (400, "campaign_points"))
-        self.assertEqual(self.rows(self.warband), [("Wyrdstone", 0), ("Campaign points", 2)])
+        self.assertEqual(self.rows(self.warband), [("Wyrdstone", 0), ("Campaign points", 3)])
+        self.assertFalse(WarbandTrade.objects.filter(warband=self.warband, action=LedgerAction.SELL).exists())
 
     def test_off_hides_them_with_their_amounts_kept_and_on_again_brings_them_back(self):
         self.switch(True)

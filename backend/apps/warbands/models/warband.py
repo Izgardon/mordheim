@@ -108,8 +108,8 @@ class WarbandResource(models.Model):
     """A counter (wyrdstone shards, treasure, ...). Every warband has one default resource (`is_default`): named as
     its campaign's settings name it (`default_resource_name`), listed first, never deleted and renamed only by the
     campaign; a Wyrdstone fee pays from it (apps/hirelings/fees.py). While its campaign has campaign points on, a
-    warband also holds Campaign points (`is_campaign_points`, listed next, never renamed or deleted), kept but hidden
-    while they are off (services/campaign_points.py)."""
+    warband also holds Campaign points (`is_campaign_points`, listed next, never renamed, deleted or sold), kept but
+    hidden while they are off (services/campaign_points.py)."""
 
     warband = models.ForeignKey(Warband, related_name="resources", on_delete=models.CASCADE)
     name = models.CharField(max_length=120)

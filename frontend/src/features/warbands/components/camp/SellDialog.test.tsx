@@ -4,7 +4,7 @@
  * depending on size of warband"), the band and the total changeable; other resources sell as
  * before, the price as typed. The sale is noted in camp.
  */
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { fakeApi } from "@/test/fake-api";
@@ -36,6 +36,14 @@ const amber: WarbandResource = {
   amount: 2,
   is_default: false,
 };
+const points: WarbandResource = {
+  id: 5,
+  warband_id: 9,
+  name: "Campaign points",
+  amount: 6,
+  is_default: false,
+  is_campaign_points: true,
+};
 const draft = { unit_results: {}, upkeep: { pay_upkeep: true, entries: {} }, camp: {} };
 const field = (name: string) => screen.getByRole("spinbutton", { name });
 
@@ -48,7 +56,7 @@ const open = () => {
     save,
     campaign: { wyrdstone_prices: BOOK_WYRDSTONE_PRICES.map((row) => [...row]) },
     // a warband of 4-6 warriors: the server's size band 1
-    postgame: { resources: [shards, amber], sheet: { summary: { size_band: 1 } } },
+    postgame: { resources: [shards, points, amber], sheet: { summary: { size_band: 1 } } },
   } as unknown as OpenCamp;
   renderWithQueryClient(<SellDialog camp={camp} open onClose={vi.fn()} />);
   return save;
@@ -100,5 +108,18 @@ describe("Camp's Sell", () => {
 
     expect(screen.queryByRole("combobox", { name: "Warband size" })).toBeNull();
     expect(field("For (gc)")).toHaveValue(null);
+  });
+
+  // William, 8 Nov 2026: "campaign points ... isnt sellable"
+  it("leaves campaign points out", () => {
+    open();
+
+    const options = within(screen.getByRole("combobox", { name: "Resource" })).getAllByRole(
+      "option"
+    );
+    expect(options.map((option) => option.textContent)).toEqual([
+      "Wyrdstone · 5 held",
+      "Amber · 2 held",
+    ]);
   });
 });

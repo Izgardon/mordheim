@@ -1,7 +1,8 @@
 """Campaign points (William, 7 Nov 2026: "campaign points campaign wide setting - if enabled adds another mandatory
 resource called campaign points"; "Sort later just add now"): with `CampaignSettings.enable_campaign_points` on, every
 warband of the campaign holds a Campaign points counter (`WarbandResource.is_campaign_points`), at 0 to begin with,
-never renamed or deleted, and changed and sold like any resource. Switched off, the counters stay with their amounts
+never renamed, deleted or sold (William, 8 Nov 2026: "it isnt sellable, just the +-"), and changed like any
+resource. Switched off, the counters stay with their amounts
 but are hidden: no list, summary or sheet shows them, no write reaches them and no fee pays from them; switched on
 again, they come back as they were.
 

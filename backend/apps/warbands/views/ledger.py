@@ -25,7 +25,7 @@ from apps.warbands.services.campaign_points import resource_rows
 from apps.warbands.services.ledger_manual import NotEditable, edit_row, enter_row
 from apps.warbands.services.ledger_reads import action_filter, log_features, log_rows, treasury_top_rows
 from apps.warbands.services.pagination import newest_first, paginate, requested_page
-from apps.warbands.services.resources import ResourceShortage, change_resource, sell_resource
+from apps.warbands.services.resources import NotSellable, ResourceShortage, change_resource, sell_resource
 
 from .base import WarbandScopedView
 
@@ -39,6 +39,8 @@ DEFAULT_RENAMED = {"detail": "The campaign's settings rename the default resourc
 DEFAULT_DELETED = {"detail": "The default resource can't be deleted.", "code": "default_resource"}
 # the campaign's campaign points: every warband holds them while the setting is on (William, 7 Nov 2026)
 CAMPAIGN_POINTS_FIXED = {"detail": "Campaign points can't be renamed or deleted.", "code": "campaign_points"}
+# nor sold (William, 8 Nov 2026: "it isnt sellable, just the +-")
+CAMPAIGN_POINTS_UNSOLD = {"detail": "Campaign points can't be sold.", "code": "campaign_points"}
 
 
 class WarbandLogListView(WarbandScopedView):
@@ -122,6 +124,8 @@ class WarbandResourceSaleView(WarbandScopedView):
             sale = sell_resource(self.warband, resource_id, **serializer.validated_data)
         except ResourceShortage as shortage:
             return Response({"detail": str(shortage), "code": "not_enough_resource"}, status=400)
+        except NotSellable:
+            return Response(CAMPAIGN_POINTS_UNSOLD, status=400)
         if sale is None:
             return Response(NOT_FOUND, status=404)
         resource, trade = sale
