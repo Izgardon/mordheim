@@ -108,8 +108,10 @@ class SeedAllTests(TestCase):
                 # the second PDF batch's five templates add 46 of their own, the third's five 54, the fifth's five 43, the sixth's eight 83
                 # Border Town Burning's Beasts of the East add 31 of their own to special.json (William, 7 Nov 2026)
                 # Frenzy, Hate High Elves, Hate Bandits and Outlaws and Hate Spellcasters shared (William, 7 Nov 2026):
-                # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4
-                "Special": 1088,
+                # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4; a
+                # pointer rule takes the rule it points to (William, 7 Nov 2026), so the Cave Squig holds the Goblin
+                # Warriors' Not Orcs and the Pit Fighters' Pit Fighter its skill's one row: 2 fewer
+                "Special": 1086,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,
@@ -326,6 +328,15 @@ class SeedAllTests(TestCase):
             "Hates Orcs & Goblins",
         )
         self.assertFalse(book.filter(name__in=merged).exists())
+
+    def test_a_rule_that_only_pointed_to_a_skill_says_the_skill(self):
+        # William, 7 Nov 2026: "the unit has the hunter skill and we just reference the skills page, it should just
+        # say the rule there!" (catalogue_import/pointer_rules.py)
+        officer = TemplateFighter.objects.get(template__slug="gunnery-school-of-nuln", name="Senior Gunnery Officer")
+        hunter = officer.special_links.get(special__name="Hunter").special
+        skill = Skill.objects.get(campaign__isnull=True, name="Hunter")
+        self.assertEqual(hunter.description, skill.description)
+        self.assertFalse(Special.objects.filter(description__istartswith="See Shooting Skills").exists())
 
     def test_a_rule_one_beast_holds_is_named_for_it(self):
         # the review (5 Nov 2026: W7): a book rule typed Animal that one beast holds reads "<rule> (<beast>)" in the

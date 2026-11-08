@@ -22501,7 +22501,7 @@
           {
             "name": "Hunter",
             "type": "Warband - Gunnery School of Nuln",
-            "description": "See Shooting Skills."
+            "description": "The warrior is an expert at getting his weapon loaded and ready. He may fire each turn with a handgun or Hochland long rifle."
           }
         ]
       },
@@ -45245,9 +45245,9 @@
             "description": "Each Cave Squig must always remain within 6\" of a Goblin Warrior, who keeps the creature in line. If a Cave Squig finds itself without a Goblin within 6\" at the start of its Movement phase, it will go wild. From that point on, move the Squig 2D6\" in a random direction during each of its Movement phases. If its movement takes it into contact with another model (friend or foe), it will engage the model in hand-to-hand combat as normal. The Cave Squig is out of the Orc & Goblin player’s control until the end of the game."
           },
           {
-            "name": "Not Orcs (Cave Squig)",
+            "name": "Not Orcs",
             "type": "Warband - Orc Mob",
-            "description": "See Goblin Warriors entry for rules."
+            "description": "Orcs don’t expect much from non-Orcs, and are therefore not unsettled if Goblins or Cave Squigs break or get cut down in battle. In fact, they expect as much from these weaklings! Therefore, when testing to see if an Orc Warband needs to take a Rout test, each Goblin Warrior or Cave Squig taken out of action only counts as half a model. Therefore, a band of 5 Orcs and 10 Goblins (15 models) would only have to take a test if 4 models fell (4 Orcs or 8 Goblins, or some combination thereof )."
           },
           {
             "name": "Animals",
@@ -49052,7 +49052,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters",
-            "description": "A Pit King has the Pit Fighter skill."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           }
         ]
       },
@@ -49099,7 +49099,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters",
-            "description": "A Pit King has the Pit Fighter skill."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           },
           {
             "name": "Hard to Kill",
@@ -49171,7 +49171,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters",
-            "description": "A Pit King has the Pit Fighter skill."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           }
         ]
       },
@@ -49212,9 +49212,9 @@
         ],
         "specials": [
           {
-            "name": "Pit Fighter (Pit Fighter)",
+            "name": "Pit Fighter",
             "type": "Warband - Pit Fighters",
-            "description": "Pit Fighters have the Pit Fighter skill."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           }
         ]
       },
@@ -49257,7 +49257,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters",
-            "description": "A Pit King has the Pit Fighter skill."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           },
           {
             "name": "Evade",
@@ -49305,7 +49305,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters",
-            "description": "A Pit King has the Pit Fighter skill."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           },
           {
             "name": "Fear",
@@ -49967,7 +49967,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters (old)",
-            "description": "See Strength Skill section."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           }
         ]
       },
@@ -50014,7 +50014,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters (old)",
-            "description": "See Strength Skill section."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           },
           {
             "name": "Hard to Kill",
@@ -50085,7 +50085,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters (old)",
-            "description": "See Strength Skill section."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           }
         ]
       },
@@ -50169,7 +50169,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters (old)",
-            "description": "See Strength Skill section."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           },
           {
             "name": "Fear",
@@ -50230,7 +50230,7 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters (old)",
-            "description": "See Strength Skill section."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           }
         ]
       },
@@ -50273,12 +50273,12 @@
           {
             "name": "Pit Fighter",
             "type": "Warband - Pit Fighters (old)",
-            "description": "See Strength Skill section."
+            "description": "The warrior has learned how to fight in enclosed spaces from his time in the dangerous fighting pits of the Empire. He is an expert at fighting in confined areas and adds +1 to his WS and +1 to his Attacks if he is fighting inside buildings or ruins. Define which bits of terrain count as buildings or ruins at the start of a battle."
           },
           {
             "name": "Arms Master",
             "type": "Warband - Pit Fighters (old)",
-            "description": "See Pit Fighter Skill section."
+            "description": "The Pit Fighter may now ignore all ‘difficult to use’ rules for all weapons. This enables him to combine certain types of weapons, he can combine a Morning Star with buckler, or even a Morning Star with a Morning Star. (TC 21)"
           }
         ]
       }

@@ -652,7 +652,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 2220 |
 | warband rules | 281 |
 | upgrades | 116 |
-| the templates' own specials | 673 |
+| the templates' own specials | 671 |
 
 ### List lines
 
@@ -1602,3 +1602,28 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): "Bought in groups of 1-5" stands over the henchmen: Deepwood Scouts and Glade Guard come in groups of 1-5.
 - Flag (p5): The special skills are a new group, Wood Elves of Athel Loren. Fey and Infiltration are ours (William, 6 Nov 2026, of Infiltration: "match it to ours drop theirs"). Excellent Sight (also a warband rule for every Elf) is one skill with the Druchii's Excellent Sight, in both groups. Excellent Sight and Seeker do what our Unblinking Eye and Resource Hunter do, under other names, so they are kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); Seeker's "only one Elven Hero" opens its description, and it is named Seeker (Wood Elves of Athel Loren), as the Kislev Ranger's own Seeker holds the name (his needs him not to have gone out of action). Elven Luck is named apart (our Luck re-rolls any roll, theirs a failed one; William: "separate yes").
 - Flag (p5): Woodland Incantations is a new lore. Lyrics of Feral Infatuation gives no range or duration, and Song of the Sun names no test ("must make a test"): both are kept as printed.
+
+## Pointer rules
+
+A fighter's or dramatis persona's own rule whose whole text pointed elsewhere takes the rule it points to (William, 7 Nov 2026: "it should just say the rule there!"; catalogue_import/pointer_rules.py):
+
+- Gunnery School of Nuln: Senior Gunnery Officer: Hunter, from our Hunter skill.
+- Orc Mob: Cave Squig: Not Orcs (Cave Squig), from the Goblin Warriors entry's Not Orcs.
+- Pit Fighters: Pit King: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters: Dwarf Troll Slayer: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters: Pit Veteran: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters: Pit Fighter: Pit Fighter (Pit Fighter), from our Pit Fighter skill.
+- Pit Fighters: Pursuer: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters: Ogre Pit Fighter: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters (old): Pit King: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters (old): Dwarf Troll Slayer: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters (old): Pit Veteran: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters (old): Ogre Pit Fighter: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters (old): Pursuer: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters (old): Pit Fighter: Pit Fighter, from our Pit Fighter skill.
+- Pit Fighters (old): Pit Fighter: Arms Master, from our Arms Master skill.
+- Maximilian the Mad: Strongman, from our Strongman skill.
+
+Left pointing (nothing to take the rule from):
+
+- none
