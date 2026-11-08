@@ -2,7 +2,7 @@
  * A closed card lists everything a unit has, a labelled line per kind (William, 8 Nov 2026: "in
  * the simple cards, can we show all the items, skills, spells, boons/banes in lists like the
  * items are now"): only the lines with something in them, his XP on the first line's right, a
- * group's items as what each member carries with the loadout's cost under them.
+ * group's items being what each member carries.
  */
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
@@ -77,16 +77,19 @@ describe("A closed card's lines", () => {
     expect(lines().map(([label]) => label)).toEqual(["Items", "Boons & Banes"]);
   });
 
-  it("show a group's items as what each carries, its loadout under them", () => {
+  // William, 8 Nov 2026: "can remove the loadout line on henchmen cards and dont need to write
+  // 'Each carries' just say items"
+  it("show a group's loadout as its items, without the loadout's cost", () => {
     renderCard({ kind: "henchmen_group", unit: makeVeteranHenchmenGroup() });
 
     expect(lines()).toEqual([
-      ["Each carries", "Club, Club, Club, Dagger, Dagger, Dagger"],
+      ["Items", "Club, Club, Club, Dagger, Dagger, Dagger"],
       ["Skills", "Resilient"],
       ["Boons & Banes", "Animosity"],
     ]);
-    const first = screen.getByText("Each carries").closest("p")?.parentElement;
-    expect(first?.nextElementSibling).toHaveTextContent(/^Loadout /);
+    expect(screen.queryByText(/Each carries/)).toBeNull();
+    expect(screen.queryByText(/^Loadout /)).toBeNull();
+    expect(screen.getByText("Items").closest("p")?.parentElement).toHaveTextContent(/XP 4 \/ 5$/);
   });
 
   it("list a hired sword's the same way", () => {

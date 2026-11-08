@@ -205,13 +205,13 @@ describe("The roster's cards (William, 7 Nov 2026)", () => {
   });
 
   // "henchmen card blocks same as hero/hs not full width on warband page"
-  it("puts a henchmen group's card in the heroes' grid, with its members and loadout", () => {
+  it("puts a henchmen group's card in the heroes' grid, with its members and items", () => {
     renderCards();
 
     const group = cardIn("Henchmen");
     expect(group.parentElement?.className).toBe(cardIn("Heroes").parentElement?.className);
-    expect(within(group).getByText(/^Each carries/)).toBeInTheDocument();
-    expect(within(group).getByText(/^Loadout /)).toBeInTheDocument();
+    expect(within(group).getByText("Blade One")).toBeInTheDocument();
+    expect(within(group).getByText("Items")).toBeInTheDocument();
   });
 
   // "remove advance btn next to xp bar": Advance ready on the card's top edge stays
