@@ -1,8 +1,8 @@
 /**
- * A closed card lists everything a unit has, a labelled line per kind (William, 8 Nov 2026: "in
- * the simple cards, can we show all the items, skills, spells, boons/banes in lists like the
- * items are now"): only the lines with something in them, his XP on the first line's right, a
- * group's items being what each member carries.
+ * A closed card lists everything a unit has, a line per kind captioned by its icon (William,
+ * 8 Nov 2026: "in the simple cards, can we show all the items, skills, spells, boons/banes in
+ * lists like the items are now"): only the lines with something in them, his XP on the first
+ * line's right, a group's items being what each member carries.
  */
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
@@ -106,9 +106,27 @@ describe("A closed card's lines", () => {
     expect(screen.getByText(/^XP 1/)).toBeInTheDocument();
   });
 
+  // William, 8 Nov 2026: "instead of saying items, skills etc for their row titles, lets just use
+  // the icons we have for them"
+  it("caption each line with its kind's icon, the name kept for screen readers and on hover", () => {
+    renderCard({ kind: "hero", unit: wizard });
+
+    const captions = Array.from(screen.getByRole("article").querySelectorAll("p > span[title]"));
+    expect(captions.map((caption) => caption.getAttribute("title"))).toEqual([
+      "Items",
+      "Skills",
+      "Spells",
+      "Boons & Banes",
+    ]);
+    for (const caption of captions) {
+      expect(caption.querySelector("svg")).not.toBeNull();
+      expect(caption.querySelector(".sr-only")).toHaveTextContent(caption.getAttribute("title")!);
+    }
+  });
+
   it("aren't on an open card", () => {
     renderCard({ kind: "hero", unit: wizard }, true);
 
-    expect(screen.queryByText("Boons & Banes", { selector: "p > span" })).toBeNull();
+    expect(screen.queryByText("Boons & Banes", { selector: "p span" })).toBeNull();
   });
 });
