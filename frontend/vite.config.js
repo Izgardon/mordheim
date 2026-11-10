@@ -27,7 +27,8 @@ export default defineConfig({
     },
     proxy: {
       "/api": {
-        target: "http://backend:8000",
+        // Compose's backend service; a cloud session's dev script points it at runserver on 127.0.0.1.
+        target: process.env.API_PROXY_TARGET || "http://backend:8000",
         changeOrigin: true,
         // Reuse connections to the backend. A new connection looks `backend` up in DNS, which
         // waits in Node's 4-thread I/O pool behind the polling watcher's stats; on a Windows bind

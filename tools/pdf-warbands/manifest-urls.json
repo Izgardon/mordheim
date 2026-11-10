@@ -1,0 +1,1078 @@
+[
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Bretonnian%20Grail%20CompanionsV0.7.pdf",
+  "warbands": [
+   {
+    "name": "Bretonnian Grail Companions",
+    "grade": "2a",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Dreamwalkers,%20Cult%20Of%20Morr.pdf",
+  "warbands": [
+   {
+    "name": "Dreamwalkers, Cult Of Morr",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Druchii.pdf",
+  "warbands": [
+   {
+    "name": "Druchii",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Dwarf%20Slayer%20Cult%20v6.pdf",
+  "warbands": [
+   {
+    "name": "Dwarf Slayer Cult",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Grave%20Robbers.pdf",
+  "warbands": [
+   {
+    "name": "Grave Robbers",
+    "grade": "2a",
+    "setting": "sylvania",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Halflings.pdf",
+  "warbands": [
+   {
+    "name": "Halflings",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Masters%20Of%20Horror.pdf",
+  "warbands": [
+   {
+    "name": "Masters Of Horror",
+    "grade": "2a",
+    "setting": "sylvania",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://drive.google.com/file/d/1B_9zwMNlE_NK1clAzJHcXSPI0ypf-NJq/view",
+  "warbands": [
+   {
+    "name": "Mazzalupo",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/lod/LOD1.pdf",
+  "warbands": [
+   {
+    "name": "Necrarchs, the Soul Stealers",
+    "grade": "2a",
+    "setting": "sylvania",
+    "anchor": "page=5"
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf",
+  "warbands": [
+   {
+    "name": "Nipponese Expedition",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Ogre%20Hunting%20Party.pdf",
+  "warbands": [
+   {
+    "name": "Ogre Hunting Party",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Order%20Of%20The%20Mare.pdf",
+  "warbands": [
+   {
+    "name": "Order Of The Mare",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Outlaws%20of%20Stirwood%20Forest%2C%20Redux.pdf",
+  "warbands": [
+   {
+    "name": "Outlaws of Stirwood Forest, Redux",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/lod/LOD3.pdf",
+  "warbands": [
+   {
+    "name": "Protectorate Of Sigmar",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": "page=8"
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Clan%20Moulder.pdf",
+  "warbands": [
+   {
+    "name": "Skaven of Clan Moulder",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Snotlings.pdf",
+  "warbands": [
+   {
+    "name": "Snotlings",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/lod/LOD4.pdf",
+  "warbands": [
+   {
+    "name": "Sorcerous Society",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": "page=6"
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Survivors%20Of%20Strigos.pdf",
+  "warbands": [
+   {
+    "name": "Survivors Of Strigos",
+    "grade": "2a",
+    "setting": "sylvania",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Wood%20Elves%20of%20Athel%20Loren.pdf",
+  "warbands": [
+   {
+    "name": "Wood Elves of Athel Loren",
+    "grade": "2a",
+    "setting": "mordheim",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/lod/LOD5.pdf",
+  "warbands": [
+   {
+    "name": "Vampire Hunters of Sylvania",
+    "grade": "2a",
+    "setting": "sylvania",
+    "anchor": "page=9"
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf",
+  "warbands": [
+   {
+    "name": "Adventurers",
+    "grade": "2b",
+    "setting": "karak-azgal",
+    "anchor": "page=19"
+   },
+   {
+    "name": "Dwarf Guildsmen",
+    "grade": "2b",
+    "setting": "karak-azgal",
+    "anchor": "page=25"
+   },
+   {
+    "name": "Dwarf Slayers",
+    "grade": "2b",
+    "setting": "karak-azgal",
+    "anchor": "page=32"
+   },
+   {
+    "name": "Night Goblins",
+    "grade": "2b",
+    "setting": "karak-azgal",
+    "anchor": "page=44"
+   },
+   {
+    "name": "Savage Orcs",
+    "grade": "2b",
+    "setting": "karak-azgal",
+    "anchor": "page=56"
+   },
+   {
+    "name": "Skaven of Clan Mors",
+    "grade": "2b",
+    "setting": "karak-azgal",
+    "anchor": "page=36"
+   },
+   {
+    "name": "Skaven of Clan Skryre",
+    "grade": "2b",
+    "setting": "karak-azgal",
+    "anchor": "page=40"
+   },
+   {
+    "name": "Strigoi",
+    "grade": "2b",
+    "setting": "karak-azgal",
+    "anchor": "page=50"
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Araby%20Smugglers.pdf",
+  "warbands": [
+   {
+    "name": "Araby Smugglers",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Blood%20Dragons.pdf",
+  "warbands": [
+   {
+    "name": "Blood Dragons",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Bretonnian%20Brigands.pdf",
+  "warbands": [
+   {
+    "name": "Bretonnian Brigands",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf",
+  "warbands": [
+   {
+    "name": "Bretonnian Buccaneers",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": "page=2"
+   },
+   {
+    "name": "Estalian Corsairs",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": "page=2"
+   },
+   {
+    "name": "Sartosan Pirates",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": ""
+   },
+   {
+    "name": "Wasteland Privateers",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": "page=2"
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Bretonnian%20Knights%20Errant.pdf",
+  "warbands": [
+   {
+    "name": "Bretonnian Knights-Errant",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Brood%20Of%20Ghurash.pdf",
+  "warbands": [
+   {
+    "name": "The Brood Of Ghurash",
+    "grade": "2b",
+    "setting": "sealed-city",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Call%20Of%20The%20Night%20Haint.pdf",
+  "warbands": [
+   {
+    "name": "Call of the Night Haint",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Channel%20Rats.pdf",
+  "warbands": [
+   {
+    "name": "Channel Rats",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Clan%20Angrund.pdf",
+  "warbands": [
+   {
+    "name": "Clan Angrund",
+    "grade": "2b",
+    "setting": "karak-eight-peaks",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+  "warbands": [
+   {
+    "name": "Clockworkers",
+    "grade": "2b",
+    "setting": "sealed-city",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Crooked%20Moon.pdf",
+  "warbands": [
+   {
+    "name": "Crooked Moon",
+    "grade": "2b",
+    "setting": "karak-eight-peaks",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Dark%20Elf%20Corsairs.pdf",
+  "warbands": [
+   {
+    "name": "Dark Elf Corsairs",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Disciples%20of%20Maldred.pdf",
+  "warbands": [
+   {
+    "name": "Disciples of Maldred",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+  "warbands": [
+   {
+    "name": "The Fallen",
+    "grade": "2b",
+    "setting": "relics-of-the-crusades",
+    "anchor": "page=12"
+   },
+   {
+    "name": "Ghutani",
+    "grade": "2b",
+    "setting": "relics-of-the-crusades",
+    "anchor": "page=2"
+   },
+   {
+    "name": "Muzil",
+    "grade": "2b",
+    "setting": "relics-of-the-crusades",
+    "anchor": "page=2"
+   },
+   {
+    "name": "Skaven of Clan Skryre",
+    "grade": "2b",
+    "setting": "relics-of-the-crusades",
+    "anchor": "page=5"
+   },
+   {
+    "name": "Slavers",
+    "grade": "2b",
+    "setting": "relics-of-the-crusades",
+    "anchor": "page=9"
+   },
+   {
+    "name": "Turjuk",
+    "grade": "2b",
+    "setting": "relics-of-the-crusades",
+    "anchor": "page=2"
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
+  "warbands": [
+   {
+    "name": "Fen Guard",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/lustria/Forest%20Goblins.pdf",
+  "warbands": [
+   {
+    "name": "Forest Goblins",
+    "grade": "2b",
+    "setting": "lustria",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Ghost%20Pirates.pdf",
+  "warbands": [
+   {
+    "name": "Ghost Pirates",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Guild%20Of%20Disgraced%20Engineers.pdf",
+  "warbands": [
+   {
+    "name": "Guild of Disgraced Engineers",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/lustria/High%20Elves.pdf",
+  "warbands": [
+   {
+    "name": "High Elves",
+    "grade": "2b",
+    "setting": "lustria",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/House%20Guard.pdf",
+  "warbands": [
+   {
+    "name": "House Guard",
+    "grade": "2b",
+    "setting": "sealed-city",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Khorne%20Raiders.pdf",
+  "warbands": [
+   {
+    "name": "Khorne Raiders",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Knights%20Of%20The%20Bitter%20Moors.pdf",
+  "warbands": [
+   {
+    "name": "Knights of the Bitter Moors",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/lustria/Lizardmen.pdf",
+  "warbands": [
+   {
+    "name": "Lizardmen",
+    "grade": "2b",
+    "setting": "lustria",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Lords%20Of%20The%20Marsh.pdf",
+  "warbands": [
+   {
+    "name": "Lords Of The Marsh",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/The%20Lost.pdf",
+  "warbands": [
+   {
+    "name": "The Lost",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Lothern%20Sea%20Patrol.pdf",
+  "warbands": [
+   {
+    "name": "Lothern Sea Patrol",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Low%20Kings.pdf",
+  "warbands": [
+   {
+    "name": "Low Kings",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Metal%20Mongers.pdf",
+  "warbands": [
+   {
+    "name": "Metal Mongers",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Militiant%20Mootlanders.pdf",
+  "warbands": [
+   {
+    "name": "Militiant Mootlanders",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Necrarchs.pdf",
+  "warbands": [
+   {
+    "name": "Necrarchs",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
+  "warbands": [
+   {
+    "name": "Orc Pirates & Savage Orcs",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Pirates%20of%20the%20Cathayan%20Sea.pdf",
+  "warbands": [
+   {
+    "name": "Pirates of the Cathayan Sea",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Sea%20Ghosts.pdf",
+  "warbands": [
+   {
+    "name": "Sea Ghosts",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Shallows%20Beasts.pdf",
+  "warbands": [
+   {
+    "name": "Shallows Beasts",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Silent%20Brotherhood.pdf",
+  "warbands": [
+   {
+    "name": "Silent Brotherhood",
+    "grade": "2b",
+    "setting": "sealed-city",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/lustria/Clan%20Pestilens.pdf",
+  "warbands": [
+   {
+    "name": "Skaven of Clan Pestilens",
+    "grade": "2b",
+    "setting": "lustria",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Skaven%20of%20Clan%20Pestilens.pdf",
+  "warbands": [
+   {
+    "name": "Skaven of Clan Pestilens",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clan%20Pristekk.pdf",
+  "warbands": [
+   {
+    "name": "Skaven Of Clan Pristekk",
+    "grade": "2b",
+    "setting": "sealed-city",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Slave%20Uprising.pdf",
+  "warbands": [
+   {
+    "name": "Slave Uprising",
+    "grade": "2b",
+    "setting": "karak-eight-peaks",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf",
+  "warbands": [
+   {
+    "name": "Slayer Pirates",
+    "grade": "2b",
+    "setting": "sartosa",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Underworld%20Alliance.pdf",
+  "warbands": [
+   {
+    "name": "Underworld Alliance",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Watchmen.pdf",
+  "warbands": [
+   {
+    "name": "Watchmen",
+    "grade": "2b",
+    "setting": "mutiny-in-marienburg",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Wood%20Elves%20of%20Arden.pdf",
+  "warbands": [
+   {
+    "name": "Wood Elves of Arden",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Woodsmen%20de%20Artois.pdf",
+  "warbands": [
+   {
+    "name": "Woodsmen de Artois",
+    "grade": "2b",
+    "setting": "mousillon",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Albion%20Barbarians.pdf",
+  "warbands": [
+   {
+    "name": "Albion Barbarians",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Altdorf%20Expeditionary%20Party.pdf",
+  "warbands": [
+   {
+    "name": "Altdorf Expeditionary Party",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Nomads.pdf",
+  "warbands": [
+   {
+    "name": "Arabyan Nomads",
+    "grade": "3",
+    "setting": "khemri",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Theives.pdf",
+  "warbands": [
+   {
+    "name": "Arabyan Theives",
+    "grade": "3",
+    "setting": "khemri",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+  "warbands": [
+   {
+    "name": "Assassin Squad, Knives From The Dark",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Circus%20Extraordinaire.pdf",
+  "warbands": [
+   {
+    "name": "Circus Extraordinare",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Cursed%20Dwarves.pdf",
+  "warbands": [
+   {
+    "name": "Cursed Dwarves",
+    "grade": "3",
+    "setting": "khemri",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/facebook/Drowned%20Dead.pdf",
+  "warbands": [
+   {
+    "name": "Drowned Dead",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Dwarf%20Grudgebearers.pdf",
+  "warbands": [
+   {
+    "name": "Dwarf Grudgebearers",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf",
+  "warbands": [
+   {
+    "name": "Dwarf Troll Slayers",
+    "grade": "3",
+    "setting": "athel-loren",
+    "anchor": "page=56"
+   },
+   {
+    "name": "Savage Orcs",
+    "grade": "3",
+    "setting": "athel-loren",
+    "anchor": "page=46"
+   },
+   {
+    "name": "Skaven of Clan Skryre",
+    "grade": "3",
+    "setting": "athel-loren",
+    "anchor": "page=66"
+   },
+   {
+    "name": "Wood Elf Scouts",
+    "grade": "3",
+    "setting": "athel-loren",
+    "anchor": "page=52"
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Goblin%20Raiders.pdf",
+  "warbands": [
+   {
+    "name": "Goblin Raiders",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Hobgoblins.pdf",
+  "warbands": [
+   {
+    "name": "Hobgoblins",
+    "grade": "3",
+    "setting": "khemri",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Hobgoblin%20Horde.pdf",
+  "warbands": [
+   {
+    "name": "Hobgoblin Horde",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Lahmian.pdf",
+  "warbands": [
+   {
+    "name": "Lahmian",
+    "grade": "3",
+    "setting": "khemri",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Mage.pdf",
+  "warbands": [
+   {
+    "name": "Mages",
+    "grade": "3",
+    "setting": "khemri",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Mordheimer%20Fanatics.pdf",
+  "warbands": [
+   {
+    "name": "Mordheimer's Fanatics",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Necromancer.pdf",
+  "warbands": [
+   {
+    "name": "Necromancer",
+    "grade": "3",
+    "setting": "khemri",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Nehekhara%20Tomb%20Guards.pdf",
+  "warbands": [
+   {
+    "name": "Nehekhara Tomb Guards",
+    "grade": "3",
+    "setting": "khemri",
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/facebook/Ostermark%20Roadwardens.pdf",
+  "warbands": [
+   {
+    "name": "Ostermark Roadwardens",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/facebook/The%20Innocents.pdf",
+  "warbands": [
+   {
+    "name": "The Innocents",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/facebook/Tilean%20Thespian%20Troupe.pdf",
+  "warbands": [
+   {
+    "name": "Tilean Thespian Troupe",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/web/Werewolf%20Hunting%20Pack.pdf",
+  "warbands": [
+   {
+    "name": "Werewolf Hunting Pack",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ },
+ {
+  "url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+  "warbands": [
+   {
+    "name": "Wood Elves, The Asrai Way-farers",
+    "grade": "3",
+    "setting": null,
+    "anchor": ""
+   }
+  ]
+ }
+]
