@@ -178,11 +178,15 @@ class DeployCheckTests(SimpleTestCase):
         # SEC-01 rest (was pinned: check --deploy warned W009 about a key that startup accepted; flipped in PR A:
         # startup refuses it). CI gaining `check --deploy` is PR B's. A management command doesn't show the settings'
         # message: Django keeps the ImproperlyConfigured aside and fails later with AppRegistryNotReady, as it does
-        # for Phase 0's missing-key guard; importing the settings, as gunicorn does, shows it (the test above)
+        # for Phase 0's missing-key guard; importing the settings, as gunicorn does, shows it (the test above).
+        # Which of the two surfaces depends on the check Django runs first, and its registry is a set, so the order
+        # varies by environment: AppRegistryNotReady in the lint image, the settings' message on Ubuntu 24.04
         result = run(CHECK_DEPLOY, DJANGO_DEBUG="0", DJANGO_SECRET_KEY=SHORT_KEY)
 
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("AppRegistryNotReady", result.stderr)
+        self.assertRegex(
+            result.stderr, r"AppRegistryNotReady|DJANGO_SECRET_KEY must be at least 50 characters when DJANGO_DEBUG"
+        )
 
 
 class LoadedSettingsTests(SimpleTestCase):
