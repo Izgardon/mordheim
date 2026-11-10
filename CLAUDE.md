@@ -2,7 +2,7 @@
 
 Mordheim Chronicler: a campaign manager for the Mordheim tabletop game. Django + DRF backend (`backend/`), React + Vite + TypeScript frontend (`frontend/`).
 
-**Production:** backend on Render (Starter, Frankfurt), Postgres on Neon (eu-west-2, London), frontend on Vercel. Every SQL query crosses Frankfurt ↔ London, so **query count is latency**.
+**Production:** backend on Render (Starter, Frankfurt), Postgres on Neon (Frankfurt, beside Render since 3 Nov 2026; it was London), frontend on Vercel. Every SQL query is still a network round trip, so **query count is latency**. Prod's IDs, the wipe procedure and deploy checks are in **`docs/working-notes.md`**, with William's other standing decisions (the database is ours to wipe, the content plan, the open items).
 
 ## Product principles (from William)
 
@@ -11,6 +11,13 @@ Mordheim Chronicler: a campaign manager for the Mordheim tabletop game. Django +
 - **Don't preserve old-campaign quirks** when a rule changes, unless William says otherwise.
 - **Lossy actions say so plainly** (e.g. "all carried items are lost; move them to the stash first").
 - **No fluff text** (William, 1 Nov 2026). Don't add helper sentences that explain what the page already shows or how a control works ("The rest stay listed, greyed out", "every setting at or below it"). A line earns its place only if the player would otherwise get something wrong: a warning, a lossy action, a number they need. When in doubt, leave it out.
+- **Not allowed right now means greyed out, still clickable,** with a warning when picked (17 Oct 2026). A warband's tailored lists are guidance enough; don't police the general pickers (5 Nov 2026).
+- **Every roll can be typed in** (5 Nov 2026: "this is the entire vibe of the app"): any dice the app rolls also takes the number rolled at the table.
+- **Edge cases are rule text, not code** (4 Nov 2026): a narrow book case (a promotion, a one-off timing) is a warband rule the player reads, not automation or a to-do.
+- **A form with more than 8 inputs asks "Discard changes?"** before closing with unsaved edits; short forms don't (5 Nov 2026).
+- **Gold rounds up** (6 Nov 2026: "always round up in mordheim for gold"): half of 35 gc is 18, for any halved or divided gold (`(value + 1) // 2`, as `apps/warbands/services/prices.py` does).
+- **Skills and items match ours by name and effect** (6 Nov 2026): an import links ours only when both match. The same effect under another name stays separate and becomes a question for William. A limit on who in a warband may take a skill opens the skill's description, or sits in its group's note for a skill of ours; never in a warband rule.
+- **Start afresh** (30 Oct 2026: "easier to start afresh"): when new code replaces old, delete the old component, its tests and dead helpers in the same change, with no shims, wrappers, re-exports or aliases.
 
 ## Engineering rules (must follow)
 
