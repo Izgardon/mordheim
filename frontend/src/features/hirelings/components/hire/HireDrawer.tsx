@@ -40,9 +40,11 @@ type HireDrawerProps = {
  * open a side draw (add new button there opens the hired sword modal)"; "should also be a toggle
  * to see all not just allowed"): the hired swords, or the dramatis personae, the warband may hire
  * by who-can, searched; Show all lists the rest with the server's reason, and they can still be
- * hired. Hire is the hire dialog (the fee and its payment); Add new is the hired sword form, and
- * the new one shows in the list. Nobody is typed in by hand (William, 8 Nov 2026: "a user should
- * always create the unit first in the modal").
+ * hired. Hire is the hire dialog (the fee and its payment). Nobody is typed in by hand: Add new is
+ * the hired sword form, and saving it goes straight on to hiring the new one, only here (William,
+ * 8 Nov 2026: "a user should always create the unit first in the modal. if they are adding a new
+ * one from the warband page then when saving it should automatically add that hired sword as if
+ * they had clicked hire, but only from that page"). Cancelled, he stays made and shows in the list.
  */
 export default function HireDrawer(props: HireDrawerProps) {
   const { campaignId, warband } = props;
@@ -148,6 +150,8 @@ export default function HireDrawer(props: HireDrawerProps) {
         onSaved={(saved) => {
           setAdding(false);
           setQuery(saved.name);
+          // on as if Hire were pressed on him: the hire dialog, then his card in Edit
+          if (props.canHire) setHiring(saved);
         }}
       />
     </SidePanel>
