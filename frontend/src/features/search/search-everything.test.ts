@@ -313,6 +313,33 @@ describe("Search everything's wargear rules and skill groups", () => {
   });
 });
 
+describe("Search everything's locations", () => {
+  it("open the Locations page searched for the location", () => {
+    const locations = [
+      {
+        id: 4,
+        campaign_id: 1,
+        name: "Sigmar's Haven",
+        area: "Old Town",
+        content: "A shrine.",
+        d6_1: "",
+        d6_2: "",
+        d6_3: "",
+        d6_4: "",
+        d6_5: "",
+        d6_6: "",
+      },
+    ];
+
+    const [found] = searchEverything("haven", { ...nothing, locations });
+
+    expect([found.label, found.hits.map((hit) => [hit.title, hit.meta, hit.to])]).toEqual([
+      "Locations",
+      [["Sigmar's Haven", "Old Town", "locations?place=Sigmar's%20Haven"]],
+    ]);
+  });
+});
+
 describe("Search everything's groups", () => {
   it("come in the reference nav's order, then the rules, then the campaign's own", () => {
     const sources: SearchSources = {

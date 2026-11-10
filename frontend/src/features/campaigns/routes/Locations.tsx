@@ -1,4 +1,4 @@
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
 import LocationsList from "@/features/warbands/components/panels/LocationsList";
 import { useMediaQuery } from "@/lib/use-media-query";
@@ -12,11 +12,13 @@ import type { CampaignLayoutContext } from "./CampaignLayout";
  * `manage_locations` add, edit and remove the locations (William, 7 Nov 2026: "shouldn't be able
  * to edit locations in the location sidebar within warband"); every member reads them here too,
  * two to a row on the web. The warband page's Locations panel rolls on them and sends heroes.
- * Shown while the campaign has Locations switched on.
+ * Shown while the campaign has Locations switched on. `?place=` opens it searched for that
+ * location (Search everything's links).
  */
 export default function Locations() {
   const { campaign } = useOutletContext<CampaignLayoutContext>();
   const isMobile = useMediaQuery("(max-width: 960px)");
+  const [params] = useSearchParams();
   if (!campaign)
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
 
@@ -42,6 +44,7 @@ export default function Locations() {
             canManage={campaignCapabilities(campaign).manage_locations}
             enabled
             page
+            initialSearch={params.get("place") ?? undefined}
           />
         </div>
       ) : (

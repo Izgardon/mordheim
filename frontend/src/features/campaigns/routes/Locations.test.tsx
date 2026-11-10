@@ -142,6 +142,16 @@ describe("The Locations page", () => {
     expect(screen.queryByRole("button", { name: /^Roll/ })).toBeNull();
   });
 
+  it("opens searched for the location a link names (Search everything's ?place=)", async () => {
+    fakeApi.on(`GET ${LOCATIONS}`, [docks, { ...docks, id: 5, name: "The Pit", area: "Old Town" }]);
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player", { enable_locations: true }));
+    renderApp(`${PAGE}?place=${encodeURIComponent("The Pit")}`);
+
+    expect(await screen.findByText("The Pit")).toBeInTheDocument();
+    expect(screen.getByRole("searchbox", { name: "Search locations" })).toHaveValue("The Pit");
+    expect(screen.queryByText("The Docks")).toBeNull();
+  });
+
   it("says so while Locations are switched off", async () => {
     openAs("owner", false);
 

@@ -274,7 +274,8 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
         title: entry.name,
         meta: entry.area || "Location",
         snippet,
-        to: `warband?panel=locations&place=${encodeURIComponent(entry.name)}`,
+        // the Locations page, searched for it
+        to: `locations?place=${encodeURIComponent(entry.name)}`,
       })),
     },
   ];
