@@ -19,7 +19,11 @@ from apps.races.serializers import RaceSerializer
 from apps.skills.serializers import SkillGroupSerializer, SkillSerializer
 from apps.special.serializers import SpecialSerializer
 from apps.spells.serializers import SpellSerializer
-from apps.warband_templates.serializers import WarbandTemplateDetailSerializer, WarbandTemplateSerializer
+from apps.warband_templates.serializers import (
+    WarbandTemplateDetailSerializer,
+    WarbandTemplateSearchSerializer,
+    WarbandTemplateSerializer,
+)
 
 from .payloads import STAT_FIELDS, with_badges
 
@@ -86,4 +90,7 @@ WarbandTemplateRowSerializer = with_badges(
 )
 WarbandTemplateDetailRowSerializer = with_badges(
     WarbandTemplateDetailSerializer, book_fields=("name", "starting_gold", "max_models", "variants")
+)
+WarbandTemplateSearchRowSerializer = with_badges(
+    WarbandTemplateSearchSerializer, book_fields=("name", "starting_gold", "max_models", "variants")
 )

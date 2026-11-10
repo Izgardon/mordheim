@@ -170,3 +170,60 @@ class WarbandTemplateApiTests(CatalogueTestCase):
         self.assertEqual(
             (few, count()), (3, 3)
         )  # the membership with the catalogue version, the templates, their types
+
+    def test_the_search_view_carries_what_each_template_holds_by_name(self) -> None:
+        # Search everything finds a warband type by its fighters, rules and skills (William, 8 Nov 2026: "the
+        # reference search doesnt search warbands yet")
+        rule = self.made.template.rules.get(title="Marksmen")
+        rule.warband_type = self.mercenaries
+        rule.save()
+        TemplateFighter.objects.filter(pk=self.made.captain.pk).update(skill_types=["Combat", "Mercenaries"])
+        [row] = self.get(f"{LIST}?campaign_id={self.campaign.id}&view=search").json()
+        self.assertEqual([entry["name"] for entry in row["types"]], ["Mercenaries", "Ostermarkers"])
+        self.assertEqual(
+            row["contents"],
+            {
+                "fighters": [
+                    {
+                        "name": "Captain",
+                        "plural": "",
+                        "kind": "hero",
+                        "skill_types": ["Combat", "Mercenaries"],
+                        "rules": ["Leader"],
+                        "skills": ["Hunter"],
+                    },
+                    {
+                        "name": "Warrior",
+                        "plural": "Warriors",
+                        "kind": "henchman",
+                        "skill_types": [],
+                        "rules": [],
+                        "skills": [],
+                    },
+                ],
+                "rules": [
+                    {"title": "Hard Bargains", "warband_type_id": None},
+                    {"title": "Marksmen", "warband_type_id": self.mercenaries.id},
+                ],
+                "upgrades": ["Tentacle"],
+            },
+        )
+        [plain] = self.get(f"{LIST}?campaign_id={self.campaign.id}").json()
+        self.assertNotIn("contents", plain)  # the Warbands page's rows stay as they were
+
+    def test_the_search_view_reads_in_the_same_queries_however_many_templates_it_holds(self) -> None:
+        def count() -> int:
+            self.client.force_authenticate(user=self.player)
+            with CaptureQueriesContext(connection) as captured:
+                response = self.client.get(f"{LIST}?campaign_id={self.campaign.id}&view=search")
+            self.assertEqual(response.status_code, 200)
+            return len(captured)
+
+        few = count()
+        for name in ("Skaven", "Undead"):
+            served = WarbandType.objects.create(name=name, slug=name.lower())
+            made = make_template(name, item=self.book_axe, race=self.human, warband_type=served)
+            made.warriors.skill_links.create(skill=self.hunter)
+        # the membership with the catalogue version, the templates, their types, rules, fighters, the fighters'
+        # rules and skills, and the upgrades
+        self.assertEqual((few, count()), (8, 8))

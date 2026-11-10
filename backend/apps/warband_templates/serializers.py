@@ -82,6 +82,33 @@ class WarbandTemplateSerializer(serializers.ModelSerializer):
         return DEFAULT_MAX_MODELS if template.max_models is None else template.max_models
 
 
+class WarbandTemplateSearchSerializer(WarbandTemplateSerializer):
+    """A list row for Search everything (`?view=search`): the template and its types, and what it holds by name (each
+    fighter with his skill groups, rules and the skills he starts with; the warband rules, each with the type it is
+    for; the upgrades), read with selectors.template_contents."""
+
+    contents = serializers.SerializerMethodField()
+
+    class Meta(WarbandTemplateSerializer.Meta):
+        fields = (*WarbandTemplateSerializer.Meta.fields, "contents")
+
+    def get_contents(self, template: WarbandTemplate) -> dict[str, Any]:
+        fighters = [
+            {
+                "name": fighter.name,
+                "plural": fighter.plural,
+                "kind": fighter.kind,
+                "skill_types": fighter.skill_types or [],
+                "rules": [link.special.name for link in fighter.special_links.all()],
+                "skills": [link.skill.name for link in fighter.skill_links.all()],
+            }
+            for fighter in template.fighters.all()
+        ]
+        rules = [{"title": rule.title, "warband_type_id": rule.warband_type_id} for rule in template.rules.all()]
+        upgrades = [upgrade.special.name for upgrade in template.upgrades.all()]
+        return {"fighters": fighters, "rules": rules, "upgrades": upgrades}
+
+
 class TemplateRuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = TemplateRule

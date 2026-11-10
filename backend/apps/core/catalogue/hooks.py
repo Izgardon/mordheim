@@ -28,11 +28,11 @@ from apps.items.selectors import item_rows
 from apps.skills import writes as skill_writes
 from apps.skills.selectors import group_learners, group_skills, in_group_order
 from apps.spells import rolls as spell_rolls
-from apps.warband_templates.selectors import template_details, template_rows
+from apps.warband_templates.selectors import template_contents, template_details, template_rows
 
 from . import merge
 from .payloads import badge_joins
-from .rows import BestiaryEntryBriefRowSerializer
+from .rows import BestiaryEntryBriefRowSerializer, WarbandTemplateSearchRowSerializer
 
 if TYPE_CHECKING:
     from .kinds import CatalogueKindSpec
@@ -255,14 +255,22 @@ class RaceHooks(CatalogueHooks):
 
 class WarbandTemplateHooks(CatalogueHooks):
     """Warband templates (the templates plan, phase 1b; written by the editor's own routes, phase 4). A list row carries
-    the warband types the template serves, each saying whether it is in play in the list's campaign; the detail reads
-    the whole template. Nothing holds one (units keep a fighter's key), so a campaign's own is archived rather than
-    deleted while a warband of the campaign uses it."""
+    the warband types the template serves, each saying whether it is in play in the list's campaign, and with
+    `?view=search` what it holds by name (Search everything); the detail reads the whole template. Nothing holds one
+    (units keep a fighter's key), so a campaign's own is archived rather than deleted while a warband of the campaign
+    uses it."""
 
     def listed(
         self, kind: "CatalogueKindSpec", rows: QuerySet[Any], campaign_id: int | None, params: QueryDict
     ) -> QuerySet[Any]:
         return template_rows(super().listed(kind, rows, campaign_id, params), campaign_id)
+
+    def row_serializer(self, kind: "CatalogueKindSpec", params: QueryDict) -> type[Serializer]:
+        """`?view=search`: each row with its fighters', rules' and upgrades' names; any other view is the default."""
+        return WarbandTemplateSearchRowSerializer if params.get("view") == "search" else kind.row_serializer
+
+    def read(self, rows: QuerySet[Any], params: QueryDict) -> QuerySet[Any]:
+        return template_contents(rows) if params.get("view") == "search" else rows
 
     def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
         return template_details(self.rows(kind))

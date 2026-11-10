@@ -35,6 +35,20 @@ def template_rows(rows: QuerySet[WarbandTemplate] | None = None, campaign_id: in
     return found.prefetch_related(type_links(campaign_id))
 
 
+def template_contents(rows: QuerySet[WarbandTemplate]) -> QuerySet[Any]:
+    """The listed templates with what Search everything finds them by (`?view=search`): their rules, fighters with
+    their rules and the skills they start with, and upgrades with their specials (one query each)."""
+    fighters = TemplateFighter.objects.prefetch_related(
+        Prefetch("special_links", queryset=TemplateFighterSpecial.objects.select_related("special")),
+        Prefetch("skill_links", queryset=TemplateFighterSkill.objects.select_related("skill")),
+    )
+    return rows.prefetch_related(
+        "rules",
+        Prefetch("fighters", queryset=fighters),
+        Prefetch("upgrades", queryset=TemplateUpgrade.objects.select_related("special")),
+    )
+
+
 def template_details(rows: QuerySet[WarbandTemplate]) -> QuerySet[Any]:
     """The templates with everything the whole template shows: its types, rules, lists with their lines' items,
     fighters with their races, lists, rules and starting skills, and upgrades with their specials (one query each)."""
