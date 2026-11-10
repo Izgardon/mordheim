@@ -5,9 +5,15 @@ plain ``manage.py test`` would send real email and publish events to the product
 Pusher app. This runner blanks those settings for the whole run and refuses any
 outbound socket connection that isn't loopback, so a missing mock fails loudly
 instead of reaching a real service.
+
+It also takes the proxy variables out of the environment for the run. A cloud session
+sets ``HTTPS_PROXY`` to a loopback proxy, so a missing mock would connect to loopback
+(which the guard allows) and reach the real host through it; without them the call goes
+straight at the host and the guard refuses it.
 """
 
 import logging
+import os
 import socket
 from contextlib import ExitStack
 from typing import Any
@@ -32,6 +38,18 @@ EXTERNAL_SERVICE_SETTINGS = {
 TEST_SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
 
 _LOOPBACK_HOSTS = {"127.0.0.1", "::1", "localhost"}
+
+# Unset for the run, so an unmocked call meets the socket guard rather than a proxy that would carry it out
+PROXY_ENV_VARS = (
+    "HTTP_PROXY",
+    "HTTPS_PROXY",
+    "ALL_PROXY",
+    "NO_PROXY",
+    "http_proxy",
+    "https_proxy",
+    "all_proxy",
+    "no_proxy",
+)
 
 
 class ExternalNetworkCallError(RuntimeError):
@@ -61,6 +79,7 @@ class NoNetworkTestRunner(DiscoverRunner):
         )
         self._external_settings.enable()
         get_pusher_client.cache_clear()
+        self._drop_proxy_env()
         self._install_socket_guard()
         # LOGGING prints django.request's 4xx and 5xx answers; here they would only repeat what the tests assert (the
         # test client raises a view's exception itself), so they stay out of the output
@@ -71,9 +90,16 @@ class NoNetworkTestRunner(DiscoverRunner):
     def teardown_test_environment(self, **kwargs: Any) -> None:
         self._request_logger.setLevel(self._request_log_level)
         self._remove_socket_guard()
+        self._proxy_env.stop()
         self._external_settings.disable()
         get_pusher_client.cache_clear()
         super().teardown_test_environment(**kwargs)
+
+    def _drop_proxy_env(self) -> None:
+        self._proxy_env = patch.dict(os.environ)
+        self._proxy_env.start()
+        for name in PROXY_ENV_VARS:
+            os.environ.pop(name, None)
 
     def _install_socket_guard(self) -> None:
         real_connect = socket.socket.connect

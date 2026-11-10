@@ -1,4 +1,5 @@
 import logging
+import os
 import socket
 
 import requests
@@ -8,7 +9,12 @@ from rest_framework.test import APIClient
 
 from apps.realtime.services import get_pusher_client
 from apps.users.emails import send_password_reset_email
-from config.test_runner import EXTERNAL_SERVICE_SETTINGS, TEST_SESSION_ENGINE, ExternalNetworkCallError
+from config.test_runner import (
+    EXTERNAL_SERVICE_SETTINGS,
+    PROXY_ENV_VARS,
+    TEST_SESSION_ENGINE,
+    ExternalNetworkCallError,
+)
 
 
 class NetworkSafetyNetTests(SimpleTestCase):
@@ -28,6 +34,12 @@ class NetworkSafetyNetTests(SimpleTestCase):
     def test_expected_error_answers_stay_out_of_the_output(self):
         # LOGGING sends django.request's 4xx and 5xx lines to stdout (INFRA-CQ-01); the runner keeps them out
         self.assertEqual(logging.getLogger("django.request").level, logging.CRITICAL)
+
+    def test_the_proxy_variables_are_out_of_the_environment(self):
+        # A cloud session sets HTTPS_PROXY to a loopback proxy, which the socket guard allows, so a missing mock
+        # would reach the real host through it; the runner unsets them for the run
+        for name in PROXY_ENV_VARS:
+            self.assertNotIn(name, os.environ, name)
 
     def test_outbound_http_is_blocked(self):
         with self.assertRaises(ExternalNetworkCallError):
