@@ -148,6 +148,13 @@ describe("The Skills page", () => {
     await waitFor(() => expect(scrolledTo).toEqual([`ref-${web.id}`]));
   });
 
+  it("lands a link's ?group= on that group, open and scrolled to (Search everything)", async () => {
+    renderApp(`${PAGE}?group=${speed.id}`);
+
+    expect(await groupRow("Speed")).toHaveAttribute("aria-expanded", "true");
+    await waitFor(() => expect(scrolledTo).toEqual([`ref-group-${speed.id}`]));
+  });
+
   it("lands an edit on the saved skill in the group it was edited in", async () => {
     // a book skill's first edit makes the campaign's version of it, which its groups then hold
     const version = { ...web, id: 40, campaign_id: CAMPAIGN_ID, replaces: web.id };
@@ -167,7 +174,8 @@ describe("The Skills page", () => {
     await user.click(within(dialog).getByRole("button", { name: "Save changes" }));
 
     await waitFor(() => expect(param(app, "open")).toBe("40"));
-    await waitFor(() => expect(scrolledTo).toEqual(["ref-40"]));
+    // the link's group first, on arrival, then the saved skill
+    await waitFor(() => expect(scrolledTo).toEqual([`ref-group-${speed.id}`, "ref-40"]));
     expect(param(app, "group")).toBe(String(speed.id));
     expect(await groupRow("Speed")).toHaveAttribute("aria-expanded", "true");
   });

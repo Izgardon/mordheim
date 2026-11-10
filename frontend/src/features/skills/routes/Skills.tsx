@@ -56,7 +56,7 @@ export default function Skills() {
   const groups = useSkillGroups(campaignId);
   const settings = useSettingsById();
   const loading = skills.isLoading || groups.isLoading;
-  const params = useReferenceParams(!loading);
+  const params = useReferenceParams(!loading, (get) => rowKeyOf(get("group")));
   const capabilities = campaignCapabilities(campaign);
   const setting = params.get("setting", ALL_SETTINGS);
   const searching = Boolean(params.query.trim());

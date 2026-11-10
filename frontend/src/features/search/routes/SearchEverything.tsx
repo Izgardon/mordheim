@@ -85,13 +85,13 @@ function ResultGroup({
 }
 
 /**
- * Search everything (`/campaigns/:id/search?q=`): one field over the reference
- * (items, skills, spells, Boons & Banes, beasts, hired swords, dramatis personae), the rulebook's
- * text, the house rules and the campaign rules, searched here from the lists the pages already
- * load, and this campaign's warbands and units (the server's `search/`) and locations. Results
- * are grouped by kind with counts; each
- * opens its page with its row open, or the warband page for a warband or unit. `/` or Ctrl+K
- * opens it from anywhere in a campaign on the web.
+ * Search everything (`/campaigns/:id/search?q=`): one field over the reference (warband types,
+ * items and their shared rules, skills and skill groups, spells, Boons & Banes, beasts, hired
+ * swords, dramatis personae), the rulebook's text, the house rules and the campaign rules,
+ * searched here from the lists the pages already load (`useSearchSources`), and this campaign's
+ * warbands and units (the server's `search/`) and locations. Results are grouped by kind with
+ * counts; each opens its page with its row open, or the warband page for a warband or unit. `/`
+ * or Ctrl+K opens it from anywhere in a campaign on the web.
  */
 export default function SearchEverything() {
   const { id } = useParams();

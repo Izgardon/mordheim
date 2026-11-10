@@ -72,6 +72,9 @@ export const queryKeys = {
       ["campaign", campaignId, "warband-templates"] as const,
     warbandTemplate: (campaignId: number, templateId: number) =>
       ["campaign", campaignId, "warband-templates", templateId] as const,
+    /** The templates with what each holds by name (Search everything); a template write marks it stale. */
+    warbandTemplateContents: (campaignId: number) =>
+      ["campaign", campaignId, "warband-templates", "contents"] as const,
     /** The server's list of common house rules (`rules/common/`), the same for every campaign. */
     commonRules: (campaignId: number) => ["campaign", campaignId, "common-rules"] as const,
     /** The campaign chat's history, newest page first (an infinite query). */

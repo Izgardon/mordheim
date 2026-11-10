@@ -29,8 +29,28 @@ export type TemplateVariant = {
   rare_bonus_except?: string[];
 };
 
+/**
+ * What a template holds by name (`?view=search`, for Search everything): each fighter with his
+ * skill groups, rules and the skills he starts with, the warband rules with the type each is for
+ * (null: every type), and the upgrades.
+ */
+export type TemplateContents = {
+  fighters: {
+    name: string;
+    plural: string;
+    kind: "hero" | "henchman";
+    skill_types: string[];
+    rules: string[];
+    skills: string[];
+  }[];
+  rules: { title: string; warband_type_id: number | null }[];
+  upgrades: string[];
+};
+
 /** `GET warband-templates/?campaign_id=`: a template and the warband types it serves. */
 export type WarbandTemplateSummary = CatalogueBadgeFields & {
+  /** Only with `?view=search`. */
+  contents?: TemplateContents;
   id: number;
   campaign_id: number | null;
   setting_id: number | null;

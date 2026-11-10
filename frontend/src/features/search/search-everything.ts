@@ -4,21 +4,28 @@ import type { CampaignLocation } from "@/features/campaigns/types/campaign-types
 import { hirelingRace } from "@/features/hirelings/hireling-catalogue-kinds";
 import type { HirelingProfile } from "@/features/hirelings/types/hireling-catalogue-types";
 import { kindOf } from "@/features/items/store/store-items";
-import type { Item } from "@/features/items/types/item-types";
+import type { Item, ItemRule } from "@/features/items/types/item-types";
 import type { RuleEntry } from "@/features/rules/rules-index";
 import { ruleSnippet } from "@/features/rules/rules-index";
 import type { CampaignRule, HouseRule } from "@/features/rules/types/rule-types";
 import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
+import type { TemplateTypeRow } from "@/features/warband-templates/template-view";
 
 import type { CampaignSearchAnswer } from "./api/search-api";
+import { itemRuleHits, skillGroupHits } from "./reference-hits";
 import { ranked, words, type SearchGroup } from "./search-ranking";
+import { warbandTypeHits } from "./warband-type-hits";
 
 export type { SearchGroup, SearchHit, SearchSnippet } from "./search-ranking";
 
 export type SearchSources = {
+  /** The Warbands page's rows (`typeRows`), their templates with what they hold (`contents`). */
+  warbandTypes: TemplateTypeRow[];
   items: Item[];
+  /** The shared wargear rules: those the items hold are found. */
+  itemRules: ItemRule[];
   skills: Skill[];
   /** The campaign's skill groups: a skill's hit names the groups holding it. */
   skillGroups: SkillGroup[];
@@ -38,15 +45,22 @@ export type SearchSources = {
 };
 
 /**
- * Search everything: one search over the reference (items, skills, spells, Boons & Banes, beasts,
- * hired swords, dramatis personae), the rulebook's text, the house rules and the campaign rules,
- * and this campaign's warbands, units and locations; grouped by kind, empty groups left out.
+ * Search everything: one search over the reference (warband types, items and their shared rules,
+ * skills and skill groups, spells, Boons & Banes, beasts, hired swords, dramatis personae), the
+ * rulebook's text, the house rules and the campaign rules, and this campaign's warbands, units
+ * and locations; grouped by kind in the reference nav's order, empty groups left out.
  */
 export function searchEverything(query: string, sources: SearchSources): SearchGroup[] {
   const needle = query.trim().toLowerCase();
   if (!needle) return [];
   const warbandPath = (id: number) => (id === sources.myWarbandId ? "warband" : `warbands/${id}`);
   const groups: SearchGroup[] = [
+    {
+      // the Warbands reference; "Warbands" further down are the campaign's own
+      id: "warband-types",
+      label: "Warband types",
+      hits: warbandTypeHits(sources.warbandTypes, needle, sources),
+    },
     {
       id: "items",
       label: "Wargear",
@@ -70,6 +84,11 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       })),
     },
     {
+      id: "item-rules",
+      label: "Wargear rules",
+      hits: itemRuleHits(sources.itemRules, sources.items, needle),
+    },
+    {
       id: "skills",
       label: "Skills",
       hits: ranked(
@@ -89,6 +108,11 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
         snippet,
         to: `skills?open=${entry.id}`,
       })),
+    },
+    {
+      id: "skill-groups",
+      label: "Skill groups",
+      hits: skillGroupHits(sources.skillGroups, needle),
     },
     {
       id: "spells",

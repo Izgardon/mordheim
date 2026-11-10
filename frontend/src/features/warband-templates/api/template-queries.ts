@@ -23,6 +23,20 @@ export function useWarbandTemplates(campaignId: number) {
   };
 }
 
+/**
+ * The campaign's templates with what each holds by name (`?view=search`): Search everything finds
+ * a warband type by its fighters, rules and skills.
+ */
+export function useWarbandTemplateContents(campaignId: number) {
+  const query = useQuery({
+    queryKey: queryKeys.campaign.warbandTemplateContents(campaignId),
+    queryFn: ({ signal }) => listWarbandTemplates(campaignId, signal, "search"),
+    enabled: campaignId > 0,
+    staleTime: CATALOGUE_STALE_TIME_MS,
+  });
+  return { data: query.data ?? NONE, isLoading: query.isLoading };
+}
+
 /** One whole template, read when its row opens. */
 export function useWarbandTemplate(campaignId: number, templateId: number) {
   return useQuery({
