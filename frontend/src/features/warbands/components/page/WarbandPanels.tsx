@@ -51,11 +51,12 @@ type WarbandPanelsProps = {
 export default function WarbandPanels(props: WarbandPanelsProps) {
   const { campaignId, warband, units, actions, loadoutFor } = props;
   const [searchParams, setSearchParams] = useSearchParams();
-  /** Out of the hire drawer onto the roster: a new card in Edit, or the form for someone else. */
-  const leaveHire = (change: Record<string, string>) => {
+  /** Out of the hire drawer onto the roster, the new hireling's card in Edit. */
+  const leaveHire = (unitId: number) => {
     const params = new URLSearchParams(searchParams);
     params.delete("panel");
-    Object.entries(change).forEach(([key, value]) => params.set(key, value));
+    params.set("unit", `hireling-${unitId}`);
+    params.set("edit", "1");
     setSearchParams(params, { replace: true });
   };
   const sellFromStash = (item: WarbandItemSummary) =>
@@ -117,8 +118,7 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
         canHire={props.canEdit}
         open={props.panel === "hire"}
         onOpenChange={(open) => props.setPanel(open ? "hire" : null)}
-        onHired={(id) => leaveHire({ unit: `hireling-${id}`, edit: "1" })}
-        onByHand={() => leaveHire({ recruit: "hireling" })}
+        onHired={leaveHire}
       />
     </>
   );

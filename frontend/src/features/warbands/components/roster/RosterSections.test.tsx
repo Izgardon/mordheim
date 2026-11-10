@@ -34,6 +34,8 @@ vi.mock("../../api/warband-cache", () => ({
 const aldric = makeHero({ id: 5, name: "Aldric Voss" });
 const ulrich = makeHero({ id: 6, name: "Ulrich Brandt", unit_type: "Champion", price: 35 });
 
+const onHire = vi.fn();
+
 function Harness() {
   const [heroes, setHeroes] = useState<WarbandHero[]>([aldric]);
   pushHeroes = setHeroes;
@@ -44,11 +46,10 @@ function Harness() {
       heroes={heroes}
       henchmenGroups={[]}
       hirelings={[]}
-      resources={[]}
       canEdit
       canCreateRace={false}
       onLoadout={vi.fn()}
-      onHire={vi.fn()}
+      onHire={onHire}
       onAdvance={vi.fn()}
       onBuyAgain={vi.fn()}
       renderEdit={(entry) => <p>Editing {unitName(entry.unit)}</p>}
@@ -113,13 +114,15 @@ describe("Recruiting from the roster", () => {
     expect(screen.getByText("Editing Aldric Voss")).toBeInTheDocument();
   });
 
-  it("opens the hire form for someone not in the list in Hired swords", () => {
+  // William, 8 Nov 2026: "we dont need the Hire someone not on this list button or inline form"
+  it("hires from the hire drawer, with no hand-typed form in Hired swords", async () => {
     renderAt("/campaigns/1/warband?recruit=hireling");
+    const user = setupUser();
     const hired = screen.getByRole("region", { name: "Hired swords" });
-    expect(
-      within(hired).getByRole("form", { name: "Hire someone not in the list" })
-    ).toBeInTheDocument();
-    expect(within(hired).getByText("Hire fee paid")).toBeInTheDocument();
+    expect(within(hired).queryByRole("form")).not.toBeInTheDocument();
+    await user.click(within(hired).getByRole("button", { name: "Hire" }));
+    expect(onHire).toHaveBeenCalled();
+    expect(within(hired).queryByRole("form")).not.toBeInTheDocument();
   });
 });
 
@@ -143,7 +146,6 @@ describe("Make a template for a type with none (the templates plan, phase 4)", (
           heroes={[aldric]}
           henchmenGroups={[]}
           hirelings={[]}
-          resources={[]}
           warbandType={reiklanders}
           canEdit
           canCreateRace={false}
@@ -185,7 +187,6 @@ describe("The roster's cards (William, 7 Nov 2026)", () => {
           heroes={[makeHero({ id: 5, name: "Konrad Adler", xp: 2, level_up: 1 })]}
           henchmenGroups={[makeVeteranHenchmenGroup({ id: 21, warband_id: 9 })]}
           hirelings={[]}
-          resources={[]}
           canEdit
           canCreateRace={false}
           onLoadout={vi.fn()}

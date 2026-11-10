@@ -6,13 +6,12 @@ import type { Item } from "@/features/items/types/item-types";
 import MakeTemplateForWarband from "@/features/warband-templates/components/MakeTemplateForWarband";
 
 import { useWarbandHireTemplate } from "../../api/warband-template-queries";
+import type { RecruitKind } from "../../hooks/units/useRecruit";
 import { useUnitActions } from "../../hooks/units/useUnitActions";
-import type { UnitKindKey } from "../../types/units";
 import type {
   HenchmenGroup,
   WarbandHero,
   WarbandHireling,
-  WarbandResource,
   WarbandRosterCounts,
   WarbandTypeBrief,
 } from "../../types/warband-types";
@@ -30,8 +29,6 @@ type RosterSectionsProps = {
   heroes: WarbandHero[];
   henchmenGroups: HenchmenGroup[];
   hirelings: WarbandHireling[];
-  /** The warband's resources, which a hire fee pays from. */
-  resources: WarbandResource[];
   /** The warband's gold and type: a hire from its template tallies against them. */
   gold?: number;
   warbandType?: WarbandTypeBrief | null;
@@ -40,7 +37,7 @@ type RosterSectionsProps = {
   canEdit: boolean;
   canCreateRace: boolean;
   onLoadout: (entry: RosterUnit) => void;
-  /** Hire: the hire picker (the catalogue), whose "someone not in the list" comes back here. */
+  /** Hire: the hire drawer. */
   onHire: () => void;
   /** The edit form for the unit being edited, rendered inside its open card. */
   renderEdit: (entry: RosterUnit, close: () => void) => ReactNode;
@@ -66,7 +63,7 @@ export default function RosterSections(props: RosterSectionsProps) {
   const hired: RosterUnit[] = props.hirelings.map((unit) => ({ kind: "hireling", unit }));
   const everyone = [...heroes, ...groups, ...hired];
 
-  const recruitForm = (kind: UnitKindKey, list: RosterUnit[]) =>
+  const recruitForm = (kind: RecruitKind, list: RosterUnit[]) =>
     canEdit && cards.recruiting === kind ? (
       <RecruitForm
         kind={kind}
@@ -74,7 +71,6 @@ export default function RosterSections(props: RosterSectionsProps) {
         warbandId={warbandId}
         typeName={props.warbandType?.name ?? ""}
         gold={props.gold ?? 0}
-        resources={props.resources}
         existingIds={list.map((entry) => entry.unit.id)}
         canCreateRace={props.canCreateRace}
         onCancel={() => cards.setRecruiting(null)}
@@ -173,7 +169,6 @@ export default function RosterSections(props: RosterSectionsProps) {
         add={canEdit ? "Hire" : undefined}
         divided
         onAdd={props.onHire}
-        form={recruitForm("hireling", hired)}
       >
         {/* cards in the heroes' grid (William: "make hired sword cards on web the same as hero
             cards in terms of shape, rather than full width") */}

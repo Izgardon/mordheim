@@ -175,7 +175,6 @@ export default function Warband() {
                     hero_count: warband?.hero_count,
                     hireling_count: warband?.hireling_count,
                   }}
-                  resources={warband.resources ?? []}
                   gold={warband.gold ?? 0}
                   warbandType={warband.warband_type}
                   canEdit={canEdit}

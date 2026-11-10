@@ -57,7 +57,6 @@ function renderDrawer({ canHire = true } = {}) {
   queryClient.setQueryData(catalogueListKey(CAMPAIGN_ID, "dramatis-personae"), [bertha]);
   queryClient.setQueryData(queryKeys.campaign.warbandWhoCan(CAMPAIGN_ID, WARBAND), whoCan);
   const onHired = vi.fn();
-  const onByHand = vi.fn();
   renderWithQueryClient(
     <HireDrawer
       campaignId={CAMPAIGN_ID}
@@ -73,11 +72,10 @@ function renderDrawer({ canHire = true } = {}) {
       open
       onOpenChange={vi.fn()}
       onHired={onHired}
-      onByHand={onByHand}
     />,
     { queryClient }
   );
-  return { onHired, onByHand };
+  return { onHired };
 }
 
 const names = (list: string) =>
@@ -120,20 +118,17 @@ describe("HireDrawer", () => {
     });
   });
 
-  it("opens the hired sword form from Add new, and the roster's form for someone not listed", async () => {
+  // William, 8 Nov 2026: "we dont need the Hire someone not on this list button or inline form"
+  it("opens the hired sword form from Add new, and types nobody in by hand", async () => {
     const user = setupUser();
-    const { onByHand } = renderDrawer();
+    renderDrawer();
+    expect(screen.queryByRole("button", { name: /not in the list/ })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Add new" }));
     expect(await screen.findByRole("dialog", { name: "Add hired sword" })).toBeInTheDocument();
-    await user.keyboard("{Escape}");
-
-    await user.click(screen.getByRole("button", { name: "Hire someone not in the list" }));
-    expect(onByHand).toHaveBeenCalled();
   });
 
   it("only reads the list for a viewer who can't hire for the warband", () => {
     renderDrawer({ canHire: false });
     expect(screen.queryByRole("button", { name: "Hire Ogre Bodyguard" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Hire someone not in the list" })).toBeNull();
   });
 });

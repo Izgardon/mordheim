@@ -33,8 +33,6 @@ type HireDrawerProps = {
   onOpenChange: (open: boolean) => void;
   /** After a hire: the new hireling's id (his card opens in Edit). */
   onHired: (unitId: number) => void;
-  /** Someone not in the list: the roster's own form. */
-  onByHand: () => void;
 };
 
 /**
@@ -43,7 +41,8 @@ type HireDrawerProps = {
  * to see all not just allowed"): the hired swords, or the dramatis personae, the warband may hire
  * by who-can, searched; Show all lists the rest with the server's reason, and they can still be
  * hired. Hire is the hire dialog (the fee and its payment); Add new is the hired sword form, and
- * the new one shows in the list.
+ * the new one shows in the list. Nobody is typed in by hand (William, 8 Nov 2026: "a user should
+ * always create the unit first in the modal").
  */
 export default function HireDrawer(props: HireDrawerProps) {
   const { campaignId, warband } = props;
@@ -80,13 +79,6 @@ export default function HireDrawer(props: HireDrawerProps) {
       onOpenChange={props.onOpenChange}
       kicker={`Hire for ${warband.name}`}
       title={config.labels.title}
-      footer={
-        props.canHire ? (
-          <Button variant="ghost" onClick={props.onByHand}>
-            Hire someone not in the list
-          </Button>
-        ) : undefined
-      }
     >
       <div className="flex flex-col gap-3">
         <div role="group" aria-label="Hire from" className="flex gap-1.5">

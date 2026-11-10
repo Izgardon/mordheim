@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 
+import type { RecruitKind } from "../../hooks/units/useRecruit";
 import type { UnitKindKey } from "../../types/units";
-
-const RECRUITS: UnitKindKey[] = ["hero", "henchmen_group", "hireling"];
 
 /**
  * Opens a unit's card in Edit from outside the roster (the camp's Recruit): the link the roster
@@ -30,19 +29,17 @@ const scrollTo = (key: string) =>
   );
 
 /**
- * Which roster card is open and which is in Edit, and the inline recruit form. A link opens a
- * card (`?unit=hero-12`, from Search everything) or puts it straight into Edit (`&edit=1`, after
- * a hire or a camp recruit), and `?recruit=hireling` opens the form; those two are read once.
+ * Which roster card is open and which is in Edit, and the inline recruit form (Add hero, Add
+ * group). A link opens a card (`?unit=hero-12`, from Search everything) or puts it straight into
+ * Edit (`&edit=1`, after a hire or a camp recruit, read once).
  */
 export function useRosterCards() {
   const [searchParams, setSearchParams] = useSearchParams();
   const linked = searchParams.get("unit");
   const linkedEdit = searchParams.get("edit") === "1";
-  const param = searchParams.get("recruit") as UnitKindKey | null;
-  const linkedRecruit = param && RECRUITS.includes(param) ? param : null;
   const [openKey, setOpenKey] = useState<string | null>(linked);
   const [editKey, setEditKey] = useState<string | null>(linked && linkedEdit ? linked : null);
-  const [recruiting, setRecruiting] = useState<UnitKindKey | null>(linkedRecruit);
+  const [recruiting, setRecruiting] = useState<RecruitKind | null>(null);
 
   useEffect(() => {
     if (!linked) return;
@@ -52,16 +49,11 @@ export function useRosterCards() {
   }, [linked, linkedEdit]);
 
   useEffect(() => {
-    if (linkedRecruit) setRecruiting(linkedRecruit);
-  }, [linkedRecruit]);
-
-  useEffect(() => {
-    if (!linkedEdit && !linkedRecruit) return;
+    if (!linkedEdit) return;
     const params = new URLSearchParams(searchParams);
     params.delete("edit");
-    params.delete("recruit");
     setSearchParams(params, { replace: true });
-  }, [linkedEdit, linkedRecruit, searchParams, setSearchParams]);
+  }, [linkedEdit, searchParams, setSearchParams]);
 
   return {
     openKey,

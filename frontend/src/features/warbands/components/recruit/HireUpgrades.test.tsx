@@ -54,7 +54,6 @@ function renderForm(kind: "hero" | "henchmen_group" = "hero") {
       warbandId={9}
       typeName="Marauders of Chaos"
       gold={200}
-      resources={[]}
       existingIds={[]}
       canCreateRace={false}
       onCancel={vi.fn()}

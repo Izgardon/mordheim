@@ -36,10 +36,10 @@ const SECTION: Record<HirelingCatalogueKind, { path: string; title: string }> = 
  * Hired swords and Dramatis personae (design E's reference layout, one page for both): every
  * entry in play in the campaign, searched by name, race or text, rows with race, hire fee, upkeep
  * and rating; a row opens to the profile, the terms, who can hire him and his rules, with Hire
- * from here (today's hire for your warband). It is also the roster's hire picker: Hire opens it for that warband
- * (`?warband=`, every entry, as before), with "Hire someone not in the list" for a custom hire.
- * With a warband, "Who it can hire" is on: those it can usually hire first (the server's who-can/),
- * the rest behind Show all with the reason. Entries are added and edited as today.
+ * from here (today's hire for your warband). Opened for a warband (`?warband=`, every entry), it
+ * hires for it: "Who it can hire" is on, those it can usually hire first (the server's who-can/),
+ * the rest behind Show all with the reason. Entries are added and edited as today; one added here
+ * is only saved, never hired (William, 8 Nov 2026: "but only from that page", the warband page).
  */
 export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKind }) {
   const config = HIRELING_CATALOGUES[kind];
@@ -57,8 +57,7 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
   const [editing, setEditing] = useState<{ id: number | null } | null>(null);
   const [hiring, setHiring] = useState<HirelingProfile | null>(null);
   const navigate = useNavigate();
-  // a hire lands on the warband page with the new card in Edit; someone not in the list is hired
-  // from the inline form at the top of its Hired swords
+  // a hire lands on the warband page with the new card in Edit
   const warbandPage = `/campaigns/${campaignId}/warband`;
   const whoCan = useWhoCan(campaignId, warband?.id);
   const access = kind === "hired-swords" ? whoCan.hiredSwords : whoCan.dramatisPersonae;
@@ -104,26 +103,15 @@ export default function HirelingCatalogue({ kind }: { kind: HirelingCatalogueKin
         noun: kind === "hired-swords" ? "hired swords" : "dramatis personae",
       }}
       actions={
-        <>
-          {canHire ? (
-            <Button
-              variant="ghost"
-              className={isMobile ? "min-h-10" : undefined}
-              onClick={() => navigate(`${warbandPage}?recruit=hireling`)}
-            >
-              Hire someone not in the list
-            </Button>
-          ) : null}
-          {capabilities.edit_catalogue ? (
-            <Button
-              variant="secondary"
-              className={isMobile ? "min-h-10" : undefined}
-              onClick={() => setEditing({ id: null })}
-            >
-              {isMobile ? "Add" : config.labels.add}
-            </Button>
-          ) : null}
-        </>
+        capabilities.edit_catalogue ? (
+          <Button
+            variant="secondary"
+            className={isMobile ? "min-h-10" : undefined}
+            onClick={() => setEditing({ id: null })}
+          >
+            {isMobile ? "Add" : config.labels.add}
+          </Button>
+        ) : null
       }
       filters={
         <FilterRow isMobile={isMobile}>
