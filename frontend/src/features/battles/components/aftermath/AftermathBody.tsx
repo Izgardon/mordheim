@@ -9,6 +9,7 @@ import type { BattleParticipant, BattleState } from "@/features/battles/types/ba
 import { numberedOr } from "@/features/battles/utils/battle-number";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import LocationsPanel from "@/features/warbands/components/panels/LocationsPanel";
+import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
 
 import AftermathAside, { opponentsOf, resultText } from "./AftermathAside";
@@ -56,6 +57,16 @@ export default function AftermathBody({
     participant: me,
   });
   const [tab, setTab] = useState<AftermathTab>("injuries");
+  const tabs = useTabScroll();
+  // a tab keeps the tab bar at the top of the screen; Next and Back land at the step's start
+  const pick = (next: AftermathTab) => {
+    tabs.pick();
+    setTab(next);
+  };
+  const step = (next: AftermathTab) => {
+    tabs.reveal();
+    setTab(next);
+  };
   const [readPlace, setReadPlace] = useState<string | null>(null);
   const { drafting, explore } = postgame;
   const { draft, persistDraft } = drafting;
@@ -112,7 +123,7 @@ export default function AftermathBody({
         <FindsCard campaignId={campaignId} drafting={drafting} isMobile={isMobile} />
       </>
     );
-  const back = () => (index > 0 ? setTab(AFTERMATH_TABS[index - 1].id) : undefined);
+  const back = () => (index > 0 ? step(AFTERMATH_TABS[index - 1].id) : undefined);
   const next = AFTERMATH_TABS[index + 1];
   const nav = (
     <div
@@ -130,7 +141,7 @@ export default function AftermathBody({
       {next ? (
         <Button
           className={cn("min-h-12 text-[15px]", isMobile ? "flex-1" : "ml-auto")}
-          onClick={() => setTab(next.id)}
+          onClick={() => step(next.id)}
         >
           Next: {isMobile ? next.short : next.label}
           {isMobile ? null : <ArrowRight aria-hidden="true" />}
@@ -155,7 +166,8 @@ export default function AftermathBody({
         saving={drafting.isSavingDraft}
         error={drafting.draftError}
         tab={tab}
-        onTab={setTab}
+        onTab={pick}
+        tabsRef={tabs.barRef}
         warbandPath={warbandPath}
         isMobile={isMobile}
         menu={<AftermathMenu battle={battle} battleState={battleState} />}

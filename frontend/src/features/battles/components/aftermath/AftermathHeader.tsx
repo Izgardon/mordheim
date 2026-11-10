@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ReactNode, Ref } from "react";
 import { Link } from "react-router-dom";
 import { Check, ChevronLeft } from "lucide-react";
 
@@ -28,6 +28,8 @@ type AftermathHeaderProps = {
   error: string;
   tab: AftermathTab;
   onTab: (tab: AftermathTab) => void;
+  /** The tab bar, which a tab change keeps at the top of the screen (`useTabScroll`). */
+  tabsRef?: Ref<HTMLDivElement>;
   warbandPath: string;
   isMobile: boolean;
   /** The ⋯ menu (Skip and Close post-battle), beside the saved state. */
@@ -50,6 +52,7 @@ export default function AftermathHeader(props: AftermathHeaderProps) {
   const { tab, onTab } = props;
   const tabs = (
     <div
+      ref={props.tabsRef}
       role="tablist"
       aria-label="Aftermath"
       className={cn(

@@ -21,6 +21,7 @@ import { battleNumberLabel } from "@/features/battles/utils/battle-number";
 import { campaignCapabilities } from "@/features/campaigns/capabilities";
 import type { CampaignLayoutContext } from "@/features/campaigns/routes/CampaignLayout";
 import { BottomBar, BottomBarButton } from "@/layouts/mobile/BottomBar";
+import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
 
 import BattleDiceSheet from "./BattleDiceSheet";
@@ -89,6 +90,8 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   const userId = screen.user?.id;
   const mySide = me ? sideId.warband(me.warband.id) : (sides[0]?.id ?? "");
   const [selected, setSelected] = useState(mySide);
+  // on the web the strip scrolls with the page: picking a side keeps it at the top of the screen
+  const sideTabs = useTabScroll();
   const side =
     sides.find((entry) => entry.id === selected) ??
     sides.find((entry) => entry.id === mySide) ??
@@ -398,7 +401,17 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       className={isMobile ? "max-h-[118px]" : "h-[min(60vh,560px)]"}
     />
   );
-  const strip = <SideStrip sides={sides} selectedId={side?.id ?? ""} onSelect={setSelected} />;
+  const strip = (
+    <SideStrip
+      sides={sides}
+      selectedId={side?.id ?? ""}
+      barRef={sideTabs.barRef}
+      onSelect={(id) => {
+        if (!isMobile) sideTabs.pick();
+        setSelected(id);
+      }}
+    />
+  );
 
   const sheets = (
     <>

@@ -1,3 +1,5 @@
+import type { Ref } from "react";
+
 import { cn } from "@/lib/utils";
 
 import { sideLine, type BattleSide } from "./battle-units";
@@ -7,6 +9,8 @@ type SideStripProps = {
   selectedId: string;
   onSelect: (id: string) => void;
   className?: string;
+  /** The strip as a tab bar (`useTabScroll`): on the web a pick keeps it at the top of the screen. */
+  barRef?: Ref<HTMLDivElement>;
 };
 
 /** How full the bar is and its colour: near the rout test it turns to danger; neutrals stay muted. */
@@ -22,9 +26,16 @@ function bar(side: BattleSide) {
  * The strip under the top bar (design E): a chip for each warband in the battle and each neutral
  * group, with how many are out and a bar towards the rout test. Tapping one shows its units.
  */
-export default function SideStrip({ sides, selectedId, onSelect, className }: SideStripProps) {
+export default function SideStrip({
+  sides,
+  selectedId,
+  onSelect,
+  className,
+  barRef,
+}: SideStripProps) {
   return (
     <div
+      ref={barRef}
       role="tablist"
       aria-label="Warbands in this battle"
       className={cn("scrollbar-hidden flex gap-1.5 overflow-x-auto", className)}

@@ -1,9 +1,11 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import { useOutletContext, useSearchParams } from "react-router-dom";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+import { scrollPageToTop } from "@/components/ScrollToTop";
 import { useAppStore } from "@/stores/app-store";
 import { useMediaQuery } from "@/lib/use-media-query";
+import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
 
 import { campaignCapabilities, isArchived, type CampaignCapabilities } from "../capabilities";
@@ -110,15 +112,20 @@ export default function CampaignSettings() {
   // The web always shows a section; a phone shows the list until one is picked.
   const current = asked ?? (isMobile ? null : (available[0]?.id ?? null));
 
-  useEffect(() => {
-    window.scrollTo({ top: 0 });
-  }, [current]);
+  // The web's section list works as tabs: the sections' row stays at the top of the screen. A
+  // phone opens a section, and goes back to the list, as a screen of its own, at its top.
+  const tabs = useTabScroll();
+  useLayoutEffect(() => {
+    if (isMobile) scrollPageToTop();
+  }, [current, isMobile]);
 
   if (!campaign)
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
 
-  const open = (id: SectionId | null) =>
+  const open = (id: SectionId | null) => {
+    if (!isMobile) tabs.pick();
     setParams(id ? { section: id } : {}, { replace: !isMobile });
+  };
   const players = `${campaign.player_count} ${campaign.player_count === 1 ? "player" : "players"}`;
   const kicker = `${campaign.name} · ${players}${isArchived(campaign) ? " · archived" : ""}`;
   const joinCode = (
@@ -185,7 +192,7 @@ export default function CampaignSettings() {
         </div>
         {joinCode}
       </header>
-      <div className="flex items-start gap-8">
+      <div ref={tabs.barRef} className="flex items-start gap-8">
         <nav aria-label="Settings sections" className="sticky top-6 w-[220px] shrink-0">
           <ul className="m-0 flex list-none flex-col gap-0.5 p-0">
             {available.map((section) => {

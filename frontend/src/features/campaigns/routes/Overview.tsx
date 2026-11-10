@@ -10,6 +10,7 @@ import OpenBounties from "@/features/bounties/components/OpenBounties";
 import CampaignRulesRow from "@/features/rules/components/CampaignRulesRow";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { queryKeys } from "@/lib/query-keys";
+import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
 
 import { useCampaignBattleHistory, useCampaignPlayers } from "../api/campaign-queries";
@@ -80,6 +81,8 @@ export default function Overview() {
   const players = playersQuery.data ?? [];
   const history = historyQuery.data ?? [];
   const [tab, setTab] = useState<Tab>("standings");
+  // a phone's tab change keeps the tab bar at the top of the screen, not the page's top
+  const tabs = useTabScroll();
   if (!campaign)
     return <p className="text-sm text-muted-foreground">No record of this campaign.</p>;
   if (playersQuery.isLoading || historyQuery.isLoading) return <OverviewSkeleton />;
@@ -169,6 +172,7 @@ export default function Overview() {
       {isMobile ? (
         <>
           <div
+            ref={tabs.barRef}
             role="tablist"
             aria-label="Campaign"
             className="grid grid-cols-4 border-b border-line"
@@ -179,7 +183,10 @@ export default function Overview() {
                 type="button"
                 role="tab"
                 aria-selected={tab === entry.id}
-                onClick={() => setTab(entry.id)}
+                onClick={() => {
+                  tabs.pick();
+                  setTab(entry.id);
+                }}
                 className={cn(
                   "-mb-px min-h-11 border-b-2 text-[13px] font-bold",
                   tab === entry.id
