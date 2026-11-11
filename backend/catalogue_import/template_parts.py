@@ -1,5 +1,6 @@
 """A warband template's warband rules and equipment lists (the special equipment as one more list, the Pit Fighters'
-four plain lists, and a variant's own lines), from a snapshot page."""
+four plain lists, and a variant's own lines), from a snapshot page or a PDF page (whose rules and lines name their
+own variant: pdf_warbands.py)."""
 
 import re
 from dataclasses import dataclass, field
@@ -103,7 +104,13 @@ def _lines(
             log.unread.append((slug, plain(raw["title"]), plain(entry["name"]), who.note))
         shown_as = _shown_as(plain(entry.get("alias")), plain(entry["name"]), item, how)
         log.shown_as += bool(shown_as)
-        lines.append(_line(item, line_price(entry.get("cost")), who, shown_as))
+        # a PDF page's line may be one variant's (the House Guard's Rapier, House Fierezza only)
+        variant = str(entry.get("variant") or "")
+        lines.append(_line(item, line_price(entry.get("cost")), who, shown_as, variant))
+        if variant:
+            log.variant_lines.append(
+                (slug, variant, plain(raw["title"]), f"{item['name']} {entry['cost'].get('cost')} gc")
+            )
     return lines
 
 
@@ -222,13 +229,15 @@ def _style_notes(page: dict[str, Any]) -> list[dict[str, str]]:
 def build_rules(slug: str, page: dict[str, Any], variants: list[dict[str, str]], log: ListLog) -> list[dict[str, str]]:
     """The warband rules in the book's order, each for every variant or for its heading's, and for every type or for
     its heading's (the Ostermarkers'); the untitled take William's titles, or their variant's name."""
-    headings = {variant["heading"]: variant["key"] for variant in variants}
+    headings = {variant["heading"]: variant["key"] for variant in variants if variant.get("heading")}
     types = RULE_TYPES.get(slug, {})
     names = {variant["key"]: variant["name"] for variant in variants}
     rules = []
     for position, raw in enumerate(page.get("specialRules") or []):
         heading = plain(raw.get("heading"))
-        variant, rule_type = headings.get(heading, ""), types.get(heading, "")
+        # a PDF page names its variant itself (`variant`); a snapshot page's is its heading's
+        variant = str(raw.get("variant") or "") or headings.get(heading, "")
+        rule_type = types.get(heading, "")
         if heading and heading not in headings and not rule_type:
             log.headings.append((slug, heading))
         title = clean_title(raw.get("rulename")) or RULE_TITLES.get((slug, position)) or names.get(variant, "")

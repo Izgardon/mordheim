@@ -792,9 +792,9 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | fighters (heroes, henchmen) | 747 (386, 361) |
 | henchmen that gain no XP | 105 |
 | henchmen that can't be promoted | 129 |
-| equipment lists | 284 |
+| equipment lists | 281 |
 | list lines | 3130 |
-| warband rules | 374 |
+| warband rules | 373 |
 | upgrades | 140 |
 | the templates' own specials | 898 |
 
@@ -1002,6 +1002,12 @@ Lines for one variant only:
 | marauders-of-chaos | kurgan | Henchmen equipment list | Bow 10 gc |
 | marauders-of-chaos | hung | Hero equipment list | Warhorse 40 gc |
 | mercenaries | middenheim | Mercenary Equipment | Wolfcloak 10 gc |
+| house-guard | fierezza | Heroes Equipment List | Rapier 15 gc |
+| house-guard | fierezza | Heroes Equipment List | Sword Breaker 30 gc |
+| house-guard | halcon | Heroes Equipment List | Crossbow pistol 35 gc |
+| house-guard | halcon | Heroes Equipment List | Long Bow 15 gc |
+| house-guard | baluardo | Heroes Equipment List | Plate Armour 55 gc |
+| house-guard | baluardo | Heroes Equipment List | Pavise 20 gc |
 
 marauders-of-chaos: every hung hero has Ride [Animal].
 
@@ -1274,7 +1280,7 @@ Kept apart from a family's, the effect differing:
 | guild-of-disgraced-engineers | guild-of-disgraced-engineers | 6 | 0 | 2 | 10 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
 | hobgoblins | hobgoblins | 6 | 1 | 1 | 8 |
-| house-guard | house-guard | 6 | 1 | 1 | 10 |
+| house-guard | house-guard | 6 | 1 | 1 | 8 |
 | khorne-raiders | khorne-raiders | 6 | 0 | 2 | 16 |
 | knights-of-the-bitter-moors | knights-of-the-bitter-moors | 6 | 0 | 1 | 9 |
 | lahmian | lahmian | 10 | 3 | 1 | 10 |
@@ -1689,14 +1695,12 @@ Kept apart from a family's, the effect differing:
 - Alias (p3): "Pike" is our Pike (Tileans).
 - Stub: Plate Armour, 70 gc, Rare 7; its rules are on p5.
 - Price row (p5): our Pike (Tileans) for house-guard, Rare 8, House Guard only.
-- Flag (p5): The three skill tables' ticks are glyphs the text layer drops: they were read from p5's image. Fierezza - Commander: all five lists; Sergeant: Combat, Shooting, Speed; Adjutant: Combat, Academic, Speed. Halcon - Commander: all five; Sergeant: Combat, Shooting, Strength; Adjutant: Shooting, Academic, Speed. Baluardo - Commander: all five; Sergeant: Combat, Strength, Speed; Adjutant: Academic, Strength, Speed. There is no Special column, so the warband has no skill group.
-- Flag (p5): A template holds one skill table, and a PDF page has no variants, so each fighter is given the three houses' lists together: the Commander and the Adjutant all five, the Sergeant Combat, Shooting, Strength and Speed. See the decisions.
-- Flag (p2): The three houses are warband rules, as our templates hold no variants for a PDF page. Each carries its own rules and names its equipment list; the player picks one house when the warband is raised.
-- Flag (p3): The Heroes list marks Rapier and Sword breaker House Fierezza only, Crossbow pistol and Longbow House Halcon only, and Plate armour and Pavise House Baluardo only. Our line notes name fighters, not houses, so those six lines are three lists of their own, every Hero buying from all four.
+- Flag (p5): The three skill tables' ticks are glyphs the text layer drops: they were read from p5's image. Each house is a variant, holding its own table. Fierezza (the first, so the fighters' own) - Commander: all five lists; Sergeant: Combat, Shooting, Speed; Adjutant: Combat, Academic, Speed. Halcon - Commander: all five; Sergeant: Combat, Shooting, Strength; Adjutant: Shooting, Academic, Speed. Baluardo - Commander: all five; Sergeant: Combat, Strength, Speed; Adjutant: Academic, Strength, Speed. There is no Special column, so the warband has no skill group.
+- Flag (p3): The Heroes list marks Rapier and Sword breaker House Fierezza only, Crossbow pistol and Longbow House Halcon only, and Plate armour and Pavise House Baluardo only: each of the six lines is its house's variant line on the one Heroes list.
 - Flag (p2): Merchantry (the Commander starts with Haggle) is printed in House Halcon's column, below Sharp Aim; Battle Seasoned and Armour are House Baluardo's. The reading order runs the two columns together.
 - Flag (p5): The Pike's entry (10 gc, Rare 8, Two-handed and Strike first with +1 Initiative in the first turn) is read as our Pike (Tileans), with a House Guard price row at 10 gc Rare 8. Our Pike's rules differ: it reaches 3", strikes first against a spear and may not use a shield or buckler at all. See the decisions.
 - Flag (p5): Plate armour is 55 gc on the Heroes list and 70 gc Rare 7 in its own entry: the list price is the starting price and the entry's is the trading price (William, 6 Nov 2026).
-- Flag (p2): Martial Finesse, Battle Seasoned and Merchantry give the Commander a skill at hire. They stay in their house's warband rule, because the house is a rule and not a variant, so no skill is given automatically.
+- Flag (p2): Martial Finesse (Fierezza), Merchantry (Halcon) and Battle Seasoned (Baluardo) each only name a skill the Commander starts with (Web of Steel, Haggle, Battle Tongue), so he is given it by his variant and none stays a rule (William, 7 Nov 2026).
 - Flag (p2): A House Guard needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p4): No group sizes are printed for the Guards, Pikemen or Warhounds.
 

@@ -218,6 +218,31 @@ class PdfCheckTests(SimpleTestCase):
             ],
         )
 
+    def test_a_rule_a_line_and_a_fighter_name_one_of_the_pages_variants(self) -> None:
+        # the House Guard's three houses: a page declares its variants, and whatever names one must name its key
+        page = good_page()
+        page["variants"] = [{"key": "Fierezza", "name": "House Fierezza"}, {"key": "halcon", "name": "House Halcon"}]
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            ["variant 'Fierezza': its key should be 'fierezza'"],
+        )
+        page["variants"][0]["key"] = "fierezza"
+        page["specialRules"][0]["variant"] = "baluardo"
+        page["equipmentLists"][0]["items"][0]["variant"] = "halcon"
+        page["fighters"][0]["variantChanges"] = {
+            "halcon": {"skillAccess": {"combat": True}, "skills": ["Web of Steel"], "stats": {"zz": 4}},
+        }
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            [
+                "warband rule Zeal: no variant 'baluardo'",
+                "fighter Captain (halcon): skill access should tick combat, shooting, academic, strength, speed,"
+                " special true or false",
+                "fighter Captain (halcon): no skill of ours 'Web of Steel'",
+                "fighter Captain (halcon): 'zz' is no characteristic",
+            ],
+        )
+
     def test_a_price_row_may_name_a_stub_another_page_declares(self) -> None:
         # Sartosa's shop row on Throwing Axes, the Dwarf Slayer Cult's stub: price rows are added after the stubs
         page = good_page()
@@ -383,6 +408,51 @@ class PdfImportTests(SimpleTestCase):
         [row] = self.items["Bramstetter's Advanced Construct Thesis"]["availabilities"]
         self.assertEqual((row["cost"], row["dice"], row["dice_multiplier"], row["rarity"]), (100, 1, 10, 8))
         self.assertEqual(self.items["Bramstetter's Advanced Construct Thesis"]["notes"], "")
+
+    def test_the_house_guard_is_three_houses_as_three_variants(self) -> None:
+        # the House Guard PDF (p2-p5): each house has its own rule, its own list lines and its own skill table
+        house = self.templates["house-guard"]
+        self.assertEqual([row["key"] for row in house["variants"]], ["fierezza", "halcon", "baluardo"])
+        self.assertEqual(
+            [(rule["title"], rule["variant"]) for rule in house["rules"]],
+            [
+                ("Chain of Command", ""),
+                ("Personal Guard", ""),
+                ("Dueling Pride", "fierezza"),
+                ("Sharp Aim", "halcon"),
+                ("Armour", "baluardo"),
+            ],
+        )
+        [heroes] = [row for row in house["lists"] if row["key"] == "house-guard-heroes-equipment-list"]
+        own = {line["item"]["name"]: line["variant"] for line in heroes["lines"] if line["variant"]}
+        self.assertEqual(
+            own,
+            {
+                "Rapier": "fierezza",
+                "Sword Breaker": "fierezza",
+                "Crossbow pistol": "halcon",
+                "Long Bow": "halcon",
+                "Plate Armour": "baluardo",
+                "Pavise": "baluardo",
+            },
+        )
+        by_name = {row["name"]: row for row in house["fighters"]}
+        self.assertEqual(by_name["Sergeant"]["skill_types"], ["Combat", "Shooting", "Speed"])
+        self.assertEqual(
+            by_name["Sergeant"]["variant_changes"],
+            {
+                "halcon": {"skill_types": ["Combat", "Shooting", "Strength"]},
+                "baluardo": {"skill_types": ["Combat", "Strength", "Speed"]},
+            },
+        )
+        self.assertEqual(
+            by_name["Commander"]["variant_changes"],
+            {
+                "fierezza": {"skills": ["Web of Steel"]},
+                "halcon": {"skills": ["Haggle"]},
+                "baluardo": {"skills": ["Battle Tongue"]},
+            },
+        )
 
     def test_the_sartosa_shop_prices_throwing_axes_for_every_sartosa_type(self) -> None:
         # the setting's Equipment PDF (p10): 15 gc, Rare 5. Throwing Axes are the Dwarf Slayer Cult's stub, which a

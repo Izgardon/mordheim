@@ -7,6 +7,20 @@
     "startingGc": 500,
     "maxModels": 15
   },
+  "variants": [
+    {
+      "key": "fierezza",
+      "name": "House Fierezza"
+    },
+    {
+      "key": "halcon",
+      "name": "House Halcon"
+    },
+    {
+      "key": "baluardo",
+      "name": "House Baluardo"
+    }
+  ],
   "specialRules": [
     {
       "rulename": "Chain of Command",
@@ -17,20 +31,19 @@
       "ruleFull": "Every Hero and Henchman of a House Guard intercepts a charge at a friendly Hero within 3\" instead of the usual 2\". In the Assassination scenario they may ignore the attacker's evasive rule when their protege is the target."
     },
     {
-      "rulename": "Houses",
-      "ruleFull": "A House Guard warband fights for one of three houses, chosen when it is raised: Fierezza, Halcon or Baluardo. It takes that house's rules and buys from that house's equipment list beside the Heroes list."
+      "rulename": "Dueling Pride",
+      "ruleFull": "A Fierezza Hero may re-roll failed hits in the first round of combat when he fights an enemy Hero.",
+      "variant": "fierezza"
     },
     {
-      "rulename": "House Fierezza",
-      "ruleFull": "Dueling Pride: a Fierezza Hero may re-roll failed hits in the first round of combat when he fights an enemy Hero.\n\nMartial Finesse: the Commander starts with the Web of Steel skill.\n\nThe House Fierezza equipment list is open to the warband's Heroes."
+      "rulename": "Sharp Aim",
+      "ruleFull": "Every warrior of House Halcon ignores the long range modifier when he fires a missile weapon.",
+      "variant": "halcon"
     },
     {
-      "rulename": "House Halcon",
-      "ruleFull": "Sharp Aim: every warrior of House Halcon ignores the long range modifier when he fires a missile weapon.\n\nMerchantry: the Commander starts with the Haggle skill.\n\nThe House Halcon equipment list is open to the warband's Heroes."
-    },
-    {
-      "rulename": "House Baluardo",
-      "ruleFull": "Armour: a Baluardo Hero suffers no movement penalty for wearing armour.\n\nBattle Seasoned: the Commander starts with the Battle Tongue skill.\n\nThe House Baluardo equipment list is open to the warband's Heroes."
+      "rulename": "Armour",
+      "ruleFull": "A Baluardo Hero suffers no movement penalty for wearing armour.",
+      "variant": "baluardo"
     }
   ],
   "equipmentLists": [
@@ -69,6 +82,14 @@
           }
         },
         {
+          "name": "rapier",
+          "alias": "Rapier",
+          "cost": {
+            "cost": 15
+          },
+          "variant": "fierezza"
+        },
+        {
           "name": "halberd",
           "alias": "Halberd",
           "cost": {
@@ -83,6 +104,14 @@
           }
         },
         {
+          "name": "sword breaker",
+          "alias": "Sword breaker",
+          "cost": {
+            "cost": 30
+          },
+          "variant": "fierezza"
+        },
+        {
           "name": "crossbow",
           "alias": "Crossbow",
           "cost": {
@@ -90,11 +119,35 @@
           }
         },
         {
+          "name": "crossbow pistol",
+          "alias": "Crossbow pistol",
+          "cost": {
+            "cost": 35
+          },
+          "variant": "halcon"
+        },
+        {
+          "name": "long bow",
+          "alias": "Longbow",
+          "cost": {
+            "cost": 15
+          },
+          "variant": "halcon"
+        },
+        {
           "name": "heavy armour",
           "alias": "Heavy armour",
           "cost": {
             "cost": 40
           }
+        },
+        {
+          "name": "Plate Armour",
+          "alias": "Plate armour",
+          "cost": {
+            "cost": 55
+          },
+          "variant": "baluardo"
         },
         {
           "name": "shield",
@@ -109,69 +162,14 @@
           "cost": {
             "cost": 10
           }
-        }
-      ]
-    },
-    {
-      "id": "house-fierezza-equipment-list",
-      "title": "House Fierezza Equipment List",
-      "caveat": "Open to a warband of House Fierezza only.",
-      "items": [
-        {
-          "name": "rapier",
-          "alias": "Rapier",
-          "cost": {
-            "cost": 15
-          }
-        },
-        {
-          "name": "sword breaker",
-          "alias": "Sword breaker",
-          "cost": {
-            "cost": 30
-          }
-        }
-      ]
-    },
-    {
-      "id": "house-halcon-equipment-list",
-      "title": "House Halcon Equipment List",
-      "caveat": "Open to a warband of House Halcon only.",
-      "items": [
-        {
-          "name": "crossbow pistol",
-          "alias": "Crossbow pistol",
-          "cost": {
-            "cost": 35
-          }
-        },
-        {
-          "name": "long bow",
-          "alias": "Longbow",
-          "cost": {
-            "cost": 15
-          }
-        }
-      ]
-    },
-    {
-      "id": "house-baluardo-equipment-list",
-      "title": "House Baluardo Equipment List",
-      "caveat": "Open to a warband of House Baluardo only.",
-      "items": [
-        {
-          "name": "Plate Armour",
-          "alias": "Plate armour",
-          "cost": {
-            "cost": 55
-          }
         },
         {
           "name": "pavise",
           "alias": "Pavise",
           "cost": {
             "cost": 20
-          }
+          },
+          "variant": "baluardo"
         }
       ]
     },
@@ -284,10 +282,7 @@
         "ld": 8
       },
       "equipmentLists": [
-        "house-guard-heroes-equipment-list",
-        "house-fierezza-equipment-list",
-        "house-halcon-equipment-list",
-        "house-baluardo-equipment-list"
+        "house-guard-heroes-equipment-list"
       ],
       "skillAccess": {
         "combat": true,
@@ -302,7 +297,24 @@
           "rulename": "Leader",
           "ruleFull": "Any warrior within 6\" of the Commander may use his Leadership instead of his own."
         }
-      ]
+      ],
+      "variantChanges": {
+        "fierezza": {
+          "skills": [
+            "Web of Steel"
+          ]
+        },
+        "halcon": {
+          "skills": [
+            "Haggle"
+          ]
+        },
+        "baluardo": {
+          "skills": [
+            "Battle Tongue"
+          ]
+        }
+      }
     },
     {
       "id": "sergeant",
@@ -326,20 +338,39 @@
         "ld": 7
       },
       "equipmentLists": [
-        "house-guard-heroes-equipment-list",
-        "house-fierezza-equipment-list",
-        "house-halcon-equipment-list",
-        "house-baluardo-equipment-list"
+        "house-guard-heroes-equipment-list"
       ],
       "skillAccess": {
         "combat": true,
         "shooting": true,
         "academic": false,
-        "strength": true,
+        "strength": false,
         "speed": true,
         "special": false
       },
-      "specialRules": []
+      "specialRules": [],
+      "variantChanges": {
+        "halcon": {
+          "skillAccess": {
+            "combat": true,
+            "shooting": true,
+            "academic": false,
+            "strength": true,
+            "speed": false,
+            "special": false
+          }
+        },
+        "baluardo": {
+          "skillAccess": {
+            "combat": true,
+            "shooting": false,
+            "academic": false,
+            "strength": true,
+            "speed": true,
+            "special": false
+          }
+        }
+      }
     },
     {
       "id": "adjutant",
@@ -363,16 +394,13 @@
         "ld": 6
       },
       "equipmentLists": [
-        "house-guard-heroes-equipment-list",
-        "house-fierezza-equipment-list",
-        "house-halcon-equipment-list",
-        "house-baluardo-equipment-list"
+        "house-guard-heroes-equipment-list"
       ],
       "skillAccess": {
         "combat": true,
-        "shooting": true,
+        "shooting": false,
         "academic": true,
-        "strength": true,
+        "strength": false,
         "speed": true,
         "special": false
       },
@@ -381,7 +409,29 @@
           "rulename": "Relay orders",
           "ruleFull": "While the Adjutant may use his leader's Leadership, any warrior within 6\" of the Adjutant may use the leader's Leadership instead of his own. The Adjutant may take the Battle Tongue skill to raise that range to 12\"."
         }
-      ]
+      ],
+      "variantChanges": {
+        "halcon": {
+          "skillAccess": {
+            "combat": false,
+            "shooting": true,
+            "academic": true,
+            "strength": false,
+            "speed": true,
+            "special": false
+          }
+        },
+        "baluardo": {
+          "skillAccess": {
+            "combat": false,
+            "shooting": false,
+            "academic": true,
+            "strength": true,
+            "speed": true,
+            "special": false
+          }
+        }
+      }
     },
     {
       "id": "guard",
@@ -514,19 +564,11 @@
   "flags": [
     {
       "page": 5,
-      "what": "The three skill tables' ticks are glyphs the text layer drops: they were read from p5's image. Fierezza - Commander: all five lists; Sergeant: Combat, Shooting, Speed; Adjutant: Combat, Academic, Speed. Halcon - Commander: all five; Sergeant: Combat, Shooting, Strength; Adjutant: Shooting, Academic, Speed. Baluardo - Commander: all five; Sergeant: Combat, Strength, Speed; Adjutant: Academic, Strength, Speed. There is no Special column, so the warband has no skill group."
-    },
-    {
-      "page": 5,
-      "what": "A template holds one skill table, and a PDF page has no variants, so each fighter is given the three houses' lists together: the Commander and the Adjutant all five, the Sergeant Combat, Shooting, Strength and Speed. See the decisions."
-    },
-    {
-      "page": 2,
-      "what": "The three houses are warband rules, as our templates hold no variants for a PDF page. Each carries its own rules and names its equipment list; the player picks one house when the warband is raised."
+      "what": "The three skill tables' ticks are glyphs the text layer drops: they were read from p5's image. Each house is a variant, holding its own table. Fierezza (the first, so the fighters' own) - Commander: all five lists; Sergeant: Combat, Shooting, Speed; Adjutant: Combat, Academic, Speed. Halcon - Commander: all five; Sergeant: Combat, Shooting, Strength; Adjutant: Shooting, Academic, Speed. Baluardo - Commander: all five; Sergeant: Combat, Strength, Speed; Adjutant: Academic, Strength, Speed. There is no Special column, so the warband has no skill group."
     },
     {
       "page": 3,
-      "what": "The Heroes list marks Rapier and Sword breaker House Fierezza only, Crossbow pistol and Longbow House Halcon only, and Plate armour and Pavise House Baluardo only. Our line notes name fighters, not houses, so those six lines are three lists of their own, every Hero buying from all four."
+      "what": "The Heroes list marks Rapier and Sword breaker House Fierezza only, Crossbow pistol and Longbow House Halcon only, and Plate armour and Pavise House Baluardo only: each of the six lines is its house's variant line on the one Heroes list."
     },
     {
       "page": 2,
@@ -542,7 +584,7 @@
     },
     {
       "page": 2,
-      "what": "Martial Finesse, Battle Seasoned and Merchantry give the Commander a skill at hire. They stay in their house's warband rule, because the house is a rule and not a variant, so no skill is given automatically."
+      "what": "Martial Finesse (Fierezza), Merchantry (Halcon) and Battle Seasoned (Baluardo) each only name a skill the Commander starts with (Web of Steel, Haggle, Battle Tongue), so he is given it by his variant and none stays a rule (William, 7 Nov 2026)."
     },
     {
       "page": 2,

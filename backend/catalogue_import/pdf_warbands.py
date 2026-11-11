@@ -46,6 +46,13 @@ snapshot so the template import builds it the same way. A file's own keys:
   `TemplateFighterSkill` holds them, so they show with his skills and follow any change to the skill (William,
   7 Nov 2026, of a rule that only names a skill: "yes please do that"). A rule that says more than the skill keeps
   its text beside them, as the snapshot's `pointer_rules.py` does;
+- `variants`: `[{key, name, startingGc, maxModels, rareBonus, rareBonusExcept}]`, the warband's own variants (the
+  House Guard's three houses), as the snapshot's pages take them from `template_answers` (`VARIANTS`,
+  `VARIANT_TERMS`). The player picks one when the warband is raised. A warband rule and an equipment list line may
+  name one (`variant`: the rules and lines of one house only, the snapshot's `VARIANT_LINES` and `RULE_TYPES` in the
+  page itself), and a fighter's `variantChanges` (`{<key>: {skillAccess, skills, stats, maxCount}}`) holds what a
+  variant changes about him, his own keys being the first variant's: the Halcon Sergeant's skill table, the
+  Commander's Haggle. A page with no `variants` names none;
 - `flags`: `{page, what}`, what the PDF leaves unclear, for William.
 
 `check_pdf.py` checks every file against the catalogue (`pdf_check.py`).
@@ -116,6 +123,28 @@ def add_pages(pages: dict[str, dict[str, Any]], pdf: dict[str, dict[str, Any]]) 
     if taken:
         raise ValueError(f"pdf-warbands: {', '.join(taken)} is a snapshot page too")
     pages.update(pdf)
+
+
+# a variant's own terms, as a template holds them, by the key a page writes
+VARIANT_TERMS = {
+    "startingGc": "starting_gold",
+    "maxModels": "max_models",
+    "rareBonus": "rare_bonus",
+    "rareBonusExcept": "rare_bonus_except",
+}
+
+
+def pdf_variants(page: dict[str, Any]) -> list[dict[str, Any]]:
+    """A PDF page's variants in the template's shape (the snapshot's come from `template_answers`): the House Guard's
+    three houses, each with its own terms where it has them."""
+    return [
+        {
+            "key": variant["key"],
+            "name": variant["name"],
+            **{name: variant[key] for key, name in VARIANT_TERMS.items() if key in variant},
+        }
+        for variant in page.get("variants") or []
+    ]
 
 
 def pdf_types(page: dict[str, Any], types: list[dict[str, Any]]) -> list[dict[str, str]]:
@@ -355,49 +384,3 @@ def add_skill_groups(sources: Any, pages: dict[str, dict[str, Any]], types: list
             chosen.update({f"{row['name']} ({group['name']})": setting_of[page[TYPE]] for row in rows})
     assignments = {**sources.overrides.get("setting_assignments", {}), "skills": chosen}
     sources.overrides = {**sources.overrides, "new_skill_groups": groups, "setting_assignments": assignments}
-
-
-def _cell(value: object) -> str:
-    return str(value).replace("|", "\\|").replace("\n", " ")
-
-
-def render_pdf(pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]]) -> str:
-    """The import report's PDF warbands section: each page's type, aliases, stubs and flags, for William's vetting."""
-    lines = [
-        "## PDF warbands",
-        "",
-        f"{len(pages)} warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.",
-        "",
-        "| Page | Type | Fighters | Aliases | Stubs | Flags |",
-        "| --- | --- | --- | --- | --- | --- |",
-    ]
-    for slug, page in pages.items():
-        counts = [len(page["fighters"]), len(page.get("aliases") or []), len(page.get("stubs") or [])]
-        lines.append(f"| {slug} | {page[TYPE]} | {' | '.join(map(str, counts))} | {len(page.get('flags') or [])} |")
-    prices = {
-        (item["name"], warband["type"]): row
-        for item in stubs
-        for row in item["availabilities"]
-        for warband in row["warbands"]
-    }
-    for page in pages.values():
-        lines += ["", f"### {page['name']}", ""]
-        for row in page.get("aliases") or []:
-            lines.append(f'- Alias (p{row["page"]}): "{_cell(row["pdf"])}" is our {_cell(row["ours"])}.')
-        for stub in page.get("stubs") or []:
-            price = prices[(stub["name"], page[TYPE])]
-            rarity = f"Rare {price['rarity']}" if price["rarity"] else "Common"
-            times = f"x{price['dice_multiplier']}" if price["dice_multiplier"] else ""
-            dice = f"+{price['dice']}D6{times}" if price["dice"] else ""
-            cost = price["cost_note"] if price["cost"] is None else f"{price['cost']}{dice} gc"
-            lines.append(f"- Stub: {stub['name']}, {cost}, {rarity}; its rules are on p{stub['rulesPage']}.")
-        for row in page.get("itemRules") or []:
-            lines.append(f"- Shared item rule (p{row['page']}): {_cell(row['name'])}.")
-        for row in page.get("priceRows") or []:
-            rarity = f"Rare {row['rarity']}" if row.get("rarity") else "Common"
-            note = f", {_cell(row['note'])}" if row.get("note") else ""
-            who = ", ".join(row.get("types") or [page[TYPE]])
-            lines.append(f"- Price row (p{row['page']}): our {_cell(row['name'])} for {who}, {rarity}{note}.")
-        for flag in page.get("flags") or []:
-            lines.append(f"- Flag (p{flag['page']}): {_cell(flag['what'])}")
-    return "\n".join(lines) + "\n"

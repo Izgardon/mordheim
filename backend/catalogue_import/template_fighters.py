@@ -1,6 +1,7 @@
-"""A warband template's fighters from a snapshot page: kind, counts, the first profile as written, race, skill groups
-(a variant's table where it differs), spell lores, the caster, leader and Large flags, and his rules as specials (the
-template's own, "Warband - Mercenaries", or our Large, Wizard and Priest)."""
+"""A warband template's fighters from a snapshot page or a PDF page: kind, counts, the first profile as written, race,
+skill groups (a variant's table where it differs), spell lores, the caster, leader and Large flags, and his rules as
+specials (the template's own, "Warband - Mercenaries", or our Large, Wizard and Priest). A PDF page's fighter says
+what a variant changes about him himself (`variantChanges`), where a snapshot page's is William's answer."""
 
 from dataclasses import dataclass, field
 from typing import Any
@@ -134,6 +135,11 @@ def skill_types(
         table = _table(tables.get(subfaction, {}), specials, extra)
         if table != base:
             changes[key] = {"skill_types": table}
+    # a PDF page's fighter holds the first variant's table and the tables that differ (`variantChanges`)
+    for key, change in (fighter.get("variantChanges") or {}).items():
+        table = _table(change["skillAccess"], specials, extra) if "skillAccess" in change else base
+        if table != base:
+            changes.setdefault(key, {})["skill_types"] = table
     return base, changes
 
 
@@ -217,6 +223,19 @@ def variant_numbers(page: str, name: str, stats: dict[str, int | str], changes: 
             changes.setdefault(variant, {})["max_count"] = counts[name]
 
 
+def page_variant_numbers(fighter: dict[str, Any], changes: dict[str, Any]) -> None:
+    """What a PDF page's variant changes about him besides his skill table (`variantChanges`): the skills it gives
+    him from the start, his profile as that variant prints it and his most."""
+    for key, change in (fighter.get("variantChanges") or {}).items():
+        found = changes.setdefault(key, {})
+        if change.get("skills"):
+            found["skills"] = [str(name) for name in change["skills"]]
+        if change.get("stats"):
+            found["stats"] = {STATS[stat]: value for stat, value in change["stats"].items()}
+        if "maxCount" in change:
+            found["max_count"] = change["maxCount"]
+
+
 def plural_of(fighter: dict[str, Any]) -> str:
     """mordheimer's plural, its "-mens" slip mended ("Marksmens" is "Marksmen", "Underclassmens" "Underclassmen")."""
     text = plain(fighter.get("plural"))
@@ -233,6 +252,7 @@ def build_fighter(
     base, changes = skill_types(page, fighter, context["variants"], log, context.get("special_groups"))
     stats = profile(page, fighter, log)
     variant_numbers(page, plain(fighter["name"]), stats, changes)
+    page_variant_numbers(fighter, changes)
     caster = ("Priest" if all(is_prayers(lore["name"]) for lore in lores) else "Wizard") if lores else "No"
     if lores:
         log.casters.append((page, fighter["name"], caster, [lore["name"] for lore in lores]))

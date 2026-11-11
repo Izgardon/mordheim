@@ -17,6 +17,7 @@ from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, mim_item
 from catalogue_import.new_groups import SkillGroups, build_skill_groups
 from catalogue_import.own_rules import own_rules
+from catalogue_import.pdf_report import render_pdf
 from catalogue_import.pdf_warbands import (
     PDF_SOURCES,
     add_pages,
@@ -25,7 +26,6 @@ from catalogue_import.pdf_warbands import (
     give_page_rules,
     load_pdf_pages,
     page_item_rules,
-    render_pdf,
     stub_items,
 )
 from catalogue_import.personae import Catalogue, build_personae, put_names_right

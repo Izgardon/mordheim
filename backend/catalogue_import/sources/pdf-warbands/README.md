@@ -2,7 +2,7 @@
 
 One file per warband, written by hand from its Broheim PDF (William, 5 Nov 2026: "lets begin adding warbands in via
 their pdfs"), in the snapshot's page shape (`../testwarbands-2026-10-31/warbands/*.json`) plus the keys
-`catalogue_import/pdf_warbands.py` describes: `warbandType`, `aliases`, `stubs`, `itemRules`, `priceRows`,
+`catalogue_import/pdf_warbands.py` describes: `warbandType`, `variants`, `aliases`, `stubs`, `itemRules`, `priceRows`,
 `skillGroup` and `specialSkillsList`, a fighter's `spellLores`, and `flags`. Rule text is in our own words with every number, roll,
 range, test and condition kept, and no flavour; the PDFs and their extracted text are never committed.
 
@@ -132,6 +132,13 @@ Cutlass and Great Scimitar are stubs with no rules, and the Mage and Street Mage
    Who of the warband may take a skill opens a new skill's description ("Gnoblars only."); a skill of ours is shared
    with other warbands, so the group's `note` says it instead (at most 200 characters, shown when learning from the
    group). Neither is a warband rule. A warband with no Special column has no `skillGroup` or `specialSkillsList`.
+   A warband whose book splits it into several (the House Guard's three houses) declares them as `variants`
+   (`{key, name}`, with `startingGc`, `maxModels`, `rareBonus` and `rareBonusExcept` where one has its own): the
+   player picks one when the warband is raised. A warband rule and an equipment list line name the one they belong
+   to (`variant`), and a fighter's `variantChanges` holds what a variant changes about him (`skillAccess`, `skills`
+   he starts with, `stats`, `maxCount`), his own keys being the first variant's. A rule that only names a skill a
+   fighter starts with is that skill, not a rule (the Fierezza Commander's Web of Steel).
+
 3. A race of the warband's own goes in `apps/races/data/races.json` and `template_answers.RACES_BY_PAGE` (one
    fighter's, `RACES_BY_FIGHTER`); a rule that is a shared special but does something else is kept apart in
    `apps/special/data/shared-specials.json`; a pre-battle roll goes in `apps/special/data/prebattle-rolls.json`; a

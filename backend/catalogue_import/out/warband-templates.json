@@ -36524,7 +36524,20 @@
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/House%20Guard.pdf",
     "starting_gold": 500,
     "max_models": 15,
-    "variants": [],
+    "variants": [
+      {
+        "key": "fierezza",
+        "name": "House Fierezza"
+      },
+      {
+        "key": "halcon",
+        "name": "House Halcon"
+      },
+      {
+        "key": "baluardo",
+        "name": "House Baluardo"
+      }
+    ],
     "types": [
       {
         "type": "house-guard",
@@ -36545,27 +36558,21 @@
         "type": ""
       },
       {
-        "title": "Houses",
-        "description": "A House Guard warband fights for one of three houses, chosen when it is raised: Fierezza, Halcon or Baluardo. It takes that house's rules and buys from that house's equipment list beside the Heroes list.",
-        "variant": "",
+        "title": "Dueling Pride",
+        "description": "A Fierezza Hero may re-roll failed hits in the first round of combat when he fights an enemy Hero.",
+        "variant": "fierezza",
         "type": ""
       },
       {
-        "title": "House Fierezza",
-        "description": "Dueling Pride: a Fierezza Hero may re-roll failed hits in the first round of combat when he fights an enemy Hero.\n\nMartial Finesse: the Commander starts with the Web of Steel skill.\n\nThe House Fierezza equipment list is open to the warband's Heroes.",
-        "variant": "",
+        "title": "Sharp Aim",
+        "description": "Every warrior of House Halcon ignores the long range modifier when he fires a missile weapon.",
+        "variant": "halcon",
         "type": ""
       },
       {
-        "title": "House Halcon",
-        "description": "Sharp Aim: every warrior of House Halcon ignores the long range modifier when he fires a missile weapon.\n\nMerchantry: the Commander starts with the Haggle skill.\n\nThe House Halcon equipment list is open to the warband's Heroes.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "House Baluardo",
-        "description": "Armour: a Baluardo Hero suffers no movement penalty for wearing armour.\n\nBattle Seasoned: the Commander starts with the Battle Tongue skill.\n\nThe House Baluardo equipment list is open to the warband's Heroes.",
-        "variant": "",
+        "title": "Armour",
+        "description": "A Baluardo Hero suffers no movement penalty for wearing armour.",
+        "variant": "baluardo",
         "type": ""
       }
     ],
@@ -36637,6 +36644,21 @@
           },
           {
             "item": {
+              "name": "Rapier",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": "fierezza"
+          },
+          {
+            "item": {
               "name": "Halberd",
               "variant": ""
             },
@@ -36667,6 +36689,21 @@
           },
           {
             "item": {
+              "name": "Sword Breaker",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": "fierezza"
+          },
+          {
+            "item": {
               "name": "Crossbow",
               "variant": ""
             },
@@ -36682,6 +36719,36 @@
           },
           {
             "item": {
+              "name": "Crossbow pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": "halcon"
+          },
+          {
+            "item": {
+              "name": "Long Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": "halcon"
+          },
+          {
+            "item": {
               "name": "Heavy Armour",
               "variant": ""
             },
@@ -36694,6 +36761,21 @@
             "warband_max": null,
             "note": "",
             "variant": ""
+          },
+          {
+            "item": {
+              "name": "Plate Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 55,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": "baluardo"
           },
           {
             "item": {
@@ -36724,102 +36806,6 @@
             "warband_max": null,
             "note": "",
             "variant": ""
-          }
-        ]
-      },
-      {
-        "key": "house-fierezza-equipment-list",
-        "name": "House Fierezza Equipment List",
-        "note": "Open to a warband of House Fierezza only.",
-        "lines": [
-          {
-            "item": {
-              "name": "Rapier",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sword Breaker",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 30,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      },
-      {
-        "key": "house-halcon-equipment-list",
-        "name": "House Halcon Equipment List",
-        "note": "Open to a warband of House Halcon only.",
-        "lines": [
-          {
-            "item": {
-              "name": "Crossbow pistol",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 35,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Long Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      },
-      {
-        "key": "house-baluardo-equipment-list",
-        "name": "House Baluardo Equipment List",
-        "note": "Open to a warband of House Baluardo only.",
-        "lines": [
-          {
-            "item": {
-              "name": "Plate Armour",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 55,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
           },
           {
             "item": {
@@ -36834,7 +36820,7 @@
             "who": {},
             "warband_max": null,
             "note": "",
-            "variant": ""
+            "variant": "baluardo"
           }
         ]
       },
@@ -37048,13 +37034,26 @@
         "is_leader": true,
         "caster": "No",
         "large": false,
-        "variant_changes": {},
+        "variant_changes": {
+          "fierezza": {
+            "skills": [
+              "Web of Steel"
+            ]
+          },
+          "halcon": {
+            "skills": [
+              "Haggle"
+            ]
+          },
+          "baluardo": {
+            "skills": [
+              "Battle Tongue"
+            ]
+          }
+        },
         "fixed_kit": "",
         "lists": [
-          "house-guard-heroes-equipment-list",
-          "house-fierezza-equipment-list",
-          "house-halcon-equipment-list",
-          "house-baluardo-equipment-list"
+          "house-guard-heroes-equipment-list"
         ],
         "specials": [
           {
@@ -37091,7 +37090,6 @@
         "skill_types": [
           "Combat",
           "Shooting",
-          "Strength",
           "Speed"
         ],
         "spell_types": [],
@@ -37100,13 +37098,25 @@
         "is_leader": false,
         "caster": "No",
         "large": false,
-        "variant_changes": {},
+        "variant_changes": {
+          "halcon": {
+            "skill_types": [
+              "Combat",
+              "Shooting",
+              "Strength"
+            ]
+          },
+          "baluardo": {
+            "skill_types": [
+              "Combat",
+              "Strength",
+              "Speed"
+            ]
+          }
+        },
         "fixed_kit": "",
         "lists": [
-          "house-guard-heroes-equipment-list",
-          "house-fierezza-equipment-list",
-          "house-halcon-equipment-list",
-          "house-baluardo-equipment-list"
+          "house-guard-heroes-equipment-list"
         ],
         "specials": [],
         "skills": []
@@ -37136,9 +37146,7 @@
         },
         "skill_types": [
           "Combat",
-          "Shooting",
           "Academic",
-          "Strength",
           "Speed"
         ],
         "spell_types": [],
@@ -37147,13 +37155,25 @@
         "is_leader": false,
         "caster": "No",
         "large": false,
-        "variant_changes": {},
+        "variant_changes": {
+          "halcon": {
+            "skill_types": [
+              "Shooting",
+              "Academic",
+              "Speed"
+            ]
+          },
+          "baluardo": {
+            "skill_types": [
+              "Academic",
+              "Strength",
+              "Speed"
+            ]
+          }
+        },
         "fixed_kit": "",
         "lists": [
-          "house-guard-heroes-equipment-list",
-          "house-fierezza-equipment-list",
-          "house-halcon-equipment-list",
-          "house-baluardo-equipment-list"
+          "house-guard-heroes-equipment-list"
         ],
         "specials": [
           {

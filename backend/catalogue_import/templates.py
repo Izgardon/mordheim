@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.common import load_json, slugify
-from catalogue_import.pdf_warbands import is_pdf, link_of, pdf_lores, pdf_types, special_groups
+from catalogue_import.pdf_warbands import is_pdf, link_of, pdf_lores, pdf_types, pdf_variants, special_groups
 from catalogue_import.shared_specials import SharedSpecials
 from catalogue_import.snapshot import Snapshot
 from catalogue_import.sources import BACKEND
@@ -20,6 +20,8 @@ from catalogue_import.template_text import clean_rule
 from catalogue_import.template_upgrades import UpgradeLog, build_upgrades, mutation_upgrades
 from catalogue_import.warbands import Resolver
 
+# a variant's own terms, which a PDF page writes itself (pdf_warbands.VARIANT_TERMS)
+VARIANT_OWN = frozenset({"starting_gold", "max_models", "rare_bonus", "rare_bonus_except"})
 # words a rule written for one fighter or another shares ("Pursuers have", "An Ogre has")
 FILLER = frozenset({"a", "an", "the", "has", "have", "is", "are", "and", "so", "follow", "follows", "cause", "causes"})
 
@@ -134,7 +136,7 @@ def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: 
         log.no_types.append(slug)
         return None
     name = page["name"]
-    variants = VARIANTS.get(slug, [])
+    variants = pdf_variants(page) if is_pdf(page) else VARIANTS.get(slug, [])
     owner = f"Warband - {name}"
     lists, list_keys = build_lists(slug, page, context["index"], log.lists)
     fighter_context = {**context, "variants": variants, "owner": owner, "special_groups": special_groups(page)}
@@ -157,7 +159,13 @@ def build_template(slug: str, snapshot: Snapshot, context: dict[str, Any], log: 
         "starting_gold": book.get("startingGc"),
         "max_models": book.get("maxModels") or SIZES.get(slug),
         "variants": [
-            {"key": variant["key"], "name": variant["name"], **VARIANT_TERMS.get(slug, {}).get(variant["key"], {})}
+            {
+                "key": variant["key"],
+                "name": variant["name"],
+                # a PDF page writes a variant's own terms itself; the snapshot's are William's answers
+                **{key: value for key, value in variant.items() if key in VARIANT_OWN},
+                **VARIANT_TERMS.get(slug, {}).get(variant["key"], {}),
+            }
             for variant in variants
         ],
         "types": types,
