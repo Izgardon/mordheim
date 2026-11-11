@@ -1302,7 +1302,7 @@
     },
     {
       "name": "Songster",
-      "setting": "mutiny-in-marienburg",
+      "setting": "mordheim-2a",
       "how": "overrides.json"
     },
     {
@@ -1377,7 +1377,7 @@
     },
     {
       "name": "Excellent Sight",
-      "setting": "mousillon",
+      "setting": "mordheim-2a",
       "how": "overrides.json"
     },
     {
@@ -2127,7 +2127,7 @@
     },
     {
       "name": "Elven Luck",
-      "setting": "mousillon",
+      "setting": "mordheim-2a",
       "how": "overrides.json"
     },
     {

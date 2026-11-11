@@ -12,9 +12,11 @@ from catalogue_import.pdf_check import Catalogue, check_page, load_catalogue
 from catalogue_import.pdf_warbands import (
     ORIGIN,
     PDF_SOURCES,
+    TYPE,
     add_price_rows,
     page_item_rules,
     put_aliases_right,
+    skill_settings,
     stub_items,
     tables_as_html,
 )
@@ -290,6 +292,31 @@ class PdfImportTests(SimpleTestCase):
         super().setUpClass()
         cls.templates = {row["slug"]: row for row in load_json(OUT / "warband-templates.json")}
         cls.items = {row["name"]: row for row in load_json(OUT / "items.json")}
+
+    def test_the_shared_skills_sit_in_the_earliest_setting_that_declares_them(self) -> None:
+        settings = {row["name"]: row["setting"] for row in load_json(OUT / "setting-assignments.json")["skills"]}
+        self.assertEqual(settings["Elven Luck"], "mordheim-2a")  # Athel Loren's (2a) and Arden's (Mousillon)
+        self.assertEqual(settings["Excellent Sight"], "mordheim-2a")  # the Druchii's, the Corsairs', both Wood Elves'
+        self.assertEqual(settings["Songster"], "mordheim-2a")  # the Slayer Cult's (2a) and the Channel Rats' (MiM)
+        self.assertEqual(settings["Deathwish"], "mordheim-2a")  # the Slayer Cult's and the Slayer Pirates' (Sartosa)
+        self.assertEqual(settings["Iron Will"], "mordheim-2a")  # the Protectorate's and the Vampire Hunters' (2a)
+        self.assertEqual(settings["Cloud of Flies"], "lustria")  # the Lustria (1b) and Mousillon (2b) Pestilens
+
+    def test_a_skill_two_pages_share_keeps_the_earlier_setting(self) -> None:
+        # a shared new skill can sit in only one setting, and which one must not depend on the order the source
+        # files are read in: the Wood Elves of Arden (Mousillon) and of Athel Loren (Mordheim 2a) both declare
+        # Elven Luck, and it belongs to the earlier of the two settings
+        late, early = good_page(), good_page()
+        late[TYPE], early[TYPE] = "late-band", "early-band"
+        late["skillGroup"], early["skillGroup"] = {"name": "Late", "new": True}, {"name": "Early", "new": True}
+        shared = {"name": "Elven Luck", "description": "Once a game the Elf may re-roll a failed roll."}
+        late["specialSkillsList"] = [dict(shared)]
+        early["specialSkillsList"] = [dict(shared), {"name": "Own", "description": "His own."}]
+        setting_of = {"late-band": "mousillon", "early-band": "mordheim-2a"}
+        # the pages are read in name order, so the later setting's page comes first
+        pages = {"a-late": late, "b-early": early}
+        self.assertEqual(skill_settings(pages, setting_of), {"Elven Luck": "mordheim-2a", "Own": "mordheim-2a"})
+        self.assertEqual(skill_settings({"b-early": early, "a-late": late}, setting_of)["Elven Luck"], "mordheim-2a")
 
     def test_aliases_are_put_right_as_a_page_loads(self) -> None:
         page = good_page()

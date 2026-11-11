@@ -65,6 +65,7 @@ from pathlib import Path
 from typing import Any
 
 from catalogue_import.common import load_json, loose_key, norm_name, slugify
+from catalogue_import.grading import SETTING_ORDER
 from catalogue_import.sources import SOURCES
 from catalogue_import.template_lists import ItemIndex, line_price
 from catalogue_import.text import clean_inline
@@ -476,10 +477,30 @@ def declared_groups(
     return found
 
 
+def skill_settings(pages: dict[str, dict[str, Any]], setting_of: dict[str, str]) -> dict[str, str]:
+    """The setting each new skill belongs to: the earliest, by the settings' own order (`grading.SETTING_ORDER`), of
+    the settings whose pages declare it. A skill two pages share is one skill (the Wood Elves' Elven Luck, the
+    Slayers' Songster, the two Clan Pestilens warbands' Cloud of Flies), so it can sit in only one setting, and
+    taking the earliest keeps that from depending on the order the files happen to be read in."""
+    rank = {slug: order for order, slug in enumerate(SETTING_ORDER)}
+    last = len(rank)
+    found: dict[str, str] = {}
+    for slug, page in pages.items():
+        setting = setting_of[page[TYPE]]
+        for _group, skills, _source, _slugs in declared_groups(slug, page):
+            for row in skills:
+                held = found.get(row["name"])
+                if "description" in row and (held is None or rank.get(setting, last) < rank.get(held, last)):
+                    found[row["name"]] = setting
+    return found
+
+
 def add_skill_groups(sources: Any, pages: dict[str, dict[str, Any]], types: list[dict[str, Any]]) -> None:
     """The pages' new skill groups, made as overrides.json's new groups are (new_groups.py): open to the page's type
-    (a shared group to the types it names), their new skills' rules from the page, in the type's setting."""
+    (a shared group to the types it names), their new skills' rules from the page, each skill in the earliest setting
+    of the pages that declare it (`skill_settings`)."""
     setting_of = {row["slug"]: row["setting"] for row in types}
+    settings = skill_settings(pages, setting_of)
     groups = dict(sources.overrides.get("new_skill_groups", {}))
     chosen = dict(sources.overrides.get("setting_assignments", {}).get("skills", {}))
     for slug, page in pages.items():
@@ -488,6 +509,6 @@ def add_skill_groups(sources: Any, pages: dict[str, dict[str, Any]], types: list
                 raise ValueError(f"pdf-warbands/{slug}.json: the skill group {group['name']!r} is made twice")
             groups[group["name"]], rows = _new_group(page, group, skills, source, slugs)
             sources.skill_files[source] = rows
-            chosen.update({f"{row['name']} ({group['name']})": setting_of[page[TYPE]] for row in rows})
+            chosen.update({f"{row['name']} ({group['name']})": settings[row["name"]] for row in rows})
     assignments = {**sources.overrides.get("setting_assignments", {}), "skills": chosen}
     sources.overrides = {**sources.overrides, "new_skill_groups": groups, "setting_assignments": assignments}

@@ -532,7 +532,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Prize-fighter | Channel Rats | mutiny-in-marienburg | Mutiny in Marienburg |
 | Knowledge of Myths and Legends | Channel Rats | mutiny-in-marienburg | Mutiny in Marienburg |
 | Animal Charmer | Channel Rats | mutiny-in-marienburg | Mutiny in Marienburg |
-| Songster | Channel Rats | mutiny-in-marienburg | Mutiny in Marienburg |
+| Songster | Channel Rats | mordheim-2a | Mutiny in Marienburg |
 | Experimental enhancements | Clockworkers | sealed-city | Sealed City |
 | Moonstone infusion | Clockworkers | sealed-city | Sealed City |
 | Puppeteer | Clockworkers | sealed-city | Sealed City |
@@ -547,7 +547,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Tattoos of Grimnir | Cursed Dwarf Slayer Skills | khemri-3 | Khemri |
 | Fated | Cursed Dwarf Slayer Skills | khemri-3 | Khemri |
 | Furious Charge | Dark Elf Corsairs | mousillon | Mousillon |
-| Excellent Sight | Dark Elf Corsairs | mousillon | Mousillon |
+| Excellent Sight | Dark Elf Corsairs | mordheim-2a | Mousillon |
 | Looting | Dark Elf Corsairs | mousillon | Mousillon |
 | Inspiring Presence | Dreamwalkers | mordheim-2a | MFB |
 | Fanatical | Dreamwalkers | mordheim-2a | MFB |
@@ -697,7 +697,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Thirst for Vengeance | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Blessing of Morr | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Touch of Darkness | Vampire Hunters of Sylvania | sylvania | LOD5 |
-| Elven Luck | Wood Elves of Arden | mousillon | Mousillon |
+| Elven Luck | Wood Elves of Arden | mordheim-2a | Mousillon |
 | Seeker (Wood Elves of Arden) | Wood Elves of Arden | mousillon | Mousillon |
 | Seeker (Wood Elves of Athel Loren) | Wood Elves of Athel Loren | mordheim-2a | WEB |
 | Staff Master | Woodsmen de Artois | mousillon | Mousillon |
