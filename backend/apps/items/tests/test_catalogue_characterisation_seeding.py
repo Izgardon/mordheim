@@ -116,14 +116,15 @@ class SeedAllTests(TestCase):
                 # templates' 21, the hired swords' 9 and Maximilian's Strongman fewer; the Corsairs' three Specialist
                 # hired swords bring 3 of their own (their Witch Elf's Frenzy is the shared one); a rule that says
                 # more than the skill keeps its text (William, 11 Nov 2026): the Ogre Hunter's Sabre Trainer and the
-                # Watchmen Sergeant's Falconer are 2 more
-                "Special": 1308,
+                # Watchmen Sergeant's Falconer are 2 more; the Sartosa Orc Pirates split into two warbands
+                # (William, 11 Nov 2026), and the Savage Orcs' template brings 12 of its own
+                "Special": 1320,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,
                 "HiredSword": 75,  # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin)
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
-                "WarbandTemplate": 114,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
+                "WarbandTemplate": 115,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
             },
         )
         for model in BOOK_MODELS:
@@ -191,7 +192,7 @@ class SeedAllTests(TestCase):
                 "DramatisPersona": 0,
             },
         )
-        self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 163)
+        self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 164)
         # the review (5 Nov 2026: D1): Broheim's typo and its capital "Of" and "The" are put right, the slug kept
         book_types = WarbandType.objects.filter(campaign__isnull=True)
         self.assertEqual(book_types.get(slug="arabyan-theives").name, "Arabyan Thieves")
@@ -214,13 +215,13 @@ class SeedAllTests(TestCase):
 
     def test_the_warband_templates_come_in_whole(self):
         # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
-        self.assertIn("Warband templates import complete. Templates: 114, archived", self.output)
+        self.assertIn("Warband templates import complete. Templates: 115, archived", self.output)
         counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
         self.assertEqual(
             counts,
             {
-                "WarbandTemplateType": 120,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
-                "TemplateFighter": 747,
+                "WarbandTemplateType": 121,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
+                "TemplateFighter": 754,  # the Savage Orcs' seven, their warband split from the Orc Pirates
                 "TemplateList": 281,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
                 "TemplateListItem": 3130,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
                 "TemplateRule": 373,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
@@ -267,13 +268,13 @@ class SeedAllTests(TestCase):
             links,
             {
                 "Fear": (
-                    91,
+                    92,
                     0,
                     5,
                     5,
                     17,
                 ),  # fighters, upgrades, hired swords, dramatis personae, beasts (14 of the East)
-                "Stupidity": (9, 0, 0, 0, 2),
+                "Stupidity": (10, 0, 0, 0, 2),  # the Savage Orcs' Troll is the tenth
                 "Immune to Psychology": (55, 0, 1, 2, 0),
                 "Immune to Poison": (52, 0, 3, 3, 8),
                 "Hideous": (

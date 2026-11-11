@@ -1582,20 +1582,6 @@
     "mordheimer_url": ""
   },
   {
-    "slug": "orc-pirates-and-savage-orcs",
-    "name": "Orc Pirates & Savage Orcs",
-    "setting": "sartosa",
-    "setting_assumed": false,
-    "race": "Orcs & Goblins",
-    "broheim_grade": "2b",
-    "mordheimer_grade": null,
-    "source": "",
-    "source_code": "SAR",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
-    "broheim_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
-    "mordheimer_url": ""
-  },
-  {
     "slug": "pirates-of-the-cathayan-sea",
     "name": "Pirates of the Cathayan Sea",
     "setting": "sartosa",
@@ -2265,6 +2251,34 @@
     "source_code": "MIC",
     "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
     "broheim_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "mordheimer_url": ""
+  },
+  {
+    "slug": "orc-pirates",
+    "name": "Orc Pirates",
+    "setting": "sartosa",
+    "setting_assumed": false,
+    "race": "Orcs & Goblins",
+    "broheim_grade": "2b",
+    "mordheimer_grade": null,
+    "source": "Sartosa",
+    "source_code": "SAR",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
+    "broheim_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
+    "mordheimer_url": ""
+  },
+  {
+    "slug": "savage-orcs-sar",
+    "name": "Savage Orcs",
+    "setting": "sartosa",
+    "setting_assumed": false,
+    "race": "Orcs & Goblins",
+    "broheim_grade": "2b",
+    "mordheimer_grade": null,
+    "source": "Sartosa",
+    "source_code": "SAR",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
+    "broheim_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
     "mordheimer_url": ""
   },
   {

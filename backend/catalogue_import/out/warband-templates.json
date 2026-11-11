@@ -62151,8 +62151,8 @@
     "upgrades": []
   },
   {
-    "slug": "orc-pirates-and-savage-orcs",
-    "name": "Orc Pirates & Savage Orcs",
+    "slug": "orc-pirates",
+    "name": "Orc Pirates",
     "setting": "sartosa",
     "source": "Sartosa",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
@@ -62161,7 +62161,7 @@
     "variants": [],
     "types": [
       {
-        "type": "orc-pirates-and-savage-orcs",
+        "type": "orc-pirates",
         "variant": ""
       }
     ],
@@ -62181,36 +62181,6 @@
       {
         "title": "Animosity",
         "description": "At the start of the warband's turn, roll a D6 for each henchman who is an Orc or a Goblin and is not in hand-to-hand combat. On a 1 he has taken offence, so roll another D6.\n\nD6 | Result\n1 | He charges the nearest friendly Orc or Goblin henchman or Hired Sword within charge reach and fights one round of hand-to-hand combat; the models then move 1\" apart and no longer count as in close combat. With none in reach he shoots the nearest with a missile weapon, if he carries one. If neither applies, or the nearest friendly model is an Orc hero, treat it as a 2-5. He may take no other action this turn, though he may defend himself.\n2-5 | He may do nothing else this turn, though he may defend himself.\n6 | He moves as fast as he can towards the nearest enemy model, charging it if he can. With no enemy in sight he may make a normal move at once. This move is on top of his move in the movement phase, and if it brings him within charge reach of an enemy he must charge in his regular movement.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "Savage Orc variation: Talismans galore",
-        "description": "Every Orc and Goblin in a Savage Orc warband has a 6+ armour save, which may not be reduced below 6+ and may not be ignored, even by a critical hit. They may never use armour other than a shield, and may never parry.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "Savage Orc variation: Fear fire",
-        "description": "Every member of a Savage Orc warband fears any model with a flaming attack, carrying a lit item (a lantern, a torch, a brazier) or any flame item. A caster who works a fiery spell in sight of a member of the warband, or who keeps up a fire-based spell, causes fear for the whole game.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "Savage Orc variation: Primitive",
-        "description": "A Savage Orc warband may never use an advanced weapon, and may never take the Weapons Master or Weapons Expert skills. Its members may not use a Halfling Cookbook, a Mordheim Map, a Tome of Magic or a Lantern.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "Savage Orc variation: Wild Animosity",
-        "description": "Wild Animosity replaces Animosity in a Savage Orc warband. At the start of the turn, roll a D6 for every standing warrior in the warband who is not in combat, the troll included unless he failed his stupidity test, and the heroes included. Every warrior rolls, not only those who roll a 1.\n\nD6 | Result\n1 | Squabble. A henchman must charge the nearest friendly model at once, hero or henchman, and fight one round of combat; after it neither may do anything else this turn, though both fight back if attacked. With no friendly model in charge range he uses a missile weapon, if he has one, against the nearest friendly model, and otherwise does nothing. A Forest Goblin will never attack a hero this way. A hero attacks no one, but may still do nothing else.\n2-5 | Uggg. The model behaves normally.\n6 | Waaaagh! The model makes a full move at once towards the nearest enemy model, charging it if it can. In its next movement phase it must charge if an enemy is within charge range. These charges ignore fear and any other psychology that would stop the Savage Orc charging.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "Savage Orc variation: equipment",
-        "description": "A Savage Orc warband buys from the Savage Orc Equipment List and the Forest Goblin Equipment List instead of the Orc Equipment List and the Goblin Swabbie Equipment List.",
         "variant": "",
         "type": ""
       }
@@ -62665,275 +62635,6 @@
             "variant": ""
           }
         ]
-      },
-      {
-        "key": "savage-orc-equipment-list",
-        "name": "Savage Orc Equipment List",
-        "note": "",
-        "lines": [
-          {
-            "item": {
-              "name": "Dagger",
-              "variant": ""
-            },
-            "shown_as": "Flint Dagger",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": true,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Club",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Morning Star",
-              "variant": ""
-            },
-            "shown_as": "Big Club (Morning Star)",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Double-handed weapon",
-              "variant": ""
-            },
-            "shown_as": "Huge club (Double-handed weapon)",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Halberd",
-              "variant": ""
-            },
-            "shown_as": "Big Stick (Halberd)",
-            "cost": 8,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Spear",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Throwing Knives/Stars/Axes",
-              "variant": ""
-            },
-            "shown_as": "Throwing Axe",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Shield",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      },
-      {
-        "key": "forest-goblin-equipment-list",
-        "name": "Forest Goblin Equipment List",
-        "note": "",
-        "lines": [
-          {
-            "item": {
-              "name": "Dagger",
-              "variant": ""
-            },
-            "shown_as": "Flint Dagger",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": true,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Club",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Spear",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Squig Prodder",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Short Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Throwing Knives/Stars/Axes",
-              "variant": ""
-            },
-            "shown_as": "Throwing weapons",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Blowpipe",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 25,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Shield",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
       }
     ],
     "fighters": [
@@ -62965,7 +62666,6 @@
           "Shooting",
           "Strength",
           "Speed",
-          "Savage Orcs",
           "Orcs"
         ],
         "spell_types": [],
@@ -62977,13 +62677,12 @@
         "variant_changes": {},
         "fixed_kit": "",
         "lists": [
-          "orc-equipment-list",
-          "savage-orc-equipment-list"
+          "orc-equipment-list"
         ],
         "specials": [
           {
             "name": "Leader",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "Any warrior within 6\" of the Orc Boss may use his Leadership for any Leadership test."
           }
         ],
@@ -63014,7 +62713,6 @@
         },
         "skill_types": [
           "Strength",
-          "Savage Orcs",
           "Orcs"
         ],
         "spell_types": [
@@ -63031,8 +62729,7 @@
         "variant_changes": {},
         "fixed_kit": "",
         "lists": [
-          "orc-equipment-list",
-          "savage-orc-equipment-list"
+          "orc-equipment-list"
         ],
         "specials": [
           {
@@ -63041,7 +62738,7 @@
           },
           {
             "name": "No Armour",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "An Orc Shaman may never wear armour."
           }
         ],
@@ -63085,23 +62782,22 @@
         "variant_changes": {},
         "fixed_kit": "",
         "lists": [
-          "goblin-swabbie-equipment-list",
-          "forest-goblin-equipment-list"
+          "goblin-swabbie-equipment-list"
         ],
         "specials": [
           {
             "name": "Glass Ceiling",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Goblin Enjuneer may never be the warband's leader."
           },
           {
             "name": "Booma Tweaker",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "In any game the Enjuneer plays in, whenever a Booma Pistol's range is rolled and the result is not a misfire, the roll may be re-rolled once. The second result stands and may not be re-rolled, even if it is a misfire."
           },
           {
             "name": "Mad Bomba",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "When the Enjuneer spends his rarity roll looking for a Fire Bomb, he treats it as Rare 5. This holds only when the Enjuneer himself searches."
           }
         ],
@@ -63134,7 +62830,6 @@
           "Combat",
           "Shooting",
           "Strength",
-          "Savage Orcs",
           "Orcs"
         ],
         "spell_types": [],
@@ -63146,8 +62841,7 @@
         "variant_changes": {},
         "fixed_kit": "",
         "lists": [
-          "orc-equipment-list",
-          "savage-orc-equipment-list"
+          "orc-equipment-list"
         ],
         "specials": [],
         "skills": []
@@ -63185,8 +62879,7 @@
         "variant_changes": {},
         "fixed_kit": "",
         "lists": [
-          "orc-equipment-list",
-          "savage-orc-equipment-list"
+          "orc-equipment-list"
         ],
         "specials": [],
         "skills": []
@@ -63224,38 +62917,37 @@
         "variant_changes": {},
         "fixed_kit": "",
         "lists": [
-          "goblin-swabbie-equipment-list",
-          "forest-goblin-equipment-list"
+          "goblin-swabbie-equipment-list"
         ],
         "specials": [
           {
             "name": "Under der Thumb",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Goblin Swabbie is not subject to Animosity."
           },
           {
             "name": "Spendible",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "The warband may shoot into a combat that holds only a Goblin Swabbie and enemy models; the shots are distributed at random."
           },
           {
             "name": "Never Gain Experience",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Goblin Swabbie never gains experience."
           },
           {
             "name": "Rabble",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "Goblin Swabbies need not be armed alike. Each may be given different equipment, but only from the Goblin Swabbie Equipment list. A Goblin Swabbie may never use magic or cast a spell of any kind, whatever his background."
           },
           {
             "name": "Blimey, they got away",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "If the warband routs, every Goblin Swabbie who had already left the table in an earlier turn is taken to have escaped: remove him from the roster as if he had been killed."
           },
           {
             "name": "Don't mind them mates, they ain't true pirates",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Goblin Swabbie who is running away or has been taken out of action does not count towards the warband's rout test."
           }
         ],
@@ -63297,22 +62989,22 @@
         "specials": [
           {
             "name": "Movement",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Sea Squig has no set Movement. On land he moves 2D6-1\" each turn, and in water he swims 2D6\", which water penalties do not reduce. He does not count as aquatic. He never runs and never declares a charge; instead he may reach an enemy with his normal move, and then counts as charging for that round of close combat."
           },
           {
             "name": "Minderz",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Sea Squig must stay within 6\" of a Goblin. He will not go wild while within 12\" of a Goblin carrying a Cat O' Nine Tails, which counts as a Squig Prodder. Without a minder at the start of his movement phase he goes wild: from then on move him 2D6\" in a random direction each movement phase, and he engages any model he reaches, friend or foe."
           },
           {
             "name": "Not Orcs",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Goblin or a Sea Squig taken out of action counts as half a model when working out whether the warband must take a rout test."
           },
           {
             "name": "Animals",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Sea Squig never gains experience."
           }
         ],
@@ -63362,17 +63054,17 @@
           },
           {
             "name": "Regeneration (Sea Troll)",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "Whenever a wound is inflicted on a Sea Troll, roll a D6: on a 4 or more the wound is ignored. He may not regenerate a wound caused by fire or fire-based magic, and never rolls for injury after a battle."
           },
           {
             "name": "Dumb Monster",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Sea Troll never learns a skill and never gains experience."
           },
           {
             "name": "Always Hungry",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "The warband must pay 15 gold crowns after every game to keep a Sea Troll. If it lacks the gold, the Boss may feed him two Goblin Swabbies or Sea Squigs instead."
           },
           {
@@ -63381,12 +63073,12 @@
           },
           {
             "name": "Aquatic",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "A Sea Troll takes no penalty for moving through water and counts as aquatic."
           },
           {
             "name": "Slimy",
-            "type": "Warband - Orc Pirates & Savage Orcs",
+            "type": "Warband - Orc Pirates",
             "description": "Any model trying to hit a Sea Troll in hand-to-hand combat is at -1 to hit; a natural 6 to hit always hits."
           }
         ],
@@ -71383,6 +71075,693 @@
             "name": "'Don't mind them mates, they ain't true pirates!'",
             "type": "Warband - Sartosan Pirates",
             "description": "Swabbies who are running away or have been taken out of action do not count towards the warband's rout test."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "savage-orcs",
+    "name": "Savage Orcs",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
+    "starting_gold": 500,
+    "max_models": 20,
+    "variants": [],
+    "types": [
+      {
+        "type": "savage-orcs-sar",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Distasteful Company",
+        "description": "The warband may hire only Pit Fighters, Ogre Bodyguards and Warlocks.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Talismans galore",
+        "description": "Every Orc and Goblin in the warband has a 6+ armour save, which may not be reduced below 6+ and may not be ignored, even by a critical hit. They may never use armour other than a shield, and may never parry.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Fear fire",
+        "description": "Every member of a Savage Orc warband fears any model with a flaming attack, carrying a lit item (a lantern, a torch, a brazier) or any flame item. A caster who works a fiery spell in sight of a member of the warband, or who keeps up a fire-based spell, causes fear for the whole game.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Primitive",
+        "description": "The warband may never use an advanced weapon, and may never take the Weapons Master or Weapons Expert skills. Its members may not use a Halfling Cookbook, a Mordheim Map, a Tome of Magic or a Lantern.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Wild Animosity",
+        "description": "Wild Animosity replaces the Orcs' Animosity. At the start of the turn, roll a D6 for every standing warrior in the warband who is not in combat, the troll included unless he failed his stupidity test, and the heroes included. Every warrior rolls, not only those who roll a 1.\n\nD6 | Result\n1 | Squabble. A henchman must charge the nearest friendly model at once, hero or henchman, and fight one round of combat; after it neither may do anything else this turn, though both fight back if attacked. With no friendly model in charge range he uses a missile weapon, if he has one, against the nearest friendly model, and otherwise does nothing. A Forest Goblin will never attack a hero this way. A hero attacks no one, but may still do nothing else.\n2-5 | Uggg. The model behaves normally.\n6 | Waaaagh! The model makes a full move at once towards the nearest enemy model, charging it if it can. In its next movement phase it must charge if an enemy is within charge range. These charges ignore fear and any other psychology that would stop the Savage Orc charging.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "savage-orc-equipment-list",
+        "name": "Savage Orc Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "Flint Dagger",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Morning Star",
+              "variant": ""
+            },
+            "shown_as": "Big Club (Morning Star)",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "Huge club (Double-handed weapon)",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "Big Stick (Halberd)",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars/Axes",
+              "variant": ""
+            },
+            "shown_as": "Throwing Axe",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "forest-goblin-equipment-list",
+        "name": "Forest Goblin Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "Flint Dagger",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Squig Prodder",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars/Axes",
+              "variant": ""
+            },
+            "shown_as": "Throwing weapons",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Blowpipe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "orc-boss",
+        "kind": "hero",
+        "name": "Orc Boss",
+        "plural": "Orc Bosses",
+        "race": "Orc",
+        "cost": 80,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 4,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Speed",
+          "Savage Orcs",
+          "Orcs"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "savage-orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Savage Orcs",
+            "description": "Any warrior within 6\" of the Orc Boss may use his Leadership for any Leadership test."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "orc-shaman",
+        "kind": "hero",
+        "name": "Orc Shaman",
+        "plural": "Orc Shamans",
+        "race": "Orc",
+        "cost": 40,
+        "starting_xp": 10,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Strength",
+          "Savage Orcs",
+          "Orcs"
+        ],
+        "spell_types": [
+          {
+            "name": "Waaaagh! Magic",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "savage-orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Wizard",
+            "type": "Caster"
+          },
+          {
+            "name": "No Armour",
+            "type": "Warband - Savage Orcs",
+            "description": "An Orc Shaman may never wear armour."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "orc-big-un",
+        "kind": "hero",
+        "name": "Orc Big 'Un",
+        "plural": "Orc Big 'Uns",
+        "race": "Orc",
+        "cost": 40,
+        "starting_xp": 15,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Savage Orcs",
+          "Orcs"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "savage-orc-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "orc-boy",
+        "kind": "henchman",
+        "name": "Orc Boy",
+        "plural": "Orc Boyz",
+        "race": "Orc",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "savage-orc-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "forest-goblins",
+        "kind": "henchman",
+        "name": "Forest Goblin",
+        "plural": "Forest Goblins",
+        "race": "Goblin",
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "forest-goblin-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Not Orcs",
+            "type": "Warband - Savage Orcs",
+            "description": "A Forest Goblin or a Cave Squig taken out of action counts as half a model when working out whether the warband must take a rout test."
+          },
+          {
+            "name": "Runts",
+            "type": "Warband - Savage Orcs",
+            "description": "A Forest Goblin may gain experience, but if he rolls That Lad's Got Talent his Orc overlords kill him at once: remove him from the roster."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "cave-squigs",
+        "kind": "henchman",
+        "name": "Cave Squig",
+        "plural": "Cave Squigs",
+        "race": null,
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": "2D6",
+          "weapon_skill": 4,
+          "ballistic_skill": 0,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "A Cave Squig never uses or needs a weapon or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Movement",
+            "type": "Warband - Savage Orcs",
+            "description": "A Cave Squig has no set Movement: roll 2D6 for the distance he moves. He never runs and never declares a charge; instead he may reach an enemy with his normal 2D6\" move, and then counts as charging for that round of close combat."
+          },
+          {
+            "name": "Minderz",
+            "type": "Warband - Savage Orcs",
+            "description": "A Cave Squig must stay within 6\" of a Forest Goblin, who keeps him in line. Without a Goblin within 6\" at the start of his movement phase he goes wild: from then on move him 2D6\" in a random direction each movement phase, and he engages in hand-to-hand combat any model he reaches, friend or foe. He is out of the player's control for the rest of the game."
+          },
+          {
+            "name": "Not Orcs (Cave Squig)",
+            "type": "Warband - Savage Orcs",
+            "description": "A Forest Goblin or a Cave Squig taken out of action counts as half a model when working out whether the warband must take a rout test."
+          },
+          {
+            "name": "Animals",
+            "type": "Warband - Savage Orcs",
+            "description": "A Cave Squig never gains experience."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "troll",
+        "kind": "henchman",
+        "name": "Troll",
+        "plural": "Trolls",
+        "race": null,
+        "cost": 200,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 3,
+          "ballistic_skill": 1,
+          "strength": 5,
+          "toughness": 4,
+          "wounds": 3,
+          "initiative": 1,
+          "attacks": 3,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "A Troll needs no weapon and may never be given a weapon or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Stupidity",
+            "type": "Psychology"
+          },
+          {
+            "name": "Regeneration (Troll)",
+            "type": "Warband - Savage Orcs",
+            "description": "Whenever a wound is inflicted on a Troll, roll a D6: on a 4 or more the wound is ignored. He may not regenerate a wound caused by fire or fire-based magic, and never rolls for injury after a battle."
+          },
+          {
+            "name": "Dumb Monster",
+            "type": "Warband - Savage Orcs",
+            "description": "A Troll never learns a skill and never gains experience."
+          },
+          {
+            "name": "Always Hungry",
+            "type": "Warband - Savage Orcs",
+            "description": "The warband must pay 15 gold crowns after every game to keep a Troll. If it lacks the gold, the Boss may feed him two Forest Goblins or Cave Squigs instead. If neither is paid the Troll wanders off in search of food."
+          },
+          {
+            "name": "Vomit Attack",
+            "type": "Warband - Savage Orcs",
+            "description": "Instead of his normal attacks a Troll may vomit over one opponent in hand-to-hand combat: one attack that hits automatically at Strength 5 and allows no armour save."
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
           }
         ],
         "skills": []

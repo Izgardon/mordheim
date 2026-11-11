@@ -33,31 +33,38 @@ ALIASES: dict[str, tuple[list[str], str]] = {
 
 
 def extra_rows(entries: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """overrides.json "extra_warband_types" in warbands-merged.json's shape: no grade, no links."""
+    """overrides.json "extra_warband_types" in warbands-merged.json's shape: its grade and Broheim PDF where the
+    entry gives them (the Sartosa Orc Pirates and Savage Orcs, two warbands of one PDF), else none."""
     return [
         {
             "name": entry["name"],
             "race": entry.get("race", ""),
-            "broheim_grade": None,
+            "broheim_grade": entry.get("broheim_grade"),
             "mordheimer_grade": None,
             "setting": entry["setting"],
             "source_code": entry.get("source_code", ""),
             "source": entry.get("source", ""),
-            "broheim_pdf": "",
+            "broheim_pdf": entry.get("broheim_pdf", ""),
             "mordheimer_url": "",
         }
         for entry in entries
     ]
 
 
-def build_warband_types(rows: list[dict[str, Any]], names: dict[str, str] | None = None) -> list[dict[str, Any]]:
+def build_warband_types(
+    rows: list[dict[str, Any]], names: dict[str, str] | None = None, dropped: dict[str, str] | None = None
+) -> list[dict[str, Any]]:
     """One row per Broheim warband. A name used by several types gets its source code in the slug. `names`
     (overrides.json "warband_type_names") puts a source's name right ("Arabyan Theives"), its slug kept; one that
-    names no row stops the build."""
-    renamed = dict(names or {})
-    unknown = set(renamed) - {row["name"] for row in rows}
-    if unknown:
-        raise ValueError(f"overrides.json warband_type_names: no warband type {', '.join(sorted(unknown))}")
+    names no row stops the build. `dropped` ("drop_warband_types": a source's name -> why) leaves a warband out, so
+    its slug reaches no file and the seeder archives the type (the Sartosa Orc Pirates & Savage Orcs, which William
+    split into two warbands on 11 Nov 2026)."""
+    renamed, out = dict(names or {}), dict(dropped or {})
+    for key, found in (("warband_type_names", renamed), ("drop_warband_types", out)):
+        unknown = set(found) - {row["name"] for row in rows}
+        if unknown:
+            raise ValueError(f"overrides.json {key}: no warband type {', '.join(sorted(unknown))}")
+    rows = [row for row in rows if row["name"] not in out]
     clashes = Counter(slugify(row["name"]) for row in rows)
     types = []
     for row in rows:

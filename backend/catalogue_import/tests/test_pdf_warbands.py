@@ -266,7 +266,7 @@ class PdfCheckTests(SimpleTestCase):
         )
 
     def test_a_price_row_may_name_the_types_it_serves(self) -> None:
-        # a setting's shop list is declared once (Sartosa's, for its eleven types), and names types of ours
+        # a setting's shop list is declared once (Sartosa's, for its twelve types), and names types of ours
         page = good_page()
         page["priceRows"] = [
             {"name": "dagger", "rarity": None, "dice": None, "types": ["witch-hunters"], "page": 10},
@@ -465,7 +465,7 @@ class PdfImportTests(SimpleTestCase):
         self.assertEqual(merged["setting"], "mordheim")  # Mordheim 1a, where it has always been
         shown = {
             (slug, line["shown_as"])
-            for slug in ("dwarf-slayer-cult", "khorne-raiders", "slayer-pirates", "orc-pirates-and-savage-orcs")
+            for slug in ("dwarf-slayer-cult", "khorne-raiders", "slayer-pirates", "savage-orcs")
             for row in self.templates[slug]["lists"]
             for line in row["lines"]
             if line["item"]["name"] == merged["name"]
@@ -475,7 +475,7 @@ class PdfImportTests(SimpleTestCase):
                 ("dwarf-slayer-cult", "Throwing axes"),
                 ("khorne-raiders", "Throwing Axes"),
                 ("slayer-pirates", "Throwing Axe"),
-                ("orc-pirates-and-savage-orcs", "Throwing Axe"),
+                ("savage-orcs", "Throwing Axe"),
             },
             shown,
         )
@@ -620,10 +620,10 @@ class PdfImportTests(SimpleTestCase):
         self.assertEqual([name for name in ("Dark Elf Sorceress", "Witch Elf") if name in hired], [])
         self.assertIn("Holy (Unholy) Relic", self.items)  # its brackets are its name, not a warband or a setting
 
-    def test_the_sartosa_shop_items_we_lack_are_stubs_for_all_eleven_types(self) -> None:
+    def test_the_sartosa_shop_items_we_lack_are_stubs_for_all_twelve_types(self) -> None:
         # William, 11 Nov 2026: "add them in as stubs if you dont have the rules for them yet, we will populate
         # later but good to know they exist". The Equipment PDF's own rules and prices are in, one row per item for
-        # the setting's eleven warband types. The Quarantine Flag is its entry's 30+2D6, not the chart's 40+2D6.
+        # the setting's twelve warband types. The Quarantine Flag is its entry's 30+2D6, not the chart's 40+2D6.
         wanted = {
             "Duck-Footed Pistol": (50, None, 11),
             "Pocket Pistol": (5, None, 4),
@@ -648,7 +648,7 @@ class PdfImportTests(SimpleTestCase):
         for name in wanted:
             [row] = self.items[name]["availabilities"]
             rows[name] = (row["cost"], row["dice"], row["rarity"])
-            self.assertEqual(len(row["warbands"]), 11, name)
+            self.assertEqual(len(row["warbands"]), 12, name)
             self.assertEqual(self.items[name]["setting"], "sartosa", name)
         self.assertEqual(rows, wanted)
         # each banner carries the shared Pirate Banner rule and then its own
@@ -681,8 +681,40 @@ class PdfImportTests(SimpleTestCase):
             self.assertEqual(row["skills"], [skill])
             self.assertEqual([special["name"] for special in row["specials"]], ["Leader"])
 
+    def test_the_orc_pirates_and_the_savage_orcs_are_two_warbands(self) -> None:
+        # William, 11 Nov 2026: "i prefer separate warbands as different settings and all". The one PDF is two
+        # warbands, each "the exact same rules as the Da Mob Warband with the following changes", so each is its own
+        # warband type with its own template, and the merged type is gone.
+        types = {row["slug"]: row for row in load_json(OUT / "warband-types.json")}
+        self.assertEqual([slug for slug in ("orc-pirates-and-savage-orcs",) if slug in types], [])
+        self.assertEqual(types["orc-pirates"]["name"], "Orc Pirates")
+        self.assertEqual(types["savage-orcs-sar"]["name"], "Savage Orcs")  # two other settings hold Savage Orcs
+        for slug in ("orc-pirates", "savage-orcs-sar"):
+            self.assertEqual((types[slug]["setting"], types[slug]["broheim_grade"]), ("sartosa", "2b"))
+        pirates, savages = self.templates["orc-pirates"], self.templates["savage-orcs"]
+        self.assertEqual([row["type"] for row in pirates["types"]], ["orc-pirates"])
+        self.assertEqual([row["type"] for row in savages["types"]], ["savage-orcs-sar"])
+        self.assertEqual(
+            [row["title"] for row in pirates["rules"]], ["Pressganging", "Distasteful Company", "Animosity"]
+        )
+        self.assertEqual(
+            [row["title"] for row in savages["rules"]],
+            ["Distasteful Company", "Talismans galore", "Fear fire", "Primitive", "Wild Animosity"],
+        )
+        self.assertEqual([row["name"] for row in pirates["lists"]], ["Orc Equipment List", "Goblin Swabbie Equipment List"])  # fmt: skip
+        self.assertEqual([row["name"] for row in savages["lists"]], ["Savage Orc Equipment List", "Forest Goblin Equipment List"])  # fmt: skip
+        self.assertEqual(
+            [row["name"] for row in savages["fighters"]],
+            ["Orc Boss", "Orc Shaman", "Orc Big 'Un", "Orc Boy", "Forest Goblin", "Cave Squig", "Troll"],
+        )
+        # only the Savage Orcs learn their four skills; the pirates' heroes learn our Orcs group, as Da Mob's do
+        boss = {name: next(row for row in page["fighters"] if row["name"] == "Orc Boss") for name, page in (("pirates", pirates), ("savages", savages))}  # fmt: skip
+        self.assertNotIn("Savage Orcs", boss["pirates"]["skill_types"])
+        self.assertIn("Savage Orcs", boss["savages"]["skill_types"])
+        self.assertIn("Orcs", boss["pirates"]["skill_types"])
+
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
-        # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page
+        # Sartosa's shop list, one row for the setting's twelve types rather than a copy in each page
         page = good_page()
         page["priceRows"] = [
             {"name": "sword", "rarity": 5, "dice": None, "types": ["witch-hunters", "sisters-of-sigmar"], "page": 10}
@@ -697,11 +729,11 @@ class PdfImportTests(SimpleTestCase):
             [{"type": "witch-hunters", "excluded": False}, {"type": "sisters-of-sigmar", "excluded": False}],
         )
 
-    def test_the_sartosa_shop_list_is_declared_once_for_its_eleven_types(self) -> None:
+    def test_the_sartosa_shop_list_is_declared_once_for_its_twelve_types(self) -> None:
         # William, 11 Nov 2026 (decision 20): the setting's Equipment PDF (p10) re-prices our items for its warbands
         rows = [row for row in self.items["Blunderbuss"]["availabilities"] if row["cost"] == 30 and row["rarity"] == 7]
         self.assertEqual(len(rows), 1)
-        self.assertEqual(len(rows[0]["warbands"]), 11)
+        self.assertEqual(len(rows[0]["warbands"]), 12)  # eleven types until the Orc Pirates split in two
         self.assertIn({"type": "sartosan-pirates", "excluded": False}, rows[0]["warbands"])
 
     def test_low_kings_buy_our_spiked_gauntlet_and_the_maps_share_their_rule(self) -> None:

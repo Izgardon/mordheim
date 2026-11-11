@@ -1731,26 +1731,6 @@
       "how": "overrides.json"
     },
     {
-      "name": "Surge",
-      "setting": "sartosa",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Wardance",
-      "setting": "sartosa",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Savage Frenzy",
-      "setting": "sartosa",
-      "how": "overrides.json"
-    },
-    {
-      "name": "The Power of Man's Red Flower",
-      "setting": "sartosa",
-      "how": "overrides.json"
-    },
-    {
       "name": "Angel of the Sword",
       "setting": "sartosa",
       "how": "overrides.json"
@@ -1862,6 +1842,26 @@
     },
     {
       "name": "Master Press-ganger",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Surge",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Wardance",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Savage Frenzy",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "The Power of Man's Red Flower",
       "setting": "sartosa",
       "how": "overrides.json"
     },

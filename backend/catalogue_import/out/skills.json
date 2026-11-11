@@ -1384,22 +1384,6 @@
     "description": "Gnoblars only. The Hero starts every game with 3 nets. They can't be sold, traded or given to another warrior, and any he doesn't use are gone after the game; he starts the next game with 3 again, at no cost."
   },
   {
-    "name": "Surge",
-    "description": "Savage Orc warbands only, and the warband's leader only. Once a game, when testing for animosity that turn every model treats a roll of 5 or 6 as a Waaagh! and the leader counts as having rolled a 6. A model who rolls a 1 still squabbles, and for that turn a hero who rolls a 1 attacks his fellow warband members."
-  },
-  {
-    "name": "Wardance",
-    "description": "Savage Orc warbands only. Once a game, at the start of the turn, the Hero may dance if he is not already in combat. Every warrior in the warband is frenzied until the start of the next turn. A warband may be affected by only one Wardance in a game, however many models have the skill."
-  },
-  {
-    "name": "Savage Frenzy",
-    "description": "Savage Orc warbands only. The warrior is subject to frenzy and may never lose it, but if he is knocked down or stunned he is also stupid for the rest of the game. He tests for stupidity first, and a failed test means he may not charge this turn."
-  },
-  {
-    "name": "The Power of Man's Red Flower",
-    "description": "Savage Orc warbands only. The warrior no longer fears fire and may use a lantern or a torch."
-  },
-  {
     "name": "Angel of the Sword",
     "description": "Wielding a Katana, the model chooses each round of combat either an extra attack or a re-roll of his parry. He declares it at the start of the combat phase, before warriors roll for Initiative."
   },
@@ -1490,6 +1474,22 @@
   {
     "name": "Master Press-ganger",
     "description": "The warband's leader only. When a henchman the warband takes out of action dies (1-2 on his injury roll), the warband may try to recruit him as a Swabbie or Crew on a 2+ instead of 4+. When an enemy the warband took out of action dies (11-15 on the Serious Injury chart), on a D6 roll of 4+ he is captured instead, to be ransomed or made to join the crew."
+  },
+  {
+    "name": "Surge",
+    "description": "Savage Orc warbands only, and the warband's leader only. Once a game, when testing for animosity that turn every model treats a roll of 5 or 6 as a Waaagh! and the leader counts as having rolled a 6. A model who rolls a 1 still squabbles, and for that turn a hero who rolls a 1 attacks his fellow warband members."
+  },
+  {
+    "name": "Wardance",
+    "description": "Savage Orc warbands only. Once a game, at the start of the turn, the Hero may dance if he is not already in combat. Every warrior in the warband is frenzied until the start of the next turn. A warband may be affected by only one Wardance in a game, however many models have the skill."
+  },
+  {
+    "name": "Savage Frenzy",
+    "description": "Savage Orc warbands only. The warrior is subject to frenzy and may never lose it, but if he is knocked down or stunned he is also stupid for the rest of the game. He tests for stupidity first, and a failed test means he may not charge this turn."
+  },
+  {
+    "name": "The Power of Man's Red Flower",
+    "description": "Savage Orc warbands only. The warrior no longer fears fire and may use a lantern or a torch."
   },
   {
     "name": "Cutthroat",

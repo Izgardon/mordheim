@@ -1,0 +1,516 @@
+{
+  "warbandType": "savage-orcs-sar",
+  "name": "Savage Orcs",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {
+      "rulename": "Distasteful Company",
+      "ruleFull": "The warband may hire only Pit Fighters, Ogre Bodyguards and Warlocks."
+    },
+    {
+      "rulename": "Talismans galore",
+      "ruleFull": "Every Orc and Goblin in the warband has a 6+ armour save, which may not be reduced below 6+ and may not be ignored, even by a critical hit. They may never use armour other than a shield, and may never parry."
+    },
+    {
+      "rulename": "Fear fire",
+      "ruleFull": "Every member of a Savage Orc warband fears any model with a flaming attack, carrying a lit item (a lantern, a torch, a brazier) or any flame item. A caster who works a fiery spell in sight of a member of the warband, or who keeps up a fire-based spell, causes fear for the whole game."
+    },
+    {
+      "rulename": "Primitive",
+      "ruleFull": "The warband may never use an advanced weapon, and may never take the Weapons Master or Weapons Expert skills. Its members may not use a Halfling Cookbook, a Mordheim Map, a Tome of Magic or a Lantern."
+    },
+    {
+      "rulename": "Wild Animosity",
+      "ruleFull": "Wild Animosity replaces the Orcs' Animosity. At the start of the turn, roll a D6 for every standing warrior in the warband who is not in combat, the troll included unless he failed his stupidity test, and the heroes included. Every warrior rolls, not only those who roll a 1.\n\nD6 | Result\n1 | Squabble. A henchman must charge the nearest friendly model at once, hero or henchman, and fight one round of combat; after it neither may do anything else this turn, though both fight back if attacked. With no friendly model in charge range he uses a missile weapon, if he has one, against the nearest friendly model, and otherwise does nothing. A Forest Goblin will never attack a hero this way. A hero attacks no one, but may still do nothing else.\n2-5 | Uggg. The model behaves normally.\n6 | Waaaagh! The model makes a full move at once towards the nearest enemy model, charging it if it can. In its next movement phase it must charge if an enemy is within charge range. These charges ignore fear and any other psychology that would stop the Savage Orc charging."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "savage-orc-equipment-list",
+      "title": "Savage Orc Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Flint Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "morning star",
+          "alias": "Big Club (Morning Star)",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Huge club (Double-handed weapon)",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Big Stick (Halberd)",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Throwing Knives/Stars/Axes",
+          "alias": "Throwing Axe",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "forest-goblin-equipment-list",
+      "title": "Forest Goblin Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Flint Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "squig prodder",
+          "alias": "Squig Prodder",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "throwing knives",
+          "alias": "Throwing weapons",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "blowpipe",
+          "alias": "Blowpipe",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "orc-boss",
+      "type": "hero",
+      "name": "Orc Boss",
+      "plural": "Orc Bosses",
+      "race": "orc",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "savage-orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "skillGroups": [
+        "Orcs"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Orc Boss may use his Leadership for any Leadership test."
+        }
+      ]
+    },
+    {
+      "id": "orc-shaman",
+      "type": "hero",
+      "name": "Orc Shaman",
+      "plural": "Orc Shamans",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 10,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "savage-orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "skillGroups": [
+        "Orcs"
+      ],
+      "spellLores": [
+        "Waaaagh! Magic"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Wizard",
+          "ruleFull": "An Orc Shaman is a wizard and uses Waaagh! Magic."
+        },
+        {
+          "rulename": "No Armour",
+          "ruleFull": "An Orc Shaman may never wear armour."
+        }
+      ]
+    },
+    {
+      "id": "orc-big-un",
+      "type": "hero",
+      "name": "Orc Big 'Un",
+      "plural": "Orc Big 'Uns",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 15,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "savage-orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "skillGroups": [
+        "Orcs"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "orc-boy",
+      "type": "henchman",
+      "name": "Orc Boy",
+      "plural": "Orc Boyz",
+      "race": "orc",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "savage-orc-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "forest-goblins",
+      "type": "henchman",
+      "name": "Forest Goblin",
+      "plural": "Forest Goblins",
+      "race": "goblin",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "forest-goblin-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Not Orcs",
+          "ruleFull": "A Forest Goblin or a Cave Squig taken out of action counts as half a model when working out whether the warband must take a rout test."
+        },
+        {
+          "rulename": "Runts",
+          "ruleFull": "A Forest Goblin may gain experience, but if he rolls That Lad's Got Talent his Orc overlords kill him at once: remove him from the roster."
+        }
+      ]
+    },
+    {
+      "id": "cave-squigs",
+      "type": "henchman",
+      "name": "Cave Squig",
+      "plural": "Cave Squigs",
+      "race": "squig",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": "2D6",
+        "ws": 4,
+        "bs": 0,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [],
+      "equipment": "A Cave Squig never uses or needs a weapon or armour.",
+      "specialRules": [
+        {
+          "rulename": "Movement",
+          "ruleFull": "A Cave Squig has no set Movement: roll 2D6 for the distance he moves. He never runs and never declares a charge; instead he may reach an enemy with his normal 2D6\" move, and then counts as charging for that round of close combat."
+        },
+        {
+          "rulename": "Minderz",
+          "ruleFull": "A Cave Squig must stay within 6\" of a Forest Goblin, who keeps him in line. Without a Goblin within 6\" at the start of his movement phase he goes wild: from then on move him 2D6\" in a random direction each movement phase, and he engages in hand-to-hand combat any model he reaches, friend or foe. He is out of the player's control for the rest of the game."
+        },
+        {
+          "rulename": "Not Orcs",
+          "ruleFull": "A Forest Goblin or a Cave Squig taken out of action counts as half a model when working out whether the warband must take a rout test."
+        },
+        {
+          "rulename": "Animals",
+          "ruleFull": "A Cave Squig never gains experience."
+        }
+      ]
+    },
+    {
+      "id": "troll",
+      "type": "henchman",
+      "name": "Troll",
+      "plural": "Trolls",
+      "race": "troll",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 200,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 3,
+        "bs": 1,
+        "s": 5,
+        "t": 4,
+        "w": 3,
+        "i": 1,
+        "a": 3,
+        "ld": 4
+      },
+      "equipmentLists": [],
+      "equipment": "A Troll needs no weapon and may never be given a weapon or armour.",
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Troll causes fear."
+        },
+        {
+          "rulename": "Stupidity",
+          "ruleFull": "A Troll is subject to stupidity."
+        },
+        {
+          "rulename": "Regeneration (Troll)",
+          "ruleFull": "Whenever a wound is inflicted on a Troll, roll a D6: on a 4 or more the wound is ignored. He may not regenerate a wound caused by fire or fire-based magic, and never rolls for injury after a battle."
+        },
+        {
+          "rulename": "Dumb Monster",
+          "ruleFull": "A Troll never learns a skill and never gains experience."
+        },
+        {
+          "rulename": "Always Hungry",
+          "ruleFull": "The warband must pay 15 gold crowns after every game to keep a Troll. If it lacks the gold, the Boss may feed him two Forest Goblins or Cave Squigs instead. If neither is paid the Troll wanders off in search of food."
+        },
+        {
+          "rulename": "Vomit Attack",
+          "ruleFull": "Instead of his normal attacks a Troll may vomit over one opponent in hand-to-hand combat: one attack that hits automatically at Strength 5 and allows no armour save."
+        },
+        {
+          "rulename": "Large",
+          "ruleFull": "A Troll is a large target."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Savage Orcs",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "Surge",
+      "description": "Savage Orc warbands only, and the warband's leader only. Once a game, when testing for animosity that turn every model treats a roll of 5 or 6 as a Waaagh! and the leader counts as having rolled a 6. A model who rolls a 1 still squabbles, and for that turn a hero who rolls a 1 attacks his fellow warband members."
+    },
+    {
+      "name": "Wardance",
+      "description": "Savage Orc warbands only. Once a game, at the start of the turn, the Hero may dance if he is not already in combat. Every warrior in the warband is frenzied until the start of the next turn. A warband may be affected by only one Wardance in a game, however many models have the skill."
+    },
+    {
+      "name": "Savage Frenzy",
+      "description": "Savage Orc warbands only. The warrior is subject to frenzy and may never lose it, but if he is knocked down or stunned he is also stupid for the rest of the game. He tests for stupidity first, and a failed test means he may not charge this turn."
+    },
+    {
+      "name": "The Power of Man's Red Flower",
+      "description": "Savage Orc warbands only. The warrior no longer fears fire and may use a lantern or a torch."
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {
+      "page": 5,
+      "what": "This warband is the second half of the Orc Pirates & Savage Orcs PDF (p5-7), \"the exact same rules as the Da Mob Warband with the following changes\": William, 11 Nov 2026, \"i prefer separate warbands as different settings and all\", so it is its own warband type with its own template (orc-pirates.json holds the other). Its changes are Talismans galore, Fear fire, Primitive, Wild Animosity in place of Animosity, its two equipment lists and its four special skills. The Orc Pirates' Pressganging, Goblin Enjuneer, Goblin Swabbies, Sea Squigs, Sea Troll and Booma Pistol are the pirate half's and are not here."
+    },
+    {
+      "page": 5,
+      "what": "The warband prints no roster of its own, so its fighters are Da Mob's with their costs, profiles, starting experience and counts: the Boss, the Shaman, the Big 'Uns, the Orc Boyz, the Goblins, the Cave Squigs and the Troll. The Goblins are named Forest Goblins, as the equipment list and Wild Animosity name them. Distasteful Company is Da Mob's rule and stands."
+    },
+    {
+      "page": 5,
+      "what": "Wild Animosity rolls for every standing warrior not in combat, heroes and the Troll included (the Troll not while he has failed his stupidity test), and every warrior rolls rather than only those who roll a 1."
+    },
+    {
+      "page": 6,
+      "what": "The Savage Orc Equipment List's \"Throwing Axe\" is our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026), 15 gc Rare 5 for everyone, shown under the list's name. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already."
+    },
+    {
+      "page": 6,
+      "what": "The Forest Goblin list sells a Short Bow at 10 gc where our catalogue has it at 5 gc: the line keeps its own price. Its \"Throwing weapons . . . 15 gc\" names no weapon; it is read as our Throwing Knives/Stars/Axes, which that price matches."
+    },
+    {
+      "page": 6,
+      "what": "Page 6 carries a block of the designers' discussion below the equipment lists (\"Wardance - could end up in the same place you were before...\"), which is not rules and is not imported."
+    },
+    {
+      "page": 5,
+      "what": "The PDF prints no Pirate column and no Pirate skill list, so this warband does not join the shared Sartosa Pirate Skills group."
+    },
+    {
+      "page": 6,
+      "what": "The Troll's Regeneration (a 4+ to ignore a wound) is not the Bounty of Arkhar mutation Regeneration (heal to full Wounds), so it is kept apart as \"Regeneration (Troll)\", as Da Mob's is."
+    }
+  ]
+}

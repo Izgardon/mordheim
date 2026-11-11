@@ -258,9 +258,10 @@
     "members": [
       "orc-mob",
       "black-orcs",
-      "orc-pirates-and-savage-orcs",
       "savage-orcs-kaz",
-      "savage-orcs-ath"
+      "savage-orcs-ath",
+      "orc-pirates",
+      "savage-orcs-sar"
     ]
   },
   {
@@ -281,13 +282,14 @@
       "crooked-moon",
       "forest-goblins-lus",
       "night-goblins-kaz",
-      "orc-pirates-and-savage-orcs",
       "savage-orcs-kaz",
       "underworld-alliance",
       "goblin-raiders",
       "hobgoblins",
       "hobgoblin-horde",
-      "savage-orcs-ath"
+      "savage-orcs-ath",
+      "orc-pirates",
+      "savage-orcs-sar"
     ]
   },
   {

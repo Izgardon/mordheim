@@ -213,7 +213,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     overrides = sources.overrides
     put_names_right(sources.personae, overrides.get("persona_names", {}))
     rows = sources.warbands + extra_rows(overrides.get("extra_warband_types", []))
-    types = build_warband_types(rows, overrides.get("warband_type_names"))
+    types = build_warband_types(rows, overrides.get("warband_type_names"), overrides.get("drop_warband_types"))
     resolver = Resolver(types, overrides.get("warband_aliases"))
     evidence = collect_evidence(types, sources)
     settings = build_settings(evidence, overrides.get("setting_grades", {}))

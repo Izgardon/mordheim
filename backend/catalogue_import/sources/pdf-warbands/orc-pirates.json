@@ -1,6 +1,6 @@
 {
-  "warbandType": "orc-pirates-and-savage-orcs",
-  "name": "Orc Pirates & Savage Orcs",
+  "warbandType": "orc-pirates",
+  "name": "Orc Pirates",
   "source": "Sartosa",
   "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
   "warbandRules": {
@@ -19,26 +19,6 @@
     {
       "rulename": "Animosity",
       "ruleFull": "At the start of the warband's turn, roll a D6 for each henchman who is an Orc or a Goblin and is not in hand-to-hand combat. On a 1 he has taken offence, so roll another D6.\n\nD6 | Result\n1 | He charges the nearest friendly Orc or Goblin henchman or Hired Sword within charge reach and fights one round of hand-to-hand combat; the models then move 1\" apart and no longer count as in close combat. With none in reach he shoots the nearest with a missile weapon, if he carries one. If neither applies, or the nearest friendly model is an Orc hero, treat it as a 2-5. He may take no other action this turn, though he may defend himself.\n2-5 | He may do nothing else this turn, though he may defend himself.\n6 | He moves as fast as he can towards the nearest enemy model, charging it if he can. With no enemy in sight he may make a normal move at once. This move is on top of his move in the movement phase, and if it brings him within charge reach of an enemy he must charge in his regular movement."
-    },
-    {
-      "rulename": "Savage Orc variation: Talismans galore",
-      "ruleFull": "Every Orc and Goblin in a Savage Orc warband has a 6+ armour save, which may not be reduced below 6+ and may not be ignored, even by a critical hit. They may never use armour other than a shield, and may never parry."
-    },
-    {
-      "rulename": "Savage Orc variation: Fear fire",
-      "ruleFull": "Every member of a Savage Orc warband fears any model with a flaming attack, carrying a lit item (a lantern, a torch, a brazier) or any flame item. A caster who works a fiery spell in sight of a member of the warband, or who keeps up a fire-based spell, causes fear for the whole game."
-    },
-    {
-      "rulename": "Savage Orc variation: Primitive",
-      "ruleFull": "A Savage Orc warband may never use an advanced weapon, and may never take the Weapons Master or Weapons Expert skills. Its members may not use a Halfling Cookbook, a Mordheim Map, a Tome of Magic or a Lantern."
-    },
-    {
-      "rulename": "Savage Orc variation: Wild Animosity",
-      "ruleFull": "Wild Animosity replaces Animosity in a Savage Orc warband. At the start of the turn, roll a D6 for every standing warrior in the warband who is not in combat, the troll included unless he failed his stupidity test, and the heroes included. Every warrior rolls, not only those who roll a 1.\n\nD6 | Result\n1 | Squabble. A henchman must charge the nearest friendly model at once, hero or henchman, and fight one round of combat; after it neither may do anything else this turn, though both fight back if attacked. With no friendly model in charge range he uses a missile weapon, if he has one, against the nearest friendly model, and otherwise does nothing. A Forest Goblin will never attack a hero this way. A hero attacks no one, but may still do nothing else.\n2-5 | Uggg. The model behaves normally.\n6 | Waaaagh! The model makes a full move at once towards the nearest enemy model, charging it if it can. In its next movement phase it must charge if an enemy is within charge range. These charges ignore fear and any other psychology that would stop the Savage Orc charging."
-    },
-    {
-      "rulename": "Savage Orc variation: equipment",
-      "ruleFull": "A Savage Orc warband buys from the Savage Orc Equipment List and the Forest Goblin Equipment List instead of the Orc Equipment List and the Goblin Swabbie Equipment List."
     }
   ],
   "equipmentLists": [
@@ -262,141 +242,6 @@
           }
         }
       ]
-    },
-    {
-      "id": "savage-orc-equipment-list",
-      "title": "Savage Orc Equipment List",
-      "caveat": "",
-      "items": [
-        {
-          "name": "dagger",
-          "alias": "Flint Dagger",
-          "cost": {
-            "cost": 2,
-            "costPrefix": "1st free/"
-          }
-        },
-        {
-          "name": "club",
-          "alias": "Club",
-          "cost": {
-            "cost": 3
-          }
-        },
-        {
-          "name": "morning star",
-          "alias": "Big Club (Morning Star)",
-          "cost": {
-            "cost": 15
-          }
-        },
-        {
-          "name": "double-handed weapon",
-          "alias": "Huge club (Double-handed weapon)",
-          "cost": {
-            "cost": 15
-          }
-        },
-        {
-          "name": "halberd",
-          "alias": "Big Stick (Halberd)",
-          "cost": {
-            "cost": 8
-          }
-        },
-        {
-          "name": "spear",
-          "alias": "Spear",
-          "cost": {
-            "cost": 10
-          }
-        },
-        {
-          "name": "bow",
-          "alias": "Bow",
-          "cost": {
-            "cost": 10
-          }
-        },
-        {
-          "name": "Throwing Knives/Stars/Axes",
-          "alias": "Throwing Axe",
-          "cost": {
-            "cost": 15
-          }
-        },
-        {
-          "name": "shield",
-          "alias": "Shield",
-          "cost": {
-            "cost": 5
-          }
-        }
-      ]
-    },
-    {
-      "id": "forest-goblin-equipment-list",
-      "title": "Forest Goblin Equipment List",
-      "caveat": "",
-      "items": [
-        {
-          "name": "dagger",
-          "alias": "Flint Dagger",
-          "cost": {
-            "cost": 2,
-            "costPrefix": "1st free/"
-          }
-        },
-        {
-          "name": "club",
-          "alias": "Club",
-          "cost": {
-            "cost": 3
-          }
-        },
-        {
-          "name": "spear",
-          "alias": "Spear",
-          "cost": {
-            "cost": 10
-          }
-        },
-        {
-          "name": "squig prodder",
-          "alias": "Squig Prodder",
-          "cost": {
-            "cost": 15
-          }
-        },
-        {
-          "name": "short bow",
-          "alias": "Short Bow",
-          "cost": {
-            "cost": 10
-          }
-        },
-        {
-          "name": "throwing knives",
-          "alias": "Throwing weapons",
-          "cost": {
-            "cost": 15
-          }
-        },
-        {
-          "name": "blowpipe",
-          "alias": "Blowpipe",
-          "cost": {
-            "cost": 25
-          }
-        },
-        {
-          "name": "shield",
-          "alias": "Shield",
-          "cost": {
-            "cost": 5
-          }
-        }
-      ]
     }
   ],
   "fighters": [
@@ -422,8 +267,7 @@
         "ld": 8
       },
       "equipmentLists": [
-        "orc-equipment-list",
-        "savage-orc-equipment-list"
+        "orc-equipment-list"
       ],
       "skillAccess": {
         "combat": true,
@@ -431,7 +275,7 @@
         "academic": false,
         "strength": true,
         "speed": true,
-        "special": true
+        "special": false
       },
       "skillGroups": [
         "Orcs"
@@ -465,8 +309,7 @@
         "ld": 7
       },
       "equipmentLists": [
-        "orc-equipment-list",
-        "savage-orc-equipment-list"
+        "orc-equipment-list"
       ],
       "skillAccess": {
         "combat": false,
@@ -474,7 +317,7 @@
         "academic": false,
         "strength": true,
         "speed": false,
-        "special": true
+        "special": false
       },
       "skillGroups": [
         "Orcs"
@@ -515,8 +358,7 @@
         "ld": 6
       },
       "equipmentLists": [
-        "goblin-swabbie-equipment-list",
-        "forest-goblin-equipment-list"
+        "goblin-swabbie-equipment-list"
       ],
       "skillAccess": {
         "combat": true,
@@ -566,8 +408,7 @@
         "ld": 7
       },
       "equipmentLists": [
-        "orc-equipment-list",
-        "savage-orc-equipment-list"
+        "orc-equipment-list"
       ],
       "skillAccess": {
         "combat": true,
@@ -575,7 +416,7 @@
         "academic": false,
         "strength": true,
         "speed": false,
-        "special": true
+        "special": false
       },
       "skillGroups": [
         "Orcs"
@@ -604,8 +445,7 @@
         "ld": 7
       },
       "equipmentLists": [
-        "orc-equipment-list",
-        "savage-orc-equipment-list"
+        "orc-equipment-list"
       ],
       "specialRules": []
     },
@@ -631,8 +471,7 @@
         "ld": 5
       },
       "equipmentLists": [
-        "goblin-swabbie-equipment-list",
-        "forest-goblin-equipment-list"
+        "goblin-swabbie-equipment-list"
       ],
       "specialRules": [
         {
@@ -764,28 +603,6 @@
       ]
     }
   ],
-  "skillGroup": {
-    "name": "Savage Orcs",
-    "new": true
-  },
-  "specialSkillsList": [
-    {
-      "name": "Surge",
-      "description": "Savage Orc warbands only, and the warband's leader only. Once a game, when testing for animosity that turn every model treats a roll of 5 or 6 as a Waaagh! and the leader counts as having rolled a 6. A model who rolls a 1 still squabbles, and for that turn a hero who rolls a 1 attacks his fellow warband members."
-    },
-    {
-      "name": "Wardance",
-      "description": "Savage Orc warbands only. Once a game, at the start of the turn, the Hero may dance if he is not already in combat. Every warrior in the warband is frenzied until the start of the next turn. A warband may be affected by only one Wardance in a game, however many models have the skill."
-    },
-    {
-      "name": "Savage Frenzy",
-      "description": "Savage Orc warbands only. The warrior is subject to frenzy and may never lose it, but if he is knocked down or stunned he is also stupid for the rest of the game. He tests for stupidity first, and a failed test means he may not charge this turn."
-    },
-    {
-      "name": "The Power of Man's Red Flower",
-      "description": "Savage Orc warbands only. The warrior no longer fears fire and may use a lantern or a torch."
-    }
-  ],
   "aliases": [],
   "stubs": [
     {
@@ -825,7 +642,11 @@
   "flags": [
     {
       "page": 2,
-      "what": "This PDF is two variations on the Orc Mob (Da Mob) list, not a list of its own: \"The Orc Pirates use the exact same rules as the Da Mob Warband with the following changes\". The template is built from our Orc Mob template with the PDF's changes, and no page was opened as an image: there is no skill table, and the only image in the file is a 15x15 bullet."
+      "what": "This PDF is two warbands, the Orc Pirates (p2-4) and the Savage Orcs (p5-7), each \"the exact same rules as the Da Mob Warband with the following changes\": William, 11 Nov 2026, \"i prefer separate warbands as different settings and all\", so each is its own warband type with its own template (savage-orcs-sar.json holds the other). The Orc Pirates' changes are Pressganging, the Goblin Enjuneer, the Goblin Swabbies, the Sea Squigs, the Sea Troll, the Booma Pistol and these two equipment lists."
+    },
+    {
+      "page": 3,
+      "what": "The PDF prints no skill table for the Orc Pirates, so their heroes tick no Special column of their own and name our Orcs group, as Da Mob's do."
     },
     {
       "page": 2,
@@ -850,22 +671,6 @@
     {
       "page": 3,
       "what": "Goblin Swabbies replace Goblin Warriors at 12 gc and never gain experience, so unlike Da Mob's Goblin Warriors they may not be promoted."
-    },
-    {
-      "page": 5,
-      "what": "The Savage Orc variation is the second half of the same PDF and serves the same warband type. Our templates hold no variants for a PDF page, so its rules are warband rules of their own, each named \"Savage Orc variation: ...\", and its two equipment lists are carried beside the Orc Pirate ones: every Orc buys from the Orc and the Savage Orc lists and every Goblin from the Goblin Swabbie and the Forest Goblin lists, and the warband rule says which pair a Savage Orc warband uses. Both pairs sell a free first dagger, and a hire gets only one. See the decisions."
-    },
-    {
-      "page": 6,
-      "what": "The Savage Orc Equipment List's \"Throwing Axe\" is our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026), 15 gc Rare 5 for everyone, shown under the list's name. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already."
-    },
-    {
-      "page": 6,
-      "what": "Page 6 carries a block of the designers' discussion below the equipment lists (\"Wardance - could end up in the same place you were before...\"), which is not rules and is not imported."
-    },
-    {
-      "page": 6,
-      "what": "The Forest Goblin list sells a Short Bow at 10 gc where the Goblin Swabbie list and our catalogue have it at 5 gc: each line keeps its own price. Its \"Throwing weapons . . . 15 gc\" names no weapon; it is read as our Throwing Knives/Stars, which that price matches."
     },
     {
       "page": 2,

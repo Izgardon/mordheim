@@ -1578,7 +1578,7 @@
     "for_everyone": false,
     "warbands": [
       {
-        "type": "orc-pirates-and-savage-orcs",
+        "type": "savage-orcs-sar",
         "excluded": false
       }
     ],
