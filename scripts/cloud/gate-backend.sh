@@ -3,9 +3,9 @@
 # check. Prints each step's last lines (the first 40 of a failure's tail) and exits non-zero if any step fails.
 #
 # The tests run in one process, as CI and the local gates run them. GATE_PARALLEL=auto runs one per CPU, about
-# three times faster, but without tblib a failing test stops the whole run (Django can't send its traceback back),
-# so use it to confirm a green tree, not to find failures. Needs the local Postgres the session-start hook starts;
-# the tests make and drop test_<database> themselves.
+# three times faster, and tblib (a dev dependency) lets a failing test send its traceback back, so a parallel run
+# names what broke like a serial one. Needs the local Postgres the session-start hook starts; the tests make and
+# drop test_<database> themselves.
 set -u
 . "$(dirname "${BASH_SOURCE[0]}")/lib.sh"
 cd "$ROOT/backend" || exit 1

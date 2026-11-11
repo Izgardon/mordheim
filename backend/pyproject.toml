@@ -26,6 +26,10 @@ dev = [
     "djangorestframework-stubs[compatible-mypy]",
     "types-requests",
     "coverage==7.6.10",
+    # Lets a parallel test run send a failing test's traceback back to the runner. Without it Django's
+    # --parallel dies with "cannot pickle 'traceback' object" on the first failure, naming no test, and the
+    # whole run has to be repeated serially to find out what broke (scripts/cloud/gate-backend.sh).
+    "tblib",
 ]
 
 [tool.ruff]
