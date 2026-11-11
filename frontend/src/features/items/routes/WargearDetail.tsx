@@ -17,20 +17,11 @@ import { longCostNote, priceLabel, rarityLabel, whoLine } from "../utils/item-pr
 import { beastEditLink, beastOf, isSold } from "../utils/item-listing";
 
 /**
- * "Town Cryer #6 · Mordheim · For Orc Mob, Night Goblins": where it comes from. The setting only
- * where the source doesn't already name it ("Sartosa", "Khemri setting, Town Cryer #18").
+ * The item's setting, Mordheim's grades as one: "Khemri" (William, 11 Nov 2026: "just say Khemri").
+ * Who may buy it is not repeated here - the price rows above already say it.
  */
 export function sourceLine(item: Item, settingName: string) {
-  const first = item.availabilities?.[0];
-  const named =
-    Boolean(settingName) && (item.source ?? "").toLowerCase().includes(settingName.toLowerCase());
-  return [
-    item.source,
-    named ? "" : settingName || (item.campaign_id ? "This campaign's own" : ""),
-    first ? whoLine(first) : "",
-  ]
-    .filter(Boolean)
-    .join(" · ");
+  return settingName || (item.campaign_id ? "This campaign's own" : "");
 }
 
 function PriceRow({ row, chosen }: { row: ItemAvailability; chosen: boolean }) {
