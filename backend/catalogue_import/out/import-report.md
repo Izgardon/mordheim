@@ -398,7 +398,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump back, Sniper, Throw voice |
 | Horned Hunters | Horned Hunters | new group | - | Animal Friendship, Infiltration, Foul Odour, Hide in Shadows, Master Trapper, Pathfinder (Horned Hunters) |
 | Khorne Raiders | Khorne Raiders | new group | - | Mutant, Blood of Khorne, Berserker (Khorne Raiders), Massive Muscles, Stromfel's Boon, Master Tanner, Rite of Combat |
-| Knights Feats | Bretonnian Knights-Errant | new group | - | Combat Charge, Lancer, Sword Master, Armour Specialist |
+| Knights Feats | Bretonnian Brigands, Bretonnian Knights-Errant | new group | In a Bretonnian Brigand warband only the Fallen Noble learns these. | Combat Charge, Lancer, Sword Master, Armour Specialist |
 | Knights of the Bitter Moors | Knights of the Bitter Moors | new group | - | Virtue of Purity, Virtue of Discipline, Virtue of Noble Disdain, Virtue of the Impetuous, Virtue of the Squire, Virtue of Valour (Knights of the Bitter Moors) |
 | Large Special | everyone, Large units only | skill_lists | - | Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip |
 | Low Kings | Low Kings | skill_group_learners | - | Backstabber, Pick Locks, Poisoner, Slaver, Stealthy, Cutpurse |
@@ -713,7 +713,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 2619 |
 | warband rules | 319 |
 | upgrades | 116 |
-| the templates' own specials | 726 |
+| the templates' own specials | 725 |
 
 ### List lines
 
@@ -1217,7 +1217,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): "Rapier (TC 7)" is our Rapier; the (TC 7) is the source the PDF cites, not part of the name. The Barding (60 gc), Horse (30 gc), Warhorse (60 gc) and Hunting Arrows (25 gc) are marked "*Starting Price Only": list prices are starting prices in the app, so no note is added.
 - Flag (p2): The Brigand list's Dagger is 2 gc with no "first free"; the Poacher list's is "Dagger (first free)". As printed.
 - Flag (p4): The Scarface's Horribly Scarred (he causes fear) is our shared Fear, under that name.
-- Flag (p4): The Fallen Noble's Knights Feats rule grants him the Knights Errant's skill list. The four skills are in the Bretonnian Knights-Errant file's Knights Feats group; a PDF page's group can serve only its own warband type today, so for the Brigands the grant is his rule. A decision for William.
+- Flag (p4): The Fallen Noble's Knights Feats rule grants him the Knights Errant's skill list, so he learns from the Knights Feats group (declared in the Bretonnian Knights-Errant file for both types) and the rule itself is not imported: who may take a skill is never a warband rule. The group's note says he is the only Brigand who learns them.
 - Flag (p6): The Green Jack's Weapons/Armour line reads "A Likely Lad may be equipped from the Poacher equipment list": read as the Green Jack's, the only hero the PDF gives that list.
 - Flag (p4): The Fallen Noble is "0-1 FALLEN NOBLE ... 45 gc each" and the Hard Men "35 gc each"; the prices are each warrior's.
 
@@ -1257,9 +1257,9 @@ Kept apart from a family's, the effect differing:
 
 - Flag (p2): A Knights Errant warband needs at least 3 models: our templates hold no minimum, so it is not imported. No group size and no maximum profile are printed, so the warband takes our Human race.
 - Flag (p2): A Knight Errant starts with D6+7 experience: the template stores 7, and his Bretonnian Leader rule carries the roll. The highest roll leads, so no fighter is marked the leader and the template's checks warn that it has none.
-- Flag (p3): The skill table's heading is printed twice, the second time over the Knights Feats list. The Knight ticks Combat, Strength, Speed and Special; the Special column is the Knights Feats group, new to us.
+- Flag (p3): The skill table's heading is printed twice, the second time over the Knights Feats list. The Knight ticks Combat, Strength, Speed and Special; his Special column is the Knights Feats group, new to us, which he names among his groups because the group is shared with the Bretonnian Brigands.
 - Flag (p3): Sword Master is printed as "When using a sword the character may parry, with reroll at equal or higher": kept as printed, since the PDF doesn't say what is re-rolled.
-- Flag (p3): The same four feats are the Bretonnian Brigands' Fallen Noble's list (his PDF, p4). They are one group here; a PDF page's group can serve only its own warband type today, so the Brigands' grant stays his rule. A decision for William.
+- Flag (p3): The same four feats are the Bretonnian Brigands' Fallen Noble's list (his PDF, p4), so Knights Feats is one shared group, declared here for both warband types; the Brigands' Fallen Noble names it among his groups, and the group's note says he is the only Brigand who learns them.
 - Flag (p3): The Knight list's "Upgrade Light Armour to Heavy armour +30 gc" is our Heavy Armour at 30 gc, shown under the PDF's wording. The list's Mace/Hammer is our Club, Mace or Hammer and its Battleaxe our Axe.
 - Flag (p4): The Knight's light armour and shield at recruitment, and that he must buy a weapon other than a dagger, are his fixed kit: neither is on his list, which prints no price for them.
 - Flag (p4): Knights Virtue (he never breaks or panics and takes no All Alone test) is kept his own rule: our shared Immune to Psychology says more.

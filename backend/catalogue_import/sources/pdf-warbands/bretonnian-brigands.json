@@ -91,9 +91,9 @@
       "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
       "equipmentLists": ["brigand-equipment-list"],
       "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": false},
+      "skillGroups": ["Knights Feats"],
       "specialRules": [
-        {"rulename": "Old Connections", "ruleFull": "The Fallen Noble adds +1 to rarity rolls."},
-        {"rulename": "Knights Feats", "ruleFull": "The Fallen Noble may also learn skills from the Knights Feats list: Combat Charge, Lancer, Sword Master and Armour Specialist."}
+        {"rulename": "Old Connections", "ruleFull": "The Fallen Noble adds +1 to rarity rolls."}
       ]
     },
     {
@@ -165,7 +165,7 @@
     {"page": 2, "what": "\"Rapier (TC 7)\" is our Rapier; the (TC 7) is the source the PDF cites, not part of the name. The Barding (60 gc), Horse (30 gc), Warhorse (60 gc) and Hunting Arrows (25 gc) are marked \"*Starting Price Only\": list prices are starting prices in the app, so no note is added."},
     {"page": 2, "what": "The Brigand list's Dagger is 2 gc with no \"first free\"; the Poacher list's is \"Dagger (first free)\". As printed."},
     {"page": 4, "what": "The Scarface's Horribly Scarred (he causes fear) is our shared Fear, under that name."},
-    {"page": 4, "what": "The Fallen Noble's Knights Feats rule grants him the Knights Errant's skill list. The four skills are in the Bretonnian Knights-Errant file's Knights Feats group; a PDF page's group can serve only its own warband type today, so for the Brigands the grant is his rule. A decision for William."},
+    {"page": 4, "what": "The Fallen Noble's Knights Feats rule grants him the Knights Errant's skill list, so he learns from the Knights Feats group (declared in the Bretonnian Knights-Errant file for both types) and the rule itself is not imported: who may take a skill is never a warband rule. The group's note says he is the only Brigand who learns them."},
     {"page": 6, "what": "The Green Jack's Weapons/Armour line reads \"A Likely Lad may be equipped from the Poacher equipment list\": read as the Green Jack's, the only hero the PDF gives that list."},
     {"page": 4, "what": "The Fallen Noble is \"0-1 FALLEN NOBLE ... 45 gc each\" and the Hard Men \"35 gc each\"; the prices are each warrior's."}
   ]

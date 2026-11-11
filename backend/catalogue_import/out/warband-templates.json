@@ -8751,7 +8751,8 @@
           "Combat",
           "Shooting",
           "Academic",
-          "Speed"
+          "Speed",
+          "Knights Feats"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -8769,11 +8770,6 @@
             "name": "Old Connections",
             "type": "Warband - Bretonnian Brigands",
             "description": "The Fallen Noble adds +1 to rarity rolls."
-          },
-          {
-            "name": "Knights Feats",
-            "type": "Warband - Bretonnian Brigands",
-            "description": "The Fallen Noble may also learn skills from the Knights Feats list: Combat Charge, Lancer, Sword Master and Armour Specialist."
           }
         ],
         "skills": []

@@ -106,7 +106,7 @@ class SeedAllTests(TestCase):
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov);
                 # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
                 # the second PDF batch's five templates add 46 of their own, the third's five 54,
-                # the fifth's five 43, the sixth's eight 83, the seventh's seven 52 and the Mousillon batch's six 24
+                # the fifth's five 43, the sixth's eight 83, the seventh's seven 52 and the Mousillon batch's six 23
                 # Border Town Burning's Beasts of the East add 31 of their own to special.json (William, 7 Nov 2026)
                 # Frenzy, Hate High Elves, Hate Bandits and Outlaws and Hate Spellcasters shared (William, 7 Nov 2026):
                 # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4; a
@@ -114,7 +114,7 @@ class SeedAllTests(TestCase):
                 # Warriors' Not Orcs and the Pit Fighters' Pit Fighter its skill's one row: 2 fewer; a rule that only
                 # named a skill is the skill he starts with (William, 7 Nov 2026: "yes please do that"): the
                 # templates' 21, the hired swords' 9 and Maximilian's Strongman fewer
-                "Special": 1131,
+                "Special": 1130,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,

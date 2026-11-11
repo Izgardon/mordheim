@@ -682,12 +682,16 @@
     "for_everyone": false,
     "warbands": [
       {
+        "type": "bretonnian-brigands",
+        "excluded": false
+      },
+      {
         "type": "bretonnian-knights-errant",
         "excluded": false
       }
     ],
     "large_only": false,
-    "note": "",
+    "note": "In a Bretonnian Brigand warband only the Fallen Noble learns these.",
     "how": "new group",
     "skills": [
       "Combat Charge",
