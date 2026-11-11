@@ -41,12 +41,4 @@
 | 3 | athel-loren | Savage Orcs | 073-Athel_Loren_Campaign_Rules.pdf | #page=46 | 77p, 0 scan |
 | 3 | athel-loren | Skaven of Clan Skryre | 073-Athel_Loren_Campaign_Rules.pdf | #page=66 | 77p, 0 scan |
 | 3 | athel-loren | Wood Elf Scouts | 073-Athel_Loren_Campaign_Rules.pdf | #page=52 | 77p, 0 scan |
-| 3 | khemri | Arabyan Nomads | 066-Arabyan_Nomads.pdf |  | 3p, 0 scan |
-| 3 | khemri | Arabyan Theives | 067-Arabyan_Theives.pdf |  | 4p, 1 scan |
-| 3 | khemri | Cursed Dwarves | 070-Cursed_Dwarves.pdf |  | 5p, 0 scan |
-| 3 | khemri | Hobgoblins | 075-Hobgoblins.pdf |  | 5p, 0 scan |
-| 3 | khemri | Lahmian | 077-Lahmian.pdf |  | 6p, 0 scan |
-| 3 | khemri | Mages | 078-Mage.pdf |  | 4p, 0 scan |
-| 3 | khemri | Necromancer | 080-Necromancer.pdf |  | 4p, 1 scan |
-| 3 | khemri | Nehekhara Tomb Guards | 081-Nehekhara_Tomb_Guards.pdf |  | 9p, 0 scan |
 75 rows
