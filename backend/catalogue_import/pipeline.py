@@ -247,7 +247,9 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     shared = sorted(shared + page_rules, key=lambda rule: rule["slug"])
     index.update(index_rules(page_rules))
     stubs = stub_items(pdf_pages, items + mim + added, types, index)
-    add_price_rows(pdf_pages, items + mim + added, types)  # a page's row on one of our items (Spiked Gauntlet)
+    # a page's row on one of our items (the Spiked Gauntlet) or on a stub the batch declares (Throwing Axes): after
+    # the stubs are made, so a price row may name one
+    add_price_rows(pdf_pages, items + mim + added + stubs, types)
     give_page_rules(pdf_pages, items + mim + added)  # a page's shared rule in place of ours (the Mordheim Map's)
     everything = items + mim + added + stubs
     for rule in page_rules:

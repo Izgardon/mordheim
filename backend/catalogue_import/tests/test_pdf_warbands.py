@@ -214,9 +214,18 @@ class PdfCheckTests(SimpleTestCase):
             check_page("witch-hunters", page, CATALOGUE).problems,
             [
                 "stub 'Pry Bar': 'Feint' is no shared item rule of ours",
-                "price row 'pry bar': no item of ours (a stub has its own row)",
+                "price row 'pry bar': no item of ours and no stub any page declares",
             ],
         )
+
+    def test_a_price_row_may_name_a_stub_another_page_declares(self) -> None:
+        # Sartosa's shop row on Throwing Axes, the Dwarf Slayer Cult's stub: price rows are added after the stubs
+        page = good_page()
+        page["stubs"] = []
+        page["equipmentLists"][0]["items"] = page["equipmentLists"][0]["items"][:2]
+        page["priceRows"] = [{"name": "pry bar", "cost": 15, "rarity": 5, "dice": None, "page": 10}]
+        catalogue = replace(CATALOGUE, page_stubs={"prybar"})
+        self.assertEqual(check_page("witch-hunters", page, catalogue).problems, [])
 
     def test_a_dice_multiplier_needs_dice(self) -> None:
         # "100 + D6x10" (Bramstetter's Advanced Construct Thesis, Clockworkers p6): dice 1, diceMultiplier 10
@@ -374,6 +383,14 @@ class PdfImportTests(SimpleTestCase):
         [row] = self.items["Bramstetter's Advanced Construct Thesis"]["availabilities"]
         self.assertEqual((row["cost"], row["dice"], row["dice_multiplier"], row["rarity"]), (100, 1, 10, 8))
         self.assertEqual(self.items["Bramstetter's Advanced Construct Thesis"]["notes"], "")
+
+    def test_the_sartosa_shop_prices_throwing_axes_for_every_sartosa_type(self) -> None:
+        # the setting's Equipment PDF (p10): 15 gc, Rare 5. Throwing Axes are the Dwarf Slayer Cult's stub, which a
+        # price row could not name until the rows were added after the stubs
+        rows = [row for row in self.items["Throwing Axes"]["availabilities"] if len(row["warbands"]) == 11]
+        [shop] = rows
+        self.assertEqual((shop["cost"], shop["rarity"]), (15, 5))
+        self.assertIn({"type": "araby-smugglers", "excluded": False}, shop["warbands"])
 
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page

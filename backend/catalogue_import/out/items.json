@@ -18623,6 +18623,62 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
+            "type": "araby-smugglers",
+            "excluded": false
+          },
+          {
+            "type": "bretonnian-buccaneers",
+            "excluded": false
+          },
+          {
+            "type": "estalian-corsairs",
+            "excluded": false
+          },
+          {
+            "type": "ghost-pirates",
+            "excluded": false
+          },
+          {
+            "type": "khorne-raiders",
+            "excluded": false
+          },
+          {
+            "type": "lothern-sea-patrol",
+            "excluded": false
+          },
+          {
+            "type": "orc-pirates-and-savage-orcs",
+            "excluded": false
+          },
+          {
+            "type": "pirates-of-the-cathayan-sea",
+            "excluded": false
+          },
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          },
+          {
+            "type": "wasteland-privateers",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },

@@ -225,7 +225,9 @@ def row_types(slug: str, page: dict[str, Any], entry: dict[str, Any], known: set
 
 
 def add_price_rows(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]], types: list[dict[str, Any]]) -> None:
-    """Each page's `priceRows` added to our items: a row for the page's type, or for every type it names (`types`),
+    """Each page's `priceRows` added to our items, or to a stub the batch declares (`stub_items` runs first, so the
+    Sartosa shop's Throwing Axes row reaches the Dwarf Slayer Cult's stub): a row for the page's type, or for every
+    type it names (`types`),
     at its line's price, with the rarity, dice, dice multiplier and note the PDF prints (the Low Kings' Spiked
     Gauntlet, 15 gc, Rare 7, Enforcer only; Sartosa's shop list, one row for its eleven warband types)."""
     index = ItemIndex(items)

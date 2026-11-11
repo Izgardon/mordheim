@@ -10,7 +10,7 @@ models; every list a fighter names there, and every list someone's; every line's
 every item, alias, skill group, skill (a fighter's starting skills among them), race, spell lore and warband type it
 names matched to our catalogue, or a
 declared stub that matches nothing of ours; a stub's rules a shared item rule of ours (or a page's) or its own name and
-text; a price it adds dice to before any multiplier ("100 + D6x10"); and a price row's item ours and named by a line, and the warband types it serves ours; and its upgrade groups' shape (`mutations`).
+text; a price it adds dice to before any multiplier ("100 + D6x10"); and a price row's item ours or a stub a page declares, and named by a line, and the warband types it serves ours; and its upgrade groups' shape (`mutations`).
 """
 
 import copy
@@ -149,6 +149,7 @@ class Catalogue:
     item_rules: set[str] = field(default_factory=set)  # shared item rules' names and aliases, norm names
     shared_groups: set[str] = field(default_factory=set)  # the groups the pages share between warband types
     page_skills: set[str] = field(default_factory=set)  # the new skills the pages declare, norm names
+    page_stubs: set[str] = field(default_factory=set)  # the stubs the pages declare, loose keys
 
 
 def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set[str]) -> Catalogue:
@@ -177,6 +178,7 @@ def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set
         | {norm_name(row["name"]) for page in pages.values() for row in page.get("itemRules") or []},
         {page[SHARED]["name"] for page in pages.values() if page.get(SHARED)},
         own_skills,
+        {loose_key(stub["name"]) for page in pages.values() for stub in page.get("stubs") or []},
     )
 
 
@@ -334,8 +336,8 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
             if name not in ours
         ]
     for row in page.get("priceRows") or []:
-        if catalogue.items.find(row["name"])[0] is None:
-            found.problems.append(f"price row {row['name']!r}: no item of ours (a stub has its own row)")
+        if catalogue.items.find(row["name"])[0] is None and loose_key(row["name"]) not in catalogue.page_stubs:
+            found.problems.append(f"price row {row['name']!r}: no item of ours and no stub any page declares")
         elif row.get("cost") is None and norm_name(row["name"]) not in line_names:
             found.problems.append(f"price row {row['name']!r}: no line names it, and it has no cost of its own")
         if row.get("diceMultiplier") and not row.get("dice"):

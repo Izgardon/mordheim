@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 464 |
+| price rows | 465 |
 | skills | 423 |
 | skill groups | 94 |
 | skill group links | 532 |
@@ -2024,6 +2024,7 @@ Kept apart from a family's, the effect differing:
 - Price row (p10): our Riverboat for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 6.
 - Price row (p10): our Rowboat for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 5.
 - Price row (p10): our Bugman's Ale for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 8.
+- Price row (p10): our Throwing Axes for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 5.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -2032,7 +2033,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
 - Flag (p2): The four 'Old' Pirate Skills are our Sea Shanty Singer, Cutlass Master, Booming Voice and Hardy Constitution, the same words; they are the Sartosan Pirates' own group here, while our Pirates group (the 1b Pirate warband's) holds them with Sea Legs and Swashbuckler besides.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband. Throwing Axes, a stub of the Dwarf Slayer Cult's, take the shop's row too; the pages that declare the stub keep their own row at their list price.
 
 ### Sea Ghosts
 
