@@ -91,7 +91,7 @@
           }
         },
         {
-          "name": "throwing axes",
+          "name": "Throwing Knives/Stars/Axes",
           "alias": "Throwing Axes",
           "cost": {
             "cost": 15
@@ -520,14 +520,6 @@
           "text": "Every attack from a Hellblade counts as magical. A Hellblade may not be made of gromril, ithilmar or a similar mortal metal."
         }
       ]
-    },
-    {
-      "name": "Throwing Axes",
-      "type": "Weapon",
-      "subtype": "Missile",
-      "rarity": 5,
-      "dice": null,
-      "rulesPage": 2
     }
   ],
   "flags": [
@@ -584,16 +576,12 @@
       "what": "The Flayerkin takes only armour from the Madbrain list; our lists are taken whole, so his fixed kit says so and his Hooks rule bars other weapons."
     },
     {
-      "page": 2,
-      "what": "Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Khorne Raiders buy them at 15 gc; neither PDF prints rules for them."
-    },
-    {
       "page": 1,
       "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
     },
     {
       "page": 2,
-      "what": "Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5; their rules are on the Dwarf Slayer Cult's stub, which declares the item."
+      "what": "Throwing Axes are our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026: \"there should only be one entry for throwing axes ... this item is available to all just gated by its setting\"), 15 gc Rare 5 for everyone, shown under this list's name. The Pirate list prints Throwing Knives and Throwing Axes at 15 gc each, so it carries the item twice, each line under its own name."
     }
   ]
 }

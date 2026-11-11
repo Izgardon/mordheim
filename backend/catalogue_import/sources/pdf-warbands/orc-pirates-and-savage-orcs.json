@@ -319,7 +319,7 @@
           }
         },
         {
-          "name": "Throwing Axes",
+          "name": "Throwing Knives/Stars/Axes",
           "alias": "Throwing Axe",
           "cost": {
             "cost": 15
@@ -820,14 +820,6 @@
           "text": "A Booma Pistol may never use Superior Gunpowder. It may use Refined Gunpowder as normal."
         }
       ]
-    },
-    {
-      "name": "Throwing Axes",
-      "type": "Weapon",
-      "subtype": "Missile",
-      "rarity": 5,
-      "dice": null,
-      "rulesPage": 7
     }
   ],
   "flags": [
@@ -865,7 +857,7 @@
     },
     {
       "page": 6,
-      "what": "The Savage Orc Equipment List's \"Throwing Axe\" is our Throwing Axes, the Dwarf Slayer Cult's stub (2a), declared here too so this warband buys them at 15 gc, Rare 5, as the Sartosa Equipment PDF's trading list has them. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already."
+      "what": "The Savage Orc Equipment List's \"Throwing Axe\" is our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026), 15 gc Rare 5 for everyone, shown under the list's name. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already."
     },
     {
       "page": 6,

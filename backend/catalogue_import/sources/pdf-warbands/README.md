@@ -186,6 +186,12 @@ Each answers a question a batch raised; follow them without asking again.
 - **A setting's shop list re-prices our items for that setting only:** price rows on the warband types of that
   setting (`priceRows`, one row naming them all in `types`, declared on one page), with our global prices and
   rarities untouched (William, 11 Nov 2026; Sartosa's Equipment shop list).
+- **One entry for a weapon we already hold under another name** (William, 11 Nov 2026: "there should only be one
+  entry for throwing axes and its this one Throwing Knives/Stars/Axes 15 gc Rare 5 it includes all of them ... this
+  item is available to all just gated by its setting"). The PDF warbands' Throwing Axes stub was our Throwing
+  Knives/Stars at the same price and rarity, so the two are one item, renamed through `item_names` in
+  `overrides.json` and kept in the earlier of the two settings (Mordheim 1a); every line names it and shows it
+  under its own list's wording. A stub that is ours under another name is a question for William, not a new item.
 - **Never fetch a setting's own PDFs to fill a gap** (William, 11 Nov 2026). Read the warband PDFs, stub whatever is
   missing, a fighter left with no skill list included, and fill it when that setting's batch comes. The Sartosa
   skills and equipment PDFs already read stay as they are.

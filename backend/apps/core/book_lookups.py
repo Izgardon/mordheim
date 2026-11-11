@@ -37,10 +37,10 @@ SPELL_DIFFICULTY = re.compile(r"^Difficulty (\d+)")
 EQUIPMENT_NAME_ALIASES = {
     "horse": "riding/draft horse",  # BUG-54
     "scythe": "double-handed weapon",  # a Priest of Morr's scythe is one (BUG-54)
-    "throwing knife": "throwing knives/stars",
-    "throwing daggers": "throwing knives/stars",
-    "throwing stars": "throwing knives/stars",
-    "throwing axes": "throwing knives/stars",
+    "throwing knife": "throwing knives/stars/axes",
+    "throwing daggers": "throwing knives/stars/axes",
+    "throwing stars": "throwing knives/stars/axes",
+    "throwing axes": "throwing knives/stars/axes",  # one entry for all of them (William, 11 Nov 2026)
     "double-handed axe": "double-handed weapon",
     "two-handed sword": "double-handed weapon",
     "brace of pistols": "pistol",

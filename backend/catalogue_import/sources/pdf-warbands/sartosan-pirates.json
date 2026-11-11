@@ -944,26 +944,6 @@
         "wasteland-privateers"
       ],
       "page": 10
-    },
-    {
-      "name": "Throwing Axes",
-      "cost": 15,
-      "rarity": 5,
-      "dice": null,
-      "types": [
-        "sartosan-pirates",
-        "araby-smugglers",
-        "bretonnian-buccaneers",
-        "estalian-corsairs",
-        "ghost-pirates",
-        "khorne-raiders",
-        "lothern-sea-patrol",
-        "orc-pirates-and-savage-orcs",
-        "pirates-of-the-cathayan-sea",
-        "slayer-pirates",
-        "wasteland-privateers"
-      ],
-      "page": 10
     }
   ],
   "aliases": [],
@@ -1003,7 +983,7 @@
     },
     {
       "page": 10,
-      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband. Throwing Axes, a stub of the Dwarf Slayer Cult's, take the shop's row too; the pages that declare the stub keep their own row at their list price."
+      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband. Throwing Axes get no row: they are our Throwing Knives/Stars/Axes, 15 gc Rare 5 for everyone already (William, 11 Nov 2026)."
     }
   ],
   "sharedSkillGroup": {

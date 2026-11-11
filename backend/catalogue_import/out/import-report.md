@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 465 |
+| price rows | 460 |
 | skills | 423 |
 | skill groups | 94 |
 | skill group links | 532 |
@@ -813,7 +813,7 @@ Lines found other than by name or tag:
 | tileans | pike | Pike (Tileans) | named for the warband |
 | cursed-dwarves | hand gun | Handgun | a loose match |
 
-480 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+487 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 
@@ -1272,7 +1272,7 @@ Kept apart from a family's, the effect differing:
 | disciples-of-maldred | disciples-of-maldred | 5 | 0 | 0 | 10 |
 | dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
 | druchii | druchii | 8 | 0 | 2 | 11 |
-| dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 12 |
+| dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 1 | 11 |
 | estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 9 |
 | fen-guard | fen-guard | 5 | 1 | 4 | 14 |
 | ghost-pirates | ghost-pirates | 7 | 0 | 1 | 14 |
@@ -1281,7 +1281,7 @@ Kept apart from a family's, the effect differing:
 | halflings | halflings | 8 | 2 | 0 | 7 |
 | hobgoblins | hobgoblins | 6 | 1 | 1 | 8 |
 | house-guard | house-guard | 6 | 1 | 1 | 8 |
-| khorne-raiders | khorne-raiders | 6 | 0 | 2 | 16 |
+| khorne-raiders | khorne-raiders | 6 | 0 | 1 | 15 |
 | knights-of-the-bitter-moors | knights-of-the-bitter-moors | 6 | 0 | 1 | 9 |
 | lahmian | lahmian | 10 | 3 | 1 | 10 |
 | lords-of-the-marsh | lords-of-the-marsh | 5 | 0 | 0 | 9 |
@@ -1296,7 +1296,7 @@ Kept apart from a family's, the effect differing:
 | necromancer | necromancer | 6 | 3 | 4 | 9 |
 | nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
-| orc-pirates-and-savage-orcs | orc-pirates-and-savage-orcs | 8 | 0 | 2 | 13 |
+| orc-pirates-and-savage-orcs | orc-pirates-and-savage-orcs | 8 | 0 | 1 | 13 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
 | pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 12 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
@@ -1307,7 +1307,7 @@ Kept apart from a family's, the effect differing:
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
 | skaven-of-clan-pestilens-mou | skaven-of-clan-pestilens-mou | 6 | 0 | 0 | 13 |
 | skaven-of-clan-pristekk | skaven-of-clan-pristekk | 7 | 0 | 3 | 9 |
-| slayer-pirates | slayer-pirates | 7 | 0 | 3 | 18 |
+| slayer-pirates | slayer-pirates | 7 | 0 | 2 | 17 |
 | snotlings | snotlings | 8 | 1 | 2 | 10 |
 | sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
@@ -1566,7 +1566,6 @@ Kept apart from a family's, the effect differing:
 ### Dwarf Slayer Cult
 
 - Alias (p2): "light armor" is our light armour.
-- Stub: Throwing Axes, 15 gc, Common; its rules are on p6.
 - Stub: Whirling Blades, 30 gc, Rare 9; its rules are on p6.
 - Flag (p1): The file is v6 but its byline says v5.0. Read as printed.
 - Flag (p1): The Slayer and Dwarf rules are warband rules (every fighter's "Dwarf: see above" and "Slayer: see above"); Deathwish isn't our shared Immune to Psychology, as it also covers fighting alone and says nothing of leaving combat. Hatred of Orcs and Goblins (the Rememberer, Stubbles and Axe Hurlers) links our shared Hate Orcs and Goblins.
@@ -1575,11 +1574,10 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The Gromril weapon is 3 × price, linked to our Gromril Weapon; its starting-warband-only price is the Gromril Weapons rule.
 - Flag (p3): No maximum profile is printed: the Dwarfs take our Dwarf race. The Rememberer starts with 0 experience, as printed.
 - Flag (p5): The Troll Slayer skills are a new group, Slayer Cult. Ferocious Charge and True Grit are ours; Monster Slayer ("in close combat"), Berserker (ours bars it with Ferocious Charge) and Thick Skull (ours adds a 2+ with a helmet) are worded otherwise, so named apart. Ours carry no "Slayers only", so the Rememberer's Not a Slayer rule lists the Slayers Only skills.
-- Flag (p6): Throwing Axes (15 gc, Common for Slayers, Rare 5 for others; 6" range, Thrown Weapon, Axe Thrower) and Whirling Blades (30 gc a pair, Rare 9, Slayers only; Cannot be parried, Cutting Edge, Pair, Dance of Doom, Whirlwind of Death) are stubs, their rules on p6. Throwing Axes' Axe Thrower lets a Hero with Shooting skills learn a skill, Axe Thrower, which isn't imported: it waits for the item's rules.
+- Flag (p6): Whirling Blades (30 gc a pair, Rare 9, Slayers only; Cannot be parried, Cutting Edge, Pair, Dance of Doom, Whirlwind of Death) is a stub, its rules on p6. Throwing Axes are our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026: "there should only be one entry for throwing axes ... this item is available to all just gated by its setting"), 15 gc Rare 5 for everyone, shown under this list's name. The PDF's Axe Thrower rule (a Hero with Shooting skills may learn the Axe Thrower skill) is our Axe Thrower skill, whose own description says he must own them.
 - Flag (p6): The Dwarf Axe (15 gc, Rare 8) is our Dwarf Axe; the PDF adds that one parry is the most a model makes, two Dwarf axes giving a re-roll of a failed parry.
 - Flag (p5): The Rite of Dragonslaying's Sea Dragon Cloak is printed with a 5+ save in close combat and 4+ against missiles, as ours.
 - Flag (p5): Deathwish is the Slayer Pirates' skill too (Sartosa): one skill with the same words in both groups, so who may take it moved from its description to this group's note (William, 6 Nov 2026, of the Songster).
-- Flag (p6): Throwing Axes carry the rules the Sartosa campaign rules' Equipment PDF prints for them (p5: 6", Strength as user, a thrown weapon that takes no penalty for range or moving and may not be used in close combat): this page declares the item first, so it holds them.
 
 ### Estalian Corsairs
 
@@ -1707,7 +1705,6 @@ Kept apart from a family's, the effect differing:
 ### Khorne Raiders
 
 - Stub: Hellblade, 35 gc, Rare 8; its rules are on p2.
-- Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p2.
 - Flag (p2): The skill table is text (X ticks), read from the -layout text. The Dread Captain has no Shooting tick; the Pirate column, which this PDF does not print a skill list for, is ticked for the Dread Captain and the Cannibal Boys and is left out: see the decisions.
 - Flag (p3): The Dread Captain's profile is M4 WS4 BS4 S4 T3 W1 I4 A1 Ld8 and the Quartermaster's M4 WS4 BS0 S4 T4 W1 I2 A2 Ld7: as printed.
 - Flag (p2): The Hellblade is "(Captain only)" on the Pirate list and carries no such note on the Madbrain list, which the Quartermasters, Madbrains and Flayerkin buy from: as printed, so only the Pirate list's line is the Captain's.
@@ -1721,9 +1718,8 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The PDF spells the skill "Beserker"; ours of that effect is named Berserker (Khorne Raiders), as our Berserker (+1 to hit when charging) is another rule.
 - Flag (p2): A Khorne Raider warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race, the Flayerkin included.
 - Flag (p3): The Flayerkin takes only armour from the Madbrain list; our lists are taken whole, so his fixed kit says so and his Hooks rule bars other weapons.
-- Flag (p2): Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Khorne Raiders buy them at 15 gc; neither PDF prints rules for them.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
-- Flag (p2): Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5; their rules are on the Dwarf Slayer Cult's stub, which declares the item.
+- Flag (p2): Throwing Axes are our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026: "there should only be one entry for throwing axes ... this item is available to all just gated by its setting"), 15 gc Rare 5 for everyone, shown under this list's name. The Pirate list prints Throwing Knives and Throwing Axes at 15 gc each, so it carries the item twice, each line under its own name.
 
 ### Knights of the Bitter Moors
 
@@ -1953,7 +1949,6 @@ Kept apart from a family's, the effect differing:
 ### Orc Pirates & Savage Orcs
 
 - Stub: Booma Pistol, 20 gc, Common; its rules are on p4.
-- Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p7.
 - Flag (p2): This PDF is two variations on the Orc Mob (Da Mob) list, not a list of its own: "The Orc Pirates use the exact same rules as the Da Mob Warband with the following changes". The template is built from our Orc Mob template with the PDF's changes, and no page was opened as an image: there is no skill table, and the only image in the file is a 15x15 bullet.
 - Flag (p2): The PDF prints no Pirate column and no Pirate skill list, so this warband does not join the shared Sartosa Pirate Skills group. See the decisions.
 - Flag (p3): The Boss, the Big 'Uns and the Orc Boyz are "same as Da Mob", so their costs, profiles, starting experience, counts and skill access are our Orc Mob template's. The Orc Shaman is kept, since the Goblin Enjuneer replaces him rather than removing him; our templates hold no replacement rule.
@@ -1962,7 +1957,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): A Sea Squig moves 2D6-1" on land and swims 2D6". Our profile takes only a plain dice value, so his Movement is 2D6 and his Movement rule holds both numbers.
 - Flag (p3): Goblin Swabbies replace Goblin Warriors at 12 gc and never gain experience, so unlike Da Mob's Goblin Warriors they may not be promoted.
 - Flag (p5): The Savage Orc variation is the second half of the same PDF and serves the same warband type. Our templates hold no variants for a PDF page, so its rules are warband rules of their own, each named "Savage Orc variation: ...", and its two equipment lists are carried beside the Orc Pirate ones: every Orc buys from the Orc and the Savage Orc lists and every Goblin from the Goblin Swabbie and the Forest Goblin lists, and the warband rule says which pair a Savage Orc warband uses. Both pairs sell a free first dagger, and a hire gets only one. See the decisions.
-- Flag (p6): The Savage Orc Equipment List's "Throwing Axe" is our Throwing Axes, the Dwarf Slayer Cult's stub (2a), declared here too so this warband buys them at 15 gc, Rare 5, as the Sartosa Equipment PDF's trading list has them. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already.
+- Flag (p6): The Savage Orc Equipment List's "Throwing Axe" is our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026), 15 gc Rare 5 for everyone, shown under the list's name. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already.
 - Flag (p6): Page 6 carries a block of the designers' discussion below the equipment lists ("Wardance - could end up in the same place you were before..."), which is not rules and is not imported.
 - Flag (p6): The Forest Goblin list sells a Short Bow at 10 gc where the Goblin Swabbie list and our catalogue have it at 5 gc: each line keeps its own price. Its "Throwing weapons . . . 15 gc" names no weapon; it is read as our Throwing Knives/Stars, which that price matches.
 - Flag (p2): The Orc list's Toughened leathers are 7 gc, where every other Sartosa list and our catalogue have them at 5 gc: as printed, for both the Orc and the Goblin Swabbie lists.
@@ -2028,7 +2023,6 @@ Kept apart from a family's, the effect differing:
 - Price row (p10): our Riverboat for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 6.
 - Price row (p10): our Rowboat for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 5.
 - Price row (p10): our Bugman's Ale for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 8.
-- Price row (p10): our Throwing Axes for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 5.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -2037,7 +2031,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
 - Flag (p2): The four 'Old' Pirate Skills are our Sea Shanty Singer, Cutlass Master, Booming Voice and Hardy Constitution, the same words; they are the Sartosan Pirates' own group here, while our Pirates group (the 1b Pirate warband's) holds them with Sea Legs and Swashbuckler besides.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband. Throwing Axes, a stub of the Dwarf Slayer Cult's, take the shop's row too; the pages that declare the stub keep their own row at their list price.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband. Throwing Axes get no row: they are our Throwing Knives/Stars/Axes, 15 gc Rare 5 for everyone already (William, 11 Nov 2026).
 
 ### Sea Ghosts
 
@@ -2133,7 +2127,6 @@ Kept apart from a family's, the effect differing:
 
 - Stub: Dwarven Pistol, 40 gc, Rare 10; its rules are on p3.
 - Stub: Double-barreled Blunderbuss, 60 gc, Rare 11; its rules are on p1.
-- Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p2.
 - Price row (p2): our dwarf axe for slayer-pirates, Rare 9.
 - Flag (p2): The skill table is text (X ticks), read from the -layout text. The Pirate column, which this PDF does not print a skill list for, is ticked for all three Heroes and is left out: see the decisions.
 - Flag (p1): Sea Trollslayers are listed with the Heroes' starting experience (0) but have no row in the skill table and no limit on their number, so they are read as henchmen.
@@ -2144,15 +2137,14 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The Dwarf Axe's line is 15 gc, Rare 9; ours is 15 gc, Rare 8, which is unchanged, so the warband buys from a price row of its own at Rare 9.
 - Flag (p2): The Dwarven Pistol (30 gc, 60 for a brace) and the Double-barreled Blunderbuss (60 gc) are stubs: the PDF prints no rules and we hold neither. The Gunner list sells the Dueling Pistol beside the Dwarven Pistol, so they are not the same weapon.
 - Flag (p2): The Pirate and Gunner lists print "Armour . . . None". The Thaggi list's Missile Weapons and Armour (Buckler 5 gc, Toughened Leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, which matches the warband rule that Slayers wear no armour.
-- Flag (p2): "Harpoon (Javelin)" at 5 gc is our Javelins, and "Throwing Axe" at 15 gc our Throwing Axes, each shown under the list's name.
 - Flag (p3): Hard to Kill, Hard Head, Grudgebearers and Deathwish are printed as the warband's rules, and are kept as warband rules rather than copied onto each fighter.
-- Flag (p2): Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Slayer Pirates buy them at 15 gc; neither PDF prints rules for them.
 - Flag (p3): The PDF spells the skill "Death Wish"; it is the Dwarf Slayer Cult's Deathwish, one skill with the same words in both groups, and who may take it sits in each group's note.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 - Flag (p2): The Dwarven Pistol's rules are in the Sartosa campaign rules' Equipment PDF (p3): 6", Strength 4, Reload, Save Modifier, Hand-to-hand and Well Built. Its trading-list price there is 40 gc, Rare 10 (80 for a brace), which the item takes; the warband's own line stays 30 gc, 60 for a brace, as a starting price.
 - Flag (p2): The Double-barreled Blunderbuss's rules are in the Sartosa campaign rules' Equipment PDF (p1): Strength 3, Shot, Fire Twice and Misfire. Its trading-list price (p10) is 60 gc, Rare 11, the same as the line's.
-- Flag (p2): Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5.
 - Flag (p2): the Sartosa campaign rules' Equipment PDF's trading list (p10) prints the Dwarven Axe at 15 gc, Rare 8, Dwarves only, as ours is; this warband's own list prints Rare 9, which its price row keeps. The warband PDF's number stands.
+- Flag (p2): "Harpoon (Javelin)" at 5 gc is our Javelins, shown under the list's name.
+- Flag (p2): Throwing Axes are our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026: "there should only be one entry for throwing axes ... this item is available to all just gated by its setting"), 15 gc Rare 5 for everyone, shown under this list's name.
 
 ### Snotlings
 

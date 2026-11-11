@@ -5667,7 +5667,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing stars",
@@ -16536,7 +16536,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -24029,7 +24029,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -24388,7 +24388,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -25933,10 +25933,10 @@
           },
           {
             "item": {
-              "name": "Throwing Axes",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Throwing axes",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -26217,10 +26217,10 @@
           },
           {
             "item": {
-              "name": "Throwing Axes",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Throwing axes",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -28606,7 +28606,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Splinters",
@@ -29482,7 +29482,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing weapons",
@@ -33674,7 +33674,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -35004,7 +35004,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing Axe",
@@ -37641,7 +37641,7 @@
         "lines": [
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -38092,7 +38092,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -38107,10 +38107,10 @@
           },
           {
             "item": {
-              "name": "Throwing Axes",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Throwing Axes",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -38857,7 +38857,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -41872,7 +41872,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -43486,7 +43486,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -44525,7 +44525,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -45184,7 +45184,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -47729,7 +47729,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing Axes",
@@ -52188,7 +52188,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Kitchenware",
@@ -57619,7 +57619,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -59193,7 +59193,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Shuriken",
@@ -59959,7 +59959,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing Axes",
@@ -60116,7 +60116,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing Axes",
@@ -60926,7 +60926,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -62773,10 +62773,10 @@
           },
           {
             "item": {
-              "name": "Throwing Axes",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Throwing Axe",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -62885,7 +62885,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing weapons",
@@ -66716,7 +66716,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing Stars/Knives",
@@ -67367,7 +67367,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing Stars",
@@ -69165,7 +69165,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -72920,7 +72920,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -73918,7 +73918,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -75174,10 +75174,10 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Throwing knives/stars",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -78891,10 +78891,10 @@
           },
           {
             "item": {
-              "name": "Throwing Axes",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Throwing Axe",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -79065,10 +79065,10 @@
           },
           {
             "item": {
-              "name": "Throwing Axes",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Throwing Axe",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -81360,7 +81360,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -81547,7 +81547,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "",
@@ -82116,7 +82116,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing weapons",
@@ -88140,7 +88140,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing stars",
@@ -88335,7 +88335,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing stars",
@@ -94170,7 +94170,7 @@
           },
           {
             "item": {
-              "name": "Throwing Knives/Stars",
+              "name": "Throwing Knives/Stars/Axes",
               "variant": ""
             },
             "shown_as": "Throwing Knife",

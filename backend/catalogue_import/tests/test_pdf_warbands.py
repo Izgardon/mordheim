@@ -454,13 +454,31 @@ class PdfImportTests(SimpleTestCase):
             },
         )
 
-    def test_the_sartosa_shop_prices_throwing_axes_for_every_sartosa_type(self) -> None:
-        # the setting's Equipment PDF (p10): 15 gc, Rare 5. Throwing Axes are the Dwarf Slayer Cult's stub, which a
-        # price row could not name until the rows were added after the stubs
-        rows = [row for row in self.items["Throwing Axes"]["availabilities"] if len(row["warbands"]) == 11]
-        [shop] = rows
-        self.assertEqual((shop["cost"], shop["rarity"]), (15, 5))
-        self.assertIn({"type": "araby-smugglers", "excluded": False}, shop["warbands"])
+    def test_throwing_axes_are_one_entry_with_the_knives_and_stars(self) -> None:
+        # William, 11 Nov 2026: "there should only be one entry for throwing axes and its this one Throwing
+        # Knives/Stars/Axes 15 gc Rare 5 it includes all of them ... this item is available to all just gated by its
+        # setting". The PDF warbands' ruleless Throwing Axes stub is gone and their lines name this one.
+        self.assertNotIn("Throwing Axes", self.items)
+        merged = self.items["Throwing Knives/Stars/Axes"]
+        [row] = merged["availabilities"]
+        self.assertEqual((row["cost"], row["rarity"], row["for_everyone"], row["warbands"]), (15, 5, True, []))
+        self.assertEqual(merged["setting"], "mordheim")  # Mordheim 1a, where it has always been
+        shown = {
+            (slug, line["shown_as"])
+            for slug in ("dwarf-slayer-cult", "khorne-raiders", "slayer-pirates", "orc-pirates-and-savage-orcs")
+            for row in self.templates[slug]["lists"]
+            for line in row["lines"]
+            if line["item"]["name"] == merged["name"]
+        }
+        self.assertLessEqual(
+            {
+                ("dwarf-slayer-cult", "Throwing axes"),
+                ("khorne-raiders", "Throwing Axes"),
+                ("slayer-pirates", "Throwing Axe"),
+                ("orc-pirates-and-savage-orcs", "Throwing Axe"),
+            },
+            shown,
+        )
 
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page

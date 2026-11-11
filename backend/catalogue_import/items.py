@@ -51,9 +51,13 @@ def _tags(item: dict[str, Any]) -> list[str]:
 
 
 def mordheimer_item(
-    item: dict[str, Any], index: dict[str, dict[str, Any]], ctx: Context, log: ItemLog
+    item: dict[str, Any],
+    index: dict[str, dict[str, Any]],
+    ctx: Context,
+    log: ItemLog,
+    renamed: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    name = item["name"]
+    name = (renamed or {}).get("name") or item["name"]
     kind, subtype = TYPES.get(item.get("type", ""), ("Miscellaneous", ""))
     return {
         "slug": "",
@@ -65,7 +69,7 @@ def mordheimer_item(
         "setting": content_setting(item.get("campaignSetting"), item.get("grade")),
         "source": clean_inline(item.get("source")),
         "link_url": MORDHEIMER + item["link"] if item.get("link") else "",
-        "tags": _tags(item),
+        "tags": unique(_tags(item) + [tag.lower() for tag in (renamed or {}).get("tags") or []]),
         "flavour": clean_inline(item.get("flavour")),
         "range": short_stat(item.get("range"), name, "range", log),
         "strength": short_stat(item.get("strength"), name, "strength", log),
@@ -85,9 +89,12 @@ def mordheimer_items(
     index: dict[str, dict[str, Any]],
     ctx: Context,
     log: ItemLog,
+    names: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Every mordheimer item except the ones it hides (Club, Mace, Hammer, Staff: aliases of "Club, Mace or Hammer")
-    and the ones overrides.json drops."""
+    and the ones overrides.json drops, each under the name William gives it (`names`: Throwing Knives/Stars is
+    Throwing Knives/Stars/Axes, the one entry for all of them)."""
+    renames = dict(names or {})
     converted = []
     for item in items:
         if item["name"] in drop:
@@ -96,5 +103,7 @@ def mordheimer_items(
         if item.get("hideFromContent") and item["name"] not in keep_hidden:
             log.hidden.append(item["name"])
             continue
-        converted.append(mordheimer_item(item, index, ctx, log))
+        converted.append(mordheimer_item(item, index, ctx, log, renames.pop(item["name"], None)))
+    if renames:
+        raise ValueError(f"overrides.json item_names: no mordheimer item {', '.join(sorted(renames))}")
     return converted

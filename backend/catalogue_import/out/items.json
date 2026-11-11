@@ -14701,8 +14701,8 @@
     ]
   },
   {
-    "slug": "throwing-knives-stars",
-    "name": "Throwing Knives/Stars",
+    "slug": "throwing-knives-stars-axes",
+    "name": "Throwing Knives/Stars/Axes",
     "variant": "",
     "origin": "mordheimer",
     "type": "Weapon",
@@ -14719,7 +14719,9 @@
       "throwing star",
       "throwing stars",
       "throwing knives",
-      "throwing star/knives"
+      "throwing star/knives",
+      "throwing axes",
+      "throwing axe"
     ],
     "flavour": "Throwing stars are used mainly by the assassins of the sinister House of Shadows, or by street thugs who specialise in ambushing the unwary. A perfectly balanced knife thrown from behind has ended the life of many a noble and merchant in Mordheim. Throwing knives are not suitable for close combat, as their balance makes them unwieldy in close quarters.",
     "range": "6\"",
@@ -18505,163 +18507,6 @@
         "warbands": [
           {
             "type": "druchii",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "throwing-axes",
-    "name": "Throwing Axes",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Missile",
-    "setting": "mordheim-2a",
-    "source": "Dave ‘Styrofoam King’ Joria",
-    "link_url": "https://www.broheim.net/downloads/warbands/web/Dwarf%20Slayer%20Cult%20v6.pdf",
-    "tags": [
-      "throwing axes"
-    ],
-    "flavour": "",
-    "range": "6\"",
-    "strength": "As user",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": false,
-    "rules": [
-      {
-        "name": "Thrown weapon",
-        "summary": "",
-        "text": "A model throwing axes takes no penalty for range or for moving, as they are balanced for throwing. They may not be used in close combat.",
-        "tables": []
-      },
-      {
-        "name": "Axe Thrower",
-        "summary": "",
-        "text": "A model with access to Shooting skills and Throwing Axes may learn the Axe Thrower skill.",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "dwarf-slayer-cult",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "khorne-raiders",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "orc-pirates-and-savage-orcs",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "slayer-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          },
-          {
-            "type": "araby-smugglers",
-            "excluded": false
-          },
-          {
-            "type": "bretonnian-buccaneers",
-            "excluded": false
-          },
-          {
-            "type": "estalian-corsairs",
-            "excluded": false
-          },
-          {
-            "type": "ghost-pirates",
-            "excluded": false
-          },
-          {
-            "type": "khorne-raiders",
-            "excluded": false
-          },
-          {
-            "type": "lothern-sea-patrol",
-            "excluded": false
-          },
-          {
-            "type": "orc-pirates-and-savage-orcs",
-            "excluded": false
-          },
-          {
-            "type": "pirates-of-the-cathayan-sea",
-            "excluded": false
-          },
-          {
-            "type": "slayer-pirates",
-            "excluded": false
-          },
-          {
-            "type": "wasteland-privateers",
             "excluded": false
           }
         ],

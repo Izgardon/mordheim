@@ -237,7 +237,13 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     )
     item_log, mim_log = ItemLog(), MimLog()
     items = mordheimer_items(
-        sources.items, overrides.get("keep_hidden_items", []), overrides.get("drop_items", []), index, ctx, item_log
+        sources.items,
+        overrides.get("keep_hidden_items", []),
+        overrides.get("drop_items", []),
+        index,
+        ctx,
+        item_log,
+        overrides.get("item_names", {}),
     )
     reader = MimReader(resolver, groups)
     mim = [mim_item(item, sources.properties, index, reader, mim_log) for item in sources.mim_items]

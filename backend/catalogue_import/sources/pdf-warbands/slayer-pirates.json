@@ -136,7 +136,7 @@
           }
         },
         {
-          "name": "throwing axes",
+          "name": "Throwing Knives/Stars/Axes",
           "alias": "Throwing Axe",
           "cost": {
             "cost": 15
@@ -225,7 +225,7 @@
           }
         },
         {
-          "name": "throwing axes",
+          "name": "Throwing Knives/Stars/Axes",
           "alias": "Throwing Axe",
           "cost": {
             "cost": 15
@@ -682,14 +682,6 @@
           "text": "The blunderbuss needs no roll to hit, but roll a D6 anyway: on a 1 it misfires, and you roll once on the black powder misfire table."
         }
       ]
-    },
-    {
-      "name": "Throwing Axes",
-      "type": "Weapon",
-      "subtype": "Missile",
-      "rarity": 5,
-      "dice": null,
-      "rulesPage": 2
     }
   ],
   "flags": [
@@ -730,16 +722,8 @@
       "what": "The Pirate and Gunner lists print \"Armour . . . None\". The Thaggi list's Missile Weapons and Armour (Buckler 5 gc, Toughened Leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, which matches the warband rule that Slayers wear no armour."
     },
     {
-      "page": 2,
-      "what": "\"Harpoon (Javelin)\" at 5 gc is our Javelins, and \"Throwing Axe\" at 15 gc our Throwing Axes, each shown under the list's name."
-    },
-    {
       "page": 3,
       "what": "Hard to Kill, Hard Head, Grudgebearers and Deathwish are printed as the warband's rules, and are kept as warband rules rather than copied onto each fighter."
-    },
-    {
-      "page": 2,
-      "what": "Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Slayer Pirates buy them at 15 gc; neither PDF prints rules for them."
     },
     {
       "page": 3,
@@ -759,11 +743,15 @@
     },
     {
       "page": 2,
-      "what": "Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5."
+      "what": "the Sartosa campaign rules' Equipment PDF's trading list (p10) prints the Dwarven Axe at 15 gc, Rare 8, Dwarves only, as ours is; this warband's own list prints Rare 9, which its price row keeps. The warband PDF's number stands."
     },
     {
       "page": 2,
-      "what": "the Sartosa campaign rules' Equipment PDF's trading list (p10) prints the Dwarven Axe at 15 gc, Rare 8, Dwarves only, as ours is; this warband's own list prints Rare 9, which its price row keeps. The warband PDF's number stands."
+      "what": "\"Harpoon (Javelin)\" at 5 gc is our Javelins, shown under the list's name."
+    },
+    {
+      "page": 2,
+      "what": "Throwing Axes are our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026: \"there should only be one entry for throwing axes ... this item is available to all just gated by its setting\"), 15 gc Rare 5 for everyone, shown under this list's name."
     }
   ]
 }
