@@ -265,7 +265,11 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     word_item_rules(everything, wordings)  # an item's own wording of a reworded rule: dropped, or only what is its own
     add_notes(everything, overrides.get("item_notes", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
-    names_we_have = Catalogue([item["name"] for item in everything], [row["name"] for row in sources.our_skills])
+    names_we_have = Catalogue(
+        [item["name"] for item in everything],
+        [row["name"] for row in sources.our_skills],
+        overrides.get("persona_item_names", {}),
+    )
     sources.our_personae = build_personae(sources.personae, names_we_have, overrides.get("fees_in_rules", {}))
     _resolve_everything(sources, resolver)
     assignment_log = AssignmentLog()

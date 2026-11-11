@@ -1,6 +1,9 @@
+import json
+
 from django.test import SimpleTestCase
 
 from catalogue_import.personae import Catalogue, build_personae, listed_skills, persona_row
+from catalogue_import.sources import OUT
 
 CATALOGUE = Catalogue(["Sword", "Throwing Knife", "Elven Cloak"], ["Dodge", "Sprint", "Strongman"])
 AENUR = {
@@ -33,6 +36,17 @@ class PersonaRowTests(SimpleTestCase):
         self.assertEqual(terms["upkeep_fee"]["kind"], "none")  # "n/a": no upkeep
         self.assertEqual(terms["unique_to"], "Any warband except Skaven may hire Aenur.")
 
+    def test_a_kit_name_william_settles_links_our_item(self) -> None:
+        # William's answer for a kit name that is ours under another word (overrides.json "persona_item_names"):
+        # Heinrich 'Altdorf' Schmidt's Whip is our Steel Whip, since no Khemri page prints a whip of its own
+        catalogue = Catalogue(["Sword", "Steel Whip"], [], {"Whip": "Steel Whip"})
+        row = persona_row({**AENUR, "equipment": "He carries a <Tooltip>Whip</Tooltip>."}, catalogue)
+
+        self.assertEqual(row["equipment"], [{"item": "Steel Whip", "quantity": 1}])
+        self.assertNotIn("Also carries", row["description"])
+        with self.assertRaises(ValueError):
+            Catalogue(["Sword"], [], {"Whip": "Steel Whip"})  # a name of no item of ours stops the build
+
     def test_a_pair_takes_its_first_fighters_profile_and_a_caster_his_spells(self) -> None:
         pair = {
             "name": "Ulli & Marquand",
@@ -59,3 +73,13 @@ class PersonaRowTests(SimpleTestCase):
         rows = build_personae([{**AENUR, "name": "Zed"}, AENUR], CATALOGUE)
 
         self.assertEqual([row["name"] for row in rows], ["Aenur, the sword of twilight", "Zed"])
+
+
+class CommittedPersonaeTests(SimpleTestCase):
+    def test_heinrichs_whip_links_an_item_of_ours(self) -> None:
+        # he is the one persona whose kit named a Whip; it linked the Fen Guard's stub by name until that stub
+        # merged into our Steel Whip, and it must link an item rather than fall into his description
+        rows = {row["name"]: row for row in json.loads((OUT / "dramatis-personae.json").read_text(encoding="utf-8"))}
+        heinrich = rows["Heinrich 'Altdorf' Schmidt"]
+        self.assertIn({"item": "Steel Whip", "quantity": 1}, heinrich["equipment"])
+        self.assertNotIn("Also carries", heinrich["description"])

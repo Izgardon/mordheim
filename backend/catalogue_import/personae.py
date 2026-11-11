@@ -115,11 +115,17 @@ def _stays(rules: list[dict[str, Any]]) -> str:
 
 class Catalogue:
     """The item and skill names our book seeds, to link a persona's kit and skills by: a name as written, else its
-    singular ("Swords", "Throwing Knives"); what still matches nothing stays in the persona's description."""
+    singular ("Swords", "Throwing Knives"); what still matches nothing stays in the persona's description.
+    `aliases` (overrides.json "persona_item_names") is the name a kit prints -> our item it means, for a kit name
+    that is ours under another word (Heinrich 'Altdorf' Schmidt's Whip is our Steel Whip)."""
 
-    def __init__(self, items: list[str], skills: list[str]) -> None:
+    def __init__(self, items: list[str], skills: list[str], aliases: dict[str, str] | None = None) -> None:
         self.items = {name.lower(): name for name in items}
         self.skills = {name.lower(): name for name in skills}
+        for printed, ours in (aliases or {}).items():
+            if ours not in items:
+                raise ValueError(f"overrides.json persona_item_names: no item {ours!r}")
+            self.items[printed.lower()] = ours
 
     @staticmethod
     def find(known: dict[str, str], name: str) -> str | None:

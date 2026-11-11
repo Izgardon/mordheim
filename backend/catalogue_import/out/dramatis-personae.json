@@ -776,7 +776,7 @@
   },
   {
     "name": "Heinrich 'Altdorf' Schmidt",
-    "description": "Dr. Heinrich Schmidt is renowned at the University of Altdorf. However, most of this renown is not out of his scholarly works, but rather the priceless artifacts he sends home from his journeys. Thanks to him, artifacts from Kislev or Norsca, as well as far off places­ such as Cathay and Lustria have found their way home to Altdorf. Since all his findings are shipped back to Altdorf, this has earned him the nickname 'Altdorf' Schmidt. His main arena for relic hunting however, has come to be in Araby and Khemri, with its grand tombs and priceless treasures. The acquisition of the relics is not often discussed, as most of the scholars agree that they are more capable of appreciating them than the inhabitants of the lands from which they came.\n\nAlso carries: Whip.\nAlso has: Tomb Explorer, Whip Master, Mule Skinner listing.",
+    "description": "Dr. Heinrich Schmidt is renowned at the University of Altdorf. However, most of this renown is not out of his scholarly works, but rather the priceless artifacts he sends home from his journeys. Thanks to him, artifacts from Kislev or Norsca, as well as far off places­ such as Cathay and Lustria have found their way home to Altdorf. Since all his findings are shipped back to Altdorf, this has earned him the nickname 'Altdorf' Schmidt. His main arena for relic hunting however, has come to be in Araby and Khemri, with its grand tombs and priceless treasures. The acquisition of the relics is not often discussed, as most of the scholars agree that they are more capable of appreciating them than the inhabitants of the lands from which they came.\n\nAlso has: Tomb Explorer, Whip Master, Mule Skinner listing.",
     "movement": 4,
     "weapon_skill": 4,
     "ballistic_skill": 4,
@@ -812,6 +812,10 @@
     ],
     "spells": [],
     "equipment": [
+      {
+        "item": "Steel Whip",
+        "quantity": 1
+      },
       {
         "item": "Sword",
         "quantity": 1
