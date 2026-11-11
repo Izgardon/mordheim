@@ -1,0 +1,147 @@
+{
+  "warbandType": "dark-elf-corsairs",
+  "name": "Dark Elf Corsairs",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Dark%20Elf%20Corsairs.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Specialists", "ruleFull": "The Captain may ask for one Specialist to join a raid, one per battle. A Specialist costs nothing to hire, does not count towards the maximum warband size, gains no experience and must carry exactly the equipment listed for him.\n\nIn the battle he counts as an ordinary member of the warband (rout tests, the Captain's Leadership and the like) and adds 10 to the warband rating. He explores with the warband if he survived, and afterwards returns to the Black Ark and leaves it. The Captain may not ask for the same Specialist two battles in a row.\n\nAfter the battle the warband pays half of its earnings in gold crowns, rounding up, in tax. If the Specialist comes to harm, his replacement cost is paid on top. A warband that cannot pay at once spends no gold crowns in later battles until the debt is cleared, and may use no Specialist while it is in debt.\n\nSpecialist | Replacement | Profile | Equipment and rules\nAssassin | 90 gc | M5 WS5 BS5 S4 T4 W1 I7 A1 Ld8 | As the Assassin hired sword (Town Cryer 12).\nSorceress | 70 gc | M5 WS4 BS4 S3 T3 W1 I5 A1 Ld8 | A wizard with 2 spells rolled at random from Dark Magic (Town Cryer 12); a dark elven blade and a dagger.\nBeastmaster | 110 gc | M5 WS4 BS3 S3 T4 W1 I6 A1 Ld8 | Light armour, a dark elven blade and a beastlash; two Cold One Beasthounds come with him.\nCold One Beasthound | - | M6 WS3 BS- S4 T4 W1 I1 A1 Ld4 | Causes fear and is subject to stupidity; may use the Beastmaster's Leadership within 6\" of him; its scaly skin gives an unmodifiable 6+ armour save.\nWitch Elf | 50 gc | M5 WS4 BS4 S3 T3 W1 I6 A1 Ld8 | Subject to frenzy from her drugs; two dark elven blades coated in dark venom; a 5+ save against every wound she suffers."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "reavers-equipment-list",
+      "title": "Reavers Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double-Handed Weapon", "cost": {"cost": 15}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "repeater crossbow", "alias": "Repeating Crossbow", "cost": {"cost": 35, "costSuffix": "not Corsairs"}},
+        {"name": "sea dragon cloak", "alias": "Dragon Cloak", "cost": {"cost": 50}}
+      ]
+    },
+    {
+      "id": "shades-equipment-list",
+      "title": "Shades Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "repeater crossbow", "alias": "Repeater Crossbow", "cost": {"cost": 35}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "captain",
+      "type": "hero",
+      "name": "Captain",
+      "plural": "Captains",
+      "race": "elf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 5, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 9},
+      "equipmentLists": ["reavers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Captain may use his Leadership instead of their own."},
+        {"rulename": "Hardened", "ruleFull": "The Captain is immune to fear."},
+        {"rulename": "Slaver", "ruleFull": "A captured result the Captain's warband rolls may only be dealt with by selling the captive into slavery."}
+      ]
+    },
+    {
+      "id": "reavers",
+      "type": "hero",
+      "name": "Reaver",
+      "plural": "Reavers",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 12,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["reavers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "blood-blade",
+      "type": "hero",
+      "name": "Blood Blade",
+      "plural": "Blood Blades",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["reavers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "corsairs",
+      "type": "henchman",
+      "name": "Corsair",
+      "plural": "Corsairs",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["reavers-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "shades",
+      "type": "henchman",
+      "name": "Shade",
+      "plural": "Shades",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 5, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["shades-equipment-list"],
+      "specialRules": [
+        {"rulename": "Elite", "ruleFull": "Shades never roll for The Lad's Got Talent: they will not give up their trade to become heroes."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Dark Elf Corsairs", "new": true, "note": ""},
+  "specialSkillsList": [
+    {"name": "Fey Quickness", "ours": "Fey Quickness"},
+    {"name": "Furious Charge", "description": "The warrior gains +1 Attack in a turn he charges."},
+    {"name": "Excellent Sight", "description": "The Hero spots hidden enemies from twice his Initiative in inches."},
+    {"name": "Looting", "description": "Once per battle the warrior may loot a knocked down or stunned model: choose at random one of the items it carries, daggers aside, and he takes it."},
+    {"name": "Infiltration", "ours": "Infiltration"}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "A Druchii Corsair warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed."},
+    {"page": 1, "what": "The dark elves take the Elf (Druchii) race, the Druchii PDF's printed dark elf maximum (T3, where our Elf has T4); the PDF prints no maximum of its own. A decision for William."},
+    {"page": 2, "what": "The Reaver list's Repeating Crossbow and the Shades list's Repeater Crossbow are our Repeater Crossbow (ours 40 gc, the lists 35). The Dragon Cloak (50 gc) is our Sea Dragon Cloak, the same price."},
+    {"page": 6, "what": "Corsairs buy from the Reaver list \"with the exception of Missile Weapons, of which they may have none\": the Repeating Crossbow line is read as not Corsairs."},
+    {"page": 3, "what": "The Specialist (0-1, \"Special\") is hired for nothing before a battle, leaves the warband after it, gains no experience and doesn't count towards the warband size. He is no roster fighter, so his rules, the four Specialists with their replacement costs, profiles and equipment, and the Cold One Beasthound's profile, are the warband's Specialists rule. A decision for William: they would suit four hired swords of the setting."},
+    {"page": 5, "what": "The Assassin Specialist's profile is printed with \"Same as Hired Sword from TC 12\" for his rules, so the rule points at that hired sword rather than repeating it."},
+    {"page": 3, "what": "The Captain's Slaver rule is his own (it forces the sold-to-slavery option); our skill of that name captures a model automatically and is a different rule."},
+    {"page": 2, "what": "The Corsair special skills: Fey Quickness and Infiltration are ours, the same effects. Excellent Sight (\"twice as far away as normal warriors\") is the same skill the Druchii and the Wood Elves of Athel Loren groups hold, with their words, which William kept apart from our Unblinking Eye. Furious Charge (+1 Attack when charging) and Looting are new; our Looter adds a Treasure instead, so Looting is kept apart. A decision for William."},
+    {"page": 6, "what": "Shades' Elite (no Lad's Got Talent) makes them henchmen who gain experience but can't be promoted."}
+  ]
+}

@@ -1,0 +1,196 @@
+{
+  "warbandType": "blood-dragons",
+  "name": "Blood Dragons",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Blood%20Dragons.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Grave Guards", "ruleFull": "A warband may never have more Grave Guards than Skeleton Warriors."},
+    {"rulename": "Bloodline Abilities", "ruleFull": "The Vampire may take one or more Bloodline abilities when he is created. The first costs the price listed, and every later one twice that. Each time he gains a new skill he may take a Bloodline ability instead of the skill, at double cost.\n\nAbility | Cost | Effect\nRed Fury | 30 gc | +1 Attack.\nKilling Blow | 30 gc | A natural 6 to hit wounds automatically. The blow may not be parried, but armour and other saves are allowed.\nBlood Lust | 50 gc | He is subject to frenzy.\nMaster Strike | 40 gc | He causes a critical hit on a 5 or 6.\nCurse Of The Undead | 50 gc | If he goes out of action, after the battle he heals all of his wounds on a D6 roll of 5+, and then does not roll on the serious injury table.\nStrength of the Dragon | 40 gc | +1 Strength.\nGift of Abhorash | 30 gc | The warband's maximum number of warriors rises by one, for good."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "blood-dragon-equipment-list",
+      "title": "Blood Dragon Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Two-handed Weapon", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "warhorse", "alias": "", "cost": {"cost": 80, "costSuffix": "Vampire only"}},
+        {"name": "barding", "alias": "", "cost": {"cost": 40, "costSuffix": "Vampire only"}}
+      ]
+    },
+    {
+      "id": "undead-equipment-list",
+      "title": "Undead Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Two-handed Weapon", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Longbow", "cost": {"cost": 15}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "vampire",
+      "type": "hero",
+      "name": "Vampire",
+      "plural": "Vampires",
+      "race": "vampire",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 110,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 4, "bs": 4, "s": 4, "t": 4, "w": 2, "i": 5, "a": 2, "ld": 9},
+      "equipmentLists": ["blood-dragon-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Vampire may use his Leadership instead of their own."},
+        {"rulename": "Fear", "ruleFull": "The Vampire causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Vampire is not affected by psychology and takes no All Alone tests."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Vampire is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The Vampire treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Summoner", "ruleFull": "The Vampire summoned every undead warrior of the warband. While he is out of action, roll a Leadership test each round for every undead model in the warband: a model that fails goes out of action too."},
+        {"rulename": "Bloodline Abilities", "ruleFull": "The Vampire may start with one or more Bloodline abilities, and may take one later instead of a skill. The abilities and their costs are the warband's Bloodline Abilities rule."}
+      ]
+    },
+    {
+      "id": "wight",
+      "type": "hero",
+      "name": "Wight",
+      "plural": "Wights",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 80,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["blood-dragon-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Wight causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A Wight is not affected by psychology and takes no All Alone tests."},
+        {"rulename": "Immune to Poison", "ruleFull": "A Wight is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "A Wight treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Killing Blow", "ruleFull": "A natural 6 on the roll to hit wounds automatically. The blow may not be parried, but armour and other saves are allowed."}
+      ]
+    },
+    {
+      "id": "dreg",
+      "type": "hero",
+      "name": "Dreg",
+      "plural": "Dregs",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["undead-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "skeleton-warriors",
+      "type": "henchman",
+      "name": "Skeleton Warrior",
+      "plural": "Skeleton Warriors",
+      "race": "skeleton",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 5},
+      "equipmentLists": ["undead-equipment-list"],
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Skeleton Warrior causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A Skeleton Warrior is not affected by psychology and takes no All Alone tests."},
+        {"rulename": "Immune to Poison", "ruleFull": "A Skeleton Warrior is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "A Skeleton Warrior treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "May Not Run", "ruleFull": "Skeleton Warriors may not run, but may charge normally."},
+        {"rulename": "No Brain", "ruleFull": "Skeleton Warriors gain no experience."}
+      ]
+    },
+    {
+      "id": "grave-guard",
+      "type": "henchman",
+      "name": "Grave Guard",
+      "plural": "Grave Guards",
+      "race": "grave guard",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 50,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 4, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["undead-equipment-list"],
+      "specialRules": [
+        {"rulename": "Immune to Psychology", "ruleFull": "A Grave Guard is not affected by psychology and takes no All Alone tests."},
+        {"rulename": "Immune to Poison", "ruleFull": "A Grave Guard is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "A Grave Guard treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "May Not Run", "ruleFull": "Grave Guards may not run in their rusted armour, but may charge normally."},
+        {"rulename": "Killing Blow", "ruleFull": "A natural 6 on the roll to hit wounds automatically. The blow may not be parried, but armour and other saves are allowed."}
+      ]
+    },
+    {
+      "id": "hell-hounds",
+      "type": "henchman",
+      "name": "Hell Hound",
+      "plural": "Hell Hounds",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 8, "ws": 4, "bs": 0, "s": 4, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. Hell Hounds are animals and use no weapons or armour.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Hell Hound causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A Hell Hound is not affected by psychology and takes no All Alone tests."},
+        {"rulename": "Immune to Poison", "ruleFull": "A Hell Hound is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "A Hell Hound treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Animal", "ruleFull": "Hell Hounds are animals and gain no experience."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "A Blood Dragon warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed."},
+    {"page": 1, "what": "The PDF opens with the author's warning that the warband is too powerful and suggests limiting the Vampire to one bloodline ability. It is a note on play, not a rule, and is not imported."},
+    {"page": 2, "what": "The skill table (p2) prints no Special column, so the warband has no skill group: the Vampire takes Combat, Academic, Strength and Speed, the Wight and the Dreg Combat and Strength."},
+    {"page": 4, "what": "The Wight (p4) takes our Undead race and the Grave Guard (p6) our Grave Guard race; the Skeleton Warrior (p5) and the Hell Hound (p6) are creatures with no race and no maximum profile. The Dreg (p4) is Human."},
+    {"page": 5, "what": "The Skeletons' (p5) and Grave Guards' (p6) Slow (they may not run, but may charge normally) is our shared May Not Run, under that name."},
+    {"page": 2, "what": "The Blood Dragon list's Warhorse (80 gc) and Barding (40 gc) are marked \"*Vampire Only\". The Undead list has no Warhorse or Barding, and the Blood Dragon list no missile weapons."},
+    {"page": 4, "what": "The Vampire's Summoner rule is his own (the undead collapse while he is out of action); our skill of that name raises the maximum warband size, which is what his Gift of Abhorash bloodline ability does."},
+    {"page": 7, "what": "The bloodline abilities are bought at creation, doubled for each later one and in place of a skill later. The template has no way to sell them, so they are the warband's Bloodline Abilities rule with their costs and effects."},
+    {"page": 6, "what": "Grave Guards are \"0-5*\", the asterisk the footnote that a warband may never have more Grave Guards than Skeletons: the count is 0-5 and the footnote is the warband's Grave Guards rule."}
+  ]
+}

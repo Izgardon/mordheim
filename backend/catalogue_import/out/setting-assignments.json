@@ -1216,6 +1216,26 @@
       "how": "overrides.json"
     },
     {
+      "name": "Combat Charge",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Lancer",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Sword Master",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Armour Specialist",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
       "name": "Wight Walk",
       "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
@@ -1261,6 +1281,21 @@
       "how": "overrides.json"
     },
     {
+      "name": "Furious Charge",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Excellent Sight",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Looting",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
       "name": "Inspiring Presence",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1297,11 +1332,6 @@
     },
     {
       "name": "Survival of the Fittest",
-      "setting": "mordheim-2a",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Excellent Sight",
       "setting": "mordheim-2a",
       "how": "overrides.json"
     },
@@ -1711,6 +1741,21 @@
       "how": "overrides.json"
     },
     {
+      "name": "Expert Explorer",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Trap Master",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Silent Strike",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
       "name": "Wyrdstone Addict",
       "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
@@ -1753,6 +1798,16 @@
     {
       "name": "Seeker (Wood Elves of Athel Loren)",
       "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Staff Master",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Forager",
+      "setting": "mousillon",
       "how": "overrides.json"
     }
   ],

@@ -1,0 +1,168 @@
+{
+  "warbandType": "the-lost",
+  "name": "The Lost",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/The%20Lost.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 18
+  },
+  "specialRules": [
+    {"rulename": "Leaders", "ruleFull": "The warband has no standing leader. At the start of each battle the hero with the highest Leadership takes the role and has the Leader skill for that battle; where no hero clearly has it, the hero with the most experience leads."},
+    {"rulename": "Traps", "ruleFull": "Write down which buildings are rigged: one building for each hero or henchmen group with the Trap Master skill. The first model to enter a rigged building must pass an Initiative test or take one Strength 3 hit."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "lost-equipment-list",
+      "title": "Equipment List of the Lost",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10, "costSuffix": "Heroes only"}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}}
+      ]
+    },
+    {
+      "id": "greycoats-equipment-list",
+      "title": "Greycoats Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Longbow", "cost": {"cost": 15}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "barons",
+      "type": "hero",
+      "name": "Baron",
+      "plural": "Barons",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 3,
+      "costGc": 55,
+      "startingXp": 15,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 6},
+      "equipmentLists": ["lost-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Mob Mentality", "ruleFull": "For every other member of the warband within 3\", the Baron gains +1 Leadership, to a maximum of +3."}
+      ]
+    },
+    {
+      "id": "elders",
+      "type": "hero",
+      "name": "Elder",
+      "plural": "Elders",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["lost-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Advisor", "ruleFull": "One hero within 6\" of the Elder may re-roll one dice each turn."}
+      ]
+    },
+    {
+      "id": "greenjacks",
+      "type": "hero",
+      "name": "Greenjack",
+      "plural": "Greenjacks",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": ["lost-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "scavengers",
+      "type": "henchman",
+      "name": "Scavenger",
+      "plural": "Scavengers",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 4},
+      "equipmentLists": ["lost-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "greycoats",
+      "type": "henchman",
+      "name": "Greycoat",
+      "plural": "Greycoats",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["greycoats-equipment-list"],
+      "specialRules": [
+        {"rulename": "Trap Masters", "ruleFull": "Greycoats may set traps, as the warband's Traps rule describes."}
+      ]
+    },
+    {
+      "id": "mummers",
+      "type": "henchman",
+      "name": "Mummer",
+      "plural": "Mummers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 4, "bs": 2, "s": 4, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["lost-equipment-list"],
+      "specialRules": [
+        {"rulename": "Brutes", "ruleFull": "Mummers may never rise to power: re-roll any Lad's Got Talent result they roll for experience."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "The Lost", "new": true, "note": ""},
+  "specialSkillsList": [
+    {"name": "Expert Explorer", "description": "The warrior may change one dice in the exploration phase by +1 or -1."},
+    {"name": "Wall Runner", "ours": "Wall Runner"},
+    {"name": "Trap Master", "description": "The warrior may lay traps, as the warband's Traps rule describes."},
+    {"name": "Silent Strike", "description": "The warrior may shoot while hidden without giving his position away."}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "A Lost warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed, so the warband takes our Human race."},
+    {"page": 2, "what": "A Baron starts with 15 + D6 experience: the template stores 15, and the roll is the player's."},
+    {"page": 1, "what": "Choice of Warriors (p1) allows up to five Greycoats, while the Greycoat entry (p5) is headed \"0-2\": the count is taken as 0-5, with Mummers 0-5 as Choice of Warriors has them (their entry prints no number)."},
+    {"page": 1, "what": "The warband has no standing leader: the hero with the highest Leadership leads each battle, so no fighter is marked the leader and the template's checks warn that it has none."},
+    {"page": 2, "what": "The skill table: the Baron ticks Combat, Shooting, Strength, Speed and Special, the Elder Academic and Special, and the Greenjack Combat, Shooting, Strength and Speed with no Special."},
+    {"page": 2, "what": "The special skills: Wall Runner is ours, the same effect (ours is worded for a Skaven and carries a suggested change). Expert Explorer does what our Resource Hunter, Seeker (Wood Elves of Athel Loren) and Treasure Hunter do, and Silent Strike what our Sniper does: both are kept apart. A decision for William."},
+    {"page": 5, "what": "The Greycoat's profile row is labelled \"Trapper\": read as the Greycoat's, the entry it sits under."},
+    {"page": 5, "what": "The Mummer's and the Scavenger's Weapons/Armour lines both name the Scavengers: read as each entry's own fighter, both from the Lost equipment list."},
+    {"page": 5, "what": "Brutes (re-roll a Lad's Got Talent result) is read as Mummers not being promotable, and his rule carries the re-roll."},
+    {"page": 3, "what": "The Lost list's Sword is marked \"(heroes only)\"; its armour is a Helmet and Light Armour only, and the Greycoats list prints \"Armour: None\"."}
+  ]
+}

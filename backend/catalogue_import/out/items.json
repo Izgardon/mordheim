@@ -5908,6 +5908,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "woodsmen-de-artois",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },

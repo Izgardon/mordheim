@@ -1,0 +1,105 @@
+{
+  "warbandType": "bretonnian-knights-errant",
+  "name": "Bretonnian Knights-Errant",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Bretonnian%20Knights%20Errant.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire no evil hired sword, and none who uses magic or poison."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "knights-errant-equipment-list",
+      "title": "Knights Errant Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "mace", "alias": "Mace/Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "Battleaxe", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "lance", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "Upgrade Light Armour to Heavy armour", "cost": {"cost": 30}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "barding", "alias": "", "cost": {"cost": 40}},
+        {"name": "warhorse", "alias": "", "cost": {"cost": 80}},
+        {"name": "wardogs", "alias": "Wardog", "cost": {"cost": 30}}
+      ]
+    },
+    {
+      "id": "squires-equipment-list",
+      "title": "Squires Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Longbow", "cost": {"cost": 15}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "knights-errant",
+      "type": "hero",
+      "name": "Knight Errant",
+      "plural": "Knights Errant",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 4,
+      "costGc": 50,
+      "startingXp": 7,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["knights-errant-equipment-list"],
+      "equipment": "A suit of light armour and a shield when first recruited. He must also buy a hand-to-hand weapon from the list; a dagger will not do.",
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Bretonnian Leader", "ruleFull": "The warband has no standing leader. Each Knight Errant starts with D6+7 experience, and the one who rolls highest leads, with every rule that applies to a leader; on a tie, choose between them. The experience rolled allows no starting advances."},
+        {"rulename": "Knights Virtue", "ruleFull": "A Knight Errant never breaks or panics: he takes no All Alone test."}
+      ]
+    },
+    {
+      "id": "squires",
+      "type": "henchman",
+      "name": "Squire",
+      "plural": "Squires",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["squires-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Knights Feats", "new": true, "note": ""},
+  "specialSkillsList": [
+    {"name": "Combat Charge", "description": "In a turn he charges, the warrior gains +1 Attack and +1 Weapon Skill."},
+    {"name": "Lancer", "description": "Only on horseback, and never with Combat Charge. If the enemies he charged suffer an unsaved wound they may not strike back, and the warrior may carry his charge another 4\" and charge any enemy within 2\" of that line. He counts as charging in the next round of combat."},
+    {"name": "Sword Master", "description": "When he fights with a sword the warrior may parry, with a re-roll on an equal or higher score."},
+    {"name": "Armour Specialist", "description": "While he wears heavy armour and a shield the warrior ignores the Movement penalty, and Strength may not take his armour save beyond 5+. Not on horseback."}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "A Knights Errant warband needs at least 3 models: our templates hold no minimum, so it is not imported. No group size and no maximum profile are printed, so the warband takes our Human race."},
+    {"page": 2, "what": "A Knight Errant starts with D6+7 experience: the template stores 7, and his Bretonnian Leader rule carries the roll. The highest roll leads, so no fighter is marked the leader and the template's checks warn that it has none."},
+    {"page": 3, "what": "The skill table's heading is printed twice, the second time over the Knights Feats list. The Knight ticks Combat, Strength, Speed and Special; the Special column is the Knights Feats group, new to us."},
+    {"page": 3, "what": "Sword Master is printed as \"When using a sword the character may parry, with reroll at equal or higher\": kept as printed, since the PDF doesn't say what is re-rolled."},
+    {"page": 3, "what": "The same four feats are the Bretonnian Brigands' Fallen Noble's list (his PDF, p4). They are one group here; a PDF page's group can serve only its own warband type today, so the Brigands' grant stays his rule. A decision for William."},
+    {"page": 3, "what": "The Knight list's \"Upgrade Light Armour to Heavy armour +30 gc\" is our Heavy Armour at 30 gc, shown under the PDF's wording. The list's Mace/Hammer is our Club, Mace or Hammer and its Battleaxe our Axe."},
+    {"page": 4, "what": "The Knight's light armour and shield at recruitment, and that he must buy a weapon other than a dagger, are his fixed kit: neither is on his list, which prints no price for them."},
+    {"page": 4, "what": "Knights Virtue (he never breaks or panics and takes no All Alone test) is kept his own rule: our shared Immune to Psychology says more."}
+  ]
+}

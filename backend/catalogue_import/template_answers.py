@@ -348,6 +348,8 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("call-of-the-night-haint", "spirit"): "Spirit",
     ("lords-of-the-marsh", "fimir"): "Fimir",  # the Lords of the Marsh PDF's Fimir maximum (p2); we had no Fimir
     ("underworld-alliance", "gnoblar"): "Gnoblar",  # its Boglars, Gnoblar kin, with no maximum printed (p4)
+    # the Corsairs' dark elves take the Druchii PDF's dark elf maximum; their own PDF prints none (p1)
+    ("dark-elf-corsairs", "elf"): "Elf (Druchii)",
 }
 CREATURES = frozenset(
     {

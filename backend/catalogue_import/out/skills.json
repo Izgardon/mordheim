@@ -972,6 +972,22 @@
     "description": "Friendly models fighting the same enemy model as the knight may use his Toughness when that enemy rolls to wound them."
   },
   {
+    "name": "Combat Charge",
+    "description": "In a turn he charges, the warrior gains +1 Attack and +1 Weapon Skill."
+  },
+  {
+    "name": "Lancer",
+    "description": "Only on horseback, and never with Combat Charge. If the enemies he charged suffer an unsaved wound they may not strike back, and the warrior may carry his charge another 4\" and charge any enemy within 2\" of that line. He counts as charging in the next round of combat."
+  },
+  {
+    "name": "Sword Master",
+    "description": "When he fights with a sword the warrior may parry, with a re-roll on an equal or higher score."
+  },
+  {
+    "name": "Armour Specialist",
+    "description": "While he wears heavy armour and a shield the warrior ignores the Movement penalty, and Strength may not take his armour save beyond 5+. Not on horseback."
+  },
+  {
     "name": "Wight Walk",
     "description": "Ethereal models only. The Hero may use his Ethereal ability to charge through walls, and can't be intercepted, passing through any warrior in his path."
   },
@@ -1008,6 +1024,18 @@
     "description": "A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."
   },
   {
+    "name": "Furious Charge",
+    "description": "The warrior gains +1 Attack in a turn he charges."
+  },
+  {
+    "name": "Excellent Sight",
+    "description": "The Hero spots hidden enemies from twice his Initiative in inches."
+  },
+  {
+    "name": "Looting",
+    "description": "Once per battle the warrior may loot a knocked down or stunned model: choose at random one of the items it carries, daggers aside, and he takes it."
+  },
+  {
     "name": "Inspiring Presence",
     "description": "Dreamer only. Morr Worshwishpers within 12\" of the Dreamer, not 6\", may use his Leadership."
   },
@@ -1038,10 +1066,6 @@
   {
     "name": "Survival of the Fittest",
     "description": "When the Hero's Serious Injury roll is a death, he takes a Leadership test on his unmodified Leadership (no holy relics or other help). If he passes, he survives but misses the next D3 battles."
-  },
-  {
-    "name": "Excellent Sight",
-    "description": "The Hero spots hidden enemies from twice his Initiative in inches."
   },
   {
     "name": "Deathwish",
@@ -1368,6 +1392,18 @@
     "description": "Strigany Heroes only, never the Strigoi Vampire. The Hero may throw two throwing knives a turn, both at the same target, each with +1 to its injury roll."
   },
   {
+    "name": "Expert Explorer",
+    "description": "The warrior may change one dice in the exploration phase by +1 or -1."
+  },
+  {
+    "name": "Trap Master",
+    "description": "The warrior may lay traps, as the warband's Traps rule describes."
+  },
+  {
+    "name": "Silent Strike",
+    "description": "The warrior may shoot while hidden without giving his position away."
+  },
+  {
     "name": "Wyrdstone Addict",
     "description": "The warrior may eat a wyrdstone shard after a battle to roll on the Warp Touch chart, and is immune to attacks from Tainted weapons."
   },
@@ -1402,5 +1438,13 @@
   {
     "name": "Seeker (Wood Elves of Athel Loren)",
     "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."
+  },
+  {
+    "name": "Staff Master",
+    "description": "While he fights with a quarter staff the warrior may use it to parry every attack one opponent makes."
+  },
+  {
+    "name": "Forager",
+    "description": "The warrior doesn't count towards the warband's size when its income is worked out."
   }
 ]

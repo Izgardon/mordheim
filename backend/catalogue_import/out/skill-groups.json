@@ -349,6 +349,26 @@
     ]
   },
   {
+    "name": "Dark Elf Corsairs",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dark-elf-corsairs",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Fey Quickness",
+      "Infiltration",
+      "Furious Charge",
+      "Excellent Sight",
+      "Looting"
+    ]
+  },
+  {
     "name": "Dreamwalkers",
     "for_everyone": false,
     "warbands": [
@@ -655,6 +675,25 @@
       "Stromfel's Boon",
       "Master Tanner",
       "Rite of Combat"
+    ]
+  },
+  {
+    "name": "Knights Feats",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "bretonnian-knights-errant",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Combat Charge",
+      "Lancer",
+      "Sword Master",
+      "Armour Specialist"
     ]
   },
   {
@@ -1451,6 +1490,25 @@
     ]
   },
   {
+    "name": "The Lost",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "the-lost",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Wall Runner",
+      "Expert Explorer",
+      "Trap Master",
+      "Silent Strike"
+    ]
+  },
+  {
     "name": "Tomb Robbers",
     "for_everyone": false,
     "warbands": [
@@ -1546,6 +1604,26 @@
       "Elven Luck",
       "Excellent Sight",
       "Seeker (Wood Elves of Athel Loren)"
+    ]
+  },
+  {
+    "name": "Woodsmen de Artois",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "woodsmen-de-artois",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Bull Rush",
+      "Infiltration",
+      "Sniper (Shadow Warriors)",
+      "Staff Master",
+      "Forager"
     ]
   }
 ]

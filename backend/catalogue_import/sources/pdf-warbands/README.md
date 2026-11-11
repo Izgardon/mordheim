@@ -50,6 +50,12 @@ check over every file.
 | `araby-smugglers.json` | araby-smugglers (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Araby%20Smugglers.pdf | 1-4 (text layer; page 2 as an image) | 11 Nov 2026 |
 | `khorne-raiders.json` | khorne-raiders (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Khorne%20Raiders.pdf | 1-3 (text layer) | 11 Nov 2026 |
 | `slayer-pirates.json` | slayer-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf | 1-4 (text layer) | 11 Nov 2026 |
+| `blood-dragons.json` | blood-dragons (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Blood%20Dragons.pdf | 1-7 (text layer) | 11 Nov 2026 |
+| `bretonnian-brigands.json` | bretonnian-brigands (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Bretonnian%20Brigands.pdf | 1-6 (text layer) | 11 Nov 2026 |
+| `bretonnian-knights-errant.json` | bretonnian-knights-errant (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Bretonnian%20Knights%20Errant.pdf | 1-5 (text layer) | 11 Nov 2026 |
+| `dark-elf-corsairs.json` | dark-elf-corsairs (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Dark%20Elf%20Corsairs.pdf | 1-6 (text layer) | 11 Nov 2026 |
+| `the-lost.json` | the-lost (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/The%20Lost.pdf | 1-5 (text layer) | 11 Nov 2026 |
+| `woodsmen-de-artois.json` | woodsmen-de-artois (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Woodsmen%20de%20Artois.pdf | 1-6 (text layer) | 11 Nov 2026 |
 
 The Sartosa warbands' Pirate skill column is the Pirate Skills list of the setting's campaign rules, not of any warband's PDF: it is read from
 https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Skills%2C%20Hired%20Swords%20%26%20Dramatis%20Personae.pdf (p1-2, text layer; 11 Nov 2026)

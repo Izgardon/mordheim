@@ -1,0 +1,195 @@
+{
+  "warbandType": "woodsmen-de-artois",
+  "name": "Woodsmen de Artois",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Woodsmen%20de%20Artois.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "woodsmen-equipment-list",
+      "title": "Woodsmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "quarter staff", "alias": "Quarterstaff", "cost": {"cost": 15}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Longbow", "cost": {"cost": 15}},
+        {"name": "throwing knives/stars", "alias": "Throwing Knife", "cost": {"cost": 15}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "chief",
+      "type": "hero",
+      "name": "Chief",
+      "plural": "Chiefs",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["woodsmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Chief may use his Leadership instead of their own."}
+      ]
+    },
+    {
+      "id": "hunter",
+      "type": "hero",
+      "name": "Hunter",
+      "plural": "Hunters",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["woodsmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "friar",
+      "type": "hero",
+      "name": "Friar",
+      "plural": "Friars",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["woodsmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "spellLores": ["Prayers of Taal"],
+      "specialRules": [
+        {"rulename": "Priest", "ruleFull": "The Friar is a Priest of Taal and prays from the Prayers of Taal."}
+      ]
+    },
+    {
+      "id": "cubs",
+      "type": "hero",
+      "name": "Cub",
+      "plural": "Cubs",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["woodsmen-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": false, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "woodsmen",
+      "type": "henchman",
+      "name": "Woodsman",
+      "plural": "Woodsmen",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["woodsmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "bowmen",
+      "type": "henchman",
+      "name": "Bowman",
+      "plural": "Bowmen",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 7,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["woodsmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Expert Shot", "ruleFull": "A Bowman ignores cover penalties when he shoots a bow or a long bow."}
+      ]
+    },
+    {
+      "id": "trappers",
+      "type": "henchman",
+      "name": "Trapper",
+      "plural": "Trappers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["woodsmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Set Traps", "ruleFull": "A Trapper may set a trap in a turn he does nothing else, and not in one in which he recovered from being knocked down: place a marker touching him. A model, friend or foe, that moves within 2\" of the marker rolls a D6, and on a 3+ triggers the trap and takes a Strength 4 hit; the Trapper never triggers his own. If the hit doesn't wound or the trap isn't triggered, the model may finish its move; a model knocked down or stunned is placed 2\" from the marker. The marker is removed either way."}
+      ]
+    },
+    {
+      "id": "hunting-hounds",
+      "type": "henchman",
+      "name": "Hunting Hound",
+      "plural": "Hunting Hounds",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 4, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. Hunting Hounds use no weapons or equipment.",
+      "specialRules": [
+        {"rulename": "Animal", "ruleFull": "Hunting Hounds are animals and gain no experience."},
+        {"rulename": "Dog Handler", "ruleFull": "A warband may buy no more Hunting Hounds than it has Trappers. While it has more Hounds than Trappers, the spare Hounds may not fight; they may be kept until the Trappers are replaced, and still count towards the warband size for trading and for the maximum."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Woodsmen de Artois", "new": true, "note": ""},
+  "specialSkillsList": [
+    {"name": "Staff Master", "description": "While he fights with a quarter staff the warrior may use it to parry every attack one opponent makes."},
+    {"name": "Bull Rush", "ours": "Bull Rush"},
+    {"name": "Forager", "description": "The warrior doesn't count towards the warband's size when its income is worked out."},
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Sniper", "ours": "Sniper (Shadow Warriors)"}
+  ],
+  "aliases": [],
+  "priceRows": [
+    {"name": "quarter staff", "rarity": null, "dice": null, "note": "", "page": 3}
+  ],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "A Woodsmen warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed, so the warband takes our Human race."},
+    {"page": 2, "what": "The skill table: the Chief ticks every column, the Friar Combat, Academic, Strength, Speed and Special, the Hunter Combat, Shooting, Speed and Special, and the Cub Combat, Shooting and Special."},
+    {"page": 2, "what": "The special skills: Bull Rush and Infiltration are ours, the same effects (ours name the Ostlanders). The PDF's Sniper is our Sniper (Shadow Warriors), both clauses the same; our other skill named Sniper lacks the spotting test and bars black powder weapons. Staff Master and Forager are new. A decision for William."},
+    {"page": 3, "what": "The Quarterstaff entry (15 gc, Common; Close Combat, As User +1, Two Handed and Parry) is our Quarter Staff, which prints Strength As user with the rules Balanced, Parry and Freestyle: ours is left unchanged, and the Woodsmen get a price row of their own, 15 gc, Common."},
+    {"page": 3, "what": "The list's Throwing Knife (15 gc) is our Throwing Knives/Stars."},
+    {"page": 5, "what": "The Friar's rule is headed \"Wizard\" but reads \"The Friar is a Priest of Taal and may use the prayers of Taal in TC 11\": he is read as a priest of the Prayers of Taal."},
+    {"page": 6, "what": "The Hunting Hound's profile row is labelled \"Trapper\": read as the Hound's, the entry it sits under."},
+    {"page": 1, "what": "Hunting Hounds are \"0-5\" in their entry, while Choice of Warriors says no more Hunting Hounds than Trappers: the count is 0-5 and the limit is his Dog Handler rule."},
+    {"page": 6, "what": "The Trapper's Set Traps rule is the same mechanic as our Set Traps skill (Gnoblars only), and is kept as his own rule, as the PDF prints it."}
+  ]
+}
