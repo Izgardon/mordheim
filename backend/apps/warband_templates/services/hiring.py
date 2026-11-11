@@ -11,7 +11,7 @@ the key; nothing links it to the template after, so a later template edit touche
 Every hire of a fighter gets one of each item his lists mark "1st free" at no cost, each item once (William, 6 Nov 2026:
 the Dagger, and the Gnoblars' Sharp Stuff too), before and after the first battle (a group: every member, as its
 loadout, so a member who joins later carries them at no cost). A fighter with no list gets none, nor one whose list
-prices the item instead. A unit typed by hand (no key) gets nothing.
+prices the item instead, nor one a line's `who` shuts out. A unit typed by hand (no key) gets nothing.
 """
 
 from typing import TYPE_CHECKING, Any
@@ -24,6 +24,7 @@ from apps.warbands.utils.stats import stat_inputs
 
 from ..models import HENCHMAN, HERO, TemplateFighter, TemplateFighterSkill, TemplateFighterSpecial, TemplateListItem
 from .resolve import apply_variant, start_skills, templates_for_type, warband_variant
+from .who import allows
 
 if TYPE_CHECKING:
     from apps.warbands.units.kinds import UnitKindSpec
@@ -64,16 +65,21 @@ def unit_body(kind_key: str, fighter: TemplateFighter) -> dict[str, Any]:
 
 def free_items(fighters: list[TemplateFighter], variant: str) -> dict[str, list[int]]:
     """Fighter key -> the items a hire of his gets free: the item of each "1st free" line of his lists for the
-    variant, in his lists' order, each item once (one query)."""
+    variant, in his lists' order, each item once, less a line whose `who` shuts him out (who.py: the Brood of
+    Ghurash's "Dagger (Henchmen only)") (one query)."""
     lines = (
         TemplateListItem.objects.filter(
             first_free=True, equipment_list__fighter_links__fighter__in=fighters, variant__in=("", variant)
         )
         .order_by("equipment_list__position", "position", "id")
-        .values_list("equipment_list__fighter_links__fighter__key", "item_id")
+        .values_list("equipment_list__fighter_links__fighter__key", "item_id", "who")
     )
+    by_key = {fighter.key: fighter for fighter in fighters}
     found: dict[str, list[int]] = {}
-    for key, item_id in lines:
+    for key, item_id, who in lines:
+        fighter = by_key.get(key)
+        if fighter is None or not allows(who or {}, fighter):
+            continue
         items = found.setdefault(key, [])
         if item_id not in items:
             items.append(item_id)

@@ -158,6 +158,18 @@ class HiringFromTheTemplateTests(CatalogueTestCase):
         self.assertEqual(sorted(hero.hero_items.values_list("item__name", "cost")), [("Dagger", 0), ("Sharp Stuff", 0)])
         self.assertEqual([action for action, _price, _ in self.ledger()], [LedgerAction.RECRUIT])
 
+    def test_a_1st_free_line_the_fighter_may_not_take_gives_him_nothing(self) -> None:
+        # the Brood of Ghurash's "Dagger (Henchmen only) ... 1st free / 2 gc": the free item follows the line's `who`
+        TemplateListItem.objects.filter(item=self.dagger).update(who={"fighters": ["warriors"]})
+        self.assertEqual(
+            self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "Mother"}]}).status_code, 200
+        )
+        self.assertFalse(Hero.objects.get(warband=self.warband, name="Mother").hero_items.exists())
+        create = {"fighter_key": "warriors", "name": "Lads", "henchmen": [{"name": "A"}]}
+        self.assertEqual(self.batch("henchmen-groups", {"create": [create]}).status_code, 200)
+        group = HenchmenGroup.objects.get(warband=self.warband, name="Lads")
+        self.assertEqual(list(group.henchmen_group_items.values_list("item__name", "cost")), [("Dagger", 0)])
+
     def test_no_list_no_priced_dagger_and_no_key_get_nothing_free(self) -> None:
         TemplateListItem.objects.filter(item=self.dagger).update(first_free=False)
         self.assertEqual(self.batch("heroes", {"create": [{"fighter_key": "captain", "name": "A"}]}).status_code, 200)
