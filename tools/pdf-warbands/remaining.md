@@ -17,21 +17,12 @@
 | 2b | lustria | High Elves | 038-High_Elves.pdf |  | 6p, 0 scan |
 | 2b | lustria | Lizardmen | 042-Lizardmen.pdf |  | 6p, 0 scan |
 | 2b | lustria | Skaven of Clan Pestilens | 055-Clan_Pestilens.pdf |  | 4p, 0 scan |
-| 2b | mousillon | Disciples of Maldred | 032-Disciples_of_Maldred.pdf |  | 9p, 0 scan |
-| 2b | mousillon | Necrarchs | 049-Necrarchs.pdf |  | 8p, 0 scan |
-| 2b | mousillon | Skaven of Clan Pestilens | 056-Skaven_of_Clan_Pestilens.pdf |  | 7p, 1 scan |
-| 2b | mousillon | Wood Elves of Arden | 062-Wood_Elves_of_Arden.pdf |  | 7p, 0 scan |
 | 2b | relics-of-the-crusades | Ghutani | 033-97RelicsoftheCrusadesPt2.pdf | #page=2 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Muzil | 033-97RelicsoftheCrusadesPt2.pdf | #page=2 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Skaven of Clan Skryre | 033-97RelicsoftheCrusadesPt2.pdf | #page=5 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Slavers | 033-97RelicsoftheCrusadesPt2.pdf | #page=9 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | The Fallen | 033-97RelicsoftheCrusadesPt2.pdf | #page=12 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Turjuk | 033-97RelicsoftheCrusadesPt2.pdf | #page=2 | 16p, 0 scan |
-| 2b | sealed-city | Clockworkers | 029-Clockworkers.pdf |  | 7p, 1 scan |
-| 2b | sealed-city | House Guard | 039-House_Guard.pdf |  | 5p, 0 scan |
-| 2b | sealed-city | Silent Brotherhood | 054-Silent_Brotherhood.pdf |  | 6p, 0 scan |
-| 2b | sealed-city | Skaven Of Clan Pristekk | 057-Clan_Pristekk.pdf |  | 5p, 0 scan |
-| 2b | sealed-city | The Brood Of Ghurash | 025-Brood_Of_Ghurash.pdf |  | 4p, 0 scan |
 | 3 |  | Albion Barbarians | 064-Albion_Barbarians.pdf |  | 5p, 0 scan |
 | 3 |  | Altdorf Expeditionary Party | 065-Altdorf_Expeditionary_Party.pdf |  | 10p, 0 scan |
 | 3 |  | Assassin Squad, Knives From The Dark | 068-Assassin_Squad.pdf |  | 8p, 0 scan |
