@@ -659,6 +659,28 @@ class PdfImportTests(SimpleTestCase):
         self.assertNotIn("Greatcoat", self.items)
         self.assertIn("greatcoat", self.items["Rain Coat"]["tags"])
 
+    def test_a_rule_that_says_more_than_the_skill_keeps_its_text_and_the_skill(self) -> None:
+        # William, 11 Nov 2026: a fighter whose rule only names one of our skills starts with the skill and the rule
+        # goes (the Estalian Captain's Expert Swordsman, the Hatamoto's Ride); one that says more keeps its text and
+        # starts with the skill too (the Ogre Hunter's Sabre Trainer, the Watchmen Sergeant's Falconer).
+        def fighter(slug: str, name: str) -> dict[str, Any]:
+            return next(row for row in self.templates[slug]["fighters"] if row["name"] == name)
+
+        for slug, name, skill in (
+            ("ogre-hunting-party", "Ogre Hunter", "Sabre Trainer"),
+            ("watchmen", "Sergeant", "Falconer"),
+        ):
+            row = fighter(slug, name)
+            self.assertEqual(row["skills"], [skill])
+            self.assertIn(skill, [special["name"] for special in row["specials"]])
+        for slug, name, skill in (
+            ("estalian-corsairs", "Pirate Captain", "Expert Swordsman"),
+            ("nipponese-expedition", "Hatamoto", "Ride [Animal]"),
+        ):
+            row = fighter(slug, name)
+            self.assertEqual(row["skills"], [skill])
+            self.assertEqual([special["name"] for special in row["specials"]], ["Leader"])
+
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page
         page = good_page()

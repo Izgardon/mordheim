@@ -61,17 +61,18 @@ STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
         "Hatamoto": {"Ride": ["Ride [Animal]"]},
         "Retainer": {"Ride": ["Ride [Animal]"]},
     },
-    # "The Ogre Hunter has the Sabre Trainer skill: ..." (the skill's rule, retold)
-    "Ogre Hunting Party": {"Ogre Hunter": {"Sabre Trainer": ["Sabre Trainer"]}},
     "The Cursed Cavalcade": {
         "Aristocrat": {"Expert Horseman": ["Ride [Animal]"]},  # "the Aristocrat has the Ride (Nightmare) skill."
         "Companion": {"Expert Swordsman": ["Expert Swordsman"]},  # "Companions all have Expert Swordsman Skill."
     },
-    # "A Sergeant has the animal handling skill Falconer, so he may use a hunting bird."
-    "Watchmen": {"Sergeant": {"Falconer": ["Falconer"]}},
 }
 # A rule that says he has one of our skills and more: he starts with the skills and the rule keeps its text.
 ALSO_STARTS_WITH: dict[str, dict[str, dict[str, list[str]]]] = {
+    # "The Ogre Hunter has the Sabre Trainer skill: when a Sabretusk Cub ... you may move it 3D6" towards any model
+    # within 12" of it that it can see, instead of the nearest" (William, 11 Nov 2026: it says more, so it keeps it)
+    "Ogre Hunting Party": {"Ogre Hunter": {"Sabre Trainer": ["Sabre Trainer"]}},
+    # "A Sergeant has the animal handling skill Falconer, so he may use a hunting bird."
+    "Watchmen": {"Sergeant": {"Falconer": ["Falconer"]}},
     "Knights of the Bitter Moors": {
         # "A Knight has the Ride skill for a horse or a warhorse (Blazing Saddles). He comes with his mount in his
         # cost"

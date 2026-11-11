@@ -114,8 +114,10 @@ class SeedAllTests(TestCase):
                 # Warriors' Not Orcs and the Pit Fighters' Pit Fighter its skill's one row: 2 fewer; a rule that only
                 # named a skill is the skill he starts with (William, 7 Nov 2026: "yes please do that"): the
                 # templates' 21, the hired swords' 9 and Maximilian's Strongman fewer; the Corsairs' three Specialist
-                # hired swords bring 3 of their own (their Witch Elf's Frenzy is the shared one)
-                "Special": 1306,
+                # hired swords bring 3 of their own (their Witch Elf's Frenzy is the shared one); a rule that says
+                # more than the skill keeps its text (William, 11 Nov 2026): the Ogre Hunter's Sabre Trainer and the
+                # Watchmen Sergeant's Falconer are 2 more
+                "Special": 1308,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,

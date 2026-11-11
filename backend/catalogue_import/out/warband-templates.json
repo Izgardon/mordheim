@@ -61118,6 +61118,11 @@
             "name": "Central Figure",
             "type": "Warband - Ogre Hunting Party",
             "description": "If the Ogre Hunter is taken out of action, the warband is at once at its Rout level, whatever its casualties."
+          },
+          {
+            "name": "Sabre Trainer",
+            "type": "Warband - Ogre Hunting Party",
+            "description": "The Ogre Hunter has the Sabre Trainer skill: when a Sabretusk Cub that started the turn within 6\" of him rolls a 1 for Untamed, you may move it 3D6\" towards any model within 12\" of it that it can see, instead of the nearest."
           }
         ],
         "skills": [
@@ -91421,7 +91426,13 @@
         "lists": [
           "watchmen-equipment-list"
         ],
-        "specials": [],
+        "specials": [
+          {
+            "name": "Falconer",
+            "type": "Warband - Watchmen",
+            "description": "A Sergeant has the animal handling skill Falconer, so he may use a hunting bird."
+          }
+        ],
         "skills": [
           "Falconer"
         ]

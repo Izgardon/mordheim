@@ -112,13 +112,16 @@ class PointerTests(SimpleTestCase):
         log = resolve_pointers([hunters, moulder], [ippan], SKILLS)
 
         ogre, trapper = hunters["fighters"]
-        self.assertEqual((ogre["skills"], ogre["specials"]), (["Sabre Trainer"], []))
+        # his rule says more than the skill, so it stays (William, 11 Nov 2026)
+        self.assertEqual((ogre["skills"], [one["name"] for one in ogre["specials"]]), (["Sabre Trainer"], ["Sabre Trainer"]))  # fmt: skip
         self.assertEqual((trapper["skills"], list(rules_of(trapper))), ([], ["Veteran Tracker"]))  # his choice
         packmaster = moulder["fighters"][0]
         self.assertEqual((packmaster["skills"], list(rules_of(packmaster))), (["Ride [Animal]"], ["Master Handler"]))
         self.assertEqual((ippan["skills"], len(ippan["specials"])), (["Step Aside", "Dodge"], 1))
         report = render_pointers(log)
-        self.assertIn("- Ogre Hunting Party: Ogre Hunter: Sabre Trainer, starts with Sabre Trainer.", report)
+        self.assertIn(
+            "- Ogre Hunting Party: Ogre Hunter: Sabre Trainer, keeps the rule and starts with Sabre Trainer.", report
+        )
         self.assertIn(
             "- Skaven of Clan Moulder: Packmaster: Master Handler, keeps the rule and starts with Ride [Animal].",
             report,
@@ -164,7 +167,7 @@ class CommittedPointerTests(SimpleTestCase):
     def test_the_sweep_gives_the_skills_rules_state_and_leaves_a_choice(self):
         hunter = self.fighters[("Ogre Hunting Party", "Ogre Hunter")]
         trapper = self.fighters[("Ogre Hunting Party", "Trapper")]  # "takes one of these special skills": his choice
-        self.assertEqual((hunter["skills"], "Sabre Trainer" in rules_of(hunter)), (["Sabre Trainer"], False))
+        self.assertEqual((hunter["skills"], "Sabre Trainer" in rules_of(hunter)), (["Sabre Trainer"], True))
         self.assertEqual((trapper["skills"], "Veteran Tracker" in rules_of(trapper)), ([], True))
         ape = self.fighters[("The Cursed Cavalcade", "Fighting Ape")]
         self.assertEqual(ape["skills"], ["Scale Sheer Surfaces", "Acrobat", "Dodge"])

@@ -799,7 +799,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 3130 |
 | warband rules | 373 |
 | upgrades | 140 |
-| the templates' own specials | 898 |
+| the templates' own specials | 900 |
 
 ### List lines
 
@@ -1942,7 +1942,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The skill table is ticks (read from the page image): Ogre Hunter Combat, Strength, Special; Trappers Combat, Shooting, Speed, Special; Sabre-Bait Combat, Speed, Special.
 - Flag (p2): Cleaver (counts as Axe) links our Cleaver at 5 gc (ours cuts like an axe); Club links our Club, Mace or Hammer. Ogre Club and Harpoon Crossbow (50 gc, Rare 10) are ours, as the PDF prints them.
 - Flag (p3): Huuuuge is our shared Fear and Large, and the Ogre Hunter's own rule for the rest (All Alone, armour, warband rating).
-- Flag (p3): The Ogre Hunter's Sabre Trainer and the Trappers' Veteran Tracker are skills they start with: templates give no starting skills, so they are rules, and the player adds the Trapper's skill.
+- Flag (p3): The Ogre Hunter's Sabre Trainer and the Trappers' Veteran Tracker are skills they start with. The Ogre Hunter starts with our Sabre Trainer skill and keeps his rule, which says more than the skill (William, 11 Nov 2026). The Trappers' rule leaves the player a choice of skill, so it stays a rule and the player adds the skill.
 - Flag (p4): No group sizes are printed: left open.
 - Flag (p5): Sharp Stuff (1st free, then 3 gc, Common, Gnoblars only; range 8", S2, No Limit, Thrown Weapon, +1 armour save, Stuff Thrower) and the Pigback Mount (50 gc, Common, Gnoblar Heroes only; M5 WS2 BS- S2 T- W1 I3 A1 Ld5, Like a Mount, Not Like a Mount, Extra Hand) are stubs, their rules on p5.
 - Flag (p6): The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); being shared, which race may take them is the group's note, while Set Traps and Netter open with "Gnoblars only". Scent Hound (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, under another name, so it is kept apart (William, 6 Nov 2026: "sep"). Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game.
@@ -2296,7 +2296,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The Watch Captain chooses the patrol's constabulary, the City Watch, River Watch or Marsh Watch, and each has a rule (Black Caps p1, Secretariat p1, Fenland Striders p5): each is a warband rule naming its constabulary, as the template has no variants for them. The Watch Carriage and the River Boat they requisition before each battle are no items given.
 - Flag (p3): The skill table has no Special column, so the patrol has no skill group. Its ticks are read from where the text layer places them: Watch Captain all five; Sergeant Combat, Shooting, Strength, Speed; Private Sleuth Combat, Academic, Speed; Rookie Combat, Shooting, Speed.
 - Flag (p3): Watch carriage/Stage coach is our Trade Wagon/Stage Coach, Club and Mace/Staff our Club, Mace or Hammer, each shown under the PDF's name; Wardog is our Wardogs.
-- Flag (p3): The Hunting Bird (25 gc, Rare 12) is a stub with its rules; our Falconer skill (Mutiny in Marienburg) words the same rules, and our Bird of Prey (18", S4) is another bird. The Sergeants' Falconer is that skill, given as their rule. Our Falconry Glove carries no rules, so the glove's rule from the Hunting Bird's entry is attached.
+- Flag (p3): The Hunting Bird (25 gc, Rare 12) is a stub with its rules; our Falconer skill (Mutiny in Marienburg) words the same rules, and our Bird of Prey (18", S4) is another bird. The Sergeants' Falconer is that skill: a Sergeant starts with our Falconer skill and keeps his rule, which says besides that he may use a hunting bird (William, 11 Nov 2026). Our Falconry Glove carries no rules, so the glove's rule from the Hunting Bird's entry is attached.
 - Flag (p3): The Marienburg Map (20 gc) prints no rules: a stub, its own item, with the Mordheim Map's rule as a shared item rule, Map, worded for any map (William, 6 Nov 2026: "Make the map rule not unique to the items, give it to both marienburg and mordheim map").
 - Flag (p4): The fighters' headings aren't in the text layer, so each is named from Choice of Warriors and his profile row (Officers' reads Watchman), and each cost is the one in his column: Watch Captain 60 gc, Rookie 15, Private Sleuth 55, Sergeant 35, Officer 25, Sewer Jack 20, Turnkey 35.
 - Flag (p5): The Turnkeys' Immune to Poison is our shared rule; the Sewer Jacks' Immune to Disease is their own.
@@ -2365,7 +2365,7 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Militant Mootlanders: Thief: Infiltration, starts with Infiltration.
 - Nipponese Expedition: Hatamoto: Ride, starts with Ride [Animal].
 - Nipponese Expedition: Retainer: Ride, starts with Ride [Animal].
-- Ogre Hunting Party: Ogre Hunter: Sabre Trainer, starts with Sabre Trainer.
+- Ogre Hunting Party: Ogre Hunter: Sabre Trainer, keeps the rule and starts with Sabre Trainer.
 - Pit Fighters: Pit King: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters: Dwarf Troll Slayer: Pit Fighter, starts with Pit Fighter.
 - Pit Fighters: Pit Veteran: Pit Fighter, starts with Pit Fighter.
@@ -2383,7 +2383,7 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - The Cursed Cavalcade: Aristocrat: Expert Horseman, starts with Ride [Animal].
 - The Cursed Cavalcade: Companion: Expert Swordsman, starts with Expert Swordsman.
 - The Cursed Cavalcade: Fighting Ape: Agile (Fighting Ape), keeps the rule and starts with Scale Sheer Surfaces, Acrobat, Dodge.
-- Watchmen: Sergeant: Falconer, starts with Falconer.
+- Watchmen: Sergeant: Falconer, keeps the rule and starts with Falconer.
 - Grand Master Ippan Shu: Parry Missiles, keeps the rule and starts with Dodge.
 - Maximilian the Mad: Strongman, starts with Strongman.
 
