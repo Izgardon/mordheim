@@ -1,0 +1,833 @@
+{
+  "warbandType": "ghost-pirates",
+  "name": "Ghost Pirates",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Ghost%20Pirates.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Swabbies",
+      "ruleFull": "The warband may capture models with the Swabbies rules. One who agrees joins the Crew; one who refuses becomes one of the Bloated. The warband may never have more Bloated than Crew."
+    },
+    {
+      "rulename": "Ethereal",
+      "ruleFull": "The Ghost Captain and the Screaming Ghosts are Ethereal. An Ethereal model has a 4+ unmodifiable save against every attack. It may not be used with Dodge or Step Aside, and it does nothing against a magical attack: a spell, a prayer, an artefact, gromril, ithilmar or a silver bullet. In the movement phase he may take a Leadership test; if he passes it he may move through any terrain piece and over water. If he begins his next movement phase in the middle of a terrain piece or over water he must take another Leadership test, and is taken out of action at once if he fails it. Once the warband is made, every item costs an Ethereal model double. When the crew finds an item, roll a D6: on a 5+ both Ethereal and non-Ethereal models may use it, and on a 1-4 only non-Ethereal models may, which is marked on the roster."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "ghost-equipment-list",
+      "title": "Ghost Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Boat Hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "Cat O' Nine Tails",
+          "alias": "Cat O' Nine Tails",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Belaying Pins",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "Cursed Pistol",
+          "alias": "Cursed Pistol",
+          "cost": {
+            "cost": 5,
+            "braceCost": 10,
+            "costSuffix": "Ghosts only"
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "Duelling Pistol",
+          "alias": "Dueling Pistol",
+          "cost": {
+            "cost": 30,
+            "braceCost": 60
+          }
+        },
+        {
+          "name": "blunderbuss",
+          "alias": "Blunderbuss",
+          "cost": {
+            "cost": 30
+          }
+        },
+        {
+          "name": "handgun",
+          "alias": "Handgun",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "skeleton-equipment-list",
+      "title": "Skeleton Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "bloated-equipment-list",
+      "title": "Bloated Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Boat Hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Cursed Pistol",
+          "alias": "Cursed Pistol",
+          "cost": {
+            "cost": 5,
+            "braceCost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "ghost-captain",
+      "type": "hero",
+      "name": "Ghost Captain",
+      "plural": "Ghost Captains",
+      "race": "undead",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 90,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "ghost-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Ghost Captain may use his Leadership for any Leadership test."
+        },
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Ghost Captain causes fear."
+        },
+        {
+          "rulename": "Immune to Poison",
+          "ruleFull": "A Ghost Captain is immune to poison."
+        },
+        {
+          "rulename": "Immune to Psychology",
+          "ruleFull": "A Ghost Captain is immune to psychology."
+        }
+      ]
+    },
+    {
+      "id": "screaming-ghost",
+      "type": "hero",
+      "name": "Screaming Ghost",
+      "plural": "Screaming Ghosts",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "ghost-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Screaming Ghost causes fear."
+        },
+        {
+          "rulename": "Immune to Poison",
+          "ruleFull": "A Screaming Ghost is immune to poison."
+        },
+        {
+          "rulename": "Immune to Psychology",
+          "ruleFull": "A Screaming Ghost is immune to psychology."
+        }
+      ]
+    },
+    {
+      "id": "skeleton-mate",
+      "type": "hero",
+      "name": "Skeleton Mate",
+      "plural": "Skeleton Mates",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "skeleton-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": false
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Skeleton Mate causes fear."
+        },
+        {
+          "rulename": "Immune to Poison",
+          "ruleFull": "A Skeleton Mate is immune to poison."
+        },
+        {
+          "rulename": "Immune to Psychology",
+          "ruleFull": "A Skeleton Mate is immune to psychology."
+        },
+        {
+          "rulename": "No Pain",
+          "ruleFull": "A Skeleton Mate treats a stunned result on the injury chart as knocked down."
+        },
+        {
+          "rulename": "May Not Run",
+          "ruleFull": "A Skeleton Mate may not run, though he may charge as normal."
+        }
+      ]
+    },
+    {
+      "id": "sea-singer",
+      "type": "hero",
+      "name": "Sea Singer",
+      "plural": "Sea Singers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 2,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "bloated-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "spellLores": [
+        "Songs of Sorrow"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Wizard",
+          "ruleFull": "A Sea Singer is a wizard. She starts with one spell from the Songs of Sorrow list."
+        },
+        {
+          "rulename": "Beauty of the Sea",
+          "ruleFull": "A male enemy who is not an animal must pass a Leadership test to charge a Sea Singer; if he fails it he stays where he is. A model she charges may not attack back until he passes a Leadership test at the start of the combat phase, and once he passes one he need not test again for the rest of that combat. She causes fear in female models. Her Beauty counts as a form of psychology."
+        }
+      ]
+    },
+    {
+      "id": "the-cursed",
+      "type": "henchman",
+      "name": "The Cursed",
+      "plural": "The Cursed",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "ghost-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Not Undead",
+          "ruleFull": "The Cursed are living men and do not count as Undead."
+        }
+      ]
+    },
+    {
+      "id": "gibbet",
+      "type": "henchman",
+      "name": "Gibbet",
+      "plural": "Gibbets",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 40,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "bloated-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Gibbet causes fear."
+        },
+        {
+          "rulename": "Immune to Poison",
+          "ruleFull": "A Gibbet is immune to poison."
+        },
+        {
+          "rulename": "Immune to Psychology",
+          "ruleFull": "A Gibbet is immune to psychology."
+        },
+        {
+          "rulename": "No Pain",
+          "ruleFull": "A Gibbet treats a stunned result on the injury chart as knocked down."
+        },
+        {
+          "rulename": "No Brain",
+          "ruleFull": "A Gibbet never gains experience."
+        },
+        {
+          "rulename": "May Not Run",
+          "ruleFull": "A Gibbet may not run, though he may charge as normal."
+        },
+        {
+          "rulename": "Iron Cage",
+          "ruleFull": "The iron cage around the Gibbet gives him a 5+ armour save, as heavy armour would. It may not be lost, stolen or given to another model."
+        },
+        {
+          "rulename": "Sink",
+          "ruleFull": "A Gibbet sinks to the bottom of any water he moves through. The bed counts as difficult terrain, so he moves at half speed, and while sunk he is at -2 to hit and -2 to be hit in combat and by missiles. He boards a ship by the normal rules. He is immune to any water or drowning damage."
+        }
+      ]
+    },
+    {
+      "id": "bloated",
+      "type": "henchman",
+      "name": "Bloated",
+      "plural": "The Bloated",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 0,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 1,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "bloated-equipment-list"
+      ],
+      "equipment": "A Bloated needs no weapon and may make one unarmed attack at no penalty. He may instead be armed from the Bloated Equipment list, and then needs two weapons to gain an extra attack.",
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Bloated causes fear."
+        },
+        {
+          "rulename": "Immune to Poison",
+          "ruleFull": "A Bloated is immune to poison."
+        },
+        {
+          "rulename": "Immune to Psychology",
+          "ruleFull": "A Bloated is immune to psychology."
+        },
+        {
+          "rulename": "May Not Run",
+          "ruleFull": "A Bloated may not run, though he may charge as normal."
+        },
+        {
+          "rulename": "No Brain",
+          "ruleFull": "A Bloated never gains experience."
+        },
+        {
+          "rulename": "Squishy",
+          "ruleFull": "A Bloated does not treat a stunned result as knocked down."
+        },
+        {
+          "rulename": "Dead Man's Float",
+          "ruleFull": "A Bloated floats, so while in water he may move up to 4\" at no penalty. He may do this as a charge, but 4\" is still his most."
+        },
+        {
+          "rulename": "Weak Magic",
+          "ruleFull": "If the warband routs, every Bloated who had already left the table in an earlier turn falls apart: remove him from the roster as if he had been killed."
+        },
+        {
+          "rulename": "Plenty more with the next tide",
+          "ruleFull": "A Bloated taken out of action does not count towards the warband's rout test."
+        }
+      ]
+    }
+  ],
+  "priceRows": [
+    {
+      "name": "Cat O' Nine Tails",
+      "cost": 3,
+      "rarity": null,
+      "dice": null,
+      "page": 10,
+      "note": "Heroes only"
+    },
+    {
+      "name": "Blunderbuss",
+      "cost": 30,
+      "rarity": 7,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Crossbow",
+      "cost": 25,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Crossbow pistol",
+      "cost": 35,
+      "rarity": 11,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Double-barrelled Pistol",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Duelling Pistol",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Handgun",
+      "cost": 35,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Long Bow",
+      "cost": 15,
+      "rarity": 5,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Pistol",
+      "cost": 15,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Repeater Crossbow",
+      "cost": 40,
+      "rarity": 10,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Repeater Pistol",
+      "cost": 40,
+      "rarity": 10,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Heavy Armour",
+      "cost": 50,
+      "rarity": 7,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Victuals",
+      "cost": 10,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Riverboat",
+      "cost": 100,
+      "rarity": 6,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Rowboat",
+      "cost": 40,
+      "rarity": 5,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Bugman's Ale",
+      "cost": 50,
+      "rarity": 8,
+      "dice": 3,
+      "page": 10
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Cursed Pistol",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 2,
+      "range": "6\"",
+      "strength": "4",
+      "note": "Ghost Pirate warbands only.",
+      "rules": [
+        {
+          "rule": "Prepare shot",
+          "text": "A Cursed Pistol takes a whole turn to reload, so it may be fired only every other turn. With a brace of them the model may fire every turn."
+        },
+        {
+          "rule": "Save Modifier",
+          "text": "A model wounded by a Cursed Pistol takes its armour save at -2."
+        },
+        {
+          "rule": "Hand-to-hand",
+          "text": "A model armed with a Cursed Pistol and another close combat weapon gains +1 Attack, resolved at Strength 4 with a -2 save modifier, once per combat. Firing a brace of them, he fights with 2 Attacks in the first turn of close combat; those attacks hit only on a natural 6, may be parried by a warrior with Cutlass Master or Master of Blades, and hit at Strength 4 with a -2 save modifier whatever his own Strength."
+        },
+        {
+          "name": "Cursed Aim",
+          "text": "The gun hits only on a natural 6 to hit, and takes no modifier of any kind, from cover, range, moving or Ballistic Skill. It never misfires, and water and rain do not spoil its powder. It may be fired only at a model it can see that is not hiding."
+        },
+        {
+          "name": "Inhuman",
+          "text": "The gun may not use Fine Powder, Superior Gunpowder, Silver Bullets or any other enhancer, and no living model may ever fire it. A Ghost may buy a Cursed Pistol after the warband is made at its normal price."
+        }
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "page": 2,
+      "what": "The skill table's ticks are images, so page 2 was opened as an image. Ghost Captain: Combat, Shooting, Academic, Strength, Speed, Pirate. Screaming Ghosts: Combat, Strength, Speed, Pirate. Skeleton Mates: Combat, Shooting, Strength, Pirate. Sea Singer: Academic, Speed. There is no Special column, so the warband has no skill group of its own."
+    },
+    {
+      "page": 1,
+      "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
+    },
+    {
+      "page": 2,
+      "what": "The Ghost Equipment List is set in two columns and the right column repeats seven of the left column's lines (Cutlass, Double-handed weapon, Cursed Pistol, Pistol, Dueling Pistol, Toughened leathers, Helmet, Light armour) with no heading of its own, adding only Blunderbuss 30 gc and Handgun 35 gc. It is read as one list: the left column plus those two."
+    },
+    {
+      "page": 2,
+      "what": "The Skeleton Equipment List prints only three hand-to-hand weapons; the \"Missile Weapons: Cursed Pistol\" block in the right column follows the Bloated list's hand-to-hand block and is read as the Bloated list's."
+    },
+    {
+      "page": 2,
+      "what": "The Bloated list's Dagger is printed \"2gc\" with no \"1st free\", unlike the Ghost and Skeleton lists': as printed."
+    },
+    {
+      "page": 2,
+      "what": "The Cursed Pistol is a stub: 5 gc (10 for a brace), Common, Ghost Pirate warbands only. Its rules are on p2 and we hold no such weapon. Its Save Modifier is -2, not the usual pistol's, so the shared rule is worded its own way."
+    },
+    {
+      "page": 4,
+      "what": "The Bloated's No Pain line is printed about Gibbets, and his Squishy rule says he does not treat a stunned result as knocked down. The simpler reading is taken: the Bloated has Squishy and no No Pain."
+    },
+    {
+      "page": 4,
+      "what": "The Bloated are recruited by Special Recruitment (captured models who refuse) and no hire price is printed, so their cost is 0 gc."
+    },
+    {
+      "page": 1,
+      "what": "The Choice of Warriors calls the 25 gc henchmen group Crew; its own entry on p4 is headed \"The Cursed\", which is the name used here."
+    },
+    {
+      "page": 1,
+      "what": "The Sea Singer replaces a Screaming Ghost or a Skeleton Mate, and the warband may hold at most 5 heroes anyway; our templates hold no replacement rule, so the three counts stand as printed (1 + 2 + 2 + 1)."
+    },
+    {
+      "page": 1,
+      "what": "A Ghost Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the undead take our Undead race, and the Sea Singer and the Cursed, who are living, our Human."
+    },
+    {
+      "page": 3,
+      "what": "The Ghost Captain's profile is M4 WS4 BS3 S4 T3 W1 I4 A1 Ld8 and the Sea Singer's M4 WS2 BS2 S2 T3 W1 I3 A1 Ld7: as printed."
+    },
+    {
+      "page": 2,
+      "what": "The Boat Hook (8 gc), the Belaying Pin (3 gc) and the Cat O' Nine Tails (8 gc) are ours already, at the Sartosa campaign rules' Equipment PDF prices; the line's Cat O' Nine Tails is 8 gc, which that PDF's trading list prints as 3 gc (open decision 20)."
+    },
+    {
+      "page": 2,
+      "what": "The Blunderbuss line is 30 gc and the Handgun line 35 gc, as the Sartosa Equipment PDF's trading list has them; our Blunderbuss is Rare 9 and our Handgun Rare 8, which are unchanged (open decision 20)."
+    },
+    {
+      "page": 10,
+      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none."
+    }
+  ]
+}

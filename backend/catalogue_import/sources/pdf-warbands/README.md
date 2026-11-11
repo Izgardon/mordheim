@@ -50,6 +50,10 @@ check over every file.
 | `araby-smugglers.json` | araby-smugglers (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Araby%20Smugglers.pdf | 1-4 (text layer; page 2 as an image) | 11 Nov 2026 |
 | `khorne-raiders.json` | khorne-raiders (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Khorne%20Raiders.pdf | 1-3 (text layer) | 11 Nov 2026 |
 | `slayer-pirates.json` | slayer-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf | 1-4 (text layer) | 11 Nov 2026 |
+| `ghost-pirates.json` | ghost-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Ghost%20Pirates.pdf | 1-5 (text layer; page 2 as an image) | 11 Nov 2026 |
+| `lothern-sea-patrol.json` | lothern-sea-patrol (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Lothern%20Sea%20Patrol.pdf | 1-5 (text layer; page 2 as an image) | 11 Nov 2026 |
+| `orc-pirates-and-savage-orcs.json` | orc-pirates-and-savage-orcs (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf | 1-7 (text layer; built on our Orc Mob template, which the PDF varies) | 11 Nov 2026 |
+| `pirates-of-the-cathayan-sea.json` | pirates-of-the-cathayan-sea (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Pirates%20of%20the%20Cathayan%20Sea.pdf | 1-5 (text layer; page 2 as an image) | 11 Nov 2026 |
 | `blood-dragons.json` | blood-dragons (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Blood%20Dragons.pdf | 1-7 (text layer) | 11 Nov 2026 |
 | `bretonnian-brigands.json` | bretonnian-brigands (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Bretonnian%20Brigands.pdf | 1-6 (text layer) | 11 Nov 2026 |
 | `bretonnian-knights-errant.json` | bretonnian-knights-errant (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Bretonnian%20Knights%20Errant.pdf | 1-5 (text layer) | 11 Nov 2026 |

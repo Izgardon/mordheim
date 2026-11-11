@@ -737,6 +737,27 @@
     ]
   },
   {
+    "name": "Lothern Sea Patrol",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "lothern-sea-patrol",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Infiltration: a Hero with the Ranger honour and a promoted Sea Ranger only.",
+    "how": "new group",
+    "skills": [
+      "Fey Quickness",
+      "Infiltration",
+      "Graceful Strength",
+      "Swordmasters Protege",
+      "Defending Guard",
+      "Swift Fighter"
+    ]
+  },
+  {
     "name": "Low Kings",
     "for_everyone": false,
     "warbands": [
@@ -1069,6 +1090,26 @@
     ]
   },
   {
+    "name": "Pirates of the Cathayan Sea",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "pirates-of-the-cathayan-sea",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Angel of the Sword",
+      "Knowledge of Shadows",
+      "Art of the Silent Death",
+      "Energy Focus",
+      "Monk Weaponry"
+    ]
+  },
+  {
     "name": "Pit Fighters",
     "for_everyone": false,
     "warbands": [
@@ -1149,7 +1190,19 @@
         "excluded": false
       },
       {
+        "type": "ghost-pirates",
+        "excluded": false
+      },
+      {
         "type": "khorne-raiders",
+        "excluded": false
+      },
+      {
+        "type": "lothern-sea-patrol",
+        "excluded": false
+      },
+      {
+        "type": "pirates-of-the-cathayan-sea",
         "excluded": false
       },
       {
@@ -1224,6 +1277,25 @@
     "skills": [
       "Bellowing Battle Roar",
       "Toughened Hide"
+    ]
+  },
+  {
+    "name": "Savage Orcs",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "orc-pirates-and-savage-orcs",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Surge",
+      "Wardance",
+      "Savage Frenzy",
+      "The Power of Man's Red Flower"
     ]
   },
   {

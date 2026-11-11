@@ -1,0 +1,1006 @@
+{
+  "warbandType": "orc-pirates-and-savage-orcs",
+  "name": "Orc Pirates & Savage Orcs",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {
+      "rulename": "Pressganging",
+      "ruleFull": "The warband may pressgang models it captures by the normal rules. One who agrees loses his race and profile and joins the crew as an Orc Boy. One who refuses becomes a Goblin Swabbie, keeps his race and profile, and gains Never Gain Experience, Rabble, \"Blimey, they got away!\" and \"Don't mind them mates, they ain't true pirates!\"."
+    },
+    {
+      "rulename": "Distasteful Company",
+      "ruleFull": "The warband may hire only Pit Fighters, Ogre Bodyguards and Warlocks."
+    },
+    {
+      "rulename": "Animosity",
+      "ruleFull": "At the start of the warband's turn, roll a D6 for each henchman who is an Orc or a Goblin and is not in hand-to-hand combat. On a 1 he has taken offence, so roll another D6.\n\nD6 | Result\n1 | He charges the nearest friendly Orc or Goblin henchman or Hired Sword within charge reach and fights one round of hand-to-hand combat; the models then move 1\" apart and no longer count as in close combat. With none in reach he shoots the nearest with a missile weapon, if he carries one. If neither applies, or the nearest friendly model is an Orc hero, treat it as a 2-5. He may take no other action this turn, though he may defend himself.\n2-5 | He may do nothing else this turn, though he may defend himself.\n6 | He moves as fast as he can towards the nearest enemy model, charging it if he can. With no enemy in sight he may make a normal move at once. This move is on top of his move in the movement phase, and if it brings him within charge reach of an enemy he must charge in his regular movement."
+    },
+    {
+      "rulename": "Savage Orc variation: Talismans galore",
+      "ruleFull": "Every Orc and Goblin in a Savage Orc warband has a 6+ armour save, which may not be reduced below 6+ and may not be ignored, even by a critical hit. They may never use armour other than a shield, and may never parry."
+    },
+    {
+      "rulename": "Savage Orc variation: Fear fire",
+      "ruleFull": "Every member of a Savage Orc warband fears any model with a flaming attack, carrying a lit item (a lantern, a torch, a brazier) or any flame item. A caster who works a fiery spell in sight of a member of the warband, or who keeps up a fire-based spell, causes fear for the whole game."
+    },
+    {
+      "rulename": "Savage Orc variation: Primitive",
+      "ruleFull": "A Savage Orc warband may never use an advanced weapon, and may never take the Weapons Master or Weapons Expert skills. Its members may not use a Halfling Cookbook, a Mordheim Map, a Tome of Magic or a Lantern."
+    },
+    {
+      "rulename": "Savage Orc variation: Wild Animosity",
+      "ruleFull": "Wild Animosity replaces Animosity in a Savage Orc warband. At the start of the turn, roll a D6 for every standing warrior in the warband who is not in combat, the troll included unless he failed his stupidity test, and the heroes included. Every warrior rolls, not only those who roll a 1.\n\nD6 | Result\n1 | Squabble. A henchman must charge the nearest friendly model at once, hero or henchman, and fight one round of combat; after it neither may do anything else this turn, though both fight back if attacked. With no friendly model in charge range he uses a missile weapon, if he has one, against the nearest friendly model, and otherwise does nothing. A Forest Goblin will never attack a hero this way. A hero attacks no one, but may still do nothing else.\n2-5 | Uggg. The model behaves normally.\n6 | Waaaagh! The model makes a full move at once towards the nearest enemy model, charging it if it can. In its next movement phase it must charge if an enemy is within charge range. These charges ignore fear and any other psychology that would stop the Savage Orc charging."
+    },
+    {
+      "rulename": "Savage Orc variation: equipment",
+      "ruleFull": "A Savage Orc warband buys from the Savage Orc Equipment List and the Forest Goblin Equipment List instead of the Orc Equipment List and the Goblin Swabbie Equipment List."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "orc-equipment-list",
+      "title": "Orc Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Battle axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Cat O' Nine Tails",
+          "alias": "Cat O' Nine Tails",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Boat Hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "Belaying Pins",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "Booma Pistol",
+          "alias": "Booma Pistol",
+          "cost": {
+            "cost": 20,
+            "braceCost": 40
+          }
+        },
+        {
+          "name": "handgun",
+          "alias": "Handgun",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 7
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "goblin-swabbie-equipment-list",
+      "title": "Goblin Swabbie Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Boat Hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "Cat O' Nine Tails",
+          "alias": "Cat O' Nine Tails",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "Belaying Pins",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short bow",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30,
+            "costSuffix": "Goblin Enjuneers only"
+          }
+        },
+        {
+          "name": "Booma Pistol",
+          "alias": "Booma Pistol",
+          "cost": {
+            "cost": 20,
+            "braceCost": 40,
+            "costSuffix": "Goblin Enjuneers only"
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 7
+          }
+        },
+        {
+          "name": "Fire Bomb",
+          "alias": "Fire Bomb",
+          "cost": {
+            "cost": 35,
+            "costSuffix": "Goblin Enjuneers only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "savage-orc-equipment-list",
+      "title": "Savage Orc Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Flint Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "morning star",
+          "alias": "Big Club (Morning Star)",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Huge club (Double-handed weapon)",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Big Stick (Halberd)",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Throwing Axes",
+          "alias": "Throwing Axe",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "forest-goblin-equipment-list",
+      "title": "Forest Goblin Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Flint Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "squig prodder",
+          "alias": "Squig Prodder",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "throwing knives",
+          "alias": "Throwing weapons",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "blowpipe",
+          "alias": "Blowpipe",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "orc-boss",
+      "type": "hero",
+      "name": "Orc Boss",
+      "plural": "Orc Bosses",
+      "race": "orc",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "orc-equipment-list",
+        "savage-orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "skillGroups": [
+        "Orcs"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Orc Boss may use his Leadership for any Leadership test."
+        }
+      ]
+    },
+    {
+      "id": "orc-shaman",
+      "type": "hero",
+      "name": "Orc Shaman",
+      "plural": "Orc Shamans",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 10,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "orc-equipment-list",
+        "savage-orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "skillGroups": [
+        "Orcs"
+      ],
+      "spellLores": [
+        "Waaaagh! Magic"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Wizard",
+          "ruleFull": "An Orc Shaman is a wizard and uses Waaagh! Magic."
+        },
+        {
+          "rulename": "No Armour",
+          "ruleFull": "An Orc Shaman may never wear armour."
+        }
+      ]
+    },
+    {
+      "id": "goblin-enjuneer",
+      "type": "hero",
+      "name": "Goblin Enjuneer",
+      "plural": "Goblin Enjuneers",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "goblin-swabbie-equipment-list",
+        "forest-goblin-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "skillGroups": [
+        "Orcs"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Glass Ceiling",
+          "ruleFull": "A Goblin Enjuneer may never be the warband's leader."
+        },
+        {
+          "rulename": "Booma Tweaker",
+          "ruleFull": "In any game the Enjuneer plays in, whenever a Booma Pistol's range is rolled and the result is not a misfire, the roll may be re-rolled once. The second result stands and may not be re-rolled, even if it is a misfire."
+        },
+        {
+          "rulename": "Mad Bomba",
+          "ruleFull": "When the Enjuneer spends his rarity roll looking for a Fire Bomb, he treats it as Rare 5. This holds only when the Enjuneer himself searches."
+        }
+      ]
+    },
+    {
+      "id": "orc-big-un",
+      "type": "hero",
+      "name": "Orc Big 'Un",
+      "plural": "Orc Big 'Uns",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 15,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "orc-equipment-list",
+        "savage-orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "skillGroups": [
+        "Orcs"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "orc-boy",
+      "type": "henchman",
+      "name": "Orc Boy",
+      "plural": "Orc Boyz",
+      "race": "orc",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "orc-equipment-list",
+        "savage-orc-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "goblin-swabbie",
+      "type": "henchman",
+      "name": "Goblin Swabbie",
+      "plural": "Goblin Swabbies",
+      "race": "goblin",
+      "minQty": 0,
+      "costGc": 12,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "goblin-swabbie-equipment-list",
+        "forest-goblin-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Under der Thumb",
+          "ruleFull": "A Goblin Swabbie is not subject to Animosity."
+        },
+        {
+          "rulename": "Spendible",
+          "ruleFull": "The warband may shoot into a combat that holds only a Goblin Swabbie and enemy models; the shots are distributed at random."
+        },
+        {
+          "rulename": "Never Gain Experience",
+          "ruleFull": "A Goblin Swabbie never gains experience."
+        },
+        {
+          "rulename": "Rabble",
+          "ruleFull": "Goblin Swabbies need not be armed alike. Each may be given different equipment, but only from the Goblin Swabbie Equipment list. A Goblin Swabbie may never use magic or cast a spell of any kind, whatever his background."
+        },
+        {
+          "rulename": "Blimey, they got away",
+          "ruleFull": "If the warband routs, every Goblin Swabbie who had already left the table in an earlier turn is taken to have escaped: remove him from the roster as if he had been killed."
+        },
+        {
+          "rulename": "Don't mind them mates, they ain't true pirates",
+          "ruleFull": "A Goblin Swabbie who is running away or has been taken out of action does not count towards the warband's rout test."
+        }
+      ]
+    },
+    {
+      "id": "sea-squig",
+      "type": "henchman",
+      "name": "Sea Squig",
+      "plural": "Sea Squigs",
+      "race": "squig",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": "2D6",
+        "ws": 4,
+        "bs": 0,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [],
+      "equipment": "A Sea Squig never uses or needs a weapon or armour.",
+      "specialRules": [
+        {
+          "rulename": "Movement",
+          "ruleFull": "A Sea Squig has no set Movement. On land he moves 2D6-1\" each turn, and in water he swims 2D6\", which water penalties do not reduce. He does not count as aquatic. He never runs and never declares a charge; instead he may reach an enemy with his normal move, and then counts as charging for that round of close combat."
+        },
+        {
+          "rulename": "Minderz",
+          "ruleFull": "A Sea Squig must stay within 6\" of a Goblin. He will not go wild while within 12\" of a Goblin carrying a Cat O' Nine Tails, which counts as a Squig Prodder. Without a minder at the start of his movement phase he goes wild: from then on move him 2D6\" in a random direction each movement phase, and he engages any model he reaches, friend or foe."
+        },
+        {
+          "rulename": "Not Orcs",
+          "ruleFull": "A Goblin or a Sea Squig taken out of action counts as half a model when working out whether the warband must take a rout test."
+        },
+        {
+          "rulename": "Animals",
+          "ruleFull": "A Sea Squig never gains experience."
+        }
+      ]
+    },
+    {
+      "id": "sea-troll",
+      "type": "henchman",
+      "name": "Sea Troll",
+      "plural": "Sea Trolls",
+      "race": "troll",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 200,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 3,
+        "bs": 1,
+        "s": 5,
+        "t": 4,
+        "w": 3,
+        "i": 1,
+        "a": 3,
+        "ld": 4
+      },
+      "equipmentLists": [],
+      "equipment": "A Sea Troll needs no weapon and may never be given a weapon or armour.",
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Sea Troll causes fear."
+        },
+        {
+          "rulename": "Stupidity",
+          "ruleFull": "A Sea Troll is subject to stupidity."
+        },
+        {
+          "rulename": "Regeneration (Sea Troll)",
+          "ruleFull": "Whenever a wound is inflicted on a Sea Troll, roll a D6: on a 4 or more the wound is ignored. He may not regenerate a wound caused by fire or fire-based magic, and never rolls for injury after a battle."
+        },
+        {
+          "rulename": "Dumb Monster",
+          "ruleFull": "A Sea Troll never learns a skill and never gains experience."
+        },
+        {
+          "rulename": "Always Hungry",
+          "ruleFull": "The warband must pay 15 gold crowns after every game to keep a Sea Troll. If it lacks the gold, the Boss may feed him two Goblin Swabbies or Sea Squigs instead."
+        },
+        {
+          "rulename": "Large",
+          "ruleFull": "A Sea Troll is a large target."
+        },
+        {
+          "rulename": "Aquatic",
+          "ruleFull": "A Sea Troll takes no penalty for moving through water and counts as aquatic."
+        },
+        {
+          "rulename": "Slimy",
+          "ruleFull": "Any model trying to hit a Sea Troll in hand-to-hand combat is at -1 to hit; a natural 6 to hit always hits."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Savage Orcs",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "Surge",
+      "description": "Savage Orc warbands only, and the warband's leader only. Once a game, when testing for animosity that turn every model treats a roll of 5 or 6 as a Waaagh! and the leader counts as having rolled a 6. A model who rolls a 1 still squabbles, and for that turn a hero who rolls a 1 attacks his fellow warband members."
+    },
+    {
+      "name": "Wardance",
+      "description": "Savage Orc warbands only. Once a game, at the start of the turn, the Hero may dance if he is not already in combat. Every warrior in the warband is frenzied until the start of the next turn. A warband may be affected by only one Wardance in a game, however many models have the skill."
+    },
+    {
+      "name": "Savage Frenzy",
+      "description": "Savage Orc warbands only. The warrior is subject to frenzy and may never lose it, but if he is knocked down or stunned he is also stupid for the rest of the game. He tests for stupidity first, and a failed test means he may not charge this turn."
+    },
+    {
+      "name": "The Power of Man's Red Flower",
+      "description": "Savage Orc warbands only. The warrior no longer fears fire and may use a lantern or a torch."
+    }
+  ],
+  "priceRows": [
+    {
+      "name": "Cat O' Nine Tails",
+      "cost": 3,
+      "rarity": null,
+      "dice": null,
+      "page": 10,
+      "note": "Heroes only"
+    },
+    {
+      "name": "Blunderbuss",
+      "cost": 30,
+      "rarity": 7,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Crossbow",
+      "cost": 25,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Crossbow pistol",
+      "cost": 35,
+      "rarity": 11,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Double-barrelled Pistol",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Duelling Pistol",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Handgun",
+      "cost": 35,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Long Bow",
+      "cost": 15,
+      "rarity": 5,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Pistol",
+      "cost": 15,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Repeater Crossbow",
+      "cost": 40,
+      "rarity": 10,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Repeater Pistol",
+      "cost": 40,
+      "rarity": 10,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Heavy Armour",
+      "cost": 50,
+      "rarity": 7,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Victuals",
+      "cost": 10,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Riverboat",
+      "cost": 100,
+      "rarity": 6,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Rowboat",
+      "cost": 40,
+      "rarity": 5,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Bugman's Ale",
+      "cost": 50,
+      "rarity": 8,
+      "dice": 3,
+      "page": 10
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Booma Pistol",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 4,
+      "range": "Special",
+      "strength": "5",
+      "note": "Greenskins only.",
+      "rules": [
+        {
+          "name": "Volatile",
+          "text": "Fired in hand-to-hand combat, a Booma Pistol suffers a blackpowder misfire on a natural 1. Fired in the shooting phase it misfires on a Misfire on the artillery dice. If it explodes it deals a Strength 5 hit to the firer, not a Strength 4 one."
+        },
+        {
+          "rule": "Prepare shot",
+          "text": "A Booma Pistol takes a whole turn to reload, so it may be fired only every other turn. With a brace of them the model may fire every turn."
+        },
+        {
+          "rule": "Hand-to-hand",
+          "text": "A model armed with a Booma Pistol and another close combat weapon gains +1 Attack, resolved at Strength 5, once per combat. Firing a brace of them, he fights with 2 Attacks in the first turn of close combat; those attacks use his Weapon Skill as any close combat attack does and may be parried, and hit at Strength 5 whatever his own Strength."
+        },
+        {
+          "name": "Varying Range",
+          "text": "Shooting in the shooting phase, the range is rolled for each shot: declare the shot, then roll an artillery dice for the range. On a Misfire, roll on the misfire table. If the target is in range, roll to hit as normal. A 1 to hit in the shooting phase causes no misfire, as the misfire was already risked this phase."
+        },
+        {
+          "name": "Never Superior",
+          "text": "A Booma Pistol may never use Superior Gunpowder. It may use Refined Gunpowder as normal."
+        }
+      ]
+    },
+    {
+      "name": "Throwing Axes",
+      "type": "Weapon",
+      "subtype": "Missile",
+      "rarity": 5,
+      "dice": null,
+      "rulesPage": 7
+    }
+  ],
+  "flags": [
+    {
+      "page": 2,
+      "what": "This PDF is two variations on the Orc Mob (Da Mob) list, not a list of its own: \"The Orc Pirates use the exact same rules as the Da Mob Warband with the following changes\". The template is built from our Orc Mob template with the PDF's changes, and no page was opened as an image: there is no skill table, and the only image in the file is a 15x15 bullet."
+    },
+    {
+      "page": 2,
+      "what": "The PDF prints no Pirate column and no Pirate skill list, so this warband does not join the shared Sartosa Pirate Skills group. See the decisions."
+    },
+    {
+      "page": 3,
+      "what": "The Boss, the Big 'Uns and the Orc Boyz are \"same as Da Mob\", so their costs, profiles, starting experience, counts and skill access are our Orc Mob template's. The Orc Shaman is kept, since the Goblin Enjuneer replaces him rather than removing him; our templates hold no replacement rule."
+    },
+    {
+      "page": 3,
+      "what": "The Goblin Enjuneer's skills are \"Combat, Shooting, Speed. He may also learn the Orc Skill Waaagh\", so he ticks no Special column of his own and names our Orcs group; the other heroes name it too, as Da Mob's do."
+    },
+    {
+      "page": 4,
+      "what": "The Sea Troll's Regeneration (a 4+ to ignore a wound) is not the Bounty of Arkhar mutation Regeneration (heal to full Wounds), so it is kept apart as \"Regeneration (Sea Troll)\". The Sea Squig and the Sea Troll are the Cave Squig and the Troll of Da Mob with the PDF's changes, at their Da Mob costs (15 gc and 200 gc, \"the normal amount\"). The Sea Troll loses the Vomit Attack and gains Aquatic and Slimy."
+    },
+    {
+      "page": 4,
+      "what": "A Sea Squig moves 2D6-1\" on land and swims 2D6\". Our profile takes only a plain dice value, so his Movement is 2D6 and his Movement rule holds both numbers."
+    },
+    {
+      "page": 3,
+      "what": "Goblin Swabbies replace Goblin Warriors at 12 gc and never gain experience, so unlike Da Mob's Goblin Warriors they may not be promoted."
+    },
+    {
+      "page": 5,
+      "what": "The Savage Orc variation is the second half of the same PDF and serves the same warband type. Our templates hold no variants for a PDF page, so its rules are warband rules of their own, each named \"Savage Orc variation: ...\", and its two equipment lists are carried beside the Orc Pirate ones: every Orc buys from the Orc and the Savage Orc lists and every Goblin from the Goblin Swabbie and the Forest Goblin lists, and the warband rule says which pair a Savage Orc warband uses. Both pairs sell a free first dagger, and a hire gets only one. See the decisions."
+    },
+    {
+      "page": 6,
+      "what": "The Savage Orc Equipment List's \"Throwing Axe\" is our Throwing Axes, the Dwarf Slayer Cult's stub (2a), declared here too so this warband buys them at 15 gc, Rare 5, as the Sartosa Equipment PDF's trading list has them. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already."
+    },
+    {
+      "page": 6,
+      "what": "Page 6 carries a block of the designers' discussion below the equipment lists (\"Wardance - could end up in the same place you were before...\"), which is not rules and is not imported."
+    },
+    {
+      "page": 6,
+      "what": "The Forest Goblin list sells a Short Bow at 10 gc where the Goblin Swabbie list and our catalogue have it at 5 gc: each line keeps its own price. Its \"Throwing weapons . . . 15 gc\" names no weapon; it is read as our Throwing Knives/Stars, which that price matches."
+    },
+    {
+      "page": 2,
+      "what": "The Orc list's Toughened leathers are 7 gc, where every other Sartosa list and our catalogue have them at 5 gc: as printed, for both the Orc and the Goblin Swabbie lists."
+    },
+    {
+      "page": 4,
+      "what": "The Booma Pistol is a stub: 20 gc (40 for a brace), Common, Greenskins only, its rules on p4. The Fire Bomb line is 35 gc; ours is 35 + 2D6 gc, Rare 9, which is unchanged."
+    },
+    {
+      "page": 10,
+      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband."
+    }
+  ]
+}

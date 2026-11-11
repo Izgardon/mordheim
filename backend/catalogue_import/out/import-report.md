@@ -26,10 +26,10 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 410 |
-| skills | 362 |
-| skill groups | 78 |
-| skill group links | 453 |
+| price rows | 593 |
+| skills | 375 |
+| skill groups | 81 |
+| skill group links | 468 |
 | serious injuries (D66) | 20 |
 | shared specials | 66 |
 | random mutation results (D66) | 36 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 362 | 152 | 173 | 37 |
+| skills | 375 | 152 | 186 | 37 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -320,7 +320,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 362 skills, one per name; `out/skill-groups.json` is 78 groups holding them (453 links), the five core groups first.
+`out/skills.json` is 375 skills, one per name; `out/skill-groups.json` is 81 groups holding them (468 links), the five core groups first.
 
 ### Merged by name
 
@@ -401,6 +401,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Knights Feats | Bretonnian Brigands, Bretonnian Knights-Errant | new group | In a Bretonnian Brigand warband only the Fallen Noble learns these. | Combat Charge, Lancer, Sword Master, Armour Specialist |
 | Knights of the Bitter Moors | Knights of the Bitter Moors | new group | - | Virtue of Purity, Virtue of Discipline, Virtue of Noble Disdain, Virtue of the Impetuous, Virtue of the Squire, Virtue of Valour (Knights of the Bitter Moors) |
 | Large Special | everyone, Large units only | skill_lists | - | Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip |
+| Lothern Sea Patrol | Lothern Sea Patrol | new group | Infiltration: a Hero with the Ranger honour and a promoted Sea Ranger only. | Fey Quickness, Infiltration, Graceful Strength, Swordmasters Protege, Defending Guard, Swift Fighter |
 | Low Kings | Low Kings | skill_group_learners | - | Backstabber, Pick Locks, Poisoner, Slaver, Stealthy, Cutpurse |
 | Marauders of Chaos | Marauders of Chaos | intersection | - | Chosen of chaos, Tattooed body, Sweeping blow, Mutant (Marauders of Chaos), Heart of the warrior |
 | Masters of Horror | Masters of Horror | new group | - | Surgeon, Alchemist, Apt Revitalist, Lunatic |
@@ -417,12 +418,14 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Ostlanders | Ostlanders | skill_group_learners | - | Bull Rush, Foul Odour, Taunt, Animal Friendship, Blood Oath |
 | Pirates | Pirates | intersection | - | Sea Shanty Singer, Sea Legs, Cutlass Master, Booming Voice, Hardy Constitution, Swashbuckler |
 | Pirates (TBMF) | Pirates | skill_lists | - | Captain Blood, Sea Legs (TBMF), Cutlass Master, Treasure Hunter, Swashbuckler |
+| Pirates of the Cathayan Sea | Pirates of the Cathayan Sea | new group | - | Angel of the Sword, Knowledge of Shadows, Art of the Silent Death, Energy Focus, Monk Weaponry |
 | Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
 | Protectorate of Sigmar | Protectorate of Sigmar | new group | - | Protection of Sigmar, Utter Determination, Iron Will, Rousing Sermon, Sigmar's Guidance |
 | Restless Dead Lich and Necromancer | The Restless Dead | intersection | - | Corpse Bomb, Deathspeaker, Wraith Touch, Forbidden Rite, Summoner |
-| Sartosa Pirate Skills | Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Khorne Raiders, Sartosan Pirates, Slayer Pirates, Wasteland Privateers | new group | A hero may know only one of these at a time; Pistol Expertise doesn't count towards that limit. For a promoted henchman it takes up no skill list. | Pistolier, Scale Sheer Surfaces, Sea Legs, Swashbuckler, Pistol Expertise, Riposte, Impenetrable Defense, Prince of Cats, Powder Refiner, Quick as a Monkey, Snapshot, Dirty Fighter, Swing, Smell of Treasure, Helmsmen, Festooned with Pistols, Looting the Dead, Novice Press-ganger, Master Press-ganger |
+| Sartosa Pirate Skills | Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Ghost Pirates, Khorne Raiders, Lothern Sea Patrol, Pirates of the Cathayan Sea, Sartosan Pirates, Slayer Pirates, Wasteland Privateers | new group | A hero may know only one of these at a time; Pistol Expertise doesn't count towards that limit. For a promoted henchman it takes up no skill list. | Pistolier, Scale Sheer Surfaces, Sea Legs, Swashbuckler, Pistol Expertise, Riposte, Impenetrable Defense, Prince of Cats, Powder Refiner, Quick as a Monkey, Snapshot, Dirty Fighter, Swing, Smell of Treasure, Helmsmen, Festooned with Pistols, Looting the Dead, Novice Press-ganger, Master Press-ganger |
 | Sartosan Pirates | Sartosan Pirates | new group | - | Sea Shanty Singer, Cutlass Master, Booming Voice, Hardy Constitution |
 | Saurus | Lizardmen (TC11) | intersection | - | Bellowing Battle Roar, Toughened Hide |
+| Savage Orcs | Orc Pirates & Savage Orcs | new group | - | Surge, Wardance, Savage Frenzy, The Power of Man's Red Flower |
 | Sea Ghosts | Sea Ghosts | skill_group_learners | - | Infiltration, Luck, See in Shadows, Hide in Shadows, Powerful Build, Fey |
 | Shadow Warriors | Shadow Warriors | skill_group_learners | - | See in Shadows, Hide in Shadows, Sniper (Shadow Warriors), Powerful Build, Master of Runes |
 | Sisters of Sigmar | Sisters of Sigmar | skill_group_learners | - | Righteous Aura, Protection of Sigmar, Utter Determination, Righteous Fury, Absolute Faith |
@@ -446,7 +449,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 ### New groups and skills (`new_skill_groups`)
 
-161 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+174 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -544,6 +547,10 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Master Tanner | Khorne Raiders | sartosa | Sartosa |
 | Rite of Combat | Khorne Raiders | sartosa | Sartosa |
 | Virtue of Valour (Knights of the Bitter Moors) | Knights of the Bitter Moors | mutiny-in-marienburg | Mutiny in Marienburg |
+| Graceful Strength | Lothern Sea Patrol | sartosa | Sartosa |
+| Swordmasters Protege | Lothern Sea Patrol | sartosa | Sartosa |
+| Defending Guard | Lothern Sea Patrol | sartosa | Sartosa |
+| Swift Fighter | Lothern Sea Patrol | sartosa | Sartosa |
 | Surgeon | Masters of Horror | sylvania | Sylvania Supplement |
 | Alchemist | Masters of Horror | sylvania | Sylvania Supplement |
 | Apt Revitalist | Masters of Horror | sylvania | Sylvania Supplement |
@@ -561,6 +568,15 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Sabre Trainer | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Set Traps | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
 | Netter (Ogre Hunting Party) | Ogre Hunting Party | mordheim-2a | Dave ‘StyrofoamKing’ Seidman-Joria and Catferret |
+| Surge | Savage Orcs | sartosa | Sartosa |
+| Wardance | Savage Orcs | sartosa | Sartosa |
+| Savage Frenzy | Savage Orcs | sartosa | Sartosa |
+| The Power of Man's Red Flower | Savage Orcs | sartosa | Sartosa |
+| Angel of the Sword | Pirates of the Cathayan Sea | sartosa | Sartosa |
+| Knowledge of Shadows | Pirates of the Cathayan Sea | sartosa | Sartosa |
+| Art of the Silent Death | Pirates of the Cathayan Sea | sartosa | Sartosa |
+| Energy Focus | Pirates of the Cathayan Sea | sartosa | Sartosa |
+| Monk Weaponry | Pirates of the Cathayan Sea | sartosa | Sartosa |
 | Iron Will | Protectorate of Sigmar | mordheim-2a | LOD3 |
 | Rousing Sermon | Protectorate of Sigmar | mordheim-2a | LOD3 |
 | Sigmar's Guidance | Protectorate of Sigmar | mordheim-2a | LOD3 |
@@ -640,7 +656,7 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs |
 | True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult, Guild of Disgraced Engineers, Slayer Pirates |
 | Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers, Slayer Pirates |
-| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Channel Rats, Dark Elf Corsairs, Metal Mongers, Sea Ghosts, Underworld Alliance, Woodsmen de Artois |
+| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Channel Rats, Dark Elf Corsairs, Lothern Sea Patrol, Metal Mongers, Sea Ghosts, Underworld Alliance, Woodsmen de Artois |
 | Foul Odour | Ostlanders | Ostlanders, Horned Hunters |
 | Hide in Shadows | Hochland Bandits, Shadow Warriors, Night Goblins (WEB) | Hochland Bandits, Horned Hunters, Shadow Warriors, Night Goblins (WEB), Sea Ghosts |
 | Sneaky Git | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
@@ -648,7 +664,7 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Hit and run | Arabian Tomb Raiders | Arabian Tomb Raiders, Araby Smugglers |
 | Virtue of the Impetuous | Bretonnian Knights | Bretonnian Knights, Bretonnian Grail Companions, Knights of the Bitter Moors |
 | Bull Rush | Ostlanders | Ostlanders, Channel Rats, Woodsmen de Artois |
-| Fey Quickness | Dark Elves, Druchii | Dark Elves, Druchii, Dark Elf Corsairs |
+| Fey Quickness | Dark Elves, Druchii | Dark Elves, Druchii, Dark Elf Corsairs, Lothern Sea Patrol |
 | Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayer Cult, Slayer Pirates |
 | Stealthy | Halflings | Halflings, Low Kings, Militant Mootlanders |
 | Mutant | Beastmen Raiders | Beastmen Raiders, Khorne Raiders |
@@ -664,8 +680,8 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Cutlass Master | Pirates | Pirates, Sartosan Pirates |
 | Booming Voice | Pirates | Pirates, Sartosan Pirates |
 | Hardy Constitution | Pirates | Pirates, Sartosan Pirates |
-| Sea Legs | Pirates | Pirates, Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Khorne Raiders, Sartosan Pirates, Slayer Pirates, Wasteland Privateers |
-| Swashbuckler | Pirates | Pirates, Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Khorne Raiders, Sartosan Pirates, Slayer Pirates, Wasteland Privateers |
+| Sea Legs | Pirates | Pirates, Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Ghost Pirates, Khorne Raiders, Lothern Sea Patrol, Pirates of the Cathayan Sea, Sartosan Pirates, Slayer Pirates, Wasteland Privateers |
+| Swashbuckler | Pirates | Pirates, Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Ghost Pirates, Khorne Raiders, Lothern Sea Patrol, Pirates of the Cathayan Sea, Sartosan Pirates, Slayer Pirates, Wasteland Privateers |
 | Wall Runner | Skaven | Skaven, The Lost |
 | Righteous Aura | Vampire Hunters of Sylvania | Sisters of Sigmar, Vampire Hunters of Sylvania |
 | Fey | Wood Elves of Athel Loren | Wood Elves of Athel Loren, Sea Ghosts |
@@ -704,16 +720,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 94 |
-| warband types linked | 100 |
-| fighters (heroes, henchmen) | 617 (317, 300) |
-| henchmen that gain no XP | 82 |
-| henchmen that can't be promoted | 102 |
-| equipment lists | 236 |
-| list lines | 2619 |
-| warband rules | 319 |
+| templates | 98 |
+| warband types linked | 104 |
+| fighters (heroes, henchmen) | 647 (332, 315) |
+| henchmen that gain no XP | 89 |
+| henchmen that can't be promoted | 109 |
+| equipment lists | 250 |
+| list lines | 2781 |
+| warband rules | 342 |
 | upgrades | 123 |
-| the templates' own specials | 730 |
+| the templates' own specials | 781 |
 
 ### List lines
 
@@ -729,7 +745,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-391 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+423 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -753,7 +769,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-61 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+63 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 
@@ -787,6 +803,7 @@ Written values, kept as written:
 | bretonnian-grail-companions | Hedge Knight | ballistic_skill - |
 | bretonnian-grail-companions | Grail Reliquae | ballistic_skill - |
 | guild-of-disgraced-engineers | Gyrocopter | movement 2D6, weapon_skill -, ballistic_skill -, strength -, initiative -, attacks -, leadership - |
+| orc-pirates-and-savage-orcs | Sea Squig | movement 2D6 |
 | skaven-of-clan-moulder | Wolf Rat | strength 3(4) |
 | snotlings | Snotling Wheelo | movement D6 |
 | underworld-alliance | Sewer Squig | movement 2D6 |
@@ -839,9 +856,12 @@ Each of those groups is for everyone or names every warband type its fighters' t
 | dreamwalkers-cult-of-morr | Priest of Morr | Priest | Funerary Rites |
 | druchii | Sorceress | Wizard | Dark Magic (Druchii) |
 | fen-guard | Branchwych | Wizard | Utterances of the Oak |
+| ghost-pirates | Sea Singer | Wizard | Songs of Sorrow |
 | lords-of-the-marsh | Draich | Wizard | Chaos Rituals |
+| lothern-sea-patrol | Mist Mage | Wizard | Spells of the Lothern Sea |
 | necrarchs-the-soul-stealers | Necrarch Vampire | Wizard | Necromancy, Dreaded Scrolls of Nagash |
 | nipponese-expedition | Vim-To Mage | Wizard | Arabian Elemental Magic |
+| orc-pirates-and-savage-orcs | Orc Shaman | Wizard | Waaaagh! Magic |
 | outlaws-of-stirwood-forest-redux | Cleric | Priest | Prayers of Sigmar |
 | protectorate-of-sigmar | Warrior Priest | Priest | Prayers of Sigmar |
 | shallows-beasts | Mutant-Priest | Wizard | Chaos Rituals |
@@ -910,12 +930,12 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the list's text |  |  | 67 | 5 | 5 | 17 |
-| Stupidity | Psychology | the list's text |  |  | 8 | 0 | 0 | 2 |
-| Immune to Psychology | Psychology | the list's text |  |  | 38 | 1 | 2 | 0 |
-| Immune to Poison | Trait | the list's text |  |  | 33 | 3 | 3 | 8 |
-| No Pain | Trait | the list's text |  |  | 31 | 1 | 1 | 4 |
-| May Not Run | Trait | the list's text |  |  | 21 | 2 | 0 | 0 |
+| Fear | Psychology | the list's text |  |  | 73 | 5 | 5 | 17 |
+| Stupidity | Psychology | the list's text |  |  | 9 | 0 | 0 | 2 |
+| Immune to Psychology | Psychology | the list's text |  |  | 43 | 1 | 2 | 0 |
+| Immune to Poison | Trait | the list's text |  |  | 38 | 3 | 3 | 8 |
+| No Pain | Trait | the list's text |  |  | 33 | 1 | 1 | 4 |
+| May Not Run | Trait | the list's text |  |  | 24 | 2 | 0 | 0 |
 | Large | Trait | the list's text |  |  | 0 | 4 | 0 | 5 |
 | Daemonic Flesh | Trait | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
@@ -981,12 +1001,12 @@ List prices the pages differ from: none.
 
 ### Merged
 
-- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Hell Hound; Bretonnian Brigands: Scarface; Bretonnian Grail Companions: Grail Knight (Fearsome); Call of the Night Haint: Cairn Wraith (Causes Fear); Call of the Night Haint: Tomb Banshee (Causes Fear); Call of the Night Haint: Malignant Spirit (Causes Fear); Call of the Night Haint: Revenant (Causes Fear); Call of the Night Haint: Mourngul (Causes Fear); Call of the Night Haint: Spirit Host (Causes Fear); Call of the Night Haint: Poltergeist (Causes Fear); Fen Guard: Branchnymph; Fen Guard: Dryad; Fen Guard: Treekin; Halflings: Village Ogre; Lords of the Marsh: Draich; Lords of the Marsh: Daemon-Fimm; Lords of the Marsh: Fimir Warrior; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire (Cause Fear); Necrarchs, the Soul Stealers: Thrall (Cause Fear); Necrarchs, the Soul Stealers: Skeletal Warrior (Cause Fear); Necrarchs, the Soul Stealers: Zombie (Cause Fear); Necrarchs, the Soul Stealers: Abomination (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Skaven of Clan Moulder: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); Underworld Alliance: Warpstone Troll; Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog; Bear (Border Town Burning); Bloodletter; Chaos Dragon; Chaos Ogre; Chaos Troll; Daemon Prince; Daemonette; Dragon Ogre; Giant; Horror; Hydra; Ogre; Plaguebearer; Ymir.
-- Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Lords of the Marsh: Young Noble; Lords of the Marsh: Shearl; Lords of the Marsh: Fimir Warrior; Underworld Alliance: Warpstone Troll; Cold One (Stupid); Chaos Troll.
-- Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Fen Guard: Branchwych; Fen Guard: Branchnymph; Fen Guard: Treekin; Masters of Horror: Mad Scientist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Sea Ghosts: Feast-Master; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
-- Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Watchmen: Turnkey; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog; Bloodletter; Daemon Prince; Daemonette; Horror; Plaguebearer; Terracotta Soldier.
-- No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Chaos Dragon; Giant; Hydra; Terracotta Soldier.
-- May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Fen Guard: Treekin; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Clan Skryre Rat Ogre; Bone Goliath.
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Hell Hound; Bretonnian Brigands: Scarface; Bretonnian Grail Companions: Grail Knight (Fearsome); Call of the Night Haint: Cairn Wraith (Causes Fear); Call of the Night Haint: Tomb Banshee (Causes Fear); Call of the Night Haint: Malignant Spirit (Causes Fear); Call of the Night Haint: Revenant (Causes Fear); Call of the Night Haint: Mourngul (Causes Fear); Call of the Night Haint: Spirit Host (Causes Fear); Call of the Night Haint: Poltergeist (Causes Fear); Fen Guard: Branchnymph; Fen Guard: Dryad; Fen Guard: Treekin; Ghost Pirates: Ghost Captain; Ghost Pirates: Screaming Ghost; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Ghost Pirates: Bloated; Halflings: Village Ogre; Lords of the Marsh: Draich; Lords of the Marsh: Daemon-Fimm; Lords of the Marsh: Fimir Warrior; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire (Cause Fear); Necrarchs, the Soul Stealers: Thrall (Cause Fear); Necrarchs, the Soul Stealers: Skeletal Warrior (Cause Fear); Necrarchs, the Soul Stealers: Zombie (Cause Fear); Necrarchs, the Soul Stealers: Abomination (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Orc Pirates & Savage Orcs: Sea Troll; Skaven of Clan Moulder: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); Underworld Alliance: Warpstone Troll; Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog; Bear (Border Town Burning); Bloodletter; Chaos Dragon; Chaos Ogre; Chaos Troll; Daemon Prince; Daemonette; Dragon Ogre; Giant; Horror; Hydra; Ogre; Plaguebearer; Ymir.
+- Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Lords of the Marsh: Young Noble; Lords of the Marsh: Shearl; Lords of the Marsh: Fimir Warrior; Orc Pirates & Savage Orcs: Sea Troll; Underworld Alliance: Warpstone Troll; Cold One (Stupid); Chaos Troll.
+- Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Fen Guard: Branchwych; Fen Guard: Branchnymph; Fen Guard: Treekin; Ghost Pirates: Ghost Captain; Ghost Pirates: Screaming Ghost; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Ghost Pirates: Bloated; Masters of Horror: Mad Scientist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Sea Ghosts: Feast-Master; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
+- Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Ghost Pirates: Ghost Captain; Ghost Pirates: Screaming Ghost; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Ghost Pirates: Bloated; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Watchmen: Turnkey; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog; Bloodletter; Daemon Prince; Daemonette; Horror; Plaguebearer; Terracotta Soldier.
+- No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Chaos Dragon; Giant; Hydra; Terracotta Soldier.
+- May Not Run: The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Fen Guard: Treekin; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Ghost Pirates: Bloated; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Clan Skryre Rat Ogre; Bone Goliath.
 - Large: Ogre Bodyguard (Large Target); Clan Skryre Rat Ogre; Bone Goliath; Ogre Slave Master (Large Target); Chaos Ogre (Large Target); Chaos Troll (Large Target); Daemon Prince (Large Target); Dragon Ogre (Large Target); Ogre (Large Target).
 - Daemonic Flesh: Chaos Fury; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne.
 - Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
@@ -1136,14 +1156,14 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-44 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+48 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
-| araby-smugglers | araby-smugglers | 6 | 0 | 0 | 10 |
+| araby-smugglers | araby-smugglers | 6 | 0 | 0 | 11 |
 | blood-dragons | blood-dragons | 6 | 0 | 0 | 9 |
 | bretonnian-brigands | bretonnian-brigands | 6 | 0 | 0 | 9 |
-| bretonnian-buccaneers | bretonnian-buccaneers | 7 | 0 | 0 | 9 |
+| bretonnian-buccaneers | bretonnian-buccaneers | 7 | 0 | 0 | 10 |
 | bretonnian-grail-companions | bretonnian-grail-companions | 7 | 2 | 3 | 12 |
 | bretonnian-knights-errant | bretonnian-knights-errant | 2 | 0 | 0 | 8 |
 | call-of-the-night-haint | call-of-the-night-haint | 8 | 0 | 3 | 14 |
@@ -1152,14 +1172,16 @@ Kept apart from a family's, the effect differing:
 | dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
 | druchii | druchii | 8 | 0 | 2 | 11 |
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 12 |
-| estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 9 |
+| estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 10 |
 | fen-guard | fen-guard | 5 | 1 | 4 | 14 |
+| ghost-pirates | ghost-pirates | 7 | 0 | 1 | 15 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | guild-of-disgraced-engineers | guild-of-disgraced-engineers | 6 | 0 | 2 | 10 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
-| khorne-raiders | khorne-raiders | 6 | 0 | 2 | 16 |
+| khorne-raiders | khorne-raiders | 6 | 0 | 2 | 17 |
 | knights-of-the-bitter-moors | knights-of-the-bitter-moors | 6 | 0 | 1 | 9 |
 | lords-of-the-marsh | lords-of-the-marsh | 5 | 0 | 0 | 9 |
+| lothern-sea-patrol | lothern-sea-patrol | 7 | 0 | 0 | 13 |
 | low-kings | low-kings | 7 | 1 | 1 | 10 |
 | masters-of-horror | masters-of-horror | 7 | 1 | 3 | 11 |
 | metal-mongers | metal-mongers | 6 | 0 | 3 | 12 |
@@ -1167,26 +1189,44 @@ Kept apart from a family's, the effect differing:
 | necrarchs-the-soul-stealers | necrarchs-the-soul-stealers | 7 | 1 | 2 | 11 |
 | nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
+| orc-pirates-and-savage-orcs | orc-pirates-and-savage-orcs | 8 | 0 | 2 | 14 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
+| pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 13 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
-| sartosan-pirates | sartosan-pirates | 7 | 0 | 0 | 8 |
+| sartosan-pirates | sartosan-pirates | 7 | 0 | 0 | 9 |
 | sea-ghosts | sea-ghosts | 6 | 0 | 0 | 10 |
 | shallows-beasts | shallows-beasts | 7 | 0 | 0 | 10 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
-| slayer-pirates | slayer-pirates | 7 | 0 | 3 | 18 |
+| slayer-pirates | slayer-pirates | 7 | 0 | 3 | 19 |
 | snotlings | snotlings | 8 | 1 | 2 | 10 |
 | sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
 | the-lost | the-lost | 6 | 0 | 0 | 10 |
 | underworld-alliance | underworld-alliance | 9 | 0 | 0 | 10 |
 | vampire-hunters-of-sylvania | vampire-hunters-of-sylvania | 6 | 1 | 4 | 11 |
-| wasteland-privateers | wasteland-privateers | 7 | 0 | 0 | 10 |
+| wasteland-privateers | wasteland-privateers | 7 | 0 | 0 | 11 |
 | watchmen | watchmen | 7 | 0 | 2 | 8 |
 | wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
 | woodsmen-de-artois | woodsmen-de-artois | 8 | 0 | 0 | 9 |
 
 ### Araby Smugglers
 
+- Price row (p10): our Cat O' Nine Tails for araby-smugglers, Common, Heroes only.
+- Price row (p10): our Blunderbuss for araby-smugglers, Rare 7.
+- Price row (p10): our Crossbow for araby-smugglers, Rare 8.
+- Price row (p10): our Crossbow pistol for araby-smugglers, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for araby-smugglers, Rare 8.
+- Price row (p10): our Duelling Pistol for araby-smugglers, Rare 8.
+- Price row (p10): our Handgun for araby-smugglers, Common.
+- Price row (p10): our Long Bow for araby-smugglers, Rare 5.
+- Price row (p10): our Pistol for araby-smugglers, Common.
+- Price row (p10): our Repeater Crossbow for araby-smugglers, Rare 10.
+- Price row (p10): our Repeater Pistol for araby-smugglers, Rare 10.
+- Price row (p10): our Heavy Armour for araby-smugglers, Rare 7.
+- Price row (p10): our Victuals for araby-smugglers, Common.
+- Price row (p10): our Riverboat for araby-smugglers, Rare 6.
+- Price row (p10): our Rowboat for araby-smugglers, Rare 5.
+- Price row (p10): our Bugman's Ale for araby-smugglers, Rare 8.
 - Flag (p2): The skill table's ticks are glyphs the text layer drops: the table was read from p2's image. The Pirate column is ticked for the Rais, the Mate and the Merchant.
 - Flag (p2): The Janissary list's Spear, Halberd, Double-handed weapon and Flail, its Missile Weapons and its Armour are printed at the top of the right column, continuing the left column; read that way.
 - Flag (p2): "Axe (Katar)" at 5 gc is read as our Axe shown under the list's name; we also hold a Katar of our own (5 gc, Rare 4), which this line is not: see the decisions.
@@ -1197,6 +1237,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Merchant's Pawnbroker skill shares its name with our shared special Pawnbroker, which is a hired sword's rule: see the decisions.
 - Flag (p3): Fine Craftmenship is the PDF's spelling of the Merchant's rule, kept as printed.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Blood Dragons
 
@@ -1224,6 +1265,22 @@ Kept apart from a family's, the effect differing:
 
 ### Bretonnian Buccaneers
 
+- Price row (p10): our Cat O' Nine Tails for bretonnian-buccaneers, Common, Heroes only.
+- Price row (p10): our Blunderbuss for bretonnian-buccaneers, Rare 7.
+- Price row (p10): our Crossbow for bretonnian-buccaneers, Rare 8.
+- Price row (p10): our Crossbow pistol for bretonnian-buccaneers, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for bretonnian-buccaneers, Rare 8.
+- Price row (p10): our Duelling Pistol for bretonnian-buccaneers, Rare 8.
+- Price row (p10): our Handgun for bretonnian-buccaneers, Common.
+- Price row (p10): our Long Bow for bretonnian-buccaneers, Rare 5.
+- Price row (p10): our Pistol for bretonnian-buccaneers, Common.
+- Price row (p10): our Repeater Crossbow for bretonnian-buccaneers, Rare 10.
+- Price row (p10): our Repeater Pistol for bretonnian-buccaneers, Rare 10.
+- Price row (p10): our Heavy Armour for bretonnian-buccaneers, Rare 7.
+- Price row (p10): our Victuals for bretonnian-buccaneers, Common.
+- Price row (p10): our Riverboat for bretonnian-buccaneers, Rare 6.
+- Price row (p10): our Rowboat for bretonnian-buccaneers, Rare 5.
+- Price row (p10): our Bugman's Ale for bretonnian-buccaneers, Rare 8.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -1233,6 +1290,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): "at warband creation, you may purchase dueling pistols for 25gc each": list prices are starting prices in the app, so the Duelling Pistol's line is 25 gc (50 for a brace) and no rule repeats it.
 - Flag (p2): The rule names "a Bretonnian hero", so the short-range change is written for Heroes only, as printed.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Bretonnian Grail Companions
 
@@ -1366,6 +1424,22 @@ Kept apart from a family's, the effect differing:
 
 ### Estalian Corsairs
 
+- Price row (p10): our Cat O' Nine Tails for estalian-corsairs, Common, Heroes only.
+- Price row (p10): our Blunderbuss for estalian-corsairs, Rare 7.
+- Price row (p10): our Crossbow for estalian-corsairs, Rare 8.
+- Price row (p10): our Crossbow pistol for estalian-corsairs, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for estalian-corsairs, Rare 8.
+- Price row (p10): our Duelling Pistol for estalian-corsairs, Rare 8.
+- Price row (p10): our Handgun for estalian-corsairs, Common.
+- Price row (p10): our Long Bow for estalian-corsairs, Rare 5.
+- Price row (p10): our Pistol for estalian-corsairs, Common.
+- Price row (p10): our Repeater Crossbow for estalian-corsairs, Rare 10.
+- Price row (p10): our Repeater Pistol for estalian-corsairs, Rare 10.
+- Price row (p10): our Heavy Armour for estalian-corsairs, Rare 7.
+- Price row (p10): our Victuals for estalian-corsairs, Common.
+- Price row (p10): our Riverboat for estalian-corsairs, Rare 6.
+- Price row (p10): our Rowboat for estalian-corsairs, Rare 5.
+- Price row (p10): our Bugman's Ale for estalian-corsairs, Rare 8.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -1375,6 +1449,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): Estalians add the Rapier and Heavy Armour to the Pirate Equipment list and lose the Crossbow, so the list carries the change and no warband rule repeats it.
 - Flag (p2): "All Estalian Captains and Champions start off with the skill Expert Swordsman": read as the Captain and the Ship's Mates, who start with our Expert Swordsman skill.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Fen Guard
 
@@ -1399,6 +1474,41 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Branchnymph is "Branch Nymph" in the skill table and her Horn's entry: named Branchnymph, as her heading.
 - Flag (p5): The Treekin's Redwood and Slow Growing are printed run together: read as two rules. Its Fear, Immune to Psychology, May Not Run and Large link the shared rules.
 - Flag (p7): Utterances of the Oak is a new lore (spells.json), in our words. Unleash Spites rolls as many dice as the casting roll's total.
+
+### Ghost Pirates
+
+- Stub: Cursed Pistol, 5 gc, Common; its rules are on p2.
+- Price row (p10): our Cat O' Nine Tails for ghost-pirates, Common, Heroes only.
+- Price row (p10): our Blunderbuss for ghost-pirates, Rare 7.
+- Price row (p10): our Crossbow for ghost-pirates, Rare 8.
+- Price row (p10): our Crossbow pistol for ghost-pirates, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for ghost-pirates, Rare 8.
+- Price row (p10): our Duelling Pistol for ghost-pirates, Rare 8.
+- Price row (p10): our Handgun for ghost-pirates, Common.
+- Price row (p10): our Long Bow for ghost-pirates, Rare 5.
+- Price row (p10): our Pistol for ghost-pirates, Common.
+- Price row (p10): our Repeater Crossbow for ghost-pirates, Rare 10.
+- Price row (p10): our Repeater Pistol for ghost-pirates, Rare 10.
+- Price row (p10): our Heavy Armour for ghost-pirates, Rare 7.
+- Price row (p10): our Victuals for ghost-pirates, Common.
+- Price row (p10): our Riverboat for ghost-pirates, Rare 6.
+- Price row (p10): our Rowboat for ghost-pirates, Rare 5.
+- Price row (p10): our Bugman's Ale for ghost-pirates, Rare 8.
+- Flag (p2): The skill table's ticks are images, so page 2 was opened as an image. Ghost Captain: Combat, Shooting, Academic, Strength, Speed, Pirate. Screaming Ghosts: Combat, Strength, Speed, Pirate. Skeleton Mates: Combat, Shooting, Strength, Pirate. Sea Singer: Academic, Speed. There is no Special column, so the warband has no skill group of its own.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p2): The Ghost Equipment List is set in two columns and the right column repeats seven of the left column's lines (Cutlass, Double-handed weapon, Cursed Pistol, Pistol, Dueling Pistol, Toughened leathers, Helmet, Light armour) with no heading of its own, adding only Blunderbuss 30 gc and Handgun 35 gc. It is read as one list: the left column plus those two.
+- Flag (p2): The Skeleton Equipment List prints only three hand-to-hand weapons; the "Missile Weapons: Cursed Pistol" block in the right column follows the Bloated list's hand-to-hand block and is read as the Bloated list's.
+- Flag (p2): The Bloated list's Dagger is printed "2gc" with no "1st free", unlike the Ghost and Skeleton lists': as printed.
+- Flag (p2): The Cursed Pistol is a stub: 5 gc (10 for a brace), Common, Ghost Pirate warbands only. Its rules are on p2 and we hold no such weapon. Its Save Modifier is -2, not the usual pistol's, so the shared rule is worded its own way.
+- Flag (p4): The Bloated's No Pain line is printed about Gibbets, and his Squishy rule says he does not treat a stunned result as knocked down. The simpler reading is taken: the Bloated has Squishy and no No Pain.
+- Flag (p4): The Bloated are recruited by Special Recruitment (captured models who refuse) and no hire price is printed, so their cost is 0 gc.
+- Flag (p1): The Choice of Warriors calls the 25 gc henchmen group Crew; its own entry on p4 is headed "The Cursed", which is the name used here.
+- Flag (p1): The Sea Singer replaces a Screaming Ghost or a Skeleton Mate, and the warband may hold at most 5 heroes anyway; our templates hold no replacement rule, so the three counts stand as printed (1 + 2 + 2 + 1).
+- Flag (p1): A Ghost Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the undead take our Undead race, and the Sea Singer and the Cursed, who are living, our Human.
+- Flag (p3): The Ghost Captain's profile is M4 WS4 BS3 S4 T3 W1 I4 A1 Ld8 and the Sea Singer's M4 WS2 BS2 S2 T3 W1 I3 A1 Ld7: as printed.
+- Flag (p2): The Boat Hook (8 gc), the Belaying Pin (3 gc) and the Cat O' Nine Tails (8 gc) are ours already, at the Sartosa campaign rules' Equipment PDF prices; the line's Cat O' Nine Tails is 8 gc, which that PDF's trading list prints as 3 gc (open decision 20).
+- Flag (p2): The Blunderbuss line is 30 gc and the Handgun line 35 gc, as the Sartosa Equipment PDF's trading list has them; our Blunderbuss is Rare 9 and our Handgun Rare 8, which are unchanged (open decision 20).
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Grave Robbers
 
@@ -1446,6 +1556,22 @@ Kept apart from a family's, the effect differing:
 
 - Stub: Hellblade, 35 gc, Rare 8; its rules are on p2.
 - Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p2.
+- Price row (p10): our Cat O' Nine Tails for khorne-raiders, Common, Heroes only.
+- Price row (p10): our Blunderbuss for khorne-raiders, Rare 7.
+- Price row (p10): our Crossbow for khorne-raiders, Rare 8.
+- Price row (p10): our Crossbow pistol for khorne-raiders, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for khorne-raiders, Rare 8.
+- Price row (p10): our Duelling Pistol for khorne-raiders, Rare 8.
+- Price row (p10): our Handgun for khorne-raiders, Common.
+- Price row (p10): our Long Bow for khorne-raiders, Rare 5.
+- Price row (p10): our Pistol for khorne-raiders, Common.
+- Price row (p10): our Repeater Crossbow for khorne-raiders, Rare 10.
+- Price row (p10): our Repeater Pistol for khorne-raiders, Rare 10.
+- Price row (p10): our Heavy Armour for khorne-raiders, Rare 7.
+- Price row (p10): our Victuals for khorne-raiders, Common.
+- Price row (p10): our Riverboat for khorne-raiders, Rare 6.
+- Price row (p10): our Rowboat for khorne-raiders, Rare 5.
+- Price row (p10): our Bugman's Ale for khorne-raiders, Rare 8.
 - Flag (p2): The skill table is text (X ticks), read from the -layout text. The Dread Captain has no Shooting tick; the Pirate column, which this PDF does not print a skill list for, is ticked for the Dread Captain and the Cannibal Boys and is left out: see the decisions.
 - Flag (p3): The Dread Captain's profile is M4 WS4 BS4 S4 T3 W1 I4 A1 Ld8 and the Quartermaster's M4 WS4 BS0 S4 T4 W1 I2 A2 Ld7: as printed.
 - Flag (p2): The Hellblade is "(Captain only)" on the Pirate list and carries no such note on the Madbrain list, which the Quartermasters, Madbrains and Flayerkin buy from: as printed, so only the Pirate list's line is the Captain's.
@@ -1462,6 +1588,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Khorne Raiders buy them at 15 gc; neither PDF prints rules for them.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 - Flag (p2): Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5; their rules are on the Dwarf Slayer Cult's stub, which declares the item.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband.
 
 ### Knights of the Bitter Moors
 
@@ -1487,6 +1614,40 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Draich's Wizard rule takes one spell from the Chaos Rituals (ours) and one from the Rituals of Dhar, which we lack and the PDF doesn't print: only the Chaos Rituals are set. He is equipped with "weapons" from the Heroes list: he buys from the whole list.
 - Flag (p3): Daemon-Fimm "cannot be equipped with weapons" and wear armour from the Heroes list: they buy from that list's three armours only. The PDF doesn't say whether they fight unarmed without penalty. Daemon Soul and Spiked Tail link our shared mutations, which say the same.
 - Flag (p4): The henchmen's costs are read from each one's column: Shearls 55 gc, Fimir Warriors 180 gc. Monstrous makes a Fimir Warrior count as 2 models towards the maximum: not imported, the most stays 12.
+
+### Lothern Sea Patrol
+
+- Price row (p10): our Cat O' Nine Tails for lothern-sea-patrol, Common, Heroes only.
+- Price row (p10): our Blunderbuss for lothern-sea-patrol, Rare 7.
+- Price row (p10): our Crossbow for lothern-sea-patrol, Rare 8.
+- Price row (p10): our Crossbow pistol for lothern-sea-patrol, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for lothern-sea-patrol, Rare 8.
+- Price row (p10): our Duelling Pistol for lothern-sea-patrol, Rare 8.
+- Price row (p10): our Handgun for lothern-sea-patrol, Common.
+- Price row (p10): our Long Bow for lothern-sea-patrol, Rare 5.
+- Price row (p10): our Pistol for lothern-sea-patrol, Common.
+- Price row (p10): our Repeater Crossbow for lothern-sea-patrol, Rare 10.
+- Price row (p10): our Repeater Pistol for lothern-sea-patrol, Rare 10.
+- Price row (p10): our Heavy Armour for lothern-sea-patrol, Rare 7.
+- Price row (p10): our Victuals for lothern-sea-patrol, Common.
+- Price row (p10): our Riverboat for lothern-sea-patrol, Rare 6.
+- Price row (p10): our Rowboat for lothern-sea-patrol, Rare 5.
+- Price row (p10): our Bugman's Ale for lothern-sea-patrol, Rare 8.
+- Price row (p10): our Elf Bow for lothern-sea-patrol, Rare 9, High Elves only.
+- Price row (p10): our Hunting Arrows for lothern-sea-patrol, Rare 9, Lothern Sea Guard only.
+- Flag (p2): The skill table's ticks are images, so page 2 was opened as an image. Commodore: Combat, Shooting, Academic, Speed, Pirate, Special. Mist Mage: Academic, Speed, Special. Bossun: Combat, Shooting, Speed, Pirate, Special. None of the three ticks Strength.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p2): The Warrior Equipment List is set in two columns and the right column repeats Long Bow 15 gc and the armour block (Shield 5, Helmet 10, Light armour 20) with no heading of its own, adding Elf Bow 35 gc and Throwing Knives 15 gc. It is read as one list: the left column plus those two.
+- Flag (p2): The Ranger Equipment List prints hand-to-hand weapons and a Bow and no armour at all; the armour block in the right column follows the Recruit list's missile block and is read as the Recruit list's. As printed, a Sea Ranger buys no armour from his list.
+- Flag (p2): The Warrior and Ranger lists sell an Ithilmar Weapon at "2 x Cost", a multiplier and not a number, so its line carries no price of its own and reads "2 x Cost", as the Dwarf Treasure Hunters' Gromril line does. Ours is Rare 9 at three times the price, which is unchanged.
+- Flag (p2): The Ithilmar Armour line is 60 gc (the footnote says Ithilmar is cheaper for them at creation); ours is 90 gc, Rare 11, which is unchanged. The Elf Bow line is 35 gc; ours is 35 + 3D6 gc, Rare 12, which is unchanged.
+- Flag (p4): Raw Recruits are taken by Special Recruitment and "may be hired like normal", but no hire price is printed, so their cost is 0 gc.
+- Flag (p3): The Honours are bought once, at recruitment, and change a Hero's rules, skills, list and stats. Our template holds no upgrade list for a PDF warband, so they are the warband rule Honours, with every cost as printed. See the decisions.
+- Flag (p2): Fey Quickness is our skill of that name and effect (a 6, or a 4+ with Dodge or Step Aside), so it is linked rather than written again. Swordmasters Protege and Infiltration each name who may take them. Swordmasters Protege is a new skill, so its limit opens its description; Infiltration is our skill, so its limit sits in the group's note.
+- Flag (p5): The Spells of the Lothern Sea are the Spells of the Djedhi we already hold, with the fourth, Fleeting Shadows, replaced by Mistress of the Deep (difficulty 8). The lore is added as its own, taking our wording for the five that are the same.
+- Flag (p1): The warband must hold between 3 and 12 models: our templates hold no minimum, so only the maximum of 12 is imported. No henchmen group sizes and no maximum profile are printed: the warband takes our Elf race, the Raw Recruits included, though their entry says some are not full elves.
+- Flag (p3): The Commodore's profile is M5 WS5 BS4 S3 T3 W1 I5 A1 Ld9 and the Bossun's M5 WS4 BS4 S3 T3 W1 I5 A1 Ld8: as printed.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Low Kings
 
@@ -1609,6 +1770,41 @@ Kept apart from a family's, the effect differing:
 - Flag (p5): Sharp Stuff (1st free, then 3 gc, Common, Gnoblars only; range 8", S2, No Limit, Thrown Weapon, +1 armour save, Stuff Thrower) and the Pigback Mount (50 gc, Common, Gnoblar Heroes only; M5 WS2 BS- S2 T- W1 I3 A1 Ld5, Like a Mount, Not Like a Mount, Extra Hand) are stubs, their rules on p5.
 - Flag (p6): The special skills are a new group, Ogre Hunting Party. Crude Belch, Maneater, Bull Charge, Bellowing Roar and Infiltration are ours, word for word in effect (our Maneater adds that the Guide can't take it); being shared, which race may take them is the group's note, while Set Traps and Netter open with "Gnoblars only". Scent Hound (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, under another name, so it is kept apart (William, 6 Nov 2026: "sep"). Netter is named apart: ours throws a net at a charger, theirs gives 3 nets each game.
 
+### Orc Pirates & Savage Orcs
+
+- Stub: Booma Pistol, 20 gc, Common; its rules are on p4.
+- Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p7.
+- Price row (p10): our Cat O' Nine Tails for orc-pirates-and-savage-orcs, Common, Heroes only.
+- Price row (p10): our Blunderbuss for orc-pirates-and-savage-orcs, Rare 7.
+- Price row (p10): our Crossbow for orc-pirates-and-savage-orcs, Rare 8.
+- Price row (p10): our Crossbow pistol for orc-pirates-and-savage-orcs, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for orc-pirates-and-savage-orcs, Rare 8.
+- Price row (p10): our Duelling Pistol for orc-pirates-and-savage-orcs, Rare 8.
+- Price row (p10): our Handgun for orc-pirates-and-savage-orcs, Common.
+- Price row (p10): our Long Bow for orc-pirates-and-savage-orcs, Rare 5.
+- Price row (p10): our Pistol for orc-pirates-and-savage-orcs, Common.
+- Price row (p10): our Repeater Crossbow for orc-pirates-and-savage-orcs, Rare 10.
+- Price row (p10): our Repeater Pistol for orc-pirates-and-savage-orcs, Rare 10.
+- Price row (p10): our Heavy Armour for orc-pirates-and-savage-orcs, Rare 7.
+- Price row (p10): our Victuals for orc-pirates-and-savage-orcs, Common.
+- Price row (p10): our Riverboat for orc-pirates-and-savage-orcs, Rare 6.
+- Price row (p10): our Rowboat for orc-pirates-and-savage-orcs, Rare 5.
+- Price row (p10): our Bugman's Ale for orc-pirates-and-savage-orcs, Rare 8.
+- Flag (p2): This PDF is two variations on the Orc Mob (Da Mob) list, not a list of its own: "The Orc Pirates use the exact same rules as the Da Mob Warband with the following changes". The template is built from our Orc Mob template with the PDF's changes, and no page was opened as an image: there is no skill table, and the only image in the file is a 15x15 bullet.
+- Flag (p2): The PDF prints no Pirate column and no Pirate skill list, so this warband does not join the shared Sartosa Pirate Skills group. See the decisions.
+- Flag (p3): The Boss, the Big 'Uns and the Orc Boyz are "same as Da Mob", so their costs, profiles, starting experience, counts and skill access are our Orc Mob template's. The Orc Shaman is kept, since the Goblin Enjuneer replaces him rather than removing him; our templates hold no replacement rule.
+- Flag (p3): The Goblin Enjuneer's skills are "Combat, Shooting, Speed. He may also learn the Orc Skill Waaagh", so he ticks no Special column of his own and names our Orcs group; the other heroes name it too, as Da Mob's do.
+- Flag (p4): The Sea Troll's Regeneration (a 4+ to ignore a wound) is not the Bounty of Arkhar mutation Regeneration (heal to full Wounds), so it is kept apart as "Regeneration (Sea Troll)". The Sea Squig and the Sea Troll are the Cave Squig and the Troll of Da Mob with the PDF's changes, at their Da Mob costs (15 gc and 200 gc, "the normal amount"). The Sea Troll loses the Vomit Attack and gains Aquatic and Slimy.
+- Flag (p4): A Sea Squig moves 2D6-1" on land and swims 2D6". Our profile takes only a plain dice value, so his Movement is 2D6 and his Movement rule holds both numbers.
+- Flag (p3): Goblin Swabbies replace Goblin Warriors at 12 gc and never gain experience, so unlike Da Mob's Goblin Warriors they may not be promoted.
+- Flag (p5): The Savage Orc variation is the second half of the same PDF and serves the same warband type. Our templates hold no variants for a PDF page, so its rules are warband rules of their own, each named "Savage Orc variation: ...", and its two equipment lists are carried beside the Orc Pirate ones: every Orc buys from the Orc and the Savage Orc lists and every Goblin from the Goblin Swabbie and the Forest Goblin lists, and the warband rule says which pair a Savage Orc warband uses. Both pairs sell a free first dagger, and a hire gets only one. See the decisions.
+- Flag (p6): The Savage Orc Equipment List's "Throwing Axe" is our Throwing Axes, the Dwarf Slayer Cult's stub (2a), declared here too so this warband buys them at 15 gc, Rare 5, as the Sartosa Equipment PDF's trading list has them. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already.
+- Flag (p6): Page 6 carries a block of the designers' discussion below the equipment lists ("Wardance - could end up in the same place you were before..."), which is not rules and is not imported.
+- Flag (p6): The Forest Goblin list sells a Short Bow at 10 gc where the Goblin Swabbie list and our catalogue have it at 5 gc: each line keeps its own price. Its "Throwing weapons . . . 15 gc" names no weapon; it is read as our Throwing Knives/Stars, which that price matches.
+- Flag (p2): The Orc list's Toughened leathers are 7 gc, where every other Sartosa list and our catalogue have them at 5 gc: as printed, for both the Orc and the Goblin Swabbie lists.
+- Flag (p4): The Booma Pistol is a stub: 20 gc (40 for a brace), Common, Greenskins only, its rules on p4. The Fire Bomb line is 35 gc; ours is 35 + 2D6 gc, Rare 9, which is unchanged.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband.
+
 ### Outlaws of Stirwood Forest, Redux
 
 - Flag (p2): Pages 2 to 4 are images (choice of warriors, starting experience, skill table, heroes, henchmen and the Forest Cloak's entry), read from the page images; page 2's lists are also in the text layer.
@@ -1617,6 +1813,40 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): Mace and Hammer are two lines, both our Club, Mace or Hammer, shown as Mace and Hammer. List prices as printed: Hunting Arrows 30 gc (ours 25), Forest Cloak 45 gc (the PDF's own entry, p4, and ours: 50 gc, Rare 10).
 - Flag (p3): A Cleric may only be taken instead of a Champion or a Petty Thief: our counts can't tie one fighter's count to another's, so it is his rule.
 - Flag (p3): The Leader rule says "her Leadership" and the Cleric's equipment line names "A Warrior Priest": read as the Bandit Leader and the Cleric. The Cleric casts from our Prayers of Sigmar.
+
+### Pirates of the Cathayan Sea
+
+- Stub: Cathayan Plate Armour, 120 gc, Rare 11; its rules are on p5.
+- Price row (p5): our Dragon Sword for pirates-of-the-cathayan-sea, Rare 10.
+- Price row (p10): our Cat O' Nine Tails for pirates-of-the-cathayan-sea, Common, Heroes only.
+- Price row (p10): our Blunderbuss for pirates-of-the-cathayan-sea, Rare 7.
+- Price row (p10): our Crossbow for pirates-of-the-cathayan-sea, Rare 8.
+- Price row (p10): our Crossbow pistol for pirates-of-the-cathayan-sea, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for pirates-of-the-cathayan-sea, Rare 8.
+- Price row (p10): our Duelling Pistol for pirates-of-the-cathayan-sea, Rare 8.
+- Price row (p10): our Handgun for pirates-of-the-cathayan-sea, Common.
+- Price row (p10): our Long Bow for pirates-of-the-cathayan-sea, Rare 5.
+- Price row (p10): our Pistol for pirates-of-the-cathayan-sea, Common.
+- Price row (p10): our Repeater Crossbow for pirates-of-the-cathayan-sea, Rare 10.
+- Price row (p10): our Repeater Pistol for pirates-of-the-cathayan-sea, Rare 10.
+- Price row (p10): our Heavy Armour for pirates-of-the-cathayan-sea, Rare 7.
+- Price row (p10): our Victuals for pirates-of-the-cathayan-sea, Common.
+- Price row (p10): our Riverboat for pirates-of-the-cathayan-sea, Rare 6.
+- Price row (p10): our Rowboat for pirates-of-the-cathayan-sea, Rare 5.
+- Price row (p10): our Bugman's Ale for pirates-of-the-cathayan-sea, Rare 8.
+- Flag (p2): The skill table's ticks are images, so page 2 was opened as an image. Disgraced Warlord: all seven columns. Shanghai'er: Combat, Shooting, Speed, Pirate, Special. Dragon Monk: Combat, Academic, Strength, Speed, Pirate, Special. Litter Bearer: Combat, Speed, Pirate, Special.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p2): A stray "Toughened Leathers . . . 5 gc" line sits above the Gunner Equipment List heading, in the right column and under no heading. Both the Pirate list and the Gunner list already sell Toughened Leathers at 5 gc, so it is left out.
+- Flag (p5): The Katana (20 gc, Rare 10; close combat, As user +1, Two-handed and Parry) is our Dragon Sword, which carries "In some older material, the Dragon Sword was referred to as Katana" and holds the same price, rarity and rules: the lines link it and show it as Katana, and the warband gets a price row of its own at Rare 10. Cathayan Plate Armour (120 gc, Rare 11; a 4+ save and -1 Movement with a shield) is a stub.
+- Flag (p2): The Quarterstaff, Chain sticks, Cathayan Candles, Fish-Hook Shot and Swivel Gun with its three ammunitions are ours already, shown under this list's names. The Monk list sells Throwing Stars at 10 gc, where the Pirate list sells Throwing Stars/Knives at 15 gc: both are our Throwing Knives/Stars, each at its own line's price.
+- Flag (p2): The Cathayan Candles line is "25+D6 gc". A list line carries only a whole number, so it is 25 gc; our item is 25 + D6 gc, Rare 9, which is unchanged and is what the store charges.
+- Flag (p2): The Pirate list's Heavy Armour is 50 gc, as ours is; the Sartosa Equipment PDF's trading list prints Heavy Armour at 50 gc Rare 7, where ours is Common (open decision 20).
+- Flag (p4): Floordogs are taken by Special Recruitment and no hire price is printed, so their cost is 0 gc.
+- Flag (p1): The Dragon Monk replaces a Shanghai'er, so the warband holds at most 5 heroes; our templates hold no replacement rule, so the four counts stand as printed (1 + 2 + 1 + 2).
+- Flag (p1): A Cathay Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
+- Flag (p4): The Martial Artist's Agile (he counts as carrying a Rope & Hook and re-rolls failed Initiative tests for climbing and leaping) is not the Grace of Shornaal mutation Agile (+1 to Initiative tests), so it is kept apart as "Agile (Martial Artist)". The Dragon Monk's rule Art of Silent Death and the special skill Art of the Silent Death are worded differently and do different things (the rule is about a quarterstaff, the skill about an extra attack), so both are kept.
+- Flag (p3): The Litter Bearer is listed under the Heroes, with a row in the skill table, and starts with 0 experience: as printed.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Protectorate Of Sigmar
 
@@ -1636,6 +1866,22 @@ Kept apart from a family's, the effect differing:
 
 ### Sartosan Pirates
 
+- Price row (p10): our Cat O' Nine Tails for sartosan-pirates, Common, Heroes only.
+- Price row (p10): our Blunderbuss for sartosan-pirates, Rare 7.
+- Price row (p10): our Crossbow for sartosan-pirates, Rare 8.
+- Price row (p10): our Crossbow pistol for sartosan-pirates, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for sartosan-pirates, Rare 8.
+- Price row (p10): our Duelling Pistol for sartosan-pirates, Rare 8.
+- Price row (p10): our Handgun for sartosan-pirates, Common.
+- Price row (p10): our Long Bow for sartosan-pirates, Rare 5.
+- Price row (p10): our Pistol for sartosan-pirates, Common.
+- Price row (p10): our Repeater Crossbow for sartosan-pirates, Rare 10.
+- Price row (p10): our Repeater Pistol for sartosan-pirates, Rare 10.
+- Price row (p10): our Heavy Armour for sartosan-pirates, Rare 7.
+- Price row (p10): our Victuals for sartosan-pirates, Common.
+- Price row (p10): our Riverboat for sartosan-pirates, Rare 6.
+- Price row (p10): our Rowboat for sartosan-pirates, Rare 5.
+- Price row (p10): our Bugman's Ale for sartosan-pirates, Rare 8.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -1644,6 +1890,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
 - Flag (p2): The four 'Old' Pirate Skills are our Sea Shanty Singer, Cutlass Master, Booming Voice and Hardy Constitution, the same words; they are the Sartosan Pirates' own group here, while our Pirates group (the 1b Pirate warband's) holds them with Sea Legs and Swashbuckler besides.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Sea Ghosts
 
@@ -1691,6 +1938,22 @@ Kept apart from a family's, the effect differing:
 - Stub: Double-barreled Blunderbuss, 60 gc, Rare 11; its rules are on p1.
 - Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p2.
 - Price row (p2): our dwarf axe for slayer-pirates, Rare 9.
+- Price row (p10): our Cat O' Nine Tails for slayer-pirates, Common, Heroes only.
+- Price row (p10): our Blunderbuss for slayer-pirates, Rare 7.
+- Price row (p10): our Crossbow for slayer-pirates, Rare 8.
+- Price row (p10): our Crossbow pistol for slayer-pirates, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for slayer-pirates, Rare 8.
+- Price row (p10): our Duelling Pistol for slayer-pirates, Rare 8.
+- Price row (p10): our Handgun for slayer-pirates, Common.
+- Price row (p10): our Long Bow for slayer-pirates, Rare 5.
+- Price row (p10): our Pistol for slayer-pirates, Common.
+- Price row (p10): our Repeater Crossbow for slayer-pirates, Rare 10.
+- Price row (p10): our Repeater Pistol for slayer-pirates, Rare 10.
+- Price row (p10): our Heavy Armour for slayer-pirates, Rare 7.
+- Price row (p10): our Victuals for slayer-pirates, Common.
+- Price row (p10): our Riverboat for slayer-pirates, Rare 6.
+- Price row (p10): our Rowboat for slayer-pirates, Rare 5.
+- Price row (p10): our Bugman's Ale for slayer-pirates, Rare 8.
 - Flag (p2): The skill table is text (X ticks), read from the -layout text. The Pirate column, which this PDF does not print a skill list for, is ticked for all three Heroes and is left out: see the decisions.
 - Flag (p1): Sea Trollslayers are listed with the Heroes' starting experience (0) but have no row in the skill table and no limit on their number, so they are read as henchmen.
 - Flag (p1): A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Dwarf race.
@@ -1709,6 +1972,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The Double-barreled Blunderbuss's rules are in the Sartosa campaign rules' Equipment PDF (p1): Strength 3, Shot, Fire Twice and Misfire. Its trading-list price (p10) is 60 gc, Rare 11, the same as the line's.
 - Flag (p2): Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5.
 - Flag (p2): the Sartosa campaign rules' Equipment PDF's trading list (p10) prints the Dwarven Axe at 15 gc, Rare 8, Dwarves only, as ours is; this warband's own list prints Rare 9, which its price row keeps. The warband PDF's number stands.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband.
 
 ### Snotlings
 
@@ -1809,6 +2073,22 @@ Kept apart from a family's, the effect differing:
 ### Wasteland Privateers
 
 - Price row (p2): our Superior Blackpowder for wasteland-privateers, Rare 5.
+- Price row (p10): our Cat O' Nine Tails for wasteland-privateers, Common, Heroes only.
+- Price row (p10): our Blunderbuss for wasteland-privateers, Rare 7.
+- Price row (p10): our Crossbow for wasteland-privateers, Rare 8.
+- Price row (p10): our Crossbow pistol for wasteland-privateers, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for wasteland-privateers, Rare 8.
+- Price row (p10): our Duelling Pistol for wasteland-privateers, Rare 8.
+- Price row (p10): our Handgun for wasteland-privateers, Common.
+- Price row (p10): our Long Bow for wasteland-privateers, Rare 5.
+- Price row (p10): our Pistol for wasteland-privateers, Common.
+- Price row (p10): our Repeater Crossbow for wasteland-privateers, Rare 10.
+- Price row (p10): our Repeater Pistol for wasteland-privateers, Rare 10.
+- Price row (p10): our Heavy Armour for wasteland-privateers, Rare 7.
+- Price row (p10): our Victuals for wasteland-privateers, Common.
+- Price row (p10): our Riverboat for wasteland-privateers, Rare 6.
+- Price row (p10): our Rowboat for wasteland-privateers, Rare 5.
+- Price row (p10): our Bugman's Ale for wasteland-privateers, Rare 8.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -1819,6 +2099,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): "any Henchmen Gunners may fire and reload Handguns in the same turn": the rule is the warband's, as the Gunner group is the only one it names.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 - Flag (p2): "When purchasing Superior Gunpowder, it counts as Rarity 5" is our Superior Blackpowder (William, 11 Nov 2026: "make superior gunpowder our blackpowder in a new price row"): a price row of their own at 30 gc, Rare 5. No line of theirs sells it, and 30 gc is both ours and the Sartosa campaign rules' Equipment PDF's trading-list price (p10, Rare 11).
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Watchmen
 

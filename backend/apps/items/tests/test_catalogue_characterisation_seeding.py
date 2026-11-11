@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 45,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit and the Fimir
-                "Item": 430,  # the import's 371 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
+                "Item": 433,  # the import's 371 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 53,  # the import's shared rules, the Metal Mongers' Experimental Technology and the Watchmen's Map among them
                 "Skill": 386,  # the import's 362 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 97,  # the import's 78 + a group of his own for each of 19 hired swords
@@ -106,7 +106,7 @@ class SeedAllTests(TestCase):
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov);
                 # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
                 # the second PDF batch's five templates add 46 of their own, the third's five 54,
-                # the fifth's five 43, the sixth's eight 83, the seventh's seven 52 and the Mousillon batch's six 28 (7 of them the Blood Dragons' bloodline upgrades, less the Killing Blow their Wight holds too)
+                # the fifth's five 43, the sixth's eight 83, the seventh's seven 52 and the Mousillon batch's six 28 and the ninth's four 51 (7 of them the Blood Dragons' bloodline upgrades, less the Killing Blow their Wight holds too)
                 # Border Town Burning's Beasts of the East add 31 of their own to special.json (William, 7 Nov 2026)
                 # Frenzy, Hate High Elves, Hate Bandits and Outlaws and Hate Spellcasters shared (William, 7 Nov 2026):
                 # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4; a
@@ -627,7 +627,7 @@ class SeedAllTests(TestCase):
         # and nine groups are new, each its warband type's alone
         infiltration = Skill.objects.get(name="Infiltration")
         held_by = set(infiltration.group_links.values_list("group__name", flat=True))
-        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren", "Channel Rats", "Underworld Alliance", "Dark Elf Corsairs", "Woodsmen de Artois"})  # fmt: skip
+        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren", "Channel Rats", "Underworld Alliance", "Dark Elf Corsairs", "Woodsmen de Artois", "Lothern Sea Patrol"})  # fmt: skip
         self.assertTrue(infiltration.description.startswith("A warrior with this skill is always placed"))
         self.assertEqual(set(Skill.objects.get(name="Infiltration (Skink)").group_links.values_list("group__name", flat=True)), {"Skink"})  # fmt: skip
         self.assertTrue(Skill.objects.filter(name="Battle Tongue").exists())

@@ -1180,6 +1180,22 @@
     "description": "The Knight may re-roll any failed rolls to wound against an enemy with a higher natural Strength than his."
   },
   {
+    "name": "Graceful Strength",
+    "description": "The Elf may use a double-handed weapon without striking last; work out the order of blows as for any other weapon."
+  },
+  {
+    "name": "Swordmasters Protege",
+    "description": "Swordmasters only. When armed with a double-handed weapon he may parry as if armed with a sword and a buckler."
+  },
+  {
+    "name": "Defending Guard",
+    "description": "The warrior may parry a blow made against any warrior within 1\" of him, but still only once a turn. He may not use this while stunned or knocked down."
+  },
+  {
+    "name": "Swift Fighter",
+    "description": "At the end of any hand-to-hand combat phase, either player's, the Elf may take a Leadership test if he is still in base contact with an enemy. If he passes he may make a normal move away from the enemy, who strikes no blows at him; he may not run or charge. If he fails he stays in combat and fights as normal the following turn. If he also knows the Pirate skill Swashbuckler, he may make one attempt to escape combat and re-roll it once if it fails."
+  },
+  {
     "name": "Surgeon",
     "description": "Mad Scientist only. He may re-roll one die of a single injury roll of one of his warriors; the second roll stands."
   },
@@ -1246,6 +1262,42 @@
   {
     "name": "Netter (Ogre Hunting Party)",
     "description": "Gnoblars only. The Hero starts every game with 3 nets. They can't be sold, traded or given to another warrior, and any he doesn't use are gone after the game; he starts the next game with 3 again, at no cost."
+  },
+  {
+    "name": "Surge",
+    "description": "Savage Orc warbands only, and the warband's leader only. Once a game, when testing for animosity that turn every model treats a roll of 5 or 6 as a Waaagh! and the leader counts as having rolled a 6. A model who rolls a 1 still squabbles, and for that turn a hero who rolls a 1 attacks his fellow warband members."
+  },
+  {
+    "name": "Wardance",
+    "description": "Savage Orc warbands only. Once a game, at the start of the turn, the Hero may dance if he is not already in combat. Every warrior in the warband is frenzied until the start of the next turn. A warband may be affected by only one Wardance in a game, however many models have the skill."
+  },
+  {
+    "name": "Savage Frenzy",
+    "description": "Savage Orc warbands only. The warrior is subject to frenzy and may never lose it, but if he is knocked down or stunned he is also stupid for the rest of the game. He tests for stupidity first, and a failed test means he may not charge this turn."
+  },
+  {
+    "name": "The Power of Man's Red Flower",
+    "description": "Savage Orc warbands only. The warrior no longer fears fire and may use a lantern or a torch."
+  },
+  {
+    "name": "Angel of the Sword",
+    "description": "Wielding a Katana, the model chooses each round of combat either an extra attack or a re-roll of his parry. He declares it at the start of the combat phase, before warriors roll for Initiative."
+  },
+  {
+    "name": "Knowledge of Shadows",
+    "description": "Whenever the warrior charges a warrior who could not see him from the start of this turn, because he was hidden or charged on an Initiative test, he gains +1 to hit and +1 on injury rolls."
+  },
+  {
+    "name": "Art of the Silent Death",
+    "description": "The warrior may use his bare hands as weapons with no penalty. Doing so he causes a critical hit on a natural 5 or 6, and gains an attack as if wielding two weapons. At the start of any round he may choose to wield a weapon in any of his hands, but then loses the critical hit on a 5."
+  },
+  {
+    "name": "Energy Focus",
+    "description": "Dragon Monks only. Fighting unarmed, the Hero may give up any number of his Attacks, each for +1 Strength in close combat."
+  },
+  {
+    "name": "Monk Weaponry",
+    "description": "The Hero may use any hand-to-hand or missile weapon from the Monk Equipment list, and may learn Energy Focus."
   },
   {
     "name": "Iron Will",

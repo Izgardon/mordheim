@@ -1476,6 +1476,26 @@
       "how": "overrides.json"
     },
     {
+      "name": "Graceful Strength",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Swordmasters Protege",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Defending Guard",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Swift Fighter",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
       "name": "Surgeon",
       "setting": "sylvania",
       "how": "overrides.json"
@@ -1558,6 +1578,51 @@
     {
       "name": "Netter (Ogre Hunting Party)",
       "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Surge",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Wardance",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Savage Frenzy",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "The Power of Man's Red Flower",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Angel of the Sword",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Knowledge of Shadows",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Art of the Silent Death",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Energy Focus",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Monk Weaponry",
+      "setting": "sartosa",
       "how": "overrides.json"
     },
     {

@@ -1,0 +1,794 @@
+{
+  "warbandType": "lothern-sea-patrol",
+  "name": "Lothern Sea Patrol",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Lothern%20Sea%20Patrol.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {
+      "rulename": "Excellent Eyes",
+      "ruleFull": "When spotting a hidden enemy, a member of the warband adds +2 to the distance at which he can spot him."
+    },
+    {
+      "rulename": "Look Rich",
+      "ruleFull": "The warband pays double upkeep for any Hired Sword who is not an Elf. It may hire only Elven or human Hired Swords, never a Dark Elf and never a witch."
+    },
+    {
+      "rulename": "Fine Craftwork",
+      "ruleFull": "A member of the warband may wear no heavy armour other than Ithilmar armour. He may still use a magical armour he comes by."
+    },
+    {
+      "rulename": "Honourable",
+      "ruleFull": "A member of the warband may never use a poison or a drug, and the warband may hire no Hired Sword who uses one."
+    },
+    {
+      "rulename": "Teetotalers",
+      "ruleFull": "A member of the warband may drink no alcohol other than Elf Wine."
+    },
+    {
+      "rulename": "Swabbies",
+      "ruleFull": "The warband may capture Swabbies. One who agrees joins the Ship's Company; one who refuses joins the Raw Recruits."
+    },
+    {
+      "rulename": "A Note on Blackpowder",
+      "ruleFull": "The warband starts with no blackpowder weapon of any kind and no list sells one, but nothing forbids one: a Hero with the Weapons Expert skill may use any powder weapon he finds."
+    },
+    {
+      "rulename": "Honours",
+      "ruleFull": "A Hero may buy one honour, and only one, when he is recruited; he may never gain another later. Pure of Heart, 5 gc: he passes the first Leadership test he must take each game, rout tests excepted if he is the leader, but he may not charge a stunned foe. Spearmaster, 10 gc: in the first round of combat with a spear he adds +1 Strength and may re-roll one failed roll to hit. Swordmaster, 10 gc: +1 Weapon Skill and he starts with the Graceful Strength skill, but he may never use a missile weapon and may never raise his Ballistic Skill. Sea Guard, 10 gc: besides the Warrior Equipment list he may buy and use an Elf Bow without further training, and with a spear he fights at +2 Initiative when working out the order of blows. White Lion, 20 gc: he starts with Strength 4 and a white lion pelt, a cloak giving +1 to his armour save against missile attacks, which only a White Lion may wear and costs 10 gc to replace with no rarity roll; he may never use a spear and loses access to Shooting skills, though he may use missile weapons as normal. Phoenix Guard, 15 gc: only one Hero in the warband may take it. He may not speak, so he may not be the warband's leader and may not look for rare items; he is immune to psychology and rolls two dice for exploration. An immune leader still rolls for rout. Ranger, 10 gc: only one Hero in the warband may take it. He must carry a long bow or an Elf Bow at all times, and one must be bought for him as soon as the warband can. He buys from the Ranger Equipment list instead of the Warrior Equipment list and gains Seeker, which lets him change one dice roll in the exploration phase by +1 or -1. Loremaster, 10 gc, or 15 gc for a Bossun: he starts with an Academic skill of your choice, and a Bossun who takes this honour may also learn Academic skills."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "warrior-equipment-list",
+      "title": "Warrior Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Ithilmar Weapon",
+          "alias": "Ithilmar Weapon",
+          "cost": {
+            "cost": 0,
+            "costPrefix": "2 x Cost"
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Long Bow",
+          "alias": "Long Bow",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Elf Bow",
+          "alias": "Elf Bow",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "throwing knives",
+          "alias": "Throwing Knives",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "Ithilmar Armour",
+          "alias": "Ithilmar Armour",
+          "cost": {
+            "cost": 60
+          }
+        }
+      ]
+    },
+    {
+      "id": "ranger-equipment-list",
+      "title": "Ranger Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Ithilmar Weapon",
+          "alias": "Ithilmar Weapon",
+          "cost": {
+            "cost": 0,
+            "costPrefix": "2 x Cost"
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "recruit-equipment-list",
+      "title": "Recruit Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Boat Hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-Handed Weapons",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Belaying Pins",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened Leathers",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "commodore",
+      "type": "hero",
+      "name": "Commodore",
+      "plural": "Commodores",
+      "race": "elf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {
+        "m": 5,
+        "ws": 5,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 5,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "warrior-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Commodore may use his Leadership for any Leadership test."
+        }
+      ]
+    },
+    {
+      "id": "mist-mage",
+      "type": "hero",
+      "name": "Mist Mage",
+      "plural": "Mist Mages",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 10,
+      "statblock": {
+        "m": 5,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "warrior-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "spellLores": [
+        "Spells of the Lothern Sea"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Wizard",
+          "ruleFull": "A Mist Mage is a wizard and casts from the Spells of the Lothern Sea list."
+        },
+        {
+          "rulename": "No Armour",
+          "ruleFull": "A Mist Mage may not wear armour while casting spells."
+        }
+      ]
+    },
+    {
+      "id": "bossun",
+      "type": "hero",
+      "name": "Bossun",
+      "plural": "Bossuns",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 50,
+      "startingXp": 8,
+      "statblock": {
+        "m": 5,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 5,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "warrior-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Disciplined",
+          "ruleFull": "Any warrior within 3\" of a Bossun may use his Leadership instead of his own."
+        }
+      ]
+    },
+    {
+      "id": "ships-company",
+      "type": "henchman",
+      "name": "Ship's Company",
+      "plural": "Ship's Company",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "warrior-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "seaguard",
+      "type": "henchman",
+      "name": "Seaguard",
+      "plural": "Seaguards",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 5,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "warrior-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Spear Master",
+          "ruleFull": "In the first round of combat with a spear, a Seaguard adds +1 Strength and may re-roll one failed roll to hit."
+        }
+      ]
+    },
+    {
+      "id": "sea-ranger",
+      "type": "henchman",
+      "name": "Sea Ranger",
+      "plural": "Sea Rangers",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "ranger-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Hide in Shadows",
+          "ruleFull": "An opponent trying to spot a Sea Ranger halves his Initiative."
+        },
+        {
+          "rulename": "Hate Dark Elves",
+          "ruleFull": "A Sea Ranger hates Dark Elves."
+        }
+      ]
+    },
+    {
+      "id": "raw-recruit",
+      "type": "henchman",
+      "name": "Raw Recruit",
+      "plural": "Raw Recruits",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 0,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 5,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "recruit-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Specially Hired",
+          "ruleFull": "Raw Recruits may be hired as normal, and may also be taken the way Swabbies are."
+        },
+        {
+          "rulename": "Never Gain Experience",
+          "ruleFull": "A Raw Recruit never gains experience."
+        },
+        {
+          "rulename": "Rabble",
+          "ruleFull": "Raw Recruits need not be armed alike. Each may be given different equipment, but only from the Recruit Equipment list. A Raw Recruit may never use magic or cast a spell of any kind, whatever his background."
+        },
+        {
+          "rulename": "Oh dear, they got away",
+          "ruleFull": "If the warband routs, every Raw Recruit who had already left the table in an earlier turn is taken to have escaped: remove him from the roster as if he had been killed."
+        },
+        {
+          "rulename": "Don't mind them, they aren't true elves",
+          "ruleFull": "A Raw Recruit who is running away or has been taken out of action does not count towards the warband's rout test."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Lothern Sea Patrol",
+    "new": true,
+    "note": "Infiltration: a Hero with the Ranger honour and a promoted Sea Ranger only."
+  },
+  "specialSkillsList": [
+    {
+      "name": "Graceful Strength",
+      "description": "The Elf may use a double-handed weapon without striking last; work out the order of blows as for any other weapon."
+    },
+    {
+      "name": "Fey Quickness",
+      "ours": "Fey Quickness"
+    },
+    {
+      "name": "Swordmasters Protege",
+      "description": "Swordmasters only. When armed with a double-handed weapon he may parry as if armed with a sword and a buckler."
+    },
+    {
+      "name": "Defending Guard",
+      "description": "The warrior may parry a blow made against any warrior within 1\" of him, but still only once a turn. He may not use this while stunned or knocked down."
+    },
+    {
+      "name": "Swift Fighter",
+      "description": "At the end of any hand-to-hand combat phase, either player's, the Elf may take a Leadership test if he is still in base contact with an enemy. If he passes he may make a normal move away from the enemy, who strikes no blows at him; he may not run or charge. If he fails he stays in combat and fights as normal the following turn. If he also knows the Pirate skill Swashbuckler, he may make one attempt to escape combat and re-roll it once if it fails."
+    },
+    {
+      "name": "Infiltration",
+      "ours": "Infiltration"
+    }
+  ],
+  "priceRows": [
+    {
+      "name": "Cat O' Nine Tails",
+      "cost": 3,
+      "rarity": null,
+      "dice": null,
+      "page": 10,
+      "note": "Heroes only"
+    },
+    {
+      "name": "Blunderbuss",
+      "cost": 30,
+      "rarity": 7,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Crossbow",
+      "cost": 25,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Crossbow pistol",
+      "cost": 35,
+      "rarity": 11,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Double-barrelled Pistol",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Duelling Pistol",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Handgun",
+      "cost": 35,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Long Bow",
+      "cost": 15,
+      "rarity": 5,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Pistol",
+      "cost": 15,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Repeater Crossbow",
+      "cost": 40,
+      "rarity": 10,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Repeater Pistol",
+      "cost": 40,
+      "rarity": 10,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Heavy Armour",
+      "cost": 50,
+      "rarity": 7,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Victuals",
+      "cost": 10,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Riverboat",
+      "cost": 100,
+      "rarity": 6,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Rowboat",
+      "cost": 40,
+      "rarity": 5,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Bugman's Ale",
+      "cost": 50,
+      "rarity": 8,
+      "dice": 3,
+      "page": 10
+    },
+    {
+      "name": "Elf Bow",
+      "cost": 35,
+      "rarity": 9,
+      "dice": 3,
+      "page": 10,
+      "note": "High Elves only"
+    },
+    {
+      "name": "Hunting Arrows",
+      "cost": 25,
+      "rarity": 9,
+      "dice": 1,
+      "page": 10,
+      "note": "Lothern Sea Guard only"
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {
+      "page": 2,
+      "what": "The skill table's ticks are images, so page 2 was opened as an image. Commodore: Combat, Shooting, Academic, Speed, Pirate, Special. Mist Mage: Academic, Speed, Special. Bossun: Combat, Shooting, Speed, Pirate, Special. None of the three ticks Strength."
+    },
+    {
+      "page": 1,
+      "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
+    },
+    {
+      "page": 2,
+      "what": "The Warrior Equipment List is set in two columns and the right column repeats Long Bow 15 gc and the armour block (Shield 5, Helmet 10, Light armour 20) with no heading of its own, adding Elf Bow 35 gc and Throwing Knives 15 gc. It is read as one list: the left column plus those two."
+    },
+    {
+      "page": 2,
+      "what": "The Ranger Equipment List prints hand-to-hand weapons and a Bow and no armour at all; the armour block in the right column follows the Recruit list's missile block and is read as the Recruit list's. As printed, a Sea Ranger buys no armour from his list."
+    },
+    {
+      "page": 2,
+      "what": "The Warrior and Ranger lists sell an Ithilmar Weapon at \"2 x Cost\", a multiplier and not a number, so its line carries no price of its own and reads \"2 x Cost\", as the Dwarf Treasure Hunters' Gromril line does. Ours is Rare 9 at three times the price, which is unchanged."
+    },
+    {
+      "page": 2,
+      "what": "The Ithilmar Armour line is 60 gc (the footnote says Ithilmar is cheaper for them at creation); ours is 90 gc, Rare 11, which is unchanged. The Elf Bow line is 35 gc; ours is 35 + 3D6 gc, Rare 12, which is unchanged."
+    },
+    {
+      "page": 4,
+      "what": "Raw Recruits are taken by Special Recruitment and \"may be hired like normal\", but no hire price is printed, so their cost is 0 gc."
+    },
+    {
+      "page": 3,
+      "what": "The Honours are bought once, at recruitment, and change a Hero's rules, skills, list and stats. Our template holds no upgrade list for a PDF warband, so they are the warband rule Honours, with every cost as printed. See the decisions."
+    },
+    {
+      "page": 2,
+      "what": "Fey Quickness is our skill of that name and effect (a 6, or a 4+ with Dodge or Step Aside), so it is linked rather than written again. Swordmasters Protege and Infiltration each name who may take them. Swordmasters Protege is a new skill, so its limit opens its description; Infiltration is our skill, so its limit sits in the group's note."
+    },
+    {
+      "page": 5,
+      "what": "The Spells of the Lothern Sea are the Spells of the Djedhi we already hold, with the fourth, Fleeting Shadows, replaced by Mistress of the Deep (difficulty 8). The lore is added as its own, taking our wording for the five that are the same."
+    },
+    {
+      "page": 1,
+      "what": "The warband must hold between 3 and 12 models: our templates hold no minimum, so only the maximum of 12 is imported. No henchmen group sizes and no maximum profile are printed: the warband takes our Elf race, the Raw Recruits included, though their entry says some are not full elves."
+    },
+    {
+      "page": 3,
+      "what": "The Commodore's profile is M5 WS5 BS4 S3 T3 W1 I5 A1 Ld9 and the Bossun's M5 WS4 BS4 S3 T3 W1 I5 A1 Ld8: as printed."
+    },
+    {
+      "page": 10,
+      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none."
+    }
+  ]
+}

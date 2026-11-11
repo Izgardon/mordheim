@@ -1,0 +1,983 @@
+{
+  "warbandType": "pirates-of-the-cathayan-sea",
+  "name": "Pirates of the Cathayan Sea",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Pirates%20of%20the%20Cathayan%20Sea.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Swabbies",
+      "ruleFull": "The warband may capture human Swabbies with the Swabbies rules. One who agrees joins the Deck Hands; one who refuses becomes a Floordog."
+    },
+    {
+      "rulename": "Swivel Guns are Rare",
+      "ruleFull": "The warband may not start a campaign game with a Swivel Gun on its roster. In a one-off game it may buy one for 2D6 gc on top of its price."
+    },
+    {
+      "rulename": "Foreign, but Human",
+      "ruleFull": "The warband counts as a Human Pirate warband, as Ostlanders and Averlanders count as Mercenaries."
+    },
+    {
+      "rulename": "Stranger in a Strange Land",
+      "ruleFull": "In any campaign set in the Old World, Mordheim, Albion, Sylvania and Sartosa among them, roll two dice for the order of deployment and take the lower. A Compass cancels this and gives nothing more. The warband does not suffer it in the Border Town Burning campaign, nor in Lustria, Khemri or the Crusades."
+    },
+    {
+      "rulename": "Succession",
+      "ruleFull": "If the Disgraced Warlord is killed, one of the Shanghai'ers takes over, as a Champion does in a Mercenary warband."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "pirate-equipment-list",
+      "title": "Pirate Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Boat Hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "Cat O' Nine Tails",
+          "alias": "Cat O' Nine Tails",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Dragon Sword",
+          "alias": "Katana",
+          "cost": {
+            "cost": 20,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "Belaying Pins",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "throwing knives",
+          "alias": "Throwing Stars/Knives",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "Duelling Pistol",
+          "alias": "Dueling Pistol",
+          "cost": {
+            "cost": 30,
+            "braceCost": 60
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened Leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light Armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy Armour",
+          "cost": {
+            "cost": 50
+          }
+        },
+        {
+          "name": "Cathayan Plate Armour",
+          "alias": "Cathayan Plate Armour",
+          "cost": {
+            "cost": 120
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "floordog-equipment-list",
+      "title": "Floordog Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Boat Hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Belaying Pins",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "gunner-equipment-list",
+      "title": "Gunner Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "blunderbuss",
+          "alias": "Blunderbuss",
+          "cost": {
+            "cost": 30
+          }
+        },
+        {
+          "name": "Duelling Pistol",
+          "alias": "Dueling Pistol",
+          "cost": {
+            "cost": 30,
+            "braceCost": 60
+          }
+        },
+        {
+          "name": "Cathayan Candles",
+          "alias": "Cathayan Candles",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "handgun",
+          "alias": "Handgun",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "Swivel Gun",
+          "alias": "Swivel Gun",
+          "cost": {
+            "cost": 65,
+            "costSuffix": "One per warband"
+          }
+        },
+        {
+          "name": "Swivel Gun - Ball Shot",
+          "alias": "Ball Shot",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Swivel Gun - Chain Shot",
+          "alias": "Chain Shot",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "Swivel Gun - Grape Shot",
+          "alias": "Grape Shot",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened Leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light Armour",
+          "cost": {
+            "cost": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "monk-equipment-list",
+      "title": "Monk Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Quarter Staff",
+          "alias": "Quarterstaff",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Dragon Sword",
+          "alias": "Katana",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "Chain Sticks",
+          "alias": "Chain sticks",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "Fish-Hook Shot",
+          "alias": "Fish-Hook Shot",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "throwing knives",
+          "alias": "Throwing Stars",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "disgraced-warlord",
+      "type": "hero",
+      "name": "Disgraced Warlord",
+      "plural": "Disgraced Warlords",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any pirate within 6\" of the Disgraced Warlord may use his Leadership for any Leadership test."
+        }
+      ]
+    },
+    {
+      "id": "shanghaier",
+      "type": "hero",
+      "name": "Shanghai'er",
+      "plural": "Shanghai'ers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "dragon-monk",
+      "type": "hero",
+      "name": "Dragon Monk",
+      "plural": "Dragon Monks",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 15,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "monk-equipment-list"
+      ],
+      "equipment": "A Dragon Monk takes no penalty at all for fighting unarmed and gains +1 Attack when he does. He may never wear armour.",
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Art of Silent Death",
+          "ruleFull": "Fighting unarmed in hand-to-hand combat, a Dragon Monk causes a critical hit on a roll to wound of 5 or 6 instead of 6. While he wields a quarterstaff, only his unarmed attacks cause a critical hit on a 5+."
+        },
+        {
+          "rulename": "Distaste for Poison",
+          "ruleFull": "A Dragon Monk may never use a poison or a venom of any kind."
+        }
+      ]
+    },
+    {
+      "id": "litter-bearer",
+      "type": "hero",
+      "name": "Litter Bearer",
+      "plural": "Litter Bearers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "deck-hand",
+      "type": "henchman",
+      "name": "Deck Hand",
+      "plural": "Deck Hands",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "gunner",
+      "type": "henchman",
+      "name": "Gunner",
+      "plural": "Gunners",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 7,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "gunner-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Swivel Guns are Dangerous",
+          "ruleFull": "A Gunner carrying the warband's Swivel Gun always counts as an individual and may never have anyone else with him. As the warband may hold only one Swivel Gun, the Gunner who carries it must either be a new Gunner or be split from an existing group, in which case he keeps the experience and skills he had."
+        }
+      ]
+    },
+    {
+      "id": "martial-artist",
+      "type": "henchman",
+      "name": "Martial Artist",
+      "plural": "Martial Artists",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Agile (Martial Artist)",
+          "ruleFull": "A Martial Artist always counts as carrying a Rope & Hook. He may also re-roll a failed Initiative test for leaping a gap, jumping down, a diving charge, and the test a rope allows for climbing up or down."
+        }
+      ]
+    },
+    {
+      "id": "floordog",
+      "type": "henchman",
+      "name": "Floordog",
+      "plural": "Floordogs",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 0,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "floordog-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Not Hired",
+          "ruleFull": "Floordogs are not hired: they come to the warband by the Swabbies rules."
+        },
+        {
+          "rulename": "Never Gain Experience",
+          "ruleFull": "A Floordog never gains experience."
+        },
+        {
+          "rulename": "Rabble",
+          "ruleFull": "Floordogs need not be armed alike. Each may be given different equipment, but only from the Floordog Equipment list. A Floordog may never use magic or cast a spell of any kind, whatever his background."
+        },
+        {
+          "rulename": "Wo kao, they got away",
+          "ruleFull": "If the warband routs, every Floordog who had already left the table in an earlier turn is taken to have escaped: remove him from the roster as if he had been killed."
+        },
+        {
+          "rulename": "Don't mind them Lao Xiong, they ain't true pirates",
+          "ruleFull": "A Floordog who is running away or has been taken out of action does not count towards the warband's rout test."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Pirates of the Cathayan Sea",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "Angel of the Sword",
+      "description": "Wielding a Katana, the model chooses each round of combat either an extra attack or a re-roll of his parry. He declares it at the start of the combat phase, before warriors roll for Initiative."
+    },
+    {
+      "name": "Knowledge of Shadows",
+      "description": "Whenever the warrior charges a warrior who could not see him from the start of this turn, because he was hidden or charged on an Initiative test, he gains +1 to hit and +1 on injury rolls."
+    },
+    {
+      "name": "Art of the Silent Death",
+      "description": "The warrior may use his bare hands as weapons with no penalty. Doing so he causes a critical hit on a natural 5 or 6, and gains an attack as if wielding two weapons. At the start of any round he may choose to wield a weapon in any of his hands, but then loses the critical hit on a 5."
+    },
+    {
+      "name": "Energy Focus",
+      "description": "Dragon Monks only. Fighting unarmed, the Hero may give up any number of his Attacks, each for +1 Strength in close combat."
+    },
+    {
+      "name": "Monk Weaponry",
+      "description": "The Hero may use any hand-to-hand or missile weapon from the Monk Equipment list, and may learn Energy Focus."
+    }
+  ],
+  "priceRows": [
+    {
+      "name": "Dragon Sword",
+      "rarity": 10,
+      "dice": null,
+      "page": 5
+    },
+    {
+      "name": "Cat O' Nine Tails",
+      "cost": 3,
+      "rarity": null,
+      "dice": null,
+      "page": 10,
+      "note": "Heroes only"
+    },
+    {
+      "name": "Blunderbuss",
+      "cost": 30,
+      "rarity": 7,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Crossbow",
+      "cost": 25,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Crossbow pistol",
+      "cost": 35,
+      "rarity": 11,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Double-barrelled Pistol",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Duelling Pistol",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Handgun",
+      "cost": 35,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Long Bow",
+      "cost": 15,
+      "rarity": 5,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Pistol",
+      "cost": 15,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Repeater Crossbow",
+      "cost": 40,
+      "rarity": 10,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Repeater Pistol",
+      "cost": 40,
+      "rarity": 10,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Heavy Armour",
+      "cost": 50,
+      "rarity": 7,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Victuals",
+      "cost": 10,
+      "rarity": null,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Riverboat",
+      "cost": 100,
+      "rarity": 6,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Rowboat",
+      "cost": 40,
+      "rarity": 5,
+      "dice": null,
+      "page": 10
+    },
+    {
+      "name": "Bugman's Ale",
+      "cost": 50,
+      "rarity": 8,
+      "dice": 3,
+      "page": 10
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Cathayan Plate Armour",
+      "type": "Armour",
+      "subtype": "Armour",
+      "rarity": 11,
+      "dice": null,
+      "rulesPage": 5,
+      "save": "4+",
+      "rules": [
+        {
+          "rule": "Save",
+          "text": "A warrior wearing Cathayan Plate Armour has a basic saving throw of 4+."
+        },
+        {
+          "rule": "Movement Penalty",
+          "text": "A warrior wearing Cathayan Plate Armour and a shield suffers -1 Movement."
+        }
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "page": 2,
+      "what": "The skill table's ticks are images, so page 2 was opened as an image. Disgraced Warlord: all seven columns. Shanghai'er: Combat, Shooting, Speed, Pirate, Special. Dragon Monk: Combat, Academic, Strength, Speed, Pirate, Special. Litter Bearer: Combat, Speed, Pirate, Special."
+    },
+    {
+      "page": 1,
+      "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
+    },
+    {
+      "page": 2,
+      "what": "A stray \"Toughened Leathers . . . 5 gc\" line sits above the Gunner Equipment List heading, in the right column and under no heading. Both the Pirate list and the Gunner list already sell Toughened Leathers at 5 gc, so it is left out."
+    },
+    {
+      "page": 5,
+      "what": "The Katana (20 gc, Rare 10; close combat, As user +1, Two-handed and Parry) is our Dragon Sword, which carries \"In some older material, the Dragon Sword was referred to as Katana\" and holds the same price, rarity and rules: the lines link it and show it as Katana, and the warband gets a price row of its own at Rare 10. Cathayan Plate Armour (120 gc, Rare 11; a 4+ save and -1 Movement with a shield) is a stub."
+    },
+    {
+      "page": 2,
+      "what": "The Quarterstaff, Chain sticks, Cathayan Candles, Fish-Hook Shot and Swivel Gun with its three ammunitions are ours already, shown under this list's names. The Monk list sells Throwing Stars at 10 gc, where the Pirate list sells Throwing Stars/Knives at 15 gc: both are our Throwing Knives/Stars, each at its own line's price."
+    },
+    {
+      "page": 2,
+      "what": "The Cathayan Candles line is \"25+D6 gc\". A list line carries only a whole number, so it is 25 gc; our item is 25 + D6 gc, Rare 9, which is unchanged and is what the store charges."
+    },
+    {
+      "page": 2,
+      "what": "The Pirate list's Heavy Armour is 50 gc, as ours is; the Sartosa Equipment PDF's trading list prints Heavy Armour at 50 gc Rare 7, where ours is Common (open decision 20)."
+    },
+    {
+      "page": 4,
+      "what": "Floordogs are taken by Special Recruitment and no hire price is printed, so their cost is 0 gc."
+    },
+    {
+      "page": 1,
+      "what": "The Dragon Monk replaces a Shanghai'er, so the warband holds at most 5 heroes; our templates hold no replacement rule, so the four counts stand as printed (1 + 2 + 1 + 2)."
+    },
+    {
+      "page": 1,
+      "what": "A Cathay Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race."
+    },
+    {
+      "page": 4,
+      "what": "The Martial Artist's Agile (he counts as carrying a Rope & Hook and re-rolls failed Initiative tests for climbing and leaping) is not the Grace of Shornaal mutation Agile (+1 to Initiative tests), so it is kept apart as \"Agile (Martial Artist)\". The Dragon Monk's rule Art of Silent Death and the special skill Art of the Silent Death are worded differently and do different things (the rule is about a quarterstaff, the skill about an extra attack), so both are kept."
+    },
+    {
+      "page": 3,
+      "what": "The Litter Bearer is listed under the Heroes, with a row in the skill table, and starts with 0 experience: as printed."
+    },
+    {
+      "page": 10,
+      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none."
+    }
+  ]
+}

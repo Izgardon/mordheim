@@ -26323,6 +26323,940 @@
     "upgrades": []
   },
   {
+    "slug": "ghost-pirates",
+    "name": "Ghost Pirates",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Ghost%20Pirates.pdf",
+    "starting_gold": 500,
+    "max_models": 15,
+    "variants": [],
+    "types": [
+      {
+        "type": "ghost-pirates",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Swabbies",
+        "description": "The warband may capture models with the Swabbies rules. One who agrees joins the Crew; one who refuses becomes one of the Bloated. The warband may never have more Bloated than Crew.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Ethereal",
+        "description": "The Ghost Captain and the Screaming Ghosts are Ethereal. An Ethereal model has a 4+ unmodifiable save against every attack. It may not be used with Dodge or Step Aside, and it does nothing against a magical attack: a spell, a prayer, an artefact, gromril, ithilmar or a silver bullet. In the movement phase he may take a Leadership test; if he passes it he may move through any terrain piece and over water. If he begins his next movement phase in the middle of a terrain piece or over water he must take another Leadership test, and is taken out of action at once if he fails it. Once the warband is made, every item costs an Ethereal model double. When the crew finds an item, roll a D6: on a 5+ both Ethereal and non-Ethereal models may use it, and on a 1-4 only non-Ethereal models may, which is marked on the roster.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "ghost-equipment-list",
+        "name": "Ghost Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Boat Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cat O' Nine Tails",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Cutlass (Sword)",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Belaying Pins",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cursed Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 10,
+            "who": {
+              "fighters": [
+                "screaming-ghost"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 30,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Duelling Pistol",
+              "variant": ""
+            },
+            "shown_as": "Dueling Pistol",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 60,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Blunderbuss",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "skeleton-equipment-list",
+        "name": "Skeleton Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "bloated-equipment-list",
+        "name": "Bloated Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Boat Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Cutlass (Sword)",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cursed Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 10,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "ghost-captain",
+        "kind": "hero",
+        "name": "Ghost Captain",
+        "plural": "Ghost Captains",
+        "race": "Undead",
+        "cost": 90,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Strength",
+          "Speed",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "ghost-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Ghost Pirates",
+            "description": "Any warrior within 6\" of the Ghost Captain may use his Leadership for any Leadership test."
+          },
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Immune to Poison",
+            "type": "Trait"
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "screaming-ghost",
+        "kind": "hero",
+        "name": "Screaming Ghost",
+        "plural": "Screaming Ghosts",
+        "race": "Undead",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Speed",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "ghost-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Immune to Poison",
+            "type": "Trait"
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "skeleton-mate",
+        "kind": "hero",
+        "name": "Skeleton Mate",
+        "plural": "Skeleton Mates",
+        "race": "Undead",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "skeleton-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Immune to Poison",
+            "type": "Trait"
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "No Pain",
+            "type": "Trait"
+          },
+          {
+            "name": "May Not Run",
+            "type": "Trait"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "sea-singer",
+        "kind": "hero",
+        "name": "Sea Singer",
+        "plural": "Sea Singers",
+        "race": "Human",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 2,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Academic",
+          "Speed"
+        ],
+        "spell_types": [
+          {
+            "name": "Songs of Sorrow",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "bloated-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Wizard",
+            "type": "Caster"
+          },
+          {
+            "name": "Beauty of the Sea",
+            "type": "Warband - Ghost Pirates",
+            "description": "A male enemy who is not an animal must pass a Leadership test to charge a Sea Singer; if he fails it he stays where he is. A model she charges may not attack back until he passes a Leadership test at the start of the combat phase, and once he passes one he need not test again for the rest of that combat. She causes fear in female models. Her Beauty counts as a form of psychology."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "the-cursed",
+        "kind": "henchman",
+        "name": "The Cursed",
+        "plural": "The Cursed",
+        "race": "Human",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "ghost-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Not Undead",
+            "type": "Warband - Ghost Pirates",
+            "description": "The Cursed are living men and do not count as Undead."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "gibbet",
+        "kind": "henchman",
+        "name": "Gibbet",
+        "plural": "Gibbets",
+        "race": "Undead",
+        "cost": 40,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "bloated-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Immune to Poison",
+            "type": "Trait"
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "No Pain",
+            "type": "Trait"
+          },
+          {
+            "name": "No Brain",
+            "type": "Warband - Ghost Pirates",
+            "description": "A Gibbet never gains experience."
+          },
+          {
+            "name": "May Not Run",
+            "type": "Trait"
+          },
+          {
+            "name": "Iron Cage",
+            "type": "Warband - Ghost Pirates",
+            "description": "The iron cage around the Gibbet gives him a 5+ armour save, as heavy armour would. It may not be lost, stolen or given to another model."
+          },
+          {
+            "name": "Sink",
+            "type": "Warband - Ghost Pirates",
+            "description": "A Gibbet sinks to the bottom of any water he moves through. The bed counts as difficult terrain, so he moves at half speed, and while sunk he is at -2 to hit and -2 to be hit in combat and by missiles. He boards a ship by the normal rules. He is immune to any water or drowning damage."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "bloated",
+        "kind": "henchman",
+        "name": "Bloated",
+        "plural": "The Bloated",
+        "race": "Undead",
+        "cost": 0,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 1,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "A Bloated needs no weapon and may make one unarmed attack at no penalty. He may instead be armed from the Bloated Equipment list, and then needs two weapons to gain an extra attack.",
+        "lists": [
+          "bloated-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Immune to Poison",
+            "type": "Trait"
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "May Not Run",
+            "type": "Trait"
+          },
+          {
+            "name": "No Brain",
+            "type": "Warband - Ghost Pirates",
+            "description": "A Gibbet never gains experience."
+          },
+          {
+            "name": "Squishy",
+            "type": "Warband - Ghost Pirates",
+            "description": "A Bloated does not treat a stunned result as knocked down."
+          },
+          {
+            "name": "Dead Man's Float",
+            "type": "Warband - Ghost Pirates",
+            "description": "A Bloated floats, so while in water he may move up to 4\" at no penalty. He may do this as a charge, but 4\" is still his most."
+          },
+          {
+            "name": "Weak Magic",
+            "type": "Warband - Ghost Pirates",
+            "description": "If the warband routs, every Bloated who had already left the table in an earlier turn falls apart: remove him from the roster as if he had been killed."
+          },
+          {
+            "name": "Plenty more with the next tide",
+            "type": "Warband - Ghost Pirates",
+            "description": "A Bloated taken out of action does not count towards the warband's rout test."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
     "slug": "grave-robbers",
     "name": "Grave Robbers",
     "setting": "sylvania",
@@ -36548,6 +37482,946 @@
         "at_recruit": true
       }
     ]
+  },
+  {
+    "slug": "lothern-sea-patrol",
+    "name": "Lothern Sea Patrol",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Lothern%20Sea%20Patrol.pdf",
+    "starting_gold": 500,
+    "max_models": 12,
+    "variants": [],
+    "types": [
+      {
+        "type": "lothern-sea-patrol",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Excellent Eyes",
+        "description": "When spotting a hidden enemy, a member of the warband adds +2 to the distance at which he can spot him.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Look Rich",
+        "description": "The warband pays double upkeep for any Hired Sword who is not an Elf. It may hire only Elven or human Hired Swords, never a Dark Elf and never a witch.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Fine Craftwork",
+        "description": "A member of the warband may wear no heavy armour other than Ithilmar armour. He may still use a magical armour he comes by.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Honourable",
+        "description": "A member of the warband may never use a poison or a drug, and the warband may hire no Hired Sword who uses one.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Teetotalers",
+        "description": "A member of the warband may drink no alcohol other than Elf Wine.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Swabbies",
+        "description": "The warband may capture Swabbies. One who agrees joins the Ship's Company; one who refuses joins the Raw Recruits.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "A Note on Blackpowder",
+        "description": "The warband starts with no blackpowder weapon of any kind and no list sells one, but nothing forbids one: a Hero with the Weapons Expert skill may use any powder weapon he finds.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Honours",
+        "description": "A Hero may buy one honour, and only one, when he is recruited; he may never gain another later. Pure of Heart, 5 gc: he passes the first Leadership test he must take each game, rout tests excepted if he is the leader, but he may not charge a stunned foe. Spearmaster, 10 gc: in the first round of combat with a spear he adds +1 Strength and may re-roll one failed roll to hit. Swordmaster, 10 gc: +1 Weapon Skill and he starts with the Graceful Strength skill, but he may never use a missile weapon and may never raise his Ballistic Skill. Sea Guard, 10 gc: besides the Warrior Equipment list he may buy and use an Elf Bow without further training, and with a spear he fights at +2 Initiative when working out the order of blows. White Lion, 20 gc: he starts with Strength 4 and a white lion pelt, a cloak giving +1 to his armour save against missile attacks, which only a White Lion may wear and costs 10 gc to replace with no rarity roll; he may never use a spear and loses access to Shooting skills, though he may use missile weapons as normal. Phoenix Guard, 15 gc: only one Hero in the warband may take it. He may not speak, so he may not be the warband's leader and may not look for rare items; he is immune to psychology and rolls two dice for exploration. An immune leader still rolls for rout. Ranger, 10 gc: only one Hero in the warband may take it. He must carry a long bow or an Elf Bow at all times, and one must be bought for him as soon as the warband can. He buys from the Ranger Equipment list instead of the Warrior Equipment list and gains Seeker, which lets him change one dice roll in the exploration phase by +1 or -1. Loremaster, 10 gc, or 15 gc for a Bossun: he starts with an Academic skill of your choice, and a Bossun who takes this honour may also learn Academic skills.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "warrior-equipment-list",
+        "name": "Warrior Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Ithilmar Weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": null,
+            "cost_note": "2 × price",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Long Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Elf Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Ithilmar Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 60,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "ranger-equipment-list",
+        "name": "Ranger Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Ithilmar Weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": null,
+            "cost_note": "2 × price",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "recruit-equipment-list",
+        "name": "Recruit Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Boat Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Belaying Pins",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "commodore",
+        "kind": "hero",
+        "name": "Commodore",
+        "plural": "Commodores",
+        "race": "Elf",
+        "cost": 70,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 5,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 9
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Lothern Sea Patrol",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "warrior-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "Any warrior within 6\" of the Commodore may use his Leadership for any Leadership test."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "mist-mage",
+        "kind": "hero",
+        "name": "Mist Mage",
+        "plural": "Mist Mages",
+        "race": "Elf",
+        "cost": 50,
+        "starting_xp": 10,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Academic",
+          "Speed",
+          "Lothern Sea Patrol"
+        ],
+        "spell_types": [
+          {
+            "name": "Spells of the Lothern Sea",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "warrior-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Wizard",
+            "type": "Caster"
+          },
+          {
+            "name": "No Armour",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "A Mist Mage may not wear armour while casting spells."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "bossun",
+        "kind": "hero",
+        "name": "Bossun",
+        "plural": "Bossuns",
+        "race": "Elf",
+        "cost": 50,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Speed",
+          "Lothern Sea Patrol",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "warrior-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Disciplined",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "Any warrior within 3\" of a Bossun may use his Leadership instead of his own."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "ships-company",
+        "kind": "henchman",
+        "name": "Ship's Company",
+        "plural": "Ship's Company",
+        "race": "Elf",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "warrior-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "seaguard",
+        "kind": "henchman",
+        "name": "Seaguard",
+        "plural": "Seaguards",
+        "race": "Elf",
+        "cost": 40,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "warrior-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Spear Master",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "In the first round of combat with a spear, a Seaguard adds +1 Strength and may re-roll one failed roll to hit."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "sea-ranger",
+        "kind": "henchman",
+        "name": "Sea Ranger",
+        "plural": "Sea Rangers",
+        "race": "Elf",
+        "cost": 40,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "ranger-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Hide in Shadows",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "An opponent trying to spot a Sea Ranger halves his Initiative."
+          },
+          {
+            "name": "Hate Dark Elves",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "A Sea Ranger hates Dark Elves."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "raw-recruit",
+        "kind": "henchman",
+        "name": "Raw Recruit",
+        "plural": "Raw Recruits",
+        "race": "Elf",
+        "cost": 0,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "recruit-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Specially Hired",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "Raw Recruits may be hired as normal, and may also be taken the way Swabbies are."
+          },
+          {
+            "name": "Never Gain Experience",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "A Raw Recruit never gains experience."
+          },
+          {
+            "name": "Rabble",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "Raw Recruits need not be armed alike. Each may be given different equipment, but only from the Recruit Equipment list. A Raw Recruit may never use magic or cast a spell of any kind, whatever his background."
+          },
+          {
+            "name": "Oh dear, they got away",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "If the warband routs, every Raw Recruit who had already left the table in an earlier turn is taken to have escaped: remove him from the roster as if he had been killed."
+          },
+          {
+            "name": "Don't mind them, they aren't true elves",
+            "type": "Warband - Lothern Sea Patrol",
+            "description": "A Raw Recruit who is running away or has been taken out of action does not count towards the warband's rout test."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
   },
   {
     "slug": "low-kings",
@@ -52088,6 +53962,1251 @@
     "upgrades": []
   },
   {
+    "slug": "orc-pirates-and-savage-orcs",
+    "name": "Orc Pirates & Savage Orcs",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
+    "starting_gold": 500,
+    "max_models": 20,
+    "variants": [],
+    "types": [
+      {
+        "type": "orc-pirates-and-savage-orcs",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Pressganging",
+        "description": "The warband may pressgang models it captures by the normal rules. One who agrees loses his race and profile and joins the crew as an Orc Boy. One who refuses becomes a Goblin Swabbie, keeps his race and profile, and gains Never Gain Experience, Rabble, \"Blimey, they got away!\" and \"Don't mind them mates, they ain't true pirates!\".",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Distasteful Company",
+        "description": "The warband may hire only Pit Fighters, Ogre Bodyguards and Warlocks.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Animosity",
+        "description": "At the start of the warband's turn, roll a D6 for each henchman who is an Orc or a Goblin and is not in hand-to-hand combat. On a 1 he has taken offence, so roll another D6.\n\nD6 | Result\n1 | He charges the nearest friendly Orc or Goblin henchman or Hired Sword within charge reach and fights one round of hand-to-hand combat; the models then move 1\" apart and no longer count as in close combat. With none in reach he shoots the nearest with a missile weapon, if he carries one. If neither applies, or the nearest friendly model is an Orc hero, treat it as a 2-5. He may take no other action this turn, though he may defend himself.\n2-5 | He may do nothing else this turn, though he may defend himself.\n6 | He moves as fast as he can towards the nearest enemy model, charging it if he can. With no enemy in sight he may make a normal move at once. This move is on top of his move in the movement phase, and if it brings him within charge reach of an enemy he must charge in his regular movement.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Savage Orc variation: Talismans galore",
+        "description": "Every Orc and Goblin in a Savage Orc warband has a 6+ armour save, which may not be reduced below 6+ and may not be ignored, even by a critical hit. They may never use armour other than a shield, and may never parry.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Savage Orc variation: Fear fire",
+        "description": "Every member of a Savage Orc warband fears any model with a flaming attack, carrying a lit item (a lantern, a torch, a brazier) or any flame item. A caster who works a fiery spell in sight of a member of the warband, or who keeps up a fire-based spell, causes fear for the whole game.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Savage Orc variation: Primitive",
+        "description": "A Savage Orc warband may never use an advanced weapon, and may never take the Weapons Master or Weapons Expert skills. Its members may not use a Halfling Cookbook, a Mordheim Map, a Tome of Magic or a Lantern.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Savage Orc variation: Wild Animosity",
+        "description": "Wild Animosity replaces Animosity in a Savage Orc warband. At the start of the turn, roll a D6 for every standing warrior in the warband who is not in combat, the troll included unless he failed his stupidity test, and the heroes included. Every warrior rolls, not only those who roll a 1.\n\nD6 | Result\n1 | Squabble. A henchman must charge the nearest friendly model at once, hero or henchman, and fight one round of combat; after it neither may do anything else this turn, though both fight back if attacked. With no friendly model in charge range he uses a missile weapon, if he has one, against the nearest friendly model, and otherwise does nothing. A Forest Goblin will never attack a hero this way. A hero attacks no one, but may still do nothing else.\n2-5 | Uggg. The model behaves normally.\n6 | Waaaagh! The model makes a full move at once towards the nearest enemy model, charging it if it can. In its next movement phase it must charge if an enemy is within charge range. These charges ignore fear and any other psychology that would stop the Savage Orc charging.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Savage Orc variation: equipment",
+        "description": "A Savage Orc warband buys from the Savage Orc Equipment List and the Forest Goblin Equipment List instead of the Orc Equipment List and the Goblin Swabbie Equipment List.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "orc-equipment-list",
+        "name": "Orc Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "Battle axe",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cat O' Nine Tails",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Cutlass (Sword)",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Boat Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Belaying Pins",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 30,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Booma Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 40,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 7,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "goblin-swabbie-equipment-list",
+        "name": "Goblin Swabbie Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Boat Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cat O' Nine Tails",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Belaying Pins",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 30,
+            "who": {
+              "fighters": [
+                "goblin-enjuneer"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Booma Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 40,
+            "who": {
+              "fighters": [
+                "goblin-enjuneer"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 7,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Fire Bomb",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "goblin-enjuneer"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "savage-orc-equipment-list",
+        "name": "Savage Orc Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "Flint Dagger",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Morning Star",
+              "variant": ""
+            },
+            "shown_as": "Big Club (Morning Star)",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "Huge club (Double-handed weapon)",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "Big Stick (Halberd)",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Axes",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "forest-goblin-equipment-list",
+        "name": "Forest Goblin Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "Flint Dagger",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Squig Prodder",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "Throwing weapons",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Blowpipe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "orc-boss",
+        "kind": "hero",
+        "name": "Orc Boss",
+        "plural": "Orc Bosses",
+        "race": "Orc",
+        "cost": 80,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 4,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Speed",
+          "Savage Orcs",
+          "Orcs"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "orc-equipment-list",
+          "savage-orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "Any warrior within 6\" of the Orc Boss may use his Leadership for any Leadership test."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "orc-shaman",
+        "kind": "hero",
+        "name": "Orc Shaman",
+        "plural": "Orc Shamans",
+        "race": "Orc",
+        "cost": 40,
+        "starting_xp": 10,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Strength",
+          "Savage Orcs",
+          "Orcs"
+        ],
+        "spell_types": [
+          {
+            "name": "Waaaagh! Magic",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "orc-equipment-list",
+          "savage-orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Wizard",
+            "type": "Caster"
+          },
+          {
+            "name": "No Armour",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "An Orc Shaman may never wear armour."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "goblin-enjuneer",
+        "kind": "hero",
+        "name": "Goblin Enjuneer",
+        "plural": "Goblin Enjuneers",
+        "race": "Goblin",
+        "cost": 35,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Speed",
+          "Orcs"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "goblin-swabbie-equipment-list",
+          "forest-goblin-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Glass Ceiling",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Goblin Enjuneer may never be the warband's leader."
+          },
+          {
+            "name": "Booma Tweaker",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "In any game the Enjuneer plays in, whenever a Booma Pistol's range is rolled and the result is not a misfire, the roll may be re-rolled once. The second result stands and may not be re-rolled, even if it is a misfire."
+          },
+          {
+            "name": "Mad Bomba",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "When the Enjuneer spends his rarity roll looking for a Fire Bomb, he treats it as Rare 5. This holds only when the Enjuneer himself searches."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "orc-big-un",
+        "kind": "hero",
+        "name": "Orc Big 'Un",
+        "plural": "Orc Big 'Uns",
+        "race": "Orc",
+        "cost": 40,
+        "starting_xp": 15,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Savage Orcs",
+          "Orcs"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "orc-equipment-list",
+          "savage-orc-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "orc-boy",
+        "kind": "henchman",
+        "name": "Orc Boy",
+        "plural": "Orc Boyz",
+        "race": "Orc",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "orc-equipment-list",
+          "savage-orc-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "goblin-swabbie",
+        "kind": "henchman",
+        "name": "Goblin Swabbie",
+        "plural": "Goblin Swabbies",
+        "race": "Goblin",
+        "cost": 12,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "goblin-swabbie-equipment-list",
+          "forest-goblin-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Under der Thumb",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Goblin Swabbie is not subject to Animosity."
+          },
+          {
+            "name": "Spendible",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "The warband may shoot into a combat that holds only a Goblin Swabbie and enemy models; the shots are distributed at random."
+          },
+          {
+            "name": "Never Gain Experience",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Goblin Swabbie never gains experience."
+          },
+          {
+            "name": "Rabble",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "Goblin Swabbies need not be armed alike. Each may be given different equipment, but only from the Goblin Swabbie Equipment list. A Goblin Swabbie may never use magic or cast a spell of any kind, whatever his background."
+          },
+          {
+            "name": "Blimey, they got away",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "If the warband routs, every Goblin Swabbie who had already left the table in an earlier turn is taken to have escaped: remove him from the roster as if he had been killed."
+          },
+          {
+            "name": "Don't mind them mates, they ain't true pirates",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Goblin Swabbie who is running away or has been taken out of action does not count towards the warband's rout test."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "sea-squig",
+        "kind": "henchman",
+        "name": "Sea Squig",
+        "plural": "Sea Squigs",
+        "race": null,
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": "2D6",
+          "weapon_skill": 4,
+          "ballistic_skill": 0,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "A Sea Squig never uses or needs a weapon or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Movement",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Sea Squig has no set Movement. On land he moves 2D6-1\" each turn, and in water he swims 2D6\", which water penalties do not reduce. He does not count as aquatic. He never runs and never declares a charge; instead he may reach an enemy with his normal move, and then counts as charging for that round of close combat."
+          },
+          {
+            "name": "Minderz",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Sea Squig must stay within 6\" of a Goblin. He will not go wild while within 12\" of a Goblin carrying a Cat O' Nine Tails, which counts as a Squig Prodder. Without a minder at the start of his movement phase he goes wild: from then on move him 2D6\" in a random direction each movement phase, and he engages any model he reaches, friend or foe."
+          },
+          {
+            "name": "Not Orcs",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Goblin or a Sea Squig taken out of action counts as half a model when working out whether the warband must take a rout test."
+          },
+          {
+            "name": "Animals",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Sea Squig never gains experience."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "sea-troll",
+        "kind": "henchman",
+        "name": "Sea Troll",
+        "plural": "Sea Trolls",
+        "race": null,
+        "cost": 200,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 3,
+          "ballistic_skill": 1,
+          "strength": 5,
+          "toughness": 4,
+          "wounds": 3,
+          "initiative": 1,
+          "attacks": 3,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "A Sea Troll needs no weapon and may never be given a weapon or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Stupidity",
+            "type": "Psychology"
+          },
+          {
+            "name": "Regeneration (Sea Troll)",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "Whenever a wound is inflicted on a Sea Troll, roll a D6: on a 4 or more the wound is ignored. He may not regenerate a wound caused by fire or fire-based magic, and never rolls for injury after a battle."
+          },
+          {
+            "name": "Dumb Monster",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Sea Troll never learns a skill and never gains experience."
+          },
+          {
+            "name": "Always Hungry",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "The warband must pay 15 gold crowns after every game to keep a Sea Troll. If it lacks the gold, the Boss may feed him two Goblin Swabbies or Sea Squigs instead."
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          },
+          {
+            "name": "Aquatic",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "A Sea Troll takes no penalty for moving through water and counts as aquatic."
+          },
+          {
+            "name": "Slimy",
+            "type": "Warband - Orc Pirates & Savage Orcs",
+            "description": "Any model trying to hit a Sea Troll in hand-to-hand combat is at -1 to hit; a natural 6 to hit always hits."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
     "slug": "ostlander-mercenaries",
     "name": "Ostlander Mercenaries",
     "setting": "mordheim",
@@ -55167,6 +58286,1301 @@
             "name": "‘Don’t mind them mates, they ain’t true pirates!’",
             "type": "Warband - Pirates",
             "description": "The rest of the crew barely notice if any Swabbies run away or go Out of Action – they know they’ll find them later on and give them 30 lashes if they’re lucky! Any Swabbies who are running away or have been taken out of action do not count towards the need to take a Rout test for the warband."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "pirates-of-the-cathayan-sea",
+    "name": "Pirates of the Cathayan Sea",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Pirates%20of%20the%20Cathayan%20Sea.pdf",
+    "starting_gold": 500,
+    "max_models": 15,
+    "variants": [],
+    "types": [
+      {
+        "type": "pirates-of-the-cathayan-sea",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Swabbies",
+        "description": "The warband may capture human Swabbies with the Swabbies rules. One who agrees joins the Deck Hands; one who refuses becomes a Floordog.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Swivel Guns are Rare",
+        "description": "The warband may not start a campaign game with a Swivel Gun on its roster. In a one-off game it may buy one for 2D6 gc on top of its price.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Foreign, but Human",
+        "description": "The warband counts as a Human Pirate warband, as Ostlanders and Averlanders count as Mercenaries.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Stranger in a Strange Land",
+        "description": "In any campaign set in the Old World, Mordheim, Albion, Sylvania and Sartosa among them, roll two dice for the order of deployment and take the lower. A Compass cancels this and gives nothing more. The warband does not suffer it in the Border Town Burning campaign, nor in Lustria, Khemri or the Crusades.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Succession",
+        "description": "If the Disgraced Warlord is killed, one of the Shanghai'ers takes over, as a Champion does in a Mercenary warband.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "pirate-equipment-list",
+        "name": "Pirate Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Boat Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cat O' Nine Tails",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Cutlass (Sword)",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Dragon Sword",
+              "variant": ""
+            },
+            "shown_as": "Katana",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Belaying Pins",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 30,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "Throwing Stars/Knives",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Duelling Pistol",
+              "variant": ""
+            },
+            "shown_as": "Dueling Pistol",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 60,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Heavy Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 50,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cathayan Plate Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 120,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "floordog-equipment-list",
+        "name": "Floordog Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Boat Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 8,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Cutlass (Sword)",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Belaying Pins",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "gunner-equipment-list",
+        "name": "Gunner Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "Cutlass (Sword)",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 30,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Blunderbuss",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Duelling Pistol",
+              "variant": ""
+            },
+            "shown_as": "Dueling Pistol",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 60,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Cathayan Candles",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Swivel Gun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 65,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": 1,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Swivel Gun - Ball Shot",
+              "variant": ""
+            },
+            "shown_as": "Ball Shot",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Swivel Gun - Chain Shot",
+              "variant": ""
+            },
+            "shown_as": "Chain Shot",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Swivel Gun - Grape Shot",
+              "variant": ""
+            },
+            "shown_as": "Grape Shot",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "monk-equipment-list",
+        "name": "Monk Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Quarter Staff",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Dragon Sword",
+              "variant": ""
+            },
+            "shown_as": "Katana",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Chain Sticks",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Fish-Hook Shot",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "Throwing Stars",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "disgraced-warlord",
+        "kind": "hero",
+        "name": "Disgraced Warlord",
+        "plural": "Disgraced Warlords",
+        "race": "Human",
+        "cost": 60,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Strength",
+          "Speed",
+          "Pirates of the Cathayan Sea",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "pirate-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "Any pirate within 6\" of the Disgraced Warlord may use his Leadership for any Leadership test."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "shanghaier",
+        "kind": "hero",
+        "name": "Shanghai'er",
+        "plural": "Shanghai'ers",
+        "race": "Human",
+        "cost": 35,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Speed",
+          "Pirates of the Cathayan Sea",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "pirate-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "dragon-monk",
+        "kind": "hero",
+        "name": "Dragon Monk",
+        "plural": "Dragon Monks",
+        "race": "Human",
+        "cost": 55,
+        "starting_xp": 15,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Academic",
+          "Strength",
+          "Speed",
+          "Pirates of the Cathayan Sea",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "A Dragon Monk takes no penalty at all for fighting unarmed and gains +1 Attack when he does. He may never wear armour.",
+        "lists": [
+          "monk-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Art of Silent Death",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "Fighting unarmed in hand-to-hand combat, a Dragon Monk causes a critical hit on a roll to wound of 5 or 6 instead of 6. While he wields a quarterstaff, only his unarmed attacks cause a critical hit on a 5+."
+          },
+          {
+            "name": "Distaste for Poison",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "A Dragon Monk may never use a poison or a venom of any kind."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "litter-bearer",
+        "kind": "hero",
+        "name": "Litter Bearer",
+        "plural": "Litter Bearers",
+        "race": "Human",
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Combat",
+          "Speed",
+          "Pirates of the Cathayan Sea",
+          "Sartosa Pirate Skills"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "pirate-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "deck-hand",
+        "kind": "henchman",
+        "name": "Deck Hand",
+        "plural": "Deck Hands",
+        "race": "Human",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "pirate-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "gunner",
+        "kind": "henchman",
+        "name": "Gunner",
+        "plural": "Gunners",
+        "race": "Human",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 7,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "gunner-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Swivel Guns are Dangerous",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "A Gunner carrying the warband's Swivel Gun always counts as an individual and may never have anyone else with him. As the warband may hold only one Swivel Gun, the Gunner who carries it must either be a new Gunner or be split from an existing group, in which case he keeps the experience and skills he had."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "martial-artist",
+        "kind": "henchman",
+        "name": "Martial Artist",
+        "plural": "Martial Artists",
+        "race": "Human",
+        "cost": 35,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "pirate-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Agile (Martial Artist)",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "A Martial Artist always counts as carrying a Rope & Hook. He may also re-roll a failed Initiative test for leaping a gap, jumping down, a diving charge, and the test a rope allows for climbing up or down."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "floordog",
+        "kind": "henchman",
+        "name": "Floordog",
+        "plural": "Floordogs",
+        "race": "Human",
+        "cost": 0,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "floordog-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Not Hired",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "Floordogs are not hired: they come to the warband by the Swabbies rules."
+          },
+          {
+            "name": "Never Gain Experience",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "A Floordog never gains experience."
+          },
+          {
+            "name": "Rabble",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "Floordogs need not be armed alike. Each may be given different equipment, but only from the Floordog Equipment list. A Floordog may never use magic or cast a spell of any kind, whatever his background."
+          },
+          {
+            "name": "Wo kao, they got away",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "If the warband routs, every Floordog who had already left the table in an earlier turn is taken to have escaped: remove him from the roster as if he had been killed."
+          },
+          {
+            "name": "Don't mind them Lao Xiong, they ain't true pirates",
+            "type": "Warband - Pirates of the Cathayan Sea",
+            "description": "A Floordog who is running away or has been taken out of action does not count towards the warband's rout test."
           }
         ],
         "skills": []
