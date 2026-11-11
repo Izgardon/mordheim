@@ -7317,7 +7317,7 @@
       },
       {
         "title": "Bloodline Abilities",
-        "description": "The Vampire may take one or more Bloodline abilities when he is created. The first costs the price listed, and every later one twice that. Each time he gains a new skill he may take a Bloodline ability instead of the skill, at double cost.\n\nAbility | Cost | Effect\nRed Fury | 30 gc | +1 Attack.\nKilling Blow | 30 gc | A natural 6 to hit wounds automatically. The blow may not be parried, but armour and other saves are allowed.\nBlood Lust | 50 gc | He is subject to frenzy.\nMaster Strike | 40 gc | He causes a critical hit on a 5 or 6.\nCurse Of The Undead | 50 gc | If he goes out of action, after the battle he heals all of his wounds on a D6 roll of 5+, and then does not roll on the serious injury table.\nStrength of the Dragon | 40 gc | +1 Strength.\nGift of Abhorash | 30 gc | The warband's maximum number of warriors rises by one, for good.",
+        "description": "The Vampire may take one or more Bloodline abilities when he is created, the first at its price and every later one at double. Each time he gains a new skill he may take a Bloodline ability instead of the skill, at double cost.",
         "variant": "",
         "type": ""
       }
@@ -7833,11 +7833,6 @@
             "name": "Summoner",
             "type": "Warband - Blood Dragons",
             "description": "The Vampire summoned every undead warrior of the warband. While he is out of action, roll a Leadership test each round for every undead model in the warband: a model that fails goes out of action too."
-          },
-          {
-            "name": "Bloodline Abilities",
-            "type": "Warband - Blood Dragons",
-            "description": "The Vampire may start with one or more Bloodline abilities, and may take one later instead of a skill. The abilities and their costs are the warband's Bloodline Abilities rule."
           }
         ],
         "skills": []
@@ -8129,7 +8124,141 @@
         "skills": []
       }
     ],
-    "upgrades": []
+    "upgrades": [
+      {
+        "group": "Bloodline Abilities",
+        "special": {
+          "name": "Red Fury",
+          "type": "Warband - Blood Dragons",
+          "description": "The Vampire gains +1 Attack."
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "vampire"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": false
+      },
+      {
+        "group": "Bloodline Abilities",
+        "special": {
+          "name": "Killing Blow",
+          "type": "Warband - Blood Dragons",
+          "description": "A natural 6 on the roll to hit wounds automatically. The blow may not be parried, but armour and other saves are allowed."
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "vampire"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": false
+      },
+      {
+        "group": "Bloodline Abilities",
+        "special": {
+          "name": "Blood Lust",
+          "type": "Warband - Blood Dragons",
+          "description": "The Vampire is subject to frenzy."
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "vampire"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": false
+      },
+      {
+        "group": "Bloodline Abilities",
+        "special": {
+          "name": "Master Strike",
+          "type": "Warband - Blood Dragons",
+          "description": "The Vampire causes a critical hit on a 5 or 6."
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "vampire"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": false
+      },
+      {
+        "group": "Bloodline Abilities",
+        "special": {
+          "name": "Curse Of The Undead",
+          "type": "Warband - Blood Dragons",
+          "description": "If the Vampire goes out of action, after the battle he heals all of his wounds on a D6 roll of 5+, and then does not roll on the serious injury table."
+        },
+        "cost": 50,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "vampire"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": false
+      },
+      {
+        "group": "Bloodline Abilities",
+        "special": {
+          "name": "Strength of the Dragon",
+          "type": "Warband - Blood Dragons",
+          "description": "The Vampire gains +1 Strength."
+        },
+        "cost": 40,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "vampire"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": false
+      },
+      {
+        "group": "Bloodline Abilities",
+        "special": {
+          "name": "Gift of Abhorash",
+          "type": "Warband - Blood Dragons",
+          "description": "The warband's maximum number of warriors rises by one, for good."
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "fighters": [
+            "vampire"
+          ]
+        },
+        "max_per_fighter": null,
+        "later_double": true,
+        "at_recruit": false
+      }
+    ]
   },
   {
     "slug": "bretonnian-brigands",

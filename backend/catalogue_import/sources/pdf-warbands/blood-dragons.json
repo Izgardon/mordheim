@@ -8,8 +8,7 @@
     "maxModels": 12
   },
   "specialRules": [
-    {"rulename": "Grave Guards", "ruleFull": "A warband may never have more Grave Guards than Skeleton Warriors."},
-    {"rulename": "Bloodline Abilities", "ruleFull": "The Vampire may take one or more Bloodline abilities when he is created. The first costs the price listed, and every later one twice that. Each time he gains a new skill he may take a Bloodline ability instead of the skill, at double cost.\n\nAbility | Cost | Effect\nRed Fury | 30 gc | +1 Attack.\nKilling Blow | 30 gc | A natural 6 to hit wounds automatically. The blow may not be parried, but armour and other saves are allowed.\nBlood Lust | 50 gc | He is subject to frenzy.\nMaster Strike | 40 gc | He causes a critical hit on a 5 or 6.\nCurse Of The Undead | 50 gc | If he goes out of action, after the battle he heals all of his wounds on a D6 roll of 5+, and then does not roll on the serious injury table.\nStrength of the Dragon | 40 gc | +1 Strength.\nGift of Abhorash | 30 gc | The warband's maximum number of warriors rises by one, for good."}
+    {"rulename": "Grave Guards", "ruleFull": "A warband may never have more Grave Guards than Skeleton Warriors."}
   ],
   "equipmentLists": [
     {
@@ -75,8 +74,7 @@
         {"rulename": "Immune to Psychology", "ruleFull": "The Vampire is not affected by psychology and takes no All Alone tests."},
         {"rulename": "Immune to Poison", "ruleFull": "The Vampire is not affected by any poison."},
         {"rulename": "No Pain", "ruleFull": "The Vampire treats a stunned result on the Injury chart as knocked down."},
-        {"rulename": "Summoner", "ruleFull": "The Vampire summoned every undead warrior of the warband. While he is out of action, roll a Leadership test each round for every undead model in the warband: a model that fails goes out of action too."},
-        {"rulename": "Bloodline Abilities", "ruleFull": "The Vampire may start with one or more Bloodline abilities, and may take one later instead of a skill. The abilities and their costs are the warband's Bloodline Abilities rule."}
+        {"rulename": "Summoner", "ruleFull": "The Vampire summoned every undead warrior of the warband. While he is out of action, roll a Leadership test each round for every undead model in the warband: a model that fails goes out of action too."}
       ]
     },
     {
@@ -180,6 +178,21 @@
       ]
     }
   ],
+  "mutations": [
+    {
+      "mutationName": "Bloodline Abilities",
+      "mutationflavour": "The Vampire may take one or more Bloodline abilities when he is created, the first at its price and every later one at double. Each time he gains a new skill he may take a Bloodline ability instead of the skill, at double cost.",
+      "items": [
+        {"heading": "Red Fury", "cost": "30", "ruleFull": "The Vampire gains +1 Attack."},
+        {"heading": "Killing Blow", "cost": "30", "ruleFull": "A natural 6 on the roll to hit wounds automatically. The blow may not be parried, but armour and other saves are allowed."},
+        {"heading": "Blood Lust", "cost": "50", "ruleFull": "The Vampire is subject to frenzy."},
+        {"heading": "Master Strike", "cost": "40", "ruleFull": "The Vampire causes a critical hit on a 5 or 6."},
+        {"heading": "Curse Of The Undead", "cost": "50", "ruleFull": "If the Vampire goes out of action, after the battle he heals all of his wounds on a D6 roll of 5+, and then does not roll on the serious injury table."},
+        {"heading": "Strength of the Dragon", "cost": "40", "ruleFull": "The Vampire gains +1 Strength."},
+        {"heading": "Gift of Abhorash", "cost": "30", "ruleFull": "The warband's maximum number of warriors rises by one, for good."}
+      ]
+    }
+  ],
   "aliases": [],
   "stubs": [],
   "flags": [
@@ -189,8 +202,8 @@
     {"page": 4, "what": "The Wight (p4) takes our Undead race and the Grave Guard (p6) our Grave Guard race; the Skeleton Warrior (p5) and the Hell Hound (p6) are creatures with no race and no maximum profile. The Dreg (p4) is Human."},
     {"page": 5, "what": "The Skeletons' (p5) and Grave Guards' (p6) Slow (they may not run, but may charge normally) is our shared May Not Run, under that name."},
     {"page": 2, "what": "The Blood Dragon list's Warhorse (80 gc) and Barding (40 gc) are marked \"*Vampire Only\". The Undead list has no Warhorse or Barding, and the Blood Dragon list no missile weapons."},
-    {"page": 4, "what": "The Vampire's Summoner rule is his own (the undead collapse while he is out of action); our skill of that name raises the maximum warband size, which is what his Gift of Abhorash bloodline ability does."},
-    {"page": 7, "what": "The bloodline abilities are bought at creation, doubled for each later one and in place of a skill later. The template has no way to sell them, so they are the warband's Bloodline Abilities rule with their costs and effects."},
+    {"page": 4, "what": "The Vampire's Summoner rule is his own (the undead collapse while he is out of action); our skill of that name raises the maximum warband size, which is what his Gift of Abhorash upgrade does. The upgrade gives the template's own special of that name, and neither touches the skill."},
+    {"page": 7, "what": "The seven bloodline abilities are the warband's upgrades, each the special it gives at its price (30 to 50 gc), the Vampire's alone, the second and later at double. One may be taken later in place of a skill advance, which no upgrade records: the group's own words, the warband's Bloodline Abilities rule, say so."},
     {"page": 6, "what": "Grave Guards are \"0-5*\", the asterisk the footnote that a warband may never have more Grave Guards than Skeletons: the count is 0-5 and the footnote is the warband's Grave Guards rule."}
   ]
 }

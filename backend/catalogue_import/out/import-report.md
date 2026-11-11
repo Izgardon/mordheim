@@ -712,8 +712,8 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | equipment lists | 236 |
 | list lines | 2619 |
 | warband rules | 319 |
-| upgrades | 116 |
-| the templates' own specials | 725 |
+| upgrades | 123 |
+| the templates' own specials | 730 |
 
 ### List lines
 
@@ -864,6 +864,7 @@ mordheimer's lore names that differ from ours: Charms & Hexes -> Charms and Hexe
 | cult-of-the-posessed | Mutations | who the-possessed, mutants; later double; at recruit |
 | lizardmen | Sacred markings | who heroes; at most 1 each; at recruit |
 | marauders-of-chaos | Mark of the Dark Gods | who marauder-chieftain, seer; at most 1 each; cost 0 |
+| blood-dragons | Bloodline Abilities | who vampire; later double |
 
 lizardmen: Poisoned Weapons is a warband rule, not an upgrade.
 
@@ -1205,8 +1206,8 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Wight (p4) takes our Undead race and the Grave Guard (p6) our Grave Guard race; the Skeleton Warrior (p5) and the Hell Hound (p6) are creatures with no race and no maximum profile. The Dreg (p4) is Human.
 - Flag (p5): The Skeletons' (p5) and Grave Guards' (p6) Slow (they may not run, but may charge normally) is our shared May Not Run, under that name.
 - Flag (p2): The Blood Dragon list's Warhorse (80 gc) and Barding (40 gc) are marked "*Vampire Only". The Undead list has no Warhorse or Barding, and the Blood Dragon list no missile weapons.
-- Flag (p4): The Vampire's Summoner rule is his own (the undead collapse while he is out of action); our skill of that name raises the maximum warband size, which is what his Gift of Abhorash bloodline ability does.
-- Flag (p7): The bloodline abilities are bought at creation, doubled for each later one and in place of a skill later. The template has no way to sell them, so they are the warband's Bloodline Abilities rule with their costs and effects.
+- Flag (p4): The Vampire's Summoner rule is his own (the undead collapse while he is out of action); our skill of that name raises the maximum warband size, which is what his Gift of Abhorash upgrade does. The upgrade gives the template's own special of that name, and neither touches the skill.
+- Flag (p7): The seven bloodline abilities are the warband's upgrades, each the special it gives at its price (30 to 50 gc), the Vampire's alone, the second and later at double. One may be taken later in place of a skill advance, which no upgrade records: the group's own words, the warband's Bloodline Abilities rule, say so.
 - Flag (p6): Grave Guards are "0-5*", the asterisk the footnote that a warband may never have more Grave Guards than Skeletons: the count is 0-5 and the footnote is the warband's Grave Guards rule.
 
 ### Bretonnian Brigands
@@ -1309,7 +1310,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): The dark elves take the Elf (Druchii) race, the Druchii PDF's printed dark elf maximum (T3, where our Elf has T4); the PDF prints no maximum of its own. A decision for William.
 - Flag (p2): The Reaver list's Repeating Crossbow and the Shades list's Repeater Crossbow are our Repeater Crossbow (ours 40 gc, the lists 35). The Dragon Cloak (50 gc) is our Sea Dragon Cloak, the same price.
 - Flag (p6): Corsairs buy from the Reaver list "with the exception of Missile Weapons, of which they may have none": the Repeating Crossbow line is read as not Corsairs.
-- Flag (p3): The Specialist (0-1, "Special") is hired for nothing before a battle, leaves the warband after it, gains no experience and doesn't count towards the warband size. He is no roster fighter, so his rules, the four Specialists with their replacement costs, profiles and equipment, and the Cold One Beasthound's profile, are the warband's Specialists rule. A decision for William: they would suit four hired swords of the setting.
+- Flag (p3): The Specialist (0-1, "Special") is hired for nothing before a battle, leaves the warband after it, gains no experience and doesn't count towards the warband size. He is no roster fighter, so his rules, the four Specialists with their replacement costs, profiles and equipment, and the Cold One Beasthound's profile, stay the warband's Specialists rule. They belong in the catalogue as four hired swords (William, 11 Nov 2026: a fighter who brings another model is a hired sword), but a hired sword only a named warband type may hire can't be declared by a PDF page yet: who-can reads mordheimer's list alone, and a row it lacks is open to everyone.
 - Flag (p5): The Assassin Specialist's profile is printed with "Same as Hired Sword from TC 12" for his rules, so the rule points at that hired sword rather than repeating it.
 - Flag (p3): The Captain's Slaver rule is his own (it forces the sold-to-slavery option); our skill of that name captures a model automatically and is a different rule.
 - Flag (p2): The Corsair special skills: Fey Quickness and Infiltration are ours, the same effects. Excellent Sight ("twice as far away as normal warriors") is the same skill the Druchii and the Wood Elves of Athel Loren groups hold, with their words, which William kept apart from our Unblinking Eye. Furious Charge (+1 Attack when charging) and Looting are new; our Looter adds a Treasure instead, so Looting is kept apart. A decision for William.

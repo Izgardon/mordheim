@@ -15,6 +15,11 @@ snapshot so the template import builds it the same way. A file's own keys:
   a page's, in its own words where it gives them, or `{name, text, tables}` its own), and needs rules until it has
   one of its own (the Metal Mongers' Ratling Gun); `statblock`, its profile rows (`{profile, m, ws, ...}`: the Night
   Haint's Mortis Engine, the Channel Rats' Wicker Man);
+- `mutations`: the upgrade groups a page sells, in the snapshot's shape (`{mutationName, mutationflavour, items:
+  [{heading, cost, ruleFull}]}`), which `template_upgrades.py` reads as it reads a snapshot page's: each item the
+  special it gives at its price, the group's own words a warband rule of its name, and its terms (who may buy, the
+  most each, the double price of a later one) `template_answers.UPGRADE_TERMS` (the Blood Dragon Vampire's seven
+  bloodline abilities). A fighter's buyable extra rules are upgrades, never a warband rule (William, 11 Nov 2026);
 - `itemRules`: `{name, summary, text, tables, page, ours}`, shared item rules a page brings, which a few items link
   (William, 6 Nov 2026, of Experimental Technology: "its a shared item rule that a few items will have"); `ours`, our
   items whose own rule it becomes (the Watchmen's Map, our Mordheim Map's rule for any map: "Make the map rule not

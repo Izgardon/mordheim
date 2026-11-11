@@ -117,6 +117,11 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
         "max_per_fighter": 1,
         "cost": 0,
     },
+    # the Blood Dragons PDF, p7: "A vampire may choose one or more of the following bloodline abilities at the
+    # beginning of the game (when he is created). The first ability is at normal cost, every subsequent costs twice
+    # ... Every time a gains a new skill, he may choose a bloodline ability instead of a skill at double cost", so
+    # they are not bought only at recruitment and he has no most
+    ("blood-dragons", "Bloodline Abilities"): {"who": {"fighters": ["vampire"]}, "later_double": True},
 }
 # One upgrade's own `who`, where its text narrows its group's: "(Saurus Only)", "(Skinks only)"
 UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {

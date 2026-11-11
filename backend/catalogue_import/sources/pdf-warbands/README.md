@@ -141,3 +141,15 @@ Each answers a question a batch raised; follow them without asking again.
   scrape the rest of the campaign setting pdfs further down the line as I think warband pdfs actually give item
   details which is what we want"). A warband PDF's item details stand, and a stub it leaves bare is filled when
   that PDF is read.
+- **A setting's shop list re-prices our items for that setting only:** price rows on the warband types of that
+  setting (`priceRows`), with our global prices and rarities untouched (William, 11 Nov 2026; Sartosa's Equipment
+  shop list).
+- **Never fetch a setting's own PDFs to fill a gap** (William, 11 Nov 2026). Read the warband PDFs, stub whatever is
+  missing, a fighter left with no skill list included, and fill it when that setting's batch comes. The Sartosa
+  skills and equipment PDFs already read stay as they are.
+- **A warband whose book gives it no fixed leader stays leaderless** (William, 11 Nov 2026), with a warband rule
+  saying how the leader is worked out each game (the Knights-Errant's highest D6+7, The Lost's highest Leadership).
+  The template check's "no leader" warning is expected.
+- **A fighter's buyable extra rules are template upgrades** (`mutations`: the Blood Dragon Vampire's bloodline
+  abilities), **and a fighter who brings another model is a hired sword** (the Dark Elf Corsairs' Specialists);
+  neither stays a warband rule (William, 11 Nov 2026).

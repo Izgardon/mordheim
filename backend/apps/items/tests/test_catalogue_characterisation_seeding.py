@@ -106,7 +106,7 @@ class SeedAllTests(TestCase):
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov);
                 # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
                 # the second PDF batch's five templates add 46 of their own, the third's five 54,
-                # the fifth's five 43, the sixth's eight 83, the seventh's seven 52 and the Mousillon batch's six 23
+                # the fifth's five 43, the sixth's eight 83, the seventh's seven 52 and the Mousillon batch's six 28 (7 of them the Blood Dragons' bloodline upgrades, less the Killing Blow their Wight holds too)
                 # Border Town Burning's Beasts of the East add 31 of their own to special.json (William, 7 Nov 2026)
                 # Frenzy, Hate High Elves, Hate Bandits and Outlaws and Hate Spellcasters shared (William, 7 Nov 2026):
                 # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4; a
@@ -114,7 +114,7 @@ class SeedAllTests(TestCase):
                 # Warriors' Not Orcs and the Pit Fighters' Pit Fighter its skill's one row: 2 fewer; a rule that only
                 # named a skill is the skill he starts with (William, 7 Nov 2026: "yes please do that"): the
                 # templates' 21, the hired swords' 9 and Maximilian's Strongman fewer
-                "Special": 1130,
+                "Special": 1135,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,
@@ -183,9 +183,9 @@ class SeedAllTests(TestCase):
                 "TemplateRule": 319,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin),
-                # the Fen Guard's 7 (Variations), the Lords of the Marsh's 15, the Shallows Beasts' 9 and the Underworld
-                # Alliance's 8
-                "TemplateUpgrade": 116,
+                # the Fen Guard's 7 (Variations), the Lords of the Marsh's 15, the Shallows Beasts' 9, the Underworld
+                # Alliance's 8 and the Blood Dragon Vampire's 7 bloodline abilities
+                "TemplateUpgrade": 123,
             },
         )
         mercenaries = WarbandTemplate.objects.get(slug="mercenaries")

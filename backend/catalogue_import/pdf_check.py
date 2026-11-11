@@ -9,7 +9,7 @@ whole numbers; its counts and group sizes (min no more than max, a hero with no 
 models; every list a fighter names there, and every list someone's; every line's note read into who may take it; and
 every item, alias, skill group, skill, race, spell lore and warband type it names matched to our catalogue, or a
 declared stub that matches nothing of ours; a stub's rules a shared item rule of ours (or a page's) or its own name and
-text; and a price row's item ours and named by a line.
+text; and a price row's item ours and named by a line; and its upgrade groups' shape (`mutations`).
 """
 
 import copy
@@ -43,6 +43,7 @@ PAGE: Spec = {
     SHARED: (dict, False),
     "aliases": (list, True),
     "stubs": (list, True),
+    "mutations": (list, False),
     "itemRules": (list, False),
     "priceRows": (list, False),
     "flags": (list, True),
@@ -108,6 +109,8 @@ STUB_RULE: Spec = {
     "text": (str, False),
     "tables": (list, False),
 }
+UPGRADE_GROUP: Spec = {"mutationName": (str, True), "mutationflavour": (str, True), "items": (list, True)}
+UPGRADE: Spec = {"heading": (str, True), "cost": (str, True), "ruleFull": (str, True)}
 ITEM_RULE: Spec = {
     "name": (str, True),
     "summary": (str, False),
@@ -390,6 +393,7 @@ def check_page(slug: str, page: dict[str, Any], catalogue: Catalogue) -> Found:
         (page["specialRules"], RULE, "warband rule"),
         (page["aliases"], ALIAS, "alias"),
         (page["stubs"], STUB, "stub"),
+        (page.get("mutations") or [], UPGRADE_GROUP, "upgrade group"),
         (page.get("itemRules") or [], ITEM_RULE, "shared item rule"),
         (page.get("priceRows") or [], PRICE_ROW, "price row"),
         (page["flags"], FLAG, "flag"),
@@ -399,6 +403,8 @@ def check_page(slug: str, page: dict[str, Any], catalogue: Catalogue) -> Found:
         _each(rows, spec, where, problems)
     for entry in page.get("specialEquipment") or []:
         shape(entry.get("cost"), COST, f"special equipment {entry.get('title')} cost", problems)
+    for group in page.get("mutations") or []:
+        _each(group.get("items") or [], UPGRADE, f"{group.get('mutationName')} upgrade", problems)
     for raw in _each(page["equipmentLists"], LIST, "list", problems):
         for line in _each(raw["items"], LINE, f"{raw['title']} line", problems):
             shape(line["cost"], COST, f"{raw['title']}, {line['name']} cost", problems)
