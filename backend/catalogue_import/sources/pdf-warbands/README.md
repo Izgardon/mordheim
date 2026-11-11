@@ -52,8 +52,8 @@ check over every file.
 | `slayer-pirates.json` | slayer-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf | 1-4 (text layer) | 11 Nov 2026 |
 | `ghost-pirates.json` | ghost-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Ghost%20Pirates.pdf | 1-5 (text layer; page 2 as an image) | 11 Nov 2026 |
 | `lothern-sea-patrol.json` | lothern-sea-patrol (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Lothern%20Sea%20Patrol.pdf | 1-5 (text layer; page 2 as an image) | 11 Nov 2026 |
-| `orc-pirates.json` | orc-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf | 1-4 (text layer; built on our Orc Mob template, which the PDF varies) | 11 Nov 2026 |
-| `savage-orcs-sar.json` | savage-orcs-sar (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf | 5-7 (text layer; built on our Orc Mob template, which the PDF varies) | 11 Nov 2026 |
+| `orc-pirates.json` | orc-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf | 1-4 (text layer; a variant of our Orc Mob template, which the PDF varies) | 11 Nov 2026 |
+| `savage-orcs-sar.json` | savage-orcs-sar (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf | 5-7 (text layer; a variant of our Orc Mob template, which the PDF varies) | 11 Nov 2026 |
 | `pirates-of-the-cathayan-sea.json` | pirates-of-the-cathayan-sea (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Pirates%20of%20the%20Cathayan%20Sea.pdf | 1-5 (text layer; page 2 as an image) | 11 Nov 2026 |
 | `blood-dragons.json` | blood-dragons (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Blood%20Dragons.pdf | 1-7 (text layer) | 11 Nov 2026 |
 | `bretonnian-brigands.json` | bretonnian-brigands (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Bretonnian%20Brigands.pdf | 1-6 (text layer) | 11 Nov 2026 |
@@ -221,13 +221,22 @@ Each answers a question a batch raised; follow them without asking again.
 - **A warband whose book gives it no fixed leader stays leaderless** (William, 11 Nov 2026), with a warband rule
   saying how the leader is worked out each game (the Knights-Errant's highest D6+7, The Lost's highest Leadership).
   The template check's "no leader" warning is expected.
-- **One PDF is two warbands where it prints two lists** (William, 11 Nov 2026: "i prefer separate warbands as
-  different settings and all"). The Orc Pirates & Savage Orcs PDF is two warbands, each "the exact same rules as the
-  Da Mob Warband with the following changes": each is its own source file, warband type and template, with only its
-  own half's rules, lists, fighters and skills. A Broheim type the split replaces is left out through
-  `drop_warband_types` in `overrides.json` and the two new ones are `extra_warband_types` entries, so the seeder
-  archives the old type and warbands raised as it keep it. A name two settings already share keeps the house
-  convention of its source code in the slug (`savage-orcs-sar`, beside `savage-orcs-kaz` and `savage-orcs-ath`).
+- **A PDF that varies another warband's list is that list's variants** (William, 11 Nov 2026: "Orc Pirates & Savage
+  Orcs should just be 2 variants of the orc mob if that still works, correctly pointing at their settings"). Each
+  half of the Orc Pirates & Savage Orcs PDF is "the exact same rules as the Da Mob Warband with the following
+  changes", so each is a source file of its own that folds into the Orc Mob's template (`variantOf`: the snapshot
+  page and the variant key) and builds no template of its own. The variants themselves and the types that preset
+  them are `template_answers` (`VARIANTS`, `TEMPLATE_TYPES`), where the snapshot's variants already live; the fold
+  makes its rules the variant's, names the variant on every line of its lists (the base warband's lines take the
+  first variant), and folds its fighters: one the base holds takes the page's skill groups and counts as
+  `variantChanges`, one it lacks joins the roster with no other variant allowing any of him, and one the page lacks
+  is allowed none in this variant. **A fighter a variant allows none of is not offered in it**, and a list with no
+  line in the variant is not shown, so a Mordheim Orc Mob never sees a Sartosa Goblin Swabbie. Each type keeps its
+  own setting and presets its own variant, so nobody picks another setting's warband. A Broheim type the change
+  replaces is left out through `drop_warband_types` in `overrides.json` and the new ones are `extra_warband_types`
+  entries, so the seeder archives the old type and warbands raised as it keep it. A name two settings already share
+  keeps the house convention of its source code in the slug (`savage-orcs-sar`, beside `savage-orcs-kaz` and
+  `savage-orcs-ath`).
 - **A fighter's buyable extra rules are template upgrades** (`mutations`: the Blood Dragon Vampire's bloodline
   abilities), **and a fighter who brings another model is a hired sword** (the Dark Elf Corsairs' Specialists);
   neither stays a warband rule (William, 11 Nov 2026).

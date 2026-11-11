@@ -16,6 +16,7 @@ from apps.warband_templates.models import (
     HENCHMAN,
     TemplateFighter,
     TemplateFighterList,
+    TemplateList,
     TemplateListItem,
     TemplateUpgrade,
 )
@@ -124,6 +125,23 @@ class WarbandTemplateEndpointTests(CatalogueTestCase):
         self.warband.save()
         lines = {row["item"]["name"]: row for row in self.read()["template"]["lists"][0]["lines"]}
         self.assertEqual((lines["Bow"]["id"], lines["Bow"]["held"]), (line.id, 0))
+
+    def test_another_variants_fighters_and_lists_are_no_part_of_this_one(self) -> None:
+        # William, 11 Nov 2026: the Sartosa Orc Pirates and Savage Orcs are variants of the Orc Mob, so a Mordheim
+        # Orc Mob must see neither their fighters nor their lists
+        theirs = TemplateList.objects.create(template=self.made.template, key="theirs", name="Their list")
+        TemplateListItem.objects.create(equipment_list=theirs, item=self.made.line.item, cost=5, variant="middenheim")
+        TemplateFighter.objects.filter(pk=self.made.warriors.pk).update(variant_changes={"reikland": {"max_count": 0}})
+
+        body = self.read()["template"]
+
+        self.assertEqual([row["name"] for row in body["lists"]], ["Kit list"])  # the warband is Reikland's
+        self.assertEqual([fighter["key"] for fighter in body["fighters"]], ["captain"])
+        self.warband.template_variant = "middenheim"
+        self.warband.save()
+        body = self.read()["template"]
+        self.assertEqual(sorted(row["name"] for row in body["lists"]), ["Kit list", "Their list"])
+        self.assertEqual(sorted(fighter["key"] for fighter in body["fighters"]), ["captain", "warriors"])
 
     def test_it_counts_the_rules_the_warband_lacks_and_closes_list_prices_after_the_first_fight(self) -> None:
         WarbandRule.objects.create(warband=self.warband, title=" hard bargains ")

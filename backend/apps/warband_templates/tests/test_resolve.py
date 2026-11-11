@@ -13,6 +13,7 @@ from apps.warband_templates.models import TemplateRule, WarbandTemplate, Warband
 from apps.warband_templates.services.list_prices import list_prices_open
 from apps.warband_templates.services.resolve import (
     apply_variant,
+    in_variant,
     template_for_type,
     template_gold,
     template_size,
@@ -88,6 +89,17 @@ class TemplateForTypeTests(CatalogueTestCase):
         self.assertEqual(apply_variant(captain, "reikland").skill_types, ["Combat", "Shooting"])
         changed = apply_variant(captain, "middenheim")
         self.assertEqual((changed.skill_types, changed.name), (["Combat", "Strength"], "Captain"))
+
+    def test_a_fighter_the_variant_allows_none_of_is_not_offered_in_it(self) -> None:
+        # William, 11 Nov 2026: the Sartosa Orc Pirates and Savage Orcs are variants of the Orc Mob, so a variant
+        # holds fighters the others do not (a Goblin Swabbie is no part of a Mordheim Orc Mob)
+        swabbie = self.made.warriors
+        swabbie.variant_changes = {"reikland": {"max_count": 0}}
+        swabbie.save(update_fields=["variant_changes"])
+        kept = in_variant(self.made.template.fighters.all(), "reikland")
+        self.assertEqual([fighter.name for fighter in kept], ["Captain"])
+        both = in_variant(self.made.template.fighters.all(), "middenheim")
+        self.assertEqual(sorted(fighter.name for fighter in both), ["Captain", "Warrior"])
 
     def test_a_variant_changes_numbers_as_written_and_gives_its_own_gold_and_size(self) -> None:
         captain = self.made.captain

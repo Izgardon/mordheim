@@ -179,6 +179,15 @@ export function startSkillsFor(
   return [...own, ...given];
 }
 
+/**
+ * The template's fighters in the variant, each as it has him: one it allows none of is left out (the Sartosa Orc
+ * Pirates' Goblin Swabbies are no part of a Mordheim Orc Mob).
+ */
+export const fightersFor = (fighters: TemplateFighter[], variant: string) =>
+  fighters
+    .map((fighter) => inVariant(fighter, variant))
+    .filter((fighter) => fighter.max_count !== 0);
+
 /** A list's lines in the variant: every variant's and its own (the Kurgan's bows). */
 export const linesFor = <Line extends Pick<TemplateLine, "variant">>(
   lines: Line[],
@@ -216,3 +225,9 @@ export const lineName = (line: Pick<TemplateLine, "item" | "shown_as">) =>
 /** A lore and when he may use it: "Tchar Rituals (with the Mark of Tchar the Eagle)". */
 export const spellLabel = (spell: TemplateSpellType) =>
   spell.note ? `${spell.name} (${spell.note})` : spell.name;
+
+/** The lists with a line in the variant: a warband never sees another variant's list. */
+export const listsFor = <List extends { lines: Pick<TemplateLine, "variant">[] }>(
+  lists: List[],
+  variant: string
+) => lists.filter((list) => linesFor(list.lines, variant).length > 0);

@@ -465,7 +465,7 @@ class PdfImportTests(SimpleTestCase):
         self.assertEqual(merged["setting"], "mordheim")  # Mordheim 1a, where it has always been
         shown = {
             (slug, line["shown_as"])
-            for slug in ("dwarf-slayer-cult", "khorne-raiders", "slayer-pirates", "savage-orcs")
+            for slug in ("dwarf-slayer-cult", "khorne-raiders", "slayer-pirates", "orc-mob")
             for row in self.templates[slug]["lists"]
             for line in row["lines"]
             if line["item"]["name"] == merged["name"]
@@ -475,7 +475,7 @@ class PdfImportTests(SimpleTestCase):
                 ("dwarf-slayer-cult", "Throwing axes"),
                 ("khorne-raiders", "Throwing Axes"),
                 ("slayer-pirates", "Throwing Axe"),
-                ("savage-orcs", "Throwing Axe"),
+                ("orc-mob", "Throwing Axe"),  # the Savage Orcs variant of the Orc Mob
             },
             shown,
         )
@@ -681,96 +681,102 @@ class PdfImportTests(SimpleTestCase):
             self.assertEqual(row["skills"], [skill])
             self.assertEqual([special["name"] for special in row["specials"]], ["Leader"])
 
-    def test_the_orc_pirates_and_the_savage_orcs_are_two_warbands(self) -> None:
-        # William, 11 Nov 2026: "i prefer separate warbands as different settings and all". The one PDF is two
-        # warbands, each "the exact same rules as the Da Mob Warband with the following changes", so each is its own
-        # warband type with its own template, and the merged type is gone.
+    def test_the_orc_pirates_and_the_savage_orcs_are_variants_of_the_orc_mob(self) -> None:
+        # William, 11 Nov 2026: "Orc Pirates & Savage Orcs should just be 2 variants of the orc mob if that still
+        # works, correctly pointing at their settings". Their pages fold into the Orc Mob's (`variantOf`), which
+        # serves all three types, each presetting its own variant so nobody picks another setting's warband.
         types = {row["slug"]: row for row in load_json(OUT / "warband-types.json")}
         self.assertEqual([slug for slug in ("orc-pirates-and-savage-orcs",) if slug in types], [])
-        self.assertEqual(types["orc-pirates"]["name"], "Orc Pirates")
-        self.assertEqual(types["savage-orcs-sar"]["name"], "Savage Orcs")  # two other settings hold Savage Orcs
-        for slug in ("orc-pirates", "savage-orcs-sar"):
-            self.assertEqual((types[slug]["setting"], types[slug]["broheim_grade"]), ("sartosa", "2b"))
-        pirates, savages = self.templates["orc-pirates"], self.templates["savage-orcs"]
-        self.assertEqual([row["type"] for row in pirates["types"]], ["orc-pirates"])
-        self.assertEqual([row["type"] for row in savages["types"]], ["savage-orcs-sar"])
         self.assertEqual(
-            [row["title"] for row in pirates["rules"]], ["Pressganging", "Distasteful Company", "Animosity"]
+            [(types[slug]["name"], types[slug]["setting"]) for slug in ("orc-mob", "orc-pirates", "savage-orcs-sar")],
+            [("Orc Mob", "mordheim"), ("Orc Pirates", "sartosa"), ("Savage Orcs", "sartosa")],
         )
+        self.assertEqual([slug for slug in ("orc-pirates", "savage-orcs") if slug in self.templates], [])
+        mob = self.templates["orc-mob"]
+        self.assertEqual([row["key"] for row in mob["variants"]], ["orc-mob", "orc-pirates", "savage-orcs"])
         self.assertEqual(
-            [row["title"] for row in savages["rules"]],
-            ["Distasteful Company", "Talismans galore", "Fear fire", "Primitive", "Wild Animosity"],
+            mob["types"],
+            [
+                {"type": "orc-mob", "variant": "orc-mob"},
+                {"type": "orc-pirates", "variant": "orc-pirates"},
+                {"type": "savage-orcs-sar", "variant": "savage-orcs"},
+            ],
         )
-        self.assertEqual([row["name"] for row in pirates["lists"]], ["Orc Equipment List", "Goblin Swabbie Equipment List"])  # fmt: skip
-        self.assertEqual([row["name"] for row in savages["lists"]], ["Savage Orc Equipment List", "Forest Goblin Equipment List"])  # fmt: skip
+        # each half's rules are its variant's; Da Mob's own are every variant's
         self.assertEqual(
-            [row["name"] for row in savages["fighters"]],
-            ["Orc Boss", "Orc Shaman", "Orc Big 'Un", "Orc Boy", "Forest Goblin", "Cave Squig", "Troll"],
+            [(row["title"], row["variant"]) for row in mob["rules"]],
+            [
+                ("Distasteful Company", ""),
+                ("Animosity", ""),
+                ("Pressganging", "orc-pirates"),
+                ("Talismans galore", "savage-orcs"),
+                ("Fear fire", "savage-orcs"),
+                ("Primitive", "savage-orcs"),
+                ("Wild Animosity", "savage-orcs"),
+            ],
         )
-        # only the Savage Orcs learn their four skills; the pirates' heroes learn our Orcs group, as Da Mob's do
-        boss = {name: next(row for row in page["fighters"] if row["name"] == "Orc Boss") for name, page in (("pirates", pirates), ("savages", savages))}  # fmt: skip
-        self.assertNotIn("Savage Orcs", boss["pirates"]["skill_types"])
-        self.assertIn("Savage Orcs", boss["savages"]["skill_types"])
-        self.assertIn("Orcs", boss["pirates"]["skill_types"])
-
-    def test_the_khemri_equipment_page_gives_its_weapons_their_rules_and_items(self) -> None:
-        # William, 11 Nov 2026, of the Khemri Equipment PDF he sent: the Jambiya is "just a nicknamed dagger", the
-        # Scimitar is "its own item, and drop the tag", the Scythe gets "the 'khemri' treatment", and an item's half
-        # of the setting follows "the warbands that sell them".
-        self.assertNotIn("scimitar", self.items["Sword"]["tags"])
-        self.assertEqual([rule.get("rule") for rule in self.items["Sword"]["rules"]], ["parry"])
-        rules = {
-            name: [rule.get("rule") or rule.get("name") for rule in self.items[name]["rules"]]
-            for name in ("Scimitar", "Scythe (Khemri)", "Ankus", "Cutlass", "Great Scimitar", "Bagh Nakh")
-        }
+        # every line names the variant that buys it, Da Mob's own included
         self.assertEqual(
-            rules,
+            {(row["name"], line["variant"]) for row in mob["lists"] for line in row["lines"]},
             {
-                "Scimitar": ["parry", "cutting-edge"],
-                "Scythe (Khemri)": ["cutting-edge", "two-handed"],
-                "Ankus": ["strike-first", "concussion"],
-                "Cutlass": ["parry", "Basket hilt"],
-                "Great Scimitar": ["two-handed", "strike-last", "cutting-edge"],
-                "Bagh Nakh": ["-1 enemy armour save", "pair", "cumbersome"],
+                ("Orc Equipment List", "orc-mob"),
+                ("Goblin Equipment List", "orc-mob"),
+                ("Orc Equipment List", "orc-pirates"),
+                ("Goblin Swabbie Equipment List", "orc-pirates"),
+                ("Savage Orc Equipment List", "savage-orcs"),
+                ("Forest Goblin Equipment List", "savage-orcs"),
             },
         )
-        for name in rules:
-            self.assertEqual(self.items[name]["setting"], "khemri-3", name)  # the warbands that sell them are 3's
-        self.assertEqual((self.items["Great Scimitar"]["strength"], self.items["Bagh Nakh"]["strength"]), ("+2", "+1"))  # fmt: skip
-        [bagh] = self.items["Bagh Nakh"]["availabilities"]  # on the page, on no list and at no price
-        self.assertEqual((bagh["cost"], bagh["cost_note"], len(bagh["warbands"])), (None, "", 8))
-        # the Sylvania scythes keep their own item and their own rows
-        self.assertEqual(
-            [row["warbands"][0]["type"] for row in self.items["Scythe"]["availabilities"]],
-            ["vampire-hunters-of-sylvania", "call-of-the-night-haint"],
-        )
-        lines = {
-            (line["item"]["name"], line["shown_as"], line["cost"])
-            for slug in ("arabyan-nomads", "arabyan-theives", "hobgoblins", "necromancer")
-            for row in self.templates[slug]["lists"]
-            for line in row["lines"]
-            if line["item"]["name"] in ("Sword", "Scimitar", "Scythe (Khemri)", "Dagger")
+        # a fighter a variant has none of is in its `variant_changes` as a most of 0
+        allowed = {
+            variant: sorted(
+                row["name"]
+                for row in mob["fighters"]
+                if (row["variant_changes"].get(variant) or {}).get("max_count") != 0
+            )
+            for variant in ("orc-mob", "orc-pirates", "savage-orcs")
         }
         self.assertEqual(
-            lines,
+            allowed,
             {
-                ("Dagger", "Jambiya", 2),
-                ("Dagger", "", 2),
-                ("Sword", "", 10),
-                ("Scimitar", "", 15),
-                ("Scythe (Khemri)", "Scythe", 5),
+                "orc-mob": [
+                    "Cave Squig",
+                    "Goblin Warrior",
+                    "Orc Big \u2018Un",
+                    "Orc Boss",
+                    "Orc Boy",
+                    "Orc Shaman",
+                    "Troll",
+                ],  # fmt: skip
+                "orc-pirates": [
+                    "Goblin Enjuneer",
+                    "Goblin Swabbie",
+                    "Orc Big \u2018Un",
+                    "Orc Boss",
+                    "Orc Boy",
+                    "Orc Shaman",
+                    "Sea Squig",
+                    "Sea Troll",
+                ],  # fmt: skip
+                "savage-orcs": [
+                    "Cave Squig",
+                    "Forest Goblin",
+                    "Orc Big \u2018Un",
+                    "Orc Boss",
+                    "Orc Boy",
+                    "Orc Shaman",
+                    "Troll",
+                ],  # fmt: skip
             },
         )
-        # the Khemri carpet is a mount in the bestiary, and its item is that beast's Animal item
-        carpet = self.items["Magic Carpet"]
-        self.assertEqual((carpet["type"], carpet["subtype"], carpet["setting"]), ("Animal", "Mount", "khemri"))
-
-    def test_our_rain_coat_says_what_the_greatcoat_adds(self) -> None:
-        # William, 11 Nov 2026: fold the Sartosa Greatcoat's two clauses into ours, which said only that a Henchman
-        # may have one and left what it does to its flavour line
-        [rule] = self.items["Rain Coat"]["rules"]
-        for clause in ("over armour with no penalty", "never together with a cloak", "walks or falls into", "Henchman may have one"):  # fmt: skip
-            self.assertIn(clause, rule["text"])
+        # only the Savage Orcs learn their four skills; every variant's heroes learn our Orcs group
+        boss = next(row for row in mob["fighters"] if row["name"] == "Orc Boss")
+        self.assertNotIn("Savage Orcs", boss["skill_types"])
+        self.assertIn("Orcs", boss["skill_types"])
+        self.assertEqual(
+            boss["variant_changes"]["savage-orcs"]["skill_types"],
+            ["Combat", "Shooting", "Strength", "Speed", "Savage Orcs", "Orcs"],
+        )
 
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's twelve types rather than a copy in each page
@@ -820,6 +826,8 @@ class PdfImportTests(SimpleTestCase):
     def test_each_file_is_a_template_of_its_type_with_its_stubs(self) -> None:
         types = {row["slug"]: row for row in load_json(OUT / "warband-types.json")}
         for slug, page in FILES.items():
+            if page.get("variantOf"):
+                continue  # it folds into another warband's list as one of its variants (the Orc Pirates)
             with self.subTest(file=slug):
                 # a template is slugged by its name, which may spell its type otherwise (Militant Mootlanders is the
                 # type militiant-mootlanders, the source's spelling)

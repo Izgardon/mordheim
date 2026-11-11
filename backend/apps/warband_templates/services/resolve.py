@@ -106,6 +106,18 @@ def variant_lines(lines: Iterable[TemplateListItem], variant: str) -> list[Templ
     return [line for line in lines if line.variant in ("", variant)]
 
 
+def offered(fighter: TemplateFighter, variant: str) -> bool:
+    """Whether the variant has him at all: one it allows none of is not offered in it (the Sartosa Orc Pirates'
+    Goblin Swabbies, who are no part of a Mordheim Orc Mob). `fighter` with the variant applied."""
+    return fighter.max_count != 0
+
+
+def in_variant(fighters: Iterable[TemplateFighter], variant: str) -> list[TemplateFighter]:
+    """The template's fighters as the variant has them, those it allows none of left out."""
+    found = [apply_variant(fighter, variant) for fighter in fighters]
+    return [fighter for fighter in found if offered(fighter, variant)]
+
+
 def start_skills(fighter: TemplateFighter) -> list[dict[str, Any]]:
     """The skills the variant gives him from the start, `[{"id", "name"}]` (set by `apply_variant`)."""
     found: list[dict[str, Any]] = getattr(fighter, "start_skills", None) or []

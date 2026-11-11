@@ -129,7 +129,7 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
     gold = serializers.SerializerMethodField()
     most_warriors = serializers.SerializerMethodField()
     rules = serializers.SerializerMethodField()
-    lists = HireListSerializer(many=True, read_only=True)
+    lists = serializers.SerializerMethodField()
     upgrades = HireUpgradeSerializer(many=True, read_only=True)
     fighters = serializers.SerializerMethodField()
     missing_rules = serializers.SerializerMethodField()
@@ -160,6 +160,12 @@ class WarbandTemplateHireSerializer(serializers.ModelSerializer):
     def get_rules(self, template: WarbandTemplate) -> Any:
         rules = variant_rules(template.rules.all(), self.context["variant"], self.context["warband_type_id"])
         return TemplateRuleSerializer(rules, many=True).data
+
+    def get_lists(self, template: WarbandTemplate) -> Any:
+        """Its lists that hold a line in this variant: a warband never sees another variant's list (the Sartosa Orc
+        Pirates' Goblin Swabbie Equipment List is no part of a Mordheim Orc Mob)."""
+        found = [row for row in template.lists.all() if self.context["lines"].get(row.pk)]
+        return HireListSerializer(found, many=True, context=self.context).data
 
     def get_fighters(self, template: WarbandTemplate) -> Any:
         return HireFighterSerializer(list(self.context["fighters"].values()), many=True, context=self.context).data

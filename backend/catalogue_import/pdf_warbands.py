@@ -67,6 +67,7 @@ from typing import Any
 from catalogue_import.common import load_json, loose_key, norm_name, slugify
 from catalogue_import.sources import SOURCES
 from catalogue_import.template_lists import ItemIndex, line_price
+from catalogue_import.text import clean_inline
 from catalogue_import.warband_items import _item, _row
 
 PDF_SOURCES = SOURCES / "pdf-warbands"
@@ -119,12 +120,108 @@ def load_pdf_pages(root: Path = PDF_SOURCES) -> dict[str, dict[str, Any]]:
     return pages
 
 
+VARIANT_OF = "variantOf"  # a page that is one variant of another warband's list, not a warband list of its own
+
+
+def _fighter_key(name: str) -> str:
+    return loose_key(plain_name(name))
+
+
+def plain_name(name: str) -> str:
+    """A fighter's name as both pages write it ("Orc Big ‘Un" and "Orc Big 'Un" are one fighter)."""
+    return str(name).replace("‘", "'").replace("’", "'")
+
+
+def unique_names(names: list[str]) -> list[str]:
+    return list(dict.fromkeys(names))
+
+
+def _page_skill_types(slug: str, page: dict[str, Any], fighter: dict[str, Any]) -> list[str]:
+    """The skill groups the page gives the fighter, as its own template would (its Special tick names its group)."""
+    from catalogue_import.template_fighters import FighterLog, skill_types  # its page shape, not its pipeline
+
+    return skill_types(slug, fighter, [], FighterLog(), special_groups(page))[0]
+
+
+def _fold_fighters(page: dict[str, Any], base: dict[str, Any], base_slug: str, key: str, keys: list[str]) -> list[str]:  # noqa: E501
+    """The page's fighters into the base page's, as that variant has them: one the base holds keeps his row and the
+    page's skill groups, profile and counts become his `variantChanges`; one the base lacks joins the roster and no
+    other variant allows any of him; one the page lacks is allowed none in this variant."""
+    held = {_fighter_key(fighter["name"]): fighter for fighter in base["fighters"]}
+    folded = []
+    for fighter in page["fighters"]:
+        found = held.get(_fighter_key(fighter["name"]))
+        if found is None:
+            others = {other: {"maxCount": 0} for other in keys if other != key}
+            base["fighters"].append({**fighter, "variantChanges": {**(fighter.get("variantChanges") or {}), **others}})
+            folded.append(f"{fighter['name']} (only {key})")
+            continue
+        found["equipmentLists"] = unique_names(
+            [*(found.get("equipmentLists") or []), *(fighter.get("equipmentLists") or [])]
+        )  # he buys from this variant's lists too; their lines name the variant
+        change: dict[str, Any] = {}
+        if fighter.get("skillAccess"):
+            mine = _page_skill_types(page[TYPE], page, fighter)
+            if mine != _page_skill_types(base_slug, base, found):
+                change["skillTypes"] = mine
+        if fighter.get("maxQty") != found.get("maxQty"):
+            change["maxCount"] = fighter.get("maxQty")
+        if change:
+            found.setdefault("variantChanges", {})[key] = {**(found.get("variantChanges") or {}).get(key, {}), **change}  # fmt: skip
+    for fighter in base["fighters"]:
+        if _fighter_key(fighter["name"]) not in {_fighter_key(row["name"]) for row in page["fighters"]}:
+            fighter.setdefault("variantChanges", {}).setdefault(key, {})["maxCount"] = 0
+            folded.append(f"{fighter['name']} (not {key})")
+    return folded
+
+
+def fold_variant_pages(
+    pdf: dict[str, dict[str, Any]], snapshot: dict[str, dict[str, Any]], keys_of: dict[str, list[str]]
+) -> list[tuple[str, str, str]]:
+    """A PDF page that is one variant of another warband's list (`variantOf`: the Sartosa Orc Pirates and Savage
+    Orcs, each "the exact same rules as the Da Mob Warband with the following changes") folds into that page and
+    builds no template of its own: its rules and every line of its lists name the variant, and its fighters are the
+    variant's (`_fold_fighters`). Its own warband type is served by the page it folds into, which `template_answers`
+    says (TEMPLATE_TYPES, VARIANTS). The page is left in `pdf` for the stubs, price rows and skill groups it brings,
+    and its name is returned so the template build leaves it out."""
+    folded = []
+    for slug in sorted(pdf):
+        page = pdf[slug]
+        spec = page.get(VARIANT_OF)
+        if not spec:
+            continue
+        base, key = snapshot.get(str(spec["page"])), str(spec["key"])
+        if base is None:
+            raise ValueError(f"pdf-warbands/{slug}.json: {VARIANT_OF} names no snapshot page {spec['page']!r}")
+        keys = keys_of.get(str(spec["page"]), [])
+        if key not in keys:
+            raise ValueError(f"pdf-warbands/{slug}.json: {spec['page']} has no variant {key!r} (template_answers)")
+        for raw in base["equipmentLists"]:  # the base warband's own lines are its own variant's
+            for entry in raw["items"]:
+                entry.setdefault("variant", keys[0])
+        held = {clean_inline(rule.get("rulename")) for rule in base["specialRules"]}
+        base["specialRules"] += [
+            {**rule, "variant": key} for rule in page["specialRules"] if clean_inline(rule["rulename"]) not in held
+        ]
+        renamed = {raw["id"]: f"{key}-{raw['id']}" for raw in page["equipmentLists"]}  # the base holds lists of its own
+        base["equipmentLists"] += [
+            {**raw, "id": renamed[raw["id"]], "items": [{**entry, "variant": key} for entry in raw["items"]]}
+            for raw in page["equipmentLists"]
+        ]
+        for fighter in page["fighters"]:  # he buys from his page's lists under their new names
+            fighter["equipmentLists"] = [renamed.get(name, name) for name in fighter.get("equipmentLists") or []]
+        for what in _fold_fighters(page, base, str(spec["page"]), key, keys):
+            folded.append((slug, key, what))
+    return folded
+
+
 def add_pages(pages: dict[str, dict[str, Any]], pdf: dict[str, dict[str, Any]]) -> None:
-    """The PDF pages beside the snapshot's, which keep their slugs."""
+    """The PDF pages beside the snapshot's, which keep their slugs; a page folded into another builds no template of
+    its own (`variantOf`), so it is left out."""
     taken = sorted(set(pages) & set(pdf))
     if taken:
         raise ValueError(f"pdf-warbands: {', '.join(taken)} is a snapshot page too")
-    pages.update(pdf)
+    pages.update({slug: page for slug, page in pdf.items() if not page.get(VARIANT_OF)})
 
 
 # a variant's own terms, as a template holds them, by the key a page writes

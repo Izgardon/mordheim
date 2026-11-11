@@ -23,6 +23,7 @@ from catalogue_import.pdf_warbands import (
     add_pages,
     add_price_rows,
     add_skill_groups,
+    fold_variant_pages,
     give_page_rules,
     load_pdf_pages,
     page_item_rules,
@@ -38,6 +39,7 @@ from catalogue_import.skill_lists import SkillLists
 from catalogue_import.snapshot import SNAPSHOT, load_snapshot
 from catalogue_import.sources import ITEM_DATA, PACKAGE, Sources, load_sources
 from catalogue_import.statements import PhraseReader
+from catalogue_import.template_answers import VARIANTS
 from catalogue_import.template_report import render_templates
 from catalogue_import.templates import TemplateLog, build_templates, our_races_and_lores
 from catalogue_import.warband_items import template_items
@@ -294,6 +296,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     who_can = build_who_can(sources, resolver, groups, hiring_log, skill_lists)
     add_skill_groups(sources, pdf_pages, types)  # the PDF pages' new skill groups, as overrides.json's new groups
     grouped = _skill_groups(sources, types, groups, skill_lists, resolver, who_can, assignments, assignment_log)
+    folded = fold_variant_pages(pdf_pages, snapshot.pages, {page: [row["key"] for row in rows] for page, rows in VARIANTS.items()})  # fmt: skip
     add_pages(snapshot.pages, pdf_pages)
     template_log = TemplateLog()
     one_rule = load_shared()  # the shared specials (William, 5 Nov 2026)
@@ -373,7 +376,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         + "\n"
         + render_random(random_mutations, one_rule)
         + "\n"
-        + render_pdf(pdf_pages, stubs)
+        + render_pdf(pdf_pages, stubs, folded)
         + "\n"
         + render_pointers(pointers),
     }

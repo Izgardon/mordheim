@@ -1,6 +1,10 @@
 {
   "warbandType": "orc-pirates",
   "name": "Orc Pirates",
+  "variantOf": {
+    "page": "orc-mob",
+    "key": "orc-pirates"
+  },
   "source": "Sartosa",
   "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
   "warbandRules": {
@@ -642,7 +646,7 @@
   "flags": [
     {
       "page": 2,
-      "what": "This PDF is two warbands, the Orc Pirates (p2-4) and the Savage Orcs (p5-7), each \"the exact same rules as the Da Mob Warband with the following changes\": William, 11 Nov 2026, \"i prefer separate warbands as different settings and all\", so each is its own warband type with its own template (savage-orcs-sar.json holds the other). The Orc Pirates' changes are Pressganging, the Goblin Enjuneer, the Goblin Swabbies, the Sea Squigs, the Sea Troll, the Booma Pistol and these two equipment lists."
+      "what": "This PDF is two warbands, the Orc Pirates (p2-4) and the Savage Orcs (p5-7), each \"the exact same rules as the Da Mob Warband with the following changes\": William, 11 Nov 2026: \"Orc Pirates & Savage Orcs should just be 2 variants of the orc mob if that still works, correctly pointing at their settings\". So this page is not a warband list of its own: it folds into the Orc Mob's template as one of its variants (`variantOf`), which serves the Orc Mob (Mordheim 1a), the Orc Pirates and the Savage Orcs (Sartosa), each type presetting its own variant. Its rules are its variant's, its lists' lines name it, and its fighters are the variant's: one Da Mob lacks joins the roster and no other variant allows any of him, and one it lacks is allowed none in this variant."
     },
     {
       "page": 3,

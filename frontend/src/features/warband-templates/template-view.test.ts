@@ -10,6 +10,8 @@ import {
   skillsFor,
   termsFor,
   typeRows,
+  fightersFor,
+  listsFor,
 } from "./template-view";
 import type {
   TemplateFighter,
@@ -208,5 +210,44 @@ describe("a variant's numbers", () => {
     expect(middenheim.skill_types).toEqual(["Strength"]);
     expect(inVariant(champion, "kurgan").max_count).toBeNull();
     expect(inVariant(champion, "reikland")).toBe(champion);
+  });
+});
+
+describe("what a variant has", () => {
+  // William, 11 Nov 2026: the Sartosa Orc Pirates and Savage Orcs are variants of the Orc Mob, so a Mordheim Orc
+  // Mob must see neither their fighters nor their lists
+  const fighter = (name: string, changes: object) =>
+    ({ name, max_count: 1, variant_changes: changes }) as unknown as TemplateFighter;
+
+  it("leaves out a fighter it allows none of", () => {
+    const fighters = [
+      fighter("Orc Boss", {}),
+      fighter("Goblin Swabbie", { "orc-mob": { max_count: 0 } }),
+      fighter("Goblin Warrior", { "orc-pirates": { max_count: 0 } }),
+    ];
+    expect(fightersFor(fighters, "orc-mob").map((row) => row.name)).toEqual([
+      "Orc Boss",
+      "Goblin Warrior",
+    ]);
+    expect(fightersFor(fighters, "orc-pirates").map((row) => row.name)).toEqual([
+      "Orc Boss",
+      "Goblin Swabbie",
+    ]);
+  });
+
+  it("leaves out a list with no line of its own", () => {
+    const lists = [
+      { name: "Orc Equipment List", lines: [{ variant: "orc-mob" }] },
+      { name: "Goblin Swabbie Equipment List", lines: [{ variant: "orc-pirates" }] },
+      { name: "Everyone's", lines: [{ variant: "" }] },
+    ];
+    expect(listsFor(lists, "orc-mob").map((list) => list.name)).toEqual([
+      "Orc Equipment List",
+      "Everyone's",
+    ]);
+    expect(listsFor(lists, "orc-pirates").map((list) => list.name)).toEqual([
+      "Goblin Swabbie Equipment List",
+      "Everyone's",
+    ]);
   });
 });

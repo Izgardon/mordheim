@@ -22,7 +22,7 @@ from ..models import (
 from .holdings import fighter_holdings, held_items
 from .list_prices import list_prices_open
 from .resolve import (
-    apply_variant,
+    in_variant,
     template_gold,
     template_size,
     templates_for_type,
@@ -70,7 +70,7 @@ def warband_template(warband: Warband) -> dict[str, Any]:
     context = {
         "variant": variant,
         "warband_type_id": warband.warband_type_id,
-        "fighters": {fighter.key: apply_variant(fighter, variant) for fighter in template.fighters.all()},
+        "fighters": {fighter.key: fighter for fighter in in_variant(template.fighters.all(), variant)},
         "lines": lines,
         "upgrades": list(template.upgrades.all()),
         "holdings": fighter_holdings(warband),
@@ -99,7 +99,7 @@ def raise_outline(campaign_id: int, warband_type_id: int, variant: str, gold: in
         return {"template": None, "gold": gold, "campaign_gold": gold, "most_warriors": 15}
     preset = getattr(template, "preset_variant", "") or ""
     picked = preset or (variant if variant in variant_keys(template) else "")
-    fighters = [apply_variant(fighter, picked) for fighter in template.fighters.all()]
+    fighters = in_variant(template.fighters.all(), picked)
     outline = {
         "id": template.pk,
         "name": template.name,

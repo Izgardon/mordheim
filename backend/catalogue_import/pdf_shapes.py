@@ -14,6 +14,7 @@ PAGE: Spec = {
     "sourceLink": (str, True),
     "warbandRules": (dict, True),
     "variants": (list, False),
+    "variantOf": (dict, False),  # this page is one variant of another warband's list (pdf_warbands.fold_variant_pages)
     "specialRules": (list, True),
     "equipmentLists": (list, True),
     "specialEquipment": (list, False),
@@ -29,6 +30,7 @@ PAGE: Spec = {
     "flags": (list, True),
 }
 WARBAND_RULES: Spec = {"startingGc": (int, True), "maxModels": (int, True)}
+VARIANT_OF: Spec = {"page": (str, True), "key": (str, True)}  # the snapshot page it folds into, and its variant key
 RULE: Spec = {"rulename": (str, True), "ruleFull": (str, True), "variant": (str, False)}
 VARIANT: Spec = {
     "key": (str, True),

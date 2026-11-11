@@ -46,7 +46,10 @@ from catalogue_import.pdf_shapes import (
     _each,
     shape,
 )
-from catalogue_import.pdf_warbands import ORIGIN, SHARED, lines_of, put_aliases_right
+from catalogue_import.pdf_shapes import (
+    VARIANT_OF as VARIANT_OF_SHAPE,
+)
+from catalogue_import.pdf_warbands import ORIGIN, SHARED, VARIANT_OF, lines_of, put_aliases_right
 from catalogue_import.sources import OUT
 from catalogue_import.template_fighters import STATS, FighterLog, race_of
 from catalogue_import.template_lists import Fighter, ItemIndex, plain, read_note
@@ -359,6 +362,8 @@ def check_page(slug: str, page: dict[str, Any], catalogue: Catalogue) -> Found:
     if page["warbandType"] != slug or slug not in catalogue.types:
         problems.append(f"{slug}: warbandType {page['warbandType']!r} is no type of ours named as the file")
     shape(page["warbandRules"], WARBAND_RULES, "warband rules", problems)
+    if VARIANT_OF in page:  # one variant of another warband's list, not a list of its own
+        shape(page[VARIANT_OF], VARIANT_OF_SHAPE, VARIANT_OF, problems)
     keys = _variants(page, problems)
     if ("skillGroup" in page) != ("specialSkillsList" in page):
         problems.append(f"{slug}: a skill group and its special skills, or neither (no Special column)")

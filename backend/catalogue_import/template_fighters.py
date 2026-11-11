@@ -135,9 +135,13 @@ def skill_types(
         table = _table(tables.get(subfaction, {}), specials, extra)
         if table != base:
             changes[key] = {"skill_types": table}
-    # a PDF page's fighter holds the first variant's table and the tables that differ (`variantChanges`)
+    # a PDF page's fighter holds the first variant's table and the tables that differ (`variantChanges`): its ticks
+    # (`skillAccess`), or the groups themselves where a folded page gives him others (`skillTypes`: the Savage Orcs')
     for key, change in (fighter.get("variantChanges") or {}).items():
-        table = _table(change["skillAccess"], specials, extra) if "skillAccess" in change else base
+        if "skillTypes" in change:
+            table = list(change["skillTypes"])
+        else:
+            table = _table(change["skillAccess"], specials, extra) if "skillAccess" in change else base
         if table != base:
             changes.setdefault(key, {})["skill_types"] = table
     return base, changes

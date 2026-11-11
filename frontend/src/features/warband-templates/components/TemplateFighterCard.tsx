@@ -2,7 +2,14 @@ import { RuleBlock, TagList } from "@/features/reference/ReferenceDetail";
 import { ProfileStrip } from "@/features/reference/profile";
 import type { SpecialKind } from "@/components/ui/game-icons";
 
-import { countLabel, groupLabel, skillsFor, spellLabel, startSkillsFor } from "../template-view";
+import {
+  countLabel,
+  groupLabel,
+  skillsFor,
+  spellLabel,
+  startSkillsFor,
+  listsFor,
+} from "../template-view";
 import type { TemplateFighter, WarbandTemplate } from "../types/template-types";
 
 const CAPTION = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
@@ -47,8 +54,9 @@ export default function TemplateFighterCard({
   template: WarbandTemplate;
   variant: string;
 }) {
+  const held = listsFor(template.lists, variant); // never another variant's list
   const lists = fighter.lists
-    .map((key) => template.lists.find((entry) => entry.key === key)?.name)
+    .map((key) => held.find((entry) => entry.key === key)?.name)
     .filter((name): name is string => Boolean(name));
   const name = fighter.kind === "henchman" && fighter.plural ? fighter.plural : fighter.name;
   const starts = startSkillsFor(fighter, variant);

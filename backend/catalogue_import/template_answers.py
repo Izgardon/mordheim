@@ -15,6 +15,9 @@ TEMPLATE_TYPES: dict[str, dict[str, str]] = {
     },
     "tileans": {"miragleans": "miragliano", "remasens": "remas", "trantios": "trantio", "tileans": ""},
     "norse": {"norse-explorers-tc13": ""},
+    # William, 11 Nov 2026: "Orc Pirates & Savage Orcs should just be 2 variants of the orc mob ... correctly
+    # pointing at their settings". Each type presets its own variant, so no one picks another setting's warband.
+    "orc-mob": {"orc-mob": "orc-mob", "orc-pirates": "orc-pirates", "savage-orcs-sar": "savage-orcs"},
 }
 
 # Each page's variants in order: key, name, the snapshot's skill-table subfaction and its rule heading.
@@ -28,6 +31,13 @@ VARIANTS: dict[str, list[dict[str, str]]] = {
         {"key": "miragliano", "name": "Miragliano", "subfaction": "Miragleans", "heading": "Miragleans"},
         {"key": "remas", "name": "Remas", "subfaction": "Remasens", "heading": "Remasens"},
         {"key": "trantio", "name": "Trantio", "subfaction": "Trantios", "heading": "Trantios"},
+    ],
+    # the Sartosa PDF's two halves, each "the exact same rules as the Da Mob Warband with the following changes":
+    # their pages fold in (sources/pdf-warbands/orc-pirates.json, savage-orcs-sar.json; `variantOf`)
+    "orc-mob": [
+        {"key": "orc-mob", "name": "Orc Mob", "subfaction": "", "heading": ""},
+        {"key": "orc-pirates", "name": "Orc Pirates", "subfaction": "", "heading": ""},
+        {"key": "savage-orcs", "name": "Savage Orcs", "subfaction": "", "heading": ""},
     ],
     "marauders-of-chaos": [
         {"key": "norse", "name": "The Norse", "subfaction": "The Norse", "heading": "The Norse"},

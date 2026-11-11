@@ -1,6 +1,6 @@
 import { DetailSection } from "@/features/reference/ReferenceDetail";
 
-import { lineName, linesFor, priceLabel } from "../template-view";
+import { lineName, linesFor, listsFor, priceLabel } from "../template-view";
 import type { TemplateLine, WarbandTemplate } from "../types/template-types";
 
 /** Who may take it (the server's words), the most a warband may have and the book's note: "Gaolers only · max 1". */
@@ -22,7 +22,7 @@ export default function TemplateLists({
 }) {
   return (
     <>
-      {template.lists.map((list) => (
+      {listsFor(template.lists, variant).map((list) => (
         <DetailSection key={list.id} title={list.name}>
           {list.note ? <p className="m-0 text-xs text-text2">{list.note}</p> : null}
           <ul aria-label={list.name} className="m-0 flex list-none flex-col p-0">

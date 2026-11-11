@@ -790,16 +790,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 115 |
+| templates | 113 |
 | warband types linked | 121 |
-| fighters (heroes, henchmen) | 754 (389, 365) |
-| henchmen that gain no XP | 107 |
-| henchmen that can't be promoted | 132 |
+| fighters (heroes, henchmen) | 744 (383, 361) |
+| henchmen that gain no XP | 105 |
+| henchmen that can't be promoted | 130 |
 | equipment lists | 281 |
 | list lines | 3130 |
-| warband rules | 373 |
+| warband rules | 370 |
 | upgrades | 140 |
-| the templates' own specials | 912 |
+| the templates' own specials | 900 |
 
 ### List lines
 
@@ -842,7 +842,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-80 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+78 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 
@@ -867,6 +867,7 @@ Written values, kept as written:
 | night-goblins-web | Great Squig | movement 3D6 |
 | night-goblins | Cave Squig | movement 2D6 |
 | orc-mob | Cave Squig | movement 2D6 |
+| orc-mob | Sea Squig | movement 2D6 |
 | the-restless-dead | Scarecrow | toughness 3(6) |
 | tomb-guardians-old | Tomb Scorpion | ballistic_skill - |
 | tomb-guardians-old | Stone Golem | ballistic_skill - |
@@ -878,8 +879,6 @@ Written values, kept as written:
 | guild-of-disgraced-engineers | Gyrocopter | movement 2D6, weapon_skill -, ballistic_skill -, strength -, initiative -, attacks -, leadership - |
 | mages | Clockwork Construct | leadership - |
 | necrarchs | Banshee | ballistic_skill -, initiative - |
-| orc-pirates | Sea Squig | movement 2D6 |
-| savage-orcs-sar | Cave Squig | movement 2D6 |
 | skaven-of-clan-moulder | Wolf Rat | strength 3(4) |
 | snotlings | Snotling Wheelo | movement D6 |
 | underworld-alliance | Sewer Squig | movement 2D6 |
@@ -891,7 +890,12 @@ Ticked for special skills with no group to name, the tick left out: imperial-out
 
 Every name in the fighters' skill access is a skill group (out/skill-groups.json).
 
-Each of those groups is for everyone or names every warband type its fighters' template serves.
+Groups the fighters name whose learners (skill_group_learners) leave out a warband type the template serves:
+
+| Group | Warband type | Fighters |
+| --- | --- | --- |
+| Savage Orcs | orc-mob | Orc Mob: Orc Boss, Orc Mob: Orc Shaman, Orc Mob: Orc Big ‘Un |
+| Savage Orcs | orc-pirates | Orc Mob: Orc Boss, Orc Mob: Orc Shaman, Orc Mob: Orc Big ‘Un |
 
 ### Casters
 
@@ -948,10 +952,8 @@ Each of those groups is for everyone or names every warband type its fighters' t
 | necrarchs | Nosferatu | Wizard | Necromancy |
 | necromancer | Necromancer | Wizard | Necromancy |
 | nipponese-expedition | Vim-To Mage | Wizard | Arabian Elemental Magic |
-| orc-pirates | Orc Shaman | Wizard | Waaaagh! Magic |
 | outlaws-of-stirwood-forest-redux | Cleric | Priest | Prayers of Sigmar |
 | protectorate-of-sigmar | Warrior Priest | Priest | Prayers of Sigmar |
-| savage-orcs-sar | Orc Shaman | Wizard | Waaaagh! Magic |
 | shallows-beasts | Mutant-Priest | Wizard | Chaos Rituals |
 | skaven-of-clan-pristekk | Clan Pristekk sorcerer | Wizard | Magic of the Horned Rat |
 | snotlings | Snotling Shaman | Wizard | Snotling Waaagh! Magic |
@@ -1005,6 +1007,74 @@ Lines for one variant only:
 | marauders-of-chaos | kurgan | Henchmen equipment list | Bow 10 gc |
 | marauders-of-chaos | hung | Hero equipment list | Warhorse 40 gc |
 | mercenaries | middenheim | Mercenary Equipment | Wolfcloak 10 gc |
+| orc-mob | orc-mob | Orc Equipment List | Dagger 2 gc |
+| orc-mob | orc-mob | Orc Equipment List | Club, Mace or Hammer 3 gc |
+| orc-mob | orc-mob | Orc Equipment List | Axe 5 gc |
+| orc-mob | orc-mob | Orc Equipment List | Sword 10 gc |
+| orc-mob | orc-mob | Orc Equipment List | Spear 10 gc |
+| orc-mob | orc-mob | Orc Equipment List | Halberd 10 gc |
+| orc-mob | orc-mob | Orc Equipment List | Double-handed weapon 15 gc |
+| orc-mob | orc-mob | Orc Equipment List | Morning Star 15 gc |
+| orc-mob | orc-mob | Orc Equipment List | Bow 10 gc |
+| orc-mob | orc-mob | Orc Equipment List | Crossbow 25 gc |
+| orc-mob | orc-mob | Orc Equipment List | Light Armour 20 gc |
+| orc-mob | orc-mob | Orc Equipment List | Shield 5 gc |
+| orc-mob | orc-mob | Orc Equipment List | Helmet 10 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Dagger 2 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Club, Mace or Hammer 3 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Sword 10 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Spear 10 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Ball and Chain 15 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Short Bow 5 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Shield 5 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Helmet 10 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Squig Prodder 15 gc |
+| orc-mob | orc-mob | Goblin Equipment List | Mad Cap Mushrooms 25 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Dagger 2 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Axe 5 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Cat O' Nine Tails 8 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Sword 10 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Double-handed weapon 15 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Boat Hook 8 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Belaying Pins 3 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Pistol 15 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Booma Pistol 20 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Handgun 35 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Toughened Leathers 7 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Buckler 5 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Light Armour 20 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Shield 5 gc |
+| orc-mob | orc-pirates | Orc Equipment List | Helmet 10 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Dagger 2 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Club, Mace or Hammer 3 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Sword 10 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Boat Hook 8 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Cat O' Nine Tails 8 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Belaying Pins 3 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Short Bow 5 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Pistol 15 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Booma Pistol 20 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Shield 5 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Helmet 10 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Toughened Leathers 7 gc |
+| orc-mob | orc-pirates | Goblin Swabbie Equipment List | Fire Bomb 35 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Dagger 2 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Club, Mace or Hammer 3 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Morning Star 15 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Double-handed weapon 15 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Halberd 8 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Spear 10 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Bow 10 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Throwing Knives/Stars/Axes 15 gc |
+| orc-mob | savage-orcs | Savage Orc Equipment List | Shield 5 gc |
+| orc-mob | savage-orcs | Forest Goblin Equipment List | Dagger 2 gc |
+| orc-mob | savage-orcs | Forest Goblin Equipment List | Club, Mace or Hammer 3 gc |
+| orc-mob | savage-orcs | Forest Goblin Equipment List | Spear 10 gc |
+| orc-mob | savage-orcs | Forest Goblin Equipment List | Squig Prodder 15 gc |
+| orc-mob | savage-orcs | Forest Goblin Equipment List | Short Bow 10 gc |
+| orc-mob | savage-orcs | Forest Goblin Equipment List | Throwing Knives/Stars/Axes 15 gc |
+| orc-mob | savage-orcs | Forest Goblin Equipment List | Blowpipe 25 gc |
+| orc-mob | savage-orcs | Forest Goblin Equipment List | Shield 5 gc |
 | house-guard | fierezza | Heroes Equipment List | Rapier 15 gc |
 | house-guard | fierezza | Heroes Equipment List | Sword Breaker 30 gc |
 | house-guard | halcon | Heroes Equipment List | Crossbow pistol 35 gc |
@@ -1021,7 +1091,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen), Remas' rout re-roll against Dark Elves, a Hung henchman who becomes a hero getting Ride Warhorse, and the Ostermarker captain's starting wardog.
 - Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
 - mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
-- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); clockworkers: In-built equipment (Clockwork fiend); disciples-of-maldred: His Master's Gift (Questing Knight); lahmian: Devoted (Thrall); savage-orcs-sar: Not Orcs (Cave Squig); skaven-of-clan-moulder: Experience (Rat Ogre); snotlings: Teamwork (Snotling Mob).
+- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); orc-mob: Movement (Sea Squig); orc-mob: Minderz (Sea Squig); orc-mob: Not Orcs (Sea Squig); orc-mob: Animals (Sea Squig); orc-mob: Dumb Monster (Sea Troll); orc-mob: Always Hungry (Sea Troll); orc-mob: Not Orcs (Forest Goblin); orc-mob: Runts (Forest Goblin); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); clockworkers: In-built equipment (Clockwork fiend); disciples-of-maldred: His Master's Gift (Questing Knight); lahmian: Devoted (Thrall); skaven-of-clan-moulder: Experience (Rat Ogre); snotlings: Teamwork (Snotling Mob).
 
 ## Shared specials
 
@@ -1029,8 +1099,8 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 
 | Special | Type | Wording | Cost | Setting | Warband | Hired sword | Dramatis persona | Beast |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Fear | Psychology | the list's text |  |  | 92 | 5 | 5 | 17 |
-| Stupidity | Psychology | the list's text |  |  | 10 | 0 | 0 | 2 |
+| Fear | Psychology | the list's text |  |  | 91 | 5 | 5 | 17 |
+| Stupidity | Psychology | the list's text |  |  | 9 | 0 | 0 | 2 |
 | Immune to Psychology | Psychology | the list's text |  |  | 55 | 1 | 2 | 0 |
 | Immune to Poison | Trait | the list's text |  |  | 52 | 3 | 3 | 8 |
 | No Pain | Trait | the list's text |  |  | 43 | 1 | 1 | 4 |
@@ -1100,8 +1170,8 @@ List prices the pages differ from: none.
 
 ### Merged
 
-- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Hell Hound; Bretonnian Brigands: Scarface; Bretonnian Grail Companions: Grail Knight (Fearsome); Call of the Night Haint: Cairn Wraith (Causes Fear); Call of the Night Haint: Tomb Banshee (Causes Fear); Call of the Night Haint: Malignant Spirit (Causes Fear); Call of the Night Haint: Revenant (Causes Fear); Call of the Night Haint: Mourngul (Causes Fear); Call of the Night Haint: Spirit Host (Causes Fear); Call of the Night Haint: Poltergeist (Causes Fear); Clockworkers: Clockwork fiend; Fen Guard: Branchnymph; Fen Guard: Dryad; Fen Guard: Treekin; Ghost Pirates: Ghost Captain; Ghost Pirates: Screaming Ghost; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Ghost Pirates: Bloated; Halflings: Village Ogre; Lahmian: Lahmia Vampire (Cause Fear); Lahmian: Skeleton (Cause Fear); Lahmian: Black Hound (Cause Fear); Lahmian: Wight (Cause Fear); Lords of the Marsh: Draich; Lords of the Marsh: Daemon-Fimm; Lords of the Marsh: Fimir Warrior; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire (Cause Fear); Necrarchs, the Soul Stealers: Thrall (Cause Fear); Necrarchs, the Soul Stealers: Skeletal Warrior (Cause Fear); Necrarchs, the Soul Stealers: Zombie (Cause Fear); Necrarchs, the Soul Stealers: Abomination (Cause Fear); Necrarchs: Nosferatu; Necrarchs: Abomination; Necrarchs: Defiled; Necrarchs: Banshee; Necrarchs: Skeleton; Necrarchs: Wight; Necromancer: Skeleton (Cause Fear); Necromancer: Undead Vulture (Cause Fear); Necromancer: Undead Golem (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Orc Pirates: Sea Troll; Savage Orcs: Troll; Skaven of Clan Moulder: Rat Ogre; Skaven of Clan Pristekk: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); The Brood of Ghurash: Broodmother; The Brood of Ghurash: Firstborn; The Brood of Ghurash: Youth; Underworld Alliance: Warpstone Troll; Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog; Bear (Border Town Burning); Bloodletter; Chaos Dragon; Chaos Ogre; Chaos Troll; Daemon Prince; Daemonette; Dragon Ogre; Giant; Horror; Hydra; Ogre; Plaguebearer; Ymir.
-- Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Lords of the Marsh: Young Noble; Lords of the Marsh: Shearl; Lords of the Marsh: Fimir Warrior; Orc Pirates: Sea Troll; Savage Orcs: Troll; Underworld Alliance: Warpstone Troll; Cold One (Stupid); Chaos Troll.
+- Fear: Beastmen Raiders: Minotaur; Black Orcs: Troll; Carnival of Chaos: Plague Bearer (Cause Fear); Cult of the Possessed: The Possessed; Dark Elves: Cold One Beasthound; Forest Goblins: Gigantic Spider; Kislevites: Trained Bear (Fearsome); Lizardmen: Kroxigor (Cause Fear); Maneaters: Sabretusk; Marauders of Chaos: Condemned; Marauders of Chaos: Spawn of Chaos; Night Goblins (web): Great Squig (Cause Fear); Night Goblins (web): Troll; Night Goblins: Troll; Norse Explorers: Wulfen; Orc Mob: Troll; Orc Mob: Sea Troll; Ostlander Mercenaries: Ogre; Pit Fighters (old): Ogre Pit Fighter; Pit Fighters: Ogre Pit Fighter; Skaven: Rat Ogre; Skaven of Clan Pestilens: Rat Ogre; The Restless Dead: Liche (Cause Fear); The Restless Dead: Grave Guard (Cause Fear); The Restless Dead: Zombie (Cause Fear); The Restless Dead: Skeleton (Cause Fear); The Restless Dead: Wight (Cause Fear); The Restless Dead: Scarecrow (Cause Fear); Nehekhara Tomb Guards: Stone Golem (Cause Fear); Undead: Vampire (Cause Fear); Undead: Ghouls (Cause Fear); Undead: Dire wolves (Cause Fear); Undead: Zombies (Cause Fear); Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Hell Hound; Bretonnian Brigands: Scarface; Bretonnian Grail Companions: Grail Knight (Fearsome); Call of the Night Haint: Cairn Wraith (Causes Fear); Call of the Night Haint: Tomb Banshee (Causes Fear); Call of the Night Haint: Malignant Spirit (Causes Fear); Call of the Night Haint: Revenant (Causes Fear); Call of the Night Haint: Mourngul (Causes Fear); Call of the Night Haint: Spirit Host (Causes Fear); Call of the Night Haint: Poltergeist (Causes Fear); Clockworkers: Clockwork fiend; Fen Guard: Branchnymph; Fen Guard: Dryad; Fen Guard: Treekin; Ghost Pirates: Ghost Captain; Ghost Pirates: Screaming Ghost; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Ghost Pirates: Bloated; Halflings: Village Ogre; Lahmian: Lahmia Vampire (Cause Fear); Lahmian: Skeleton (Cause Fear); Lahmian: Black Hound (Cause Fear); Lahmian: Wight (Cause Fear); Lords of the Marsh: Draich; Lords of the Marsh: Daemon-Fimm; Lords of the Marsh: Fimir Warrior; Masters of Horror: Thrall (Cause Fear); Masters of Horror: Zombie (Cause Fear); Masters of Horror: Flesh Construct (Cause Fear); Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire (Cause Fear); Necrarchs, the Soul Stealers: Thrall (Cause Fear); Necrarchs, the Soul Stealers: Skeletal Warrior (Cause Fear); Necrarchs, the Soul Stealers: Zombie (Cause Fear); Necrarchs, the Soul Stealers: Abomination (Cause Fear); Necrarchs: Nosferatu; Necrarchs: Abomination; Necrarchs: Defiled; Necrarchs: Banshee; Necrarchs: Skeleton; Necrarchs: Wight; Necromancer: Skeleton (Cause Fear); Necromancer: Undead Vulture (Cause Fear); Necromancer: Undead Golem (Cause Fear); Ogre Hunting Party: Ogre Hunter; Ogre Hunting Party: Sabretusk Cub; Skaven of Clan Moulder: Rat Ogre; Skaven of Clan Pristekk: Rat Ogre; Survivors of Strigos: Strigoi Vampire (Cause Fear); Survivors of Strigos: Ghoul (Cause Fear); The Brood of Ghurash: Broodmother; The Brood of Ghurash: Firstborn; The Brood of Ghurash: Youth; Underworld Alliance: Warpstone Troll; Ogre Bodyguard; Clan Skryre Rat Ogre; Bone Goliath (Cause Fear); Chaos Fury; Ogre Slave Master; Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne; Countess Marianna Chevaux, Vampire Assassin (Cause fear); Khar-mel the Djinn; Sigmund Spindle, the Harvester of Flesh (Causes Fear); The Headless Horseman (Causes Fear); Cold One; Rhinox; Temple Dog; Bear (Border Town Burning); Bloodletter; Chaos Dragon; Chaos Ogre; Chaos Troll; Daemon Prince; Daemonette; Dragon Ogre; Giant; Horror; Hydra; Ogre; Plaguebearer; Ymir.
+- Stupidity: Black Orcs: Troll; Night Goblins (web): Troll; Night Goblins: Troll; Orc Mob: Troll; Orc Mob: Sea Troll; Lords of the Marsh: Young Noble; Lords of the Marsh: Shearl; Lords of the Marsh: Fimir Warrior; Underworld Alliance: Warpstone Troll; Cold One (Stupid); Chaos Troll.
 - Immune to Psychology: Court of the Profane Pleasures: Slaaneshi Devout; The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Clockworkers: Clockwork soldier; Clockworkers: Clockwork fiend; Cursed Dwarves: Slayer; Fen Guard: Branchwych; Fen Guard: Branchnymph; Fen Guard: Treekin; Ghost Pirates: Ghost Captain; Ghost Pirates: Screaming Ghost; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Ghost Pirates: Bloated; Lahmian: Lahmia Vampire; Lahmian: Skeleton; Lahmian: Wight; Mages: Clockwork Construct; Masters of Horror: Mad Scientist; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Necrarchs: Nosferatu; Necrarchs: Skeleton; Necrarchs: Wight; Necromancer: Skeleton; Necromancer: Undead Golem; Sea Ghosts: Feast-Master; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; The Headless Horseman.
 - Immune to Poison: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Nehekhara Tomb Guards: Stone Golem; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Clockworkers: Clockwork soldier; Clockworkers: Clockwork fiend; Ghost Pirates: Ghost Captain; Ghost Pirates: Screaming Ghost; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Ghost Pirates: Bloated; Lahmian: Lahmia Vampire; Lahmian: Skeleton; Lahmian: Wight; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Necrarchs: Nosferatu; Necrarchs: Abomination; Necrarchs: Defiled; Necrarchs: Banshee; Necrarchs: Skeleton; Necrarchs: Wight; Necromancer: Skeleton; Necromancer: Undead Golem; Survivors of Strigos: Strigoi Vampire; Watchmen: Turnkey; Wood Elves of Arden: Ivy Ferret; Clan Skryre Rat Ogre; Snake Charmer; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Sigmund Spindle, the Harvester of Flesh; The Headless Horseman; Nightmare; Temple Dog; Bloodletter; Daemon Prince; Daemonette; Horror; Plaguebearer; Terracotta Soldier.
 - No Pain: The Restless Dead: Liche; The Restless Dead: Grave Guard; The Restless Dead: Zombie; The Restless Dead: Skeleton; The Restless Dead: Wight; The Restless Dead: Scarecrow; Undead: Vampire; Undead: Dire wolves; Undead: Zombies; Blood Dragons: Vampire; Blood Dragons: Wight; Blood Dragons: Skeleton Warrior; Blood Dragons: Grave Guard; Blood Dragons: Hell Hound; Call of the Night Haint: Cairn Wraith; Call of the Night Haint: Tomb Banshee; Call of the Night Haint: Malignant Spirit; Call of the Night Haint: Revenant; Call of the Night Haint: Mourngul; Call of the Night Haint: Spirit Host; Call of the Night Haint: Poltergeist; Clockworkers: Clockwork soldier; Clockworkers: Clockwork fiend; Ghost Pirates: Skeleton Mate; Ghost Pirates: Gibbet; Lahmian: Lahmia Vampire; Lahmian: Skeleton; Lahmian: Wight; Masters of Horror: Thrall; Masters of Horror: Zombie; Masters of Horror: Flesh Construct; Metal Mongers: Machine-Ogre; Necrarchs, the Soul Stealers: Necrarch Vampire; Necrarchs, the Soul Stealers: Thrall; Necrarchs, the Soul Stealers: Skeletal Warrior; Necrarchs, the Soul Stealers: Zombie; Necrarchs, the Soul Stealers: Abomination; Necrarchs: Nosferatu; Necrarchs: Abomination; Necrarchs: Defiled; Necrarchs: Skeleton; Necromancer: Undead Vulture; Survivors of Strigos: Strigoi Vampire; Bone Goliath; Countess Marianna Chevaux, Vampire Assassin; Chaos Dragon; Giant; Hydra; Terracotta Soldier.
@@ -1324,6 +1394,22 @@ Kept apart from a family's, the effect differing:
 | wood-elves-of-arden | wood-elves-of-arden | 6 | 0 | 0 | 7 |
 | wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
 | woodsmen-de-artois | woodsmen-de-artois | 8 | 0 | 1 | 9 |
+
+Pages folded into another warband's list as one of its variants:
+
+- orc-pirates (orc-pirates): Goblin Enjuneer (only orc-pirates)
+- orc-pirates (orc-pirates): Goblin Swabbie (only orc-pirates)
+- orc-pirates (orc-pirates): Sea Squig (only orc-pirates)
+- orc-pirates (orc-pirates): Sea Troll (only orc-pirates)
+- orc-pirates (orc-pirates): Goblin Warrior (not orc-pirates)
+- orc-pirates (orc-pirates): Cave Squig (not orc-pirates)
+- orc-pirates (orc-pirates): Troll (not orc-pirates)
+- savage-orcs-sar (savage-orcs): Forest Goblin (only savage-orcs)
+- savage-orcs-sar (savage-orcs): Goblin Warrior (not savage-orcs)
+- savage-orcs-sar (savage-orcs): Goblin Enjuneer (not savage-orcs)
+- savage-orcs-sar (savage-orcs): Goblin Swabbie (not savage-orcs)
+- savage-orcs-sar (savage-orcs): Sea Squig (not savage-orcs)
+- savage-orcs-sar (savage-orcs): Sea Troll (not savage-orcs)
 
 ### Araby Smugglers
 
@@ -1958,7 +2044,7 @@ Kept apart from a family's, the effect differing:
 ### Orc Pirates
 
 - Stub: Booma Pistol, 20 gc, Common; its rules are on p4.
-- Flag (p2): This PDF is two warbands, the Orc Pirates (p2-4) and the Savage Orcs (p5-7), each "the exact same rules as the Da Mob Warband with the following changes": William, 11 Nov 2026, "i prefer separate warbands as different settings and all", so each is its own warband type with its own template (savage-orcs-sar.json holds the other). The Orc Pirates' changes are Pressganging, the Goblin Enjuneer, the Goblin Swabbies, the Sea Squigs, the Sea Troll, the Booma Pistol and these two equipment lists.
+- Flag (p2): This PDF is two warbands, the Orc Pirates (p2-4) and the Savage Orcs (p5-7), each "the exact same rules as the Da Mob Warband with the following changes": William, 11 Nov 2026: "Orc Pirates & Savage Orcs should just be 2 variants of the orc mob if that still works, correctly pointing at their settings". So this page is not a warband list of its own: it folds into the Orc Mob's template as one of its variants (`variantOf`), which serves the Orc Mob (Mordheim 1a), the Orc Pirates and the Savage Orcs (Sartosa), each type presetting its own variant. Its rules are its variant's, its lists' lines name it, and its fighters are the variant's: one Da Mob lacks joins the roster and no other variant allows any of him, and one it lacks is allowed none in this variant.
 - Flag (p3): The PDF prints no skill table for the Orc Pirates, so their heroes tick no Special column of their own and name our Orcs group, as Da Mob's do.
 - Flag (p2): The PDF prints no Pirate column and no Pirate skill list, so this warband does not join the shared Sartosa Pirate Skills group. See the decisions.
 - Flag (p3): The Boss, the Big 'Uns and the Orc Boyz are "same as Da Mob", so their costs, profiles, starting experience, counts and skill access are our Orc Mob template's. The Orc Shaman is kept, since the Goblin Enjuneer replaces him rather than removing him; our templates hold no replacement rule.
@@ -2060,7 +2146,7 @@ Kept apart from a family's, the effect differing:
 
 ### Savage Orcs
 
-- Flag (p5): This warband is the second half of the Orc Pirates & Savage Orcs PDF (p5-7), "the exact same rules as the Da Mob Warband with the following changes": William, 11 Nov 2026, "i prefer separate warbands as different settings and all", so it is its own warband type with its own template (orc-pirates.json holds the other). Its changes are Talismans galore, Fear fire, Primitive, Wild Animosity in place of Animosity, its two equipment lists and its four special skills. The Orc Pirates' Pressganging, Goblin Enjuneer, Goblin Swabbies, Sea Squigs, Sea Troll and Booma Pistol are the pirate half's and are not here.
+- Flag (p5): This warband is the second half of the Orc Pirates & Savage Orcs PDF (p5-7), "the exact same rules as the Da Mob Warband with the following changes": William, 11 Nov 2026: "Orc Pirates & Savage Orcs should just be 2 variants of the orc mob if that still works, correctly pointing at their settings". So this page is not a warband list of its own: it folds into the Orc Mob's template as one of its variants (`variantOf`), which serves the Orc Mob (Mordheim 1a), the Orc Pirates and the Savage Orcs (Sartosa), each type presetting its own variant. Its rules are its variant's, its lists' lines name it, and its fighters are the variant's: one Da Mob lacks joins the roster and no other variant allows any of him, and one it lacks is allowed none in this variant.
 - Flag (p5): The warband prints no roster of its own, so its fighters are Da Mob's with their costs, profiles, starting experience and counts: the Boss, the Shaman, the Big 'Uns, the Orc Boyz, the Goblins, the Cave Squigs and the Troll. The Goblins are named Forest Goblins, as the equipment list and Wild Animosity name them. Distasteful Company is Da Mob's rule and stands.
 - Flag (p5): Wild Animosity rolls for every standing warrior not in combat, heroes and the Troll included (the Troll not while he has failed his stupidity test), and every warrior rolls rather than only those who roll a 1.
 - Flag (p6): The Savage Orc Equipment List's "Throwing Axe" is our Throwing Knives/Stars/Axes, the one entry for all of them (William, 11 Nov 2026), 15 gc Rare 5 for everyone, shown under the list's name. The Axe Thrower rule the PDF prints (two axes a shooting phase at +1 Strength, not with Quickshot or Knife Thrower) is our Axe Thrower skill already.

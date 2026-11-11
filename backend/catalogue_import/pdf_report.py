@@ -10,8 +10,11 @@ def _cell(value: object) -> str:
     return str(value).replace("|", "\\|").replace("\n", " ")
 
 
-def render_pdf(pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]]) -> str:
-    """The import report's PDF warbands section: each page's type, aliases, stubs and flags, for William's vetting."""
+def render_pdf(
+    pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]], folded: list[tuple[str, str, str]] | None = None
+) -> str:
+    """The import report's PDF warbands section: each page's type, aliases, stubs and flags, for William's vetting;
+    `folded`, what a page that is one variant of another warband's list changed about its fighters."""
     lines = [
         "## PDF warbands",
         "",
@@ -23,6 +26,9 @@ def render_pdf(pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]]) ->
     for slug, page in pages.items():
         counts = [len(page["fighters"]), len(page.get("aliases") or []), len(page.get("stubs") or [])]
         lines.append(f"| {slug} | {page[TYPE]} | {' | '.join(map(str, counts))} | {len(page.get('flags') or [])} |")
+    if folded:
+        lines += ["", "Pages folded into another warband's list as one of its variants:", ""]
+        lines += [f"- {slug} ({key}): {what}" for slug, key, what in folded]
     prices = {
         (item["name"], warband["type"]): row
         for item in stubs

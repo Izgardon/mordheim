@@ -6,7 +6,7 @@ import { DetailSection, FactLine, ReferenceDetail } from "@/features/reference/R
 import WarbandRules from "@/features/warbands/components/rules/WarbandRules";
 
 import { useWarbandTemplate } from "../api/template-queries";
-import { inVariant, rulesFor, termsFor } from "../template-view";
+import { fightersFor, rulesFor, termsFor } from "../template-view";
 import TemplateFighterCard from "./TemplateFighterCard";
 import TemplateLists from "./TemplateLists";
 import TemplateUpgrades from "./TemplateUpgrades";
@@ -60,15 +60,11 @@ export default function TemplateDetail({
     </Button>
   );
   const terms = termsFor(template, variant);
-  const heroes = template.fighters.filter((fighter) => fighter.kind === "hero");
-  const henchmen = template.fighters.filter((fighter) => fighter.kind === "henchman");
+  const shown = fightersFor(template.fighters, variant);
+  const heroes = shown.filter((fighter) => fighter.kind === "hero");
+  const henchmen = shown.filter((fighter) => fighter.kind === "henchman");
   const card = (fighter: (typeof template.fighters)[number]) => (
-    <TemplateFighterCard
-      key={fighter.id}
-      fighter={inVariant(fighter, variant)}
-      template={template}
-      variant={variant}
-    />
+    <TemplateFighterCard key={fighter.id} fighter={fighter} template={template} variant={variant} />
   );
 
   return (
