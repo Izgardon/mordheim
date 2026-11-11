@@ -15810,17 +15810,32 @@
     "link_url": "",
     "tags": [],
     "flavour": "",
-    "range": "Varies",
-    "strength": "Varies",
+    "range": "6\"",
+    "strength": "Special",
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
         "summary": "Skaven gas bomb weapon; details in rules.",
         "text": "",
+        "tables": []
+      },
+      {
+        "rule": "thrown-weapon"
+      },
+      {
+        "name": "Poison wind",
+        "summary": "",
+        "text": "Obstacles do not stop the gas: ignore cover penalties to hit, and the globe ignores armour saves. It deals D3 wounds to the target on a 3+, and a single wound on a 4+ to anyone else within 2\". The warpstone poison is magical, so it affects undead too.",
+        "tables": []
+      },
+      {
+        "name": "Drop",
+        "summary": "",
+        "text": "On a roll of 1 to hit, the thrower has dropped the globe or broken it in his hands: resolve a hit against him. A model may also choose to drop a globe on a model in base contact instead of using a close combat weapon.",
         "tables": []
       }
     ],
@@ -15840,6 +15855,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-skryre-rel",
+            "excluded": false
+          }
+        ],
+        "note": "Clan Skryre only"
       }
     ]
   },
@@ -16808,13 +16839,16 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
         "summary": "Protective mask against gas attacks; details in rules.",
         "text": "",
         "tables": []
+      },
+      {
+        "rule": "save"
       }
     ],
     "availabilities": [
@@ -16828,6 +16862,22 @@
         "for_everyone": true,
         "warbands": [],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-skryre-rel",
+            "excluded": false
+          }
+        ],
+        "note": "Clan Skryre only"
       }
     ]
   },
@@ -24016,6 +24066,349 @@
         "warbands": [
           {
             "type": "skaven-of-clan-skryre-kaz",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "scourge",
+    "name": "Scourge",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "relics-of-the-crusades",
+    "source": "Relics of the Crusades",
+    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+    "tags": [
+      "scourge"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-skryre-rel",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "slavers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "warp-blades",
+    "name": "Warp Blades",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "relics-of-the-crusades",
+    "source": "Relics of the Crusades",
+    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+    "tags": [
+      "warp blades"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Tap into the winds",
+        "summary": "",
+        "text": "Warp Blades are fitted to a spear, staff or halberd. Their bearer has +1 Strength and knows the Chain Lightning spell.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 40,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-skryre-rel",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "warpstone-token",
+    "name": "Warpstone Token",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "relics-of-the-crusades",
+    "source": "Relics of the Crusades",
+    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+    "tags": [
+      "warpstone token"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "Bought from Skaven merchants with one piece of treasure, which buys D3 Warpstone Tokens.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Warpstone boost",
+        "summary": "",
+        "text": "A Skaven wizard may eat one Warpstone Token before he casts a spell, for +1 to his roll to cast that turn. He may eat more than one, and the bonuses add up. If he rolls a double while using a Warpstone Token he is taken out of action.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-skryre-rel",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "insulation-robe",
+    "name": "Insulation Robe",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "Body Armour",
+    "setting": "relics-of-the-crusades",
+    "source": "Relics of the Crusades",
+    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+    "tags": [
+      "insulation robe"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Insulation",
+        "summary": "",
+        "text": "A Skaven wearing an Insulation Robe has an unmodified 3+ armour save against electrical damage, such as a misfiring Chain Lightning spell.",
+        "tables": []
+      },
+      {
+        "name": "Heavy",
+        "summary": "",
+        "text": "A warrior wearing an Insulation Robe has -1 Movement and -1 Initiative.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 30,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-skryre-rel",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "trappers-pole",
+    "name": "Trapper's Pole",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "relics-of-the-crusades",
+    "source": "Relics of the Crusades",
+    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+    "tags": [
+      "trapper's pole"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Spear",
+        "summary": "",
+        "text": "A Trapper's Pole works exactly like a spear.",
+        "tables": []
+      },
+      {
+        "name": "Trapper",
+        "summary": "",
+        "text": "Make a note of any living animal that gains no experience - a horse, dog, giant rat or boar among them - that a warrior carrying a Trapper's Pole takes out of action. On a 1 or 2 when its injuries are worked out, the animal joins his warband.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "slavers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "manacles",
+    "name": "Manacles",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "setting": "relics-of-the-crusades",
+    "source": "Relics of the Crusades",
+    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+    "tags": [
+      "manacles"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "You're mine",
+        "summary": "",
+        "text": "Make a note of any living henchman that a warrior carrying Manacles takes out of action. On a 1 when his injuries are worked out, a human henchman joins the slaver warband: he loses everything he carried and takes a new slave's profile. A henchman who is not human may be sold for 2D6 dinars instead.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "slavers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "slave",
+    "name": "Slave",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "setting": "relics-of-the-crusades",
+    "source": "Relics of the Crusades",
+    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+    "tags": [
+      "slave"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "A slave bought for the warband. The Slaver list sells him to heroes only; this PDF prints no profile or rules for him.",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 8,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "slavers",
             "excluded": false
           }
         ],

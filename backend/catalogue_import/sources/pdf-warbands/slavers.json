@@ -1,0 +1,492 @@
+{
+  "warbandType": "slavers",
+  "name": "Slavers",
+  "source": "Relics of the Crusades",
+  "sourceLink": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {
+      "rulename": "Slave trade",
+      "ruleFull": "The warband counts as gaining one extra piece of treasure after every battle, for the slaves it sells who do not fight."
+    },
+    {
+      "rulename": "Lad's got the talent",
+      "ruleFull": "When a slave gains the Lad's Got the Talent advance, he takes a Leadership test. Passed, he is freed: he keeps his profile, becomes a Caravan Guard, may become the warband's leader, and loses every special rule of being a slave. Failed, he is taken off the warband list and becomes a new Eunuch in a henchmen group of his own. Roll advances for any slave left in the group as normal."
+    },
+    {
+      "rulename": "Room for slaves",
+      "ruleFull": "The warband may hold 20 warriors while hiring its heroes and henchmen gives at most 12, so the rest are slaves it buys."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "slaver-equipment-list",
+      "title": "Slaver Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "rapier",
+          "alias": "Rapier",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "morning star",
+          "alias": "Morning star",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Trapper's Pole",
+          "alias": "Trapper's Pole",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Scourge",
+          "alias": "Scourge",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "sling",
+          "alias": "Sling",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": {
+            "cost": 50
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Manacles",
+          "alias": "Manacles",
+          "cost": {
+            "cost": 20,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "Slave",
+          "alias": "Slave",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        }
+      ]
+    }
+  ],
+  "specialEquipment": [],
+  "fighters": [
+    {
+      "id": "slave-merchant",
+      "type": "hero",
+      "name": "Slave Merchant",
+      "plural": "Slave Merchants",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "slaver-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Slave Merchant may use his Leadership instead of his own."
+        }
+      ]
+    },
+    {
+      "id": "overseer",
+      "type": "hero",
+      "name": "Overseer",
+      "plural": "Overseers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "slaver-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Slave Driver",
+          "ruleFull": "A slave within 3\" of the Overseer may use his Leadership. If he carries a scourge, the range is 6\"."
+        }
+      ]
+    },
+    {
+      "id": "caravan-guard",
+      "type": "hero",
+      "name": "Caravan Guard",
+      "plural": "Caravan Guards",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "slaver-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": []
+    },
+    {
+      "id": "eunuch",
+      "type": "henchman",
+      "name": "Eunuch",
+      "plural": "Eunuchs",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 10
+      },
+      "equipmentLists": [
+        "slaver-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Broken Spirit",
+          "ruleFull": "A Eunuch automatically passes any Leadership test he has to take while the Slave Merchant is not out of action. A Eunuch may never become the warband's leader."
+        }
+      ]
+    },
+    {
+      "id": "ogre",
+      "type": "henchman",
+      "name": "Ogre",
+      "plural": "Ogres",
+      "race": "ogre",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 160,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 6,
+        "ws": 3,
+        "bs": 2,
+        "s": 4,
+        "t": 4,
+        "w": 3,
+        "i": 3,
+        "a": 2,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "slaver-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "An Ogre causes fear."
+        },
+        {
+          "rulename": "Large",
+          "ruleFull": "Any model may shoot at an Ogre, even when it is not the closest target."
+        },
+        {
+          "rulename": "Slow Witted",
+          "ruleFull": "An Ogre gains advances at half the rate of everyone else."
+        }
+      ]
+    },
+    {
+      "id": "hound",
+      "type": "henchman",
+      "name": "Hound",
+      "plural": "Hounds",
+      "race": "warhound",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 25,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 4,
+        "bs": 0,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [],
+      "equipment": "None. Hounds never carry weapons or armour.",
+      "specialRules": [
+        {
+          "rulename": "Keen Scent",
+          "ruleFull": "While the warband holds a Hound, its slaves ignore the I'm outta here rule."
+        }
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Scourge",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 10
+    },
+    {
+      "name": "Trapper's Pole",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 6,
+      "dice": null,
+      "rulesPage": 10,
+      "rules": [
+        {
+          "name": "Spear",
+          "text": "A Trapper's Pole works exactly like a spear."
+        },
+        {
+          "name": "Trapper",
+          "text": "Make a note of any living animal that gains no experience - a horse, dog, giant rat or boar among them - that a warrior carrying a Trapper's Pole takes out of action. On a 1 or 2 when its injuries are worked out, the animal joins his warband."
+        }
+      ]
+    },
+    {
+      "name": "Manacles",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": 8,
+      "dice": 1,
+      "rulesPage": 10,
+      "rules": [
+        {
+          "name": "You're mine",
+          "text": "Make a note of any living henchman that a warrior carrying Manacles takes out of action. On a 1 when his injuries are worked out, a human henchman joins the slaver warband: he loses everything he carried and takes a new slave's profile. A henchman who is not human may be sold for 2D6 dinars instead."
+        }
+      ]
+    },
+    {
+      "name": "Slave",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 10,
+      "note": "A slave bought for the warband. The Slaver list sells him to heroes only; this PDF prints no profile or rules for him."
+    }
+  ],
+  "priceRows": [],
+  "flags": [
+    {
+      "page": 9,
+      "what": "A Slaver warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 10,
+      "what": "The skill table's ticks are glyphs the reading-order text drops; read from the -layout text's tick columns. The table has five columns and no Special column, so the warband has no skill group of its own."
+    },
+    {
+      "page": 9,
+      "what": "The Choice of warriors says up to five Eunuchs while the Eunuch entry on page 11 is headed 0-3. Read as 0-3, which is the count that makes the page's own arithmetic work: 1 Slave Merchant + 1 Overseer + 3 Caravan Guards + 3 Eunuchs + 1 Ogre + 3 Hounds is the maximum of 12 the page says hiring gives."
+    },
+    {
+      "page": 11,
+      "what": "The Eunuch's Leadership is printed as 10, higher than any hero's; imported as printed."
+    },
+    {
+      "page": 10,
+      "what": "The Slave is sold on the list at 8 dinars to heroes only. No profile, rules or model count are printed for him here, so he is a bare stub and nothing is added to the roster."
+    },
+    {
+      "page": 9,
+      "what": "The rules name a slave's own special rules - stupidity, I'm outta here, a new slave's profile - which this PDF never prints. They belong to the campaign's own rules, not read here."
+    },
+    {
+      "page": 10,
+      "what": "The Trapper's Pole is 15 dinars Rare 6 and the Manacles 20+D6 Rare 8, both Slavers only; the list prices the Manacles at a flat 20, and the entry's dice are kept."
+    },
+    {
+      "page": 11,
+      "what": "No maximum profile and no henchmen group sizes are printed: the warband takes our Human race, the Ogre our Ogre and the Hounds our Warhound."
+    },
+    {
+      "page": 10,
+      "what": "The Scourge is on the Slaver and the Clan Skryre Heroes lists at 15 dinars and no rules are printed for it on either page, so it is one item with a price row for each warband."
+    }
+  ]
+}

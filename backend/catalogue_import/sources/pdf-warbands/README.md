@@ -89,6 +89,19 @@ check over every file.
 | `night-goblins-kaz.json` | night-goblins-kaz (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=44 | 44-48 of Karak Azgal (text layer) | 11 Nov 2026 |
 | `strigoi.json` | strigoi (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=50 | 50-55 of Karak Azgal (text layer) | 11 Nov 2026 |
 | `savage-orcs-kaz.json` | savage-orcs-kaz (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56 | 56-61 of Karak Azgal (text layer) | 11 Nov 2026 |
+| `ghutani.json` | ghutani (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 2-4 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `muzil.json` | muzil (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 2-4 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `turjuk.json` | turjuk (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 2-4 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `skaven-of-clan-skryre-rel.json` | skaven-of-clan-skryre-rel (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 5-8 (text layer; no images) | 11 Nov 2026 |
+| `slavers.json` | slavers (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 9-11 (text layer; no images) | 11 Nov 2026 |
+| `the-fallen.json` | the-fallen (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 12-14 (text layer; no images) | 11 Nov 2026 |
+
+The six Relics of the Crusades warbands above are one 16-page PDF (its pages 1 and 15-16 are the setting's other warbands, its hired swords
+and its dramatis persona, none of them imported). Its pages 2-4 are one Arabian Tribes warband list with three tribes - Ghutani, Muzil and Turjuk -
+that share every fighter, price and equipment list and differ only in their Special Rules and their skill table; our data holds the three as three
+warband types, so each is a source file of its own. The Clan Skryre template carries its setting in brackets, because Karak Azgal and Athel Loren
+hold a warband of that name too. The setting's own campaign PDFs (its part 1, which holds the slave rules, the Arabian Steed and the Holy skills its
+pages point at) are not read, so what they would fill is stubbed or flagged.
 
 The four Lustria warbands above are the supplement's own, not Town Cryer's: Lustria also holds a grade 1b Lizardmen warband
 (`lizardmen-tc11`) and the setting is a mixed-grade one (19 entries at 1b, 4 at 2b), left as one setting at its majority grade

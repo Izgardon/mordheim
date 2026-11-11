@@ -1,0 +1,277 @@
+{
+  "warbandType": "the-fallen",
+  "name": "The Fallen",
+  "source": "Relics of the Crusades",
+  "sourceLink": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Eaters of Flesh",
+      "ruleFull": "Make a note of any enemy model taken out of action by a warrior who has the Eaters of Flesh rule. A hero deducts 1 from his serious injury roll. A henchman is removed from his warband on a D6 of 1-3 instead of 1-2."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "fallen-equipment-list",
+      "title": "Fallen Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": { "cost": 2, "costPrefix": "1st free/" }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer or mace",
+          "cost": { "cost": 3 }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": { "cost": 5 }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": { "cost": 10 }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": { "cost": 15 }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": { "cost": 10 }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": { "cost": 10 }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short bow",
+          "cost": { "cost": 10 }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": { "cost": 15 }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": { "cost": 20 }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": { "cost": 50 }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": { "cost": 5 }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": { "cost": 10 }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "revenant",
+      "type": "hero",
+      "name": "Revenant",
+      "plural": "Revenants",
+      "race": "undead",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 110,
+      "startingXp": 20,
+      "statblock": { "m": 6, "ws": 4, "bs": 4, "s": 4, "t": 4, "w": 2, "i": 5, "a": 2, "ld": 8 },
+      "equipmentLists": ["fallen-equipment-list"],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any friendly warrior within 6\" of the Revenant may use his Leadership instead of his own."
+        },
+        {
+          "rulename": "Cause Fear",
+          "ruleFull": "A Revenant causes fear."
+        },
+        {
+          "rulename": "Immune to Poison",
+          "ruleFull": "A Revenant is not affected by poison."
+        },
+        {
+          "rulename": "No Pain",
+          "ruleFull": "A Revenant treats a stunned result on the Injury chart as knocked down."
+        },
+        {
+          "rulename": "Eaters of Flesh",
+          "ruleFull": "When the Revenant takes a living enemy out of action and is in base contact with no enemy model, he takes a Leadership test. Failed, he starts eating the body and may do nothing for D3 turns. He takes his turns as normal once those turns are up, or as soon as he is hit by an attack."
+        }
+      ]
+    },
+    {
+      "id": "butcher",
+      "type": "hero",
+      "name": "Butcher",
+      "plural": "Butchers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 8,
+      "statblock": { "m": 4, "ws": 3, "bs": 2, "s": 4, "t": 4, "w": 1, "i": 3, "a": 2, "ld": 6 },
+      "equipmentLists": ["fallen-equipment-list"],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": false,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Cause Fear",
+          "ruleFull": "A Butcher causes fear."
+        },
+        {
+          "rulename": "Eaters of Flesh",
+          "ruleFull": "When the Butcher takes a living enemy out of action and is in base contact with no enemy model, he takes a Leadership test. Failed, he starts eating the body and may do nothing for D3 turns. He takes his turns as normal once those turns are up, or as soon as he is hit by an attack."
+        }
+      ]
+    },
+    {
+      "id": "scavenger",
+      "type": "hero",
+      "name": "Scavenger",
+      "plural": "Scavengers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": { "m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7 },
+      "equipmentLists": ["fallen-equipment-list"],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": []
+    },
+    {
+      "id": "ghoul",
+      "type": "henchman",
+      "name": "Ghoul",
+      "plural": "Ghouls",
+      "race": "ghoul",
+      "minQty": 0,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": { "m": 4, "ws": 2, "bs": 2, "s": 3, "t": 4, "w": 1, "i": 3, "a": 2, "ld": 5 },
+      "equipmentLists": [],
+      "equipment": "None while he is a henchman. A Ghoul promoted to a hero picks weapons and armour from the Fallen Equipment list.",
+      "specialRules": [
+        {
+          "rulename": "Cause Fear",
+          "ruleFull": "A Ghoul causes fear."
+        }
+      ]
+    },
+    {
+      "id": "sgull",
+      "type": "henchman",
+      "name": "Sgull",
+      "plural": "Sgulls",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 60,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": { "m": 5, "ws": 3, "bs": 0, "s": 3, "t": 4, "w": 2, "i": 3, "a": 2, "ld": 4 },
+      "equipmentLists": [],
+      "equipment": "None. Sgulls never carry weapons or armour.",
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Sgull causes fear."
+        },
+        {
+          "rulename": "Flyers",
+          "ruleFull": "A Sgull ignores all terrain and may move at any angle."
+        }
+      ]
+    },
+    {
+      "id": "wild-dog",
+      "type": "henchman",
+      "name": "Wild Dog",
+      "plural": "Wild Dogs",
+      "race": "warhound",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": { "m": 6, "ws": 4, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5 },
+      "equipmentLists": [],
+      "equipment": "None. Wild Dogs never carry weapons or armour.",
+      "specialRules": []
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {
+      "page": 12,
+      "what": "A Fallen warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 13,
+      "what": "The skill table's ticks are glyphs the reading-order text drops; read from the -layout text's tick columns. The table has five columns and no Special column, so the warband has no skill group of its own."
+    },
+    {
+      "page": 12,
+      "what": "Eaters of Flesh is printed twice and says two different things: the warband rule on page 12 is what happens to the victim, and the Revenant's and the Butcher's own rule on page 13 is the Leadership test they take. Both are kept under that name."
+    },
+    {
+      "page": 14,
+      "what": "A Ghoul carries nothing while he is a henchman and buys from the Fallen Equipment list only once he is promoted, so he names no list and his kit is written."
+    },
+    {
+      "page": 14,
+      "what": "A Sgull is an undead giant vulture. We hold no race for it and no maximum profile is printed, so it takes our Animal."
+    },
+    {
+      "page": 14,
+      "what": "No maximum profile and no henchmen group sizes are printed: the heroes take our Human race, the Revenant our Undead, the Ghouls our Ghoul and the Wild Dogs our Warhound."
+    }
+  ]
+}

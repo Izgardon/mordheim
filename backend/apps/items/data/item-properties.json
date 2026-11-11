@@ -1486,5 +1486,29 @@
     "name": "Falconry",
     "description": "A warrior using a hunting bird must wear a falconry glove: one who uses a bird without it rolls on the Serious Injury chart in the post-battle sequence.",
     "type": "Miscellaneous"
+  },
+  {
+    "id": 250,
+    "name": "Thrown weapon",
+    "description": "A model throwing a Poison Wind Globe takes no penalty for range or for moving.",
+    "type": "Weapon"
+  },
+  {
+    "id": 251,
+    "name": "Poison wind",
+    "description": "Obstacles do not stop the gas: ignore cover penalties to hit, and the globe ignores armour saves. It deals D3 wounds to the target on a 3+, and a single wound on a 4+ to anyone else within 2\". The warpstone poison is magical, so it affects undead too.",
+    "type": "Weapon"
+  },
+  {
+    "id": 252,
+    "name": "Drop",
+    "description": "On a roll of 1 to hit, the thrower has dropped the globe or broken it in his hands: resolve a hit against him. A model may also choose to drop a globe on a model in base contact instead of using a close combat weapon.",
+    "type": "Weapon"
+  },
+  {
+    "id": 253,
+    "name": "Save",
+    "description": "A warrior wearing a Gas Mask is affected by poison wind only on a D6 roll of 6+.",
+    "type": "Miscellaneous"
   }
 ]

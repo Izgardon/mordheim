@@ -234,9 +234,10 @@
     "subtype": "Ranged",
     "grade": "2a",
     "description": "Skaven gas bomb weapon; details in rules.",
-    "strength": "Varies",
-    "range": "Varies",
-    "properties": [],
+    "strength": "Special",
+    "range": "6\"",
+    "properties": [250, 251, 252],
+    "needs_rules": false,
     "availabilities": [
       {
         "cost": 20,
@@ -648,7 +649,8 @@
     "description": "Protective mask against gas attacks; details in rules.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [253],
+    "needs_rules": false,
     "single_use": false,
     "availabilities": [
       {

@@ -1,0 +1,542 @@
+{
+  "warbandType": "skaven-of-clan-skryre-rel",
+  "name": "Skaven of Clan Skryre (Relics of the Crusades)",
+  "source": "Relics of the Crusades",
+  "sourceLink": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "clan-skryre-heroes-equipment-list",
+      "title": "Clan Skryre Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Staff/double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Scourge",
+          "alias": "Scourge",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Warp Blades",
+          "alias": "Warp blades",
+          "cost": {
+            "cost": 40
+          }
+        },
+        {
+          "name": "poison wind globe",
+          "alias": "Poison wind globe",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": {
+            "cost": 50
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "gas mask",
+          "alias": "Gas mask",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "clan-skryre-henchmen-equipment-list",
+      "title": "Clan Skryre Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "sling",
+          "alias": "Sling",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {
+      "title": "Insulation Robe",
+      "alias": "",
+      "cost": {
+        "cost": 30
+      },
+      "availability": "Rare 9, Clan Skryre only"
+    }
+  ],
+  "fighters": [
+    {
+      "id": "warlock-engineer",
+      "type": "hero",
+      "name": "Warlock Engineer",
+      "plural": "Warlock Engineers",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {
+        "m": 5,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 5,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "clan-skryre-heroes-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "spellLores": [
+        "Magic of the Horned Rat"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Warlock Engineer may use his Leadership instead of his own."
+        },
+        {
+          "rulename": "Wizard",
+          "ruleFull": "A Warlock Engineer is a wizard and casts the Magic of the Horned Rat."
+        }
+      ]
+    },
+    {
+      "id": "skaven-overseer",
+      "type": "hero",
+      "name": "Skaven Overseer",
+      "plural": "Skaven Overseers",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {
+        "m": 6,
+        "ws": 4,
+        "bs": 3,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 5,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "clan-skryre-heroes-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Slave Driver",
+          "ruleFull": "Skaven Slaves within 3\" of the Skaven Overseer may use his Leadership. If he carries a scourge, the range is 6\"."
+        },
+        {
+          "rulename": "Slave Master",
+          "ruleFull": "Skaven Slaves ignore the Easy come, easy go rule in a battle the Skaven Overseer was not taken out of action in."
+        }
+      ]
+    },
+    {
+      "id": "apprentice-warlock",
+      "type": "hero",
+      "name": "Apprentice Warlock",
+      "plural": "Apprentice Warlocks",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 18,
+      "startingXp": 0,
+      "statblock": {
+        "m": 5,
+        "ws": 2,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [
+        "clan-skryre-heroes-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": true,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": []
+    },
+    {
+      "id": "verminkin",
+      "type": "henchman",
+      "name": "Verminkin",
+      "plural": "Verminkin",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "clan-skryre-henchmen-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "skaven-slave",
+      "type": "henchman",
+      "name": "Skaven Slave",
+      "plural": "Skaven Slaves",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 6,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 5,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 2
+      },
+      "equipmentLists": [],
+      "equipment": "A single dagger, and no other equipment.",
+      "specialRules": [
+        {
+          "rulename": "Life is cheap",
+          "ruleFull": "A member of the warband may shoot into a close combat that holds only enemies and Skaven Slaves. Randomise the hits."
+        },
+        {
+          "rulename": "Easy come, easy go",
+          "ruleFull": "After rolling for injuries, roll a D3 and remove that many Skaven Slaves from the warband."
+        },
+        {
+          "rulename": "Numerous",
+          "ruleFull": "Skaven Slaves may take the warband up to 20 models: with 15 other Skaven on the roster, up to 5 Skaven Slaves may be added."
+        },
+        {
+          "rulename": "Worthless",
+          "ruleFull": "A Skaven Slave taken out of action counts as half a model towards the warband's rout test. A warband of 5 Skaven and 10 Skaven Slaves tests when 4 models have fallen: 4 Skaven, 8 Skaven Slaves, or any mix worth 4."
+        }
+      ]
+    },
+    {
+      "id": "giant-rat",
+      "type": "henchman",
+      "name": "Giant Rat",
+      "plural": "Giant Rats",
+      "race": "giant rat",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 2,
+        "bs": 0,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [],
+      "equipment": "None. Giant Rats never carry weapons or armour.",
+      "specialRules": []
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Scourge",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 6
+    },
+    {
+      "name": "Warp Blades",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 8,
+      "dice": 1,
+      "rulesPage": 5,
+      "rules": [
+        {
+          "name": "Tap into the winds",
+          "text": "Warp Blades are fitted to a spear, staff or halberd. Their bearer has +1 Strength and knows the Chain Lightning spell."
+        }
+      ]
+    },
+    {
+      "name": "Warpstone Token",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": null,
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 6,
+      "note": "Bought from Skaven merchants with one piece of treasure, which buys D3 Warpstone Tokens.",
+      "rules": [
+        {
+          "name": "Warpstone boost",
+          "text": "A Skaven wizard may eat one Warpstone Token before he casts a spell, for +1 to his roll to cast that turn. He may eat more than one, and the bonuses add up. If he rolls a double while using a Warpstone Token he is taken out of action."
+        }
+      ],
+      "types": [
+        "skaven-of-clan-skryre-rel"
+      ]
+    },
+    {
+      "name": "Insulation Robe",
+      "type": "Armour",
+      "subtype": "Body Armour",
+      "rarity": 9,
+      "dice": 2,
+      "rulesPage": 6,
+      "rules": [
+        {
+          "name": "Insulation",
+          "text": "A Skaven wearing an Insulation Robe has an unmodified 3+ armour save against electrical damage, such as a misfiring Chain Lightning spell."
+        },
+        {
+          "name": "Heavy",
+          "text": "A warrior wearing an Insulation Robe has -1 Movement and -1 Initiative."
+        }
+      ]
+    }
+  ],
+  "priceRows": [
+    {
+      "name": "poison wind globe",
+      "rarity": 6,
+      "dice": 1,
+      "note": "Clan Skryre only",
+      "page": 5
+    },
+    {
+      "name": "gas mask",
+      "rarity": 6,
+      "dice": null,
+      "note": "Clan Skryre only",
+      "page": 5
+    }
+  ],
+  "flags": [
+    {
+      "page": 5,
+      "what": "A Clan Skryre warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 6,
+      "what": "The skill table's ticks are glyphs the reading-order text drops; read from the -layout text's tick columns. The table has five columns and no Special column, so the warband has no skill group of its own, and it does not share the Skaven of Karak Azgal group that batch introduced."
+    },
+    {
+      "page": 5,
+      "what": "The Poison Wind Globe and the Gas Mask are ours already (Mutiny in Marienburg, 20 gc Rare 6 and 15 gc Rare 6) with no rules; this PDF prints both their prices and their rules, so each keeps one entry with a Clan Skryre price row (15+D6 Rare 6 and 5 gc Rare 6) and takes the PDF's rules."
+    },
+    {
+      "page": 6,
+      "what": "The Scourge is on the Clan Skryre Heroes and the Slaver lists at 15 dinars and no rules are printed for it, so it is one stub serving both types."
+    },
+    {
+      "page": 6,
+      "what": "The Warpstone Token is priced \"1 piece of treasure\", Availability Special, which is no number: its row carries no price and no rarity, and its note says what it costs."
+    },
+    {
+      "page": 6,
+      "what": "Warp Blades, the Warpstone Token and the Insulation Robe are printed at 40+D6 Rare 8, 1 piece of treasure Special and 30+2D6 Rare 9, all Clan Skryre only. The Insulation Robe is in no equipment list, so it is a special-equipment line at 30 dinars."
+    },
+    {
+      "page": 8,
+      "what": "The PDF prints one spell, Chain Lightning (Difficulty 7), under the heading Clan Skryre Magic, while the Warlock Engineer's own rule says he casts the Magic of the Horned Rat, which is ours. Chain Lightning is a lore of its own, Clan Skryre Magic, and the Warlock Engineer casts the Magic of the Horned Rat; the Warp Blades grant the spell."
+    },
+    {
+      "page": 7,
+      "what": "Skaven Slaves are \"armed with a single dagger and cannot use any other equipment\": they buy from no list and the dagger is written as their kit. They gain no experience, so \"Experience: Skaven Slaves don't survive long enough to gain experience\" is not a rule of theirs."
+    },
+    {
+      "page": 7,
+      "what": "The warband's maximum is 15 models; the Skaven Slaves' Numerous rule raises it to 20 and is a rule of theirs, not the template's maximum."
+    },
+    {
+      "page": 8,
+      "what": "No maximum profile and no henchmen group sizes are printed: the warband takes our Skaven race, and the Giant Rats our Giant Rat."
+    },
+    {
+      "page": 5,
+      "what": "Three warband types are named Skaven of Clan Skryre - Karak Azgal's, Athel Loren's and this one - so the template carries its setting in brackets, as the Lustria and Mousillon Clan Pestilens templates do."
+    }
+  ]
+}

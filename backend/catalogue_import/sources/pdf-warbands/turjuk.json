@@ -1,0 +1,417 @@
+{
+  "warbandType": "turjuk",
+  "name": "Turjuk",
+  "source": "Relics of the Crusades",
+  "sourceLink": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Pride in horses",
+      "ruleFull": "A Turjuk leader who owns neither a Riding Horse nor an Arabian Steed has his Leadership reduced by 1."
+    },
+    {
+      "rulename": "A slave may lead",
+      "ruleFull": "A slave, or the son of a slave, may become the warband's leader."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "arabian-tribe-equipment-list",
+      "title": "Arabian Tribe Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace or hammer",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "long bow",
+          "alias": "Long bow",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "mule",
+          "alias": "Mule",
+          "cost": {
+            "cost": 30
+          }
+        },
+        {
+          "name": "riding horse",
+          "alias": "Riding Horse",
+          "cost": {
+            "cost": 40
+          }
+        }
+      ]
+    },
+    {
+      "id": "townsmen-equipment-list",
+      "title": "Townsmen Equipment List",
+      "caveat": "This list is for Townsmen only.",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace or hammer",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "sling",
+          "alias": "Sling",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short bow",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "emir",
+      "type": "hero",
+      "name": "Emir",
+      "plural": "Emirs",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "arabian-tribe-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Emir may use his Leadership for a Leadership test."
+        }
+      ],
+      "skills": [
+        "Ride [Animal]",
+        "Horse Archer"
+      ]
+    },
+    {
+      "id": "scholar",
+      "type": "hero",
+      "name": "Scholar",
+      "plural": "Scholars",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "arabian-tribe-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": true,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Field of Scholarship",
+          "ruleFull": "When the Scholar joins the warband, choose the field he has studied.\n\nCartography: add or subtract 1 from the D6 when exploring.\n\nPhysiology: after all serious injuries have been worked out, one hero may re-roll his result.\n\nPoetry: the warband's leader adds +1 to his Leadership for his first Leadership test of a scenario if the warband won its last battle. For one turn of a scenario, every friendly model within 6\" has +1 Weapon Skill and +1 Attack.\n\nTheology: the Scholar serves The One and learns Holy skills.\n\nThe Occult: the Scholar is a wizard and casts Lesser Magic."
+        }
+      ]
+    },
+    {
+      "id": "askar",
+      "type": "hero",
+      "name": "Askar",
+      "plural": "Askars",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 35,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "arabian-tribe-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [],
+      "skills": [
+        "Ride [Animal]",
+        "Horse Archer"
+      ]
+    },
+    {
+      "id": "townsman",
+      "type": "henchman",
+      "name": "Townsman",
+      "plural": "Townsmen",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "townsmen-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "mamluk",
+      "type": "henchman",
+      "name": "Mamluk",
+      "plural": "Mamluks",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "arabian-tribe-equipment-list"
+      ],
+      "specialRules": []
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {
+      "page": 2,
+      "what": "The PDF prints one Arabian Tribes warband list (pages 2-4) with three tribes - Ghutani, Muzil and Turjuk - that share its choice of warriors, fighters, profiles, prices and equipment lists and differ only in their Special Rules and their skill table. Our data holds the three as three warband types, so each is a source file of its own, the shared parts repeated and the differences carried."
+    },
+    {
+      "page": 2,
+      "what": "An Arabian Tribe warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 3,
+      "what": "The three skill tables' ticks are glyphs the reading-order text drops; read from the -layout text's tick columns and checked against page 3 as an image. The tables have five columns and no Special column, so the tribes have no skill group of their own."
+    },
+    {
+      "page": 3,
+      "what": "The Arabian Tribe and Townsmen lists print Mace and Hammer as two lines at 3 dinars each; both are our Club, Mace or Hammer, so each list carries one line for them."
+    },
+    {
+      "page": 4,
+      "what": "The Scholar's Theology field gives him Holy skills, and the Occult field makes him a Lesser Magic wizard. We hold no Holy skill group and a field is picked per model, so neither is a skill group or a spell lore on the Scholar: the choice stays in his rule."
+    },
+    {
+      "page": 4,
+      "what": "No maximum profile and no henchmen group sizes are printed: the warband takes our Human race."
+    },
+    {
+      "page": 2,
+      "what": "\"Every Turjuk Emir and Askar has the following skills: Ride Horse, Ride Arabian Steed and Horse Archer\" names skills, so both start with them. Ride Horse and Ride Arabian Steed are our one Ride [Animal] skill, which names its animal, so each starts with Ride [Animal] and Horse Archer."
+    },
+    {
+      "page": 2,
+      "what": "The Arabian Steed is named in the Turjuk rules but is in no equipment list and no profile or price is printed for it, so no item or beast is added."
+    }
+  ]
+}
