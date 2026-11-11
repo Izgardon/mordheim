@@ -393,6 +393,9 @@
           "rulename": "Expert Swordsman",
           "ruleFull": "A Pirate Captain has the Expert Swordsman skill."
         }
+      ],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
       ]
     },
     {
@@ -432,6 +435,9 @@
           "rulename": "Expert Swordsman",
           "ruleFull": "A Ship's Mate has the Expert Swordsman skill."
         }
+      ],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
       ]
     },
     {
@@ -466,7 +472,10 @@
         "speed": true,
         "special": false
       },
-      "specialRules": []
+      "specialRules": [],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ]
     },
     {
       "id": "crew",
@@ -617,10 +626,6 @@
     },
     {
       "page": 3,
-      "what": "The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions."
-    },
-    {
-      "page": 3,
       "what": "The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same."
     },
     {
@@ -646,6 +651,10 @@
     {
       "page": 2,
       "what": "\"All Estalian Captains and Champions start off with the skill Expert Swordsman\": read as the Captain and the Ship's Mates, who start with our Expert Swordsman skill."
+    },
+    {
+      "page": 1,
+      "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
     }
   ]
 }

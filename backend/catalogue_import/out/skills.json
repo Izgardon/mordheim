@@ -1232,6 +1232,66 @@
     "description": "When the warrior shoots he may choose any target, not only the closest enemy."
   },
   {
+    "name": "Pistol Expertise",
+    "description": "The Hero may use any pistol he finds or buys. A non-Skaven model may not buy a Warplock Pistol, but may use one he has taken. In hand-to-hand combat, whenever an opponent in base contact is knocked down or stunned, he reloads his pistols. This skill does not count towards the one Pirate skill a hero may know, so he may learn another beside it."
+  },
+  {
+    "name": "Riposte",
+    "description": "When the Hero parries an attack he makes one extra attack at once, resolved before the attacker's other attacks."
+  },
+  {
+    "name": "Impenetrable Defense",
+    "description": "When armed with two swords or other parrying weapons, the warrior gains a parry and a re-roll, as if he were armed with a sword and a buckler."
+  },
+  {
+    "name": "Prince of Cats",
+    "description": "When armed with a Cat O' Nine Tails or a Whip, the Hero makes all his base attacks before a charger, not only the whipcrack attack. Attacks from an additional hand weapon are not included unless it is another whip or cat."
+  },
+  {
+    "name": "Powder Refiner",
+    "description": "If the Hero does not search for rare items or dramatis personae, he makes 1D3-1 batches of Superior Blackpowder, so he may make none. They must be used in the next battle and may not be sold."
+  },
+  {
+    "name": "Quick as a Monkey",
+    "description": "The Hero may run or charge while climbing."
+  },
+  {
+    "name": "Snapshot",
+    "description": "A model armed with a pistol with a shot prepared may fire it in the first round of a hand-to-hand combat, resolved first, before any blows are struck. The shot is at a further -2 to hit and uses his Ballistic Skill. It is in addition to his close combat attacks. He may make only one Snapshot in a combat, and gains no extra attack from a second weapon in that first round."
+  },
+  {
+    "name": "Dirty Fighter",
+    "description": "The Hero counts +2 Initiative for working out the order of attacks in close combat."
+  },
+  {
+    "name": "Swing",
+    "description": "The Hero may declare a diving charge against a model within 2D6\" of a building, rather than 2\". Roll the distance after the charge is declared. He may use this skill only while he owns a Rope & Hook."
+  },
+  {
+    "name": "Smell of Treasure",
+    "description": "When a Hero of the warband finds a Treasure Map or a Mordheim Map on his rarity roll, you may roll to see which result the map is before deciding to buy it. If you do not buy it you pay nothing, but that Hero's rarity roll is spent for this post-battle sequence. It works on a map any Hero finds, as long as the Hero with this skill was not taken out of action in the last battle."
+  },
+  {
+    "name": "Helmsmen",
+    "description": "Any boat or raft the Hero travels in may move up to 3\" further each turn."
+  },
+  {
+    "name": "Festooned with Pistols",
+    "description": "The Hero may carry any number of braces of pistols. He may carry only one missile weapon that is not a pistol, and still reloads only one barrel a turn; with Pistolier he may instead fire and reload a barrel in the same turn."
+  },
+  {
+    "name": "Looting the Dead",
+    "description": "When rolling for warriors taken out of action at the end of a battle, roll a D6 for each warrior who is to be removed from his roster and is not taken as a Swabbie or Crew. On a 4+ the looter takes all of that warrior's equipment and the warband keeps it. A warrior may be looted only once, but several Looters give several chances. Warriors of any warband in the game may be looted, your own among them."
+  },
+  {
+    "name": "Novice Press-ganger",
+    "description": "The warband's leader only. The warband may capture Swabbies and Crew, as a Pirate warband does. A Crew mate joins a henchmen group costing 25 gold crowns or less; if the warband has none, he joins its cheapest group that is not animals and the player pays the difference in cost (into a 30 gc group, 5 gc). A Swabbie joins any group that is not animals costing 15 gold crowns or less, or failing that has a human henchman's profile. Where a fitting kind of Swabbie exists for the warband, it may recruit that instead."
+  },
+  {
+    "name": "Master Press-ganger",
+    "description": "The warband's leader only. When a henchman the warband takes out of action dies (1-2 on his injury roll), the warband may try to recruit him as a Swabbie or Crew on a 2+ instead of 4+. When an enemy the warband took out of action dies (11-15 on the Serious Injury chart), on a D6 roll of 4+ he is captured instead, to be ransomed or made to join the crew."
+  },
+  {
     "name": "Beastkin",
     "description": "The range of every Beast or Animal Handling skill this Hero has, now or later, is doubled to 12\"."
   },

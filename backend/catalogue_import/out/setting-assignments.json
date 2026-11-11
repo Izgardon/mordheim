@@ -1541,6 +1541,81 @@
       "how": "overrides.json"
     },
     {
+      "name": "Pistol Expertise",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Riposte",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Impenetrable Defense",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Prince of Cats",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Powder Refiner",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Quick as a Monkey",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Snapshot",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Dirty Fighter",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Swing",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Smell of Treasure",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Helmsmen",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Festooned with Pistols",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Looting the Dead",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Novice Press-ganger",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Master Press-ganger",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
       "name": "Beastkin",
       "setting": "mordheim-2a",
       "how": "overrides.json"

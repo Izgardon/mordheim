@@ -2817,7 +2817,8 @@
           "Academic",
           "Strength",
           "Speed",
-          "Araby Smugglers"
+          "Araby Smugglers",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -2866,7 +2867,8 @@
           "Combat",
           "Shooting",
           "Speed",
-          "Araby Smugglers"
+          "Araby Smugglers",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -2908,7 +2910,8 @@
         "skill_types": [
           "Academic",
           "Speed",
-          "Araby Smugglers"
+          "Araby Smugglers",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -8006,7 +8009,8 @@
           "Shooting",
           "Academic",
           "Strength",
-          "Speed"
+          "Speed",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -8054,7 +8058,8 @@
         "skill_types": [
           "Combat",
           "Shooting",
-          "Speed"
+          "Speed",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -8096,7 +8101,8 @@
         "skill_types": [
           "Combat",
           "Shooting",
-          "Speed"
+          "Speed",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -21801,7 +21807,8 @@
           "Shooting",
           "Academic",
           "Strength",
-          "Speed"
+          "Speed",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -21851,7 +21858,8 @@
         "skill_types": [
           "Combat",
           "Strength",
-          "Speed"
+          "Speed",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -21895,7 +21903,8 @@
         "skill_types": [
           "Combat",
           "Strength",
-          "Speed"
+          "Speed",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -29767,7 +29776,8 @@
           "Academic",
           "Strength",
           "Speed",
-          "Khorne Raiders"
+          "Khorne Raiders",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -29864,7 +29874,8 @@
         "skill_types": [
           "Combat",
           "Speed",
-          "Khorne Raiders"
+          "Khorne Raiders",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -55734,7 +55745,8 @@
           "Academic",
           "Strength",
           "Speed",
-          "Sartosan Pirates"
+          "Sartosan Pirates",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -55783,7 +55795,8 @@
           "Combat",
           "Shooting",
           "Strength",
-          "Sartosan Pirates"
+          "Sartosan Pirates",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -55826,7 +55839,8 @@
           "Combat",
           "Shooting",
           "Speed",
-          "Sartosan Pirates"
+          "Sartosan Pirates",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -61834,7 +61848,8 @@
           "Combat",
           "Academic",
           "Strength",
-          "Slayer Pirates"
+          "Slayer Pirates",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -61882,7 +61897,8 @@
         "skill_types": [
           "Combat",
           "Shooting",
-          "Slayer Pirates"
+          "Slayer Pirates",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -61930,7 +61946,8 @@
         "skill_types": [
           "Combat",
           "Strength",
-          "Slayer Pirates"
+          "Slayer Pirates",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -72034,7 +72051,8 @@
           "Shooting",
           "Academic",
           "Strength",
-          "Speed"
+          "Speed",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -72082,7 +72100,8 @@
         "skill_types": [
           "Combat",
           "Shooting",
-          "Strength"
+          "Strength",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -72124,7 +72143,8 @@
         "skill_types": [
           "Combat",
           "Shooting",
-          "Speed"
+          "Speed",
+          "Sartosa Pirate Skills"
         ],
         "spell_types": [],
         "gains_xp": true,

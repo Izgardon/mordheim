@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.common import load_json, loose_key, norm_name, slugify
-from catalogue_import.pdf_warbands import ORIGIN, lines_of, put_aliases_right
+from catalogue_import.pdf_warbands import ORIGIN, SHARED, lines_of, put_aliases_right
 from catalogue_import.sources import OUT
 from catalogue_import.template_fighters import STATS, FighterLog, race_of
 from catalogue_import.template_lists import Fighter, ItemIndex, plain, read_note
@@ -40,6 +40,7 @@ PAGE: Spec = {
     "fighters": (list, True),
     "skillGroup": (dict, False),
     "specialSkillsList": (list, False),
+    SHARED: (dict, False),
     "aliases": (list, True),
     "stubs": (list, True),
     "itemRules": (list, False),
@@ -74,12 +75,14 @@ FIGHTER: Spec = {
     "statblock": (dict, True),
     "equipmentLists": (list, True),
     "skillAccess": (dict, False),
+    "skillGroups": (list, False),
     "equipment": (str, False),
     "spellLores": (list, False),
     "specialRules": (list, True),
 }
 GROUP: Spec = {"min": (int, True), "max": (int, True)}
 SKILL_GROUP: Spec = {"name": (str, True), "new": (bool, True), "note": (str, False)}
+SHARED_GROUP: Spec = {"name": (str, True), "note": (str, False), "types": (list, True), "skills": (list, True)}
 NOTE_MAX = 200  # a group's learn_note
 SKILL: Spec = {"name": (str, True), "description": (str, False), "ours": (str, False), "pdfName": (str, False)}
 ALIAS: Spec = {"pdf": (str, True), "ours": (str, True), "page": (int, True)}
@@ -134,15 +137,18 @@ class Catalogue:
     lores: set[str]
     types: set[str]
     item_rules: set[str] = field(default_factory=set)  # shared item rules' names and aliases, norm names
+    shared_groups: set[str] = field(default_factory=set)  # the groups the pages share between warband types
 
 
 def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set[str]) -> Catalogue:
     """Our catalogue as out/ holds it, less what the PDF pages bring (their stubs, groups and new skills)."""
     own_groups = {page["skillGroup"]["name"] for page in pages.values() if page.get("skillGroup", {}).get("new")}
+    own_groups |= {page[SHARED]["name"] for page in pages.values() if page.get(SHARED)}
     own_skills = {
         norm_name(row["name"])
         for page in pages.values()
-        for row in page.get("specialSkillsList") or []
+        for rows in (page.get("specialSkillsList") or [], (page.get(SHARED) or {}).get("skills") or [])
+        for row in rows
         if "description" in row
     }
     return Catalogue(
@@ -158,6 +164,7 @@ def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set
         {row["slug"] for row in load_json(OUT / "warband-types.json")},
         {norm_name(name) for row in load_json(OUT / "item-rules.json") for name in [row["name"], *row["aliases"]]}
         | {norm_name(row["name"]) for page in pages.values() for row in page.get("itemRules") or []},
+        {page[SHARED]["name"] for page in pages.values() if page.get(SHARED)},
     )
 
 
@@ -229,6 +236,8 @@ def _counts(fighter: dict[str, Any], where: str, problems: list[str]) -> None:
 def _fighters(slug: str, page: dict[str, Any], catalogue: Catalogue, problems: list[str]) -> None:
     lists = {raw["id"] for raw in page["equipmentLists"]}
     named: set[str] = set()
+    # a fighter's own groups: ours, the page's own group, or the group it shares with other warband types
+    known = set(catalogue.groups) | catalogue.shared_groups | {(page.get("skillGroup") or {}).get("name")}
     for fighter in _each(page["fighters"], FIGHTER, "fighter", problems):
         where = f"fighter {fighter['name']}"
         if fighter["type"] not in ("hero", "henchman"):
@@ -241,6 +250,9 @@ def _fighters(slug: str, page: dict[str, Any], catalogue: Catalogue, problems: l
         problems += [f"{where}: no list {key!r}" for key in fighter["equipmentLists"] if key not in lists]
         problems += [
             f"{where}: no lore {lore!r}" for lore in fighter.get("spellLores") or [] if lore not in catalogue.lores
+        ]
+        problems += [
+            f"{where}: no skill group {name!r}" for name in fighter.get("skillGroups") or [] if name not in known
         ]
         log = FighterLog()
         race_of(slug, fighter, catalogue.races, log)
@@ -311,15 +323,36 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
     ]
 
 
-def _skills(page: dict[str, Any], catalogue: Catalogue, problems: list[str]) -> None:
-    group, rows = page["skillGroup"], _each(page["specialSkillsList"], SKILL, "special skill", problems)
+def _group_skills(where: str, rows: list[dict[str, Any]], catalogue: Catalogue, problems: list[str]) -> None:
+    """Each of a group's skills new (its description) or one of ours (`ours`), and no new one named as ours."""
     for row in rows:
         if ("description" in row) == ("ours" in row):
-            problems.append(f"special skill {row['name']!r}: a description (new) or the skill of ours it is")
+            problems.append(f"{where} {row['name']!r}: a description (new) or the skill of ours it is")
         elif "ours" in row and norm_name(row["ours"]) not in catalogue.skills:
-            problems.append(f"special skill {row['name']!r}: no skill of ours {row['ours']!r}")
+            problems.append(f"{where} {row['name']!r}: no skill of ours {row['ours']!r}")
         elif "description" in row and norm_name(row["name"]) in catalogue.skills:
-            problems.append(f"special skill {row['name']!r}: one of our skills holds the name, use it or name it apart")
+            problems.append(f"{where} {row['name']!r}: one of our skills holds the name, use it or name it apart")
+
+
+def _shared_group(page: dict[str, Any], catalogue: Catalogue, problems: list[str]) -> None:
+    """A group one page declares for several warband types: its shape, its types ours, its skills, its note."""
+    group = page[SHARED]
+    if not shape(group, SHARED_GROUP, "shared skill group", problems):
+        return
+    where = f"shared skill group {group['name']!r}"
+    if group["name"] in catalogue.groups:
+        problems.append(f"{where}: we have it already")
+    problems += [f"{where}: no warband type {slug!r}" for slug in group["types"] if slug not in catalogue.types]
+    if page["warbandType"] not in group["types"]:
+        problems.append(f"{where}: the page's own type isn't one of its types")
+    if len(group.get("note") or "") > NOTE_MAX:
+        problems.append(f"{where}: its note is over {NOTE_MAX} characters")
+    _group_skills("shared skill", _each(group["skills"], SKILL, "shared skill", problems), catalogue, problems)
+
+
+def _skills(page: dict[str, Any], catalogue: Catalogue, problems: list[str]) -> None:
+    group, rows = page["skillGroup"], _each(page["specialSkillsList"], SKILL, "special skill", problems)
+    _group_skills("special skill", rows, catalogue, problems)
     note = group.get("note") or ""
     if note and not group["new"]:
         problems.append(f"skill group {group['name']!r}: only a new group takes a note")
@@ -372,6 +405,8 @@ def check_page(slug: str, page: dict[str, Any], catalogue: Catalogue) -> Found:
     _fighters(slug, page, catalogue, problems)
     _notes(page, problems)
     _items(page, catalogue, found)
+    if page.get(SHARED):
+        _shared_group(page, catalogue, problems)
     if "skillGroup" in page:
         _skills(page, catalogue, problems)
     else:

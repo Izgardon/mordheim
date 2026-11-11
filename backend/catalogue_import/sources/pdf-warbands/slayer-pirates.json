@@ -365,6 +365,9 @@
           "rulename": "Leader",
           "ruleFull": "Any warrior within 6\" of the Slayer Captain may use his Leadership instead of his own."
         }
+      ],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
       ]
     },
     {
@@ -404,6 +407,9 @@
           "rulename": "Expert Weaponsmith",
           "ruleFull": "Every Pistol in the warband, of any kind, has its range increased by 3\", and every Blunderbuss, of any kind, by 6\". The increase holds only while the Master Gunner is in the warband, and only in a battle he was deployed in."
         }
+      ],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
       ]
     },
     {
@@ -438,7 +444,10 @@
         "speed": false,
         "special": true
       },
-      "specialRules": []
+      "specialRules": [],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ]
     },
     {
       "id": "sea-trollslayer",
@@ -698,6 +707,10 @@
     {
       "page": 3,
       "what": "The PDF spells the skill \"Death Wish\"; it is the Dwarf Slayer Cult's Deathwish, one skill with the same words in both groups, and who may take it sits in each group's note."
+    },
+    {
+      "page": 1,
+      "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
     }
   ]
 }

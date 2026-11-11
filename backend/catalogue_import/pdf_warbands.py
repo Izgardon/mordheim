@@ -25,6 +25,11 @@ snapshot so the template import builds it the same way. A file's own keys:
   a warband with no Special column (the Outlaws of Stirwood Forest, Redux). Who of the warband may take a skill opens
   a new skill's description ("Gnoblars only."); for one of ours, which other warbands share, it is the new group's
   `note` (William, 6 Nov 2026), shown when learning from it;
+- `sharedSkillGroup` (`{name, note, types, skills}`): a new group one page declares for several warband types, its
+  skills in `specialSkillsList`'s shape (the Sartosa Pirate Skills, which every Sartosa warband's Pirate column
+  names). The pages that share it name it in their fighters' `skillGroups` and declare it no second time;
+- a fighter's `skillGroups`: groups he learns from besides his Special tick, each one of ours or a page's shared one
+  (a Khorne Raiders Quartermaster ticks Special but not Pirate);
 - a fighter's `spellLores`: the lores he casts from, by our spells' lore names;
 - `flags`: `{page, what}`, what the PDF leaves unclear, for William.
 
@@ -42,6 +47,7 @@ from catalogue_import.warband_items import _item, _row
 
 PDF_SOURCES = SOURCES / "pdf-warbands"
 TYPE = "warbandType"
+SHARED = "sharedSkillGroup"  # a new group one page declares for several warband types
 ORIGIN = "pdf-warbands"
 
 
@@ -263,14 +269,14 @@ def stub_items(
     return stubs
 
 
-def _new_group(slug: str, page: dict[str, Any]) -> tuple[dict[str, Any], list[dict[str, str]]]:
+def _new_group(
+    page: dict[str, Any], group: dict[str, Any], skills: list[dict[str, Any]], source: str, slugs: list[str]
+) -> tuple[dict[str, Any], list[dict[str, str]]]:
     """A page's new skill group as overrides.json's `new_skill_groups` holds one, and its new skills' rules."""
-    skills = page.get("specialSkillsList") or []
-    source = f"pdf-warbands/{slug}.json"
     new = [row for row in skills if "description" in row]
     decision = {
-        "type": page[TYPE],
-        "note": page["skillGroup"].get("note") or "",
+        "types": slugs,
+        "note": group.get("note") or "",
         "skills": [row["ours"] for row in skills if "ours" in row],
         "new_skills": [{"name": row["name"], "rule": row["name"]} for row in new],
         "source": source,
@@ -278,21 +284,35 @@ def _new_group(slug: str, page: dict[str, Any]) -> tuple[dict[str, Any], list[di
     return decision, [{"name": row["name"], "description": row["description"], "source": page["source"]} for row in new]
 
 
+def declared_groups(
+    slug: str, page: dict[str, Any]
+) -> list[tuple[dict[str, Any], list[dict[str, Any]], str, list[str]]]:
+    """The new groups a page declares: its own (the Special tick's, for its type), then one it shares with other
+    warband types (`sharedSkillGroup`). Each as (the group, its skills, the source key its rules take, its types)."""
+    found = []
+    own = page.get("skillGroup") or {}
+    if own.get("new"):
+        found.append((own, page.get("specialSkillsList") or [], f"pdf-warbands/{slug}.json", [page[TYPE]]))
+    shared = page.get(SHARED) or {}
+    if shared:
+        source = f"pdf-warbands/{slug}.json ({shared['name']})"
+        found.append((shared, shared.get("skills") or [], source, list(shared["types"])))
+    return found
+
+
 def add_skill_groups(sources: Any, pages: dict[str, dict[str, Any]], types: list[dict[str, Any]]) -> None:
-    """The pages' new skill groups, made as overrides.json's new groups are (new_groups.py): open to the page's type,
-    their new skills' rules from the page, in the type's setting."""
+    """The pages' new skill groups, made as overrides.json's new groups are (new_groups.py): open to the page's type
+    (a shared group to the types it names), their new skills' rules from the page, in the type's setting."""
     setting_of = {row["slug"]: row["setting"] for row in types}
     groups = dict(sources.overrides.get("new_skill_groups", {}))
     chosen = dict(sources.overrides.get("setting_assignments", {}).get("skills", {}))
     for slug, page in pages.items():
-        group = page.get("skillGroup") or {}
-        if not group.get("new"):
-            continue
-        if group["name"] in groups:
-            raise ValueError(f"pdf-warbands/{slug}.json: overrides.json makes the skill group {group['name']!r} too")
-        groups[group["name"]], rows = _new_group(slug, page)
-        sources.skill_files[f"pdf-warbands/{slug}.json"] = rows
-        chosen.update({f"{row['name']} ({group['name']})": setting_of[page[TYPE]] for row in rows})
+        for group, skills, source, slugs in declared_groups(slug, page):
+            if group["name"] in groups:
+                raise ValueError(f"pdf-warbands/{slug}.json: the skill group {group['name']!r} is made twice")
+            groups[group["name"]], rows = _new_group(page, group, skills, source, slugs)
+            sources.skill_files[source] = rows
+            chosen.update({f"{row['name']} ({group['name']})": setting_of[page[TYPE]] for row in rows})
     assignments = {**sources.overrides.get("setting_assignments", {}), "skills": chosen}
     sources.overrides = {**sources.overrides, "new_skill_groups": groups, "setting_assignments": assignments}
 

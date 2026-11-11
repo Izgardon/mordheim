@@ -27,9 +27,9 @@ Answers go into `overrides.json`; the next build applies them.
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
 | price rows | 408 |
-| skills | 335 |
-| skill groups | 73 |
-| skill group links | 415 |
+| skills | 350 |
+| skill groups | 74 |
+| skill group links | 434 |
 | serious injuries (D66) | 20 |
 | shared specials | 66 |
 | random mutation results (D66) | 36 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 335 | 152 | 146 | 37 |
+| skills | 350 | 152 | 161 | 37 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 335 skills, one per name; `out/skill-groups.json` is 73 groups holding them (415 links), the five core groups first.
+`out/skills.json` is 350 skills, one per name; `out/skill-groups.json` is 74 groups holding them (434 links), the five core groups first.
 
 ### Merged by name
 
@@ -416,6 +416,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
 | Protectorate of Sigmar | Protectorate of Sigmar | new group | - | Protection of Sigmar, Utter Determination, Iron Will, Rousing Sermon, Sigmar's Guidance |
 | Restless Dead Lich and Necromancer | The Restless Dead | intersection | - | Corpse Bomb, Deathspeaker, Wraith Touch, Forbidden Rite, Summoner |
+| Sartosa Pirate Skills | Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Khorne Raiders, Sartosan Pirates, Slayer Pirates, Wasteland Privateers | new group | A hero may know only one of these at a time; Pistol Expertise doesn't count towards that limit. For a promoted henchman it takes up no skill list. | Pistolier, Scale Sheer Surfaces, Sea Legs, Swashbuckler, Pistol Expertise, Riposte, Impenetrable Defense, Prince of Cats, Powder Refiner, Quick as a Monkey, Snapshot, Dirty Fighter, Swing, Smell of Treasure, Helmsmen, Festooned with Pistols, Looting the Dead, Novice Press-ganger, Master Press-ganger |
 | Sartosan Pirates | Sartosan Pirates | new group | - | Sea Shanty Singer, Cutlass Master, Booming Voice, Hardy Constitution |
 | Saurus | Lizardmen (TC11) | intersection | - | Bellowing Battle Roar, Toughened Hide |
 | Sea Ghosts | Sea Ghosts | skill_group_learners | - | Infiltration, Luck, See in Shadows, Hide in Shadows, Powerful Build, Fey |
@@ -439,7 +440,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 ### New groups and skills (`new_skill_groups`)
 
-135 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+150 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -551,6 +552,21 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Iron Will | Protectorate of Sigmar | mordheim-2a | LOD3 |
 | Rousing Sermon | Protectorate of Sigmar | mordheim-2a | LOD3 |
 | Sigmar's Guidance | Protectorate of Sigmar | mordheim-2a | LOD3 |
+| Pistol Expertise | Sartosa Pirate Skills | sartosa | Sartosa |
+| Riposte | Sartosa Pirate Skills | sartosa | Sartosa |
+| Impenetrable Defense | Sartosa Pirate Skills | sartosa | Sartosa |
+| Prince of Cats | Sartosa Pirate Skills | sartosa | Sartosa |
+| Powder Refiner | Sartosa Pirate Skills | sartosa | Sartosa |
+| Quick as a Monkey | Sartosa Pirate Skills | sartosa | Sartosa |
+| Snapshot | Sartosa Pirate Skills | sartosa | Sartosa |
+| Dirty Fighter | Sartosa Pirate Skills | sartosa | Sartosa |
+| Swing | Sartosa Pirate Skills | sartosa | Sartosa |
+| Smell of Treasure | Sartosa Pirate Skills | sartosa | Sartosa |
+| Helmsmen | Sartosa Pirate Skills | sartosa | Sartosa |
+| Festooned with Pistols | Sartosa Pirate Skills | sartosa | Sartosa |
+| Looting the Dead | Sartosa Pirate Skills | sartosa | Sartosa |
+| Novice Press-ganger | Sartosa Pirate Skills | sartosa | Sartosa |
+| Master Press-ganger | Sartosa Pirate Skills | sartosa | Sartosa |
 | Beastkin | Skaven Clan Moulder | mordheim-2a | WEB |
 | Hypnotic Musk | Skaven Clan Moulder | mordheim-2a | WEB |
 | Subjugator of Mankind | Skaven Clan Moulder | mordheim-2a | WEB |
@@ -630,6 +646,8 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Cutlass Master | Pirates | Pirates, Sartosan Pirates |
 | Booming Voice | Pirates | Pirates, Sartosan Pirates |
 | Hardy Constitution | Pirates | Pirates, Sartosan Pirates |
+| Sea Legs | Pirates | Pirates, Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Khorne Raiders, Sartosan Pirates, Slayer Pirates, Wasteland Privateers |
+| Swashbuckler | Pirates | Pirates, Araby Smugglers, Bretonnian Buccaneers, Estalian Corsairs, Khorne Raiders, Sartosan Pirates, Slayer Pirates, Wasteland Privateers |
 | Righteous Aura | Vampire Hunters of Sylvania | Sisters of Sigmar, Vampire Hunters of Sylvania |
 | Fey | Wood Elves of Athel Loren | Wood Elves of Athel Loren, Sea Ghosts |
 
@@ -1113,7 +1131,7 @@ Kept apart from a family's, the effect differing:
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | guild-of-disgraced-engineers | guild-of-disgraced-engineers | 6 | 0 | 2 | 10 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
-| khorne-raiders | khorne-raiders | 6 | 0 | 2 | 14 |
+| khorne-raiders | khorne-raiders | 6 | 0 | 2 | 15 |
 | knights-of-the-bitter-moors | knights-of-the-bitter-moors | 6 | 0 | 1 | 9 |
 | lords-of-the-marsh | lords-of-the-marsh | 5 | 0 | 0 | 9 |
 | low-kings | low-kings | 7 | 1 | 1 | 10 |
@@ -1129,7 +1147,7 @@ Kept apart from a family's, the effect differing:
 | sea-ghosts | sea-ghosts | 6 | 0 | 0 | 10 |
 | shallows-beasts | shallows-beasts | 7 | 0 | 0 | 10 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
-| slayer-pirates | slayer-pirates | 7 | 0 | 3 | 13 |
+| slayer-pirates | slayer-pirates | 7 | 0 | 3 | 14 |
 | snotlings | snotlings | 8 | 1 | 2 | 10 |
 | sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
@@ -1142,7 +1160,6 @@ Kept apart from a family's, the effect differing:
 ### Araby Smugglers
 
 - Flag (p2): The skill table's ticks are glyphs the text layer drops: the table was read from p2's image. The Pirate column is ticked for the Rais, the Mate and the Merchant.
-- Flag (p2): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (the Human Pirates PDF says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
 - Flag (p2): The Janissary list's Spear, Halberd, Double-handed weapon and Flail, its Missile Weapons and its Armour are printed at the top of the right column, continuing the left column; read that way.
 - Flag (p2): "Axe (Katar)" at 5 gc is read as our Axe shown under the list's name; we also hold a Katar of our own (5 gc, Rare 4), which this line is not: see the decisions.
 - Flag (p2): The Slave list prints "Cutlass (Sword)" where the Corsair and Janissary lists print "Scimitar (Sword)": as printed, both our Sword at 10 gc.
@@ -1151,11 +1168,11 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): "The maximum number of Crew in the warband may never exceed 15": read as the warband's maximum of 15 models.
 - Flag (p4): The Merchant's Pawnbroker skill shares its name with our shared special Pawnbroker, which is a hired sword's rule: see the decisions.
 - Flag (p3): Fine Craftmenship is the PDF's spelling of the Merchant's rule, kept as printed.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 
 ### Bretonnian Buccaneers
 
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
-- Flag (p3): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
 - Flag (p5): Swabbies have no hire price (they are captured, not hired): their cost is 0 gc.
@@ -1163,6 +1180,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
 - Flag (p2): "at warband creation, you may purchase dueling pistols for 25gc each": list prices are starting prices in the app, so the Duelling Pistol's line is 25 gc (50 for a brace) and no rule repeats it.
 - Flag (p2): The rule names "a Bretonnian hero", so the short-range change is written for Heroes only, as printed.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 
 ### Bretonnian Grail Companions
 
@@ -1273,7 +1291,6 @@ Kept apart from a family's, the effect differing:
 ### Estalian Corsairs
 
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
-- Flag (p3): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
 - Flag (p5): Swabbies have no hire price (they are captured, not hired): their cost is 0 gc.
@@ -1281,6 +1298,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
 - Flag (p2): Estalians add the Rapier and Heavy Armour to the Pirate Equipment list and lose the Crossbow, so the list carries the change and no warband rule repeats it.
 - Flag (p2): "All Estalian Captains and Champions start off with the skill Expert Swordsman": read as the Captain and the Ship's Mates, who start with our Expert Swordsman skill.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 
 ### Fen Guard
 
@@ -1366,6 +1384,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): A Khorne Raider warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race, the Flayerkin included.
 - Flag (p3): The Flayerkin takes only armour from the Madbrain list; our lists are taken whole, so his fixed kit says so and his Hooks rule bars other weapons.
 - Flag (p2): Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Khorne Raiders buy them at 15 gc; neither PDF prints rules for them.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 
 ### Knights of the Bitter Moors
 
@@ -1541,13 +1560,13 @@ Kept apart from a family's, the effect differing:
 ### Sartosan Pirates
 
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
-- Flag (p3): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
 - Flag (p5): Swabbies have no hire price (they are captured, not hired): their cost is 0 gc.
 - Flag (p3): The Swivel Gun's line is 65 gc, Rare 8, one per warband; our Swivel Gun is 65 gc, Rare 8 already, so the line only carries the limit.
 - Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
 - Flag (p2): The four 'Old' Pirate Skills are our Sea Shanty Singer, Cutlass Master, Booming Voice and Hardy Constitution, the same words; they are the Sartosan Pirates' own group here, while our Pirates group (the 1b Pirate warband's) holds them with Sea Legs and Swashbuckler besides.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 
 ### Sea Ghosts
 
@@ -1608,6 +1627,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): Hard to Kill, Hard Head, Grudgebearers and Deathwish are printed as the warband's rules, and are kept as warband rules rather than copied onto each fighter.
 - Flag (p2): Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Slayer Pirates buy them at 15 gc; neither PDF prints rules for them.
 - Flag (p3): The PDF spells the skill "Death Wish"; it is the Dwarf Slayer Cult's Deathwish, one skill with the same words in both groups, and who may take it sits in each group's note.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 
 ### Snotlings
 
@@ -1695,7 +1715,6 @@ Kept apart from a family's, the effect differing:
 ### Wasteland Privateers
 
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
-- Flag (p3): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
 - Flag (p5): Swabbies have no hire price (they are captured, not hired): their cost is 0 gc.
@@ -1704,6 +1723,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The Handgun is added to the Pirate Equipment list for Wastelanders, so the list carries it and no warband rule repeats it.
 - Flag (p2): "When purchasing Superior Gunpowder, it counts as Rarity 5": read as our Superior Blackpowder (30 gc, Rare 11), which no line of theirs sells, so it stays a warband rule.
 - Flag (p2): "any Henchmen Gunners may fire and reload Handguns in the same turn": the rule is the warband's, as the Gunner group is the only one it names.
+- Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 
 ### Watchmen
 

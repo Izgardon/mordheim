@@ -386,6 +386,9 @@
           "rulename": "Leader",
           "ruleFull": "Any pirate within 6\" of the Captain may use his Leadership for any Leadership test."
         }
+      ],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
       ]
     },
     {
@@ -420,7 +423,10 @@
         "speed": true,
         "special": false
       },
-      "specialRules": []
+      "specialRules": [],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ]
     },
     {
       "id": "cabin-boy",
@@ -454,7 +460,10 @@
         "speed": true,
         "special": false
       },
-      "specialRules": []
+      "specialRules": [],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
+      ]
     },
     {
       "id": "crew",
@@ -605,10 +614,6 @@
     },
     {
       "page": 3,
-      "what": "The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions."
-    },
-    {
-      "page": 3,
       "what": "The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same."
     },
     {
@@ -634,6 +639,10 @@
     {
       "page": 2,
       "what": "The rule names \"a Bretonnian hero\", so the short-range change is written for Heroes only, as printed."
+    },
+    {
+      "page": 1,
+      "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
     }
   ]
 }

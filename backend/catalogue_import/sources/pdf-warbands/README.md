@@ -51,6 +51,10 @@ check over every file.
 | `khorne-raiders.json` | khorne-raiders (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Khorne%20Raiders.pdf | 1-3 (text layer) | 11 Nov 2026 |
 | `slayer-pirates.json` | slayer-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf | 1-4 (text layer) | 11 Nov 2026 |
 
+The Sartosa warbands' Pirate skill column is the Pirate Skills list of the setting's campaign rules, not of any warband's PDF: it is read from
+https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Skills%2C%20Hired%20Swords%20%26%20Dramatis%20Personae.pdf (p1-2, text layer; 11 Nov 2026)
+as the shared group `sharedSkillGroup` in `sartosan-pirates.json`. Its Hired Swords and Dramatis Personae are not imported.
+
 ## Adding a warband
 
 1. Read the PDF's text (`pdftotext`, in reading order); a profile or table the reading order runs together is
@@ -78,6 +82,9 @@ check over every file.
 
    A skill two pages share is one skill with the same
    words in both groups, so its limit moves to the group's note (the Slayer Cult's and the Channel Rats' Songster).
+   A group several warband types learn from is declared once, as one page's `sharedSkillGroup` (its `types` the slugs
+   it serves), and each hero who learns from it names it in his `skillGroups` (the Sartosa warbands' Pirate column,
+   which a Khorne Raiders Quartermaster doesn't tick though he ticks Special).
 
    Who of the warband may take a skill opens a new skill's description ("Gnoblars only."); a skill of ours is shared
    with other warbands, so the group's `note` says it instead (at most 200 characters, shown when learning from the

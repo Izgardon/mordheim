@@ -1089,6 +1089,64 @@
     ]
   },
   {
+    "name": "Sartosa Pirate Skills",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "araby-smugglers",
+        "excluded": false
+      },
+      {
+        "type": "bretonnian-buccaneers",
+        "excluded": false
+      },
+      {
+        "type": "estalian-corsairs",
+        "excluded": false
+      },
+      {
+        "type": "khorne-raiders",
+        "excluded": false
+      },
+      {
+        "type": "sartosan-pirates",
+        "excluded": false
+      },
+      {
+        "type": "slayer-pirates",
+        "excluded": false
+      },
+      {
+        "type": "wasteland-privateers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "A hero may know only one of these at a time; Pistol Expertise doesn't count towards that limit. For a promoted henchman it takes up no skill list.",
+    "how": "new group",
+    "skills": [
+      "Pistolier",
+      "Scale Sheer Surfaces",
+      "Sea Legs",
+      "Swashbuckler",
+      "Pistol Expertise",
+      "Riposte",
+      "Impenetrable Defense",
+      "Prince of Cats",
+      "Powder Refiner",
+      "Quick as a Monkey",
+      "Snapshot",
+      "Dirty Fighter",
+      "Swing",
+      "Smell of Treasure",
+      "Helmsmen",
+      "Festooned with Pistols",
+      "Looting the Dead",
+      "Novice Press-ganger",
+      "Master Press-ganger"
+    ]
+  },
+  {
     "name": "Sartosan Pirates",
     "for_everyone": false,
     "warbands": [

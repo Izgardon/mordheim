@@ -263,6 +263,9 @@
           "rulename": "Leader",
           "ruleFull": "Any warrior within 6\" of the Dread Captain may use his Leadership for any Leadership test."
         }
+      ],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
       ]
     },
     {
@@ -341,6 +344,9 @@
           "rulename": "Frenzy",
           "ruleFull": "A Cannibal Boy is subject to frenzy."
         }
+      ],
+      "skillGroups": [
+        "Sartosa Pirate Skills"
       ]
     },
     {
@@ -581,6 +587,10 @@
     {
       "page": 2,
       "what": "Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Khorne Raiders buy them at 15 gc; neither PDF prints rules for them."
+    },
+    {
+      "page": 1,
+      "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
     }
   ]
 }

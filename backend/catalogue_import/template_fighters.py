@@ -98,9 +98,10 @@ def race_of(page: str, fighter: dict[str, Any], races: set[str], log: FighterLog
     return name
 
 
-def _table(ticks: dict[str, Any], specials: list[str]) -> list[str]:
+def _table(ticks: dict[str, Any], specials: list[str], extra: list[str] | None = None) -> list[str]:
     names = [name for key, name in CORE_SKILLS if ticks.get(key)]
-    return names + (specials if ticks.get("special") else [])
+    names += specials if ticks.get("special") else []
+    return names + [name for name in extra or [] if name not in names]
 
 
 def skill_types(
@@ -111,12 +112,14 @@ def skill_types(
     own: list[str] | None = None,
 ) -> tuple[list[str], dict[str, Any]]:
     """His skill groups (the first variant's table) and, by variant key, the tables that differ from it. The Special
-    tick names the page's own group (`own`: a PDF page's), else template_answers' for the page."""
+    tick names the page's own group (`own`: a PDF page's), else template_answers' for the page; a PDF page's fighter
+    may name groups of his own besides it (`skillGroups`: the Sartosa warbands' Pirate column)."""
     access = fighter.get("skillAccess")
     if not access:
         return [], {}
     name = fighter["name"]
     specials = SPECIAL_GROUPS_BY_FIGHTER.get((page, name)) or own or SPECIAL_GROUPS.get(page, [])
+    extra = list(fighter.get("skillGroups") or [])
     if isinstance(access, dict):
         tables = {"": {**access, **({"special": True} if name in SPECIAL_ADDED.get(page, []) else {})}}
         keyed = [("", "")]
@@ -125,10 +128,10 @@ def skill_types(
         keyed = [(variant["key"], variant["subfaction"]) for variant in variants] or [("", next(iter(tables)))]
     if any(table.get("special") for table in tables.values()) and not specials:
         log.no_special_group.append((page, name))
-    base = _table(tables.get(keyed[0][1]) or next(iter(tables.values())), specials)
+    base = _table(tables.get(keyed[0][1]) or next(iter(tables.values())), specials, extra)
     changes = {}
     for key, subfaction in keyed[1:]:
-        table = _table(tables.get(subfaction, {}), specials)
+        table = _table(tables.get(subfaction, {}), specials, extra)
         if table != base:
             changes[key] = {"skill_types": table}
     return base, changes
