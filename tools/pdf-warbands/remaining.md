@@ -17,26 +17,16 @@
 | 2b | lustria | High Elves | 038-High_Elves.pdf |  | 6p, 0 scan |
 | 2b | lustria | Lizardmen | 042-Lizardmen.pdf |  | 6p, 0 scan |
 | 2b | lustria | Skaven of Clan Pestilens | 055-Clan_Pestilens.pdf |  | 4p, 0 scan |
-| 2b | mousillon | Blood Dragons | 021-Blood_Dragons.pdf |  | 7p, 0 scan |
-| 2b | mousillon | Bretonnian Brigands | 022-Bretonnian_Brigands.pdf |  | 6p, 0 scan |
-| 2b | mousillon | Bretonnian Knights-Errant | 024-Bretonnian_Knights_Errant.pdf |  | 5p, 0 scan |
-| 2b | mousillon | Dark Elf Corsairs | 031-Dark_Elf_Corsairs.pdf |  | 6p, 0 scan |
 | 2b | mousillon | Disciples of Maldred | 032-Disciples_of_Maldred.pdf |  | 9p, 0 scan |
 | 2b | mousillon | Necrarchs | 049-Necrarchs.pdf |  | 8p, 0 scan |
 | 2b | mousillon | Skaven of Clan Pestilens | 056-Skaven_of_Clan_Pestilens.pdf |  | 7p, 1 scan |
-| 2b | mousillon | The Lost | 044-The_Lost.pdf |  | 5p, 0 scan |
 | 2b | mousillon | Wood Elves of Arden | 062-Wood_Elves_of_Arden.pdf |  | 7p, 0 scan |
-| 2b | mousillon | Woodsmen de Artois | 063-Woodsmen_de_Artois.pdf |  | 6p, 0 scan |
 | 2b | relics-of-the-crusades | Ghutani | 033-97RelicsoftheCrusadesPt2.pdf | #page=2 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Muzil | 033-97RelicsoftheCrusadesPt2.pdf | #page=2 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Skaven of Clan Skryre | 033-97RelicsoftheCrusadesPt2.pdf | #page=5 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Slavers | 033-97RelicsoftheCrusadesPt2.pdf | #page=9 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | The Fallen | 033-97RelicsoftheCrusadesPt2.pdf | #page=12 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Turjuk | 033-97RelicsoftheCrusadesPt2.pdf | #page=2 | 16p, 0 scan |
-| 2b | sartosa | Ghost Pirates | 036-Ghost_Pirates.pdf |  | 5p, 0 scan |
-| 2b | sartosa | Lothern Sea Patrol | 045-Lothern_Sea_Patrol.pdf |  | 5p, 0 scan |
-| 2b | sartosa | Orc Pirates & Savage Orcs | 050-Orc_Pirates___Savage_Orcs.pdf |  | 7p, 0 scan |
-| 2b | sartosa | Pirates of the Cathayan Sea | 051-Pirates_of_the_Cathayan_Sea.pdf |  | 5p, 0 scan |
 | 2b | sealed-city | Clockworkers | 029-Clockworkers.pdf |  | 7p, 1 scan |
 | 2b | sealed-city | House Guard | 039-House_Guard.pdf |  | 5p, 0 scan |
 | 2b | sealed-city | Silent Brotherhood | 054-Silent_Brotherhood.pdf |  | 6p, 0 scan |
