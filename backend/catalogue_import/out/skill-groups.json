@@ -101,6 +101,33 @@
     ]
   },
   {
+    "name": "Adventurers",
+    "setting": null,
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "adventurers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Fey and Fey Quickness are the Elf's; Ferocious Charge the Barbarian's and the Dwarf's; Magic Resistant, Monster Slayer and Berserker the Dwarf's.",
+    "how": "new group",
+    "skills": [
+      "Fey",
+      "Fey Quickness",
+      "Ferocious Charge",
+      "Monster Slayer",
+      "Berserker",
+      "Chosen of the White Tower",
+      "Hard to Kill",
+      "Instinctive Warrior",
+      "Trading Flair",
+      "Taunt (Adventurers)",
+      "Magic Resistant"
+    ]
+  },
+  {
     "name": "Amazons",
     "setting": null,
     "for_everyone": false,
@@ -683,6 +710,10 @@
       {
         "type": "pit-fighters-old",
         "excluded": false
+      },
+      {
+        "type": "dwarf-slayers",
+        "excluded": false
       }
     ],
     "large_only": false,
@@ -706,6 +737,14 @@
     "warbands": [
       {
         "type": "dwarf-treasure-hunters",
+        "excluded": false
+      },
+      {
+        "type": "dwarf-guildsmen",
+        "excluded": false
+      },
+      {
+        "type": "dwarf-slayers",
         "excluded": false
       }
     ],
@@ -1251,6 +1290,26 @@
       "Netter",
       "Ride Squig",
       "Sneaky Git"
+    ]
+  },
+  {
+    "name": "Night Goblins (Karak Azgal)",
+    "setting": null,
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "night-goblins-kaz",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Infiltration",
+      "Ded Shooty",
+      "Sneaky Git (Karak Azgal)",
+      "Netter (Karak Azgal)"
     ]
   },
   {
@@ -1858,6 +1917,30 @@
       "Metallic Body",
       "Respirator",
       "Tinker-Rat"
+    ]
+  },
+  {
+    "name": "Skaven of Karak Azgal",
+    "setting": null,
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "skaven-of-clan-mors",
+        "excluded": false
+      },
+      {
+        "type": "skaven-of-clan-skryre-kaz",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Black Hunger",
+      "Tail Fighting",
+      "Wall Runner",
+      "Infiltration"
     ]
   },
   {

@@ -1,0 +1,213 @@
+{
+  "warbandType": "dwarf-slayers",
+  "name": "Dwarf Slayers",
+  "source": "Karak Azgal",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=32",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Hard to Kill", "ruleFull": "Dwarfs are taken out of action only on a 6 on the Injury chart: 1-2 is knocked down, 3-5 stunned and 6 out of action."},
+    {"rulename": "Hard Head", "ruleFull": "Dwarfs ignore the special rules of clubs, maces and the like."},
+    {"rulename": "Armour", "ruleFull": "Dwarfs never suffer movement penalties for wearing armour."},
+    {"rulename": "Hate Orcs and Goblins", "ruleFull": "All Dwarfs hate Orcs and Goblins."},
+    {"rulename": "Grudgebearers", "ruleFull": "The warband may never include an Elven Hired Sword or Dramatis Persona of any kind."},
+    {"rulename": "Mighty Doom", "ruleFull": "The warband takes no Rout tests until half of it has been taken out of action, and may never rout voluntarily."},
+    {"rulename": "Shame", "ruleFull": "A Dwarf Hero who is not already a Slayer and is taken out of action in either of the ways below takes his vows and becomes a Slayer. He loses any special ability, Leader among them, but keeps his skills; he is immune to psychology, and he may learn the Troll Slayer special skills from the rulebook.\n\nTaken out of action in the Dwarf player's first or second turn.\n\nTaken out of action in single combat by an opponent with Weapon Skill 2 or Strength 2, or by an animal."},
+    {"rulename": "No Missiles or Armour", "ruleFull": "A Slayer may never take a missile weapon or armour. This covers the Giant Slayer, the Troll Slayers and the Slayers; the Rememberer and the Clansmen may take both."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "dwarf-warrior-equipment-list",
+      "title": "Dwarf Warrior Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "dwarf axe", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "gromril weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 times the cost"}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "gromril armour", "alias": "", "cost": {"cost": 75}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "mercenary-equipment-list",
+      "title": "Mercenary Equipment List",
+      "caveat": "The Human Rememberer only.",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "duelling pistol", "alias": "", "cost": {"cost": 25, "braceCost": 50}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "giant-slayer",
+      "type": "hero",
+      "name": "Giant Slayer",
+      "plural": "Giant Slayers",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 85,
+      "startingXp": 20,
+      "statblock": {"m": 3, "ws": 5, "bs": 3, "s": 3, "t": 4, "w": 2, "i": 2, "a": 2, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": false},
+      "skillGroups": ["Dwarf Troll Slayers"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any model in the warband within 6\" of the Giant Slayer may use his Leadership instead of his own."},
+        {"rulename": "No Missiles or Armour", "ruleFull": "He may take no missile weapon and no armour."}
+      ]
+    },
+    {
+      "id": "troll-slayer",
+      "type": "hero",
+      "name": "Troll Slayer",
+      "plural": "Troll Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 50,
+      "startingXp": 10,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": false},
+      "skillGroups": ["Dwarf Troll Slayers"],
+      "specialRules": [
+        {"rulename": "No Missiles or Armour", "ruleFull": "He may take no missile weapon and no armour."}
+      ]
+    },
+    {
+      "id": "dwarf-rememberer",
+      "type": "hero",
+      "name": "Dwarf Rememberer",
+      "plural": "Dwarf Rememberers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 0,
+      "statblock": {"m": 3, "ws": 3, "bs": 2, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": false, "special": false},
+      "skillGroups": ["Dwarves"],
+      "specialRules": [
+        {"rulename": "Hard to Find", "ruleFull": "The warband may hold only one Rememberer, a Dwarf or a Human. Roll a D6 when you decide to recruit him: 1-4 he is a Dwarf, 5-6 he is a Human. If you do not want the one you rolled, you must wait until after your next game before trying again."},
+        {"rulename": "Rememberer", "ruleFull": "Once per game, a Slayer Hero within 6\" of the Rememberer who is fighting a large creature, such as a troll or an ogre, may re-roll his failed to-hit rolls, once only."}
+      ]
+    },
+    {
+      "id": "human-rememberer",
+      "type": "hero",
+      "name": "Human Rememberer",
+      "plural": "Human Rememberers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 4, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["mercenary-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Hard to Find", "ruleFull": "The warband may hold only one Rememberer, a Dwarf or a Human. Roll a D6 when you decide to recruit him: 1-4 he is a Dwarf, 5-6 he is a Human. If you do not want the one you rolled, you must wait until after your next game before trying again."},
+        {"rulename": "Rememberer", "ruleFull": "Once per game, a Slayer Hero within 6\" of the Rememberer who is fighting a large creature, such as a troll or an ogre, may re-roll his failed to-hit rolls, once only."}
+      ]
+    },
+    {
+      "id": "slayer",
+      "type": "henchman",
+      "name": "Slayer",
+      "plural": "Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 40,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 3, "ws": 3, "bs": 2, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "specialRules": [
+        {"rulename": "No Missiles or Armour", "ruleFull": "A Slayer may take no missile weapon and no armour."}
+      ]
+    },
+    {
+      "id": "dwarf-clansman",
+      "type": "henchman",
+      "name": "Dwarf Clansman",
+      "plural": "Dwarf Clansmen",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 35,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "mutations": [
+    {
+      "mutationName": "Scars and Tattoos",
+      "mutationflavour": "A Slayer Hero may have runic scars and tattoos cut and inked into his body. One is bought between games in place of his search for rare equipment, and its difficulty is its rarity roll. None may be applied twice to multiply its effect, and three rules hold:\n\nRule of jealousy: a scar may be used only once in each warband.\n\nRule of three: no model may have more than three tattoos or scars. They may be added at different times, and once added can never be removed.\n\nRule of pride: no combination of tattoos and scars may be used more than once in each warband.",
+      "items": [
+        {"heading": "Scar of Gromril", "cost": "40", "ruleFull": "The wearer has a 4+ ward save against missile fire. Rarity 8."},
+        {"heading": "Scar of Steel", "cost": "30", "ruleFull": "The wearer has a 5+ ward save against missile fire. Rarity 7."},
+        {"heading": "Scar of Speed", "cost": "30", "ruleFull": "Once per battle the wearer may triple his run or charge distance. Rarity 7."},
+        {"heading": "Scar of Fear", "cost": "50", "ruleFull": "The wearer causes fear. Rarity 8."},
+        {"heading": "Scar of Fury", "cost": "30", "ruleFull": "The wearer is subject to frenzy. Rarity 7."},
+        {"heading": "Tattoo of Stone", "cost": "20", "ruleFull": "The wearer has a 6+ ward save against missile fire. Rarity 6."},
+        {"heading": "Tattoo of Passage", "cost": "10", "ruleFull": "The wearer ignores difficult terrain and moves at his normal speed. Rarity 6."},
+        {"heading": "Tattoo of Hatred", "cost": "50", "ruleFull": "The wearer hates all enemies. Rarity 8."},
+        {"heading": "Tattoo of Luck", "cost": "10", "ruleFull": "The wearer ignores the first hit in each game. Rarity 6."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 32, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
+    {"page": 32, "what": "The PDF prints no equipment list of its own: \"The Dwarf Warrior equipment lists from Town Crier 6 apply\". The list is taken from our own Dwarf Treasure Hunters warband, which is that list, not from any other PDF."},
+    {"page": 34, "what": "The Human Rememberer uses \"the Mercenary equipment list in the Mordheim rulebook\": the list is taken from our own Mercenaries warband. Its Wolf Cloak line is ours as we hold it."},
+    {"page": 32, "what": "\"All of the special rules from Town Crier 6 apply apart from Incomparable Miners\": Hard to Kill, Hard Head, Armour, Hate Orcs and Goblins and Grudgebearers are carried over from our own Dwarf Treasure Hunters warband in our words."},
+    {"page": 33, "what": "The skill table has a Special and a Slayer column. \"Dwarf Heroes may use any of the Dwarf Special Skills and Slayer heroes may also use the Slayer Special Skills\": the Slayers take our Dwarf Troll Slayers group, which holds both lists, and the Dwarf Rememberer our Dwarves group. No group of the warband's own is declared."},
+    {"page": 32, "what": "The Rememberer's row in the skill table is split into Dwarf (Combat, Shooting, Academic, Special) and Human (Combat, Shooting, Academic, Speed); the Human has no Special tick."},
+    {"page": 33, "what": "The Rememberer is one 0-1 Hero with two profiles, a Dwarf or a Human. He is imported as two 0-1 fighters, and the Hard to Find rule on both says the warband may hold only one."},
+    {"page": 33, "what": "The Giant Slayer's profile is W2 A2, as printed."},
+    {"page": 33, "what": "Henchmen are bought in groups of 1-5. No maximum is printed for the Slayers or the Clansmen."},
+    {"page": 32, "what": "The Shame rule is kept as a warband rule: it turns a Hero into a Slayer, which the app cannot do to a unit."},
+    {"page": 35, "what": "The Scars and Tattoos are the warband's upgrades, each the special it gives at its price (10 to 50 gc), the Slayer Heroes' only, at most three each. An upgrade carries no rarity, so each one's difficulty is said in its text, and the group's own words, the warband's Scars and Tattoos rule, say it is bought in place of the rare-equipment search."},
+    {"page": 33, "what": "\"Dwarfs may use the Dwarf Axe as detailed in Town Crier 6\" is our Dwarf Axe, on the Dwarf Warrior list at 15 gc."}
+  ]
+}

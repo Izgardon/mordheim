@@ -81,6 +81,14 @@ check over every file.
 | `high-elves.json` | high-elves (2b, Lustria) | https://www.broheim.net/downloads/warbands/supplement/lustria/High%20Elves.pdf | 1-6 (text layer; no images) | 11 Nov 2026 |
 | `lizardmen-lus.json` | lizardmen-lus (2b, Lustria) | https://www.broheim.net/downloads/warbands/supplement/lustria/Lizardmen.pdf | 1-6 (text layer; no images) | 11 Nov 2026 |
 | `skaven-of-clan-pestilens-lus.json` | skaven-of-clan-pestilens-lus (2b, Lustria) | https://www.broheim.net/downloads/warbands/supplement/lustria/Clan%20Pestilens.pdf | 1-4 (text layer; no images) | 11 Nov 2026 |
+| `adventurers.json` | adventurers (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=19 | 19-24 of Karak Azgal (text layer) | 11 Nov 2026 |
+| `dwarf-guildsmen.json` | dwarf-guildsmen (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=25 | 25-28 of Karak Azgal (text layer) | 11 Nov 2026 |
+| `dwarf-slayers.json` | dwarf-slayers (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=32 | 32-35 of Karak Azgal (text layer) | 11 Nov 2026 |
+| `skaven-of-clan-mors.json` | skaven-of-clan-mors (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=36 | 36-39 of Karak Azgal (text layer) | 11 Nov 2026 |
+| `skaven-of-clan-skryre-kaz.json` | skaven-of-clan-skryre-kaz (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=40 | 40-43 of Karak Azgal (text layer) | 11 Nov 2026 |
+| `night-goblins-kaz.json` | night-goblins-kaz (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=44 | 44-48 of Karak Azgal (text layer) | 11 Nov 2026 |
+| `strigoi.json` | strigoi (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=50 | 50-55 of Karak Azgal (text layer) | 11 Nov 2026 |
+| `savage-orcs-kaz.json` | savage-orcs-kaz (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56 | 56-61 of Karak Azgal (text layer) | 11 Nov 2026 |
 
 The four Lustria warbands above are the supplement's own, not Town Cryer's: Lustria also holds a grade 1b Lizardmen warband
 (`lizardmen-tc11`) and the setting is a mixed-grade one (19 entries at 1b, 4 at 2b), left as one setting at its majority grade
@@ -104,6 +112,8 @@ is the warband mordheimer's snapshot already holds as `testwarbands-2026-10-31/w
 its numbers match ours and its differences are flagged in the vet file instead.
 Khemri's own campaign PDFs (Equipment, Elemental Magic, Dramatis Personae and a Town Cryer compilation) are not read (William, 11 Nov 2026): the Ankus,
 Cutlass and Great Scimitar are stubs with no rules, and the Mage and Street Mage cast from our four Elemental Lores until it is.
+
+Karak Azgal's eight warbands share one 76-page PDF, and only each warband's own pages were read; its campaign material (pages 1-18 and 62-76, the hired swords, exploration chart, runic artefacts and scenarios among them) is not imported. Four of them point at warbands we already hold for their lists, rules or skills ("all of the equipment lists from Town Crier 6 (or Best of Town Crier) apply", "the Orc special skills from TC6"): those were taken from our own Dwarf Treasure Hunters, Skaven and Mercenaries warbands and our Dwarves, Dwarf Troll Slayers and Orcs skill groups, never from another PDF.
 
 ## Adding a warband
 

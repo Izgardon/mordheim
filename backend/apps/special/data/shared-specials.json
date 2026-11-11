@@ -573,6 +573,10 @@
         {
           "warband": "Skaven of Clan Pristekk",
           "fighter": "Rat Ogre"
+        },
+        {
+          "warband": "Skaven of Clan Mors",
+          "fighter": "Rat Ogre"
         }
       ],
       "why": "Not stupid while a Skaven Hero is within 6\"."
@@ -709,6 +713,10 @@
         },
         {
           "warband": "Orc Mob",
+          "fighter": "Troll"
+        },
+        {
+          "warband": "Night Goblins (Karak Azgal)",
           "fighter": "Troll"
         }
       ],

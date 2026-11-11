@@ -1,0 +1,243 @@
+{
+  "warbandType": "savage-orcs-kaz",
+  "name": "Savage Orcs (Karak Azgal)",
+  "source": "Karak Azgal",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Animosity", "ruleFull": "Savage Orcs are subject to animosity, as Orcs are."},
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire the Black Orc Bodyguard, and Snerik."},
+    {"rulename": "Pet", "ruleFull": "One Savage Orc Hero may have a single pet: a War Boar, a Giant Wolf or a Giant Spider. The pet is his own. Only he may ride the War Boar, and nobody rides a Wolf or a Spider, goblins included; he may buy a second War Boar to ride. The pet counts as a piece of equipment, not as a member of the warband, for the share of treasure and for the warband's size, and it runs off at once if the Hero dies. A warband with Giant Wolves may hold no Giant Spiders, and one with Giant Spiders no Giant Wolves."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "savage-orc-equipment-list",
+      "title": "Savage Orc Equipment List",
+      "caveat": "Heroes and Henchmen buy from the same list.",
+      "items": [
+        {"name": "dagger", "alias": "Stone Dagger", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "hammer", "alias": "Stone Hammer", "cost": {"cost": 3}},
+        {"name": "club", "alias": "Wooden Club", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "Stone Axe", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10, "costSuffix": "not Gobbo Boyz"}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20, "costSuffix": "Heroes only"}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Skull Busta", "alias": "", "cost": {"cost": 15}, "availability": "Rare 6, Savage Orcs only"},
+    {"title": "Warpaint", "alias": "", "cost": {"cost": 5}, "availability": "Rare 6, Savage Orcs and Gobbo Boyz only"},
+    {"title": "Kumfy Gear", "alias": "", "cost": {"cost": 75}, "availability": "Common, any Orc warband but no Goblin"},
+    {"title": "Effigy of Mork", "alias": "", "cost": {"cost": 30}, "availability": "Rare 7, Savage Orcs only"}
+  ],
+  "fighters": [
+    {
+      "id": "boss",
+      "type": "hero",
+      "name": "Boss",
+      "plural": "Bosses",
+      "race": "orc",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 75,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["savage-orc-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": false},
+      "skillGroups": ["Orcs"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any member of the warband within 6\" of the Boss may use his Leadership for a Leadership test."}
+      ]
+    },
+    {
+      "id": "wierdo",
+      "type": "hero",
+      "name": "Wierdo",
+      "plural": "Wierdos",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 10,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["savage-orc-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": false, "special": false},
+      "skillGroups": ["Orcs"],
+      "spellLores": ["Waaaagh! Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Wierdo is a spell caster and uses Waaagh! Magic."},
+        {"rulename": "No Armour", "ruleFull": "The Wierdo may wear no armour, but may take anything else from the list."}
+      ]
+    },
+    {
+      "id": "spotta",
+      "type": "hero",
+      "name": "Spotta",
+      "plural": "Spottaz",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["savage-orc-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": false},
+      "skillGroups": ["Orcs"],
+      "specialRules": [
+        {"rulename": "Get out dere!", "ruleFull": "To send a Spotta ahead, roll a D6 for him at the start of the game, after every model on both sides has been deployed, the Spottaz included. Subtract 1 from the roll if the Boss is within 6\" of him.\n\nD6 | Result\n1-2 | The Spotta sneaks forward and may be placed anywhere on the table, at least 12\" from any enemy model.\n3-4 | The Spotta may be moved up to D6+6\" from where he stands.\n5-6 | The Spotta refuses to leave the others; if the Boss is within 6\", he starts the game knocked down."}
+      ]
+    },
+    {
+      "id": "brute",
+      "type": "henchman",
+      "name": "Brute",
+      "plural": "Brutes",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 40,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["savage-orc-equipment-list"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "Brutes are subject to animosity."}
+      ]
+    },
+    {
+      "id": "nuttaz",
+      "type": "henchman",
+      "name": "Nutta",
+      "plural": "Nuttaz",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 35,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["savage-orc-equipment-list"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "Nuttaz are subject to animosity."},
+        {"rulename": "Frenzy", "ruleFull": "Nuttaz are subject to frenzy. While frenzied they ignore animosity."},
+        {"rulename": "No Missiles", "ruleFull": "A Nutta may take anything from the list except a missile weapon."}
+      ]
+    },
+    {
+      "id": "boyz",
+      "type": "henchman",
+      "name": "Boy",
+      "plural": "Boyz",
+      "race": "orc",
+      "minQty": 0,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["savage-orc-equipment-list"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "Boyz are subject to animosity."}
+      ]
+    },
+    {
+      "id": "gobbo-boyz",
+      "type": "henchman",
+      "name": "Gobbo Boy",
+      "plural": "Gobbo Boyz",
+      "race": "goblin",
+      "minQty": 0,
+      "costGc": 10,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["savage-orc-equipment-list"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "Gobbo Boyz are subject to animosity."},
+        {"rulename": "Ain't Orcz", "ruleFull": "Each Gobbo Boy taken out of action counts as half a model when working out whether the warband must take a Rout test. A warband of 5 Orcs and 10 Gobbo Boyz, 15 models, tests only once 4 models have fallen: 4 Orcs, 8 Gobbo Boyz, or any mix that comes to 4."},
+        {"rulename": "Useless Gitz", "ruleFull": "Gobbo Boyz gain no experience."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Skull Busta",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 6,
+      "dice": null,
+      "rulesPage": 59,
+      "rules": [
+        {"name": "Huge Hammer", "text": "On the first turn of any combat the wielder gains +1 Strength and causes concussion as a hammer does. In every later round it counts as an ordinary hammer."},
+        {"name": "Unwieldy", "text": "A Skull Busta may not be used while mounted, may not be used by a goblin, and may not be used with any other weapon, though a shield is allowed."},
+        {"name": "Feelin' wobbly", "text": "A roll of 2-4 on the Injury chart counts as stunned when a Skull Busta caused the hit."},
+        {"name": "Basha", "text": "A warrior wearing a helmet saves against stunning only on a 6 when hit by a Skull Busta. A knight's helm, of a Crusading Knights warband, saves on a 4+."}
+      ]
+    },
+    {
+      "name": "Warpaint",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 6,
+      "dice": null,
+      "rulesPage": 59,
+      "rules": [
+        {"name": "Mork Protects", "text": "While he wears the warpaint, blue, red or white, the wearer has a 6+ invulnerable save. One use only."}
+      ]
+    },
+    {
+      "name": "Kumfy Gear",
+      "type": "Armour",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 59,
+      "save": "5+",
+      "rules": [
+        {"name": "Thick Skins", "text": "Kumfy Gear gives a 5+ armour save, and a 5+ save against every fire-based and cold-based attack. It may not be worn with Warpaint or light armour."}
+      ]
+    },
+    {
+      "name": "Effigy of Mork",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 7,
+      "dice": null,
+      "rulesPage": 59,
+      "rules": [
+        {"name": "Mork's Presence", "text": "The bearer ignores the first hit against him in a battle. The Effigy also lets the first Leadership test anyone in the warband takes be re-rolled; carried by the Boss, it lets the first Rout test be re-rolled instead, as long as its power has not already been used that battle. A Savage Orc carrying an Effigy of Mork would never carry a Lucky Charm or a Holy Relic."}
+      ]
+    }
+  ],
+  "priceRows": [
+    {"name": "War Boar", "cost": 90, "rarity": 11, "dice": null, "note": "A Hero's pet; only he may ride it.", "page": 60},
+    {"name": "Giant Wolf", "cost": 40, "rarity": 10, "dice": null, "note": "A Hero's pet. It may not be ridden.", "page": 60},
+    {"name": "Giant Spider", "cost": 50, "rarity": 11, "dice": null, "note": "A Hero's pet. It may not be ridden.", "page": 60}
+  ],
+  "flags": [
+    {"page": 56, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
+    {"page": 56, "what": "Animosity is \"See TC6 in WD243\" and is not printed here, so the warband rule and the fighters' rules name it without repeating its table. Nothing was guessed and no other PDF was read."},
+    {"page": 56, "what": "\"Savage Orc heroes may use the Orc special skills from TC6\": the Heroes name our Orcs group. Our Savage Orcs group, from the Sartosa Orc Pirates & Savage Orcs PDF, is a different list and is not used here. See the decisions."},
+    {"page": 57, "what": "The Weirdo's \"Spells: see TC6\" and \"uses Waagh! Magic\" are read as our Waaaagh! Magic lore. The PDF spells his name both Weirdo and Wierdo; the fighter entry's \"Wierdo\" is imported."},
+    {"page": 56, "what": "The Stone Dagger, Stone Hammer, Wooden Club and Stone Axe are our Dagger, Club, Mace or Hammer (twice, at 3 gc) and Axe, each shown under the list's name at the list's price."},
+    {"page": 59, "what": "The Skull Busta (15 gc, Rare 6), Warpaint (5 gc, Rare 6, one use), Kumfy Gear (75 gc, no rarity printed) and the Effigy of Mork (30 gc, Rare 7) are stubs with the rules the page prints. Warpaint is also for Gobbo Boyz and Kumfy Gear for any Orc warband but no goblin; the limits are in each line's availability, and no price row was added for another warband's types."},
+    {"page": 60, "what": "The War Boar (90 gc, Rare 11), Giant Wolf (40 gc, Rare 10) and Giant Spider (50 gc, Rare 11) are ours, with the same profiles, each a price row for this warband. Ours sell the Giant Wolf at 85 gc and the Giant Spider at 100 gc; the PDF's lower prices are its own, because neither may be ridden here."},
+    {"page": 60, "what": "The Pet rule holds what a template cannot: one pet per Hero, the pet outside the warband's size and treasure, and no Giant Wolves and Giant Spiders in the same warband."},
+    {"page": 58, "what": "The Brutes, Nuttaz, Boyz and Gobbo Boyz have no group size printed, and the Boyz and Gobbo Boyz no maximum."},
+    {"page": 56, "what": "Starting experience: Boss 20, Wierdo 10, Spottaz 8, Henchmen 0."},
+    {"page": 56, "what": "The skill table is printed as lines of words rather than a grid; no page was opened as an image."}
+  ]
+}

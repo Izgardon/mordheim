@@ -1,0 +1,191 @@
+{
+  "warbandType": "skaven-of-clan-skryre-kaz",
+  "name": "Skaven of Clan Skryre (Karak Azgal)",
+  "source": "Karak Azgal",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=40",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "skaven-hero-equipment-list",
+      "title": "Skaven Hero Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "weeping blades", "alias": "", "cost": {"cost": 50}},
+        {"name": "fighting claws", "alias": "", "cost": {"cost": 35}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "throwing knives/stars", "alias": "", "cost": {"cost": 15}},
+        {"name": "blowpipe", "alias": "", "cost": {"cost": 25}},
+        {"name": "warplock pistol", "alias": "", "cost": {"cost": 35, "braceCost": 70}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "skaven-henchmen-equipment-list",
+      "title": "Skaven Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Jezzail", "alias": "", "cost": {"cost": 175}, "availability": "Rare 11, Clan Skryre Heroes only"}
+  ],
+  "fighters": [
+    {
+      "id": "master-engineer",
+      "type": "hero",
+      "name": "Master Engineer",
+      "plural": "Master Engineers",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["skaven-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "skillGroups": ["Skaven of Karak Azgal"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any model in the warband within 6\" of the Master Engineer may use his Leadership instead of his own."},
+        {"rulename": "Master Engineer", "ruleFull": "The Master Engineer may re-roll any fumble with a blackpowder or wyrdstone-powered weapon he carries. The second result stands."}
+      ]
+    },
+    {
+      "id": "engineer",
+      "type": "hero",
+      "name": "Engineer",
+      "plural": "Engineers",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": ["skaven-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": false},
+      "skillGroups": ["Skaven of Karak Azgal"],
+      "specialRules": []
+    },
+    {
+      "id": "warlock-engineer",
+      "type": "hero",
+      "name": "Warlock Engineer",
+      "plural": "Warlock Engineers",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 6},
+      "equipmentLists": ["skaven-hero-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "skillGroups": ["Skaven of Karak Azgal"],
+      "spellLores": ["Magic of the Horned Rat"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Warlock Engineer is a spell caster and uses the Magic of the Horned Rat."}
+      ]
+    },
+    {
+      "id": "engineer-apprentice",
+      "type": "hero",
+      "name": "Engineer Apprentice",
+      "plural": "Engineer Apprentices",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 5, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": ["skaven-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": false, "special": false},
+      "skillGroups": ["Skaven of Karak Azgal"],
+      "specialRules": []
+    },
+    {
+      "id": "clanrat",
+      "type": "henchman",
+      "name": "Clanrat",
+      "plural": "Clanrats",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 20,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["skaven-henchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "skavenslave",
+      "type": "henchman",
+      "name": "Skavenslave",
+      "plural": "Skavenslaves",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 15,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": ["skaven-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Experience", "ruleFull": "Skavenslaves gain no experience."},
+        {"rulename": "All Races", "ruleFull": "A Skavenslave may be of any race, their fellow Skaven included. The profile above is the weakened state of all of them."},
+        {"rulename": "Slavers", "ruleFull": "A captured enemy warrior may be added to a Skavenslave group. He takes the profile above and must be equipped as the rest of the group is. Anything he carried when he was captured may be kept or sold by the warband."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Jezzail",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "rarity": 11,
+      "dice": null,
+      "rulesPage": 40,
+      "range": "36\"",
+      "strength": "5",
+      "rules": [
+        {"rule": "Move or fire", "text": "A jezzail may not move and fire in the same turn, other than to pivot on the spot to face its target or to stand up from knocked down."},
+        {"rule": "Prepare shot", "text": "A jezzail takes a whole turn to reload, so it may be fired only every other turn."},
+        {"rule": "Save Modifier", "summary": "-3 armour save modifier", "text": "A warrior wounded by a jezzail takes his armour save at -3."},
+        {"name": "Pick target", "text": "A model armed with a jezzail may shoot at any enemy model in sight, not only the closest."},
+        {"name": "Assistant", "text": "A jezzail takes a crew of 2. Any Skaven model may be the firer's assistant while he stays in base contact. With no assistant the firer carries the jezzail at half speed and is at -1 to hit, and if the pair is shot at the assistant is always hit first."},
+        {"name": "Pavise", "text": "A jezzail team with an assistant may buy a pavise. The assistant carries it, a henchman included, and the team moves at the speed of its slower member."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 40, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
+    {"page": 40, "what": "The PDF prints no equipment list of its own: \"All of the equipment lists from the rulebook apply\". The Skaven Hero and Skaven Henchmen lists are taken from our own Skaven warband, which is the rulebook's, not from any other PDF."},
+    {"page": 41, "what": "\"Skaven Heroes may use any of the Skaven Special Skills in the rulebook except for the Art of Silent Death\": the heroes name the new group Skaven of Karak Azgal, declared once in skaven-of-clan-mors.json for both Karak Azgal Skaven warbands, which holds our other four Skaven skills. See the decisions."},
+    {"page": 40, "what": "The Jezzail is a stub: 175 gc, Rare 11, Clan Skryre Heroes only, range 36\", Strength 5, -3 armour save modifier, with the rules the page prints. Move or fire, Prepare shot and Save Modifier link our shared item rules in the jezzail's own words; Pick target, Assistant and Pavise are its own."},
+    {"page": 40, "what": "The Pavise rule points at Town Crier 7 for the pavise's own rules, which this PDF does not print. Our Pavise item carries them."},
+    {"page": 42, "what": "Henchmen are bought in groups of 1-5. No maximum is printed for Clanrats or Skavenslaves, and the warband has no Rat Ogre."},
+    {"page": 41, "what": "Starting experience: Master Engineer 20, Warlock Engineer and Engineers 8, Engineer Apprentices 0, Henchmen 0."},
+    {"page": 40, "what": "The skill table ticks: Master Engineer every column, Engineer Combat, Shooting, Academic and Speed, Warlock Engineer Academic and Speed, Engineer Apprentice Combat and Shooting; all four tick Special."}
+  ]
+}

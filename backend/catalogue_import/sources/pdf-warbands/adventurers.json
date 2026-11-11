@@ -1,0 +1,270 @@
+{
+  "warbandType": "adventurers",
+  "name": "Adventurers",
+  "source": "Karak Azgal",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=19",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Leader", "ruleFull": "The warband has no fixed leader. When it is raised, mark each Hero except the Imperial Captain with a number from 1 to 5. Roll a D6 before each battle: the Hero whose number is rolled leads the warband for that battle. The Imperial Captain can never lead, so the warband may go into a battle with no leader."},
+    {"rulename": "Rivalries", "ruleFull": "While the Dwarf leads, the Elf will not stay within 6\" of him and so cannot use his Leadership, though he may join a combat the Dwarf is in.\n\nWhile the Elf leads, the Dwarf will not stay within 6\" of him and so cannot use his Leadership, though he may join a combat the Elf is in.\n\nWhile the Wizard leads, the Barbarian will not stay within 6\" of him and so cannot use his Leadership, though he may join a combat the Wizard is in.\n\nWhile the Barbarian leads, the Wizard will not stay within 6\" of him and so cannot use his Leadership, though he may join a combat the Barbarian is in.\n\nWhile the Imperial Noble leads, none of this applies."},
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire these hired swords: Dwarf Troll Slayer, Freelancer (without his horse), Warlock, Duellist, Elf Ranger, Halfling Scout, Pit Fighter, Tilean Marksman and Imperial Assassin."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "wizard-equipment-list",
+      "title": "Wizard Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "staff", "alias": "Staff", "cost": {"cost": 3}},
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}}
+      ]
+    },
+    {
+      "id": "elf-equipment-list",
+      "title": "Elf Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "club, mace or hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "elf bow", "alias": "", "cost": {"cost": 35}},
+        {"name": "long bow", "alias": "", "cost": {"cost": 15}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "elven cloak", "alias": "", "cost": {"cost": 100}}
+      ]
+    },
+    {
+      "id": "dwarf-equipment-list",
+      "title": "Dwarf Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "club, mace or hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "dwarf axe", "alias": "", "cost": {"cost": 15}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "gromril weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 times the cost"}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}}
+      ]
+    },
+    {
+      "id": "barbarian-equipment-list",
+      "title": "Barbarian Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}}
+      ]
+    },
+    {
+      "id": "imperial-noble-equipment-list",
+      "title": "Imperial Noble Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "rapier", "alias": "", "cost": {"cost": 15}},
+        {"name": "sword breaker", "alias": "Swordbreaker", "cost": {"cost": 30}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "duelling pistol", "alias": "", "cost": {"cost": 25, "braceCost": 50}},
+        {"name": "crossbow pistol", "alias": "", "cost": {"cost": 35}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "cannon-fodder-equipment-list",
+      "title": "Cannon Fodder Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "club, mace or hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "long bow", "alias": "", "cost": {"cost": 15}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "wizard",
+      "type": "hero",
+      "name": "Wizard",
+      "plural": "Wizards",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["wizard-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": false, "special": false},
+      "spellLores": ["Lesser Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Wizard is a spell caster. He starts with two spells from the Lesser Magic list, chosen at random."}
+      ]
+    },
+    {
+      "id": "elf",
+      "type": "hero",
+      "name": "Elf",
+      "plural": "Elves",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["elf-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Hatred", "ruleFull": "The Elf hates Dark Elves."},
+        {"rulename": "Seeker", "ruleFull": "If the Elf is not taken out of action during the battle, you may change one dice of the exploration sequence by +1 or -1."}
+      ]
+    },
+    {
+      "id": "barbarian",
+      "type": "hero",
+      "name": "Barbarian",
+      "plural": "Barbarians",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 10},
+      "equipmentLists": ["barbarian-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Frenzy", "ruleFull": "The Barbarian is subject to frenzy."},
+        {"rulename": "Dim-witted", "ruleFull": "While the Barbarian leads the warband, his Leadership counts as 7 for warband members within 6\" and for Rout tests."},
+        {"rulename": "Never Armoured", "ruleFull": "The Barbarian never wears armour."}
+      ]
+    },
+    {
+      "id": "imperial-noble",
+      "type": "hero",
+      "name": "Imperial Noble",
+      "plural": "Imperial Nobles",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["imperial-noble-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Honourable", "ruleFull": "The Imperial Noble never attacks an opponent who is knocked down or stunned."},
+        {"rulename": "Family Heirloom", "ruleFull": "The Family Heirloom is a sword or a pistol his family has held a long time. Roll a D6 for it when the warband is raised:\n\nD6 | Result\n1-2 | The Noble may re-roll his first failed Psychology test in a battle.\n3-4 | The Noble causes fear in Orcs, Goblins and Skaven.\n5-6 | The Noble may re-roll one dice in a battle."}
+      ]
+    },
+    {
+      "id": "dwarf",
+      "type": "hero",
+      "name": "Dwarf",
+      "plural": "Dwarfs",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Hard to Kill", "ruleFull": "A Dwarf is taken out of action only on a 6 on the Injury chart: 1-2 is knocked down, 3-5 stunned and 6 out of action."},
+        {"rulename": "Hard Head", "ruleFull": "Dwarfs ignore the special rules of clubs, maces and the like."}
+      ]
+    },
+    {
+      "id": "cannon-fodder",
+      "type": "henchman",
+      "name": "Cannon Fodder",
+      "plural": "Cannon Fodder",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["cannon-fodder-equipment-list"],
+      "specialRules": [
+        {"rulename": "Mixed Bunch", "ruleFull": "When a Cannon Fodder gets the Lad's Got Talent result he becomes an Imperial Captain. He picks two skills from any of the Adventurers' skill tables, but not the special ones, and keeps the Cannon Fodder equipment list. The warband may never hold more than one Imperial Captain."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Adventurers",
+    "new": true,
+    "note": "Fey and Fey Quickness are the Elf's; Ferocious Charge the Barbarian's and the Dwarf's; Magic Resistant, Monster Slayer and Berserker the Dwarf's."
+  },
+  "specialSkillsList": [
+    {"name": "Fey", "ours": "Fey"},
+    {"name": "Fey Quickness", "ours": "Fey Quickness"},
+    {"name": "Chosen of the White Tower", "description": "Elf only. He may parry without a buckler or a sword, and may re-roll the parry if he is already armed with one."},
+    {"name": "Hard to Kill", "description": "Barbarian only. When rolling on the Injury chart for him, treat a roll of 5 as stunned: he is taken out of action only on a 6."},
+    {"name": "Ferocious Charge", "ours": "Ferocious Charge"},
+    {"name": "Instinctive Warrior", "description": "Barbarian only. He may parry with his double-handed weapon, using the parry rules for a single sword."},
+    {"name": "Trading Flair", "description": "Imperial Noble only. He may re-roll one dice when searching for rare items. In addition, on a D6 roll of 5+ after a battle he gets a 2D6 gold crowns discount on a single item he buys."},
+    {"name": "Taunt (Adventurers)", "pdfName": "Taunt", "description": "Imperial Noble only. He may taunt one enemy within 10\". That enemy must pass a Leadership test or charge the Noble, even if the Noble is beyond his charge range."},
+    {"name": "Magic Resistant", "description": "The effect of a spell or a scroll does not affect the Dwarf on a D6 roll of 4+."},
+    {"name": "Monster Slayer", "ours": "Monster Slayer"},
+    {"name": "Berserker", "ours": "Berserker"}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 19, "what": "The warband's minimum of 4 models is not imported: our templates hold no minimum."},
+    {"page": 19, "what": "\"The maximum amount of Heroes in your warband is 6\" is not imported as a rule: the six Hero entries are each 0-1, and the sixth (the Imperial Captain) is not a fighter row of ours."},
+    {"page": 19, "what": "The Imperial Captain (0-1) has no profile and no hire cost printed: he exists only as a promoted Cannon Fodder, so no fighter row was made. His terms are in the Cannon Fodder's Mixed Bunch rule."},
+    {"page": 19, "what": "The leader rule numbers the Heroes 1 to 5 and rolls a D6 before each battle, but does not say what a 6 means. It is written as the warband possibly having no leader that battle, which is what the PDF says follows from the Captain never leading."},
+    {"page": 20, "what": "The Elf's entry calls his list the \"Ranger Equipment list\"; the list on p20 is headed \"Elf Equipment List\". Read as one list."},
+    {"page": 20, "what": "The Dwarf list prints Sword with no price. It is imported at 10 gc, the price the same PDF's other lists give a Sword."},
+    {"page": 20, "what": "The Barbarian list holds only Flail, Double Handed Weapon and Morning Star: no dagger and no armour, which matches his \"will never wear armour\" rule."},
+    {"page": 20, "what": "The Dwarf list's \"Gromril Weapon 3x the cost\" links our Gromril Weapon, priced 3 × price as the Slayer Cult's is."},
+    {"page": 22, "what": "The Barbarian's Leadership is printed \"10/7\": 10 is taken as his Leadership and the 7 is his Dim-witted rule, which is how the rule reads. Ld 10 is above our Human maximum of 9, so the app will warn."},
+    {"page": 22, "what": "The Elf's \"Fey Quickness. Same as TC12\" is linked to our Fey Quickness, whose text cites TC10."},
+    {"page": 22, "what": "The Barbarian's Ferocious Charge (double attacks on the charge, -1 to hit) is word for word our Ferocious Charge, so it is linked; the Dwarf's cites the rulebook and is the same skill."},
+    {"page": 23, "what": "The Noble's Taunt is not our Taunt (the Ostlander's shooting-phase insult), so it is kept apart as Taunt (Adventurers). His Trading Flair overlaps our Haggle but adds the rare-item re-roll and the 5+ condition, so it is a new skill. See the decisions."},
+    {"page": 23, "what": "The Dwarf's Hard to Kill and Hard Head cite the rulebook; they are written in the words our other Dwarf warbands use. The Barbarian's special skill Hard to Kill has the same effect and is a new skill of that name."},
+    {"page": 23, "what": "Magic Resistant is the Cursed Dwarves' skill too: one skill with the same words in both groups, so \"the Dwarf only\" sits in this group's note."},
+    {"page": 21, "what": "Only the Elf, Barbarian, Imperial Noble and Dwarf have a special skill table; the Wizard does not, so he does not tick Special."},
+    {"page": 21, "what": "The profile row is headed \"Elf Ranger\"; the fighter entry is \"0-1 Elf\", which is the name imported."},
+    {"page": 20, "what": "Heroes start with 8 experience and Cannon Fodder with 0. No group sizes are printed for the Cannon Fodder, and no maximum."}
+  ]
+}

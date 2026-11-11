@@ -1126,6 +1126,36 @@
       "how": "overrides.json"
     },
     {
+      "name": "Chosen of the White Tower",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hard to Kill",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Instinctive Warrior",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Trading Flair",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Taunt (Adventurers)",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Magic Resistant",
+      "setting": "khemri-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Slave Driver",
       "setting": "sartosa",
       "how": "overrides.json"
@@ -1328,11 +1358,6 @@
     {
       "name": "Gift of Sentience",
       "setting": "sealed-city",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Magic Resistant",
-      "setting": "khemri-3",
       "how": "overrides.json"
     },
     {
@@ -1698,6 +1723,16 @@
     {
       "name": "Pull of Undeath",
       "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Sneaky Git (Karak Azgal)",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Netter (Karak Azgal)",
+      "setting": "karak-azgal",
       "how": "overrides.json"
     },
     {

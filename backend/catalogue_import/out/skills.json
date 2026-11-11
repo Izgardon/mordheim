@@ -900,6 +900,30 @@
     "description": "The warrior is an expert in hand-to-hand combat method of the Imperial duelist, aristocrats famed for their skill in single combat.\n\nAt the end of each Close Combat phase, the Duelist can force any non-large opponent he is fighting one-on-one to pass a Strength test or be pushed 2\" in any direction choosen by the Duelist. If this brings the target in contact with another model, both suffer an automatic Strength 2 hit. If this pushes the opponent off from a high place, then he falls and takes damage as normal. The duelist stays on the elevated area."
   },
   {
+    "name": "Chosen of the White Tower",
+    "description": "Elf only. He may parry without a buckler or a sword, and may re-roll the parry if he is already armed with one."
+  },
+  {
+    "name": "Hard to Kill",
+    "description": "Barbarian only. When rolling on the Injury chart for him, treat a roll of 5 as stunned: he is taken out of action only on a 6."
+  },
+  {
+    "name": "Instinctive Warrior",
+    "description": "Barbarian only. He may parry with his double-handed weapon, using the parry rules for a single sword."
+  },
+  {
+    "name": "Trading Flair",
+    "description": "Imperial Noble only. He may re-roll one dice when searching for rare items. In addition, on a D6 roll of 5+ after a battle he gets a 2D6 gold crowns discount on a single item he buys."
+  },
+  {
+    "name": "Taunt (Adventurers)",
+    "description": "Imperial Noble only. He may taunt one enemy within 10\". That enemy must pass a Leadership test or charge the Noble, even if the Noble is beyond his charge range."
+  },
+  {
+    "name": "Magic Resistant",
+    "description": "The effect of a spell or a scroll does not affect the Dwarf on a D6 roll of 4+."
+  },
+  {
     "name": "Slave Driver",
     "description": "While the Hero is armed with a Cat O' Nine Tails or a similar whip and is not in close combat, every Slave within 4\" passes any Leadership test he is required to take."
   },
@@ -1062,10 +1086,6 @@
   {
     "name": "Gift of Sentience",
     "description": "Instead of searching for rare items, the Hero may spend D3 moonstones on a single Clockwork soldier. The soldier loses Need Orders, Immune to Psychology and Brainless, and re-rolls any That Lad's Got Talent result when rolling for advances."
-  },
-  {
-    "name": "Magic Resistant",
-    "description": "The effect of a spell or a scroll does not affect the Dwarf on a D6 roll of 4+."
   },
   {
     "name": "Smith",
@@ -1358,6 +1378,14 @@
   {
     "name": "Pull of Undeath",
     "description": "Leader only. While the Hero is within 4\" of an undead henchman, that henchman is taken out of action only on a natural 6."
+  },
+  {
+    "name": "Sneaky Git (Karak Azgal)",
+    "description": "Night Goblin Big Boss only. He may move D3 members of his warband after all other deployment is complete."
+  },
+  {
+    "name": "Netter (Karak Azgal)",
+    "description": "The Goblin may declare a net charge and throw his net at the target as the rulebook says. If he hits and the target does not escape, the target counts as knocked down and the Goblin completes his charge; if he misses or the target escapes, it is a failed charge, and he stops 1\" away if it would bring him into base contact. A warrior caught in a net is hit automatically in combat, though the Goblin still rolls to wound as against a knocked down enemy. In the warrior's next recovery phase, unless he is stunned or out of action, he cuts himself free, but may do nothing else and strikes last that turn, as if he had stood up from knocked down."
   },
   {
     "name": "Death before Dishonor",

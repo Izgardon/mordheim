@@ -1,0 +1,224 @@
+{
+  "warbandType": "skaven-of-clan-mors",
+  "name": "Skaven of Clan Mors",
+  "source": "Karak Azgal",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=36",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "skaven-hero-equipment-list",
+      "title": "Skaven Hero Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "weeping blades", "alias": "", "cost": {"cost": 50}},
+        {"name": "fighting claws", "alias": "", "cost": {"cost": 35}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "throwing knives/stars", "alias": "", "cost": {"cost": 15}},
+        {"name": "blowpipe", "alias": "", "cost": {"cost": 25}},
+        {"name": "warplock pistol", "alias": "", "cost": {"cost": 35, "braceCost": 70}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "skaven-henchmen-equipment-list",
+      "title": "Skaven Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "claw-leader",
+      "type": "hero",
+      "name": "Claw Leader",
+      "plural": "Claw Leaders",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["skaven-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "skillGroups": ["Skaven of Karak Azgal"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any model in the warband within 6\" of the Claw Leader may use his Leadership instead of his own."},
+        {"rulename": "Tactical Genius", "ruleFull": "The Clan Mors player adds +1 to his dice roll to see who sets up first."}
+      ]
+    },
+    {
+      "id": "stormvermin",
+      "type": "hero",
+      "name": "Stormvermin",
+      "plural": "Stormvermin",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": ["skaven-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": false},
+      "skillGroups": ["Skaven of Karak Azgal"],
+      "specialRules": []
+    },
+    {
+      "id": "mors-sorcerer",
+      "type": "hero",
+      "name": "Mors Sorcerer",
+      "plural": "Mors Sorcerers",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 6},
+      "equipmentLists": ["skaven-hero-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "skillGroups": ["Skaven of Karak Azgal"],
+      "spellLores": ["Magic of the Horned Rat"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Mors Sorcerer is a spell caster and uses the Magic of the Horned Rat."}
+      ]
+    },
+    {
+      "id": "young-claw",
+      "type": "hero",
+      "name": "Young Claw",
+      "plural": "Young Claws",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 5, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": ["skaven-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": false, "special": false},
+      "skillGroups": ["Skaven of Karak Azgal"],
+      "specialRules": []
+    },
+    {
+      "id": "clanrat",
+      "type": "henchman",
+      "name": "Clanrat",
+      "plural": "Clanrats",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 20,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["skaven-henchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "skavenslave",
+      "type": "henchman",
+      "name": "Skavenslave",
+      "plural": "Skavenslaves",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 15,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": ["skaven-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Experience", "ruleFull": "Skavenslaves gain no experience."},
+        {"rulename": "All Races", "ruleFull": "A Skavenslave may be of any race, their fellow Skaven included. The profile above is the weakened state of all of them."},
+        {"rulename": "Slavers", "ruleFull": "A captured enemy warrior may be added to a Skavenslave group. He takes the profile above and must be equipped as the rest of the group is. Anything he carried when he was captured may be kept or sold by the warband."}
+      ]
+    },
+    {
+      "id": "rat-ogre",
+      "type": "henchman",
+      "name": "Rat Ogre",
+      "plural": "Rat Ogres",
+      "race": "rat ogre",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 210,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 1},
+      "statblock": {"m": 6, "ws": 3, "bs": 3, "s": 5, "t": 5, "w": 3, "i": 4, "a": 3, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. A Rat Ogre fights with jaws, claws and brute force, and can never use weapons or armour.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Rat Ogre causes fear."},
+        {"rulename": "Stupidity", "ruleFull": "A Rat Ogre is subject to stupidity unless a Skaven Hero is within 6\" of it."},
+        {"rulename": "Experience", "ruleFull": "Rat Ogres gain no experience."},
+        {"rulename": "Large", "ruleFull": "Any model may shoot at a Rat Ogre, even if it is not the closest target."}
+      ]
+    },
+    {
+      "id": "wolf-rat",
+      "type": "henchman",
+      "name": "Wolf Rat",
+      "plural": "Wolf Rats",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 60,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 6, "ws": 4, "bs": 0, "s": 4, "t": 4, "w": 1, "i": 4, "a": 2, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None. Wolf Rats neither need nor use weapons or armour.",
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "Wolf Rats are animals and gain no experience."}
+      ]
+    }
+  ],
+  "sharedSkillGroup": {
+    "name": "Skaven of Karak Azgal",
+    "note": "",
+    "types": ["skaven-of-clan-mors", "skaven-of-clan-skryre-kaz"],
+    "skills": [
+      {"name": "Black Hunger", "ours": "Black Hunger"},
+      {"name": "Tail Fighting", "ours": "Tail Fighting"},
+      {"name": "Wall Runner", "ours": "Wall Runner"},
+      {"name": "Infiltration", "ours": "Infiltration"}
+    ]
+  },
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 36, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
+    {"page": 36, "what": "The PDF prints no equipment list of its own: \"All of the equipment lists from the rulebook apply\". The Skaven Hero and Skaven Henchmen lists are taken from our own Skaven warband, which is the rulebook's, not from any other PDF. \"Skaven Clan Mors may use the Skaven weapons as detailed in the rulebook\" is covered by those lists (Weeping Blades, Fighting Claws, Warplock Pistol, Blowpipe, Throwing Knives/Stars)."},
+    {"page": 36, "what": "\"Skaven Heroes may use any of the Skaven Special Skills in the rulebook except for the Art of Silent Death\": our Skaven group holds the Art of Silent Death, so one new group, Skaven of Karak Azgal, holds our other four Skaven skills and serves both Karak Azgal Skaven warbands. See the decisions."},
+    {"page": 38, "what": "The Rat Ogre is printed \"0.1\", read as 0-1."},
+    {"page": 38, "what": "\"Note: Rat Ogres and Wolf Rats are alternative list entries to be confirmed\" is the author's note. Both are imported as printed."},
+    {"page": 38, "what": "The Rat Ogre's Stupidity is not the shared rule (he is not stupid while a Skaven Hero is within 6\"), so it stays the Rat Ogres' own, as our other Skaven warbands' is."},
+    {"page": 39, "what": "The Wolf Rats are M6 WS4 BS0 S4 T4 W1 I4 A2 Ld6 here, which is not the Clan Moulder Wolf Rat's profile. As printed; they take no race, as an animal."},
+    {"page": 38, "what": "Henchmen are bought in groups of 1-5. No maximum is printed for Clanrats or Skavenslaves."},
+    {"page": 36, "what": "Starting experience: Claw Leader 20, Mors Sorcerer and Stormvermin 8, Young Claws 0, Henchmen 0."}
+  ]
+}

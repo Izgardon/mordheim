@@ -313,6 +313,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "savage-orcs-kaz",
+            "excluded": false
+          }
+        ],
+        "note": "A Hero's pet. It may not be ridden."
       }
     ]
   },
@@ -379,6 +395,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "savage-orcs-kaz",
+            "excluded": false
+          }
+        ],
+        "note": "A Hero's pet. It may not be ridden."
       }
     ]
   },
@@ -1134,6 +1166,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 90,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "savage-orcs-kaz",
+            "excluded": false
+          }
+        ],
+        "note": "A Hero's pet; only he may ride it."
       }
     ]
   },
@@ -4018,6 +4066,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "night-goblins-kaz",
+            "excluded": false
+          }
+        ],
+        "note": "Fanatics only."
       }
     ]
   },
@@ -6418,6 +6482,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "night-goblins-kaz",
+            "excluded": false
+          }
+        ],
+        "note": "Fanatics only."
       }
     ]
   },
@@ -10210,6 +10290,22 @@
           },
           {
             "type": "night-goblins-web",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "night-goblins-kaz",
             "excluded": false
           }
         ],
@@ -23170,6 +23266,212 @@
     ]
   },
   {
+    "slug": "skull-busta",
+    "name": "Skull Busta",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "karak-azgal",
+    "source": "Karak Azgal",
+    "link_url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56",
+    "tags": [
+      "skull busta"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Huge Hammer",
+        "summary": "",
+        "text": "On the first turn of any combat the wielder gains +1 Strength and causes concussion as a hammer does. In every later round it counts as an ordinary hammer.",
+        "tables": []
+      },
+      {
+        "name": "Unwieldy",
+        "summary": "",
+        "text": "A Skull Busta may not be used while mounted, may not be used by a goblin, and may not be used with any other weapon, though a shield is allowed.",
+        "tables": []
+      },
+      {
+        "name": "Feelin' wobbly",
+        "summary": "",
+        "text": "A roll of 2-4 on the Injury chart counts as stunned when a Skull Busta caused the hit.",
+        "tables": []
+      },
+      {
+        "name": "Basha",
+        "summary": "",
+        "text": "A warrior wearing a helmet saves against stunning only on a 6 when hit by a Skull Busta. A knight's helm, of a Crusading Knights warband, saves on a 4+.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "savage-orcs-kaz",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "warpaint",
+    "name": "Warpaint",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "karak-azgal",
+    "source": "Karak Azgal",
+    "link_url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56",
+    "tags": [
+      "warpaint"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Mork Protects",
+        "summary": "",
+        "text": "While he wears the warpaint, blue, red or white, the wearer has a 6+ invulnerable save. One use only.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "savage-orcs-kaz",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "kumfy-gear",
+    "name": "Kumfy Gear",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "karak-azgal",
+    "source": "Karak Azgal",
+    "link_url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56",
+    "tags": [
+      "kumfy gear"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "5+",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Thick Skins",
+        "summary": "",
+        "text": "Kumfy Gear gives a 5+ armour save, and a 5+ save against every fire-based and cold-based attack. It may not be worn with Warpaint or light armour.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 75,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "savage-orcs-kaz",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "effigy-of-mork",
+    "name": "Effigy of Mork",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "karak-azgal",
+    "source": "Karak Azgal",
+    "link_url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56",
+    "tags": [
+      "effigy of mork"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Mork's Presence",
+        "summary": "",
+        "text": "The bearer ignores the first hit against him in a battle. The Effigy also lets the first Leadership test anyone in the warband takes be re-rolled; carried by the Boss, it lets the first Rout test be re-rolled instead, as long as its power has not already been used that battle. A Savage Orc carrying an Effigy of Mork would never carry a Lucky Charm or a Holy Relic.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "savage-orcs-kaz",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "long-daggers",
     "name": "Long daggers",
     "variant": "",
@@ -23650,6 +23952,78 @@
     ]
   },
   {
+    "slug": "jezzail",
+    "name": "Jezzail",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "setting": "karak-azgal",
+    "source": "Karak Azgal",
+    "link_url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=40",
+    "tags": [
+      "jezzail"
+    ],
+    "flavour": "",
+    "range": "36\"",
+    "strength": "5",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "move-or-fire",
+        "text": "A jezzail may not move and fire in the same turn, other than to pivot on the spot to face its target or to stand up from knocked down."
+      },
+      {
+        "rule": "prepare-shot",
+        "text": "A jezzail takes a whole turn to reload, so it may be fired only every other turn."
+      },
+      {
+        "rule": "save-modifier",
+        "summary": "-3 armour save modifier",
+        "text": "A warrior wounded by a jezzail takes his armour save at -3."
+      },
+      {
+        "name": "Pick target",
+        "summary": "",
+        "text": "A model armed with a jezzail may shoot at any enemy model in sight, not only the closest.",
+        "tables": []
+      },
+      {
+        "name": "Assistant",
+        "summary": "",
+        "text": "A jezzail takes a crew of 2. Any Skaven model may be the firer's assistant while he stays in base contact. With no assistant the firer carries the jezzail at half speed and is at -1 to hit, and if the pair is shot at the assistant is always hit first.",
+        "tables": []
+      },
+      {
+        "name": "Pavise",
+        "summary": "",
+        "text": "A jezzail team with an assistant may buy a pavise. The assistant carries it, a henchman included, and the team moves at the speed of its slower member.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 175,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-skryre-kaz",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "dwarven-pistol",
     "name": "Dwarven Pistol",
     "variant": "",
@@ -23762,6 +24136,57 @@
         "warbands": [
           {
             "type": "slayer-pirates",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "corpse-liquor",
+    "name": "Corpse Liquor",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Poisons and Drugs",
+    "setting": "karak-azgal",
+    "source": "Karak Azgal",
+    "link_url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=50",
+    "tags": [
+      "corpse liquor"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "poisoned",
+        "text": "A weapon or claw coated with Corpse Liquor wounds its target automatically on a roll of 6 to hit. You still roll a dice for each wound caused that way: on a 6 it is a critical hit, otherwise a normal wound. Armour saves are taken as normal."
+      },
+      {
+        "name": "One battle",
+        "summary": "",
+        "text": "Each purchase lasts one warrior for one battle.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "strigoi",
             "excluded": false
           }
         ],

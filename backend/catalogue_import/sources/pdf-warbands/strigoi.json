@@ -1,0 +1,240 @@
+{
+  "warbandType": "strigoi",
+  "name": "Strigoi",
+  "source": "Karak Azgal",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=50",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Dead Leader", "ruleFull": "If the Vampire is killed he cannot be replaced for that battle: every undead creature of the warband crumbles and is lost with its equipment. Pick a new leader from among the Heroes as the rulebook says. After one game a new Vampire may be bought, who becomes the leader, and the acting leader returns to his former place."},
+    {"rulename": "Bats or Fell Bats", "ruleFull": "The warband may hold up to 5 Bats or up to 2 Fell Bats, never both kinds at once."},
+    {"rulename": "Hired Swords", "ruleFull": "Besides any who name the warband themselves, the warband may hire the Strigani Seer, and a Necromancer only while it has no Vampire."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "undead-equipment-list",
+      "title": "Undead Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 5}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10, "costSuffix": "Strigany only"}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5, "costSuffix": "Strigany only"}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Corpse Liquor", "alias": "", "cost": {"cost": 10}, "availability": "Rare 9, Strigoi warbands only"}
+  ],
+  "fighters": [
+    {
+      "id": "vampire",
+      "type": "hero",
+      "name": "Vampire",
+      "plural": "Vampires",
+      "race": "vampire",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 125,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 4, "bs": 4, "s": 4, "t": 4, "w": 2, "i": 5, "a": 2, "ld": 8},
+      "equipmentLists": [],
+      "equipment": "None. A Strigoi Vampire uses no weapons or equipment.",
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": false},
+      "spellLores": ["Necromancy"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any model in the warband within 6\" of the Vampire may use his Leadership instead of his own."},
+        {"rulename": "Bestial", "ruleFull": "The Vampire has a 6+ ward save against every attack."},
+        {"rulename": "Wizard", "ruleFull": "The Vampire is a spell caster and uses Necromantic magic."}
+      ]
+    },
+    {
+      "id": "charnel-guard",
+      "type": "hero",
+      "name": "Charnel Guard",
+      "plural": "Charnel Guard",
+      "race": "ghoul",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 50,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 3, "a": 2, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None, apart from the few bones a Charnel Guard uses as a primitive weapon.",
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "A Charnel Guard causes fear."},
+        {"rulename": "Cunning", "ruleFull": "Unlike an ordinary Ghoul, a Charnel Guard may learn the Weapons Training or Weapons Expert skill and use any weapon."}
+      ]
+    },
+    {
+      "id": "strigany",
+      "type": "hero",
+      "name": "Strigany",
+      "plural": "Strigany",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["undead-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": [
+        {"rulename": "Living", "ruleFull": "The Strigany are living humans, and none of the Undead rules apply to them."}
+      ]
+    },
+    {
+      "id": "ghoul",
+      "type": "henchman",
+      "name": "Ghoul",
+      "plural": "Ghouls",
+      "race": "ghoul",
+      "minQty": 0,
+      "costGc": 40,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 4, "w": 1, "i": 3, "a": 2, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None, apart from the few bones a Ghoul uses as a primitive weapon.",
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "Ghouls cause fear."}
+      ]
+    },
+    {
+      "id": "skeleton",
+      "type": "henchman",
+      "name": "Skeleton",
+      "plural": "Skeletons",
+      "race": "skeleton",
+      "minQty": 0,
+      "costGc": 15,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 1, "a": 1, "ld": 5},
+      "equipmentLists": ["undead-equipment-list"],
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "Skeletons cause fear."},
+        {"rulename": "May not run", "ruleFull": "Skeletons may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Skeletons are not affected by psychology and never leave combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Skeletons are not affected by any drug or poison."},
+        {"rulename": "No Pain", "ruleFull": "Skeletons treat a stunned result on the Injury chart as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "Skeletons gain no experience."},
+        {"rulename": "Hand-to-hand only", "ruleFull": "A Skeleton may take hand-to-hand weapons and armour from the list, but no missile weapon."}
+      ]
+    },
+    {
+      "id": "bat",
+      "type": "henchman",
+      "name": "Bat",
+      "plural": "Bats",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 20,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 8, "ws": 2, "bs": 0, "s": 3, "t": 2, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None.",
+      "specialRules": [
+        {"rulename": "Living", "ruleFull": "Bats are living beings, and none of the Undead rules apply to them."},
+        {"rulename": "Animals", "ruleFull": "Bats are animals and gain no experience."},
+        {"rulename": "Flyers", "ruleFull": "A Bat ignores terrain when it moves and may charge any model it can see, whatever its height and whoever would intercept."},
+        {"rulename": "Squishy", "ruleFull": "A wounded Bat uses this Injury chart: 1-2 knocked down, 3 stunned, 4-6 out of action."}
+      ]
+    },
+    {
+      "id": "fell-bat",
+      "type": "henchman",
+      "name": "Fell Bat",
+      "plural": "Fell Bats",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 80,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 2},
+      "statblock": {"m": 8, "ws": 3, "bs": 0, "s": 3, "t": 3, "w": 2, "i": 3, "a": 2, "ld": 6},
+      "equipmentLists": [],
+      "equipment": "None.",
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "Fell Bats are animals and gain no experience."},
+        {"rulename": "Flyers", "ruleFull": "A Fell Bat ignores terrain when it moves and may charge any model it can see, whatever its height and whoever would intercept."},
+        {"rulename": "Cause Fear", "ruleFull": "Fell Bats cause fear."},
+        {"rulename": "May not run", "ruleFull": "Fell Bats may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "Fell Bats are not affected by psychology and never leave combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Fell Bats are not affected by any drug or poison."},
+        {"rulename": "No Pain", "ruleFull": "Fell Bats treat a stunned result on the Injury chart as knocked down."}
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "mutationName": "Strigoi Vampire Abilities",
+      "mutationflavour": "The Vampire may take an ability in place of his search for rare equipment. The prices below are for his first; the second and every later one cost double. Each ability may be taken only once unless it says otherwise.",
+      "items": [
+        {"heading": "Curse Of The Undead", "cost": "50", "ruleFull": "If the Vampire goes out of action, after the battle he heals all of his wounds on a D6 roll of 5+, and then does not roll on the serious injury table."},
+        {"heading": "Infinite Hatred", "cost": "75", "ruleFull": "The Vampire may re-roll his failed to-hit rolls in the first turn of each combat. Each dice may be re-rolled only once."},
+        {"heading": "Quick Blood", "cost": "40", "ruleFull": "The Vampire's ward save improves to 5+."},
+        {"heading": "Blood Lust", "cost": "50", "ruleFull": "The Vampire is subject to frenzy."},
+        {"heading": "Master Strike", "cost": "40", "ruleFull": "The Vampire causes a critical hit on a 5 or 6."},
+        {"heading": "Dark Acolyte", "cost": "35", "ruleFull": "The Vampire gains +1 on his difficulty roll to cast a spell."},
+        {"heading": "Bat Wings", "cost": "50", "ruleFull": "The Vampire may fly up to 12\" in the movement phase, ignoring terrain and climbing."},
+        {"heading": "Revulsion", "cost": "30", "ruleFull": "Anyone taking a fear test because of the Vampire does so at -1 Leadership."},
+        {"heading": "Infected Wound", "cost": "30", "ruleFull": "The Vampire's attacks are poisoned, with the effect of Black Lotus. It may not be combined with Corpse Liquor."},
+        {"heading": "Blood Kiss", "cost": "75", "ruleFull": "The Vampire may steal a wound from an enemy he stuns or takes out of action in combat. This may take him above his starting Wounds, and lasts only for that battle."},
+        {"heading": "Iron Sinews", "cost": "40", "ruleFull": "The Vampire gains +1 Strength, which may take him beyond his racial maximum."},
+        {"heading": "Hunter", "cost": "25", "ruleFull": "The Vampire may spot hidden models at up to twice his Initiative in inches."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Corpse Liquor",
+      "type": "Miscellaneous",
+      "subtype": "Poisons and Drugs",
+      "rarity": 9,
+      "dice": 1,
+      "rulesPage": 51,
+      "rules": [
+        {"rule": "Poisoned", "text": "A weapon or claw coated with Corpse Liquor wounds its target automatically on a roll of 6 to hit. You still roll a dice for each wound caused that way: on a 6 it is a critical hit, otherwise a normal wound. Armour saves are taken as normal."},
+        {"name": "One battle", "text": "Each purchase lasts one warrior for one battle."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 50, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
+    {"page": 50, "what": "The skill table prints no Special column, so the warband has no skill group: the Vampire takes Combat, Academic, Strength and Speed, the Charnel Guard Combat, Strength and Speed, and the Strigany Combat and Strength."},
+    {"page": 50, "what": "The list prints Mace at 3 gc and Hammer at 5 gc, both our Club, Mace or Hammer, each shown under the list's name at its own price."},
+    {"page": 50, "what": "The missile weapons are \"Strigani only\", which is the Strigany; the two spellings are the same fighter. The note is carried as \"Strigany only\" on the Bow and Short Bow lines."},
+    {"page": 51, "what": "Corpse Liquor is a stub: 10+D6 gc, Rare 9, Strigoi only, with the rules the page prints. Its effect is Black Lotus's, under its own name, so it links our shared Poisoned rule in its own words and keeps a rule of its own for lasting one warrior one battle."},
+    {"page": 51, "what": "The Vampire's Bloodline rule is the terms of the Strigoi Vampire Abilities, which are the warband's upgrades: the Vampire's alone, the first at its price and every later one at double, taken in place of a rare-equipment search. The group's own words carry those terms."},
+    {"page": 53, "what": "The Skeletons take no race, as our other warbands' Skeletons do. The Bats and Fell Bats are animals with no race."},
+    {"page": 53, "what": "The Skeletons' \"may be equipped with hand-to-hand weapons ... may not use missile weapons\" is a rule of theirs: the list is shared with the Strigany, who may take the bows."},
+    {"page": 50, "what": "Bats are 0-5 and Fell Bats 0-2, and the warband may not hold both kinds: the counts are imported and the Bats or Fell Bats warband rule says the rest."},
+    {"page": 50, "what": "Starting experience: Vampire 20, Charnel Guard 8, Strigany 0, Henchmen 0. Henchmen are bought in groups of 1-5, and no maximum is printed for the Ghouls or the Skeletons."},
+    {"page": 51, "what": "The Vampire uses \"Necromantic magic\" from the rulebook, read as our Necromancy lore."}
+  ]
+}

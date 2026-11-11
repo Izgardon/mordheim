@@ -579,9 +579,15 @@
       "warbands": [
         {
           "type": "dwarf-treasure-hunters"
+        },
+        {
+          "type": "dwarf-guildsmen"
+        },
+        {
+          "type": "dwarf-slayers"
         }
       ],
-      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+      "why": "the warband the list is named after, plus the Karak Azgal warbands whose heroes learn from it (\"Dwarf Heroes may use any of the Dwarf Special Skills listed in Town Crier 6\")"
     },
     "Dwarf Troll Slayers": {
       "warbands": [
@@ -596,9 +602,12 @@
         },
         {
           "type": "pit-fighters-old"
+        },
+        {
+          "type": "dwarf-slayers"
         }
       ],
-      "why": "the warband the list is named after, plus the warbands whose templates' fighters learn from it (William, 4 Nov 2026: take recommendations)"
+      "why": "the warband the list is named after, plus the warbands whose templates' fighters learn from it (William, 4 Nov 2026: take recommendations); the Karak Azgal Dwarf Slayers' Slayer column is this list"
     },
     "Low Kings": {
       "warbands": [

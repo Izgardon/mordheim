@@ -145,6 +145,16 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
     # only have one such trait ... Heroes without a modus operandi may take this trait instead of choosing a skill on
     # an Advance", so one each and not only at recruitment
     ("silent-brotherhood", "Modus Operandi"): {"who": {"heroes": True}, "max_per_fighter": 1},
+    # the Karak Azgal PDF, p51: "The vampire may take any of the Bloodline Abilities instead of searching for rare
+    # equipment. The costs shown are for the first ability only. The second and subsequent abilities will cost double"
+    ("strigoi", "Strigoi Vampire Abilities"): {"who": {"fighters": ["vampire"]}, "later_double": True},
+    # the Karak Azgal PDF, p35: "Slayer heroes can have runic tatoos and scars added to their bodies ... Each Slayer
+    # hero would roll for tattoo instead of searching for rare equipment ... No individual can have more than three
+    # tattoos or scars"
+    ("dwarf-slayers", "Scars and Tattoos"): {
+        "who": {"fighters": ["giant-slayer", "troll-slayer"]},
+        "max_per_fighter": 3,
+    },
 }
 # One upgrade's own `who`, where its text narrows its group's: "(Saurus Only)", "(Skinks only)"
 UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {
