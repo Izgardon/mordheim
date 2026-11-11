@@ -1934,7 +1934,7 @@
   {
     "slug": "arabyan-nomads",
     "name": "Arabyan Nomads",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "setting_assumed": false,
     "race": "Human",
     "broheim_grade": "3",
@@ -1948,7 +1948,7 @@
   {
     "slug": "arabyan-theives",
     "name": "Arabyan Thieves",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "setting_assumed": false,
     "race": "Human",
     "broheim_grade": "3",
@@ -1990,7 +1990,7 @@
   {
     "slug": "cursed-dwarves",
     "name": "Cursed Dwarves",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "setting_assumed": false,
     "race": "Dwarf",
     "broheim_grade": "3",
@@ -2060,7 +2060,7 @@
   {
     "slug": "hobgoblins",
     "name": "Hobgoblins",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "setting_assumed": false,
     "race": "Goblin",
     "broheim_grade": "3",
@@ -2088,7 +2088,7 @@
   {
     "slug": "lahmian",
     "name": "Lahmian",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "setting_assumed": false,
     "race": "Vampire/Undead",
     "broheim_grade": "3",
@@ -2102,7 +2102,7 @@
   {
     "slug": "mages",
     "name": "Mages",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "setting_assumed": false,
     "race": "Human Wizard",
     "broheim_grade": "3",
@@ -2130,7 +2130,7 @@
   {
     "slug": "necromancer",
     "name": "Necromancer",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "setting_assumed": false,
     "race": "Undead",
     "broheim_grade": "3",
@@ -2144,7 +2144,7 @@
   {
     "slug": "nehekhara-tomb-guards",
     "name": "Nehekhara Tomb Guards",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "setting_assumed": false,
     "race": "Undead",
     "broheim_grade": "3",

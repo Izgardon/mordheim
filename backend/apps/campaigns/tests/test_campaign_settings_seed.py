@@ -18,17 +18,18 @@ def seed() -> None:
 
 
 class SeedSettingsTests(TestCase):
-    def test_the_import_seeds_nineteen_settings_with_mordheim_always_on(self) -> None:
+    def test_the_import_seeds_twenty_settings_with_mordheim_always_on(self) -> None:
         seed()
         rows = list(CampaignType.objects.all())
-        self.assertEqual(len(rows), 19)
+        self.assertEqual(len(rows), 20)
         self.assertEqual(rows[0].slug, "mordheim")
         self.assertEqual((rows[0].grade, rows[0].always_on), ("1a", True))
         self.assertEqual([row.slug for row in rows if row.always_on], ["mordheim"])
         by_slug = {row.slug: row for row in rows}
-        self.assertEqual(by_slug["khemri"].grade, "1b")
+        self.assertEqual(by_slug["khemri"].grade, "1b")  # Khemri splits by grade too (William, 11 Nov 2026)
+        self.assertEqual((by_slug["khemri"].name, by_slug["khemri-3"].grade), ("Khemri 1b", "3"))
         self.assertEqual(by_slug["grade-3"].grade, "3")
-        self.assertEqual([row.sort_order for row in rows], list(range(1, 20)))
+        self.assertEqual([row.sort_order for row in rows], list(range(1, 21)))
 
     def test_seeding_twice_updates_in_place(self) -> None:
         seed()
@@ -36,7 +37,7 @@ class SeedSettingsTests(TestCase):
         seed()
         lustria = CampaignType.objects.get(slug="lustria")
         self.assertEqual((lustria.name, lustria.grade, lustria.sort_order), ("Lustria", "1b", 6))
-        self.assertEqual(CampaignType.objects.count(), 19)
+        self.assertEqual(CampaignType.objects.count(), 20)
 
     def test_a_grade_outside_1a_to_3_stops_the_run(self) -> None:
         with self.assertRaisesMessage(CommandError, "grade '2c'"):
@@ -68,7 +69,7 @@ class PresetTests(TestCase):
                 "border-town-burning",
             ],
         )
-        self.assertEqual(len(preset_ids("3")), 19)
+        self.assertEqual(len(preset_ids("3")), 20)
 
     def test_presets_list_each_grade_lowest_first_with_its_settings(self) -> None:
         listed = presets(CampaignType.objects.all())

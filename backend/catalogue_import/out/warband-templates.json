@@ -3065,7 +3065,7 @@
   {
     "slug": "arabyan-nomads",
     "name": "Arabyan Nomads",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "source": "Khemri",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Nomads.pdf",
     "starting_gold": 500,
@@ -3755,7 +3755,7 @@
   {
     "slug": "arabyan-theives",
     "name": "Arabyan Theives",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "source": "Khemri",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Theives.pdf",
     "starting_gold": 500,
@@ -20133,7 +20133,7 @@
   {
     "slug": "cursed-dwarves",
     "name": "Cursed Dwarves",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "source": "Khemri",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Cursed%20Dwarves.pdf",
     "starting_gold": 500,
@@ -34263,7 +34263,7 @@
   {
     "slug": "hobgoblins",
     "name": "Hobgoblins",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "source": "Khemri",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Hobgoblins.pdf",
     "starting_gold": 500,
@@ -40705,7 +40705,7 @@
   {
     "slug": "lahmian",
     "name": "Lahmian",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "source": "Khemri",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Lahmian.pdf",
     "starting_gold": 500,
@@ -46061,7 +46061,7 @@
   {
     "slug": "mages",
     "name": "Mages",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "source": "Khemri",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Mage.pdf",
     "starting_gold": 500,
@@ -55114,7 +55114,7 @@
   {
     "slug": "necromancer",
     "name": "Necromancer",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "source": "Khemri",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Necromancer.pdf",
     "starting_gold": 500,
@@ -55993,7 +55993,7 @@
   {
     "slug": "nehekhara-tomb-guards",
     "name": "Nehekhara Tomb Guards",
-    "setting": "khemri",
+    "setting": "khemri-3",
     "source": "grafixgibs.tripod.com",
     "link_url": "https://mordheimer.net/docs/testwarbands/grade-1b-warbands/tomb-guardians-old",
     "starting_gold": 500,

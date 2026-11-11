@@ -145,10 +145,31 @@ class SeedAllTests(TestCase):
                     else:  # the rest count as Mordheim's until they get theirs
                         self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
-        self.assertEqual(CampaignType.objects.count(), 19)
+        self.assertEqual(CampaignType.objects.count(), 20)
         mordheim = CampaignType.objects.filter(slug__startswith="mordheim").order_by("sort_order")
         names = list(mordheim.values_list("name", flat=True))  # the review (5 Nov 2026: D4): 1a was "Mordheim"
         self.assertEqual(names, ["Mordheim 1a", "Mordheim 1b", "Mordheim 1c", "Mordheim 2a"])
+        # William, 11 Nov 2026: Khemri splits by grade too, so its eight grade 3 warbands and everything they
+        # bring stay out of a campaign that ticks only its 1b half
+        khemri = CampaignType.objects.filter(slug__startswith="khemri").order_by("sort_order")
+        self.assertEqual(list(khemri.values_list("name", "grade")), [("Khemri 1b", "1b"), ("Khemri 3", "3")])
+        khemri_3 = {
+            model.__name__: model.objects.filter(campaign_type__slug="khemri-3").count()
+            for model in (WarbandType, WarbandTemplate, Item, Skill, HiredSword, DramatisPersona)
+        }
+        # the PDF batch's seven and the Nehekhara Tomb Guards, their four weapons and their skills; Khemri's own
+        # four hired swords and Abdul Alhazred are 1b's
+        self.assertEqual(
+            khemri_3,
+            {
+                "WarbandType": 8,
+                "WarbandTemplate": 8,
+                "Item": 4,
+                "Skill": 25,
+                "HiredSword": 0,
+                "DramatisPersona": 0,
+            },
+        )
         self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 163)
         # the review (5 Nov 2026: D1): Broheim's typo and its capital "Of" and "The" are put right, the slug kept
         book_types = WarbandType.objects.filter(campaign__isnull=True)

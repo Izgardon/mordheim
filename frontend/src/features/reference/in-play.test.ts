@@ -34,12 +34,13 @@ const setting = (id: number, slug: string, name: string, sort_order: number): Se
 });
 
 const settings = settingsById([
-  setting(1, "mordheim", "Mordheim", 1),
+  setting(1, "mordheim", "Mordheim 1a", 1),
   setting(2, "mordheim-1b", "Mordheim 1b", 2),
   setting(3, "mordheim-1c", "Mordheim 1c", 3),
   setting(4, "mordheim-2a", "Mordheim 2a", 4),
   setting(5, "empire-in-flames", "Empire in Flames", 5),
-  setting(7, "khemri", "Khemri", 7),
+  setting(7, "khemri", "Khemri 1b", 7),
+  setting(8, "khemri-3", "Khemri 3", 8),
 ]);
 
 const item = (id: number, settingId: number | null, inPlay: boolean): Item =>
@@ -74,6 +75,17 @@ describe("the reference's scope", () => {
     ]);
   });
 
+  it("groups Khemri's two grades as one setting too (William, 11 Nov 2026)", () => {
+    // the split that keeps the grade 3 warbands out of a 1b campaign shows as one "Khemri"
+    expect([7, 8].map((id) => settingFilterKey(id, settings))).toEqual(["khemri", "khemri"]);
+    expect(settingShortName(8, settings)).toBe("Khemri");
+    expect(settingFilterOptions([8, 5, 7], settings)).toEqual([
+      { id: ALL_SETTINGS, label: "All settings" },
+      { id: "5", label: "Empire in Flames" },
+      { id: "khemri", label: "Khemri" },
+    ]);
+  });
+
   it("counts a book entry with no setting yet as Mordheim's, a custom one as the campaign's", () => {
     // skills and specials: book rows not graded yet have none (campaigns/in_play.py)
     const key = (row: Parameters<typeof entrySettingKey>[0]) => entrySettingKey(row, settings);
@@ -82,12 +94,12 @@ describe("the reference's scope", () => {
     expect(key({ setting_id: null, campaign_id: 9, replaces: 4 })).toBe("mordheim"); // a version
     expect(key({ setting_id: null, campaign_id: 9, replaces: null })).toBe("own");
     expect(key({ setting_id: 2, campaign_id: 9, replaces: 4 })).toBe("mordheim");
-    expect(key({ setting_id: 7 })).toBe("7");
-    expect(settingKeyLabel("7", settings)).toBe("Khemri");
-    expect(settingKeyOptions(["7", "mordheim", "7"], settings)).toEqual([
+    expect(key({ setting_id: 5 })).toBe("5");
+    expect(settingKeyLabel("5", settings)).toBe("Empire in Flames");
+    expect(settingKeyOptions(["5", "mordheim", "5"], settings)).toEqual([
       { id: ALL_SETTINGS, label: "All settings" },
       { id: "mordheim", label: "Mordheim" },
-      { id: "7", label: "Khemri" },
+      { id: "5", label: "Empire in Flames" },
     ]);
   });
 });
@@ -134,6 +146,7 @@ describe("Wargear's rows", () => {
     );
 
     expect(result.current.rows.map((row) => row.settingName)).toEqual(["Mordheim", "Khemri", ""]);
+    expect(settingShortName(7, settings)).toBe("Khemri");
     expect(settingShortName(4, settings)).toBe("Mordheim");
     expect(settingShortName(null, settings)).toBe("");
     expect(settingShortName(99, settings)).toBe("");

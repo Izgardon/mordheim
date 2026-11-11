@@ -33,7 +33,7 @@ class SettingsInPlayTests(CampaignTestCase):
         with self.assertNumQueries(1):
             data = self.client.get("/api/settings/").data
         rows = {row["slug"]: row for row in data["settings"]}
-        self.assertEqual(len(rows), 19)
+        self.assertEqual(len(rows), 20)
         self.assertEqual(
             {key: rows["mordheim"][key] for key in ("grade", "grade_label", "always_on", "warband_types")},
             {"grade": "1a", "grade_label": "Official", "always_on": True, "warband_types": 13},

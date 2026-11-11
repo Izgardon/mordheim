@@ -105,6 +105,19 @@ class ResolverTests(SimpleTestCase):
         with self.assertRaisesRegex(ValueError, "no warband type Nobody"):
             build_warband_types(rows, {"Nobody": "Somebody"})
 
+    def test_a_khemri_warband_lands_in_its_grades_half_of_the_setting(self) -> None:
+        # William, 11 Nov 2026: Khemri splits by grade as Mordheim does, so its grade 3 warbands are Khemri 3's
+        rows = [
+            warband("Tomb Guardians", "Undead", setting="khemri", grade="1b"),
+            warband("Hobgoblins", "Goblin", setting="khemri", grade="3"),
+            warband("Amazons", "Human", setting="lustria", grade="2b"),
+        ]
+        types = build_warband_types(rows)
+        self.assertEqual(
+            [(row["slug"], row["setting"]) for row in types],
+            [("tomb-guardians", "khemri"), ("hobgoblins", "khemri-3"), ("amazons", "lustria")],
+        )
+
     def test_shared_names_get_their_source_code_and_odd_names_are_logged(self) -> None:
         rows = [warband("Night Goblins", "Night Goblin", "MIC"), warband("Night Goblins", "Night Goblin", "WEB")]
         types = build_warband_types(rows)

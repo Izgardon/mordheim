@@ -112,20 +112,37 @@
   },
   {
     "slug": "khemri",
-    "name": "Khemri",
+    "name": "Khemri 1b",
     "grade": "1b",
     "sort_order": 7,
     "always_on": false,
-    "grade_basis": "majority of 28 graded entries",
+    "grade_basis": "Khemri split by grade",
     "counts": {
-      "warbands": 10,
+      "warbands": 2,
       "items": 12,
       "skills": 1,
       "hired_swords": 4,
       "dramatis_personae": 1
     },
     "grades_seen": {
-      "1b": 20,
+      "1b": 20
+    }
+  },
+  {
+    "slug": "khemri-3",
+    "name": "Khemri 3",
+    "grade": "3",
+    "sort_order": 8,
+    "always_on": false,
+    "grade_basis": "Khemri split by grade",
+    "counts": {
+      "warbands": 8,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {
       "3": 8
     }
   },
@@ -133,7 +150,7 @@
     "slug": "nemesis-crown",
     "name": "The Nemesis Crown",
     "grade": "1b",
-    "sort_order": 8,
+    "sort_order": 9,
     "always_on": false,
     "grade_basis": "majority of 41 graded entries",
     "counts": {
@@ -151,7 +168,7 @@
     "slug": "border-town-burning",
     "name": "Border Town Burning",
     "grade": "1c",
-    "sort_order": 9,
+    "sort_order": 10,
     "always_on": false,
     "grade_basis": "majority of 31 graded entries",
     "counts": {
@@ -170,7 +187,7 @@
     "slug": "sylvania",
     "name": "Sylvania",
     "grade": "2a",
-    "sort_order": 10,
+    "sort_order": 11,
     "always_on": false,
     "grade_basis": "majority of 5 graded entries",
     "counts": {
@@ -188,7 +205,7 @@
     "slug": "mutiny-in-marienburg",
     "name": "Mutiny in Marienburg",
     "grade": "2b",
-    "sort_order": 11,
+    "sort_order": 12,
     "always_on": false,
     "grade_basis": "majority of 48 graded entries",
     "counts": {
@@ -209,7 +226,7 @@
     "slug": "sartosa",
     "name": "Sartosa",
     "grade": "2b",
-    "sort_order": 12,
+    "sort_order": 13,
     "always_on": false,
     "grade_basis": "majority of 11 graded entries",
     "counts": {
@@ -227,7 +244,7 @@
     "slug": "mousillon",
     "name": "Mousillon",
     "grade": "2b",
-    "sort_order": 13,
+    "sort_order": 14,
     "always_on": false,
     "grade_basis": "majority of 10 graded entries",
     "counts": {
@@ -245,7 +262,7 @@
     "slug": "karak-azgal",
     "name": "Karak Azgal",
     "grade": "2b",
-    "sort_order": 14,
+    "sort_order": 15,
     "always_on": false,
     "grade_basis": "majority of 8 graded entries",
     "counts": {
@@ -263,7 +280,7 @@
     "slug": "relics-of-the-crusades",
     "name": "Relics of the Crusades",
     "grade": "2b",
-    "sort_order": 15,
+    "sort_order": 16,
     "always_on": false,
     "grade_basis": "majority of 6 graded entries",
     "counts": {
@@ -281,7 +298,7 @@
     "slug": "sealed-city",
     "name": "The Sealed City",
     "grade": "2b",
-    "sort_order": 16,
+    "sort_order": 17,
     "always_on": false,
     "grade_basis": "majority of 5 graded entries",
     "counts": {
@@ -299,7 +316,7 @@
     "slug": "karak-eight-peaks",
     "name": "Karak Eight Peaks",
     "grade": "2b",
-    "sort_order": 17,
+    "sort_order": 18,
     "always_on": false,
     "grade_basis": "majority of 3 graded entries",
     "counts": {
@@ -317,7 +334,7 @@
     "slug": "athel-loren",
     "name": "Athel Loren",
     "grade": "3",
-    "sort_order": 18,
+    "sort_order": 19,
     "always_on": false,
     "grade_basis": "majority of 4 graded entries",
     "counts": {
@@ -335,7 +352,7 @@
     "slug": "grade-3",
     "name": "Grade 3",
     "grade": "3",
-    "sort_order": 19,
+    "sort_order": 20,
     "always_on": false,
     "grade_basis": "Mordheim split by grade",
     "counts": {

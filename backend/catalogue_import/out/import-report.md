@@ -19,7 +19,7 @@ Answers go into `overrides.json`; the next build applies them.
 
 | What | Rows |
 | --- | --- |
-| settings | 19 |
+| settings | 20 |
 | warband types | 163 |
 | warband groups | 20 |
 | shared item rules | 53 |
@@ -180,7 +180,8 @@ No membership questions left.
 | Mordheim 2a | 2a | Mordheim split by grade | 2a: 104, 2b: 6 |
 | Empire in Flames | 1a | majority of 14 graded entries | 1a: 13, 1b: 1 |
 | Lustria | 1b | majority of 23 graded entries | 1b: 19, 2b: 4 |
-| Khemri | 1b | majority of 28 graded entries | 1b: 20, 3: 8 |
+| Khemri 1b | 1b | Khemri split by grade | 1b: 20 |
+| Khemri 3 | 3 | Khemri split by grade | 3: 8 |
 | The Nemesis Crown | 1b | majority of 41 graded entries | 1b: 41 |
 | Border Town Burning | 1c | majority of 31 graded entries | 1b: 1, 1c: 30 |
 | Sylvania | 2a | majority of 5 graded entries | 2a: 5 |
@@ -194,7 +195,7 @@ No membership questions left.
 | Athel Loren | 3 | majority of 4 graded entries | 3: 4 |
 | Grade 3 | 3 | Mordheim split by grade | 3: 14 |
 
-Named settings that mix grades, kept whole at the majority grade: Empire in Flames, Lustria, Khemri, Border Town Burning, Mutiny in Marienburg.
+Named settings that mix grades, kept whole at the majority grade: Empire in Flames, Lustria, Border Town Burning, Mutiny in Marienburg.
 Warband types with no setting in either source, placed in Mordheim's part for their grade: Pit Fighters (old), Bretonnian Grail Companions, Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Knives from the Dark, Circus Extraordinaire, Drowned Dead, Dwarf Grudgebearers, Goblin Raiders, Hobgoblin Horde, Mordheimer's Fanatics, Ostermark Roadwardens, The Innocents, Tilean Thespian Troupe, Werewolf Hunting Pack, Wood Elves, the Asrai Way-farers.
 Warband types on neither site, added in overrides.json: Albion Commandos.
 Grades not counted (not 1a to 3): 2c, 3a, all on MiM items.
@@ -495,11 +496,11 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Pawnbroker | Araby Smugglers | sartosa | Sartosa |
 | Black Market | Araby Smugglers | sartosa | Sartosa |
 | Man of the World | Araby Smugglers | sartosa | Sartosa |
-| Blending into the Sands | Arabyan Nomads | khemri | Khemri |
-| Sticky Fingers | Arabyan Theives | khemri | Khemri |
-| Knife Fighting (Arabyan Theives) | Arabyan Theives | khemri | Khemri |
-| Hide in Shadows (Arabyan Theives) | Arabyan Theives | khemri | Khemri |
-| Sheer Speed | Arabyan Theives | khemri | Khemri |
+| Blending into the Sands | Arabyan Nomads | khemri-3 | Khemri |
+| Sticky Fingers | Arabyan Theives | khemri-3 | Khemri |
+| Knife Fighting (Arabyan Theives) | Arabyan Theives | khemri-3 | Khemri |
+| Hide in Shadows (Arabyan Theives) | Arabyan Theives | khemri-3 | Khemri |
+| Sheer Speed | Arabyan Theives | khemri-3 | Khemri |
 | Virtue of Noble Disdain (Grail Companions) | Grail Companions | mordheim-2a | WEB |
 | Virtue of Heroism | Grail Companions | mordheim-2a | WEB |
 | Virtue of Stoicism | Grail Companions | mordheim-2a | WEB |
@@ -531,14 +532,14 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Puppeteer | Clockworkers | sealed-city | Sealed City |
 | Rogue control | Clockworkers | sealed-city | Sealed City |
 | Gift of Sentience | Clockworkers | sealed-city | Sealed City |
-| Magic Resistant | Cursed Dwarves | khemri | Khemri |
-| Smith | Cursed Dwarves | khemri | Khemri |
-| Gnollengrom | Cursed Dwarves | khemri | Khemri |
-| Fearless (Cursed Dwarves) | Cursed Dwarves | khemri | Khemri |
-| Dwarf Grit | Cursed Dwarves | khemri | Khemri |
-| Sweeping Strike | Cursed Dwarf Slayer Skills | khemri | Khemri |
-| Tattoos of Grimnir | Cursed Dwarf Slayer Skills | khemri | Khemri |
-| Fated | Cursed Dwarf Slayer Skills | khemri | Khemri |
+| Magic Resistant | Cursed Dwarves | khemri-3 | Khemri |
+| Smith | Cursed Dwarves | khemri-3 | Khemri |
+| Gnollengrom | Cursed Dwarves | khemri-3 | Khemri |
+| Fearless (Cursed Dwarves) | Cursed Dwarves | khemri-3 | Khemri |
+| Dwarf Grit | Cursed Dwarves | khemri-3 | Khemri |
+| Sweeping Strike | Cursed Dwarf Slayer Skills | khemri-3 | Khemri |
+| Tattoos of Grimnir | Cursed Dwarf Slayer Skills | khemri-3 | Khemri |
+| Fated | Cursed Dwarf Slayer Skills | khemri-3 | Khemri |
 | Furious Charge | Dark Elf Corsairs | mousillon | Mousillon |
 | Excellent Sight | Dark Elf Corsairs | mousillon | Mousillon |
 | Looting | Dark Elf Corsairs | mousillon | Mousillon |
@@ -571,9 +572,9 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Skilled Huntsman | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Layers of Fat | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Shifty | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
-| Ded Shooty (Hobgoblins) | Hobgoblins | khemri | Khemri |
-| Ded Sneaky | Hobgoblins | khemri | Khemri |
-| Backstabba | Hobgoblins | khemri | Khemri |
+| Ded Shooty (Hobgoblins) | Hobgoblins | khemri-3 | Khemri |
+| Ded Sneaky | Hobgoblins | khemri-3 | Khemri |
+| Backstabba | Hobgoblins | khemri-3 | Khemri |
 | Blood of Khorne | Khorne Raiders | sartosa | Sartosa |
 | Berserker (Khorne Raiders) | Khorne Raiders | sartosa | Sartosa |
 | Massive Muscles | Khorne Raiders | sartosa | Sartosa |
@@ -581,19 +582,19 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Master Tanner | Khorne Raiders | sartosa | Sartosa |
 | Rite of Combat | Khorne Raiders | sartosa | Sartosa |
 | Virtue of Valour (Knights of the Bitter Moors) | Knights of the Bitter Moors | mutiny-in-marienburg | Mutiny in Marienburg |
-| Swift | Lahmian | khemri | Khemri |
-| Transfix | Lahmian | khemri | Khemri |
-| Quickblood | Lahmian | khemri | Khemri |
-| Innocence Lost | Lahmian | khemri | Khemri |
-| Seduction | Lahmian | khemri | Khemri |
-| Night Creature | Lahmian | khemri | Khemri |
+| Swift | Lahmian | khemri-3 | Khemri |
+| Transfix | Lahmian | khemri-3 | Khemri |
+| Quickblood | Lahmian | khemri-3 | Khemri |
+| Innocence Lost | Lahmian | khemri-3 | Khemri |
+| Seduction | Lahmian | khemri-3 | Khemri |
+| Night Creature | Lahmian | khemri-3 | Khemri |
 | Graceful Strength | Lothern Sea Patrol | sartosa | Sartosa |
 | Swordmasters Protege | Lothern Sea Patrol | sartosa | Sartosa |
 | Defending Guard | Lothern Sea Patrol | sartosa | Sartosa |
 | Swift Fighter | Lothern Sea Patrol | sartosa | Sartosa |
-| Dispel | Magician Skills | khemri | Khemri |
-| Store Spell | Magician Skills | khemri | Khemri |
-| Clockwork Mage | Magician Skills | khemri | Khemri |
+| Dispel | Magician Skills | khemri-3 | Khemri |
+| Store Spell | Magician Skills | khemri-3 | Khemri |
+| Clockwork Mage | Magician Skills | khemri-3 | Khemri |
 | Surgeon | Masters of Horror | sylvania | Sylvania Supplement |
 | Alchemist | Masters of Horror | sylvania | Sylvania Supplement |
 | Apt Revitalist | Masters of Horror | sylvania | Sylvania Supplement |

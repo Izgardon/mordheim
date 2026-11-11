@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.common import norm_name, slugify
-from catalogue_import.grading import mordheim_part
+from catalogue_import.grading import content_setting
 
 # Names in mordheimer's data that match no warband type, or more than one, with the proposed mapping and why.
 # Every use lands in the report; overrides.json "warband_aliases" replaces any of them.
@@ -64,7 +64,7 @@ def build_warband_types(rows: list[dict[str, Any]], names: dict[str, str] | None
         base = slugify(row["name"])
         slug = f"{base}-{slugify(row['source_code'])}" if clashes[base] > 1 else base
         named = row.get("setting")
-        setting = named if named and named != "mordheim" else mordheim_part(row["broheim_grade"])
+        setting = content_setting(named, row["broheim_grade"])
         types.append(
             {
                 "slug": slug,
