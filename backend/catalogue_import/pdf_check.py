@@ -10,7 +10,7 @@ models; every list a fighter names there, and every list someone's; every line's
 every item, alias, skill group, skill (a fighter's starting skills among them), race, spell lore and warband type it
 names matched to our catalogue, or a
 declared stub that matches nothing of ours; a stub's rules a shared item rule of ours (or a page's) or its own name and
-text; and a price row's item ours and named by a line, and the warband types it serves ours; and its upgrade groups' shape (`mutations`).
+text; a price it adds dice to before any multiplier ("100 + D6x10"); and a price row's item ours and named by a line, and the warband types it serves ours; and its upgrade groups' shape (`mutations`).
 """
 
 import copy
@@ -96,6 +96,7 @@ STUB: Spec = {
     "subtype": (str, True),
     "rarity": ((int, type(None)), True),
     "dice": ((int, type(None)), True),
+    "diceMultiplier": ((int, type(None)), False),  # "100 + D6x10": dice 1, diceMultiplier 10
     "rulesPage": (int, True),
     "range": (str, False),
     "strength": (str, False),
@@ -126,6 +127,7 @@ PRICE_ROW: Spec = {
     "cost": ((int, type(None)), False),  # a row for an item no line of the page sells
     "rarity": ((int, type(None)), True),
     "dice": ((int, type(None)), True),
+    "diceMultiplier": ((int, type(None)), False),  # "100 + D6x10": dice 1, diceMultiplier 10
     "types": (list, False),  # the warband types it serves, the page's own among them (a setting's shop list)
     "note": (str, False),
     "page": (int, True),
@@ -297,6 +299,8 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
             found.problems.append(f"stub {stub['name']!r}: our {item['name']!r} ({how or 'its name'}), link it")
         if stub["type"] not in STUB_TYPES:
             found.problems.append(f"stub {stub['name']!r}: type {stub['type']!r}")
+        if stub.get("diceMultiplier") and not stub.get("dice"):
+            found.problems.append(f"stub {stub['name']!r}: a dice multiplier needs dice")
         for rule in _each(stub.get("rules") or [], STUB_RULE, f"stub {stub['name']} rule", found.problems):
             if "rule" in rule and ("name" in rule or norm_name(rule["rule"]) not in catalogue.item_rules):
                 found.problems.append(f"stub {stub['name']!r}: {rule['rule']!r} is no shared item rule of ours")
@@ -334,6 +338,8 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
             found.problems.append(f"price row {row['name']!r}: no item of ours (a stub has its own row)")
         elif row.get("cost") is None and norm_name(row["name"]) not in line_names:
             found.problems.append(f"price row {row['name']!r}: no line names it, and it has no cost of its own")
+        if row.get("diceMultiplier") and not row.get("dice"):
+            found.problems.append(f"price row {row['name']!r}: a dice multiplier needs dice")
         found.problems += [
             f"price row {row['name']!r}: no warband type {slug!r}"
             for slug in row.get("types") or []

@@ -218,6 +218,19 @@ class PdfCheckTests(SimpleTestCase):
             ],
         )
 
+    def test_a_dice_multiplier_needs_dice(self) -> None:
+        # "100 + D6x10" (Bramstetter's Advanced Construct Thesis, Clockworkers p6): dice 1, diceMultiplier 10
+        page = good_page()
+        page["stubs"][0]["dice"], page["stubs"][0]["diceMultiplier"] = None, 10
+        page["priceRows"] = [{"name": "sword", "rarity": 7, "dice": None, "diceMultiplier": 25, "page": 5}]
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            [
+                "stub 'Pry Bar': a dice multiplier needs dice",
+                "price row 'sword': a dice multiplier needs dice",
+            ],
+        )
+
     def test_a_price_row_may_name_the_types_it_serves(self) -> None:
         # a setting's shop list is declared once (Sartosa's, for its eleven types), and names types of ours
         page = good_page()
@@ -343,6 +356,24 @@ class PdfImportTests(SimpleTestCase):
             (row["cost"], row["rarity"], row["warbands"], row["note"]),
             (10, 7, [{"type": "witch-hunters", "excluded": False}], "Captain only"),
         )
+
+    def test_a_stub_and_a_price_row_carry_a_dice_multiplier(self) -> None:
+        # "100 + D6x10" and "200 + D6x25": the dice a price adds are multiplied
+        page = good_page()
+        page["stubs"][0]["diceMultiplier"] = 25
+        page["priceRows"] = [{"name": "sword", "rarity": 7, "dice": 1, "diceMultiplier": 10, "page": 5}]
+        put_aliases_right(page)
+        [stub] = stub_items({"witch-hunters": page}, ITEMS, TYPES)
+        self.assertEqual(stub["availabilities"][0]["dice_multiplier"], 25)
+        items: list[dict[str, Any]] = [{**item, "availabilities": []} for item in ITEMS]
+        add_price_rows({"witch-hunters": page}, items, TYPES)
+        self.assertEqual(items[1]["availabilities"][0]["dice_multiplier"], 10)
+
+    def test_the_clockworkers_thesis_costs_100_plus_d6_times_10(self) -> None:
+        # the Clockworkers PDF, p6: 100 + D6x10 gold crowns, Rare 8
+        [row] = self.items["Bramstetter's Advanced Construct Thesis"]["availabilities"]
+        self.assertEqual((row["cost"], row["dice"], row["dice_multiplier"], row["rarity"]), (100, 1, 10, 8))
+        self.assertEqual(self.items["Bramstetter's Advanced Construct Thesis"]["notes"], "")
 
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page

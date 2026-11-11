@@ -118,7 +118,8 @@ Cutlass and Great Scimitar are stubs with no rules, and the Mage and Street Mage
      Map), and one of our items the warband buys from its own row is a `priceRows` entry (the Low Kings' Spiked
      Gauntlet, 15 gc, Rare 7, Enforcer only). A price row serves the page's own type, or every type its `types`
      names (its own among them), so a setting's shop list is declared once (Sartosa's, in `sartosan-pirates.json`,
-     for the setting's eleven types).
+     for the setting's eleven types). A price row and a stub both take a `diceMultiplier` beside their `dice`
+     ("100 + D6x10": `dice` 1, `diceMultiplier` 10), which needs dice.
      One of our Mutiny in Marienburg items with no rules takes the PDF's in `apps/items/data/mim-items.json` (its
      `properties`, `needs_rules` false: the Armour of the Wildwood, the Stromfels Heart).
 

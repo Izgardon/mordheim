@@ -20507,7 +20507,7 @@
     "strength": "",
     "save": "",
     "statblock": [],
-    "notes": "The PDF prices it at 100 + D6x10 gold crowns.",
+    "notes": "",
     "needs_rules": false,
     "rules": [
       {
@@ -20521,8 +20521,8 @@
       {
         "label": "",
         "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
+        "dice": 1,
+        "dice_multiplier": 10,
         "cost_note": "",
         "rarity": 8,
         "for_everyone": false,

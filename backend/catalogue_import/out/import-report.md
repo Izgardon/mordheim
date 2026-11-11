@@ -1260,7 +1260,7 @@ Kept apart from a family's, the effect differing:
 | bretonnian-knights-errant | bretonnian-knights-errant | 2 | 0 | 0 | 8 |
 | call-of-the-night-haint | call-of-the-night-haint | 8 | 0 | 3 | 14 |
 | channel-rats | channel-rats | 8 | 0 | 2 | 10 |
-| clockworkers | clockworkers | 7 | 0 | 4 | 11 |
+| clockworkers | clockworkers | 7 | 0 | 4 | 10 |
 | cursed-dwarves | cursed-dwarves | 7 | 3 | 0 | 11 |
 | dark-elf-corsairs | dark-elf-corsairs | 5 | 0 | 0 | 9 |
 | disciples-of-maldred | disciples-of-maldred | 5 | 0 | 0 | 10 |
@@ -1471,13 +1471,12 @@ Kept apart from a family's, the effect differing:
 - Stub: Clockwork pistol, 25 gc, Common; its rules are on p2.
 - Stub: Clockwork rifle, 40 gc, Common; its rules are on p2.
 - Stub: Orichalcum token, 10 gc, Common; its rules are on p2.
-- Stub: Bramstetter's Advanced Construct Thesis, 100 gc, Rare 8; its rules are on p6.
+- Stub: Bramstetter's Advanced Construct Thesis, 100+1D6x10 gc, Rare 8; its rules are on p6.
 - Flag (p4): The skill table's ticks are glyphs the text layer drops: the table was read from p4's image. Master of Clocks: Combat, Shooting, Academic, Special. Dwarf engineer: Combat, Shooting, Strength, and no Special. Metallurgist and Apprentice: Academic, Speed, Special.
 - Flag (p1): The seven construct rules (Need Orders, Immune to Psychology, No Pain, May Not Run, Immune to Poison, Brainless, In-built equipment) are printed once as a block. They are carried as each construct's own rules, so the four that are shared specials of ours link them, and the slot counts each fighter's entry prints sit in his In-built equipment.
 - Flag (p2): The Clockwork pistol (25 gc) and Clockwork rifle (40 gc) have no rules anywhere in this PDF. They are stubs with no rules; the Sealed City's own PDFs are not read (William, 11 Nov 2026).
 - Flag (p2): The Heroes list prints Hammer and Staff at 3 gc each, both our Club, Mace or Hammer: carried as one line "Hammer/Staff". The Constructs list's Hammer and Mace, 3 gc each, are one line the same way.
 - Flag (p2): The Constructs list is printed as 1-Slot and 2-Slot sections; our lists have no sections, so the slots are said in the list's caveat and in the In-built equipment rule.
-- Flag (p6): Bramstetter's Advanced Construct Thesis costs 100 + D6x10 gold crowns. A stub's price takes a number of D6 but no multiplier, so it is carried at 100 gc Rare 8 with the printed price in its notes.
 - Flag (p6): The six Laws of Construction are carried as a new spell lore, Laws of Construction, with each law's difficulty, so the Master of Clocks can pick one. The PDF says a Law is not a spell: that is said in the warband rule of the same name.
 - Flag (p3): Experimental enhancements and the Stygian Mutation chart it rolls on are the Sealed City's own rules, which are not read.
 - Flag (p3): Moonstones are spent by Gift of Sentience and Moonstone refinery but are on no equipment list, so no item of ours is made for them.

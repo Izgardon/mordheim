@@ -7,7 +7,7 @@ snapshot so the template import builds it the same way. A file's own keys:
   the template's setting and grade are the type's;
 - `aliases`: `{pdf, ours, page}`, a line's name as the PDF spells it and our item's name or tag it means
   ("Doubled-handed weapon" is a Double-handed weapon), put right as the file loads;
-- `stubs`: `{name, type, subtype, rarity, dice, rulesPage, note}`, items a line names that we lack (William: "yes to
+- `stubs`: `{name, type, subtype, rarity, dice, diceMultiplier, rulesPage, note}`, items a line names that we lack (William: "yes to
   stubs"): each a bare item, no rules, with one price row for its warband only at the line's price (`cost`: the price
   the setting's own trading list prints, where that differs from the line's), and `note` its
   item's notes (the Sorcerous Society's Familiar names its pets in the bestiary). A stub whose rules William gives
@@ -24,12 +24,13 @@ snapshot so the template import builds it the same way. A file's own keys:
   (William, 6 Nov 2026, of Experimental Technology: "its a shared item rule that a few items will have"); `ours`, our
   items whose own rule it becomes (the Watchmen's Map, our Mordheim Map's rule for any map: "Make the map rule not
   unique to the items, give it to both marienburg and mordheim map");
-- `priceRows`: `{name, rarity, dice, note, page, types}`, a price row for the page's type on one of our items its lines
+- `priceRows`: `{name, rarity, dice, diceMultiplier, note, page, types}`, a price row for the page's type on one of our items its lines
   sell (the Low Kings' Spiked Gauntlet: William, 6 Nov 2026, "would prefer them being just one item"), at the line's
   price, or at its own `cost` for an item no line sells (the Wasteland Privateers' Superior Blackpowder, Rare 5 for
   them: William, 11 Nov 2026, "make superior gunpowder our blackpowder in a new price row"). `types`, the warband type
   slugs it serves (the page's own among them), is one row for several types: a setting's shop list is declared once
-  (Sartosa's, on `sartosan-pirates.json`, for its eleven types) rather than copied into each page;
+  (Sartosa's, on `sartosan-pirates.json`, for its eleven types) rather than copied into each page. `diceMultiplier`
+  multiplies the dice a price adds, as a stub's does ("100 + D6x10": `dice` 1, `diceMultiplier` 10), and needs dice;
 - `skillGroup` (`{name, new, note}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills,
   each `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for
   a warband with no Special column (the Outlaws of Stirwood Forest, Redux). Who of the warband may take a skill opens
@@ -235,7 +236,12 @@ def add_price_rows(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]]
             if item is None:
                 raise ValueError(f"pdf-warbands/{slug}.json: the price row's {entry['name']!r} is no item of ours")
             price, note = _stub_cost(slug, page, entry["name"], entry.get("cost"))
-            cost = {"cost": price, "dice": entry.get("dice"), "dice_multiplier": None, "cost_note": note}
+            cost = {
+                "cost": price,
+                "dice": entry.get("dice"),
+                "dice_multiplier": entry.get("diceMultiplier"),
+                "cost_note": note,
+            }
             warbands = [{"type": name, "excluded": False} for name in row_types(slug, page, entry, known)]
             item["availabilities"].append(_row(cost, entry.get("rarity"), warbands, entry.get("note") or ""))
 
@@ -264,7 +270,12 @@ def stub_items(
             if found is not None:
                 raise ValueError(f"pdf-warbands/{slug}.json: the stub {stub['name']!r} is our {found['name']!r} {how}")
             price, note = _stub_cost(slug, page, stub["name"], stub.get("cost"))
-            cost = {"cost": price, "dice": stub.get("dice"), "dice_multiplier": None, "cost_note": note}
+            cost = {
+                "cost": price,
+                "dice": stub.get("dice"),
+                "dice_multiplier": stub.get("diceMultiplier"),
+                "cost_note": note,
+            }
             row = _row(cost, stub.get("rarity"), [{"type": warband["slug"], "excluded": False}], "")
             if loose_key(stub["name"]) in made:
                 made[loose_key(stub["name"])]["availabilities"].append(row)
@@ -374,7 +385,8 @@ def render_pdf(pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]]) ->
         for stub in page.get("stubs") or []:
             price = prices[(stub["name"], page[TYPE])]
             rarity = f"Rare {price['rarity']}" if price["rarity"] else "Common"
-            dice = f"+{price['dice']}D6" if price["dice"] else ""
+            times = f"x{price['dice_multiplier']}" if price["dice_multiplier"] else ""
+            dice = f"+{price['dice']}D6{times}" if price["dice"] else ""
             cost = price["cost_note"] if price["cost"] is None else f"{price['cost']}{dice} gc"
             lines.append(f"- Stub: {stub['name']}, {cost}, {rarity}; its rules are on p{stub['rulesPage']}.")
         for row in page.get("itemRules") or []:

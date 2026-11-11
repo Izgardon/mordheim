@@ -658,9 +658,9 @@
       "type": "Miscellaneous",
       "subtype": "Equipment",
       "rarity": 8,
-      "dice": null,
+      "dice": 1,
+      "diceMultiplier": 10,
       "rulesPage": 6,
-      "note": "The PDF prices it at 100 + D6x10 gold crowns.",
       "rules": [
         {
           "name": "Reference work",
@@ -689,10 +689,6 @@
     {
       "page": 2,
       "what": "The Constructs list is printed as 1-Slot and 2-Slot sections; our lists have no sections, so the slots are said in the list's caveat and in the In-built equipment rule."
-    },
-    {
-      "page": 6,
-      "what": "Bramstetter's Advanced Construct Thesis costs 100 + D6x10 gold crowns. A stub's price takes a number of D6 but no multiplier, so it is carried at 100 gc Rare 8 with the printed price in its notes."
     },
     {
       "page": 6,
