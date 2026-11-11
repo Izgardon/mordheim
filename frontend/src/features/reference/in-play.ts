@@ -32,6 +32,19 @@ export function settingFilterKey(
   return setting && MORDHEIM_SLUGS.has(setting.slug) ? MORDHEIM : String(settingId);
 }
 
+/**
+ * A row's setting as the Wargear column and card name it: "Mordheim" for any of Mordheim's grades,
+ * else the setting's own name ("Sartosa", "Khemri"), and nothing for an entry with no setting (the
+ * campaign's own).
+ */
+export function settingShortName(
+  settingId: number | null | undefined,
+  settings: Map<number, Setting>
+) {
+  if (settingId == null || !settings.has(settingId)) return "";
+  return settingKeyLabel(settingFilterKey(settingId, settings), settings);
+}
+
 type SettingRow = {
   setting_id?: number | null;
   campaign_id?: number | null;

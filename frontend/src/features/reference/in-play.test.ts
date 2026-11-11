@@ -19,6 +19,7 @@ import {
   settingFilterOptions,
   settingKeyLabel,
   settingKeyOptions,
+  settingShortName,
 } from "./in-play";
 
 const setting = (id: number, slug: string, name: string, sort_order: number): Setting => ({
@@ -124,5 +125,17 @@ describe("Wargear's rows", () => {
     const { result } = renderHook(() => useWargearRows({ ...filters, items, setting: "mordheim" }));
 
     expect(result.current.rows.map((row) => row.item.id)).toEqual([1, 2]);
+  });
+
+  it("name a Mordheim grade's setting 'Mordheim', a higher grade's its own, and none for its own", () => {
+    const named = [item(1, 2, true), item(2, 7, true), item(3, null, true)];
+    const { result } = renderHook(() =>
+      useWargearRows({ ...filters, items: named, setting: "all" })
+    );
+
+    expect(result.current.rows.map((row) => row.settingName)).toEqual(["Mordheim", "Khemri", ""]);
+    expect(settingShortName(4, settings)).toBe("Mordheim");
+    expect(settingShortName(null, settings)).toBe("");
+    expect(settingShortName(99, settings)).toBe("");
   });
 });

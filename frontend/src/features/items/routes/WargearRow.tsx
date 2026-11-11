@@ -12,6 +12,7 @@ export const WARGEAR_COLUMNS = [
   { label: "Price", className: "w-[124px] shrink-0" },
   { label: "Rarity", className: "w-[96px] shrink-0" },
   { label: "Rules", className: "w-[240px] shrink-0 max-[1180px]:hidden" },
+  { label: "Setting", className: "w-[120px] shrink-0 max-[1320px]:hidden" },
 ];
 
 /** "S as user +1", "30\" · S 4", "Save 6+": an item's figures in one line. */
@@ -38,7 +39,7 @@ export default function WargearRow({
   /** The open row's card. */
   children: ReactNode;
 }) {
-  const { item, availability, warning } = row;
+  const { item, availability, warning, settingName } = row;
   const key = String(item.id);
   const price = priceLabel(availability);
   const rarity = availability ? rarityLabel(availability.rarity) : "-";
@@ -81,6 +82,7 @@ export default function WargearRow({
                     </span>
                   ))}
               </span>,
+              <span key="setting">{settingName}</span>,
             ]
       }
     >

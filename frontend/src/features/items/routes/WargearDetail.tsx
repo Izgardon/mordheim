@@ -2,7 +2,6 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-import type { Setting } from "@/features/campaigns/types/campaign-types";
 import {
   DetailSection,
   FactLine,
@@ -17,16 +16,17 @@ import type { Item, ItemAvailability, ItemOffer } from "../types/item-types";
 import { longCostNote, priceLabel, rarityLabel, whoLine } from "../utils/item-prices";
 import { beastEditLink, beastOf, isSold } from "../utils/item-listing";
 
-/** "Town Cryer #6 · Mordheim, grade 1a · For Orc Mob, Night Goblins": where it comes from. */
-export function sourceLine(item: Item, setting: Setting | undefined) {
+/**
+ * "Town Cryer #6 · Mordheim · For Orc Mob, Night Goblins": where it comes from. The setting only
+ * where the source doesn't already name it ("Sartosa", "Khemri setting, Town Cryer #18").
+ */
+export function sourceLine(item: Item, settingName: string) {
   const first = item.availabilities?.[0];
+  const named =
+    Boolean(settingName) && (item.source ?? "").toLowerCase().includes(settingName.toLowerCase());
   return [
     item.source,
-    setting
-      ? `${setting.name}, grade ${setting.grade}`
-      : item.campaign_id
-        ? "This campaign's own"
-        : "",
+    named ? "" : settingName || (item.campaign_id ? "This campaign's own" : ""),
     first ? whoLine(first) : "",
   ]
     .filter(Boolean)
@@ -61,7 +61,8 @@ type WargearDetailProps = {
   offer: ItemOffer | undefined;
   /** The offer's warning, or the out-of-play one for a reader with no warband. */
   warning: string;
-  setting: Setting | undefined;
+  /** Its setting as Wargear names it ("Mordheim", "Sartosa"), empty for the campaign's own. */
+  settingName: string;
   campaignId: number;
   isMobile: boolean;
   canBuy: boolean;
@@ -79,11 +80,11 @@ type WargearDetailProps = {
  * page, and Get this item and Edit.
  */
 export default function WargearDetail(props: WargearDetailProps) {
-  const { item, offer, setting } = props;
+  const { item, offer } = props;
   const beast = beastOf(item);
   const rows = item.availabilities ?? [];
   const chosen = rows.find((row) => row.id === offer?.availability_id) ?? rows[0] ?? null;
-  const source = sourceLine(item, setting);
+  const source = sourceLine(item, props.settingName);
   let edit: ReactNode = null;
   if (props.canEdit && beast) {
     edit = (

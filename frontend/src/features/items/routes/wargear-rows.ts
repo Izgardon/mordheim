@@ -6,6 +6,7 @@ import {
   inPlayOnly,
   settingFilterKey,
   settingFilterOptions,
+  settingShortName,
 } from "@/features/reference/in-play";
 import { matchesSearchQuery } from "@/lib/matches-search-query";
 
@@ -24,6 +25,8 @@ export type WargearRowData = {
   availability: ItemAvailability | null;
   offer?: ItemOffer;
   warning: string;
+  /** Its setting as the column and the card name it ("Mordheim", "Sartosa"), empty for none. */
+  settingName: string;
 };
 
 type WargearFilters = {
@@ -56,9 +59,10 @@ export function useWargearRows(filters: WargearFilters) {
           const availability =
             rows.find((row) => row.id === offer?.availability_id) ?? rows[0] ?? null;
           const warning = offer && !offer.can_buy ? offer.reason : "";
-          return { item, availability, offer, warning };
+          const settingName = settingShortName(item.setting_id, settings);
+          return { item, availability, offer, warning, settingName };
         }),
-    [items, offers]
+    [items, offers, settings]
   );
   const searched = all.filter(
     ({ item, warning }) =>

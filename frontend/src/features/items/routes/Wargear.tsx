@@ -156,7 +156,7 @@ export default function Wargear() {
                 item={item}
                 offer={row.offer}
                 warning={warning}
-                setting={item.setting_id != null ? settings.get(item.setting_id) : undefined}
+                settingName={row.settingName}
                 campaignId={campaignId}
                 isMobile={isMobile}
                 canBuy={canBuy}
