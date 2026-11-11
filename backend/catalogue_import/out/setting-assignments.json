@@ -1606,6 +1606,26 @@
       "how": "overrides.json"
     },
     {
+      "name": "Greased Hair",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Double-Hand Master",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Survivor",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Whirlwind",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
       "name": "Absorption",
       "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
@@ -2151,6 +2171,16 @@
       "how": "overrides.json"
     },
     {
+      "name": "Skavenbrew Master",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Warpstone Resistance",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
       "name": "Gloryseeker",
       "setting": "sartosa",
       "how": "overrides.json"
@@ -2293,6 +2323,46 @@
     {
       "name": "Touch of Darkness",
       "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Infiltrate (Wood Elf Scouts)",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Trapper",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Expert Hunter",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Stand and Shoot",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Wild Hunter",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Pathfinder (Wood Elf Scouts)",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Tree Walker",
+      "setting": "athel-loren",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Sniper (Wood Elf Scouts)",
+      "setting": "athel-loren",
       "how": "overrides.json"
     },
     {

@@ -158,6 +158,9 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
     # the Goblin Raiders PDF, p8: "Every goblin Big Boss and Boss may purchase a special 'Nitch' upon hiring. Each
     # may only purchase a single Nitch, no more"; the Shaman may buy Beastmasta only, which the group's text says
     ("goblin-raiders", "Speshul Nitches"): {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
+    # the Athel Loren campaign PDF, p59: "Only heroes can buy runic tattoos ... No tattoo may be bought in
+    # duplicates", and no tattoo costs double later, so Heroes only and no most each (one of each is the limit)
+    ("dwarf-troll-slayers", "Runic Tattoos"): {"who": {"heroes": True}},
 }
 # One upgrade's own `who`, where its text narrows its group's: "(Saurus Only)", "(Skinks only)"
 UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {

@@ -1,0 +1,791 @@
+{
+  "warbandType": "skaven-of-clan-skryre-ath",
+  "name": "Skaven of Clan Skryre (Athel Loren)",
+  "source": "Athel Loren",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=66",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {
+      "rulename": "Skryre Special Equipment",
+      "ruleFull": "The warband may hold jezzails, warpfire throwers, warplock pistols and poison wind globes only while it has at least one Warlock Apprentice; with no Apprentice none of that equipment may be included. The Warlock Engineer is the exception: he may always buy it for his own use."
+    },
+    {
+      "rulename": "Slaves",
+      "ruleFull": "The warband may hold any number of Slaves, up to half the warband."
+    },
+    {
+      "rulename": "Shops",
+      "ruleFull": "Clan Skryre warbands may visit the Skaven Armoury, the Clan Skryre Armoury and the Warlock's Inner Sanctum."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "engineers-equipment-list",
+      "title": "Engineers Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "flail",
+          "alias": "",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "warplock pistol",
+          "alias": "",
+          "cost": {
+            "cost": 30,
+            "braceCost": 70,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "warplock jezzail",
+          "alias": "",
+          "cost": {
+            "cost": 100,
+            "costSuffix": "Warlock Apprentices and Initiates only"
+          }
+        },
+        {
+          "name": "warpfire thrower",
+          "alias": "",
+          "cost": {
+            "cost": 40,
+            "costSuffix": "Warlock Apprentices and Initiates only"
+          }
+        },
+        {
+          "name": "poison wind globe",
+          "alias": "Poison Wind Globes",
+          "cost": {
+            "cost": 50,
+            "costSuffix": "Warlock Apprentices and Initiates only"
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "warpstone armour",
+          "alias": "",
+          "cost": {
+            "cost": 60
+          }
+        },
+        {
+          "name": "jezzail support",
+          "alias": "",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Initiates only"
+          }
+        },
+        {
+          "name": "warpfire barrel",
+          "alias": "",
+          "cost": {
+            "cost": 20,
+            "costSuffix": "Initiates only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "club",
+          "alias": "",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "sling",
+          "alias": "",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "",
+          "cost": {
+            "cost": 20,
+            "costSuffix": "Not Slaves"
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Not Slaves"
+          }
+        }
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {
+      "title": "Warplock pistol",
+      "alias": "Warplock Pistol",
+      "cost": {
+        "cost": 30
+      },
+      "availability": "Common"
+    },
+    {
+      "title": "Warplock Jezzail",
+      "alias": "",
+      "cost": {
+        "cost": 100
+      },
+      "availability": "Rare 10"
+    },
+    {
+      "title": "Warpfire Thrower",
+      "alias": "",
+      "cost": {
+        "cost": 40
+      },
+      "availability": "Rare 10"
+    },
+    {
+      "title": "Warpstone Armour",
+      "alias": "",
+      "cost": {
+        "cost": 60
+      },
+      "availability": "Rare 10"
+    },
+    {
+      "title": "Poison Wind Globe",
+      "alias": "Poison Wind Globes",
+      "cost": {
+        "cost": 50
+      },
+      "availability": "Rare 6"
+    },
+    {
+      "title": "Jezzail Support",
+      "alias": "",
+      "cost": {
+        "cost": 10
+      },
+      "availability": "Common"
+    },
+    {
+      "title": "Warpfire Barrel",
+      "alias": "",
+      "cost": {
+        "cost": 20
+      },
+      "availability": "Common"
+    },
+    {
+      "title": "Warpstone Shard",
+      "alias": "",
+      "cost": {
+        "cost": 30
+      },
+      "availability": "Rare 10"
+    },
+    {
+      "title": "Skavenbrew",
+      "alias": "",
+      "cost": {
+        "cost": 25
+      },
+      "availability": "Rare 6, 25 + 2D6 gc"
+    }
+  ],
+  "fighters": [
+    {
+      "id": "warlock-engineer",
+      "type": "hero",
+      "name": "Warlock Engineer",
+      "plural": "Warlock Engineers",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 20,
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "engineers-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": true,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "spellLores": [
+        "Magic of the Horned Rat"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Warlock Engineer may use his Leadership instead of his own."
+        },
+        {
+          "rulename": "Wizard",
+          "ruleFull": "A Warlock Engineer is a wizard and casts the Magic of the Horned Rat."
+        }
+      ]
+    },
+    {
+      "id": "stormvermin",
+      "type": "hero",
+      "name": "Stormvermin",
+      "plural": "Stormvermin",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {
+        "m": 5,
+        "ws": 4,
+        "bs": 3,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 5,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "engineers-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "warlock-apprentices",
+      "type": "hero",
+      "name": "Warlock Apprentice",
+      "plural": "Warlock Apprentices",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "startingXp": 0,
+      "statblock": {
+        "m": 5,
+        "ws": 2,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [
+        "engineers-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "spellLores": [
+        "Magic of the Horned Rat"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Trainees",
+          "ruleFull": "A Warlock Apprentice begins with no spells. When he rolls a new skill as an experience advance he may take a randomly determined spell instead of a skill."
+        },
+        {
+          "rulename": "Inexperienced",
+          "ruleFull": "Every spell a Warlock Apprentice casts counts as +1 difficulty."
+        }
+      ]
+    },
+    {
+      "id": "initiates",
+      "type": "henchman",
+      "name": "Initiate",
+      "plural": "Initiates",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "engineers-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "The Lad's Got Talent",
+          "ruleFull": "When an Initiate group rolls \"Lad's Got Talent\", the promoted Initiate must take spells as one of his two skill lists, and the rules for Warlock Apprentices apply to him from then on."
+        }
+      ]
+    },
+    {
+      "id": "clanrats",
+      "type": "henchman",
+      "name": "Clanrat",
+      "plural": "Clanrats",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "henchmen-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "slaves",
+      "type": "henchman",
+      "name": "Slave",
+      "plural": "Slaves",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 10,
+      "gainExp": true,
+      "promotable": false,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 5,
+        "ws": 2,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [
+        "henchmen-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Slave's Kit",
+          "ruleFull": "A Slave may carry a shield, but may never wear a helmet or light armour."
+        },
+        {
+          "rulename": "Expected to Die",
+          "ruleFull": "When testing whether the warband must take a Rout test, each Slave taken out of action counts as half a model."
+        },
+        {
+          "rulename": "Doomed",
+          "ruleFull": "A Slave who rolls \"Lad's Got Talent\" is removed from the roster, whether or not the warband holds its full number of Heroes, and you roll for an advance again if his group has other members."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Skaven Clan Skryre (Athel Loren)",
+    "new": true,
+    "note": "Infiltration: Stormvermin only. Skavenbrew Master: Warlock Engineers and Warlock Apprentices only."
+  },
+  "specialSkillsList": [
+    {
+      "name": "Tail Fighting",
+      "ours": "Tail Fighting"
+    },
+    {
+      "name": "Wall Runner",
+      "ours": "Wall Runner"
+    },
+    {
+      "name": "Infiltration",
+      "ours": "Infiltration"
+    },
+    {
+      "name": "Skavenbrew Master",
+      "description": "One batch of skavenbrew bought per game may have its die roll for effect changed by +1 or -1, as though a slave had been sacrificed. This is not cumulative with sacrificing a slave: do one or the other, not both."
+    },
+    {
+      "name": "Warpstone Resistance",
+      "description": "This Skaven is only stunned on a 5-6 when he swallows a chunk of warpstone, and takes a Strength 2 hit instead of the usual hit when a poison wind globe hits him for any reason. Skavenbrew no longer has any effect on him."
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Warplock Jezzail",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 70,
+      "range": "36\"",
+      "strength": "5",
+      "rules": [
+        {
+          "rule": "Prepare shot",
+          "text": "A warplock jezzail takes a whole turn to reload, so the model may only fire it every other turn."
+        },
+        {
+          "rule": "Move or fire",
+          "text": "The model may not move and fire a warplock jezzail in the same turn, other than to pivot on the spot to face its target or to stand up."
+        },
+        {
+          "rule": "Difficult to use",
+          "text": "Every shot fired from a jezzail is at -2 to hit. A jezzail support, carried by a second Initiate or Apprentice, removes that penalty."
+        },
+        {
+          "rule": "Save Modifier",
+          "text": "A warrior wounded by a warplock jezzail takes his armour save with a -3 modifier."
+        }
+      ]
+    },
+    {
+      "name": "Warpfire Thrower",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 73,
+      "range": "6+2D6\"",
+      "strength": "4",
+      "rules": [
+        {
+          "name": "Random Range",
+          "text": "When a warpfire thrower is fired, work out its range and draw a straight line from the firer up to that distance. Every model within 1\" of the line takes a single Strength 4 hit."
+        },
+        {
+          "rule": "Move or fire",
+          "text": "The model may not move and fire a warpfire thrower in the same turn, other than to pivot on the spot to face its target or to stand up."
+        },
+        {
+          "name": "Dangerous",
+          "text": "If the roll for the distance the warpfire travels is a double, roll another D6: on a 5+ the warpfire is splattered over the crew instead of being fired, and is resolved as though their own weapon had hit them."
+        },
+        {
+          "name": "Fuel Hungry",
+          "text": "A warpfire thrower may only be fired twice per battle. A warpfire barrel removes that limit."
+        }
+      ]
+    },
+    {
+      "name": "Warpstone Armour",
+      "type": "Armour",
+      "subtype": "Body Armour",
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 70,
+      "save": "5+",
+      "rules": [
+        {
+          "name": "Heavy Armour",
+          "text": "Warpstone armour counts as heavy armour and grants a 5+ save. Being heavy armour, it takes 1 off the wearer's Movement if he also carries a shield."
+        },
+        {
+          "name": "Magical",
+          "text": "A Skaven spellcaster wearing warpstone armour may still cast spells as usual."
+        }
+      ]
+    },
+    {
+      "name": "Jezzail Support",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 71,
+      "rules": [
+        {
+          "name": "Steady Jezzail",
+          "text": "While a warrior with a jezzail support is in base contact with a warrior armed with a jezzail in the Shooting phase, the warrior firing the jezzail does not suffer the Difficult to use penalty."
+        },
+        {
+          "name": "May Not Shoot",
+          "text": "A warrior using a jezzail support may not fire any other missile weapon he carries."
+        }
+      ]
+    },
+    {
+      "name": "Warpfire Barrel",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 74,
+      "rules": [
+        {
+          "name": "Store Fuel",
+          "text": "While a warrior with a warpfire barrel is in base contact with a warrior armed with a warpfire thrower in the Shooting phase, that warpfire thrower is not limited to two shots per battle."
+        },
+        {
+          "name": "Must Remain in Base Contact",
+          "text": "The warrior carrying the barrel must stay in base contact with the model holding the warpfire thrower. If the barrel bearer is killed, the warpfire thrower may fire twice more before it runs out of fuel. If a warpfire thrower's carrier is killed, the Skaven with the barrel may join another model armed with one. More barrels than warpfire throwers gain nothing."
+        },
+        {
+          "name": "Unstable",
+          "text": "A model carrying a barrel may not move more than 5\" in a turn, so he may not run and may charge only up to his normal Movement. If he is forced to move faster, roll a D6: on a 1 the barrel bursts and every model within D3+1\", the bearer included, takes a Strength 4 hit. This may not be done deliberately. If a model carrying a barrel suffers a critical hit in close combat, roll a D6: on a 5+ the barrel explodes the same way, and the critical hit is then resolved as usual."
+        }
+      ]
+    },
+    {
+      "name": "Warpstone Shard",
+      "cost": 30,
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 74,
+      "types": [
+        "skaven-of-clan-skryre-ath"
+      ],
+      "rules": [
+        {
+          "name": "Casting",
+          "text": "If a Warlock Engineer, and only a Warlock Engineer, swallows a shard of warpstone before casting a spell, that spell's difficulty is reduced by 2 for that casting. One use only."
+        },
+        {
+          "rule": "Side effects",
+          "text": "Immediately after a warpstone shard is used, roll a D6: on a 4+ the Warlock Engineer is stunned. The spell's effects are worked out before the roll."
+        }
+      ]
+    },
+    {
+      "name": "Skavenbrew",
+      "cost": 25,
+      "type": "Miscellaneous",
+      "subtype": "Poisons and Drugs",
+      "rarity": 6,
+      "dice": 2,
+      "rulesPage": 74,
+      "types": [
+        "skaven-of-clan-skryre-ath"
+      ],
+      "rules": [
+        {
+          "name": "Drug",
+          "text": "Each batch is given to one warrior, who must be a Hero, and lasts a single game. Roll on the table for what it does.\n\nD6 | Effect\n5-6 | He is subject to the psychology rules for frenzy for the next battle.\n3-4 | He hates all non-Skaven and is subject to the psychology rules for hatred for the next battle.\n1-2 | The brew has no effect."
+        },
+        {
+          "rule": "Side effects",
+          "text": "After a game in which a warrior used skavenbrew, roll 2D6: on a 2-3 he loses a point of Initiative for good, and if that would take his Initiative to 2 or below he suffers from stupidity instead. No roll is needed if the brew had no effect."
+        },
+        {
+          "name": "Test Subject",
+          "text": "A Warlock Engineer may test a batch on a slave first. Roll a D6: on a 6 the slave is unharmed, otherwise remove him from the roster at once, dead. Whatever the roll, you may then add +1 or -1 to the D6 roll for the brew's effect."
+        }
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "page": 67,
+      "what": "A Clan Skryre warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 68,
+      "what": "The skill table ticks the Warlock Engineer Shooting, Academic, Speed and Special, the Stormvermin Combat, Strength, Speed and Special, and the Warlock Apprentice Shooting, Speed and Special. Read from the tick positions against the column centres."
+    },
+    {
+      "page": 68,
+      "what": "Tail Fighting, Wall Runner and Infiltration are ours with the same words. Infiltration's \"available to Stormvermin only\" and Skavenbrew Master's \"Warlock Engineers or Apprentices only\" are in the group's note, not in a warband rule."
+    },
+    {
+      "page": 68,
+      "what": "This is not Karak Azgal's shared \"Skaven of Karak Azgal\" group (the rulebook Skaven skills less the Art of Silent Death) nor our rulebook \"Skaven\" group: it has no Black Hunger and adds Skavenbrew Master and Warpstone Resistance. Kept apart as \"Skaven Clan Skryre (Athel Loren)\". Decision 11."
+    },
+    {
+      "page": 69,
+      "what": "The Engineers list prices a Helmet at 5 gc and the Henchmen list at 10 gc; both are imported as their list prints them."
+    },
+    {
+      "page": 69,
+      "what": "The Warplock Pistol line reads \"30gc (70 brace)\", so a brace is not twice the single price. Both numbers are imported as printed. The Clan Skryre Armoury chart prints 35 gc (70 brace) for the same weapon. Decision 12."
+    },
+    {
+      "page": 70,
+      "what": "Warplock Pistol is our Warplock pistol, with the same 8\" range, Strength 5, Prepare Shot and -3 save modifier; ours adds its close combat use, which this PDF does not print."
+    },
+    {
+      "page": 70,
+      "what": "Poison Wind Globes is our Poison Wind Globe (Mutiny in Marienburg), which the Relics of the Crusades batch has since given rules from its own PDF: 6\", Strength Special, Thrown Weapon, Poison wind (ignores cover penalties and armour saves, D3 wounds on a 3+ and one wound on a 4+ to anyone within 2\", magical so it affects undead) and Drop (a 1 to hit drops it on the thrower). This PDF words the same weapon differently: 6\", Strength 4, No Armour Save, Template (every model within 1\" of the point hit takes a Strength 4 hit, so a model up to 7\" from the thrower may be hit, and a miss deviates the template D3\" in a random direction) and Fragile (if the carrier is knocked down or stunned, a D6 of 1 bursts a globe, resolved as though thrown at a point centred on him). Ours is left exactly as Relics wrote it; the line links it at this list's 50 gc. Decision 13."
+    },
+    {
+      "page": 70,
+      "what": "Warplock Jezzail, Warpfire Thrower, Warpstone Armour, Jezzail Support, Warpfire Barrel, Warpstone Shard and Skavenbrew are new items, each with the rules this PDF prints. Our Fog-enhancing Warpstone Shards and Warpstone Amulet are different items."
+    },
+    {
+      "page": 74,
+      "what": "Warpstone Shard and Skavenbrew are on no equipment list: the Clan Skryre Armoury chart sells them and the PDF prints their rules, so each is a stub whose one price row serves this warband type."
+    },
+    {
+      "page": 71,
+      "what": "The Warpstone Shard's own text repeats the Poison Wind Globes paragraph before its rules; only its rules were taken, since they are what it does."
+    },
+    {
+      "page": 75,
+      "what": "The Warlock Apprentice begins with no spells, so he carries no Wizard rule, but the Magic of the Horned Rat is offered to him so the spell picker holds it when Trainees gives him one. Decision 14."
+    },
+    {
+      "page": 77,
+      "what": "The Slave's \"may carry shields, but may not wear helmets or light armour\" is both a note on those two lines and his own rule, since the Clanrats share the list."
+    },
+    {
+      "page": 67,
+      "what": "\"Any number of Slaves, up to a maximum of half your warband\" is a warband rule: our templates hold no ratio between a fighter and the warband's size."
+    },
+    {
+      "page": 77,
+      "what": "Clanrats and Slaves have no maximum (\"any number\"). Every henchman group is \"bought in groups of 1-5\"."
+    },
+    {
+      "page": 66,
+      "what": "The setting's own shop price charts (pages 38 to 46) re-price and re-rarify our items per shop location, not per warband, so they are not imported; the stubs' rarities are the Clan Skryre Armoury's. Decision 6."
+    },
+    {
+      "page": 68,
+      "what": "Karak Azgal's shared \"Skaven of Karak Azgal\" group is Black Hunger, Tail Fighting, Wall Runner and Infiltration, and its Clan Skryre has no Special column of its own. This warband's Special column holds Tail Fighting, Wall Runner, Infiltration, Skavenbrew Master and Warpstone Resistance: no Black Hunger and two skills of its own, so the shared group is not used. Decision 11."
+    },
+    {
+      "page": 70,
+      "what": "Karak Azgal's Clan Skryre brought a Jezzail (36\", S5, Move or fire, Prepare shot, -3 save, Pick target, a two-Skaven crew with an assistant and a pavise), 175 gc Rare 11, and the Relics of the Crusades batch left it alone (its own Clan Skryre sells no jezzail). This warband's Warplock Jezzail is the same range and Strength but is -2 to hit (Difficult to use) until a jezzail support steadies it, and has no crew, pick-target or pavise rules, so it is kept apart. Decision 16."
+    },
+    {
+      "page": 74,
+      "what": "The Relics of the Crusades Clan Skryre brought a Warpstone Token (a wizard eats one before casting for +1 to the roll, cumulative, and a double takes him out of action). This warband's Warpstone Shard is a Warlock Engineer only, takes 2 off the spell's difficulty, is one use and then stuns him on a D6 of 4+, so the two are kept apart. Decision 19."
+    },
+    {
+      "page": 74,
+      "what": "Checked against the grade 3 batch's thirteen stubs as well: none of them is a warpstone item, so the Warpstone Shard's only near neighbour is still the Relics Warpstone Token. Decision 19."
+    }
+  ]
+}

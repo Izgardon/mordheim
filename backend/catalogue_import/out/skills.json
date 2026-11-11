@@ -1284,6 +1284,22 @@
     "description": "Slayers only. If the Hero's charge fails he may still move his full distance. Only against enemies he can see or has detected."
   },
   {
+    "name": "Greased Hair",
+    "description": "Every Dwarf within 2\" of this Dwarf may use his Leadership. If he already has a skill of that kind, its range is increased by 2\" instead."
+  },
+  {
+    "name": "Double-Hand Master",
+    "description": "His attacks with a double-handed weapon may not be parried."
+  },
+  {
+    "name": "Survivor",
+    "description": "He may re-roll his result on the serious injury table. He may re-roll only once, and the second result stands."
+  },
+  {
+    "name": "Whirlwind",
+    "description": "He adds +1 to his rolls on the critical hit effect table for each model in close combat with him, up to +3."
+  },
+  {
     "name": "Absorption",
     "description": "Every attack against the Hero in the shooting phase is at -1 Strength."
   },
@@ -1720,6 +1736,14 @@
     "description": "Chieftain and Packmaster only, and may be taken more than once. The Hero may make any Hero of the warband, himself included, roll at once on the Sealed City's Stygian Mutation chart. One of the D66 dice may be re-rolled once."
   },
   {
+    "name": "Skavenbrew Master",
+    "description": "One batch of skavenbrew bought per game may have its die roll for effect changed by +1 or -1, as though a slave had been sacrificed. This is not cumulative with sacrificing a slave: do one or the other, not both."
+  },
+  {
+    "name": "Warpstone Resistance",
+    "description": "This Skaven is only stunned on a 5-6 when he swallows a chunk of warpstone, and takes a Strength 2 hit instead of the usual hit when a poison wind globe hits him for any reason. Skavenbrew no longer has any effect on him."
+  },
+  {
     "name": "Gloryseeker",
     "description": "While the Pirate is in close combat with a model that causes fear, he has +1 Attack each round of combat. He gains one extra Attack only, however many fear-causing enemies he faces."
   },
@@ -1834,6 +1858,38 @@
   {
     "name": "Touch of Darkness",
     "description": "Vampire Hunter and Slayers only. The warrior ignores darkness penalties."
+  },
+  {
+    "name": "Infiltrate (Wood Elf Scouts)",
+    "description": "This warrior is placed after every other model has been placed. He may be placed anywhere on the battlefield, but never in the enemy deployment zone or within 8\" of an enemy model. If both sides have a warrior with this skill, each side rolls a D6 and the lowest roll sets up first."
+  },
+  {
+    "name": "Trapper",
+    "description": "Every time an enemy model runs, roll a D6. On a 1 or lower he sets off one of this warrior's traps and takes a Strength 3 hit with no critical hits. Each further warrior in the warband with this skill takes another -1 off that roll, never past -2 however many have it."
+  },
+  {
+    "name": "Expert Hunter",
+    "description": "An enemy shooting at this warrior while he is in cover suffers -1 to hit on top of the usual -1, so -2 in all."
+  },
+  {
+    "name": "Stand and Shoot",
+    "description": "When this warrior is charged he may shoot at his charger if he passes a Leadership test. He suffers -2 to hit on that shot."
+  },
+  {
+    "name": "Wild Hunter",
+    "description": "This warrior does not suffer the -1 to hit penalty for moving and shooting."
+  },
+  {
+    "name": "Pathfinder (Wood Elf Scouts)",
+    "description": "This warrior finds artifacts on a roll of 5 or 6 rather than only on a 6."
+  },
+  {
+    "name": "Tree Walker",
+    "description": "This warrior takes no Initiative test to climb a tree, and may run and charge up trees."
+  },
+  {
+    "name": "Sniper (Wood Elf Scouts)",
+    "description": "This warrior may shoot while hidden in a tree, and stays hidden as long as the enemy he shot at fails an Initiative test."
   },
   {
     "name": "Elven Luck",

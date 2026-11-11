@@ -35093,6 +35093,858 @@
     "upgrades": []
   },
   {
+    "slug": "dwarf-troll-slayers",
+    "name": "Dwarf Troll Slayers",
+    "setting": "athel-loren",
+    "source": "Athel Loren",
+    "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=56",
+    "starting_gold": 500,
+    "max_models": 12,
+    "variants": [],
+    "types": [
+      {
+        "type": "dwarf-troll-slayers",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Hard to Kill",
+        "description": "When rolling on the Injury chart for a Dwarf, treat 1-2 as knocked down, 3-5 as stunned and 6 as out of action.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Hard Head",
+        "description": "A Dwarf ignores the special rules for maces, clubs and the like.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Armour",
+        "description": "A Dwarf suffers no movement penalty for wearing armour. A Slayer will never wear armour of any kind other than runic tattoos: armour he gains through exploration is sold at the next shop he visits for whatever it fetches.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Hate Orcs and Goblins",
+        "description": "Every Dwarf hates Orcs and Goblins.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Grudgebearers",
+        "description": "The warband may never include an Elven Hired Sword of any kind.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Resistant",
+        "description": "A Dwarf affected by a spell gains a 6+ resistance save, and the spell has no effect on him if he passes it. Each model rolls on its own, so where a spell covers an area the models that pass are unaffected and the ones that fail are not.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Slayers",
+        "description": "The warband may ignore the first two Rout tests it is required to take, and may never rout voluntarily.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Close Combat",
+        "description": "Slayers never buy long-range weapons, and sell any they are given at once for whatever they fetch. Thrown weapons do not count as long-range weapons.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Academic Skills",
+        "description": "A Slayer may take any Academic skill that does not deal with magic.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Heroes",
+        "description": "Only four Heroes may be hired. The other two may come only from \"Lad's Got Talent\" rolls.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Explore On",
+        "description": "Every Hero rolls for exploration even when he was taken out of action, but rolls one D3 instead of one D6. A Hero who was not taken out of action still rolls a D6. Henchmen do not roll when taken out of action.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Shops",
+        "description": "Slayers may visit the Dwarf Outpost, the Runesmith and the Human Shop.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Runic Tattoos",
+        "description": "Only Heroes may buy runic tattoos, and no Hero may buy the same tattoo twice. A Henchman may have only ordinary tattoos, which do nothing in the game; a Henchman who becomes a Hero may buy runic tattoos. At the start of a campaign only the Daemon Slayer and the Dragon Slayer may buy them, and each pays 5 gold crowns less than the price listed; the discount is gone on every visit after that.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "slayer-equipment-list",
+        "name": "Slayer Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Dwarf Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "Double handed Axe/Hammer",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "squig-slayer-equipment-list",
+        "name": "Squig Slayer Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Dwarf Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars/Axes",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Hammer",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "special-equipment",
+        "name": "Special equipment",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Throwing Hammer",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars/Axes",
+              "variant": ""
+            },
+            "shown_as": "Throwing Axe",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "daemon-slayer",
+        "kind": "hero",
+        "name": "Daemon Slayer",
+        "plural": "Daemon Slayers",
+        "race": "Dwarf",
+        "cost": 95,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 3,
+          "weapon_skill": 5,
+          "ballistic_skill": 4,
+          "strength": 4,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 2,
+          "leadership": 9
+        },
+        "skill_types": [
+          "Combat",
+          "Academic",
+          "Strength",
+          "Slayer Skills (Athel Loren)"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "slayer-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "Any model in the warband within 8\" of the Daemon Slayer may use his Leadership."
+          },
+          {
+            "name": "Doomed",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Daemon Slayer is immune to all psychology and to All Alone tests."
+          },
+          {
+            "name": "Monster-killer",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Daemon Slayer automatically wounds any model of Toughness 8 or lower on a 4+, or on less where the To Wound chart needs less."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "dragon-slayer",
+        "kind": "hero",
+        "name": "Dragon Slayer",
+        "plural": "Dragon Slayers",
+        "race": "Dwarf",
+        "cost": 80,
+        "starting_xp": 11,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 3,
+          "weapon_skill": 5,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 2,
+          "leadership": 9
+        },
+        "skill_types": [
+          "Combat",
+          "Academic",
+          "Strength",
+          "Slayer Skills (Athel Loren)"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "slayer-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Respected",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "The Dragon Slayer does not lead the warband, but any model in the warband within 4\" of him may use his Leadership."
+          },
+          {
+            "name": "Doomed",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Daemon Slayer is immune to all psychology and to All Alone tests."
+          },
+          {
+            "name": "Monster-killer (Dragon Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Dragon Slayer automatically wounds any model of Toughness 7 or lower on a 4+, or on less where the To Wound chart needs less."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "giant-slayers",
+        "kind": "hero",
+        "name": "Giant Slayer",
+        "plural": "Giant Slayers",
+        "race": "Dwarf",
+        "cost": 65,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 3,
+          "weapon_skill": 5,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 2,
+          "leadership": 9
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Slayer Skills (Athel Loren)"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "slayer-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Doomed (Giant Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Giant Slayer is immune to fear and to All Alone tests."
+          },
+          {
+            "name": "Monster-killer (Giant Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Giant Slayer automatically wounds any model of Toughness 6 or lower on a 4+, or on less where the To Wound chart needs less."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "goblin-slayers",
+        "kind": "hero",
+        "name": "Goblin Slayer",
+        "plural": "Goblin Slayers",
+        "race": "Dwarf",
+        "cost": 30,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 3,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Strength"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "slayer-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Doomed (Goblin Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Goblin Slayer is immune to All Alone tests."
+          },
+          {
+            "name": "Monster-killer (Goblin Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Goblin Slayer automatically wounds any model of Toughness 5 or lower on a 4+, or on less where the To Wound chart needs less."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "skaven-slayers",
+        "kind": "henchman",
+        "name": "Skaven Slayer",
+        "plural": "Skaven Slayers",
+        "race": "Dwarf",
+        "cost": 45,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 3,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 9
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "slayer-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Frenzy",
+            "type": "Psychology"
+          },
+          {
+            "name": "Doomed (Skaven Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Skaven Slayer is immune to all psychology and to All Alone tests while he is frenzied, and immune to fear while he is not."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "troll-slayers",
+        "kind": "henchman",
+        "name": "Troll Slayer",
+        "plural": "Troll Slayers",
+        "race": "Dwarf",
+        "cost": 40,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 3,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 9
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "slayer-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Monster-killer (Troll Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Troll Slayer automatically wounds any model of Toughness 5 or lower on a 4+, or on less where the To Wound chart needs less."
+          },
+          {
+            "name": "Doomed (Troll Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Troll Slayer is immune to fear and to All Alone tests."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "squig-slayers",
+        "kind": "henchman",
+        "name": "Squig Slayer",
+        "plural": "Squig Slayers",
+        "race": "Dwarf",
+        "cost": 45,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 3,
+          "weapon_skill": 3,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 9
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "squig-slayer-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Monster-killer (Squig Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Squig Slayer automatically wounds any model of Toughness 5 or lower on a 4+, or on less where the To Wound chart needs less. This applies to his thrown weapons too."
+          },
+          {
+            "name": "Doomed (Squig Slayer)",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Squig Slayer is immune to fear and to All Alone tests."
+          },
+          {
+            "name": "Throwing",
+            "type": "Warband - Dwarf Troll Slayers",
+            "description": "A Squig Slayer armed with two thrown weapons may throw each of them in the Shooting phase, shooting twice in the turn."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": [
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Stok Gloves",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "He may re-roll one attack that failed to hit, and the second roll stands. This works with any close combat weapon."
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Ok Band",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "He always strikes before his enemy in close combat, but with one attack only unless he would have struck first anyway. It does nothing for a double-handed weapon, which always strikes last."
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Klad Swirls",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "He gains a 6+ armour save, which may not be modified."
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Uzkul Signs",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "He causes fear and is immune to fear himself."
+        },
+        "cost": 20,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Zharr Marks",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "All his attacks count as burning and do double wounds against anything susceptible to fire, his unarmed attacks and his thrown weapons included. He never suffers the penalties for fighting unarmed, and always counts as armed with a sword that may not parry."
+        },
+        "cost": 15,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Skrund Bracelets",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "He may charge his normal Movement +D3\"."
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Drung Stripes",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "He gains a 4+ resistance roll against spells of every kind. This is used in place of the warband's Resistant rule, which no longer applies to him."
+        },
+        "cost": 25,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Azul Spirals",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "He is immune to all psychology and to All Alone tests."
+        },
+        "cost": 15,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Runic Tattoos",
+        "special": {
+          "name": "Hunk Symbols",
+          "type": "Warband - Dwarf Troll Slayers",
+          "description": "Any enemy charging him takes D3\" off his charge distance. If he then fails to reach him, the rules for a failed charge apply."
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": null,
+        "later_double": false,
+        "at_recruit": false
+      }
+    ]
+  },
+  {
     "slug": "estalian-corsairs",
     "name": "Estalian Corsairs",
     "setting": "sartosa",
@@ -84191,6 +85043,718 @@
     "upgrades": []
   },
   {
+    "slug": "savage-orcs-athel-loren",
+    "name": "Savage Orcs (Athel Loren)",
+    "setting": "athel-loren",
+    "source": "Athel Loren",
+    "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=46",
+    "starting_gold": 500,
+    "max_models": 20,
+    "variants": [],
+    "types": [
+      {
+        "type": "savage-orcs-ath",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Animosity",
+        "description": "At the start of your turn roll a D6 for each Henchman who is an Orc or a Goblin, leaving out any model already engaged in close combat. On a 1 he has taken offence: roll another D6 and read the result below.\n\nD6 | Result\n1 | If a friendly Orc or Goblin subject to Animosity, or a Hired Sword, is within charge reach he charges the nearest of them and fights one round of close combat. At the end of that round the two models move 1\" apart and no longer count as being in close combat, unless one of them rolls this result again. If none is within charge reach and he carries a missile weapon, he instead shoots at the nearest friendly Orc or Goblin subject to Animosity, or the nearest Hired Sword. If neither applies, treat the roll as 2-5. In any case he may take no other action this turn, though he may defend himself in close combat.\n2-5 | He spends the turn hurling insults at the nearest friendly Orc or Goblin. He may do nothing else this turn, though he may defend himself in close combat.\n6 | He must move as fast as he can towards the nearest enemy model, charging into close combat if he can. With no enemy model in sight he may make a normal move at once. This move is in addition to his move in the Movement phase, so he may move twice in the turn, and if it takes him within charge reach of an enemy model he must charge during his regular movement.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Forest Goblins",
+        "description": "The warband may never hold more Forest Goblins than Orcs.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Shops",
+        "description": "Savage Orcs may visit the Orc Camp and the Orc Black Market.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "savage-orc-equipment-list",
+        "name": "Savage Orc Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "forest-goblins"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Magic War Paint",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "except": [
+                "savage-orc-shaman"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "War Boar",
+              "variant": ""
+            },
+            "shown_as": "Boar",
+            "cost": 60,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "orc-equipment-list",
+        "name": "Orc Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Morning Star",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Heavy Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 50,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "black-orcs"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "savage-orc-shaman",
+        "kind": "hero",
+        "name": "Savage Orc Shaman",
+        "plural": "Savage Orc Shamans",
+        "race": "Orc",
+        "cost": 40,
+        "starting_xp": 11,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Speed"
+        ],
+        "spell_types": [
+          {
+            "name": "Waaaagh! Magic",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "savage-orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Wizard",
+            "type": "Caster"
+          },
+          {
+            "name": "No Shield",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Savage Orc Shaman may take magic war paint, but may never take a shield."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "black-orcs",
+        "kind": "hero",
+        "name": "Black Orc",
+        "plural": "Black Orcs",
+        "race": "Black Orc",
+        "cost": 60,
+        "starting_xp": 11,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Strength"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "Any warrior within 6\" of a Black Orc may use his Leadership when taking a Leadership test."
+          },
+          {
+            "name": "Bossy",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "Any Orc or Goblin within 6\" of a Black Orc does not roll for Animosity."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "savage-orc-scarboyz",
+        "kind": "hero",
+        "name": "Savage Orc Scarboy",
+        "plural": "Savage Orc Scarboyz",
+        "race": "Orc",
+        "cost": 35,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Strength"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "savage-orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Savage",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Savage Orc Scarboy is subject to frenzy."
+          },
+          {
+            "name": "Animosity",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Savage Orc Scarboy is subject to Animosity."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "orc-boyz",
+        "kind": "henchman",
+        "name": "Orc Boy",
+        "plural": "Orc Boyz",
+        "race": "Orc",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Animosity",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Savage Orc Scarboy is subject to Animosity."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "savage-orc-boyz",
+        "kind": "henchman",
+        "name": "Savage Orc Boy",
+        "plural": "Savage Orc Boyz",
+        "race": "Orc",
+        "cost": 30,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "savage-orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Savage",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Savage Orc Scarboy is subject to frenzy."
+          },
+          {
+            "name": "Animosity",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Savage Orc Scarboy is subject to Animosity."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "forest-goblins",
+        "kind": "henchman",
+        "name": "Forest Goblin",
+        "plural": "Forest Goblins",
+        "race": "Goblin",
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "savage-orc-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Animosity (Forest Goblin)",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Forest Goblin is subject to Animosity. He will not charge an Orc because of Animosity, but he will still shoot at one."
+          },
+          {
+            "name": "Not Orcs",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "When testing whether the warband must take a Rout test, each Forest Goblin taken out of action counts as half a model."
+          },
+          {
+            "name": "Natives",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Forest Goblin suffers no movement penalty in woods."
+          },
+          {
+            "name": "Weedy Grots",
+            "type": "Warband - Savage Orcs (Athel Loren)",
+            "description": "A Forest Goblin gains experience, but must re-roll any \"Lad's Got Talent\" result."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
     "slug": "savage-orcs-karak-azgal",
     "name": "Savage Orcs (Karak Azgal)",
     "setting": "karak-azgal",
@@ -93499,6 +95063,867 @@
           {
             "name": "Large",
             "type": "Trait"
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "skaven-of-clan-skryre-athel-loren",
+    "name": "Skaven of Clan Skryre (Athel Loren)",
+    "setting": "athel-loren",
+    "source": "Athel Loren",
+    "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=66",
+    "starting_gold": 500,
+    "max_models": 20,
+    "variants": [],
+    "types": [
+      {
+        "type": "skaven-of-clan-skryre-ath",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Skryre Special Equipment",
+        "description": "The warband may hold jezzails, warpfire throwers, warplock pistols and poison wind globes only while it has at least one Warlock Apprentice; with no Apprentice none of that equipment may be included. The Warlock Engineer is the exception: he may always buy it for his own use.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Slaves",
+        "description": "The warband may hold any number of Slaves, up to half the warband.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Shops",
+        "description": "Clan Skryre warbands may visit the Skaven Armoury, the Clan Skryre Armoury and the Warlock's Inner Sanctum.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "engineers-equipment-list",
+        "name": "Engineers Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Flail",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warplock pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": 70,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warplock Jezzail",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 100,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "warlock-apprentices",
+                "initiates"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warpfire Thrower",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 40,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "warlock-apprentices",
+                "initiates"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Poison Wind Globe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 50,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "warlock-apprentices",
+                "initiates"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warpstone Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 60,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Jezzail Support",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "initiates"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warpfire Barrel",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "initiates"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "henchmen-equipment-list",
+        "name": "Henchmen Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sling",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "except": [
+                "slaves"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "except": [
+                "slaves"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "special-equipment",
+        "name": "Special equipment",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Warplock pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warplock Jezzail",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 100,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warpfire Thrower",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 40,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warpstone Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 60,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Poison Wind Globe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 50,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Jezzail Support",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warpfire Barrel",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Warpstone Shard",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Skavenbrew",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": ", 25 + 2D6 gc",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "warlock-engineer",
+        "kind": "hero",
+        "name": "Warlock Engineer",
+        "plural": "Warlock Engineers",
+        "race": "Skaven",
+        "cost": 65,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Skaven Clan Skryre (Athel Loren)"
+        ],
+        "spell_types": [
+          {
+            "name": "Magic of the Horned Rat",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "engineers-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Skaven of Clan Skryre (Athel Loren)",
+            "description": "Any warrior within 6\" of the Warlock Engineer may use his Leadership instead of his own."
+          },
+          {
+            "name": "Wizard",
+            "type": "Caster"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "stormvermin",
+        "kind": "hero",
+        "name": "Stormvermin",
+        "plural": "Stormvermin",
+        "race": "Skaven",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Speed",
+          "Skaven Clan Skryre (Athel Loren)"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "engineers-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "warlock-apprentices",
+        "kind": "hero",
+        "name": "Warlock Apprentice",
+        "plural": "Warlock Apprentices",
+        "race": "Skaven",
+        "cost": 30,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 2,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 4
+        },
+        "skill_types": [
+          "Shooting",
+          "Speed",
+          "Skaven Clan Skryre (Athel Loren)"
+        ],
+        "spell_types": [
+          {
+            "name": "Magic of the Horned Rat",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "engineers-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Trainees",
+            "type": "Warband - Skaven of Clan Skryre (Athel Loren)",
+            "description": "A Warlock Apprentice begins with no spells. When he rolls a new skill as an experience advance he may take a randomly determined spell instead of a skill."
+          },
+          {
+            "name": "Inexperienced",
+            "type": "Warband - Skaven of Clan Skryre (Athel Loren)",
+            "description": "Every spell a Warlock Apprentice casts counts as +1 difficulty."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "initiates",
+        "kind": "henchman",
+        "name": "Initiate",
+        "plural": "Initiates",
+        "race": "Skaven",
+        "cost": 30,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "engineers-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "The Lad's Got Talent",
+            "type": "Warband - Skaven of Clan Skryre (Athel Loren)",
+            "description": "When an Initiate group rolls \"Lad's Got Talent\", the promoted Initiate must take spells as one of his two skill lists, and the rules for Warlock Apprentices apply to him from then on."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "clanrats",
+        "kind": "henchman",
+        "name": "Clanrat",
+        "plural": "Clanrats",
+        "race": "Skaven",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "henchmen-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "slaves",
+        "kind": "henchman",
+        "name": "Slave",
+        "plural": "Slaves",
+        "race": "Skaven",
+        "cost": 10,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 2,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "henchmen-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Slave's Kit",
+            "type": "Warband - Skaven of Clan Skryre (Athel Loren)",
+            "description": "A Slave may carry a shield, but may never wear a helmet or light armour."
+          },
+          {
+            "name": "Expected to Die",
+            "type": "Warband - Skaven of Clan Skryre (Athel Loren)",
+            "description": "When testing whether the warband must take a Rout test, each Slave taken out of action counts as half a model."
+          },
+          {
+            "name": "Doomed",
+            "type": "Warband - Skaven of Clan Skryre (Athel Loren)",
+            "description": "A Slave who rolls \"Lad's Got Talent\" is removed from the roster, whether or not the warband holds its full number of Heroes, and you roll for an advance again if his group has other members."
           }
         ],
         "skills": []
@@ -111362,6 +113787,487 @@
             "description": "War hounds are animals and thus do not gain experience."
           }
         ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "wood-elf-scouts",
+    "name": "Wood Elf Scouts",
+    "setting": "athel-loren",
+    "source": "Athel Loren",
+    "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=52",
+    "starting_gold": 500,
+    "max_models": 15,
+    "variants": [],
+    "types": [
+      {
+        "type": "wood-elf-scouts",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "No Metal",
+        "description": "A Wood Elf may never use a crossbow or a blackpowder weapon.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Honourable",
+        "description": "A Wood Elf may never use drugs or poisons.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Native",
+        "description": "A Wood Elf suffers no movement penalty in woods.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Shops",
+        "description": "Wood Elf Scouts may visit the Wood Elf Village, the Pine Glade and the Yew Glade.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "scout-equipment-list",
+        "name": "Scout Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Long Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Elf Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Javelins",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Healing Herbs",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Elven Cloak",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 100,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Elven Boots",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 75,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Hunting Arrows",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "glade-guard-equipment-list",
+        "name": "Glade Guard Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "waywatcher",
+        "kind": "hero",
+        "name": "Waywatcher",
+        "plural": "Waywatchers",
+        "race": "Elf",
+        "cost": 80,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 5,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 6,
+          "attacks": 1,
+          "leadership": 9
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Wood Elf Scouts"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "scout-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Wood Elf Scouts",
+            "description": "Any warrior within 6\" of the Waywatcher may use his Leadership when taking a Leadership test."
+          }
+        ],
+        "skills": [
+          "Sniper (Wood Elf Scouts)"
+        ]
+      },
+      {
+        "key": "scouts",
+        "kind": "hero",
+        "name": "Scout",
+        "plural": "Scouts",
+        "race": "Elf",
+        "cost": 55,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 5,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Shooting",
+          "Speed",
+          "Wood Elf Scouts"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "scout-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "glade-guards",
+        "kind": "henchman",
+        "name": "Glade Guard",
+        "plural": "Glade Guards",
+        "race": "Elf",
+        "cost": 35,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "glade-guard-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "archers",
+        "kind": "henchman",
+        "name": "Archer",
+        "plural": "Archers",
+        "race": "Elf",
+        "cost": 35,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": 1,
+        "group_max": 5,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "scout-equipment-list"
+        ],
+        "specials": [],
         "skills": []
       }
     ],

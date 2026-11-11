@@ -1,0 +1,179 @@
+{
+  "warbandType": "wood-elf-scouts",
+  "name": "Wood Elf Scouts",
+  "source": "Athel Loren",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=52",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "No Metal",
+      "ruleFull": "A Wood Elf may never use a crossbow or a blackpowder weapon."
+    },
+    {
+      "rulename": "Honourable",
+      "ruleFull": "A Wood Elf may never use drugs or poisons."
+    },
+    {
+      "rulename": "Native",
+      "ruleFull": "A Wood Elf suffers no movement penalty in woods."
+    },
+    {
+      "rulename": "Shops",
+      "ruleFull": "Wood Elf Scouts may visit the Wood Elf Village, the Pine Glade and the Yew Glade."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "scout-equipment-list",
+      "title": "Scout Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Longbow", "cost": {"cost": 15}},
+        {"name": "elf bow", "alias": "", "cost": {"cost": 35, "costSuffix": "Heroes only"}},
+        {"name": "javelins", "alias": "Javelin", "cost": {"cost": 5}},
+        {"name": "healing herbs", "alias": "", "cost": {"cost": 20, "costSuffix": "Heroes only"}},
+        {"name": "elven cloak", "alias": "", "cost": {"cost": 100, "costSuffix": "Heroes only"}},
+        {"name": "elven boots", "alias": "", "cost": {"cost": 75, "costSuffix": "Heroes only"}},
+        {"name": "hunting arrows", "alias": "", "cost": {"cost": 25, "costSuffix": "Heroes only"}}
+      ]
+    },
+    {
+      "id": "glade-guard-equipment-list",
+      "title": "Glade Guard Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "waywatcher",
+      "type": "hero",
+      "name": "Waywatcher",
+      "plural": "Waywatchers",
+      "race": "elf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 5, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 9},
+      "equipmentLists": ["scout-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "skills": ["Sniper (Wood Elf Scouts)"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior within 6\" of the Waywatcher may use his Leadership when taking a Leadership test."}
+      ]
+    },
+    {
+      "id": "scouts",
+      "type": "hero",
+      "name": "Scout",
+      "plural": "Scouts",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 55,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 5, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["scout-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "glade-guards",
+      "type": "henchman",
+      "name": "Glade Guard",
+      "plural": "Glade Guards",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["glade-guard-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "archers",
+      "type": "henchman",
+      "name": "Archer",
+      "plural": "Archers",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 5, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["scout-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "Wood Elf Scouts", "new": true, "note": ""},
+  "specialSkillsList": [
+    {
+      "name": "Infiltrate (Wood Elf Scouts)",
+      "pdfName": "Infiltrate",
+      "description": "This warrior is placed after every other model has been placed. He may be placed anywhere on the battlefield, but never in the enemy deployment zone or within 8\" of an enemy model. If both sides have a warrior with this skill, each side rolls a D6 and the lowest roll sets up first."
+    },
+    {
+      "name": "Trapper",
+      "description": "Every time an enemy model runs, roll a D6. On a 1 or lower he sets off one of this warrior's traps and takes a Strength 3 hit with no critical hits. Each further warrior in the warband with this skill takes another -1 off that roll, never past -2 however many have it."
+    },
+    {
+      "name": "Expert Hunter",
+      "description": "An enemy shooting at this warrior while he is in cover suffers -1 to hit on top of the usual -1, so -2 in all."
+    },
+    {
+      "name": "Stand and Shoot",
+      "description": "When this warrior is charged he may shoot at his charger if he passes a Leadership test. He suffers -2 to hit on that shot."
+    },
+    {
+      "name": "Wild Hunter",
+      "description": "This warrior does not suffer the -1 to hit penalty for moving and shooting."
+    },
+    {
+      "name": "Pathfinder (Wood Elf Scouts)",
+      "pdfName": "Pathfinder",
+      "description": "This warrior finds artifacts on a roll of 5 or 6 rather than only on a 6."
+    },
+    {
+      "name": "Tree Walker",
+      "description": "This warrior takes no Initiative test to climb a tree, and may run and charge up trees."
+    },
+    {
+      "name": "Sniper (Wood Elf Scouts)",
+      "pdfName": "Sniper",
+      "description": "This warrior may shoot while hidden in a tree, and stays hidden as long as the enemy he shot at fails an Initiative test."
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 52, "what": "A Wood Elf Scout warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 53, "what": "The skill table ticks the Waywatcher Combat, Shooting, Academic, Speed and Special, and the Scout Shooting, Speed and Special. Read from the tick positions against the column centres."},
+    {"page": 53, "what": "Infiltrate is not our Infiltration: ours places the warrior out of sight of the opposing warband and more than 12\" from any enemy, where this one bars the enemy deployment zone and 8\" from an enemy. Kept apart as Infiltrate (Wood Elf Scouts). Decision 5."},
+    {"page": 53, "what": "Sniper is not our Sniper (the Hochland Bandits') nor our Sniper (Shadow Warriors): this one needs the warrior to be hidden in a tree and the target to fail an Initiative test. Kept apart as Sniper (Wood Elf Scouts). Decision 5."},
+    {"page": 53, "what": "Trapper is not our Master Trapper (trip wires at 4\", triggered on a 2+). Kept apart under the plain name Trapper, which nothing of ours holds."},
+    {"page": 53, "what": "Pathfinder is kept apart as Pathfinder (Wood Elf Scouts): the plain name is the Dwarf Pathfinder hired sword's own skill (Infiltrate and finding hidden paths) and our Pathfinder (Horned Hunters) rolls an extra exploration die, so neither is this one."},
+    {"page": 55, "what": "The Waywatcher's Sniper special rule says exactly what the group's Sniper skill says, so it is imported as the skill he starts with rather than as a second rule."},
+    {"page": 54, "what": "Elf Bow is marked Heroes only. The whole Equipment (heroes only) block - Healing Herbs, Elven Cloak, Elven Boots and Hunting Arrows - is noted the same way, since the Archers buy from the Scout list too."},
+    {"page": 54, "what": "Longbow (15 gc) is our Long Bow and Javelin (5 gc) our Javelins, each bought under the PDF's name. Every line of both lists is one of our items; the warband needs no stub."},
+    {"page": 54, "what": "No availability or rarity is printed for any of this warband's equipment, so no price row was added: the lists' prices stand as list prices and our global prices and rarities are unchanged."},
+    {"page": 54, "what": "The Scout has no special rules of his own. Henchmen are \"bought in groups of 1-5\", imported as both groups' size."},
+    {"page": 52, "what": "The setting's own shop price charts (pages 38 to 46) re-price and re-rarify our items per shop location, not per warband, so they are not imported. Decision 6."}
+  ]
+}

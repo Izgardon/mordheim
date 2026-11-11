@@ -1,0 +1,655 @@
+{
+  "warbandType": "dwarf-troll-slayers",
+  "name": "Dwarf Troll Slayers",
+  "source": "Athel Loren",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=56",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {
+      "rulename": "Hard to Kill",
+      "ruleFull": "When rolling on the Injury chart for a Dwarf, treat 1-2 as knocked down, 3-5 as stunned and 6 as out of action."
+    },
+    {
+      "rulename": "Hard Head",
+      "ruleFull": "A Dwarf ignores the special rules for maces, clubs and the like."
+    },
+    {
+      "rulename": "Armour",
+      "ruleFull": "A Dwarf suffers no movement penalty for wearing armour. A Slayer will never wear armour of any kind other than runic tattoos: armour he gains through exploration is sold at the next shop he visits for whatever it fetches."
+    },
+    {
+      "rulename": "Hate Orcs and Goblins",
+      "ruleFull": "Every Dwarf hates Orcs and Goblins."
+    },
+    {
+      "rulename": "Grudgebearers",
+      "ruleFull": "The warband may never include an Elven Hired Sword of any kind."
+    },
+    {
+      "rulename": "Resistant",
+      "ruleFull": "A Dwarf affected by a spell gains a 6+ resistance save, and the spell has no effect on him if he passes it. Each model rolls on its own, so where a spell covers an area the models that pass are unaffected and the ones that fail are not."
+    },
+    {
+      "rulename": "Slayers",
+      "ruleFull": "The warband may ignore the first two Rout tests it is required to take, and may never rout voluntarily."
+    },
+    {
+      "rulename": "Close Combat",
+      "ruleFull": "Slayers never buy long-range weapons, and sell any they are given at once for whatever they fetch. Thrown weapons do not count as long-range weapons."
+    },
+    {
+      "rulename": "Academic Skills",
+      "ruleFull": "A Slayer may take any Academic skill that does not deal with magic."
+    },
+    {
+      "rulename": "Heroes",
+      "ruleFull": "Only four Heroes may be hired. The other two may come only from \"Lad's Got Talent\" rolls."
+    },
+    {
+      "rulename": "Explore On",
+      "ruleFull": "Every Hero rolls for exploration even when he was taken out of action, but rolls one D3 instead of one D6. A Hero who was not taken out of action still rolls a D6. Henchmen do not roll when taken out of action."
+    },
+    {
+      "rulename": "Shops",
+      "ruleFull": "Slayers may visit the Dwarf Outpost, the Runesmith and the Human Shop."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "slayer-equipment-list",
+      "title": "Slayer Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Hammer",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "dwarf axe",
+          "alias": "",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double handed Axe/Hammer",
+          "cost": {
+            "cost": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "squig-slayer-equipment-list",
+      "title": "Squig Slayer Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Hammer",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "dwarf axe",
+          "alias": "",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "throwing knives/stars/axes",
+          "alias": "Throwing Knives",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "throwing hammer",
+          "alias": "Throwing Hammers",
+          "cost": {
+            "cost": 20
+          }
+        }
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {
+      "title": "Throwing Hammer",
+      "alias": "",
+      "cost": {
+        "cost": 20
+      },
+      "availability": "Rare 5"
+    },
+    {
+      "title": "Throwing Knives/Stars/Axes",
+      "alias": "Throwing Axe",
+      "cost": {
+        "cost": 25
+      },
+      "availability": "Rare 6"
+    }
+  ],
+  "mutations": [
+    {
+      "mutationName": "Runic Tattoos",
+      "mutationflavour": "Only Heroes may buy runic tattoos, and no Hero may buy the same tattoo twice. A Henchman may have only ordinary tattoos, which do nothing in the game; a Henchman who becomes a Hero may buy runic tattoos. At the start of a campaign only the Daemon Slayer and the Dragon Slayer may buy them, and each pays 5 gold crowns less than the price listed; the discount is gone on every visit after that.",
+      "items": [
+        {
+          "heading": "Stok Gloves",
+          "cost": "25",
+          "ruleFull": "He may re-roll one attack that failed to hit, and the second roll stands. This works with any close combat weapon."
+        },
+        {
+          "heading": "Ok Band",
+          "cost": "30",
+          "ruleFull": "He always strikes before his enemy in close combat, but with one attack only unless he would have struck first anyway. It does nothing for a double-handed weapon, which always strikes last."
+        },
+        {
+          "heading": "Klad Swirls",
+          "cost": "25",
+          "ruleFull": "He gains a 6+ armour save, which may not be modified."
+        },
+        {
+          "heading": "Uzkul Signs",
+          "cost": "20",
+          "ruleFull": "He causes fear and is immune to fear himself."
+        },
+        {
+          "heading": "Zharr Marks",
+          "cost": "15",
+          "ruleFull": "All his attacks count as burning and do double wounds against anything susceptible to fire, his unarmed attacks and his thrown weapons included. He never suffers the penalties for fighting unarmed, and always counts as armed with a sword that may not parry."
+        },
+        {
+          "heading": "Skrund Bracelets",
+          "cost": "30",
+          "ruleFull": "He may charge his normal Movement +D3\"."
+        },
+        {
+          "heading": "Drung Stripes",
+          "cost": "25",
+          "ruleFull": "He gains a 4+ resistance roll against spells of every kind. This is used in place of the warband's Resistant rule, which no longer applies to him."
+        },
+        {
+          "heading": "Azul Spirals",
+          "cost": "15",
+          "ruleFull": "He is immune to all psychology and to All Alone tests."
+        },
+        {
+          "heading": "Hunk Symbols",
+          "cost": "30",
+          "ruleFull": "Any enemy charging him takes D3\" off his charge distance. If he then fails to reach him, the rules for a failed charge apply."
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "daemon-slayer",
+      "type": "hero",
+      "name": "Daemon Slayer",
+      "plural": "Daemon Slayers",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 95,
+      "startingXp": 20,
+      "statblock": {
+        "m": 3,
+        "ws": 5,
+        "bs": 4,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 2,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "slayer-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any model in the warband within 8\" of the Daemon Slayer may use his Leadership."
+        },
+        {
+          "rulename": "Doomed",
+          "ruleFull": "A Daemon Slayer is immune to all psychology and to All Alone tests."
+        },
+        {
+          "rulename": "Monster-killer",
+          "ruleFull": "A Daemon Slayer automatically wounds any model of Toughness 8 or lower on a 4+, or on less where the To Wound chart needs less."
+        }
+      ]
+    },
+    {
+      "id": "dragon-slayer",
+      "type": "hero",
+      "name": "Dragon Slayer",
+      "plural": "Dragon Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 11,
+      "statblock": {
+        "m": 3,
+        "ws": 5,
+        "bs": 3,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 2,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "slayer-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Respected",
+          "ruleFull": "The Dragon Slayer does not lead the warband, but any model in the warband within 4\" of him may use his Leadership."
+        },
+        {
+          "rulename": "Doomed",
+          "ruleFull": "A Dragon Slayer is immune to all psychology and to All Alone tests."
+        },
+        {
+          "rulename": "Monster-killer",
+          "ruleFull": "A Dragon Slayer automatically wounds any model of Toughness 7 or lower on a 4+, or on less where the To Wound chart needs less."
+        }
+      ]
+    },
+    {
+      "id": "giant-slayers",
+      "type": "hero",
+      "name": "Giant Slayer",
+      "plural": "Giant Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 65,
+      "startingXp": 8,
+      "statblock": {
+        "m": 3,
+        "ws": 5,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 2,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "slayer-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Doomed",
+          "ruleFull": "A Giant Slayer is immune to fear and to All Alone tests."
+        },
+        {
+          "rulename": "Monster-killer",
+          "ruleFull": "A Giant Slayer automatically wounds any model of Toughness 6 or lower on a 4+, or on less where the To Wound chart needs less."
+        }
+      ]
+    },
+    {
+      "id": "goblin-slayers",
+      "type": "hero",
+      "name": "Goblin Slayer",
+      "plural": "Goblin Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "startingXp": 0,
+      "statblock": {
+        "m": 3,
+        "ws": 3,
+        "bs": 2,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "slayer-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Doomed",
+          "ruleFull": "A Goblin Slayer is immune to All Alone tests."
+        },
+        {
+          "rulename": "Monster-killer",
+          "ruleFull": "A Goblin Slayer automatically wounds any model of Toughness 5 or lower on a 4+, or on less where the To Wound chart needs less."
+        }
+      ]
+    },
+    {
+      "id": "skaven-slayers",
+      "type": "henchman",
+      "name": "Skaven Slayer",
+      "plural": "Skaven Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 45,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 3,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "slayer-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Frenzy",
+          "ruleFull": "A Skaven Slayer is subject to frenzy."
+        },
+        {
+          "rulename": "Doomed",
+          "ruleFull": "A Skaven Slayer is immune to all psychology and to All Alone tests while he is frenzied, and immune to fear while he is not."
+        }
+      ]
+    },
+    {
+      "id": "troll-slayers",
+      "type": "henchman",
+      "name": "Troll Slayer",
+      "plural": "Troll Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 3,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "slayer-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Monster-killer",
+          "ruleFull": "A Troll Slayer automatically wounds any model of Toughness 5 or lower on a 4+, or on less where the To Wound chart needs less."
+        },
+        {
+          "rulename": "Doomed",
+          "ruleFull": "A Troll Slayer is immune to fear and to All Alone tests."
+        }
+      ]
+    },
+    {
+      "id": "squig-slayers",
+      "type": "henchman",
+      "name": "Squig Slayer",
+      "plural": "Squig Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 45,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 3,
+        "ws": 3,
+        "bs": 4,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "squig-slayer-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Monster-killer",
+          "ruleFull": "A Squig Slayer automatically wounds any model of Toughness 5 or lower on a 4+, or on less where the To Wound chart needs less. This applies to his thrown weapons too."
+        },
+        {
+          "rulename": "Doomed",
+          "ruleFull": "A Squig Slayer is immune to fear and to All Alone tests."
+        },
+        {
+          "rulename": "Throwing",
+          "ruleFull": "A Squig Slayer armed with two thrown weapons may throw each of them in the Shooting phase, shooting twice in the turn."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Slayer Skills (Athel Loren)",
+    "new": true,
+    "note": ""
+  },
+  "specialSkillsList": [
+    {
+      "name": "Ferocious Charge",
+      "ours": "Ferocious Charge"
+    },
+    {
+      "name": "Berserker",
+      "ours": "Berserker"
+    },
+    {
+      "name": "Greased Hair",
+      "description": "Every Dwarf within 2\" of this Dwarf may use his Leadership. If he already has a skill of that kind, its range is increased by 2\" instead."
+    },
+    {
+      "name": "Double-Hand Master",
+      "description": "His attacks with a double-handed weapon may not be parried."
+    },
+    {
+      "name": "Survivor",
+      "description": "He may re-roll his result on the serious injury table. He may re-roll only once, and the second result stands."
+    },
+    {
+      "name": "Whirlwind",
+      "description": "He adds +1 to his rolls on the critical hit effect table for each model in close combat with him, up to +3."
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Throwing Hammer",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "rarity": 5,
+      "dice": null,
+      "rulesPage": 59,
+      "range": "8\"",
+      "strength": "As user",
+      "rules": [
+        {
+          "rule": "Concussion",
+          "text": "When rolling for injuries caused by a throwing hammer, treat 1 as knocked down, 2-4 as stunned and 5-6 as out of action."
+        },
+        {
+          "rule": "Thrown Weapon",
+          "text": "Throwing hammers suffer no penalty for throwing over half range or for moving. They may not be thrown if the model runs, and may not be used in close combat."
+        }
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "page": 57,
+      "what": "A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 58,
+      "what": "The skill table ticks the Daemon Slayer and the Dragon Slayer Combat, Strength, Academic and Slayer, the Giant Slayer Combat, Strength and Slayer, and the Goblin Slayer Combat and Strength. Read from the tick positions against the column centres: the Academic ticks sit on Academic's centre, not Speed's."
+    },
+    {
+      "page": 58,
+      "what": "This is not our \"Dwarf Troll Slayers\" skill group, which is mordheimer's list for the Dwarf Treasure Hunters, Dwarf Rangers and Pit Fighters, nor the Dwarf Slayer Cult's \"Slayer Cult\" group nor the Slayer Pirates' nor the Cursed Dwarves'. Its six skills are imported as a new group, \"Slayer Skills (Athel Loren)\". Decision 7."
+    },
+    {
+      "page": 58,
+      "what": "Ferocious Charge and Berserker are ours with the same words; ours' Berserker already says the two may not be used together, which is this PDF's note under them. Greased Hair, Double-Hand Master, Survivor and Whirlwind are new."
+    },
+    {
+      "page": 59,
+      "what": "The Squig Slayer list sells Throwing Knives at 15 gc, Throwing Hammers at 20 gc and Throwing Axes at 25 gc. Throwing Axes is our Throwing Knives/Stars/Axes, which the list already sells at 15 gc, so the 25 gc line is left out as a second line for the same item. No price row was added either: that item is settled as one entry, one row, 15 gc Rare 5, for everyone (William, 11 Nov 2026). Decision 8."
+    },
+    {
+      "page": 59,
+      "what": "The Special Equipment entry for Throwing Axe is 8\", As User +1, Cutting Edge and Thrown Weapon, where our Throwing Knives/Stars/Axes is 6\", As user and Thrown Weapon only. Nothing of ours was changed. Decision 8."
+    },
+    {
+      "page": 59,
+      "what": "Throwing Hammer is a new item: 20 gc, Rare 5, 8\", As user, with Concussion and Thrown Weapon. It is not our Throwing Knives/Stars/Axes (which has neither Concussion nor an 8\" range) and not our Club, Mace or Hammer. Decision 9."
+    },
+    {
+      "page": 59,
+      "what": "\"Double handed Axe/Hammer\" (15 gc) is our Double-handed weapon and \"Hammer\" (3 gc) our Club, Mace or Hammer, each bought under the PDF's name."
+    },
+    {
+      "page": 59,
+      "what": "The nine runic tattoos are template upgrades, for Heroes, each bought once. The upgrade group's own words become the warband rule Runic Tattoos and carry the rest: Heroes only, no tattoo twice, a Henchman only ordinary tattoos, and only the Daemon Slayer and the Dragon Slayer buying at the start of a campaign at 5 gc less. Their two identical Runic Tattoos fighter rules are left out, since the group's rule says the same for both. Decision 10."
+    },
+    {
+      "page": 57,
+      "what": "\"Only 4 dwarf heroes at maximum can be bought. The other two may only be acquired by 'Lads got Talent' rolls\" is a warband rule: the per-fighter maxima printed (1 + 1 + 2 + 3) are imported as printed and allow more."
+    },
+    {
+      "page": 57,
+      "what": "The Slayers rule calls a Rout test a \"bottle test\"; it is written as a Rout test."
+    },
+    {
+      "page": 62,
+      "what": "The Dragon Slayer's leadership rule is called Respected, not Leader, so only the Daemon Slayer leads the warband, as the PDF says."
+    },
+    {
+      "page": 65,
+      "what": "Troll Slayers have no maximum (\"any number\"). Every henchman group is \"bought in groups of 1-5\"."
+    },
+    {
+      "page": 56,
+      "what": "The setting's own shop price charts (pages 38 to 46) re-price and re-rarify our items per shop location, not per warband, so they are not imported. Decision 6."
+    },
+    {
+      "page": 58,
+      "what": "Karak Azgal's Dwarf Slayers learn from our existing \"Dwarf Troll Slayers\" group (mordheimer's) and our \"Dwarves\", and its fighters are a Giant Slayer, a Troll Slayer, two Rememberers, a Slayer and a Dwarf Clansman. This warband is a different list with its own six skills, so neither it nor Mordheim 2a's Dwarf Slayer Cult was reused. Decision 7."
+    },
+    {
+      "page": 59,
+      "what": "Karak Azgal's Dwarf Slayers buy Scars and Tattoos (its Giant and Troll Slayers only, at most three each, rolled for instead of searching for rare equipment). This warband's nine runic tattoos are bought, Heroes only, one of each, so they are its own upgrade group. Decision 10."
+    },
+    {
+      "page": 58,
+      "what": "The grade 3 batch's Dwarf Grudgebearers is a third Dwarf warband to keep apart: it learns from our \"Dwarves\" group (Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull) and its own \"Dwarf Grudgebearers\" group, has no Slayer among its seven fighters, and shares no skill with this warband's six. Its Hard to Kill, Hard Head, Armour, Hate Orcs and Goblins and Grudgebearers rules are the rulebook's Dwarf block, which both warbands print; this one's Armour rule adds that a Slayer wears none. Decision 7."
+    }
+  ]
+}

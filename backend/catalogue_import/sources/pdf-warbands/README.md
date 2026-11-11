@@ -102,6 +102,10 @@ check over every file.
 | `drowned-dead.json` | drowned-dead (3, Grade 3) | https://www.broheim.net/downloads/warbands/facebook/Drowned%20Dead.pdf | 1-11 (text layer; 1-4 story, 10-11 modelling notes) | 11 Nov 2026 |
 | `dwarf-grudgebearers.json` | dwarf-grudgebearers (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Dwarf%20Grudgebearers.pdf | 1-6 (text layer; its skill table read from the page's own text columns) | 11 Nov 2026 |
 | `goblin-raiders.json` | goblin-raiders (3, Grade 3) | https://www.broheim.net/downloads/warbands/web/Goblin%20Raiders.pdf | 1-8 (text layer; page 2 as an image for its skill table) | 11 Nov 2026 |
+| `savage-orcs-ath.json` | savage-orcs-ath (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=46 | 46-52 of the Athel Loren campaign rules (text layer; no images) | 11 Nov 2026 |
+| `wood-elf-scouts.json` | wood-elf-scouts (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=52 | 52-56 (text layer; no images) | 11 Nov 2026 |
+| `dwarf-troll-slayers.json` | dwarf-troll-slayers (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=56 | 56-65 (text layer; no images) | 11 Nov 2026 |
+| `skaven-of-clan-skryre-ath.json` | skaven-of-clan-skryre-ath (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=66 | 66-77 (text layer; no images) | 11 Nov 2026 |
 
 The six Relics of the Crusades warbands are one 16-page PDF (its pages 1 and 15-16 are the setting's other warbands, its hired swords
 and its dramatis persona, none of them imported). Its pages 2-4 are one Arabian Tribes warband list with three tribes - Ghutani, Muzil and Turjuk -
@@ -109,6 +113,12 @@ that share every fighter, price and equipment list and differ only in their Spec
 warband types, so each is a source file of its own. The Clan Skryre template carries its setting in brackets, because Karak Azgal and Athel Loren
 hold a warband of that name too. The setting's own campaign PDFs (its part 1, which holds the slave rules, the Arabian Steed and the Holy skills its
 pages point at) are not read, so what they would fill is stubbed or flagged.
+
+The four Athel Loren warbands above are all in one 77-page campaign PDF, each read from its own pages only; the setting's shop price charts (pages 38 to 46)
+re-price and re-rarify our items per shop location rather than per warband, so they are not imported, and the stubs' rarities are each warband's own shop's.
+Three of the four share a name with a warband of another setting, so their skill groups and templates carry the setting in brackets: `Savage Orcs (Athel Loren)`
+beside `savage-orcs-sar` and `savage-orcs-kaz`, `Skaven of Clan Skryre (Athel Loren)` beside `-kaz` and `-rel`, and `Slayer Skills (Athel Loren)` because our
+`Dwarf Troll Slayers` skill group is mordheimer's list for the Dwarf Treasure Hunters, Dwarf Rangers and Pit Fighters, not this warband's.
 
 The four Lustria warbands above are the supplement's own, not Town Cryer's: Lustria also holds a grade 1b Lizardmen warband
 (`lizardmen-tc11`) and the setting is a mixed-grade one (19 entries at 1b, 4 at 2b), left as one setting at its majority grade

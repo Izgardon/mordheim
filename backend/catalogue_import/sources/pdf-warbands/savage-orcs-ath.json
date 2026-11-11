@@ -1,0 +1,541 @@
+{
+  "warbandType": "savage-orcs-ath",
+  "name": "Savage Orcs (Athel Loren)",
+  "source": "Athel Loren",
+  "sourceLink": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=46",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {
+      "rulename": "Animosity",
+      "ruleFull": "At the start of your turn roll a D6 for each Henchman who is an Orc or a Goblin, leaving out any model already engaged in close combat. On a 1 he has taken offence: roll another D6 and read the result below.\n\nD6 | Result\n1 | If a friendly Orc or Goblin subject to Animosity, or a Hired Sword, is within charge reach he charges the nearest of them and fights one round of close combat. At the end of that round the two models move 1\" apart and no longer count as being in close combat, unless one of them rolls this result again. If none is within charge reach and he carries a missile weapon, he instead shoots at the nearest friendly Orc or Goblin subject to Animosity, or the nearest Hired Sword. If neither applies, treat the roll as 2-5. In any case he may take no other action this turn, though he may defend himself in close combat.\n2-5 | He spends the turn hurling insults at the nearest friendly Orc or Goblin. He may do nothing else this turn, though he may defend himself in close combat.\n6 | He must move as fast as he can towards the nearest enemy model, charging into close combat if he can. With no enemy model in sight he may make a normal move at once. This move is in addition to his move in the Movement phase, so he may move twice in the turn, and if it takes him within charge reach of an enemy model he must charge during his regular movement."
+    },
+    {
+      "rulename": "Forest Goblins",
+      "ruleFull": "The warband may never hold more Forest Goblins than Orcs."
+    },
+    {
+      "rulename": "Shops",
+      "ruleFull": "Savage Orcs may visit the Orc Camp and the Orc Black Market."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "savage-orc-equipment-list",
+      "title": "Savage Orc Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "",
+          "cost": {
+            "cost": 5,
+            "costSuffix": "Forest Goblins only"
+          }
+        },
+        {
+          "name": "magic war paint",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "",
+          "cost": {
+            "cost": 5,
+            "costSuffix": "Not Savage Orc Shamans"
+          }
+        },
+        {
+          "name": "war boar",
+          "alias": "Boar",
+          "cost": {
+            "cost": 60,
+            "costSuffix": "Heroes only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "orc-equipment-list",
+      "title": "Orc Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "morning star",
+          "alias": "",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "",
+          "cost": {
+            "cost": 50,
+            "costSuffix": "Black Orcs only"
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "savage-orc-shaman",
+      "type": "hero",
+      "name": "Savage Orc Shaman",
+      "plural": "Savage Orc Shamans",
+      "race": "orc",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 11,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "savage-orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "spellLores": [
+        "Waaaagh! Magic"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Wizard",
+          "ruleFull": "A Savage Orc Shaman is a wizard and casts Waaagh! Magic."
+        },
+        {
+          "rulename": "No Shield",
+          "ruleFull": "A Savage Orc Shaman may take magic war paint, but may never take a shield."
+        }
+      ]
+    },
+    {
+      "id": "black-orcs",
+      "type": "hero",
+      "name": "Black Orc",
+      "plural": "Black Orcs",
+      "race": "black orc",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 60,
+      "startingXp": 11,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of a Black Orc may use his Leadership when taking a Leadership test."
+        },
+        {
+          "rulename": "Bossy",
+          "ruleFull": "Any Orc or Goblin within 6\" of a Black Orc does not roll for Animosity."
+        }
+      ]
+    },
+    {
+      "id": "savage-orc-scarboyz",
+      "type": "hero",
+      "name": "Savage Orc Scarboy",
+      "plural": "Savage Orc Scarboyz",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "savage-orc-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Savage",
+          "ruleFull": "A Savage Orc Scarboy is subject to frenzy."
+        },
+        {
+          "rulename": "Animosity",
+          "ruleFull": "A Savage Orc Scarboy is subject to Animosity."
+        }
+      ]
+    },
+    {
+      "id": "orc-boyz",
+      "type": "henchman",
+      "name": "Orc Boy",
+      "plural": "Orc Boyz",
+      "race": "orc",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "orc-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Animosity",
+          "ruleFull": "An Orc Boy is subject to Animosity."
+        }
+      ]
+    },
+    {
+      "id": "savage-orc-boyz",
+      "type": "henchman",
+      "name": "Savage Orc Boy",
+      "plural": "Savage Orc Boyz",
+      "race": "orc",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "savage-orc-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Savage",
+          "ruleFull": "A Savage Orc Boy is subject to frenzy."
+        },
+        {
+          "rulename": "Animosity",
+          "ruleFull": "A Savage Orc Boy is subject to Animosity."
+        }
+      ]
+    },
+    {
+      "id": "forest-goblins",
+      "type": "henchman",
+      "name": "Forest Goblin",
+      "plural": "Forest Goblins",
+      "race": "goblin",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": false,
+      "groupSize": {
+        "min": 1,
+        "max": 5
+      },
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "savage-orc-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Animosity",
+          "ruleFull": "A Forest Goblin is subject to Animosity. He will not charge an Orc because of Animosity, but he will still shoot at one."
+        },
+        {
+          "rulename": "Not Orcs",
+          "ruleFull": "When testing whether the warband must take a Rout test, each Forest Goblin taken out of action counts as half a model."
+        },
+        {
+          "rulename": "Natives",
+          "ruleFull": "A Forest Goblin suffers no movement penalty in woods."
+        },
+        {
+          "rulename": "Weedy Grots",
+          "ruleFull": "A Forest Goblin gains experience, but must re-roll any \"Lad's Got Talent\" result."
+        }
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Magic War Paint",
+      "type": "Armour",
+      "subtype": "",
+      "rarity": 9,
+      "dice": null,
+      "rulesPage": 48
+    }
+  ],
+  "flags": [
+    {
+      "page": 47,
+      "what": "A Savage Orc warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 47,
+      "what": "The Animosity table prints its three results as 1, 2 and 3, but result 1 says the warrior \"behaves as if a 2-5 had been rolled on this chart\", and no result is printed for 4-6. The three results are imported as 1, 2-5 and 6, which is what result 1's own wording and the rulebook's chart give. Decision 1."
+    },
+    {
+      "page": 48,
+      "what": "The skill table ticks the Shaman Combat, Strength and Speed, and the Black Orc and the Scarboy Combat and Strength. Read from the tick positions against the column centres. The Shaman is a wizard but is not ticked Academic; taken as printed. Decision 2."
+    },
+    {
+      "page": 48,
+      "what": "There is no Special column, so the warband has no special skill group. Our existing \"Savage Orcs\" skill group is the Sartosa warband's and is not given to this one."
+    },
+    {
+      "page": 48,
+      "what": "The Orc Equipment List's Armour heading has a stray \"25gc\" beside it at the cost column. No item carries that price; the four armour lines under it are Light Armour 20, Heavy Armour 50, Shield 5 and Helmet 10, all imported as printed."
+    },
+    {
+      "page": 48,
+      "what": "\"Missile Weapons*\" in the Savage Orc list is marked Forest Goblins only (Short Bow). \"Missile Weapons**\" in the Orc list is marked Orcs only (Bow, Crossbow); both fighters who buy from that list are Orcs, so no note was added. Heavy Armour is marked Black Orcs only."
+    },
+    {
+      "page": 49,
+      "what": "The Shaman's \"may take magic warpaint, but may not take shields\" is kept both as a note on the Shield line and as his own rule, since he and three other fighters share the list."
+    },
+    {
+      "page": 48,
+      "what": "Boar is 60 gc on the equipment list; the Orc Camp and Orc Black Market price charts print 40 + 10D6 gc. The list price is used, as a list price. It is our War Boar, bought under the PDF's name."
+    },
+    {
+      "page": 38,
+      "what": "Magic War Paint is a stub with no rules: the warband pages print none and the campaign's own equipment pages were not read. Its rarity is the Orc Camp chart's Rare 9; the Orc Black Market chart prints Rare 5 for the same item. Decision 3."
+    },
+    {
+      "page": 50,
+      "what": "Only the Black Orc carries a Leader rule, and he is 0-2, so a warband may be raised with no leader. The Shaman is the one mandatory hero but the PDF gives him no leadership rule. Decision 4."
+    },
+    {
+      "page": 52,
+      "what": "Weedy Grots makes a Forest Goblin re-roll any \"Lad's Got Talent\", so the group is imported as not promotable; the rule's own words are kept on him."
+    },
+    {
+      "page": 48,
+      "what": "\"Your warband may never include more Forest Goblins than Orcs\" is kept as the Forest Goblin's own rule, since our templates hold no ratio between two fighters."
+    },
+    {
+      "page": 49,
+      "what": "Waaagh! Magic is our \"Waaaagh! Magic\" lore. The PDF points at Town Cryer 6 for the spell list and prints none of its own."
+    },
+    {
+      "page": 51,
+      "what": "Henchmen are \"bought in groups of 1-5\", imported as the group size for every henchman group."
+    },
+    {
+      "page": 50,
+      "what": "Savage (\"he is subject to frenzy\") is our shared Frenzy special under another name, so it is kept apart as the warband's own rule; the shared list matches by name and Savage is not one of Frenzy's. Decision 15."
+    },
+    {
+      "page": 48,
+      "what": "Karak Azgal's Savage Orcs learn from our rulebook \"Orcs\" group; this warband's skill table has no Special column at all, so it learns from no warband group and shares none. Decision 17."
+    },
+    {
+      "page": 38,
+      "what": "Karak Azgal's Savage Orcs brought a Warpaint item (Miscellaneous, 5 gc, Rare 6, \"Mork Protects\": a one-use 6+ invulnerable save). This warband's Magic War Paint is an Armour entry at 10 gc, Rare 9, whose rules this PDF does not print, and the Shaman may take it in place of a shield, which reads as a standing save rather than a one-use one. Kept apart until its rules are known. Decision 18."
+    },
+    {
+      "page": 38,
+      "what": "Checked against the grade 3 batch's thirteen stubs as well: none of them is war paint of any kind, so Magic War Paint stays the one open question beside Karak Azgal's Warpaint. Decision 18."
+    }
+  ]
+}

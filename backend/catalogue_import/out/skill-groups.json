@@ -2014,6 +2014,27 @@
     ]
   },
   {
+    "name": "Skaven Clan Skryre (Athel Loren)",
+    "setting": "athel-loren",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "skaven-of-clan-skryre-ath",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Infiltration: Stormvermin only. Skavenbrew Master: Warlock Engineers and Warlock Apprentices only.",
+    "how": "new group",
+    "skills": [
+      "Tail Fighting",
+      "Wall Runner",
+      "Infiltration",
+      "Skavenbrew Master",
+      "Warpstone Resistance"
+    ]
+  },
+  {
     "name": "Skaven Metal Mongers",
     "setting": null,
     "for_everyone": false,
@@ -2124,6 +2145,28 @@
       "Deathwish",
       "Gloryseeker",
       "Leviathan Slayer"
+    ]
+  },
+  {
+    "name": "Slayer Skills (Athel Loren)",
+    "setting": "athel-loren",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dwarf-troll-slayers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Ferocious Charge",
+      "Berserker",
+      "Greased Hair",
+      "Double-Hand Master",
+      "Survivor",
+      "Whirlwind"
     ]
   },
   {
@@ -2290,6 +2333,30 @@
       "Thirst for Vengeance",
       "Blessing of Morr",
       "Touch of Darkness"
+    ]
+  },
+  {
+    "name": "Wood Elf Scouts",
+    "setting": "athel-loren",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "wood-elf-scouts",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Infiltrate (Wood Elf Scouts)",
+      "Trapper",
+      "Expert Hunter",
+      "Stand and Shoot",
+      "Wild Hunter",
+      "Pathfinder (Wood Elf Scouts)",
+      "Tree Walker",
+      "Sniper (Wood Elf Scouts)"
     ]
   },
   {

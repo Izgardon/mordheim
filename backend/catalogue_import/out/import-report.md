@@ -26,10 +26,10 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 533 |
-| skills | 464 |
-| skill groups | 107 |
-| skill group links | 600 |
+| price rows | 542 |
+| skills | 478 |
+| skill groups | 110 |
+| skill group links | 619 |
 | serious injuries (D66) | 20 |
 | shared specials | 66 |
 | random mutation results (D66) | 36 |
@@ -211,7 +211,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 464 | 152 | 275 | 37 |
+| skills | 478 | 152 | 289 | 37 |
 | hired swords | 75 | 71 | 4 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -322,7 +322,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 464 skills, one per name; `out/skill-groups.json` is 107 groups holding them (600 links), the five core groups first.
+`out/skills.json` is 478 skills, one per name; `out/skill-groups.json` is 110 groups holding them (619 links), the five core groups first.
 
 ### Merged by name
 
@@ -458,11 +458,13 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Skaven | Skaven | skill_group_learners | - | Black Hunger, Tail Fighting, Wall Runner, Infiltration, Art of Silent Death |
 | Skaven Clan Moulder | Skaven of Clan Moulder | new group | - | Black Hunger, Beastkin, Hypnotic Musk, Subjugator of Mankind, Twistkin |
 | Skaven Clan Pestilens | Skaven of Clan Pestilens (TC29) | skill_group_learners | - | Black Hunger, Censer Bearer, Rotten Body, Contagious, Ignore Pain |
+| Skaven Clan Skryre (Athel Loren) | Skaven of Clan Skryre (ATH) | new group | Infiltration: Stormvermin only. Skavenbrew Master: Warlock Engineers and Warlock Apprentices only. | Tail Fighting, Wall Runner, Infiltration, Skavenbrew Master, Warpstone Resistance |
 | Skaven Metal Mongers | Metal Mongers | skill_lists | - | Tail Fighting, Infiltration, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat |
 | Skaven of Karak Azgal | Skaven of Clan Mors, Skaven of Clan Skryre (KAZ) | new group | - | Black Hunger, Tail Fighting, Wall Runner, Infiltration |
 | Skink | Lizardmen (TC11) | intersection | - | Infiltration (Skink), Great Hunter |
 | Slayer Cult | Dwarf Slayer Cult | new group | Songster: the Rememberer only. Deathwish: Stubbles and Axe Hurlers who become Heroes. | Ferocious Charge, True Grit, Deathwish, Monster Slayer (Slayer Cult), Berserker (Slayer Cult), Deathblow, Axe Mastery, Thick Skull (Slayer Cult), Songster, Song of Honor, Relentless |
 | Slayer Pirates | Slayer Pirates | new group | Deathwish: Landlubbers and Gunners only. | Ferocious Charge, True Grit, Thick Skull, Deathwish, Gloryseeker, Leviathan Slayer |
+| Slayer Skills (Athel Loren) | Dwarf Troll Slayers | new group | - | Ferocious Charge, Berserker, Greased Hair, Double-Hand Master, Survivor, Whirlwind |
 | Snotlings | Snotlings | new group | - | Stampede, Achilles' Heel, Worm, Big Bully, Frustratingly Tiny, Mob Master |
 | Sons of Hashut | Sons of Hashut | new group | - | Extra Tough, True Grit, Thick Skull, Unlimited Hatred |
 | Survivors of Strigos | Survivors of Strigos | new group | - | Iron Sinews, Great Thirster, Curse of the Revenant, Dark Arts, Light Fingers, Practiced Arm |
@@ -471,13 +473,14 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Undead Vampires | Undead | skill_lists | Vampire only | Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form |
 | Underworld Alliance | Underworld Alliance | new group | - | Infiltration, Wyrdstone Addict, Toss Me!, Stuff 'em with Green, Ha! Watch This |
 | Vampire Hunters of Sylvania | Vampire Hunters of Sylvania | new group | Iron Will and Righteous Aura: the Vampire Hunter and Slayers only. | Righteous Aura, Iron Will, Thirst for Vengeance, Blessing of Morr, Touch of Darkness |
+| Wood Elf Scouts | Wood Elf Scouts | new group | - | Infiltrate (Wood Elf Scouts), Trapper, Expert Hunter, Stand and Shoot, Wild Hunter, Pathfinder (Wood Elf Scouts), Tree Walker, Sniper (Wood Elf Scouts) |
 | Wood Elves of Arden | Wood Elves of Arden | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves of Arden) |
 | Wood Elves of Athel Loren | Wood Elves of Athel Loren | new group | - | Fey, Infiltration, Elven Luck, Excellent Sight, Seeker (Wood Elves of Athel Loren) |
 | Woodsmen de Artois | Woodsmen de Artois | new group | - | Bull Rush, Infiltration, Sniper (Shadow Warriors), Staff Master, Forager |
 
 ### New groups and skills (`new_skill_groups`)
 
-263 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+277 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -601,6 +604,10 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Thick Skull (Slayer Cult) | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
 | Song of Honor | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
 | Relentless | Slayer Cult | mordheim-2a | Dave ‘Styrofoam King’ Joria |
+| Greased Hair | Slayer Skills (Athel Loren) | athel-loren | Athel Loren |
+| Double-Hand Master | Slayer Skills (Athel Loren) | athel-loren | Athel Loren |
+| Survivor | Slayer Skills (Athel Loren) | athel-loren | Athel Loren |
+| Whirlwind | Slayer Skills (Athel Loren) | athel-loren | Athel Loren |
 | Absorption | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
 | Adaptation | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
 | Harvester of Souls | Fen Guard | mutiny-in-marienburg | Mutiny in Marienburg |
@@ -710,6 +717,8 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Enrage | Clan Pristekk | sealed-city | Sealed City |
 | Breeder | Clan Pristekk | sealed-city | Sealed City |
 | Mutating Experiment | Clan Pristekk | sealed-city | Sealed City |
+| Skavenbrew Master | Skaven Clan Skryre (Athel Loren) | athel-loren | Athel Loren |
+| Warpstone Resistance | Skaven Clan Skryre (Athel Loren) | athel-loren | Athel Loren |
 | Gloryseeker | Slayer Pirates | sartosa | Sartosa |
 | Leviathan Slayer | Slayer Pirates | sartosa | Sartosa |
 | Stampede | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
@@ -739,6 +748,14 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Thirst for Vengeance | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Blessing of Morr | Vampire Hunters of Sylvania | sylvania | LOD5 |
 | Touch of Darkness | Vampire Hunters of Sylvania | sylvania | LOD5 |
+| Infiltrate (Wood Elf Scouts) | Wood Elf Scouts | athel-loren | Athel Loren |
+| Trapper | Wood Elf Scouts | athel-loren | Athel Loren |
+| Expert Hunter | Wood Elf Scouts | athel-loren | Athel Loren |
+| Stand and Shoot | Wood Elf Scouts | athel-loren | Athel Loren |
+| Wild Hunter | Wood Elf Scouts | athel-loren | Athel Loren |
+| Pathfinder (Wood Elf Scouts) | Wood Elf Scouts | athel-loren | Athel Loren |
+| Tree Walker | Wood Elf Scouts | athel-loren | Athel Loren |
+| Sniper (Wood Elf Scouts) | Wood Elf Scouts | athel-loren | Athel Loren |
 | Elven Luck | Wood Elves of Arden | mordheim-2a | Mousillon |
 | Seeker (Wood Elves of Arden) | Wood Elves of Arden | mousillon | Mousillon |
 | Seeker (Wood Elves of Athel Loren) | Wood Elves of Athel Loren | mordheim-2a | WEB |
@@ -773,16 +790,16 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Dwarf Guildsmen, Dwarf Slayers, Dwarf Grudgebearers |
 | True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult, Dwarf Guildsmen, Dwarf Slayers, Guild of Disgraced Engineers, Slayer Pirates, Dwarf Grudgebearers |
 | Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Dwarf Guildsmen, Dwarf Slayers, Guild of Disgraced Engineers, Slayer Pirates, Dwarf Grudgebearers |
-| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Channel Rats, Dark Elf Corsairs, Lothern Sea Patrol, Metal Mongers, Night Goblins (KAZ), Sea Ghosts, Silent Brotherhood, Skaven of Clan Mors, Skaven of Clan Skryre (KAZ), Underworld Alliance, Wood Elves of Arden, Woodsmen de Artois, Arabyan Thieves, Assassin Squad, Knives from the Dark, Dwarf Grudgebearers, Goblin Raiders |
+| Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Channel Rats, Dark Elf Corsairs, Lothern Sea Patrol, Metal Mongers, Night Goblins (KAZ), Sea Ghosts, Silent Brotherhood, Skaven of Clan Mors, Skaven of Clan Skryre (KAZ), Underworld Alliance, Wood Elves of Arden, Woodsmen de Artois, Arabyan Thieves, Assassin Squad, Knives from the Dark, Dwarf Grudgebearers, Goblin Raiders, Skaven of Clan Skryre (ATH) |
 | Foul Odour | Ostlanders | Ostlanders, Horned Hunters |
 | Hide in Shadows | Hochland Bandits, Shadow Warriors, Night Goblins (WEB) | Hochland Bandits, Horned Hunters, Shadow Warriors, Night Goblins (WEB), Sea Ghosts |
 | Sneaky Git | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Netter | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Fey | Wood Elves of Athel Loren | Wood Elves of Athel Loren, Adventurers, High Elves, Sea Ghosts, Wood Elves of Arden |
 | Fey Quickness | Dark Elves, Druchii | Dark Elves, Druchii, Adventurers, Dark Elf Corsairs, High Elves, Lothern Sea Patrol |
-| Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayer Cult, Adventurers, Dwarf Slayers, Slayer Pirates, Cursed Dwarves |
+| Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayer Cult, Adventurers, Dwarf Slayers, Slayer Pirates, Cursed Dwarves, Dwarf Troll Slayers |
 | Monster Slayer | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Adventurers, Dwarf Slayers, Cursed Dwarves |
-| Berserker | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Adventurers, Dwarf Slayers, Cursed Dwarves |
+| Berserker | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Adventurers, Dwarf Slayers, Cursed Dwarves, Dwarf Troll Slayers |
 | Hit and run | Arabian Tomb Raiders | Arabian Tomb Raiders, Araby Smugglers, Arabyan Nomads, Goblin Raiders |
 | Weather tolerant | Arabian Tomb Raiders | Arabian Tomb Raiders, Arabyan Nomads |
 | Virtue of the Impetuous | Bretonnian Knights | Bretonnian Knights, Bretonnian Grail Companions, Knights of the Bitter Moors |
@@ -812,8 +829,8 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Backstabber | Low Kings | Low Kings, Silent Brotherhood |
 | Master of Poisons | Dark Elves | Dark Elves, Silent Brotherhood |
 | Black Hunger | Skaven, Skaven of Clan Pestilens (TC29), Skaven of Clan Moulder | Skaven, Skaven of Clan Pestilens (TC29), Skaven of Clan Moulder, Skaven of Clan Mors, Skaven of Clan Pristekk, Skaven of Clan Skryre (KAZ) |
-| Tail Fighting | Skaven | Skaven, Metal Mongers, Skaven of Clan Mors, Skaven of Clan Skryre (KAZ) |
-| Wall Runner | Skaven | Skaven, The Lost, Skaven of Clan Mors, Skaven of Clan Skryre (KAZ) |
+| Tail Fighting | Skaven | Skaven, Metal Mongers, Skaven of Clan Mors, Skaven of Clan Skryre (KAZ), Skaven of Clan Skryre (ATH) |
+| Wall Runner | Skaven | Skaven, The Lost, Skaven of Clan Mors, Skaven of Clan Skryre (KAZ), Skaven of Clan Skryre (ATH) |
 | Righteous Aura | Vampire Hunters of Sylvania | Sisters of Sigmar, Vampire Hunters of Sylvania |
 | Sniper (Shadow Warriors) | Shadow Warriors | Shadow Warriors, Woodsmen de Artois |
 
@@ -851,16 +868,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 138 |
-| warband types linked | 146 |
-| fighters (heroes, henchmen) | 900 (464, 436) |
+| templates | 142 |
+| warband types linked | 150 |
+| fighters (heroes, henchmen) | 923 (476, 447) |
 | henchmen that gain no XP | 127 |
-| henchmen that can't be promoted | 154 |
-| equipment lists | 336 |
-| list lines | 3742 |
-| warband rules | 460 |
-| upgrades | 170 |
-| the templates' own specials | 1068 |
+| henchmen that can't be promoted | 156 |
+| equipment lists | 346 |
+| list lines | 3824 |
+| warband rules | 483 |
+| upgrades | 179 |
+| the templates' own specials | 1109 |
 
 ### List lines
 
@@ -875,7 +892,7 @@ Lines found other than by name or tag:
 | cursed-cavalcade | Misericordia | Misericordia (Cursed Cavalcade) | named for the warband |
 | cursed-dwarves | hand gun | Handgun | a loose match |
 
-564 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+571 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 
@@ -889,6 +906,7 @@ Notes it couldn't read, kept as the line's note:
 | savage-orcs-kaz | Special equipment | Warpaint | , Savage Orcs and Gobbo Boyz only |
 | savage-orcs-kaz | Special equipment | Kumfy Gear | , any Orc warband but no Goblin |
 | savage-orcs-kaz | Special equipment | Effigy of Mork | , Savage Orcs only |
+| skaven-of-clan-skryre-ath | Special equipment | Skavenbrew | , 25 + 2D6 gc |
 | skaven-of-clan-skryre-kaz | Special equipment | Jezzail | , Clan Skryre Heroes only |
 | skaven-of-clan-skryre-rel | Special equipment | Insulation Robe | , Clan Skryre only |
 | strigoi | Special equipment | Corpse Liquor | , Strigoi warbands only |
@@ -1040,10 +1058,13 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | nipponese-expedition | Vim-To Mage | Wizard | Arabian Elemental Magic |
 | outlaws-of-stirwood-forest-redux | Cleric | Priest | Prayers of Sigmar |
 | protectorate-of-sigmar | Warrior Priest | Priest | Prayers of Sigmar |
+| savage-orcs-ath | Savage Orc Shaman | Wizard | Waaaagh! Magic |
 | savage-orcs-kaz | Wierdo | Wizard | Waaaagh! Magic |
 | shallows-beasts | Mutant-Priest | Wizard | Chaos Rituals |
 | skaven-of-clan-mors | Mors Sorcerer | Wizard | Magic of the Horned Rat |
 | skaven-of-clan-pristekk | Clan Pristekk sorcerer | Wizard | Magic of the Horned Rat |
+| skaven-of-clan-skryre-ath | Warlock Engineer | Wizard | Magic of the Horned Rat |
+| skaven-of-clan-skryre-ath | Warlock Apprentice | Wizard | Magic of the Horned Rat |
 | skaven-of-clan-skryre-kaz | Warlock Engineer | Wizard | Magic of the Horned Rat |
 | skaven-of-clan-skryre-rel | Warlock Engineer | Wizard | Magic of the Horned Rat |
 | snotlings | Snotling Shaman | Wizard | Snotling Waaagh! Magic |
@@ -1069,6 +1090,7 @@ mordheimer's lore names that differ from ours: Charms & Hexes -> Charms and Hexe
 | marauders-of-chaos | Mark of the Dark Gods | who marauder-chieftain, seer; at most 1 each; cost 0 |
 | blood-dragons | Bloodline Abilities | who vampire; later double |
 | dwarf-slayers | Scars and Tattoos | who giant-slayer, troll-slayer; at most 3 each |
+| dwarf-troll-slayers | Runic Tattoos | who heroes |
 | goblin-raiders | Speshul Nitches | who heroes; at most 1 each; at recruit |
 | lizardmen-lus | Sacred Markings | who heroes; at most 1 each; at recruit |
 | lothern-sea-patrol | Honours | who heroes; at most 1 each; at recruit |
@@ -1186,7 +1208,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 - Not applied (rules the data can't hold): Trantio's extra 100 gc in a one-off game and 20% in a Lustrian campaign (it depends on the campaign), Miragliano's +1 to hit with crossbows (heroes) and missiles (Marksmen), Remas' rout re-roll against Dark Elves, a Hung henchman who becomes a hero getting Ride Warhorse, and the Ostermarker captain's starting wardog.
 - Mercenaries: the Ostermarkers pick one of the three cities' skill tables.
 - mercenaries: 'Ostermarker Special rules' (heading Ostermark) is for the ostermarkers type only.
-- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); orc-mob: Movement (Sea Squig); orc-mob: Minderz (Sea Squig); orc-mob: Not Orcs (Sea Squig); orc-mob: Animals (Sea Squig); orc-mob: Dumb Monster (Sea Troll); orc-mob: Always Hungry (Sea Troll); orc-mob: Not Orcs (Forest Goblin); orc-mob: Runts (Forest Goblin); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); albion-barbarians: Lad's Got Talent (Warrior); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); clockworkers: In-built equipment (Clockwork fiend); disciples-of-maldred: His Master's Gift (Questing Knight); drowned-dead: No Brain (Jolly Boat); dwarf-slayers: No Missiles or Armour (Slayer); lahmian: Devoted (Thrall); skaven-of-clan-moulder: Experience (Rat Ogre); snotlings: Teamwork (Snotling Mob); strigoi: Living (Bat).
+- A rule worded for another fighter only ("Pit Veterans have") takes the first fighter's wording; one that really differs is named apart, with its fighter or upgrade group: black-orcs: Black Orc (Black Orc); black-orcs: Animosity (Orc Shoota); carnival-of-chaos: Daemonic (Nurgling); carnival-of-chaos: Daemonic Aura (Nurgling); cult-of-the-posessed: Mutations (Mutants); cursed-cavalcade: Animal (Fighting Ape); forest-goblins: Animosity (Red Toof Goblin); horned-hunters: Strictures (Initiate); horned-hunters: Strictures (Zealot); imperial-outriders: Ride (Hussar); lustrian-reavers: Starting Equipment (Saurus Slayer); lustrian-reavers: Starting Equipment (Reaver Beastmaster); lustrian-reavers: Starting Equipment (Jungle Shadow); lustrian-reavers: Starting Equipment (Trapmaster); night-goblins-web: Movement (Great Squig); orc-mob: Animosity (Goblin Warrior); orc-mob: Not Orcs (Cave Squig); orc-mob: Movement (Sea Squig); orc-mob: Minderz (Sea Squig); orc-mob: Not Orcs (Sea Squig); orc-mob: Animals (Sea Squig); orc-mob: Dumb Monster (Sea Troll); orc-mob: Always Hungry (Sea Troll); orc-mob: Not Orcs (Forest Goblin); orc-mob: Runts (Forest Goblin); pit-fighters: Pit Fighter (Pit Fighter); skaven-eshin: Experience (Rat Ogre); skaven-pestilens: Experience (Rat Ogre); tomb-guardians-old: Undead (Skeleton Soldier); tomb-guardians-old: Undead (Tomb Guard); tomb-guardians: Undead (Skeleton Warrior); tomb-guardians: Undead (Tomb Guardian); albion-barbarians: Lad's Got Talent (Warrior); bretonnian-grail-companions: Lord's Boon (Knight of the Realm); clockworkers: In-built equipment (Clockwork fiend); disciples-of-maldred: His Master's Gift (Questing Knight); drowned-dead: No Brain (Jolly Boat); dwarf-slayers: No Missiles or Armour (Slayer); dwarf-troll-slayers: Monster-killer (Dragon Slayer); dwarf-troll-slayers: Doomed (Giant Slayer); dwarf-troll-slayers: Monster-killer (Giant Slayer); dwarf-troll-slayers: Doomed (Goblin Slayer); dwarf-troll-slayers: Monster-killer (Goblin Slayer); dwarf-troll-slayers: Doomed (Skaven Slayer); dwarf-troll-slayers: Monster-killer (Troll Slayer); dwarf-troll-slayers: Doomed (Troll Slayer); dwarf-troll-slayers: Monster-killer (Squig Slayer); dwarf-troll-slayers: Doomed (Squig Slayer); lahmian: Devoted (Thrall); savage-orcs-ath: Animosity (Forest Goblin); skaven-of-clan-moulder: Experience (Rat Ogre); snotlings: Teamwork (Snotling Mob); strigoi: Living (Bat).
 
 ## Shared specials
 
@@ -1205,7 +1227,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Perfect Killer | Trait | the list's text |  |  | 3 | 1 | 1 | 0 |
 | Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
 | Hate Orcs and Goblins | Psychology | the list's text |  |  | 5 | 3 | 0 | 0 |
-| Frenzy | Psychology | the list's text |  |  | 9 | 1 | 1 | 1 |
+| Frenzy | Psychology | the list's text |  |  | 10 | 1 | 1 | 1 |
 | Hate High Elves | Psychology | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Hate Bandits and Outlaws | Psychology | the list's text |  |  | 2 | 0 | 0 | 0 |
 | Hate Spellcasters | Psychology | the list's text |  |  | 2 | 0 | 0 | 0 |
@@ -1276,7 +1298,7 @@ List prices the pages differ from: none.
 - Perfect Killer: Skaven: Assassin Adept; Assassin Squad, Knives from the Dark: Shadowblade; Silent Brotherhood: Silent Master; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
 - Pawnbroker: Arabian Merchant; Cathayan Merchant.
 - Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Slayer Cult: Rememberer; Dwarf Slayer Cult: Stubble; Dwarf Slayer Cult: Axe Hurler; Dwarf Pathfinder; Dwarf Treasure Hunter (Hates Orcs & Goblins); Runesmith Journeyman.
-- Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Adventurers: Barbarian; Druchii: Witch Elf; Forest Goblins (Lustria): Red Toof Clan Goblin (Berserkers); Khorne Raiders: Cannibal Boy; Savage Orcs (Karak Azgal): Nutta; Skaven of Clan Pestilens (Mousillon): Plague Priest; Skaven of Clan Pestilens (Mousillon): Plague Champion; Witch Elf (Dark Elf Corsairs); Sigmund Spindle, the Harvester of Flesh (Maddened); Bloodletter.
+- Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Adventurers: Barbarian; Druchii: Witch Elf; Dwarf Troll Slayers: Skaven Slayer; Forest Goblins (Lustria): Red Toof Clan Goblin (Berserkers); Khorne Raiders: Cannibal Boy; Savage Orcs (Karak Azgal): Nutta; Skaven of Clan Pestilens (Mousillon): Plague Priest; Skaven of Clan Pestilens (Mousillon): Plague Champion; Witch Elf (Dark Elf Corsairs); Sigmund Spindle, the Harvester of Flesh (Maddened); Bloodletter.
 - Hate High Elves: Dark Elf Assassin (Kindred Hatred); Dijin Katal, the Renegade Assassin (Kindred Hatred).
 - Hate Bandits and Outlaws: Horned Hunters: Horned Hunter (Hang the Bandit!); Horned Hunters: Initiate (Hang the Bandit!).
 - Hate Spellcasters: Witch Hunters: Witch Hunter Captain (Burn the Witch!); Witch Hunters: Witch Hunter (Burn the Witch!).
@@ -1420,7 +1442,7 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-90 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+94 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
@@ -1450,6 +1472,7 @@ Kept apart from a family's, the effect differing:
 | dwarf-guildsmen | dwarf-guildsmen | 6 | 0 | 0 | 11 |
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 1 | 11 |
 | dwarf-slayers | dwarf-slayers | 6 | 0 | 0 | 12 |
+| dwarf-troll-slayers | dwarf-troll-slayers | 7 | 0 | 1 | 17 |
 | estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 9 |
 | fen-guard | fen-guard | 5 | 1 | 3 | 14 |
 | forest-goblins-lus | forest-goblins-lus | 7 | 0 | 0 | 17 |
@@ -1485,6 +1508,7 @@ Kept apart from a family's, the effect differing:
 | pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 12 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
 | sartosan-pirates | sartosan-pirates | 7 | 0 | 17 | 10 |
+| savage-orcs-ath | savage-orcs-ath | 6 | 0 | 1 | 18 |
 | savage-orcs-kaz | savage-orcs-kaz | 7 | 0 | 4 | 11 |
 | savage-orcs-sar | savage-orcs-sar | 7 | 0 | 0 | 8 |
 | sea-ghosts | sea-ghosts | 6 | 0 | 0 | 10 |
@@ -1495,6 +1519,7 @@ Kept apart from a family's, the effect differing:
 | skaven-of-clan-pestilens-lus | skaven-of-clan-pestilens-lus | 6 | 0 | 0 | 14 |
 | skaven-of-clan-pestilens-mou | skaven-of-clan-pestilens-mou | 6 | 0 | 1 | 13 |
 | skaven-of-clan-pristekk | skaven-of-clan-pristekk | 7 | 0 | 3 | 9 |
+| skaven-of-clan-skryre-ath | skaven-of-clan-skryre-ath | 6 | 0 | 7 | 20 |
 | skaven-of-clan-skryre-kaz | skaven-of-clan-skryre-kaz | 6 | 0 | 1 | 8 |
 | skaven-of-clan-skryre-rel | skaven-of-clan-skryre-rel | 6 | 0 | 4 | 11 |
 | slavers | slavers | 6 | 0 | 4 | 9 |
@@ -1511,6 +1536,7 @@ Kept apart from a family's, the effect differing:
 | vampire-hunters-of-sylvania | vampire-hunters-of-sylvania | 6 | 1 | 4 | 11 |
 | wasteland-privateers | wasteland-privateers | 7 | 0 | 0 | 10 |
 | watchmen | watchmen | 7 | 0 | 2 | 8 |
+| wood-elf-scouts | wood-elf-scouts | 4 | 0 | 0 | 12 |
 | wood-elves-of-arden | wood-elves-of-arden | 6 | 0 | 0 | 7 |
 | wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
 | woodsmen-de-artois | woodsmen-de-artois | 8 | 0 | 1 | 9 |
@@ -1955,6 +1981,27 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p32): The Shame rule is kept as a warband rule: it turns a Hero into a Slayer, which the app cannot do to a unit.
 - Flag (p35): The Scars and Tattoos are the warband's upgrades, each the special it gives at its price (10 to 50 gc), the Slayer Heroes' only, at most three each. An upgrade carries no rarity, so each one's difficulty is said in its text, and the group's own words, the warband's Scars and Tattoos rule, say it is bought in place of the rare-equipment search.
 - Flag (p33): "Dwarfs may use the Dwarf Axe as detailed in Town Crier 6" is our Dwarf Axe, on the Dwarf Warrior list at 15 gc.
+
+### Dwarf Troll Slayers
+
+- Stub: Throwing Hammer, 20 gc, Rare 5; its rules are on p59.
+- Flag (p57): A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p58): The skill table ticks the Daemon Slayer and the Dragon Slayer Combat, Strength, Academic and Slayer, the Giant Slayer Combat, Strength and Slayer, and the Goblin Slayer Combat and Strength. Read from the tick positions against the column centres: the Academic ticks sit on Academic's centre, not Speed's.
+- Flag (p58): This is not our "Dwarf Troll Slayers" skill group, which is mordheimer's list for the Dwarf Treasure Hunters, Dwarf Rangers and Pit Fighters, nor the Dwarf Slayer Cult's "Slayer Cult" group nor the Slayer Pirates' nor the Cursed Dwarves'. Its six skills are imported as a new group, "Slayer Skills (Athel Loren)". Decision 7.
+- Flag (p58): Ferocious Charge and Berserker are ours with the same words; ours' Berserker already says the two may not be used together, which is this PDF's note under them. Greased Hair, Double-Hand Master, Survivor and Whirlwind are new.
+- Flag (p59): The Squig Slayer list sells Throwing Knives at 15 gc, Throwing Hammers at 20 gc and Throwing Axes at 25 gc. Throwing Axes is our Throwing Knives/Stars/Axes, which the list already sells at 15 gc, so the 25 gc line is left out as a second line for the same item. No price row was added either: that item is settled as one entry, one row, 15 gc Rare 5, for everyone (William, 11 Nov 2026). Decision 8.
+- Flag (p59): The Special Equipment entry for Throwing Axe is 8", As User +1, Cutting Edge and Thrown Weapon, where our Throwing Knives/Stars/Axes is 6", As user and Thrown Weapon only. Nothing of ours was changed. Decision 8.
+- Flag (p59): Throwing Hammer is a new item: 20 gc, Rare 5, 8", As user, with Concussion and Thrown Weapon. It is not our Throwing Knives/Stars/Axes (which has neither Concussion nor an 8" range) and not our Club, Mace or Hammer. Decision 9.
+- Flag (p59): "Double handed Axe/Hammer" (15 gc) is our Double-handed weapon and "Hammer" (3 gc) our Club, Mace or Hammer, each bought under the PDF's name.
+- Flag (p59): The nine runic tattoos are template upgrades, for Heroes, each bought once. The upgrade group's own words become the warband rule Runic Tattoos and carry the rest: Heroes only, no tattoo twice, a Henchman only ordinary tattoos, and only the Daemon Slayer and the Dragon Slayer buying at the start of a campaign at 5 gc less. Their two identical Runic Tattoos fighter rules are left out, since the group's rule says the same for both. Decision 10.
+- Flag (p57): "Only 4 dwarf heroes at maximum can be bought. The other two may only be acquired by 'Lads got Talent' rolls" is a warband rule: the per-fighter maxima printed (1 + 1 + 2 + 3) are imported as printed and allow more.
+- Flag (p57): The Slayers rule calls a Rout test a "bottle test"; it is written as a Rout test.
+- Flag (p62): The Dragon Slayer's leadership rule is called Respected, not Leader, so only the Daemon Slayer leads the warband, as the PDF says.
+- Flag (p65): Troll Slayers have no maximum ("any number"). Every henchman group is "bought in groups of 1-5".
+- Flag (p56): The setting's own shop price charts (pages 38 to 46) re-price and re-rarify our items per shop location, not per warband, so they are not imported. Decision 6.
+- Flag (p58): Karak Azgal's Dwarf Slayers learn from our existing "Dwarf Troll Slayers" group (mordheimer's) and our "Dwarves", and its fighters are a Giant Slayer, a Troll Slayer, two Rememberers, a Slayer and a Dwarf Clansman. This warband is a different list with its own six skills, so neither it nor Mordheim 2a's Dwarf Slayer Cult was reused. Decision 7.
+- Flag (p59): Karak Azgal's Dwarf Slayers buy Scars and Tattoos (its Giant and Troll Slayers only, at most three each, rolled for instead of searching for rare equipment). This warband's nine runic tattoos are bought, Heroes only, one of each, so they are its own upgrade group. Decision 10.
+- Flag (p58): The grade 3 batch's Dwarf Grudgebearers is a third Dwarf warband to keep apart: it learns from our "Dwarves" group (Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull) and its own "Dwarf Grudgebearers" group, has no Slayer among its seven fighters, and shares no skill with this warband's six. Its Hard to Kill, Hard Head, Armour, Hate Orcs and Goblins and Grudgebearers rules are the rulebook's Dwarf block, which both warbands print; this one's Armour rule adds that a Slayer wears none. Decision 7.
 
 ### Estalian Corsairs
 
@@ -2557,6 +2604,28 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all twelve Sartosa warband types, and a warband's own list price still wins for that warband. Throwing Axes get no row: they are our Throwing Knives/Stars/Axes, 15 gc Rare 5 for everyone already (William, 11 Nov 2026).
 - Flag (p10): The setting's Equipment PDF prints eighteen items our catalogue lacks: they are stubs with the rules and prices it prints, one row for the setting's twelve warband types (William, 11 Nov 2026: "add them in as stubs if you dont have the rules for them yet, we will populate later but good to know they exist"). The Quarantine Flag is 40+2D6 on the trading chart and 30+2D6 in its entry: the entry's, as William settled for the Horn of the Wild Hunt. Each of the six Banners carries the shared Pirate Banner rule and its own. The Greatcoat (10 gc, Common) is our Rain Coat, "Based on 'Raincoat' from Border Town Burning" and the same price, so it is no new item: it is a tag on ours, and the PDF adds that it may be worn over armour without penalty but not with a cloak, and does not keep powder dry when walking through water. The Powder Monkey has no rules in either PDF read.
 
+### Savage Orcs (Athel Loren)
+
+- Stub: Magic War Paint, 10 gc, Rare 9; its rules are on p48.
+- Flag (p47): A Savage Orc warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p47): The Animosity table prints its three results as 1, 2 and 3, but result 1 says the warrior "behaves as if a 2-5 had been rolled on this chart", and no result is printed for 4-6. The three results are imported as 1, 2-5 and 6, which is what result 1's own wording and the rulebook's chart give. Decision 1.
+- Flag (p48): The skill table ticks the Shaman Combat, Strength and Speed, and the Black Orc and the Scarboy Combat and Strength. Read from the tick positions against the column centres. The Shaman is a wizard but is not ticked Academic; taken as printed. Decision 2.
+- Flag (p48): There is no Special column, so the warband has no special skill group. Our existing "Savage Orcs" skill group is the Sartosa warband's and is not given to this one.
+- Flag (p48): The Orc Equipment List's Armour heading has a stray "25gc" beside it at the cost column. No item carries that price; the four armour lines under it are Light Armour 20, Heavy Armour 50, Shield 5 and Helmet 10, all imported as printed.
+- Flag (p48): "Missile Weapons*" in the Savage Orc list is marked Forest Goblins only (Short Bow). "Missile Weapons**" in the Orc list is marked Orcs only (Bow, Crossbow); both fighters who buy from that list are Orcs, so no note was added. Heavy Armour is marked Black Orcs only.
+- Flag (p49): The Shaman's "may take magic warpaint, but may not take shields" is kept both as a note on the Shield line and as his own rule, since he and three other fighters share the list.
+- Flag (p48): Boar is 60 gc on the equipment list; the Orc Camp and Orc Black Market price charts print 40 + 10D6 gc. The list price is used, as a list price. It is our War Boar, bought under the PDF's name.
+- Flag (p38): Magic War Paint is a stub with no rules: the warband pages print none and the campaign's own equipment pages were not read. Its rarity is the Orc Camp chart's Rare 9; the Orc Black Market chart prints Rare 5 for the same item. Decision 3.
+- Flag (p50): Only the Black Orc carries a Leader rule, and he is 0-2, so a warband may be raised with no leader. The Shaman is the one mandatory hero but the PDF gives him no leadership rule. Decision 4.
+- Flag (p52): Weedy Grots makes a Forest Goblin re-roll any "Lad's Got Talent", so the group is imported as not promotable; the rule's own words are kept on him.
+- Flag (p48): "Your warband may never include more Forest Goblins than Orcs" is kept as the Forest Goblin's own rule, since our templates hold no ratio between two fighters.
+- Flag (p49): Waaagh! Magic is our "Waaaagh! Magic" lore. The PDF points at Town Cryer 6 for the spell list and prints none of its own.
+- Flag (p51): Henchmen are "bought in groups of 1-5", imported as the group size for every henchman group.
+- Flag (p50): Savage ("he is subject to frenzy") is our shared Frenzy special under another name, so it is kept apart as the warband's own rule; the shared list matches by name and Savage is not one of Frenzy's. Decision 15.
+- Flag (p48): Karak Azgal's Savage Orcs learn from our rulebook "Orcs" group; this warband's skill table has no Special column at all, so it learns from no warband group and shares none. Decision 17.
+- Flag (p38): Karak Azgal's Savage Orcs brought a Warpaint item (Miscellaneous, 5 gc, Rare 6, "Mork Protects": a one-use 6+ invulnerable save). This warband's Magic War Paint is an Armour entry at 10 gc, Rare 9, whose rules this PDF does not print, and the Shaman may take it in place of a shield, which reads as a standing save rather than a one-use one. Kept apart until its rules are known. Decision 18.
+- Flag (p38): Checked against the grade 3 batch's thirteen stubs as well: none of them is war paint of any kind, so Magic War Paint stays the one open question beside Karak Azgal's Warpaint. Decision 18.
+
 ### Savage Orcs (Karak Azgal)
 
 - Stub: Skull Busta, 15 gc, Rare 6; its rules are on p59.
@@ -2708,6 +2777,36 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): A Clan Pristekk warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p3): No group sizes and no maximum profile are printed: the Skaven take our Skaven race, and the Giant rat and Rat Ogre are creatures with none.
 - Flag (p3): The Rat Ogre's Stupidity is the Skaven Rat Ogre's, not stupid while a Skaven Hero is within 6": its owner was added to the shared specials' Stupidity (Rat Ogre), which is kept apart.
+
+### Skaven of Clan Skryre (Athel Loren)
+
+- Stub: Warplock Jezzail, 100 gc, Rare 10; its rules are on p70.
+- Stub: Warpfire Thrower, 40 gc, Rare 10; its rules are on p73.
+- Stub: Warpstone Armour, 60 gc, Rare 10; its rules are on p70.
+- Stub: Jezzail Support, 10 gc, Common; its rules are on p71.
+- Stub: Warpfire Barrel, 20 gc, Common; its rules are on p74.
+- Stub: Warpstone Shard, 30 gc, Rare 10; its rules are on p74.
+- Stub: Skavenbrew, 25+2D6 gc, Rare 6; its rules are on p74.
+- Flag (p67): A Clan Skryre warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p68): The skill table ticks the Warlock Engineer Shooting, Academic, Speed and Special, the Stormvermin Combat, Strength, Speed and Special, and the Warlock Apprentice Shooting, Speed and Special. Read from the tick positions against the column centres.
+- Flag (p68): Tail Fighting, Wall Runner and Infiltration are ours with the same words. Infiltration's "available to Stormvermin only" and Skavenbrew Master's "Warlock Engineers or Apprentices only" are in the group's note, not in a warband rule.
+- Flag (p68): This is not Karak Azgal's shared "Skaven of Karak Azgal" group (the rulebook Skaven skills less the Art of Silent Death) nor our rulebook "Skaven" group: it has no Black Hunger and adds Skavenbrew Master and Warpstone Resistance. Kept apart as "Skaven Clan Skryre (Athel Loren)". Decision 11.
+- Flag (p69): The Engineers list prices a Helmet at 5 gc and the Henchmen list at 10 gc; both are imported as their list prints them.
+- Flag (p69): The Warplock Pistol line reads "30gc (70 brace)", so a brace is not twice the single price. Both numbers are imported as printed. The Clan Skryre Armoury chart prints 35 gc (70 brace) for the same weapon. Decision 12.
+- Flag (p70): Warplock Pistol is our Warplock pistol, with the same 8" range, Strength 5, Prepare Shot and -3 save modifier; ours adds its close combat use, which this PDF does not print.
+- Flag (p70): Poison Wind Globes is our Poison Wind Globe (Mutiny in Marienburg), which the Relics of the Crusades batch has since given rules from its own PDF: 6", Strength Special, Thrown Weapon, Poison wind (ignores cover penalties and armour saves, D3 wounds on a 3+ and one wound on a 4+ to anyone within 2", magical so it affects undead) and Drop (a 1 to hit drops it on the thrower). This PDF words the same weapon differently: 6", Strength 4, No Armour Save, Template (every model within 1" of the point hit takes a Strength 4 hit, so a model up to 7" from the thrower may be hit, and a miss deviates the template D3" in a random direction) and Fragile (if the carrier is knocked down or stunned, a D6 of 1 bursts a globe, resolved as though thrown at a point centred on him). Ours is left exactly as Relics wrote it; the line links it at this list's 50 gc. Decision 13.
+- Flag (p70): Warplock Jezzail, Warpfire Thrower, Warpstone Armour, Jezzail Support, Warpfire Barrel, Warpstone Shard and Skavenbrew are new items, each with the rules this PDF prints. Our Fog-enhancing Warpstone Shards and Warpstone Amulet are different items.
+- Flag (p74): Warpstone Shard and Skavenbrew are on no equipment list: the Clan Skryre Armoury chart sells them and the PDF prints their rules, so each is a stub whose one price row serves this warband type.
+- Flag (p71): The Warpstone Shard's own text repeats the Poison Wind Globes paragraph before its rules; only its rules were taken, since they are what it does.
+- Flag (p75): The Warlock Apprentice begins with no spells, so he carries no Wizard rule, but the Magic of the Horned Rat is offered to him so the spell picker holds it when Trainees gives him one. Decision 14.
+- Flag (p77): The Slave's "may carry shields, but may not wear helmets or light armour" is both a note on those two lines and his own rule, since the Clanrats share the list.
+- Flag (p67): "Any number of Slaves, up to a maximum of half your warband" is a warband rule: our templates hold no ratio between a fighter and the warband's size.
+- Flag (p77): Clanrats and Slaves have no maximum ("any number"). Every henchman group is "bought in groups of 1-5".
+- Flag (p66): The setting's own shop price charts (pages 38 to 46) re-price and re-rarify our items per shop location, not per warband, so they are not imported; the stubs' rarities are the Clan Skryre Armoury's. Decision 6.
+- Flag (p68): Karak Azgal's shared "Skaven of Karak Azgal" group is Black Hunger, Tail Fighting, Wall Runner and Infiltration, and its Clan Skryre has no Special column of its own. This warband's Special column holds Tail Fighting, Wall Runner, Infiltration, Skavenbrew Master and Warpstone Resistance: no Black Hunger and two skills of its own, so the shared group is not used. Decision 11.
+- Flag (p70): Karak Azgal's Clan Skryre brought a Jezzail (36", S5, Move or fire, Prepare shot, -3 save, Pick target, a two-Skaven crew with an assistant and a pavise), 175 gc Rare 11, and the Relics of the Crusades batch left it alone (its own Clan Skryre sells no jezzail). This warband's Warplock Jezzail is the same range and Strength but is -2 to hit (Difficult to use) until a jezzail support steadies it, and has no crew, pick-target or pavise rules, so it is kept apart. Decision 16.
+- Flag (p74): The Relics of the Crusades Clan Skryre brought a Warpstone Token (a wizard eats one before casting for +1 to the roll, cumulative, and a double takes him out of action). This warband's Warpstone Shard is a Warlock Engineer only, takes 2 off the spell's difficulty, is one use and then stuns him on a D6 of 4+, so the two are kept apart. Decision 19.
+- Flag (p74): Checked against the grade 3 batch's thirteen stubs as well: none of them is a warpstone item, so the Warpstone Shard's only near neighbour is still the Relics Warpstone Token. Decision 19.
 
 ### Skaven of Clan Skryre (Karak Azgal)
 
@@ -2949,6 +3048,21 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p3): The Marienburg Map (20 gc) prints no rules: a stub, its own item, with the Mordheim Map's rule as a shared item rule, Map, worded for any map (William, 6 Nov 2026: "Make the map rule not unique to the items, give it to both marienburg and mordheim map").
 - Flag (p4): The fighters' headings aren't in the text layer, so each is named from Choice of Warriors and his profile row (Officers' reads Watchman), and each cost is the one in his column: Watch Captain 60 gc, Rookie 15, Private Sleuth 55, Sergeant 35, Officer 25, Sewer Jack 20, Turnkey 35.
 - Flag (p5): The Turnkeys' Immune to Poison is our shared rule; the Sewer Jacks' Immune to Disease is their own.
+
+### Wood Elf Scouts
+
+- Flag (p52): A Wood Elf Scout warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p53): The skill table ticks the Waywatcher Combat, Shooting, Academic, Speed and Special, and the Scout Shooting, Speed and Special. Read from the tick positions against the column centres.
+- Flag (p53): Infiltrate is not our Infiltration: ours places the warrior out of sight of the opposing warband and more than 12" from any enemy, where this one bars the enemy deployment zone and 8" from an enemy. Kept apart as Infiltrate (Wood Elf Scouts). Decision 5.
+- Flag (p53): Sniper is not our Sniper (the Hochland Bandits') nor our Sniper (Shadow Warriors): this one needs the warrior to be hidden in a tree and the target to fail an Initiative test. Kept apart as Sniper (Wood Elf Scouts). Decision 5.
+- Flag (p53): Trapper is not our Master Trapper (trip wires at 4", triggered on a 2+). Kept apart under the plain name Trapper, which nothing of ours holds.
+- Flag (p53): Pathfinder is kept apart as Pathfinder (Wood Elf Scouts): the plain name is the Dwarf Pathfinder hired sword's own skill (Infiltrate and finding hidden paths) and our Pathfinder (Horned Hunters) rolls an extra exploration die, so neither is this one.
+- Flag (p55): The Waywatcher's Sniper special rule says exactly what the group's Sniper skill says, so it is imported as the skill he starts with rather than as a second rule.
+- Flag (p54): Elf Bow is marked Heroes only. The whole Equipment (heroes only) block - Healing Herbs, Elven Cloak, Elven Boots and Hunting Arrows - is noted the same way, since the Archers buy from the Scout list too.
+- Flag (p54): Longbow (15 gc) is our Long Bow and Javelin (5 gc) our Javelins, each bought under the PDF's name. Every line of both lists is one of our items; the warband needs no stub.
+- Flag (p54): No availability or rarity is printed for any of this warband's equipment, so no price row was added: the lists' prices stand as list prices and our global prices and rarities are unchanged.
+- Flag (p54): The Scout has no special rules of his own. Henchmen are "bought in groups of 1-5", imported as both groups' size.
+- Flag (p52): The setting's own shop price charts (pages 38 to 46) re-price and re-rarify our items per shop location, not per warband, so they are not imported. Decision 6.
 
 ### Wood Elves of Arden
 
