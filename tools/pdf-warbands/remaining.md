@@ -33,17 +33,10 @@
 | 2b | relics-of-the-crusades | Slavers | 033-97RelicsoftheCrusadesPt2.pdf | #page=9 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | The Fallen | 033-97RelicsoftheCrusadesPt2.pdf | #page=12 | 16p, 0 scan |
 | 2b | relics-of-the-crusades | Turjuk | 033-97RelicsoftheCrusadesPt2.pdf | #page=2 | 16p, 0 scan |
-| 2b | sartosa | Araby Smugglers | 020-Araby_Smugglers.pdf |  | 4p, 0 scan |
-| 2b | sartosa | Bretonnian Buccaneers | 023-Human_Pirates.pdf | #page=2 | 5p, 0 scan |
-| 2b | sartosa | Estalian Corsairs | 023-Human_Pirates.pdf | #page=2 | 5p, 0 scan |
 | 2b | sartosa | Ghost Pirates | 036-Ghost_Pirates.pdf |  | 5p, 0 scan |
-| 2b | sartosa | Khorne Raiders | 040-Khorne_Raiders.pdf |  | 3p, 0 scan |
 | 2b | sartosa | Lothern Sea Patrol | 045-Lothern_Sea_Patrol.pdf |  | 5p, 0 scan |
 | 2b | sartosa | Orc Pirates & Savage Orcs | 050-Orc_Pirates___Savage_Orcs.pdf |  | 7p, 0 scan |
 | 2b | sartosa | Pirates of the Cathayan Sea | 051-Pirates_of_the_Cathayan_Sea.pdf |  | 5p, 0 scan |
-| 2b | sartosa | Sartosan Pirates | 023-Human_Pirates.pdf |  | 5p, 0 scan |
-| 2b | sartosa | Slayer Pirates | 059-Slayer_Pirates.pdf |  | 4p, 0 scan |
-| 2b | sartosa | Wasteland Privateers | 023-Human_Pirates.pdf | #page=2 | 5p, 0 scan |
 | 2b | sealed-city | Clockworkers | 029-Clockworkers.pdf |  | 7p, 1 scan |
 | 2b | sealed-city | House Guard | 039-House_Guard.pdf |  | 5p, 0 scan |
 | 2b | sealed-city | Silent Brotherhood | 054-Silent_Brotherhood.pdf |  | 6p, 0 scan |
