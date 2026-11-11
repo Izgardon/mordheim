@@ -561,6 +561,7 @@
     "wounds": "2",
     "initiative": "4",
     "attacks": "4",
-    "leadership": "8"
+    "leadership": "8",
+    "setting": "khemri-3"
   }
 ]

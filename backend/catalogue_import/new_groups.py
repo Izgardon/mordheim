@@ -98,10 +98,12 @@ class NewGroups:
             made = [self._new(name, skill, rule, decision.get("source"), assign) for skill, rule in wanted]
             skills += [skill for skill in made if skill is not None]
             self._left_out(name, slugs, [*skills, *(rule for _skill, rule in wanted)])
+            access = self.build.access_of(frozenset(slugs))
             groups.append(
                 {
                     "name": name,
-                    **self.build.access_of(frozenset(slugs)),
+                    "setting": self.build.setting_of(access),
+                    **access,
                     "large_only": False,
                     "note": str(decision.get("note") or ""),
                     "how": "new group",

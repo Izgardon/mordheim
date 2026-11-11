@@ -142,6 +142,11 @@ class SeedAllTests(TestCase):
                         slugs = Counter(graded.values_list("campaign_type__slug", flat=True))
                         # the Bloodletter's Frenzy is the shared one now (William, 7 Nov 2026)
                         self.assertEqual(slugs, {"mutiny-in-marienburg": 10, "border-town-burning": 30})
+                    elif model in (Race, Spell, SkillGroup):  # only what the Khemri 3 warbands brought (11 Nov)
+                        rest = model._default_manager.filter(**{"campaign_type__isnull": False}).exclude(
+                            **{"campaign_type__slug": "khemri-3"}
+                        )
+                        self.assertFalse(rest.exists())
                     else:  # the rest count as Mordheim's until they get theirs
                         self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
@@ -155,10 +160,21 @@ class SeedAllTests(TestCase):
         self.assertEqual(list(khemri.values_list("name", "grade")), [("Khemri 1b", "1b"), ("Khemri 3", "3")])
         khemri_3 = {
             model.__name__: model.objects.filter(campaign_type__slug="khemri-3").count()
-            for model in (WarbandType, WarbandTemplate, Item, Skill, HiredSword, DramatisPersona)
+            for model in (
+                WarbandType,
+                WarbandTemplate,
+                Item,
+                Skill,
+                SkillGroup,
+                Race,
+                Spell,
+                HiredSword,
+                DramatisPersona,
+            )  # fmt: skip
         }
-        # the PDF batch's seven and the Nehekhara Tomb Guards, their four weapons and their skills; Khemri's own
-        # four hired swords and Abdul Alhazred are 1b's
+        # the PDF batch's seven and the Nehekhara Tomb Guards, their four weapons, their skills and the six warband
+        # groups plus the Cursed Dwarf Slayer Skills, the Skeleton race and the six Hobgoblin Magic spells; Khemri's
+        # own four hired swords and Abdul Alhazred are 1b's
         self.assertEqual(
             khemri_3,
             {
@@ -166,6 +182,9 @@ class SeedAllTests(TestCase):
                 "WarbandTemplate": 8,
                 "Item": 4,
                 "Skill": 25,
+                "SkillGroup": 7,
+                "Race": 1,
+                "Spell": 6,
                 "HiredSword": 0,
                 "DramatisPersona": 0,
             },

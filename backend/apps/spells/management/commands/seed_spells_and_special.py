@@ -58,8 +58,9 @@ class Command(BaseCommand):
     def _seed(
         self, model: type[Spell] | type[Special], path: Path, label: str, texts: tuple[str, ...]
     ) -> tuple[int, int]:
-        """Upsert each named, typed row of the file: its stripped texts, a spell's roll and a special's kind,
-        category and setting (none: Mordheim's; Border Town Burning's beasts' rules are that setting's)."""
+        """Upsert each named, typed row of the file: its stripped texts, a spell's roll, a special's kind and
+        category, and either's setting (none: Mordheim's; Border Town Burning's beasts' rules are that setting's,
+        the Hobgoblin Magic lore Khemri 3's)."""
         if not path.exists():
             self.stdout.write(self.style.WARNING(f"{label} JSON not found at {path}"))
             return 0, 0
@@ -77,6 +78,7 @@ class Command(BaseCommand):
             defaults = {field: entry.get(field, "").strip() for field in texts}
             if model is Spell:
                 defaults["roll"] = entry.get("roll")
+                defaults["campaign_type_id"] = settings.get(entry.get("setting") or "")
             else:  # Boons & Banes (special/kinds.py) and its icon (special/categories.py)
                 defaults["campaign_type_id"] = settings.get(entry.get("setting") or "")
                 defaults["kind"] = book_kind(name)

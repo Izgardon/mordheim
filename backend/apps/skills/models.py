@@ -47,7 +47,11 @@ class Skill(CatalogueEntry, PrebattleRoll):
 
 class SkillGroup(CatalogueEntry):
     """A group skills are learned from, and who learns from it: everyone, or the warbands its lines name. A Large
-    unit's group warns for any other unit and its note is shown when learning, neither ever blocks."""
+    unit's group warns for any other unit and its note is shown when learning, neither ever blocks.
+
+    Its setting holds its grade, as a skill's does: a grade 3 group goes out of play with its setting instead of
+    showing as a row with every skill inside it filtered out (the Khemri split, William, 11 Nov 2026). Null counts
+    as Mordheim's, which every other group's still is."""
 
     campaign = models.ForeignKey(
         "campaigns.Campaign",
@@ -55,6 +59,11 @@ class SkillGroup(CatalogueEntry):
         null=True,
         blank=True,
         on_delete=models.CASCADE,
+    )
+    campaign_type = (
+        models.ForeignKey(  # its setting, which holds its grade (grading phase 1); null counts as Mordheim's
+            "campaigns.CampaignType", related_name="skill_groups", null=True, blank=True, on_delete=models.RESTRICT
+        )
     )
     name = models.CharField(max_length=160)
     for_everyone = models.BooleanField(default=True)

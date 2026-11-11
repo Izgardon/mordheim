@@ -1,6 +1,7 @@
 [
   {
     "name": "Combat",
+    "setting": null,
     "for_everyone": true,
     "warbands": [],
     "large_only": false,
@@ -17,6 +18,7 @@
   },
   {
     "name": "Shooting",
+    "setting": null,
     "for_everyone": true,
     "warbands": [],
     "large_only": false,
@@ -36,6 +38,7 @@
   },
   {
     "name": "Academic",
+    "setting": null,
     "for_everyone": true,
     "warbands": [],
     "large_only": false,
@@ -62,6 +65,7 @@
   },
   {
     "name": "Strength",
+    "setting": null,
     "for_everyone": true,
     "warbands": [],
     "large_only": false,
@@ -80,6 +84,7 @@
   },
   {
     "name": "Speed",
+    "setting": null,
     "for_everyone": true,
     "warbands": [],
     "large_only": false,
@@ -97,6 +102,7 @@
   },
   {
     "name": "Amazons",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -117,6 +123,7 @@
   },
   {
     "name": "Animal",
+    "setting": null,
     "for_everyone": true,
     "warbands": [],
     "large_only": false,
@@ -130,6 +137,7 @@
   },
   {
     "name": "Araby Smugglers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -151,6 +159,7 @@
   },
   {
     "name": "Arabyan Nomads",
+    "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [
       {
@@ -169,6 +178,7 @@
   },
   {
     "name": "Arabyan Theives",
+    "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [
       {
@@ -190,6 +200,7 @@
   },
   {
     "name": "Battle Monks of Cathay",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -209,6 +220,7 @@
   },
   {
     "name": "Beastmen Raiders",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -230,6 +242,7 @@
   },
   {
     "name": "Black Dwarfs",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -251,6 +264,7 @@
   },
   {
     "name": "Bretonnian Chapel Guard",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -271,6 +285,7 @@
   },
   {
     "name": "Bretonnian Knights",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -292,6 +307,7 @@
   },
   {
     "name": "Brood of Ghurash",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -312,6 +328,7 @@
   },
   {
     "name": "Call of the Night Haint",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -332,6 +349,7 @@
   },
   {
     "name": "Cavalry",
+    "setting": null,
     "for_everyone": true,
     "warbands": [],
     "large_only": false,
@@ -350,6 +368,7 @@
   },
   {
     "name": "Channel Rats",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -371,6 +390,7 @@
   },
   {
     "name": "Clan Pestilens (Mousillon)",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -391,6 +411,7 @@
   },
   {
     "name": "Clan Pristekk",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -412,6 +433,7 @@
   },
   {
     "name": "Clockworkers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -432,6 +454,7 @@
   },
   {
     "name": "Cursed Cavalcade",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -450,6 +473,7 @@
   },
   {
     "name": "Cursed Dwarf Slayer Skills",
+    "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [
       {
@@ -471,6 +495,7 @@
   },
   {
     "name": "Cursed Dwarves",
+    "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [
       {
@@ -491,6 +516,7 @@
   },
   {
     "name": "Dark Elf",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -511,6 +537,7 @@
   },
   {
     "name": "Dark Elf Corsairs",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -531,6 +558,7 @@
   },
   {
     "name": "Dreamwalkers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -550,6 +578,7 @@
   },
   {
     "name": "Druchii",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -572,6 +601,7 @@
   },
   {
     "name": "Dwarf Exiled Engineers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -594,6 +624,7 @@
   },
   {
     "name": "Dwarf Rangers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -613,6 +644,7 @@
   },
   {
     "name": "Dwarf Troll Slayers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -648,6 +680,7 @@
   },
   {
     "name": "Dwarves",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -668,6 +701,7 @@
   },
   {
     "name": "Fen Guard",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -690,6 +724,7 @@
   },
   {
     "name": "Forest Goblins",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -706,6 +741,7 @@
   },
   {
     "name": "Grail Companions",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -735,6 +771,7 @@
   },
   {
     "name": "Grave Robber",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -755,6 +792,7 @@
   },
   {
     "name": "Halflings (MIC)",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -777,6 +815,7 @@
   },
   {
     "name": "Hobgoblins",
+    "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [
       {
@@ -795,6 +834,7 @@
   },
   {
     "name": "Hochland Bandits",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -815,6 +855,7 @@
   },
   {
     "name": "Horned Hunters",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -836,6 +877,7 @@
   },
   {
     "name": "Khorne Raiders",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -858,6 +900,7 @@
   },
   {
     "name": "Knights Feats",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -885,6 +928,7 @@
   },
   {
     "name": "Knights of the Bitter Moors",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -906,6 +950,7 @@
   },
   {
     "name": "Lahmian",
+    "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [
       {
@@ -927,6 +972,7 @@
   },
   {
     "name": "Large Special",
+    "setting": null,
     "for_everyone": true,
     "warbands": [],
     "large_only": true,
@@ -942,6 +988,7 @@
   },
   {
     "name": "Lothern Sea Patrol",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -963,6 +1010,7 @@
   },
   {
     "name": "Low Kings",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -984,6 +1032,7 @@
   },
   {
     "name": "Magician Skills",
+    "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [
       {
@@ -1002,6 +1051,7 @@
   },
   {
     "name": "Marauders of Chaos",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1022,6 +1072,7 @@
   },
   {
     "name": "Masters of Horror",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1041,6 +1092,7 @@
   },
   {
     "name": "Merchant Caravans",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1061,6 +1113,7 @@
   },
   {
     "name": "Militant Mootlanders",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1082,6 +1135,7 @@
   },
   {
     "name": "Necrarchs, the Soul Stealers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1100,6 +1154,7 @@
   },
   {
     "name": "Night Goblins",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1121,6 +1176,7 @@
   },
   {
     "name": "Night Goblins (MIC)",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1140,6 +1196,7 @@
   },
   {
     "name": "Nipponese Expedition",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1161,6 +1218,7 @@
   },
   {
     "name": "Norse",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1185,6 +1243,7 @@
   },
   {
     "name": "Ogre Hunting Party",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1209,6 +1268,7 @@
   },
   {
     "name": "Ogres",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1230,6 +1290,7 @@
   },
   {
     "name": "Orcs",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1252,6 +1313,7 @@
   },
   {
     "name": "Ostlanders",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1272,6 +1334,7 @@
   },
   {
     "name": "Pirates",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1293,6 +1356,7 @@
   },
   {
     "name": "Pirates (TBMF)",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1313,6 +1377,7 @@
   },
   {
     "name": "Pirates of the Cathayan Sea",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1333,6 +1398,7 @@
   },
   {
     "name": "Pit Fighters",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1357,6 +1423,7 @@
   },
   {
     "name": "Protectorate of Sigmar",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1377,6 +1444,7 @@
   },
   {
     "name": "Restless Dead Lich and Necromancer",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1397,6 +1465,7 @@
   },
   {
     "name": "Sartosa Pirate Skills",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1467,6 +1536,7 @@
   },
   {
     "name": "Sartosan Pirates",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1486,6 +1556,7 @@
   },
   {
     "name": "Saurus",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1503,6 +1574,7 @@
   },
   {
     "name": "Savage Orcs",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1522,6 +1594,7 @@
   },
   {
     "name": "Sea Ghosts",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1543,6 +1616,7 @@
   },
   {
     "name": "Shadow Warriors",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1563,6 +1637,7 @@
   },
   {
     "name": "Silent Brotherhood",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1584,6 +1659,7 @@
   },
   {
     "name": "Sisters of Sigmar",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1604,6 +1680,7 @@
   },
   {
     "name": "Skaven",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1624,6 +1701,7 @@
   },
   {
     "name": "Skaven Clan Moulder",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1644,6 +1722,7 @@
   },
   {
     "name": "Skaven Clan Pestilens",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1664,6 +1743,7 @@
   },
   {
     "name": "Skaven Metal Mongers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1685,6 +1765,7 @@
   },
   {
     "name": "Skink",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1702,6 +1783,7 @@
   },
   {
     "name": "Slayer Cult",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1728,6 +1810,7 @@
   },
   {
     "name": "Slayer Pirates",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1749,6 +1832,7 @@
   },
   {
     "name": "Snotlings",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1770,6 +1854,7 @@
   },
   {
     "name": "Sons of Hashut",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1789,6 +1874,7 @@
   },
   {
     "name": "Survivors of Strigos",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1810,6 +1896,7 @@
   },
   {
     "name": "The Lost",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1829,6 +1916,7 @@
   },
   {
     "name": "Tomb Robbers",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1847,6 +1935,7 @@
   },
   {
     "name": "Undead Vampires",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1867,6 +1956,7 @@
   },
   {
     "name": "Underworld Alliance",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1887,6 +1977,7 @@
   },
   {
     "name": "Vampire Hunters of Sylvania",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1907,6 +1998,7 @@
   },
   {
     "name": "Wood Elves of Arden",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1927,6 +2019,7 @@
   },
   {
     "name": "Wood Elves of Athel Loren",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {
@@ -1947,6 +2040,7 @@
   },
   {
     "name": "Woodsmen de Artois",
+    "setting": null,
     "for_everyone": false,
     "warbands": [
       {

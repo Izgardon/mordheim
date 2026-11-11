@@ -2,7 +2,8 @@
 
 Campaign rows are never read or written (BUG-17); the run is all or nothing; there is no --truncate (BUG-16,
 BUG-130: it deleted every race and every unit of one). Every stat must be there: a missing one stops the run with
-the race's name (BUG-54).
+the race's name (BUG-54). A race may name its `setting` (grading phase 1), as a special does; one that names none
+is Mordheim's, which every race but the Khemri 3 Skeleton still is.
 """
 
 from pathlib import Path
@@ -10,6 +11,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.campaigns.models import CampaignType
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import STAT_FIELDS, clean, entry_value, read_json_list, read_stats, upsert_global
 from apps.races.models import Race
@@ -52,13 +54,16 @@ class Command(BaseCommand):
             )
 
         created = updated = skipped = 0
+        settings = dict(CampaignType.objects.values_list("slug", "id"))
         for entry in read_json_list(path, "race objects"):
             name = clean(entry_value(entry, HEADER_ALIASES["name"]))
             if not name:
                 skipped += 1
                 continue
             raw = {field: entry_value(entry, HEADER_ALIASES[field]) for field in STAT_FIELDS}
-            _, was_created = upsert_global(Race, {"name": name}, read_stats(raw, f"Race '{name}'"))
+            stats = read_stats(raw, f"Race '{name}'")
+            setting = {"campaign_type_id": settings.get(clean(entry.get("setting")))}
+            _, was_created = upsert_global(Race, {"name": name}, {**stats, **setting})
             if was_created:
                 created += 1
             else:

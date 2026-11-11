@@ -1,7 +1,8 @@
 """Seed the book's skills and skill groups (skill groups, phase 1a) from the catalogue import: `out/skills.json` (one
 skill per name with its rules: our skills table with William's decisions applied, merged by name, and the new groups'
 skills) and `out/skill-groups.json` (each group with who learns from it, whether it is a Large unit's, the note shown
-when learning from it and its skills by name). Each skill's setting comes from `out/setting-assignments.json`.
+when learning from it and its skills by name). Each skill's setting comes from `out/setting-assignments.json` and a
+group's from its own `setting` (grading phase 1): a group naming none is Mordheim's, as all but the Khemri 3 ones are.
 
 Skills are upserted by name and groups by name; each seeded group's skills and who-can lines are written again. A
 group's lines name warband types and groups, so they apply once seed_warband_types has run (seed_all runs it first);
@@ -16,6 +17,7 @@ from typing import Any
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from apps.campaigns.models import CampaignType
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import IMPORT_OUT, AccessLines, SettingAssignments, clean, read_json_list, upsert_global
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill, SkillGroupWarband
@@ -69,6 +71,7 @@ class Command(BaseCommand):
 
     def _groups(self, path: Path, skills: dict[str, Skill]) -> None:
         access = AccessLines()  # who learns from each, once the warband types are seeded
+        settings = dict(CampaignType.objects.values_list("slug", "id"))  # a group's setting (grading phase 1)
         entries = [entry for entry in read_json_list(path, "skill group objects") if clean(entry.get("name"))]
         names = [clean(entry["name"]) for entry in entries]
         book = SkillGroup.objects.filter(campaign__isnull=True, name__in=names)
@@ -78,7 +81,8 @@ class Command(BaseCommand):
         lines: list[SkillGroupWarband] = []
         created = 0
         for entry, name in zip(entries, names, strict=True):
-            group, was_created = upsert_global(SkillGroup, {"name": name}, self._group_fields(entry, access))
+            fields = self._group_fields(entry, access, settings)
+            group, was_created = upsert_global(SkillGroup, {"name": name}, fields)
             created += was_created
             links += [SkillGroupSkill(group=group, skill=self._skill(skills, skill, name)) for skill in entry.get("skills", [])]  # fmt: skip
             if access.ready:
@@ -92,11 +96,12 @@ class Command(BaseCommand):
         )
 
     @staticmethod
-    def _group_fields(entry: dict[str, Any], access: AccessLines) -> dict[str, Any]:
+    def _group_fields(entry: dict[str, Any], access: AccessLines, settings: dict[str, int]) -> dict[str, Any]:
         return {
             "for_everyone": bool(entry.get("for_everyone", True)) if access.ready else True,
             "large_only": bool(entry.get("large_only")),
             "learn_note": clean(entry.get("note")),
+            "campaign_type_id": settings.get(clean(entry.get("setting"))),
         }
 
     @staticmethod

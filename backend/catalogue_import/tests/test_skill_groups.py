@@ -8,7 +8,7 @@ from django.test import SimpleTestCase
 
 from catalogue_import.assignments import AssignmentLog, assign, best_entry
 from catalogue_import.new_groups import build_skill_groups
-from catalogue_import.skill_groups import title_case
+from catalogue_import.skill_groups import SkillGroupBuild, title_case
 from catalogue_import.skill_lists import SkillLists
 from catalogue_import.tests.world import world
 
@@ -259,3 +259,39 @@ class CaveatTests(SimpleTestCase):
 
         self.assertIs(best_entry("Skink", found), found[1])
         self.assertIs(best_entry("Dark Elf", found), found[0])
+
+
+class GroupSettingTests(SimpleTestCase):
+    """A group's setting (grading phase 1): the one every warband that may learn from it sits in, when each of them
+    is graded 3. Grade 3 is what a lower-grade campaign must not see at all (the Khemri split, William,
+    11 Nov 2026); every other group stays Mordheim's, as it was."""
+
+    TYPES = [
+        {"slug": "hobgoblins", "setting": "khemri-3", "broheim_grade": "3"},
+        {"slug": "lahmian", "setting": "khemri-3", "broheim_grade": "3"},
+        {"slug": "tomb-guardians", "setting": "khemri", "broheim_grade": "1b"},
+        {"slug": "athel-loren-elves", "setting": "athel-loren", "broheim_grade": "3"},
+    ]
+
+    def build(self) -> SkillGroupBuild:
+        overrides: dict[str, Any] = {"skill_lists": {}, "skill_splits": {}, "skill_wordings": {}}
+        groups = [{"slug": "khemri", "name": "Khemri", "members": ["hobgoblins", "lahmian"]}]
+        return SkillGroupBuild(overrides, self.TYPES, groups, SkillLists(overrides, self.TYPES, groups))
+
+    def setting_of(self, *lines: dict[str, Any], for_everyone: bool = False) -> str | None:
+        return self.build().setting_of({"for_everyone": for_everyone, "warbands": list(lines)})
+
+    def test_a_group_only_grade_3_warbands_learn_from_takes_their_setting(self) -> None:
+        self.assertEqual(self.setting_of({"type": "hobgoblins", "excluded": False}), "khemri-3")
+        both = ({"type": "hobgoblins", "excluded": False}, {"type": "lahmian", "excluded": False})
+        self.assertEqual(self.setting_of(*both), "khemri-3")
+        self.assertEqual(self.setting_of({"type": "athel-loren-elves", "excluded": False}), "athel-loren")
+
+    def test_every_other_group_keeps_none(self) -> None:
+        self.assertIsNone(self.setting_of(for_everyone=True))  # the core five
+        self.assertIsNone(self.setting_of({"type": "tomb-guardians", "excluded": False}))  # graded 1b
+        mixed = ({"type": "hobgoblins", "excluded": False}, {"type": "tomb-guardians", "excluded": False})
+        self.assertIsNone(self.setting_of(*mixed))  # two settings, two grades
+        self.assertIsNone(self.setting_of({"group": "khemri", "excluded": False}))  # a warband group, not types
+        self.assertIsNone(self.setting_of({"type": "hobgoblins", "excluded": True}))  # shut out, not let in
+        self.assertIsNone(self.setting_of({"type": "nobody", "excluded": False}))  # no such type
