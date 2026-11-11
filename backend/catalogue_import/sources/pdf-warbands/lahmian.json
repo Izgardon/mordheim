@@ -1,0 +1,278 @@
+{
+  "warbandType": "lahmian",
+  "name": "Lahmian",
+  "source": "Khemri",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/khemri/Lahmian.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Foreign or Khemrian", "ruleFull": "A Lahmian warband begins either as a newly returned foreign warband or as a native Khemrian one. A foreign warband takes Blood Slaves and Black Hounds, and its Beloved equips from the Mercenary list, but only when the warband is raised; after that every warrior and every piece of equipment lost is replaced from the Khemrian side, so the warband becomes Khemrian over time. A Khemrian warband takes Wights and Jackals, and its Beloved equips from the Arabyan Nomad list when the warband is raised. A Lahmian warband played anywhere but Khemri uses the foreign side for everything, recruiting and re-equipping included."},
+    {"rulename": "No more than five Heroes", "ruleFull": "The warband may never hold more than 5 Heroes."},
+    {"rulename": "Vampire warbands without vampires", "ruleFull": "The warband may not recruit a new vampire while it holds a Blood Sister. If the Lahmia is slain the Blood Sister may become a vampire in the post-battle experience phase; until she does, the surviving human Henchman with the highest Leadership leads the warband, and with a tie the one with the most experience. With no Blood Sister the warband is led the same way and a new vampire may be recruited after the next battle. If after a battle the warband holds neither a vampire nor a necromancer, every skeleton and wight is lost as the magic sustaining them fails."},
+    {"rulename": "Habituation", "ruleFull": "A human member of a Lahmian warband is immune to fear caused by the skeletons, wights and vampires of his own warband. Any other kind of undead causes fear as normal."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "lahmian-undead-list",
+      "title": "Undead List",
+      "caveat": "",
+      "items": [
+        {"name": "jambiya/dagger", "alias": "Jambiya/dagger", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Serpent Whip", "cost": {"cost": 25}, "availability": "Rare 8 (Vampires and Blood Sisters only)"}
+  ],
+  "fighters": [
+    {
+      "id": "lahmia-vampire",
+      "type": "hero",
+      "name": "Lahmia Vampire",
+      "plural": "Lahmia Vampires",
+      "race": "vampire",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 110,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 4, "bs": 4, "s": 4, "t": 4, "w": 2, "i": 5, "a": 2, "ld": 8},
+      "equipmentLists": ["lahmian-undead-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior within 6\" of the vampire may use her Leadership instead of his own."},
+        {"rulename": "Cause Fear", "ruleFull": "The vampire causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The vampire is not affected by psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "The vampire is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The vampire treats a stunned result as knocked down."},
+        {"rulename": "Local Knowledge", "ruleFull": "Khemrian warbands only. A Khemrian Lahmian warband with a vampire may re-roll one dice in the exploration phase. This applies only in the Khemri setting."}
+      ]
+    },
+    {
+      "id": "lahmian-necromancer",
+      "type": "hero",
+      "name": "Necromancer",
+      "plural": "Necromancers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["lahmian-undead-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Necromancy"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Necromancer is a wizard and casts from the Necromantic spell list."}
+      ]
+    },
+    {
+      "id": "beloved",
+      "type": "hero",
+      "name": "Beloved",
+      "plural": "Beloved",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["lahmian-undead-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Devoted", "ruleFull": "If the vampire is knocked down or stunned in close combat the Beloved becomes frenzied and at once takes the most direct route to her aid, attacking any model within 2\" of either side of a straight line to her. If the vampire is taken out of action the Beloved hates the model that did it and tries to kill it at the earliest opportunity. He stays frenzied until that enemy is slain."}
+      ]
+    },
+    {
+      "id": "blood-sister",
+      "type": "hero",
+      "name": "Blood Sister",
+      "plural": "Blood Sisters",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["lahmian-undead-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Hardened", "ruleFull": "A Blood Sister is immune to fear and never tests for being all alone."},
+        {"rulename": "Demi-Vampires", "ruleFull": "If the warband's Lahmia is killed the Blood Sister may take her place. At her next advance she becomes a vampire on a 4+ on a D6, and that counts instead of the advance. She keeps her skills and experience, the rules for undead apply to her at once and her maximum characteristics become a vampire's. If she fails, roll again at her next advance and at every one after it. Once a Blood Sister has become a vampire a new Blood Sister may be recruited after the next game."}
+      ]
+    },
+    {
+      "id": "thrall",
+      "type": "hero",
+      "name": "Thrall",
+      "plural": "Thralls",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["lahmian-undead-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Devoted", "ruleFull": "If the vampire is knocked down or stunned in close combat the Thrall becomes frenzied and at once takes the most direct route to her aid, attacking any model within 2\" of either side of a straight line to her. If the vampire is taken out of action he hates the model that did it and tries to kill it at the earliest opportunity."},
+        {"rulename": "Favoured", "ruleFull": "If the vampire's Beloved is killed she may grant one Thrall the Blood Kiss at his next advance, which counts instead of that advance. His Leadership rises to 8 if it is not already, and he takes the Beloved's place on the roster. A new Thrall may be recruited after the warband's next battle."}
+      ]
+    },
+    {
+      "id": "lahmian-skeleton",
+      "type": "henchman",
+      "name": "Skeleton",
+      "plural": "Skeletons",
+      "race": "skeleton",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 5},
+      "equipmentLists": ["lahmian-undead-list"],
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "A skeleton causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A skeleton is not affected by psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "A skeleton is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "A skeleton treats a stunned result as knocked down."},
+        {"rulename": "May Not Run", "ruleFull": "A skeleton may not run, but charges as normal."},
+        {"rulename": "No Brain", "ruleFull": "A skeleton gains no experience."}
+      ]
+    },
+    {
+      "id": "blood-slave",
+      "type": "henchman",
+      "name": "Blood Slave",
+      "plural": "Blood Slaves",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["lahmian-undead-list"],
+      "specialRules": []
+    },
+    {
+      "id": "black-hound",
+      "type": "henchman",
+      "name": "Black Hound",
+      "plural": "Black Hounds",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 20,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 7, "ws": 3, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "A Black Hound causes fear."},
+        {"rulename": "Animals", "ruleFull": "A Black Hound gains no experience and carries no weapons or armour."}
+      ]
+    },
+    {
+      "id": "wight",
+      "type": "henchman",
+      "name": "Wight",
+      "plural": "Wights",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 0, "s": 3, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["lahmian-undead-list"],
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "A wight causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A wight is not affected by psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "A wight is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "A wight treats a stunned result as knocked down."},
+        {"rulename": "Wight weapons", "ruleFull": "A wight's weapons are enchanted to drain the living, so his rolls to wound cause a critical hit on a 5+."}
+      ]
+    },
+    {
+      "id": "jackal",
+      "type": "henchman",
+      "name": "Jackal",
+      "plural": "Jackals",
+      "race": "animal",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 6, "ws": 3, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 4},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Pack Attack", "ruleFull": "If two or more jackals attack the same model, every jackal attacking it gains one extra attack."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Lahmian",
+    "new": true
+  },
+  "specialSkillsList": [
+    {"name": "Swift", "description": "The vampire may run and still counts as having moved normally for every purpose."},
+    {"name": "Transfix", "description": "At the start of the combat phase one enemy model in base contact must test against its Leadership. If it fails it may not attack that turn and every attack against it gains +1 to hit. It has no effect on a model immune to psychology."},
+    {"name": "Quickblood", "description": "The vampire has an unmodifiable 6+ save against all wounds, taken before any armour save and, against a critical hit, before rolling for multiple wounds. Dodge and Step Aside supersede this save rather than combining with it, so a vampire with Quickblood and Dodge has a 5+ save against missiles and 6+ in close combat."},
+    {"name": "Innocence Lost", "description": "The vampire always attacks first in close combat. If an enemy model may also attack first, the one with the higher Initiative goes first, and with equal Initiative the higher roll on a D6. It has no effect on a model immune to psychology."},
+    {"name": "Seduction", "description": "The vampire tests against her Leadership at the start of the combat phase. If she passes, one enemy model in base contact must also test against its Leadership, and if it fails the vampire's player controls it. Its owner may try to take it back by testing again in each of his recovery phases. Control is lost at once if the vampire attacks it, and if it ends the game under her control it counts as out of action. Only one model may be controlled at a time. It has no effect on a model immune to psychology."},
+    {"name": "Night Creature", "description": "A model wishing to charge, shoot or cast a spell at the vampire must roll 4+ to do so, or choose another target. This works only if the vampire did not move in her previous movement phase."}
+  ],
+  "aliases": [
+    {"pdf": "jambiya/dagger", "ours": "dagger", "page": 6},
+    {"pdf": "light armor", "ours": "light armour", "page": 6},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 6}
+  ],
+  "stubs": [
+    {
+      "name": "Serpent Whip",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 8,
+      "dice": null,
+      "rulesPage": 6,
+      "range": "4\"",
+      "strength": "As user",
+      "rules": [
+        {"rule": "Cannot be parried", "text": "A Serpent Whip is too flexible to be parried by a sword or a buckler."},
+        {"name": "Reach", "text": "The bearer may attack an enemy up to 4\" away, and that enemy strikes no blows back, as long as no other enemy is in base contact with him."},
+        {"rule": "Poisoned", "text": "A Serpent Whip counts as coated with Black Lotus."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 2, "what": "The warband's two kinds, foreign and Khemrian, are not variants in the PDF's sense: they share one list of Heroes and differ in their Henchmen and in the Beloved's starting list. All five Henchmen are imported and the difference is the Foreign or Khemrian warband rule, as the House Guard's houses were in batch 11."},
+    {"page": 2, "what": "The Beloved buys from the Mercenary list (foreign) or the Arabyan Nomad list (Khemrian) when the warband is raised, and from the Undead list after that. A template cannot point at another warband's list, so he is given the Undead list and the rule says the rest."},
+    {"page": 2, "what": "The warband may hold at most 5 Heroes, though the entries add up to 6 (1 vampire, 1 necromancer, 1 beloved, 1 blood sister and 2 thralls). It is a warband rule."},
+    {"page": 4, "what": "The Jackals are not said to gain no experience, unlike the Black Hounds (\"Animals - never gain experience\"), so they are imported as gaining it; as printed."},
+    {"page": 3, "what": "Henchmen are bought in groups of 1-5, so every Henchmen entry carries that group size."},
+    {"page": 5, "what": "The Skeletons' Slow (\"may not run, charge as normal\") is our shared May Not Run. The warband's four general undead rules are our shared Fear, Immune to Psychology, Immune to Poison and No Pain; the Lahmian list does not give the undead May Not Run, so only the Skeletons carry it."},
+    {"page": 6, "what": "The Serpent Whip is a stub carrying the PDF's rules (25 gc, Rare 8, range 4\", Strength as user, cannot be parried, reach, poisoned as Black Lotus). Vampires and Blood Sisters only, which is in its special equipment entry."},
+    {"page": 6, "what": "The Undead list sells a Mace and a Hammer at 3 gc each: both are our Club, Mace or Hammer, so the list holds the item twice, as the PDF prints it."},
+    {"page": 1, "what": "A Lahmian warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 3, "what": "The Blood Sister entry is headed \"0-1 Blood Sisters\" on page 2 and \"0-1 Blood Sister\" in the Khemrian column; 0-1 either way."}
+  ]
+}

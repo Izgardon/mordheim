@@ -1,0 +1,173 @@
+{
+  "warbandType": "hobgoblins",
+  "name": "Hobgoblins",
+  "source": "Khemri",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/khemri/Hobgoblins.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Treacherous Gits", "ruleFull": "At the start of each turn roll a D6 for every Henchman not already in hand-to-hand combat. On a 1, roll a D6 again:\n\nD6 | Result\n1 | He switches sides and the opposing player controls him for the rest of the battle. With more than one opponent he joins the warband with the highest rating. He still takes treachery tests, so he may end up back on his own side.\n2-5 | He will not shoot or charge this turn, but may do anything else.\n6 | He takes no further treachery tests for the rest of the game."},
+    {"rulename": "Giant Wolves", "ruleFull": "A Giant Wolf must be ridden into battle. Nominate a Hero or a Henchman to ride each one, and the rules for mounted models apply, except that a rider never dismounts during a battle. If the model is taken out of action roll on the Serious Injury table for both the rider and the wolf. Riders may be switched between battles. A mounted model may not enter a building in an above-ground scenario; in a tomb-raiding scenario it may be ridden, but may not run inside a tomb and charges only its normal move, which must still be declared as a charge."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "loot-boyz-equipment-list",
+      "title": "Loot Boyz Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "Scimitar", "cost": {"cost": 15}},
+        {"name": "Cutlass", "alias": "", "cost": {"cost": 15}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "thievin-gitz-equipment-list",
+      "title": "Thievin' Gitz Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "khan",
+      "type": "hero",
+      "name": "Khan",
+      "plural": "Khans",
+      "race": "hobgoblin",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["loot-boyz-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any member of the warband within 6\" of the Khan may use his Leadership for a Psychology test."}
+      ]
+    },
+    {
+      "id": "magi",
+      "type": "hero",
+      "name": "Magi",
+      "plural": "Magis",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["loot-boyz-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Hobgoblin Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Magi is a spell caster. He starts with one spell from the Hobgoblin Magic list, chosen in the normal way, and may not wear armour."}
+      ]
+    },
+    {
+      "id": "loot-boy",
+      "type": "hero",
+      "name": "Loot Boy",
+      "plural": "Loot Boyz",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "costGc": 35,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["loot-boyz-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "thievin-git",
+      "type": "henchman",
+      "name": "Thievin' Git",
+      "plural": "Thievin' Gitz",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["thievin-gitz-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "stickaz",
+      "type": "henchman",
+      "name": "Stickaz",
+      "plural": "Stickaz",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["thievin-gitz-equipment-list"],
+      "specialRules": [
+        {"rulename": "Steady aim", "ruleFull": "A Stickaz may re-roll one failed to-hit roll with a missile weapon each turn."}
+      ]
+    },
+    {
+      "id": "giant-wolf",
+      "type": "henchman",
+      "name": "Giant Wolf",
+      "plural": "Giant Wolves",
+      "race": "wolf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 50,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 9, "ws": 4, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 3},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "A Giant Wolf gains no experience and may be given no weapons or equipment."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Hobgoblins",
+    "new": true
+  },
+  "specialSkillsList": [
+    {"name": "Ded Shooty (Hobgoblins)", "pdfName": "Ded Shooty", "description": "The Hobgoblin ignores the penalties for moving when he shoots, from wolf back as well as on foot."},
+    {"name": "Ded Sneaky", "description": "The Hobgoblin is placed after every other model, anywhere on the table at least 12\" from any enemy model."},
+    {"name": "Backstabba", "description": "The Hobgoblin makes one surprise attack from a direction his opponent is not expecting. It is in addition to his normal attacks and cannot be parried."}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 5}
+  ],
+  "stubs": [
+    {"name": "Cutlass", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 5}
+  ],
+  "flags": [
+    {"page": 2, "what": "The warband has 500 \"Loot points\", read as 500 gold crowns; the lists price everything in gold."},
+    {"page": 2, "what": "No count is printed for the Loot Boyz, who are Heroes, so they are imported as 0 with no maximum, and none for the Thievin' Gitz either."},
+    {"page": 2, "what": "The skill table's ticks were read from the page's own text columns (Combat 100, Shooting 143, Academic 193, Strength 246, Speed 294, Special 333): Khan and Loot Boy Combat, Shooting, Strength, Speed, Special; Magi Shooting, Academic, Speed, Special. No page was opened as an image."},
+    {"page": 2, "what": "The PDF's Ded Shooty (ignore movement penalties when shooting) is not our Ded Shooty (+6\" range), so it is named apart; Ded Sneaky is close to our Infiltration but does not require being out of sight. See the decisions."},
+    {"page": 3, "what": "The Magi's spells are a new lore, Hobgoblin Magic, its six spells added with the PDF's difficulties."},
+    {"page": 5, "what": "\"Scimitar\" at 15 gc is our Sword (its tags hold the name), so the Loot Boyz list sells our Sword at 10 gc and at 15 gc as printed; Cutlass is a stub with no rules."},
+    {"page": 1, "what": "A Hobgoblin warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "No group sizes are printed."}
+  ]
+}

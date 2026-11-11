@@ -1,0 +1,202 @@
+{
+  "warbandType": "cursed-dwarves",
+  "name": "Cursed Dwarves",
+  "source": "Khemri",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/khemri/Cursed%20Dwarves.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Dwarf special rules", "ruleFull": "Every special rule of a Dwarf warband applies."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "cursed-dwarf-equipment-list",
+      "title": "Dwarf Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "battle axe", "alias": "Battle axe", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "hand gun", "alias": "Hand gun", "cost": {"cost": 35}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "dwarf armour", "alias": "Dwarf armour", "cost": {"cost": 80}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "cursed-dwarf-leader",
+      "type": "hero",
+      "name": "Dwarf Leader",
+      "plural": "Dwarf Leaders",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {"m": 3, "ws": 5, "bs": 4, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 10},
+      "equipmentLists": ["cursed-dwarf-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any Dwarf within 6\" of the Dwarf Leader may use his Leadership for any Leadership test."}
+      ]
+    },
+    {
+      "id": "cursed-dwarf-priest",
+      "type": "hero",
+      "name": "Priest",
+      "plural": "Priests",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 0,
+      "statblock": {"m": 3, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 4, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["cursed-dwarf-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Items of devotion", "ruleFull": "The Priest starts with one vial of Blessed Water."}
+      ]
+    },
+    {
+      "id": "cursed-dwarf-slayer",
+      "type": "hero",
+      "name": "Slayer",
+      "plural": "Slayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["cursed-dwarf-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "skillGroups": ["Cursed Dwarf Slayer Skills"],
+      "specialRules": [
+        {"rulename": "Immune to Psychology", "ruleFull": "The Slayer already counts himself dead, so he is immune to all psychology and never breaks off from combat for any reason."},
+        {"rulename": "Sworn to die", "ruleFull": "A Slayer may never wear armour and never carries a missile weapon."}
+      ]
+    },
+    {
+      "id": "cursed-dwarf-longbeard",
+      "type": "hero",
+      "name": "Longbeard",
+      "plural": "Longbeards",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 8,
+      "statblock": {"m": 3, "ws": 5, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 10},
+      "equipmentLists": ["cursed-dwarf-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": false, "strength": false, "speed": false, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "cursed-dwarf-clansman",
+      "type": "henchman",
+      "name": "Clansman",
+      "plural": "Clansmen",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["cursed-dwarf-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "shadow-self",
+      "type": "henchman",
+      "name": "Shadow-self",
+      "plural": "Shadow-selves",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 3, "ws": 3, "bs": 0, "s": 3, "t": 4, "w": 1, "i": 1, "a": 1, "ld": 5},
+      "equipmentLists": ["cursed-dwarf-equipment-list"],
+      "specialRules": [
+        {"rulename": "Zombie rules", "ruleFull": "Every Zombie rule applies to a Shadow-self."}
+      ]
+    },
+    {
+      "id": "dwarf-ghoul",
+      "type": "henchman",
+      "name": "Dwarf Ghoul",
+      "plural": "Dwarf Ghouls",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 5,
+      "costGc": 70,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 3, "bs": 2, "s": 3, "t": 5, "w": 1, "i": 3, "a": 2, "ld": 5},
+      "equipmentLists": ["cursed-dwarf-equipment-list"],
+      "specialRules": [
+        {"rulename": "Ghoul rules", "ruleFull": "Every Ghoul rule applies to a Dwarf Ghoul."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Cursed Dwarves",
+    "new": true
+  },
+  "specialSkillsList": [
+    {"name": "Magic Resistant", "description": "The effect of a spell or a scroll does not affect the Dwarf on a D6 roll of 4+."},
+    {"name": "Smith", "description": "Between battles the Dwarf may buy one common weapon at half price."},
+    {"name": "Gnollengrom", "description": "Dwarf Leader only. The warband may re-roll any failed rout test."},
+    {"name": "Fearless (Cursed Dwarves)", "pdfName": "Fearless", "description": "The Dwarf is immune to fear, and terror counts as fear for him."},
+    {"name": "Dwarf Grit", "description": "When the Dwarf suffers a critical hit he may roll a D6. On a 4+ he suffers a normal wound instead of the critical hit's extra damage."}
+  ],
+  "sharedSkillGroup": {
+    "name": "Cursed Dwarf Slayer Skills",
+    "types": ["cursed-dwarves"],
+    "skills": [
+      {"name": "Ferocious Charge", "ours": "Ferocious Charge"},
+      {"name": "Monster Slayer", "ours": "Monster Slayer"},
+      {"name": "Berserker", "ours": "Berserker"},
+      {"name": "Sweeping Strike", "pdfName": "Sweeping strike", "description": "The Dwarf makes one extra attack while he is engaged by more than one model."},
+      {"name": "Tattoos of Grimnir", "description": "The Slayer has a 5+ armour save. Taken again it becomes 4+, and again 3+."},
+      {"name": "Fated", "description": "The Slayer may re-roll any result on the Serious Injury table. The second result stands, even if it is worse than the first."}
+    ]
+  },
+  "priceRows": [
+    {"name": "Blessed Water", "cost": 10, "dice": 3, "rarity": null, "note": "The Priest has ready access", "page": 3},
+    {"name": "Holy Relic", "cost": 15, "dice": 3, "rarity": 6, "note": "The Priest has ready access", "page": 3}
+  ],
+  "aliases": [
+    {"pdf": "light armor", "ours": "light armour", "page": 5},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 5},
+    {"pdf": "dwarf armour", "ours": "gromril armour", "page": 5}
+  ],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "The PDF says its rules are a rough draft."},
+    {"page": 3, "what": "The Priest's profile prints W4 (M3 WS4 BS4 S3 T3 W4 I2 A1 Ld9), read from the page's own columns; as printed."},
+    {"page": 4, "what": "The Dwarf Ghoul's profile row is labelled \"Leader\" in the PDF; it is the Ghoul's line, T5 A2 as printed."},
+    {"page": 2, "what": "No skill table is printed for the Longbeard, so he is imported with no skill access (William, 11 Nov 2026: stub what is missing and flag it)."},
+    {"page": 2, "what": "The skill table gives the Clansmen Combat, Strength and Special, but they are Henchmen, who take no skill lists in our templates."},
+    {"page": 2, "what": "The Slayer skills are a second group of his own (\"Cursed Dwarf Slayer Skills\"), open to the Cursed Dwarves alone, because he picks from them as well as from the warband's table."},
+    {"page": 3, "what": "The Priest's \"Blessed Water is common and Holy Relic is rare 6\" is two price rows for the warband; his starting vial stays in his rules."},
+    {"page": 5, "what": "\"Dwarf armour\" at 80 gc is read as our Gromril Armour (150 gc Rare 11 globally), shown under the list's name at the list price. See the decisions."},
+    {"page": 4, "what": "A Shadow-self follows the Zombie rules, so he is imported as gaining no experience; a Dwarf Ghoul follows the Ghoul rules and gains it."},
+    {"page": 1, "what": "A Cursed Dwarves warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 1, "what": "No group sizes are printed, and the Clansmen have no maximum."}
+  ]
+}

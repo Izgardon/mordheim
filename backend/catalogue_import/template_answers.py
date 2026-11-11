@@ -349,6 +349,10 @@ RACES_BY_FIGHTER: dict[tuple[str, str], str] = {
     ("the-brood-of-ghurash", "Youth"): "Troll",
     ("the-brood-of-ghurash", "Child"): "Troll",
     ("the-brood-of-ghurash", "Newborn"): "Troll",
+    # the Necromancer PDF's Skeleton maximum (p3), the only one printed for a skeleton; we had no Skeleton race
+    ("necromancer", "Skeleton"): "Skeleton",
+    # the Lahmian PDF prints no maximum for its Skeletons (p3), so they take the Necromancer PDF's Skeleton
+    ("lahmian", "Skeleton"): "Skeleton",
 }
 # A warband's own maximum is a race of its own, and the Undead warband's Vampire is our Vampire
 RACES_BY_PAGE: dict[tuple[str, str], str] = {

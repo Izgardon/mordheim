@@ -1,0 +1,182 @@
+{
+  "warbandType": "arabyan-nomads",
+  "name": "Arabyan Nomads",
+  "source": "Khemri",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Nomads.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Northern Barbarians", "ruleFull": "Every Hero in the warband hates human warriors of the Empire and of Bretonnia."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "nomad-warrior-list",
+      "title": "Warrior List",
+      "caveat": "",
+      "items": [
+        {"name": "jambiya", "alias": "Jambiya", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "katar", "alias": "", "cost": {"cost": 5}},
+        {"name": "scythe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "Ankus", "alias": "", "cost": {"cost": 13}},
+        {"name": "sword", "alias": "Scimitar", "cost": {"cost": 15}},
+        {"name": "Cutlass", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "Great Scimitar", "alias": "", "cost": {"cost": 20}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "handgun", "alias": "Handgun", "cost": {"cost": 35}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}}
+      ]
+    },
+    {
+      "id": "nomad-slave-list",
+      "title": "Slave List",
+      "caveat": "",
+      "items": [
+        {"name": "jambiya", "alias": "Jambiya", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club", "cost": {"cost": 3}},
+        {"name": "katar", "alias": "", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "sheik",
+      "type": "hero",
+      "name": "Sheik",
+      "plural": "Sheiks",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["nomad-warrior-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior within 6\" of the Sheik may use his Leadership instead of his own."}
+      ]
+    },
+    {
+      "id": "nomad-champion",
+      "type": "hero",
+      "name": "Champion",
+      "plural": "Champions",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["nomad-warrior-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "street-mage",
+      "type": "hero",
+      "name": "Street Mage",
+      "plural": "Street Mages",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["nomad-warrior-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Elemental Lore of Air", "Elemental Lore of Earth", "Elemental Lore of Fire", "Elemental Lore of Water"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Street Mage is a wizard. He starts with one elemental spell, and the element he chooses is the only one he may ever cast from. When he gains a new level he may take another spell from it, chosen at random."}
+      ]
+    },
+    {
+      "id": "bedouin",
+      "type": "hero",
+      "name": "Bedouin",
+      "plural": "Bedouins",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["nomad-warrior-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Guide", "ruleFull": "Add +1 to the warband's roll for equipping and trading. Two Bedouins still give +1 only."}
+      ]
+    },
+    {
+      "id": "nomad-warrior",
+      "type": "henchman",
+      "name": "Warrior",
+      "plural": "Warriors",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["nomad-warrior-list"],
+      "specialRules": []
+    },
+    {
+      "id": "nomad-slave",
+      "type": "henchman",
+      "name": "Slave",
+      "plural": "Slaves",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["nomad-slave-list"],
+      "specialRules": [
+        {"rulename": "Executed", "ruleFull": "A Slave gains experience, but the leader executes him if he rolls That Lad's Got Talent."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Arabyan Nomads",
+    "new": true
+  },
+  "specialSkillsList": [
+    {"name": "Blending into the Sands", "description": "The warrior may hide in open ground."},
+    {"name": "Weather Tolerant", "ours": "Weather tolerant"},
+    {"name": "Hit and Run", "ours": "Hit and run"}
+  ],
+  "aliases": [
+    {"pdf": "jambiya", "ours": "dagger", "page": 3},
+    {"pdf": "light armor", "ours": "light armour", "page": 3},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 3}
+  ],
+  "stubs": [
+    {"name": "Ankus", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Cutlass", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Great Scimitar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3}
+  ],
+  "flags": [
+    {"page": 1, "what": "The PDF prints no starting gold, only \"Maximum warband number is 15\". The template carries our 500 gc default."},
+    {"page": 2, "what": "The Champion's profile reads S4 for a human champion; as printed."},
+    {"page": 2, "what": "The Street Mage \"starts with one Elemental Spell, whichever element they chose is the only one they can get\". The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), so he is given our four Elemental Lores (Air, Earth, Fire, Water) and the one-element limit is left to his Wizard rule. See the decisions."},
+    {"page": 3, "what": "\"Scimitar\" at 15 gc is our Sword (its tags already hold the name), so the Warrior list sells our Sword twice, at 10 gc and at 15 gc as the PDF prints them. Jambiya is our Dagger. Ankus, Cutlass and Great Scimitar are stubs with no rules: the Khemri Equipment PDF holds them."},
+    {"page": 3, "what": "The Warrior list's Scythe is 5 gc and its Katar 5 gc; our Scythe (10/15 gc elsewhere) still has no rules of its own."},
+    {"page": 2, "what": "No group sizes are printed for the Warriors or the Slaves."},
+    {"page": 1, "what": "The Sheik and the Street Mage tick no Special column, so neither learns the warband's own skills."}
+  ]
+}

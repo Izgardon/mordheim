@@ -550,5 +550,17 @@
     "initiative": "4",
     "attacks": "6",
     "leadership": "6"
+  },
+  {
+    "name": "Skeleton",
+    "movement": "4",
+    "weapon_skill": "6",
+    "ballistic_skill": "5",
+    "strength": "4",
+    "toughness": "3",
+    "wounds": "2",
+    "initiative": "4",
+    "attacks": "4",
+    "leadership": "8"
   }
 ]

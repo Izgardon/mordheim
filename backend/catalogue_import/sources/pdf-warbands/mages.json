@@ -1,0 +1,146 @@
+{
+  "warbandType": "mages",
+  "name": "Mages",
+  "source": "Khemri",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/khemri/Mage.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "mage-equipment-list",
+      "title": "Mage Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "staff", "alias": "Staff", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15}},
+        {"name": "dueling pistol", "alias": "Dueling pistol", "cost": {"cost": 25}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2, "costSuffix": "Apprentices only"}},
+        {"name": "familiar", "alias": "Familiar", "cost": {"cost": 20}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "arch-mage",
+      "type": "hero",
+      "name": "Arch Mage",
+      "plural": "Arch Mages",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["mage-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Elemental Lore of Air", "Elemental Lore of Earth", "Elemental Lore of Fire", "Elemental Lore of Water"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any member of the warband within 6\" of the Arch Mage may use his Leadership for a Leadership test."},
+        {"rulename": "Wizard", "ruleFull": "The Arch Mage may take spells from two of the elemental lores, and starts with two spells, one from each."}
+      ]
+    },
+    {
+      "id": "mage",
+      "type": "hero",
+      "name": "Mage",
+      "plural": "Mages",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["mage-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Elemental Lore of Air", "Elemental Lore of Earth", "Elemental Lore of Fire", "Elemental Lore of Water"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Mage casts from one elemental lore and starts with one spell from it."}
+      ]
+    },
+    {
+      "id": "warlock",
+      "type": "hero",
+      "name": "Warlock",
+      "plural": "Warlocks",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 10,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["mage-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Lesser Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Warlock casts from the Lesser Magic list and starts with two spells."}
+      ]
+    },
+    {
+      "id": "apprentice",
+      "type": "henchman",
+      "name": "Apprentice",
+      "plural": "Apprentices",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 6,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 2, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["mage-equipment-list"],
+      "specialRules": [
+        {"rulename": "Cantrips", "ruleFull": "An Apprentice may cast Cantrip: difficulty 10, range 12\". The target may take a Leadership test, and the Cantrip has no effect if he passes it. If the casting succeeds, roll:\n\nRoll | Result\n1-5 | The target is frozen in place and may not charge, attack or move, but defends as normal.\n6 | The target is stunned."},
+        {"rulename": "Promotion", "ruleFull": "An Apprentice who becomes a Hero chooses one elemental lore to learn spells from, or takes spells from the Lesser Magic list instead."}
+      ]
+    },
+    {
+      "id": "clockwork-construct",
+      "type": "henchman",
+      "name": "Clockwork Construct",
+      "plural": "Clockwork Constructs",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 30,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 3, "bs": 0, "s": 4, "t": 4, "w": 2, "i": 2, "a": 1, "ld": "-"},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Clockwork body", "ruleFull": "A Clockwork Construct has a 5+ armour save, gains no experience and may carry no weapons, but suffers no penalty for being unarmed."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A Clockwork Construct is not affected by psychology."},
+        {"rulename": "May Not Run", "ruleFull": "A Clockwork Construct may not run."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Magician Skills",
+    "new": true
+  },
+  "specialSkillsList": [
+    {"name": "Dispel", "pdfName": "Disspell", "description": "The Hero may try to dispel a spell that has just been cast by rolling higher than the casting roll that succeeded. A sorcerer who cast on a 10 is dispelled only on an 11 or 12."},
+    {"name": "Store Spell", "description": "The Hero must carry a staff. He chooses a spell and casts it into the staff, which holds it for that game if the casting succeeds. He may cast it from the staff later with +3 to the casting roll; if he rolls a double when he does, the stored spell is lost."},
+    {"name": "Clockwork Mage", "description": "The Hero may pay 5 gold crowns for each Clockwork Construct in a group to raise its Movement or its Weapon Skill by 1. A characteristic may be raised twice at most, only one characteristic may be raised per game, and the whole group must be raised at once."}
+  ],
+  "aliases": [
+    {"pdf": "dueling pistol", "ours": "duelling pistol", "page": 4}
+  ],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "The PDF prints no starting gold, only \"Mage Warband -max 12\". The template carries our 500 gc default."},
+    {"page": 1, "what": "The Arch Mage takes spells from \"2 of the elemental spell lists\" and the Mage from one. The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), and its page in this PDF is an empty heading, so both are given our four Elemental Lores (Air, Earth, Fire, Water), which the Sorcerous Society brought. See the decisions."},
+    {"page": 1, "what": "The Apprentices are \"0-3 per mage hero (max 6)\"; the simpler reading, 0-6, is imported (William: \"just keep 0-1 dont complicate it\")."},
+    {"page": 1, "what": "\"Clockwork Beasts - 0-5\" in the choice of warriors is the entry headed \"Clockwork Construct - 30\"; the entry's name and count are taken."},
+    {"page": 1, "what": "Cantrip is printed under Magician Skills but is the Apprentices' spell (\"Cantrips - see above\"), so it is the Apprentice's rule with its difficulty, range and chart rather than a Hero's skill."},
+    {"page": 3, "what": "The Clockwork Construct's Leadership is printed as \"-\", and its profile has W2 and a 5+ save; as printed."},
+    {"page": 2, "what": "The Apprentice's profile prints S2; as printed."},
+    {"page": 4, "what": "The Familiar line prints no price, only \"per TC#10\". Our Familiar is 20+1D6 gc Rare 8 from Town Cryer 10, so the line carries 20 gc. Its \"Arch Mage only when creating a warband, Heroes after that\" cannot be read into a line note, so it is flagged here rather than imported."},
+    {"page": 4, "what": "The list's Dueling pistol is our Duelling Pistol (30 gc Rare 10 globally) at the list price of 25 gc, and its Staff is our Club, Mace or Hammer."},
+    {"page": 1, "what": "No group sizes are printed, and the warband has no special rules of its own."}
+  ]
+}

@@ -920,6 +920,26 @@
     "description": "Merchant only. If the Merchant was not taken out of action, in the post-battle sequence the warband may try to buy any item from any campaign setting or any other warband's list, at the warband's normal rarity roll; experimental or fan-made items need the group's agreement. It may hold only one of each item bought this way. A pair or a brace is bought together and may not be split between warriors. The skill works with Black Market, and a foreign item may be added to the Black Market list at the Merchant's next advance; a Black Market roll for a foreign item the warband already holds is wasted. A weapon may still need Weapons Training or Weapons Expert before it can be used."
   },
   {
+    "name": "Blending into the Sands",
+    "description": "The warrior may hide in open ground."
+  },
+  {
+    "name": "Sticky Fingers",
+    "description": "A model taken out of action is left on the table. If the Hero moves into base contact with him he may try to steal one of his weapons, succeeding on a 5+ on a D6. The attempt takes his whole turn and he may do nothing else that turn."
+  },
+  {
+    "name": "Knife Fighting (Arabyan Theives)",
+    "description": "While the Hero fights with knives in hand-to-hand combat he adds +1 to his Weapon Skill and +1 to the injury rolls he causes with them. His enemy still gets its +1 armour save against a knife."
+  },
+  {
+    "name": "Hide in Shadows (Arabyan Theives)",
+    "description": "While the Hero is within 1\" of a wall or other linear obstacle, an opposing model must pass an Initiative test to charge him."
+  },
+  {
+    "name": "Sheer Speed",
+    "description": "Guild Master and Master Thief only. The Hero adds +1 to his Movement."
+  },
+  {
     "name": "Virtue of Noble Disdain (Grail Companions)",
     "description": "The knight may re-roll failed rolls to hit against enemy henchmen."
   },
@@ -1042,6 +1062,38 @@
   {
     "name": "Gift of Sentience",
     "description": "Instead of searching for rare items, the Hero may spend D3 moonstones on a single Clockwork soldier. The soldier loses Need Orders, Immune to Psychology and Brainless, and re-rolls any That Lad's Got Talent result when rolling for advances."
+  },
+  {
+    "name": "Magic Resistant",
+    "description": "The effect of a spell or a scroll does not affect the Dwarf on a D6 roll of 4+."
+  },
+  {
+    "name": "Smith",
+    "description": "Between battles the Dwarf may buy one common weapon at half price."
+  },
+  {
+    "name": "Gnollengrom",
+    "description": "Dwarf Leader only. The warband may re-roll any failed rout test."
+  },
+  {
+    "name": "Fearless (Cursed Dwarves)",
+    "description": "The Dwarf is immune to fear, and terror counts as fear for him."
+  },
+  {
+    "name": "Dwarf Grit",
+    "description": "When the Dwarf suffers a critical hit he may roll a D6. On a 4+ he suffers a normal wound instead of the critical hit's extra damage."
+  },
+  {
+    "name": "Sweeping Strike",
+    "description": "The Dwarf makes one extra attack while he is engaged by more than one model."
+  },
+  {
+    "name": "Tattoos of Grimnir",
+    "description": "The Slayer has a 5+ armour save. Taken again it becomes 4+, and again 3+."
+  },
+  {
+    "name": "Fated",
+    "description": "The Slayer may re-roll any result on the Serious Injury table. The second result stands, even if it is worse than the first."
   },
   {
     "name": "Furious Charge",
@@ -1172,6 +1224,18 @@
     "description": "When charged, the Halfling gains one bonus attack, which strikes first."
   },
   {
+    "name": "Ded Shooty (Hobgoblins)",
+    "description": "The Hobgoblin ignores the penalties for moving when he shoots, from wolf back as well as on foot."
+  },
+  {
+    "name": "Ded Sneaky",
+    "description": "The Hobgoblin is placed after every other model, anywhere on the table at least 12\" from any enemy model."
+  },
+  {
+    "name": "Backstabba",
+    "description": "The Hobgoblin makes one surprise attack from a direction his opponent is not expecting. It is in addition to his normal attacks and cannot be parried."
+  },
+  {
     "name": "Blood of Khorne",
     "description": "The Hero ignores the effect of a spell or a prayer on a D6 roll of 4+."
   },
@@ -1200,6 +1264,30 @@
     "description": "The Knight may re-roll any failed rolls to wound against an enemy with a higher natural Strength than his."
   },
   {
+    "name": "Swift",
+    "description": "The vampire may run and still counts as having moved normally for every purpose."
+  },
+  {
+    "name": "Transfix",
+    "description": "At the start of the combat phase one enemy model in base contact must test against its Leadership. If it fails it may not attack that turn and every attack against it gains +1 to hit. It has no effect on a model immune to psychology."
+  },
+  {
+    "name": "Quickblood",
+    "description": "The vampire has an unmodifiable 6+ save against all wounds, taken before any armour save and, against a critical hit, before rolling for multiple wounds. Dodge and Step Aside supersede this save rather than combining with it, so a vampire with Quickblood and Dodge has a 5+ save against missiles and 6+ in close combat."
+  },
+  {
+    "name": "Innocence Lost",
+    "description": "The vampire always attacks first in close combat. If an enemy model may also attack first, the one with the higher Initiative goes first, and with equal Initiative the higher roll on a D6. It has no effect on a model immune to psychology."
+  },
+  {
+    "name": "Seduction",
+    "description": "The vampire tests against her Leadership at the start of the combat phase. If she passes, one enemy model in base contact must also test against its Leadership, and if it fails the vampire's player controls it. Its owner may try to take it back by testing again in each of his recovery phases. Control is lost at once if the vampire attacks it, and if it ends the game under her control it counts as out of action. Only one model may be controlled at a time. It has no effect on a model immune to psychology."
+  },
+  {
+    "name": "Night Creature",
+    "description": "A model wishing to charge, shoot or cast a spell at the vampire must roll 4+ to do so, or choose another target. This works only if the vampire did not move in her previous movement phase."
+  },
+  {
     "name": "Graceful Strength",
     "description": "The Elf may use a double-handed weapon without striking last; work out the order of blows as for any other weapon."
   },
@@ -1214,6 +1302,18 @@
   {
     "name": "Swift Fighter",
     "description": "At the end of any hand-to-hand combat phase, either player's, the Elf may take a Leadership test if he is still in base contact with an enemy. If he passes he may make a normal move away from the enemy, who strikes no blows at him; he may not run or charge. If he fails he stays in combat and fights as normal the following turn. If he also knows the Pirate skill Swashbuckler, he may make one attempt to escape combat and re-roll it once if it fails."
+  },
+  {
+    "name": "Dispel",
+    "description": "The Hero may try to dispel a spell that has just been cast by rolling higher than the casting roll that succeeded. A sorcerer who cast on a 10 is dispelled only on an 11 or 12."
+  },
+  {
+    "name": "Store Spell",
+    "description": "The Hero must carry a staff. He chooses a spell and casts it into the staff, which holds it for that game if the casting succeeds. He may cast it from the staff later with +3 to the casting roll; if he rolls a double when he does, the stored spell is lost."
+  },
+  {
+    "name": "Clockwork Mage",
+    "description": "The Hero may pay 5 gold crowns for each Clockwork Construct in a group to raise its Movement or its Weapon Skill by 1. A characteristic may be raised twice at most, only one characteristic may be raised per game, and the whole group must be raised at once."
   },
   {
     "name": "Surgeon",

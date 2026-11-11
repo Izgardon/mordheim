@@ -69,6 +69,13 @@ check over every file.
 | `house-guard.json` | house-guard (2b, Sealed City) | https://www.broheim.net/downloads/warbands/supplement/sealedcity/House%20Guard.pdf | 1-5 (text layer; page 5 as an image) | 11 Nov 2026 |
 | `silent-brotherhood.json` | silent-brotherhood (2b, Sealed City) | https://www.broheim.net/downloads/warbands/supplement/sealedcity/Silent%20Brotherhood.pdf | 1-6 (text layer; page 3 as an image) | 11 Nov 2026 |
 | `skaven-of-clan-pristekk.json` | skaven-of-clan-pristekk (2b, Sealed City) | https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clan%20Pristekk.pdf | 1-5 (text layer; page 1 as an image) | 11 Nov 2026 |
+| `arabyan-nomads.json` | arabyan-nomads (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Nomads.pdf | 1-3 (text layer) | 11 Nov 2026 |
+| `arabyan-theives.json` | arabyan-theives (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Theives.pdf | 1-4 (text layer) | 11 Nov 2026 |
+| `cursed-dwarves.json` | cursed-dwarves (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Cursed%20Dwarves.pdf | 1-5 (text layer) | 11 Nov 2026 |
+| `hobgoblins.json` | hobgoblins (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Hobgoblins.pdf | 1-5 (text layer; its skill table read from the page's own text columns) | 11 Nov 2026 |
+| `lahmian.json` | lahmian (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Lahmian.pdf | 1-6 (text layer) | 11 Nov 2026 |
+| `mages.json` | mages (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Mage.pdf | 1-4 (text layer) | 11 Nov 2026 |
+| `necromancer.json` | necromancer (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Necromancer.pdf | 1-4 (text layer) | 11 Nov 2026 |
 
 The Sartosa warbands' Pirate skill column is the Pirate Skills list of the setting's campaign rules, not of any warband's PDF: it is read from
 https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Skills%2C%20Hired%20Swords%20%26%20Dramatis%20Personae.pdf (p1-2, text layer; 11 Nov 2026)
@@ -79,6 +86,14 @@ stubs their rules and settles their prices. The setting's other eight campaign P
 The Sealed City's own campaign PDFs (Ambitions, Lost And Found, Madness Rules, Stygian Mutations) are not read (William, 11 Nov 2026): what its
 warbands point at - the Stygian Mutations, the moonstones and orichalcum they spend, and the Clockwork pistol's and rifle's rules - is stubbed or
 flagged and filled when that batch comes.
+
+The Khemri warbands' type rows carry Broheim's grade 3, while the grade that counts is their setting's: Khemri is graded 1b, because the
+setting also holds the 1b Arabian Tomb Raiders and Tomb Guardians (flagged for William, 11 Nov 2026; nothing of ours was changed).
+The Nehekhara Tomb Guards' PDF (https://www.broheim.net/downloads/warbands/supplement/khemri/Nehekhara%20Tomb%20Guards.pdf, 1-9, text layer; read 11 Nov 2026)
+is the warband mordheimer's snapshot already holds as `testwarbands-2026-10-31/warbands/tomb-guardians-old.json`, so no source file was written for it:
+its numbers match ours and its differences are flagged in the vet file instead.
+Khemri's own campaign PDFs (Equipment, Elemental Magic, Dramatis Personae and a Town Cryer compilation) are not read (William, 11 Nov 2026): the Ankus,
+Cutlass and Great Scimitar are stubs with no rules, and the Mage and Street Mage cast from our four Elemental Lores until it is.
 
 ## Adding a warband
 

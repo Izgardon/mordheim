@@ -1,0 +1,200 @@
+{
+  "warbandType": "necromancer",
+  "name": "Necromancer",
+  "source": "Khemri",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/khemri/Necromancer.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "necromancer-list",
+      "title": "Necromancer List",
+      "caveat": "",
+      "items": [
+        {"name": "jambiya", "alias": "Jambiya", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "katar", "alias": "", "cost": {"cost": 5}},
+        {"name": "Scythe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "Ankus", "alias": "", "cost": {"cost": 13}},
+        {"name": "sword", "alias": "Scimitar", "cost": {"cost": 15}},
+        {"name": "Cutlass", "alias": "", "cost": {"cost": 15}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "necromancer-warrior-list",
+      "title": "Warrior List",
+      "caveat": "",
+      "items": [
+        {"name": "jambiya", "alias": "Jambiya", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
+        {"name": "katar", "alias": "", "cost": {"cost": 5}},
+        {"name": "Scythe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "Ankus", "alias": "", "cost": {"cost": 13}},
+        {"name": "sword", "alias": "Scimitar", "cost": {"cost": 15}},
+        {"name": "Cutlass", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "Great Scimitar", "alias": "", "cost": {"cost": 20}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armor", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armor", "alias": "", "cost": {"cost": 50}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "", "cost": {"cost": 15}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "khemri-necromancer",
+      "type": "hero",
+      "name": "Necromancer",
+      "plural": "Necromancers",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["necromancer-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Necromancy"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior within 6\" of the Necromancer may use his Leadership instead of his own."},
+        {"rulename": "Wizard", "ruleFull": "The Necromancer casts from the Necromantic spell list and may start with one spell, chosen at random."},
+        {"rulename": "Succession", "ruleFull": "If the Necromancer dies the Apprentice takes his books and scrolls, becomes a Necromancer and leads the warband, and a new Apprentice may be hired. Only a Necromancer or an Apprentice can hold the warband together: with neither, its undead turn to dust."}
+      ]
+    },
+    {
+      "id": "necromancer-apprentice",
+      "type": "hero",
+      "name": "Apprentice",
+      "plural": "Apprentices",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["necromancer-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Learning necromancy", "ruleFull": "The Apprentice may use one skill advance to learn necromantic magic."}
+      ]
+    },
+    {
+      "id": "khemri-tomb-robber",
+      "type": "hero",
+      "name": "Tomb Robber",
+      "plural": "Tomb Robbers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 45,
+      "startingXp": 11,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["necromancer-warrior-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "skills": ["Trap Expert"],
+      "specialRules": []
+    },
+    {
+      "id": "necromancer-skeleton",
+      "type": "henchman",
+      "name": "Skeleton",
+      "plural": "Skeletons",
+      "race": "skeleton",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 1, "a": 1, "ld": 5},
+      "equipmentLists": ["necromancer-warrior-list"],
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "A skeleton causes fear."},
+        {"rulename": "Immune to Poison", "ruleFull": "A skeleton is not affected by any poison."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A skeleton is not affected by psychology."},
+        {"rulename": "May Not Run", "ruleFull": "A skeleton may not run."},
+        {"rulename": "Brittle bones", "ruleFull": "A skeleton remembers rather than learns, and may only ever take Combat skills if he becomes a Hero."}
+      ]
+    },
+    {
+      "id": "undead-vulture",
+      "type": "henchman",
+      "name": "Undead Vulture",
+      "plural": "Undead Vultures",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 20,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 8, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "An Undead Vulture causes fear."},
+        {"rulename": "May Not Run", "ruleFull": "An Undead Vulture may not run, and gains no experience."},
+        {"rulename": "No Pain", "ruleFull": "An Undead Vulture treats a stunned result as knocked down."},
+        {"rulename": "Flyer", "ruleFull": "The vulture ignores terrain when it moves and may charge any model it can see, whatever its height and whoever would intercept. Shooting and hand-to-hand attacks against it are at -1 to hit."},
+        {"rulename": "Fragile", "ruleFull": "Use this injury chart for the vulture: 1-3 knocked down, 4-6 out of action."}
+      ]
+    },
+    {
+      "id": "undead-golem",
+      "type": "henchman",
+      "name": "Undead Golem",
+      "plural": "Undead Golems",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 200,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 3, "bs": 0, "s": 4, "t": 4, "w": 3, "i": 2, "a": 2, "ld": 6},
+      "equipmentLists": ["necromancer-warrior-list"],
+      "specialRules": [
+        {"rulename": "Cause Fear", "ruleFull": "The Undead Golem causes fear."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Undead Golem is not affected by any poison."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Undead Golem is not affected by psychology."},
+        {"rulename": "May Not Run", "ruleFull": "The Undead Golem may not run."},
+        {"rulename": "Upkeep", "ruleFull": "The Undead Golem costs 15 gold crowns of upkeep to maintain. He gains experience, but never takes the That Lad's Got Talent re-roll."}
+      ]
+    }
+  ],
+  "aliases": [
+    {"pdf": "jambiya", "ours": "dagger", "page": 4},
+    {"pdf": "light armor", "ours": "light armour", "page": 4},
+    {"pdf": "heavy armor", "ours": "heavy armour", "page": 4}
+  ],
+  "stubs": [
+    {"name": "Ankus", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4},
+    {"name": "Cutlass", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4},
+    {"name": "Great Scimitar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4},
+    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4}
+  ],
+  "flags": [
+    {"page": 1, "what": "The PDF prints no starting gold, only \"Max. Warband size is 15\". The template carries our 500 gc default."},
+    {"page": 2, "what": "The Tomb Robber \"starts with Disarm/Spot traps skill\". That is our Trap Expert, so he is given it as a starting skill. See the decisions."},
+    {"page": 3, "what": "The Skeletons' maximum characteristics (WS6 BS5 S4 T3 W2 I4 A4 Ld8) are the only ones printed for a skeleton anywhere in this batch, so they become a new race, Skeleton, which the Lahmian skeletons take too (their PDF prints none)."},
+    {"page": 3, "what": "The undead rules are written \"Immune to physiology\", read as Immune to Psychology. The Skeletons are given Cause Fear, Immune to Poison, Immune to Psychology and May Not Run as printed, with no No Pain; the Undead Vulture's \"does not suffer from stun\" is No Pain."},
+    {"page": 3, "what": "The Undead Golem costs 200 gc with an upkeep of 15 gc. A Henchman's upkeep is not something our templates hold, so it stays in his rules."},
+    {"page": 3, "what": "\"This is Tuff Git's Flesh golem for Mordheim modified\" is the PDF's note on where the Golem comes from."},
+    {"page": 4, "what": "\"Scimitar\" at 15 gc is our Sword (its tags hold the name), so each list sells our Sword at 10 gc and at 15 gc as printed. Jambiya is our Dagger. Ankus, Cutlass and Great Scimitar are stubs with no rules."},
+    {"page": 1, "what": "No warband-wide special rules are printed; the Necromancer's succession note is his own rule."},
+    {"page": 1, "what": "No group sizes are printed, and the Skeletons have no maximum."}
+  ]
+}

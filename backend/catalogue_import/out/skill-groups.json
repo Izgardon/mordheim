@@ -150,6 +150,45 @@
     ]
   },
   {
+    "name": "Arabyan Nomads",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "arabyan-nomads",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Weather tolerant",
+      "Hit and run",
+      "Blending into the Sands"
+    ]
+  },
+  {
+    "name": "Arabyan Theives",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "arabyan-theives",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Infiltration",
+      "Trap Expert",
+      "Sticky Fingers",
+      "Knife Fighting (Arabyan Theives)",
+      "Hide in Shadows (Arabyan Theives)",
+      "Sheer Speed"
+    ]
+  },
+  {
     "name": "Battle Monks of Cathay",
     "for_everyone": false,
     "warbands": [
@@ -407,6 +446,47 @@
       "Noblesse Obliges",
       "Torturer",
       "Duelist"
+    ]
+  },
+  {
+    "name": "Cursed Dwarf Slayer Skills",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "cursed-dwarves",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Ferocious Charge",
+      "Monster Slayer",
+      "Berserker",
+      "Sweeping Strike",
+      "Tattoos of Grimnir",
+      "Fated"
+    ]
+  },
+  {
+    "name": "Cursed Dwarves",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "cursed-dwarves",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Magic Resistant",
+      "Smith",
+      "Gnollengrom",
+      "Fearless (Cursed Dwarves)",
+      "Dwarf Grit"
     ]
   },
   {
@@ -696,6 +776,24 @@
     ]
   },
   {
+    "name": "Hobgoblins",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "hobgoblins",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Ded Shooty (Hobgoblins)",
+      "Ded Sneaky",
+      "Backstabba"
+    ]
+  },
+  {
     "name": "Hochland Bandits",
     "for_everyone": false,
     "warbands": [
@@ -807,6 +905,27 @@
     ]
   },
   {
+    "name": "Lahmian",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "lahmian",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Swift",
+      "Transfix",
+      "Quickblood",
+      "Innocence Lost",
+      "Seduction",
+      "Night Creature"
+    ]
+  },
+  {
     "name": "Large Special",
     "for_everyone": true,
     "warbands": [],
@@ -861,6 +980,24 @@
       "Slaver",
       "Stealthy",
       "Cutpurse"
+    ]
+  },
+  {
+    "name": "Magician Skills",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "mages",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Dispel",
+      "Store Spell",
+      "Clockwork Mage"
     ]
   },
   {
