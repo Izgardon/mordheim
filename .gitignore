@@ -24,7 +24,14 @@ dist/
 npm-debug.log*
 
 claude.md
-.claude/
+# Local Claude settings and skills; the shared settings.json (the cloud session hook) is committed
+.claude/*
+!.claude/settings.json
+
+# PDF sources and their text, OCR and page images (tools/pdf-warbands/fetch.sh makes them); never committed
+.pdf-sources/
+# Worktrees inside the checkout (scripts/cloud/worktree.sh)
+/.worktrees/
 # Coverage data
 .coverage
 .coverage.*
