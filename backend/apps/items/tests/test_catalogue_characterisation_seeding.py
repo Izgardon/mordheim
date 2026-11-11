@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 47,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 446,  # the import's 394 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
+                "Item": 445,  # the import's 393 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 53,  # the import's shared rules, the Metal Mongers' Experimental Technology and the Watchmen's Map among them
                 "Skill": 447,  # the import's 423 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 113,  # the import's 94 + a group of his own for each of 19 hired swords
@@ -525,7 +525,7 @@ class SeedAllTests(TestCase):
         knives |= {"Misericordia", "Poison Daggers", "Shortsword", "Spirit Knife", "Starblade", "Thinglash"}
         self.assertEqual(holders("+1 Enemy armour save"), knives)
         self.assertEqual(ItemRule.objects.filter(name__iregex=r"^two.handed$").count(), 1)
-        self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike (Merchant Caravans)", "Flail", "Halberd"}, holders("Two-handed"))  # fmt: skip
+        self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike", "Flail", "Halberd"}, holders("Two-handed"))  # fmt: skip
 
     def test_item_values_match_mordheimer(self):
         # the 2026-10-28 data audit: transcription errors in a price, a save and a strength

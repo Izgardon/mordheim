@@ -526,7 +526,7 @@
   "aliases": [
     {
       "pdf": "Pike",
-      "ours": "Pike (Tileans)",
+      "ours": "Pike",
       "page": 3
     }
   ],
@@ -554,7 +554,7 @@
   ],
   "priceRows": [
     {
-      "name": "Pike (Tileans)",
+      "name": "Pike",
       "rarity": 8,
       "dice": null,
       "note": "House Guard only",
@@ -576,7 +576,7 @@
     },
     {
       "page": 5,
-      "what": "The Pike's entry (10 gc, Rare 8, Two-handed and Strike first with +1 Initiative in the first turn) is read as our Pike (Tileans), with a House Guard price row at 10 gc Rare 8. Our Pike's rules differ: it reaches 3\", strikes first against a spear and may not use a shield or buckler at all. See the decisions."
+      "what": "The Pike's entry (10 gc, Rare 8, Two-handed and Strike first with +1 Initiative in the first turn) is read as our Pike, with a House Guard price row at 10 gc Rare 8. Ours carries those same two rules (Border Town Burning). It was read as Pike (Tileans), the Lustria pike that reaches 3\", until William discontinued that one (11 Nov 2026: \"the tilean one got discontinued\") and this became the only pike."
     },
     {
       "page": 5,

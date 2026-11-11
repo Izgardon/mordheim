@@ -18,7 +18,7 @@ from catalogue_import.pdf_warbands import (
     stub_items,
     tables_as_html,
 )
-from catalogue_import.sources import OUT
+from catalogue_import.sources import HIRELING_DATA, OUT
 from catalogue_import.template_lists import ItemIndex
 from catalogue_import.template_text import clean_rule
 from catalogue_import.template_upgrades import halved
@@ -525,6 +525,100 @@ class PdfImportTests(SimpleTestCase):
             line["item"]["name"] for row in self.templates["nipponese-expedition"]["lists"] for line in row["lines"]
         }
         self.assertLessEqual({"Kanabo", "Double-handed weapon"}, lines)
+
+    def test_there_is_one_pike_and_the_tileans_and_house_guard_buy_it(self) -> None:
+        # William, 11 Nov 2026: "the tilean one got discontinued". Pike (Tileans) is dropped and Pike (Merchant
+        # Caravans) is plain Pike; its holders are the Merchant Caravans, the Tilean warbands and the House Guard.
+        gone = ("Pike (Tileans)", "Pike (Merchant Caravans)")
+        self.assertEqual([name for name in gone if name in self.items], [])
+        pike = self.items["Pike"]
+        self.assertEqual([rule.get("rule") or rule.get("name") for rule in pike["rules"]], ["strike-first", "two-handed"])  # fmt: skip
+        buyers = {
+            entry["type"]
+            for row in pike["availabilities"]
+            for entry in row["warbands"]
+            if not entry["excluded"] and "type" in entry
+        }
+        self.assertLessEqual({"merchant-caravans", "tileans", "house-guard"}, buyers)
+        lines = {
+            (slug, line["cost"])
+            for slug in ("tileans", "house-guard", "merchant-caravans")
+            for row in self.templates[slug]["lists"]
+            for line in row["lines"]
+            if line["item"]["name"] == "Pike"
+        }
+        self.assertEqual(lines, {("tileans", 12), ("house-guard", 10), ("merchant-caravans", 10)})
+
+    def test_the_mousillon_censer_and_the_woodsmens_staff_are_their_own_items(self) -> None:
+        # William, 11 Nov 2026: a warband's own version takes the warband's name in brackets, or the setting's where
+        # several warbands share the warband's name. Three warbands are Skaven of Clan Pestilens, so the censer is
+        # Mousillon's; the Woodsmen are one warband, so the staff is theirs. Ours stay as they are.
+        censer = self.items["Plague Censer (Mousillon)"]
+        self.assertEqual((censer["strength"], censer["setting"]), ("As user +2", "mousillon"))
+        self.assertEqual([rule.get("rule") or rule.get("name") for rule in censer["rules"]], ["heavy", "two-handed", "Fog of Death"])  # fmt: skip
+        [row] = censer["availabilities"]
+        self.assertEqual((row["cost"], row["dice"], row["rarity"]), (75, 5, 12))
+        self.assertNotIn("Toughness test", censer["rules"][-1]["text"])  # the PDF's roll, not our Censer's test
+        [ours] = self.items["Censer"]["availabilities"]  # ours keeps only the Town Cryer 29 warband's row
+        self.assertEqual(ours["warbands"], [{"type": "skaven-of-clan-pestilens-tc29", "excluded": False}])
+        staff = self.items["Quarter Staff (Woodsmen de Artois)"]
+        self.assertEqual(staff["strength"], "As user +1")
+        self.assertEqual([rule["rule"] for rule in staff["rules"]], ["two-handed", "parry"])
+        self.assertEqual([row["cost"] for row in self.items["Quarter Staff"]["availabilities"]], [15])
+        shown = {
+            (slug, line["item"]["name"], line["shown_as"])
+            for slug, name in (
+                ("skaven-of-clan-pestilens-mousillon", "Plague Censer (Mousillon)"),
+                ("woodsmen-de-artois", "Quarter Staff (Woodsmen de Artois)"),
+            )
+            for row in self.templates[slug]["lists"]
+            for line in row["lines"]
+            if line["item"]["name"] == name
+        }
+        self.assertEqual(
+            shown,
+            {
+                ("skaven-of-clan-pestilens-mousillon", "Plague Censer (Mousillon)", "Plague Censer"),
+                ("woodsmen-de-artois", "Quarter Staff (Woodsmen de Artois)", "Quarterstaff"),
+            },
+        )
+
+    def test_the_clockworkers_pistol_and_rifle_are_our_pistol_and_handgun(self) -> None:
+        # William, 11 Nov 2026: "these are just nicknames". Their lines name ours, shown under the Clockworkers'
+        # names, with a price row each at this PDF's price; ours keep their own 15 gc and 35 gc, Rare 8.
+        self.assertEqual([name for name in ("Clockwork pistol", "Clockwork rifle") if name in self.items], [])
+        shown = {
+            (line["item"]["name"], line["shown_as"], line["cost"])
+            for row in self.templates["clockworkers"]["lists"]
+            for line in row["lines"]
+            if line["item"]["name"] in ("Pistol", "Handgun")
+        }
+        self.assertEqual(shown, {("Pistol", "Clockwork pistol", 25), ("Handgun", "Clockwork rifle", 40)})
+        for name, cost in (("Pistol", 25), ("Handgun", 40)):
+            rows = [
+                (row["cost"], row["rarity"])
+                for row in self.items[name]["availabilities"]
+                if {"type": "clockworkers", "excluded": False} in row["warbands"]
+            ]
+            self.assertEqual(rows, [(cost, None)])
+
+    def test_a_warband_only_row_is_named_for_its_warband_or_for_its_setting(self) -> None:
+        # William, 11 Nov 2026: the warband's name in brackets where that tells them apart, the setting's where it
+        # does not, and never both. Three warbands are Skaven of Clan Pestilens, so the Mousillon skill takes the
+        # setting; only the Dark Elf Corsairs hire their three Specialists, so those take the warband.
+        rotten = sorted(row["name"] for row in load_json(OUT / "skills.json") if row["name"].startswith("Rotten"))
+        self.assertEqual(rotten, ["Rotten Body", "Rotten Body (Mousillon)"])
+        hired = {row["name"] for row in load_json(HIRELING_DATA / "hired-swords.json")}
+        self.assertLessEqual(
+            {
+                "Dark Elf Sorceress (Dark Elf Corsairs)",
+                "Dark Elf Beastmaster (Dark Elf Corsairs)",
+                "Witch Elf (Dark Elf Corsairs)",
+            },
+            hired,
+        )
+        self.assertEqual([name for name in ("Dark Elf Sorceress", "Witch Elf") if name in hired], [])
+        self.assertIn("Holy (Unholy) Relic", self.items)  # its brackets are its name, not a warband or a setting
 
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page

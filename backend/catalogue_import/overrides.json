@@ -137,8 +137,18 @@
   },
   "setting_grades": {},
   "keep_hidden_items": [],
-  "drop_items": [],
+  "drop_items": [
+    "Pike (Tileans)"
+  ],
   "item_names": {
+    "Pike (Merchant Caravans)": {
+      "name": "Pike",
+      "tags": [
+        "pike",
+        "pikes"
+      ],
+      "why": "William, 11 Nov 2026: \"the tilean one got discontinued\". With Pike (Tileans) dropped there is one pike, so it is named plainly; mordheimer's own note on the Tilean entry says to use these Border Town Burning rules. The Tileans and the Sealed City's House Guard buy this one"
+    },
     "Throwing Knives/Stars": {
       "name": "Throwing Knives/Stars/Axes",
       "tags": [
@@ -170,6 +180,15 @@
     }
   },
   "item_warbands_add": {
+    "Pike (Merchant Caravans)": {
+      "warbands": [
+        "miragleans",
+        "remasens",
+        "tileans",
+        "trantios"
+      ],
+      "why": "the Tilean warbands' own pike, Pike (Tileans), is discontinued (William, 11 Nov 2026), so they buy this one, which item_names renames Pike; their list line keeps its own 12 gc"
+    },
     "Nightmare": {
       "warbands": [
         "cursed-cavalcade"
@@ -358,7 +377,7 @@
         "Halberd",
         "Horseman's Hammer",
         "Man-catcher",
-        "Pike (Merchant Caravans)",
+        "Pike",
         "Serpent Staff"
       ],
       "items": {
@@ -930,9 +949,9 @@
     },
     "hired_swords": {
       "Norse Shaman": "border-town-burning",
-      "Dark Elf Sorceress": "mousillon",
-      "Dark Elf Beastmaster": "mousillon",
-      "Witch Elf": "mousillon"
+      "Dark Elf Sorceress (Dark Elf Corsairs)": "mousillon",
+      "Dark Elf Beastmaster (Dark Elf Corsairs)": "mousillon",
+      "Witch Elf (Dark Elf Corsairs)": "mousillon"
     }
   }
 }

@@ -49,15 +49,15 @@
           }
         },
         {
-          "name": "Clockwork pistol",
-          "alias": "",
+          "name": "Pistol",
+          "alias": "Clockwork pistol",
           "cost": {
             "cost": 25
           }
         },
         {
-          "name": "Clockwork rifle",
-          "alias": "",
+          "name": "Handgun",
+          "alias": "Clockwork rifle",
           "cost": {
             "cost": 40,
             "costSuffix": "Master of Clocks & Dwarf engineer only"
@@ -192,8 +192,8 @@
           }
         },
         {
-          "name": "Clockwork pistol",
-          "alias": "",
+          "name": "Pistol",
+          "alias": "Clockwork pistol",
           "cost": {
             "cost": 25
           }
@@ -206,8 +206,8 @@
           }
         },
         {
-          "name": "Clockwork rifle",
-          "alias": "",
+          "name": "Handgun",
+          "alias": "Clockwork rifle",
           "cost": {
             "cost": 40
           }
@@ -627,23 +627,11 @@
     }
   ],
   "aliases": [],
+  "priceRows": [
+    {"name": "Pistol", "rarity": null, "dice": null, "note": "", "page": 2},
+    {"name": "Handgun", "rarity": null, "dice": null, "note": "", "page": 2}
+  ],
   "stubs": [
-    {
-      "name": "Clockwork pistol",
-      "type": "Weapon",
-      "subtype": "Ranged",
-      "rarity": null,
-      "dice": null,
-      "rulesPage": 2
-    },
-    {
-      "name": "Clockwork rifle",
-      "type": "Weapon",
-      "subtype": "Ranged",
-      "rarity": null,
-      "dice": null,
-      "rulesPage": 2
-    },
     {
       "name": "Orichalcum token",
       "type": "Miscellaneous",
@@ -680,7 +668,7 @@
     },
     {
       "page": 2,
-      "what": "The Clockwork pistol (25 gc) and Clockwork rifle (40 gc) have no rules anywhere in this PDF. They are stubs with no rules; the Sealed City's own PDFs are not read (William, 11 Nov 2026)."
+      "what": "The Clockwork pistol (25 gc) and Clockwork rifle (40 gc) have no rules anywhere in this PDF and are nicknames, not new weapons (William, 11 Nov 2026: \"these are just nicknames\"): they are our Pistol and our Handgun, shown under the Clockworkers' names on their lists, with a price row each for the Clockworkers at this PDF's 25 gc and 40 gc, Common. Ours keep their own 15 gc and 35 gc, Rare 8, for everyone."
     },
     {
       "page": 2,

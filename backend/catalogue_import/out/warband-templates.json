@@ -17425,10 +17425,10 @@
           },
           {
             "item": {
-              "name": "Clockwork pistol",
+              "name": "Pistol",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Clockwork pistol",
             "cost": 25,
             "cost_note": "",
             "first_free": false,
@@ -17440,10 +17440,10 @@
           },
           {
             "item": {
-              "name": "Clockwork rifle",
+              "name": "Handgun",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Clockwork rifle",
             "cost": 40,
             "cost_note": "",
             "first_free": false,
@@ -17719,10 +17719,10 @@
           },
           {
             "item": {
-              "name": "Clockwork pistol",
+              "name": "Pistol",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Clockwork pistol",
             "cost": 25,
             "cost_note": "",
             "first_free": false,
@@ -17749,10 +17749,10 @@
           },
           {
             "item": {
-              "name": "Clockwork rifle",
+              "name": "Handgun",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Clockwork rifle",
             "cost": 40,
             "cost_note": "",
             "first_free": false,
@@ -36674,10 +36674,10 @@
           },
           {
             "item": {
-              "name": "Pike (Tileans)",
+              "name": "Pike",
               "variant": ""
             },
-            "shown_as": "Pike",
+            "shown_as": "",
             "cost": 10,
             "cost_note": "",
             "first_free": false,
@@ -36891,10 +36891,10 @@
           },
           {
             "item": {
-              "name": "Pike (Tileans)",
+              "name": "Pike",
               "variant": ""
             },
-            "shown_as": "Pike",
+            "shown_as": "",
             "cost": 10,
             "cost_note": "",
             "first_free": false,
@@ -50658,7 +50658,7 @@
           },
           {
             "item": {
-              "name": "Pike (Merchant Caravans)",
+              "name": "Pike",
               "variant": ""
             },
             "shown_as": "",
@@ -77470,7 +77470,7 @@
           },
           {
             "item": {
-              "name": "Censer",
+              "name": "Plague Censer (Mousillon)",
               "variant": ""
             },
             "shown_as": "Plague Censer",
@@ -85944,7 +85944,7 @@
           },
           {
             "item": {
-              "name": "Pike (Tileans)",
+              "name": "Pike",
               "variant": ""
             },
             "shown_as": "",
@@ -94065,10 +94065,10 @@
           },
           {
             "item": {
-              "name": "Quarter Staff",
+              "name": "Quarter Staff (Woodsmen de Artois)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Quarterstaff",
             "cost": 15,
             "cost_note": "",
             "first_free": false,

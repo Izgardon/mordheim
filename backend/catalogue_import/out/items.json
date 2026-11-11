@@ -3042,6 +3042,22 @@
       },
       {
         "label": "",
+        "cost": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
         "cost": 35,
         "dice": null,
         "dice_multiplier": null,
@@ -3405,6 +3421,22 @@
           {
             "type": "dark-elves",
             "excluded": true
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
           }
         ],
         "note": ""
@@ -4571,22 +4603,6 @@
         "warbands": [
           {
             "type": "skaven-of-clan-pestilens-tc29",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 75,
-        "dice": 5,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 12,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "skaven-of-clan-pestilens-mou",
             "excluded": false
           }
         ],
@@ -6166,87 +6182,8 @@
     ]
   },
   {
-    "slug": "pike-tileans",
-    "name": "Pike (Tileans)",
-    "variant": "",
-    "origin": "mordheimer",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mordheim-1b",
-    "source": "Lustria, Cities of Gold",
-    "link_url": "https://mordheimer.net/docs/weapons-armour/close-combat#pike-(tileans)",
-    "tags": [
-      "pike",
-      "pikes"
-    ],
-    "flavour": "The Pike is a special weapon in Lustria - Cities of Gold. It is somewhat longer than a spear and is weighted so that it can be wielded efficiently between the trees and underbrush and that is so common in the jungle.",
-    "range": "Close Combat (3\")",
-    "strength": "As user",
-    "save": "",
-    "statblock": [],
-    "notes": "Due to the fact any \"reach\" mechanic was removed from Mordheim, we recommend using the later Pike (Merchant Caravans) rules from Border Town Burning.",
-    "needs_rules": false,
-    "rules": [
-      {
-        "rule": "strike-first",
-        "text": "A model wielding a pike can strike first in the first round of combat even when charged by a model wielding a spear. After the initial round of combat resolve strikes in Initiative order. The model can change to normal hand-to-hand weapons after the initial round."
-      },
-      {
-        "name": "Long Polearm",
-        "summary": "Can attack from 3\" away",
-        "text": "Due to its considerable length, a model that has a pike can attack another model from up to 3\" away without being a part of a hand-to-hand melee.",
-        "tables": []
-      },
-      {
-        "rule": "unwieldy",
-        "summary": "Cannot use shields or bucklers",
-        "text": "Pikes have to be used with both hands therefore only 1 attack is allowed. The model also cannot take advantage of a shield or buckler while using a pike."
-      },
-      {
-        "name": "Large",
-        "summary": "Only man-sized or larger can use",
-        "text": "Because of its length and weight only man-sized or larger creatures can use pikes. Skaven, Skinks, Halflings, etc cannot.",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 12,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "group": "tileans",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "house-guard",
-            "excluded": false
-          }
-        ],
-        "note": "House Guard only"
-      }
-    ]
-  },
-  {
-    "slug": "pike-merchant-caravans",
-    "name": "Pike (Merchant Caravans)",
+    "slug": "pike",
+    "name": "Pike",
     "variant": "",
     "origin": "mordheimer",
     "type": "Weapon",
@@ -6255,7 +6192,9 @@
     "source": "Border Town Burning",
     "link_url": "https://mordheimer.net/docs/weapons-armour/close-combat#pike-(merchant-caravans)",
     "tags": [
-      "pikebtb"
+      "pikebtb",
+      "pike",
+      "pikes"
     ],
     "flavour": "A Pike is comparable to a spear, though its length exceeds the one of a common one. The Tileans use them in their civil wars, and with the silk road, they came to the outer border towns of Cathay.",
     "range": "Close Combat",
@@ -6285,11 +6224,43 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "miragleans",
+            "excluded": false
+          },
+          {
+            "type": "remasens",
+            "excluded": false
+          },
+          {
+            "type": "tileans",
+            "excluded": false
+          },
+          {
+            "type": "trantios",
+            "excluded": false
+          },
+          {
             "type": "merchant-caravans",
             "excluded": false
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "house-guard",
+            "excluded": false
+          }
+        ],
+        "note": "House Guard only"
       }
     ]
   },
@@ -6404,22 +6375,6 @@
         "warbands": [
           {
             "type": "battle-monks-of-cathay",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "woodsmen-de-artois",
             "excluded": false
           }
         ],
@@ -20219,86 +20174,6 @@
     ]
   },
   {
-    "slug": "clockwork-pistol",
-    "name": "Clockwork pistol",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Ranged",
-    "setting": "sealed-city",
-    "source": "Sealed City",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
-    "tags": [
-      "clockwork pistol"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "clockworkers",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "clockwork-rifle",
-    "name": "Clockwork rifle",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Ranged",
-    "setting": "sealed-city",
-    "source": "Sealed City",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
-    "tags": [
-      "clockwork rifle"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "clockworkers",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "orichalcum-token",
     "name": "Orichalcum token",
     "variant": "",
@@ -21604,6 +21479,59 @@
     ]
   },
   {
+    "slug": "plague-censer-mousillon",
+    "name": "Plague Censer (Mousillon)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mousillon",
+    "source": "Mousillon",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Skaven%20of%20Clan%20Pestilens.pdf",
+    "tags": [
+      "plague censer (mousillon)"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user +2",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "heavy"
+      },
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Fog of Death",
+        "summary": "",
+        "text": "At the end of each close-combat phase roll a D6 for every model in base contact with the wielder. On a 6 that model suffers a wound from the poisonous gas, with no armour save allowed. The wielder is immune to the Fog of Death, even in base contact with another Plague Censer wielder. Shooting at the wielder is at a further -1 to hit.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 75,
+        "dice": 5,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-pestilens-mou",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "thinglash",
     "name": "Thinglash",
     "variant": "",
@@ -21932,6 +21860,53 @@
         "warbands": [
           {
             "type": "watchmen",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "quarter-staff-woodsmen-de-artois",
+    "name": "Quarter Staff (Woodsmen de Artois)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "mousillon",
+    "source": "Mousillon",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Woodsmen%20de%20Artois.pdf",
+    "tags": [
+      "quarter staff (woodsmen de artois)"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user +1",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "rule": "parry"
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "woodsmen-de-artois",
             "excluded": false
           }
         ],

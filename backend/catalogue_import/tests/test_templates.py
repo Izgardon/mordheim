@@ -23,8 +23,14 @@ from catalogue_import.templates import TemplateLog, hero_skills
 
 ITEMS = [
     {"name": "Dagger", "variant": "", "slug": "dagger", "tags": ["dagger", "daggers"]},
-    {"name": "Pike (Merchant Caravans)", "variant": "", "slug": "pike-merchant-caravans", "tags": ["pike"]},
-    {"name": "Pike (Tileans)", "variant": "", "slug": "pike-tileans", "tags": ["pike"]},
+    {"name": "Pike", "variant": "", "slug": "pike-merchant-caravans", "tags": ["pike"]},
+    {"name": "Quarter Staff", "variant": "", "slug": "quarter-staff", "tags": ["quarter staff"]},
+    {
+        "name": "Quarter Staff (Woodsmen de Artois)",
+        "variant": "",
+        "slug": "quarter-staff-woodsmen-de-artois",
+        "tags": [],
+    },
     {"name": "Sunstaff (Lustria)", "variant": "", "slug": "sunstaff-lustria", "tags": []},
     {"name": "Club, Mace or Hammer", "variant": "", "slug": "club-mace-or-hammer", "tags": ["club", "mace", "hammer"]},
     {"name": "Gromril Weapon", "variant": "", "slug": "gromril-weapon", "tags": []},
@@ -62,8 +68,10 @@ class ListLineTests(SimpleTestCase):
     index = ItemIndex(ITEMS)
 
     def test_an_item_named_for_the_warband_comes_first(self) -> None:
-        self.assertEqual(self.index.find("pike", ["Merchant Caravans"])[0]["name"], "Pike (Merchant Caravans)")  # type: ignore[index]
-        self.assertEqual(self.index.find("pike", ["Tileans"])[0]["name"], "Pike (Tileans)")  # type: ignore[index]
+        found = self.index.find("quarter staff", ["Woodsmen de Artois"])[0]
+        self.assertEqual(found["name"], "Quarter Staff (Woodsmen de Artois)")  # type: ignore[index]
+        self.assertEqual(self.index.find("quarter staff", ["Fen Guard"])[0]["name"], "Quarter Staff")  # type: ignore[index]
+        self.assertEqual(self.index.find("pike", ["Tileans"])[0]["name"], "Pike")  # type: ignore[index]
 
     def test_a_tag_a_slug_an_escape_and_mordheimers_entry_before_mims(self) -> None:
         found = {name: self.index.find(name) for name in ("mace", "sunstaff-lustria", "gromril weapon\\", "lantern")}

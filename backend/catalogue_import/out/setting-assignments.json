@@ -1916,7 +1916,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Rotten Body (Clan Pestilens, Mousillon)",
+      "name": "Rotten Body (Mousillon)",
       "setting": "mousillon",
       "how": "overrides.json"
     },
@@ -2478,17 +2478,17 @@
       "how": "mordheimer"
     },
     {
-      "name": "Dark Elf Sorceress",
+      "name": "Dark Elf Sorceress (Dark Elf Corsairs)",
       "setting": "mousillon",
       "how": "overrides.json"
     },
     {
-      "name": "Dark Elf Beastmaster",
+      "name": "Dark Elf Beastmaster (Dark Elf Corsairs)",
       "setting": "mousillon",
       "how": "overrides.json"
     },
     {
-      "name": "Witch Elf",
+      "name": "Witch Elf (Dark Elf Corsairs)",
       "setting": "mousillon",
       "how": "overrides.json"
     }

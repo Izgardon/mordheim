@@ -4610,7 +4610,7 @@
     }
   },
   {
-    "name": "Dark Elf Sorceress",
+    "name": "Dark Elf Sorceress (Dark Elf Corsairs)",
     "type": "Hired Sword",
     "description": "",
     "movement": 5,
@@ -4666,7 +4666,7 @@
     }
   },
   {
-    "name": "Dark Elf Beastmaster",
+    "name": "Dark Elf Beastmaster (Dark Elf Corsairs)",
     "type": "Hired Sword",
     "description": "",
     "movement": 5,
@@ -4726,7 +4726,7 @@
     }
   },
   {
-    "name": "Witch Elf",
+    "name": "Witch Elf (Dark Elf Corsairs)",
     "type": "Hired Sword",
     "description": "",
     "movement": 5,

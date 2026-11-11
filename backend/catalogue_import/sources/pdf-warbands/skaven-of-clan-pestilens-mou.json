@@ -21,7 +21,7 @@
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "flail", "alias": "", "cost": {"cost": 15}},
         {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
-        {"name": "censer", "alias": "Plague Censer", "cost": {"cost": 100}},
+        {"name": "Plague Censer (Mousillon)", "alias": "Plague Censer", "cost": {"cost": 100}},
         {"name": "shield", "alias": "", "cost": {"cost": 5}},
         {"name": "helmet", "alias": "", "cost": {"cost": 10}},
         {"name": "light armour", "alias": "", "cost": {"cost": 20}},
@@ -156,13 +156,16 @@
     {"name": "Numb", "description": "The warrior treats a stunned result on the Injury chart as knocked down."},
     {"name": "Frenzy", "description": "The warrior is subject to frenzy."},
     {"name": "Resilient", "ours": "Resilient"},
-    {"name": "Rotten Body (Clan Pestilens, Mousillon)", "pdfName": "Rotten Body", "description": "The warrior causes fear."}
+    {"name": "Rotten Body (Mousillon)", "pdfName": "Rotten Body", "description": "The warrior causes fear."}
   ],
-  "priceRows": [
-    {"name": "censer", "cost": 75, "dice": 5, "rarity": 12, "note": "", "page": 4}
-  ],
+  "priceRows": [],
   "aliases": [],
-  "stubs": [],
+  "stubs": [
+    {"name": "Plague Censer (Mousillon)", "type": "Weapon", "subtype": "Melee", "cost": 75, "dice": 5, "rarity": 12, "rulesPage": 4,
+     "range": "Close Combat", "strength": "As user +2",
+     "rules": [{"rule": "heavy"}, {"rule": "two-handed"},
+               {"name": "Fog of Death", "summary": "A 6 wounds each model in base contact; -1 to hit it when shooting", "text": "At the end of each close-combat phase roll a D6 for every model in base contact with the wielder. On a 6 that model suffers a wound from the poisonous gas, with no armour save allowed. The wielder is immune to the Fog of Death, even in base contact with another Plague Censer wielder. Shooting at the wielder is at a further -1 to hit."}]}
+  ],
   "flags": [
     {"page": 2, "what": "A Clan Pestilens warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed."},
     {"page": 2, "what": "The warband spends warp tokens (wt), which the PDF says are treated as gold crowns: every price is imported as gold."},
@@ -170,10 +173,10 @@
     {"page": 5, "what": "The Plague Priest has Movement 4 where every other Skaven of the warband has 5: kept as printed."},
     {"page": 5, "what": "The Plague Priest and the Plague Champion \"start with the Resilient Strength skill\": each starts with our Resilient skill, so neither keeps a rule saying so. The Champion's rule is printed in the Priest's words (\"The Plague Priest is a disease-ridden Skaven\"), read as the Champion's own."},
     {"page": 4, "what": "The Plague Censer is priced 100 wt on the equipment list and 75+5D6 wt, Rare 12, in its own entry: the list price is the starting price and the entry's is the item's price row."},
-    {"page": 4, "what": "The Plague Censer is our Censer, bought under the PDF's name. The PDF's Strength is As User +2 with Heavy, Two Handed and Fog of Death; ours carries Heavy, Two-handed and a Fog of Death that takes a Toughness test rather than the PDF's D6 roll of 6 at the end of each close combat phase, and the PDF's extra -1 to hit for shooting at the wielder."},
+    {"page": 4, "what": "The Plague Censer is its own item, Plague Censer (Mousillon), with the PDF's rules: As user +2, Heavy, Two Handed and a Fog of Death that rolls a D6 for every model in base contact at the end of each close-combat phase (a 6 wounds, no armour save, the wielder immune) and takes -1 to hit when shooting at the wielder. Our Censer (Town Cryer 29) keeps its own Fog of Death, a Toughness test, and is unchanged; this one takes the setting's name, since three warbands are called Skaven of Clan Pestilens (William, 11 Nov 2026)."},
     {"page": 3, "what": "The equipment lists' Staff (3 gc) and Club/Staff (3 gc) are our Club, Mace or Hammer, bought under the PDF's names."},
     {"page": 3, "what": "The Clanrat list's Flail is noted \"Plague Monks and Initiates only\": read as Plague Monks and Monk Initiates."},
-    {"page": 2, "what": "The special skills are a new group, Clan Pestilens (Mousillon). Our Skaven Clan Pestilens group (the Mordheim 1b warband's) holds different skills, so the two are kept apart. Resilient is ours. Rotten Body is named apart because our skill of that name makes a Skaven immune to poisons, diseases and the fog of death, where this one makes him cause fear. Numb does what our Ignore Pain does, and Cloud of Flies what the shared special of that name does, both under another name: both are kept apart."},
+    {"page": 2, "what": "The special skills are a new group, Clan Pestilens (Mousillon). Our Skaven Clan Pestilens group (the Mordheim 1b warband's) holds different skills, so the two are kept apart. Resilient is ours. Rotten Body is named apart because our skill of that name makes a Skaven immune to poisons, diseases and the fog of death, where this one makes him cause fear; it takes the setting's name, Rotten Body (Mousillon), because three warbands are called Skaven of Clan Pestilens, so the warband's name would not tell them apart (William, 11 Nov 2026). Numb does what our Ignore Pain does, and Cloud of Flies what the shared special of that name does, both under another name: both are kept apart."},
     {"page": 6, "what": "Plague Monks have no maximum (\"any number\"). Plague Rats and Skaven Slaves gain no experience."},
     {"page": 1, "what": "Our catalogue already holds a Skaven of Clan Pestilens template, the Mordheim 1b warband's, and a template is kept by its name, so this one is named Skaven of Clan Pestilens (Mousillon). Its warband type is named Skaven of Clan Pestilens, as the PDF names it."},
     {"page": 7, "what": "Page 7 holds only the Skaven Slave's Abused rule; the measured scan page carries nothing else."}

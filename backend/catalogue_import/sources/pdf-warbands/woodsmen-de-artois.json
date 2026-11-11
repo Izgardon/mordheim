@@ -23,7 +23,7 @@
         {"name": "halberd", "alias": "", "cost": {"cost": 10}},
         {"name": "morning star", "alias": "", "cost": {"cost": 15}},
         {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
-        {"name": "quarter staff", "alias": "Quarterstaff", "cost": {"cost": 15}},
+        {"name": "Quarter Staff (Woodsmen de Artois)", "alias": "Quarterstaff", "cost": {"cost": 15}},
         {"name": "shield", "alias": "", "cost": {"cost": 5}},
         {"name": "buckler", "alias": "", "cost": {"cost": 5}},
         {"name": "helmet", "alias": "", "cost": {"cost": 10}},
@@ -177,15 +177,17 @@
     {"name": "Sniper", "ours": "Sniper (Shadow Warriors)"}
   ],
   "aliases": [],
-  "priceRows": [
-    {"name": "quarter staff", "rarity": null, "dice": null, "note": "", "page": 3}
+  "priceRows": [],
+  "stubs": [
+    {"name": "Quarter Staff (Woodsmen de Artois)", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3,
+     "range": "Close Combat", "strength": "As user +1",
+     "rules": [{"rule": "two-handed"}, {"rule": "parry"}]}
   ],
-  "stubs": [],
   "flags": [
     {"page": 1, "what": "A Woodsmen warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed, so the warband takes our Human race."},
     {"page": 2, "what": "The skill table: the Chief ticks every column, the Friar Combat, Academic, Strength, Speed and Special, the Hunter Combat, Shooting, Speed and Special, and the Cub Combat, Shooting and Special."},
     {"page": 2, "what": "The special skills: Bull Rush and Infiltration are ours, the same effects (ours name the Ostlanders). The PDF's Sniper is our Sniper (Shadow Warriors), both clauses the same; our other skill named Sniper lacks the spotting test and bars black powder weapons. Staff Master and Forager are new. A decision for William."},
-    {"page": 3, "what": "The Quarterstaff entry (15 gc, Common; Close Combat, As User +1, Two Handed and Parry) is our Quarter Staff, which prints Strength As user with the rules Balanced, Parry and Freestyle: ours is left unchanged, and the Woodsmen get a price row of their own, 15 gc, Common."},
+    {"page": 3, "what": "The Quarterstaff entry (15 gc, Common; Close Combat, As User +1, Two Handed and Parry) is its own item, Quarter Staff (Woodsmen de Artois), named for the warband (William, 11 Nov 2026), shown under the list's name. Our Quarter Staff is As user with Balanced, Parry and Freestyle, a different weapon, and is left unchanged."},
     {"page": 3, "what": "The list's Throwing Knife (15 gc) is our Throwing Knives/Stars."},
     {"page": 5, "what": "The Friar's rule is headed \"Wizard\" but reads \"The Friar is a Priest of Taal and may use the prayers of Taal in TC 11\": he is read as a priest of the Prayers of Taal."},
     {"page": 6, "what": "The Hunting Hound's profile row is labelled \"Trapper\": read as the Hound's, the entry it sits under."},
