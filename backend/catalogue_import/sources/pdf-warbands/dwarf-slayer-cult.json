@@ -622,7 +622,19 @@
       "subtype": "Missile",
       "rarity": null,
       "dice": null,
-      "rulesPage": 6
+      "rulesPage": 6,
+      "range": "6\"",
+      "strength": "As user",
+      "rules": [
+        {
+          "name": "Thrown weapon",
+          "text": "A model throwing axes takes no penalty for range or for moving, as they are balanced for throwing. They may not be used in close combat."
+        },
+        {
+          "name": "Axe Thrower",
+          "text": "A model with access to Shooting skills and Throwing Axes may learn the Axe Thrower skill."
+        }
+      ]
     },
     {
       "name": "Whirling Blades",
@@ -677,6 +689,10 @@
     {
       "page": 5,
       "what": "Deathwish is the Slayer Pirates' skill too (Sartosa): one skill with the same words in both groups, so who may take it moved from its description to this group's note (William, 6 Nov 2026, of the Songster)."
+    },
+    {
+      "page": 6,
+      "what": "Throwing Axes carry the rules the Sartosa campaign rules' Equipment PDF prints for them (p5: 6\", Strength as user, a thrown weapon that takes no penalty for range or moving and may not be used in close combat): this page declares the item first, so it holds them."
     }
   ]
 }

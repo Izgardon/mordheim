@@ -88,6 +88,7 @@ SKILL: Spec = {"name": (str, True), "description": (str, False), "ours": (str, F
 ALIAS: Spec = {"pdf": (str, True), "ours": (str, True), "page": (int, True)}
 STUB: Spec = {
     "name": (str, True),
+    "cost": ((int, type(None)), False),  # the setting's trading list, where it differs from the line's price
     "type": (str, True),
     "subtype": (str, True),
     "rarity": ((int, type(None)), True),
@@ -117,6 +118,7 @@ ITEM_RULE: Spec = {
 }
 PRICE_ROW: Spec = {
     "name": (str, True),
+    "cost": ((int, type(None)), False),  # a row for an item no line of the page sells
     "rarity": ((int, type(None)), True),
     "dice": ((int, type(None)), True),
     "note": (str, False),
@@ -316,8 +318,8 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
     for row in page.get("priceRows") or []:
         if catalogue.items.find(row["name"])[0] is None:
             found.problems.append(f"price row {row['name']!r}: no item of ours (a stub has its own row)")
-        elif norm_name(row["name"]) not in line_names:
-            found.problems.append(f"price row {row['name']!r}: no line names it")
+        elif row.get("cost") is None and norm_name(row["name"]) not in line_names:
+            found.problems.append(f"price row {row['name']!r}: no line names it, and it has no cost of its own")
     found.problems += [
         f"alias {row['pdf']!r}: no line" for row in page["aliases"] if norm_name(row["pdf"]) not in raw_names
     ]

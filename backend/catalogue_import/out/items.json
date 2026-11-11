@@ -11552,6 +11552,22 @@
         "for_everyone": true,
         "warbands": [],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wasteland-privateers",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -17499,13 +17515,26 @@
       "throwing axes"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "6\"",
+    "strength": "As user",
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Thrown weapon",
+        "summary": "",
+        "text": "A model throwing axes takes no penalty for range or for moving, as they are balanced for throwing. They may not be used in close combat.",
+        "tables": []
+      },
+      {
+        "name": "Axe Thrower",
+        "summary": "",
+        "text": "A model with access to Shooting skills and Throwing Axes may learn the Axe Thrower skill.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -17529,7 +17558,7 @@
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
-        "rarity": null,
+        "rarity": 5,
         "for_everyone": false,
         "warbands": [
           {
@@ -17545,7 +17574,7 @@
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
-        "rarity": null,
+        "rarity": 5,
         "for_everyone": false,
         "warbands": [
           {
@@ -19954,21 +19983,42 @@
       "dwarven pistol"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "6\"",
+    "strength": "4",
     "save": "",
     "statblock": [],
-    "notes": "The PDF prints no rules for it.",
-    "needs_rules": true,
-    "rules": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Reload",
+        "summary": "",
+        "text": "A Dwarven Pistol may be fired and reloaded in the same turn. A hero with the Pistolier skill and a brace of Dwarven Pistols may fire twice each turn, no more.",
+        "tables": []
+      },
+      {
+        "rule": "save-modifier",
+        "text": "As the Mordheim rulebook has it."
+      },
+      {
+        "rule": "hand-to-hand",
+        "text": "As the Mordheim rulebook has it."
+      },
+      {
+        "name": "Well Built",
+        "summary": "",
+        "text": "Whenever a Dwarven Pistol misfires, roll a D6: on a 4+ the misfire is ignored. Refined Powder has no effect on a Dwarven Pistol.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
-        "cost": 30,
+        "cost": 40,
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
-        "rarity": null,
+        "rarity": 10,
         "for_everyone": false,
         "warbands": [
           {
@@ -19994,13 +20044,32 @@
       "double-barreled blunderbuss"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "Special",
+    "strength": "3",
     "save": "",
     "statblock": [],
-    "notes": "The PDF prints no rules for it.",
-    "needs_rules": true,
-    "rules": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Shot",
+        "summary": "",
+        "text": "When the model fires, draw a straight line 16\" long and 1\" wide in any direction from him: every model in its path is hit automatically at Strength 3.",
+        "tables": []
+      },
+      {
+        "name": "Fire Twice",
+        "summary": "",
+        "text": "Either barrel takes a long time to load, so it may be fired only twice in a battle. The user may instead fire both shots at once, dealing 2 Strength 3 hits instead of 1.",
+        "tables": []
+      },
+      {
+        "name": "Misfire",
+        "summary": "",
+        "text": "The blunderbuss needs no roll to hit, but roll a D6 anyway: on a 1 it misfires, and you roll once on the black powder misfire table.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -20008,7 +20077,7 @@
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
-        "rarity": null,
+        "rarity": 11,
         "for_everyone": false,
         "warbands": [
           {

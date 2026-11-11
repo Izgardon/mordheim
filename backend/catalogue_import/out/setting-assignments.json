@@ -1001,6 +1001,11 @@
       "how": "overrides.json"
     },
     {
+      "name": "Axe Thrower",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
       "name": "Chaos Engineer",
       "setting": "border-town-burning",
       "how": "overrides.json"

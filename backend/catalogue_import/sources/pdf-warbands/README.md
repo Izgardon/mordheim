@@ -54,6 +54,8 @@ check over every file.
 The Sartosa warbands' Pirate skill column is the Pirate Skills list of the setting's campaign rules, not of any warband's PDF: it is read from
 https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Skills%2C%20Hired%20Swords%20%26%20Dramatis%20Personae.pdf (p1-2, text layer; 11 Nov 2026)
 as the shared group `sharedSkillGroup` in `sartosan-pirates.json`. Its Hired Swords and Dramatis Personae are not imported.
+The same setting's https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Equipment.pdf (10 pages, text layer; 11 Nov 2026) gives the Sartosa
+stubs their rules and settles their prices. The setting's other eight campaign PDFs are not read (William, 11 Nov 2026).
 
 ## Adding a warband
 
@@ -122,3 +124,14 @@ Each answers a question a batch raised; follow them without asking again.
 - **Every "1st free" line** gives one of its item free at hire, not only the dagger.
 - **A shared skill William renames** is renamed at its source (Sign of Sigmar became Righteous Aura).
 - **A warband's minimum of 3 models** is not imported.
+- **A skill list goes to the warbands whose own entry grants it.** A cross-warband grant that holds only while the
+  campaign is set somewhere is not imported (William, 11 Nov 2026, of the ~60 warbands the Sartosa skills PDF lets
+  learn Pirate skills: "ignore the rule that everyone can use those skills, just give them to the warbands that
+  explicitly say they can").
+- **A skill of one setting carries that setting even inside a general group,** so the pickers offer it only where
+  the setting is ticked (the Sartosa Axe Thrower, in the Shooting group). A skill with no setting counts as
+  Mordheim's and shows everywhere, so never leave one blank.
+- **A setting's campaign PDFs are read when its own batch comes,** not up front (William, 11 Nov 2026: "we will
+  scrape the rest of the campaign setting pdfs further down the line as I think warband pdfs actually give item
+  details which is what we want"). A warband PDF's item details stand, and a stub it leaves bare is filled when
+  that PDF is read.

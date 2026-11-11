@@ -526,7 +526,7 @@
       "name": "Throwing Axes",
       "type": "Weapon",
       "subtype": "Missile",
-      "rarity": null,
+      "rarity": 5,
       "dice": null,
       "rulesPage": 2
     }
@@ -591,6 +591,10 @@
     {
       "page": 1,
       "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
+    },
+    {
+      "page": 2,
+      "what": "Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5; their rules are on the Dwarf Slayer Cult's stub, which declares the item."
     }
   ]
 }

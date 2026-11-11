@@ -624,25 +624,62 @@
       "name": "Dwarven Pistol",
       "type": "Weapon",
       "subtype": "Blackpowder",
-      "rarity": null,
+      "rarity": 10,
       "dice": null,
-      "rulesPage": 2,
-      "note": "The PDF prints no rules for it."
+      "rulesPage": 3,
+      "note": "",
+      "cost": 40,
+      "range": "6\"",
+      "strength": "4",
+      "rules": [
+        {
+          "name": "Reload",
+          "text": "A Dwarven Pistol may be fired and reloaded in the same turn. A hero with the Pistolier skill and a brace of Dwarven Pistols may fire twice each turn, no more."
+        },
+        {
+          "rule": "Save Modifier",
+          "text": "As the Mordheim rulebook has it."
+        },
+        {
+          "rule": "Hand-to-hand",
+          "text": "As the Mordheim rulebook has it."
+        },
+        {
+          "name": "Well Built",
+          "text": "Whenever a Dwarven Pistol misfires, roll a D6: on a 4+ the misfire is ignored. Refined Powder has no effect on a Dwarven Pistol."
+        }
+      ]
     },
     {
       "name": "Double-barreled Blunderbuss",
       "type": "Weapon",
       "subtype": "Blackpowder",
-      "rarity": null,
+      "rarity": 11,
       "dice": null,
-      "rulesPage": 2,
-      "note": "The PDF prints no rules for it."
+      "rulesPage": 1,
+      "note": "",
+      "strength": "3",
+      "range": "Special",
+      "rules": [
+        {
+          "name": "Shot",
+          "text": "When the model fires, draw a straight line 16\" long and 1\" wide in any direction from him: every model in its path is hit automatically at Strength 3."
+        },
+        {
+          "name": "Fire Twice",
+          "text": "Either barrel takes a long time to load, so it may be fired only twice in a battle. The user may instead fire both shots at once, dealing 2 Strength 3 hits instead of 1."
+        },
+        {
+          "name": "Misfire",
+          "text": "The blunderbuss needs no roll to hit, but roll a D6 anyway: on a 1 it misfires, and you roll once on the black powder misfire table."
+        }
+      ]
     },
     {
       "name": "Throwing Axes",
       "type": "Weapon",
       "subtype": "Missile",
-      "rarity": null,
+      "rarity": 5,
       "dice": null,
       "rulesPage": 2
     }
@@ -711,6 +748,22 @@
     {
       "page": 1,
       "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
+    },
+    {
+      "page": 2,
+      "what": "The Dwarven Pistol's rules are in the Sartosa campaign rules' Equipment PDF (p3): 6\", Strength 4, Reload, Save Modifier, Hand-to-hand and Well Built. Its trading-list price there is 40 gc, Rare 10 (80 for a brace), which the item takes; the warband's own line stays 30 gc, 60 for a brace, as a starting price."
+    },
+    {
+      "page": 2,
+      "what": "The Double-barreled Blunderbuss's rules are in the Sartosa campaign rules' Equipment PDF (p1): Strength 3, Shot, Fire Twice and Misfire. Its trading-list price (p10) is 60 gc, Rare 11, the same as the line's."
+    },
+    {
+      "page": 2,
+      "what": "Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5."
+    },
+    {
+      "page": 2,
+      "what": "the Sartosa campaign rules' Equipment PDF's trading list (p10) prints the Dwarven Axe at 15 gc, Rare 8, Dwarves only, as ours is; this warband's own list prints Rare 9, which its price row keeps. The warband PDF's number stands."
     }
   ]
 }

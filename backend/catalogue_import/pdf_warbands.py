@@ -8,7 +8,8 @@ snapshot so the template import builds it the same way. A file's own keys:
 - `aliases`: `{pdf, ours, page}`, a line's name as the PDF spells it and our item's name or tag it means
   ("Doubled-handed weapon" is a Double-handed weapon), put right as the file loads;
 - `stubs`: `{name, type, subtype, rarity, dice, rulesPage, note}`, items a line names that we lack (William: "yes to
-  stubs"): each a bare item, no rules, with one price row for its warband only at the line's price, and `note` its
+  stubs"): each a bare item, no rules, with one price row for its warband only at the line's price (`cost`: the price
+  the setting's own trading list prints, where that differs from the line's), and `note` its
   item's notes (the Sorcerous Society's Familiar names its pets in the bestiary). A stub whose rules William gives
   carries them (`range`, `strength`, `save` and `rules`: `{rule, summary, text}` a shared item rule by name, ours or
   a page's, in its own words where it gives them, or `{name, text, tables}` its own), and needs rules until it has
@@ -19,7 +20,9 @@ snapshot so the template import builds it the same way. A file's own keys:
   items whose own rule it becomes (the Watchmen's Map, our Mordheim Map's rule for any map: "Make the map rule not
   unique to the items, give it to both marienburg and mordheim map");
 - `priceRows`: `{name, rarity, dice, note, page}`, a price row for the page's type on one of our items its lines sell
-  (the Low Kings' Spiked Gauntlet: William, 6 Nov 2026, "would prefer them being just one item"), at the line's price;
+  (the Low Kings' Spiked Gauntlet: William, 6 Nov 2026, "would prefer them being just one item"), at the line's price,
+  or at its own `cost` for an item no line sells (the Wasteland Privateers' Superior Blackpowder, Rare 5 for them:
+  William, 11 Nov 2026, "make superior gunpowder our blackpowder in a new price row");
 - `skillGroup` (`{name, new, note}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills,
   each `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for
   a warband with no Special column (the Outlaws of Stirwood Forest, Redux). Who of the warband may take a skill opens
@@ -143,9 +146,11 @@ def lines_of(page: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
     return found
 
 
-def _stub_cost(slug: str, page: dict[str, Any], name: str) -> tuple[int | None, str]:
-    """The stub's price from the first line naming it: its cost, or none and a note for a line priced by its base
-    item ("3 × price", the Druchii's Darksteel blade)."""
+def _stub_cost(slug: str, page: dict[str, Any], name: str, own: int | None = None) -> tuple[int | None, str]:
+    """The price of a stub or a price row: its own `cost` where it has one, else the first line naming it ("3 ×
+    price" and no cost for a line priced by its base item, the Druchii's Darksteel blade)."""
+    if own is not None:
+        return own, ""
     for _list, line, cost in lines_of(page):
         price = line_price(cost)
         if loose_key(line) == loose_key(name) and (price.cost is not None or price.cost_note):
@@ -207,7 +212,7 @@ def add_price_rows(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]]
             item, _how = index.find(entry["name"])
             if item is None:
                 raise ValueError(f"pdf-warbands/{slug}.json: the price row's {entry['name']!r} is no item of ours")
-            price, note = _stub_cost(slug, page, entry["name"])
+            price, note = _stub_cost(slug, page, entry["name"], entry.get("cost"))
             cost = {"cost": price, "dice": entry.get("dice"), "dice_multiplier": None, "cost_note": note}
             warbands = [{"type": by_slug[page[TYPE]]["slug"], "excluded": False}]
             item["availabilities"].append(_row(cost, entry.get("rarity"), warbands, entry.get("note") or ""))
@@ -236,7 +241,7 @@ def stub_items(
             found, how = index.find(stub["name"])
             if found is not None:
                 raise ValueError(f"pdf-warbands/{slug}.json: the stub {stub['name']!r} is our {found['name']!r} {how}")
-            price, note = _stub_cost(slug, page, stub["name"])
+            price, note = _stub_cost(slug, page, stub["name"], stub.get("cost"))
             cost = {"cost": price, "dice": stub.get("dice"), "dice_multiplier": None, "cost_note": note}
             row = _row(cost, stub.get("rarity"), [{"type": warband["slug"], "excluded": False}], "")
             if loose_key(stub["name"]) in made:

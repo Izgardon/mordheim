@@ -1,15 +1,32 @@
 {
   "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists. warband_type_names: a type's name as Broheim spells it -> as we show it (a typo or a capital \"Of\"; the slug stays the source's). persona_names: a dramatis persona's name as mordheimer gives it -> ours (one casing: title case, small words lower case after the first; William, 5 Nov 2026). group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it (type, or types), our skills it holds (skills) and new ones (new_skills; {name, rule} names one apart from the skill whose rules it takes) with rules from mordheimer, or from the source file in sources/ it names. seed_items_back: an item of our old seed (apps/items/data/standard-items.json) -> the setting and source it comes back with, and why: its price rows and properties as they were, single use kept. extra_items: items no source has: name, type, subtype, setting, source, cost, the warband types that buy it, the price row's note, and why. warband_items: an item a warband's special equipment brings in (warband_items.py) -> the snapshot page (testwarbands-2026-10-31), the entry when it is named otherwise, the warband type that buys it, its type and subtype: one price row for that type at the book's price and rarity.",
   "warband_aliases": {
-    "Stromfels Reavers": ["shallows-beasts"],
-    "Amazons": ["amazons-lustria", "amazons-mordheim"],
-    "Chaos Dwarfs": ["black-dwarfs"],
+    "Stromfels Reavers": [
+      "shallows-beasts"
+    ],
+    "Amazons": [
+      "amazons-lustria",
+      "amazons-mordheim"
+    ],
+    "Chaos Dwarfs": [
+      "black-dwarfs"
+    ],
     "Mercenaries": [],
-    "Night Goblins": ["night-goblins-mic"],
-    "Norse Explorers": ["norse-explorers-tc13", "norse-explorers-btb"]
+    "Night Goblins": [
+      "night-goblins-mic"
+    ],
+    "Norse Explorers": [
+      "norse-explorers-tc13",
+      "norse-explorers-btb"
+    ]
   },
   "extra_warband_types": [
-    { "name": "Albion Commandos", "race": "Human", "setting": "mutiny-in-marienburg", "source": "Mutiny in Marienburg" }
+    {
+      "name": "Albion Commandos",
+      "race": "Human",
+      "setting": "mutiny-in-marienburg",
+      "source": "Mutiny in Marienburg"
+    }
   ],
   "warband_type_names": {
     "Arabyan Theives": "Arabyan Thieves",
@@ -44,7 +61,9 @@
   },
   "group_members": {
     "add": {
-      "humans": ["pit-fighters"],
+      "humans": [
+        "pit-fighters"
+      ],
       "mercenaries": [
         "ostlanders",
         "miragleans",
@@ -54,9 +73,15 @@
         "imperial-outriders",
         "lustrian-reavers"
       ],
-      "sigmarite": ["protectorate-of-sigmar"],
-      "good": ["imperial-outriders"],
-      "evil": ["beastmen-raiders"]
+      "sigmarite": [
+        "protectorate-of-sigmar"
+      ],
+      "good": [
+        "imperial-outriders"
+      ],
+      "evil": [
+        "beastmen-raiders"
+      ]
     },
     "remove": {},
     "keep_in": {
@@ -69,18 +94,45 @@
         "sorcerous-society",
         "vampire-hunters-of-sylvania"
       ],
-      "elves": ["druchii", "wood-elves-of-athel-loren"],
-      "dwarfs": ["dwarf-slayer-cult"],
-      "skaven": ["underworld-alliance", "skaven-of-clan-moulder"],
-      "goblins": ["underworld-alliance"],
-      "orcs-and-goblins": ["snotlings"]
+      "elves": [
+        "druchii",
+        "wood-elves-of-athel-loren"
+      ],
+      "dwarfs": [
+        "dwarf-slayer-cult"
+      ],
+      "skaven": [
+        "underworld-alliance",
+        "skaven-of-clan-moulder"
+      ],
+      "goblins": [
+        "underworld-alliance"
+      ],
+      "orcs-and-goblins": [
+        "snotlings"
+      ]
     },
     "keep_out": {
-      "humans": ["undead", "mootlanders", "black-dwarfs"],
-      "skaven": ["nipponese-expedition"],
-      "goblins": ["snotlings"],
-      "orcs-and-goblins": ["sons-of-hashut"],
-      "evil": ["hochland-bandits", "horned-hunters", "lizardmen-tc11", "pirates"]
+      "humans": [
+        "undead",
+        "mootlanders",
+        "black-dwarfs"
+      ],
+      "skaven": [
+        "nipponese-expedition"
+      ],
+      "goblins": [
+        "snotlings"
+      ],
+      "orcs-and-goblins": [
+        "sons-of-hashut"
+      ],
+      "evil": [
+        "hochland-bandits",
+        "horned-hunters",
+        "lizardmen-tc11",
+        "pirates"
+      ]
     }
   },
   "setting_grades": {},
@@ -88,57 +140,87 @@
   "drop_items": [],
   "item_warbands": {
     "Katar": {
-      "warbands": ["arabian-tomb-raiders"],
+      "warbands": [
+        "arabian-tomb-raiders"
+      ],
       "why": "on the Arabian Tomb Raiders' Slave equipment list, not on Khemri's trading chart"
     },
     "Tufenk": {
-      "warbands": ["arabian-tomb-raiders"],
+      "warbands": [
+        "arabian-tomb-raiders"
+      ],
       "why": "on the Arabian Tomb Raiders' Warrior equipment list, not on Khemri's trading chart"
     },
     "Spiked Gauntlet": {
-      "warbands": ["pit-fighters", "pit-fighters-old"],
+      "warbands": [
+        "pit-fighters",
+        "pit-fighters-old"
+      ],
       "why": "its note says Pit Fighters only, and \"pit fighters is a legitimate warband so that weapon should appear for them\"; William, 1 Nov 2026"
     }
   },
   "item_warbands_add": {
     "Nightmare": {
-      "warbands": ["cursed-cavalcade"],
+      "warbands": [
+        "cursed-cavalcade"
+      ],
       "why": "the Cursed Cavalcade's special equipment: the Aristocrat may ride one; the templates plan, William, 4 Nov 2026"
     },
     "Elven Steed": {
-      "warbands": ["druchii", "wood-elves-of-athel-loren"],
+      "warbands": [
+        "druchii",
+        "wood-elves-of-athel-loren"
+      ],
       "why": "its note says Elves only; its list predates these warbands; William, 1 Nov 2026"
     },
     "Giant Spider": {
-      "warbands": ["night-goblins-web"],
+      "warbands": [
+        "night-goblins-web"
+      ],
       "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
     },
     "Giant Wolf": {
-      "warbands": ["forest-goblins-nc", "night-goblins-web"],
+      "warbands": [
+        "forest-goblins-nc",
+        "night-goblins-web"
+      ],
       "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
     },
     "Gnoblar Fighter": {
-      "warbands": ["ogre-hunting-party"],
+      "warbands": [
+        "ogre-hunting-party"
+      ],
       "why": "its note says Ogres and Chaos Dwarfs only, but \"black dwarves dont get gnoblar fighters\"; William, 1 Nov 2026"
     },
     "Rhinox": {
-      "warbands": ["ogre-hunting-party"],
+      "warbands": [
+        "ogre-hunting-party"
+      ],
       "why": "its note names the Ogres; its list predates the Ogre Hunting Party; William, 1 Nov 2026"
     },
     "Chaos Dwarf Blunderbuss": {
-      "warbands": ["black-dwarfs"],
+      "warbands": [
+        "black-dwarfs"
+      ],
       "why": "its note says Chaos Dwarfs only; its list predates the Black Dwarfs; William, 1 Nov 2026"
     },
     "Sons of Hashut Obsidian Weapon": {
-      "warbands": ["black-dwarfs"],
+      "warbands": [
+        "black-dwarfs"
+      ],
       "why": "its note says Chaos Dwarfs only; its list predates the Black Dwarfs; William, 1 Nov 2026"
     },
     "Dwarf Axe": {
-      "warbands": ["dwarf-slayer-cult"],
+      "warbands": [
+        "dwarf-slayer-cult"
+      ],
       "why": "its note says Dwarfs only; its list predates the Dwarf Slayer Cult; William, 1 Nov 2026"
     },
     "Squig Prodder": {
-      "warbands": ["forest-goblins-nc", "night-goblins-mic"],
+      "warbands": [
+        "forest-goblins-nc",
+        "night-goblins-mic"
+      ],
       "why": "its note says Goblins only; its list predates these warbands; William, 1 Nov 2026"
     },
     "Riding/Draft Horse": {
@@ -192,19 +274,34 @@
   },
   "item_exclusions": {
     "Black Lotus": {
-      "warbands": ["witch-hunters", "sisters-of-sigmar", "protectorate-of-sigmar"],
+      "warbands": [
+        "witch-hunters",
+        "sisters-of-sigmar",
+        "protectorate-of-sigmar"
+      ],
       "why": "the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026"
     },
     "Dark Venom": {
-      "warbands": ["witch-hunters", "sisters-of-sigmar", "protectorate-of-sigmar"],
+      "warbands": [
+        "witch-hunters",
+        "sisters-of-sigmar",
+        "protectorate-of-sigmar"
+      ],
       "why": "the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026"
     },
     "Tarot Cards": {
-      "warbands": ["witch-hunters", "sisters-of-sigmar", "protectorate-of-sigmar"],
+      "warbands": [
+        "witch-hunters",
+        "sisters-of-sigmar",
+        "protectorate-of-sigmar"
+      ],
       "why": "the Sigmarite warbands, the Protectorate of Sigmar included; William, 1 Nov 2026"
     },
     "Tome of Magic": {
-      "warbands": ["witch-hunters", "sisters-of-sigmar"],
+      "warbands": [
+        "witch-hunters",
+        "sisters-of-sigmar"
+      ],
       "why": "as its note says, so Clan Pestilens may buy it: \"why no pestilens, isn't it available to any caster?\"; William, 1 Nov 2026"
     }
   },
@@ -234,14 +331,46 @@
     "Stromfels Heart": "Heroes only",
     "Nightmare": "Cursed Cavalcade: the Aristocrat only"
   },
-  "whole_names": ["Harpoon Gun/Crossbow"],
+  "whole_names": [
+    "Harpoon Gun/Crossbow"
+  ],
   "skill_lists": {
-    "Animal": { "for_everyone": true },
-    "Large Special": { "for_everyone": true, "large_only": true },
-    "Skaven Metal Mongers": { "warbands": [{ "type": "metal-mongers" }] },
-    "Undead Vampires": { "warbands": [{ "type": "undead" }], "note": "Vampire only" },
-    "Pirates (TBMF)": { "warbands": [{ "type": "pirates" }] },
-    "Dwarf Exiled Engineers": { "warbands": [{ "type": "guild-of-disgraced-engineers" }] }
+    "Animal": {
+      "for_everyone": true
+    },
+    "Large Special": {
+      "for_everyone": true,
+      "large_only": true
+    },
+    "Skaven Metal Mongers": {
+      "warbands": [
+        {
+          "type": "metal-mongers"
+        }
+      ]
+    },
+    "Undead Vampires": {
+      "warbands": [
+        {
+          "type": "undead"
+        }
+      ],
+      "note": "Vampire only"
+    },
+    "Pirates (TBMF)": {
+      "warbands": [
+        {
+          "type": "pirates"
+        }
+      ]
+    },
+    "Dwarf Exiled Engineers": {
+      "warbands": [
+        {
+          "type": "guild-of-disgraced-engineers"
+        }
+      ]
+    }
   },
   "drop_skills": {
     "Knowledge of Myths and Legends (Strigany)": "left out of the catalogue for now (William)",
@@ -258,10 +387,17 @@
       "type": "Dwarf Exiled Engineers",
       "description": "The Engineer may now attempt D3+1 inventions in the post-game phase rather than 1. Expelled Engineer Only. (MiM)",
       "source": "the Guild of Disgraced Engineers PDF (Broheim, Mutiny in Marienburg), Dwarf Engineer Skill List"
+    },
+    {
+      "name": "Axe Thrower",
+      "type": "Shooting",
+      "description": "The warrior is a master of the throwing axe. He may throw up to two Throwing Axes in his shooting phase and may divide the shots between any targets in range as he wishes, each attack at +1 Strength. He must own Throwing Axes to use it, and it may not be combined with Quick Shot.",
+      "source": "the Sartosa campaign rules' Skills PDF (Broheim, Sartosa), New Shooting Skill"
     }
   ],
   "skill_descriptions": {
-    "Quick Thinker (Dwarf Exiled Engineers)": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)"
+    "Quick Thinker (Dwarf Exiled Engineers)": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)",
+    "Mutant (Beastmen Raiders)": "The Hero may buy one mutation from the Possessed Mutation list. This skill may be taken only once. (EiF 74)"
   },
   "skill_splits": {
     "Mutant (Marauders of Chaos)": {
@@ -308,67 +444,242 @@
     }
   },
   "skill_group_learners": {
-    "Dark Elf": { "warbands": [{ "type": "dark-elves" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Dwarves": { "warbands": [{ "type": "dwarf-treasure-hunters" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Dwarf Troll Slayers": { "warbands": [{ "type": "dwarf-treasure-hunters" }, { "type": "dwarf-rangers" }, { "type": "pit-fighters" }, { "type": "pit-fighters-old" }], "why": "the warband the list is named after, plus the warbands whose templates' fighters learn from it (William, 4 Nov 2026: take recommendations)" },
-    "Low Kings": { "warbands": [{ "type": "low-kings" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Militant Mootlanders": { "warbands": [{ "type": "militiant-mootlanders" }], "why": "Mutiny in Marienburg's Militant Mootlanders' own skills, not the Halflings' (William, 6 Nov 2026: \"the MiM group is called militant mootlanders and should have their own skills\")" },
-    "Night Goblins": { "warbands": [{ "type": "night-goblins-web" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Ogres": { "warbands": [{ "group": "ogres" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Orcs": { "warbands": [{ "group": "orcs" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Pit Fighters": { "warbands": [{ "type": "pit-fighters" }, { "type": "pit-fighters-old" }], "why": "both Pit Fighters warbands, whose templates' fighters learn from it (William, 4 Nov 2026: take recommendations)" },
-    "Ostlanders": { "warbands": [{ "type": "ostlanders" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Sea Ghosts": { "warbands": [{ "type": "sea-ghosts" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Shadow Warriors": { "warbands": [{ "type": "shadow-warriors" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Sisters of Sigmar": { "warbands": [{ "type": "sisters-of-sigmar" }], "why": "the warband the list is named after: its Righteous Aura (Sign of Sigmar until William, 6 Nov 2026: \"rename to righteous aura as the base\") shares its name with mordheimer's Vampire Hunters of Sylvania skill, which would open the list to them" },
-    "Skaven": { "warbands": [{ "type": "skaven" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" },
-    "Skaven Clan Pestilens": { "warbands": [{ "type": "skaven-of-clan-pestilens-tc29" }], "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)" }
+    "Dark Elf": {
+      "warbands": [
+        {
+          "type": "dark-elves"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Dwarves": {
+      "warbands": [
+        {
+          "type": "dwarf-treasure-hunters"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Dwarf Troll Slayers": {
+      "warbands": [
+        {
+          "type": "dwarf-treasure-hunters"
+        },
+        {
+          "type": "dwarf-rangers"
+        },
+        {
+          "type": "pit-fighters"
+        },
+        {
+          "type": "pit-fighters-old"
+        }
+      ],
+      "why": "the warband the list is named after, plus the warbands whose templates' fighters learn from it (William, 4 Nov 2026: take recommendations)"
+    },
+    "Low Kings": {
+      "warbands": [
+        {
+          "type": "low-kings"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Militant Mootlanders": {
+      "warbands": [
+        {
+          "type": "militiant-mootlanders"
+        }
+      ],
+      "why": "Mutiny in Marienburg's Militant Mootlanders' own skills, not the Halflings' (William, 6 Nov 2026: \"the MiM group is called militant mootlanders and should have their own skills\")"
+    },
+    "Night Goblins": {
+      "warbands": [
+        {
+          "type": "night-goblins-web"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Ogres": {
+      "warbands": [
+        {
+          "group": "ogres"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Orcs": {
+      "warbands": [
+        {
+          "group": "orcs"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Pit Fighters": {
+      "warbands": [
+        {
+          "type": "pit-fighters"
+        },
+        {
+          "type": "pit-fighters-old"
+        }
+      ],
+      "why": "both Pit Fighters warbands, whose templates' fighters learn from it (William, 4 Nov 2026: take recommendations)"
+    },
+    "Ostlanders": {
+      "warbands": [
+        {
+          "type": "ostlanders"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Sea Ghosts": {
+      "warbands": [
+        {
+          "type": "sea-ghosts"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Shadow Warriors": {
+      "warbands": [
+        {
+          "type": "shadow-warriors"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Sisters of Sigmar": {
+      "warbands": [
+        {
+          "type": "sisters-of-sigmar"
+        }
+      ],
+      "why": "the warband the list is named after: its Righteous Aura (Sign of Sigmar until William, 6 Nov 2026: \"rename to righteous aura as the base\") shares its name with mordheimer's Vampire Hunters of Sylvania skill, which would open the list to them"
+    },
+    "Skaven": {
+      "warbands": [
+        {
+          "type": "skaven"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    },
+    "Skaven Clan Pestilens": {
+      "warbands": [
+        {
+          "type": "skaven-of-clan-pestilens-tc29"
+        }
+      ],
+      "why": "the warband the list is named after (William, 4 Nov 2026: take recommendations)"
+    }
   },
   "new_skill_groups": {
     "Black Dwarfs": {
       "type": "black-dwarfs",
-      "skills": ["Extra Tough", "Resource Hunter", "True Grit", "Thick Skull"],
-      "new_skills": ["Chaos Engineer", "Tyrant"]
+      "skills": [
+        "Extra Tough",
+        "Resource Hunter",
+        "True Grit",
+        "Thick Skull"
+      ],
+      "new_skills": [
+        "Chaos Engineer",
+        "Tyrant"
+      ]
     },
     "Sons of Hashut": {
       "type": "sons-of-hashut",
-      "skills": ["Extra Tough", "True Grit", "Thick Skull"],
-      "new_skills": ["Unlimited Hatred"]
+      "skills": [
+        "Extra Tough",
+        "True Grit",
+        "Thick Skull"
+      ],
+      "new_skills": [
+        "Unlimited Hatred"
+      ]
     },
     "Dwarf Rangers": {
       "type": "dwarf-rangers",
-      "skills": ["Extra Tough", "Resource Hunter", "True Grit", "Thick Skull"]
+      "skills": [
+        "Extra Tough",
+        "Resource Hunter",
+        "True Grit",
+        "Thick Skull"
+      ]
     },
     "Horned Hunters": {
       "type": "horned-hunters",
-      "skills": ["Animal Friendship", "Infiltration", "Foul Odour", "Hide in Shadows"],
+      "skills": [
+        "Animal Friendship",
+        "Infiltration",
+        "Foul Odour",
+        "Hide in Shadows"
+      ],
       "new_skills": [
         "Master Trapper",
-        { "name": "Pathfinder (Horned Hunters)", "rule": "Pathfinder" }
+        {
+          "name": "Pathfinder (Horned Hunters)",
+          "rule": "Pathfinder"
+        }
       ],
       "why": "Pathfinder is the Dwarf Pathfinder hired sword's own skill (a different rule), so the Horned Hunters' is its own skill named after its group, as the splits are (William, 4 Nov 2026: take recommendations)"
     },
     "Night Goblins (MIC)": {
       "type": "night-goblins-mic",
-      "skills": ["Infiltration", "Sneaky Git", "Netter"],
-      "new_skills": ["Ded Shooty"]
+      "skills": [
+        "Infiltration",
+        "Sneaky Git",
+        "Netter"
+      ],
+      "new_skills": [
+        "Ded Shooty"
+      ]
     },
     "Amazons": {
-      "types": ["amazons-lustria", "amazons-mordheim"],
+      "types": [
+        "amazons-lustria",
+        "amazons-mordheim"
+      ],
       "why": "open to both Amazons warbands, as warband_aliases maps Amazons; its skills keep Mordheim 1b, the lower of their settings (William, 4 Nov 2026: take recommendations)",
-      "new_skills": ["Skink Hunter", "Elixir of Life", "Mesmerising Dance", "Savage Fury", "Concealment"]
+      "new_skills": [
+        "Skink Hunter",
+        "Elixir of Life",
+        "Mesmerising Dance",
+        "Savage Fury",
+        "Concealment"
+      ]
     },
     "Bretonnian Chapel Guard": {
       "type": "bretonnian-chapel-guard",
-      "new_skills": ["Renowned Virtue", "Questing Vow", "Shield Bash", "Bulging Muscles", "Untiring"]
+      "new_skills": [
+        "Renowned Virtue",
+        "Questing Vow",
+        "Shield Bash",
+        "Bulging Muscles",
+        "Untiring"
+      ]
     },
     "Merchant Caravans": {
       "type": "merchant-caravans",
-      "new_skills": ["Bribery", "Dubious Income", "Wholesale", "Deal Breaker", "Connected"]
+      "new_skills": [
+        "Bribery",
+        "Dubious Income",
+        "Wholesale",
+        "Deal Breaker",
+        "Connected"
+      ]
     },
     "Cursed Cavalcade": {
       "type": "cursed-cavalcade",
-      "new_skills": ["Noblesse Obliges", "Torturer", "Duelist"],
+      "new_skills": [
+        "Noblesse Obliges",
+        "Torturer",
+        "Duelist"
+      ],
       "source": "cavalcade-skills.json"
     }
   },
@@ -377,27 +688,39 @@
   },
   "hire_warbands_add": {
     "Sigmund Spindle, the Harvester of Flesh": {
-      "warbands": ["beastmen-raiders"],
+      "warbands": [
+        "beastmen-raiders"
+      ],
       "why": "Beastmen Raiders joined Evil, so his list is the Evil group again and follows it; William, 1 Nov 2026"
     },
     "The Headless Horseman": {
-      "warbands": ["beastmen-raiders"],
+      "warbands": [
+        "beastmen-raiders"
+      ],
       "why": "Beastmen Raiders joined Evil, so his list is the Evil group again and follows it; William, 1 Nov 2026"
     },
     "Witch Hunter": {
-      "warbands": ["merchant-caravans"],
+      "warbands": [
+        "merchant-caravans"
+      ],
       "why": "Merchant Caravans hire whoever Mercenaries may (their Hired Swords rule); the templates plan, William, 4 Nov 2026"
     },
     "Halfling Knight": {
-      "warbands": ["merchant-caravans"],
+      "warbands": [
+        "merchant-caravans"
+      ],
       "why": "Merchant Caravans hire whoever Mercenaries may (their Hired Swords rule); the templates plan, William, 4 Nov 2026"
     },
     "Imperial Tactician": {
-      "warbands": ["merchant-caravans"],
+      "warbands": [
+        "merchant-caravans"
+      ],
       "why": "Merchant Caravans hire whoever Mercenaries may (their Hired Swords rule); the templates plan, William, 4 Nov 2026"
     },
     "Knight of the White Wolf": {
-      "warbands": ["merchant-caravans"],
+      "warbands": [
+        "merchant-caravans"
+      ],
       "why": "Merchant Caravans hire whoever Mercenaries may (their Hired Swords rule); the templates plan, William, 4 Nov 2026"
     }
   },
@@ -426,25 +749,84 @@
       "setting": "mordheim-1b",
       "source": "Town Cryer #14",
       "cost": 20,
-      "warbands": ["pit-fighters-old"],
+      "warbands": [
+        "pit-fighters-old"
+      ],
       "note": "Pit Fighters (old) only",
       "why": "on the Pit Fighters (old) list; no rules for now (question 29); William, 4 Nov 2026"
     }
   ],
   "warband_items": {
-    "Hedonist Whip": { "page": "court-of-the-profane-pleasures", "warband": "court-of-profane-pleasures", "type": "Weapon", "subtype": "Melee" },
-    "Slaaneshi Man-Catcher": { "page": "court-of-the-profane-pleasures", "warband": "court-of-profane-pleasures", "type": "Weapon", "subtype": "Melee" },
-    "Banner of the Noble House": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
-    "Bird of Prey": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
-    "Boar Spear": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Weapon", "subtype": "Melee" },
-    "Cathayan Quilted Silk Armour": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Armour" },
-    "Sun King Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
-    "Silver Death Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
-    "Fish Head Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
-    "Faceless Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
-    "Plague Doctor Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
-    "Evil Jester Mask": { "page": "cursed-cavalcade", "warband": "cursed-cavalcade", "type": "Miscellaneous" },
-    "Misericordia (Cursed Cavalcade)": { "page": "cursed-cavalcade", "entry": "Misericordia", "warband": "cursed-cavalcade", "type": "Weapon", "subtype": "Melee" }
+    "Hedonist Whip": {
+      "page": "court-of-the-profane-pleasures",
+      "warband": "court-of-profane-pleasures",
+      "type": "Weapon",
+      "subtype": "Melee"
+    },
+    "Slaaneshi Man-Catcher": {
+      "page": "court-of-the-profane-pleasures",
+      "warband": "court-of-profane-pleasures",
+      "type": "Weapon",
+      "subtype": "Melee"
+    },
+    "Banner of the Noble House": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Miscellaneous"
+    },
+    "Bird of Prey": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Miscellaneous"
+    },
+    "Boar Spear": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Weapon",
+      "subtype": "Melee"
+    },
+    "Cathayan Quilted Silk Armour": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Armour"
+    },
+    "Sun King Mask": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Miscellaneous"
+    },
+    "Silver Death Mask": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Miscellaneous"
+    },
+    "Fish Head Mask": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Miscellaneous"
+    },
+    "Faceless Mask": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Miscellaneous"
+    },
+    "Plague Doctor Mask": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Miscellaneous"
+    },
+    "Evil Jester Mask": {
+      "page": "cursed-cavalcade",
+      "warband": "cursed-cavalcade",
+      "type": "Miscellaneous"
+    },
+    "Misericordia (Cursed Cavalcade)": {
+      "page": "cursed-cavalcade",
+      "entry": "Misericordia",
+      "warband": "cursed-cavalcade",
+      "type": "Weapon",
+      "subtype": "Melee"
+    }
   },
   "setting_assignments": {
     "skills": {
@@ -491,8 +873,11 @@
       "Dubious Income (Merchant Caravans)": "border-town-burning",
       "Wholesale (Merchant Caravans)": "border-town-burning",
       "Deal Breaker (Merchant Caravans)": "border-town-burning",
-      "Connected (Merchant Caravans)": "border-town-burning"
+      "Connected (Merchant Caravans)": "border-town-burning",
+      "Axe Thrower (Shooting)": "sartosa"
     },
-    "hired_swords": { "Norse Shaman": "border-town-burning" }
+    "hired_swords": {
+      "Norse Shaman": "border-town-burning"
+    }
   }
 }

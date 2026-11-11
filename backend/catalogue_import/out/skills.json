@@ -85,7 +85,7 @@
   },
   {
     "name": "Mutant",
-    "description": "The Beastman may buy one mutation. (EiF 74)"
+    "description": "The Hero may buy one mutation from the Possessed Mutation list. This skill may be taken only once. (EiF 74)"
   },
   {
     "name": "Fearless",
@@ -798,6 +798,10 @@
   {
     "name": "Master Inventor",
     "description": "The Engineer may now attempt D3+1 inventions in the post-game phase rather than 1. Expelled Engineer Only. (MiM)"
+  },
+  {
+    "name": "Axe Thrower",
+    "description": "The warrior is a master of the throwing axe. He may throw up to two Throwing Axes in his shooting phase and may divide the shots between any targets in range as he wishes, each attack at +1 Strength. He must own Throwing Axes to use it, and it may not be combined with Quick Shot."
   },
   {
     "name": "Chaos Engineer",

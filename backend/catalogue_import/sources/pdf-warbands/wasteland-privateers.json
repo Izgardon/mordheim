@@ -22,7 +22,7 @@
     },
     {
       "rulename": "Master Gunners",
-      "ruleFull": "A Gunner may fire and reload a Handgun in the same turn, as the Hunter skill allows, with Handguns only. Superior Blackpowder counts as Rare 5 for this warband."
+      "ruleFull": "A Gunner may fire and reload a Handgun in the same turn, as the Hunter skill allows, with Handguns only."
     },
     {
       "rulename": "Succession",
@@ -645,15 +645,25 @@
     },
     {
       "page": 2,
-      "what": "\"When purchasing Superior Gunpowder, it counts as Rarity 5\": read as our Superior Blackpowder (30 gc, Rare 11), which no line of theirs sells, so it stays a warband rule."
-    },
-    {
-      "page": 2,
       "what": "\"any Henchmen Gunners may fire and reload Handguns in the same turn\": the rule is the warband's, as the Gunner group is the only one it names."
     },
     {
       "page": 1,
       "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
+    },
+    {
+      "page": 2,
+      "what": "\"When purchasing Superior Gunpowder, it counts as Rarity 5\" is our Superior Blackpowder (William, 11 Nov 2026: \"make superior gunpowder our blackpowder in a new price row\"): a price row of their own at 30 gc, Rare 5. No line of theirs sells it, and 30 gc is both ours and the Sartosa campaign rules' Equipment PDF's trading-list price (p10, Rare 11)."
+    }
+  ],
+  "priceRows": [
+    {
+      "name": "Superior Blackpowder",
+      "cost": 30,
+      "rarity": 5,
+      "dice": null,
+      "note": "",
+      "page": 2
     }
   ]
 }
