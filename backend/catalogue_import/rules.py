@@ -55,6 +55,36 @@ def build_shared_rules(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return sorted(shared, key=lambda rule: rule["slug"])
 
 
+def reword_shared(shared: list[dict[str, Any]], wordings: dict[str, Any]) -> None:
+    """William's wording for a shared rule in place of its items' most common one (`item_rule_wordings`): the
+    Two-handed rule says the shield's +1 armour save against shooting, which every weapon using it gets."""
+    by_slug = {rule["slug"]: rule for rule in shared}
+    for slug, entry in wordings.items():
+        rule = by_slug.get(slug)
+        if rule is None:
+            raise ValueError(f"overrides.json item_rule_wordings: no shared item rule {slug!r}")
+        rule.update({key: entry[key] for key in ("summary", "text") if key in entry})
+
+
+def word_item_rules(items: list[dict[str, Any]], wordings: dict[str, Any]) -> None:
+    """Each item's own wording of a reworded rule: dropped where the shared rule now says it (`covers`), or kept as
+    only what is the item's own (`items`: the Boat Hook allows no other weapon at all)."""
+    for slug, entry in wordings.items():
+        covers, own = list(entry.get("covers") or []), dict(entry.get("items") or {})
+        found: set[str] = set()
+        for item in items:
+            for link in item.get("rules") or []:
+                if link.get("rule") != slug or item["name"] not in covers + list(own):
+                    continue
+                found.add(item["name"])
+                for key in ("summary", "text", "tables"):
+                    link.pop(key, None)
+                link.update(own.get(item["name"], {}))
+        missing = sorted(set(covers + list(own)) - found)
+        if missing:
+            raise ValueError(f"overrides.json item_rule_wordings {slug!r}: no item holds it: {', '.join(missing)}")
+
+
 def index_rules(shared: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
     """Shared rules looked up by any spelling of their name."""
     index = {}

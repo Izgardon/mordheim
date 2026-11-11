@@ -6,6 +6,7 @@ from django.test import SimpleTestCase
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimReader
 from catalogue_import.pipeline import ItemDecisions, add_notes, build, same_name_clusters, seed_changes
+from catalogue_import.rules import reword_shared, word_item_rules
 from catalogue_import.sources import OUT
 from catalogue_import.tests.world import world
 from catalogue_import.warbands import Resolver
@@ -69,6 +70,44 @@ class BuildTests(SimpleTestCase):
         items: list[dict[str, Any]] = [{"name": "Heart", "availabilities": [{"note": ""}, {"note": "Rare 10"}]}]
         add_notes(items, {"Heart": "Priest only"})
         self.assertEqual([row["note"] for row in items[0]["availabilities"]], ["Priest only", "Rare 10; Priest only"])
+
+    def test_a_shared_rule_takes_williams_wording_and_its_items_keep_only_their_own(self) -> None:
+        # William, 11 Nov 2026: "people always get the +1 save from having a shield for 2 handed weapons, its not
+        # specific to either and really should be mentioned within the 2-handed rule for every weapon that uses
+        # that rule"
+        shared = [{"slug": "two-handed", "summary": "Two hands", "text": "Requires two hands to wield"}]
+        wordings: dict[str, Any] = {
+            "two-handed": {"summary": "Both hands", "text": "No shield in close combat; +1 shooting save."}
+        }
+        reword_shared(shared, wordings)
+        self.assertEqual((shared[0]["summary"], shared[0]["text"]), ("Both hands", wordings["two-handed"]["text"]))
+        with self.assertRaisesRegex(ValueError, "no shared item rule 'parry'"):
+            reword_shared(shared, {"parry": {"text": "Parries"}})
+        items: list[dict[str, Any]] = [
+            {"name": "Halberd", "rules": [{"rule": "two-handed", "text": "Its own wording."}]},
+            {"name": "Boat Hook", "rules": [{"rule": "two-handed", "summary": "Drop", "text": "Its own wording."}]},
+        ]
+        wordings["two-handed"]["covers"] = ["Halberd"]
+        wordings["two-handed"]["items"] = {"Boat Hook": {"text": "No other weapon at all."}}
+        word_item_rules(items, wordings)
+        self.assertEqual(items[0]["rules"], [{"rule": "two-handed"}])
+        self.assertEqual(items[1]["rules"], [{"rule": "two-handed", "text": "No other weapon at all."}])
+        with self.assertRaisesRegex(ValueError, "no item holds it: Flail"):
+            word_item_rules(items, {"two-handed": {"covers": ["Flail"]}})
+
+    def test_every_two_handed_weapon_gets_the_shields_shooting_save(self) -> None:
+        rules = {row["slug"]: row for row in json.loads(self.first["item-rules.json"])}
+        self.assertIn("+1 armour save bonus against shooting", rules["two-handed"]["text"])
+        items = json.loads(self.first["items.json"])
+        own = {
+            item["name"]: rule
+            for item in items
+            for rule in item["rules"]
+            if rule.get("rule") == "two-handed" and len(rule) > 1
+        }
+        # only the Boat Hook, which is stricter: no other weapon at all
+        self.assertEqual(list(own), ["Boat Hook"])
+        self.assertEqual(own["Boat Hook"]["text"], "A model using a Boat Hook may use no other weapon at all in close combat.")  # fmt: skip
 
 
 class TemplateItemsBuildTests(SimpleTestCase):

@@ -509,8 +509,7 @@
           "text": "Attacks made with a Hellblade are at +1 to hit. This does not work against Undead or daemon models."
         },
         {
-          "rule": "Two-handed",
-          "text": "A model armed with a Hellblade may not use a shield, a buckler or an additional weapon in close combat. If he carries a shield he still gets its +1 armour save bonus against shooting."
+          "rule": "Two-handed"
         },
         {
           "name": "Deadly",

@@ -1,5 +1,5 @@
 {
-  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists. warband_type_names: a type's name as Broheim spells it -> as we show it (a typo or a capital \"Of\"; the slug stays the source's). persona_names: a dramatis persona's name as mordheimer gives it -> ours (one casing: title case, small words lower case after the first; William, 5 Nov 2026). group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_notes: item name -> a soft note added to each of its price rows. whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it (type, or types), our skills it holds (skills) and new ones (new_skills; {name, rule} names one apart from the skill whose rules it takes) with rules from mordheimer, or from the source file in sources/ it names. seed_items_back: an item of our old seed (apps/items/data/standard-items.json) -> the setting and source it comes back with, and why: its price rows and properties as they were, single use kept. extra_items: items no source has: name, type, subtype, setting, source, cost, the warband types that buy it, the price row's note, and why. warband_items: an item a warband's special equipment brings in (warband_items.py) -> the snapshot page (testwarbands-2026-10-31), the entry when it is named otherwise, the warband type that buys it, its type and subtype: one price row for that type at the book's price and rarity.",
+  "_readme": "William's decisions from import-report.md. warband_aliases: a source warband name -> type slugs ([] leaves it out); MiM restrictions use them too; one that keeps the mapping the build would make reads as settled in the report. extra_warband_types: warbands neither Broheim nor mordheimer lists. warband_type_names: a type's name as Broheim spells it -> as we show it (a typo or a capital \"Of\"; the slug stays the source's). persona_names: a dramatis persona's name as mordheimer gives it -> ours (one casing: title case, small words lower case after the first; William, 5 Nov 2026). group_members: add/remove type slugs per group slug, and keep_in/keep_out the types William keeps in or out of a group (held there); each settles its types' group questions. setting_grades: setting slug -> grade. keep_hidden_items: mordheimer items it hides that should be imported anyway. drop_items: mordheimer items left out. item_warbands: item name -> the only type slugs that may buy it, and why. item_warbands_add: item name -> type slugs added to its mordheimer list, and why. item_exclusions: item name -> the only type slugs an item for everyone shuts out, and why. item_defaults_kept: item name -> why the default its contradictions took stands. item_notes: item name -> a soft note added to each of its price rows. item_rule_wordings: a shared item rule's slug -> the wording William settles for it (summary, text), the items whose own wording it now covers (covers: their own is dropped) and those that keep only what is theirs (items: name -> summary, text). whole_names: names matched as a whole on the same-name list, not split at the slash. setting_assignments: kind (skills, hired_swords, dramatis_personae) -> our row's name as the report shows it (\"Sniper (Hochland Bandits)\") -> setting slug (one mordheimer gives several settings is then settled). skill_lists: a skill list's name -> who learns the skills of it mordheimer lacks (for_everyone, or warbands as {type} or {group} slugs), large_only (a Large unit's skill) and a note shown when learning. drop_skills: our skill rows left out (label -> why). extra_skills: skill rows our table lacks. skill_descriptions: a skill row's description put right (label -> text). fees_in_rules: a hired sword's or dramatis persona's name -> why its hire fee is in its rules: kind special, its gold kept, its hiring sentence in full as the note. hire_warbands_add: a hired sword's or dramatis persona's name -> type slugs added to its mordheimer hire list, and why (a list that then matches a group is stored as that group, so it follows the group). Skill groups (phase 1a): our skill rows merge by name into one skill each, linked into the group of every list that had it, and each list is a group; a list's skill_lists decision is its group's (who learns from it, large_only, note). skill_splits: a row (by label) whose rule differs stays its own skill under name, in its group alone, and why. skill_wordings: a merged skill's name -> the wording it takes (text, or the row label it is from) and why; any other merged skill keeps its longest. skill_group_learners: a group's name -> who learns from it (for_everyone, or warbands as {type} or {group} slugs), settling a group the report flags (its default is the warbands that may learn every skill in it). new_skill_groups: groups our lists lack -> the warband type that alone learns from it (type, or types), our skills it holds (skills) and new ones (new_skills; {name, rule} names one apart from the skill whose rules it takes) with rules from mordheimer, or from the source file in sources/ it names. seed_items_back: an item of our old seed (apps/items/data/standard-items.json) -> the setting and source it comes back with, and why: its price rows and properties as they were, single use kept. extra_items: items no source has: name, type, subtype, setting, source, cost, the warband types that buy it, the price row's note, and why. warband_items: an item a warband's special equipment brings in (warband_items.py) -> the snapshot page (testwarbands-2026-10-31), the entry when it is named otherwise, the warband type that buys it, its type and subtype: one price row for that type at the book's price and rarity.",
   "warband_aliases": {
     "Stromfels Reavers": [
       "shallows-beasts"
@@ -330,6 +330,42 @@
   "item_notes": {
     "Stromfels Heart": "Heroes only",
     "Nightmare": "Cursed Cavalcade: the Aristocrat only"
+  },
+  "item_rule_wordings": {
+    "two-handed": {
+      "summary": "Needs both hands; no shield, buckler or second weapon in close combat",
+      "text": "A model armed with this weapon needs both hands for it, so he may not use a shield, buckler or additional weapon in close combat. If he carries a shield he still gets its +1 armour save bonus against shooting.",
+      "why": "William, 11 Nov 2026: \"people always get the +1 save from having a shield for 2 handed weapons, its not specific to either and really should be mentioned within the 2-handed rule for every weapon that uses that rule\"",
+      "covers": [
+        "Bec de Corbin",
+        "Brazier Iron",
+        "Chain Sticks",
+        "Censer",
+        "Double-handed weapon",
+        "Dragon Sword",
+        "Flail",
+        "Great Axe",
+        "Halberd",
+        "Horseman's Hammer",
+        "Man-catcher",
+        "Pike (Merchant Caravans)",
+        "Serpent Staff"
+      ],
+      "items": {
+        "Boat Hook": {
+          "summary": "Allows no other weapon at all",
+          "text": "A model using a Boat Hook may use no other weapon at all in close combat."
+        }
+      }
+    },
+    "parry": {
+      "items": {
+        "Serpent Staff": {
+          "text": "The Serpent Staff may be used to parry."
+        }
+      },
+      "why": "the Serpent Staff worded its two rules as one sentence, the half left by the Two-handed rule's own wording"
+    }
   },
   "whole_names": [
     "Harpoon Gun/Crossbow"

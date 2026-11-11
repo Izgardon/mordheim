@@ -498,8 +498,7 @@
           "text": "A warrior with a shock rod strikes first."
         },
         {
-          "rule": "Two-handed",
-          "text": "A shock rod takes both hands."
+          "rule": "Two-handed"
         },
         {
           "name": "Shock",

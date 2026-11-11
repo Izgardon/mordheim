@@ -4061,9 +4061,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "summary": "It requires two hands to use.",
-        "text": "A model armed with a Bec de Corbin may not use a shield, buckler or additional weapon in close combat. If the model has a shield he still gets a +1 bonus to his armour save against shooting."
+        "rule": "two-handed"
       },
       {
         "rule": "strike-first",
@@ -4123,8 +4121,8 @@
       },
       {
         "rule": "two-handed",
-        "summary": "Models using a Boat Hook in combat cannot use any other weapons",
-        "text": "Models using a Boat Hook in combat cannot use any other weapons, or gain benefit from a shield or buckler, while in close combat."
+        "summary": "Allows no other weapon at all",
+        "text": "A model using a Boat Hook may use no other weapon at all in close combat."
       }
     ],
     "availabilities": [
@@ -4292,8 +4290,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "text": "A warrior armed with a brazier staff requires two hands to wield it effectively and so may not use a shield with it or another hand weapon or buckler in close combat. The warrior may still use a shield for the purposes of missile fire though."
+        "rule": "two-handed"
       },
       {
         "rule": "fire"
@@ -4553,8 +4550,7 @@
         "rule": "heavy"
       },
       {
-        "rule": "two-handed",
-        "text": "A censer requires two hands to be used and the wielder cannot use a shield, buckler or additional weapon in close combat."
+        "rule": "two-handed"
       },
       {
         "name": "Fog of Death",
@@ -4969,8 +4965,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "text": "A model armed with a double-handed weapon may not use a shield, buckler or additional weapon in close combat. If the model is equipped with a shield he will still get a +1 bonus to his armour save against shooting."
+        "rule": "two-handed"
       },
       {
         "rule": "strike-last",
@@ -5016,8 +5011,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "text": "A model armed with a Dragon Sword may not use a shield, buckler or additional weapon in close combat. It gets an additional +1 armour save bonus against ranged attacks if it carries a shield."
+        "rule": "two-handed"
       },
       {
         "rule": "parry",
@@ -5272,8 +5266,7 @@
         "text": "A flail is extremely tiring to use and thus the +2 Strength bonus applies only in the first turn of each hand-to-hand combat."
       },
       {
-        "rule": "two-handed",
-        "text": "As a flail requires two hands to use, a model using a flail may not use a shield, buckler or additional weapon in close combat. If the model has a shield he still gets a +1 bonus to his armour save against shooting."
+        "rule": "two-handed"
       }
     ],
     "availabilities": [
@@ -5313,8 +5306,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "text": "As a great axe requires two hands to use, a model using a great axe may not use a shield, buckler or additional weapon in close combat. If the model has a shield he still gets a +1 bonus to his armour save against shooting."
+        "rule": "two-handed"
       },
       {
         "rule": "strike-last",
@@ -5412,8 +5404,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "text": "A model armed with a halberd may not use a shield, buckler or additional weapon in close combat.\n\nIf the model has a shield he still gets a +1 bonus to his armour save against shooting."
+        "rule": "two-handed"
       }
     ],
     "availabilities": [
@@ -5513,8 +5504,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "text": "A model armed with a Horseman's Hammer may not use a shield, buckler, or additional weapon in close combat. If the model is equipped with a shield he will still get a +1 bonus to his armour save against shooting."
+        "rule": "two-handed"
       },
       {
         "name": "Cavalry Charge",
@@ -6265,9 +6255,7 @@
         "text": "A warrior with a pike strikes first in the first turn of a hand-to-hand combat. For that turn, he gains +1 Initiative representing the pike's long shaft that allows him to attack even before the enemy reaches him."
       },
       {
-        "rule": "two-handed",
-        "summary": "Requires two hands to use",
-        "text": "A model armed with a pike may not use a shield, buckler, or additional weapon in close combat. However, it gets an additional +1 armor save bonus against ranged attacks if it carries a shield."
+        "rule": "two-handed"
       }
     ],
     "availabilities": [
@@ -6532,12 +6520,11 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "text": "The staff is used with two hands..."
+        "rule": "two-handed"
       },
       {
         "rule": "parry",
-        "text": "...and may be used to parry."
+        "text": "The Serpent Staff may be used to parry."
       },
       {
         "name": "Serpent",
@@ -19480,8 +19467,7 @@
     "needs_rules": false,
     "rules": [
       {
-        "rule": "two-handed",
-        "text": "A thingcatcher takes both hands."
+        "rule": "two-handed"
       },
       {
         "name": "Capture",
@@ -20994,8 +20980,7 @@
         "tables": []
       },
       {
-        "rule": "two-handed",
-        "text": "A model armed with a Hellblade may not use a shield, a buckler or an additional weapon in close combat. If he carries a shield he still gets its +1 armour save bonus against shooting."
+        "rule": "two-handed"
       },
       {
         "name": "Deadly",
@@ -21936,8 +21921,7 @@
         "text": "A warrior with a shock rod strikes first."
       },
       {
-        "rule": "two-handed",
-        "text": "A shock rod takes both hands."
+        "rule": "two-handed"
       },
       {
         "name": "Shock",

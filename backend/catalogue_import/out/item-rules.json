@@ -527,8 +527,8 @@
       "Two Handed",
       "Two handed"
     ],
-    "summary": "Requires two hands to wield",
-    "text": "Requires two hands to wield",
+    "summary": "Needs both hands; no shield, buckler or second weapon in close combat",
+    "text": "A model armed with this weapon needs both hands for it, so he may not use a shield, buckler or additional weapon in close combat. If he carries a shield he still gets its +1 armour save bonus against shooting.",
     "tables": [],
     "used_by": 14,
     "wordings": 13

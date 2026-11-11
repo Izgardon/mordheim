@@ -202,7 +202,7 @@
     {"name": "Thingcatcher", "type": "Weapon", "subtype": "Melee", "rarity": 9, "dice": null, "rulesPage": 3,
      "range": "Close Combat", "strength": "As user",
      "rules": [
-       {"rule": "Two-handed", "text": "A thingcatcher takes both hands."},
+       {"rule": "Two-handed"},
        {"name": "Capture", "text": "A model taken out of action by a thingcatcher is captured and does not roll for serious injuries. Only animals and large models, such as Ogres and Duskcats, may be captured this way."}
      ]},
     {"name": "Wolf Rat Mount", "type": "Miscellaneous", "subtype": "", "rarity": 11, "dice": null, "rulesPage": 3}

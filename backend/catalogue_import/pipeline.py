@@ -32,7 +32,7 @@ from catalogue_import.personae import Catalogue, build_personae, put_names_right
 from catalogue_import.pointer_rules import check_answers, render_pointers, resolve_pointers
 from catalogue_import.random_mutations import build_random_mutations, render_random
 from catalogue_import.report import ReportData, render_report
-from catalogue_import.rules import build_shared_rules, index_rules
+from catalogue_import.rules import build_shared_rules, index_rules, reword_shared, word_item_rules
 from catalogue_import.shared_specials import build_shared, load_shared, render_shared
 from catalogue_import.skill_lists import SkillLists
 from catalogue_import.snapshot import SNAPSHOT, load_snapshot
@@ -221,6 +221,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     skill_lists = SkillLists(overrides, types, groups)
     sources.our_skills = skill_lists.apply(sources.our_skills)  # William's drops, additions and rewordings first
     shared = build_shared_rules(sources.items)
+    wordings = overrides.get("item_rule_wordings", {})
+    reword_shared(shared, wordings)  # William's wording for a shared rule (the Two-handed rule's shield save)
     index = index_rules(shared)
     names = display_names(types)
     decide = ItemDecisions(overrides, types, sources.items)
@@ -254,6 +256,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     everything = items + mim + added + stubs
     for rule in page_rules:
         rule["used_by"] = sum({"rule": rule["slug"]} in item["rules"] for item in everything)
+    word_item_rules(everything, wordings)  # an item's own wording of a reworded rule: dropped, or only what is its own
     add_notes(everything, overrides.get("item_notes", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue([item["name"] for item in everything], [row["name"] for row in sources.our_skills])
