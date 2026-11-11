@@ -35,10 +35,6 @@
     {
       "rulename": "A Note on Blackpowder",
       "ruleFull": "The warband starts with no blackpowder weapon of any kind and no list sells one, but nothing forbids one: a Hero with the Weapons Expert skill may use any powder weapon he finds."
-    },
-    {
-      "rulename": "Honours",
-      "ruleFull": "A Hero may buy one honour, and only one, when he is recruited; he may never gain another later. Pure of Heart, 5 gc: he passes the first Leadership test he must take each game, rout tests excepted if he is the leader, but he may not charge a stunned foe. Spearmaster, 10 gc: in the first round of combat with a spear he adds +1 Strength and may re-roll one failed roll to hit. Swordmaster, 10 gc: +1 Weapon Skill and he starts with the Graceful Strength skill, but he may never use a missile weapon and may never raise his Ballistic Skill. Sea Guard, 10 gc: besides the Warrior Equipment list he may buy and use an Elf Bow without further training, and with a spear he fights at +2 Initiative when working out the order of blows. White Lion, 20 gc: he starts with Strength 4 and a white lion pelt, a cloak giving +1 to his armour save against missile attacks, which only a White Lion may wear and costs 10 gc to replace with no rarity roll; he may never use a spear and loses access to Shooting skills, though he may use missile weapons as normal. Phoenix Guard, 15 gc: only one Hero in the warband may take it. He may not speak, so he may not be the warband's leader and may not look for rare items; he is immune to psychology and rolls two dice for exploration. An immune leader still rolls for rout. Ranger, 10 gc: only one Hero in the warband may take it. He must carry a long bow or an Elf Bow at all times, and one must be bought for him as soon as the warband can. He buys from the Ranger Equipment list instead of the Warrior Equipment list and gains Seeker, which lets him change one dice roll in the exploration phase by +1 or -1. Loremaster, 10 gc, or 15 gc for a Bossun: he starts with an Academic skill of your choice, and a Bossun who takes this honour may also learn Academic skills."
     }
   ],
   "equipmentLists": [
@@ -768,7 +764,7 @@
     },
     {
       "page": 3,
-      "what": "The Honours are bought once, at recruitment, and change a Hero's rules, skills, list and stats. Our template holds no upgrade list for a PDF warband, so they are the warband rule Honours, with every cost as printed. See the decisions."
+      "what": "The Honours are bought once, at recruitment, and change a Hero's rules, skills, list and stats. William, 11 Nov 2026: a fighter's buyable extra rules are template upgrades, never a warband rule, so they are the upgrade group Honours, with every cost as printed; its terms (heroes only, one each, bought at recruitment) are in template_answers.UPGRADE_TERMS. The Loremaster's 15 gc for a Bossun is in its text, as an upgrade carries one price."
     },
     {
       "page": 2,
@@ -789,6 +785,54 @@
     {
       "page": 10,
       "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none."
+    }
+  ],
+  "mutations": [
+    {
+      "mutationName": "Honours",
+      "mutationflavour": "A Hero may buy one honour, and only one, when he is recruited; he may never gain another later. An honour is often part of the model's name.",
+      "items": [
+        {
+          "heading": "Pure of Heart",
+          "cost": "5",
+          "ruleFull": "The Hero passes the first Leadership test he must take each game, rout tests excepted if he is the leader, but he may not charge a stunned foe."
+        },
+        {
+          "heading": "Spearmaster",
+          "cost": "10",
+          "ruleFull": "In the first round of combat with a spear, the Hero adds +1 Strength and may re-roll one failed roll to hit."
+        },
+        {
+          "heading": "Swordmaster",
+          "cost": "10",
+          "ruleFull": "The Hero gains +1 Weapon Skill and starts with the Graceful Strength skill. He may never use a missile weapon and may never raise his Ballistic Skill."
+        },
+        {
+          "heading": "Sea Guard",
+          "cost": "10",
+          "ruleFull": "Besides the Warrior Equipment list, the Hero may buy and use an Elf Bow without further training. Armed with a spear he fights at +2 Initiative when working out the order of blows."
+        },
+        {
+          "heading": "White Lion",
+          "cost": "20",
+          "ruleFull": "The Hero starts with Strength 4 and a white lion pelt, a cloak giving +1 to his armour save against missile attacks, which only a White Lion may wear and costs 10 gold crowns to replace with no rarity roll. He may never use a spear and loses access to Shooting skills, though he may use missile weapons as normal."
+        },
+        {
+          "heading": "Phoenix Guard",
+          "cost": "15",
+          "ruleFull": "Only one Hero in the warband may take this honour. He may not speak, so he may not be the warband's leader and may not look for rare items. He is immune to psychology and rolls two dice for exploration. An immune leader still rolls for rout."
+        },
+        {
+          "heading": "Ranger",
+          "cost": "10",
+          "ruleFull": "Only one Hero in the warband may take this honour. He must carry a long bow or an Elf Bow at all times, and one must be bought for him as soon as the warband can. He buys from the Ranger Equipment list instead of the Warrior Equipment list, and gains Seeker, which lets him change one dice roll in the exploration phase by +1 or -1."
+        },
+        {
+          "heading": "Loremaster",
+          "cost": "10",
+          "ruleFull": "The Hero starts with an Academic skill of your choice. A Bossun may take this honour too and may then also learn Academic skills, but it costs him 15 gold crowns instead of 10."
+        }
+      ]
     }
   ]
 }

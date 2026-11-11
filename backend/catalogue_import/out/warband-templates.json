@@ -37543,7 +37543,7 @@
       },
       {
         "title": "Honours",
-        "description": "A Hero may buy one honour, and only one, when he is recruited; he may never gain another later. Pure of Heart, 5 gc: he passes the first Leadership test he must take each game, rout tests excepted if he is the leader, but he may not charge a stunned foe. Spearmaster, 10 gc: in the first round of combat with a spear he adds +1 Strength and may re-roll one failed roll to hit. Swordmaster, 10 gc: +1 Weapon Skill and he starts with the Graceful Strength skill, but he may never use a missile weapon and may never raise his Ballistic Skill. Sea Guard, 10 gc: besides the Warrior Equipment list he may buy and use an Elf Bow without further training, and with a spear he fights at +2 Initiative when working out the order of blows. White Lion, 20 gc: he starts with Strength 4 and a white lion pelt, a cloak giving +1 to his armour save against missile attacks, which only a White Lion may wear and costs 10 gc to replace with no rarity roll; he may never use a spear and loses access to Shooting skills, though he may use missile weapons as normal. Phoenix Guard, 15 gc: only one Hero in the warband may take it. He may not speak, so he may not be the warband's leader and may not look for rare items; he is immune to psychology and rolls two dice for exploration. An immune leader still rolls for rout. Ranger, 10 gc: only one Hero in the warband may take it. He must carry a long bow or an Elf Bow at all times, and one must be bought for him as soon as the warband can. He buys from the Ranger Equipment list instead of the Warrior Equipment list and gains Seeker, which lets him change one dice roll in the exploration phase by +1 or -1. Loremaster, 10 gc, or 15 gc for a Bossun: he starts with an Academic skill of your choice, and a Bossun who takes this honour may also learn Academic skills.",
+        "description": "A Hero may buy one honour, and only one, when he is recruited; he may never gain another later. An honour is often part of the model's name.",
         "variant": "",
         "type": ""
       }
@@ -38421,7 +38421,144 @@
         "skills": []
       }
     ],
-    "upgrades": []
+    "upgrades": [
+      {
+        "group": "Honours",
+        "special": {
+          "name": "Pure of Heart",
+          "type": "Warband - Lothern Sea Patrol",
+          "description": "The Hero passes the first Leadership test he must take each game, rout tests excepted if he is the leader, but he may not charge a stunned foe."
+        },
+        "cost": 5,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Honours",
+        "special": {
+          "name": "Spearmaster",
+          "type": "Warband - Lothern Sea Patrol",
+          "description": "In the first round of combat with a spear, the Hero adds +1 Strength and may re-roll one failed roll to hit."
+        },
+        "cost": 10,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Honours",
+        "special": {
+          "name": "Swordmaster",
+          "type": "Warband - Lothern Sea Patrol",
+          "description": "The Hero gains +1 Weapon Skill and starts with the Graceful Strength skill. He may never use a missile weapon and may never raise his Ballistic Skill."
+        },
+        "cost": 10,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Honours",
+        "special": {
+          "name": "Sea Guard",
+          "type": "Warband - Lothern Sea Patrol",
+          "description": "Besides the Warrior Equipment list, the Hero may buy and use an Elf Bow without further training. Armed with a spear he fights at +2 Initiative when working out the order of blows."
+        },
+        "cost": 10,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Honours",
+        "special": {
+          "name": "White Lion",
+          "type": "Warband - Lothern Sea Patrol",
+          "description": "The Hero starts with Strength 4 and a white lion pelt, a cloak giving +1 to his armour save against missile attacks, which only a White Lion may wear and costs 10 gold crowns to replace with no rarity roll. He may never use a spear and loses access to Shooting skills, though he may use missile weapons as normal."
+        },
+        "cost": 20,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Honours",
+        "special": {
+          "name": "Phoenix Guard",
+          "type": "Warband - Lothern Sea Patrol",
+          "description": "Only one Hero in the warband may take this honour. He may not speak, so he may not be the warband's leader and may not look for rare items. He is immune to psychology and rolls two dice for exploration. An immune leader still rolls for rout."
+        },
+        "cost": 15,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Honours",
+        "special": {
+          "name": "Ranger",
+          "type": "Warband - Lothern Sea Patrol",
+          "description": "Only one Hero in the warband may take this honour. He must carry a long bow or an Elf Bow at all times, and one must be bought for him as soon as the warband can. He buys from the Ranger Equipment list instead of the Warrior Equipment list, and gains Seeker, which lets him change one dice roll in the exploration phase by +1 or -1."
+        },
+        "cost": 10,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      },
+      {
+        "group": "Honours",
+        "special": {
+          "name": "Loremaster",
+          "type": "Warband - Lothern Sea Patrol",
+          "description": "The Hero starts with an Academic skill of your choice. A Bossun may take this honour too and may then also learn Academic skills, but it costs him 15 gold crowns instead of 10."
+        },
+        "cost": 10,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": true
+      }
+    ]
   },
   {
     "slug": "low-kings",

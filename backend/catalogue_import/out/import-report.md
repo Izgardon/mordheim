@@ -728,8 +728,8 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | equipment lists | 250 |
 | list lines | 2781 |
 | warband rules | 342 |
-| upgrades | 123 |
-| the templates' own specials | 781 |
+| upgrades | 131 |
+| the templates' own specials | 789 |
 
 ### List lines
 
@@ -885,6 +885,7 @@ mordheimer's lore names that differ from ours: Charms & Hexes -> Charms and Hexe
 | lizardmen | Sacred markings | who heroes; at most 1 each; at recruit |
 | marauders-of-chaos | Mark of the Dark Gods | who marauder-chieftain, seer; at most 1 each; cost 0 |
 | blood-dragons | Bloodline Abilities | who vampire; later double |
+| lothern-sea-patrol | Honours | who heroes; at most 1 each; at recruit |
 
 lizardmen: Poisoned Weapons is a warband rule, not an upgrade.
 
@@ -1642,7 +1643,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The Warrior and Ranger lists sell an Ithilmar Weapon at "2 x Cost", a multiplier and not a number, so its line carries no price of its own and reads "2 x Cost", as the Dwarf Treasure Hunters' Gromril line does. Ours is Rare 9 at three times the price, which is unchanged.
 - Flag (p2): The Ithilmar Armour line is 60 gc (the footnote says Ithilmar is cheaper for them at creation); ours is 90 gc, Rare 11, which is unchanged. The Elf Bow line is 35 gc; ours is 35 + 3D6 gc, Rare 12, which is unchanged.
 - Flag (p4): Raw Recruits are taken by Special Recruitment and "may be hired like normal", but no hire price is printed, so their cost is 0 gc.
-- Flag (p3): The Honours are bought once, at recruitment, and change a Hero's rules, skills, list and stats. Our template holds no upgrade list for a PDF warband, so they are the warband rule Honours, with every cost as printed. See the decisions.
+- Flag (p3): The Honours are bought once, at recruitment, and change a Hero's rules, skills, list and stats. William, 11 Nov 2026: a fighter's buyable extra rules are template upgrades, never a warband rule, so they are the upgrade group Honours, with every cost as printed; its terms (heroes only, one each, bought at recruitment) are in template_answers.UPGRADE_TERMS. The Loremaster's 15 gc for a Bossun is in its text, as an upgrade carries one price.
 - Flag (p2): Fey Quickness is our skill of that name and effect (a 6, or a 4+ with Dodge or Step Aside), so it is linked rather than written again. Swordmasters Protege and Infiltration each name who may take them. Swordmasters Protege is a new skill, so its limit opens its description; Infiltration is our skill, so its limit sits in the group's note.
 - Flag (p5): The Spells of the Lothern Sea are the Spells of the Djedhi we already hold, with the fourth, Fleeting Shadows, replaced by Mistress of the Deep (difficulty 8). The lore is added as its own, taking our wording for the five that are the same.
 - Flag (p1): The warband must hold between 3 and 12 models: our templates hold no minimum, so only the maximum of 12 is imported. No henchmen group sizes and no maximum profile are printed: the warband takes our Elf race, the Raw Recruits included, though their entry says some are not full elves.

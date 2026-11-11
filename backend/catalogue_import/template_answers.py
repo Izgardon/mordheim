@@ -122,6 +122,9 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
     # ... Every time a gains a new skill, he may choose a bloodline ability instead of a skill at double cost", so
     # they are not bought only at recruitment and he has no most
     ("blood-dragons", "Bloodline Abilities"): {"who": {"fighters": ["vampire"]}, "later_double": True},
+    # the Lothern Sea Patrol PDF, p3: "any High Elf Hero may purchase one and only one honour ... They may only
+    # purchase one when first recruited"
+    ("lothern-sea-patrol", "Honours"): {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
 }
 # One upgrade's own `who`, where its text narrows its group's: "(Saurus Only)", "(Skinks only)"
 UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {
