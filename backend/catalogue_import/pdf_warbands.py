@@ -7,8 +7,10 @@ snapshot so the template import builds it the same way. A file's own keys:
   the template's setting and grade are the type's;
 - `aliases`: `{pdf, ours, page}`, a line's name as the PDF spells it and our item's name or tag it means
   ("Doubled-handed weapon" is a Double-handed weapon), put right as the file loads;
-- `stubs`: `{name, type, subtype, rarity, dice, diceMultiplier, rulesPage, note}`, items a line names that we lack (William: "yes to
-  stubs"): each a bare item, no rules, with one price row for its warband only at the line's price (`cost`: the price
+- `stubs`: `{name, type, subtype, rarity, dice, diceMultiplier, rulesPage, note, types}`, items a line names that we
+  lack (William: "yes to
+  stubs"): each a bare item, no rules, with one price row for its warband only, or for every type it names (`types`,
+  as a price row's: a setting's shop list declares an item it alone sells once), at the line's price (`cost`: the price
   the setting's own trading list prints, where that differs from the line's), and `note` its
   item's notes (the Sorcerous Society's Familiar names its pets in the bestiary). A stub whose rules William gives
   carries them (`range`, `strength`, `save` and `rules`: `{rule, summary, text}` a shared item rule by name, ours or
@@ -288,9 +290,12 @@ def stub_items(
     price, with the rarity and dice the PDF prints. A stub two pages declare (the Protectorate of Sigmar's Blessed
     Bolts, which the Vampire Hunters of Sylvania buy too) is one item with a row for each, made from the first by
     grade, then in the pages' order (the 2a Vampire Hunters' Scythe keeps its setting when the 2b Night Haint buy it
-    too). A stub that names one of our items stops the build: link it."""
+    too). A stub that names one of our items stops the build: link it. A stub's row serves every warband type it
+    names (`types`), as a price row's does, so a setting's shop list declares an item it alone sells once (Sartosa's
+    Duck-Footed Pistol, for the setting's eleven types)."""
     index = ItemIndex(items)
     by_slug = {row["slug"]: row for row in types}
+    known = set(by_slug)
     stubs: list[dict[str, Any]] = []
     made: dict[str, dict[str, Any]] = {}
     in_order = sorted(pages.items(), key=lambda pair: by_slug[pair[1][TYPE]].get("broheim_grade") or "")
@@ -307,7 +312,8 @@ def stub_items(
                 "dice_multiplier": stub.get("diceMultiplier"),
                 "cost_note": note,
             }
-            row = _row(cost, stub.get("rarity"), [{"type": warband["slug"], "excluded": False}], "")
+            buyers = [{"type": name, "excluded": False} for name in row_types(slug, page, stub, known)]
+            row = _row(cost, stub.get("rarity"), buyers, "")
             if loose_key(stub["name"]) in made:
                 made[loose_key(stub["name"])]["availabilities"].append(row)
                 continue

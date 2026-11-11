@@ -141,6 +141,14 @@
     "Pike (Tileans)"
   ],
   "item_names": {
+    "Rain Coat": {
+      "name": "Rain Coat",
+      "tags": [
+        "greatcoat",
+        "frockcoat"
+      ],
+      "why": "the Sartosa shop's Greatcoat (10 gc, Common) is \"Based on 'Raincoat' from Border Town Burning\" at our own price, so it is ours under another name (William, 11 Nov 2026) and its names find ours. The PDF adds that it may be worn over armour without penalty but not with a cloak, and keeps no powder dry when walking through water: for William"
+    },
     "Pike (Merchant Caravans)": {
       "name": "Pike",
       "tags": [
@@ -397,6 +405,7 @@
     }
   },
   "whole_names": [
+    "Silver Bullets/Arrows",
     "Harpoon Gun/Crossbow"
   ],
   "skill_lists": {

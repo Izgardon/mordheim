@@ -271,7 +271,9 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
             continue
         found.by[how or "its name"] = found.by.get(how or "its name", 0) + 1
     found.stubs = sorted(used)
-    found.problems += [f"stub {name!r}: no line names it" for name in sorted(set(stubs.values()) - used)]
+    # a shop stub (its own `types` and `cost`, the setting's trading list) is sold by no list line
+    wanted = {stub["name"] for stub in page["stubs"] if not stub.get("types")}
+    found.problems += [f"stub {name!r}: no line names it" for name in sorted(wanted - used)]
     raw_names = {norm_name(name) for _title, name, _cost in lines_of(page)}
     line_names = {norm_name(name) for _title, name, _cost in lines_of(fixed)}
     ours = {item["name"] for item in catalogue.items.items}

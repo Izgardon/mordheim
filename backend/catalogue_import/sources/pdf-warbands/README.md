@@ -198,6 +198,12 @@ Each answers a question a batch raised; follow them without asking again.
   under its own name and its own price kept in a price row where it differs from ours. The Nipponese **Kanabo**
   stays its own item: it is 15 gc like our Double-handed weapon, but its lists sell both, and it is As user +1 with
   Two-Handed and Concussion where ours is +2 and strikes last. A matching price is not a match.
+- **A setting's shop sells an item no warband list does:** its stub names the types its row serves (`types`, as a
+  price row's), so the shop list declares it once for the whole setting and no list line need name it (William,
+  11 Nov 2026, of the eighteen Sartosa shop items we lacked: "add them in as stubs if you dont have the rules for
+  them yet, we will populate later but good to know they exist"; the rules the Equipment PDF prints went in with
+  them). The Sartosa Greatcoat is "Based on 'Raincoat' from Border Town Burning" at our own 10 gc, so it is our
+  Rain Coat under another name: a tag on ours through `item_names`, never a new item.
 - **Never fetch a setting's own PDFs to fill a gap** (William, 11 Nov 2026). Read the warband PDFs, stub whatever is
   missing, a fighter left with no skill list included, and fill it when that setting's batch comes. The Sartosa
   skills and equipment PDFs already read stay as they are.

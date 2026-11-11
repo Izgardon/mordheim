@@ -620,6 +620,45 @@ class PdfImportTests(SimpleTestCase):
         self.assertEqual([name for name in ("Dark Elf Sorceress", "Witch Elf") if name in hired], [])
         self.assertIn("Holy (Unholy) Relic", self.items)  # its brackets are its name, not a warband or a setting
 
+    def test_the_sartosa_shop_items_we_lack_are_stubs_for_all_eleven_types(self) -> None:
+        # William, 11 Nov 2026: "add them in as stubs if you dont have the rules for them yet, we will populate
+        # later but good to know they exist". The Equipment PDF's own rules and prices are in, one row per item for
+        # the setting's eleven warband types. The Quarantine Flag is its entry's 30+2D6, not the chart's 40+2D6.
+        wanted = {
+            "Duck-Footed Pistol": (50, None, 11),
+            "Pocket Pistol": (5, None, 4),
+            "Sword Pistol": (60, None, 11),
+            "Powder Horn": (10, None, 6),
+            "Powder Monkey": (15, None, 8),
+            "Grog": (10, 1, None),
+            "Raft": (40, None, None),
+            "Norlander Net": (10, None, None),
+            "Captain's Hat": (25, 2, 9),
+            "Whalebone Charm": (15, 3, 10),
+            "Silver Bullets/Arrows": (30, None, 10),
+            "Banner - Jolly Roger": (40, 2, 9),
+            "Banner - 'Friendly' Flag": (25, 2, 9),
+            "Banner - Hourglass": (50, 2, 9),
+            "Banner - Nation's Colors": (40, 2, 9),
+            "Banner - Quarantine Flag": (30, 2, 9),
+            "Banner - Red Flag": (40, 2, 9),
+        }
+        self.assertEqual(sorted(name for name in wanted if name not in self.items), [])
+        rows = {}
+        for name in wanted:
+            [row] = self.items[name]["availabilities"]
+            rows[name] = (row["cost"], row["dice"], row["rarity"])
+            self.assertEqual(len(row["warbands"]), 11, name)
+            self.assertEqual(self.items[name]["setting"], "sartosa", name)
+        self.assertEqual(rows, wanted)
+        # each banner carries the shared Pirate Banner rule and then its own
+        banner = self.items["Banner - Red Flag"]["rules"]
+        self.assertEqual([rule.get("rule") or rule.get("name") for rule in banner], ["pirate-banner", "Red Flag"])
+        self.assertEqual(self.items["Powder Monkey"]["needs_rules"], True)  # no rules in either PDF read
+        # the Greatcoat is our Rain Coat under another name, so it is a tag on ours rather than an item
+        self.assertNotIn("Greatcoat", self.items)
+        self.assertIn("greatcoat", self.items["Rain Coat"]["tags"])
+
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page
         page = good_page()

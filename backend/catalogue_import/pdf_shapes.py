@@ -97,6 +97,7 @@ STUB: Spec = {
     "rules": (list, False),
     "statblock": (list, False),
     "note": (str, False),
+    "types": (list, False),  # the warband types its row serves, as a price row's: Sartosa's shop list
 }
 STUB_RULE: Spec = {
     "rule": (str, False),

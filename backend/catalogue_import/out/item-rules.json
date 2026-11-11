@@ -383,6 +383,16 @@
     "wordings": 13
   },
   {
+    "slug": "pirate-banner",
+    "name": "Pirate Banner",
+    "aliases": [],
+    "summary": "One flag per warband; one hand, no two-handed weapons",
+    "text": "A pirate warband may carry one pirate flag. Carrying it takes up one hand, so its bearer may carry or use no two-handed weapon during the game. A Swabbie gains no benefit from a Pirate Banner. A good warband (the Sisters of Sigmar, the Witch Hunters, the Lothern Sea Patrol) may carry only the Nation's Colors.",
+    "tables": [],
+    "used_by": 6,
+    "wordings": 1
+  },
+  {
     "slug": "poisoned",
     "name": "Poisoned",
     "aliases": [],

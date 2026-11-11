@@ -947,7 +947,553 @@
     }
   ],
   "aliases": [],
-  "stubs": [],
+  "stubs": [
+    {
+      "name": "Duck-Footed Pistol",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "cost": 50,
+      "dice": null,
+      "rarity": 11,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "range": "10\"",
+      "strength": "3",
+      "rules": [
+        {
+          "name": "Blackpowder",
+          "text": "A natural 1 to hit is a misfire: roll on the Blackpowder misfire table. On a BOOM result the wielder suffers 1D3+1 Strength 3 hits. It may be used with Superior Blackpowder, which makes a BOOM's hits Strength 4."
+        },
+        {
+          "name": "Spread-Shot",
+          "text": "When a shot in the shooting phase hits, the closest 1D3 models within 2\" of the target are hit too, the closest first, with no armour save modifier. The firer is never hit and never counts as the closest model, but his own warband may be. Models in hiding count as close and may be hit. A hit reaches a model in cover only if the target was in cover."
+        },
+        {
+          "rule": "hand-to-hand",
+          "summary": "One extra attack at Strength 3 in the first round",
+          "text": "It may be fired in the first round of combat, as a pistol: one extra attack at the wielder's Weapon Skill, resolved at Strength 3. If that attack hits and is not parried, 1D3 models in base contact with the firer are hit at Strength 3 as well, the closest first, his own warband among them. This is not shooting into combat, so the shots are not randomised, and no model takes more than one hit for one shot (a Ricochet critical aside). Once fired in the first round it may not be fired again in that combat."
+        },
+        {
+          "name": "Loading Time",
+          "text": "Reloading always takes a whole turn, whatever skills the firer has, and he may fire no weapon other than a pistol while he reloads."
+        },
+        {
+          "name": "Unbraced",
+          "text": "It is never bought as a brace, and a hero may own only one. A firer with the Pistolier skill may fire it together with one pistol of another type."
+        }
+      ]
+    },
+    {
+      "name": "Pocket Pistol",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "cost": 5,
+      "dice": null,
+      "rarity": 4,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "range": "4\"",
+      "strength": "4",
+      "rules": [
+        {
+          "name": "Single Shot",
+          "text": "It holds one shot, and may not be used again for the rest of the battle."
+        },
+        {
+          "rule": "save-modifier"
+        },
+        {
+          "rule": "hand-to-hand"
+        },
+        {
+          "name": "Tiny",
+          "text": "One Pocket Pistol does not count towards the missile weapons a hero may carry, and a model may carry two."
+        },
+        {
+          "name": "Hidden",
+          "text": "The hero carries it even in a scenario that deprives heroes of their weapons. Whenever he is captured, by an injury roll, a bounty hunter, the Pressganger skill or anything else, he escapes unharmed with all his equipment on a 4+. Carrying two still gives one roll."
+        }
+      ]
+    },
+    {
+      "name": "Sword Pistol",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "cost": 60,
+      "dice": null,
+      "rarity": 11,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "range": "10\"/Close Combat",
+      "strength": "4/As user",
+      "rules": [
+        {
+          "name": "Pistol-Like",
+          "text": "Out of combat it works as a Duelling Pistol, with the rules for pistol fire, Accuracy, Prepare shot and its save modifier."
+        },
+        {
+          "rule": "parry",
+          "text": "In close combat a model wielding a Sword Pistol gains one parry a turn, as with a sword."
+        },
+        {
+          "name": "Intricate",
+          "text": "If a parry with the Sword Pistol rolls a natural 1, it counts as a plain sword for the rest of the battle: it may no longer fire out of combat and loses Balanced and Blasting Charge."
+        },
+        {
+          "name": "Balanced",
+          "text": "In the first round of close combat every attack with the Sword Pistol is at +1 to hit."
+        },
+        {
+          "name": "Blasting Charge",
+          "text": "The first hit it deals in the first round of close combat deals, besides the hit at the user's Strength, an extra attack at Strength 4 with a further -1 to the enemy's armour save. After the first round it counts as a sword with the Intricate rule. The Blasting Charge may be used at the beginning of each new combat."
+        }
+      ]
+    },
+    {
+      "name": "Powder Horn",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 10,
+      "dice": null,
+      "rarity": 6,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "name": "Fresh Powder",
+          "text": "A hero whose gunpowder has become wet (walking through water, rain) may use the horn for fresh powder, enough for every powder weapon he carries for the rest of the battle, or until he becomes wet again. Used while he is still wet (standing in deep water, in a continuous storm) the powder is good for one turn only. If he was using Superior Blackpowder this game, the horn holds superior powder too. A model may carry several horns, each used once per game."
+        }
+      ]
+    },
+    {
+      "name": "Powder Monkey",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 15,
+      "dice": null,
+      "rarity": 8,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ]
+    },
+    {
+      "name": "Grog",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 10,
+      "dice": 1,
+      "rarity": null,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "name": "A case of grog",
+          "text": "A case holds doses for 1D6 warriors and may be drunk at the start of a game. A henchmen group may drink only if there is enough for every member, or none of them may. Everyone who drinks passes automatically every Leadership test he must take, and is at -1 Weapon Skill and -1 Ballistic Skill. A leader who drinks does not pass rout tests automatically, and no warrior may use his Leadership that game. Elves may not drink it, and it has no effect on a model immune to poison."
+        }
+      ]
+    },
+    {
+      "name": "Raft",
+      "type": "Miscellaneous",
+      "subtype": "Vehicles",
+      "cost": 40,
+      "dice": null,
+      "rarity": null,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "name": "Deployment",
+          "text": "A raft is placed when you deploy, against the water nearest your deployment zone, or anywhere within your deployment zone on land. Two models may carry it at their base movement, with no running."
+        }
+      ]
+    },
+    {
+      "name": "Norlander Net",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 10,
+      "dice": null,
+      "rarity": null,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "name": "Snare",
+          "text": "Once per game, instead of shooting a missile weapon, the net may be thrown in the shooting phase. Treat it as a missile weapon in every respect, with a range of 8\", and use the model's Ballistic Skill to hit, with no penalty for moving or for range. A model it hits rolls a D6 at once: equal to or under his Strength he breaks free; over it he may not move, shoot or cast spells in his next turn, though he is not otherwise affected. Either way the net is used for that game."
+        },
+        {
+          "name": "Made to Last",
+          "text": "Unlike other nets, a Norlander Net is always retrieved after the battle and may be used again, once per game. A hero may carry only one in a game."
+        }
+      ]
+    },
+    {
+      "name": "Captain's Hat",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 25,
+      "dice": 2,
+      "rarity": 9,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "name": "Fit for an admiral",
+          "text": "Only the warband's leader may wear it. The range of his Leadership is 3\" further and he has +1 when searching for rare items. He may wear no helmet while he wears it. If he is taken out of action, roll a D6: on a 1-3 the opponent who took him out takes the hat (with several players, a random opponent where that is unclear)."
+        }
+      ]
+    },
+    {
+      "name": "Whalebone Charm",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 15,
+      "dice": 3,
+      "rarity": 10,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "name": "Whittled luck",
+          "text": "Once per game, during any of his turns, a hero using the charm gives one of his dice rolls in each phase +1 or -1: one in Recovery, one in Movement, one in Shooting and one in Combat. The effects last until the end of that turn. The warband's leader may use it on a rout test."
+        }
+      ]
+    },
+    {
+      "name": "Silver Bullets/Arrows",
+      "type": "Miscellaneous",
+      "subtype": "Ammunition",
+      "cost": 30,
+      "dice": null,
+      "rarity": 10,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "name": "Silvered",
+          "text": "Attacks with these count as magical against true undead, daemons and other mystical creatures, in shooting and in close combat, so they negate an unmodified mystical save, Ethereal among them, but not Dodge or Step Aside. There is enough for one game. Decide when they are bought or found whether they are arrows or bullets; they stay that until they are used or discarded."
+        }
+      ]
+    },
+    {
+      "name": "Banner - Jolly Roger",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 40,
+      "dice": 2,
+      "rarity": 9,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "rule": "pirate-banner"
+        },
+        {
+          "name": "Jolly Roger",
+          "text": "One per warband, carried by any Hero. Any Pirate within 12\" of the Jolly Roger never counts as All Alone."
+        }
+      ]
+    },
+    {
+      "name": "Banner - 'Friendly' Flag",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 25,
+      "dice": 2,
+      "rarity": 9,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "rule": "pirate-banner"
+        },
+        {
+          "name": "'Friendly' Flag",
+          "text": "After set-up the warband may advance a further 6\" in. The High Elf Lothern Sea Guard may not use it."
+        }
+      ]
+    },
+    {
+      "name": "Banner - Hourglass",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 50,
+      "dice": 2,
+      "rarity": 9,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "rule": "pirate-banner"
+        },
+        {
+          "name": "Hourglass",
+          "text": "Roll D6+6. On the turn of that number every opposing warband that has suffered at least one notable casualty (a Swabbie does not count) is at its Rout level."
+        }
+      ]
+    },
+    {
+      "name": "Banner - Nation's Colors",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 40,
+      "dice": 2,
+      "rarity": 9,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "rule": "pirate-banner"
+        },
+        {
+          "name": "Nation's Colors",
+          "text": "While the warband's leader, or the model acting as leader, is within 12\" of the banner, he passes automatically the first rout check he must take. The next turn he may ignore a rout check on a 4+, and the turn after on a 6+. None of these dice may be re-rolled by any means. If he carries a Holy Relic and the first Leadership test he must take is a rout check, the Nation's Colors and the relic are both spent at once, and the Colors still ignore the next test on a 4+ and then on a 6+. A Navy warband may field no other flag. Its cost is the leader's."
+        }
+      ]
+    },
+    {
+      "name": "Banner - Quarantine Flag",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 30,
+      "dice": 2,
+      "rarity": 9,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "rule": "pirate-banner"
+        },
+        {
+          "name": "Quarantine Flag",
+          "text": "When an enemy takes the bearer out of action in close combat, the model that inflicted the injury takes a Toughness test: roll a D6, and if the result is higher than his Toughness he suffers an automatic wound; a 6 always wounds. Undead and possessed models never take this test. Only the Carnival of Chaos and members of Clan Pestilens may take this flag."
+        }
+      ]
+    },
+    {
+      "name": "Banner - Red Flag",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 40,
+      "dice": 2,
+      "rarity": 9,
+      "rulesPage": 10,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "rules": [
+        {
+          "rule": "pirate-banner"
+        },
+        {
+          "name": "Red Flag",
+          "text": "Every member of the warband within 6\" of the banner causes fear. Only a warband that can take prisoners may fly it, and in any game you bring it you may take no prisoners afterwards."
+        }
+      ]
+    }
+  ],
   "flags": [
     {
       "page": 3,
@@ -984,6 +1530,10 @@
     {
       "page": 10,
       "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband. Throwing Axes get no row: they are our Throwing Knives/Stars/Axes, 15 gc Rare 5 for everyone already (William, 11 Nov 2026)."
+    },
+    {
+      "page": 10,
+      "what": "The setting's Equipment PDF prints eighteen items our catalogue lacks: they are stubs with the rules and prices it prints, one row for the setting's eleven warband types (William, 11 Nov 2026: \"add them in as stubs if you dont have the rules for them yet, we will populate later but good to know they exist\"). The Quarantine Flag is 40+2D6 on the trading chart and 30+2D6 in its entry: the entry's, as William settled for the Horn of the Wild Hunt. Each of the six Banners carries the shared Pirate Banner rule and its own. The Greatcoat (10 gc, Common) is our Rain Coat, \"Based on 'Raincoat' from Border Town Burning\" and the same price, so it is no new item: it is a tag on ours, and the PDF adds that it may be worn over armour without penalty but not with a cloak, and does not keep powder dry when walking through water. The Powder Monkey has no rules in either PDF read."
     }
   ],
   "sharedSkillGroup": {
@@ -1079,5 +1629,13 @@
         "description": "The warband's leader only. When a henchman the warband takes out of action dies (1-2 on his injury roll), the warband may try to recruit him as a Swabbie or Crew on a 2+ instead of 4+. When an enemy the warband took out of action dies (11-15 on the Serious Injury chart), on a D6 roll of 4+ he is captured instead, to be ransomed or made to join the crew."
       }
     ]
-  }
+  },
+  "itemRules": [
+    {
+      "name": "Pirate Banner",
+      "summary": "One flag per warband; one hand, no two-handed weapons",
+      "text": "A pirate warband may carry one pirate flag. Carrying it takes up one hand, so its bearer may carry or use no two-handed weapon during the game. A Swabbie gains no benefit from a Pirate Banner. A good warband (the Sisters of Sigmar, the Witch Hunters, the Lothern Sea Patrol) may carry only the Nation's Colors.",
+      "page": 10
+    }
+  ]
 }
