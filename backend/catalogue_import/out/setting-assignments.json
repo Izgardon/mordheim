@@ -1156,6 +1156,76 @@
       "how": "overrides.json"
     },
     {
+      "name": "Experienced Fighter",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Attack Howl",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Master Shot",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Savage Fury (Albion Barbarians)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Concealment (Albion Barbarians)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Power Surge",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Arcane Reach",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Combat Wizard",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Arcane Barrage",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Large Familiar",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Surveyor",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hardened Will",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Dispell (Altdorf Expeditionary Party)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fierce Casting",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Slave Driver",
       "setting": "sartosa",
       "how": "overrides.json"
@@ -1203,6 +1273,36 @@
     {
       "name": "Sheer Speed",
       "setting": "khemri-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Silent Strike (Assassin Squad)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Ultimate Kill",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Master of Poisons (Assassin Squad)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Shadow Defense",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Ultimate Specialist",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Play Dead",
+      "setting": "grade-3",
       "how": "overrides.json"
     },
     {
@@ -1451,6 +1551,21 @@
       "how": "overrides.json"
     },
     {
+      "name": "Monster Hunter",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Set Traps (Dwarf Grudgebearers)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Expert Runesmith",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Deathwish",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1523,6 +1638,26 @@
     {
       "name": "Poison Sap",
       "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Flank",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Strong 'Un",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Wolf Breaker",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fast Learner",
+      "setting": "grade-3",
       "how": "overrides.json"
     },
     {

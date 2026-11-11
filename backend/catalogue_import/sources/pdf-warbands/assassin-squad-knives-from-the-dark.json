@@ -1,0 +1,295 @@
+{
+  "warbandType": "assassin-squad-knives-from-the-dark",
+  "name": "Assassin Squad, Knives from the Dark",
+  "source": "Assassin Squad, Knives from the Dark",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Look Behind You!", "ruleFull": "A model trying to spot a hidden member of the warband does so at -1 Initiative, to a minimum of 1. This does not cover the warband's hired swords."},
+    {"rulename": "The Boss", "ruleFull": "The warband's leader must cause fear where that is possible. When a leader is replaced, pick from the heroes who are horribly scarred or fearsome; if none is, pick as normal, and the new leader must take the Fearsome skill with his next skill advance, which rules out a hero with no Strength skills."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "assassin-equipment-list",
+      "title": "Assassin Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "fighting claws", "alias": "", "cost": {"cost": 35, "costSuffix": "(Heroes only)"}},
+        {"name": "Chain Axe", "alias": "Chain axe", "cost": {"cost": 10}},
+        {"name": "Wyrd Blade", "alias": "Wyrd blade", "cost": {"cost": 15, "costSuffix": "(Heroes only)"}},
+        {"name": "weeping blades", "alias": "Weeping Blades (pair)", "cost": {"cost": 50}},
+        {"name": "throwing stars", "alias": "Throwing Stars", "cost": {"cost": 15}},
+        {"name": "Black Darts", "alias": "", "cost": {"cost": 15}},
+        {"name": "light armour", "alias": "Light Armor", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "dark venom", "alias": "Black Venom", "cost": {"cost": 10, "costSuffix": "(Heroes only)"}},
+        {"name": "flash powder", "alias": "", "cost": {"cost": 10, "costSuffix": "(Heroes only)"}},
+        {"name": "Kill Knife", "alias": "", "cost": {"cost": 15, "costSuffix": "(Silent Hunter only)"}},
+        {"name": "Short Spear", "alias": "", "cost": {"cost": 15, "costSuffix": "(Silent Hunter only)"}},
+        {"name": "Body Armour", "alias": "", "cost": {"cost": 15, "costSuffix": "(Silent Hunter only)"}}
+      ]
+    },
+    {
+      "id": "sniper-equipment-list",
+      "title": "Sniper Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "throwing stars", "alias": "Throwing Stars", "cost": {"cost": 15}},
+        {"name": "Black Darts", "alias": "", "cost": {"cost": 15}},
+        {"name": "toughened leathers", "alias": "", "cost": {"cost": 5}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "Assassin Bullets", "alias": "", "cost": {"cost": 25}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "shadowblade",
+      "type": "hero",
+      "name": "Shadowblade",
+      "plural": "Shadowblades",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 4, "bs": 4, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["assassin-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior in the warband within 6\" of the Shadowblade may use his Leadership instead of his own."},
+        {"rulename": "Fear", "ruleFull": "The Shadowblade causes fear."},
+        {"rulename": "Perfect Killer", "ruleFull": "Every attack he makes, shooting or in close combat, has an extra -1 save modifier."},
+        {"rulename": "Vanish Into the Shadows", "ruleFull": "At the start of a close combat round the Shadowblade may declare that he leaves the battle at the end of that round. He is out of the game from then on, with everything that follows from it. This is not being taken out of action, and he may do it while knocked down."}
+      ]
+    },
+    {
+      "id": "silent-hunter",
+      "type": "hero",
+      "name": "Silent Hunter",
+      "plural": "Silent Hunters",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 12,
+      "statblock": {"m": 6, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 5, "a": 2, "ld": 6},
+      "equipmentLists": ["assassin-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Shadow Infiltration", "ruleFull": "As the Infiltration skill, except that he need only be set up beyond the range at which he could be spotted while hidden. He is also immune to all alone tests."}
+      ]
+    },
+    {
+      "id": "black-knife",
+      "type": "hero",
+      "name": "Black Knife",
+      "plural": "Black Knives",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 6, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": ["assassin-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "young-snout",
+      "type": "hero",
+      "name": "Young Snout",
+      "plural": "Young Snouts",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 6, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["sniper-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "sniper",
+      "type": "henchman",
+      "name": "Sniper",
+      "plural": "Snipers",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 35,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 5, "ws": 2, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["sniper-equipment-list"],
+      "specialRules": [
+        {"rulename": "Camouflage", "ruleFull": "A Sniper may shoot while hidden. He is detected only if he hits his target and a D6 roll of 3 or more follows."}
+      ]
+    },
+    {
+      "id": "knife",
+      "type": "henchman",
+      "name": "Knife",
+      "plural": "Knives",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 30,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["assassin-equipment-list"],
+      "specialRules": [
+        {"rulename": "Dagger Specialist", "ruleFull": "A missed attack made with a dagger on the turn he charges may be re-rolled. The second result stands."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Assassin Squad",
+    "new": true,
+    "note": ""
+  },
+  "specialSkillsList": [
+    {"name": "Silent Strike (Assassin Squad)", "pdfName": "Silent Strike", "description": "He may charge out of hiding and return to it. Roll a D6: on a 5 or more he charges and attacks, his opponents strike back, and if he takes no wound he returns to the place he hid in. The distance out and back may not be more than twice his Movement, or three times it with Sprint, so he cannot hide again if the charge took more than half of it. On any other roll he charges as normal."},
+    {"name": "Ultimate Kill", "description": "He may give up all his extra close combat attacks for one attack at +1 to hit, +1 to wound and +1 on the injury roll. He needs 2 or more Attacks on his profile to use it. It does not work with Ultimate Specialist or Strike to Injure, nor with blackpowder weapons."},
+    {"name": "Master of Poisons (Assassin Squad)", "pdfName": "Master of Poisons", "description": "If he does not search for rare items he may brew 3D-1 portions of Dark Venom or Black Lotus, so he may end with none. Each portion covers one weapon and must be used in the next battle."},
+    {"name": "Shadow Defense", "description": "He may parry with any weapon he uses, and may re-roll a failed parry. With a weapon that already parries, he parries on a roll equal to or higher than his opponent's, and may re-roll that too."},
+    {"name": "Ultimate Specialist", "description": "He gains +1 Weapon Skill and +1 on the injury roll in close combat. It does not work with Ultimate Kill or Strike to Injure."},
+    {"name": "Play Dead", "description": "He may re-roll one result on the serious injury table. A Shadowblade with this skill may also use Vanish Into the Shadows while stunned, and may return to his hiding place with Silent Strike while knocked down."},
+    {"name": "Infiltration", "ours": "Infiltration"}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Chain Axe",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 6,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {"rule": "Two-handed"},
+        {"name": "Disarm", "text": "Roll to hit as normal. On a hit of 5 or more the target loses 1 Attack, to a minimum of 1, until the start of the wielder's next close combat phase. The wielder picks which weapon he disables."},
+        {"rule": "Save Modifier", "text": "A model wounded by a chain axe takes his armour save at -1, as against an axe."}
+      ]
+    },
+    {
+      "name": "Wyrd Blade",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 6,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {"name": "Corrosive", "text": "The wielder strikes at +1 Strength in the first round of each combat."},
+        {"rule": "Parry", "text": "The blade counts as a sword, so the wielder may parry blows."}
+      ]
+    },
+    {
+      "name": "Kill Knife",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 6,
+      "range": "Close Combat",
+      "strength": "As user, to a maximum of 4",
+      "rules": [
+        {"name": "Weak Spot", "text": "+1 to the injury roll."},
+        {"rule": "No Save", "text": "A model wounded by a kill knife takes no armour save."}
+      ]
+    },
+    {
+      "name": "Body Armour",
+      "type": "Armour",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 6,
+      "save": "6+",
+      "rules": [
+        {"name": "Skaven only", "text": "The armour is cut for a Skaven and no other race may wear it."},
+        {"name": "Second chance", "text": "A failed armour save may be re-rolled once."}
+      ]
+    },
+    {
+      "name": "Short Spear",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 7,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {"name": "Spear or sword", "text": "Used in both hands it gives strike first and parry. Used in one hand it gives parry only, and counts as a hand weapon, so it may be combined with a shield."}
+      ]
+    },
+    {
+      "name": "Assassin Bullets",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 7,
+      "rules": [
+        {"name": "Sling shot", "text": "Sling bullets cut to wound better than a stone: +1 to the injury roll."}
+      ]
+    },
+    {
+      "name": "Black Darts",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 7,
+      "range": "8\"",
+      "strength": "3",
+      "rules": [
+        {"name": "Dark venom", "text": "A dart is Strength 2 and coated in dark venom, which makes it Strength 3. Against a model immune to poison it is Strength 2. No other poison may be used on them."},
+        {"name": "Small projectile", "text": "A dart may be thrown while hidden. The thrower is detected only if the victim is hit and a D6 roll of 4 or more follows. Darts may be used with Knife-Fighter."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 2, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum. Its maximum of 12 is."},
+    {"page": 2, "what": "Starting experience: Shadowblade 20, Silent Hunter 12, Black Knife 8, Young Snout 0, henchmen 0."},
+    {"page": 3, "what": "The skill tables are printed as prose, not a table of ticks, and were read from the text."},
+    {"page": 3, "what": "The \"Silent Hunter Only\" block (Kill Knife, Short Spear, Body Armour) sits under the Assassin column, so those three lines are on the Assassin list, closed to everyone but the Silent Hunter."},
+    {"page": 3, "what": "\"These prices are only at warband creation\" (Black Venom, Assassin Bullets) needs no rule: our list prices are already open only until the warband's first battle."},
+    {"page": 3, "what": "Black Venom is our Dark Venom, which the warband's own Master of Poisons skill names by that name, shown under the PDF's wording at its 10 gc list price. Ours is 30 gc Rare 8 in the store. See the decisions."},
+    {"page": 3, "what": "Throwing Stars is our Throwing Knives/Stars/Axes (William, 11 Nov 2026: one entry for all of them), shown under the PDF's name."},
+    {"page": 4, "what": "The Shadowblade's Perfect Killer and Fear are our shared specials: the same words."},
+    {"page": 4, "what": "The PDF grants the warband no rulebook Skaven skills: its heroes tick Special only, so the new Assassin Squad group is its own and the Skaven and Skaven of Karak Azgal groups are untouched."},
+    {"page": 6, "what": "The Chain Axe, Wyrd Blade, Kill Knife, Body Armour, Short Spear, Assassin Bullets and Black Darts are stubs: none matches an item of ours. Each is Common, so its price row carries no rarity."},
+    {"page": 6, "what": "The Kill Knife \"is treated like being at the users strength with a maximum of S4\", read as the wielder's Strength to a maximum of 4."},
+    {"page": 7, "what": "The Black Darts are printed \"S3 (S2 + dark venom, some creatures are immune to poison)\", read as Strength 2 plus the venom's +1, so Strength 2 against a model immune to poison."},
+    {"page": 7, "what": "Master of Poisons is kept apart as Master of Poisons (Assassin Squad): ours makes D3-1 doses of Dark Venom only, the PDF's \"3D-1 portions of dark venom or black lotus\". \"3D-1\" is as printed and is probably D3-1. See the decisions."},
+    {"page": 7, "what": "Silent Strike is kept apart as Silent Strike (Assassin Squad): our skill of the name lets a warrior shoot while hidden, where this one charges out of hiding and back. See the decisions."},
+    {"page": 8, "what": "The warband's Infiltration is word for word our Infiltration, so it is linked."},
+    {"page": 8, "what": "The Development Progression and Designer Notes are not imported."}
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "warbandType": "circus-extraordinare",
+  "name": "Circus Extraordinaire",
+  "source": "Circus Extraordinaire",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/experimental/Circus%20Extraordinaire.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Entertain the Masses", "ruleFull": "In the exploration phase the warband may entertain the people living in the ruins instead of exploring. It then rolls an extra 2D6 for the wyrdstone shards it finds, and counts no doubles, triples or other results on the exploration tables."},
+    {"rulename": "Superstitious", "ruleFull": "The warband must always decline the chance to loot the dead."},
+    {"rulename": "Lure of the Road", "ruleFull": "Where an exploration result would let an Undead warband add zombies, or another warband sell people as slaves, the warband may add those people as Impressionable Youths instead."},
+    {"rulename": "Apprenticeship", "ruleFull": "A Youth promoted by That Lad's Got Talent may be named the apprentice of one Performer. If that Performer dies the Youth gains his special rules in his place, even if that takes the warband past its limit for that specialization. A promoted Youth is no longer subject to Dream Chasers."},
+    {"rulename": "Hard Luck of the Road", "ruleFull": "To hire a new Performer the Ringmaster must pass a Leadership test, at -1 for each Performer he has lost in battle and a further -1 for each Performer after the first he is hiring at the same time."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "performer-equipment-list",
+      "title": "Performer Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Club, Mace or Hammer", "alias": "Hammer/Mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double Handed Weapon", "cost": {"cost": 15}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Longbow", "cost": {"cost": 15}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35}},
+        {"name": "hunting rifle", "alias": "", "cost": {"cost": 200}},
+        {"name": "throwing knives", "alias": "Throwing Knives", "cost": {"cost": 15}},
+        {"name": "light armour", "alias": "Light Armor", "cost": {"cost": 20}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "hireling-equipment-list",
+      "title": "Hireling Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Club, Mace or Hammer", "alias": "Hammer/Mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double Handed Weapon", "cost": {"cost": 15, "costSuffix": "(Strongmen only)"}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "", "cost": {"cost": 15}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2, "costSuffix": "(Impressionable Youths only)"}},
+        {"name": "light armour", "alias": "Light Armor", "cost": {"cost": 20}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "ringmaster",
+      "type": "hero",
+      "name": "Ringmaster",
+      "plural": "Ringmasters",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["performer-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior in the warband within 6\" of the Ringmaster may use his Leadership instead of his own."},
+        {"rulename": "Performer Skill", "ruleFull": "For 20 gc more the Ringmaster may take one of the Performer specializations himself. He then counts towards the warband's limit for that specialization, and starts with 4 experience more."}
+      ]
+    },
+    {
+      "id": "performer",
+      "type": "hero",
+      "name": "Performer",
+      "plural": "Performers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["performer-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Lesser Magic"],
+      "specialRules": [
+        {"rulename": "Specialist", "ruleFull": "Each Performer picks one specialization when he joins, within the warband's limits: 0-2 Beast Tamer, 0-2 Acrobat, 0-1 Exotic Mystery of the East, 0-1 Freak, 0-1 Marksman, 0-1 Magician.\n\nBeast Tamer: the warband may hold 2 more Trained Animals, and a Trained Animal within 6\" of him does not test for Ferocity.\n\nAcrobat: he starts with the Dodge skill.\n\nExotic Mystery of the East: he never uses a weapon and is always treated as carrying a pair of clubs. He may be given no equipment.\n\nFreak: he may buy a mutation from the Cult of the Possessed mutation list.\n\nMarksman: he starts with Knife-Fighter or Trick Shooter.\n\nMagician: he is a spell caster, as a Warlock is.\n\nA Marksman takes Combat, Shooting and Speed as his skill lists; a Freak and an Exotic Mystery of the East take Combat and Strength; every other Performer takes Combat, Academic and Speed."}
+      ]
+    },
+    {
+      "id": "tough",
+      "type": "henchman",
+      "name": "Tough",
+      "plural": "Toughs",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 4, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["hireling-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "pickpocket",
+      "type": "henchman",
+      "name": "Pickpocket",
+      "plural": "Pickpockets",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["hireling-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "strongman",
+      "type": "henchman",
+      "name": "Strongman",
+      "plural": "Strongmen",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 4, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["hireling-equipment-list"],
+      "specialRules": [
+        {"rulename": "Beefy", "ruleFull": "A Strongman's maximum Strength is 5."}
+      ]
+    },
+    {
+      "id": "impressionable-youth",
+      "type": "henchman",
+      "name": "Impressionable Youth",
+      "plural": "Impressionable Youths",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 15,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["hireling-equipment-list"],
+      "specialRules": [
+        {"rulename": "Dream Chasers", "ruleFull": "The warband may never hold more Impressionable Youths than its other hirelings together. If losses leave the hirelings outnumbered, enough Youths leave the warband to put that right."}
+      ]
+    },
+    {
+      "id": "clown",
+      "type": "henchman",
+      "name": "Clown",
+      "plural": "Clowns",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["hireling-equipment-list"],
+      "specialRules": [
+        {"rulename": "Goofy Clothes", "ruleFull": "A Clown's costume gives him a 6+ armour save that the Strength of a hit never modifies. He loses it while he carries or wears anything else that gives an armour save."}
+      ]
+    },
+    {
+      "id": "trained-animal",
+      "type": "henchman",
+      "name": "Trained Animal",
+      "plural": "Trained Animals",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 20,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 6, "ws": 4, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. A Trained Animal fights with claws and fangs.",
+      "specialRules": [
+        {"rulename": "Animal", "ruleFull": "A Trained Animal is an animal and gains no experience."},
+        {"rulename": "Ferocity", "ruleFull": "While it is out of range of its trainer and not in close combat a Trained Animal must test for stupidity. Where a failed test would have it stand still, it charges the nearest model instead, friend or foe."},
+        {"rulename": "Oddity", "ruleFull": "For 60 gc more when it is bought, one Trained Animal in the warband may be an Oddity: it gains +1 Wound and +1 Toughness, and is subject to stupidity in place of Ferocity."},
+        {"rulename": "Tamer Limits", "ruleFull": "The warband may hold 2 Trained Animals for each Beast Tamer Performer."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
+    {"page": 2, "what": "No fighter has a Special column, so the warband declares no skill group."},
+    {"page": 3, "what": "The Performer is one entry (0-4) with six specializations the player picks from, each with its own limit and its own skill lists. The entry is one fighter with its skill lists set to the Combat, Academic and Speed of \"most Performers\"; the Marksman's (Combat, Shooting, Speed) and the Freak's and Mystery of the East's (Combat, Strength) are in his Specialist rule, as are the specializations themselves."},
+    {"page": 3, "what": "The Magician specialization \"has the Wizard Special Rule as per Warlocks\" and names no lore, so Lesser Magic (the Warlock's) is offered to a Performer and the rule says only that he casts as a Warlock does."},
+    {"page": 3, "what": "The Freak may buy \"a Mutation from the Cult of the Possessed Mutations list\", which our Cult template already sells; no upgrade list of this warband's own was made."},
+    {"page": 3, "what": "The Acrobat starts with Dodge and the Marksman with Knife-Fighter or Trick Shooter. They are written in the Specialist rule rather than as skills a Performer starts with, because only one specialization in six takes each."},
+    {"page": 3, "what": "The Ringmaster's Performer Skill (20 gc for a specialization and 4 more starting experience) is kept as his rule. See the decisions."},
+    {"page": 3, "what": "Starting experience: Ringmaster 20, Performers 8, henchmen 0."},
+    {"page": 4, "what": "The Performer list sells a Pistol at 15 gc and a brace at 30 gc."},
+    {"page": 4, "what": "The Hireling list's Double Handed Weapon is marked Strongmen only and its Sling Impressionable Youths only."},
+    {"page": 4, "what": "Throwing Knives is our Throwing Knives/Stars/Axes (William, 11 Nov 2026: one entry for all of them)."},
+    {"page": 6, "what": "The Strongman and the Clown are printed with \"{Description}\" where their text would be: the PDF is unfinished there. Their profiles and rules are as printed."},
+    {"page": 6, "what": "The Trained Animal's Oddity costs \"an additional 60 points at purchase\", read as 60 gold crowns."},
+    {"page": 6, "what": "No group size is printed for the henchmen; each is bought in groups of 1-5, as the header says."},
+    {"page": 7, "what": "The Development Progression and Designer Notes are not imported. No page was opened as an image: every page of the PDF has a text layer."}
+  ]
+}

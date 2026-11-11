@@ -1,0 +1,222 @@
+{
+  "warbandType": "altdorf-expeditionary-party",
+  "name": "Altdorf Expeditionary Party",
+  "source": "Altdorf Expeditionary Party",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/experimental/Altdorf%20Expeditionary%20Party.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Students", "ruleFull": "No more than half of the warband may be Students."},
+    {"rulename": "Solemn Duty", "ruleFull": "The warband may not take on a hired sword or dramatis persona who can cast spells."},
+    {"rulename": "Beyond Reproach", "ruleFull": "The warband may not ally with a warband that holds members or hirelings who are Undead, possessed, daemonic, mutated or evil, and may take on no hired sword or dramatis persona who is."},
+    {"rulename": "Perils of Casting", "ruleFull": "A wizard casting Common Magic who rolls two 1s suffers a miscast and rolls at once on the table below. No change to the dice cancels a miscast, re-rolls included, though a re-roll may cause one.\n\n2D6 | Result\n2 | The wizard is taken out of action.\n3 | The wizard is stupid. Roll a D6 after the battle: on a 2 or more the effect ends.\n4 | The wizard may cast no spell for the rest of the battle.\n5-6 | The spell is cast on the wizard himself. Any choice it calls for is made by the player to his left.\n7 | Nothing happens beyond the spell failing.\n8-9 | The wizard is thrown D6\" in a random direction and lands knocked down.\n10-11 | The wizard may cast no spell in his next shooting phase. He may use missile weapons as normal.\n12 | Pick a warband at random from those with a caster, then a caster within it at random. That caster may cast one spell of his choice for free, with no roll to cast; everything else follows the normal rules."},
+    {"rulename": "The Colleges", "ruleFull": "A Mage picks one College of magic, which he may never abandon. Each College changes his Common Magic as follows.\n\nAmber: the target of Buff causes fear. The wizard also knows Children of the Wild, which works as Children of the Horned Rat but summons woodland animals, using the giant rat profile. De-buff cast on an animal sets the target's Movement to 0 while it lasts.\n\nAmethyst: Blast 2 ignores armour saves. A model taken out of action by Blast 1 cannot be raised by Necromancy. Unsaved wounds from Blast 2 and Blast 3 are drained to the caster, who may go above his starting and racial maximum Wounds until the end of the battle. Only living models are affected by Blast 2 and Blast 3.\n\nBright: every Blast spell counts as flaming. The target of Buff causes flaming hits in close combat. De-buff causes a Strength 0 flaming hit for each failed recovery test. A fighter of either side who hits a warded model in close combat suffers a Strength 0 flaming hit for each hit he scores.\n\nCelestial: Buff grants re-rolls of missed hits in the close combat and shooting phases. Ward grants re-rolls of failed saves and characteristic tests. De-buff forces re-rolls of successful hits in the close combat and shooting phases. The wizard also knows Scrying, difficulty automatic, which alters one dice by +1 or -1 in the exploration phase.\n\nGold: Blast 1 counts as flaming. Blast 2 is Strength 3 against a target in light armour and Strength 4 against one in heavy armour; Blast 3 is Strength 4 and Strength 5 the same way; both ignore armour saves. Against a target in neither, both are Strength 1. Add +1 Strength if the target wears a helmet. The wizard may also, instead of searching for rare trade, try to make D3 units of Flash Powder, D3 units of Superior Blackpowder or one Fire Bomb, succeeding on a D6 roll of 4 or more.\n\nGrey: the target of Buff causes fear and may make a normal move or charge at once when the spell is cast. The target of Ward may fly up to 12\" in the movement phase instead of moving or charging, and counts as charging if that brings him into base contact with an enemy. The wizard may also adjust a mission roll by +1 or -1 after it is rolled; where more than one model may, the highest Leadership test chooses the order.\n\nJade: Blast spells are +1 Strength if the target is within 1\" of a terrain feature that gives cover without being a building, or of difficult, very difficult or impassable terrain. De-buff halves the target's Movement. Buff doubles the target's Toughness and halves his Movement and Initiative. Ward heals the model to full on the turn it is first cast. After serious injuries are rolled, one result of 36 or less is ignored on a D6 roll of 3 or more.\n\nLight: Blast spells are +1 Strength against Undead, daemonic and possessed models. A living model hit by Blast 1 must also pass an Initiative test or be dazzled, counting as Weapon Skill 1 in its next close combat phase. Blast 2 and Blast 3 cause one flaming hit. Ward heals the model 1 wound and stands him up on the turn it is first cast, with no close combat penalty for standing up. Buff makes every model within 8\" of the target immune to fear.\n\nFlaming hits: a model that suffers an unsaved flaming hit is set on fire on a D6 roll of 5 or more. It takes a Strength 4 hit in each recovery phase; if it survives, roll a D6, and on a 4 or more the fire goes out. Any unengaged friendly model in contact with it that earns experience may roll as well, and a 4 or more from any of them puts the fire out. A burning model flees in a random direction under the normal rules for fleeing."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "wizard-equipment-list",
+      "title": "Wizard Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Club, Mace or Hammer", "alias": "Wand/Staff/Mace", "cost": {"cost": 3}},
+        {"name": "Quarterstaff (Altdorf Expeditionary Party)", "alias": "Quarterstaff", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 15}},
+        {"name": "Glyph of Blasting", "alias": "", "cost": {"cost": 25}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "warrior-equipment-list",
+      "title": "Warrior Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Club, Mace or Hammer", "alias": "Hammer/Mace", "cost": {"cost": 3, "costSuffix": "(Not Soldiers)"}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5, "costSuffix": "(Not Soldiers)"}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15, "costSuffix": "(Not Soldiers)"}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15, "costSuffix": "(Not Soldiers)"}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10, "costSuffix": "(Not Soldiers)"}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25, "costSuffix": "(Not Soldiers)"}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "costSuffix": "(Not Soldiers)"}},
+        {"name": "duelling pistol", "alias": "", "cost": {"cost": 25, "costSuffix": "(Not Soldiers)"}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10, "costSuffix": "(Not Soldiers)"}},
+        {"name": "long bow", "alias": "", "cost": {"cost": 15, "costSuffix": "(Not Soldiers)"}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35, "costSuffix": "(Not Soldiers)"}},
+        {"name": "toughened leathers", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5, "costSuffix": "(Not Soldiers)"}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "arch-mage",
+      "type": "hero",
+      "name": "Arch-Mage",
+      "plural": "Arch-Mages",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 9},
+      "equipmentLists": ["wizard-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Common Magic"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior in the warband within 6\" of the Arch-Mage may use his Leadership instead of his own."},
+        {"rulename": "Wizard", "ruleFull": "The Arch-Mage is a spell caster and uses Common Magic."},
+        {"rulename": "Learned", "ruleFull": "The Arch-Mage starts with one Common Magic spell of your choice and one Common Magic spell chosen at random."}
+      ]
+    },
+    {
+      "id": "man-at-arms",
+      "type": "hero",
+      "name": "Man-At-Arms",
+      "plural": "Men-At-Arms",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 55,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["warrior-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "student",
+      "type": "henchman",
+      "name": "Student",
+      "plural": "Students",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 30,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["wizard-equipment-list"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "A Student starts with no spells, but counts as a wizard, in particular for what weapons he may use and for hatred. As a henchman he may still use no equipment beyond his list."},
+        {"rulename": "Very Talented", "ruleFull": "A Student who rolls That Lad's Got Talent becomes a Mage. Pick two skill lists for him as normal; he also takes the warband's special skills. In place of rolling on the hero's advance table, pick a College of magic for him and a Common Magic spell of your choice. A Mage is recruited no other way, has no hire cost and buys from the Wizard equipment list."}
+      ]
+    },
+    {
+      "id": "soldier",
+      "type": "henchman",
+      "name": "Soldier",
+      "plural": "Soldiers",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["warrior-equipment-list"],
+      "specialRules": [
+        {"rulename": "Trained to a Pattern", "ruleFull": "A Soldier takes only the lines of the Warrior list marked for him. A Soldier promoted to a Hero who learns Weapons Training or Weapons Expert may be equipped as those skills allow."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Altdorf Expeditionary Party",
+    "new": true,
+    "note": ""
+  },
+  "specialSkillsList": [
+    {"name": "Power Surge", "description": "Wizards only. He may roll one extra dice when casting Common Magic. Two 1s still cause a miscast."},
+    {"name": "Arcane Reach", "description": "Wizards and prayer users only. The range of any spell he casts is 6\" longer. It does nothing for a spell that targets only the caster, and does not widen the area a spell affects: only the distance to the first target."},
+    {"name": "Combat Wizard", "pdfName": "Combat wizard", "description": "Wizards only. He may take skills from the Combat, Shooting and Strength lists. He may never hold more skills taken this way than half his Weapon Skill, rounding up."},
+    {"name": "Arcane Barrage", "description": "Wizards and prayer users only. After casting a spell he may try to cast a second. He first suffers a Strength 3 hit with no armour or dodge save allowed; if he is still standing he casts as normal. It may not be used after any other skill or ability that allows more than one cast in a turn, and none may be used after it."},
+    {"name": "Large Familiar", "pdfName": "Large familiar", "description": "Wizards only. His familiar is a larger animal with the profile of a wardog for 25 gc more or of a giant rat for 15 gc more, paid with the summoning. It is deployed with its wizard and never without him, may use his Leadership within 6\", and rolls as a henchman when it is taken out of action; its wizard must then pass a Leadership test or be stunned. It is not a mount, may not be ridden, and does not count towards the warband's maximum models."},
+    {"name": "Surveyor", "description": "When he rolls for exploration he may roll two dice instead of one and keep either, once per exploration phase."},
+    {"name": "Hardened Will", "description": "Wizards only. He may re-roll his Leadership tests."},
+    {"name": "Dispell (Altdorf Expeditionary Party)", "pdfName": "Dispell", "description": "Wizards and prayer users only. After an enemy wizard casts a spell, a wizard with this skill who can see him may try to dispel it: roll 2D6, and the spell is dispelled on a roll equal to or higher than the enemy's casting roll. Only one attempt may be made against each casting."},
+    {"name": "Fierce Casting", "description": "Wizards only. A spell he casts that has a Strength value causes critical hits under the normal rules for critical hits. Where the optional critical tables are in use, the default tables are used instead; a spell that summons a weapon uses the table for that weapon."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Quarterstaff (Altdorf Expeditionary Party)",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 4,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {"rule": "Concussion", "text": "When the wielder rolls to see how badly a model is injured, a roll of 2-4 is treated as stunned."},
+        {"rule": "Two-handed"},
+        {"rule": "Parry"}
+      ]
+    },
+    {
+      "name": "Glyph of Blasting",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 5,
+      "rules": [
+        {"name": "Wizards only", "text": "Only a spell caster may buy a glyph of blasting."},
+        {"name": "Inscribed on a weapon", "text": "The glyph may be added to any ranged or close combat weapon carried or in the stash, and must be on a weapon to be used. If that weapon is lost the glyph is lost with it, and is regained with it. For selling, the weapon and the glyph count as one item worth the two prices together. The glyph fills a ranged weapon slot, so a sword carrying one fills a close combat slot and a ranged slot."},
+        {"name": "Arcane bolt", "text": "A wizard carrying a weapon with the glyph may cast Arcane bolt, difficulty 5: range 24\", one Strength 4 hit. The normal rules and modifiers for shooting at a target apply, and it may not be used in close combat."}
+      ]
+    },
+    {
+      "name": "Grimoire of Magic",
+      "cost": 200,
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 13,
+      "dice": 1,
+      "diceMultiplier": 50,
+      "rulesPage": 6,
+      "types": ["altdorf-expeditionary-party"],
+      "rules": [
+        {"name": "Who may buy one", "text": "Any warband that may hire a wizard hero, or that holds a member with Arcane Lore."},
+        {"name": "Learning from it", "text": "The grimoire works as a Tome of Magic, except that the wizard may learn spells from the Lesser Magic list, from his own warband's list where he has one, or from one College of magic. A wizard may ever pick only one College, and may not abandon it once picked; he gains that College's advantages and is subject to the Perils of Casting when he casts Common Magic."},
+        {"name": "Found, not bought", "text": "A Tome of Magic that comes from anywhere but the trading post or another player is a Grimoire of Magic instead on a D6 roll of 5 or more."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 1, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
+    {"page": 1, "what": "\"50% Students: A maximum of half your warband may be Students\" is a warband rule: our fighter counts are whole numbers."},
+    {"page": 1, "what": "The skill table was read from the page as an image (its ticks are glyphs): Arch-Mage Academic, Speed, Special; Men-At-Arms Combat, Shooting, Strength, Speed, Special; the Mage ticks Special and two lists of the player's choice."},
+    {"page": 2, "what": "The Mage has no profile (\"N/A\") and no hire cost: he exists only as a promoted Student, so no fighter row was made, as the Karak Azgal Adventurers' Imperial Captain has none. His terms are in the Student's Very Talented rule."},
+    {"page": 2, "what": "The Student's Wizard rule says he counts as a wizard but \"being Henchmen, they still cannot use any equipment\", while his entry says he picks weapons and armour from the Wizard list. Both are kept as printed; he buys from the Wizard list."},
+    {"page": 2, "what": "Starting experience: Arch-Mage 20, Men-At-Arms 8. None is printed for the henchmen, so they start with 0."},
+    {"page": 3, "what": "The Soldier's entry says \"1 spear, halberd, or sword\" while the list's asterisks mark Dagger, Sword, Spear, Toughened Leathers, Light armour, Heavy armour, Shield and Helmet as his, with no asterisk on the Halberd. The asterisks are followed, because they also settle his armour; the Halberd is closed to Soldiers. See the decisions."},
+    {"page": 3, "what": "The Halberd is 15 gc on the Wizard list and 10 gc on the Warrior list. Both are kept as printed."},
+    {"page": 3, "what": "The Wizard list's Wand/Staff/Mace is our Club, Mace or Hammer at the same 3 gc, shown under the PDF's name; so is the Warrior list's Hammer/Mace."},
+    {"page": 4, "what": "The Familiar is our Familiar: 20 gc on both, and ours is the same ritual and re-roll. Ours re-rolls one failed casting roll each turn where the PDF's does it once per game, and the PDF prints \"Ld\" where its rarity would go, which we cannot read, so ours (Rare 8) stands. See the decisions."},
+    {"page": 4, "what": "The Quarterstaff is kept apart as Quarterstaff (Altdorf Expeditionary Party): ours is 15 gc with Balanced (+1 Initiative) and Freestyle, the PDF's 3 gc with Concussion, Two-handed and Parry. See the decisions."},
+    {"page": 5, "what": "The Glyph of Blasting is a stub typed Miscellaneous, not a weapon: it is inscribed on a weapon and is not wielded itself. Its Arcane bolt is part of its rules, not a spell of a lore."},
+    {"page": 6, "what": "The Grimoire of Magic is printed \"(Optional)\", Rare 13, 200 + D6x50 gc, and no equipment list sells it, so it is a stub with a price row of its own for this warband."},
+    {"page": 5, "what": "The PDF says the Familiar, Quarterstaff, Glyph of Blasting and Grimoire of Magic \"are available to all warbands for any warrior that can use them\". Our price rows name this warband, so another warband sees them as not usually available, which warns rather than blocks. See the decisions."},
+    {"page": 7, "what": "Each special skill names who may take it beyond this warband (\"may be taken by any College wizard\", \"any wizard or prayer user\"). The limit within the warband opens the skill's description; the grant to other warbands is not imported (William, 11 Nov 2026)."},
+    {"page": 7, "what": "Dispell is kept apart as Dispell (Altdorf Expeditionary Party): our Dispel needs a roll higher than the casting roll, where the PDF's dispels on equal or higher, needs line of sight and allows one attempt per casting. See the decisions."},
+    {"page": 7, "what": "The Large Familiar skill also lets a campaign using expanded mount rules take any mount's profile for half that mount's price. That is left out: it points at rules we do not hold. The wardog and giant rat profiles and their 25 gc and 15 gc are kept."},
+    {"page": 8, "what": "Common Magic is a new lore of six spells, difficulties 9, 9, 10, 7, 9 and 9. The eight Colleges change what those spells do and are one warband rule; the player picks a Mage's College."}
+  ]
+}

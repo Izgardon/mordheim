@@ -1,0 +1,227 @@
+{
+  "warbandType": "dwarf-grudgebearers",
+  "name": "Dwarf Grudgebearers",
+  "source": "Dwarf Grudgebearers",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/experimental/Dwarf%20Grudgebearers.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Hard to Kill", "ruleFull": "On the injury chart a Dwarf of the warband is knocked down on a 1 or 2, stunned on a 3, 4 or 5, and taken out of action only on a 6."},
+    {"rulename": "Hard Head", "ruleFull": "A Dwarf of the warband ignores the special rules for maces, clubs and the like."},
+    {"rulename": "Armour", "ruleFull": "A Dwarf of the warband never suffers a movement penalty for wearing armour."},
+    {"rulename": "Hate Orcs and Goblins", "ruleFull": "Every Dwarf of the warband hates Orcs and Goblins."},
+    {"rulename": "Grudgebearers", "ruleFull": "The warband may never take on an Elven hired sword or dramatis persona of any kind."},
+    {"rulename": "Incomparable Miners", "ruleFull": "Add +1 to the number of wyrdstone shards the warband finds at the end of a battle."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "dwarf-warrior-equipment-list",
+      "title": "Dwarf Warrior Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Club, Mace or Hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "dwarf axe", "alias": "", "cost": {"cost": 15}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "gromril weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 times the cost"}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "duelling pistol", "alias": "Dueling Pistol", "cost": {"cost": 30, "braceCost": 60}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "gromril armour", "alias": "", "cost": {"cost": 75}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "dwarf-quarreller-equipment-list",
+      "title": "Dwarf Quarreller Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Club, Mace or Hammer", "alias": "Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "dwarf axe", "alias": "", "cost": {"cost": 15}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "gromril weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 times the cost"}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "thane",
+      "type": "hero",
+      "name": "Thane",
+      "plural": "Thanes",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {"m": 3, "ws": 5, "bs": 4, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior in the warband within 6\" of the Thane may use his Leadership instead of his own."}
+      ]
+    },
+    {
+      "id": "runesmith",
+      "type": "hero",
+      "name": "Runesmith",
+      "plural": "Runesmiths",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 10,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "skillGroups": ["Dwarf Grudgebearers"],
+      "skills": ["Warrior Wizard"],
+      "spellLores": ["Dwarf Runes"],
+      "specialRules": [
+        {"rulename": "Rune Wizard", "ruleFull": "The Runesmith is no wizard and does not follow the rules for wizards, but he casts runes as spells."}
+      ]
+    },
+    {
+      "id": "oath-guard",
+      "type": "hero",
+      "name": "Oath Guard",
+      "plural": "Oath Guards",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 3, "ws": 5, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": [
+        {"rulename": "My Lord, Watch It!", "ruleFull": "When the Thane is charged, the Oath Guard may intercept from within 4\" instead of 2\"."},
+        {"rulename": "The Oath Is Broken", "ruleFull": "If the Thane dies the Oath Guard becomes a Slayer and gains the Deathwish rule. He may never again carry or use a missile weapon or any armour, and he learns from the Slayer special skills. He may never become the leader, and no new Oath Guard may be hired. Every skill he has already learnt he keeps."}
+      ]
+    },
+    {
+      "id": "ranger",
+      "type": "hero",
+      "name": "Ranger",
+      "plural": "Rangers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 8,
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-quarreller-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": false, "special": true},
+      "skillGroups": ["Dwarf Grudgebearers"],
+      "specialRules": []
+    },
+    {
+      "id": "quarreller",
+      "type": "henchman",
+      "name": "Quarreller",
+      "plural": "Quarrellers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 40,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-quarreller-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "clansman",
+      "type": "henchman",
+      "name": "Clansman",
+      "plural": "Clansmen",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 40,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 3, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 9},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "aspirant",
+      "type": "henchman",
+      "name": "Aspirant",
+      "plural": "Aspirants",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 3, "ws": 3, "bs": 2, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 8},
+      "equipmentLists": ["dwarf-warrior-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {
+    "name": "Dwarves",
+    "new": false
+  },
+  "specialSkillsList": [
+    {"name": "Master of Blades", "ours": "Master of Blades"},
+    {"name": "Extra Tough", "ours": "Extra Tough"},
+    {"name": "Resource Hunter", "ours": "Resource Hunter"},
+    {"name": "True Grit", "ours": "True Grit"},
+    {"name": "Thick Skull", "ours": "Thick Skull"}
+  ],
+  "sharedSkillGroup": {
+    "name": "Dwarf Grudgebearers",
+    "note": "Monster Hunter, Set Traps and Infiltration are the Ranger's; Expert Runesmith the Runesmith's.",
+    "types": ["dwarf-grudgebearers"],
+    "skills": [
+      {"name": "Monster Hunter", "description": "Every enemy monster and animal counts as a large target for him."},
+      {"name": "Set Traps (Dwarf Grudgebearers)", "pdfName": "Set Traps", "description": "He may set one gin trap per battle, in a turn in which he fires no weapon and has not just stood up from being knocked down: place a marker touching him. A model that moves within 2\" of the marker rolls a D6, and on a 3 or more it springs the trap and takes a Strength 4 hit. A 6 to wound is no critical hit, but gives a further -1 to armour saves; armour and ward saves are taken as normal with their modifiers. A model that is not wounded, or that does not spring the trap, finishes its move; one that is wounded is placed knocked down or stunned 2\" from the marker. A sprung trap's marker is removed."},
+      {"name": "Expert Runesmith", "description": "He adds +1 to all of his difficulty rolls."},
+      {"name": "Infiltration", "ours": "Infiltration"}
+    ]
+  },
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum. Its maximum of 12 is."},
+    {"page": 1, "what": "Starting experience: Thane 20, Runesmith 10, Oath Guard 8, Ranger 8, and 0 for the Quarrellers, the Aspirants and the \"Warriors\", which is the Clansmen (no other fighter is called a Warrior)."},
+    {"page": 2, "what": "The Gromril weapon line is \"3 times the cost\", which our Gromril Weapon already prices that way, and the Gromril armour is 75 gc on the list. Both notes say the price holds for a starting warband only, which needs no rule: our list prices are open only until the warband's first battle."},
+    {"page": 3, "what": "The skill table's ticks were read from the page's own text columns: Thane and Ranger Combat, Shooting, Strength and Special; Runesmith and Oath Guard Combat, Strength and Special. None has Academic or Speed, the Runesmith included."},
+    {"page": 3, "what": "The Dwarf axe box (15 gc, Rare 8, Dwarfs only, Cutting Edge and Parry) is our Dwarf Axe word for word, so it is linked and no stub was made."},
+    {"page": 3, "what": "The Gin Trap box prints no price and no equipment list sells it, and its text is what the Ranger's Set Traps skill does, so it is part of that skill rather than an item."},
+    {"page": 4, "what": "The fighters' names are set as images; each entry was read from the text that follows it (\"A Dwarf Oath Guard may be equipped...\"), which names every one of them."},
+    {"page": 4, "what": "The Thane's Leader rule is printed \"within 6\\\" of the Agent\", which is a slip for the Thane; it is written as the Thane."},
+    {"page": 4, "what": "The Runesmith's Warrior Wizard rule says only what our Warrior Wizard skill does, so he starts with that skill rather than carrying the rule."},
+    {"page": 4, "what": "The Oath Guard's The Oath Is Broken gives him the Deathwish rule and the Slayer special skills when the Thane dies. It stays his rule: the app cannot switch his skill lists."},
+    {"page": 5, "what": "No group size is printed for the henchmen; 1-5 is used."},
+    {"page": 5, "what": "The Runesmith's six runes are a new lore, Dwarf Runes, with the difficulties the PDF prints (6, 8, 8, 8, 8, 7). Expert Runesmith is the one skill of his own table, so it sits in the warband's own group with the Ranger's, with the group's note saying whose each is."},
+    {"page": 6, "what": "The Dwarf Heroes' skill table is our Dwarves group word for word (Master of Blades, Extra Tough, Resource Hunter, True Grit, Thick Skull), so the Special tick names that group and this warband type joins its learners, as the Karak Azgal Dwarf Guildsmen and Dwarf Slayers did."},
+    {"page": 3, "what": "Set Traps is kept apart as Set Traps (Dwarf Grudgebearers): our Set Traps is the Ogre Hunting Party's, reads \"Gnoblars only\" and has no -1 armour save on a 6 to wound. See the decisions."},
+    {"page": 1, "what": "The warband's Hard to Kill, Hard Head, Armour and Hate Orcs and Goblins are the rulebook's Dwarf rules, kept as warband rules as the PDF prints them."}
+  ]
+}

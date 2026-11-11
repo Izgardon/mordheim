@@ -1,0 +1,263 @@
+{
+  "warbandType": "goblin-raiders",
+  "name": "Goblin Raiders",
+  "source": "Goblin Raiders",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Goblin%20Raiders.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {"rulename": "Animosity", "ruleFull": "Every henchman of the warband is subject to animosity, as the Orc & Goblin warband's rules describe it."},
+    {"rulename": "Fear Elves", "ruleFull": "The warband's Goblins fear Elves. No other member of the warband is affected."},
+    {"rulename": "Distasteful Company", "ruleFull": "The warband may hire only Pit Fighters, Ogre Bodyguards and Warlocks, any Goblin hired sword, and any hired sword whose own entry says he will work for Goblins."},
+    {"rulename": "Bonecrunchas", "ruleFull": "The warband may never hold more Bonecruncha Wolves than it holds Goblins."},
+    {"rulename": "Riding Skills", "ruleFull": "Every Hero of the warband may learn riding skills. The number of mounts a campaign allows does not change."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "goblin-equipment-list",
+      "title": "Goblin Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double Handed Weapon", "cost": {"cost": 15, "costSuffix": "(Heroes only)"}},
+        {"name": "Leather Whip", "alias": "", "cost": {"cost": 7, "costSuffix": "(Heroes only)"}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10, "costSuffix": "(Heroes only)"}},
+        {"name": "boss pole", "alias": "", "cost": {"cost": 20, "costSuffix": "(Heroes only)"}},
+        {"name": "poison daggers", "alias": "Poisoned Daggers", "cost": {"cost": 30, "costSuffix": "(Heroes only)"}},
+        {"name": "Sharp Daggas", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "throwing knives", "alias": "Throwing Knives", "cost": {"cost": 15, "costSuffix": "(Heroes only)"}},
+        {"name": "light armour", "alias": "Light Armor", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "Heavy Armor", "cost": {"cost": 50, "costSuffix": "(Heroes only)"}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "barding", "alias": "", "cost": {"cost": 30, "costSuffix": "(Heroes only)"}},
+        {"name": "giant wolf", "alias": "", "cost": {"cost": 85}},
+        {"name": "wolfcloak", "alias": "Wolf Cloak", "cost": {"cost": 10, "costSuffix": "(Heroes only)"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "big-boss",
+      "type": "hero",
+      "name": "Big Boss",
+      "plural": "Big Bosses",
+      "race": "goblin",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 17,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["goblin-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "skillGroups": ["Animal"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior in the warband within 6\" of the Big Boss may use his Leadership instead of his own."}
+      ]
+    },
+    {
+      "id": "shaman",
+      "type": "hero",
+      "name": "Shaman",
+      "plural": "Shamans",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 30,
+      "startingXp": 10,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["goblin-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "skillGroups": ["Animal"],
+      "spellLores": ["Waaaagh! Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Shaman is a spell caster and uses Waaagh! Magic."}
+      ]
+    },
+    {
+      "id": "boss",
+      "type": "hero",
+      "name": "Boss",
+      "plural": "Bosses",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["goblin-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "skillGroups": ["Animal"],
+      "specialRules": []
+    },
+    {
+      "id": "goblin-warrior",
+      "type": "henchman",
+      "name": "Goblin Warrior",
+      "plural": "Goblin Warriors",
+      "race": "goblin",
+      "minQty": 0,
+      "costGc": 15,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["goblin-equipment-list"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "A Goblin Warrior is subject to animosity."}
+      ]
+    },
+    {
+      "id": "wolfhead",
+      "type": "henchman",
+      "name": "Wolfhead",
+      "plural": "Wolfheads",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["goblin-equipment-list"],
+      "skills": ["Leap"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "A Wolfhead is subject to animosity."},
+        {"rulename": "Reckless", "ruleFull": "A Wolfhead who starts a turn out of combat and within 12\" of an enemy he can see ignores all psychology until the end of that turn, fear and animosity included, and moves as fast as he can towards that enemy, leaping to close the distance if his move is not enough. Reaching base contact counts as a charge. With more than one enemy within 12\" you pick the target. He is not reckless in a turn in which he has just stood up from being knocked down."}
+      ]
+    },
+    {
+      "id": "bonecruncha-wolf",
+      "type": "henchman",
+      "name": "Bonecruncha Wolf",
+      "plural": "Bonecruncha Wolves",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 30,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 7, "ws": 3, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. A Bonecruncha Wolf fights with fangs and claws and never uses weapons or armour.",
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "Bonecruncha Wolves are animals and gain no experience."},
+        {"rulename": "Charge", "ruleFull": "A Bonecruncha Wolf fights with 2 Attacks instead of 1 in the turn it charges, for that round of combat only."}
+      ]
+    },
+    {
+      "id": "stone-troll",
+      "type": "henchman",
+      "name": "Stone Troll",
+      "plural": "Stone Trolls",
+      "race": "troll",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 200,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 1},
+      "statblock": {"m": 6, "ws": 3, "bs": 1, "s": 5, "t": 4, "w": 3, "i": 1, "a": 3, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. A Troll may carry a big club, but may never be given weapons or armour.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Stupidity", "ruleFull": "The model is subject to stupidity."},
+        {"rulename": "Regeneration", "ruleFull": "Roll a D6 for each wound an enemy inflicts on the Troll: on a 4 or more the wound is ignored. A wound from fire or fire-based magic may not be regenerated. A Troll never rolls for injury after a battle."},
+        {"rulename": "Dumb Monsters", "ruleFull": "A Troll gains no experience and never learns a skill."},
+        {"rulename": "Always Hungry", "ruleFull": "The warband must pay 15 gc after each battle to feed the Troll. If it cannot, the Big Boss may sacrifice three Snotlings instead. If neither is paid the Troll wanders off in search of food."},
+        {"rulename": "Dispel", "ruleFull": "When a spell targets the Stone Troll, or a template over it falls on it, roll a D6: on a 4 or more the spell or prayer is negated and affects nobody."}
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "mutationName": "Speshul Nitches",
+      "mutationflavour": "Each Big Boss and Boss may buy one Speshul Nitch when he is hired, and no more. A Shaman may buy the Beastmasta Nitch and no other.",
+      "items": [
+        {"heading": "Lil' Warboss", "cost": "20", "ruleFull": "Big Boss only. Every Goblin within 6\" of him is free of animosity, which a Boss Pole does not add to. He may learn one special skill of the Orc Da Mob warband's list, and may buy heavy armour."},
+        {"heading": "World-Class Theef", "cost": "5", "ruleFull": "He may buy and use the special items of any greenskin warband that a Goblin can use, as the players agree. Where such an item is on his own equipment list he may buy it when the warband is raised. Nobody without this Nitch may use those items."},
+        {"heading": "Wolfskin", "cost": "25", "ruleFull": "He gains the Reckless rule, as a Wolfhead has it, and the Leap skill. He may buy a Wolfcloak, and may learn the special skill Strong 'Un."},
+        {"heading": "Beastmasta", "cost": "20", "ruleFull": "Any friendly animal within 6\" of him may use his Leadership, and the warband adds +1 to its rarity rolls when looking for a Giant Wolf mount. He may learn the special skill Beast tamer, and may buy a Leather Whip."},
+        {"heading": "Wolf Rida", "cost": "10", "ruleFull": "He starts with the skill Ride Giant Wolf. He may learn the special skill Wolf Breaker, and may buy barding."},
+        {"heading": "Nasty Skulker", "cost": "20", "ruleFull": "While he is armed with daggers and nothing else, Poisoned Daggers and Sharp Daggas included, he has the Lightning Reflexes skill. He may learn Infiltration and may buy Throwing Knives. No more than three members of the warband may take this Nitch."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Goblin Raiders",
+    "new": true,
+    "note": "Hit and run is any Hero's; Beast tamer needs the Beastmasta Nitch and Infiltration the Nasty Skulker Nitch."
+  },
+  "specialSkillsList": [
+    {"name": "Hit and run", "ours": "Hit and run"},
+    {"name": "Flank", "description": "Leader only. When the warband is set up, pick up to 3 of its members, but never the Troll. At the start of your third turn pick a table edge and roll a D6: on a 4 or more you may place those models anywhere along it, and on a 1, 2 or 3 along a table edge picked at random instead. Either way they may be placed up to 8\" in from the edge, never in combat and never within 6\" of an enemy. They may not move that turn, and count as having moved if they shoot."},
+    {"name": "Strong 'Un", "description": "A hero with the Wolfskin Nitch only. He learns one Strength skill at once. He may take this skill only once."},
+    {"name": "Wolf Breaker", "description": "A hero with the Wolf Rida Nitch only. He may buy a Bonecruncha Wolf as a mount for 100 gc, with the Bonecruncha's profile and rules and with no rarity roll, one for each hero with this skill. It also counts as the skill Ride Bonecruncha Mount for the riding skills. While he rides a Bonecruncha he causes fear."},
+    {"name": "Beast tamer", "ours": "Beastmaster"},
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Fast Learner", "description": "A henchman promoted by That Lad's Got Talent only. He gains a Nitch at once, paying its price. A Goblin Warrior may take Nasty Skulker or Wolf Rida, a Wolfhead Beastmasta or Wolfskin. A Wolfhead who takes Wolfskin this way may buy a Wolfcloak for 10 gc at once, with no hunt to make."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Sharp Daggas",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 6,
+      "range": "Close Combat",
+      "strength": "As user",
+      "note": "Goblins only.",
+      "rules": [
+        {"rule": "Save Modifier", "text": "The daggers are honed to a razor edge: every armour save against them is at -1."},
+        {"rule": "Pair", "text": "Sharp Daggas are used in pairs, one in each hand, and give the wielder an extra attack. The second hand may hold nothing else, and the pair may never be split between two warriors."}
+      ]
+    },
+    {
+      "name": "Leather Whip",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 7,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {"rule": "Cannot Be Parried", "text": "A model attacked with a leather whip may not parry with a sword or a buckler."},
+        {"rule": "Whipcrack"},
+        {"rule": "+1 Enemy armour save", "text": "A model wounded by a leather whip gains +1 to his armour save, as against a dagger."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 2, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum. Its maximum of 20 is."},
+    {"page": 2, "what": "Starting experience: Big Boss 17, Shaman 10, Boss 8, henchmen 0."},
+    {"page": 2, "what": "The skill table is headed \"Night Goblin Skill Table\", a leftover from the warband it was based on; its ticks were read from the page as an image and match the prose above it. Big Boss: Combat, Shooting, Academic, Speed, Special. Shaman: Shooting, Academic, Speed, Special. Boss: Combat, Shooting, Speed, Special. Nobody has Strength."},
+    {"page": 2, "what": "\"All Goblin Raider Heroes may learn Riding Skills\" is read as our Animal group, which holds Ride [Animal], and is also kept as a warband rule for the mounts a campaign allows. See the decisions."},
+    {"page": 2, "what": "Five lines are closed to a Nitch rather than to a fighter (Throwing Knives to Nasty Skulker, Heavy Armor to Lil' Warboss, Barding to Wolf Rida, the Leather Whip to Beastmasta, the Wolf Cloak to Wolfskin). Our line notes name fighters, not upgrades, so each is marked Heroes only and the Nitch that opens it is named in that Nitch's own text."},
+    {"page": 2, "what": "Poisoned Daggers is our Poison Daggers word for word, at this list's 30 gc (ours is 25 gc in the store); Wolf Cloak is our Wolfcloak, the Annual 02 item, word for word; the Boss Pole, Giant Wolf, Short Bow and Barding are ours. Barding is 30 gc on this list and 80 gc Rare 8 in the store."},
+    {"page": 2, "what": "Throwing Knives is our Throwing Knives/Stars/Axes (William, 11 Nov 2026: one entry for all of them)."},
+    {"page": 4, "what": "The Wolfhead's Leap rule says only that he has the Speed skill Leap, so he starts with our Leap skill rather than carrying the rule."},
+    {"page": 5, "what": "The Stone Troll's Fear, Stupidity and Regeneration are worded as our shared specials word them; his Always Hungry upkeep of 15 gc after each battle stays a rule, since our upkeep fees are for hired swords."},
+    {"page": 6, "what": "Sharp Daggas (10 gc a pair, Common, Goblins only) is a stub: nothing of ours is a -1 armour save paired dagger."},
+    {"page": 7, "what": "The Leather Whip is kept apart from our Steel Whip: both cannot be parried and have whipcrack, but the whip here is 7 gc and also gives the enemy +1 to his armour save. See the decisions."},
+    {"page": 8, "what": "The six Speshul Nitches are an upgrade list, bought when a hero is hired, one each (template_answers.UPGRADE_TERMS). The Shaman may take only Beastmasta, which the list's own text says."},
+    {"page": 9, "what": "Hit and run and Infiltration are ours word for word; Beast tamer is our Beastmaster, the same Border Town Burning skill under the PDF's name. Who may take each sits in the group's note. See the decisions."},
+    {"page": 10, "what": "The Shaman's Waaagh! Magic is our Waaaagh! Magic: the same six spells with the same difficulties, so no new lore was added."}
+  ]
+}

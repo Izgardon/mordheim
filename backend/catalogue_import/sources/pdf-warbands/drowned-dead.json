@@ -1,0 +1,256 @@
+{
+  "warbandType": "drowned-dead",
+  "name": "Drowned Dead",
+  "source": "Drowned Dead",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/facebook/Drowned%20Dead.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Hired Swords", "ruleFull": "The warband may hire the hired swords an Undead warband may hire."},
+    {"rulename": "Wet Powder", "ruleFull": "A blackpowder weapon of the warband never hits on better than a 4 or more, whatever its Ballistic Skill, Weapon Skill and modifiers, shooting or in close combat."},
+    {"rulename": "Drowned", "ruleFull": "Water of any depth is difficult ground for the warband, rather than very difficult or impassable."},
+    {"rulename": "No Armour", "ruleFull": "The warband wears no armour: a model may appear to wear pieces of it, but they have no effect in play."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "drowned-dead-equipment-list",
+      "title": "Drowned Dead Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Club, Mace or Hammer", "alias": "Hammer or club", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "Boat Hook (counts as spear)", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "Cutlass (counts as sword)", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double handed weapon", "cost": {"cost": 15}},
+        {"name": "throwing knives", "alias": "Throwing Knives", "cost": {"cost": 15}},
+        {"name": "belaying pins", "alias": "Belaying pins", "cost": {"cost": 15}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "duelling pistol", "alias": "", "cost": {"cost": 25, "braceCost": 50, "costSuffix": "(Heroes only)"}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35}},
+        {"name": "blunderbuss", "alias": "", "cost": {"cost": 30, "costSuffix": "(Heroes only)"}},
+        {"name": "spy glass", "alias": "Spyglass", "cost": {"cost": 20, "costSuffix": "(Heroes only)"}},
+        {"name": "peg leg", "alias": "", "cost": {"cost": 8, "costSuffix": "(Heroes only)"}},
+        {"name": "hook hand", "alias": "", "cost": {"cost": 4, "costSuffix": "(Heroes only)"}},
+        {"name": "rope & hook", "alias": "Rope and Hook", "cost": {"cost": 5, "costSuffix": "(Heroes only)"}},
+        {"name": "Will o' Wisp", "alias": "", "cost": {"cost": 20, "costSuffix": "(Heroes only)"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "captain",
+      "type": "hero",
+      "name": "Captain",
+      "plural": "Captains",
+      "race": "undead",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 90,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["drowned-dead-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior in the warband within 6\" of the Captain may use his Leadership instead of his own."},
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The model is immune to psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The model treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "quartermaster",
+      "type": "hero",
+      "name": "Quartermaster",
+      "plural": "Quartermasters",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["drowned-dead-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The model is immune to psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The model treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "surgeon",
+      "type": "hero",
+      "name": "Surgeon",
+      "plural": "Surgeons",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["drowned-dead-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Necromancy"],
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The model is immune to psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The model treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Necromancer", "ruleFull": "The Surgeon is a spell caster and starts with one spell from the Necromancy list. Where that list says zombies, read Bloated."}
+      ]
+    },
+    {
+      "id": "mate",
+      "type": "hero",
+      "name": "Mate",
+      "plural": "Mates",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["drowned-dead-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The model is immune to psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The model treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "topsman",
+      "type": "henchman",
+      "name": "Topsman",
+      "plural": "Topsmen",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 40,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["drowned-dead-equipment-list"],
+      "skills": ["Acrobat"],
+      "specialRules": [
+        {"rulename": "Rigging Gear", "ruleFull": "Each Topsman comes with a Rope & Hook."},
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The model is immune to psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The model treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "stevedore",
+      "type": "henchman",
+      "name": "Stevedore",
+      "plural": "Stevedores",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 40,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["drowned-dead-equipment-list"],
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The model is immune to psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The model treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "May Not Run", "ruleFull": "The model may not run, but may charge normally."}
+      ]
+    },
+    {
+      "id": "bloated",
+      "type": "henchman",
+      "name": "Bloated",
+      "plural": "Bloated",
+      "race": "undead",
+      "minQty": 0,
+      "costGc": 15,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 1, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. Bloated use no weapons or equipment and suffer no penalty for being unarmed.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The model is immune to psychology and never leaves combat."},
+        {"rulename": "Immune to Poison", "ruleFull": "Not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "The model treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "May Not Run", "ruleFull": "The model may not run, but may charge normally."},
+        {"rulename": "No Brain", "ruleFull": "Bloated never gain experience."},
+        {"rulename": "No Skill", "ruleFull": "Bloated use no equipment. They may carry what they held in life, but it counts as no more than a bludgeon; they suffer no penalty for being unarmed."}
+      ]
+    },
+    {
+      "id": "jolly-boat",
+      "type": "henchman",
+      "name": "Jolly Boat",
+      "plural": "Jolly Boats",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 120,
+      "startingXp": 0,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {"min": 1, "max": 1},
+      "statblock": {"m": 4, "ws": 3, "bs": "-", "s": 3, "t": 7, "w": 4, "i": 3, "a": 1, "ld": "-"},
+      "equipmentLists": [],
+      "equipment": "None. Neither the boat, its Helmsman nor the Bloated pulling it use weapons or equipment, and they suffer no penalty for being unarmed.",
+      "specialRules": [
+        {"rulename": "Corpse Cart", "ruleFull": "While the warband holds the Jolly Boat its maximum number of warriors is 3 higher, 15 in all, counting the Jolly Boat as one."},
+        {"rulename": "Helmsman", "ruleFull": "The Helmsman comes with the boat and is bonded to it. He may never leave it, and cannot be injured unless the Jolly Boat is destroyed, in which case he is destroyed with it."},
+        {"rulename": "Bloated", "ruleFull": "The two to four Bloated that drag the boat are pinned to its hull and may never leave it. They may not run, but may charge normally."},
+        {"rulename": "No Brain", "ruleFull": "Neither the boat, its Helmsman nor the Bloated pulling it gain experience."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Jolly Boat and its Helmsman are undead and know no fear. The Jolly Boat passes any Leadership test it must take automatically."},
+        {"rulename": "Sail the Damned Seas", "ruleFull": "The Jolly Boat may not go up stairs or ladders, but may be dragged over obstacles such as walls and barriers. It counts as a large target for shooting. Where a scenario has loot to carry, it counts as up to four models for carrying chests, shards, corpses and prisoners."},
+        {"rulename": "Cursèd Eternal", "ruleFull": "If the Jolly Boat is taken out of action, the boat, its Helmsman and the Bloated pulling it suffer it together. Leave the wreck on the table as an obstacle to hide behind and clamber over. After the battle it is lost from the warband only on a roll of 1, rather than the henchman's usual 1 or 2; on a 2 or more it fights in the next battle as normal."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Will o' Wisp",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 8,
+      "rules": [
+        {"name": "Concealed Light", "text": "The carrier spots hidden enemies at 4\" further. It gives an enemy no extra sight of him, whatever the scenario."},
+        {"name": "Free-Hand", "text": "The wisp floats along on its own, so it leaves both of the carrier's hands free."}
+      ]
+    }
+  ],
+  "flags": [
+    {"page": 5, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum. Its maximum of 12 is, and the Jolly Boat's Corpse Cart rule raises it to 15."},
+    {"page": 5, "what": "The Mate's entry heads him \"40gc 4xp\" while the Starting Experience section gives the Mates, Quartermaster and Surgeon 8 each. The section is taken, since it covers all three the same way, and the 4 is flagged."},
+    {"page": 5, "what": "No fighter has a Special column, so the warband declares no skill group."},
+    {"page": 5, "what": "No group size is printed for the henchmen; 1-5 is used, as in every other warband of this grade. The Jolly Boat is one model, 0-1."},
+    {"page": 5, "what": "Boat Hook \"(counts as spear)\" is our Spear at the line's 10 gc, shown under the PDF's name. We also hold a Boat Hook item of our own (Pirates, 8 gc, strike first and two-handed), which this list is not. See the decisions."},
+    {"page": 5, "what": "Cutlass \"(counts as sword)\" is our Sword at the line's 10 gc, shown under the PDF's name. We also hold a Cutlass item of our own (Khemri, 15 gc, parry and basket hilt), which this list is not. See the decisions."},
+    {"page": 5, "what": "\"Throwing Knives or belaying pins 15gc\" is one line for two items, so it is read as two lines at 15 gc each: our Throwing Knives/Stars/Axes and our Belaying Pins. Ours sell at 15 gc and 3 gc in the store; only the list price is this warband's."},
+    {"page": 5, "what": "The list marks the Duelling pistol, Blunderbuss, Spyglass, Peg Leg, Hook Hand, Rope and Hook and Will o' Wisp \"Heroes only\". The ^ mark on the blackpowder lines points at the Wet Powder rule and needs nothing of its own."},
+    {"page": 5, "what": "The Will o' Wisp is 10 gc on the list and 20 gc in its own entry; the entry's price is used (William, 6 Nov 2026, of the Horn of the Wild Hunt)."},
+    {"page": 6, "what": "Each fighter's Cause Fear, Immune to Psychology, Immune to Poison and May Not Run are our shared specials, worded as ours word them."},
+    {"page": 6, "what": "The Topsman's header reads \"(I, Acrobat skill)\" and his Acrobatic rule says only that he has the Acrobat skill, so he starts with our Acrobat skill rather than carrying a rule. His free Rope & Hook stays a rule: the list sells the Rope & Hook to heroes only."},
+    {"page": 7, "what": "The Jolly Boat is a henchman of one model with a combined profile; its Ballistic Skill and Leadership are printed \"-\" and kept as printed. It is a model, not an item."},
+    {"page": 8, "what": "The Spy Glass, Peg Leg, Hook Hand and Rope & Hook are ours word for word, so they are linked; the Will o' Wisp is a stub."},
+    {"page": 10, "what": "Pages 1-4 are the warband's story and pages 10-11 are modelling notes and photographs. Neither is imported, and no page was opened as an image."}
+  ]
+}

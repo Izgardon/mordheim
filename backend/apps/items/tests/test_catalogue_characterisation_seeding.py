@@ -91,11 +91,11 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 48,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 480,  # the import's 415 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
+                "Item": 493,  # the import's 415 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
-                "Skill": 461,  # the import's 437 (one per name) + the 24 hired swords' own skills the book lacks
-                "SkillGroup": 121,  # the import's 102 + a group of his own for each of 19 hired swords
-                "Spell": 300,  # 281 (the PDFs' lores) + the Dark Mage's six (BUG-54)
+                "Skill": 488,  # the import's 464 (one per name) + the 24 hired swords' own skills the book lacks
+                "SkillGroup": 126,  # the import's 107 + a group of his own for each of 19 hired swords
+                "Spell": 318,  # 300 (the PDFs' lores) + the Dark Mage's six (BUG-54)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -118,13 +118,13 @@ class SeedAllTests(TestCase):
                 # more than the skill keeps its text (William, 11 Nov 2026): the Ogre Hunter's Sabre Trainer and the
                 # Watchmen Sergeant's Falconer are 2 more; the Sartosa Orc Pirates and Savage Orcs are two
                 # variants of the Orc Mob (William, 11 Nov 2026), so their pages bring no template of their own
-                "Special": 1425,
+                "Special": 1476,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 64,
                 "HiredSword": 75,  # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin)
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
-                "WarbandTemplate": 131,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs' (Karak Azgal's eight)
+                "WarbandTemplate": 138,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs' (the first seven grade 3 warbands among them)
             },
         )
         for model in BOOK_MODELS:
@@ -145,9 +145,9 @@ class SeedAllTests(TestCase):
                         slugs = Counter(graded.values_list("campaign_type__slug", flat=True))
                         # the Bloodletter's Frenzy is the shared one now (William, 7 Nov 2026)
                         self.assertEqual(slugs, {"mutiny-in-marienburg": 10, "border-town-burning": 30})
-                    elif model in (Race, Spell, SkillGroup):  # only what the Khemri 3 warbands brought (11 Nov)
+                    elif model in (Race, Spell, SkillGroup):  # what the Khemri 3 and the Grade 3 warbands brought
                         rest = model._default_manager.filter(**{"campaign_type__isnull": False}).exclude(
-                            **{"campaign_type__slug": "khemri-3"}
+                            **{"campaign_type__slug__in": ("khemri-3", "grade-3")}
                         )
                         self.assertFalse(rest.exists())
                     else:  # the rest count as Mordheim's until they get theirs
@@ -217,21 +217,21 @@ class SeedAllTests(TestCase):
 
     def test_the_warband_templates_come_in_whole(self):
         # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
-        self.assertIn("Warband templates import complete. Templates: 131, archived", self.output)
+        self.assertIn("Warband templates import complete. Templates: 138, archived", self.output)
         counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
         self.assertEqual(
             counts,
             {
-                "WarbandTemplateType": 139,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each; the Orc Mob serves three
-                "TemplateFighter": 855,  # the Orc Mob holds its two variants' five fighters of their own
-                "TemplateList": 325,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
-                "TemplateListItem": 3577,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 429,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                "WarbandTemplateType": 146,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each; the Orc Mob serves three
+                "TemplateFighter": 900,  # the Orc Mob holds its two variants' five fighters of their own
+                "TemplateList": 336,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
+                "TemplateListItem": 3742,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
+                "TemplateRule": 460,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin),
                 # the Fen Guard's 7 (Variations), the Lords of the Marsh's 15, the Shallows Beasts' 9, the Underworld
                 # Alliance's 8 and the Blood Dragon Vampire's 7 bloodline abilities and the Nosferatu's 6 Necrolore abilities
-                "TemplateUpgrade": 164,
+                "TemplateUpgrade": 170,
             },
         )
         mercenaries = WarbandTemplate.objects.get(slug="mercenaries")
@@ -270,15 +270,15 @@ class SeedAllTests(TestCase):
             links,
             {
                 "Fear": (
-                    104,
+                    113,
                     0,
                     5,
                     5,
                     17,
                 ),  # fighters, upgrades, hired swords, dramatis personae, beasts (14 of the East)
-                "Stupidity": (10, 0, 0, 0, 2),
-                "Immune to Psychology": (57, 0, 1, 2, 0),
-                "Immune to Poison": (55, 0, 3, 3, 8),
+                "Stupidity": (11, 0, 0, 0, 2),
+                "Immune to Psychology": (65, 0, 1, 2, 0),
+                "Immune to Poison": (62, 0, 3, 3, 8),
                 "Hideous": (
                     0,
                     7,
@@ -508,7 +508,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 437, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 464, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)
@@ -528,6 +528,7 @@ class SeedAllTests(TestCase):
 
         knives = {"Dagger", "Disease Dagger", "Fist", "Hobgoblin Poisoned Daggers", "Kitchen Knife", "Main Gauche"}
         knives |= {"Misericordia", "Poison Daggers", "Shortsword", "Spirit Knife", "Starblade", "Thinglash"}
+        knives |= {"Leather Whip"}  # the Goblin Raiders' whip gives the enemy +1 to his save, as a dagger does
         self.assertEqual(holders("+1 Enemy armour save"), knives)
         self.assertEqual(ItemRule.objects.filter(name__iregex=r"^two.handed$").count(), 1)
         self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike", "Flail", "Halberd"}, holders("Two-handed"))  # fmt: skip
@@ -673,7 +674,7 @@ class SeedAllTests(TestCase):
         # and nine groups are new, each its warband type's alone
         infiltration = Skill.objects.get(name="Infiltration")
         held_by = set(infiltration.group_links.values_list("group__name", flat=True))
-        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren", "Wood Elves of Arden", "Channel Rats", "Underworld Alliance", "Dark Elf Corsairs", "Woodsmen de Artois", "Lothern Sea Patrol", "Silent Brotherhood", "Arabyan Theives", "Skaven of Karak Azgal", "Night Goblins (Karak Azgal)"})  # fmt: skip
+        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren", "Wood Elves of Arden", "Channel Rats", "Underworld Alliance", "Dark Elf Corsairs", "Woodsmen de Artois", "Lothern Sea Patrol", "Silent Brotherhood", "Arabyan Theives", "Skaven of Karak Azgal", "Night Goblins (Karak Azgal)", "Assassin Squad", "Dwarf Grudgebearers", "Goblin Raiders"})  # fmt: skip
         self.assertTrue(infiltration.description.startswith("A warrior with this skill is always placed"))
         self.assertEqual(set(Skill.objects.get(name="Infiltration (Skink)").group_links.values_list("group__name", flat=True)), {"Skink", "Lizardmen (Lustria)"})  # fmt: skip
         self.assertTrue(Skill.objects.filter(name="Battle Tongue").exists())
@@ -684,8 +685,9 @@ class SeedAllTests(TestCase):
         self.assertFalse(cavalcade.for_everyone)
         dwarves = SkillGroup.objects.get(name="Dwarves").warband_links.values_list("warband_type__slug", flat=True)
         self.assertEqual(
-            list(dwarves), ["dwarf-treasure-hunters", "dwarf-guildsmen", "dwarf-slayers"]
-        )  # skill_group_learners: the warband it is named after, and the Karak Azgal warbands whose heroes learn from it
+            list(dwarves), ["dwarf-treasure-hunters", "dwarf-guildsmen", "dwarf-slayers", "dwarf-grudgebearers"]
+        )  # skill_group_learners: the warband it is named after, the Karak Azgal warbands whose heroes learn from it,
+        # and the Dwarf Grudgebearers, whose own skill table is this list
         sea_ghosts = SkillGroup.objects.get(name="Sea Ghosts").warband_links.values_list(
             "warband_type__slug", flat=True
         )

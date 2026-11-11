@@ -24738,6 +24738,175 @@
     ]
   },
   {
+    "slug": "quarterstaff-altdorf-expeditionary-party",
+    "name": "Quarterstaff (Altdorf Expeditionary Party)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Altdorf Expeditionary Party",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Altdorf%20Expeditionary%20Party.pdf",
+    "tags": [
+      "quarterstaff (altdorf expeditionary party)"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "concussion",
+        "text": "When the wielder rolls to see how badly a model is injured, a roll of 2-4 is treated as stunned."
+      },
+      {
+        "rule": "two-handed"
+      },
+      {
+        "rule": "parry"
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 3,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "altdorf-expeditionary-party",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "glyph-of-blasting",
+    "name": "Glyph of Blasting",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Altdorf Expeditionary Party",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Altdorf%20Expeditionary%20Party.pdf",
+    "tags": [
+      "glyph of blasting"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Wizards only",
+        "summary": "",
+        "text": "Only a spell caster may buy a glyph of blasting.",
+        "tables": []
+      },
+      {
+        "name": "Inscribed on a weapon",
+        "summary": "",
+        "text": "The glyph may be added to any ranged or close combat weapon carried or in the stash, and must be on a weapon to be used. If that weapon is lost the glyph is lost with it, and is regained with it. For selling, the weapon and the glyph count as one item worth the two prices together. The glyph fills a ranged weapon slot, so a sword carrying one fills a close combat slot and a ranged slot.",
+        "tables": []
+      },
+      {
+        "name": "Arcane bolt",
+        "summary": "",
+        "text": "A wizard carrying a weapon with the glyph may cast Arcane bolt, difficulty 5: range 24\", one Strength 4 hit. The normal rules and modifiers for shooting at a target apply, and it may not be used in close combat.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "altdorf-expeditionary-party",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "grimoire-of-magic",
+    "name": "Grimoire of Magic",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Altdorf Expeditionary Party",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Altdorf%20Expeditionary%20Party.pdf",
+    "tags": [
+      "grimoire of magic"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Who may buy one",
+        "summary": "",
+        "text": "Any warband that may hire a wizard hero, or that holds a member with Arcane Lore.",
+        "tables": []
+      },
+      {
+        "name": "Learning from it",
+        "summary": "",
+        "text": "The grimoire works as a Tome of Magic, except that the wizard may learn spells from the Lesser Magic list, from his own warband's list where he has one, or from one College of magic. A wizard may ever pick only one College, and may not abandon it once picked; he gains that College's advantages and is subject to the Perils of Casting when he casts Common Magic.",
+        "tables": []
+      },
+      {
+        "name": "Found, not bought",
+        "summary": "",
+        "text": "A Tome of Magic that comes from anywhere but the trading post or another player is a Grimoire of Magic instead on a D6 roll of 5 or more.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 200,
+        "dice": 1,
+        "dice_multiplier": 50,
+        "cost_note": "",
+        "rarity": 13,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "altdorf-expeditionary-party",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "ankus",
     "name": "Ankus",
     "variant": "",
@@ -25234,6 +25403,516 @@
           },
           {
             "type": "nehekhara-tomb-guards",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "chain-axe",
+    "name": "Chain Axe",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Assassin Squad, Knives from the Dark",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+    "tags": [
+      "chain axe"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Disarm",
+        "summary": "",
+        "text": "Roll to hit as normal. On a hit of 5 or more the target loses 1 Attack, to a minimum of 1, until the start of the wielder's next close combat phase. The wielder picks which weapon he disables.",
+        "tables": []
+      },
+      {
+        "rule": "save-modifier",
+        "text": "A model wounded by a chain axe takes his armour save at -1, as against an axe."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "assassin-squad-knives-from-the-dark",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "wyrd-blade",
+    "name": "Wyrd Blade",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Assassin Squad, Knives from the Dark",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+    "tags": [
+      "wyrd blade"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Corrosive",
+        "summary": "",
+        "text": "The wielder strikes at +1 Strength in the first round of each combat.",
+        "tables": []
+      },
+      {
+        "rule": "parry",
+        "text": "The blade counts as a sword, so the wielder may parry blows."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "assassin-squad-knives-from-the-dark",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "kill-knife",
+    "name": "Kill Knife",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Assassin Squad, Knives from the Dark",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+    "tags": [
+      "kill knife"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user, to a maximum of 4",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Weak Spot",
+        "summary": "",
+        "text": "+1 to the injury roll.",
+        "tables": []
+      },
+      {
+        "rule": "no-save",
+        "text": "A model wounded by a kill knife takes no armour save."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "assassin-squad-knives-from-the-dark",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "body-armour",
+    "name": "Body Armour",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Assassin Squad, Knives from the Dark",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+    "tags": [
+      "body armour"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "6+",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Skaven only",
+        "summary": "",
+        "text": "The armour is cut for a Skaven and no other race may wear it.",
+        "tables": []
+      },
+      {
+        "name": "Second chance",
+        "summary": "",
+        "text": "A failed armour save may be re-rolled once.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "assassin-squad-knives-from-the-dark",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "short-spear",
+    "name": "Short Spear",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Assassin Squad, Knives from the Dark",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+    "tags": [
+      "short spear"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Spear or sword",
+        "summary": "",
+        "text": "Used in both hands it gives strike first and parry. Used in one hand it gives parry only, and counts as a hand weapon, so it may be combined with a shield.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "assassin-squad-knives-from-the-dark",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "assassin-bullets",
+    "name": "Assassin Bullets",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Assassin Squad, Knives from the Dark",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+    "tags": [
+      "assassin bullets"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Sling shot",
+        "summary": "",
+        "text": "Sling bullets cut to wound better than a stone: +1 to the injury roll.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "assassin-squad-knives-from-the-dark",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "black-darts",
+    "name": "Black Darts",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "grade-3",
+    "source": "Assassin Squad, Knives from the Dark",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
+    "tags": [
+      "black darts"
+    ],
+    "flavour": "",
+    "range": "8\"",
+    "strength": "3",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Dark venom",
+        "summary": "",
+        "text": "A dart is Strength 2 and coated in dark venom, which makes it Strength 3. Against a model immune to poison it is Strength 2. No other poison may be used on them.",
+        "tables": []
+      },
+      {
+        "name": "Small projectile",
+        "summary": "",
+        "text": "A dart may be thrown while hidden. The thrower is detected only if the victim is hit and a D6 roll of 4 or more follows. Darts may be used with Knife-Fighter.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "assassin-squad-knives-from-the-dark",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "will-o-wisp",
+    "name": "Will o' Wisp",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Drowned Dead",
+    "link_url": "https://www.broheim.net/downloads/warbands/facebook/Drowned%20Dead.pdf",
+    "tags": [
+      "will o' wisp"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Concealed Light",
+        "summary": "",
+        "text": "The carrier spots hidden enemies at 4\" further. It gives an enemy no extra sight of him, whatever the scenario.",
+        "tables": []
+      },
+      {
+        "name": "Free-Hand",
+        "summary": "",
+        "text": "The wisp floats along on its own, so it leaves both of the carrier's hands free.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "drowned-dead",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "sharp-daggas",
+    "name": "Sharp Daggas",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Goblin Raiders",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Goblin%20Raiders.pdf",
+    "tags": [
+      "sharp daggas"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "Goblins only.",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "save-modifier",
+        "text": "The daggers are honed to a razor edge: every armour save against them is at -1."
+      },
+      {
+        "rule": "pair",
+        "text": "Sharp Daggas are used in pairs, one in each hand, and give the wielder an extra attack. The second hand may hold nothing else, and the pair may never be split between two warriors."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "goblin-raiders",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "leather-whip",
+    "name": "Leather Whip",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Goblin Raiders",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Goblin%20Raiders.pdf",
+    "tags": [
+      "leather whip"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "cannot-be-parried",
+        "text": "A model attacked with a leather whip may not parry with a sword or a buckler."
+      },
+      {
+        "rule": "whipcrack"
+      },
+      {
+        "rule": "1-enemy-armour-save",
+        "text": "A model wounded by a leather whip gains +1 to his armour save, as against a dagger."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 7,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "goblin-raiders",
             "excluded": false
           }
         ],

@@ -95,8 +95,15 @@ check over every file.
 | `skaven-of-clan-skryre-rel.json` | skaven-of-clan-skryre-rel (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 5-8 (text layer; no images) | 11 Nov 2026 |
 | `slavers.json` | slavers (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 9-11 (text layer; no images) | 11 Nov 2026 |
 | `the-fallen.json` | the-fallen (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 12-14 (text layer; no images) | 11 Nov 2026 |
+| `albion-barbarians.json` | albion-barbarians (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Albion%20Barbarians.pdf | 1-5 (text layer) | 11 Nov 2026 |
+| `altdorf-expeditionary-party.json` | altdorf-expeditionary-party (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Altdorf%20Expeditionary%20Party.pdf | 1-10 (text layer; page 1 as an image for its skill table) | 11 Nov 2026 |
+| `assassin-squad-knives-from-the-dark.json` | assassin-squad-knives-from-the-dark (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf | 1-8 (text layer) | 11 Nov 2026 |
+| `circus-extraordinare.json` | circus-extraordinare (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Circus%20Extraordinaire.pdf | 1-7 (text layer) | 11 Nov 2026 |
+| `drowned-dead.json` | drowned-dead (3, Grade 3) | https://www.broheim.net/downloads/warbands/facebook/Drowned%20Dead.pdf | 1-11 (text layer; 1-4 story, 10-11 modelling notes) | 11 Nov 2026 |
+| `dwarf-grudgebearers.json` | dwarf-grudgebearers (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Dwarf%20Grudgebearers.pdf | 1-6 (text layer; its skill table read from the page's own text columns) | 11 Nov 2026 |
+| `goblin-raiders.json` | goblin-raiders (3, Grade 3) | https://www.broheim.net/downloads/warbands/web/Goblin%20Raiders.pdf | 1-8 (text layer; page 2 as an image for its skill table) | 11 Nov 2026 |
 
-The six Relics of the Crusades warbands above are one 16-page PDF (its pages 1 and 15-16 are the setting's other warbands, its hired swords
+The six Relics of the Crusades warbands are one 16-page PDF (its pages 1 and 15-16 are the setting's other warbands, its hired swords
 and its dramatis persona, none of them imported). Its pages 2-4 are one Arabian Tribes warband list with three tribes - Ghutani, Muzil and Turjuk -
 that share every fighter, price and equipment list and differ only in their Special Rules and their skill table; our data holds the three as three
 warband types, so each is a source file of its own. The Clan Skryre template carries its setting in brackets, because Karak Azgal and Athel Loren
@@ -127,6 +134,11 @@ Khemri's own campaign PDFs (Equipment, Elemental Magic, Dramatis Personae and a 
 Cutlass and Great Scimitar are stubs with no rules, and the Mage and Street Mage cast from our four Elemental Lores until it is.
 
 Karak Azgal's eight warbands share one 76-page PDF, and only each warband's own pages were read; its campaign material (pages 1-18 and 62-76, the hired swords, exploration chart, runic artefacts and scenarios among them) is not imported. Four of them point at warbands we already hold for their lists, rules or skills ("all of the equipment lists from Town Crier 6 (or Best of Town Crier) apply", "the Orc special skills from TC6"): those were taken from our own Dwarf Treasure Hunters, Skaven and Mercenaries warbands and our Dwarves, Dwarf Troll Slayers and Orcs skill groups, never from another PDF.
+
+The first seven grade 3 warbands (Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Circus Extraordinaire, Drowned Dead,
+Dwarf Grudgebearers and Goblin Raiders) belong to no supplement and share the existing `grade-3` setting, which turns all fourteen of its
+warbands on at once (William, 11 Nov 2026). They share no content with one another: each brings its own skill group, and only the Dwarf
+Grudgebearers join a group of ours (the Dwarves list, which is their own skill table word for word).
 
 ## Adding a warband
 

@@ -924,6 +924,62 @@
     "description": "The effect of a spell or a scroll does not affect the Dwarf on a D6 roll of 4+."
   },
   {
+    "name": "Experienced Fighter",
+    "description": "He always strikes first in hand-to-hand combat, whoever charged."
+  },
+  {
+    "name": "Attack Howl",
+    "description": "When he charges he adds +2 to his close combat to hit rolls that turn instead of the usual +1."
+  },
+  {
+    "name": "Master Shot",
+    "description": "The range of any bow he uses is 6\" longer."
+  },
+  {
+    "name": "Savage Fury (Albion Barbarians)",
+    "description": "He gains +1 Attack in the first round of combat when he charges, and is immune to fear."
+  },
+  {
+    "name": "Concealment (Albion Barbarians)",
+    "description": "Any enemy must halve the range at which he can spot this warrior while he is hidden. He may also shoot while hidden: roll a D6 afterwards, and on a 5 or 6 he stays hidden."
+  },
+  {
+    "name": "Power Surge",
+    "description": "Wizards only. He may roll one extra dice when casting Common Magic. Two 1s still cause a miscast."
+  },
+  {
+    "name": "Arcane Reach",
+    "description": "Wizards and prayer users only. The range of any spell he casts is 6\" longer. It does nothing for a spell that targets only the caster, and does not widen the area a spell affects: only the distance to the first target."
+  },
+  {
+    "name": "Combat Wizard",
+    "description": "Wizards only. He may take skills from the Combat, Shooting and Strength lists. He may never hold more skills taken this way than half his Weapon Skill, rounding up."
+  },
+  {
+    "name": "Arcane Barrage",
+    "description": "Wizards and prayer users only. After casting a spell he may try to cast a second. He first suffers a Strength 3 hit with no armour or dodge save allowed; if he is still standing he casts as normal. It may not be used after any other skill or ability that allows more than one cast in a turn, and none may be used after it."
+  },
+  {
+    "name": "Large Familiar",
+    "description": "Wizards only. His familiar is a larger animal with the profile of a wardog for 25 gc more or of a giant rat for 15 gc more, paid with the summoning. It is deployed with its wizard and never without him, may use his Leadership within 6\", and rolls as a henchman when it is taken out of action; its wizard must then pass a Leadership test or be stunned. It is not a mount, may not be ridden, and does not count towards the warband's maximum models."
+  },
+  {
+    "name": "Surveyor",
+    "description": "When he rolls for exploration he may roll two dice instead of one and keep either, once per exploration phase."
+  },
+  {
+    "name": "Hardened Will",
+    "description": "Wizards only. He may re-roll his Leadership tests."
+  },
+  {
+    "name": "Dispell (Altdorf Expeditionary Party)",
+    "description": "Wizards and prayer users only. After an enemy wizard casts a spell, a wizard with this skill who can see him may try to dispel it: roll 2D6, and the spell is dispelled on a roll equal to or higher than the enemy's casting roll. Only one attempt may be made against each casting."
+  },
+  {
+    "name": "Fierce Casting",
+    "description": "Wizards only. A spell he casts that has a Strength value causes critical hits under the normal rules for critical hits. Where the optional critical tables are in use, the default tables are used instead; a spell that summons a weapon uses the table for that weapon."
+  },
+  {
     "name": "Slave Driver",
     "description": "While the Hero is armed with a Cat O' Nine Tails or a similar whip and is not in close combat, every Slave within 4\" passes any Leadership test he is required to take."
   },
@@ -962,6 +1018,30 @@
   {
     "name": "Sheer Speed",
     "description": "Guild Master and Master Thief only. The Hero adds +1 to his Movement."
+  },
+  {
+    "name": "Silent Strike (Assassin Squad)",
+    "description": "He may charge out of hiding and return to it. Roll a D6: on a 5 or more he charges and attacks, his opponents strike back, and if he takes no wound he returns to the place he hid in. The distance out and back may not be more than twice his Movement, or three times it with Sprint, so he cannot hide again if the charge took more than half of it. On any other roll he charges as normal."
+  },
+  {
+    "name": "Ultimate Kill",
+    "description": "He may give up all his extra close combat attacks for one attack at +1 to hit, +1 to wound and +1 on the injury roll. He needs 2 or more Attacks on his profile to use it. It does not work with Ultimate Specialist or Strike to Injure, nor with blackpowder weapons."
+  },
+  {
+    "name": "Master of Poisons (Assassin Squad)",
+    "description": "If he does not search for rare items he may brew 3D-1 portions of Dark Venom or Black Lotus, so he may end with none. Each portion covers one weapon and must be used in the next battle."
+  },
+  {
+    "name": "Shadow Defense",
+    "description": "He may parry with any weapon he uses, and may re-roll a failed parry. With a weapon that already parries, he parries on a roll equal to or higher than his opponent's, and may re-roll that too."
+  },
+  {
+    "name": "Ultimate Specialist",
+    "description": "He gains +1 Weapon Skill and +1 on the injury roll in close combat. It does not work with Ultimate Kill or Strike to Injure."
+  },
+  {
+    "name": "Play Dead",
+    "description": "He may re-roll one result on the serious injury table. A Shadowblade with this skill may also use Vanish Into the Shadows while stunned, and may return to his hiding place with Silent Strike while knocked down."
   },
   {
     "name": "Virtue of Noble Disdain (Grail Companions)",
@@ -1160,6 +1240,18 @@
     "description": "When the Hero's Serious Injury roll is a death, he takes a Leadership test on his unmodified Leadership (no holy relics or other help). If he passes, he survives but misses the next D3 battles."
   },
   {
+    "name": "Monster Hunter",
+    "description": "Every enemy monster and animal counts as a large target for him."
+  },
+  {
+    "name": "Set Traps (Dwarf Grudgebearers)",
+    "description": "He may set one gin trap per battle, in a turn in which he fires no weapon and has not just stood up from being knocked down: place a marker touching him. A model that moves within 2\" of the marker rolls a D6, and on a 3 or more it springs the trap and takes a Strength 4 hit. A 6 to wound is no critical hit, but gives a further -1 to armour saves; armour and ward saves are taken as normal with their modifiers. A model that is not wounded, or that does not spring the trap, finishes its move; one that is wounded is placed knocked down or stunned 2\" from the marker. A sprung trap's marker is removed."
+  },
+  {
+    "name": "Expert Runesmith",
+    "description": "He adds +1 to all of his difficulty rolls."
+  },
+  {
     "name": "Deathwish",
     "description": "The Hero is immune to all psychology and never tests for fighting alone."
   },
@@ -1218,6 +1310,22 @@
   {
     "name": "Poison Sap",
     "description": "Instead of trading after the game, the Hero may make D3-1 batches of Black Lotus, shared among the warband but never sold."
+  },
+  {
+    "name": "Flank",
+    "description": "Leader only. When the warband is set up, pick up to 3 of its members, but never the Troll. At the start of your third turn pick a table edge and roll a D6: on a 4 or more you may place those models anywhere along it, and on a 1, 2 or 3 along a table edge picked at random instead. Either way they may be placed up to 8\" in from the edge, never in combat and never within 6\" of an enemy. They may not move that turn, and count as having moved if they shoot."
+  },
+  {
+    "name": "Strong 'Un",
+    "description": "A hero with the Wolfskin Nitch only. He learns one Strength skill at once. He may take this skill only once."
+  },
+  {
+    "name": "Wolf Breaker",
+    "description": "A hero with the Wolf Rida Nitch only. He may buy a Bonecruncha Wolf as a mount for 100 gc, with the Bonecruncha's profile and rules and with no rarity roll, one for each hero with this skill. It also counts as the skill Ride Bonecruncha Mount for the riding skills. While he rides a Bonecruncha he causes fear."
+  },
+  {
+    "name": "Fast Learner",
+    "description": "A henchman promoted by That Lad's Got Talent only. He gains a Nitch at once, paying its price. A Goblin Warrior may take Nasty Skulker or Wolf Rida, a Wolfhead Beastmasta or Wolfskin. A Wolfhead who takes Wolfskin this way may buy a Wolfcloak for 10 gc at once, with no hunt to make."
   },
   {
     "name": "Quiet as a Mouse",

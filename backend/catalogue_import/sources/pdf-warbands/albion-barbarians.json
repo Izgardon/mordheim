@@ -1,0 +1,146 @@
+{
+  "warbandType": "albion-barbarians",
+  "name": "Albion Barbarians",
+  "source": "Albion Barbarians",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/experimental/Albion%20Barbarians.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {"rulename": "May Hire", "ruleFull": "The warband hires no hired swords. The only models it may take on are the dramatis personae Im Abav Yub and Gaz Er Unga Og."},
+    {"rulename": "Indigenous", "ruleFull": "The warband suffers no movement penalty from the weather, and halves any Initiative reduction the weather table calls for (a reduction of 2 becomes 1, a reduction of 1 becomes none). Sight, shooting and hailstorms affect them as they affect anyone else."},
+    {"rulename": "No Blackpowder", "ruleFull": "No warrior in the warband may use a blackpowder weapon, even if a skill he has would otherwise let him."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "albion-barbarian-equipment-list",
+      "title": "Albion Barbarians' Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10, "costSuffix": "(Not Warriors)"}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "chief",
+      "type": "hero",
+      "name": "Chief",
+      "plural": "Chiefs",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["albion-barbarian-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior in the warband within 6\" of the Chief may use his Leadership instead of his own."}
+      ]
+    },
+    {
+      "id": "shaman",
+      "type": "hero",
+      "name": "Shaman",
+      "plural": "Shamans",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["albion-barbarian-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Barbarian Shaman Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Shaman is a spell caster and uses Barbarian Shaman Magic. He starts with two spells, chosen at random."}
+      ]
+    },
+    {
+      "id": "champion",
+      "type": "hero",
+      "name": "Champion",
+      "plural": "Champions",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 35,
+      "startingXp": 4,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["albion-barbarian-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "hunter",
+      "type": "henchman",
+      "name": "Hunter",
+      "plural": "Hunters",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 35,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["albion-barbarian-equipment-list"],
+      "specialRules": [
+        {"rulename": "Lad's Got Talent", "ruleFull": "When a Hunter rolls That Lad's Got Talent, the new Hero takes Shooting and Speed as his skill lists."}
+      ]
+    },
+    {
+      "id": "warrior",
+      "type": "henchman",
+      "name": "Warrior",
+      "plural": "Warriors",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "startingXp": 0,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["albion-barbarian-equipment-list"],
+      "specialRules": [
+        {"rulename": "Lad's Got Talent", "ruleFull": "When a Warrior rolls That Lad's Got Talent, the new Hero takes Combat and Strength as his skill lists."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Albion Barbarians",
+    "new": true,
+    "note": ""
+  },
+  "specialSkillsList": [
+    {"name": "Experienced Fighter", "description": "He always strikes first in hand-to-hand combat, whoever charged."},
+    {"name": "Attack Howl", "description": "When he charges he adds +2 to his close combat to hit rolls that turn instead of the usual +1."},
+    {"name": "Master Shot", "description": "The range of any bow he uses is 6\" longer."},
+    {"name": "Savage Fury (Albion Barbarians)", "pdfName": "Savage Fury", "description": "He gains +1 Attack in the first round of combat when he charges, and is immune to fear."},
+    {"name": "Concealment (Albion Barbarians)", "pdfName": "Concealment", "description": "Any enemy must halve the range at which he can spot this warrior while he is hidden. He may also shoot while hidden: roll a D6 afterwards, and on a 5 or 6 he stays hidden."}
+  ],
+  "aliases": [
+    {"pdf": "double handed weapon", "ours": "Double-handed weapon", "page": 3}
+  ],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "The warband's minimum of 3 models is not imported: our templates hold no minimum."},
+    {"page": 3, "what": "The PDF prints one equipment list for the whole warband and says the Warriors \"use all kinds of weapons the tribe produces except bows\", so the Bow line is read as closed to Warriors; every other line is open to all."},
+    {"page": 3, "what": "The list prints its Armor section with a Shield only. No other armour is sold."},
+    {"page": 4, "what": "Starting experience: Chief 20, Shaman 8, Champions 4, Henchmen 0."},
+    {"page": 5, "what": "Savage Fury is kept apart as Savage Fury (Albion Barbarians). Ours of that name is the Amazons' (+1 Attack when charging, immune to charm effects and fear) and is a skill their group makes, which the import cannot lend to another group. See the decisions."},
+    {"page": 5, "what": "Concealment is kept apart as Concealment (Albion Barbarians): ours halves the spotting range in jungle terrain only and does not let him shoot while hidden. See the decisions."},
+    {"page": 5, "what": "The six Shaman spells are a new lore, Barbarian Shaman Magic, with the difficulties the PDF prints (6, 6, 7, 7, 5, 7)."}
+  ]
+}

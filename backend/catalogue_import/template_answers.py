@@ -155,6 +155,9 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
         "who": {"fighters": ["giant-slayer", "troll-slayer"]},
         "max_per_fighter": 3,
     },
+    # the Goblin Raiders PDF, p8: "Every goblin Big Boss and Boss may purchase a special 'Nitch' upon hiring. Each
+    # may only purchase a single Nitch, no more"; the Shaman may buy Beastmasta only, which the group's text says
+    ("goblin-raiders", "Speshul Nitches"): {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
 }
 # One upgrade's own `who`, where its text narrows its group's: "(Saurus Only)", "(Skinks only)"
 UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {

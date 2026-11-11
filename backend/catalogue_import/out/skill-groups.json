@@ -128,6 +128,52 @@
     ]
   },
   {
+    "name": "Albion Barbarians",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "albion-barbarians",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Experienced Fighter",
+      "Attack Howl",
+      "Master Shot",
+      "Savage Fury (Albion Barbarians)",
+      "Concealment (Albion Barbarians)"
+    ]
+  },
+  {
+    "name": "Altdorf Expeditionary Party",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "altdorf-expeditionary-party",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Power Surge",
+      "Arcane Reach",
+      "Combat Wizard",
+      "Arcane Barrage",
+      "Large Familiar",
+      "Surveyor",
+      "Hardened Will",
+      "Dispell (Altdorf Expeditionary Party)",
+      "Fierce Casting"
+    ]
+  },
+  {
     "name": "Amazons",
     "setting": null,
     "for_everyone": false,
@@ -223,6 +269,29 @@
       "Knife Fighting (Arabyan Theives)",
       "Hide in Shadows (Arabyan Theives)",
       "Sheer Speed"
+    ]
+  },
+  {
+    "name": "Assassin Squad",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "assassin-squad-knives-from-the-dark",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Infiltration",
+      "Silent Strike (Assassin Squad)",
+      "Ultimate Kill",
+      "Master of Poisons (Assassin Squad)",
+      "Shadow Defense",
+      "Ultimate Specialist",
+      "Play Dead"
     ]
   },
   {
@@ -671,6 +740,26 @@
     ]
   },
   {
+    "name": "Dwarf Grudgebearers",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "dwarf-grudgebearers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Monster Hunter, Set Traps and Infiltration are the Ranger's; Expert Runesmith the Runesmith's.",
+    "how": "new group",
+    "skills": [
+      "Infiltration",
+      "Monster Hunter",
+      "Set Traps (Dwarf Grudgebearers)",
+      "Expert Runesmith"
+    ]
+  },
+  {
     "name": "Dwarf Rangers",
     "setting": null,
     "for_everyone": false,
@@ -746,6 +835,10 @@
       {
         "type": "dwarf-slayers",
         "excluded": false
+      },
+      {
+        "type": "dwarf-grudgebearers",
+        "excluded": false
       }
     ],
     "large_only": false,
@@ -814,6 +907,29 @@
     "how": "new group",
     "skills": [
       "Animosity"
+    ]
+  },
+  {
+    "name": "Goblin Raiders",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "goblin-raiders",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Hit and run is any Hero's; Beast tamer needs the Beastmasta Nitch and Infiltration the Nasty Skulker Nitch.",
+    "how": "new group",
+    "skills": [
+      "Hit and run",
+      "Beastmaster",
+      "Infiltration",
+      "Flank",
+      "Strong 'Un",
+      "Wolf Breaker",
+      "Fast Learner"
     ]
   },
   {
