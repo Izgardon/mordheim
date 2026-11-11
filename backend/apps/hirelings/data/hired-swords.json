@@ -4608,5 +4608,181 @@
       "rating": 22,
       "race": "Elf"
     }
+  },
+  {
+    "name": "Dark Elf Sorceress",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Dark Magic",
+        "description": "The Sorceress is a wizard with two spells, rolled at random from Dark Elf Magic."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dark Elf Blade",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "special",
+        "note": "Free to hire before a battle. Afterwards the warband pays half of its earnings in gold crowns, rounding up, in tax."
+      },
+      "upkeep_fee": {
+        "kind": "special",
+        "note": "Half of the warband's earnings in gold crowns, rounding up, after each battle, and 70 gc more if he came to harm."
+      },
+      "unique_to": "Dark Elf Corsairs only, as one of the Black Ark's Specialists.",
+      "warbands": [
+        {
+          "type": "dark-elf-corsairs"
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 10,
+      "race": "Elf"
+    }
+  },
+  {
+    "name": "Dark Elf Beastmaster",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 6,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Cold One Beasthounds",
+        "description": "Two Cold One Beasthounds come with the Beastmaster: M6 WS3 BS0 S4 T4 W1 I1 A1 Ld4. A Beasthound causes fear and is subject to stupidity, and may use the Beastmaster's Leadership while within 6\" of him. Its scaly skin gives it a 6+ armour save that may not be modified."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Dark Elf Blade",
+        "quantity": 1
+      },
+      {
+        "item": "Beastlash",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "special",
+        "note": "Free to hire before a battle. Afterwards the warband pays half of its earnings in gold crowns, rounding up, in tax."
+      },
+      "upkeep_fee": {
+        "kind": "special",
+        "note": "Half of the warband's earnings in gold crowns, rounding up, after each battle, and 110 gc more if he came to harm."
+      },
+      "unique_to": "Dark Elf Corsairs only, as one of the Black Ark's Specialists.",
+      "warbands": [
+        {
+          "type": "dark-elf-corsairs"
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 10,
+      "race": "Elf"
+    }
+  },
+  {
+    "name": "Witch Elf",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 6,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Frenzy",
+        "description": "The Witch Elf takes drugs before a battle and is subject to frenzy."
+      },
+      {
+        "name": "Martial Arts",
+        "description": "The Witch Elf has a 5+ save against every wound she suffers."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dark Elf Blade",
+        "quantity": 2
+      },
+      {
+        "item": "Dark Venom",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "special",
+        "note": "Free to hire before a battle. Afterwards the warband pays half of its earnings in gold crowns, rounding up, in tax."
+      },
+      "upkeep_fee": {
+        "kind": "special",
+        "note": "Half of the warband's earnings in gold crowns, rounding up, after each battle, and 50 gc more if he came to harm."
+      },
+      "unique_to": "Dark Elf Corsairs only, as one of the Black Ark's Specialists.",
+      "warbands": [
+        {
+          "type": "dark-elf-corsairs"
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 10,
+      "race": "Elf"
+    }
   }
 ]

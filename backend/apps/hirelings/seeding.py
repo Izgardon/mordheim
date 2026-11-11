@@ -11,7 +11,11 @@ fees, fees.py; or `hire_cost` and `upkeep_cost` in gold with a `*_cost_expressio
 
 Who may hire a row, its fees and the book's sentence come from the catalogue import (`out/who-can.json`, mordheimer's
 by name) where it lists the row: its warband types and groups, its fee and upkeep (structured fees) and its hiring
-sentence as `hire_note`; otherwise the row's own fees and its `unique_to` as the note.
+sentence as `hire_note`; otherwise the row's own fees and its `unique_to` as the note. A row mordheimer's list lacks
+may say who may hire it itself (`warbands`, the who-can lines' shape: `{"type": slug}` or `{"group": slug}`, each
+`excluded` or not), so a hired sword only one warband may take is not seeded for everyone (William, 11 Nov 2026, of
+the Dark Elf Corsairs' Specialists: "why cant specialists just be hired swords that only that warband can hire?");
+with no `warbands` the row stays for everyone, as it always was.
 
 Rows are upserted in the book by name (BUG-17). Links resolve against the book (`core/book_lookups.py`); a row's own
 specials and spells the book lacks are created in it under "Hired Sword - <name>" ("Dramatis Persona - <name>"), and
@@ -137,13 +141,20 @@ class _Run:
         imported = self.who_can.of(name)
         if imported is None:
             fees = {f"{fee}_fee": self.own_fee(terms, fee, name) for fee in FEES}
-            return {**fees, "for_everyone": True, "hire_note": clean(terms.get("unique_to"))}
+            own = self.own_lines(terms, name)
+            return {**fees, "for_everyone": not own, "hire_note": clean(terms.get("unique_to"))}
         return {
             "hire_fee": self.checked(imported["hire_fee"], name),
             "upkeep_fee": self.checked(imported["upkeep_fee"], name),
             "for_everyone": imported["for_everyone"],
             "hire_note": imported["note"] or clean(terms.get("unique_to")),
         }
+
+    def own_lines(self, terms: dict[str, Any], name: str) -> list[dict[str, Any]]:
+        """The who-can lines a row names itself (`warbands`), for one mordheimer's list lacks; none while the warband
+        types aren't seeded, when every row is for everyone."""
+        lines = terms.get("warbands") or []
+        return self.who_can.access.of(lines, name) if lines and self.who_can.access.ready else []
 
     def own_fee(self, terms: dict[str, Any], fee: str, name: str) -> Fee:
         """A row's own fee: its structured `<fee>_fee`, else its gold `<fee>_cost` with the `<fee>_cost_expression` as
@@ -164,12 +175,13 @@ class _Run:
         """The row's links become the data's: each kind in one INSERT, through the catalogue's link builder."""
         links = self.lookups.links(data, row.name)
         imported = self.who_can.of(row.name)
+        terms = data.get(self.spec.terms) or {}
         resolved = {
             "skill_ids": [skill.id for skill in links.skills],
             "special_ids": [special.id for special in links.specials],
             "spell_ids": [spell.id for spell in links.spells],
             "item_entries": [{"item_id": pk, "quantity": quantity} for pk, quantity in links.quantities.items()],
-            "warbands": imported["lines"] if imported else [],
+            "warbands": imported["lines"] if imported else self.own_lines(terms, row.name),
         }
         write_links(row, resolved, replace=True)
 

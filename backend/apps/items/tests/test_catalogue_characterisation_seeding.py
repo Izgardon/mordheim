@@ -113,12 +113,13 @@ class SeedAllTests(TestCase):
                 # pointer rule takes the rule it points to (William, 7 Nov 2026), so the Cave Squig holds the Goblin
                 # Warriors' Not Orcs and the Pit Fighters' Pit Fighter its skill's one row: 2 fewer; a rule that only
                 # named a skill is the skill he starts with (William, 7 Nov 2026: "yes please do that"): the
-                # templates' 21, the hired swords' 9 and Maximilian's Strongman fewer
-                "Special": 1194,
+                # templates' 21, the hired swords' 9 and Maximilian's Strongman fewer; the Corsairs' three Specialist
+                # hired swords bring 3 of their own (their Witch Elf's Frenzy is the shared one)
+                "Special": 1197,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,
-                "HiredSword": 72,
+                "HiredSword": 75,  # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin)
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
                 "WarbandTemplate": 98,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
             },
@@ -300,7 +301,7 @@ class SeedAllTests(TestCase):
             links,
             {
                 # Totem Warrior, Berserker, Witch Elf, Cannibal Boy; Sigmund's Maddened; the Bloodletter
-                "Frenzy": (4, 0, 1, 1),
+                "Frenzy": (4, 1, 1, 1),  # the Corsairs' Witch Elf hired sword takes it too
                 "Hate Orcs and Goblins": (5, 3, 0, 0),  # the Dwarf Treasure Hunter's Hates Orcs & Goblins now too
                 "Hate High Elves": (0, 1, 1, 0),  # the Dark Elf Assassin's and Dijin Katal's Kindred Hatred
                 "Hate Bandits and Outlaws": (2, 0, 0, 0),  # the Horned Hunters' Hang the Bandit!

@@ -687,6 +687,12 @@
     "Aksho'akhash the Vile Dreadwing, Lord of the Carrion Throne": "his hire is the summoning ritual his hiring sentence describes (William: do what you think is best); shown, never automated"
   },
   "hire_warbands_add": {
+    "Dark Elf Assassin": {
+      "warbands": [
+        "dark-elf-corsairs"
+      ],
+      "why": "the Dark Elf Corsairs' Assassin Specialist is this hired sword, whose rules their PDF points at (\"Same as Hired Sword from TC 12\", p5); William, 11 Nov 2026"
+    },
     "Sigmund Spindle, the Harvester of Flesh": {
       "warbands": [
         "beastmen-raiders"
@@ -877,7 +883,10 @@
       "Axe Thrower (Shooting)": "sartosa"
     },
     "hired_swords": {
-      "Norse Shaman": "border-town-burning"
+      "Norse Shaman": "border-town-burning",
+      "Dark Elf Sorceress": "mousillon",
+      "Dark Elf Beastmaster": "mousillon",
+      "Witch Elf": "mousillon"
     }
   }
 }

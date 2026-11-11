@@ -2236,6 +2236,21 @@
       "name": "Wood Elf Hunter",
       "setting": "mordheim-2a",
       "how": "mordheimer"
+    },
+    {
+      "name": "Dark Elf Sorceress",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Dark Elf Beastmaster",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Witch Elf",
+      "setting": "mousillon",
+      "how": "overrides.json"
     }
   ],
   "dramatis_personae": [

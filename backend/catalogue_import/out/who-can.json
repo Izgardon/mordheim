@@ -2597,6 +2597,10 @@
         {
           "type": "grave-robbers",
           "excluded": false
+        },
+        {
+          "type": "dark-elf-corsairs",
+          "excluded": false
         }
       ],
       "note": "Any evil warband may hire a Dark Elf Assassin.",

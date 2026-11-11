@@ -41,6 +41,20 @@ OGRE = {
         "available_special_skills": [{"name": "Bully", "description": "Shoves."}],
     },
 }
+# a hired sword mordheimer's list doesn't hold, naming who may hire him himself (the Corsairs' Specialists)
+SPECIALIST = {
+    "name": "Black Ark Specialist",
+    **STATS,
+    "hired_sword": {
+        "hire_fee": {"kind": "special", "note": "Free before the battle; half the warband's earnings in tax after it."},
+        "upkeep_cost": None,
+        "rating": 15,
+        "grade": "2b",
+        "race": "Ogre",
+        "unique_to": "Dark Elf Corsairs only",
+        "warbands": [{"type": "dark-elf-corsairs"}],
+    },
+}
 AENUR = {
     "name": "Aenur",
     **STATS,
@@ -100,6 +114,21 @@ class HirelingSeederTests(TestCase):
         self.assertIn("Reiklanders", {line.warband_type.name for line in lines if line.warband_type})
         self.assertFalse(any(line.excluded for line in lines))
         self.assertEqual(ogre.hire_note, "Any warband except Skaven may hire an Ogre Bodyguard.")
+
+    def test_a_hired_sword_mordheimer_lacks_says_who_may_hire_him_himself(self):
+        # William, 11 Nov 2026: "why cant specialists just be hired swords that only that warband can hire?" — a row
+        # the import's list lacks carries its own who-can lines, so it is not seeded for everyone
+        run("seed_settings")
+        run("seed_warband_types")
+        with data_file([SPECIALIST]) as path:
+            run("seed_hired_swords", json_paths=[path])
+
+        row = HiredSword.objects.get(name="Black Ark Specialist", campaign__isnull=True)
+        lines = row.warband_links.values_list("warband_type__slug", "warband_group_id", "excluded")
+        self.assertFalse(row.for_everyone)
+        self.assertEqual(list(lines), [("dark-elf-corsairs", None, False)])
+        self.assertEqual(row.hire_note, "Dark Elf Corsairs only")  # his own sentence, as before
+        self.assertEqual(row.hire_fee["kind"], "special")
 
     def test_a_second_run_updates_in_place_and_replaces_the_links(self):
         with data_file([OGRE]) as path:

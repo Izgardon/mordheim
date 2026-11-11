@@ -210,7 +210,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
 | skills | 375 | 152 | 186 | 37 |
-| hired swords | 72 | 71 | 1 | 0 |
+| hired swords | 75 | 71 | 4 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
 Not on mordheimer (skills), so Mordheim: [Animal] Handler, Ride [Animal], Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip, Falconer, Heron Strike, Swallow Kick, Water Form, Inch Punch, Virtue of Valor, Virtue of the Impetuous, Virtue of the Squire, Tunneler, Tinkerer, Quick Thinker, Animosity, Backstabber, Pick Locks, Slaver, Cutpurse, Infiltrate, ’ard ’ead, Captain Blood, Treasure Hunter, Luck, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat, Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form.
@@ -942,7 +942,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
 | Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
 | Hate Orcs and Goblins | Psychology | the list's text |  |  | 5 | 3 | 0 | 0 |
-| Frenzy | Psychology | the list's text |  |  | 4 | 0 | 1 | 1 |
+| Frenzy | Psychology | the list's text |  |  | 4 | 1 | 1 | 1 |
 | Hate High Elves | Psychology | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Hate Bandits and Outlaws | Psychology | the list's text |  |  | 2 | 0 | 0 | 0 |
 | Hate Spellcasters | Psychology | the list's text |  |  | 2 | 0 | 0 | 0 |
@@ -1013,7 +1013,7 @@ List prices the pages differ from: none.
 - Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
 - Pawnbroker: Arabian Merchant; Cathayan Merchant.
 - Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Slayer Cult: Rememberer; Dwarf Slayer Cult: Stubble; Dwarf Slayer Cult: Axe Hurler; Dwarf Pathfinder; Dwarf Treasure Hunter (Hates Orcs & Goblins); Runesmith Journeyman.
-- Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Druchii: Witch Elf; Khorne Raiders: Cannibal Boy; Sigmund Spindle, the Harvester of Flesh (Maddened); Bloodletter.
+- Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Druchii: Witch Elf; Khorne Raiders: Cannibal Boy; Witch Elf; Sigmund Spindle, the Harvester of Flesh (Maddened); Bloodletter.
 - Hate High Elves: Dark Elf Assassin (Kindred Hatred); Dijin Katal, the Renegade Assassin (Kindred Hatred).
 - Hate Bandits and Outlaws: Horned Hunters: Horned Hunter (Hang the Bandit!); Horned Hunters: Initiate (Hang the Bandit!).
 - Hate Spellcasters: Witch Hunters: Witch Hunter Captain (Burn the Witch!); Witch Hunters: Witch Hunter (Burn the Witch!).
@@ -1369,8 +1369,8 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): The dark elves take the Elf (Druchii) race, the Druchii PDF's printed dark elf maximum (T3, where our Elf has T4); the PDF prints no maximum of its own. A decision for William.
 - Flag (p2): The Reaver list's Repeating Crossbow and the Shades list's Repeater Crossbow are our Repeater Crossbow (ours 40 gc, the lists 35). The Dragon Cloak (50 gc) is our Sea Dragon Cloak, the same price.
 - Flag (p6): Corsairs buy from the Reaver list "with the exception of Missile Weapons, of which they may have none": the Repeating Crossbow line is read as not Corsairs.
-- Flag (p3): The Specialist (0-1, "Special") is hired for nothing before a battle, leaves the warband after it, gains no experience and doesn't count towards the warband size. He is no roster fighter, so his rules, the four Specialists with their replacement costs, profiles and equipment, and the Cold One Beasthound's profile, stay the warband's Specialists rule. They belong in the catalogue as four hired swords (William, 11 Nov 2026: a fighter who brings another model is a hired sword), but a hired sword only a named warband type may hire can't be declared by a PDF page yet: who-can reads mordheimer's list alone, and a row it lacks is open to everyone.
-- Flag (p5): The Assassin Specialist's profile is printed with "Same as Hired Sword from TC 12" for his rules, so the rule points at that hired sword rather than repeating it.
+- Flag (p3): The four Specialists are hired swords in the catalogue, each hirable by the Dark Elf Corsairs alone (William, 11 Nov 2026: "why cant specialists just be hired swords that only that warband can hire?"): the Dark Elf Sorceress (70 gc to replace), the Dark Elf Beastmaster (110, his two Cold One Beasthounds his rule) and the Witch Elf (50), each hired for nothing with the tax and the replacement fine as his fees; the Assassin is our Dark Elf Assassin, whose rules the PDF points at, with the Corsairs added to who may hire him. The warband rule keeps how a Specialist works and no longer lists them.
+- Flag (p5): The Assassin Specialist's profile (M5 WS5 BS5 S4 T4 W1 I7 A1 Ld8) and "Same as Hired Sword from TC 12" are our Dark Elf Assassin, the same profile: no second row was made, and the Corsairs were added to who may hire him instead. His fees stay ours (70 gc and 25); the warband's Specialists rule carries the Black Ark's terms.
 - Flag (p3): The Captain's Slaver rule is his own (it forces the sold-to-slavery option); our skill of that name captures a model automatically and is a different rule.
 - Flag (p2): The Corsair special skills: Fey Quickness and Infiltration are ours, the same effects. Excellent Sight ("twice as far away as normal warriors") is the same skill the Druchii and the Wood Elves of Athel Loren groups hold, with their words, which William kept apart from our Unblinking Eye. Furious Charge (+1 Attack when charging) and Looting are new; our Looter adds a Treasure instead, so Looting is kept apart. A decision for William.
 - Flag (p6): Shades' Elite (no Lad's Got Talent) makes them henchmen who gain experience but can't be promoted.
