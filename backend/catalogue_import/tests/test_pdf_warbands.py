@@ -2,6 +2,7 @@
 passes the check, the check finds what a bad file gets wrong, and the import builds each file's template, stubs and
 skill group by the snapshot's code path."""
 
+from dataclasses import replace
 from typing import Any, ClassVar
 
 from django.test import SimpleTestCase
@@ -144,6 +145,15 @@ class PdfCheckTests(SimpleTestCase):
                 "special skill 'Brave': one of our skills holds the name, use it or name it apart",
                 "special skill 'Grim': no skill of ours 'Grim'",
             ],
+        )
+
+    def test_a_fighters_starting_skills_must_be_ours(self) -> None:
+        page = good_page()
+        page["fighters"][0]["skills"] = ["Brave", "Fervour", "Grim"]  # ours, the page's own, and neither
+        catalogue = replace(CATALOGUE, page_skills={"fervour"})
+        self.assertEqual(
+            check_page("witch-hunters", page, catalogue).problems,
+            ["fighter Captain: no skill of ours 'Grim' to start with"],
         )
 
     def test_an_existing_group_holds_the_skills_named_and_every_list_is_bought_from(self) -> None:
@@ -399,6 +409,16 @@ class PdfImportTests(SimpleTestCase):
         self.assertLessEqual(
             {("Blessed Water", "Holy Water"), ("Sigmarite Warhammer", "Warhammer")}, shown("protectorate-of-sigmar")
         )
+
+    def test_a_fighter_starts_with_the_skills_his_page_names(self) -> None:
+        # William, 7 Nov 2026, of a rule that only named a skill: "yes please do that". The Mousillon Clan Pestilens
+        # PDF (p5) says the Plague Priest and the Plague Champion start with the Resilient Strength skill, so each
+        # holds the skill itself and neither keeps a rule saying so.
+        pestilens = self.templates["skaven-of-clan-pestilens-mousillon"]
+        held = {row["name"]: (row["skills"], [rule["name"] for rule in row["specials"]]) for row in pestilens["fighters"]}  # fmt: skip
+        self.assertEqual(held["Plague Priest"], (["Resilient"], ["Leader", "Frenzy"]))
+        self.assertEqual(held["Plague Champion"], (["Resilient"], ["Frenzy"]))
+        self.assertEqual(held["Monk Initiate"][0], [])
 
     def test_a_priest_of_morr_casts_his_funerary_rites_as_a_priest(self) -> None:
         # the Vampire Hunters of Sylvania's PDF (p11): "Priests of Morr are not wizards"

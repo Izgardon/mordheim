@@ -70686,13 +70686,11 @@
           {
             "name": "Frenzy",
             "type": "Psychology"
-          },
-          {
-            "name": "Resilient",
-            "type": "Mutation"
           }
         ],
-        "skills": []
+        "skills": [
+          "Resilient"
+        ]
       },
       {
         "key": "plague-champion",
@@ -70738,13 +70736,11 @@
           {
             "name": "Frenzy",
             "type": "Psychology"
-          },
-          {
-            "name": "Resilient",
-            "type": "Mutation"
           }
         ],
-        "skills": []
+        "skills": [
+          "Resilient"
+        ]
       },
       {
         "key": "monk-initiate",

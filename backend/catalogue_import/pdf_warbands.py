@@ -39,6 +39,10 @@ snapshot so the template import builds it the same way. A file's own keys:
 - a fighter's `skillGroups`: groups he learns from besides his Special tick, each one of ours or a page's shared one
   (a Khorne Raiders Quartermaster ticks Special but not Pirate);
 - a fighter's `spellLores`: the lores he casts from, by our spells' lore names;
+- a fighter's `skills`: the skills he starts with, by our names (the Mousillon Plague Priest's Resilient), as
+  `TemplateFighterSkill` holds them, so they show with his skills and follow any change to the skill (William,
+  7 Nov 2026, of a rule that only names a skill: "yes please do that"). A rule that says more than the skill keeps
+  its text beside them, as the snapshot's `pointer_rules.py` does;
 - `flags`: `{page, what}`, what the PDF leaves unclear, for William.
 
 `check_pdf.py` checks every file against the catalogue (`pdf_check.py`).

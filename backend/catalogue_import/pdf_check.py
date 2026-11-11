@@ -7,7 +7,8 @@ A file is checked for its shape against the snapshot pages' (the keys a page, li
 their types); each stat a whole number from 0 to 10 or written ("D6", "3(4)", "-"); its costs, list and brace prices
 whole numbers; its counts and group sizes (min no more than max, a hero with no group size); its starting gold and most
 models; every list a fighter names there, and every list someone's; every line's note read into who may take it; and
-every item, alias, skill group, skill, race, spell lore and warband type it names matched to our catalogue, or a
+every item, alias, skill group, skill (a fighter's starting skills among them), race, spell lore and warband type it
+names matched to our catalogue, or a
 declared stub that matches nothing of ours; a stub's rules a shared item rule of ours (or a page's) or its own name and
 text; and a price row's item ours and named by a line; and its upgrade groups' shape (`mutations`).
 """
@@ -77,6 +78,7 @@ FIGHTER: Spec = {
     "equipmentLists": (list, True),
     "skillAccess": (dict, False),
     "skillGroups": (list, False),
+    "skills": (list, False),  # the skills he starts with, by our names
     "equipment": (str, False),
     "spellLores": (list, False),
     "specialRules": (list, True),
@@ -143,6 +145,7 @@ class Catalogue:
     types: set[str]
     item_rules: set[str] = field(default_factory=set)  # shared item rules' names and aliases, norm names
     shared_groups: set[str] = field(default_factory=set)  # the groups the pages share between warband types
+    page_skills: set[str] = field(default_factory=set)  # the new skills the pages declare, norm names
 
 
 def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set[str]) -> Catalogue:
@@ -170,6 +173,7 @@ def load_catalogue(pages: dict[str, dict[str, Any]], races: set[str], lores: set
         {norm_name(name) for row in load_json(OUT / "item-rules.json") for name in [row["name"], *row["aliases"]]}
         | {norm_name(row["name"]) for page in pages.values() for row in page.get("itemRules") or []},
         {page[SHARED]["name"] for page in pages.values() if page.get(SHARED)},
+        own_skills,
     )
 
 
@@ -258,6 +262,12 @@ def _fighters(slug: str, page: dict[str, Any], catalogue: Catalogue, problems: l
         ]
         problems += [
             f"{where}: no skill group {name!r}" for name in fighter.get("skillGroups") or [] if name not in known
+        ]
+        held = catalogue.skills | catalogue.page_skills
+        problems += [
+            f"{where}: no skill of ours {name!r} to start with"
+            for name in fighter.get("skills") or []
+            if norm_name(name) not in held
         ]
         log = FighterLog()
         race_of(slug, fighter, catalogue.races, log)

@@ -261,5 +261,7 @@ def build_fighter(
         "fixed_kit": plain(fighter.get("equipment")),
         "lists": lists,
         "specials": specials,
-        "skills": [],  # the skills he starts with (pointer_rules.py)
+        # the skills he starts with: a PDF page's fighter names them (`skills`), and pointer_rules.py adds a
+        # snapshot fighter's, whose rule only named a skill (William, 7 Nov 2026: "yes please do that")
+        "skills": [str(name) for name in fighter.get("skills") or []],
     }

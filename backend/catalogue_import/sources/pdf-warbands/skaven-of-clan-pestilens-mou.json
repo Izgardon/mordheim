@@ -60,10 +60,10 @@
       "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
       "equipmentLists": ["clan-pestilence-equipment-list"],
       "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "skills": ["Resilient"],
       "specialRules": [
         {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Plague Priest may use his Leadership instead of their own."},
-        {"rulename": "Frenzy", "ruleFull": "The Plague Priest is subject to frenzy."},
-        {"rulename": "Resilient", "ruleFull": "The Plague Priest starts with the Resilient Strength skill."}
+        {"rulename": "Frenzy", "ruleFull": "The Plague Priest is subject to frenzy."}
       ]
     },
     {
@@ -79,9 +79,9 @@
       "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 6},
       "equipmentLists": ["clan-pestilence-equipment-list"],
       "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "skills": ["Resilient"],
       "specialRules": [
-        {"rulename": "Frenzy", "ruleFull": "A Plague Champion is subject to frenzy."},
-        {"rulename": "Resilient", "ruleFull": "A Plague Champion starts with the Resilient Strength skill."}
+        {"rulename": "Frenzy", "ruleFull": "A Plague Champion is subject to frenzy."}
       ]
     },
     {
@@ -168,7 +168,7 @@
     {"page": 2, "what": "The warband spends warp tokens (wt), which the PDF says are treated as gold crowns: every price is imported as gold."},
     {"page": 2, "what": "The skill table ticks Priest and Champion Combat, Strength, Speed and Special, and the Initiate Combat, Speed and Special."},
     {"page": 5, "what": "The Plague Priest has Movement 4 where every other Skaven of the warband has 5: kept as printed."},
-    {"page": 5, "what": "The Plague Champion's Resilient rule is printed in the Plague Priest's words (\"The Plague Priest is a disease-ridden Skaven\"): read as the Champion's own."},
+    {"page": 5, "what": "The Plague Priest and the Plague Champion \"start with the Resilient Strength skill\": each starts with our Resilient skill, so neither keeps a rule saying so. The Champion's rule is printed in the Priest's words (\"The Plague Priest is a disease-ridden Skaven\"), read as the Champion's own."},
     {"page": 4, "what": "The Plague Censer is priced 100 wt on the equipment list and 75+5D6 wt, Rare 12, in its own entry: the list price is the starting price and the entry's is the item's price row."},
     {"page": 4, "what": "The Plague Censer is our Censer, bought under the PDF's name. The PDF's Strength is As User +2 with Heavy, Two Handed and Fog of Death; ours carries Heavy, Two-handed and a Fog of Death that takes a Toughness test rather than the PDF's D6 roll of 6 at the end of each close combat phase, and the PDF's extra -1 to hit for shooting at the wielder."},
     {"page": 3, "what": "The equipment lists' Staff (3 gc) and Club/Staff (3 gc) are our Club, Mace or Hammer, bought under the PDF's names."},
