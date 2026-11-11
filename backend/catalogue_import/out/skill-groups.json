@@ -252,6 +252,26 @@
     ]
   },
   {
+    "name": "Brood of Ghurash",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "the-brood-of-ghurash",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "The Terror",
+      "Mother knows best",
+      "Ground Pounder",
+      "Titanic Strength",
+      "Hurl"
+    ]
+  },
+  {
     "name": "Call of the Night Haint",
     "for_everyone": false,
     "warbands": [
@@ -328,6 +348,47 @@
       "Numb",
       "Frenzy",
       "Rotten Body (Clan Pestilens, Mousillon)"
+    ]
+  },
+  {
+    "name": "Clan Pristekk",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "skaven-of-clan-pristekk",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Black Hunger",
+      "Bloated",
+      "Thing handler",
+      "Enrage",
+      "Breeder",
+      "Mutating Experiment"
+    ]
+  },
+  {
+    "name": "Clockworkers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "clockworkers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Experimental enhancements",
+      "Moonstone infusion",
+      "Puppeteer",
+      "Rogue control",
+      "Gift of Sentience"
     ]
   },
   {
@@ -1361,6 +1422,27 @@
       "Sniper (Shadow Warriors)",
       "Powerful Build",
       "Master of Runes"
+    ]
+  },
+  {
+    "name": "Silent Brotherhood",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "silent-brotherhood",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Master of Poisons: Poisoner only.",
+    "how": "new group",
+    "skills": [
+      "Backstabber",
+      "Infiltration",
+      "Master of Poisons",
+      "Cutthroat",
+      "Hit and Run (Silent Brotherhood)",
+      "Hide in Shadows (Silent Brotherhood)"
     ]
   },
   {

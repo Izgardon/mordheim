@@ -90,8 +90,8 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             self.seeded,
             {
-                "Race": 45,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit and the Fimir
-                "Item": 433,  # the import's 371 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
+                "Race": 46,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir and the Brood of Ghurash's Troll
+                "Item": 446,  # the import's 384 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 53,  # the import's shared rules, the Metal Mongers' Experimental Technology and the Watchmen's Map among them
                 "Skill": 404,  # the import's 380 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 102,  # the import's 83 + a group of his own for each of 19 hired swords
@@ -106,7 +106,7 @@ class SeedAllTests(TestCase):
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov);
                 # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
                 # the second PDF batch's five templates add 46 of their own, the third's five 54,
-                # the fifth's five 43, the sixth's eight 83, the seventh's seven 52 and the Mousillon batch's six 28 (7 of them the Blood Dragons' bloodline upgrades, less the Killing Blow their Wight holds too) the ninth's four 59 (8 of them the Lothern Sea Patrol's Honours) and the tenth's four 38 (6 of them the Nosferatu's Necrolore upgrades)
+                # the fifth's five 43, the sixth's eight 83, the seventh's seven 52 and the Mousillon batch's six 28 (7 of them the Blood Dragons' bloodline upgrades, less the Killing Blow their Wight holds too) the ninth's four 59 (8 of them the Lothern Sea Patrol's Honours) and the tenth's four 38 (6 of them the Nosferatu's Necrolore upgrades) and the Sealed City's five 35 (3 of them the Silent Brotherhood's modus operandi)
                 # Border Town Burning's Beasts of the East add 31 of their own to special.json (William, 7 Nov 2026)
                 # Frenzy, Hate High Elves, Hate Bandits and Outlaws and Hate Spellcasters shared (William, 7 Nov 2026):
                 # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4; a
@@ -281,7 +281,7 @@ class SeedAllTests(TestCase):
         texts = nurglings.special_links.filter(special__name__endswith="(Nurglings)").values_list("special__description", flat=True)  # fmt: skip
         self.assertEqual([text.split(" are ")[0] for text in texts], ["Nurglings", "Nurglings"])
         rat_ogres = book.get(name="Stupidity (Rat Ogre)").template_fighter_links.values_list("fighter__template__slug", flat=True)  # fmt: skip
-        self.assertEqual(sorted(rat_ogres), ["skaven", "skaven-of-clan-pestilens"])
+        self.assertEqual(sorted(rat_ogres), ["skaven", "skaven-of-clan-pestilens", "skaven-of-clan-pristekk"])
 
     def test_frenzy_and_hatred_are_shared_and_a_rule_that_changes_them_stays_its_owners(self):
         # William, 7 Nov 2026: "yes" (Frenzy and Hatred shared as Fear is): one short line each, linking the Rules
@@ -426,7 +426,7 @@ class SeedAllTests(TestCase):
     def test_skaven_and_clan_pestilens_keep_their_own_maximums(self):
         # the 2026-10-28 data audit: races.json held Clan Pestilens' maximums under the name "Skaven" too, and
         # seed_races upserts by name, so the Skaven race had M5 T5 instead of M6 T4
-        self.assertIn("Races import complete. Created: 45, Updated: 0", self.output)
+        self.assertIn("Races import complete. Created: 46, Updated: 0", self.output)
         skaven = {race.name: (race.movement, race.toughness) for race in Race.objects.filter(name__startswith="Skaven")}
         self.assertEqual(skaven, {"Skaven": (6, 4), "Skaven (Clan Pestilens)": (5, 5)})
 
@@ -482,7 +482,7 @@ class SeedAllTests(TestCase):
             return set(items.values_list("name", flat=True))
 
         knives = {"Dagger", "Disease Dagger", "Fist", "Hobgoblin Poisoned Daggers", "Kitchen Knife", "Main Gauche"}
-        knives |= {"Misericordia", "Poison Daggers", "Shortsword", "Spirit Knife", "Starblade"}
+        knives |= {"Misericordia", "Poison Daggers", "Shortsword", "Spirit Knife", "Starblade", "Thinglash"}
         self.assertEqual(holders("+1 Enemy armour save"), knives)
         self.assertEqual(ItemRule.objects.filter(name__iregex=r"^two.handed$").count(), 1)
         self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike (Merchant Caravans)", "Flail", "Halberd"}, holders("Two-handed"))  # fmt: skip
@@ -628,7 +628,7 @@ class SeedAllTests(TestCase):
         # and nine groups are new, each its warband type's alone
         infiltration = Skill.objects.get(name="Infiltration")
         held_by = set(infiltration.group_links.values_list("group__name", flat=True))
-        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren", "Wood Elves of Arden", "Channel Rats", "Underworld Alliance", "Dark Elf Corsairs", "Woodsmen de Artois", "Lothern Sea Patrol"})  # fmt: skip
+        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren", "Wood Elves of Arden", "Channel Rats", "Underworld Alliance", "Dark Elf Corsairs", "Woodsmen de Artois", "Lothern Sea Patrol", "Silent Brotherhood"})  # fmt: skip
         self.assertTrue(infiltration.description.startswith("A warrior with this skill is always placed"))
         self.assertEqual(set(Skill.objects.get(name="Infiltration (Skink)").group_links.values_list("group__name", flat=True)), {"Skink"})  # fmt: skip
         self.assertTrue(Skill.objects.filter(name="Battle Tongue").exists())

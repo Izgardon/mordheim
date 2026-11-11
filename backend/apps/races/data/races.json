@@ -538,5 +538,17 @@
     "initiative": "6",
     "attacks": "5",
     "leadership": "9"
+  },
+  {
+    "name": "Troll",
+    "movement": "6",
+    "weapon_skill": "6",
+    "ballistic_skill": "3",
+    "strength": "6",
+    "toughness": "5",
+    "wounds": "5",
+    "initiative": "4",
+    "attacks": "6",
+    "leadership": "6"
   }
 ]

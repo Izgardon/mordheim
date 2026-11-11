@@ -1,0 +1,388 @@
+{
+  "warbandType": "the-brood-of-ghurash",
+  "name": "The Brood of Ghurash",
+  "source": "Sealed City",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Brood%20Of%20Ghurash.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {
+      "rulename": "Slow witted",
+      "ruleFull": "A Brood member gains half the experience another model would gain."
+    },
+    {
+      "rulename": "Always hungry",
+      "ruleFull": "Each Hero counts as two models when the warband sells moonstones."
+    },
+    {
+      "rulename": "Brood Mentality",
+      "ruleFull": "Every Brood member is subject to stupidity. When one takes a Stupidity test he adds 1 to his Leadership for each warband member within 6\". The warband never hires Hired Swords. A Baneworm neither gains nor suffers from this rule."
+    },
+    {
+      "rulename": "Hoard",
+      "ruleFull": "The warband never sells a rare item, even one no Brood member can use, but it may trade stored items for captured brood members. It suffers -2 on every rarity roll."
+    },
+    {
+      "rulename": "Regenerate",
+      "ruleFull": "When a Brood member rolls for serious injuries after being taken out of action, treat any result of 16-35 as a full recovery. A Henchman taken out of action during a game survives on a 2+. A Brood member whose last wound was caused by fire does not regenerate after the game. A Baneworm neither gains nor suffers from this rule."
+    },
+    {
+      "rulename": "Aquatic",
+      "ruleFull": "A Brood member may move through water terrain with no penalty and counts as being in cover while he is in the water."
+    },
+    {
+      "rulename": "Accelerated evolution",
+      "ruleFull": "Each time a Brood Hero rolls for an advance he may also consume any number of moonstones, roll a D6 and add the number of moonstones spent to the result.\n\nD6 | Result\n1-4 | Nothing happens.\n5-6 | He may choose a single lesser Mutation.\n7-8 | He may choose a single lesser or greater Mutation.\n9+ | He may choose any single Mutation.\n\nLesser Mutations: Blackblood, Daemon Soul, Mer-creature, Suckers, Tentacle. Greater Mutations: Great Claw, Leech maw, Poisonous fangs, Spines, Spit venom. Sublime Mutations: Acidic stream, Extra Arm, Regeneration, Scaly skin, Shark bite."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "brood-equipment-list",
+      "title": "Brood Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/",
+            "costSuffix": "Children and Newborns only"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "throwing weapons",
+          "alias": "Throwing weapons",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "broodmother",
+      "type": "hero",
+      "name": "Broodmother",
+      "plural": "Broodmothers",
+      "race": "troll",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 140,
+      "startingXp": 10,
+      "statblock": {
+        "m": 6,
+        "ws": 4,
+        "bs": 2,
+        "s": 5,
+        "t": 4,
+        "w": 3,
+        "i": 2,
+        "a": 3,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "brood-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Broodmother may use her Leadership instead of his own."
+        },
+        {
+          "rulename": "Fear",
+          "ruleFull": "The Broodmother causes fear."
+        },
+        {
+          "rulename": "Large",
+          "ruleFull": "The Broodmother is a Large Target, as the shooting rules define it."
+        }
+      ]
+    },
+    {
+      "id": "firstborn",
+      "type": "hero",
+      "name": "Firstborn",
+      "plural": "Firstborns",
+      "race": "troll",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 105,
+      "startingXp": 4,
+      "statblock": {
+        "m": 6,
+        "ws": 3,
+        "bs": 2,
+        "s": 4,
+        "t": 4,
+        "w": 3,
+        "i": 1,
+        "a": 2,
+        "ld": 4
+      },
+      "equipmentLists": [
+        "brood-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Firstborn causes fear."
+        },
+        {
+          "rulename": "Large",
+          "ruleFull": "A Firstborn is a Large Target, as the shooting rules define it."
+        }
+      ]
+    },
+    {
+      "id": "youth",
+      "type": "hero",
+      "name": "Youth",
+      "plural": "Youths",
+      "race": "troll",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 0,
+      "statblock": {
+        "m": 6,
+        "ws": 3,
+        "bs": 2,
+        "s": 4,
+        "t": 3,
+        "w": 2,
+        "i": 1,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [
+        "brood-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Youth causes fear."
+        },
+        {
+          "rulename": "Large",
+          "ruleFull": "A Youth is a Large Target, as the shooting rules define it."
+        }
+      ]
+    },
+    {
+      "id": "child",
+      "type": "henchman",
+      "name": "Child",
+      "plural": "Children",
+      "race": "troll",
+      "minQty": 0,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 6,
+        "ws": 3,
+        "bs": 2,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 1,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [
+        "brood-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "newborn",
+      "type": "henchman",
+      "name": "Newborn",
+      "plural": "Newborns",
+      "race": "troll",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 2,
+        "bs": 1,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 1,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [
+        "brood-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Nestlings",
+          "ruleFull": "If a Newborn is taken out of action by an enemy warrior in close combat, every Brood Hero who can see him hates that model until the end of the game. A Hero must always try to intercept a charge at a Newborn."
+        },
+        {
+          "rulename": "Too little",
+          "ruleFull": "A Newborn never becomes a Hero: re-roll every That Lad's Got Talent result."
+        }
+      ]
+    },
+    {
+      "id": "baneworm",
+      "type": "henchman",
+      "name": "Baneworm",
+      "plural": "Baneworms",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 2,
+        "bs": 0,
+        "s": 3,
+        "t": 2,
+        "w": 1,
+        "i": 4,
+        "a": 2,
+        "ld": 4
+      },
+      "equipmentLists": [],
+      "equipment": "A maw and mandibles. A Baneworm never uses weapons or armour.",
+      "specialRules": [
+        {
+          "rulename": "Mer-creature",
+          "ruleFull": "A Baneworm lives underwater and can also move on solid ground."
+        },
+        {
+          "rulename": "Lurker",
+          "ruleFull": "A Baneworm that was hidden in the previous turn may make a diving charge even when he does not charge from above."
+        },
+        {
+          "rulename": "Animal",
+          "ruleFull": "A Baneworm gains no experience and may not climb."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Brood of Ghurash",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "The Terror",
+      "description": "May be taken only by a Troll who already has four or more mutations. Every enemy warrior in close combat with him must take an All Alone test at the end of each turn, even with friendly warriors within 6\"."
+    },
+    {
+      "name": "Mother knows best",
+      "description": "Broodmother only. She may use the Brood Mentality bonus when she takes a Rout test."
+    },
+    {
+      "name": "Ground Pounder",
+      "description": "In the shooting phase, instead of shooting, the Hero slams both fists into the ground. Every model that is not a large target within D6\" must pass an Initiative test or be knocked down."
+    },
+    {
+      "name": "Titanic Strength",
+      "description": "Whenever the Hero hits an enemy warrior but fails to wound, the model hit must pass a Strength test or be knocked down."
+    },
+    {
+      "name": "Hurl",
+      "description": "Instead of shooting, the Hero may grab a normal-sized model in base contact and hurl it. The model must be knocked down, stunned or willing. It is thrown up to BS+D6\" in a direction the Hero chooses. If it hits another warrior, both take one automatic hit at a Strength equal to the other model's Toughness. This counts as a charge unless the models are allied or from the same warband."
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {
+      "page": 2,
+      "what": "The skill table's ticks are glyphs the text layer drops: the table was read from p2's image. Broodmother: Combat, Strength, Special. Firstborn and Youth: Strength, Special."
+    },
+    {
+      "page": 1,
+      "what": "\"Fear: All Heroes cause fear\" and \"Large: All Heroes are large targets\" are printed as warband rules: they are carried as each Hero's own rule, so they link our shared Fear and Large."
+    },
+    {
+      "page": 1,
+      "what": "Brood Mentality makes every Brood member subject to stupidity. It is kept as one warband rule rather than our shared Stupidity on each fighter, because its Leadership bonus and the Baneworm's exemption go with it."
+    },
+    {
+      "page": 2,
+      "what": "The Dagger line reads \"Dagger (Henchmen only)\". Our line notes name fighters, so it is written \"Children and Newborns only\" (the Baneworm uses no weapons at all): the same models."
+    },
+    {
+      "page": 1,
+      "what": "The maximum profile is printed for the Troll only (M6 WS6 BS3 S6 T5 W5 I4 A6 Ld6), which is the new race Troll; the Baneworm has none and is an animal that gains no experience."
+    },
+    {
+      "page": 4,
+      "what": "Accelerated evolution and the Baneworm's Mer-creature point at the Sealed City's Stygian Mutations, which we do not read (William, 11 Nov 2026). The chart's names are carried as the rule prints them; Leech maw, Acidic stream and Shark bite are no special of ours."
+    },
+    {
+      "page": 1,
+      "what": "A Brood family needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 3,
+      "what": "No group sizes are printed for the Children, Newborns or Baneworms."
+    },
+    {
+      "page": 2,
+      "what": "A hire takes the list's first-free item even when the line's note shuts him out: a Broodmother hired in the app gets the free Dagger although the line reads \"Children and Newborns only\". See the decisions."
+    }
+  ]
+}

@@ -1024,6 +1024,26 @@
     "description": "A friendly model within 6\" of him may re-roll a failed Leadership test, rout tests included, at +1 Leadership (no more than 10)."
   },
   {
+    "name": "Experimental enhancements",
+    "description": "Apprentice only. Instead of searching for rare items, the Apprentice may work on one construct. He needs 3D6 gold crowns of materials, then rolls on the Sealed City's Stygian Mutation chart and applies the result to one of your constructs."
+  },
+  {
+    "name": "Moonstone infusion",
+    "description": "Before the game the Hero may raise any characteristic except Toughness and Wounds of a single construct by 1 for each orichalcum token used. Each characteristic may be raised only once, and the increase lasts for that game."
+  },
+  {
+    "name": "Puppeteer",
+    "description": "Any construct within 12\" of the Hero may ignore the Need Orders rule."
+  },
+  {
+    "name": "Rogue control",
+    "description": "Instead of shooting a missile weapon, the Hero may choose a single construct or clockwork weapon within 12\" and line of sight. Roll 2D6 against the construct's or the weapon bearer's Leadership: if the roll is higher, the target ceases to function until the Clockworkers' next Movement phase."
+  },
+  {
+    "name": "Gift of Sentience",
+    "description": "Instead of searching for rare items, the Hero may spend D3 moonstones on a single Clockwork soldier. The soldier loses Need Orders, Immune to Psychology and Brainless, and re-rolls any That Lad's Got Talent result when rolling for advances."
+  },
+  {
     "name": "Furious Charge",
     "description": "The warrior gains +1 Attack in a turn he charges."
   },
@@ -1372,6 +1392,18 @@
     "description": "The warband's leader only. When a henchman the warband takes out of action dies (1-2 on his injury roll), the warband may try to recruit him as a Swabbie or Crew on a 2+ instead of 4+. When an enemy the warband took out of action dies (11-15 on the Serious Injury chart), on a D6 roll of 4+ he is captured instead, to be ransomed or made to join the crew."
   },
   {
+    "name": "Cutthroat",
+    "description": "While the Hero fights with two daggers of any kind as a pair, he has an extra -1 modifier to any armour save against a wound he inflicts."
+  },
+  {
+    "name": "Hit and Run (Silent Brotherhood)",
+    "description": "At the end of any hand-to-hand phase in which the Hero is still in base contact with an enemy model, he may take a Leadership test. If he passes he may make a normal move away from the enemy, who strike no blows at him; he may not run or charge. If he fails he stays in combat and fights as normal in the following turn."
+  },
+  {
+    "name": "Hide in Shadows (Silent Brotherhood)",
+    "description": "While the Hero is within 1\" of a wall or other linear obstacle, an opposing model must pass an Initiative test to charge or shoot at him."
+  },
+  {
     "name": "Beastkin",
     "description": "The range of every Beast or Animal Handling skill this Hero has, now or later, is doubled to 12\"."
   },
@@ -1402,6 +1434,26 @@
   {
     "name": "Rotten Body (Clan Pestilens, Mousillon)",
     "description": "The warrior causes fear."
+  },
+  {
+    "name": "Bloated",
+    "description": "May be taken only by a Hero who has Black Hunger. He gains +1 Wound and +1 Toughness and loses 1 Movement, and counts as two models when the warband sells moonstone."
+  },
+  {
+    "name": "Thing handler",
+    "description": "Any Giant rat, Rat Ogre or converted thing within 6\" of the Hero may use his Leadership."
+  },
+  {
+    "name": "Enrage",
+    "description": "At the start of your turn, instead of moving, the Hero may enrage up to as many Giant rats, Rat Ogres and things within 4\" as his basic Attacks. Each gains frenzy until the end of the turn and suffers a Strength 2 hit, or a Strength 4 hit if it is a large target. At least one of the Hero's weapons must have the whipcrack rule."
+  },
+  {
+    "name": "Breeder",
+    "description": "Instead of searching for rare items, the Hero may skavenise a captured thing. He pays one moonstone or D6 orichalcum tokens and rolls a D6. 1: the thing explodes and is struck off the roster, and the Breeder must pass an Initiative test or roll on the Serious Injury chart. 2-3: it is converted but suffers from stupidity. 4-5: it is converted. 6: it is converted but suffers from frenzy and stupidity. A converted thing is a new animal Henchman with its own characteristics and rules; it may never use weapons or armour, and suffers no penalty for fighting unarmed."
+  },
+  {
+    "name": "Mutating Experiment",
+    "description": "Chieftain and Packmaster only, and may be taken more than once. The Hero may make any Hero of the warband, himself included, roll at once on the Sealed City's Stygian Mutation chart. One of the D66 dice may be re-rolled once."
   },
   {
     "name": "Gloryseeker",
@@ -1458,6 +1510,26 @@
   {
     "name": "Practiced Arm",
     "description": "Strigany Heroes only, never the Strigoi Vampire. The Hero may throw two throwing knives a turn, both at the same target, each with +1 to its injury roll."
+  },
+  {
+    "name": "The Terror",
+    "description": "May be taken only by a Troll who already has four or more mutations. Every enemy warrior in close combat with him must take an All Alone test at the end of each turn, even with friendly warriors within 6\"."
+  },
+  {
+    "name": "Mother knows best",
+    "description": "Broodmother only. She may use the Brood Mentality bonus when she takes a Rout test."
+  },
+  {
+    "name": "Ground Pounder",
+    "description": "In the shooting phase, instead of shooting, the Hero slams both fists into the ground. Every model that is not a large target within D6\" must pass an Initiative test or be knocked down."
+  },
+  {
+    "name": "Titanic Strength",
+    "description": "Whenever the Hero hits an enemy warrior but fails to wound, the model hit must pass a Strength test or be knocked down."
+  },
+  {
+    "name": "Hurl",
+    "description": "Instead of shooting, the Hero may grab a normal-sized model in base contact and hurl it. The model must be knocked down, stunned or willing. It is thrown up to BS+D6\" in a direction the Hero chooses. If it hits another warrior, both take one automatic hit at a Strength equal to the other model's Toughness. This counts as a charge unless the models are allied or from the same warband."
   },
   {
     "name": "Expert Explorer",

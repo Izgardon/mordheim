@@ -1281,6 +1281,31 @@
       "how": "overrides.json"
     },
     {
+      "name": "Experimental enhancements",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Moonstone infusion",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Puppeteer",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Rogue control",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Gift of Sentience",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
       "name": "Furious Charge",
       "setting": "mousillon",
       "how": "overrides.json"
@@ -1716,6 +1741,21 @@
       "how": "overrides.json"
     },
     {
+      "name": "Cutthroat",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hit and Run (Silent Brotherhood)",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hide in Shadows (Silent Brotherhood)",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
       "name": "Beastkin",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1753,6 +1793,31 @@
     {
       "name": "Rotten Body (Clan Pestilens, Mousillon)",
       "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Bloated",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Thing handler",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Enrage",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Breeder",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Mutating Experiment",
+      "setting": "sealed-city",
       "how": "overrides.json"
     },
     {
@@ -1823,6 +1888,31 @@
     {
       "name": "Practiced Arm",
       "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "The Terror",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Mother knows best",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Ground Pounder",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Titanic Strength",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hurl",
+      "setting": "sealed-city",
       "how": "overrides.json"
     },
     {

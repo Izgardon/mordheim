@@ -1,0 +1,550 @@
+{
+  "warbandType": "skaven-of-clan-pristekk",
+  "name": "Skaven of Clan Pristekk",
+  "source": "Sealed City",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clan%20Pristekk.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "packmasters-equipment-list",
+      "title": "Packmasters Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Thinglash",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Thingcatcher",
+          "alias": "Thing-catcher",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "Shock rod",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "sling",
+          "alias": "Sling",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "net",
+          "alias": "Net",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "clanrats-equipment-list",
+      "title": "Clanrats Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "sling",
+          "alias": "Sling",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "pristekk-chieftain",
+      "type": "hero",
+      "name": "Chieftain",
+      "plural": "Chieftains",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {
+        "m": 5,
+        "ws": 4,
+        "bs": 4,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 5,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "packmasters-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Chieftain may use his Leadership instead of his own."
+        }
+      ]
+    },
+    {
+      "id": "clan-pristekk-sorcerer",
+      "type": "hero",
+      "name": "Clan Pristekk sorcerer",
+      "plural": "Clan Pristekk sorcerers",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 12,
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "clanrats-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "spellLores": [
+        "Magic of the Horned Rat"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Wizard",
+          "ruleFull": "A Clan Pristekk sorcerer is a wizard and uses the Magic of the Horned Rat."
+        }
+      ]
+    },
+    {
+      "id": "pristekk-packmaster",
+      "type": "hero",
+      "name": "Packmaster",
+      "plural": "Packmasters",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {
+        "m": 5,
+        "ws": 4,
+        "bs": 3,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "packmasters-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "pristekk-underling",
+      "type": "hero",
+      "name": "Underling",
+      "plural": "Underlings",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "clanrats-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "pristekk-clanrat",
+      "type": "henchman",
+      "name": "Clanrat",
+      "plural": "Clanrats",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "clanrats-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "pristekk-giant-rat",
+      "type": "henchman",
+      "name": "Giant rat",
+      "plural": "Giant rats",
+      "race": "giant rat",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 2,
+        "bs": 0,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [],
+      "equipment": "None. A Giant rat never uses weapons or armour.",
+      "specialRules": [
+        {
+          "rulename": "Countless",
+          "ruleFull": "Giant rats may raise the warband's numbers to 20 models."
+        },
+        {
+          "rulename": "Animals",
+          "ruleFull": "A Giant rat is an animal and gains no experience."
+        }
+      ]
+    },
+    {
+      "id": "pristekk-rat-ogre",
+      "type": "henchman",
+      "name": "Rat Ogre",
+      "plural": "Rat Ogres",
+      "race": "rat ogre",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 210,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 3,
+        "bs": 3,
+        "s": 5,
+        "t": 5,
+        "w": 3,
+        "i": 4,
+        "a": 3,
+        "ld": 4
+      },
+      "equipmentLists": [],
+      "equipment": "Jaws, claws and brute force. A Rat Ogre never uses weapons or armour.",
+      "specialRules": [
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Rat Ogre causes fear."
+        },
+        {
+          "rulename": "Stupidity",
+          "ruleFull": "A Rat Ogre is subject to stupidity unless a Skaven Hero is within 6\" of it."
+        },
+        {
+          "rulename": "Experience",
+          "ruleFull": "A Rat Ogre gains no experience."
+        },
+        {
+          "rulename": "Large",
+          "ruleFull": "A Rat Ogre is a Large Target, as the shooting rules define it."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Clan Pristekk",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "Black Hunger",
+      "ours": "Black Hunger"
+    },
+    {
+      "name": "Bloated",
+      "description": "May be taken only by a Hero who has Black Hunger. He gains +1 Wound and +1 Toughness and loses 1 Movement, and counts as two models when the warband sells moonstone."
+    },
+    {
+      "name": "Thing handler",
+      "description": "Any Giant rat, Rat Ogre or converted thing within 6\" of the Hero may use his Leadership."
+    },
+    {
+      "name": "Enrage",
+      "description": "At the start of your turn, instead of moving, the Hero may enrage up to as many Giant rats, Rat Ogres and things within 4\" as his basic Attacks. Each gains frenzy until the end of the turn and suffers a Strength 2 hit, or a Strength 4 hit if it is a large target. At least one of the Hero's weapons must have the whipcrack rule."
+    },
+    {
+      "name": "Breeder",
+      "description": "Instead of searching for rare items, the Hero may skavenise a captured thing. He pays one moonstone or D6 orichalcum tokens and rolls a D6. 1: the thing explodes and is struck off the roster, and the Breeder must pass an Initiative test or roll on the Serious Injury chart. 2-3: it is converted but suffers from stupidity. 4-5: it is converted. 6: it is converted but suffers from frenzy and stupidity. A converted thing is a new animal Henchman with its own characteristics and rules; it may never use weapons or armour, and suffers no penalty for fighting unarmed."
+    },
+    {
+      "name": "Mutating Experiment",
+      "description": "Chieftain and Packmaster only, and may be taken more than once. The Hero may make any Hero of the warband, himself included, roll at once on the Sealed City's Stygian Mutation chart. One of the D66 dice may be re-rolled once."
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Thinglash",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 5,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {
+          "rule": "+1 Enemy armour save",
+          "text": "An enemy wounded by a thinglash gains +1 on his armour save, and a 6+ armour save if he has none."
+        },
+        {
+          "rule": "Cannot Be Parried",
+          "text": "A model attacked by a thinglash may not parry with a sword or the like."
+        },
+        {
+          "rule": "Whipcrack",
+          "text": "When the wielder charges he gains +1 Attack for that turn, after any other modifier. When he is charged he gains +1 Attack, used only against the charger and striking first. Charged by two or more opponents at once he still gains only +1 Attack in all. A wielder using two whips gains +1 Attack for the second hand weapon, but only the first whip's whipcrack."
+        },
+        {
+          "name": "Infuriate",
+          "text": "While the wielder is not in close combat, any Giant rat, Rat Ogre or thing within 4\" hates every enemy warrior."
+        }
+      ]
+    },
+    {
+      "name": "Thingcatcher",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 9,
+      "dice": null,
+      "rulesPage": 5
+    },
+    {
+      "name": "Shock rod",
+      "cost": 15,
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 6,
+      "dice": null,
+      "rulesPage": 5,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {
+          "rule": "Strike First",
+          "text": "A warrior with a shock rod strikes first."
+        },
+        {
+          "rule": "Two-handed",
+          "text": "A shock rod takes both hands."
+        },
+        {
+          "name": "Shock",
+          "text": "When a shock rod is used, treat a roll of 1-4 on the Injury chart as stunned."
+        }
+      ]
+    }
+  ],
+
+  "flags": [
+    {
+      "page": 1,
+      "what": "The skill table's ticks are glyphs the text layer drops: the table was read from p1's image. Chieftain: Combat, Academic, Strength, Speed, Special. Sorcerer: Academic, Speed, Special. Packmaster: Combat, Strength, Speed, Special. Underling: Combat, Speed, Special."
+    },
+    {
+      "page": 1,
+      "what": "Choice of warriors reads \"Verminkin: Your warband may include any number of Verminkin\", while the Henchmen entry is headed \"0-5 Clanrats\". The entry's name and count are taken, and the Verminkin line is not imported."
+    },
+    {
+      "page": 5,
+      "what": "The Shock rod is 10 gc on the Packmasters list and 15 gc Rare 6 in its own entry: the list price is the starting price and the entry's the trading price (William, 6 Nov 2026)."
+    },
+    {
+      "page": 5,
+      "what": "The Thing-catcher is our Thingcatcher, stubbed for the Skaven of Clan Moulder with no rules; this PDF gives them (Two-handed and Capture), so they were added to that stub, and Clan Pristekk declares the same stub to get its own row at 25 gc Rare 9 (the Clan Moulder row is 20 gc). See the decisions."
+    },
+    {
+      "page": 5,
+      "what": "The Thinglash is a stub of its own. Our Beastlash carries the same Whipcrack and Cannot Be Parried, but is Strength as user -1 and causes fear in animals instead of +1 enemy armour save and Infuriate. See the decisions."
+    },
+    {
+      "page": 2,
+      "what": "Mutating Experiment and Breeder point at the Sealed City's own Stygian Mutation chart and at captured things, which are not read (William, 11 Nov 2026). Moonstones and orichalcum tokens are on no list of this warband, so no item of ours is made for them here."
+    },
+    {
+      "page": 1,
+      "what": "A Clan Pristekk warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 3,
+      "what": "No group sizes and no maximum profile are printed: the Skaven take our Skaven race, and the Giant rat and Rat Ogre are creatures with none."
+    },
+    {
+      "page": 3,
+      "what": "The Rat Ogre's Stupidity is the Skaven Rat Ogre's, not stupid while a Skaven Hero is within 6\": its owner was added to the shared specials' Stupidity (Rat Ogre), which is kept apart."
+    }
+  ]
+}

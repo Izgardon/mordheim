@@ -16134,6 +16134,954 @@
     "upgrades": []
   },
   {
+    "slug": "clockworkers",
+    "name": "Clockworkers",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "starting_gold": 500,
+    "max_models": 12,
+    "variants": [],
+    "types": [
+      {
+        "type": "clockworkers",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Laws of Construction",
+        "description": "A Law is not a spell, so protection against spells does not stop it, and it may be used while wearing armour, as a prayer may. A Clockworker who knows Laws rolls for one on a D6:\n\nD6 | Law | Difficulty\n1 | Offense | 7\n2 | Motion | 6\n3 | Defense | 7\n4 | Sacrifice | 9\n5 | Protection | 7\n6 | Rampage | 10",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "clockworkers-heroes-equipment-list",
+        "name": "Heroes Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer/Staff",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "Double-handed hammer",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Clockwork pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Clockwork rifle",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 40,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "master-of-clocks",
+                "dwarf-engineer"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Heavy Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 50,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "master-of-clocks",
+                "dwarf-engineer"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Orichalcum token",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "handymen-equipment-list",
+        "name": "Handymen Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "Double-handed hammer",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "constructs-equipment-list",
+        "name": "Constructs Equipment List",
+        "note": "A 1-slot line fills one of the construct's equipment slots and a 2-slot line two; armour goes in its armour slot.",
+        "lines": [
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Hammer/Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Clockwork pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Clockwork rifle",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 40,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Heavy Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 50,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "special-equipment",
+        "name": "Special equipment",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Bramstetter's Advanced Construct Thesis",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 100,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "Clockworkers only",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "master-of-clocks",
+        "kind": "hero",
+        "name": "Master of Clocks",
+        "plural": "Masters of Clocks",
+        "race": "Human",
+        "cost": 65,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 4,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Clockworkers"
+        ],
+        "spell_types": [
+          {
+            "name": "Laws of Construction",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "clockworkers-heroes-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Clockworkers",
+            "description": "Any warrior within 6\" of the Master of Clocks may use his Leadership instead of his own."
+          },
+          {
+            "name": "Laws of Construction",
+            "type": "Warband - Clockworkers",
+            "description": "The Master of Clocks starts with one Law of Construction."
+          },
+          {
+            "name": "Promotion",
+            "type": "Warband - Clockworkers",
+            "description": "If the Master of Clocks dies or leaves the expedition, the new leader may learn Laws of Construction on later skill advances."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "dwarf-engineer",
+        "kind": "hero",
+        "name": "Dwarf engineer",
+        "plural": "Dwarf engineers",
+        "race": "Dwarf",
+        "cost": 45,
+        "starting_xp": 12,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 3,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "clockworkers-heroes-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Armour",
+            "type": "Warband - Clockworkers",
+            "description": "A Dwarf never suffers a movement penalty for wearing armour."
+          },
+          {
+            "name": "Hard to Kill",
+            "type": "Warband - Clockworkers",
+            "description": "On the Injury chart, treat a roll of 1-2 as knocked down, 3-5 as stunned and 6 as out of action."
+          },
+          {
+            "name": "Hard Head",
+            "type": "Warband - Clockworkers",
+            "description": "A Dwarf ignores the special rules for maces, clubs and the like."
+          },
+          {
+            "name": "Smithery",
+            "type": "Warband - Clockworkers",
+            "description": "Instead of searching for rare items, the engineer may fit a single construct with any weapon he can get. A two-handed or missile weapon takes two slots, any other weapon one."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "metallurgist",
+        "kind": "hero",
+        "name": "Metallurgist",
+        "plural": "Metallurgists",
+        "race": "Human",
+        "cost": 35,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Academic",
+          "Speed",
+          "Clockworkers"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "clockworkers-heroes-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Moonstone refinery",
+            "type": "Warband - Clockworkers",
+            "description": "Instead of searching for rare items, the Metallurgist may split one moonstone into D6 orichalcum tokens."
+          },
+          {
+            "name": "Hellish tincture",
+            "type": "Warband - Clockworkers",
+            "description": "Once per game the Metallurgist may throw this tincture as blessed water is thrown, and it sets its target on fire. On a roll of 1 to hit, he is set on fire instead."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "apprentice",
+        "kind": "hero",
+        "name": "Apprentice",
+        "plural": "Apprentices",
+        "race": "Human",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Academic",
+          "Speed",
+          "Clockworkers"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "clockworkers-heroes-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "handyman",
+        "kind": "henchman",
+        "name": "Handyman",
+        "plural": "Handymen",
+        "race": "Human",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "handymen-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Crude",
+            "type": "Warband - Clockworkers",
+            "description": "When a Handyman rolls That Lad's Got Talent, the new Hero takes Combat and Strength skills as his two skill lists."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "clockwork-soldier",
+        "kind": "henchman",
+        "name": "Clockwork soldier",
+        "plural": "Clockwork soldiers",
+        "race": null,
+        "cost": 40,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": 1,
+        "group_max": 1,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 4,
+          "wounds": 1,
+          "initiative": 2,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "constructs-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Need Orders",
+            "type": "Warband - Clockworkers",
+            "description": "At the beginning of your turn roll a D6 for each construct with no friendly Hero within 6\", unless it is in close combat. On a 1-2 it may neither move nor shoot this turn."
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "No Pain",
+            "type": "Trait"
+          },
+          {
+            "name": "May Not Run",
+            "type": "Trait"
+          },
+          {
+            "name": "Immune to Poison",
+            "type": "Trait"
+          },
+          {
+            "name": "Brainless",
+            "type": "Warband - Clockworkers",
+            "description": "A construct gains no experience and can only be improved physically."
+          },
+          {
+            "name": "In-built equipment",
+            "type": "Warband - Clockworkers",
+            "description": "A weapon or piece of armour given to a construct can never be taken off it again. A construct has equipment slots instead of the usual maximum number of weapons: to give it equipment with no slot free, enough equipment must first be abandoned. A Clockwork soldier has two equipment slots and one armour slot."
+          },
+          {
+            "name": "Solitary maintenance",
+            "type": "Warband - Clockworkers",
+            "description": "Each Clockwork soldier forms a Henchmen group of his own."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "clockwork-fiend",
+        "kind": "henchman",
+        "name": "Clockwork fiend",
+        "plural": "Clockwork fiends",
+        "race": null,
+        "cost": 240,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": 1,
+        "group_max": 1,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 5,
+          "toughness": 5,
+          "wounds": 3,
+          "initiative": 1,
+          "attacks": 3,
+          "leadership": 8
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "constructs-equipment-list",
+          "special-equipment"
+        ],
+        "specials": [
+          {
+            "name": "Need Orders",
+            "type": "Warband - Clockworkers",
+            "description": "At the beginning of your turn roll a D6 for each construct with no friendly Hero within 6\", unless it is in close combat. On a 1-2 it may neither move nor shoot this turn."
+          },
+          {
+            "name": "Immune to Psychology",
+            "type": "Psychology"
+          },
+          {
+            "name": "No Pain",
+            "type": "Trait"
+          },
+          {
+            "name": "May Not Run",
+            "type": "Trait"
+          },
+          {
+            "name": "Immune to Poison",
+            "type": "Trait"
+          },
+          {
+            "name": "Brainless",
+            "type": "Warband - Clockworkers",
+            "description": "A construct gains no experience and can only be improved physically."
+          },
+          {
+            "name": "In-built equipment (Clockwork fiend)",
+            "type": "Warband - Clockworkers",
+            "description": "A weapon or piece of armour given to a construct can never be taken off it again. A construct has equipment slots instead of the usual maximum number of weapons: to give it equipment with no slot free, enough equipment must first be abandoned. A Clockwork fiend has four equipment slots and one armour slot."
+          },
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          },
+          {
+            "name": "Lumbering behemoth",
+            "type": "Warband - Clockworkers",
+            "description": "A Moonstone infusion on a Clockwork fiend costs twice as many orichalcum tokens for each characteristic raised."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
     "slug": "court-of-the-profane-pleasures",
     "name": "Court of the Profane Pleasures",
     "setting": "mordheim-1c",
@@ -33164,6 +34112,781 @@
             "name": "Animals",
             "type": "Warband - Horned Hunters",
             "description": "Warhounds are animals and thus do not gain experience."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "house-guard",
+    "name": "House Guard",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/House%20Guard.pdf",
+    "starting_gold": 500,
+    "max_models": 15,
+    "variants": [],
+    "types": [
+      {
+        "type": "house-guard",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Chain of Command",
+        "description": "If the warband's leader is taken out of action, work out a new temporary leader at once, as if the leader had been killed for good. He is in charge and has the Leader ability until the end of the game or until he too is taken out of action, when the warband works out another.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Personal Guard",
+        "description": "Every Hero and Henchman of a House Guard intercepts a charge at a friendly Hero within 3\" instead of the usual 2\". In the Assassination scenario they may ignore the attacker's evasive rule when their protege is the target.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Houses",
+        "description": "A House Guard warband fights for one of three houses, chosen when it is raised: Fierezza, Halcon or Baluardo. It takes that house's rules and buys from that house's equipment list beside the Heroes list.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "House Fierezza",
+        "description": "Dueling Pride: a Fierezza Hero may re-roll failed hits in the first round of combat when he fights an enemy Hero.\n\nMartial Finesse: the Commander starts with the Web of Steel skill.\n\nThe House Fierezza equipment list is open to the warband's Heroes.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "House Halcon",
+        "description": "Sharp Aim: every warrior of House Halcon ignores the long range modifier when he fires a missile weapon.\n\nMerchantry: the Commander starts with the Haggle skill.\n\nThe House Halcon equipment list is open to the warband's Heroes.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "House Baluardo",
+        "description": "Armour: a Baluardo Hero suffers no movement penalty for wearing armour.\n\nBattle Seasoned: the Commander starts with the Battle Tongue skill.\n\nThe House Baluardo equipment list is open to the warband's Heroes.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "house-guard-heroes-equipment-list",
+        "name": "Heroes Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pike (Tileans)",
+              "variant": ""
+            },
+            "shown_as": "Pike",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Heavy Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 40,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "house-fierezza-equipment-list",
+        "name": "House Fierezza Equipment List",
+        "note": "Open to a warband of House Fierezza only.",
+        "lines": [
+          {
+            "item": {
+              "name": "Rapier",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword Breaker",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "house-halcon-equipment-list",
+        "name": "House Halcon Equipment List",
+        "note": "Open to a warband of House Halcon only.",
+        "lines": [
+          {
+            "item": {
+              "name": "Crossbow pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Long Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "house-baluardo-equipment-list",
+        "name": "House Baluardo Equipment List",
+        "note": "Open to a warband of House Baluardo only.",
+        "lines": [
+          {
+            "item": {
+              "name": "Plate Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 55,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pavise",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "house-guard-henchmen-equipment-list",
+        "name": "Henchmen Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Mace",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Pike (Tileans)",
+              "variant": ""
+            },
+            "shown_as": "Pike",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Long Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "commander",
+        "kind": "hero",
+        "name": "Commander",
+        "plural": "Commanders",
+        "race": "Human",
+        "cost": 65,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Strength",
+          "Speed"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "house-guard-heroes-equipment-list",
+          "house-fierezza-equipment-list",
+          "house-halcon-equipment-list",
+          "house-baluardo-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - House Guard",
+            "description": "Any warrior within 6\" of the Commander may use his Leadership instead of his own."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "sergeant",
+        "kind": "hero",
+        "name": "Sergeant",
+        "plural": "Sergeants",
+        "race": "Human",
+        "cost": 35,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Speed"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "house-guard-heroes-equipment-list",
+          "house-fierezza-equipment-list",
+          "house-halcon-equipment-list",
+          "house-baluardo-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "adjutant",
+        "kind": "hero",
+        "name": "Adjutant",
+        "plural": "Adjutants",
+        "race": "Human",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Strength",
+          "Speed"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "house-guard-heroes-equipment-list",
+          "house-fierezza-equipment-list",
+          "house-halcon-equipment-list",
+          "house-baluardo-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Relay orders",
+            "type": "Warband - House Guard",
+            "description": "While the Adjutant may use his leader's Leadership, any warrior within 6\" of the Adjutant may use the leader's Leadership instead of his own. The Adjutant may take the Battle Tongue skill to raise that range to 12\"."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "guard",
+        "kind": "henchman",
+        "name": "Guard",
+        "plural": "Guards",
+        "race": "Human",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "house-guard-henchmen-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "pikeman",
+        "kind": "henchman",
+        "name": "Pikeman",
+        "plural": "Pikemen",
+        "race": "Human",
+        "cost": 35,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 4,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "house-guard-henchmen-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Pikewall",
+            "type": "Warband - House Guard",
+            "description": "A Pikeman who is charged while wielding a weapon that strikes first may re-roll his failed hits."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "house-guard-warhound",
+        "kind": "henchman",
+        "name": "Warhound",
+        "plural": "Warhounds",
+        "race": null,
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 4,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 4,
+          "ballistic_skill": 0,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "Jaws. A Warhound never uses weapons or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Animals",
+            "type": "Warband - House Guard",
+            "description": "A Warhound is an animal and gains no experience."
           }
         ],
         "skills": []
@@ -67457,6 +69180,825 @@
     ]
   },
   {
+    "slug": "silent-brotherhood",
+    "name": "Silent Brotherhood",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Silent%20Brotherhood.pdf",
+    "starting_gold": 500,
+    "max_models": 12,
+    "variants": [],
+    "types": [
+      {
+        "type": "silent-brotherhood",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Assignments",
+        "description": "After the game any Hero who was not taken out of action may carry out a client's assignment instead of exploring. He adds no dice to the Exploration chart and may not search for rare items. Roll a D6 instead.\n\nD6 | Result\n1 | He fails and misses the next game while he evades his pursuers.\n2-5 | He succeeds and gains 2D6 gold crowns and 1 experience point.\n6 | He surpasses the client's requirements and gains 3D6 gold crowns and D3 experience points.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Sworn Brotherhood",
+        "description": "To hire a new Hero during a campaign the warband's leader must first pass a Leadership test. If he fails, no new Heroes may be hired after that game. This does not apply when the warband is raised.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "The silence",
+        "description": "No warband member or Hired Sword may ever use a blackpowder weapon or an animal.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Underground contacts",
+        "description": "Each Hero may have one underground contact. Instead of searching for rare items he may use his contact, paying the bribe its rules give.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Modus Operandi",
+        "description": "Every Hero may choose one modus operandi when he is hired, and the choice can never be changed. A Hero may hold only one, and must have the weapons, armour and equipment it needs when it is bought; its price covers that basic set, which may be replaced later with no penalty. A Hero with none may take one instead of a skill on an advance. A second Hero may take a modus operandi only once each of them is held by someone, so two Executors need a Sniper and a Lurker first. The Silent Master may not take the sniper. Only a Hero with the sniper may buy the Crossbow or the Long bow from the Brotherhood list.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "brotherhood-equipment-list",
+        "name": "Brotherhood Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Long daggers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "Two-handed weapon",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Blowpipe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow pistol",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Long Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Buckler",
+              "variant": ""
+            },
+            "shown_as": "Cloak (counts as buckler)",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Rope & Hook",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Dark Venom",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Black Lotus",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Black-marketeer",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Fence",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Rumour-monger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spy",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Thief",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {
+              "heroes": true
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "thugs-equipment-list",
+        "name": "Thugs Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "silent-master",
+        "kind": "hero",
+        "name": "Silent Master",
+        "plural": "Silent Masters",
+        "race": "Human",
+        "cost": 80,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 2,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Academic",
+          "Speed",
+          "Silent Brotherhood"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brotherhood-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Silent Brotherhood",
+            "description": "Any warrior within 6\" of the Silent Master may use his Leadership instead of his own."
+          },
+          {
+            "name": "Perfect Killer",
+            "type": "Trait"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "poisoner",
+        "kind": "hero",
+        "name": "Poisoner",
+        "plural": "Poisoners",
+        "race": "Human",
+        "cost": 50,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Academic",
+          "Speed",
+          "Silent Brotherhood"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brotherhood-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Toxic trades",
+            "type": "Warband - Silent Brotherhood",
+            "description": "If the Poisoner does not search for rare items he may make a single dose of Black Lotus. It must be used in the next battle and may not be sold or traded to another warband."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "brotherhood-assassin",
+        "kind": "hero",
+        "name": "Assassin",
+        "plural": "Assassins",
+        "race": "Human",
+        "cost": 40,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Speed",
+          "Silent Brotherhood"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brotherhood-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "brotherhood-agent",
+        "kind": "henchman",
+        "name": "Brotherhood agent",
+        "plural": "Brotherhood agents",
+        "race": "Human",
+        "cost": 35,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brotherhood-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "brotherhood-novice",
+        "kind": "henchman",
+        "name": "Brotherhood novice",
+        "plural": "Brotherhood novices",
+        "race": "Human",
+        "cost": 25,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brotherhood-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "brotherhood-thug",
+        "kind": "henchman",
+        "name": "Thug",
+        "plural": "Thugs",
+        "race": "Human",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "thugs-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Loudmouths",
+            "type": "Warband - Silent Brotherhood",
+            "description": "A Thug never becomes a Hero: re-roll every That Lad's Got Talent result."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": [
+      {
+        "group": "Modus Operandi",
+        "special": {
+          "name": "Sniper",
+          "type": "Warband - Silent Brotherhood",
+          "description": "Equipment: a crossbow or long bow, a sword, and a rope and hook.\n\nSniper: while hidden, he may shoot and stay hidden. If his target is not taken out of action at once, the target tests against its Initiative to spot him; a passed test means he has been spotted and is no longer hidden.\n\nDistant fighter: he gains +1 Ballistic Skill and suffers -1 Weapon Skill, and may not take skills from the Combat list."
+        },
+        "cost": 30,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Modus Operandi",
+        "special": {
+          "name": "Executor",
+          "type": "Warband - Silent Brotherhood",
+          "description": "Equipment: an axe and a sword or a double-handed weapon, and light armour.\n\nCrushing attack: he gains +1 Initiative and +1 to hit on the turn he charges. Enemy warriors attacking him in return also gain +1 to hit for that turn.\n\nClose quarters: he may not take skills from the Shooting list."
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      },
+      {
+        "group": "Modus Operandi",
+        "special": {
+          "name": "Lurker",
+          "type": "Warband - Silent Brotherhood",
+          "description": "Equipment: a blowpipe or long daggers, and throwing knives.\n\nStealthed advance: he may hide even after running in the Movement phase.\n\nLightly armed: he may never use armour."
+        },
+        "cost": 35,
+        "cost_note": "",
+        "note": "",
+        "who": {
+          "heroes": true
+        },
+        "max_per_fighter": 1,
+        "later_double": false,
+        "at_recruit": false
+      }
+    ]
+  },
+  {
     "slug": "sisters-of-sigmar",
     "name": "Sisters of Sigmar",
     "setting": "mordheim",
@@ -70917,6 +73459,654 @@
     "upgrades": []
   },
   {
+    "slug": "skaven-of-clan-pristekk",
+    "name": "Skaven of Clan Pristekk",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clan%20Pristekk.pdf",
+    "starting_gold": 500,
+    "max_models": 15,
+    "variants": [],
+    "types": [
+      {
+        "type": "skaven-of-clan-pristekk",
+        "variant": ""
+      }
+    ],
+    "rules": [],
+    "lists": [
+      {
+        "key": "packmasters-equipment-list",
+        "name": "Packmasters Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Thinglash",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Thingcatcher",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shock rod",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sling",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Net",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "clanrats-equipment-list",
+        "name": "Clanrats Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sling",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "pristekk-chieftain",
+        "kind": "hero",
+        "name": "Chieftain",
+        "plural": "Chieftains",
+        "race": "Skaven",
+        "cost": 60,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 5,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Academic",
+          "Strength",
+          "Speed",
+          "Clan Pristekk"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "packmasters-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Skaven of Clan Pristekk",
+            "description": "Any warrior within 6\" of the Chieftain may use his Leadership instead of his own."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "clan-pristekk-sorcerer",
+        "kind": "hero",
+        "name": "Clan Pristekk sorcerer",
+        "plural": "Clan Pristekk sorcerers",
+        "race": "Skaven",
+        "cost": 45,
+        "starting_xp": 12,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Academic",
+          "Speed",
+          "Clan Pristekk"
+        ],
+        "spell_types": [
+          {
+            "name": "Magic of the Horned Rat",
+            "note": ""
+          }
+        ],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "Wizard",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "clanrats-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Wizard",
+            "type": "Caster"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "pristekk-packmaster",
+        "kind": "hero",
+        "name": "Packmaster",
+        "plural": "Packmasters",
+        "race": "Skaven",
+        "cost": 45,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Speed",
+          "Clan Pristekk"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "packmasters-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "pristekk-underling",
+        "kind": "hero",
+        "name": "Underling",
+        "plural": "Underlings",
+        "race": "Skaven",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 5
+        },
+        "skill_types": [
+          "Combat",
+          "Speed",
+          "Clan Pristekk"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "clanrats-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "pristekk-clanrat",
+        "kind": "henchman",
+        "name": "Clanrat",
+        "plural": "Clanrats",
+        "race": "Skaven",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 5,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "clanrats-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "pristekk-giant-rat",
+        "kind": "henchman",
+        "name": "Giant rat",
+        "plural": "Giant rats",
+        "race": null,
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 2,
+          "ballistic_skill": 0,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "None. A Giant rat never uses weapons or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Countless",
+            "type": "Warband - Skaven of Clan Pristekk",
+            "description": "Giant rats may raise the warband's numbers to 20 models."
+          },
+          {
+            "name": "Animals",
+            "type": "Warband - Skaven of Clan Pristekk",
+            "description": "A Giant rat is an animal and gains no experience."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "pristekk-rat-ogre",
+        "kind": "henchman",
+        "name": "Rat Ogre",
+        "plural": "Rat Ogres",
+        "race": null,
+        "cost": 210,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 3,
+          "ballistic_skill": 3,
+          "strength": 5,
+          "toughness": 5,
+          "wounds": 3,
+          "initiative": 4,
+          "attacks": 3,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "Jaws, claws and brute force. A Rat Ogre never uses weapons or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Stupidity (Rat Ogre)",
+            "type": "Warband - Skaven",
+            "description": "A Rat Ogre is subject to stupidity unless a Skaven Hero is within 6\" of it."
+          },
+          {
+            "name": "Experience",
+            "type": "Warband - Skaven of Clan Pristekk",
+            "description": "A Rat Ogre gains no experience."
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
     "slug": "slayer-pirates",
     "name": "Slayer Pirates",
     "setting": "sartosa",
@@ -74257,6 +77447,452 @@
             "name": "Sonic",
             "type": "Warband - Survivors of Strigos",
             "description": "A Giant Bat needs no line of sight to charge."
+          }
+        ],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
+    "slug": "the-brood-of-ghurash",
+    "name": "The Brood of Ghurash",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Brood%20Of%20Ghurash.pdf",
+    "starting_gold": 500,
+    "max_models": 12,
+    "variants": [],
+    "types": [
+      {
+        "type": "the-brood-of-ghurash",
+        "variant": ""
+      }
+    ],
+    "rules": [
+      {
+        "title": "Slow witted",
+        "description": "A Brood member gains half the experience another model would gain.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Always hungry",
+        "description": "Each Hero counts as two models when the warband sells moonstones.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Brood Mentality",
+        "description": "Every Brood member is subject to stupidity. When one takes a Stupidity test he adds 1 to his Leadership for each warband member within 6\". The warband never hires Hired Swords. A Baneworm neither gains nor suffers from this rule.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Hoard",
+        "description": "The warband never sells a rare item, even one no Brood member can use, but it may trade stored items for captured brood members. It suffers -2 on every rarity roll.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Regenerate",
+        "description": "When a Brood member rolls for serious injuries after being taken out of action, treat any result of 16-35 as a full recovery. A Henchman taken out of action during a game survives on a 2+. A Brood member whose last wound was caused by fire does not regenerate after the game. A Baneworm neither gains nor suffers from this rule.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Aquatic",
+        "description": "A Brood member may move through water terrain with no penalty and counts as being in cover while he is in the water.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Accelerated evolution",
+        "description": "Each time a Brood Hero rolls for an advance he may also consume any number of moonstones, roll a D6 and add the number of moonstones spent to the result.\n\nD6 | Result\n1-4 | Nothing happens.\n5-6 | He may choose a single lesser Mutation.\n7-8 | He may choose a single lesser or greater Mutation.\n9+ | He may choose any single Mutation.\n\nLesser Mutations: Blackblood, Daemon Soul, Mer-creature, Suckers, Tentacle. Greater Mutations: Great Claw, Leech maw, Poisonous fangs, Spines, Spit venom. Sublime Mutations: Acidic stream, Extra Arm, Regeneration, Scaly skin, Shark bite.",
+        "variant": "",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "brood-equipment-list",
+        "name": "Brood Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {
+              "fighters": [
+                "child",
+                "newborn"
+              ]
+            },
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Club",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Throwing Knives/Stars",
+              "variant": ""
+            },
+            "shown_as": "Throwing weapons",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "broodmother",
+        "kind": "hero",
+        "name": "Broodmother",
+        "plural": "Broodmothers",
+        "race": "Troll",
+        "cost": 140,
+        "starting_xp": 10,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 4,
+          "ballistic_skill": 2,
+          "strength": 5,
+          "toughness": 4,
+          "wounds": 3,
+          "initiative": 2,
+          "attacks": 3,
+          "leadership": 5
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Brood of Ghurash"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brood-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - The Brood of Ghurash",
+            "description": "Any warrior within 6\" of the Broodmother may use her Leadership instead of his own."
+          },
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "firstborn",
+        "kind": "hero",
+        "name": "Firstborn",
+        "plural": "Firstborns",
+        "race": "Troll",
+        "cost": 105,
+        "starting_xp": 4,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 4,
+          "toughness": 4,
+          "wounds": 3,
+          "initiative": 1,
+          "attacks": 2,
+          "leadership": 4
+        },
+        "skill_types": [
+          "Strength",
+          "Brood of Ghurash"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brood-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "youth",
+        "kind": "hero",
+        "name": "Youth",
+        "plural": "Youths",
+        "race": "Troll",
+        "cost": 40,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 2,
+          "initiative": 1,
+          "attacks": 1,
+          "leadership": 4
+        },
+        "skill_types": [
+          "Strength",
+          "Brood of Ghurash"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": true,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brood-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Fear",
+            "type": "Psychology"
+          },
+          {
+            "name": "Large",
+            "type": "Trait"
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "child",
+        "kind": "henchman",
+        "name": "Child",
+        "plural": "Children",
+        "race": "Troll",
+        "cost": 30,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 4,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 1,
+          "attacks": 1,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brood-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "newborn",
+        "kind": "henchman",
+        "name": "Newborn",
+        "plural": "Newborns",
+        "race": "Troll",
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 2,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 2,
+          "ballistic_skill": 1,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 1,
+          "attacks": 1,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "brood-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Nestlings",
+            "type": "Warband - The Brood of Ghurash",
+            "description": "If a Newborn is taken out of action by an enemy warrior in close combat, every Brood Hero who can see him hates that model until the end of the game. A Hero must always try to intercept a charge at a Newborn."
+          },
+          {
+            "name": "Too little",
+            "type": "Warband - The Brood of Ghurash",
+            "description": "A Newborn never becomes a Hero: re-roll every That Lad's Got Talent result."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "baneworm",
+        "kind": "henchman",
+        "name": "Baneworm",
+        "plural": "Baneworms",
+        "race": null,
+        "cost": 15,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 6,
+          "weapon_skill": 2,
+          "ballistic_skill": 0,
+          "strength": 3,
+          "toughness": 2,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 2,
+          "leadership": 4
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": false,
+        "promotable": false,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "A maw and mandibles. A Baneworm never uses weapons or armour.",
+        "lists": [],
+        "specials": [
+          {
+            "name": "Mer-creature",
+            "type": "Favour of Tchar"
+          },
+          {
+            "name": "Lurker",
+            "type": "Warband - The Brood of Ghurash",
+            "description": "A Baneworm that was hidden in the previous turn may make a diving charge even when he does not charge from above."
+          },
+          {
+            "name": "Animal",
+            "type": "Warband - The Brood of Ghurash",
+            "description": "A Baneworm gains no experience and may not climb."
           }
         ],
         "skills": []

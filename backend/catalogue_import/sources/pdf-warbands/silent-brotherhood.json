@@ -1,0 +1,658 @@
+{
+  "warbandType": "silent-brotherhood",
+  "name": "Silent Brotherhood",
+  "source": "Sealed City",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Silent%20Brotherhood.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {
+      "rulename": "Assignments",
+      "ruleFull": "After the game any Hero who was not taken out of action may carry out a client's assignment instead of exploring. He adds no dice to the Exploration chart and may not search for rare items. Roll a D6 instead.\n\nD6 | Result\n1 | He fails and misses the next game while he evades his pursuers.\n2-5 | He succeeds and gains 2D6 gold crowns and 1 experience point.\n6 | He surpasses the client's requirements and gains 3D6 gold crowns and D3 experience points."
+    },
+    {
+      "rulename": "Sworn Brotherhood",
+      "ruleFull": "To hire a new Hero during a campaign the warband's leader must first pass a Leadership test. If he fails, no new Heroes may be hired after that game. This does not apply when the warband is raised."
+    },
+    {
+      "rulename": "The silence",
+      "ruleFull": "No warband member or Hired Sword may ever use a blackpowder weapon or an animal."
+    },
+    {
+      "rulename": "Underground contacts",
+      "ruleFull": "Each Hero may have one underground contact. Instead of searching for rare items he may use his contact, paying the bribe its rules give."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "brotherhood-equipment-list",
+      "title": "Brotherhood Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Long daggers",
+          "alias": "",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "two-handed weapon",
+          "alias": "Two-handed weapon",
+          "cost": {
+            "cost": 15,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "blowpipe",
+          "alias": "Blowpipe",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "crossbow pistol",
+          "alias": "Crossbow pistol",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "long bow",
+          "alias": "Long bow",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "throwing knives",
+          "alias": "Throwing knives",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light Armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Cloak (counts as buckler)",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "rope & hook",
+          "alias": "Rope & Hook",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "dark venom",
+          "alias": "Dark Venom",
+          "cost": {
+            "cost": 30
+          }
+        },
+        {
+          "name": "black lotus",
+          "alias": "Black Lotus",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Black-marketeer",
+          "alias": "",
+          "cost": {
+            "cost": 20,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "Fence",
+          "alias": "",
+          "cost": {
+            "cost": 30,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "Rumour-monger",
+          "alias": "",
+          "cost": {
+            "cost": 30,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "Spy",
+          "alias": "",
+          "cost": {
+            "cost": 30,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "Thief",
+          "alias": "",
+          "cost": {
+            "cost": 25,
+            "costSuffix": "Heroes only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "thugs-equipment-list",
+      "title": "Thugs Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "club",
+          "alias": "Club",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leather",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "silent-master",
+      "type": "hero",
+      "name": "Silent Master",
+      "plural": "Silent Masters",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 5,
+        "a": 2,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "brotherhood-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Silent Master may use his Leadership instead of his own."
+        },
+        {
+          "rulename": "Perfect Killer",
+          "ruleFull": "The Silent Master always has an extra -1 modifier to any armour save against a wound he inflicts, in shooting and in close combat alike."
+        }
+      ]
+    },
+    {
+      "id": "poisoner",
+      "type": "hero",
+      "name": "Poisoner",
+      "plural": "Poisoners",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "brotherhood-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Toxic trades",
+          "ruleFull": "If the Poisoner does not search for rare items he may make a single dose of Black Lotus. It must be used in the next battle and may not be sold or traded to another warband."
+        }
+      ]
+    },
+    {
+      "id": "brotherhood-assassin",
+      "type": "hero",
+      "name": "Assassin",
+      "plural": "Assassins",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "brotherhood-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "brotherhood-agent",
+      "type": "henchman",
+      "name": "Brotherhood agent",
+      "plural": "Brotherhood agents",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "brotherhood-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "brotherhood-novice",
+      "type": "henchman",
+      "name": "Brotherhood novice",
+      "plural": "Brotherhood novices",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "brotherhood-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "brotherhood-thug",
+      "type": "henchman",
+      "name": "Thug",
+      "plural": "Thugs",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [
+        "thugs-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Loudmouths",
+          "ruleFull": "A Thug never becomes a Hero: re-roll every That Lad's Got Talent result."
+        }
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "mutationName": "Modus Operandi",
+      "mutationflavour": "Every Hero may choose one modus operandi when he is hired, and the choice can never be changed. A Hero may hold only one, and must have the weapons, armour and equipment it needs when it is bought; its price covers that basic set, which may be replaced later with no penalty. A Hero with none may take one instead of a skill on an advance. A second Hero may take a modus operandi only once each of them is held by someone, so two Executors need a Sniper and a Lurker first. The Silent Master may not take the sniper. Only a Hero with the sniper may buy the Crossbow or the Long bow from the Brotherhood list.",
+      "items": [
+        {
+          "heading": "Sniper",
+          "cost": "30",
+          "ruleFull": "Equipment: a crossbow or long bow, a sword, and a rope and hook.\n\nSniper: while hidden, he may shoot and stay hidden. If his target is not taken out of action at once, the target tests against its Initiative to spot him; a passed test means he has been spotted and is no longer hidden.\n\nDistant fighter: he gains +1 Ballistic Skill and suffers -1 Weapon Skill, and may not take skills from the Combat list."
+        },
+        {
+          "heading": "Executor",
+          "cost": "35",
+          "ruleFull": "Equipment: an axe and a sword or a double-handed weapon, and light armour.\n\nCrushing attack: he gains +1 Initiative and +1 to hit on the turn he charges. Enemy warriors attacking him in return also gain +1 to hit for that turn.\n\nClose quarters: he may not take skills from the Shooting list."
+        },
+        {
+          "heading": "Lurker",
+          "cost": "35",
+          "ruleFull": "Equipment: a blowpipe or long daggers, and throwing knives.\n\nStealthed advance: he may hide even after running in the Movement phase.\n\nLightly armed: he may never use armour."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Silent Brotherhood",
+    "new": true,
+    "note": "Master of Poisons: Poisoner only."
+  },
+  "specialSkillsList": [
+    {
+      "name": "Cutthroat",
+      "description": "While the Hero fights with two daggers of any kind as a pair, he has an extra -1 modifier to any armour save against a wound he inflicts."
+    },
+    {
+      "name": "Hit and Run (Silent Brotherhood)",
+      "pdfName": "Hit and Run",
+      "description": "At the end of any hand-to-hand phase in which the Hero is still in base contact with an enemy model, he may take a Leadership test. If he passes he may make a normal move away from the enemy, who strike no blows at him; he may not run or charge. If he fails he stays in combat and fights as normal in the following turn."
+    },
+    {
+      "name": "Backstabber",
+      "ours": "Backstabber"
+    },
+    {
+      "name": "Infiltration",
+      "ours": "Infiltration"
+    },
+    {
+      "name": "Hide in Shadows (Silent Brotherhood)",
+      "pdfName": "Hide in Shadows",
+      "description": "While the Hero is within 1\" of a wall or other linear obstacle, an opposing model must pass an Initiative test to charge or shoot at him."
+    },
+    {
+      "name": "Master of Poisons",
+      "ours": "Master of Poisons"
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Long daggers",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 6,
+      "dice": null,
+      "rulesPage": 4,
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {
+          "rule": "Pair",
+          "text": "Long daggers are used in pairs, one in each hand. A warrior armed with them gains an extra attack for using two weapons."
+        },
+        {
+          "rule": "Parry",
+          "text": "A warrior armed with long daggers may parry blows as a model armed with a sword does."
+        }
+      ]
+    },
+    {
+      "name": "Black-marketeer",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": 6,
+      "dice": 1,
+      "rulesPage": 6,
+      "rules": [
+        {
+          "name": "Bribery",
+          "text": "D6 gold crowns."
+        },
+        {
+          "name": "Benefit",
+          "text": "The Hero may roll on the Merchant hired sword's Black Market table and buy the goods he finds."
+        }
+      ]
+    },
+    {
+      "name": "Fence",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": 6,
+      "dice": 1,
+      "rulesPage": 6,
+      "rules": [
+        {
+          "name": "Bribery",
+          "text": "None."
+        },
+        {
+          "name": "Benefit",
+          "text": "The fence may sell a rare item stored during the battle just fought, before the Heroes of either warband search for rare items. Roll a D6 for what he gets: 1-3, half the item's basic price; 4-5, its full basic price; 6, its full basic price plus half again."
+        }
+      ]
+    },
+    {
+      "name": "Rumour-monger",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": 6,
+      "dice": 2,
+      "rulesPage": 6,
+      "rules": [
+        {
+          "name": "Bribery",
+          "text": "2D6 gold crowns."
+        },
+        {
+          "name": "Benefit",
+          "text": "He may praise or denounce a single warband in the campaign. The next time that warband's Heroes search for rare items they get +1 or -1 on every rarity roll, as the rumour-monger's owner chooses."
+        }
+      ]
+    },
+    {
+      "name": "Spy",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": 7,
+      "dice": 1,
+      "rulesPage": 6,
+      "rules": [
+        {
+          "name": "Bribery",
+          "text": "3D6 gold crowns."
+        },
+        {
+          "name": "Benefit",
+          "text": "After both sides are deployed in your next game, you may re-position up to D3 warriors, friend or foe, within the scenario's deployment restrictions."
+        }
+      ]
+    },
+    {
+      "name": "Thief",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": 5,
+      "dice": 1,
+      "rulesPage": 6,
+      "rules": [
+        {
+          "name": "Bribery",
+          "text": "Half the stolen item's basic price."
+        },
+        {
+          "name": "Benefit",
+          "text": "The Thief may try to steal one item of your choice. A common item is stolen on a 2+ on a D6; a rare item is stolen by rolling higher than its availability number on 2D6. An item stolen is used just as a bought one. If he fails, roll a D6: on 1-5 he is chased out of the trading post and escapes, on a 6 he is caught by the authorities and hanged."
+        }
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "page": 3,
+      "what": "The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. Silent Master: Combat, Shooting, Academic, Speed, Special. Assassin: Combat, Shooting, Speed, Special. Poisoner: Combat, Academic, Speed, Special."
+    },
+    {
+      "page": 3,
+      "what": "The Brotherhood list marks the Crossbow and the Long bow \"Sniper only\". A sniper is a modus operandi, not a fighter, so our line notes cannot hold it: it is said in the Modus Operandi warband rule instead."
+    },
+    {
+      "page": 2,
+      "what": "The three modus operandi are buyable extra rules, so they are template upgrades (William, 11 Nov 2026), one special each carrying both of its rules and the basic equipment its price covers. Who may take one, the one each and the order they must be taken in are the page's warnings and the warband rule's words."
+    },
+    {
+      "page": 3,
+      "what": "The five underground contacts are on the equipment list and have their own entries: each is a stub carrying its Bribery and Benefit, at the list price with the entry's dice and rarity (Black-marketeer 20+D6 Rare 6, Fence 30+D6 Rare 6, Rumour-monger 30+2D6 Rare 6, Spy 30+D6 Rare 7, Thief 25+D6 Rare 5)."
+    },
+    {
+      "page": 3,
+      "what": "\"Cloak (counts as buckler)\" at 5 gc is our Buckler shown under the list's name, and \"Two-handed weapon\" our Double-handed weapon. The Thugs list prices its Axe at 10 gc and its Bow at 15 gc, where the Brotherhood list prices an Axe at 5 gc: as printed."
+    },
+    {
+      "page": 4,
+      "what": "The PDF's Hit and Run (a Leadership test to leave combat) and Hide in Shadows (within 1\" of a wall) are not what our skills of those names do, so each is a new skill named apart. Backstabber, Infiltration and Master of Poisons are ours. See the decisions."
+    },
+    {
+      "page": 4,
+      "what": "The Silent Master's Perfect Killer is our shared special of that name."
+    },
+    {
+      "page": 3,
+      "what": "A Silent Brotherhood warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 4,
+      "what": "No group sizes are printed for the Brotherhood agents, novices or Thugs."
+    }
+  ]
+}

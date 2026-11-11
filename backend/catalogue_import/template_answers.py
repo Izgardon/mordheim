@@ -128,6 +128,10 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
     # the Necrarchs PDF, p8: "a Nosferatu may purchase one permenant Necrolore ability. The costs shown are for the
     # first ability only. Subsequent abilities will cost double", bought in place of a rare-equipment search
     ("necrarchs", "Necrolore Abilities"): {"who": {"fighters": ["nosferatu"]}, "later_double": True},
+    # the Silent Brotherhood PDF, p2: "Every hero may choose one modus operandi when they are hired ... A hero may
+    # only have one such trait ... Heroes without a modus operandi may take this trait instead of choosing a skill on
+    # an Advance", so one each and not only at recruitment
+    ("silent-brotherhood", "Modus Operandi"): {"who": {"heroes": True}, "max_per_fighter": 1},
 }
 # One upgrade's own `who`, where its text narrows its group's: "(Saurus Only)", "(Skinks only)"
 UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {
@@ -339,6 +343,12 @@ RACES_BY_FIGHTER: dict[tuple[str, str], str] = {
     ("bretonnian-grail-companions", "Grail Knight"): "Grail Knight",
     # the Necrarchs PDF's Necrarch Vampire maximum (p10), unlike our Vampire's; its Thrall is our Vampire
     ("necrarchs-the-soul-stealers", "Necrarch Vampire"): "Necrarch Vampire",
+    # the Brood of Ghurash PDF's Troll maximum (p1); a troll is a creature, so each of its trolls is named here
+    ("the-brood-of-ghurash", "Broodmother"): "Troll",
+    ("the-brood-of-ghurash", "Firstborn"): "Troll",
+    ("the-brood-of-ghurash", "Youth"): "Troll",
+    ("the-brood-of-ghurash", "Child"): "Troll",
+    ("the-brood-of-ghurash", "Newborn"): "Troll",
 }
 # A warband's own maximum is a race of its own, and the Undead warband's Vampire is our Vampire
 RACES_BY_PAGE: dict[tuple[str, str], str] = {

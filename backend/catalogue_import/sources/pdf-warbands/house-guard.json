@@ -1,0 +1,556 @@
+{
+  "warbandType": "house-guard",
+  "name": "House Guard",
+  "source": "Sealed City",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/House%20Guard.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Chain of Command",
+      "ruleFull": "If the warband's leader is taken out of action, work out a new temporary leader at once, as if the leader had been killed for good. He is in charge and has the Leader ability until the end of the game or until he too is taken out of action, when the warband works out another."
+    },
+    {
+      "rulename": "Personal Guard",
+      "ruleFull": "Every Hero and Henchman of a House Guard intercepts a charge at a friendly Hero within 3\" instead of the usual 2\". In the Assassination scenario they may ignore the attacker's evasive rule when their protege is the target."
+    },
+    {
+      "rulename": "Houses",
+      "ruleFull": "A House Guard warband fights for one of three houses, chosen when it is raised: Fierezza, Halcon or Baluardo. It takes that house's rules and buys from that house's equipment list beside the Heroes list."
+    },
+    {
+      "rulename": "House Fierezza",
+      "ruleFull": "Dueling Pride: a Fierezza Hero may re-roll failed hits in the first round of combat when he fights an enemy Hero.\n\nMartial Finesse: the Commander starts with the Web of Steel skill.\n\nThe House Fierezza equipment list is open to the warband's Heroes."
+    },
+    {
+      "rulename": "House Halcon",
+      "ruleFull": "Sharp Aim: every warrior of House Halcon ignores the long range modifier when he fires a missile weapon.\n\nMerchantry: the Commander starts with the Haggle skill.\n\nThe House Halcon equipment list is open to the warband's Heroes."
+    },
+    {
+      "rulename": "House Baluardo",
+      "ruleFull": "Armour: a Baluardo Hero suffers no movement penalty for wearing armour.\n\nBattle Seasoned: the Commander starts with the Battle Tongue skill.\n\nThe House Baluardo equipment list is open to the warband's Heroes."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "house-guard-heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Pike",
+          "alias": "Pike",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": {
+            "cost": 40
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "house-fierezza-equipment-list",
+      "title": "House Fierezza Equipment List",
+      "caveat": "Open to a warband of House Fierezza only.",
+      "items": [
+        {
+          "name": "rapier",
+          "alias": "Rapier",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "sword breaker",
+          "alias": "Sword breaker",
+          "cost": {
+            "cost": 30
+          }
+        }
+      ]
+    },
+    {
+      "id": "house-halcon-equipment-list",
+      "title": "House Halcon Equipment List",
+      "caveat": "Open to a warband of House Halcon only.",
+      "items": [
+        {
+          "name": "crossbow pistol",
+          "alias": "Crossbow pistol",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "long bow",
+          "alias": "Longbow",
+          "cost": {
+            "cost": 15
+          }
+        }
+      ]
+    },
+    {
+      "id": "house-baluardo-equipment-list",
+      "title": "House Baluardo Equipment List",
+      "caveat": "Open to a warband of House Baluardo only.",
+      "items": [
+        {
+          "name": "Plate Armour",
+          "alias": "Plate armour",
+          "cost": {
+            "cost": 55
+          }
+        },
+        {
+          "name": "pavise",
+          "alias": "Pavise",
+          "cost": {
+            "cost": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "house-guard-henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Pike",
+          "alias": "Pike",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "long bow",
+          "alias": "Longbow",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "commander",
+      "type": "hero",
+      "name": "Commander",
+      "plural": "Commanders",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "house-guard-heroes-equipment-list",
+        "house-fierezza-equipment-list",
+        "house-halcon-equipment-list",
+        "house-baluardo-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Commander may use his Leadership instead of his own."
+        }
+      ]
+    },
+    {
+      "id": "sergeant",
+      "type": "hero",
+      "name": "Sergeant",
+      "plural": "Sergeants",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "house-guard-heroes-equipment-list",
+        "house-fierezza-equipment-list",
+        "house-halcon-equipment-list",
+        "house-baluardo-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": []
+    },
+    {
+      "id": "adjutant",
+      "type": "hero",
+      "name": "Adjutant",
+      "plural": "Adjutants",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "house-guard-heroes-equipment-list",
+        "house-fierezza-equipment-list",
+        "house-halcon-equipment-list",
+        "house-baluardo-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Relay orders",
+          "ruleFull": "While the Adjutant may use his leader's Leadership, any warrior within 6\" of the Adjutant may use the leader's Leadership instead of his own. The Adjutant may take the Battle Tongue skill to raise that range to 12\"."
+        }
+      ]
+    },
+    {
+      "id": "guard",
+      "type": "henchman",
+      "name": "Guard",
+      "plural": "Guards",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "house-guard-henchmen-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "pikeman",
+      "type": "henchman",
+      "name": "Pikeman",
+      "plural": "Pikemen",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "house-guard-henchmen-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Pikewall",
+          "ruleFull": "A Pikeman who is charged while wielding a weapon that strikes first may re-roll his failed hits."
+        }
+      ]
+    },
+    {
+      "id": "house-guard-warhound",
+      "type": "henchman",
+      "name": "Warhound",
+      "plural": "Warhounds",
+      "race": "warhound",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 4,
+        "bs": 0,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 5
+      },
+      "equipmentLists": [],
+      "equipment": "Jaws. A Warhound never uses weapons or armour.",
+      "specialRules": [
+        {
+          "rulename": "Animals",
+          "ruleFull": "A Warhound is an animal and gains no experience."
+        }
+      ]
+    }
+  ],
+  "aliases": [
+    {
+      "pdf": "Pike",
+      "ours": "Pike (Tileans)",
+      "page": 3
+    }
+  ],
+  "stubs": [
+    {
+      "name": "Plate Armour",
+      "cost": 70,
+      "type": "Armour",
+      "subtype": "Body Armour",
+      "rarity": 7,
+      "dice": null,
+      "rulesPage": 5,
+      "save": "4+",
+      "rules": [
+        {
+          "rule": "Save",
+          "text": "A warrior wearing plate armour has a basic saving throw of 4+ on a D6."
+        },
+        {
+          "rule": "Movement Penalty",
+          "text": "A warrior wearing plate armour suffers -1 Movement."
+        }
+      ]
+    }
+  ],
+  "priceRows": [
+    {
+      "name": "Pike (Tileans)",
+      "rarity": 8,
+      "dice": null,
+      "note": "House Guard only",
+      "page": 5
+    }
+  ],
+  "flags": [
+    {
+      "page": 5,
+      "what": "The three skill tables' ticks are glyphs the text layer drops: they were read from p5's image. Fierezza - Commander: all five lists; Sergeant: Combat, Shooting, Speed; Adjutant: Combat, Academic, Speed. Halcon - Commander: all five; Sergeant: Combat, Shooting, Strength; Adjutant: Shooting, Academic, Speed. Baluardo - Commander: all five; Sergeant: Combat, Strength, Speed; Adjutant: Academic, Strength, Speed. There is no Special column, so the warband has no skill group."
+    },
+    {
+      "page": 5,
+      "what": "A template holds one skill table, and a PDF page has no variants, so each fighter is given the three houses' lists together: the Commander and the Adjutant all five, the Sergeant Combat, Shooting, Strength and Speed. See the decisions."
+    },
+    {
+      "page": 2,
+      "what": "The three houses are warband rules, as our templates hold no variants for a PDF page. Each carries its own rules and names its equipment list; the player picks one house when the warband is raised."
+    },
+    {
+      "page": 3,
+      "what": "The Heroes list marks Rapier and Sword breaker House Fierezza only, Crossbow pistol and Longbow House Halcon only, and Plate armour and Pavise House Baluardo only. Our line notes name fighters, not houses, so those six lines are three lists of their own, every Hero buying from all four."
+    },
+    {
+      "page": 2,
+      "what": "Merchantry (the Commander starts with Haggle) is printed in House Halcon's column, below Sharp Aim; Battle Seasoned and Armour are House Baluardo's. The reading order runs the two columns together."
+    },
+    {
+      "page": 5,
+      "what": "The Pike's entry (10 gc, Rare 8, Two-handed and Strike first with +1 Initiative in the first turn) is read as our Pike (Tileans), with a House Guard price row at 10 gc Rare 8. Our Pike's rules differ: it reaches 3\", strikes first against a spear and may not use a shield or buckler at all. See the decisions."
+    },
+    {
+      "page": 5,
+      "what": "Plate armour is 55 gc on the Heroes list and 70 gc Rare 7 in its own entry: the list price is the starting price and the entry's is the trading price (William, 6 Nov 2026)."
+    },
+    {
+      "page": 2,
+      "what": "Martial Finesse, Battle Seasoned and Merchantry give the Commander a skill at hire. They stay in their house's warband rule, because the house is a rule and not a variant, so no skill is given automatically."
+    },
+    {
+      "page": 2,
+      "what": "A House Guard needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 4,
+      "what": "No group sizes are printed for the Guards, Pikemen or Warhounds."
+    }
+  ]
+}

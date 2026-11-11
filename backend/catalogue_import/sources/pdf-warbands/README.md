@@ -64,12 +64,21 @@ check over every file.
 | `necrarchs.json` | necrarchs (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Necrarchs.pdf | 1-8 (text layer) | 11 Nov 2026 |
 | `skaven-of-clan-pestilens-mou.json` | skaven-of-clan-pestilens-mou (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Skaven%20of%20Clan%20Pestilens.pdf | 1-7 (text layer; p7 holds one rule only) | 11 Nov 2026 |
 | `wood-elves-of-arden.json` | wood-elves-of-arden (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Wood%20Elves%20of%20Arden.pdf | 1-7 (text layer; page 2 as an image) | 11 Nov 2026 |
+| `the-brood-of-ghurash.json` | the-brood-of-ghurash (2b, Sealed City) | https://www.broheim.net/downloads/warbands/supplement/sealedcity/Brood%20Of%20Ghurash.pdf | 1-4 (text layer; page 2 as an image) | 11 Nov 2026 |
+| `clockworkers.json` | clockworkers (2b, Sealed City) | https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf | 1-7 (text layer; pages 2 and 4 as images, page 7 a scan of a picture) | 11 Nov 2026 |
+| `house-guard.json` | house-guard (2b, Sealed City) | https://www.broheim.net/downloads/warbands/supplement/sealedcity/House%20Guard.pdf | 1-5 (text layer; page 5 as an image) | 11 Nov 2026 |
+| `silent-brotherhood.json` | silent-brotherhood (2b, Sealed City) | https://www.broheim.net/downloads/warbands/supplement/sealedcity/Silent%20Brotherhood.pdf | 1-6 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `skaven-of-clan-pristekk.json` | skaven-of-clan-pristekk (2b, Sealed City) | https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clan%20Pristekk.pdf | 1-5 (text layer; page 1 as an image) | 11 Nov 2026 |
 
 The Sartosa warbands' Pirate skill column is the Pirate Skills list of the setting's campaign rules, not of any warband's PDF: it is read from
 https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Skills%2C%20Hired%20Swords%20%26%20Dramatis%20Personae.pdf (p1-2, text layer; 11 Nov 2026)
 as the shared group `sharedSkillGroup` in `sartosan-pirates.json`. Its Hired Swords and Dramatis Personae are not imported.
 The same setting's https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Equipment.pdf (10 pages, text layer; 11 Nov 2026) gives the Sartosa
 stubs their rules and settles their prices. The setting's other eight campaign PDFs are not read (William, 11 Nov 2026).
+
+The Sealed City's own campaign PDFs (Ambitions, Lost And Found, Madness Rules, Stygian Mutations) are not read (William, 11 Nov 2026): what its
+warbands point at - the Stygian Mutations, the moonstones and orichalcum they spend, and the Clockwork pistol's and rifle's rules - is stubbed or
+flagged and filled when that batch comes.
 
 ## Adding a warband
 

@@ -569,6 +569,10 @@
         {
           "warband": "Skaven of Clan Pestilens",
           "fighter": "Rat Ogre"
+        },
+        {
+          "warband": "Skaven of Clan Pristekk",
+          "fighter": "Rat Ogre"
         }
       ],
       "why": "Not stupid while a Skaven Hero is within 6\"."

@@ -1,0 +1,718 @@
+{
+  "warbandType": "clockworkers",
+  "name": "Clockworkers",
+  "source": "Sealed City",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {
+      "rulename": "Laws of Construction",
+      "ruleFull": "A Law is not a spell, so protection against spells does not stop it, and it may be used while wearing armour, as a prayer may. A Clockworker who knows Laws rolls for one on a D6:\n\nD6 | Law | Difficulty\n1 | Offense | 7\n2 | Motion | 6\n3 | Defense | 7\n4 | Sacrifice | 9\n5 | Protection | 7\n6 | Rampage | 10"
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "clockworkers-heroes-equipment-list",
+      "title": "Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "hammer",
+          "alias": "Hammer/Staff",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed hammer",
+          "alias": "Double-handed hammer",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Clockwork pistol",
+          "alias": "",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "Clockwork rifle",
+          "alias": "",
+          "cost": {
+            "cost": 40,
+            "costSuffix": "Master of Clocks & Dwarf engineer only"
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": {
+            "cost": 50,
+            "costSuffix": "Master of Clocks & Dwarf engineer only"
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Orichalcum token",
+          "alias": "",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "handymen-equipment-list",
+      "title": "Handymen Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "hammer",
+          "alias": "Hammer",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "double-handed hammer",
+          "alias": "Double-handed hammer",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short bow",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "constructs-equipment-list",
+      "title": "Constructs Equipment List",
+      "caveat": "A 1-slot line fills one of the construct's equipment slots and a 2-slot line two; armour goes in its armour slot.",
+      "items": [
+        {
+          "name": "hammer",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Clockwork pistol",
+          "alias": "",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Clockwork rifle",
+          "alias": "",
+          "cost": {
+            "cost": 40
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": {
+            "cost": 50
+          }
+        }
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {
+      "title": "Bramstetter's Advanced Construct Thesis",
+      "alias": "",
+      "cost": {
+        "cost": 100
+      },
+      "availability": "Rare 8 (Clockworkers only)"
+    }
+  ],
+  "fighters": [
+    {
+      "id": "master-of-clocks",
+      "type": "hero",
+      "name": "Master of Clocks",
+      "plural": "Masters of Clocks",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 4,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "clockworkers-heroes-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": false,
+        "speed": false,
+        "special": true
+      },
+      "spellLores": [
+        "Laws of Construction"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Master of Clocks may use his Leadership instead of his own."
+        },
+        {
+          "rulename": "Laws of Construction",
+          "ruleFull": "The Master of Clocks starts with one Law of Construction."
+        },
+        {
+          "rulename": "Promotion",
+          "ruleFull": "If the Master of Clocks dies or leaves the expedition, the new leader may learn Laws of Construction on later skill advances."
+        }
+      ]
+    },
+    {
+      "id": "dwarf-engineer",
+      "type": "hero",
+      "name": "Dwarf engineer",
+      "plural": "Dwarf engineers",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 12,
+      "statblock": {
+        "m": 3,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "clockworkers-heroes-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Armour",
+          "ruleFull": "A Dwarf never suffers a movement penalty for wearing armour."
+        },
+        {
+          "rulename": "Hard to Kill",
+          "ruleFull": "On the Injury chart, treat a roll of 1-2 as knocked down, 3-5 as stunned and 6 as out of action."
+        },
+        {
+          "rulename": "Hard Head",
+          "ruleFull": "A Dwarf ignores the special rules for maces, clubs and the like."
+        },
+        {
+          "rulename": "Smithery",
+          "ruleFull": "Instead of searching for rare items, the engineer may fit a single construct with any weapon he can get. A two-handed or missile weapon takes two slots, any other weapon one."
+        }
+      ]
+    },
+    {
+      "id": "metallurgist",
+      "type": "hero",
+      "name": "Metallurgist",
+      "plural": "Metallurgists",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "clockworkers-heroes-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Moonstone refinery",
+          "ruleFull": "Instead of searching for rare items, the Metallurgist may split one moonstone into D6 orichalcum tokens."
+        },
+        {
+          "rulename": "Hellish tincture",
+          "ruleFull": "Once per game the Metallurgist may throw this tincture as blessed water is thrown, and it sets its target on fire. On a roll of 1 to hit, he is set on fire instead."
+        }
+      ]
+    },
+    {
+      "id": "apprentice",
+      "type": "hero",
+      "name": "Apprentice",
+      "plural": "Apprentices",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "clockworkers-heroes-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "handyman",
+      "type": "henchman",
+      "name": "Handyman",
+      "plural": "Handymen",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 2,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "handymen-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Crude",
+          "ruleFull": "When a Handyman rolls That Lad's Got Talent, the new Hero takes Combat and Strength skills as his two skill lists."
+        }
+      ]
+    },
+    {
+      "id": "clockwork-soldier",
+      "type": "henchman",
+      "name": "Clockwork soldier",
+      "plural": "Clockwork soldiers",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 40,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {
+        "min": 1,
+        "max": 1
+      },
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "constructs-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Need Orders",
+          "ruleFull": "At the beginning of your turn roll a D6 for each construct with no friendly Hero within 6\", unless it is in close combat. On a 1-2 it may neither move nor shoot this turn."
+        },
+        {
+          "rulename": "Immune to Psychology",
+          "ruleFull": "A construct is immune to psychology and never leaves combat."
+        },
+        {
+          "rulename": "No Pain",
+          "ruleFull": "A construct treats a stunned result as knocked down."
+        },
+        {
+          "rulename": "May Not Run",
+          "ruleFull": "A construct may not run, but may charge as normal."
+        },
+        {
+          "rulename": "Immune to Poison",
+          "ruleFull": "A construct is unaffected by poison or drugs."
+        },
+        {
+          "rulename": "Brainless",
+          "ruleFull": "A construct gains no experience and can only be improved physically."
+        },
+        {
+          "rulename": "In-built equipment",
+          "ruleFull": "A weapon or piece of armour given to a construct can never be taken off it again. A construct has equipment slots instead of the usual maximum number of weapons: to give it equipment with no slot free, enough equipment must first be abandoned. A Clockwork soldier has two equipment slots and one armour slot."
+        },
+        {
+          "rulename": "Solitary maintenance",
+          "ruleFull": "Each Clockwork soldier forms a Henchmen group of his own."
+        }
+      ]
+    },
+    {
+      "id": "clockwork-fiend",
+      "type": "henchman",
+      "name": "Clockwork fiend",
+      "plural": "Clockwork fiends",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 240,
+      "gainExp": false,
+      "promotable": false,
+      "groupSize": {
+        "min": 1,
+        "max": 1
+      },
+      "statblock": {
+        "m": 5,
+        "ws": 3,
+        "bs": 3,
+        "s": 5,
+        "t": 5,
+        "w": 3,
+        "i": 1,
+        "a": 3,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "constructs-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Need Orders",
+          "ruleFull": "At the beginning of your turn roll a D6 for each construct with no friendly Hero within 6\", unless it is in close combat. On a 1-2 it may neither move nor shoot this turn."
+        },
+        {
+          "rulename": "Immune to Psychology",
+          "ruleFull": "A construct is immune to psychology and never leaves combat."
+        },
+        {
+          "rulename": "No Pain",
+          "ruleFull": "A construct treats a stunned result as knocked down."
+        },
+        {
+          "rulename": "May Not Run",
+          "ruleFull": "A construct may not run, but may charge as normal."
+        },
+        {
+          "rulename": "Immune to Poison",
+          "ruleFull": "A construct is unaffected by poison or drugs."
+        },
+        {
+          "rulename": "Brainless",
+          "ruleFull": "A construct gains no experience and can only be improved physically."
+        },
+        {
+          "rulename": "In-built equipment",
+          "ruleFull": "A weapon or piece of armour given to a construct can never be taken off it again. A construct has equipment slots instead of the usual maximum number of weapons: to give it equipment with no slot free, enough equipment must first be abandoned. A Clockwork fiend has four equipment slots and one armour slot."
+        },
+        {
+          "rulename": "Fear",
+          "ruleFull": "A Clockwork fiend causes fear."
+        },
+        {
+          "rulename": "Large",
+          "ruleFull": "A Clockwork fiend is a Large Target, as the shooting rules define it."
+        },
+        {
+          "rulename": "Lumbering behemoth",
+          "ruleFull": "A Moonstone infusion on a Clockwork fiend costs twice as many orichalcum tokens for each characteristic raised."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Clockworkers",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "Experimental enhancements",
+      "description": "Apprentice only. Instead of searching for rare items, the Apprentice may work on one construct. He needs 3D6 gold crowns of materials, then rolls on the Sealed City's Stygian Mutation chart and applies the result to one of your constructs."
+    },
+    {
+      "name": "Moonstone infusion",
+      "description": "Before the game the Hero may raise any characteristic except Toughness and Wounds of a single construct by 1 for each orichalcum token used. Each characteristic may be raised only once, and the increase lasts for that game."
+    },
+    {
+      "name": "Puppeteer",
+      "description": "Any construct within 12\" of the Hero may ignore the Need Orders rule."
+    },
+    {
+      "name": "Rogue control",
+      "description": "Instead of shooting a missile weapon, the Hero may choose a single construct or clockwork weapon within 12\" and line of sight. Roll 2D6 against the construct's or the weapon bearer's Leadership: if the roll is higher, the target ceases to function until the Clockworkers' next Movement phase."
+    },
+    {
+      "name": "Gift of Sentience",
+      "description": "Instead of searching for rare items, the Hero may spend D3 moonstones on a single Clockwork soldier. The soldier loses Need Orders, Immune to Psychology and Brainless, and re-rolls any That Lad's Got Talent result when rolling for advances."
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Clockwork pistol",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 2
+    },
+    {
+      "name": "Clockwork rifle",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 2
+    },
+    {
+      "name": "Orichalcum token",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 2,
+      "note": "Spent by the Moonstone infusion skill and made by the Metallurgist's Moonstone refinery."
+    },
+    {
+      "name": "Bramstetter's Advanced Construct Thesis",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "rarity": 8,
+      "dice": null,
+      "rulesPage": 6,
+      "note": "The PDF prices it at 100 + D6x10 gold crowns.",
+      "rules": [
+        {
+          "name": "Reference work",
+          "text": "A Clockworker carrying one of these adds 1 to the score when he works out whether a Law of Construction is used successfully."
+        }
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "page": 4,
+      "what": "The skill table's ticks are glyphs the text layer drops: the table was read from p4's image. Master of Clocks: Combat, Shooting, Academic, Special. Dwarf engineer: Combat, Shooting, Strength, and no Special. Metallurgist and Apprentice: Academic, Speed, Special."
+    },
+    {
+      "page": 1,
+      "what": "The seven construct rules (Need Orders, Immune to Psychology, No Pain, May Not Run, Immune to Poison, Brainless, In-built equipment) are printed once as a block. They are carried as each construct's own rules, so the four that are shared specials of ours link them, and the slot counts each fighter's entry prints sit in his In-built equipment."
+    },
+    {
+      "page": 2,
+      "what": "The Clockwork pistol (25 gc) and Clockwork rifle (40 gc) have no rules anywhere in this PDF. They are stubs with no rules; the Sealed City's own PDFs are not read (William, 11 Nov 2026)."
+    },
+    {
+      "page": 2,
+      "what": "The Heroes list prints Hammer and Staff at 3 gc each, both our Club, Mace or Hammer: carried as one line \"Hammer/Staff\". The Constructs list's Hammer and Mace, 3 gc each, are one line the same way."
+    },
+    {
+      "page": 2,
+      "what": "The Constructs list is printed as 1-Slot and 2-Slot sections; our lists have no sections, so the slots are said in the list's caveat and in the In-built equipment rule."
+    },
+    {
+      "page": 6,
+      "what": "Bramstetter's Advanced Construct Thesis costs 100 + D6x10 gold crowns. A stub's price takes a number of D6 but no multiplier, so it is carried at 100 gc Rare 8 with the printed price in its notes."
+    },
+    {
+      "page": 6,
+      "what": "The six Laws of Construction are carried as a new spell lore, Laws of Construction, with each law's difficulty, so the Master of Clocks can pick one. The PDF says a Law is not a spell: that is said in the warband rule of the same name."
+    },
+    {
+      "page": 3,
+      "what": "Experimental enhancements and the Stygian Mutation chart it rolls on are the Sealed City's own rules, which are not read."
+    },
+    {
+      "page": 3,
+      "what": "Moonstones are spent by Gift of Sentience and Moonstone refinery but are on no equipment list, so no item of ours is made for them."
+    },
+    {
+      "page": 1,
+      "what": "A Clockwork expedition needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 7,
+      "what": "Page 7 is a scan with no text layer: it holds a picture and its caption only (opened as an image)."
+    }
+  ]
+}
