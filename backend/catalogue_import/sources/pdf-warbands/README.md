@@ -192,6 +192,12 @@ Each answers a question a batch raised; follow them without asking again.
   Knives/Stars at the same price and rarity, so the two are one item, renamed through `item_names` in
   `overrides.json` and kept in the earlier of the two settings (Mordheim 1a); every line names it and shows it
   under its own list's wording. A stub that is ours under another name is a question for William, not a new item.
+  Four more stubs were judged the same way on 11 Nov 2026: the Fen Guard's **Whip** is our Steel Whip (10 gc both),
+  the Druchii's **Darksteel blade** our Dark Elf Blade (Rare 9, and the same Critical Damage and Wicked Edge) and
+  the Snotlings' **Slingshot** our Sling (2 gc, 18", S3, fire twice at half range), each merged, its line shown
+  under its own name and its own price kept in a price row where it differs from ours. The Nipponese **Kanabo**
+  stays its own item: it is 15 gc like our Double-handed weapon, but its lists sell both, and it is As user +1 with
+  Two-Handed and Concussion where ours is +2 and strikes last. A matching price is not a match.
 - **Never fetch a setting's own PDFs to fill a gap** (William, 11 Nov 2026). Read the warband PDFs, stub whatever is
   missing, a fighter left with no skill list included, and fill it when that setting's batch comes. The Sartosa
   skills and equipment PDFs already read stay as they are.

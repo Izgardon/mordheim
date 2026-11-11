@@ -28,7 +28,7 @@
         {"name": "halberd", "alias": "", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "beastlash", "alias": "", "cost": {"cost": 10, "costSuffix": "Beastmaster only"}},
-        {"name": "darksteel blade", "alias": "", "cost": {"cost": 0, "costPrefix": "3 x price"}},
+        {"name": "Dark Elf Blade", "alias": "Darksteel blade", "cost": {"cost": 0, "costPrefix": "3 x price"}},
         {"name": "repeater crossbow", "alias": "", "cost": {"cost": 20}},
         {"name": "crossbow pistol", "alias": "", "cost": {"cost": 35}},
         {"name": "throwing knives", "alias": "", "cost": {"cost": 15}},
@@ -242,8 +242,10 @@
   ],
   "aliases": [],
   "stubs": [
-    {"name": "Draich", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": 1, "rulesPage": 7},
-    {"name": "Darksteel Blade", "type": "Weapon", "subtype": "Melee", "rarity": 9, "dice": null, "rulesPage": 7}
+    {"name": "Draich", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": 1, "rulesPage": 7}
+  ],
+  "priceRows": [
+    {"name": "Dark Elf Blade", "rarity": 9, "dice": null, "note": "Heroes only", "page": 7}
   ],
   "flags": [
     {"page": 1, "what": "Most headings (fighters', lists', skills' and items' names) are images the text layer lacks; each fighter was matched by the name in his own text, and pages 2, 3 and 8 were read as images for the skill table, the list titles and the skill names."},
@@ -251,7 +253,7 @@
     {"page": 2, "what": "The Druchii maximum (M5 WS7 BS7 S4 T3 W3 I9 A4 Ld10) has T3 where our Elf has T4, so they take a new race, Elf (Druchii)."},
     {"page": 2, "what": "The skill table has no Strength column: no Druchii Hero learns Strength skills."},
     {"page": 3, "what": "The Repeater crossbow is 20 gc on the lists (ours is 40 gc), a list price, which the app keeps to the starting warband. The Sea Dragon Cloak is 30 gc (ours 50 gc) and Dark Venom 15 gc: taken as printed."},
-    {"page": 3, "what": "The Darksteel blade is \"3 x price\": a stub with no price of its own (3 × price), like our Gromril Weapon, Rare 9, its rules on p7 (Critical Damage, Wicked Edge; heroes only). The Draich is a stub at 25 gc (25+1D6, Rare 8, Strength as user +2, Two-handed, Swift), its rules on p7."},
+    {"page": 3, "what": "The Darksteel blade is our Dark Elf Blade: the same Rare 9 and the same two rules, Critical Damage (+1 on the critical hit chart) and Wicked Edge (2-4 on the injury table is Stunned), so the two are one item, shown under this list's name (William, 11 Nov 2026: one entry for a weapon we already hold under another name). Its price is this list's \"3 x price\", in a price row for the Druchii; ours stays the Dark Elves' + 20 gc, Rare 9. Heroes only. The Draich is a stub at 25 gc (25+1D6, Rare 8, Strength as user +2, Two-handed, Swift), its rules on p7."},
     {"page": 3, "what": "The Beastlash links our Beastlash at the list's 10 gc (the PDF prices it 10+D6, Rare 8)."},
     {"page": 6, "what": "Slavehounds come only with a Beastmaster (0-3, \"if it also includes a Beastmaster\"): our counts can't tie one fighter's to another's, so it is said in their Animals rule."},
     {"page": 8, "what": "The PDF's Sea Dragon Cloak gives +2 to the save against shooting (5+ with none) and +1 in close combat (6+ with none); ours gives a 5+ save in close combat and 4+ against missiles. Linked to ours as it is."},

@@ -242,7 +242,9 @@
     {"pdf": "war horse", "ours": "warhorse", "page": 4}
   ],
   "stubs": [
-    {"name": "Kanabo", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Kanabo", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3,
+     "range": "Close Combat", "strength": "As user +1",
+     "rules": [{"rule": "two-handed"}, {"name": "Concussion", "text": "A roll of 2-4 on the injury table is a Stunned result."}]},
     {"name": "Sashimono", "type": "Miscellaneous", "subtype": "", "rarity": null, "dice": null, "rulesPage": 3},
     {"name": "Horo", "type": "Armour", "subtype": "", "rarity": 6, "dice": null, "rulesPage": 3},
     {"name": "Kusarigama", "type": "Weapon", "subtype": "Melee", "rarity": 8, "dice": null, "rulesPage": 3}
@@ -252,7 +254,7 @@
     {"page": 1, "what": "No maximum profile is printed, so every warrior takes our Human race."},
     {"page": 2, "what": "Page 2 is a scan with no text layer, read from the page image: the skill chart (Hatamoto all six; Vim-To Mage Academic, Speed, Special; Shinobi Combat, Shooting, Speed, Special; Retainer Combat, Shooting, Strength, Special) and the special skills."},
     {"page": 2, "what": "The special skills are a new group, Nipponese Expedition. Blessed by the Kami (re-roll the Heroes Serious Injury roll once, the second result stands) does what our Extra Tough does, under another name, so it is kept apart (William, 6 Nov 2026: \"sep\")."},
-    {"page": 3, "what": "Four stubs, their rules on p3: Kanabo (Common, 15 gc; S+1, Two-Handed, Concussion), Sashimono (Common, 15 gc; re-roll Leadership tests other than Rout), Horo (Rare 6, 10 gc; +1 armour save against shooting while mounted) and Kusarigama (Rare 8, 20 gc; Two-Handed, Cannot be parried, Chain Strike). The text layer puts the Kanabo's special rules under the Horo."},
+    {"page": 3, "what": "Four stubs, their rules on p3, the Kanabo carrying its own (Common, 15 gc; Close Combat, As user +1, Two-Handed and Concussion). It is 15 gc like our Double-handed weapon, but a different weapon and not a second name for it: the Nippon lists sell both, and ours is As user +2 and always strikes last (William, 11 Nov 2026: one entry for a weapon we hold under another name, which this is not). The other three are Sashimono (Common, 15 gc; re-roll Leadership tests other than Rout), Horo (Rare 6, 10 gc; +1 armour save against shooting while mounted) and Kusarigama (Rare 8, 20 gc; Two-Handed, Cannot be parried, Chain Strike). The text layer puts the Kanabo's special rules under the Horo."},
     {"page": 4, "what": "The Sashimono is 15 gc on the Warrior and Noble lists and 20 gc on the Warrior Monk list: each as printed. The Katana links our Dragon Sword by its tag (the PDF gives it no rules)."},
     {"page": 4, "what": "The Noble list is the Warrior list plus its own lines, so it repeats the Warrior list's lines. The Ashigaru and Onnabushi buy from the Warrior list (\"the Nippon equipment list\")."},
     {"page": 6, "what": "The Vim-To Mage buys from no list: his Tenants of the Order allow only a walking staff (a club) and a dagger, at no price given. His Vim-Toist Magic is our Arabian Elemental Magic, as the PDF says."},

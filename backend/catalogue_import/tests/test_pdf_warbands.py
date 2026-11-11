@@ -480,6 +480,52 @@ class PdfImportTests(SimpleTestCase):
             shown,
         )
 
+    def test_three_ruleless_stubs_are_the_items_of_ours_they_duplicated(self) -> None:
+        # William, 11 Nov 2026: one entry for a weapon we already hold under another name. The Fen Guard's Whip is
+        # our Steel Whip (10 gc both), the Druchii's Darksteel blade our Dark Elf Blade (Rare 9, Critical Damage and
+        # Wicked Edge both) and the Snotlings' Slingshot our Sling (2 gc both), each line shown under its own name.
+        retired = ("Whip", "Darksteel Blade", "Slingshot")
+        self.assertEqual([name for name in retired if name in self.items], [])
+        shown = {
+            (slug, line["item"]["name"], line["shown_as"])
+            for slug in ("fen-guard", "druchii", "snotlings")
+            for row in self.templates[slug]["lists"]
+            for line in row["lines"]
+            if line["item"]["name"] in ("Steel Whip", "Dark Elf Blade", "Sling")
+        }
+        self.assertEqual(
+            shown,
+            {
+                ("fen-guard", "Steel Whip", "Whip"),
+                ("druchii", "Dark Elf Blade", "Darksteel blade"),
+                ("snotlings", "Sling", "Slingshot"),
+            },
+        )
+        rows = {
+            name: [
+                (row["cost"], row["cost_note"], row["rarity"], row["note"])
+                for row in self.items[name]["availabilities"]
+                if {"type": slug, "excluded": False} in row["warbands"]
+            ]
+            for name, slug in (("Steel Whip", "fen-guard"), ("Dark Elf Blade", "druchii"))
+        }
+        self.assertEqual(rows["Steel Whip"], [(10, "", None, "Heroes only")])
+        self.assertEqual(rows["Dark Elf Blade"], [(None, "3 × price", 9, "Heroes only")])
+        # the Sling is 2 gc for everyone already, so the Snotlings' row would say nothing new
+        [sling] = self.items["Sling"]["availabilities"]
+        self.assertEqual((sling["cost"], sling["for_everyone"]), (2, True))
+
+    def test_the_kanabo_stays_its_own_item_beside_our_double_handed_weapon(self) -> None:
+        # 15 gc, like our Double-handed weapon, but a different weapon: the Nipponese list sells both, and the
+        # Kanabo's entry is Strength +1 with Two-Handed and Concussion where ours is +2 and strikes last
+        kanabo = self.items.get("Kanabo") or {}
+        self.assertEqual(kanabo.get("strength"), "As user +1")
+        self.assertEqual([rule.get("rule") or rule.get("name") for rule in kanabo.get("rules") or []], ["two-handed", "Concussion"])  # fmt: skip
+        lines = {
+            line["item"]["name"] for row in self.templates["nipponese-expedition"]["lists"] for line in row["lines"]
+        }
+        self.assertLessEqual({"Kanabo", "Double-handed weapon"}, lines)
+
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page
         page = good_page()

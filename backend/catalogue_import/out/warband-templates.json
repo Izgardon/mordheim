@@ -23984,10 +23984,10 @@
           },
           {
             "item": {
-              "name": "Darksteel Blade",
+              "name": "Dark Elf Blade",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Darksteel blade",
             "cost": null,
             "cost_note": "3 × price",
             "first_free": false,
@@ -28570,10 +28570,10 @@
           },
           {
             "item": {
-              "name": "Whip",
+              "name": "Steel Whip",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Whip",
             "cost": 10,
             "cost_note": "",
             "first_free": false,
@@ -79795,10 +79795,10 @@
           },
           {
             "item": {
-              "name": "Slingshot",
+              "name": "Sling",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Slingshot",
             "cost": 2,
             "cost_note": "",
             "first_free": false,
@@ -79912,10 +79912,10 @@
           },
           {
             "item": {
-              "name": "Slingshot",
+              "name": "Sling",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Slingshot",
             "cost": 2,
             "cost_note": "",
             "first_free": false,
@@ -80054,10 +80054,10 @@
           },
           {
             "item": {
-              "name": "Slingshot",
+              "name": "Sling",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Slingshot",
             "cost": 2,
             "cost_note": "",
             "first_free": false,

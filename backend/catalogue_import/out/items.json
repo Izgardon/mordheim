@@ -4881,6 +4881,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "3 × price",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "druchii",
+            "excluded": false
+          }
+        ],
+        "note": "Heroes only"
       }
     ]
   },
@@ -6979,6 +6995,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "fen-guard",
+            "excluded": false
+          }
+        ],
+        "note": "Heroes only"
       }
     ]
   },
@@ -18475,46 +18507,6 @@
     ]
   },
   {
-    "slug": "darksteel-blade",
-    "name": "Darksteel Blade",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mordheim-2a",
-    "source": "Mordheimer's Information Centre",
-    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Druchii.pdf",
-    "tags": [
-      "darksteel blade"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": null,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "3 × price",
-        "rarity": 9,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "druchii",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "whirling-blades",
     "name": "Whirling Blades",
     "variant": "",
@@ -18928,13 +18920,23 @@
       "kanabo"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "Close Combat",
+    "strength": "As user +1",
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Concussion",
+        "summary": "",
+        "text": "A roll of 2-4 on the injury table is a Stunned result.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -19421,46 +19423,6 @@
       {
         "label": "",
         "cost": 0,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "snotlings",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "slingshot",
-    "name": "Slingshot",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Ranged",
-    "setting": "mordheim-2a",
-    "source": "Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria",
-    "link_url": "https://www.broheim.net/downloads/warbands/web/Snotlings.pdf",
-    "tags": [
-      "slingshot"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 2,
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
@@ -20416,46 +20378,6 @@
         "warbands": [
           {
             "type": "clockworkers",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "whip",
-    "name": "Whip",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
-    "tags": [
-      "whip"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "fen-guard",
             "excluded": false
           }
         ],

@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 460 |
+| price rows | 459 |
 | skills | 423 |
 | skill groups | 94 |
 | skill group links | 532 |
@@ -814,7 +814,7 @@ Lines found other than by name or tag:
 | tileans | pike | Pike (Tileans) | named for the warband |
 | cursed-dwarves | hand gun | Handgun | a loose match |
 
-487 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+492 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 
@@ -1272,10 +1272,10 @@ Kept apart from a family's, the effect differing:
 | dark-elf-corsairs | dark-elf-corsairs | 5 | 0 | 0 | 9 |
 | disciples-of-maldred | disciples-of-maldred | 5 | 0 | 0 | 10 |
 | dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
-| druchii | druchii | 8 | 0 | 2 | 11 |
+| druchii | druchii | 8 | 0 | 1 | 11 |
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 1 | 11 |
 | estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 9 |
-| fen-guard | fen-guard | 5 | 1 | 4 | 14 |
+| fen-guard | fen-guard | 5 | 1 | 3 | 14 |
 | ghost-pirates | ghost-pirates | 7 | 0 | 1 | 14 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | guild-of-disgraced-engineers | guild-of-disgraced-engineers | 6 | 0 | 2 | 10 |
@@ -1309,7 +1309,7 @@ Kept apart from a family's, the effect differing:
 | skaven-of-clan-pestilens-mou | skaven-of-clan-pestilens-mou | 6 | 0 | 0 | 13 |
 | skaven-of-clan-pristekk | skaven-of-clan-pristekk | 7 | 0 | 3 | 9 |
 | slayer-pirates | slayer-pirates | 7 | 0 | 2 | 17 |
-| snotlings | snotlings | 8 | 1 | 2 | 10 |
+| snotlings | snotlings | 8 | 1 | 1 | 10 |
 | sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
 | the-brood-of-ghurash | the-brood-of-ghurash | 6 | 0 | 0 | 9 |
@@ -1551,13 +1551,13 @@ Kept apart from a family's, the effect differing:
 ### Druchii
 
 - Stub: Draich, 25+1D6 gc, Rare 8; its rules are on p7.
-- Stub: Darksteel Blade, 3 × price, Rare 9; its rules are on p7.
+- Price row (p7): our Dark Elf Blade for druchii, Rare 9, Heroes only.
 - Flag (p1): Most headings (fighters', lists', skills' and items' names) are images the text layer lacks; each fighter was matched by the name in his own text, and pages 2, 3 and 8 were read as images for the skill table, the list titles and the skill names.
 - Flag (p2): A Druchii warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p2): The Druchii maximum (M5 WS7 BS7 S4 T3 W3 I9 A4 Ld10) has T3 where our Elf has T4, so they take a new race, Elf (Druchii).
 - Flag (p2): The skill table has no Strength column: no Druchii Hero learns Strength skills.
 - Flag (p3): The Repeater crossbow is 20 gc on the lists (ours is 40 gc), a list price, which the app keeps to the starting warband. The Sea Dragon Cloak is 30 gc (ours 50 gc) and Dark Venom 15 gc: taken as printed.
-- Flag (p3): The Darksteel blade is "3 x price": a stub with no price of its own (3 × price), like our Gromril Weapon, Rare 9, its rules on p7 (Critical Damage, Wicked Edge; heroes only). The Draich is a stub at 25 gc (25+1D6, Rare 8, Strength as user +2, Two-handed, Swift), its rules on p7.
+- Flag (p3): The Darksteel blade is our Dark Elf Blade: the same Rare 9 and the same two rules, Critical Damage (+1 on the critical hit chart) and Wicked Edge (2-4 on the injury table is Stunned), so the two are one item, shown under this list's name (William, 11 Nov 2026: one entry for a weapon we already hold under another name). Its price is this list's "3 x price", in a price row for the Druchii; ours stays the Dark Elves' + 20 gc, Rare 9. Heroes only. The Draich is a stub at 25 gc (25+1D6, Rare 8, Strength as user +2, Two-handed, Swift), its rules on p7.
 - Flag (p3): The Beastlash links our Beastlash at the list's 10 gc (the PDF prices it 10+D6, Rare 8).
 - Flag (p6): Slavehounds come only with a Beastmaster (0-3, "if it also includes a Beastmaster"): our counts can't tie one fighter's to another's, so it is said in their Animals rule.
 - Flag (p8): The PDF's Sea Dragon Cloak gives +2 to the save against shooting (5+ with none) and +1 in close combat (6+ with none); ours gives a 5+ save in close combat and 4+ against missiles. Linked to ours as it is.
@@ -1595,10 +1595,10 @@ Kept apart from a family's, the effect differing:
 ### Fen Guard
 
 - Alias (p2): "oaken armour" is our the oaken armour.
-- Stub: Whip, 10 gc, Common; its rules are on p2.
 - Stub: Greenwood Scythe, 60 gc, Rare 10; its rules are on p3.
 - Stub: Iron Bark, 10 gc, Rare 5; its rules are on p3.
 - Stub: Horn of the Wild Hunt, 120 gc, Rare 12; its rules are on p3.
+- Price row (p2): our steel whip for fen-guard, Common, Heroes only.
 - Price row (p2): our armour of the wildwood for fen-guard, Rare 12, Heroes only.
 - Price row (p2): our the oaken armour for fen-guard, Rare 12, Heroes only.
 - Flag (p1): A Glade Warriors warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed.
@@ -1606,7 +1606,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): Hard to Kill is printed among the warband's rules for the Dryads and Spiteborn only: it is their own rule.
 - Flag (p1): Variation is a tailored upgrade list, Variations, for Heroes, each mutation at its listed price (Tentacle 35, Extra Arm 40, Cloud of Flies 25, Hulking Brute 50, Spines 35, Blackblood 30, Beak 35). Henchmen may take one too: upgrades are for heroes, so the player adds it. "possible Nesting Bird (Beak!)" is read as the Beak, offered.
 - Flag (p2): The skill table's ticks are images: read from p2's image. Its columns run Strength before Academic.
-- Flag (p2): The Whip (10 gc, Heroes only) has no entry in the PDF: a stub with no rules, which Heinrich 'Altdorf' Schmidt carries too (William, 6 Nov 2026: "sure"). The Armour of the Willow Wood (130 gc) is our Armour of the Wildwood shown as Armour of the Willow Wood (William: "yes, keep ours, attached rules if we dont have them"), and the Oaken Armour (150 gc) our The Oaken Armour; both now carry the rules William gave. Each has a price row for the Fen Guard too, Heroes only at the list's price, since our rows are the Elves' and the Elf Rangers'.
+- Flag (p2): The Whip (10 gc, Heroes only) has no entry in the PDF and no rules of its own: it is our Steel Whip, 10 gc already, shown under this list's name, with a price row for the Fen Guard, Heroes only (William, 11 Nov 2026: one entry for a weapon we already hold under another name). Ours is unchanged; it may not be parried with a sword or buckler. Heinrich 'Altdorf' Schmidt carries a whip too (William, 6 Nov 2026: "sure"), which linked this stub by name: his Khemri bullwhip is not the Sisters' steel whip, so it links no item now and reads "Also carries: Whip." in his description, for William. The Armour of the Willow Wood (130 gc) is our Armour of the Wildwood shown as Armour of the Willow Wood (William: "yes, keep ours, attached rules if we dont have them"), and the Oaken Armour (150 gc) our The Oaken Armour; both now carry the rules William gave. Each has a price row for the Fen Guard too, Heroes only at the list's price, since our rows are the Elves' and the Elf Rangers'.
 - Flag (p2): Splinters (Throwing Knives) is our Throwing Knives/Stars shown as Splinters, Vine Tendril (Fish Hook Shot) our Fish-hook Shot/Hunting Lasso (MiM) shown as Vine Tendril, Climbing Vine (rope and hook) our Rope & Hook shown as Climbing Vine, Hammer our Club, Mace or Hammer. The list has no dagger.
 - Flag (p2): The Magic Acorn is 100 gc on the list, but that price is the Militant Mootlanders' before their first battle (William, 6 Nov 2026: "it is 100 just for the mootlanders on initial buy"): the line takes our usual 250 gc (Rare 15). The Healing Herbs are 10 gc (ours 20+2D6) and the Familiar 20 gc (ours 20+D6, Rare 8): taken as printed.
 - Flag (p3): The Greenwood Scythe (60 gc, Rare 10, Branchwych only; S as user +1, Two-handed, Treescuttle Venom: +1 to injury rolls) and Iron Bark (10 gc, Rare 5, Fen Guard only; +2 to the armour save, broken the first time a save fails) are stubs, their rules on p3.
@@ -1924,7 +1924,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): No maximum profile is printed, so every warrior takes our Human race.
 - Flag (p2): Page 2 is a scan with no text layer, read from the page image: the skill chart (Hatamoto all six; Vim-To Mage Academic, Speed, Special; Shinobi Combat, Shooting, Speed, Special; Retainer Combat, Shooting, Strength, Special) and the special skills.
 - Flag (p2): The special skills are a new group, Nipponese Expedition. Blessed by the Kami (re-roll the Heroes Serious Injury roll once, the second result stands) does what our Extra Tough does, under another name, so it is kept apart (William, 6 Nov 2026: "sep").
-- Flag (p3): Four stubs, their rules on p3: Kanabo (Common, 15 gc; S+1, Two-Handed, Concussion), Sashimono (Common, 15 gc; re-roll Leadership tests other than Rout), Horo (Rare 6, 10 gc; +1 armour save against shooting while mounted) and Kusarigama (Rare 8, 20 gc; Two-Handed, Cannot be parried, Chain Strike). The text layer puts the Kanabo's special rules under the Horo.
+- Flag (p3): Four stubs, their rules on p3, the Kanabo carrying its own (Common, 15 gc; Close Combat, As user +1, Two-Handed and Concussion). It is 15 gc like our Double-handed weapon, but a different weapon and not a second name for it: the Nippon lists sell both, and ours is As user +2 and always strikes last (William, 11 Nov 2026: one entry for a weapon we hold under another name, which this is not). The other three are Sashimono (Common, 15 gc; re-roll Leadership tests other than Rout), Horo (Rare 6, 10 gc; +1 armour save against shooting while mounted) and Kusarigama (Rare 8, 20 gc; Two-Handed, Cannot be parried, Chain Strike). The text layer puts the Kanabo's special rules under the Horo.
 - Flag (p4): The Sashimono is 15 gc on the Warrior and Noble lists and 20 gc on the Warrior Monk list: each as printed. The Katana links our Dragon Sword by its tag (the PDF gives it no rules).
 - Flag (p4): The Noble list is the Warrior list plus its own lines, so it repeats the Warrior list's lines. The Ashigaru and Onnabushi buy from the Warrior list ("the Nippon equipment list").
 - Flag (p6): The Vim-To Mage buys from no list: his Tenants of the Order allow only a walking staff (a club) and a dagger, at no price given. His Vim-Toist Magic is our Arabian Elemental Magic, as the PDF says.
@@ -2151,7 +2151,6 @@ Kept apart from a family's, the effect differing:
 
 - Alias (p3): "light armor" is our light armour.
 - Stub: Pebble, 0 gc, Common; its rules are on p9.
-- Stub: Slingshot, 2 gc, Common; its rules are on p9.
 - Flag (p2): A Snotling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p2): The Bullied Goblin's maximum is our Goblin's. We have no Snotling race: the Snot maximum (M4 WS4 BS4 S3 T3 W2 I9 A4 Ld6) is a new race, Snotling.
 - Flag (p2): The skill table is an image (read from the page image): Bullied Goblin Combat, Shooting, Speed, Special; BigSnotz Combat, Speed, Special; Scout Shooting, Speed, Special; Shaman Speed, Special. The Shaman has no Academic tick.
@@ -2159,7 +2158,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Leader rule says "within 6" of the Chieftain": read as the Bullied Goblin, who leads. The Rigors of Leadership says "+2 experience for surviving a battle", not whether that replaces the usual +1: kept as printed.
 - Flag (p7): The Wheelo's Movement is "Special" (D6" walking, 2D6" running or charging): its profile's M is D6. It is a machine, so it takes no race. Its group is 1, as there may be only one.
 - Flag (p9): Runts come in groups of any size; the other henchmen's group sizes are not printed: left open.
-- Flag (p9): The Pebble (free, Snotling warband only; range 6", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) and the Slingshot (2 gc, Common, Snotling warband only; range 18", S2, fire twice at half range) are stubs, their rules on p9. The Power Squig (20+D6 gc, Rare 8, special equipment for the Shaman) "acts exactly the same as a Familiar": it is our Familiar, shown as Power Squig (William, 6 Nov 2026: "yes").
+- Flag (p9): The Pebble (free, Snotling warband only; range 6", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) is a stub, its rules on p9. The Slingshot (2 gc, Common; range 18", S2, fire twice at half range) is our Sling, 2 gc for everyone with the same rules, shown under this list's name (William, 11 Nov 2026: one entry for a weapon we already hold under another name); it needs no price row of its own, ours being 2 gc for everyone already. The Power Squig (20+D6 gc, Rare 8, special equipment for the Shaman) "acts exactly the same as a Familiar": it is our Familiar, shown as Power Squig (William, 6 Nov 2026: "yes").
 - Flag (p10): The special skills are a new group, Snotlings; none is one of ours.
 - Flag (p11): Snotling Waaagh! Magic is a new lore (ours, Waaagh! Magic, is the Orcs' and has other spells). Pebbles of Doom says "any friendly Hero within 6"" without saying one or all: kept as printed.
 

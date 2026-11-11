@@ -31,7 +31,7 @@
         {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
         {"name": "Pebble", "alias": "", "cost": {"cost": 0}},
         {"name": "short bow", "alias": "", "cost": {"cost": 10, "costSuffix": "Bullied Goblin and BigSnotz only"}},
-        {"name": "Slingshot", "alias": "", "cost": {"cost": 2}},
+        {"name": "Sling", "alias": "Slingshot", "cost": {"cost": 2}},
         {"name": "light armor", "alias": "", "cost": {"cost": 20, "costSuffix": "Bullied Goblin and BigSnotz only"}},
         {"name": "shield", "alias": "", "cost": {"cost": 5}},
         {"name": "helmet", "alias": "", "cost": {"cost": 10}}
@@ -45,7 +45,7 @@
         {"name": "dagger", "alias": "Pointy Stick", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "club", "alias": "", "cost": {"cost": 3}},
         {"name": "Pebble", "alias": "", "cost": {"cost": 0}},
-        {"name": "Slingshot", "alias": "", "cost": {"cost": 2}},
+        {"name": "Sling", "alias": "Slingshot", "cost": {"cost": 2}},
         {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
         {"name": "blunderbuss", "alias": "", "cost": {"cost": 30}},
         {"name": "pistol", "alias": "", "cost": {"cost": 15}}
@@ -61,7 +61,7 @@
         {"name": "axe", "alias": "", "cost": {"cost": 5}},
         {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
         {"name": "Pebble", "alias": "", "cost": {"cost": 0}},
-        {"name": "Slingshot", "alias": "", "cost": {"cost": 2}}
+        {"name": "Sling", "alias": "Slingshot", "cost": {"cost": 2}}
       ]
     }
   ],
@@ -245,8 +245,7 @@
     {"pdf": "light armor", "ours": "light armour", "page": 3}
   ],
   "stubs": [
-    {"name": "Pebble", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 9},
-    {"name": "Slingshot", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 9}
+    {"name": "Pebble", "type": "Weapon", "subtype": "Ranged", "rarity": null, "dice": null, "rulesPage": 9}
   ],
   "flags": [
     {"page": 2, "what": "A Snotling warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
@@ -256,7 +255,7 @@
     {"page": 4, "what": "The Leader rule says \"within 6\" of the Chieftain\": read as the Bullied Goblin, who leads. The Rigors of Leadership says \"+2 experience for surviving a battle\", not whether that replaces the usual +1: kept as printed."},
     {"page": 7, "what": "The Wheelo's Movement is \"Special\" (D6\" walking, 2D6\" running or charging): its profile's M is D6. It is a machine, so it takes no race. Its group is 1, as there may be only one."},
     {"page": 9, "what": "Runts come in groups of any size; the other henchmen's group sizes are not printed: left open."},
-    {"page": 9, "what": "The Pebble (free, Snotling warband only; range 6\", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) and the Slingshot (2 gc, Common, Snotling warband only; range 18\", S2, fire twice at half range) are stubs, their rules on p9. The Power Squig (20+D6 gc, Rare 8, special equipment for the Shaman) \"acts exactly the same as a Familiar\": it is our Familiar, shown as Power Squig (William, 6 Nov 2026: \"yes\")."},
+    {"page": 9, "what": "The Pebble (free, Snotling warband only; range 6\", S as user, Thrown weapon, +1 enemy armour save, Easy to Find) is a stub, its rules on p9. The Slingshot (2 gc, Common; range 18\", S2, fire twice at half range) is our Sling, 2 gc for everyone with the same rules, shown under this list's name (William, 11 Nov 2026: one entry for a weapon we already hold under another name); it needs no price row of its own, ours being 2 gc for everyone already. The Power Squig (20+D6 gc, Rare 8, special equipment for the Shaman) \"acts exactly the same as a Familiar\": it is our Familiar, shown as Power Squig (William, 6 Nov 2026: \"yes\")."},
     {"page": 10, "what": "The special skills are a new group, Snotlings; none is one of ours."},
     {"page": 11, "what": "Snotling Waaagh! Magic is a new lore (ours, Waaagh! Magic, is the Orcs' and has other spells). Pebbles of Doom says \"any friendly Hero within 6\"\" without saying one or all: kept as printed."}
   ]
