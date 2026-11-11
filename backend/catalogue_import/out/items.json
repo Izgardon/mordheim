@@ -297,6 +297,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 45,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "forest-goblins-lus",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -2097,6 +2113,22 @@
         "rarity": null,
         "for_everyone": true,
         "warbands": [],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "lizardmen-lus",
+            "excluded": false
+          }
+        ],
         "note": ""
       }
     ]
@@ -4279,6 +4311,22 @@
           }
         ],
         "note": "Forest and Night Goblins only"
+      },
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "forest-goblins-lus",
+            "excluded": false
+          }
+        ],
+        "note": "Chieftain and Bosses only"
       }
     ]
   },
@@ -4639,6 +4687,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 75,
+        "dice": 5,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-pestilens-lus",
+            "excluded": false
+          }
+        ],
+        "note": "Plague Champions only"
       }
     ]
   },
@@ -7528,6 +7592,22 @@
           }
         ],
         "note": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar"
+      },
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "lizardmen-lus",
+            "excluded": false
+          }
+        ],
+        "note": "Skink Heroes only, on missile weapons"
       }
     ]
   },
@@ -8290,6 +8370,22 @@
           }
         ],
         "note": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar"
+      },
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "lizardmen-lus",
+            "excluded": false
+          }
+        ],
+        "note": "Skink Heroes only, on missile weapons"
       }
     ]
   },
@@ -8471,6 +8567,22 @@
         "warbands": [
           {
             "type": "shadow-warriors",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "high-elves",
             "excluded": false
           }
         ],
@@ -10237,6 +10349,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "forest-goblins-lus",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -10865,6 +10993,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "forest-goblins-lus",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -11049,6 +11193,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "forest-goblins-lus",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -11096,6 +11256,22 @@
           }
         ],
         "note": "Skink Henchmen only"
+      },
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "lizardmen-lus",
+            "excluded": false
+          }
+        ],
+        "note": "Skink Henchmen only, on missile weapons"
       }
     ]
   },
@@ -13604,6 +13780,38 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "forest-goblins-lus",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "lizardmen-lus",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -13664,6 +13872,22 @@
           },
           {
             "type": "lizardmen-tc11",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "lizardmen-lus",
             "excluded": false
           }
         ],
@@ -14014,6 +14238,22 @@
       {
         "label": "",
         "cost": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "high-elves",
+            "excluded": false
+          }
+        ],
+        "note": "Rangers only"
+      },
+      {
+        "label": "",
+        "cost": 35,
         "dice": 3,
         "dice_multiplier": null,
         "cost_note": "",
@@ -14263,6 +14503,22 @@
           },
           {
             "type": "norse-explorers-btb",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "lizardmen-lus",
             "excluded": false
           }
         ],
@@ -20555,6 +20811,111 @@
         "warbands": [
           {
             "type": "guild-of-disgraced-engineers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "mage-staff-of-hoeth",
+    "name": "Mage Staff of Hoeth",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "lustria",
+    "source": "Lustria",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/lustria/High%20Elves.pdf",
+    "tags": [
+      "mage staff of hoeth"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user, as user +1",
+    "save": "",
+    "statblock": [],
+    "notes": "Loremaster only.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "One or Two-handed",
+        "summary": "",
+        "text": "A Mage Staff of Hoeth may be used one-handed, when it counts as a club, or two-handed, when it counts as a club and gives its wielder +1 Strength.",
+        "tables": []
+      },
+      {
+        "rule": "concussion",
+        "text": "When a Mage Staff of Hoeth is used in close combat, a roll of 2-4 on the Injury chart counts as stunned."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "high-elves",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "elven-greatsword",
+    "name": "Elven Greatsword",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "lustria",
+    "source": "Lustria",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/lustria/High%20Elves.pdf",
+    "tags": [
+      "elven greatsword"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user +2",
+    "save": "",
+    "statblock": [],
+    "notes": "Sword Wardens only.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Strike Last",
+        "summary": "",
+        "text": "An Elven Greatsword strikes last, even when charging, because a Sword Warden is not yet a full Sword Master.",
+        "tables": []
+      },
+      {
+        "rule": "parry",
+        "text": "A model armed with an Elven Greatsword may parry blows as if he were armed with a sword."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "high-elves",
             "excluded": false
           }
         ],

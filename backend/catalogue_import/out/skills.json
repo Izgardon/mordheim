@@ -1224,6 +1224,22 @@
     "description": "When charged, the Halfling gains one bonus attack, which strikes first."
   },
   {
+    "name": "High Sorcery",
+    "description": "Loremaster only. When an enemy spellcaster casts a spell successfully, the Loremaster may try to dispel it: if he rolls higher than the opponent's casting roll, the spell is dispelled."
+  },
+  {
+    "name": "Stand and Fire",
+    "description": "If the Elf passes a Leadership test he may stand and fire at a charging opponent. He suffers -1 to hit and may fire only once, at a single opponent. If that opponent is knocked down or stunned, place him halfway between the Elf and where he started, or in view if he was out of sight."
+  },
+  {
+    "name": "Miniath",
+    "description": "The Elf may parry with any weapon. If he carries a weapon he can already parry with, he gains one extra parry attempt."
+  },
+  {
+    "name": "Unerring Strike",
+    "description": "The Elf may re-roll any failed roll to wound."
+  },
+  {
     "name": "Ded Shooty (Hobgoblins)",
     "description": "The Hobgoblin ignores the penalties for moving when he shoots, from wolf back as well as on foot."
   },
@@ -1524,12 +1540,24 @@
     "description": "A cloud of flies surrounds the warrior. Any model in base contact with him has -1 to hit with every attack. Clan Pestilens Heroes and Plague Monks, undead and followers of Nurgle are not affected."
   },
   {
-    "name": "Numb",
-    "description": "The warrior treats a stunned result on the Injury chart as knocked down."
-  },
-  {
     "name": "Frenzy",
     "description": "The warrior is subject to frenzy."
+  },
+  {
+    "name": "Resilience",
+    "description": "The warrior's Toughness is increased by +1. This is the only way for a Skaven to reach Toughness 5."
+  },
+  {
+    "name": "No Pain",
+    "description": "The warrior treats a stunned result as knocked down."
+  },
+  {
+    "name": "Fear",
+    "description": "The warrior causes fear."
+  },
+  {
+    "name": "Numb",
+    "description": "The warrior treats a stunned result on the Injury chart as knocked down."
   },
   {
     "name": "Rotten Body (Mousillon)",

@@ -77,6 +77,15 @@ check over every file.
 | `lahmian.json` | lahmian (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Lahmian.pdf | 1-6 (text layer) | 11 Nov 2026 |
 | `mages.json` | mages (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Mage.pdf | 1-4 (text layer) | 11 Nov 2026 |
 | `necromancer.json` | necromancer (3, Khemri) | https://www.broheim.net/downloads/warbands/supplement/khemri/Necromancer.pdf | 1-4 (text layer) | 11 Nov 2026 |
+| `forest-goblins-lus.json` | forest-goblins-lus (2b, Lustria) | https://www.broheim.net/downloads/warbands/supplement/lustria/Forest%20Goblins.pdf | 1-6 (text layer; no images) | 11 Nov 2026 |
+| `high-elves.json` | high-elves (2b, Lustria) | https://www.broheim.net/downloads/warbands/supplement/lustria/High%20Elves.pdf | 1-6 (text layer; no images) | 11 Nov 2026 |
+| `lizardmen-lus.json` | lizardmen-lus (2b, Lustria) | https://www.broheim.net/downloads/warbands/supplement/lustria/Lizardmen.pdf | 1-6 (text layer; no images) | 11 Nov 2026 |
+| `skaven-of-clan-pestilens-lus.json` | skaven-of-clan-pestilens-lus (2b, Lustria) | https://www.broheim.net/downloads/warbands/supplement/lustria/Clan%20Pestilens.pdf | 1-4 (text layer; no images) | 11 Nov 2026 |
+
+The four Lustria warbands above are the supplement's own, not Town Cryer's: Lustria also holds a grade 1b Lizardmen warband
+(`lizardmen-tc11`) and the setting is a mixed-grade one (19 entries at 1b, 4 at 2b), left as one setting at its majority grade
+(William, 11 Nov 2026), unlike Khemri, which was split. Their skill groups, templates and the Forest Goblins' race carry the
+setting's name in brackets, because another warband of each name already holds the plain one.
 
 The Sartosa warbands' Pirate skill column is the Pirate Skills list of the setting's campaign rules, not of any warband's PDF: it is read from
 https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Skills%2C%20Hired%20Swords%20%26%20Dramatis%20Personae.pdf (p1-2, text layer; 11 Nov 2026)

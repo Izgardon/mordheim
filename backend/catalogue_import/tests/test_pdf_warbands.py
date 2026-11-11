@@ -559,8 +559,14 @@ class PdfImportTests(SimpleTestCase):
         [row] = censer["availabilities"]
         self.assertEqual((row["cost"], row["dice"], row["rarity"]), (75, 5, 12))
         self.assertNotIn("Toughness test", censer["rules"][-1]["text"])  # the PDF's roll, not our Censer's test
-        [ours] = self.items["Censer"]["availabilities"]  # ours keeps only the Town Cryer 29 warband's row
-        self.assertEqual(ours["warbands"], [{"type": "skaven-of-clan-pestilens-tc29", "excluded": False}])
+        # ours keeps the Town Cryer 29 warband's row, and the Lustria warband's, whose Fog of Death is ours
+        self.assertEqual(
+            [row["warbands"] for row in self.items["Censer"]["availabilities"]],
+            [
+                [{"type": "skaven-of-clan-pestilens-tc29", "excluded": False}],
+                [{"type": "skaven-of-clan-pestilens-lus", "excluded": False}],
+            ],
+        )
         staff = self.items["Quarter Staff (Woodsmen de Artois)"]
         self.assertEqual(staff["strength"], "As user +1")
         self.assertEqual([rule["rule"] for rule in staff["rules"]], ["two-handed", "parry"])

@@ -1,0 +1,255 @@
+{
+  "warbandType": "lizardmen-lus",
+  "name": "Lizardmen (Lustria)",
+  "source": "Lustria",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/lustria/Lizardmen.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {
+      "rulename": "Scaly Skin",
+      "ruleFull": "A Saurus has a 5+ armour save and a Skink a 6+ from his scales. Strength modifiers may not take the save beyond 6, and any \"no save\" result on the injury chart negates the 6+. Light armour adds +1 to the save, as does a shield."
+    },
+    {
+      "rulename": "Armour",
+      "ruleFull": "Light armour always costs the warband 50 gold crowns, from the equipment list and from the trading chart alike."
+    },
+    {
+      "rulename": "Bite Attack",
+      "ruleFull": "A Saurus has a bite attack that wounds with his own Strength and takes no penalty for being unarmed. The bite always strikes last, whoever charged and whatever weapon is used, and strikes after a double-handed weapon."
+    },
+    {
+      "rulename": "Cold Blooded",
+      "ruleFull": "When taking a psychology test or a Rout test a Lizardman rolls 3D6 and takes the lowest two dice. The warband may never use the Leadership of a Saurus or a Kroxigor for a Rout test."
+    },
+    {
+      "rulename": "Aquatic",
+      "ruleFull": "A Skink moves through water terrain with no penalty and counts as being in cover while he is in the water."
+    },
+    {
+      "rulename": "Jungle Born",
+      "ruleFull": "A Skink moves through jungle terrain with no penalty."
+    },
+    {
+      "rulename": "Saurus Rarity",
+      "ruleFull": "The warband may never hold more Saurus Braves than Skink Braves."
+    },
+    {
+      "rulename": "Saurus Skill Prohibitions",
+      "ruleFull": "A Saurus may never gain Academic skills and may never use missile weapons."
+    },
+    {
+      "rulename": "Poisoned Weapons",
+      "ruleFull": "A Skink Hero may buy Dark Venom for 20 gold crowns and Black Lotus for 10 gold crowns, both as common items, and may use them only on missile weapons. A Saurus may buy Dark Venom or Black Lotus for his close combat weapons at the trading chart's price and rarity. A Skink Henchman may buy Reptile Venom for a missile weapon for 5 gold crowns as a common item: it adds +1 to the weapon's Strength, grants no save modifier, and lasts for one battle. Every henchman in a group must be armed the same way."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "saurus-equipment-list",
+      "title": "Saurus Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Stone Axe", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double-Handed Weapon", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "helmet", "alias": "Bone Helmet", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "skinks-equipment-list",
+      "title": "Skinks Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Stone Axe", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10, "costSuffix": "Heroes only"}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "Short Bow", "cost": {"cost": 5}},
+        {"name": "bolas", "alias": "Bolas", "cost": {"cost": 5}},
+        {"name": "javelins", "alias": "Javelin", "cost": {"cost": 10}},
+        {"name": "throwing knives/stars/axes", "alias": "Throwing Knives", "cost": {"cost": 15}},
+        {"name": "blowpipe", "alias": "", "cost": {"cost": 25}},
+        {"name": "helmet", "alias": "Bone Helmet", "cost": {"cost": 10, "costSuffix": "Skink Priest only"}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Blowpipe", "alias": "", "cost": {"cost": 25}, "availability": "Rare 7"},
+    {"title": "Bolas", "alias": "", "cost": {"cost": 5}, "availability": "Common"},
+    {"title": "Javelins", "alias": "Javelin", "cost": {"cost": 10}, "availability": "Common"},
+    {"title": "Dark Venom", "alias": "", "cost": {"cost": 20}, "availability": "Common (Skink Heroes only, missile weapons only)"},
+    {"title": "Black Lotus", "alias": "", "cost": {"cost": 10}, "availability": "Common (Skink Heroes only, missile weapons only)"},
+    {"title": "Reptile Venom", "alias": "", "cost": {"cost": 5}, "availability": "Common (Skink Henchmen only, missile weapons only)"}
+  ],
+  "mutations": [
+    {
+      "mutationName": "Sacred Markings",
+      "mutationflavour": "A Hero may have a single Sacred Marking, and it may only be bought when he is recruited.",
+      "items": [
+        {
+          "heading": "Oversized Jaws",
+          "cost": "40",
+          "ruleFull": "Saurus only. The Hero makes his bite attack at +1 Strength."
+        },
+        {
+          "heading": "Poison Glands",
+          "cost": "40",
+          "ruleFull": "Skinks only. The Hero may attack with his teeth instead of his weapons. These attacks are resolved as a Saurus bite attack but at a +1 save modifier whatever his Strength, and add +1 to the roll on the injury table."
+        },
+        {
+          "heading": "Mark of the Old Ones",
+          "cost": "50",
+          "ruleFull": "The Hero may turn one of his failed dice rolls into a successful one. This may be used once per battle and only on an action he makes himself, a failed Rout test included."
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "skink-priest",
+      "type": "hero",
+      "name": "Skink Priest",
+      "plural": "Skink Priests",
+      "race": "skink",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["skinks-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Lizardmen Magic"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any Lizardman within 6\" of the Skink Priest may use his Leadership for any Leadership test. If the Skink Priest is killed you may recruit a new one, but you must play at least one game without a leader first."},
+        {"rulename": "Wizard", "ruleFull": "The Skink Priest casts Lizardmen Magic. Its spells work like the Prayers of Sigmar and may be used even when he wears armour."}
+      ]
+    },
+    {
+      "id": "saurus-totem-warrior",
+      "type": "hero",
+      "name": "Saurus Totem Warrior",
+      "plural": "Saurus Totem Warriors",
+      "race": "saurus",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 11,
+      "statblock": {"m": 4, "ws": 4, "bs": 0, "s": 4, "t": 4, "w": 1, "i": 2, "a": "1(2)", "ld": 8},
+      "equipmentLists": ["saurus-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "skink-great-crests",
+      "type": "hero",
+      "name": "Skink Great Crest",
+      "plural": "Skink Great Crests",
+      "race": "skink",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 6, "ws": 3, "bs": 3, "s": 3, "t": 2, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["skinks-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "skink-braves",
+      "type": "henchman",
+      "name": "Skink Brave",
+      "plural": "Skink Braves",
+      "race": "skink",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 6, "ws": 2, "bs": 3, "s": 3, "t": 2, "w": 1, "i": 4, "a": 1, "ld": 6},
+      "equipmentLists": ["skinks-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "saurus-braves",
+      "type": "henchman",
+      "name": "Saurus Brave",
+      "plural": "Saurus Braves",
+      "race": "saurus",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 0, "s": 4, "t": 4, "w": 1, "i": 1, "a": "1(2)", "ld": 7},
+      "equipmentLists": ["saurus-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "kroxigor",
+      "type": "henchman",
+      "name": "Kroxigor",
+      "plural": "Kroxigors",
+      "race": "kroxigor",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 200,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 3, "bs": 0, "s": 5, "t": 4, "w": 3, "i": 1, "a": 3, "ld": 8},
+      "equipmentLists": [],
+      "equipment": "A halberd.",
+      "specialRules": [
+        {"rulename": "Scaly Skin", "ruleFull": "A Kroxigor has a natural armour save of 4+."},
+        {"rulename": "Aquatic", "ruleFull": "A Kroxigor moves through water with no penalty and counts as being in cover while he is in the water."},
+        {"rulename": "Fear", "ruleFull": "A Kroxigor causes fear."},
+        {"rulename": "Large", "ruleFull": "A Kroxigor may be picked out by an archer even when he is not the closest model."},
+        {"rulename": "Animal", "ruleFull": "A Kroxigor never gains experience."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Lizardmen (Lustria)", "new": true, "note": "Infiltration and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only."},
+  "specialSkillsList": [
+    {"name": "Infiltration (Skink)", "pdfName": "Infiltration", "ours": "Infiltration (Skink)"},
+    {"name": "Great Hunter", "ours": "Great Hunter"},
+    {"name": "Bellowing Battle Roar", "ours": "Bellowing Battle Roar"},
+    {"name": "Toughened Hide", "ours": "Toughened Hide"}
+  ],
+  "priceRows": [
+    {"name": "Blowpipe", "rarity": 7, "dice": null, "note": "", "page": 2},
+    {"name": "Bolas", "rarity": null, "dice": null, "note": "", "page": 2},
+    {"name": "Javelins", "rarity": null, "dice": null, "note": "", "page": 2},
+    {"name": "Dark Venom", "rarity": null, "dice": null, "note": "Skink Heroes only, on missile weapons", "page": 2},
+    {"name": "Black Lotus", "rarity": null, "dice": null, "note": "Skink Heroes only, on missile weapons", "page": 2},
+    {"name": "Reptile Venom", "rarity": null, "dice": null, "note": "Skink Henchmen only, on missile weapons", "page": 2},
+    {"name": "Light Armour", "cost": 50, "rarity": null, "dice": null, "note": "", "page": 1}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "A Lizardmen warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 1, "what": "The Skink and Saurus maximum profiles printed are our Skink and Saurus races', so no new race was made. The Saurus maximum prints Attacks as 4+1, which our Saurus race already holds as 5."},
+    {"page": 3, "what": "The skill table ticks the Skink Priest Academic, Speed and Special; the Totem Warrior Combat, Strength and Special; and the Skink Great Crest Shooting, Speed and Special. Read from the tick positions."},
+    {"page": 3, "what": "All four special skills are ours, with the same words: Infiltration (our name for the Skink's, which the PDF prints as Infiltration), Great Hunter, Bellowing Battle Roar and Toughened Hide. Who may take each is in the group's note."},
+    {"page": 3, "what": "\"Saurus can never receive Academic skills and can never use missile weapons\" is kept as a warband rule, since it limits a fighter rather than who may take one of the group's skills. Neither Saurus fighter ticks Academic in any case."},
+    {"page": 2, "what": "The Saurus Totem Warrior and the Saurus Brave print Attacks as 1+1, which is their one attack plus their bite; both are imported as 1(2)."},
+    {"page": 2, "what": "Blowpipe, Bolas, Javelins, Dark Venom, Black Lotus and Reptile Venom are all ours, each with a price row for this warband at the PDF's price and rarity. The Town Cryer 11 Lizardmen already hold rows of their own: that warband's Javelins are 5 gc where this PDF prints 10 gc, and nothing of theirs was changed."},
+    {"page": 2, "what": "The Blowpipe is Rare 7 here and Common in the Forest Goblins PDF of the same setting; each warband's row carries its own PDF's rarity."},
+    {"page": 3, "what": "Stone Axe (\"counts as a club\", 3 gc) is our Club, Mace or Hammer, bought under the PDF's name."},
+    {"page": 3, "what": "Bone Helmet (10 gc) is our Helmet at the same price, bought under the PDF's name; the PDF gives it no rules of its own."},
+    {"page": 1, "what": "The Armour rule prices light armour at 50 gc from the trading chart too, so a price row at 50 gc was added for this warband; our global 20 gc is unchanged."},
+    {"page": 2, "what": "Poisoned Weapons buys nothing onto a fighter, so it is a warband rule, not a Sacred Marking."},
+    {"page": 2, "what": "The Sacred Markings are template upgrades: one per Hero, bought only when he is recruited. Oversized Jaws is the Totem Warrior's and Poison Glands the Skink Heroes'."},
+    {"page": 4, "what": "The Skink Braves have no maximum (\"any number\"). No henchmen group sizes are printed."},
+    {"page": 5, "what": "Lizardmen Magic is ours: the same six spells with the same difficulties. The PDF's note that its spells work like the Prayers of Sigmar and may be cast in armour is kept on the Skink Priest's Wizard rule."}
+  ]
+}

@@ -389,6 +389,27 @@
     ]
   },
   {
+    "name": "Clan Pestilens (Lustria)",
+    "setting": null,
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "skaven-of-clan-pestilens-lus",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Cloud of Flies",
+      "Frenzy",
+      "Resilience",
+      "No Pain",
+      "Fear"
+    ]
+  },
+  {
     "name": "Clan Pestilens (Mousillon)",
     "setting": null,
     "for_everyone": false,
@@ -740,6 +761,23 @@
     ]
   },
   {
+    "name": "Forest Goblins (Lustria)",
+    "setting": null,
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "forest-goblins-lus",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Bosses only.",
+    "how": "new group",
+    "skills": [
+      "Animosity"
+    ]
+  },
+  {
     "name": "Grail Companions",
     "setting": null,
     "for_everyone": false,
@@ -811,6 +849,27 @@
       "Skilled Huntsman",
       "Layers of Fat",
       "Shifty"
+    ]
+  },
+  {
+    "name": "High Elves",
+    "setting": null,
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "high-elves",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Fey Quickness",
+      "High Sorcery",
+      "Stand and Fire",
+      "Miniath",
+      "Unerring Strike"
     ]
   },
   {
@@ -984,6 +1043,26 @@
       "Brick Wall",
       "Frog Splash",
       "Titanic Grip"
+    ]
+  },
+  {
+    "name": "Lizardmen (Lustria)",
+    "setting": null,
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "lizardmen-lus",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Infiltration and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only.",
+    "how": "new group",
+    "skills": [
+      "Infiltration (Skink)",
+      "Great Hunter",
+      "Bellowing Battle Roar",
+      "Toughened Hide"
     ]
   },
   {
@@ -1440,6 +1519,24 @@
       "Iron Will",
       "Rousing Sermon",
       "Sigmar's Guidance"
+    ]
+  },
+  {
+    "name": "Ranger (High Elves)",
+    "setting": null,
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "high-elves",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Fey",
+      "Luck"
     ]
   },
   {

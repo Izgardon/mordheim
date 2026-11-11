@@ -563,5 +563,17 @@
     "attacks": "4",
     "leadership": "8",
     "setting": "khemri-3"
+  },
+  {
+    "name": "Goblin (Lustria)",
+    "movement": "5",
+    "weapon_skill": "3",
+    "ballistic_skill": "5",
+    "strength": "4",
+    "toughness": "4",
+    "wounds": "2",
+    "initiative": "6",
+    "attacks": "3",
+    "leadership": "7"
   }
 ]

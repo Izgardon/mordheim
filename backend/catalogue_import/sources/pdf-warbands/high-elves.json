@@ -1,0 +1,238 @@
+{
+  "warbandType": "high-elves",
+  "name": "High Elves",
+  "source": "Lustria",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/lustria/High%20Elves.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {
+      "rulename": "Excellent Sight",
+      "ruleFull": "A High Elf spots hidden enemies from twice as far away as other warriors, that is, twice his Initiative value in inches."
+    },
+    {
+      "rulename": "Haughty",
+      "ruleFull": "The warband may never include a hired sword who is not a High Elf, and may never use equipment of Dwarf origin, gromril weapons and armour included."
+    },
+    {
+      "rulename": "Honourable",
+      "ruleFull": "A High Elf may never use poison or drugs of any kind."
+    },
+    {
+      "rulename": "The Old Ways",
+      "ruleFull": "A High Elf may never use black powder weapons of any sort."
+    },
+    {
+      "rulename": "Resolve",
+      "ruleFull": "When taking a Rout test against Dark Elves the warband counts its Leadership as 10. It may never choose to rout voluntarily against them."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "high-elf-equipment-list",
+      "title": "High Elf Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "Mage Staff of Hoeth", "alias": "Mage Staff", "cost": {"cost": 20}},
+        {"name": "double-handed weapon", "alias": "Double-Handed Weapon", "cost": {"cost": 15}},
+        {"name": "Elven Greatsword", "alias": "", "cost": {"cost": 25}},
+        {"name": "ithilmar weapon", "alias": "Ithilmar Weapon", "cost": {"cost": 0, "costPrefix": "2 x Cost"}},
+        {"name": "long bow", "alias": "Long Bow", "cost": {"cost": 15}},
+        {"name": "elf bow", "alias": "Elven Bow", "cost": {"cost": 35}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "ithilmar armour", "alias": "Ithilmar Armour", "cost": {"cost": 60}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "cadets-equipment-list",
+      "title": "Cadets Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Long Bow", "cost": {"cost": 15}},
+        {"name": "elf bow", "alias": "Elven Bow", "cost": {"cost": 35, "costSuffix": "Rangers only"}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "Elven Wine", "alias": "", "cost": {"cost": 50, "costSuffix": "Heroes only"}},
+        {"name": "Elven Cloak", "alias": "", "cost": {"cost": 75, "costSuffix": "Heroes only"}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Mage Staff of Hoeth", "alias": "", "cost": {"cost": 20}, "availability": "Rare 10 (Loremaster only)"},
+    {"title": "Elven Greatsword", "alias": "", "cost": {"cost": 25}, "availability": "Rare 10 (Sword Wardens only)"},
+    {"title": "Elven Wine", "alias": "", "cost": {"cost": 50}, "availability": "Rare 10"}
+  ],
+  "fighters": [
+    {
+      "id": "loremaster",
+      "type": "hero",
+      "name": "Loremaster",
+      "plural": "Loremasters",
+      "race": "elf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 9},
+      "equipmentLists": ["high-elf-equipment-list"],
+      "equipment": "A sword, a dagger or a Mage Staff of Hoeth only.",
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["High Elf Magic", "Lesser Magic"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any model in the warband within 6\" of the Loremaster may use his Leadership instead of his own."},
+        {"rulename": "Wizard", "ruleFull": "The Loremaster starts with one spell from High Elf Magic. Each later spell he gains is chosen from either High Elf Magic or Lesser Magic."}
+      ]
+    },
+    {
+      "id": "ranger",
+      "type": "hero",
+      "name": "Ranger",
+      "plural": "Rangers",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 45,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["cadets-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "skillGroups": ["Ranger (High Elves)"],
+      "specialRules": [
+        {"rulename": "Seeker", "ruleFull": "If the Ranger was not taken out of action, you may modify one Exploration dice by -1 or +1."}
+      ]
+    },
+    {
+      "id": "sword-warden",
+      "type": "hero",
+      "name": "Sword Warden",
+      "plural": "Sword Wardens",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 50,
+      "startingXp": 11,
+      "statblock": {"m": 5, "ws": 5, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["high-elf-equipment-list"],
+      "equipment": "Anything from the High Elf equipment list; never a missile weapon.",
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Sword Master Protege", "ruleFull": "Anyone shooting at a Sword Warden armed with a sword or an Elven Greatsword, but not a double-handed sword, deducts -1 from the roll to hit. This does not apply to black powder weapons."}
+      ]
+    },
+    {
+      "id": "seaguard",
+      "type": "henchman",
+      "name": "Seaguard",
+      "plural": "Seaguard",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["high-elf-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "cadets",
+      "type": "henchman",
+      "name": "Cadet",
+      "plural": "Cadets",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["cadets-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "skillGroup": {"name": "High Elves", "new": true, "note": ""},
+  "specialSkillsList": [
+    {"name": "High Sorcery", "description": "Loremaster only. When an enemy spellcaster casts a spell successfully, the Loremaster may try to dispel it: if he rolls higher than the opponent's casting roll, the spell is dispelled."},
+    {"name": "Stand and Fire", "description": "If the Elf passes a Leadership test he may stand and fire at a charging opponent. He suffers -1 to hit and may fire only once, at a single opponent. If that opponent is knocked down or stunned, place him halfway between the Elf and where he started, or in view if he was out of sight."},
+    {"name": "Miniath", "description": "The Elf may parry with any weapon. If he carries a weapon he can already parry with, he gains one extra parry attempt."},
+    {"name": "Unerring Strike", "description": "The Elf may re-roll any failed roll to wound."},
+    {"name": "Fey Quickness", "ours": "Fey Quickness"}
+  ],
+  "sharedSkillGroup": {
+    "name": "Ranger (High Elves)",
+    "note": "",
+    "types": ["high-elves"],
+    "skills": [
+      {"name": "Fey", "ours": "Fey"},
+      {"name": "Luck", "ours": "Luck"}
+    ]
+  },
+  "priceRows": [
+    {"name": "Elven Wine", "rarity": 10, "dice": null, "note": "", "page": 2},
+    {"name": "Elf Bow", "rarity": null, "dice": null, "cost": 35, "note": "Rangers only", "page": 3}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Mage Staff of Hoeth",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 2,
+      "range": "Close Combat",
+      "strength": "As user, as user +1",
+      "rules": [
+        {"name": "One or Two-handed", "text": "A Mage Staff of Hoeth may be used one-handed, when it counts as a club, or two-handed, when it counts as a club and gives its wielder +1 Strength."},
+        {"rule": "Concussion", "text": "When a Mage Staff of Hoeth is used in close combat, a roll of 2-4 on the Injury chart counts as stunned."}
+      ],
+      "note": "Loremaster only."
+    },
+    {
+      "name": "Elven Greatsword",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 2,
+      "range": "Close Combat",
+      "strength": "As user +2",
+      "rules": [
+        {"rule": "Two-handed"},
+        {"name": "Strike Last", "text": "An Elven Greatsword strikes last, even when charging, because a Sword Warden is not yet a full Sword Master."},
+        {"rule": "Parry", "text": "A model armed with an Elven Greatsword may parry blows as if he were armed with a sword."}
+      ],
+      "note": "Sword Wardens only."
+    }
+  ],
+  "flags": [
+    {"page": 1, "what": "A High Elf warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "The Elf maximum profile printed (M5 WS7 BS7 S4 T4 W3 I9 A4 Ld10) is our Elf race's, so no new race was made."},
+    {"page": 2, "what": "The skill table ticks the Loremaster Academic, Speed and Special; the Sword Warden Combat, Academic, Strength, Speed and Special; and the Ranger Shooting, Speed and Special. Read from the tick positions."},
+    {"page": 4, "what": "The Ranger's own skill table (Fey, Luck) is a second group, Ranger (High Elves), which only he learns from. Both skills are ours, with the same words."},
+    {"page": 3, "what": "High Sorcery, Stand and Fire, Miniath and Unerring Strike are new skills; Fey Quickness is ours, with the same words. High Sorcery is the Loremaster's alone, which opens its description."},
+    {"page": 2, "what": "Elven Wine is ours. Our rule names a Shadow Warrior warband, where this PDF says a High Elf warband; both mean the warband that drinks it is immune to fear for the battle. Ours is unchanged and a price row at 50 gc, Rare 10, was added for this warband."},
+    {"page": 3, "what": "The Mage Staff of Hoeth and the Elven Greatsword are items we lack, so each is a stub with its printed rules. Neither matches one of ours: our Wizard's Staff and our double-handed weapons do something else."},
+    {"page": 3, "what": "The Ithilmar Weapon line prints \"2 times the cost\"; our Ithilmar Weapon's own price is three times the weapon's. The line keeps the PDF's wording and ours is unchanged."},
+    {"page": 3, "what": "The Ithilmar Armour line (60 gc) and the Elven Cloak line (75 gc) are marked as starting prices, which is what a list price is, so neither carries a price row."},
+    {"page": 3, "what": "The Miscellaneous Equipment section (Elven Wine, Elven Cloak, \"High Elf Heroes Only\") is printed at the foot of the Cadets column, so it is imported in the Cadets list with each line marked Heroes only."},
+    {"page": 3, "what": "The Elven Bow is our Elf Bow. The High Elf list sells it to anyone at 35 gc and the Cadets list to Rangers only at the same price; a price row at 35 gc, Common, Rangers only, carries the warband's price."},
+    {"page": 4, "what": "The Loremaster may use only a sword, a dagger or a Mage Staff of Hoeth, and the Sword Warden may never use a missile weapon: both are noted on the fighter rather than taken off his list."},
+    {"page": 5, "what": "High Elf Magic is a lore we lack, so its six spells are added with their printed difficulties. The Loremaster also casts from our Lesser Magic."},
+    {"page": 5, "what": "The Seaguard have no maximum (\"any number\"). No henchmen group sizes are printed."}
+  ]
+}

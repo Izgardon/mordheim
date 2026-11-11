@@ -120,6 +120,9 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
     },
     # "A Hero may only have a single Sacred Marking and these may only be bought when you recruit the Hero"
     ("lizardmen", "Sacred markings"): {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
+    # the Lustria Lizardmen PDF, p2: "A Hero may only have a single Sacred Marking and these may only be bought
+    # when you recruit the Hero"
+    ("lizardmen-lus", "Sacred Markings"): {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
     # no price in the book: "Upon being hired Seers choose their Mark"; the leader may choose one through the Eye of
     # the Gods; one Mark each ("their Mark"). No two models may have different Marks: its rule says so, unchecked
     ("marauders-of-chaos", "Mark of the Dark Gods"): {
@@ -147,6 +150,8 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
 UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {
     ("lizardmen", "Oversized Jaws"): {"fighters": ["saurus-totem-warrior"]},
     ("lizardmen", "Poison Glands"): {"fighters": ["skink-priest", "skink-great-crests"]},
+    ("lizardmen-lus", "Oversized Jaws"): {"fighters": ["saurus-totem-warrior"]},
+    ("lizardmen-lus", "Poison Glands"): {"fighters": ["skink-priest", "skink-great-crests"]},
 }
 # Entries of an upgrade group that are no upgrade but a warband rule, by page: Poisoned Weapons lets Skink Heroes and
 # Saurus buy Dark Venom and Black Lotus, and Skink henchmen Reptile Venom; nothing is bought onto a fighter
@@ -349,6 +354,7 @@ RACES_BY_FIGHTER: dict[tuple[str, str], str] = {
     ("carnival-of-chaos", "Brute"): "Human",
     ("carnival-of-chaos", "Tainted One"): "Human",
     ("lizardmen", "Kroxigor"): "Kroxigor",
+    ("lizardmen-lus", "Kroxigor"): "Kroxigor",
     # the Grail Companions PDF's Grail Knight maximum (p2); its Companions' is our Human
     ("bretonnian-grail-companions", "Grail Knight"): "Grail Knight",
     # the Necrarchs PDF's Necrarch Vampire maximum (p10), unlike our Vampire's; its Thrall is our Vampire
@@ -389,6 +395,8 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("skaven-of-clan-pestilens-mou", "skaven"): "Skaven (Clan Pestilens)",
     ("necrarchs", "spirit"): "Spirit",  # the Necrarchs PDF's Banshee (p5), with no maximum printed
     ("wood-elves-of-arden", "spirit"): "Spirit",  # its Ivy Ferret, a woodland spirit (p5), with none printed
+    # the Lustria Forest Goblins PDF's own maximum (p2): WS3, W2, A3, unlike our Goblin's
+    ("forest-goblins-lus", "goblin"): "Goblin (Lustria)",
 }
 CREATURES = frozenset(
     {
@@ -400,6 +408,7 @@ CREATURES = frozenset(
         "construct",
         "daemon",
         "giant rat",
+        "giant spider",
         "hawk",
         "kroxigor",
         "monkey",

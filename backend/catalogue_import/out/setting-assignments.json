@@ -1531,6 +1531,26 @@
       "how": "overrides.json"
     },
     {
+      "name": "High Sorcery",
+      "setting": "lustria",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Stand and Fire",
+      "setting": "lustria",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Miniath",
+      "setting": "lustria",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Unerring Strike",
+      "setting": "lustria",
+      "how": "overrides.json"
+    },
+    {
       "name": "Ded Shooty (Hobgoblins)",
       "setting": "khemri-3",
       "how": "overrides.json"
@@ -1902,16 +1922,31 @@
     },
     {
       "name": "Cloud of Flies",
-      "setting": "mousillon",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Numb",
-      "setting": "mousillon",
+      "setting": "lustria",
       "how": "overrides.json"
     },
     {
       "name": "Frenzy",
+      "setting": "lustria",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Resilience",
+      "setting": "lustria",
+      "how": "overrides.json"
+    },
+    {
+      "name": "No Pain",
+      "setting": "lustria",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fear",
+      "setting": "lustria",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Numb",
       "setting": "mousillon",
       "how": "overrides.json"
     },

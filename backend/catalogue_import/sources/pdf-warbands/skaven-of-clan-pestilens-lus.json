@@ -1,0 +1,176 @@
+{
+  "warbandType": "skaven-of-clan-pestilens-lus",
+  "name": "Skaven of Clan Pestilens (Lustria)",
+  "source": "Lustria",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/lustria/Clan%20Pestilens.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "clan-pestilens-hero-equipment-list",
+      "title": "Hero Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "staff", "alias": "Staff", "cost": {"cost": 3}},
+        {"name": "double-handed weapon", "alias": "Double-Handed Weapon", "cost": {"cost": 15}},
+        {"name": "censer", "alias": "Plague Censor", "cost": {"cost": 100}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "warplock pistol", "alias": "Warplock Pistol", "cost": {"cost": 35, "braceCost": 70}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "clan-pestilens-henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club/Staff", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15, "costSuffix": "Plague Monks only"}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Censer", "alias": "Plague Censer", "cost": {"cost": 75}, "availability": "Rare 12 (Plague Champions only)"}
+  ],
+  "fighters": [
+    {
+      "id": "plague-priest",
+      "type": "hero",
+      "name": "Plague Priest",
+      "plural": "Plague Priests",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["clan-pestilens-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any model in the warband within 6\" of the Plague Priest may use his Leadership instead of his own."}
+      ]
+    },
+    {
+      "id": "plague-champion",
+      "type": "hero",
+      "name": "Plague Champion",
+      "plural": "Plague Champions",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": ["clan-pestilens-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "monk-initiate",
+      "type": "hero",
+      "name": "Monk Initiate",
+      "plural": "Monk Initiates",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["clan-pestilens-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "plague-monk",
+      "type": "henchman",
+      "name": "Plague Monk",
+      "plural": "Plague Monks",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 7,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["clan-pestilens-henchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "clan-rat",
+      "type": "henchman",
+      "name": "Clan Rat",
+      "plural": "Clan Rats",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["clan-pestilens-henchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "skaven-slave",
+      "type": "henchman",
+      "name": "Skaven Slave",
+      "plural": "Skaven Slaves",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 10,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": ["clan-pestilens-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Doomed", "ruleFull": "If a Skaven Slave rolls \"The lad's got talent\", the leader has him executed rather than let him rise: take him off the roster, whether or not the warband holds its full quota of heroes."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Clan Pestilens (Lustria)", "new": true, "note": ""},
+  "specialSkillsList": [
+    {"name": "Cloud of Flies", "description": "A cloud of flies surrounds the warrior. Any model in base contact with him has -1 to hit with every attack. Clan Pestilens Heroes and Plague Monks, undead and followers of Nurgle are not affected."},
+    {"name": "Frenzy", "description": "The warrior is subject to frenzy."},
+    {"name": "Resilience", "description": "The warrior's Toughness is increased by +1. This is the only way for a Skaven to reach Toughness 5."},
+    {"name": "No Pain", "description": "The warrior treats a stunned result as knocked down."},
+    {"name": "Fear", "description": "The warrior causes fear."}
+  ],
+  "priceRows": [
+    {"name": "censer", "cost": 75, "dice": 5, "rarity": 12, "note": "Plague Champions only", "page": 1}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "A Clan Pestilens warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 1, "what": "The Skaven maximum profile printed (M6 WS6 BS6 S4 T4 W3 I7 A4 Ld7) is our plain Skaven race's, not our Skaven (Clan Pestilens) race's (M5 T5) which the Mordheim 1b and Mousillon warbands of the same name use. Imported as printed, so this warband's race is Skaven."},
+    {"page": 1, "what": "The warband has no Special Rules section of its own: the PDF prints none."},
+    {"page": 2, "what": "The skill table ticks the Plague Priest Combat, Academic, Strength, Speed and Special; the Plague Champions Combat, Strength, Speed and Special; and the Monk Initiates Combat, Speed and Special. Read from the tick positions."},
+    {"page": 2, "what": "The special skills are a new group, Clan Pestilens (Lustria). Cloud of Flies and Frenzy are ours, with the same words. Resilience (+1 Toughness) is a skill of its own: our Resilient takes -1 Strength off hits in close combat, which is a different rule. No Pain (stunned counts as knocked down) is what our Numb does and what our Ignore Pain does for the Mordheim 1b warband, and Fear (causes fear) is what our Fearsome does; both are kept apart because the names differ."},
+    {"page": 1, "what": "The Plague Censer is our Censer. The equipment list sells it at 100 gc, a starting price, and its own entry prices it at 75+5D6, Rare 12, Plague Champions only, which is the price row. The Mousillon warband's censer is an item of its own, Plague Censer (Mousillon), because its Fog of Death rolls a D6 for every model in base contact at the end of each close-combat phase; this PDF's takes a Toughness test from the model it hits, which is what our Censer does, so this warband buys ours."},
+    {"page": 1, "what": "This PDF's Fog of Death adds an extra -1 to hit for shooting at the wielder and says a roll of 6 always wounds whatever the Toughness. Our Censer takes the same Toughness test without those two lines; ours is unchanged."},
+    {"page": 2, "what": "The Hero list's dagger is priced \"1st free/2 wt\" in warp tokens where every other line is in gold crowns; the PDF treats warp tokens as gold crowns, so it is imported as 2 gc."},
+    {"page": 2, "what": "The Hero list's Staff (3 gc) and the Henchmen list's Club/Staff (3 gc) are our Club, Mace or Hammer, bought under the PDF's names."},
+    {"page": 2, "what": "The Henchmen list's Flail is noted \"Plague Monks only\"."},
+    {"page": 3, "what": "The Plague Priest's Leader rule names the Loremaster, which belongs to another warband's PDF; it is read as the Plague Priest."},
+    {"page": 3, "what": "The Monk Initiate is a hero at 15 gc with 0 starting experience."},
+    {"page": 4, "what": "The Clan Rats have no maximum (\"any number\"). No henchmen group sizes are printed, and no fighter is said to gain no experience, so every henchman gains it. The Skaven Slave gains experience but may never be promoted: his Doomed rule removes him instead."},
+    {"page": 1, "what": "Our catalogue already holds two Skaven of Clan Pestilens templates, the Mordheim 1b warband's and Mousillon's, and a template is kept by its name, so this one is named Skaven of Clan Pestilens (Lustria). Its skills, profiles and prices differ from both: it shares only the skills Cloud of Flies and Frenzy with the Mousillon group, and it buys our Censer where Mousillon has an item of its own."}
+  ]
+}

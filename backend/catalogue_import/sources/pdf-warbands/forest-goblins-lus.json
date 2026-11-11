@@ -1,0 +1,227 @@
+{
+  "warbandType": "forest-goblins-lus",
+  "name": "Forest Goblins (Lustria)",
+  "source": "Lustria",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/lustria/Forest%20Goblins.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {
+      "rulename": "Camouflage",
+      "ruleFull": "A hidden Forest Goblin is not spotted automatically within an enemy's Initiative distance in inches: the enemy must first roll equal to or under his Initiative to spot him."
+    },
+    {
+      "rulename": "Natives",
+      "ruleFull": "Forest Goblins suffer no movement penalty for moving through jungle terrain."
+    },
+    {
+      "rulename": "Animosity",
+      "ruleFull": "At the start of the Forest Goblin player's turn, roll a D6 for each hero or henchman subject to animosity. Do not roll for a model engaged in hand-to-hand combat. On a 1 he has taken offence: roll another D6 and apply the result.\n\nD6 | Result\n1 | I 'Erd Dat! If a friendly Goblin henchman or Hired Sword is within charge reach, the warrior charges the nearest one and fights one round of close combat. At the end of that round both models move 1\" apart and no longer count as being in close combat, unless one of them fails another animosity test and rolls this result again. If no friendly Goblin henchman or Hired Sword is within charge reach and the warrior has a missile weapon, he shoots at the nearest one instead. If neither applies, or the nearest friendly model is a Goblin hero, treat the result as a 2-5. In any case he may take no other action this turn, though he may defend himself in hand-to-hand combat.\n2-5 | Wud Yoo Say? The warrior spends the turn hurling insults at the nearest friendly Goblin. He may do nothing else this turn, though he may defend himself in hand-to-hand combat.\n6 | I'll Show Yer! The warrior must move as quickly as possible towards the nearest enemy model, charging into combat if possible. If no enemy model is in sight he may make a normal move at once. This move is in addition to his move in the movement phase, so he may move twice in one turn. If the extra move takes him within charge reach of an enemy model, he must charge into close combat during his regular movement."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "forest-goblin-hero-equipment-list",
+      "title": "Hero Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "Halbard", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double-Handed Weapon", "cost": {"cost": 15}},
+        {"name": "blowpipe", "alias": "", "cost": {"cost": 25}},
+        {"name": "short bow", "alias": "Shortbow", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "forest-goblin-henchmen-equipment-list",
+      "title": "Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "Short Bow", "cost": {"cost": 5}},
+        {"name": "throwing knives/stars/axes", "alias": "Throwing Weapons", "cost": {"cost": 15}},
+        {"name": "blowpipe", "alias": "", "cost": {"cost": 25}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Boss Pole", "alias": "Bosspole", "cost": {"cost": 20}, "availability": "Common (Chieftain and Bosses only)"},
+    {"title": "Blowpipe", "alias": "", "cost": {"cost": 25}, "availability": "Common"},
+    {"title": "Magic Gubbinz", "alias": "", "cost": {"cost": 50}, "availability": "Rare 9"},
+    {"title": "Poisoned Weapon", "alias": "", "cost": {"cost": 25}, "availability": "Common"},
+    {"title": "Red Toof Tribal Jewellery", "alias": "Red Toof Clan Membership", "cost": {"cost": 40}, "availability": "Rare 9"},
+    {"title": "Giant Spider", "alias": "Arachnid Mount", "cost": {"cost": 45}, "availability": "Rare 5"}
+  ],
+  "fighters": [
+    {
+      "id": "chieftain",
+      "type": "hero",
+      "name": "Chieftain",
+      "plural": "Chieftains",
+      "race": "goblin",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 17,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["forest-goblin-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any model in the warband within 6\" of the Chieftain may use his Leadership instead of his own."}
+      ]
+    },
+    {
+      "id": "boss",
+      "type": "hero",
+      "name": "Boss",
+      "plural": "Bosses",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 4,
+      "costGc": 20,
+      "startingXp": 6,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["forest-goblin-hero-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "A Boss is subject to animosity."}
+      ]
+    },
+    {
+      "id": "forest-goblin-shaman",
+      "type": "hero",
+      "name": "Forest Goblin Shaman",
+      "plural": "Forest Goblin Shamans",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 20,
+      "startingXp": 6,
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["forest-goblin-hero-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Forest Goblin Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "A Forest Goblin Shaman begins with one spell chosen at random from Forest Goblin Magic."}
+      ]
+    },
+    {
+      "id": "forest-goblins",
+      "type": "henchman",
+      "name": "Forest Goblin",
+      "plural": "Forest Goblins",
+      "race": "goblin",
+      "minQty": 0,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["forest-goblin-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "Forest Goblins are subject to animosity."}
+      ]
+    },
+    {
+      "id": "red-toof-clan-goblins",
+      "type": "henchman",
+      "name": "Red Toof Clan Goblin",
+      "plural": "Red Toof Clan Goblins",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["forest-goblin-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "Red Toof Clan Goblins are subject to animosity."},
+        {"rulename": "Berserkers", "ruleFull": "A Red Toof Clan Goblin is subject to frenzy. In addition, if he begins his turn within charge range of an enemy he is immune to animosity for that turn."}
+      ]
+    },
+    {
+      "id": "forest-goblin-sluggas",
+      "type": "henchman",
+      "name": "Forest Goblin Slugga",
+      "plural": "Forest Goblin Sluggas",
+      "race": "goblin",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["forest-goblin-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "Animosity", "ruleFull": "Forest Goblin Sluggas are subject to animosity."},
+        {"rulename": "Sluggas", "ruleFull": "In the shooting phase a Slugga may throw thrown weapons up to three times. This may not be combined with Quick Shot if he is promoted to a hero."}
+      ]
+    },
+    {
+      "id": "gigantic-spider",
+      "type": "henchman",
+      "name": "Gigantic Spider",
+      "plural": "Gigantic Spiders",
+      "race": "giant spider",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 200,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 3, "bs": 0, "s": 5, "t": 5, "w": 3, "i": 4, "a": 2, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Gigantic Spider causes fear."},
+        {"rulename": "Large Monster", "ruleFull": "A Gigantic Spider is a large target and may always be shot at, whether or not it is the closest model."},
+        {"rulename": "Poisonous", "ruleFull": "When a Gigantic Spider wounds an enemy, a roll on the injury table of 1 is knocked down, 2-4 is stunned and 5-6 is out of action."},
+        {"rulename": "Native", "ruleFull": "A Gigantic Spider moves through jungle terrain without penalty."},
+        {"rulename": "May Ride", "ruleFull": "If the optional rules for mounts are used, the Chieftain may ride the Gigantic Spider. He gains +1 armour save and moves at the spider's rate of 6. Shooting attacks hit the Chieftain on a D6 roll of 1-2 and the spider on a 3-6; in close combat the opponent chooses which to hit. While it is ridden the spider does not test for stupidity, as the Chieftain directs it."},
+        {"rulename": "Nonsentient", "ruleFull": "A Gigantic Spider is subject to stupidity and never gains experience. It may climb as normal."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Forest Goblins (Lustria)", "new": true, "note": "Bosses only."},
+  "specialSkillsList": [
+    {"name": "Animosity", "ours": "Animosity"}
+  ],
+  "priceRows": [
+    {"name": "Boss Pole", "rarity": null, "dice": null, "note": "Chieftain and Bosses only", "page": 2},
+    {"name": "Blowpipe", "rarity": null, "dice": null, "note": "", "page": 2},
+    {"name": "Magic Gubbinz", "rarity": 9, "dice": null, "note": "", "page": 3},
+    {"name": "Poisoned Weapon", "rarity": null, "dice": null, "note": "", "page": 3},
+    {"name": "Red Toof Tribal Jewellery", "rarity": 9, "dice": null, "note": "", "page": 3},
+    {"name": "Giant Spider", "rarity": 5, "dice": null, "note": "", "page": 3}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "A Forest Goblin warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
+    {"page": 1, "what": "The PDF spells the leader \"Chieftan\" in its headings and \"Chieftain\" in its text; he is imported as Chieftain."},
+    {"page": 2, "what": "The Forest Goblin maximum profile (M5 WS3 BS5 S4 T4 W2 I6 A3 Ld7) is lower than our Goblin race's in several places, so it is a race of its own, Goblin (Lustria). It is taken as printed, although the Chieftain already stands at the WS3 maximum."},
+    {"page": 3, "what": "The skill table ticks the Chieftain Combat, Shooting, Academic and Speed; the Bosses Combat, Shooting, Speed and Special; and the Shaman Shooting, Academic and Speed. Only the Bosses tick Special, so only they learn the warband's own skills; the Chieftain has no Special and no Strength tick, and the Shaman has Shooting. Read from the tick positions, as printed."},
+    {"page": 3, "what": "The only special skill printed is Animosity, which lets a Boss remove his animosity instead of taking a skill. It is our Animosity skill, whose description says \"A Forest Goblin Brave\" (the Nemesis Crown warband's name for the same hero); the limit to Bosses is in the group's note."},
+    {"page": 4, "what": "The henchmen list's missile weapons read Short Bow 5 gc, then a line \"Throwing Weapons 15 gc\" and Blowpipe 25 gc under the same heading. The 15 gc line is read as our Throwing Knives/Stars/Axes, which carries that price and rarity."},
+    {"page": 2, "what": "The Bosspole is our Boss Pole, which the Nemesis Crown Forest Goblins already buy at 20 gc with the same rules (ignore animosity within 6\", acts as a spear)."},
+    {"page": 3, "what": "The Arachnid Mount (45 gc, Rare 5) is bought as our Giant Spider under the PDF's name. Ours carries Poisoned Attack and Wall Walk; the PDF gives Movement 6, +1 armour save, no need to dismount to climb and a re-roll of a failed climb. Ours is unchanged; the price row is the PDF's."},
+    {"page": 3, "what": "Red Toof Clan Membership (40 gc, Rare 9, frenzy, can never be removed) is our Red Toof Tribal Jewellery at the same price and rarity, bought under the PDF's name."},
+    {"page": 2, "what": "The Blowpipe is Common here and Rare 7 in the Lizardmen PDF of the same setting; each warband's price row carries its own PDF's rarity."},
+    {"page": 4, "what": "The Red Toof Clan Goblins are \"up to five\" in Choice of Warriors and \"1-5\" in their entry: the simpler reading, 0-5, is imported."},
+    {"page": 4, "what": "The Chieftain's Leader rule names the Loremaster, which belongs to another warband's PDF; it is read as the Chieftain."},
+    {"page": 6, "what": "The Gigantic Spider's Weapons/Armour line names the Sluggas, which belongs to the entry above; it is read as carrying nothing."},
+    {"page": 6, "what": "The Gigantic Spider is bought as a henchman at 200 gc and is also sold as the Arachnid Mount at 45 gc; both are imported as printed."},
+    {"page": 6, "what": "The spell list is our Forest Goblin Magic: the same six spells with the same difficulties, named for G'rrk and M'rrk here and for Gork and Mork in ours (Wind of G'rrk, Gaze of M'rrk, Idol of G'rrk). Ours is unchanged."},
+    {"page": 4, "what": "No Animosity rule is printed for the Chieftain or the Shaman, although the warband rule says all Forest Goblins are subject to it. Taken as printed: only the Bosses, Forest Goblins, Red Toof Clan Goblins and Sluggas carry it."},
+    {"page": 1, "what": "No henchmen group sizes are printed."}
+  ]
+}
