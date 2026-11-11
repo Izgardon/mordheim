@@ -189,11 +189,15 @@ def lines_of(page: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
     return found
 
 
-def _stub_cost(slug: str, page: dict[str, Any], name: str, own: int | None = None) -> tuple[int | None, str]:
+NO_COST = object()  # a stub or price row that gives no `cost` key takes its line's price
+
+
+def _stub_cost(slug: str, page: dict[str, Any], name: str, own: Any = NO_COST) -> tuple[int | None, str]:
     """The price of a stub or a price row: its own `cost` where it has one, else the first line naming it ("3 ×
-    price" and no cost for a line priced by its base item, the Druchii's Darksteel blade)."""
-    if own is not None:
-        return own, ""
+    price" and no cost for a line priced by its base item, the Druchii's Darksteel blade). A `cost` of null is a
+    price of its own: none, for a page that prints an item with no price (the Khemri Bagh Nakh)."""
+    if own is not NO_COST:
+        return (own if isinstance(own, int) else None), ""
     for _list, line, cost in lines_of(page):
         price = line_price(cost)
         if loose_key(line) == loose_key(name) and (price.cost is not None or price.cost_note):
@@ -268,7 +272,7 @@ def add_price_rows(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]]
             item, _how = index.find(entry["name"])
             if item is None:
                 raise ValueError(f"pdf-warbands/{slug}.json: the price row's {entry['name']!r} is no item of ours")
-            price, note = _stub_cost(slug, page, entry["name"], entry.get("cost"))
+            price, note = _stub_cost(slug, page, entry["name"], entry.get("cost", NO_COST))
             cost = {
                 "cost": price,
                 "dice": entry.get("dice"),
@@ -305,7 +309,7 @@ def stub_items(
             found, how = index.find(stub["name"])
             if found is not None:
                 raise ValueError(f"pdf-warbands/{slug}.json: the stub {stub['name']!r} is our {found['name']!r} {how}")
-            price, note = _stub_cost(slug, page, stub["name"], stub.get("cost"))
+            price, note = _stub_cost(slug, page, stub["name"], stub.get("cost", NO_COST))
             cost = {
                 "cost": price,
                 "dice": stub.get("dice"),

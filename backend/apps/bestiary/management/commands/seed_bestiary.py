@@ -32,7 +32,7 @@ from apps.core.book_lookups import BookLookups
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import clean, parse_armour_save, read_json_list, read_written_stats, upsert_global
 from apps.items.importing import ImportedItems, legacy_rows, mordheim_part
-from apps.items.models import Item
+from apps.items.models import ANIMAL, Item
 from apps.items.writes import replace_availabilities
 from apps.special.models import Special
 from apps.special.owners import mark_beast_rules
@@ -126,10 +126,21 @@ class ItemSource:
         replace_availabilities(item, legacy_rows(shop.get("availabilities", [])))
 
 
+def _adopt_book_item(entry: BestiaryEntry) -> None:
+    """A book item of the beast's name that no beast holds becomes its Animal item, rather than a second row of that
+    name: the Magic Carpet was a Miscellaneous item until the Khemri equipment page made it a mount (11 Nov 2026)."""
+    if entry.campaign_id is not None:
+        return
+    Item.objects.filter(campaign__isnull=True, name=entry.name, bestiary_entry__isnull=True).update(
+        bestiary_entry=entry, type=ANIMAL, subtype=SUBTYPES[entry.kind]
+    )
+
+
 def _sync_item(
     entry: BestiaryEntry, data: dict[str, Any], lookups: BookLookups, source: ItemSource, path: Path
 ) -> bool:
     """The beast's Animal item (every beast has one), with its text, setting and prices; whether it is new."""
+    _adopt_book_item(entry)
     created = not Item.objects.filter(bestiary_entry=entry).exists()
     item = sync_item(entry, {})
     lookups.remember_item(item)  # a later entry may be equipped with it (the Freelancer's Warhorse, BUG-54)

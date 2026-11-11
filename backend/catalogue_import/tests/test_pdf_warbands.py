@@ -713,6 +713,65 @@ class PdfImportTests(SimpleTestCase):
         self.assertIn("Savage Orcs", boss["savages"]["skill_types"])
         self.assertIn("Orcs", boss["pirates"]["skill_types"])
 
+    def test_the_khemri_equipment_page_gives_its_weapons_their_rules_and_items(self) -> None:
+        # William, 11 Nov 2026, of the Khemri Equipment PDF he sent: the Jambiya is "just a nicknamed dagger", the
+        # Scimitar is "its own item, and drop the tag", the Scythe gets "the 'khemri' treatment", and an item's half
+        # of the setting follows "the warbands that sell them".
+        self.assertNotIn("scimitar", self.items["Sword"]["tags"])
+        self.assertEqual([rule.get("rule") for rule in self.items["Sword"]["rules"]], ["parry"])
+        rules = {
+            name: [rule.get("rule") or rule.get("name") for rule in self.items[name]["rules"]]
+            for name in ("Scimitar", "Scythe (Khemri)", "Ankus", "Cutlass", "Great Scimitar", "Bagh Nakh")
+        }
+        self.assertEqual(
+            rules,
+            {
+                "Scimitar": ["parry", "cutting-edge"],
+                "Scythe (Khemri)": ["cutting-edge", "two-handed"],
+                "Ankus": ["strike-first", "concussion"],
+                "Cutlass": ["parry", "Basket hilt"],
+                "Great Scimitar": ["two-handed", "strike-last", "cutting-edge"],
+                "Bagh Nakh": ["-1 enemy armour save", "pair", "cumbersome"],
+            },
+        )
+        for name in rules:
+            self.assertEqual(self.items[name]["setting"], "khemri-3", name)  # the warbands that sell them are 3's
+        self.assertEqual((self.items["Great Scimitar"]["strength"], self.items["Bagh Nakh"]["strength"]), ("+2", "+1"))  # fmt: skip
+        [bagh] = self.items["Bagh Nakh"]["availabilities"]  # on the page, on no list and at no price
+        self.assertEqual((bagh["cost"], bagh["cost_note"], len(bagh["warbands"])), (None, "", 8))
+        # the Sylvania scythes keep their own item and their own rows
+        self.assertEqual(
+            [row["warbands"][0]["type"] for row in self.items["Scythe"]["availabilities"]],
+            ["vampire-hunters-of-sylvania", "call-of-the-night-haint"],
+        )
+        lines = {
+            (line["item"]["name"], line["shown_as"], line["cost"])
+            for slug in ("arabyan-nomads", "arabyan-theives", "hobgoblins", "necromancer")
+            for row in self.templates[slug]["lists"]
+            for line in row["lines"]
+            if line["item"]["name"] in ("Sword", "Scimitar", "Scythe (Khemri)", "Dagger")
+        }
+        self.assertEqual(
+            lines,
+            {
+                ("Dagger", "Jambiya", 2),
+                ("Dagger", "", 2),
+                ("Sword", "", 10),
+                ("Scimitar", "", 15),
+                ("Scythe (Khemri)", "Scythe", 5),
+            },
+        )
+        # the Khemri carpet is a mount in the bestiary, and its item is that beast's Animal item
+        carpet = self.items["Magic Carpet"]
+        self.assertEqual((carpet["type"], carpet["subtype"], carpet["setting"]), ("Animal", "Mount", "khemri"))
+
+    def test_our_rain_coat_says_what_the_greatcoat_adds(self) -> None:
+        # William, 11 Nov 2026: fold the Sartosa Greatcoat's two clauses into ours, which said only that a Henchman
+        # may have one and left what it does to its flavour line
+        [rule] = self.items["Rain Coat"]["rules"]
+        for clause in ("over armour with no penalty", "never together with a cloak", "walks or falls into", "Henchman may have one"):  # fmt: skip
+            self.assertIn(clause, rule["text"])
+
     def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
         # Sartosa's shop list, one row for the setting's twelve types rather than a copy in each page
         page = good_page()

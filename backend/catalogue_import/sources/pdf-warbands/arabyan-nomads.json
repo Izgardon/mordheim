@@ -19,11 +19,11 @@
         {"name": "jambiya", "alias": "Jambiya", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
         {"name": "katar", "alias": "", "cost": {"cost": 5}},
-        {"name": "scythe", "alias": "", "cost": {"cost": 5}},
+        {"name": "Scythe (Khemri)", "alias": "Scythe", "cost": {"cost": 5}},
         {"name": "sword", "alias": "", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "Ankus", "alias": "", "cost": {"cost": 13}},
-        {"name": "sword", "alias": "Scimitar", "cost": {"cost": 15}},
+        {"name": "Scimitar", "alias": "", "cost": {"cost": 15}},
         {"name": "Cutlass", "alias": "", "cost": {"cost": 15}},
         {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
         {"name": "Great Scimitar", "alias": "", "cost": {"cost": 20}},
@@ -165,17 +165,19 @@
     {"pdf": "heavy armor", "ours": "heavy armour", "page": 3}
   ],
   "stubs": [
-    {"name": "Ankus", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
-    {"name": "Cutlass", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
-    {"name": "Great Scimitar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
-    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3}
+    {"name": "Ankus", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 1, "range": "Close Combat", "strength": "As user", "rules": [{"rule": "strike-first", "text": "An Ankus is used as a spear in the turn its wielder charges, and he strikes first that turn; in hand-to-hand after that it is used as a staff."}, {"rule": "concussion"}]},
+    {"name": "Cutlass", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 1, "range": "Close Combat", "strength": "As user", "rules": [{"rule": "parry"}, {"name": "Basket hilt", "text": "A Cutlass has a basket hilt that can be punched with: whenever a hit with it is successful, the wielder makes one extra punch attack."}]},
+    {"name": "Great Scimitar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 1, "range": "Close Combat", "strength": "+2", "rules": [{"rule": "two-handed"}, {"rule": "strike-last"}, {"rule": "cutting-edge", "text": "It has an extra save modifier of -1, so a model with Strength 4 using it has a -2 save modifier when he hits an opponent in hand-to-hand combat."}]},
+    {"name": "Scimitar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 1, "range": "Close Combat", "strength": "As user", "rules": [{"rule": "parry"}, {"rule": "cutting-edge", "text": "It has an extra save modifier of -1, so a model with Strength 4 using it has a -2 save modifier when he hits an opponent in hand-to-hand combat."}]},
+    {"name": "Scythe (Khemri)", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 1, "range": "Close Combat", "strength": "As user", "rules": [{"rule": "cutting-edge", "text": "It has an extra save modifier of -1, so a model with Strength 4 using it has a -2 save modifier when he hits an opponent in hand-to-hand combat."}, {"rule": "two-handed"}]},
+    {"name": "Bagh Nakh", "type": "Weapon", "subtype": "Melee", "cost": null, "rarity": null, "dice": null, "rulesPage": 1, "range": "Close Combat", "strength": "+1", "note": "The Khemri equipment page prints no price for the Bagh Nakh, and no warband list sells it.", "types": ["arabyan-nomads", "arabyan-theives", "cursed-dwarves", "hobgoblins", "lahmian", "mages", "necromancer", "nehekhara-tomb-guards"], "rules": [{"name": "-1 enemy armour save", "summary": "Target gets -1 to armour save", "text": "Target gets -1 to armour save"}, {"rule": "pair", "text": "Bagh Nakh are used in pairs, one in each hand, and the warrior fighting with them gains an extra Attack. He may use no other weapon or item in his hands while he does."}, {"rule": "cumbersome", "text": "The user is at -1 Initiative and -1 Movement throughout the battle."}]}
   ],
   "flags": [
     {"page": 1, "what": "The PDF prints no starting gold, only \"Maximum warband number is 15\". The template carries our 500 gc default."},
     {"page": 2, "what": "The Champion's profile reads S4 for a human champion; as printed."},
     {"page": 2, "what": "The Street Mage \"starts with one Elemental Spell, whichever element they chose is the only one they can get\". The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), so he is given our four Elemental Lores (Air, Earth, Fire, Water) and the one-element limit is left to his Wizard rule. See the decisions."},
-    {"page": 3, "what": "\"Scimitar\" at 15 gc is our Sword (its tags already hold the name), so the Warrior list sells our Sword twice, at 10 gc and at 15 gc as the PDF prints them. Jambiya is our Dagger. Ankus, Cutlass and Great Scimitar are stubs with no rules: the Khemri Equipment PDF holds them."},
-    {"page": 3, "what": "The Warrior list's Scythe is 5 gc and its Katar 5 gc; our Scythe (10/15 gc elsewhere) still has no rules of its own."},
+    {"page": 3, "what": "The Khemri Equipment PDF (https://www.broheim.net/downloads/campaigns/khemri/Equipment.pdf, read 11 Nov 2026 at William's direction) gives these weapons their rules, and this page declares them for the setting. The Jambiya is our Dagger, \"just a nicknamed dagger\" (William), whose +1 enemy armour save is the Jambiya's rule. The Katar is ours already, the same -1 enemy armour save. \"Scimitar\" at 15 gc is its own item now (as user, Parry, Cutting edge, where our Sword parries only), so the tag that made this list sell our Sword twice is dropped. The Scythe is Scythe (Khemri) (as user, Cutting edge, Two Handed), kept apart from the Sylvania scythes (William: \"in this list scythe is something unique so give it the 'khemri' treatment\"). Ankus (as user, Strike first only when charged, Concussion), Cutlass (as user, Parry, an extra punch attack when a hit is successful) and Great Scimitar (+2, Two-handed, Strike last, Cutting edge) now carry their rules. The Bagh Nakh (+1, -1 enemy armour save, pair, cumbersome) is on the page but on no warband list and at no price: a row for the setting's warband types with no price. The page's Vanguards and Sword of Unholy Turning are not imported (William: \"ignore both\")."},
+    {"page": 3, "what": "The Warrior list's Scythe is 5 gc and its Katar 5 gc. The Ankus is \"used as a spear, when charged and a staff in hth\", and its rules line prints \"Strike first (only when charged)\": read as striking first in the turn he charges. The Cutlass's extra punch attack is printed with no Strength of its own. The Khemri page's Tufenk is Strength 1 where our Tufenk (mordheimer, Khemri 1b) is Strength 2, and its Genie lamp is our Lamp of the Djinn with two table rows worded otherwise (its Good 4 and 5 are an extra hero and an extra henchman, where ours are a random and a chosen item, and its Bad 6 is nothing where ours is a roll on the injury chart) and a Jinn who fights for D3x10 gc, which ours does not carry: all three are for William, and nothing of ours was changed."},
     {"page": 2, "what": "No group sizes are printed for the Warriors or the Slaves."},
     {"page": 1, "what": "The Sheik and the Street Mage tick no Special column, so neither learns the warband's own skills."}
   ]

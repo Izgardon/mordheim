@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 47,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 462,  # the import's 410 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
+                "Item": 465,  # the import's 413 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 447,  # the import's 423 (one per name) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 113,  # the import's 94 + a group of his own for each of 19 hired swords
@@ -121,7 +121,7 @@ class SeedAllTests(TestCase):
                 "Special": 1320,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
-                "BestiaryEntry": 63,
+                "BestiaryEntry": 64,
                 "HiredSword": 75,  # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin)
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
                 "WarbandTemplate": 115,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
@@ -175,15 +175,17 @@ class SeedAllTests(TestCase):
                 DramatisPersona,
             )  # fmt: skip
         }
-        # the PDF batch's seven and the Nehekhara Tomb Guards, their four weapons, their skills and the six warband
-        # groups plus the Cursed Dwarf Slayer Skills, the Skeleton race and the six Hobgoblin Magic spells; Khemri's
-        # own four hired swords and Abdul Alhazred are 1b's
+        # the PDF batch's seven and the Nehekhara Tomb Guards, their seven weapons (the Ankus, Cutlass, Great
+        # Scimitar and Serpent Whip, and the Scimitar, Scythe (Khemri) and Bagh Nakh the Khemri equipment page
+        # brought on 11 Nov 2026), their skills and the six warband groups plus the Cursed Dwarf Slayer Skills, the
+        # Skeleton race and the six Hobgoblin Magic spells; Khemri's own four hired swords and Abdul Alhazred are
+        # 1b's, as are its Lamp of the Djinn, Monkey's Paw, Tufenk, Katar and Magic Carpet
         self.assertEqual(
             khemri_3,
             {
                 "WarbandType": 8,
                 "WarbandTemplate": 8,
-                "Item": 4,
+                "Item": 7,
                 "Skill": 25,
                 "SkillGroup": 7,
                 "Race": 1,

@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 475 |
+| price rows | 480 |
 | skills | 423 |
 | skill groups | 94 |
 | skill group links | 532 |
@@ -814,7 +814,7 @@ Lines found other than by name or tag:
 | cursed-cavalcade | Misericordia | Misericordia (Cursed Cavalcade) | named for the warband |
 | cursed-dwarves | hand gun | Handgun | a loose match |
 
-495 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+494 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 
@@ -1260,8 +1260,8 @@ Kept apart from a family's, the effect differing:
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
 | araby-smugglers | araby-smugglers | 6 | 0 | 0 | 10 |
-| arabyan-nomads | arabyan-nomads | 6 | 3 | 4 | 7 |
-| arabyan-theives | arabyan-theives | 5 | 3 | 3 | 6 |
+| arabyan-nomads | arabyan-nomads | 6 | 3 | 6 | 7 |
+| arabyan-theives | arabyan-theives | 5 | 3 | 4 | 6 |
 | blood-dragons | blood-dragons | 6 | 0 | 0 | 9 |
 | bretonnian-brigands | bretonnian-brigands | 6 | 0 | 0 | 9 |
 | bretonnian-buccaneers | bretonnian-buccaneers | 7 | 0 | 0 | 9 |
@@ -1282,7 +1282,7 @@ Kept apart from a family's, the effect differing:
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | guild-of-disgraced-engineers | guild-of-disgraced-engineers | 6 | 0 | 2 | 10 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
-| hobgoblins | hobgoblins | 6 | 1 | 1 | 8 |
+| hobgoblins | hobgoblins | 6 | 1 | 2 | 8 |
 | house-guard | house-guard | 6 | 1 | 1 | 8 |
 | khorne-raiders | khorne-raiders | 6 | 0 | 1 | 15 |
 | knights-of-the-bitter-moors | knights-of-the-bitter-moors | 6 | 0 | 1 | 9 |
@@ -1296,7 +1296,7 @@ Kept apart from a family's, the effect differing:
 | militiant-mootlanders | militiant-mootlanders | 7 | 0 | 1 | 11 |
 | necrarchs-the-soul-stealers | necrarchs-the-soul-stealers | 7 | 1 | 2 | 11 |
 | necrarchs | necrarchs | 6 | 0 | 0 | 9 |
-| necromancer | necromancer | 6 | 3 | 4 | 9 |
+| necromancer | necromancer | 6 | 3 | 5 | 9 |
 | nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
 | orc-pirates | orc-pirates | 8 | 0 | 1 | 10 |
@@ -1343,15 +1343,17 @@ Kept apart from a family's, the effect differing:
 - Alias (p3): "jambiya" is our dagger.
 - Alias (p3): "light armor" is our light armour.
 - Alias (p3): "heavy armor" is our heavy armour.
-- Stub: Ankus, 13 gc, Common; its rules are on p3.
-- Stub: Cutlass, 15 gc, Common; its rules are on p3.
-- Stub: Great Scimitar, 20 gc, Common; its rules are on p3.
-- Stub: Scythe, 5 gc, Common; its rules are on p3.
+- Stub: Ankus, 13 gc, Common; its rules are on p1.
+- Stub: Cutlass, 15 gc, Common; its rules are on p1.
+- Stub: Great Scimitar, 20 gc, Common; its rules are on p1.
+- Stub: Scimitar, 15 gc, Common; its rules are on p1.
+- Stub: Scythe (Khemri), 5 gc, Common; its rules are on p1.
+- Stub: Bagh Nakh, , Common; its rules are on p1.
 - Flag (p1): The PDF prints no starting gold, only "Maximum warband number is 15". The template carries our 500 gc default.
 - Flag (p2): The Champion's profile reads S4 for a human champion; as printed.
 - Flag (p2): The Street Mage "starts with one Elemental Spell, whichever element they chose is the only one they can get". The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), so he is given our four Elemental Lores (Air, Earth, Fire, Water) and the one-element limit is left to his Wizard rule. See the decisions.
-- Flag (p3): "Scimitar" at 15 gc is our Sword (its tags already hold the name), so the Warrior list sells our Sword twice, at 10 gc and at 15 gc as the PDF prints them. Jambiya is our Dagger. Ankus, Cutlass and Great Scimitar are stubs with no rules: the Khemri Equipment PDF holds them.
-- Flag (p3): The Warrior list's Scythe is 5 gc and its Katar 5 gc; our Scythe (10/15 gc elsewhere) still has no rules of its own.
+- Flag (p3): The Khemri Equipment PDF (https://www.broheim.net/downloads/campaigns/khemri/Equipment.pdf, read 11 Nov 2026 at William's direction) gives these weapons their rules, and this page declares them for the setting. The Jambiya is our Dagger, "just a nicknamed dagger" (William), whose +1 enemy armour save is the Jambiya's rule. The Katar is ours already, the same -1 enemy armour save. "Scimitar" at 15 gc is its own item now (as user, Parry, Cutting edge, where our Sword parries only), so the tag that made this list sell our Sword twice is dropped. The Scythe is Scythe (Khemri) (as user, Cutting edge, Two Handed), kept apart from the Sylvania scythes (William: "in this list scythe is something unique so give it the 'khemri' treatment"). Ankus (as user, Strike first only when charged, Concussion), Cutlass (as user, Parry, an extra punch attack when a hit is successful) and Great Scimitar (+2, Two-handed, Strike last, Cutting edge) now carry their rules. The Bagh Nakh (+1, -1 enemy armour save, pair, cumbersome) is on the page but on no warband list and at no price: a row for the setting's warband types with no price. The page's Vanguards and Sword of Unholy Turning are not imported (William: "ignore both").
+- Flag (p3): The Warrior list's Scythe is 5 gc and its Katar 5 gc. The Ankus is "used as a spear, when charged and a staff in hth", and its rules line prints "Strike first (only when charged)": read as striking first in the turn he charges. The Cutlass's extra punch attack is printed with no Strength of its own. The Khemri page's Tufenk is Strength 1 where our Tufenk (mordheimer, Khemri 1b) is Strength 2, and its Genie lamp is our Lamp of the Djinn with two table rows worded otherwise (its Good 4 and 5 are an extra hero and an extra henchman, where ours are a random and a chosen item, and its Bad 6 is nothing where ours is a roll on the injury chart) and a Jinn who fights for D3x10 gc, which ours does not carry: all three are for William, and nothing of ours was changed.
 - Flag (p2): No group sizes are printed for the Warriors or the Slaves.
 - Flag (p1): The Sheik and the Street Mage tick no Special column, so neither learns the warband's own skills.
 
@@ -1362,12 +1364,13 @@ Kept apart from a family's, the effect differing:
 - Alias (p3): "heavy armor" is our heavy armour.
 - Stub: Ankus, 13 gc, Common; its rules are on p3.
 - Stub: Cutlass, 15 gc, Common; its rules are on p3.
-- Stub: Scythe, 5 gc, Common; its rules are on p3.
+- Stub: Scythe (Khemri), 5 gc, Common; its rules are on p3.
+- Stub: Scimitar, 15 gc, Common; its rules are on p3.
 - Flag (p1): The PDF prints no starting gold, only "Maximum warband number is 15". The template carries our 500 gc default.
 - Flag (p1): Knowing the trade routes also says "All heroes in the thief warband may gain the Disarm/Spot trap skill". That is our Trap Expert, so it is a skill of the warband's own group (every Hero ticks Special) rather than a sentence in the warband rule. See the decisions.
 - Flag (p1): Known thieves: a captured thief sells for "1D6+ the model exprience", read as 1D6 gold crowns plus his experience. The chopped-off hand on a 1-3 is given no effect in the PDF; as printed.
 - Flag (p1): The PDF's Hide in Shadows (an Initiative test to charge him while he is within 1" of a wall, said to be the Imperial Assassin's skill) and Knife fighting (+1 WS and +1 to injury with knives) are not what our skills of those names do, so each is a new skill named apart. See the decisions.
-- Flag (p3): "Scimitar" at 15 gc is our Sword (its tags hold the name), so the Thieves list sells our Sword at 10 gc and at 15 gc as printed. Jambiya is our Dagger. Ankus and Cutlass are stubs with no rules; the Scythe stub is the one the Vampire Hunters brought.
+- Flag (p3): The Scimitar (15 gc) and the Scythe (5 gc) are their own Khemri items now, with the rules the Khemri Equipment PDF prints; the Scythe is Scythe (Khemri), kept apart from the Sylvania scythes, and the Jambiya is our Dagger. The Ankus and the Cutlass carry their rules too. All of them are declared on arabyan-nomads.json, the first page of the setting to sell them.
 - Flag (p2): No group sizes are printed for the Thieves or the Beggars, and the Beggars have no maximum.
 
 ### Blood Dragons
@@ -1683,12 +1686,13 @@ Kept apart from a family's, the effect differing:
 
 - Alias (p5): "light armor" is our light armour.
 - Stub: Cutlass, 15 gc, Common; its rules are on p5.
+- Stub: Scimitar, 15 gc, Common; its rules are on p5.
 - Flag (p2): The warband has 500 "Loot points", read as 500 gold crowns; the lists price everything in gold.
 - Flag (p2): No count is printed for the Loot Boyz, who are Heroes, so they are imported as 0 with no maximum, and none for the Thievin' Gitz either.
 - Flag (p2): The skill table's ticks were read from the page's own text columns (Combat 100, Shooting 143, Academic 193, Strength 246, Speed 294, Special 333): Khan and Loot Boy Combat, Shooting, Strength, Speed, Special; Magi Shooting, Academic, Speed, Special. No page was opened as an image.
 - Flag (p2): The PDF's Ded Shooty (ignore movement penalties when shooting) is not our Ded Shooty (+6" range), so it is named apart; Ded Sneaky is close to our Infiltration but does not require being out of sight. See the decisions.
 - Flag (p3): The Magi's spells are a new lore, Hobgoblin Magic, its six spells added with the PDF's difficulties.
-- Flag (p5): "Scimitar" at 15 gc is our Sword (its tags hold the name), so the Loot Boyz list sells our Sword at 10 gc and at 15 gc as printed; Cutlass is a stub with no rules.
+- Flag (p5): The Scimitar (15 gc) is its own Khemri item now, with the rules the Khemri Equipment PDF prints (as user, Parry, Cutting edge), so the Loot Boyz list no longer sells our Sword twice; the Cutlass carries its rules too. Both are declared on arabyan-nomads.json.
 - Flag (p1): A Hobgoblin warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p2): No group sizes are printed.
 
@@ -1903,14 +1907,15 @@ Kept apart from a family's, the effect differing:
 - Stub: Ankus, 13 gc, Common; its rules are on p4.
 - Stub: Cutlass, 15 gc, Common; its rules are on p4.
 - Stub: Great Scimitar, 20 gc, Common; its rules are on p4.
-- Stub: Scythe, 5 gc, Common; its rules are on p4.
+- Stub: Scythe (Khemri), 5 gc, Common; its rules are on p4.
+- Stub: Scimitar, 15 gc, Common; its rules are on p4.
 - Flag (p1): The PDF prints no starting gold, only "Max. Warband size is 15". The template carries our 500 gc default.
 - Flag (p2): The Tomb Robber "starts with Disarm/Spot traps skill". That is our Trap Expert, so he is given it as a starting skill. See the decisions.
 - Flag (p3): The Skeletons' maximum characteristics (WS6 BS5 S4 T3 W2 I4 A4 Ld8) are the only ones printed for a skeleton anywhere in this batch, so they become a new race, Skeleton, which the Lahmian skeletons take too (their PDF prints none).
 - Flag (p3): The undead rules are written "Immune to physiology", read as Immune to Psychology. The Skeletons are given Cause Fear, Immune to Poison, Immune to Psychology and May Not Run as printed, with no No Pain; the Undead Vulture's "does not suffer from stun" is No Pain.
 - Flag (p3): The Undead Golem costs 200 gc with an upkeep of 15 gc. A Henchman's upkeep is not something our templates hold, so it stays in his rules.
 - Flag (p3): "This is Tuff Git's Flesh golem for Mordheim modified" is the PDF's note on where the Golem comes from.
-- Flag (p4): "Scimitar" at 15 gc is our Sword (its tags hold the name), so each list sells our Sword at 10 gc and at 15 gc as printed. Jambiya is our Dagger. Ankus, Cutlass and Great Scimitar are stubs with no rules.
+- Flag (p4): The Scimitar (15 gc) and the Scythe (5 gc) are their own Khemri items now, with the rules the Khemri Equipment PDF prints; the Scythe is Scythe (Khemri), kept apart from the Sylvania scythes, and the Jambiya is our Dagger. The Ankus, the Cutlass and the Great Scimitar carry their rules too. All of them are declared on arabyan-nomads.json.
 - Flag (p1): No warband-wide special rules are printed; the Necromancer's succession note is his own rule.
 - Flag (p1): No group sizes are printed, and the Skeletons have no maximum.
 

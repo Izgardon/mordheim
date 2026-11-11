@@ -649,5 +649,29 @@
       "grade": "2a",
       "availabilities": []
     }
+  },
+  {
+    "name": "Magic Carpet",
+    "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "description": "A flying carpet, bought as the Magic Carpet (50+4D6 gc, Rare 12). It counts as a mount and moves 16\" with no penalty for terrain, onto the roofs of buildings and other high places. It carries up to three men, or one large creature and a man, and one of the riders must be a character. Once it has lost a wound it moves half as far. If it is taken out of action its riders fall and take damage, and after the battle it rolls on the Henchmen injury chart to see whether it survived; taken out of action by fire it is destroyed outright, with no roll. The Khemri equipment page prints its Movement, Toughness and Wounds only.",
+    "movement": "16",
+    "weapon_skill": 0,
+    "ballistic_skill": 0,
+    "strength": 0,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 0,
+    "attacks": 0,
+    "leadership": 0,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": []
   }
 ]

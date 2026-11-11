@@ -3138,10 +3138,10 @@
           },
           {
             "item": {
-              "name": "Scythe",
+              "name": "Scythe (Khemri)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Scythe",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -3198,10 +3198,10 @@
           },
           {
             "item": {
-              "name": "Sword",
+              "name": "Scimitar",
               "variant": ""
             },
-            "shown_as": "Scimitar",
+            "shown_as": "",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -3834,10 +3834,10 @@
           },
           {
             "item": {
-              "name": "Scythe",
+              "name": "Scythe (Khemri)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Scythe",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -3894,10 +3894,10 @@
           },
           {
             "item": {
-              "name": "Sword",
+              "name": "Scimitar",
               "variant": ""
             },
-            "shown_as": "Scimitar",
+            "shown_as": "",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -34357,10 +34357,10 @@
           },
           {
             "item": {
-              "name": "Sword",
+              "name": "Scimitar",
               "variant": ""
             },
-            "shown_as": "Scimitar",
+            "shown_as": "",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -55180,10 +55180,10 @@
           },
           {
             "item": {
-              "name": "Scythe",
+              "name": "Scythe (Khemri)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Scythe",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -55240,10 +55240,10 @@
           },
           {
             "item": {
-              "name": "Sword",
+              "name": "Scimitar",
               "variant": ""
             },
-            "shown_as": "Scimitar",
+            "shown_as": "",
             "cost": 15,
             "cost_note": "",
             "first_free": false,
@@ -55412,10 +55412,10 @@
           },
           {
             "item": {
-              "name": "Scythe",
+              "name": "Scythe (Khemri)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Scythe",
             "cost": 5,
             "cost_note": "",
             "first_free": false,
@@ -55472,10 +55472,10 @@
           },
           {
             "item": {
-              "name": "Sword",
+              "name": "Scimitar",
               "variant": ""
             },
-            "shown_as": "Scimitar",
+            "shown_as": "",
             "cost": 15,
             "cost_note": "",
             "first_free": false,

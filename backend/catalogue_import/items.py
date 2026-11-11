@@ -50,6 +50,14 @@ def _tags(item: dict[str, Any]) -> list[str]:
     return unique([tag for tag in tags if tag])
 
 
+def _item_tags(item: dict[str, Any], renamed: dict[str, Any] | None) -> list[str]:
+    """Its tags, with the ones William adds (`tags`) and without the ones he drops (`drop_tags`: "scimitar" was a
+    tag on our Sword until the Khemri scimitar became an item of its own, 11 Nov 2026)."""
+    dropped = {tag.lower() for tag in (renamed or {}).get("drop_tags") or []}
+    added = [tag.lower() for tag in (renamed or {}).get("tags") or []]
+    return [tag for tag in unique(_tags(item) + added) if tag not in dropped]
+
+
 def mordheimer_item(
     item: dict[str, Any],
     index: dict[str, dict[str, Any]],
@@ -59,17 +67,19 @@ def mordheimer_item(
 ) -> dict[str, Any]:
     name = (renamed or {}).get("name") or item["name"]
     kind, subtype = TYPES.get(item.get("type", ""), ("Miscellaneous", ""))
+    kind = (renamed or {}).get("type") or kind  # William's kind for it: the Magic Carpet is a mount, so an Animal
+    subtype = (renamed or {}).get("subtype") or clean_inline(item.get("group")) or subtype
     return {
         "slug": "",
         "name": name,
         "variant": "",
         "origin": "mordheimer",
         "type": kind,
-        "subtype": clean_inline(item.get("group")) or subtype,
+        "subtype": subtype,
         "setting": content_setting(item.get("campaignSetting"), item.get("grade")),
         "source": clean_inline(item.get("source")),
         "link_url": MORDHEIMER + item["link"] if item.get("link") else "",
-        "tags": unique(_tags(item) + [tag.lower() for tag in (renamed or {}).get("tags") or []]),
+        "tags": _item_tags(item, renamed),
         "flavour": clean_inline(item.get("flavour")),
         "range": short_stat(item.get("range"), name, "range", log),
         "strength": short_stat(item.get("strength"), name, "strength", log),

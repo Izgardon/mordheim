@@ -1024,7 +1024,7 @@
   },
   {
     "name": "Khar-mel the Djinn",
-    "description": "Djinn are magical elemental spirits akin to Daemons, that reside in the deep deserts of Araby and the Land of the Dead. They may be summoned by a complicated ritual involving dark pacts and unholy promises. Djinn are creatures born of the elements and may assume many different forms such as horses made of sand, pillars of fire or mighty Arabic warriors comprised of swirling air. As with all Daemons, anyone learning a Djinn's true name will receive great power over it. Djinn are ancient spirits and know many long forgotten secrets, especially from the early days of Nehekhara and for this reason many sorcerers and priests attempt to summon them to learn such forbidden knowledge. Sultan Jaffar was known to have been in prolonged contact with some of the mightiest Djinn, although many surmise that their lies led to his downfall.\n\nKhar-mel is one of the few known Djinn of Araby. She has oft been encountered in the western desert over the centuries. Despite being centuries old, she normally appears as a beautiful arabian woman of about 30 years of age, although she has been known to appear as a swirling cloud of dust or a pillar of fire on occasion.\n\nLike all Djinn, Khar-mel knows many secrets forgotten by mortal man and many sorcerers and priests have tried to summon her to answer their questions. If she does have one weakness it is her thirst for knowledge. A warband who claims that they are undertaking a quest in search of ancient lore may well secure Khar-mel's services.\n\nAlso carries: Scimitar.",
+    "description": "Djinn are magical elemental spirits akin to Daemons, that reside in the deep deserts of Araby and the Land of the Dead. They may be summoned by a complicated ritual involving dark pacts and unholy promises. Djinn are creatures born of the elements and may assume many different forms such as horses made of sand, pillars of fire or mighty Arabic warriors comprised of swirling air. As with all Daemons, anyone learning a Djinn's true name will receive great power over it. Djinn are ancient spirits and know many long forgotten secrets, especially from the early days of Nehekhara and for this reason many sorcerers and priests attempt to summon them to learn such forbidden knowledge. Sultan Jaffar was known to have been in prolonged contact with some of the mightiest Djinn, although many surmise that their lies led to his downfall.\n\nKhar-mel is one of the few known Djinn of Araby. She has oft been encountered in the western desert over the centuries. Despite being centuries old, she normally appears as a beautiful arabian woman of about 30 years of age, although she has been known to appear as a swirling cloud of dust or a pillar of fire on occasion.\n\nLike all Djinn, Khar-mel knows many secrets forgotten by mortal man and many sorcerers and priests have tried to summon her to answer their questions. If she does have one weakness it is her thirst for knowledge. A warband who claims that they are undertaking a quest in search of ancient lore may well secure Khar-mel's services.",
     "movement": 6,
     "weapon_skill": 4,
     "ballistic_skill": 4,
@@ -1065,7 +1065,12 @@
     ],
     "skills": [],
     "spells": [],
-    "equipment": [],
+    "equipment": [
+      {
+        "item": "Scimitar",
+        "quantity": 1
+      }
+    ],
     "dramatis_persona": {
       "hire_fee": {
         "kind": "gold",

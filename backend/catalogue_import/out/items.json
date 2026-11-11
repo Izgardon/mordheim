@@ -7013,8 +7013,7 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/close-combat#sword",
     "tags": [
       "sword",
-      "swords",
-      "scimitar"
+      "swords"
     ],
     "flavour": "The sword is often referred to as the 'king of weapons'. The most common sword available, the broadsword of the Empire, is a masterpiece by the standards of any smith: four full feet of gleaming steel, double-edged and razor-sharp.\n\nSwords are much more effective weapons than crude clubs and axes, though learning to use a sword is a long and difficult process. It takes years to truly master this weapon – most warriors in Mordheim die long before they get this far!",
     "range": "Close Combat",
@@ -10111,8 +10110,8 @@
     "name": "Magic Carpet",
     "variant": "",
     "origin": "mordheimer",
-    "type": "Miscellaneous",
-    "subtype": "",
+    "type": "Animal",
+    "subtype": "Mount",
     "setting": "khemri",
     "source": "Khemri setting, Town Cryer #17",
     "link_url": "https://mordheimer.net/docs/weapons-armour/miscellaneous-equipment#magic-carpet",
@@ -10986,8 +10985,8 @@
     "rules": [
       {
         "name": "",
-        "summary": "Available to Henchmen despite normal rules.",
-        "text": "Note that this miscellaneous item is an exception to the normal rules as it is available to Henchmen.",
+        "summary": "Keeps the wearer's equipment dry; over armour, never with a cloak",
+        "text": "A rain coat keeps its wearer, and above all his equipment and his blackpowder, dry in wet weather. It may be worn over armour with no penalty, but never together with a cloak, and it is no help against the water a model walks or falls into. It is an exception to the normal rules, in that a Henchman may have one.",
         "tables": []
       }
     ],
@@ -19752,54 +19751,6 @@
           }
         ],
         "note": ""
-      },
-      {
-        "label": "",
-        "cost": 5,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "arabyan-nomads",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 5,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "arabyan-theives",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 5,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "necromancer",
-            "excluded": false
-          }
-        ],
-        "note": ""
       }
     ]
   },
@@ -23621,13 +23572,21 @@
       "ankus"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "Close Combat",
+    "strength": "As user",
     "save": "",
     "statblock": [],
     "notes": "",
     "needs_rules": true,
-    "rules": [],
+    "rules": [
+      {
+        "rule": "strike-first",
+        "text": "An Ankus is used as a spear in the turn its wielder charges, and he strikes first that turn; in hand-to-hand after that it is used as a staff."
+      },
+      {
+        "rule": "concussion"
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -23693,13 +23652,23 @@
       "cutlass"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "Close Combat",
+    "strength": "As user",
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "parry"
+      },
+      {
+        "name": "Basket hilt",
+        "summary": "",
+        "text": "A Cutlass has a basket hilt that can be punched with: whenever a hit with it is successful, the wielder makes one extra punch attack.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -23781,13 +23750,24 @@
       "great scimitar"
     ],
     "flavour": "",
-    "range": "",
-    "strength": "",
+    "range": "Close Combat",
+    "strength": "+2",
     "save": "",
     "statblock": [],
     "notes": "",
     "needs_rules": true,
-    "rules": [],
+    "rules": [
+      {
+        "rule": "two-handed"
+      },
+      {
+        "rule": "strike-last"
+      },
+      {
+        "rule": "cutting-edge",
+        "text": "It has an extra save modifier of -1, so a model with Strength 4 using it has a -2 save modifier when he hits an opponent in hand-to-hand combat."
+      }
+    ],
     "availabilities": [
       {
         "label": "",
@@ -23816,6 +23796,265 @@
         "warbands": [
           {
             "type": "necromancer",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "scimitar",
+    "name": "Scimitar",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "khemri-3",
+    "source": "Khemri",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Nomads.pdf",
+    "tags": [
+      "scimitar"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "parry"
+      },
+      {
+        "rule": "cutting-edge",
+        "text": "It has an extra save modifier of -1, so a model with Strength 4 using it has a -2 save modifier when he hits an opponent in hand-to-hand combat."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "arabyan-nomads",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "arabyan-theives",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "hobgoblins",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "necromancer",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "scythe-khemri",
+    "name": "Scythe (Khemri)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "khemri-3",
+    "source": "Khemri",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Nomads.pdf",
+    "tags": [
+      "scythe (khemri)"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "cutting-edge",
+        "text": "It has an extra save modifier of -1, so a model with Strength 4 using it has a -2 save modifier when he hits an opponent in hand-to-hand combat."
+      },
+      {
+        "rule": "two-handed"
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "arabyan-nomads",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "arabyan-theives",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "necromancer",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "bagh-nakh",
+    "name": "Bagh Nakh",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "khemri-3",
+    "source": "Khemri",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Nomads.pdf",
+    "tags": [
+      "bagh nakh"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "+1",
+    "save": "",
+    "statblock": [],
+    "notes": "The Khemri equipment page prints no price for the Bagh Nakh, and no warband list sells it.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "-1 enemy armour save",
+        "summary": "",
+        "text": "Target gets -1 to armour save",
+        "tables": []
+      },
+      {
+        "rule": "pair",
+        "text": "Bagh Nakh are used in pairs, one in each hand, and the warrior fighting with them gains an extra Attack. He may use no other weapon or item in his hands while he does."
+      },
+      {
+        "rule": "cumbersome",
+        "text": "The user is at -1 Initiative and -1 Movement throughout the battle."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "arabyan-nomads",
+            "excluded": false
+          },
+          {
+            "type": "arabyan-theives",
+            "excluded": false
+          },
+          {
+            "type": "cursed-dwarves",
+            "excluded": false
+          },
+          {
+            "type": "hobgoblins",
+            "excluded": false
+          },
+          {
+            "type": "lahmian",
+            "excluded": false
+          },
+          {
+            "type": "mages",
+            "excluded": false
+          },
+          {
+            "type": "necromancer",
+            "excluded": false
+          },
+          {
+            "type": "nehekhara-tomb-guards",
             "excluded": false
           }
         ],

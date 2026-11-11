@@ -138,6 +138,21 @@ def add_notes(items: list[dict[str, Any]], notes: dict[str, str]) -> None:
             row["note"] = "; ".join(filter(None, [row["note"], note]))
 
 
+def set_own_rules(items: list[dict[str, Any]], decisions: dict[str, Any]) -> None:
+    """overrides.json "item_own_rules": the rules William settles for one of our items, in place of its own (the
+    Rain Coat, which mordheimer leaves to its flavour line while the Khemri page prints what it does). A name that
+    is no item of ours stops the build."""
+    by_name = {item["name"]: item for item in items}
+    missing = sorted(set(decisions) - set(by_name))
+    if missing:
+        raise ValueError(f"overrides.json item_own_rules: no item {', '.join(missing)}")
+    for name, decision in decisions.items():
+        by_name[name]["rules"] = [
+            {"name": rule.get("name", ""), "summary": rule.get("summary", ""), "text": rule["text"], "tables": []}
+            for rule in decision["rules"]
+        ]
+
+
 def _resolve_everything(sources: Sources, resolver: Resolver) -> None:
     """Runs every warband name through the resolver so the report lists all that needed help."""
     for kind, rows in (
@@ -264,6 +279,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         rule["used_by"] = sum({"rule": rule["slug"]} in item["rules"] for item in everything)
     word_item_rules(everything, wordings)  # an item's own wording of a reworded rule: dropped, or only what is its own
     add_notes(everything, overrides.get("item_notes", {}))
+    set_own_rules(everything, overrides.get("item_own_rules", {}))
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue(
         [item["name"] for item in everything],

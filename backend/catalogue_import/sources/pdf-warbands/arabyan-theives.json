@@ -20,11 +20,11 @@
         {"name": "jambiya", "alias": "Jambiya", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
         {"name": "katar", "alias": "", "cost": {"cost": 5}},
-        {"name": "Scythe", "alias": "", "cost": {"cost": 5}},
+        {"name": "Scythe (Khemri)", "alias": "Scythe", "cost": {"cost": 5}},
         {"name": "sword", "alias": "", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "Ankus", "alias": "", "cost": {"cost": 13}},
-        {"name": "sword", "alias": "Scimitar", "cost": {"cost": 15}},
+        {"name": "Scimitar", "alias": "", "cost": {"cost": 15}},
         {"name": "Cutlass", "alias": "", "cost": {"cost": 15}},
         {"name": "sling", "alias": "", "cost": {"cost": 2}},
         {"name": "short bow", "alias": "", "cost": {"cost": 5}},
@@ -139,14 +139,15 @@
   "stubs": [
     {"name": "Ankus", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
     {"name": "Cutlass", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
-    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3}
+    {"name": "Scythe (Khemri)", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3},
+    {"name": "Scimitar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 3}
   ],
   "flags": [
     {"page": 1, "what": "The PDF prints no starting gold, only \"Maximum warband number is 15\". The template carries our 500 gc default."},
     {"page": 1, "what": "Knowing the trade routes also says \"All heroes in the thief warband may gain the Disarm/Spot trap skill\". That is our Trap Expert, so it is a skill of the warband's own group (every Hero ticks Special) rather than a sentence in the warband rule. See the decisions."},
     {"page": 1, "what": "Known thieves: a captured thief sells for \"1D6+ the model exprience\", read as 1D6 gold crowns plus his experience. The chopped-off hand on a 1-3 is given no effect in the PDF; as printed."},
     {"page": 1, "what": "The PDF's Hide in Shadows (an Initiative test to charge him while he is within 1\" of a wall, said to be the Imperial Assassin's skill) and Knife fighting (+1 WS and +1 to injury with knives) are not what our skills of those names do, so each is a new skill named apart. See the decisions."},
-    {"page": 3, "what": "\"Scimitar\" at 15 gc is our Sword (its tags hold the name), so the Thieves list sells our Sword at 10 gc and at 15 gc as printed. Jambiya is our Dagger. Ankus and Cutlass are stubs with no rules; the Scythe stub is the one the Vampire Hunters brought."},
+    {"page": 3, "what": "The Scimitar (15 gc) and the Scythe (5 gc) are their own Khemri items now, with the rules the Khemri Equipment PDF prints; the Scythe is Scythe (Khemri), kept apart from the Sylvania scythes, and the Jambiya is our Dagger. The Ankus and the Cutlass carry their rules too. All of them are declared on arabyan-nomads.json, the first page of the setting to sell them."},
     {"page": 2, "what": "No group sizes are printed for the Thieves or the Beggars, and the Beggars have no maximum."}
   ]
 }

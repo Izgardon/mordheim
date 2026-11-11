@@ -205,7 +205,17 @@ Each answers a question a batch raised; follow them without asking again.
   them yet, we will populate later but good to know they exist"; the rules the Equipment PDF prints went in with
   them). The Sartosa Greatcoat is "Based on 'Raincoat' from Border Town Burning" at our own 10 gc, so it is our
   Rain Coat under another name: a tag on ours through `item_names`, never a new item.
-- **Never fetch a setting's own PDFs to fill a gap** (William, 11 Nov 2026). Read the warband PDFs, stub whatever is
+- **A setting's equipment page William sends is read** (11 Nov 2026, of the Khemri Equipment PDF,
+  https://www.broheim.net/downloads/campaigns/khemri/Equipment.pdf): it gives the setting's bare stubs their rules
+  and its own weapons their items, declared once on the first page of the setting that sells them. An item of ours
+  under another name is linked (the Jambiya is our Dagger, "just a nicknamed dagger"); one of ours whose rules
+  differ is its own item named for the setting (**Scythe (Khemri)**, "in this list scythe is something unique so
+  give it the 'khemri' treatment"), and a tag that made a list sell ours twice is dropped (`drop_tags` in
+  `item_names`: our Sword's "scimitar", now that the Khemri Scimitar is its own item). Which half of a split setting
+  an item belongs to follows the warbands that sell it. A mount goes in the bestiary with its profile and its rules
+  as writing, and its item is the Animal item of that beast (the Magic Carpet). An item the page prints that no
+  warband list sells and no page prices takes a row with no price (`cost` null) for the setting's types.
+- **Never fetch a setting's own PDFs to fill a gap** (William, 11 Nov 2026), unless he sends one. Read the warband PDFs, stub whatever is
   missing, a fighter left with no skill list included, and fill it when that setting's batch comes. The Sartosa
   skills and equipment PDFs already read stay as they are.
 - **A warband whose book gives it no fixed leader stays leaderless** (William, 11 Nov 2026), with a warband rule

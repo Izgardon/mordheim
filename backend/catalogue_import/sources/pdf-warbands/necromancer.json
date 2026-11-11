@@ -17,11 +17,11 @@
         {"name": "jambiya", "alias": "Jambiya", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
         {"name": "katar", "alias": "", "cost": {"cost": 5}},
-        {"name": "Scythe", "alias": "", "cost": {"cost": 5}},
+        {"name": "Scythe (Khemri)", "alias": "Scythe", "cost": {"cost": 5}},
         {"name": "sword", "alias": "", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "Ankus", "alias": "", "cost": {"cost": 13}},
-        {"name": "sword", "alias": "Scimitar", "cost": {"cost": 15}},
+        {"name": "Scimitar", "alias": "", "cost": {"cost": 15}},
         {"name": "Cutlass", "alias": "", "cost": {"cost": 15}},
         {"name": "buckler", "alias": "", "cost": {"cost": 5}},
         {"name": "shield", "alias": "", "cost": {"cost": 5}},
@@ -39,11 +39,11 @@
         {"name": "jambiya", "alias": "Jambiya", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "mace", "alias": "Mace", "cost": {"cost": 3}},
         {"name": "katar", "alias": "", "cost": {"cost": 5}},
-        {"name": "Scythe", "alias": "", "cost": {"cost": 5}},
+        {"name": "Scythe (Khemri)", "alias": "Scythe", "cost": {"cost": 5}},
         {"name": "sword", "alias": "", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "Ankus", "alias": "", "cost": {"cost": 13}},
-        {"name": "sword", "alias": "Scimitar", "cost": {"cost": 15}},
+        {"name": "Scimitar", "alias": "", "cost": {"cost": 15}},
         {"name": "Cutlass", "alias": "", "cost": {"cost": 15}},
         {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
         {"name": "Great Scimitar", "alias": "", "cost": {"cost": 20}},
@@ -184,7 +184,8 @@
     {"name": "Ankus", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4},
     {"name": "Cutlass", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4},
     {"name": "Great Scimitar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4},
-    {"name": "Scythe", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4}
+    {"name": "Scythe (Khemri)", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4},
+    {"name": "Scimitar", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": null, "rulesPage": 4}
   ],
   "flags": [
     {"page": 1, "what": "The PDF prints no starting gold, only \"Max. Warband size is 15\". The template carries our 500 gc default."},
@@ -193,7 +194,7 @@
     {"page": 3, "what": "The undead rules are written \"Immune to physiology\", read as Immune to Psychology. The Skeletons are given Cause Fear, Immune to Poison, Immune to Psychology and May Not Run as printed, with no No Pain; the Undead Vulture's \"does not suffer from stun\" is No Pain."},
     {"page": 3, "what": "The Undead Golem costs 200 gc with an upkeep of 15 gc. A Henchman's upkeep is not something our templates hold, so it stays in his rules."},
     {"page": 3, "what": "\"This is Tuff Git's Flesh golem for Mordheim modified\" is the PDF's note on where the Golem comes from."},
-    {"page": 4, "what": "\"Scimitar\" at 15 gc is our Sword (its tags hold the name), so each list sells our Sword at 10 gc and at 15 gc as printed. Jambiya is our Dagger. Ankus, Cutlass and Great Scimitar are stubs with no rules."},
+    {"page": 4, "what": "The Scimitar (15 gc) and the Scythe (5 gc) are their own Khemri items now, with the rules the Khemri Equipment PDF prints; the Scythe is Scythe (Khemri), kept apart from the Sylvania scythes, and the Jambiya is our Dagger. The Ankus, the Cutlass and the Great Scimitar carry their rules too. All of them are declared on arabyan-nomads.json."},
     {"page": 1, "what": "No warband-wide special rules are printed; the Necromancer's succession note is his own rule."},
     {"page": 1, "what": "No group sizes are printed, and the Skeletons have no maximum."}
   ]
