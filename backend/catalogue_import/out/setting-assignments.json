@@ -1736,6 +1736,26 @@
       "how": "overrides.json"
     },
     {
+      "name": "Cloud of Flies",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Numb",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Frenzy",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Rotten Body (Clan Pestilens, Mousillon)",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
       "name": "Gloryseeker",
       "setting": "sartosa",
       "how": "overrides.json"
@@ -1857,7 +1877,12 @@
     },
     {
       "name": "Elven Luck",
-      "setting": "mordheim-2a",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Seeker (Wood Elves of Arden)",
+      "setting": "mousillon",
       "how": "overrides.json"
     },
     {

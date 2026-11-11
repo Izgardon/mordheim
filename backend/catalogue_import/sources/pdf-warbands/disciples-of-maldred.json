@@ -1,0 +1,178 @@
+{
+  "warbandType": "disciples-of-maldred",
+  "name": "Disciples of Maldred",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Disciples%20of%20Maldred.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 13
+  },
+  "specialRules": [
+    {"rulename": "Squires", "ruleFull": "A warband may never have more Squires than Questing Knights."},
+    {"rulename": "Men-at-Arms", "ruleFull": "A warband may have no more than 4 Men-at-Arms for each Questing Knight."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "maldred-equipment-list",
+      "title": "Maldred's Disciples Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "Battleaxe", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "lance", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 40}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "warhorse", "alias": "", "cost": {"cost": 80}},
+        {"name": "barding", "alias": "", "cost": {"cost": 40}}
+      ]
+    },
+    {
+      "id": "squires-equipment-list",
+      "title": "Squires Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "riding/draft horse", "alias": "Riding Horse", "cost": {"cost": 30}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Longbow", "cost": {"cost": 15}}
+      ]
+    },
+    {
+      "id": "men-at-arms-equipment-list",
+      "title": "Men-at-Arms Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "sword", "alias": "", "cost": {"cost": 5}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "prophet-of-the-false-grail",
+      "type": "hero",
+      "name": "Prophet of the False Grail",
+      "plural": "Prophets of the False Grail",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 8},
+      "equipmentLists": ["maldred-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "spellLores": ["Chaos Rituals"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Prophet may use his Leadership instead of their own."},
+        {"rulename": "Wizard", "ruleFull": "The Prophet is a wizard and casts Chaos Rituals."},
+        {"rulename": "Corrupting Influence", "ruleFull": "After each battle every untainted Questing Knight of the warband tests for corruption, as the Questing Knight's Corruption rule says. Should the Prophet die, a corrupt Knight leads the warband before an untainted one, and gains this rule when he does."},
+        {"rulename": "His Master's Gift", "ruleFull": "When the Prophet gains a skill he may roll 2D6 on the Gifts of Tzeentch table instead.\n\n2D6 | Gift\n2-3 | The Master's Foresight: he may re-roll one dice in each battle, but not in the post-battle sequence. Add +1 to his next roll on this table, once only.\n4 | Unfit!: he loses 1 Weapon Skill for good, and fights on.\n5 | Twisted Fate: for the next D6 turns, if he goes out of action and his injury roll is anything but Dead, he rolls again at once and takes the second result as well.\n6-8 | Silence: nothing happens.\n9 | Tzeentch's Temperament: before each battle roll a D6. On an even number he has -1 Initiative and -1 Weapon Skill, on an odd number +1 Initiative and +1 Weapon Skill.\n10 | Energy Surge: one characteristic chosen at random rises by 1, to a maximum of 10. It may pass his racial maximum, and no characteristic may be raised this way twice.\n11 | Mutation: roll a random mutation and pay its price. If it cannot be paid he has the mutation for the next battle only.\n12 | Chaos Armour: a 3+ armour save, including a shield, with no Movement penalty, and he may cast spells while wearing it. Any armour he wore fuses to him. It may never be passed to another warrior and may not be removed."}
+      ]
+    },
+    {
+      "id": "questing-knight",
+      "type": "hero",
+      "name": "Questing Knight",
+      "plural": "Questing Knights",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 65,
+      "startingXp": 12,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["maldred-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "skillGroups": ["Knights Feats"],
+      "specialRules": [
+        {"rulename": "Knights Virtue", "ruleFull": "An untainted Questing Knight never breaks from combat and takes no All Alone test. He loses this when he becomes corrupt."},
+        {"rulename": "Corruption", "ruleFull": "After each battle an untainted Questing Knight takes a Leadership test, with +1 to the roll if he took any model out of action that game. If he passes he stays untainted. If he fails he becomes corrupt and rolls at once on the Gifts of Tzeentch table. On a double 1 he instead leaves the warband with his Squire: remove both from the roster."},
+        {"rulename": "His Master's Gift", "ruleFull": "Once he is corrupt, when the Knight gains a skill he may roll 2D6 on the Gifts of Tzeentch table instead, as the Prophet's His Master's Gift rule sets it out."}
+      ]
+    },
+    {
+      "id": "squire",
+      "type": "hero",
+      "name": "Squire",
+      "plural": "Squires",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 4,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["squires-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Oath of Servitude", "ruleFull": "Choose which Questing Knight a new Squire serves; a Knight may have only one Squire at a time. If his Knight becomes corrupt, so does the Squire."},
+        {"rulename": "In His Lord's Footsteps", "ruleFull": "When his Knight dies the Squire becomes a Questing Knight. He takes any armour his master carried, buys from the Maldred's Disciples list, counts towards the warband's two Questing Knights, may have a Squire of his own, and follows the Questing Knight's rules and skill lists."}
+      ]
+    },
+    {
+      "id": "mercenary-guard",
+      "type": "henchman",
+      "name": "Mercenary Guard",
+      "plural": "Mercenary Guards",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 6,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 3, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["squires-equipment-list", "men-at-arms-equipment-list"],
+      "specialRules": [
+        {"rulename": "Sell-sword", "ruleFull": "Before the warband's first game a Mercenary Guard may be equipped from the Mercenaries warband's equipment list. After that he buys only from the Squires and Men-at-Arms lists."}
+      ]
+    },
+    {
+      "id": "men-at-arms",
+      "type": "henchman",
+      "name": "Man-at-Arms",
+      "plural": "Men-at-Arms",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 8,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["men-at-arms-equipment-list"],
+      "specialRules": []
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "A Disciples of Maldred warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed, so every fighter takes our Human race."},
+    {"page": 2, "what": "The skill table ticks Prophet Combat, Academic, Speed and Special; Questing Knight Combat, Strength, Speed and Special; Squire Combat, Shooting and Speed."},
+    {"page": 2, "what": "The PDF says the Knights and the Prophet use different Special skill lists and sends the reader to their entries. The Knight's is Knights Feats; the Prophet's entry names no list of skills, only the Gifts of Tzeentch table he rolls on instead of taking a skill, so his Special tick is left unticked and the table is his His Master's Gift rule."},
+    {"page": 6, "what": "The four Knights Feats are word for word the Bretonnian Knights Errant's (their PDF, p3), so this warband joins that shared group rather than taking a copy. Only an untainted Knight learns them, and he keeps any he has once corrupt: that is in the group's note."},
+    {"page": 3, "what": "The Men-at-Arms list prices a Sword at 5 gc, where the other two lists price it at 10 gc: kept as printed."},
+    {"page": 2, "what": "The Maldred's Disciples list prints no Warhorse or Barding restriction and no missile weapons; the Squires list has a Riding Horse, Bow and Longbow."},
+    {"page": 5, "what": "Twisted Fate lasts \"D6 turns\" though the effect falls in the post-battle injury roll: kept as printed."},
+    {"page": 7, "what": "Corruption adds +1 to the Leadership test roll if the Knight took a model out of action, which makes the test harder to pass: kept as printed."},
+    {"page": 9, "what": "The henchmen are \"Mercenary Guards\" in the choice of warriors, \"MERCENARIES\" in their heading and \"Mercenaries\" in their profile: taken as Mercenary Guard. His Movement is 3, where every other man of the warband has 4: kept as printed."},
+    {"page": 9, "what": "A Mercenary Guard buys from the Mordheim Mercenaries warband's list before the warband's first game: that list is not one of this page's, so his two lists are the Squires and Men-at-Arms lists and the rest is his Sell-sword rule."}
+  ]
+}

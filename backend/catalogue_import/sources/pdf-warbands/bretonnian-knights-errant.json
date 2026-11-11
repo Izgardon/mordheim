@@ -86,8 +86,8 @@
   ],
   "sharedSkillGroup": {
     "name": "Knights Feats",
-    "note": "In a Bretonnian Brigand warband only the Fallen Noble learns these.",
-    "types": ["bretonnian-knights-errant", "bretonnian-brigands"],
+    "note": "In a Bretonnian Brigand warband only the Fallen Noble learns these; among the Disciples of Maldred only an untainted Questing Knight, who keeps any he has once corrupt.",
+    "types": ["bretonnian-knights-errant", "bretonnian-brigands", "disciples-of-maldred"],
     "skills": [
       {"name": "Combat Charge", "description": "In a turn he charges, the warrior gains +1 Attack and +1 Weapon Skill."},
       {"name": "Lancer", "description": "Only on horseback, and never with Combat Charge. If the enemies he charged suffer an unsaved wound they may not strike back, and the warrior may carry his charge another 4\" and charge any enemy within 2\" of that line. He counts as charging in the next round of combat."},

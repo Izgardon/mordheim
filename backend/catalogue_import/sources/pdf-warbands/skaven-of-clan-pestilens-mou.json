@@ -1,0 +1,181 @@
+{
+  "warbandType": "skaven-of-clan-pestilens-mou",
+  "name": "Skaven of Clan Pestilens (Mousillon)",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Skaven%20of%20Clan%20Pestilens.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "clan-pestilence-equipment-list",
+      "title": "Clan Pestilence Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "staff", "alias": "Staff", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "censer", "alias": "Plague Censer", "cost": {"cost": 100}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "warplock pistol", "alias": "", "cost": {"cost": 35, "braceCost": 70}}
+      ]
+    },
+    {
+      "id": "clanrat-equipment-list",
+      "title": "Clanrat Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club/Staff", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15, "costSuffix": "Plague Monks and Monk Initiates only"}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "plague-priest",
+      "type": "hero",
+      "name": "Plague Priest",
+      "plural": "Plague Priests",
+      "race": "skaven",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["clan-pestilence-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Plague Priest may use his Leadership instead of their own."},
+        {"rulename": "Frenzy", "ruleFull": "The Plague Priest is subject to frenzy."},
+        {"rulename": "Resilient", "ruleFull": "The Plague Priest starts with the Resilient Strength skill."}
+      ]
+    },
+    {
+      "id": "plague-champion",
+      "type": "hero",
+      "name": "Plague Champion",
+      "plural": "Plague Champions",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 45,
+      "startingXp": 11,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": ["clan-pestilence-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Frenzy", "ruleFull": "A Plague Champion is subject to frenzy."},
+        {"rulename": "Resilient", "ruleFull": "A Plague Champion starts with the Resilient Strength skill."}
+      ]
+    },
+    {
+      "id": "monk-initiate",
+      "type": "hero",
+      "name": "Monk Initiate",
+      "plural": "Monk Initiates",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 5, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["clanrat-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "plague-monk",
+      "type": "henchman",
+      "name": "Plague Monk",
+      "plural": "Plague Monks",
+      "race": "skaven",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": ["clanrat-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "plague-rat",
+      "type": "henchman",
+      "name": "Plague Rat",
+      "plural": "Plague Rats",
+      "race": "giant rat",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": [],
+      "equipment": "None. A Plague Rat fights with teeth and claws.",
+      "specialRules": [
+        {"rulename": "Plague Infested", "ruleFull": "Every attack a Plague Rat makes counts as coated with black lotus."},
+        {"rulename": "Animal", "ruleFull": "Plague Rats are animals and gain no experience."}
+      ]
+    },
+    {
+      "id": "skaven-slave",
+      "type": "henchman",
+      "name": "Skaven Slave",
+      "plural": "Skaven Slaves",
+      "race": "skaven",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": ["clanrat-equipment-list"],
+      "specialRules": [
+        {"rulename": "Abused", "ruleFull": "Skaven Slaves gain no experience."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Clan Pestilens (Mousillon)", "new": true, "note": ""},
+  "specialSkillsList": [
+    {"name": "Cloud of Flies", "description": "A cloud of flies surrounds the warrior. Any model in base contact with him has -1 to hit with every attack. Clan Pestilens Heroes and Plague Monks, undead and followers of Nurgle are not affected."},
+    {"name": "Numb", "description": "The warrior treats a stunned result on the Injury chart as knocked down."},
+    {"name": "Frenzy", "description": "The warrior is subject to frenzy."},
+    {"name": "Resilient", "ours": "Resilient"},
+    {"name": "Rotten Body (Clan Pestilens, Mousillon)", "pdfName": "Rotten Body", "description": "The warrior causes fear."}
+  ],
+  "priceRows": [
+    {"name": "censer", "cost": 75, "dice": 5, "rarity": 12, "note": "", "page": 4}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "A Clan Pestilens warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed."},
+    {"page": 2, "what": "The warband spends warp tokens (wt), which the PDF says are treated as gold crowns: every price is imported as gold."},
+    {"page": 2, "what": "The skill table ticks Priest and Champion Combat, Strength, Speed and Special, and the Initiate Combat, Speed and Special."},
+    {"page": 5, "what": "The Plague Priest has Movement 4 where every other Skaven of the warband has 5: kept as printed."},
+    {"page": 5, "what": "The Plague Champion's Resilient rule is printed in the Plague Priest's words (\"The Plague Priest is a disease-ridden Skaven\"): read as the Champion's own."},
+    {"page": 4, "what": "The Plague Censer is priced 100 wt on the equipment list and 75+5D6 wt, Rare 12, in its own entry: the list price is the starting price and the entry's is the item's price row."},
+    {"page": 4, "what": "The Plague Censer is our Censer, bought under the PDF's name. The PDF's Strength is As User +2 with Heavy, Two Handed and Fog of Death; ours carries Heavy, Two-handed and a Fog of Death that takes a Toughness test rather than the PDF's D6 roll of 6 at the end of each close combat phase, and the PDF's extra -1 to hit for shooting at the wielder."},
+    {"page": 3, "what": "The equipment lists' Staff (3 gc) and Club/Staff (3 gc) are our Club, Mace or Hammer, bought under the PDF's names."},
+    {"page": 3, "what": "The Clanrat list's Flail is noted \"Plague Monks and Initiates only\": read as Plague Monks and Monk Initiates."},
+    {"page": 2, "what": "The special skills are a new group, Clan Pestilens (Mousillon). Our Skaven Clan Pestilens group (the Mordheim 1b warband's) holds different skills, so the two are kept apart. Resilient is ours. Rotten Body is named apart because our skill of that name makes a Skaven immune to poisons, diseases and the fog of death, where this one makes him cause fear. Numb does what our Ignore Pain does, and Cloud of Flies what the shared special of that name does, both under another name: both are kept apart."},
+    {"page": 6, "what": "Plague Monks have no maximum (\"any number\"). Plague Rats and Skaven Slaves gain no experience."},
+    {"page": 1, "what": "Our catalogue already holds a Skaven of Clan Pestilens template, the Mordheim 1b warband's, and a template is kept by its name, so this one is named Skaven of Clan Pestilens (Mousillon). Its warband type is named Skaven of Clan Pestilens, as the PDF names it."},
+    {"page": 7, "what": "Page 7 holds only the Skaven Slave's Abused rule; the measured scan page carries nothing else."}
+  ]
+}

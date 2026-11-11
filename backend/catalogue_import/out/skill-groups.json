@@ -311,6 +311,26 @@
     ]
   },
   {
+    "name": "Clan Pestilens (Mousillon)",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "skaven-of-clan-pestilens-mou",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Resilient",
+      "Cloud of Flies",
+      "Numb",
+      "Frenzy",
+      "Rotten Body (Clan Pestilens, Mousillon)"
+    ]
+  },
+  {
     "name": "Cursed Cavalcade",
     "for_everyone": false,
     "warbands": [
@@ -688,10 +708,14 @@
       {
         "type": "bretonnian-knights-errant",
         "excluded": false
+      },
+      {
+        "type": "disciples-of-maldred",
+        "excluded": false
       }
     ],
     "large_only": false,
-    "note": "In a Bretonnian Brigand warband only the Fallen Noble learns these.",
+    "note": "In a Bretonnian Brigand warband only the Fallen Noble learns these; among the Disciples of Maldred only an untainted Questing Knight, who keeps any he has once corrupt.",
     "how": "new group",
     "skills": [
       "Combat Charge",
@@ -1660,6 +1684,26 @@
       "Thirst for Vengeance",
       "Blessing of Morr",
       "Touch of Darkness"
+    ]
+  },
+  {
+    "name": "Wood Elves of Arden",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "wood-elves-of-arden",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Fey",
+      "Infiltration",
+      "Elven Luck",
+      "Excellent Sight",
+      "Seeker (Wood Elves of Arden)"
     ]
   },
   {

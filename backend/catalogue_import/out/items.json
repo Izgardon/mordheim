@@ -5539,6 +5539,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 75,
+        "dice": 5,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-pestilens-mou",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },

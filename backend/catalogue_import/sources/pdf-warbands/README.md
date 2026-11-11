@@ -60,6 +60,10 @@ check over every file.
 | `dark-elf-corsairs.json` | dark-elf-corsairs (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Dark%20Elf%20Corsairs.pdf | 1-6 (text layer) | 11 Nov 2026 |
 | `the-lost.json` | the-lost (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/The%20Lost.pdf | 1-5 (text layer) | 11 Nov 2026 |
 | `woodsmen-de-artois.json` | woodsmen-de-artois (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Woodsmen%20de%20Artois.pdf | 1-6 (text layer) | 11 Nov 2026 |
+| `disciples-of-maldred.json` | disciples-of-maldred (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Disciples%20of%20Maldred.pdf | 1-9 (text layer) | 11 Nov 2026 |
+| `necrarchs.json` | necrarchs (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Necrarchs.pdf | 1-8 (text layer) | 11 Nov 2026 |
+| `skaven-of-clan-pestilens-mou.json` | skaven-of-clan-pestilens-mou (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Skaven%20of%20Clan%20Pestilens.pdf | 1-7 (text layer; p7 holds one rule only) | 11 Nov 2026 |
+| `wood-elves-of-arden.json` | wood-elves-of-arden (2b, Mousillon) | https://www.broheim.net/downloads/warbands/supplement/mousillon/Wood%20Elves%20of%20Arden.pdf | 1-7 (text layer; page 2 as an image) | 11 Nov 2026 |
 
 The Sartosa warbands' Pirate skill column is the Pirate Skills list of the setting's campaign rules, not of any warband's PDF: it is read from
 https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Skills%2C%20Hired%20Swords%20%26%20Dramatis%20Personae.pdf (p1-2, text layer; 11 Nov 2026)

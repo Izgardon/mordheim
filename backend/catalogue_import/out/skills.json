@@ -1388,6 +1388,22 @@
     "description": "Stormvermin only. When he takes this skill, the Hero must buy one mutation from the Possessed's list in the rulebook at half its listed cost."
   },
   {
+    "name": "Cloud of Flies",
+    "description": "A cloud of flies surrounds the warrior. Any model in base contact with him has -1 to hit with every attack. Clan Pestilens Heroes and Plague Monks, undead and followers of Nurgle are not affected."
+  },
+  {
+    "name": "Numb",
+    "description": "The warrior treats a stunned result on the Injury chart as knocked down."
+  },
+  {
+    "name": "Frenzy",
+    "description": "The warrior is subject to frenzy."
+  },
+  {
+    "name": "Rotten Body (Clan Pestilens, Mousillon)",
+    "description": "The warrior causes fear."
+  },
+  {
     "name": "Gloryseeker",
     "description": "While the Pirate is in close combat with a model that causes fear, he has +1 Attack each round of combat. He gains one extra Attack only, however many fear-causing enemies he faces."
   },
@@ -1486,6 +1502,10 @@
   {
     "name": "Elven Luck",
     "description": "Once per game the Wood Elf may re-roll any failed roll."
+  },
+  {
+    "name": "Seeker (Wood Elves of Arden)",
+    "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."
   },
   {
     "name": "Seeker (Wood Elves of Athel Loren)",

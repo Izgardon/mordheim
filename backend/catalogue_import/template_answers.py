@@ -125,6 +125,9 @@ UPGRADE_TERMS: dict[tuple[str, str], dict[str, Any]] = {
     # the Lothern Sea Patrol PDF, p3: "any High Elf Hero may purchase one and only one honour ... They may only
     # purchase one when first recruited"
     ("lothern-sea-patrol", "Honours"): {"who": {"heroes": True}, "max_per_fighter": 1, "at_recruit": True},
+    # the Necrarchs PDF, p8: "a Nosferatu may purchase one permenant Necrolore ability. The costs shown are for the
+    # first ability only. Subsequent abilities will cost double", bought in place of a rare-equipment search
+    ("necrarchs", "Necrolore Abilities"): {"who": {"fighters": ["nosferatu"]}, "later_double": True},
 }
 # One upgrade's own `who`, where its text narrows its group's: "(Saurus Only)", "(Skinks only)"
 UPGRADE_WHO: dict[tuple[str, str], dict[str, Any]] = {
@@ -358,6 +361,10 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("underworld-alliance", "gnoblar"): "Gnoblar",  # its Boglars, Gnoblar kin, with no maximum printed (p4)
     # the Corsairs' dark elves take the Druchii PDF's dark elf maximum; their own PDF prints none (p1)
     ("dark-elf-corsairs", "elf"): "Elf (Druchii)",
+    # the Mousillon Clan Pestilens PDF prints no maximum (p5), so its Skaven take the Clan's, as the 1b warband does
+    ("skaven-of-clan-pestilens-mou", "skaven"): "Skaven (Clan Pestilens)",
+    ("necrarchs", "spirit"): "Spirit",  # the Necrarchs PDF's Banshee (p5), with no maximum printed
+    ("wood-elves-of-arden", "spirit"): "Spirit",  # its Ivy Ferret, a woodland spirit (p5), with none printed
 }
 CREATURES = frozenset(
     {

@@ -1,0 +1,215 @@
+{
+  "warbandType": "necrarchs",
+  "name": "Necrarchs",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Necrarchs.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "nosferatu-equipment-list",
+      "title": "Nosferatu Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace, Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Two-handed Weapon", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "rapier", "alias": "", "cost": {"cost": 15}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "duelling pistol", "alias": "Duelling Pistol/Brace", "cost": {"cost": 25, "braceCost": 50}},
+        {"name": "crossbow pistol", "alias": "Crossbow Pistol/Brace", "cost": {"cost": 35, "braceCost": 70}}
+      ]
+    },
+    {
+      "id": "defiled-equipment-list",
+      "title": "Defiled Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace, Hammer", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Two-handed Weapon", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "", "cost": {"cost": 50}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5, "costSuffix": "Defiled only"}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10, "costSuffix": "Defiled only"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "nosferatu",
+      "type": "hero",
+      "name": "Nosferatu",
+      "plural": "Nosferatu",
+      "race": "vampire",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 125,
+      "startingXp": 20,
+      "statblock": {"m": 6, "ws": 4, "bs": 4, "s": 4, "t": 4, "w": 2, "i": 5, "a": 2, "ld": 9},
+      "equipmentLists": ["nosferatu-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "spellLores": ["Necromancy"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Nosferatu may use his Leadership instead of their own."},
+        {"rulename": "Wizard", "ruleFull": "The Nosferatu is a wizard and starts with one Necromancy spell chosen at random."},
+        {"rulename": "No Armour", "ruleFull": "The Nosferatu never wears armour."},
+        {"rulename": "Tattered Mind", "ruleFull": "If the Nosferatu is all alone, or loses a wound with no injury result, he moves 2D6\" in a random direction at once and rolls on the Madness serious injury result (1-3 stupidity, 4-6 frenzy). This lasts until the end of the next combat phase, and while it does he may not cast spells. The move may take him into combat, where he counts as charging in the next combat phase, or out of combat."},
+        {"rulename": "Fear", "ruleFull": "The Nosferatu causes fear."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The Nosferatu is not affected by psychology and never leaves combat of his own accord."},
+        {"rulename": "Immune to Poison", "ruleFull": "The Nosferatu is not affected by any drug or poison."},
+        {"rulename": "No Pain", "ruleFull": "The Nosferatu treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "abomination",
+      "type": "hero",
+      "name": "Abomination",
+      "plural": "Abominations",
+      "race": "construct",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 4, "a": 2, "ld": 8},
+      "equipmentLists": [],
+      "equipment": "None. An Abomination fights with fangs, talons or blades, at no penalty.",
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "An Abomination causes fear."},
+        {"rulename": "Immune to Poison", "ruleFull": "An Abomination is not affected by any poison."},
+        {"rulename": "No Pain", "ruleFull": "An Abomination treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "Unnatural Life", "ruleFull": "An Abomination counts as a living model."}
+      ]
+    },
+    {
+      "id": "defiled",
+      "type": "hero",
+      "name": "Defiled",
+      "plural": "Defiled",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["defiled-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": [
+        {"rulename": "Absolute Faith", "ruleFull": "While he can draw line of sight to the Nosferatu, a Defiled may use the Nosferatu's Leadership for any Leadership test he takes."},
+        {"rulename": "Fear", "ruleFull": "A Defiled causes fear."},
+        {"rulename": "May Not Run", "ruleFull": "A Defiled may not run, but may charge normally."},
+        {"rulename": "Immune to Poison", "ruleFull": "A Defiled is not affected by any drug or poison."},
+        {"rulename": "No Pain", "ruleFull": "A Defiled treats a stunned result on the Injury chart as knocked down."}
+      ]
+    },
+    {
+      "id": "banshee",
+      "type": "henchman",
+      "name": "Banshee",
+      "plural": "Banshees",
+      "race": "spirit",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 45,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 4, "bs": "-", "s": 3, "t": 4, "w": 1, "i": "-", "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "equipment": "None. A Banshee can hold no equipment.",
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Banshee causes fear."},
+        {"rulename": "Ethereal", "ruleFull": "A Banshee's movement is not affected by models or small obstacles. Only solid walls, windows excepted, stop it."},
+        {"rulename": "Immune to Poison", "ruleFull": "A Banshee is not affected by any drug or poison."},
+        {"rulename": "Cold Steel", "ruleFull": "Only an attack made with a steel or iron weapon can harm a Banshee, and it is at -1 to hit. Arrows, bolts and bullets count as iron tipped. Blessed and magic weapons hit normally. Injuries are taken normally, and an out of action result sends the Banshee back to the spirit realm."},
+        {"rulename": "Wailing", "ruleFull": "Instead of attacking, a Banshee may wail: an attack with a 4\" reach at Strength 3, rolled to hit with the Banshee's Weapon Skill, which is resolved before any other combat. A wail ignores all armour saves and may not be parried. If the Banshee gains a Strength advance, its wail gains it too."}
+      ]
+    },
+    {
+      "id": "skeleton",
+      "type": "henchman",
+      "name": "Skeleton",
+      "plural": "Skeletons",
+      "race": "skeleton",
+      "minQty": 0,
+      "costGc": 17,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 4, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 1, "a": 1, "ld": 6},
+      "equipmentLists": ["defiled-equipment-list"],
+      "specialRules": [
+        {"rulename": "One Weapon", "ruleFull": "A Skeleton may use only one weapon at a time."},
+        {"rulename": "Fear", "ruleFull": "A Skeleton causes fear."},
+        {"rulename": "May Not Run", "ruleFull": "A Skeleton may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A Skeleton is not affected by psychology and never leaves combat of its own accord."},
+        {"rulename": "Immune to Poison", "ruleFull": "A Skeleton is not affected by any drug or poison."},
+        {"rulename": "No Pain", "ruleFull": "A Skeleton treats a stunned result on the Injury chart as knocked down."},
+        {"rulename": "No Brain", "ruleFull": "Skeletons gain no experience."}
+      ]
+    },
+    {
+      "id": "wight",
+      "type": "henchman",
+      "name": "Wight",
+      "plural": "Wights",
+      "race": "undead",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 50,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 2, "s": 3, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["defiled-equipment-list"],
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "A Wight causes fear."},
+        {"rulename": "Chill Touch", "ruleFull": "Each hit a Wight scores gives its opponent -1 Weapon Skill. Hits add up, and the penalty lasts until one of the two models leaves combat. A model taken to Weapon Skill 0 passes out and counts as knocked down."},
+        {"rulename": "May Not Run", "ruleFull": "A Wight may not run, but may charge normally."},
+        {"rulename": "Immune to Psychology", "ruleFull": "A Wight is not affected by psychology and never leaves combat of its own accord."},
+        {"rulename": "Immune to Poison", "ruleFull": "A Wight is not affected by any drug or poison."}
+      ]
+    }
+  ],
+  "mutations": [
+    {
+      "mutationName": "Necrolore Abilities",
+      "mutationflavour": "In place of searching for rare equipment the Nosferatu may buy one Necrolore ability, which is permanent. The price shown is for the first; every later one costs double. Each ability may be bought once only unless it says otherwise.",
+      "items": [
+        {"heading": "Kin Hatred", "cost": "25", "ruleFull": "The Nosferatu hates other vampires, and scores a critical hit on a 5 or 6 against a vampire in hand-to-hand combat."},
+        {"heading": "Eternal Study", "cost": "25", "ruleFull": "The Nosferatu has a 4+ save against his own Tattered Mind rule."},
+        {"heading": "Necromantic Flood", "cost": "20", "ruleFull": "Once per battle the Nosferatu may re-roll a failed difficulty test to cast a spell."},
+        {"heading": "Corpus Paella", "cost": "20", "ruleFull": "One knocked down Skeleton, Wight, Defiled or Abomination within 6\" of the Nosferatu may stand up and act as normal this round."},
+        {"heading": "Bone Wizard", "cost": "30", "ruleFull": "The Nosferatu may add D3-1 Skeletons to the warband for the next battle. They count towards routing."},
+        {"heading": "Imbuing the Undead", "cost": "30", "ruleFull": "Once per battle, in his magic phase, the Nosferatu may move one kind of undead warrior of the warband, the Defiled included: every warrior of that kind may charge or march (double Movement). A model brought into close combat by the move counts as charging."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "A Necrarch warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed."},
+    {"page": 2, "what": "The skill table has no Special column: the Nosferatu ticks Combat, Shooting, Academic, Strength and Speed, the Abomination Combat, Strength and Speed, the Defiled Combat and Strength. The warband has no skill group."},
+    {"page": 3, "what": "No maximum profiles are printed. The Nosferatu takes our Vampire race, not our Necrarch Vampire race, which is the Sylvania Necrarchs PDF's maximum and caps Weapon Skill at 4, the Nosferatu's starting value. The Defiled and the Wight take our Undead race, the Banshee our Spirit race, and the Abomination (a made creature) and the Skeleton have no race."},
+    {"page": 3, "what": "The Nosferatu list sells light armour, heavy armour, a shield and a helmet, though his entry says he will never wear armour: both are kept, the second as his No Armour rule."},
+    {"page": 4, "what": "Tattered Mind prints the Madness result as \"0-3 Stupidity, 4-6 Frenzied\": read as 1-3 and 4-6, since a D6 rolls no 0."},
+    {"page": 5, "what": "The Defiled list's Short Bow and Bow are starred \"Defiled Only\": the star is read as the line's note."},
+    {"page": 5, "what": "The Banshee's Ballistic Skill and Initiative are printed as \"-\": kept as printed."},
+    {"page": 6, "what": "Skeletons have no maximum (\"any number\") and gain no experience. The Banshee and the Wight gain experience, and nothing is said about promoting them, so both may be promoted."},
+    {"page": 8, "what": "The six Necrolore abilities are the warband's upgrades, each the special it gives at its price (20 to 30 gc), the Nosferatu's alone, the second and later at double. That they are bought in place of a rare-equipment search is the group's own words, the warband's Necrolore Abilities rule."}
+  ]
+}

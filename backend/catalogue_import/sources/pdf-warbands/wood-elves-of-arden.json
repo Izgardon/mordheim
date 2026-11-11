@@ -1,0 +1,181 @@
+{
+  "warbandType": "wood-elves-of-arden",
+  "name": "Wood Elves of Arden",
+  "source": "Mousillon",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/mousillon/Wood%20Elves%20of%20Arden.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [],
+  "equipmentLists": [
+    {
+      "id": "wood-elf-equipment-list",
+      "title": "Wood Elf Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "ithilmar weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "2 x price"}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "ithilmar armour", "alias": "", "cost": {"cost": 60}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "", "cost": {"cost": 15}},
+        {"name": "elf bow", "alias": "Elfbow", "cost": {"cost": 35}},
+        {"name": "elven cloak", "alias": "", "cost": {"cost": 75}},
+        {"name": "elven wine", "alias": "", "cost": {"cost": 50}}
+      ]
+    },
+    {
+      "id": "scout-equipment-list",
+      "title": "Scout Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "ithilmar weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "2 x price"}},
+        {"name": "light armour", "alias": "", "cost": {"cost": 20}},
+        {"name": "ithilmar armour", "alias": "", "cost": {"cost": 60}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "", "cost": {"cost": 15}},
+        {"name": "elf bow", "alias": "Elfbow", "cost": {"cost": 35}},
+        {"name": "elven cloak", "alias": "", "cost": {"cost": 75}},
+        {"name": "elven wine", "alias": "", "cost": {"cost": 50}},
+        {"name": "hunting arrows", "alias": "", "cost": {"cost": 35}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "protector-of-the-hunt",
+      "type": "hero",
+      "name": "Protector of the Hunt",
+      "plural": "Protectors of the Hunt",
+      "race": "elf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 5, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 9},
+      "equipmentLists": ["wood-elf-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Warriors within 6\" of the Protector of the Hunt may use his Leadership instead of their own."}
+      ]
+    },
+    {
+      "id": "elder-scout",
+      "type": "hero",
+      "name": "Elder Scout",
+      "plural": "Elder Scouts",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 12,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["scout-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Sniper", "ruleFull": "An Elder Scout may shoot while hiding. After the shot roll a D6: on a 5 or more nobody saw where the arrow came from."},
+        {"rulename": "Camouflage", "ruleFull": "While an Elder Scout is hidden, each enemy model must pass a further Initiative test to spot him."}
+      ]
+    },
+    {
+      "id": "forest-mage",
+      "type": "hero",
+      "name": "Forest Mage",
+      "plural": "Forest Mages",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 12,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["wood-elf-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Woodland Incantations"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Forest Mage is a wizard and starts with one Woodland Incantation chosen at random."}
+      ]
+    },
+    {
+      "id": "glade-guard",
+      "type": "henchman",
+      "name": "Glade Guard",
+      "plural": "Glade Guard",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["wood-elf-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "scout",
+      "type": "henchman",
+      "name": "Scout",
+      "plural": "Scouts",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 8},
+      "equipmentLists": ["scout-equipment-list"],
+      "specialRules": [
+        {"rulename": "Crossfire", "ruleFull": "If more than one Scout henchman shoots at the same target, they have +1 on the injury roll."}
+      ]
+    },
+    {
+      "id": "ivy-ferret",
+      "type": "henchman",
+      "name": "Ivy Ferret",
+      "plural": "Ivy Ferrets",
+      "race": "spirit",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 30,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": "-", "ws": 3, "bs": 0, "s": 2, "t": 2, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": [],
+      "equipment": "None. An Ivy Ferret may carry no weapons or armour.",
+      "specialRules": [
+        {"rulename": "Keeper", "ruleFull": "An Ivy Ferret stays beside its keeper, any Hero of the warband, and moves with him."},
+        {"rulename": "Running About", "ruleFull": "Nobody may attack an Ivy Ferret directly. For each hit on its keeper roll a D6: on a 6 the Ivy Ferret is hit instead. Once it has been hit and survived it hides for the rest of that combat, and may neither be hit nor attack again."},
+        {"rulename": "Immune to Poison", "ruleFull": "An Ivy Ferret is not affected by any poison."},
+        {"rulename": "Spirit", "ruleFull": "An Ivy Ferret is a woodland spirit and gains no experience."},
+        {"rulename": "Poison Teeth", "ruleFull": "An Ivy Ferret's bite counts as coated with black lotus. It may attack in each round its keeper may attack."}
+      ]
+    }
+  ],
+  "skillGroup": {"name": "Wood Elves of Arden", "new": true, "note": ""},
+  "specialSkillsList": [
+    {"name": "Fey", "ours": "Fey"},
+    {"name": "Elven Luck", "description": "Once per game the Wood Elf may re-roll any failed roll."},
+    {"name": "Excellent Sight", "description": "The Hero spots hidden enemies from twice his Initiative in inches."},
+    {"name": "Seeker (Wood Elves of Arden)", "pdfName": "Seeker", "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."},
+    {"name": "Infiltration", "ours": "Infiltration"}
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 2, "what": "A Wood Elf warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed, so the Elves take our Elf race."},
+    {"page": 2, "what": "The skill table was read from a page image: the Protector of the Hunt ticks Combat, Shooting, Academic, Speed and Special; the Elder Scout Combat, Speed and Special; the Forest Mage Shooting, Academic, Speed and Special. Nobody ticks Strength."},
+    {"page": 3, "what": "The Ithilmar Weapon (price x 2) and the Ithilmar Armour (60 gc) are starred, and the PDF prints no footnote for the star on either list."},
+    {"page": 3, "what": "List prices as printed: Elven Cloak 75 gc, Ithilmar Armour 60 gc, Hunting Arrows 35 gc, Elven Wine 50 gc, Elf Bow 35 gc. Ours are priced otherwise, and are left alone."},
+    {"page": 5, "what": "The Ivy Ferret's Movement is printed as \"-\": it stays beside its keeper, which is kept as its Keeper rule."},
+    {"page": 6, "what": "Woodland Incantations is the lore we already hold from the Wood Elves of Athel Loren: the same six spells with the same difficulties, so the Forest Mage casts ours."},
+    {"page": 2, "what": "The five special skills are word for word the Wood Elves of Athel Loren's (their PDF, p5), but that warband is Mordheim 2a and this one Mousillon, and a skill carries its setting, so this is a group of its own rather than a shared one. Fey and Infiltration are ours; Elven Luck and Excellent Sight are kept apart as they are there; Seeker is named Seeker (Wood Elves of Arden), as our Kislev Ranger's Seeker holds the plain name, and its \"only one Elven Hero\" opens its description."}
+  ]
+}
