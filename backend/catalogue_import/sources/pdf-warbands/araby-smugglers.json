@@ -1,0 +1,602 @@
+{
+  "warbandType": "araby-smugglers",
+  "name": "Araby Smugglers",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Araby%20Smugglers.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Slavers",
+      "ruleFull": "A captured Hero or Henchman who joins the warband willingly becomes one of the Crew; one who joins unwillingly becomes a Slave, and does not follow the Swabbie rules. After rolling for captures in the post-battle sequence, the warband may sell any Slaves, old or newly taken, for 2D6 gold crowns each. Taking slaves may carry the warband over 15 models and over five Slaves for a time, as long as the extra models are sold or dismissed before the cargo is sold."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "corsair-equipment-list",
+      "title": "Corsair Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger (Jambiya)",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe (Katar)",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "boat hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "Cat O' Nine Tails",
+          "alias": "",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Scimitar (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "belaying pin",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short Bow",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "handgun",
+          "alias": "Handgun",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "janissary-equipment-list",
+      "title": "Janissary Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger (Jambiya)",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe (Katar)",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Scimitar (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "flail",
+          "alias": "Flail",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short Bow",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "handgun",
+          "alias": "Handgun",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "slave-equipment-list",
+      "title": "Slave Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger (Jambiya)",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe (Katar)",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "boat hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "belaying pin",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "rais",
+      "type": "hero",
+      "name": "Rais",
+      "plural": "Rais",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "corsair-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Rais may use his Leadership for any Leadership test."
+        }
+      ]
+    },
+    {
+      "id": "araby-mate",
+      "type": "hero",
+      "name": "Mate",
+      "plural": "Mates",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 25,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "corsair-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "merchant",
+      "type": "hero",
+      "name": "Merchant",
+      "plural": "Merchants",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "corsair-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": false,
+        "academic": true,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Fine Craftmenship",
+          "ruleFull": "Once per turn you may re-roll any dice roll the Merchant makes. If he is not taken out of action, he rolls two exploration dice and keeps either one as the result."
+        }
+      ]
+    },
+    {
+      "id": "araby-crew",
+      "type": "henchman",
+      "name": "Crew",
+      "plural": "Crew",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "corsair-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "janissary",
+      "type": "henchman",
+      "name": "Janissary",
+      "plural": "Janissaries",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "janissary-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Not Pirates",
+          "ruleFull": "A Janissary may not use the leader's Leadership for a test. A Janissary who becomes a Hero may not learn a Pirate skill and may not become the warband's leader."
+        }
+      ]
+    },
+    {
+      "id": "slave",
+      "type": "henchman",
+      "name": "Slave",
+      "plural": "Slaves",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 15,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "slave-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Life of Slavery",
+          "ruleFull": "A Slave gains experience, but if he rolls That Lad's Got Talent the leader executes him: remove him from the roster. The rest of his group then re-roll the advance, re-rolling any further That Lad's Got Talent result this advance."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Araby Smugglers",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "Hit and Run",
+      "ours": "Hit and run"
+    },
+    {
+      "name": "Slave Driver",
+      "description": "While the Hero is armed with a Cat O' Nine Tails or a similar whip and is not in close combat, every Slave within 4\" passes any Leadership test he is required to take."
+    },
+    {
+      "name": "Pious Fury",
+      "description": "The Hero hates every Skaven, Undead and Chaos warband, the Possessed, the Carnival of Chaos, the Khorne Raiders and the Marauders among them, and every model in them. He never drinks alcohol and never uses drugs."
+    },
+    {
+      "name": "Pawnbroker",
+      "description": "Merchant only. If the Merchant was not taken out of action, the warband gains 2D6 gold crowns more for each item it sells, up to that item's full value."
+    },
+    {
+      "name": "Black Market",
+      "description": "Merchant only. Choose six different items from the warband's equipment lists or the campaign equipment list and number them 1 to 6: that is the Merchant's Black Market list. After a battle he was not taken out of action in, instead of searching for rare items he may roll a D6 on that list and buy the item rolled at its base cost, with no rarity roll and no dice added to the price. He may change the items on the list each time he gains an advance. A single pistol or a brace may be listed, but not both of the same pistol, and only the number listed may be bought. An Ithilmar weapon and a Gromril weapon may be listed where the setting allows, the weapon itself chosen after the metal is rolled."
+    },
+    {
+      "name": "Man of the World",
+      "description": "Merchant only. If the Merchant was not taken out of action, in the post-battle sequence the warband may try to buy any item from any campaign setting or any other warband's list, at the warband's normal rarity roll; experimental or fan-made items need the group's agreement. It may hold only one of each item bought this way. A pair or a brace is bought together and may not be split between warriors. The skill works with Black Market, and a foreign item may be added to the Black Market list at the Merchant's next advance; a Black Market roll for a foreign item the warband already holds is wasted. A weapon may still need Weapons Training or Weapons Expert before it can be used."
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {
+      "page": 2,
+      "what": "The skill table's ticks are glyphs the text layer drops: the table was read from p2's image. The Pirate column is ticked for the Rais, the Mate and the Merchant."
+    },
+    {
+      "page": 2,
+      "what": "The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (the Human Pirates PDF says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions."
+    },
+    {
+      "page": 2,
+      "what": "The Janissary list's Spear, Halberd, Double-handed weapon and Flail, its Missile Weapons and its Armour are printed at the top of the right column, continuing the left column; read that way."
+    },
+    {
+      "page": 2,
+      "what": "\"Axe (Katar)\" at 5 gc is read as our Axe shown under the list's name; we also hold a Katar of our own (5 gc, Rare 4), which this line is not: see the decisions."
+    },
+    {
+      "page": 2,
+      "what": "The Slave list prints \"Cutlass (Sword)\" where the Corsair and Janissary lists print \"Scimitar (Sword)\": as printed, both our Sword at 10 gc."
+    },
+    {
+      "page": 1,
+      "what": "An Araby Smuggler warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race."
+    },
+    {
+      "page": 3,
+      "what": "The Janissary's entry reads \"A Bedouin may be equipped with weapons and armour chosen from the Jannisary Equipment list\": read as the Janissary, the only fighter the list serves."
+    },
+    {
+      "page": 1,
+      "what": "\"The maximum number of Crew in the warband may never exceed 15\": read as the warband's maximum of 15 models."
+    },
+    {
+      "page": 4,
+      "what": "The Merchant's Pawnbroker skill shares its name with our shared special Pawnbroker, which is a hired sword's rule: see the decisions."
+    },
+    {
+      "page": 3,
+      "what": "Fine Craftmenship is the PDF's spelling of the Merchant's rule, kept as printed."
+    }
+  ]
+}

@@ -1,17 +1,30 @@
 {
-  "mutation_types": ["Mutation", "Blessing of Nurgle", "Favour of Tchar", "Bounty of Arkhar", "Grace of Shornaal"],
+  "mutation_types": [
+    "Mutation",
+    "Blessing of Nurgle",
+    "Favour of Tchar",
+    "Bounty of Arkhar",
+    "Grace of Shornaal"
+  ],
   "shared": [
     {
       "name": "Fear",
       "type": "Psychology",
       "text": "The model causes fear.",
-      "aliases": ["Cause Fear", "Causes Fear", "Fearsome"]
+      "aliases": [
+        "Cause Fear",
+        "Causes Fear",
+        "Fearsome"
+      ]
     },
     {
       "name": "Stupidity",
       "type": "Psychology",
       "text": "The model is subject to stupidity.",
-      "aliases": ["Stupid", "Moronic"]
+      "aliases": [
+        "Stupid",
+        "Moronic"
+      ]
     },
     {
       "name": "Immune to Psychology",
@@ -19,7 +32,12 @@
       "text": "The model is immune to psychology and never leaves combat.",
       "aliases": []
     },
-    {"name": "Immune to Poison", "type": "Trait", "text": "Not affected by any poison.", "aliases": []},
+    {
+      "name": "Immune to Poison",
+      "type": "Trait",
+      "text": "Not affected by any poison.",
+      "aliases": []
+    },
     {
       "name": "No Pain",
       "type": "Trait",
@@ -36,7 +54,9 @@
       "name": "Large",
       "type": "Trait",
       "text": "This unit is treated as a Large Target. They may always be shot at with ranged weapons with a +1 modifier to hit.",
-      "aliases": ["Large Target"]
+      "aliases": [
+        "Large Target"
+      ]
     },
     {
       "name": "Daemonic Flesh",
@@ -60,53 +80,115 @@
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
       "text": "The model hates Orcs and Goblins.",
-      "aliases": ["Hates Orcs & Goblins", "Hates Orcs and Goblins", "Hate Orcs & Goblins"]
+      "aliases": [
+        "Hates Orcs & Goblins",
+        "Hates Orcs and Goblins",
+        "Hate Orcs & Goblins"
+      ]
     },
     {
       "name": "Frenzy",
       "type": "Psychology",
       "text": "The model is subject to frenzy.",
-      "aliases": ["Berserkers", "Maddened"]
+      "aliases": [
+        "Berserkers",
+        "Maddened"
+      ]
     },
     {
       "name": "Hate High Elves",
       "type": "Psychology",
       "text": "The model hates High Elves.",
-      "aliases": ["Kindred Hatred"]
+      "aliases": [
+        "Kindred Hatred"
+      ]
     },
     {
       "name": "Hate Bandits and Outlaws",
       "type": "Psychology",
       "text": "The model hates Bandits and Outlaws.",
-      "aliases": ["Hang the Bandit!"]
+      "aliases": [
+        "Hang the Bandit!"
+      ]
     },
     {
       "name": "Hate Spellcasters",
       "type": "Psychology",
       "text": "The model hates every model that can cast spells.",
-      "aliases": ["Burn the Witch!"]
+      "aliases": [
+        "Burn the Witch!"
+      ]
     },
-    {"name": "Daemon Soul", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 20, "aliases": []},
-    {"name": "Great Claw", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 50, "aliases": []},
+    {
+      "name": "Daemon Soul",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "cost": 20,
+      "aliases": []
+    },
+    {
+      "name": "Great Claw",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "cost": 50,
+      "aliases": []
+    },
     {
       "name": "Cloven Hoofs",
       "type": "Mutation",
       "upgrade_of": "Cult of the Possessed",
       "cost": 40,
-      "aliases": ["Cloven Hooves"]
+      "aliases": [
+        "Cloven Hooves"
+      ]
     },
-    {"name": "Tentacle", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 35, "aliases": []},
-    {"name": "Blackblood", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 30, "aliases": []},
-    {"name": "Spines", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 35, "aliases": []},
-    {"name": "Scorpion Tail", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 40, "aliases": []},
-    {"name": "Extra Arm", "type": "Mutation", "upgrade_of": "Cult of the Possessed", "cost": 40, "aliases": []},
+    {
+      "name": "Tentacle",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "cost": 35,
+      "aliases": []
+    },
+    {
+      "name": "Blackblood",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "cost": 30,
+      "aliases": []
+    },
+    {
+      "name": "Spines",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "cost": 35,
+      "aliases": []
+    },
+    {
+      "name": "Scorpion Tail",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "cost": 40,
+      "aliases": []
+    },
+    {
+      "name": "Extra Arm",
+      "type": "Mutation",
+      "upgrade_of": "Cult of the Possessed",
+      "cost": 40,
+      "aliases": []
+    },
     {
       "name": "Hideous",
       "type": "Mutation",
       "upgrade_of": "Cult of the Possessed",
-      "subject": {"The mutant": "The model"},
+      "subject": {
+        "The mutant": "The model"
+      },
       "cost": 40,
-      "aliases": ["Eyestalks", "Skull Face"]
+      "aliases": [
+        "Eyestalks",
+        "Skull Face"
+      ]
     },
     {
       "name": "Crystalline Body",
@@ -160,7 +242,9 @@
       "name": "Stream of Corruption",
       "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
-      "subject": {"The Tainted One": "The model"},
+      "subject": {
+        "The Tainted One": "The model"
+      },
       "cost": 25,
       "aliases": []
     },
@@ -168,15 +252,21 @@
       "name": "Nurgle's Rot",
       "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
-      "subject": {"The Tainted One": "The model"},
+      "subject": {
+        "The Tainted One": "The model"
+      },
       "cost": 50,
-      "aliases": ["Neiglish Rot"]
+      "aliases": [
+        "Neiglish Rot"
+      ]
     },
     {
       "name": "Cloud of Flies",
       "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
-      "subject": {"The Tainted One": "The model"},
+      "subject": {
+        "The Tainted One": "The model"
+      },
       "cost": 25,
       "aliases": []
     },
@@ -184,7 +274,9 @@
       "name": "Bloated Foulness",
       "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
-      "subject": {"The Tainted One": "The model"},
+      "subject": {
+        "The Tainted One": "The model"
+      },
       "cost": 40,
       "aliases": []
     },
@@ -192,7 +284,9 @@
       "name": "Mark of Nurgle",
       "type": "Blessing of Nurgle",
       "upgrade_of": "Carnival of Chaos",
-      "subject": {"The Tainted One": "The model"},
+      "subject": {
+        "The Tainted One": "The model"
+      },
       "aliases": []
     },
     {
@@ -217,7 +311,9 @@
       "from": "Mutiny in Marienburg, p162",
       "cost": 35,
       "text": "Unless it already has a bite attack, the model makes an extra bite attack in each close combat phase, at its own Strength and with no penalty for not using a weapon. The bite always strikes last, whoever charged and whatever weapon is used, even after double-handed weapons.",
-      "aliases": ["Beaked"]
+      "aliases": [
+        "Beaked"
+      ]
     },
     {
       "name": "Burning Body",
@@ -278,7 +374,9 @@
       "from": "Mutiny in Marienburg, Bounties of Arkhar",
       "cost": 45,
       "text": "The model's armour save improves by +1. With no armour, its skin alone gives it a 6+ save.",
-      "aliases": ["Iron Hard Skin"]
+      "aliases": [
+        "Iron Hard Skin"
+      ]
     },
     {
       "name": "Fangs",
@@ -294,7 +392,9 @@
       "from": "Mutiny in Marienburg, Bounties of Arkhar",
       "cost": 50,
       "text": "Unless it already has a tail, the model gains an extra tail attack in each hand-to-hand combat phase, at its Strength +1. A model that already has a tail decides at the start of each hand-to-hand combat which tail it uses.",
-      "aliases": ["Mace Tail"]
+      "aliases": [
+        "Mace Tail"
+      ]
     },
     {
       "name": "Regeneration",
@@ -310,7 +410,9 @@
       "from": "Mutiny in Marienburg, Bounties of Arkhar",
       "cost": 35,
       "text": "In the shooting phase the model may spit acid at a target up to 8\" away: a Strength 4 shooting attack with no penalty for range or for moving.",
-      "aliases": ["Acid Spray"]
+      "aliases": [
+        "Acid Spray"
+      ]
     },
     {
       "name": "Alluring",
@@ -449,170 +551,313 @@
     {
       "name": "Fear (Maximilian)",
       "rule": "Fear",
-      "owners": [{"dramatis_persona": "Maximilian the Mad"}],
+      "owners": [
+        {
+          "dramatis_persona": "Maximilian the Mad"
+        }
+      ],
       "why": "His warband's models within 3\" of him are immune to fear."
     },
     {
       "name": "Stupidity (Rat Ogre)",
       "rule": "Stupidity",
       "owners": [
-        {"warband": "Skaven", "fighter": "Rat Ogre"},
-        {"warband": "Skaven of Clan Pestilens", "fighter": "Rat Ogre"}
+        {
+          "warband": "Skaven",
+          "fighter": "Rat Ogre"
+        },
+        {
+          "warband": "Skaven of Clan Pestilens",
+          "fighter": "Rat Ogre"
+        }
       ],
       "why": "Not stupid while a Skaven Hero is within 6\"."
     },
     {
       "name": "Stupidity (Clan Moulder Rat Ogre)",
       "rule": "Stupidity",
-      "owners": [{"warband": "Skaven of Clan Moulder", "fighter": "Rat Ogre"}],
+      "owners": [
+        {
+          "warband": "Skaven of Clan Moulder",
+          "fighter": "Rat Ogre"
+        }
+      ],
       "why": "Not stupid while a Clan Moulder Hero is within 6\"."
     },
     {
       "name": "Stupidity (Cold One Beasthounds)",
       "rule": "Stupidity",
-      "owners": [{"warband": "Dark Elves", "fighter": "Cold One Beasthound"}],
+      "owners": [
+        {
+          "warband": "Dark Elves",
+          "fighter": "Cold One Beasthound"
+        }
+      ],
       "why": "Tests on the Beastmaster's Leadership within 6\" of him."
     },
     {
       "name": "Immune to Psychology (Plague Bearers)",
       "rule": "Immune to Psychology",
-      "owners": [{"warband": "Carnival of Chaos", "fighter": "Plague Bearer"}],
+      "owners": [
+        {
+          "warband": "Carnival of Chaos",
+          "fighter": "Plague Bearer"
+        }
+      ],
       "why": "Automatically passes every Leadership-based test, rout tests included."
     },
     {
       "name": "Immune to Psychology (Nurglings)",
       "rule": "Immune to Psychology",
-      "owners": [{"warband": "Carnival of Chaos", "fighter": "Nurgling"}],
+      "owners": [
+        {
+          "warband": "Carnival of Chaos",
+          "fighter": "Nurgling"
+        }
+      ],
       "why": "Automatically passes every Leadership-based test, rout tests included."
     },
     {
       "name": "Immune to Psychology (Plague Cart)",
       "rule": "Immune to Psychology",
-      "owners": [{"warband": "Carnival of Chaos", "fighter": "Plague Cart"}],
+      "owners": [
+        {
+          "warband": "Carnival of Chaos",
+          "fighter": "Plague Cart"
+        }
+      ],
       "why": "Automatically passes every Leadership-based test, rout tests included."
     },
     {
       "name": "Immune to Psychology (Belandysh)",
       "rule": "Immune to Psychology",
-      "owners": [{"dramatis_persona": "Belandysh, Condemned Champion of Chen"}],
+      "owners": [
+        {
+          "dramatis_persona": "Belandysh, Condemned Champion of Chen"
+        }
+      ],
       "why": "Automatically passes all Leadership tests."
     },
     {
       "name": "Immune to Psychology (Ippan Shu)",
       "rule": "Immune to Psychology",
-      "owners": [{"dramatis_persona": "Grand Master Ippan Shu"}],
+      "owners": [
+        {
+          "dramatis_persona": "Grand Master Ippan Shu"
+        }
+      ],
       "why": "Automatically passes all Leadership-based tests."
+    },
+    {
+      "name": "Immune to Psychology (Madbrains)",
+      "rule": "Immune to Psychology",
+      "owners": [
+        {
+          "warband": "Khorne Raiders",
+          "fighter": "Madbrain"
+        }
+      ],
+      "why": "He passes any Leadership test he is required to take, and may not be promoted to leader."
     },
     {
       "name": "Immune to Psychology (Nightmare)",
       "rule": "Immune to Psychology (Mount)",
-      "owners": [{"beast": "Nightmare"}],
+      "owners": [
+        {
+          "beast": "Nightmare"
+        }
+      ],
       "why": "Never takes Leadership tests, and stands still if left leaderless."
     },
     {
       "name": "Immune to Poison (Plague Bearers)",
       "rule": "Immune to Poison",
-      "owners": [{"warband": "Carnival of Chaos", "fighter": "Plague Bearer"}],
+      "owners": [
+        {
+          "warband": "Carnival of Chaos",
+          "fighter": "Plague Bearer"
+        }
+      ],
       "why": "Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed."
     },
     {
       "name": "Immune to Poison (Nurglings)",
       "rule": "Immune to Poison",
-      "owners": [{"warband": "Carnival of Chaos", "fighter": "Nurgling"}],
+      "owners": [
+        {
+          "warband": "Carnival of Chaos",
+          "fighter": "Nurgling"
+        }
+      ],
       "why": "Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed."
     },
     {
       "name": "Regeneration (Troll)",
       "rule": "Regeneration",
       "owners": [
-        {"warband": "Night Goblins", "fighter": "Troll"},
-        {"warband": "Night Goblins (web)", "fighter": "Troll"},
-        {"warband": "Orc Mob", "fighter": "Troll"}
+        {
+          "warband": "Night Goblins",
+          "fighter": "Troll"
+        },
+        {
+          "warband": "Night Goblins (web)",
+          "fighter": "Troll"
+        },
+        {
+          "warband": "Orc Mob",
+          "fighter": "Troll"
+        }
       ],
       "why": "Ignores each wound on a 4+, never one from fire, and never rolls for injury; the mutation heals once."
     },
     {
       "name": "Regeneration (Black Orcs' Troll)",
       "rule": "Regeneration",
-      "owners": [{"warband": "Black Orcs", "fighter": "Troll"}],
+      "owners": [
+        {
+          "warband": "Black Orcs",
+          "fighter": "Troll"
+        }
+      ],
       "why": "The Trolls' rule, but one taken out of action by fire rolls for injury as a henchman."
     },
     {
       "name": "Regeneration (Belandysh)",
       "rule": "Regeneration",
-      "owners": [{"dramatis_persona": "Belandysh, Condemned Champion of Chen"}],
+      "owners": [
+        {
+          "dramatis_persona": "Belandysh, Condemned Champion of Chen"
+        }
+      ],
       "why": "Ignores each wound on a 4+, never one from fire; the mutation heals once."
     },
     {
       "name": "Scaly Skin (Cold One Beasthounds)",
       "rule": "Scaly Skin",
-      "owners": [{"warband": "Dark Elves", "fighter": "Cold One Beasthound"}],
+      "owners": [
+        {
+          "warband": "Dark Elves",
+          "fighter": "Cold One Beasthound"
+        }
+      ],
       "why": "A 6+ armour save; the mutation's is 5+, and armour adds to it."
     },
     {
       "name": "Scaly Skin (Kroxigor)",
       "rule": "Scaly Skin",
-      "owners": [{"warband": "Lizardmen", "fighter": "Kroxigor"}],
+      "owners": [
+        {
+          "warband": "Lizardmen",
+          "fighter": "Kroxigor"
+        }
+      ],
       "why": "A natural 4+ save; the mutation's is 5+."
     },
     {
       "name": "Scaly Skin (Chameleon Skink)",
       "rule": "Scaly Skin",
-      "owners": [{"hired_sword": "Chameleon Skink"}],
+      "owners": [
+        {
+          "hired_sword": "Chameleon Skink"
+        }
+      ],
       "why": "The Lizardmen's Scaly Skin, a Skink's 6+; the mutation's is 5+."
     },
     {
       "name": "No Pain (Sigmund)",
       "rule": "No Pain",
-      "owners": [{"dramatis_persona": "Sigmund Spindle, the Harvester of Flesh"}],
+      "owners": [
+        {
+          "dramatis_persona": "Sigmund Spindle, the Harvester of Flesh"
+        }
+      ],
       "why": "Ignores knocked down results too: only losing his last wound takes him out of action."
     },
     {
       "name": "No Pain (Veskit)",
       "rule": "No Pain",
-      "owners": [{"dramatis_persona": "Veskit, High Executioner of Clan Eshin"}],
+      "owners": [
+        {
+          "dramatis_persona": "Veskit, High Executioner of Clan Eshin"
+        }
+      ],
       "why": "Ignores knocked down results too: only losing his last wound takes him out of action."
     },
     {
       "name": "Agile (Fighting Ape)",
       "rule": "Agile",
-      "owners": [{"warband": "The Cursed Cavalcade", "fighter": "Fighting Ape"}],
+      "owners": [
+        {
+          "warband": "The Cursed Cavalcade",
+          "fighter": "Fighting Ape"
+        }
+      ],
       "why": "The Scale Sheer Surfaces, Acrobat and Dodge skills and a diving charge from up to 10\" high; the Grace of Shornaal is +1 to Initiative tests."
     },
     {
       "name": "Mer-creature (Fishmen)",
       "rule": "Mer-creature",
-      "owners": [{"warband": "Shallows Beasts", "fighter": "Fishman"}],
+      "owners": [
+        {
+          "warband": "Shallows Beasts",
+          "fighter": "Fishman"
+        }
+      ],
       "why": "No Movement penalty on land; the Favour of Tchar is -1 Movement there."
     },
     {
       "name": "Regeneration (Boglar)",
       "rule": "Regeneration",
-      "owners": [{"warband": "Underworld Alliance", "fighter": "Boglar"}],
+      "owners": [
+        {
+          "warband": "Underworld Alliance",
+          "fighter": "Boglar"
+        }
+      ],
       "why": "Each wound ignored on a 5+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once."
     },
     {
       "name": "Regeneration (Warpstone Troll)",
       "rule": "Regeneration",
-      "owners": [{"warband": "Underworld Alliance", "fighter": "Warpstone Troll"}],
+      "owners": [
+        {
+          "warband": "Underworld Alliance",
+          "fighter": "Warpstone Troll"
+        }
+      ],
       "why": "Each wound ignored on a 4+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once, and the Trolls never roll for injury."
     },
     {
       "name": "Berserkers (Red Toof Goblin)",
       "rule": "Berserkers",
-      "owners": [{"warband": "Forest Goblins", "fighter": "Red Toof Goblin"}],
+      "owners": [
+        {
+          "warband": "Forest Goblins",
+          "fighter": "Red Toof Goblin"
+        }
+      ],
       "why": "Frenzy, and immune to animosity in a turn he begins within charge range of an enemy."
     },
     {
       "name": "Kindred Hatred (Strigoi Vampire)",
       "rule": "Kindred Hatred",
-      "owners": [{"warband": "Survivors of Strigos", "fighter": "Strigoi Vampire"}],
+      "owners": [
+        {
+          "warband": "Survivors of Strigos",
+          "fighter": "Strigoi Vampire"
+        }
+      ],
       "why": "Hates vampires of every other bloodline, not High Elves."
     },
     {
       "name": "Hatred",
       "rule": "Hatred",
-      "owners": [{"warband": "Bretonnian Chapel Guard", "fighter": "Battle Pilgrim"}],
+      "owners": [
+        {
+          "warband": "Bretonnian Chapel Guard",
+          "fighter": "Battle Pilgrim"
+        }
+      ],
       "text": "The model hates every enemy model.",
       "why": "Hates every enemy: an open-ended target no shared row names, kept his own and worded short."
     }

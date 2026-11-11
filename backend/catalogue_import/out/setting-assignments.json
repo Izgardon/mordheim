@@ -1121,6 +1121,31 @@
       "how": "overrides.json"
     },
     {
+      "name": "Slave Driver",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Pious Fury",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Pawnbroker",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Black Market",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Man of the World",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
       "name": "Virtue of Noble Disdain (Grail Companions)",
       "setting": "mordheim-2a",
       "how": "overrides.json"
@@ -1381,6 +1406,36 @@
       "how": "overrides.json"
     },
     {
+      "name": "Blood of Khorne",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Berserker (Khorne Raiders)",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Massive Muscles",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Stromfel's Boon",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Master Tanner",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Rite of Combat",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
       "name": "Virtue of Valour (Knights of the Bitter Moors)",
       "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
@@ -1503,6 +1558,16 @@
     {
       "name": "Twistkin",
       "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Gloryseeker",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Leviathan Slayer",
+      "setting": "sartosa",
       "how": "overrides.json"
     },
     {

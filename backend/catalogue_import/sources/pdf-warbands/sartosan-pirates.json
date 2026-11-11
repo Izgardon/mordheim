@@ -1,0 +1,653 @@
+{
+  "warbandType": "sartosan-pirates",
+  "name": "Sartosan Pirates",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Swabbies",
+      "ruleFull": "The warband's Swabbies are human, and are captured rather than hired, under the Sartosa campaign rules."
+    },
+    {
+      "rulename": "Hired Swords",
+      "ruleFull": "The warband hires Hired Swords and buys other items as a human Mercenary warband does. A warband holding both Dwarfs and Elves pays 20 gold crowns more in upkeep."
+    },
+    {
+      "rulename": "Swivel Guns are Rare, Matey!",
+      "ruleFull": "Unlike other Pirate warbands, the Sartosans may start with a Swivel Gun, bought as normal. In a one-off game they start with two free Swabbies."
+    },
+    {
+      "rulename": "Succession",
+      "ruleFull": "If the Captain is killed, one of the Mates takes his place, as a Champion does in a Mercenary warband."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "pirate-equipment-list",
+      "title": "Pirate Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "boat hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "Cat O' Nine Tails",
+          "alias": "",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "belaying pin",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "duelling pistol",
+          "alias": "Dueling Pistol",
+          "cost": {
+            "cost": 30,
+            "braceCost": 60
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened Leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light Armour",
+          "cost": {
+            "cost": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "swabbie-equipment-list",
+      "title": "Swabbie Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "boat hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "belaying pin",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    },
+    {
+      "id": "gunner-equipment-list",
+      "title": "Gunner Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "blunderbuss",
+          "alias": "Blunderbuss",
+          "cost": {
+            "cost": 30
+          }
+        },
+        {
+          "name": "duelling pistol",
+          "alias": "Dueling Pistol",
+          "cost": {
+            "cost": 30,
+            "braceCost": 60
+          }
+        },
+        {
+          "name": "handgun",
+          "alias": "Handgun",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "swivel gun",
+          "alias": "Swivel Gun",
+          "cost": {
+            "cost": 65,
+            "costSuffix": "one per warband"
+          }
+        },
+        {
+          "name": "Ball Shot",
+          "alias": "Ball Shot",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Chain Shot",
+          "alias": "Chain Shot",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "Grape Shot",
+          "alias": "Grape Shot",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened Leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light Armour",
+          "cost": {
+            "cost": 20
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "pirate-captain",
+      "type": "hero",
+      "name": "Pirate Captain",
+      "plural": "Pirate Captains",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any pirate within 6\" of the Captain may use his Leadership for any Leadership test."
+        }
+      ]
+    },
+    {
+      "id": "ships-mate",
+      "type": "hero",
+      "name": "Ship's Mate",
+      "plural": "Ship's Mates",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "cabin-boy",
+      "type": "hero",
+      "name": "Cabin Boy",
+      "plural": "Cabin Boys",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "crew",
+      "type": "henchman",
+      "name": "Crew",
+      "plural": "Crew",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "gunner",
+      "type": "henchman",
+      "name": "Gunner",
+      "plural": "Gunners",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 7,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "gunner-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Swivel Guns is Dangerous, Matey!",
+          "ruleFull": "A Gunner carrying the Swivel Gun always counts as an individual and may never be joined by anyone else. Since the warband may hold only one Swivel Gun, the Gunner carrying it is either newly hired or split off from his group, keeping the experience and skills he had."
+        }
+      ]
+    },
+    {
+      "id": "boatswain",
+      "type": "henchman",
+      "name": "Boatswain",
+      "plural": "Boatswains",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 32,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "equipment": "A Rope & Hook, which he may never sell or give away.",
+      "specialRules": [
+        {
+          "rulename": "Expert Riggers",
+          "ruleFull": "A Boatswain may re-roll a failed Initiative test for leaping over a gap, jumping down or making a diving charge, and the test for climbing up or down with a rope."
+        }
+      ]
+    },
+    {
+      "id": "swabbie",
+      "type": "henchman",
+      "name": "Swabbie",
+      "plural": "Swabbies",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 0,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "swabbie-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Not Hired",
+          "ruleFull": "Swabbies are not hired: they are captured, under the Sartosa campaign rules."
+        },
+        {
+          "rulename": "Never Gain Experience",
+          "ruleFull": "Swabbies never gain experience."
+        },
+        {
+          "rulename": "Rabble",
+          "ruleFull": "Swabbies need not be armed alike: each may carry different equipment, but only from the Swabbie Equipment list. A Swabbie may never use magic or cast a spell."
+        },
+        {
+          "rulename": "'Blimey, they got away!'",
+          "ruleFull": "If the warband routs, any Swabbie who has already left the table in an earlier turn escapes for good: remove him from the roster as if he had been killed."
+        },
+        {
+          "rulename": "'Don't mind them mates, they ain't true pirates!'",
+          "ruleFull": "Swabbies who are running away or have been taken out of action do not count towards the warband's rout test."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Sartosan Pirates",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "Sea Shanty Singer",
+      "ours": "Sea Shanty Singer"
+    },
+    {
+      "name": "Cutlass Master",
+      "ours": "Cutlass Master"
+    },
+    {
+      "name": "Booming Voice",
+      "ours": "Booming Voice"
+    },
+    {
+      "name": "Hardy Constitution",
+      "ours": "Hardy Constitution"
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {
+      "page": 3,
+      "what": "The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy."
+    },
+    {
+      "page": 3,
+      "what": "The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions."
+    },
+    {
+      "page": 3,
+      "what": "The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same."
+    },
+    {
+      "page": 2,
+      "what": "A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race."
+    },
+    {
+      "page": 5,
+      "what": "Swabbies have no hire price (they are captured, not hired): their cost is 0 gc."
+    },
+    {
+      "page": 3,
+      "what": "The Swivel Gun's line is 65 gc, Rare 8, one per warband; our Swivel Gun is 65 gc, Rare 8 already, so the line only carries the limit."
+    },
+    {
+      "page": 3,
+      "what": "The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them."
+    },
+    {
+      "page": 2,
+      "what": "The four 'Old' Pirate Skills are our Sea Shanty Singer, Cutlass Master, Booming Voice and Hardy Constitution, the same words; they are the Sartosan Pirates' own group here, while our Pirates group (the 1b Pirate warband's) holds them with Sea Legs and Swashbuckler besides."
+    }
+  ]
+}

@@ -4645,6 +4645,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -17506,6 +17522,38 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "khorne-raiders",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -19438,6 +19486,69 @@
     ]
   },
   {
+    "slug": "hellblade",
+    "name": "Hellblade",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Khorne%20Raiders.pdf",
+    "tags": [
+      "hellblade"
+    ],
+    "flavour": "",
+    "range": "Close combat",
+    "strength": "As user +1",
+    "save": "",
+    "statblock": [],
+    "notes": "Khorne warbands only.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Soulseeking",
+        "summary": "",
+        "text": "Attacks made with a Hellblade are at +1 to hit. This does not work against Undead or daemon models.",
+        "tables": []
+      },
+      {
+        "rule": "two-handed",
+        "text": "A model armed with a Hellblade may not use a shield, a buckler or an additional weapon in close combat. If he carries a shield he still gets its +1 armour save bonus against shooting."
+      },
+      {
+        "name": "Deadly",
+        "summary": "",
+        "text": "A Hellblade causes a critical hit on a roll of 5 or 6. This does not apply if the warrior needs 5 or more to wound.",
+        "tables": []
+      },
+      {
+        "name": "Magical",
+        "summary": "",
+        "text": "Every attack from a Hellblade counts as magical. A Hellblade may not be made of gromril, ithilmar or a similar mortal metal.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "khorne-raiders",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "field-trebuchet",
     "name": "Field Trebuchet",
     "variant": "",
@@ -19822,6 +19933,86 @@
         "warbands": [
           {
             "type": "militiant-mootlanders",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "dwarven-pistol",
+    "name": "Dwarven Pistol",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf",
+    "tags": [
+      "dwarven pistol"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "The PDF prints no rules for it.",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "double-barreled-blunderbuss",
+    "name": "Double-barreled Blunderbuss",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf",
+    "tags": [
+      "double-barreled blunderbuss"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "The PDF prints no rules for it.",
+    "needs_rules": true,
+    "rules": [],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "slayer-pirates",
             "excluded": false
           }
         ],

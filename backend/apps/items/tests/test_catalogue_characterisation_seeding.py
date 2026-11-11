@@ -91,10 +91,10 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 45,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit and the Fimir
-                "Item": 427,  # the import's 368 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
+                "Item": 430,  # the import's 371 (its 14 animals are beasts'; the PDFs' stubs among them) + one Animal item per beast
                 "ItemRule": 53,  # the import's shared rules, the Metal Mongers' Experimental Technology and the Watchmen's Map among them
-                "Skill": 346,  # the import's 322 (one per name) + the 24 hired swords' own skills the book lacks
-                "SkillGroup": 88,  # the import's 69 + a group of his own for each of 19 hired swords
+                "Skill": 359,  # the import's 335 (one per name) + the 24 hired swords' own skills the book lacks
+                "SkillGroup": 92,  # the import's 73 + a group of his own for each of 19 hired swords
                 "Spell": 269,  # 263 (the PDFs' lores) + the Dark Mage's six (BUG-54)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
@@ -105,7 +105,8 @@ class SeedAllTests(TestCase):
                 # Johann the Knife and Penthesilea held Bertha's Hiring Fee), less the 8 copies of Large Target,
                 # Daemonic Flesh, Perfect Killer, Pawnbroker and Hate Orcs and Goblins, shared now (William, 6 Nov);
                 # Large Target is Large, which moved from special.json to the shared (William, 6 Nov: "yes same rule");
-                # the second PDF batch's five templates add 46 of their own, the third's five 54, the fifth's five 43, the sixth's eight 83
+                # the second PDF batch's five templates add 46 of their own, the third's five 54,
+                # the fifth's five 43, the sixth's eight 83 and the seventh's seven 52
                 # Border Town Burning's Beasts of the East add 31 of their own to special.json (William, 7 Nov 2026)
                 # Frenzy, Hate High Elves, Hate Bandits and Outlaws and Hate Spellcasters shared (William, 7 Nov 2026):
                 # 4 more, less the Bloodletter's Frenzy, the templates' 6 and the hired swords' and personae's 4; a
@@ -113,13 +114,13 @@ class SeedAllTests(TestCase):
                 # Warriors' Not Orcs and the Pit Fighters' Pit Fighter its skill's one row: 2 fewer; a rule that only
                 # named a skill is the skill he starts with (William, 7 Nov 2026: "yes please do that"): the
                 # templates' 21, the hired swords' 9 and Maximilian's Strongman fewer
-                "Special": 1055,
+                "Special": 1107,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 63,
                 "HiredSword": 72,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
-                "WarbandTemplate": 81,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
+                "WarbandTemplate": 88,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs'
             },
         )
         for model in BOOK_MODELS:
@@ -170,16 +171,16 @@ class SeedAllTests(TestCase):
 
     def test_the_warband_templates_come_in_whole(self):
         # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
-        self.assertIn("Warband templates import complete. Templates: 81, archived", self.output)
+        self.assertIn("Warband templates import complete. Templates: 88, archived", self.output)
         counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
         self.assertEqual(
             counts,
             {
-                "WarbandTemplateType": 87,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
-                "TemplateFighter": 537,
-                "TemplateList": 205,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
-                "TemplateListItem": 2220,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 281,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                "WarbandTemplateType": 94,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each
+                "TemplateFighter": 584,
+                "TemplateList": 225,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
+                "TemplateListItem": 2488,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
+                "TemplateRule": 310,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin),
                 # the Fen Guard's 7 (Variations), the Lords of the Marsh's 15, the Shallows Beasts' 9 and the Underworld
@@ -269,6 +270,8 @@ class SeedAllTests(TestCase):
                 "Immune to Psychology (Nightmare)": "beast",  # a mount's book rule only beasts hold (7 Nov 2026)
                 # the daemons', plants' and Terracotta Soldier's of the East: every Leadership-based test passed
                 "Immune to Psychology (Beasts of the East)": "beast",
+                # the Madbrain passes any Leadership test he takes (Sartosa)
+                "Immune to Psychology (Madbrains)": "warband",
                 "Immune to Poison (Plague Bearers)": "warband",
                 "Immune to Poison (Nurglings)": "warband",
             },
@@ -296,7 +299,8 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             links,
             {
-                "Frenzy": (3, 0, 1, 1),  # Totem Warrior, Berserker, Witch Elf; Sigmund's Maddened; the Bloodletter
+                # Totem Warrior, Berserker, Witch Elf, Cannibal Boy; Sigmund's Maddened; the Bloodletter
+                "Frenzy": (4, 0, 1, 1),
                 "Hate Orcs and Goblins": (5, 3, 0, 0),  # the Dwarf Treasure Hunter's Hates Orcs & Goblins now too
                 "Hate High Elves": (0, 1, 1, 0),  # the Dark Elf Assassin's and Dijin Katal's Kindred Hatred
                 "Hate Bandits and Outlaws": (2, 0, 0, 0),  # the Horned Hunters' Hang the Bandit!
@@ -458,7 +462,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 322, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 335, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)

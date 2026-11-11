@@ -1,0 +1,586 @@
+{
+  "warbandType": "khorne-raiders",
+  "name": "Khorne Raiders",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Khorne%20Raiders.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Swabbies/Skinners",
+      "ruleFull": "The warband may try to enlist captured crew as normal. One who agrees joins the Plunderers. One who refuses does not become a Swabbie: the warband gains 1D3 Toughened Leathers free instead."
+    },
+    {
+      "rulename": "Magic? Bah!",
+      "ruleFull": "No one in the warband may learn magic, and the warband may not hire a Hired Sword or Dramatis Persona who uses magic. It may keep and use any magical item it finds that it could use normally. Apart from spellcasters, it may hire any Hired Sword or Dramatis Persona a Possessed warband may hire."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "pirate-equipment-list",
+      "title": "Pirate Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "Cat O' Nine Tails",
+          "alias": "",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "steel whip",
+          "alias": "Steel Whip",
+          "cost": {
+            "cost": 15,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Hellblade",
+          "alias": "Hellblade",
+          "cost": {
+            "cost": 35,
+            "costSuffix": "Captain only"
+          }
+        },
+        {
+          "name": "throwing knives",
+          "alias": "Throwing Knives",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "throwing axes",
+          "alias": "Throwing Axes",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "javelin",
+          "alias": "Harpoon (Javelin)",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "rope & hook",
+          "alias": "Rope & Hook",
+          "cost": {
+            "cost": 5,
+            "costSuffix": "Heroes only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "madbrain-equipment-list",
+      "title": "Madbrain Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "flail",
+          "alias": "Flail",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "Hellblade",
+          "alias": "Hellblade",
+          "cost": {
+            "cost": 35
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened leathers",
+          "cost": {
+            "cost": 5,
+            "costSuffix": "Quartermasters & Flayerkin only"
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Quartermasters & Flayerkin only"
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20,
+            "costSuffix": "Quartermasters & Flayerkin only"
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "dread-captain",
+      "type": "hero",
+      "name": "Dread Captain",
+      "plural": "Dread Captains",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Dread Captain may use his Leadership for any Leadership test."
+        }
+      ]
+    },
+    {
+      "id": "quartermaster",
+      "type": "hero",
+      "name": "Quartermaster",
+      "plural": "Quartermasters",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 60,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 0,
+        "s": 4,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 2,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "madbrain-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Massive Swing",
+          "ruleFull": "A Quartermaster may carry one two-handed weapon, a halberd or a double-handed weapon for instance, in one hand. In his other hand he may carry an additional single-handed weapon."
+        }
+      ]
+    },
+    {
+      "id": "cannibal-boy",
+      "type": "hero",
+      "name": "Cannibal Boy",
+      "plural": "Cannibal Boys",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Frenzy",
+          "ruleFull": "A Cannibal Boy is subject to frenzy."
+        }
+      ]
+    },
+    {
+      "id": "plunderer",
+      "type": "henchman",
+      "name": "Plunderer",
+      "plural": "Plunderers",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "madbrain",
+      "type": "henchman",
+      "name": "Madbrain",
+      "plural": "Madbrains",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "madbrain-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Immune to Psychology",
+          "ruleFull": "A Madbrain passes any Leadership test he is required to take. He may not be promoted to leader."
+        },
+        {
+          "rulename": "Reckless",
+          "ruleFull": "A Madbrain adds +1 to every injury roll he makes in hand-to-hand combat, and every opponent in hand-to-hand combat adds +1 to injury rolls made against him."
+        }
+      ]
+    },
+    {
+      "id": "flayerkin",
+      "type": "henchman",
+      "name": "Flayerkin",
+      "plural": "Flayerkin",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 40,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "madbrain-equipment-list"
+      ],
+      "equipment": "Steel hooks. A Flayerkin takes only armour from the Madbrain Equipment list.",
+      "specialRules": [
+        {
+          "rulename": "Hooks",
+          "ruleFull": "A Flayerkin has a sharp steel hook at the end of each wrist. He gains one extra attack, as if armed with a second weapon, and attacks with the hooks take neither penalty nor bonus. He may use no other weapon."
+        },
+        {
+          "rulename": "Climbing",
+          "ruleFull": "A Flayerkin always counts as carrying a Rope & Hook."
+        },
+        {
+          "rulename": "Chain Spine",
+          "ruleFull": "While a Flayerkin is at the top of an elevation and within 1\" of the edge, every friendly model directly below him at the bottom counts as carrying a Rope & Hook when climbing up, and any friendly model within 1\" of him at the top of an elevation may use that Rope & Hook when climbing down. He still gives this while knocked down, stunned or taken out of action; in the last case, remove the model and leave a marker where he stood."
+        },
+        {
+          "rulename": "Mindless",
+          "ruleFull": "A Flayerkin never gains experience."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Khorne Raiders",
+    "new": true
+  },
+  "specialSkillsList": [
+    {
+      "name": "Mutant",
+      "ours": "Mutant"
+    },
+    {
+      "name": "Blood of Khorne",
+      "description": "The Hero ignores the effect of a spell or a prayer on a D6 roll of 4+."
+    },
+    {
+      "name": "Berserker (Khorne Raiders)",
+      "description": "When the Hero charges, he doubles his base number of Attacks for the first round of combat. He must charge whenever an enemy model is within his charge range. While charging, while being charged and in hand-to-hand combat he is immune to psychology. The skill may not be used while he is frenzied."
+    },
+    {
+      "name": "Massive Muscles",
+      "description": "Quartermaster only. He may carry a double-handed weapon in each hand. If he loses a hand, it may be replaced with a double-handed weapon hand instead of a hook hand, for 25 gold crowns."
+    },
+    {
+      "name": "Stromfel's Boon",
+      "description": "The model counts as aquatic: he takes no penalty and no drowning damage in water."
+    },
+    {
+      "name": "Master Tanner",
+      "description": "Whenever the warband sacrifices a Swabbie it gains 1D3+1 Toughened Leathers, or one Leather Cape. A Leather Cape gives +1 to the save and may be worn with Toughened Leathers, Light Armour or other armour, but not with another cape or cloak. Like Toughened Leathers, it may not be sold or given to another warrior."
+    },
+    {
+      "name": "Rite of Combat",
+      "description": "Whenever the Hero takes an enemy out of action in hand-to-hand combat who was not knocked down or stunned, he gains +1 experience. Once all charges are declared, move this Hero first: if his charge reaches its target, no other member of the warband may charge that model, and any who declared a charge against it move half their distance or stand still, your choice. An enemy in combat with this Hero may not be charged by another member of the warband unless the Hero is outnumbered, knocked down or stunned. Berserkers and frenzied Cannibal Boys, who must charge the nearest enemy they can, are the exception."
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Hellblade",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 8,
+      "dice": null,
+      "rulesPage": 2,
+      "range": "Close combat",
+      "strength": "As user +1",
+      "note": "Khorne warbands only.",
+      "rules": [
+        {
+          "name": "Soulseeking",
+          "text": "Attacks made with a Hellblade are at +1 to hit. This does not work against Undead or daemon models."
+        },
+        {
+          "rule": "Two-handed",
+          "text": "A model armed with a Hellblade may not use a shield, a buckler or an additional weapon in close combat. If he carries a shield he still gets its +1 armour save bonus against shooting."
+        },
+        {
+          "name": "Deadly",
+          "text": "A Hellblade causes a critical hit on a roll of 5 or 6. This does not apply if the warrior needs 5 or more to wound."
+        },
+        {
+          "name": "Magical",
+          "text": "Every attack from a Hellblade counts as magical. A Hellblade may not be made of gromril, ithilmar or a similar mortal metal."
+        }
+      ]
+    },
+    {
+      "name": "Throwing Axes",
+      "type": "Weapon",
+      "subtype": "Missile",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 2
+    }
+  ],
+  "flags": [
+    {
+      "page": 2,
+      "what": "The skill table is text (X ticks), read from the -layout text. The Dread Captain has no Shooting tick; the Pirate column, which this PDF does not print a skill list for, is ticked for the Dread Captain and the Cannibal Boys and is left out: see the decisions."
+    },
+    {
+      "page": 3,
+      "what": "The Dread Captain's profile is M4 WS4 BS4 S4 T3 W1 I4 A1 Ld8 and the Quartermaster's M4 WS4 BS0 S4 T4 W1 I2 A2 Ld7: as printed."
+    },
+    {
+      "page": 2,
+      "what": "The Hellblade is \"(Captain only)\" on the Pirate list and carries no such note on the Madbrain list, which the Quartermasters, Madbrains and Flayerkin buy from: as printed, so only the Pirate list's line is the Captain's."
+    },
+    {
+      "page": 2,
+      "what": "The Steel Whip's line is 15 gc; our Steel Whip is 10 gc. The line price stands, ours is unchanged."
+    },
+    {
+      "page": 2,
+      "what": "\"Harpoon (Javelin)\" at 5 gc is our Javelins shown under the list's name."
+    },
+    {
+      "page": 2,
+      "what": "The Madbrain list's armour is \"(Quartermasters & Flayerkin Only)\", so each armour line carries that note."
+    },
+    {
+      "page": 2,
+      "what": "Rope & Hook sits under \"Miscellaneous Equipment (Heroes Only)\", so its line carries the Heroes only note."
+    },
+    {
+      "page": 2,
+      "what": "The Madbrain's Immune to Psychology says he passes any Leadership test he takes, which our shared Immune to Psychology does not: kept apart as \"Immune to Psychology (Madbrains)\"."
+    },
+    {
+      "page": 2,
+      "what": "Master Tanner's Leather Cape is on no equipment list and has no price, so it is not an item of ours; the skill carries it."
+    },
+    {
+      "page": 2,
+      "what": "Mutant is our skill of that name (\"The Beastman may buy one mutation\"), which the PDF words for a Khorne Hero buying one mutation from the Possessed list, once."
+    },
+    {
+      "page": 2,
+      "what": "The PDF spells the skill \"Beserker\"; ours of that effect is named Berserker (Khorne Raiders), as our Berserker (+1 to hit when charging) is another rule."
+    },
+    {
+      "page": 2,
+      "what": "A Khorne Raider warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race, the Flayerkin included."
+    },
+    {
+      "page": 3,
+      "what": "The Flayerkin takes only armour from the Madbrain list; our lists are taken whole, so his fixed kit says so and his Hooks rule bars other weapons."
+    },
+    {
+      "page": 2,
+      "what": "Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Khorne Raiders buy them at 15 gc; neither PDF prints rules for them."
+    }
+  ]
+}

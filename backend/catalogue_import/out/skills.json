@@ -896,6 +896,26 @@
     "description": "The warrior is an expert in hand-to-hand combat method of the Imperial duelist, aristocrats famed for their skill in single combat.\n\nAt the end of each Close Combat phase, the Duelist can force any non-large opponent he is fighting one-on-one to pass a Strength test or be pushed 2\" in any direction choosen by the Duelist. If this brings the target in contact with another model, both suffer an automatic Strength 2 hit. If this pushes the opponent off from a high place, then he falls and takes damage as normal. The duelist stays on the elevated area."
   },
   {
+    "name": "Slave Driver",
+    "description": "While the Hero is armed with a Cat O' Nine Tails or a similar whip and is not in close combat, every Slave within 4\" passes any Leadership test he is required to take."
+  },
+  {
+    "name": "Pious Fury",
+    "description": "The Hero hates every Skaven, Undead and Chaos warband, the Possessed, the Carnival of Chaos, the Khorne Raiders and the Marauders among them, and every model in them. He never drinks alcohol and never uses drugs."
+  },
+  {
+    "name": "Pawnbroker",
+    "description": "Merchant only. If the Merchant was not taken out of action, the warband gains 2D6 gold crowns more for each item it sells, up to that item's full value."
+  },
+  {
+    "name": "Black Market",
+    "description": "Merchant only. Choose six different items from the warband's equipment lists or the campaign equipment list and number them 1 to 6: that is the Merchant's Black Market list. After a battle he was not taken out of action in, instead of searching for rare items he may roll a D6 on that list and buy the item rolled at its base cost, with no rarity roll and no dice added to the price. He may change the items on the list each time he gains an advance. A single pistol or a brace may be listed, but not both of the same pistol, and only the number listed may be bought. An Ithilmar weapon and a Gromril weapon may be listed where the setting allows, the weapon itself chosen after the metal is rolled."
+  },
+  {
+    "name": "Man of the World",
+    "description": "Merchant only. If the Merchant was not taken out of action, in the post-battle sequence the warband may try to buy any item from any campaign setting or any other warband's list, at the warband's normal rarity roll; experimental or fan-made items need the group's agreement. It may hold only one of each item bought this way. A pair or a brace is bought together and may not be split between warriors. The skill works with Black Market, and a foreign item may be added to the Black Market list at the Merchant's next advance; a Black Market roll for a foreign item the warband already holds is wasted. A weapon may still need Weapons Training or Weapons Expert before it can be used."
+  },
+  {
     "name": "Virtue of Noble Disdain (Grail Companions)",
     "description": "The knight may re-roll failed rolls to hit against enemy henchmen."
   },
@@ -1021,7 +1041,7 @@
   },
   {
     "name": "Deathwish",
-    "description": "Slayers only: Stubbles and Axe Hurlers who become Heroes (see Skittish). The Hero is immune to all psychology and never tests for fighting alone."
+    "description": "The Hero is immune to all psychology and never tests for fighting alone."
   },
   {
     "name": "Monster Slayer (Slayer Cult)",
@@ -1102,6 +1122,30 @@
   {
     "name": "Shifty",
     "description": "When charged, the Halfling gains one bonus attack, which strikes first."
+  },
+  {
+    "name": "Blood of Khorne",
+    "description": "The Hero ignores the effect of a spell or a prayer on a D6 roll of 4+."
+  },
+  {
+    "name": "Berserker (Khorne Raiders)",
+    "description": "When the Hero charges, he doubles his base number of Attacks for the first round of combat. He must charge whenever an enemy model is within his charge range. While charging, while being charged and in hand-to-hand combat he is immune to psychology. The skill may not be used while he is frenzied."
+  },
+  {
+    "name": "Massive Muscles",
+    "description": "Quartermaster only. He may carry a double-handed weapon in each hand. If he loses a hand, it may be replaced with a double-handed weapon hand instead of a hook hand, for 25 gold crowns."
+  },
+  {
+    "name": "Stromfel's Boon",
+    "description": "The model counts as aquatic: he takes no penalty and no drowning damage in water."
+  },
+  {
+    "name": "Master Tanner",
+    "description": "Whenever the warband sacrifices a Swabbie it gains 1D3+1 Toughened Leathers, or one Leather Cape. A Leather Cape gives +1 to the save and may be worn with Toughened Leathers, Light Armour or other armour, but not with another cape or cloak. Like Toughened Leathers, it may not be sold or given to another warrior."
+  },
+  {
+    "name": "Rite of Combat",
+    "description": "Whenever the Hero takes an enemy out of action in hand-to-hand combat who was not knocked down or stunned, he gains +1 experience. Once all charges are declared, move this Hero first: if his charge reaches its target, no other member of the warband may charge that model, and any who declared a charge against it move half their distance or stand still, your choice. An enemy in combat with this Hero may not be charged by another member of the warband unless the Hero is outnumbered, knocked down or stunned. Berserkers and frenzied Cannibal Boys, who must charge the nearest enemy they can, are the exception."
   },
   {
     "name": "Virtue of Valour (Knights of the Bitter Moors)",
@@ -1202,6 +1246,14 @@
   {
     "name": "Twistkin",
     "description": "Stormvermin only. When he takes this skill, the Hero must buy one mutation from the Possessed's list in the rulebook at half its listed cost."
+  },
+  {
+    "name": "Gloryseeker",
+    "description": "While the Pirate is in close combat with a model that causes fear, he has +1 Attack each round of combat. He gains one extra Attack only, however many fear-causing enemies he faces."
+  },
+  {
+    "name": "Leviathan Slayer",
+    "description": "In hand-to-hand combat the Slayer always wounds on a 5+, after bonuses and penalties. If he would need 4+ or less to wound, he causes a critical hit on a natural 5+ instead."
   },
   {
     "name": "Stampede",

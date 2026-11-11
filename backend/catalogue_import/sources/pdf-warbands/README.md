@@ -43,6 +43,13 @@ check over every file.
 | `shallows-beasts.json` | shallows-beasts (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Shallows%20Beasts.pdf | 1-5 (text layer) | 6 Nov 2026 |
 | `underworld-alliance.json` | underworld-alliance (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Underworld%20Alliance.pdf | 1-5 (text layer) | 6 Nov 2026 |
 | `watchmen.json` | watchmen (2b, Mutiny in Marienburg) | https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Watchmen.pdf | 1-5 (text layer) | 6 Nov 2026 |
+| `sartosan-pirates.json` | sartosan-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf | 1-5 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `estalian-corsairs.json` | estalian-corsairs (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf | 1-5 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `wasteland-privateers.json` | wasteland-privateers (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf | 1-5 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `bretonnian-buccaneers.json` | bretonnian-buccaneers (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf | 1-5 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `araby-smugglers.json` | araby-smugglers (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Araby%20Smugglers.pdf | 1-4 (text layer; page 2 as an image) | 11 Nov 2026 |
+| `khorne-raiders.json` | khorne-raiders (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Khorne%20Raiders.pdf | 1-3 (text layer) | 11 Nov 2026 |
+| `slayer-pirates.json` | slayer-pirates (2b, Sartosa) | https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf | 1-4 (text layer) | 11 Nov 2026 |
 
 ## Adding a warband
 

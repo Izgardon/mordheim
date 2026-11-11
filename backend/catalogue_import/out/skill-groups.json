@@ -128,6 +128,27 @@
     ]
   },
   {
+    "name": "Araby Smugglers",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "araby-smugglers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Hit and run",
+      "Slave Driver",
+      "Pious Fury",
+      "Pawnbroker",
+      "Black Market",
+      "Man of the World"
+    ]
+  },
+  {
     "name": "Battle Monks of Cathay",
     "for_everyone": false,
     "warbands": [
@@ -614,6 +635,28 @@
     ]
   },
   {
+    "name": "Khorne Raiders",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "khorne-raiders",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Mutant",
+      "Blood of Khorne",
+      "Berserker (Khorne Raiders)",
+      "Massive Muscles",
+      "Stromfel's Boon",
+      "Master Tanner",
+      "Rite of Combat"
+    ]
+  },
+  {
     "name": "Knights of the Bitter Moors",
     "for_everyone": false,
     "warbands": [
@@ -1046,6 +1089,25 @@
     ]
   },
   {
+    "name": "Sartosan Pirates",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "sartosan-pirates",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Sea Shanty Singer",
+      "Cutlass Master",
+      "Booming Voice",
+      "Hardy Constitution"
+    ]
+  },
+  {
     "name": "Saurus",
     "for_everyone": false,
     "warbands": [
@@ -1231,7 +1293,7 @@
       }
     ],
     "large_only": false,
-    "note": "Songster: the Rememberer only.",
+    "note": "Songster: the Rememberer only. Deathwish: Stubbles and Axe Hurlers who become Heroes.",
     "how": "new group",
     "skills": [
       "Ferocious Charge",
@@ -1245,6 +1307,27 @@
       "Songster",
       "Song of Honor",
       "Relentless"
+    ]
+  },
+  {
+    "name": "Slayer Pirates",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "slayer-pirates",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Deathwish: Landlubbers and Gunners only.",
+    "how": "new group",
+    "skills": [
+      "Ferocious Charge",
+      "True Grit",
+      "Thick Skull",
+      "Deathwish",
+      "Gloryseeker",
+      "Leviathan Slayer"
     ]
   },
   {

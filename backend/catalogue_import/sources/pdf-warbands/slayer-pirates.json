@@ -1,0 +1,703 @@
+{
+  "warbandType": "slayer-pirates",
+  "name": "Slayer Pirates",
+  "source": "Sartosa",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Slayer%20Pirates.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {
+      "rulename": "Hard to Kill",
+      "ruleFull": "A Dwarf is taken out of action only on a 6 on the Injury chart: 1-2 is knocked down, 3-5 stunned, 6 out of action."
+    },
+    {
+      "rulename": "Hard Head",
+      "ruleFull": "A Dwarf ignores the special rules for maces, clubs and the like."
+    },
+    {
+      "rulename": "Grudgebearers",
+      "ruleFull": "The warband may never include an Elven Hired Sword or Dramatis Persona of any kind."
+    },
+    {
+      "rulename": "See You in Davie Jones!",
+      "ruleFull": "If the warband routs voluntarily, it receives half the exploration dice, rounding up."
+    },
+    {
+      "rulename": "Deathwish",
+      "ruleFull": "Unless a rule says otherwise, every member of the warband is immune to all psychology, frenzy and stupidity included, and never tests for fighting alone."
+    },
+    {
+      "rulename": "Not just any ol' Toy!",
+      "ruleFull": "A Slayer may never use armour of any kind, and may use no magic except magic weapons."
+    },
+    {
+      "rulename": "Up Close",
+      "ruleFull": "A Slayer may use only thrown missile weapons and pistols of any kind. Only the Gunners and the Master Gunner may learn Shooting skills, and only they may use thrown weapons and gunpowder weapons; they may use no other missile weapon."
+    },
+    {
+      "rulename": "Swabbies",
+      "ruleFull": "The warband captures Swabbies, under the Sartosa campaign rules. A willing captive joins the Landlubbers; an unwilling one becomes a Thaggi."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "pirate-equipment-list",
+      "title": "Pirate Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "boat hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "Cat O' Nine Tails",
+          "alias": "",
+          "cost": {
+            "cost": 8,
+            "costSuffix": "Heroes only"
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "dwarf axe",
+          "alias": "Dwarf Axe",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "belaying pin",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "Dwarven Pistol",
+          "alias": "Dwarven Pistol",
+          "cost": {
+            "cost": 30,
+            "braceCost": 60
+          }
+        },
+        {
+          "name": "javelin",
+          "alias": "Harpoon (Javelin)",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "throwing axes",
+          "alias": "Throwing Axe",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "rope & hook",
+          "alias": "Rope & Hook",
+          "cost": {
+            "cost": 5,
+            "costSuffix": "Heroes only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "gunner-equipment-list",
+      "title": "Gunner Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "belaying pin",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "pistol",
+          "alias": "Pistol",
+          "cost": {
+            "cost": 15,
+            "braceCost": 30
+          }
+        },
+        {
+          "name": "duelling pistol",
+          "alias": "Dueling Pistol",
+          "cost": {
+            "cost": 30,
+            "braceCost": 60
+          }
+        },
+        {
+          "name": "Dwarven Pistol",
+          "alias": "Dwarven Pistol",
+          "cost": {
+            "cost": 30,
+            "braceCost": 60
+          }
+        },
+        {
+          "name": "javelin",
+          "alias": "Harpoon (Javelin)",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "throwing axes",
+          "alias": "Throwing Axe",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "blunderbuss",
+          "alias": "Blunderbuss",
+          "cost": {
+            "cost": 30
+          }
+        },
+        {
+          "name": "Double-barreled Blunderbuss",
+          "alias": "Double-barreled Blunderbuss",
+          "cost": {
+            "cost": 60,
+            "costSuffix": "Heroes only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "thaggi-equipment-list",
+      "title": "Thaggi Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "cost": 2,
+            "costPrefix": "1st free/"
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Hammer/Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "boat hook",
+          "alias": "Boat Hook",
+          "cost": {
+            "cost": 8
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Cutlass (Sword)",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "belaying pin",
+          "alias": "Belaying Pin",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "javelin",
+          "alias": "Harpoon (Javelin)",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "toughened leathers",
+          "alias": "Toughened Leathers",
+          "cost": {
+            "cost": 5
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "slayer-captain",
+      "type": "hero",
+      "name": "Slayer Captain",
+      "plural": "Slayer Captains",
+      "race": "dwarf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 85,
+      "startingXp": 20,
+      "statblock": {
+        "m": 3,
+        "ws": 5,
+        "bs": 4,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any warrior within 6\" of the Slayer Captain may use his Leadership instead of his own."
+        }
+      ]
+    },
+    {
+      "id": "master-gunner",
+      "type": "hero",
+      "name": "Master Gunner",
+      "plural": "Master Gunners",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 50,
+      "startingXp": 10,
+      "statblock": {
+        "m": 3,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "gunner-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": [
+        {
+          "rulename": "Expert Weaponsmith",
+          "ruleFull": "Every Pistol in the warband, of any kind, has its range increased by 3\", and every Blunderbuss, of any kind, by 6\". The increase holds only while the Master Gunner is in the warband, and only in a battle he was deployed in."
+        }
+      ]
+    },
+    {
+      "id": "dwarf-mate",
+      "type": "hero",
+      "name": "Dwarf Mate",
+      "plural": "Dwarf Mates",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 50,
+      "startingXp": 8,
+      "statblock": {
+        "m": 3,
+        "ws": 5,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": false,
+        "special": true
+      },
+      "specialRules": []
+    },
+    {
+      "id": "sea-trollslayer",
+      "type": "henchman",
+      "name": "Sea Trollslayer",
+      "plural": "Sea Trollslayers",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 3,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "slayer-gunner",
+      "type": "henchman",
+      "name": "Gunner",
+      "plural": "Gunners",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 3,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 9
+      },
+      "equipmentLists": [
+        "gunner-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Skittish",
+          "ruleFull": "Gunners do not have the Death Wish skill and suffer psychology as normal. When a Gunner gains That Lad's Got Talent, he must learn Death Wish instead of rolling on the Hero advance table, even if Special is not one of his two skill lists."
+        }
+      ]
+    },
+    {
+      "id": "landlubber",
+      "type": "henchman",
+      "name": "Landlubber",
+      "plural": "Landlubbers",
+      "race": "dwarf",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 3,
+        "ws": 3,
+        "bs": 2,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "pirate-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Skittish",
+          "ruleFull": "Landlubbers do not have the Death Wish skill and suffer psychology as normal. When a Landlubber gains That Lad's Got Talent, he must learn Death Wish instead of rolling on the Hero advance table, even if Special is not one of his two skill lists."
+        }
+      ]
+    },
+    {
+      "id": "thaggi",
+      "type": "henchman",
+      "name": "Thaggi",
+      "plural": "Thaggi",
+      "race": "dwarf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 0,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 3,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 4,
+        "w": 1,
+        "i": 2,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "thaggi-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Not Hired",
+          "ruleFull": "Thaggi are not hired: they are given to the warband, under the Sartosa campaign rules."
+        },
+        {
+          "rulename": "Never Gain Experience",
+          "ruleFull": "Thaggi never gain experience."
+        },
+        {
+          "rulename": "Rabble",
+          "ruleFull": "Thaggi need not be armed alike: each may carry different equipment, but only from the Thaggi Equipment list. A Thaggi may never use magic or cast a spell."
+        },
+        {
+          "rulename": "'Kruk, they got away!'",
+          "ruleFull": "If the warband routs, any Thaggi who has already left the table in an earlier turn escapes for good: remove him from the roster as if he had been killed."
+        },
+        {
+          "rulename": "'Don't mind them mates, they ain't true dwarves!'",
+          "ruleFull": "Thaggi who are running away or have been taken out of action do not count towards the warband's rout test."
+        }
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Slayer Pirates",
+    "new": true,
+    "note": "Deathwish: Landlubbers and Gunners only."
+  },
+  "specialSkillsList": [
+    {
+      "name": "Deathwish",
+      "description": "The Hero is immune to all psychology and never tests for fighting alone."
+    },
+    {
+      "name": "Gloryseeker",
+      "description": "While the Pirate is in close combat with a model that causes fear, he has +1 Attack each round of combat. He gains one extra Attack only, however many fear-causing enemies he faces."
+    },
+    {
+      "name": "Ferocious Charge",
+      "ours": "Ferocious Charge"
+    },
+    {
+      "name": "Leviathan Slayer",
+      "description": "In hand-to-hand combat the Slayer always wounds on a 5+, after bonuses and penalties. If he would need 4+ or less to wound, he causes a critical hit on a natural 5+ instead."
+    },
+    {
+      "name": "True Grit",
+      "ours": "True Grit"
+    },
+    {
+      "name": "Thick Skull",
+      "ours": "Thick Skull"
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Dwarven Pistol",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 2,
+      "note": "The PDF prints no rules for it."
+    },
+    {
+      "name": "Double-barreled Blunderbuss",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 2,
+      "note": "The PDF prints no rules for it."
+    },
+    {
+      "name": "Throwing Axes",
+      "type": "Weapon",
+      "subtype": "Missile",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 2
+    }
+  ],
+  "priceRows": [
+    {
+      "name": "dwarf axe",
+      "rarity": 9,
+      "dice": null,
+      "page": 2
+    }
+  ],
+  "flags": [
+    {
+      "page": 2,
+      "what": "The skill table is text (X ticks), read from the -layout text. The Pirate column, which this PDF does not print a skill list for, is ticked for all three Heroes and is left out: see the decisions."
+    },
+    {
+      "page": 1,
+      "what": "Sea Trollslayers are listed with the Heroes' starting experience (0) but have no row in the skill table and no limit on their number, so they are read as henchmen."
+    },
+    {
+      "page": 1,
+      "what": "A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Dwarf race."
+    },
+    {
+      "page": 1,
+      "what": "Thaggi are described as dwarfs that humans also fill out: they take our Dwarf race, as their profile (M3 T4) is a dwarf's."
+    },
+    {
+      "page": 4,
+      "what": "Thaggi have no hire price (they are given to the warband, not hired): their cost is 0 gc."
+    },
+    {
+      "page": 1,
+      "what": "Up Close is printed as \"Only Gunners and the Master gunners may only learn Shooting Skills, and may any thrown weapons and gunpowder weapons (no other types.)\": read as the Gunners and the Master Gunner alone learning Shooting skills and using thrown and gunpowder weapons."
+    },
+    {
+      "page": 2,
+      "what": "The Dwarf Axe's line is 15 gc, Rare 9; ours is 15 gc, Rare 8, which is unchanged, so the warband buys from a price row of its own at Rare 9."
+    },
+    {
+      "page": 2,
+      "what": "The Dwarven Pistol (30 gc, 60 for a brace) and the Double-barreled Blunderbuss (60 gc) are stubs: the PDF prints no rules and we hold neither. The Gunner list sells the Dueling Pistol beside the Dwarven Pistol, so they are not the same weapon."
+    },
+    {
+      "page": 2,
+      "what": "The Pirate and Gunner lists print \"Armour . . . None\". The Thaggi list's Missile Weapons and Armour (Buckler 5 gc, Toughened Leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, which matches the warband rule that Slayers wear no armour."
+    },
+    {
+      "page": 2,
+      "what": "\"Harpoon (Javelin)\" at 5 gc is our Javelins, and \"Throwing Axe\" at 15 gc our Throwing Axes, each shown under the list's name."
+    },
+    {
+      "page": 3,
+      "what": "Hard to Kill, Hard Head, Grudgebearers and Deathwish are printed as the warband's rules, and are kept as warband rules rather than copied onto each fighter."
+    },
+    {
+      "page": 2,
+      "what": "Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Slayer Pirates buy them at 15 gc; neither PDF prints rules for them."
+    },
+    {
+      "page": 3,
+      "what": "The PDF spells the skill \"Death Wish\"; it is the Dwarf Slayer Cult's Deathwish, one skill with the same words in both groups, and who may take it sits in each group's note."
+    }
+  ]
+}

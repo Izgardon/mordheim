@@ -26,10 +26,10 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 402 |
-| skills | 322 |
-| skill groups | 69 |
-| skill group links | 392 |
+| price rows | 408 |
+| skills | 335 |
+| skill groups | 73 |
+| skill group links | 415 |
 | serious injuries (D66) | 20 |
 | shared specials | 66 |
 | random mutation results (D66) | 36 |
@@ -209,7 +209,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 322 | 152 | 133 | 37 |
+| skills | 335 | 152 | 146 | 37 |
 | hired swords | 72 | 71 | 1 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -318,7 +318,7 @@ Description put right: Quick Thinker (Dwarf Exiled Engineers).
 
 ## Skill groups
 
-`out/skills.json` is 322 skills, one per name; `out/skill-groups.json` is 69 groups holding them (392 links), the five core groups first.
+`out/skills.json` is 335 skills, one per name; `out/skill-groups.json` is 73 groups holding them (415 links), the five core groups first.
 
 ### Merged by name
 
@@ -370,6 +370,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Speed | everyone | intersection | - | Leap, Sprint, Acrobat, Lightning Reflexes, Jump Up, Dodge, Scale Sheer Surfaces |
 | Amazons | Amazons (group) | new group | - | Skink Hunter, Elixir of Life, Mesmerising Dance, Savage Fury, Concealment |
 | Animal | everyone | skill_lists | - | [Animal] Handler, Ride [Animal], Falconer |
+| Araby Smugglers | Araby Smugglers | new group | - | Hit and run, Slave Driver, Pious Fury, Pawnbroker, Black Market, Man of the World |
 | Battle Monks of Cathay | Battle Monks of Cathay | intersection | - | Heron Strike, Swallow Kick, Water Form, Inch Punch |
 | Beastmen Raiders | Beastmen Raiders | intersection | - | Shaggy Hide, Mutant, Fearless, Horned One, Bellowing Roar, Manhater |
 | Black Dwarfs | Black Dwarfs | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull, Chaos Engineer, Tyrant |
@@ -393,6 +394,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Halflings (MIC) | Halflings | new group | Stealthy: the Halfling Thief only. | Stealthy, Quiet as a Mouse, Crude Belch (Halflings MIC), Wizened Halfling, Skilled Huntsman, Layers of Fat, Shifty |
 | Hochland Bandits | Hochland Bandits | intersection | - | Banditry, Hide in Shadows, Jump back, Sniper, Throw voice |
 | Horned Hunters | Horned Hunters | new group | - | Animal Friendship, Infiltration, Foul Odour, Hide in Shadows, Master Trapper, Pathfinder (Horned Hunters) |
+| Khorne Raiders | Khorne Raiders | new group | - | Mutant, Blood of Khorne, Berserker (Khorne Raiders), Massive Muscles, Stromfel's Boon, Master Tanner, Rite of Combat |
 | Knights of the Bitter Moors | Knights of the Bitter Moors | new group | - | Virtue of Purity, Virtue of Discipline, Virtue of Noble Disdain, Virtue of the Impetuous, Virtue of the Squire, Virtue of Valour (Knights of the Bitter Moors) |
 | Large Special | everyone, Large units only | skill_lists | - | Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip |
 | Low Kings | Low Kings | skill_group_learners | - | Backstabber, Pick Locks, Poisoner, Slaver, Stealthy, Cutpurse |
@@ -414,6 +416,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Pit Fighters | Pit Fighters, Pit Fighters (old) | skill_group_learners | - | Bulging Biceps, Force of Will, Arms master, Body Slam, Grizzled Veteran |
 | Protectorate of Sigmar | Protectorate of Sigmar | new group | - | Protection of Sigmar, Utter Determination, Iron Will, Rousing Sermon, Sigmar's Guidance |
 | Restless Dead Lich and Necromancer | The Restless Dead | intersection | - | Corpse Bomb, Deathspeaker, Wraith Touch, Forbidden Rite, Summoner |
+| Sartosan Pirates | Sartosan Pirates | new group | - | Sea Shanty Singer, Cutlass Master, Booming Voice, Hardy Constitution |
 | Saurus | Lizardmen (TC11) | intersection | - | Bellowing Battle Roar, Toughened Hide |
 | Sea Ghosts | Sea Ghosts | skill_group_learners | - | Infiltration, Luck, See in Shadows, Hide in Shadows, Powerful Build, Fey |
 | Shadow Warriors | Shadow Warriors | skill_group_learners | - | See in Shadows, Hide in Shadows, Sniper (Shadow Warriors), Powerful Build, Master of Runes |
@@ -423,7 +426,8 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Skaven Clan Pestilens | Skaven of Clan Pestilens (TC29) | skill_group_learners | - | Black Hunger, Censer Bearer, Rotten Body, Contagious, Ignore Pain |
 | Skaven Metal Mongers | Metal Mongers | skill_lists | - | Tail Fighting, Infiltration, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat |
 | Skink | Lizardmen (TC11) | intersection | - | Infiltration (Skink), Great Hunter |
-| Slayer Cult | Dwarf Slayer Cult | new group | Songster: the Rememberer only. | Ferocious Charge, True Grit, Deathwish, Monster Slayer (Slayer Cult), Berserker (Slayer Cult), Deathblow, Axe Mastery, Thick Skull (Slayer Cult), Songster, Song of Honor, Relentless |
+| Slayer Cult | Dwarf Slayer Cult | new group | Songster: the Rememberer only. Deathwish: Stubbles and Axe Hurlers who become Heroes. | Ferocious Charge, True Grit, Deathwish, Monster Slayer (Slayer Cult), Berserker (Slayer Cult), Deathblow, Axe Mastery, Thick Skull (Slayer Cult), Songster, Song of Honor, Relentless |
+| Slayer Pirates | Slayer Pirates | new group | Deathwish: Landlubbers and Gunners only. | Ferocious Charge, True Grit, Thick Skull, Deathwish, Gloryseeker, Leviathan Slayer |
 | Snotlings | Snotlings | new group | - | Stampede, Achilles' Heel, Worm, Big Bully, Frustratingly Tiny, Mob Master |
 | Sons of Hashut | Sons of Hashut | new group | - | Extra Tough, True Grit, Thick Skull, Unlimited Hatred |
 | Survivors of Strigos | Survivors of Strigos | new group | - | Iron Sinews, Great Thirster, Curse of the Revenant, Dark Arts, Light Fingers, Practiced Arm |
@@ -435,7 +439,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 ### New groups and skills (`new_skill_groups`)
 
-122 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
+135 new skills, each with the setting mordheimer gives its name (else overrides.json's, by "Name (Group)"):
 
 | Skill | Group | Setting | Rules from |
 | --- | --- | --- | --- |
@@ -463,6 +467,11 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Noblesse Obliges | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
 | Torturer | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
 | Duelist | Cursed Cavalcade | mordheim-1c | The Cursed Cavalcade (mordheimer) |
+| Slave Driver | Araby Smugglers | sartosa | Sartosa |
+| Pious Fury | Araby Smugglers | sartosa | Sartosa |
+| Pawnbroker | Araby Smugglers | sartosa | Sartosa |
+| Black Market | Araby Smugglers | sartosa | Sartosa |
+| Man of the World | Araby Smugglers | sartosa | Sartosa |
 | Virtue of Noble Disdain (Grail Companions) | Grail Companions | mordheim-2a | WEB |
 | Virtue of Heroism | Grail Companions | mordheim-2a | WEB |
 | Virtue of Stoicism | Grail Companions | mordheim-2a | WEB |
@@ -515,6 +524,12 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Skilled Huntsman | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Layers of Fat | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
 | Shifty | Halflings (MIC) | mordheim-2a | Mordheimer's Information Centre |
+| Blood of Khorne | Khorne Raiders | sartosa | Sartosa |
+| Berserker (Khorne Raiders) | Khorne Raiders | sartosa | Sartosa |
+| Massive Muscles | Khorne Raiders | sartosa | Sartosa |
+| Stromfel's Boon | Khorne Raiders | sartosa | Sartosa |
+| Master Tanner | Khorne Raiders | sartosa | Sartosa |
+| Rite of Combat | Khorne Raiders | sartosa | Sartosa |
 | Virtue of Valour (Knights of the Bitter Moors) | Knights of the Bitter Moors | mutiny-in-marienburg | Mutiny in Marienburg |
 | Surgeon | Masters of Horror | sylvania | Sylvania Supplement |
 | Alchemist | Masters of Horror | sylvania | Sylvania Supplement |
@@ -540,6 +555,8 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Hypnotic Musk | Skaven Clan Moulder | mordheim-2a | WEB |
 | Subjugator of Mankind | Skaven Clan Moulder | mordheim-2a | WEB |
 | Twistkin | Skaven Clan Moulder | mordheim-2a | WEB |
+| Gloryseeker | Slayer Pirates | sartosa | Sartosa |
+| Leviathan Slayer | Slayer Pirates | sartosa | Sartosa |
 | Stampede | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
 | Achilles' Heel | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
 | Worm | Snotlings | mordheim-2a | Luke ‘Ram Rock Ed First/Auretious Taak’ Roberts and Dave ‘Styrofoamking’ Seidman-Joria |
@@ -588,17 +605,19 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | --- | --- | --- |
 | Extra Tough | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
 | Resource Hunter | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs |
-| True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult, Guild of Disgraced Engineers |
-| Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers |
+| True Grit | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult, Guild of Disgraced Engineers, Slayer Pirates |
+| Thick Skull | Dwarf Treasure Hunters, Dwarf Rangers, Black Dwarfs, Sons of Hashut, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Black Dwarfs, Sons of Hashut, Guild of Disgraced Engineers, Slayer Pirates |
 | Infiltration | Skaven, Dark Elves, Horned Hunters, Shadow Warriors, Night Goblins (MIC), Night Goblins (WEB), Druchii, Ogre Hunting Party | Skaven, Dark Elves, Horned Hunters, Night Goblins (MIC), Druchii, Ogre Hunting Party, Wood Elves of Athel Loren, Channel Rats, Metal Mongers, Sea Ghosts, Underworld Alliance |
 | Foul Odour | Ostlanders | Ostlanders, Horned Hunters |
 | Hide in Shadows | Hochland Bandits, Shadow Warriors, Night Goblins (WEB) | Hochland Bandits, Horned Hunters, Shadow Warriors, Night Goblins (WEB), Sea Ghosts |
 | Sneaky Git | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
 | Netter | Night Goblins (WEB) | Night Goblins (MIC), Night Goblins (WEB) |
+| Hit and run | Arabian Tomb Raiders | Arabian Tomb Raiders, Araby Smugglers |
 | Virtue of the Impetuous | Bretonnian Knights | Bretonnian Knights, Bretonnian Grail Companions, Knights of the Bitter Moors |
 | Bull Rush | Ostlanders | Ostlanders, Channel Rats |
-| Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayer Cult |
+| Ferocious Charge | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Dwarf Slayer Cult | Dwarf Treasure Hunters, Dwarf Rangers, Pit Fighters, Pit Fighters (old), Dwarf Slayer Cult, Slayer Pirates |
 | Stealthy | Halflings | Halflings, Low Kings, Militant Mootlanders |
+| Mutant | Beastmen Raiders | Beastmen Raiders, Khorne Raiders |
 | Virtue of Purity | Bretonnian Knights | Bretonnian Knights, Knights of the Bitter Moors |
 | Virtue of Discipline | Bretonnian Knights | Bretonnian Knights, Knights of the Bitter Moors |
 | Virtue of Noble Disdain | Bretonnian Knights | Bretonnian Knights, Knights of the Bitter Moors |
@@ -607,6 +626,10 @@ Our skills the new groups hold, whose learners change (a skill is learnable by w
 | Maneater | Ogre Hunting Party | Maneaters, Ogre Hunting Party |
 | Protection of Sigmar | Sisters of Sigmar | Sisters of Sigmar, Protectorate of Sigmar |
 | Utter Determination | Sisters of Sigmar | Sisters of Sigmar, Protectorate of Sigmar |
+| Sea Shanty Singer | Pirates | Pirates, Sartosan Pirates |
+| Cutlass Master | Pirates | Pirates, Sartosan Pirates |
+| Booming Voice | Pirates | Pirates, Sartosan Pirates |
+| Hardy Constitution | Pirates | Pirates, Sartosan Pirates |
 | Righteous Aura | Vampire Hunters of Sylvania | Sisters of Sigmar, Vampire Hunters of Sylvania |
 | Fey | Wood Elves of Athel Loren | Wood Elves of Athel Loren, Sea Ghosts |
 
@@ -643,16 +666,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 81 |
-| warband types linked | 87 |
-| fighters (heroes, henchmen) | 537 (278, 259) |
-| henchmen that gain no XP | 73 |
-| henchmen that can't be promoted | 89 |
-| equipment lists | 205 |
-| list lines | 2220 |
-| warband rules | 281 |
+| templates | 88 |
+| warband types linked | 94 |
+| fighters (heroes, henchmen) | 584 (299, 285) |
+| henchmen that gain no XP | 79 |
+| henchmen that can't be promoted | 97 |
+| equipment lists | 225 |
+| list lines | 2488 |
+| warband rules | 310 |
 | upgrades | 116 |
-| the templates' own specials | 650 |
+| the templates' own specials | 702 |
 
 ### List lines
 
@@ -668,7 +691,7 @@ Lines found other than by name or tag:
 | merchant-caravans | pike | Pike (Merchant Caravans) | named for the warband |
 | tileans | pike | Pike (Tileans) | named for the warband |
 
-301 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+371 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Every note was read into who may take the line, a limit or a brace price.
 
@@ -858,7 +881,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Perfect Killer | Trait | the list's text |  |  | 1 | 1 | 1 | 0 |
 | Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
 | Hate Orcs and Goblins | Psychology | the list's text |  |  | 5 | 3 | 0 | 0 |
-| Frenzy | Psychology | the list's text |  |  | 3 | 0 | 1 | 1 |
+| Frenzy | Psychology | the list's text |  |  | 4 | 0 | 1 | 1 |
 | Hate High Elves | Psychology | the list's text |  |  | 0 | 1 | 1 | 0 |
 | Hate Bandits and Outlaws | Psychology | the list's text |  |  | 2 | 0 | 0 | 0 |
 | Hate Spellcasters | Psychology | the list's text |  |  | 2 | 0 | 0 | 0 |
@@ -929,7 +952,7 @@ List prices the pages differ from: none.
 - Perfect Killer: Skaven: Assassin Adept; Dark Elf Assassin; Dijin Katal, the Renegade Assassin.
 - Pawnbroker: Arabian Merchant; Cathayan Merchant.
 - Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Slayer Cult: Rememberer; Dwarf Slayer Cult: Stubble; Dwarf Slayer Cult: Axe Hurler; Dwarf Pathfinder; Dwarf Treasure Hunter (Hates Orcs & Goblins); Runesmith Journeyman.
-- Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Druchii: Witch Elf; Sigmund Spindle, the Harvester of Flesh (Maddened); Bloodletter.
+- Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Druchii: Witch Elf; Khorne Raiders: Cannibal Boy; Sigmund Spindle, the Harvester of Flesh (Maddened); Bloodletter.
 - Hate High Elves: Dark Elf Assassin (Kindred Hatred); Dijin Katal, the Renegade Assassin (Kindred Hatred).
 - Hate Bandits and Outlaws: Horned Hunters: Horned Hunter (Hang the Bandit!); Horned Hunters: Initiate (Hang the Bandit!).
 - Hate Spellcasters: Witch Hunters: Witch Hunter Captain (Burn the Witch!); Witch Hunters: Witch Hunter (Burn the Witch!).
@@ -976,6 +999,7 @@ List prices the pages differ from: none.
 | Immune to Psychology (Plague Cart) | Carnival of Chaos: Plague Cart | Automatically passes every Leadership-based test, rout tests included. |
 | Immune to Psychology (Belandysh) | Belandysh, Condemned Champion of Chen | Automatically passes all Leadership tests. |
 | Immune to Psychology (Ippan Shu) | Grand Master Ippan Shu | Automatically passes all Leadership-based tests. |
+| Immune to Psychology (Madbrains) | Khorne Raiders: Madbrain | He passes any Leadership test he is required to take, and may not be promoted to leader. |
 | Immune to Psychology (Nightmare) | Nightmare | Never takes Leadership tests, and stands still if left leaderless. |
 | Immune to Poison (Plague Bearers) | Carnival of Chaos: Plague Bearer | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |
 | Immune to Poison (Nurglings) | Carnival of Chaos: Nurgling | Immune to diseases too: a Disease Dagger's spares only the Undead and the Possessed. |
@@ -1072,20 +1096,24 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-31 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+38 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
+| araby-smugglers | araby-smugglers | 6 | 0 | 0 | 10 |
+| bretonnian-buccaneers | bretonnian-buccaneers | 7 | 0 | 0 | 9 |
 | bretonnian-grail-companions | bretonnian-grail-companions | 7 | 2 | 3 | 12 |
 | call-of-the-night-haint | call-of-the-night-haint | 8 | 0 | 3 | 14 |
 | channel-rats | channel-rats | 8 | 0 | 2 | 10 |
 | dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
 | druchii | druchii | 8 | 0 | 2 | 11 |
-| dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 10 |
+| dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 11 |
+| estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 9 |
 | fen-guard | fen-guard | 5 | 1 | 4 | 14 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | guild-of-disgraced-engineers | guild-of-disgraced-engineers | 6 | 0 | 2 | 10 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
+| khorne-raiders | khorne-raiders | 6 | 0 | 2 | 14 |
 | knights-of-the-bitter-moors | knights-of-the-bitter-moors | 6 | 0 | 1 | 9 |
 | lords-of-the-marsh | lords-of-the-marsh | 5 | 0 | 0 | 9 |
 | low-kings | low-kings | 7 | 1 | 1 | 10 |
@@ -1097,16 +1125,44 @@ Kept apart from a family's, the effect differing:
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
+| sartosan-pirates | sartosan-pirates | 7 | 0 | 0 | 8 |
 | sea-ghosts | sea-ghosts | 6 | 0 | 0 | 10 |
 | shallows-beasts | shallows-beasts | 7 | 0 | 0 | 10 |
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
+| slayer-pirates | slayer-pirates | 7 | 0 | 3 | 13 |
 | snotlings | snotlings | 8 | 1 | 2 | 10 |
 | sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
 | underworld-alliance | underworld-alliance | 9 | 0 | 0 | 10 |
 | vampire-hunters-of-sylvania | vampire-hunters-of-sylvania | 6 | 1 | 4 | 11 |
+| wasteland-privateers | wasteland-privateers | 7 | 0 | 0 | 10 |
 | watchmen | watchmen | 7 | 0 | 2 | 8 |
 | wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
+
+### Araby Smugglers
+
+- Flag (p2): The skill table's ticks are glyphs the text layer drops: the table was read from p2's image. The Pirate column is ticked for the Rais, the Mate and the Merchant.
+- Flag (p2): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (the Human Pirates PDF says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
+- Flag (p2): The Janissary list's Spear, Halberd, Double-handed weapon and Flail, its Missile Weapons and its Armour are printed at the top of the right column, continuing the left column; read that way.
+- Flag (p2): "Axe (Katar)" at 5 gc is read as our Axe shown under the list's name; we also hold a Katar of our own (5 gc, Rare 4), which this line is not: see the decisions.
+- Flag (p2): The Slave list prints "Cutlass (Sword)" where the Corsair and Janissary lists print "Scimitar (Sword)": as printed, both our Sword at 10 gc.
+- Flag (p1): An Araby Smuggler warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
+- Flag (p3): The Janissary's entry reads "A Bedouin may be equipped with weapons and armour chosen from the Jannisary Equipment list": read as the Janissary, the only fighter the list serves.
+- Flag (p1): "The maximum number of Crew in the warband may never exceed 15": read as the warband's maximum of 15 models.
+- Flag (p4): The Merchant's Pawnbroker skill shares its name with our shared special Pawnbroker, which is a hired sword's rule: see the decisions.
+- Flag (p3): Fine Craftmenship is the PDF's spelling of the Merchant's rule, kept as printed.
+
+### Bretonnian Buccaneers
+
+- Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
+- Flag (p3): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
+- Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
+- Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
+- Flag (p5): Swabbies have no hire price (they are captured, not hired): their cost is 0 gc.
+- Flag (p3): The Swivel Gun's line is 65 gc, Rare 8, one per warband; our Swivel Gun is 65 gc, Rare 8 already, so the line only carries the limit.
+- Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
+- Flag (p2): "at warband creation, you may purchase dueling pistols for 25gc each": list prices are starting prices in the app, so the Duelling Pistol's line is 25 gc (50 for a brace) and no rule repeats it.
+- Flag (p2): The rule names "a Bretonnian hero", so the short-range change is written for Heroes only, as printed.
 
 ### Bretonnian Grail Companions
 
@@ -1212,6 +1268,19 @@ Kept apart from a family's, the effect differing:
 - Flag (p6): Throwing Axes (15 gc, Common for Slayers, Rare 5 for others; 6" range, Thrown Weapon, Axe Thrower) and Whirling Blades (30 gc a pair, Rare 9, Slayers only; Cannot be parried, Cutting Edge, Pair, Dance of Doom, Whirlwind of Death) are stubs, their rules on p6. Throwing Axes' Axe Thrower lets a Hero with Shooting skills learn a skill, Axe Thrower, which isn't imported: it waits for the item's rules.
 - Flag (p6): The Dwarf Axe (15 gc, Rare 8) is our Dwarf Axe; the PDF adds that one parry is the most a model makes, two Dwarf axes giving a re-roll of a failed parry.
 - Flag (p5): The Rite of Dragonslaying's Sea Dragon Cloak is printed with a 5+ save in close combat and 4+ against missiles, as ours.
+- Flag (p5): Deathwish is the Slayer Pirates' skill too (Sartosa): one skill with the same words in both groups, so who may take it moved from its description to this group's note (William, 6 Nov 2026, of the Songster).
+
+### Estalian Corsairs
+
+- Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
+- Flag (p3): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
+- Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
+- Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
+- Flag (p5): Swabbies have no hire price (they are captured, not hired): their cost is 0 gc.
+- Flag (p3): The Swivel Gun's line is 65 gc, Rare 8, one per warband; our Swivel Gun is 65 gc, Rare 8 already, so the line only carries the limit.
+- Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
+- Flag (p2): Estalians add the Rapier and Heavy Armour to the Pirate Equipment list and lose the Crossbow, so the list carries the change and no warband rule repeats it.
+- Flag (p2): "All Estalian Captains and Champions start off with the skill Expert Swordsman": read as the Captain and the Ship's Mates, who start with our Expert Swordsman skill.
 
 ### Fen Guard
 
@@ -1278,6 +1347,25 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): Henchmen group sizes are not given for the Halfling Scouts, Halfling Warriors or Piggies: left empty (no most per group). The Village Ogre's is 1, as there may be only one.
 - Flag (p1): A Halfling warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p4): The special skills differ from Mutiny in Marienburg's Halfling skills (Crude belch, Stealthy, Tea-leaf, Flan-eater, Looter, Taunt), now the Militant Mootlanders' group, which the Halflings don't learn from (William, 6 Nov 2026). Halflings (MIC) is their group; its Crude Belch is named apart from the Mootlanders' (theirs gives -1 to hit for the turn, not a lost first attack). Its Stealthy is the Mootlanders' Stealthy, name and effect, so it links ours; our Stealthy being shared, the PDF heading's "Halfling Thieves Only" is the group's note.
+
+### Khorne Raiders
+
+- Stub: Hellblade, 35 gc, Rare 8; its rules are on p2.
+- Stub: Throwing Axes, 15 gc, Common; its rules are on p2.
+- Flag (p2): The skill table is text (X ticks), read from the -layout text. The Dread Captain has no Shooting tick; the Pirate column, which this PDF does not print a skill list for, is ticked for the Dread Captain and the Cannibal Boys and is left out: see the decisions.
+- Flag (p3): The Dread Captain's profile is M4 WS4 BS4 S4 T3 W1 I4 A1 Ld8 and the Quartermaster's M4 WS4 BS0 S4 T4 W1 I2 A2 Ld7: as printed.
+- Flag (p2): The Hellblade is "(Captain only)" on the Pirate list and carries no such note on the Madbrain list, which the Quartermasters, Madbrains and Flayerkin buy from: as printed, so only the Pirate list's line is the Captain's.
+- Flag (p2): The Steel Whip's line is 15 gc; our Steel Whip is 10 gc. The line price stands, ours is unchanged.
+- Flag (p2): "Harpoon (Javelin)" at 5 gc is our Javelins shown under the list's name.
+- Flag (p2): The Madbrain list's armour is "(Quartermasters & Flayerkin Only)", so each armour line carries that note.
+- Flag (p2): Rope & Hook sits under "Miscellaneous Equipment (Heroes Only)", so its line carries the Heroes only note.
+- Flag (p2): The Madbrain's Immune to Psychology says he passes any Leadership test he takes, which our shared Immune to Psychology does not: kept apart as "Immune to Psychology (Madbrains)".
+- Flag (p2): Master Tanner's Leather Cape is on no equipment list and has no price, so it is not an item of ours; the skill carries it.
+- Flag (p2): Mutant is our skill of that name ("The Beastman may buy one mutation"), which the PDF words for a Khorne Hero buying one mutation from the Possessed list, once.
+- Flag (p2): The PDF spells the skill "Beserker"; ours of that effect is named Berserker (Khorne Raiders), as our Berserker (+1 to hit when charging) is another rule.
+- Flag (p2): A Khorne Raider warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race, the Flayerkin included.
+- Flag (p3): The Flayerkin takes only armour from the Madbrain list; our lists are taken whole, so his fixed kit says so and his Hooks rule bars other weapons.
+- Flag (p2): Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Khorne Raiders buy them at 15 gc; neither PDF prints rules for them.
 
 ### Knights of the Bitter Moors
 
@@ -1450,6 +1538,17 @@ Kept apart from a family's, the effect differing:
 - Flag (p11): No group sizes are printed.
 - Flag (p12): The special skills are a new group, Protectorate of Sigmar. Protection of Sigmar and Utter Determination are ours, name and effect; our Utter Determination says "Only the Matriarch or the Warrior Priest" (William, 6 Nov 2026: "Just have one utter determination and say matriarch/warrior priest"). Unshakeable Faith (immune to fear) is the Vampire Hunters' Iron Will, one skill named Iron Will in both groups ("yes go for iron will"); it differs from our Fearless (fear and All Alone). Rousing Sermon and Sigmar's Guidance (printed "Sigmars Guidance") are like nothing of ours.
 
+### Sartosan Pirates
+
+- Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
+- Flag (p3): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
+- Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
+- Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
+- Flag (p5): Swabbies have no hire price (they are captured, not hired): their cost is 0 gc.
+- Flag (p3): The Swivel Gun's line is 65 gc, Rare 8, one per warband; our Swivel Gun is 65 gc, Rare 8 already, so the line only carries the limit.
+- Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
+- Flag (p2): The four 'Old' Pirate Skills are our Sea Shanty Singer, Cutlass Master, Booming Voice and Hardy Constitution, the same words; they are the Sartosan Pirates' own group here, while our Pirates group (the 1b Pirate warband's) holds them with Sea Legs and Swashbuckler besides.
+
 ### Sea Ghosts
 
 - Flag (p3): A Sea Elf Rangers warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes are printed. No maximum profile is printed: the Elves take our Elf race.
@@ -1489,6 +1588,26 @@ Kept apart from a family's, the effect differing:
 - Flag (p6): It's Alive!: each Rat Ogre must buy a mutation when hired, but upgrades are for heroes only, so it is his rule's text and the player adds the mutation from Boons & Banes.
 - Flag (p6): The Rat Ogre's Stupidity depends on a Clan Moulder Hero within 6", unlike the Skaven's and Clan Pestilens' (a Skaven Hero): kept apart as Stupidity (Clan Moulder Rat Ogre).
 - Flag (p2): The scan's OCR garbles the dotted price lines and every profile: the profiles and the skill table were read from page images (pages 4, 5 and 6); the list prices read cleanly from the OCR.
+
+### Slayer Pirates
+
+- Stub: Dwarven Pistol, 30 gc, Common; its rules are on p2.
+- Stub: Double-barreled Blunderbuss, 60 gc, Common; its rules are on p2.
+- Stub: Throwing Axes, 15 gc, Common; its rules are on p2.
+- Price row (p2): our dwarf axe for slayer-pirates, Rare 9.
+- Flag (p2): The skill table is text (X ticks), read from the -layout text. The Pirate column, which this PDF does not print a skill list for, is ticked for all three Heroes and is left out: see the decisions.
+- Flag (p1): Sea Trollslayers are listed with the Heroes' starting experience (0) but have no row in the skill table and no limit on their number, so they are read as henchmen.
+- Flag (p1): A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Dwarf race.
+- Flag (p1): Thaggi are described as dwarfs that humans also fill out: they take our Dwarf race, as their profile (M3 T4) is a dwarf's.
+- Flag (p4): Thaggi have no hire price (they are given to the warband, not hired): their cost is 0 gc.
+- Flag (p1): Up Close is printed as "Only Gunners and the Master gunners may only learn Shooting Skills, and may any thrown weapons and gunpowder weapons (no other types.)": read as the Gunners and the Master Gunner alone learning Shooting skills and using thrown and gunpowder weapons.
+- Flag (p2): The Dwarf Axe's line is 15 gc, Rare 9; ours is 15 gc, Rare 8, which is unchanged, so the warband buys from a price row of its own at Rare 9.
+- Flag (p2): The Dwarven Pistol (30 gc, 60 for a brace) and the Double-barreled Blunderbuss (60 gc) are stubs: the PDF prints no rules and we hold neither. The Gunner list sells the Dueling Pistol beside the Dwarven Pistol, so they are not the same weapon.
+- Flag (p2): The Pirate and Gunner lists print "Armour . . . None". The Thaggi list's Missile Weapons and Armour (Buckler 5 gc, Toughened Leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, which matches the warband rule that Slayers wear no armour.
+- Flag (p2): "Harpoon (Javelin)" at 5 gc is our Javelins, and "Throwing Axe" at 15 gc our Throwing Axes, each shown under the list's name.
+- Flag (p3): Hard to Kill, Hard Head, Grudgebearers and Deathwish are printed as the warband's rules, and are kept as warband rules rather than copied onto each fighter.
+- Flag (p2): Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Slayer Pirates buy them at 15 gc; neither PDF prints rules for them.
+- Flag (p3): The PDF spells the skill "Death Wish"; it is the Dwarf Slayer Cult's Deathwish, one skill with the same words in both groups, and who may take it sits in each group's note.
 
 ### Snotlings
 
@@ -1573,6 +1692,19 @@ Kept apart from a family's, the effect differing:
 - Flag (p12): No group sizes are printed.
 - Flag (p13): Funerary Rites differ from ours in their Difficulties (Sanctity of the Fallen 5, ours 7; Do you know who I am? 9, ours 7; I am death! 7, ours 8): a new lore, Funerary Rites (Vampire Hunters of Sylvania).
 
+### Wasteland Privateers
+
+- Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
+- Flag (p3): The 'Pirate' skill column names the New Pirate Skill list, which this PDF does not print (it says it lives in the Sartosa campaign rules). No skill group of ours stands for it, so the column is left out: see the decisions.
+- Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
+- Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
+- Flag (p5): Swabbies have no hire price (they are captured, not hired): their cost is 0 gc.
+- Flag (p3): The Swivel Gun's line is 65 gc, Rare 8, one per warband; our Swivel Gun is 65 gc, Rare 8 already, so the line only carries the limit.
+- Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
+- Flag (p2): The Handgun is added to the Pirate Equipment list for Wastelanders, so the list carries it and no warband rule repeats it.
+- Flag (p2): "When purchasing Superior Gunpowder, it counts as Rarity 5": read as our Superior Blackpowder (30 gc, Rare 11), which no line of theirs sells, so it stays a warband rule.
+- Flag (p2): "any Henchmen Gunners may fire and reload Handguns in the same turn": the rule is the warband's, as the Gunner group is the only one it names.
+
 ### Watchmen
 
 - Stub: Hunting Bird, 25 gc, Rare 12; its rules are on p3.
@@ -1607,6 +1739,8 @@ A fighter's or dramatis persona's own rule that only pointed to a skill, or said
 - Battle Monks of Cathay: Emissary: Ride Horse, starts with Ride [Animal].
 - Bretonnian Chapel Guard: Questing Knight: Ride, starts with Ride [Animal].
 - Carnival of Chaos: Brute: Unnatural Strength, starts with Strongman.
+- Estalian Corsairs: Pirate Captain: Expert Swordsman, starts with Expert Swordsman.
+- Estalian Corsairs: Ship's Mate: Expert Swordsman, starts with Expert Swordsman.
 - Forest Goblins: Chieftain: Ride Spiders, starts with Ride [Animal].
 - Gunnery School of Nuln: Senior Gunnery Officer: Hunter, starts with Hunter.
 - Gunnery School of Nuln: Marksmen: Quick Reload, starts with Hunter.
