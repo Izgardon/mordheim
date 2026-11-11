@@ -79,6 +79,10 @@ class HenchmenGroupItem(models.Model):
 
     class Meta:
         db_table = "henchmen_group_item"
+        # Postgres may hand back an unordered read in any order, so a group's kit rendered differently between
+        # loads and test_roster_promote failed at random on the order of two rows. loadouts.py and members.py
+        # already order by id; this makes every other read agree with them.
+        ordering = ["id"]
 
     def __str__(self):
         return f"{self.henchmen_group_id}:{self.item_id}"
