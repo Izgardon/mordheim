@@ -90,16 +90,21 @@ bash scripts/cloud/dev.sh start                       # the QA app on :5173; sto
 8. **Merge** (William's standing permission: `docs/working-notes.md`, "Production database").
    1. Re-run both gates.
    2. Fast-forward main (`git merge --ff-only <branch>`).
-   3. Check prod's users and campaigns in Neon (the Neon connector): project `damp-silence-20519897`, branch
-      `br-late-breeze-b9e8ksw2`, database `neondb`.
-   4. If anything is worth keeping, take an undo branch first (`create_branch`, no compute).
-   5. Wipe prod: `DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO neondb_owner;
-      GRANT ALL ON SCHEMA public TO public;`.
-   6. Push main. Render migrates and reseeds on boot, which takes about 10 minutes.
-   7. Check that prod's counts match the local seed's (templates, races, skills, items, specials, bestiary), that
-      `https://mordheim-1.onrender.com/api/health/` answers ok, and that the commit's Vercel status is success
+   3. Push main. Render deploys and migrates on boot; it does **not** pick up new catalogue rows (below).
+   4. Check `https://mordheim-1.onrender.com/api/health/` answers ok and the commit's Vercel status is success
       (`gh api repos/Izgardon/mordheim/commits/<sha>/status`).
-   8. Reseed the local database: drop and recreate it, then `migrate`, `seed_all` and `seed_demo_campaign`.
+   5. Reseed the local database: drop and recreate it, then `migrate`, `seed_all` and `seed_demo_campaign`.
+
+   **Don't wipe prod per batch** (William, 11 Nov 2026: "do whatever you think is best regarding seeding, i dont
+   need to use the app and its not being used anywhere right now"). A batch adds catalogue rows, and the boot seed
+   skips a catalogue that already has a book hired sword, so **prod's catalogue falls behind main on purpose**: the
+   code is current, the warbands are not. That costs nothing while nobody plays on it, and it saves a wipe, a
+   ten-minute reseed, the count checks and a demo re-run on every batch. Say in the merge report how far behind
+   prod is.
+
+   **Refresh prod when it next matters** — before William demonstrates it, before anyone plays, or when the PDF
+   work ends — with the wipe in `docs/working-notes.md`, once for all the batches since the last refresh. The live
+   demo is re-run after each refresh, which only William can do.
    9. Strike the batch off `remaining.md`, and tell William the live demo needs re-running.
 
 ## Running two agents at once

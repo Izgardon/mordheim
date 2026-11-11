@@ -22,7 +22,11 @@ your control til i say otherwise", and the same day: "Free to merge whatever you
 - Backend on Render (Starter, Frankfurt): `https://mordheim-1.onrender.com`. Frontend on Vercel:
   `https://mordheim-eight.vercel.app`. Both deploy from `main`.
 
-**Wiping prod** (when a merge changes seeded data or the catalogue: the boot seed skips a complete catalogue):
+**Wiping prod** (the boot seed skips a complete catalogue, so new rows only reach prod through a wipe). **Not on
+every merge** (William, 11 Nov 2026: "do whatever you think is best regarding seeding, i dont need to use the app
+and its not being used anywhere right now"): prod's catalogue is allowed to fall behind main while nobody uses the
+app, and is refreshed in one go when it next matters — before a demo, before anyone plays, or at the end of a run
+of batches. The steps:
 1. Check prod's users and campaigns in Neon. Take an undo branch if any are worth keeping.
 2. Run `DROP SCHEMA public CASCADE; CREATE SCHEMA public; GRANT ALL ON SCHEMA public TO neondb_owner;
    GRANT ALL ON SCHEMA public TO public;` on that branch and database.
