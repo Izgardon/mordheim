@@ -617,121 +617,6 @@
       ]
     }
   ],
-  "priceRows": [
-    {
-      "name": "Cat O' Nine Tails",
-      "cost": 3,
-      "rarity": null,
-      "dice": null,
-      "page": 10,
-      "note": "Heroes only"
-    },
-    {
-      "name": "Blunderbuss",
-      "cost": 30,
-      "rarity": 7,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Crossbow",
-      "cost": 25,
-      "rarity": 8,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Crossbow pistol",
-      "cost": 35,
-      "rarity": 11,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Double-barrelled Pistol",
-      "cost": 30,
-      "rarity": 8,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Duelling Pistol",
-      "cost": 30,
-      "rarity": 8,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Handgun",
-      "cost": 35,
-      "rarity": null,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Long Bow",
-      "cost": 15,
-      "rarity": 5,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Pistol",
-      "cost": 15,
-      "rarity": null,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Repeater Crossbow",
-      "cost": 40,
-      "rarity": 10,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Repeater Pistol",
-      "cost": 40,
-      "rarity": 10,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Heavy Armour",
-      "cost": 50,
-      "rarity": 7,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Victuals",
-      "cost": 10,
-      "rarity": null,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Riverboat",
-      "cost": 100,
-      "rarity": 6,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Rowboat",
-      "cost": 40,
-      "rarity": 5,
-      "dice": null,
-      "page": 10
-    },
-    {
-      "name": "Bugman's Ale",
-      "cost": 50,
-      "rarity": 8,
-      "dice": 3,
-      "page": 10
-    }
-  ],
   "aliases": [],
   "stubs": [],
   "flags": [
@@ -770,10 +655,6 @@
     {
       "page": 1,
       "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
-    },
-    {
-      "page": 10,
-      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none."
     }
   ]
 }

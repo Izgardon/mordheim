@@ -24,10 +24,12 @@ snapshot so the template import builds it the same way. A file's own keys:
   (William, 6 Nov 2026, of Experimental Technology: "its a shared item rule that a few items will have"); `ours`, our
   items whose own rule it becomes (the Watchmen's Map, our Mordheim Map's rule for any map: "Make the map rule not
   unique to the items, give it to both marienburg and mordheim map");
-- `priceRows`: `{name, rarity, dice, note, page}`, a price row for the page's type on one of our items its lines sell
-  (the Low Kings' Spiked Gauntlet: William, 6 Nov 2026, "would prefer them being just one item"), at the line's price,
-  or at its own `cost` for an item no line sells (the Wasteland Privateers' Superior Blackpowder, Rare 5 for them:
-  William, 11 Nov 2026, "make superior gunpowder our blackpowder in a new price row");
+- `priceRows`: `{name, rarity, dice, note, page, types}`, a price row for the page's type on one of our items its lines
+  sell (the Low Kings' Spiked Gauntlet: William, 6 Nov 2026, "would prefer them being just one item"), at the line's
+  price, or at its own `cost` for an item no line sells (the Wasteland Privateers' Superior Blackpowder, Rare 5 for
+  them: William, 11 Nov 2026, "make superior gunpowder our blackpowder in a new price row"). `types`, the warband type
+  slugs it serves (the page's own among them), is one row for several types: a setting's shop list is declared once
+  (Sartosa's, on `sartosan-pirates.json`, for its eleven types) rather than copied into each page;
 - `skillGroup` (`{name, new, note}`) and `specialSkillsList`: the group the heroes' Special tick names and its skills,
   each `{name, description}` in our words (a new group's new skill) or `{name, ours}` (one of our skills); neither for
   a warband with no Special column (the Outlaws of Stirwood Forest, Redux). Who of the warband may take a skill opens
@@ -211,11 +213,22 @@ def give_page_rules(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]
                 by_name[name]["rules"] = [{"rule": slugify(row["name"])}]
 
 
+def row_types(slug: str, page: dict[str, Any], entry: dict[str, Any], known: set[str]) -> list[str]:
+    """The warband types a price row serves: the ones it names (`types`: Sartosa's shop list, declared once for the
+    setting's eleven), else the page's own."""
+    found = list(entry.get("types") or [page[TYPE]])
+    for name in found:
+        if name not in known:
+            raise ValueError(f"pdf-warbands/{slug}.json: the price row's {name!r} is no warband type")
+    return found
+
+
 def add_price_rows(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]], types: list[dict[str, Any]]) -> None:
-    """Each page's `priceRows` added to our items: a row for the page's type at its line's price, with the rarity,
-    dice and note the PDF prints (the Low Kings' Spiked Gauntlet, 15 gc, Rare 7, Enforcer only)."""
+    """Each page's `priceRows` added to our items: a row for the page's type, or for every type it names (`types`),
+    at its line's price, with the rarity, dice, dice multiplier and note the PDF prints (the Low Kings' Spiked
+    Gauntlet, 15 gc, Rare 7, Enforcer only; Sartosa's shop list, one row for its eleven warband types)."""
     index = ItemIndex(items)
-    by_slug = {row["slug"]: row for row in types}
+    known = {row["slug"] for row in types}
     for slug, page in pages.items():
         for entry in page.get("priceRows") or []:
             item, _how = index.find(entry["name"])
@@ -223,7 +236,7 @@ def add_price_rows(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]]
                 raise ValueError(f"pdf-warbands/{slug}.json: the price row's {entry['name']!r} is no item of ours")
             price, note = _stub_cost(slug, page, entry["name"], entry.get("cost"))
             cost = {"cost": price, "dice": entry.get("dice"), "dice_multiplier": None, "cost_note": note}
-            warbands = [{"type": by_slug[page[TYPE]]["slug"], "excluded": False}]
+            warbands = [{"type": name, "excluded": False} for name in row_types(slug, page, entry, known)]
             item["availabilities"].append(_row(cost, entry.get("rarity"), warbands, entry.get("note") or ""))
 
 
@@ -369,7 +382,8 @@ def render_pdf(pages: dict[str, dict[str, Any]], stubs: list[dict[str, Any]]) ->
         for row in page.get("priceRows") or []:
             rarity = f"Rare {row['rarity']}" if row.get("rarity") else "Common"
             note = f", {_cell(row['note'])}" if row.get("note") else ""
-            lines.append(f"- Price row (p{row['page']}): our {_cell(row['name'])} for {page[TYPE]}, {rarity}{note}.")
+            who = ", ".join(row.get("types") or [page[TYPE]])
+            lines.append(f"- Price row (p{row['page']}): our {_cell(row['name'])} for {who}, {rarity}{note}.")
         for flag in page.get("flags") or []:
             lines.append(f"- Flag (p{flag['page']}): {_cell(flag['what'])}")
     return "\n".join(lines) + "\n"

@@ -116,7 +116,9 @@ Cutlass and Great Scimitar are stubs with no rules, and the Mage and Street Mage
      the same, the Ratling Gun's Move or fire; else its own name and text), a rule several items carry is one of the
      page's `itemRules` (Experimental Technology; its `ours` our items whose own rule it becomes, the Mordheim Map's
      Map), and one of our items the warband buys from its own row is a `priceRows` entry (the Low Kings' Spiked
-     Gauntlet, 15 gc, Rare 7, Enforcer only).
+     Gauntlet, 15 gc, Rare 7, Enforcer only). A price row serves the page's own type, or every type its `types`
+     names (its own among them), so a setting's shop list is declared once (Sartosa's, in `sartosan-pirates.json`,
+     for the setting's eleven types).
      One of our Mutiny in Marienburg items with no rules takes the PDF's in `apps/items/data/mim-items.json` (its
      `properties`, `needs_rules` false: the Armour of the Wildwood, the Stromfels Heart).
 
@@ -174,8 +176,8 @@ Each answers a question a batch raised; follow them without asking again.
   details which is what we want"). A warband PDF's item details stand, and a stub it leaves bare is filled when
   that PDF is read.
 - **A setting's shop list re-prices our items for that setting only:** price rows on the warband types of that
-  setting (`priceRows`), with our global prices and rarities untouched (William, 11 Nov 2026; Sartosa's Equipment
-  shop list).
+  setting (`priceRows`, one row naming them all in `types`, declared on one page), with our global prices and
+  rarities untouched (William, 11 Nov 2026; Sartosa's Equipment shop list).
 - **Never fetch a setting's own PDFs to fill a gap** (William, 11 Nov 2026). Read the warband PDFs, stub whatever is
   missing, a fighter left with no skill list included, and fill it when that setting's batch comes. The Sartosa
   skills and equipment PDFs already read stay as they are.

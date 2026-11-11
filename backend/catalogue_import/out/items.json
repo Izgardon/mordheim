@@ -1838,165 +1838,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -2538,165 +2418,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -2977,165 +2737,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -3230,165 +2870,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 30,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -3530,165 +3050,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -4019,165 +3419,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -4325,165 +3605,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -5269,165 +4429,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": "Heroes only"
-      },
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -8763,165 +7803,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -12559,165 +11479,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -12780,165 +11580,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 6,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -14284,165 +12964,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -15226,165 +13786,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 25,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -15450,165 +13890,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 35,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -15964,165 +14284,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 15,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 5,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false
@@ -16232,165 +14432,45 @@
         "for_everyone": false,
         "warbands": [
           {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
             "type": "araby-smugglers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "bretonnian-buccaneers",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "estalian-corsairs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "ghost-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "khorne-raiders",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "lothern-sea-patrol",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "orc-pirates-and-savage-orcs",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "pirates-of-the-cathayan-sea",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "sartosan-pirates",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "slayer-pirates",
             "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
+          },
           {
             "type": "wasteland-privateers",
             "excluded": false

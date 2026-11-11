@@ -629,14 +629,40 @@
       "cost": 3,
       "rarity": null,
       "dice": null,
-      "page": 10,
-      "note": "Heroes only"
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "note": "Heroes only",
+      "page": 10
     },
     {
       "name": "Blunderbuss",
       "cost": 30,
       "rarity": 7,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -644,6 +670,19 @@
       "cost": 25,
       "rarity": 8,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -651,6 +690,19 @@
       "cost": 35,
       "rarity": 11,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -658,6 +710,19 @@
       "cost": 30,
       "rarity": 8,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -665,6 +730,19 @@
       "cost": 30,
       "rarity": 8,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -672,6 +750,19 @@
       "cost": 35,
       "rarity": null,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -679,6 +770,19 @@
       "cost": 15,
       "rarity": 5,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -686,6 +790,19 @@
       "cost": 15,
       "rarity": null,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -693,6 +810,19 @@
       "cost": 40,
       "rarity": 10,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -700,6 +830,19 @@
       "cost": 40,
       "rarity": 10,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -707,6 +850,19 @@
       "cost": 50,
       "rarity": 7,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -714,6 +870,19 @@
       "cost": 10,
       "rarity": null,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -721,6 +890,19 @@
       "cost": 100,
       "rarity": 6,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -728,6 +910,19 @@
       "cost": 40,
       "rarity": 5,
       "dice": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     },
     {
@@ -735,6 +930,19 @@
       "cost": 50,
       "rarity": 8,
       "dice": 3,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates-and-savage-orcs",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
       "page": 10
     }
   ],
@@ -775,7 +983,7 @@
     },
     {
       "page": 10,
-      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none."
+      "what": "The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband."
     }
   ],
   "sharedSkillGroup": {

@@ -10,7 +10,7 @@ models; every list a fighter names there, and every list someone's; every line's
 every item, alias, skill group, skill (a fighter's starting skills among them), race, spell lore and warband type it
 names matched to our catalogue, or a
 declared stub that matches nothing of ours; a stub's rules a shared item rule of ours (or a page's) or its own name and
-text; and a price row's item ours and named by a line; and its upgrade groups' shape (`mutations`).
+text; and a price row's item ours and named by a line, and the warband types it serves ours; and its upgrade groups' shape (`mutations`).
 """
 
 import copy
@@ -126,6 +126,7 @@ PRICE_ROW: Spec = {
     "cost": ((int, type(None)), False),  # a row for an item no line of the page sells
     "rarity": ((int, type(None)), True),
     "dice": ((int, type(None)), True),
+    "types": (list, False),  # the warband types it serves, the page's own among them (a setting's shop list)
     "note": (str, False),
     "page": (int, True),
 }
@@ -333,6 +334,13 @@ def _items(page: dict[str, Any], catalogue: Catalogue, found: Found) -> None:
             found.problems.append(f"price row {row['name']!r}: no item of ours (a stub has its own row)")
         elif row.get("cost") is None and norm_name(row["name"]) not in line_names:
             found.problems.append(f"price row {row['name']!r}: no line names it, and it has no cost of its own")
+        found.problems += [
+            f"price row {row['name']!r}: no warband type {slug!r}"
+            for slug in row.get("types") or []
+            if slug not in catalogue.types
+        ]
+        if row.get("types") and page["warbandType"] not in row["types"]:
+            found.problems.append(f"price row {row['name']!r}: the page's own type isn't one of its types")
     found.problems += [
         f"alias {row['pdf']!r}: no line" for row in page["aliases"] if norm_name(row["pdf"]) not in raw_names
     ]

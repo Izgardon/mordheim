@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 243 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 624 |
+| price rows | 464 |
 | skills | 423 |
 | skill groups | 94 |
 | skill group links | 532 |
@@ -1250,12 +1250,12 @@ Kept apart from a family's, the effect differing:
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
-| araby-smugglers | araby-smugglers | 6 | 0 | 0 | 11 |
+| araby-smugglers | araby-smugglers | 6 | 0 | 0 | 10 |
 | arabyan-nomads | arabyan-nomads | 6 | 3 | 4 | 7 |
 | arabyan-theives | arabyan-theives | 5 | 3 | 3 | 6 |
 | blood-dragons | blood-dragons | 6 | 0 | 0 | 9 |
 | bretonnian-brigands | bretonnian-brigands | 6 | 0 | 0 | 9 |
-| bretonnian-buccaneers | bretonnian-buccaneers | 7 | 0 | 0 | 10 |
+| bretonnian-buccaneers | bretonnian-buccaneers | 7 | 0 | 0 | 9 |
 | bretonnian-grail-companions | bretonnian-grail-companions | 7 | 2 | 3 | 12 |
 | bretonnian-knights-errant | bretonnian-knights-errant | 2 | 0 | 0 | 8 |
 | call-of-the-night-haint | call-of-the-night-haint | 8 | 0 | 3 | 14 |
@@ -1267,19 +1267,19 @@ Kept apart from a family's, the effect differing:
 | dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
 | druchii | druchii | 8 | 0 | 2 | 11 |
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 2 | 12 |
-| estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 10 |
+| estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 9 |
 | fen-guard | fen-guard | 5 | 1 | 4 | 14 |
-| ghost-pirates | ghost-pirates | 7 | 0 | 1 | 15 |
+| ghost-pirates | ghost-pirates | 7 | 0 | 1 | 14 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | guild-of-disgraced-engineers | guild-of-disgraced-engineers | 6 | 0 | 2 | 10 |
 | halflings | halflings | 8 | 2 | 0 | 7 |
 | hobgoblins | hobgoblins | 6 | 1 | 1 | 8 |
 | house-guard | house-guard | 6 | 1 | 1 | 10 |
-| khorne-raiders | khorne-raiders | 6 | 0 | 2 | 17 |
+| khorne-raiders | khorne-raiders | 6 | 0 | 2 | 16 |
 | knights-of-the-bitter-moors | knights-of-the-bitter-moors | 6 | 0 | 1 | 9 |
 | lahmian | lahmian | 10 | 3 | 1 | 10 |
 | lords-of-the-marsh | lords-of-the-marsh | 5 | 0 | 0 | 9 |
-| lothern-sea-patrol | lothern-sea-patrol | 7 | 0 | 0 | 13 |
+| lothern-sea-patrol | lothern-sea-patrol | 7 | 0 | 0 | 12 |
 | low-kings | low-kings | 7 | 1 | 1 | 10 |
 | mages | mages | 5 | 1 | 0 | 10 |
 | masters-of-horror | masters-of-horror | 7 | 1 | 3 | 11 |
@@ -1290,9 +1290,9 @@ Kept apart from a family's, the effect differing:
 | necromancer | necromancer | 6 | 3 | 4 | 9 |
 | nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
-| orc-pirates-and-savage-orcs | orc-pirates-and-savage-orcs | 8 | 0 | 2 | 14 |
+| orc-pirates-and-savage-orcs | orc-pirates-and-savage-orcs | 8 | 0 | 2 | 13 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
-| pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 13 |
+| pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 12 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
 | sartosan-pirates | sartosan-pirates | 7 | 0 | 0 | 9 |
 | sea-ghosts | sea-ghosts | 6 | 0 | 0 | 10 |
@@ -1301,7 +1301,7 @@ Kept apart from a family's, the effect differing:
 | skaven-of-clan-moulder | skaven-of-clan-moulder | 7 | 0 | 3 | 8 |
 | skaven-of-clan-pestilens-mou | skaven-of-clan-pestilens-mou | 6 | 0 | 0 | 13 |
 | skaven-of-clan-pristekk | skaven-of-clan-pristekk | 7 | 0 | 3 | 9 |
-| slayer-pirates | slayer-pirates | 7 | 0 | 3 | 19 |
+| slayer-pirates | slayer-pirates | 7 | 0 | 3 | 18 |
 | snotlings | snotlings | 8 | 1 | 2 | 10 |
 | sorcerous-society | sorcerous-society | 5 | 0 | 2 | 10 |
 | survivors-of-strigos | survivors-of-strigos | 6 | 2 | 4 | 11 |
@@ -1309,7 +1309,7 @@ Kept apart from a family's, the effect differing:
 | the-lost | the-lost | 6 | 0 | 0 | 10 |
 | underworld-alliance | underworld-alliance | 9 | 0 | 0 | 10 |
 | vampire-hunters-of-sylvania | vampire-hunters-of-sylvania | 6 | 1 | 4 | 11 |
-| wasteland-privateers | wasteland-privateers | 7 | 0 | 0 | 11 |
+| wasteland-privateers | wasteland-privateers | 7 | 0 | 0 | 10 |
 | watchmen | watchmen | 7 | 0 | 2 | 8 |
 | wood-elves-of-arden | wood-elves-of-arden | 6 | 0 | 0 | 7 |
 | wood-elves-of-athel-loren | wood-elves-of-athel-loren | 5 | 0 | 0 | 10 |
@@ -1317,22 +1317,6 @@ Kept apart from a family's, the effect differing:
 
 ### Araby Smugglers
 
-- Price row (p10): our Cat O' Nine Tails for araby-smugglers, Common, Heroes only.
-- Price row (p10): our Blunderbuss for araby-smugglers, Rare 7.
-- Price row (p10): our Crossbow for araby-smugglers, Rare 8.
-- Price row (p10): our Crossbow pistol for araby-smugglers, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for araby-smugglers, Rare 8.
-- Price row (p10): our Duelling Pistol for araby-smugglers, Rare 8.
-- Price row (p10): our Handgun for araby-smugglers, Common.
-- Price row (p10): our Long Bow for araby-smugglers, Rare 5.
-- Price row (p10): our Pistol for araby-smugglers, Common.
-- Price row (p10): our Repeater Crossbow for araby-smugglers, Rare 10.
-- Price row (p10): our Repeater Pistol for araby-smugglers, Rare 10.
-- Price row (p10): our Heavy Armour for araby-smugglers, Rare 7.
-- Price row (p10): our Victuals for araby-smugglers, Common.
-- Price row (p10): our Riverboat for araby-smugglers, Rare 6.
-- Price row (p10): our Rowboat for araby-smugglers, Rare 5.
-- Price row (p10): our Bugman's Ale for araby-smugglers, Rare 8.
 - Flag (p2): The skill table's ticks are glyphs the text layer drops: the table was read from p2's image. The Pirate column is ticked for the Rais, the Mate and the Merchant.
 - Flag (p2): The Janissary list's Spear, Halberd, Double-handed weapon and Flail, its Missile Weapons and its Armour are printed at the top of the right column, continuing the left column; read that way.
 - Flag (p2): "Axe (Katar)" at 5 gc is read as our Axe shown under the list's name; we also hold a Katar of our own (5 gc, Rare 4), which this line is not: see the decisions.
@@ -1343,7 +1327,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p4): The Merchant's Pawnbroker skill shares its name with our shared special Pawnbroker, which is a hired sword's rule: see the decisions.
 - Flag (p3): Fine Craftmenship is the PDF's spelling of the Merchant's rule, kept as printed.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Arabyan Nomads
 
@@ -1403,22 +1386,6 @@ Kept apart from a family's, the effect differing:
 
 ### Bretonnian Buccaneers
 
-- Price row (p10): our Cat O' Nine Tails for bretonnian-buccaneers, Common, Heroes only.
-- Price row (p10): our Blunderbuss for bretonnian-buccaneers, Rare 7.
-- Price row (p10): our Crossbow for bretonnian-buccaneers, Rare 8.
-- Price row (p10): our Crossbow pistol for bretonnian-buccaneers, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for bretonnian-buccaneers, Rare 8.
-- Price row (p10): our Duelling Pistol for bretonnian-buccaneers, Rare 8.
-- Price row (p10): our Handgun for bretonnian-buccaneers, Common.
-- Price row (p10): our Long Bow for bretonnian-buccaneers, Rare 5.
-- Price row (p10): our Pistol for bretonnian-buccaneers, Common.
-- Price row (p10): our Repeater Crossbow for bretonnian-buccaneers, Rare 10.
-- Price row (p10): our Repeater Pistol for bretonnian-buccaneers, Rare 10.
-- Price row (p10): our Heavy Armour for bretonnian-buccaneers, Rare 7.
-- Price row (p10): our Victuals for bretonnian-buccaneers, Common.
-- Price row (p10): our Riverboat for bretonnian-buccaneers, Rare 6.
-- Price row (p10): our Rowboat for bretonnian-buccaneers, Rare 5.
-- Price row (p10): our Bugman's Ale for bretonnian-buccaneers, Rare 8.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -1428,7 +1395,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): "at warband creation, you may purchase dueling pistols for 25gc each": list prices are starting prices in the app, so the Duelling Pistol's line is 25 gc (50 for a brace) and no rule repeats it.
 - Flag (p2): The rule names "a Bretonnian hero", so the short-range change is written for Heroes only, as printed.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Bretonnian Grail Companions
 
@@ -1612,22 +1578,6 @@ Kept apart from a family's, the effect differing:
 
 ### Estalian Corsairs
 
-- Price row (p10): our Cat O' Nine Tails for estalian-corsairs, Common, Heroes only.
-- Price row (p10): our Blunderbuss for estalian-corsairs, Rare 7.
-- Price row (p10): our Crossbow for estalian-corsairs, Rare 8.
-- Price row (p10): our Crossbow pistol for estalian-corsairs, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for estalian-corsairs, Rare 8.
-- Price row (p10): our Duelling Pistol for estalian-corsairs, Rare 8.
-- Price row (p10): our Handgun for estalian-corsairs, Common.
-- Price row (p10): our Long Bow for estalian-corsairs, Rare 5.
-- Price row (p10): our Pistol for estalian-corsairs, Common.
-- Price row (p10): our Repeater Crossbow for estalian-corsairs, Rare 10.
-- Price row (p10): our Repeater Pistol for estalian-corsairs, Rare 10.
-- Price row (p10): our Heavy Armour for estalian-corsairs, Rare 7.
-- Price row (p10): our Victuals for estalian-corsairs, Common.
-- Price row (p10): our Riverboat for estalian-corsairs, Rare 6.
-- Price row (p10): our Rowboat for estalian-corsairs, Rare 5.
-- Price row (p10): our Bugman's Ale for estalian-corsairs, Rare 8.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -1637,7 +1587,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): Estalians add the Rapier and Heavy Armour to the Pirate Equipment list and lose the Crossbow, so the list carries the change and no warband rule repeats it.
 - Flag (p2): "All Estalian Captains and Champions start off with the skill Expert Swordsman": read as the Captain and the Ship's Mates, who start with our Expert Swordsman skill.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Fen Guard
 
@@ -1666,22 +1615,6 @@ Kept apart from a family's, the effect differing:
 ### Ghost Pirates
 
 - Stub: Cursed Pistol, 5 gc, Common; its rules are on p2.
-- Price row (p10): our Cat O' Nine Tails for ghost-pirates, Common, Heroes only.
-- Price row (p10): our Blunderbuss for ghost-pirates, Rare 7.
-- Price row (p10): our Crossbow for ghost-pirates, Rare 8.
-- Price row (p10): our Crossbow pistol for ghost-pirates, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for ghost-pirates, Rare 8.
-- Price row (p10): our Duelling Pistol for ghost-pirates, Rare 8.
-- Price row (p10): our Handgun for ghost-pirates, Common.
-- Price row (p10): our Long Bow for ghost-pirates, Rare 5.
-- Price row (p10): our Pistol for ghost-pirates, Common.
-- Price row (p10): our Repeater Crossbow for ghost-pirates, Rare 10.
-- Price row (p10): our Repeater Pistol for ghost-pirates, Rare 10.
-- Price row (p10): our Heavy Armour for ghost-pirates, Rare 7.
-- Price row (p10): our Victuals for ghost-pirates, Common.
-- Price row (p10): our Riverboat for ghost-pirates, Rare 6.
-- Price row (p10): our Rowboat for ghost-pirates, Rare 5.
-- Price row (p10): our Bugman's Ale for ghost-pirates, Rare 8.
 - Flag (p2): The skill table's ticks are images, so page 2 was opened as an image. Ghost Captain: Combat, Shooting, Academic, Strength, Speed, Pirate. Screaming Ghosts: Combat, Strength, Speed, Pirate. Skeleton Mates: Combat, Shooting, Strength, Pirate. Sea Singer: Academic, Speed. There is no Special column, so the warband has no skill group of its own.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 - Flag (p2): The Ghost Equipment List is set in two columns and the right column repeats seven of the left column's lines (Cutlass, Double-handed weapon, Cursed Pistol, Pistol, Dueling Pistol, Toughened leathers, Helmet, Light armour) with no heading of its own, adding only Blunderbuss 30 gc and Handgun 35 gc. It is read as one list: the left column plus those two.
@@ -1696,7 +1629,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Ghost Captain's profile is M4 WS4 BS3 S4 T3 W1 I4 A1 Ld8 and the Sea Singer's M4 WS2 BS2 S2 T3 W1 I3 A1 Ld7: as printed.
 - Flag (p2): The Boat Hook (8 gc), the Belaying Pin (3 gc) and the Cat O' Nine Tails (8 gc) are ours already, at the Sartosa campaign rules' Equipment PDF prices; the line's Cat O' Nine Tails is 8 gc, which that PDF's trading list prints as 3 gc (open decision 20).
 - Flag (p2): The Blunderbuss line is 30 gc and the Handgun line 35 gc, as the Sartosa Equipment PDF's trading list has them; our Blunderbuss is Rare 9 and our Handgun Rare 8, which are unchanged (open decision 20).
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Grave Robbers
 
@@ -1773,22 +1705,6 @@ Kept apart from a family's, the effect differing:
 
 - Stub: Hellblade, 35 gc, Rare 8; its rules are on p2.
 - Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p2.
-- Price row (p10): our Cat O' Nine Tails for khorne-raiders, Common, Heroes only.
-- Price row (p10): our Blunderbuss for khorne-raiders, Rare 7.
-- Price row (p10): our Crossbow for khorne-raiders, Rare 8.
-- Price row (p10): our Crossbow pistol for khorne-raiders, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for khorne-raiders, Rare 8.
-- Price row (p10): our Duelling Pistol for khorne-raiders, Rare 8.
-- Price row (p10): our Handgun for khorne-raiders, Common.
-- Price row (p10): our Long Bow for khorne-raiders, Rare 5.
-- Price row (p10): our Pistol for khorne-raiders, Common.
-- Price row (p10): our Repeater Crossbow for khorne-raiders, Rare 10.
-- Price row (p10): our Repeater Pistol for khorne-raiders, Rare 10.
-- Price row (p10): our Heavy Armour for khorne-raiders, Rare 7.
-- Price row (p10): our Victuals for khorne-raiders, Common.
-- Price row (p10): our Riverboat for khorne-raiders, Rare 6.
-- Price row (p10): our Rowboat for khorne-raiders, Rare 5.
-- Price row (p10): our Bugman's Ale for khorne-raiders, Rare 8.
 - Flag (p2): The skill table is text (X ticks), read from the -layout text. The Dread Captain has no Shooting tick; the Pirate column, which this PDF does not print a skill list for, is ticked for the Dread Captain and the Cannibal Boys and is left out: see the decisions.
 - Flag (p3): The Dread Captain's profile is M4 WS4 BS4 S4 T3 W1 I4 A1 Ld8 and the Quartermaster's M4 WS4 BS0 S4 T4 W1 I2 A2 Ld7: as printed.
 - Flag (p2): The Hellblade is "(Captain only)" on the Pirate list and carries no such note on the Madbrain list, which the Quartermasters, Madbrains and Flayerkin buy from: as printed, so only the Pirate list's line is the Captain's.
@@ -1805,7 +1721,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): Throwing Axes are a stub of the Dwarf Slayer Cult's (2a), declared here too so the Khorne Raiders buy them at 15 gc; neither PDF prints rules for them.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 - Flag (p2): Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5; their rules are on the Dwarf Slayer Cult's stub, which declares the item.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband.
 
 ### Knights of the Bitter Moors
 
@@ -1851,22 +1766,6 @@ Kept apart from a family's, the effect differing:
 
 ### Lothern Sea Patrol
 
-- Price row (p10): our Cat O' Nine Tails for lothern-sea-patrol, Common, Heroes only.
-- Price row (p10): our Blunderbuss for lothern-sea-patrol, Rare 7.
-- Price row (p10): our Crossbow for lothern-sea-patrol, Rare 8.
-- Price row (p10): our Crossbow pistol for lothern-sea-patrol, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for lothern-sea-patrol, Rare 8.
-- Price row (p10): our Duelling Pistol for lothern-sea-patrol, Rare 8.
-- Price row (p10): our Handgun for lothern-sea-patrol, Common.
-- Price row (p10): our Long Bow for lothern-sea-patrol, Rare 5.
-- Price row (p10): our Pistol for lothern-sea-patrol, Common.
-- Price row (p10): our Repeater Crossbow for lothern-sea-patrol, Rare 10.
-- Price row (p10): our Repeater Pistol for lothern-sea-patrol, Rare 10.
-- Price row (p10): our Heavy Armour for lothern-sea-patrol, Rare 7.
-- Price row (p10): our Victuals for lothern-sea-patrol, Common.
-- Price row (p10): our Riverboat for lothern-sea-patrol, Rare 6.
-- Price row (p10): our Rowboat for lothern-sea-patrol, Rare 5.
-- Price row (p10): our Bugman's Ale for lothern-sea-patrol, Rare 8.
 - Price row (p10): our Elf Bow for lothern-sea-patrol, Rare 9, High Elves only.
 - Price row (p10): our Hunting Arrows for lothern-sea-patrol, Rare 9, Lothern Sea Guard only.
 - Flag (p2): The skill table's ticks are images, so page 2 was opened as an image. Commodore: Combat, Shooting, Academic, Speed, Pirate, Special. Mist Mage: Academic, Speed, Special. Bossun: Combat, Shooting, Speed, Pirate, Special. None of the three ticks Strength.
@@ -1881,7 +1780,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p5): The Spells of the Lothern Sea are the Spells of the Djedhi we already hold, with the fourth, Fleeting Shadows, replaced by Mistress of the Deep (difficulty 8). The lore is added as its own, taking our wording for the five that are the same.
 - Flag (p1): The warband must hold between 3 and 12 models: our templates hold no minimum, so only the maximum of 12 is imported. No henchmen group sizes and no maximum profile are printed: the warband takes our Elf race, the Raw Recruits included, though their entry says some are not full elves.
 - Flag (p3): The Commodore's profile is M5 WS5 BS4 S3 T3 W1 I5 A1 Ld9 and the Bossun's M5 WS4 BS4 S3 T3 W1 I5 A1 Ld8: as printed.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Low Kings
 
@@ -2053,22 +1951,6 @@ Kept apart from a family's, the effect differing:
 
 - Stub: Booma Pistol, 20 gc, Common; its rules are on p4.
 - Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p7.
-- Price row (p10): our Cat O' Nine Tails for orc-pirates-and-savage-orcs, Common, Heroes only.
-- Price row (p10): our Blunderbuss for orc-pirates-and-savage-orcs, Rare 7.
-- Price row (p10): our Crossbow for orc-pirates-and-savage-orcs, Rare 8.
-- Price row (p10): our Crossbow pistol for orc-pirates-and-savage-orcs, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for orc-pirates-and-savage-orcs, Rare 8.
-- Price row (p10): our Duelling Pistol for orc-pirates-and-savage-orcs, Rare 8.
-- Price row (p10): our Handgun for orc-pirates-and-savage-orcs, Common.
-- Price row (p10): our Long Bow for orc-pirates-and-savage-orcs, Rare 5.
-- Price row (p10): our Pistol for orc-pirates-and-savage-orcs, Common.
-- Price row (p10): our Repeater Crossbow for orc-pirates-and-savage-orcs, Rare 10.
-- Price row (p10): our Repeater Pistol for orc-pirates-and-savage-orcs, Rare 10.
-- Price row (p10): our Heavy Armour for orc-pirates-and-savage-orcs, Rare 7.
-- Price row (p10): our Victuals for orc-pirates-and-savage-orcs, Common.
-- Price row (p10): our Riverboat for orc-pirates-and-savage-orcs, Rare 6.
-- Price row (p10): our Rowboat for orc-pirates-and-savage-orcs, Rare 5.
-- Price row (p10): our Bugman's Ale for orc-pirates-and-savage-orcs, Rare 8.
 - Flag (p2): This PDF is two variations on the Orc Mob (Da Mob) list, not a list of its own: "The Orc Pirates use the exact same rules as the Da Mob Warband with the following changes". The template is built from our Orc Mob template with the PDF's changes, and no page was opened as an image: there is no skill table, and the only image in the file is a 15x15 bullet.
 - Flag (p2): The PDF prints no Pirate column and no Pirate skill list, so this warband does not join the shared Sartosa Pirate Skills group. See the decisions.
 - Flag (p3): The Boss, the Big 'Uns and the Orc Boyz are "same as Da Mob", so their costs, profiles, starting experience, counts and skill access are our Orc Mob template's. The Orc Shaman is kept, since the Goblin Enjuneer replaces him rather than removing him; our templates hold no replacement rule.
@@ -2082,7 +1964,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p6): The Forest Goblin list sells a Short Bow at 10 gc where the Goblin Swabbie list and our catalogue have it at 5 gc: each line keeps its own price. Its "Throwing weapons . . . 15 gc" names no weapon; it is read as our Throwing Knives/Stars, which that price matches.
 - Flag (p2): The Orc list's Toughened leathers are 7 gc, where every other Sartosa list and our catalogue have them at 5 gc: as printed, for both the Orc and the Goblin Swabbie lists.
 - Flag (p4): The Booma Pistol is a stub: 20 gc (40 for a brace), Common, Greenskins only, its rules on p4. The Fire Bomb line is 35 gc; ours is 35 + 2D6 gc, Rare 9, which is unchanged.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband.
 
 ### Outlaws of Stirwood Forest, Redux
 
@@ -2097,22 +1978,6 @@ Kept apart from a family's, the effect differing:
 
 - Stub: Cathayan Plate Armour, 120 gc, Rare 11; its rules are on p5.
 - Price row (p5): our Dragon Sword for pirates-of-the-cathayan-sea, Rare 10.
-- Price row (p10): our Cat O' Nine Tails for pirates-of-the-cathayan-sea, Common, Heroes only.
-- Price row (p10): our Blunderbuss for pirates-of-the-cathayan-sea, Rare 7.
-- Price row (p10): our Crossbow for pirates-of-the-cathayan-sea, Rare 8.
-- Price row (p10): our Crossbow pistol for pirates-of-the-cathayan-sea, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for pirates-of-the-cathayan-sea, Rare 8.
-- Price row (p10): our Duelling Pistol for pirates-of-the-cathayan-sea, Rare 8.
-- Price row (p10): our Handgun for pirates-of-the-cathayan-sea, Common.
-- Price row (p10): our Long Bow for pirates-of-the-cathayan-sea, Rare 5.
-- Price row (p10): our Pistol for pirates-of-the-cathayan-sea, Common.
-- Price row (p10): our Repeater Crossbow for pirates-of-the-cathayan-sea, Rare 10.
-- Price row (p10): our Repeater Pistol for pirates-of-the-cathayan-sea, Rare 10.
-- Price row (p10): our Heavy Armour for pirates-of-the-cathayan-sea, Rare 7.
-- Price row (p10): our Victuals for pirates-of-the-cathayan-sea, Common.
-- Price row (p10): our Riverboat for pirates-of-the-cathayan-sea, Rare 6.
-- Price row (p10): our Rowboat for pirates-of-the-cathayan-sea, Rare 5.
-- Price row (p10): our Bugman's Ale for pirates-of-the-cathayan-sea, Rare 8.
 - Flag (p2): The skill table's ticks are images, so page 2 was opened as an image. Disgraced Warlord: all seven columns. Shanghai'er: Combat, Shooting, Speed, Pirate, Special. Dragon Monk: Combat, Academic, Strength, Speed, Pirate, Special. Litter Bearer: Combat, Speed, Pirate, Special.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 - Flag (p2): A stray "Toughened Leathers . . . 5 gc" line sits above the Gunner Equipment List heading, in the right column and under no heading. Both the Pirate list and the Gunner list already sell Toughened Leathers at 5 gc, so it is left out.
@@ -2125,7 +1990,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p1): A Cathay Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
 - Flag (p4): The Martial Artist's Agile (he counts as carrying a Rope & Hook and re-rolls failed Initiative tests for climbing and leaping) is not the Grace of Shornaal mutation Agile (+1 to Initiative tests), so it is kept apart as "Agile (Martial Artist)". The Dragon Monk's rule Art of Silent Death and the special skill Art of the Silent Death are worded differently and do different things (the rule is about a quarterstaff, the skill about an extra attack), so both are kept.
 - Flag (p3): The Litter Bearer is listed under the Heroes, with a row in the skill table, and starts with 0 experience: as printed.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Protectorate Of Sigmar
 
@@ -2145,22 +2009,22 @@ Kept apart from a family's, the effect differing:
 
 ### Sartosan Pirates
 
-- Price row (p10): our Cat O' Nine Tails for sartosan-pirates, Common, Heroes only.
-- Price row (p10): our Blunderbuss for sartosan-pirates, Rare 7.
-- Price row (p10): our Crossbow for sartosan-pirates, Rare 8.
-- Price row (p10): our Crossbow pistol for sartosan-pirates, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for sartosan-pirates, Rare 8.
-- Price row (p10): our Duelling Pistol for sartosan-pirates, Rare 8.
-- Price row (p10): our Handgun for sartosan-pirates, Common.
-- Price row (p10): our Long Bow for sartosan-pirates, Rare 5.
-- Price row (p10): our Pistol for sartosan-pirates, Common.
-- Price row (p10): our Repeater Crossbow for sartosan-pirates, Rare 10.
-- Price row (p10): our Repeater Pistol for sartosan-pirates, Rare 10.
-- Price row (p10): our Heavy Armour for sartosan-pirates, Rare 7.
-- Price row (p10): our Victuals for sartosan-pirates, Common.
-- Price row (p10): our Riverboat for sartosan-pirates, Rare 6.
-- Price row (p10): our Rowboat for sartosan-pirates, Rare 5.
-- Price row (p10): our Bugman's Ale for sartosan-pirates, Rare 8.
+- Price row (p10): our Cat O' Nine Tails for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Common, Heroes only.
+- Price row (p10): our Blunderbuss for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 7.
+- Price row (p10): our Crossbow for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 8.
+- Price row (p10): our Crossbow pistol for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 11.
+- Price row (p10): our Double-barrelled Pistol for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 8.
+- Price row (p10): our Duelling Pistol for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 8.
+- Price row (p10): our Handgun for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Common.
+- Price row (p10): our Long Bow for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 5.
+- Price row (p10): our Pistol for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Common.
+- Price row (p10): our Repeater Crossbow for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 10.
+- Price row (p10): our Repeater Pistol for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 10.
+- Price row (p10): our Heavy Armour for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 7.
+- Price row (p10): our Victuals for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Common.
+- Price row (p10): our Riverboat for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 6.
+- Price row (p10): our Rowboat for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 5.
+- Price row (p10): our Bugman's Ale for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates-and-savage-orcs, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 8.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -2169,7 +2033,7 @@ Kept apart from a family's, the effect differing:
 - Flag (p3): The Cat O' Nine Tails, Boat Hook, Belaying Pin, Swivel Gun and its Ball, Chain and Grape Shot are all ours, at the list's prices; the PDF prints no rules for them.
 - Flag (p2): The four 'Old' Pirate Skills are our Sea Shanty Singer, Cutlass Master, Booming Voice and Hardy Constitution, the same words; they are the Sartosan Pirates' own group here, while our Pirates group (the 1b Pirate warband's) holds them with Sea Legs and Swashbuckler besides.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
+- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all eleven Sartosa warband types, and a warband's own list price still wins for that warband.
 
 ### Sea Ghosts
 
@@ -2267,22 +2131,6 @@ Kept apart from a family's, the effect differing:
 - Stub: Double-barreled Blunderbuss, 60 gc, Rare 11; its rules are on p1.
 - Stub: Throwing Axes, 15 gc, Rare 5; its rules are on p2.
 - Price row (p2): our dwarf axe for slayer-pirates, Rare 9.
-- Price row (p10): our Cat O' Nine Tails for slayer-pirates, Common, Heroes only.
-- Price row (p10): our Blunderbuss for slayer-pirates, Rare 7.
-- Price row (p10): our Crossbow for slayer-pirates, Rare 8.
-- Price row (p10): our Crossbow pistol for slayer-pirates, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for slayer-pirates, Rare 8.
-- Price row (p10): our Duelling Pistol for slayer-pirates, Rare 8.
-- Price row (p10): our Handgun for slayer-pirates, Common.
-- Price row (p10): our Long Bow for slayer-pirates, Rare 5.
-- Price row (p10): our Pistol for slayer-pirates, Common.
-- Price row (p10): our Repeater Crossbow for slayer-pirates, Rare 10.
-- Price row (p10): our Repeater Pistol for slayer-pirates, Rare 10.
-- Price row (p10): our Heavy Armour for slayer-pirates, Rare 7.
-- Price row (p10): our Victuals for slayer-pirates, Common.
-- Price row (p10): our Riverboat for slayer-pirates, Rare 6.
-- Price row (p10): our Rowboat for slayer-pirates, Rare 5.
-- Price row (p10): our Bugman's Ale for slayer-pirates, Rare 8.
 - Flag (p2): The skill table is text (X ticks), read from the -layout text. The Pirate column, which this PDF does not print a skill list for, is ticked for all three Heroes and is left out: see the decisions.
 - Flag (p1): Sea Trollslayers are listed with the Heroes' starting experience (0) but have no row in the skill table and no limit on their number, so they are read as henchmen.
 - Flag (p1): A Slayer warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Dwarf race.
@@ -2301,7 +2149,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): The Double-barreled Blunderbuss's rules are in the Sartosa campaign rules' Equipment PDF (p1): Strength 3, Shot, Fire Twice and Misfire. Its trading-list price (p10) is 60 gc, Rare 11, the same as the line's.
 - Flag (p2): Throwing Axes are 15 gc, Rare 5 in the Sartosa campaign rules' Equipment PDF's trading list (p10), so the warband's row is Rare 5.
 - Flag (p2): the Sartosa campaign rules' Equipment PDF's trading list (p10) prints the Dwarven Axe at 15 gc, Rare 8, Dwarves only, as ours is; this warband's own list prints Rare 9, which its price row keeps. The warband PDF's number stands.
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband.
 
 ### Snotlings
 
@@ -2414,22 +2261,6 @@ Kept apart from a family's, the effect differing:
 ### Wasteland Privateers
 
 - Price row (p2): our Superior Blackpowder for wasteland-privateers, Rare 5.
-- Price row (p10): our Cat O' Nine Tails for wasteland-privateers, Common, Heroes only.
-- Price row (p10): our Blunderbuss for wasteland-privateers, Rare 7.
-- Price row (p10): our Crossbow for wasteland-privateers, Rare 8.
-- Price row (p10): our Crossbow pistol for wasteland-privateers, Rare 11.
-- Price row (p10): our Double-barrelled Pistol for wasteland-privateers, Rare 8.
-- Price row (p10): our Duelling Pistol for wasteland-privateers, Rare 8.
-- Price row (p10): our Handgun for wasteland-privateers, Common.
-- Price row (p10): our Long Bow for wasteland-privateers, Rare 5.
-- Price row (p10): our Pistol for wasteland-privateers, Common.
-- Price row (p10): our Repeater Crossbow for wasteland-privateers, Rare 10.
-- Price row (p10): our Repeater Pistol for wasteland-privateers, Rare 10.
-- Price row (p10): our Heavy Armour for wasteland-privateers, Rare 7.
-- Price row (p10): our Victuals for wasteland-privateers, Common.
-- Price row (p10): our Riverboat for wasteland-privateers, Rare 6.
-- Price row (p10): our Rowboat for wasteland-privateers, Rare 5.
-- Price row (p10): our Bugman's Ale for wasteland-privateers, Rare 8.
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -2440,7 +2271,6 @@ Kept apart from a family's, the effect differing:
 - Flag (p2): "any Henchmen Gunners may fire and reload Handguns in the same turn": the rule is the warband's, as the Gunner group is the only one it names.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 - Flag (p2): "When purchasing Superior Gunpowder, it counts as Rarity 5" is our Superior Blackpowder (William, 11 Nov 2026: "make superior gunpowder our blackpowder in a new price row"): a price row of their own at 30 gc, Rare 5. No line of theirs sells it, and 30 gc is both ours and the Sartosa campaign rules' Equipment PDF's trading-list price (p10, Rare 11).
-- Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each item below is one the setting's shop prices differently from ours; every one of the eleven Sartosa types carries the same rows, declared in its own file, and a warband's own list price still wins for that warband. Throwing Axes, which the list prices at 15 gc Rare 5, are a stub of ours, and a price row may not name a stub: the Dwarf Slayer Cult, the Khorne Raiders, the Slayer Pirates and the Orc Pirates hold that row through their own stub declarations, and the other Sartosa types hold none.
 
 ### Watchmen
 

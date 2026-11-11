@@ -218,6 +218,21 @@ class PdfCheckTests(SimpleTestCase):
             ],
         )
 
+    def test_a_price_row_may_name_the_types_it_serves(self) -> None:
+        # a setting's shop list is declared once (Sartosa's, for its eleven types), and names types of ours
+        page = good_page()
+        page["priceRows"] = [
+            {"name": "dagger", "rarity": None, "dice": None, "types": ["witch-hunters"], "page": 10},
+            {"name": "sword", "rarity": 5, "dice": None, "types": ["no-such-band"], "page": 10},
+        ]
+        self.assertEqual(
+            check_page("witch-hunters", page, CATALOGUE).problems,
+            [
+                "price row 'sword': no warband type 'no-such-band'",
+                "price row 'sword': the page's own type isn't one of its types",
+            ],
+        )
+
 
 class PdfImportTests(SimpleTestCase):
     templates: ClassVar[dict[str, dict[str, Any]]]
@@ -328,6 +343,29 @@ class PdfImportTests(SimpleTestCase):
             (row["cost"], row["rarity"], row["warbands"], row["note"]),
             (10, 7, [{"type": "witch-hunters", "excluded": False}], "Captain only"),
         )
+
+    def test_a_price_row_gives_every_warband_type_it_names_one_row(self) -> None:
+        # Sartosa's shop list, one row for the setting's eleven types rather than a copy in each page
+        page = good_page()
+        page["priceRows"] = [
+            {"name": "sword", "rarity": 5, "dice": None, "types": ["witch-hunters", "sisters-of-sigmar"], "page": 10}
+        ]
+        put_aliases_right(page)
+        items: list[dict[str, Any]] = [{**item, "availabilities": []} for item in ITEMS]
+        types = [*TYPES, {"slug": "sisters-of-sigmar", "setting": "sylvania"}]
+        add_price_rows({"witch-hunters": page}, items, types)
+        [row] = items[1]["availabilities"]
+        self.assertEqual(
+            row["warbands"],
+            [{"type": "witch-hunters", "excluded": False}, {"type": "sisters-of-sigmar", "excluded": False}],
+        )
+
+    def test_the_sartosa_shop_list_is_declared_once_for_its_eleven_types(self) -> None:
+        # William, 11 Nov 2026 (decision 20): the setting's Equipment PDF (p10) re-prices our items for its warbands
+        rows = [row for row in self.items["Blunderbuss"]["availabilities"] if row["cost"] == 30 and row["rarity"] == 7]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(len(rows[0]["warbands"]), 11)
+        self.assertIn({"type": "sartosan-pirates", "excluded": False}, rows[0]["warbands"])
 
     def test_low_kings_buy_our_spiked_gauntlet_and_the_maps_share_their_rule(self) -> None:
         # William, 6 Nov 2026: one Spiked Gauntlet; the Magic Acorn "is 100 just for the mootlanders on initial buy", a
