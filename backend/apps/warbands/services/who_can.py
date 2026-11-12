@@ -6,7 +6,10 @@ A list says whether it is for everyone and names warband types or groups, each i
 (`Buyer`). Where a price row names it:
 
 1. a line naming its type or a type it counts as;
-2. otherwise a line naming a group one of them is in;
+2. otherwise a line naming a group one of them is in, unless an excluded line names one of the types themselves:
+   a named type is the most specific statement there is, so an exclusion naming a type shuts the buyer out of a
+   group that lets it in ("the Skaven group, excluding Clan Eshin"), while an exclusion naming a group does not
+   beat a line naming its type;
 3. otherwise a row for everyone, unless an excluded line names one of its types or groups;
 4. otherwise, for an item its own warband template list sells in its variant, every row of the item, ranked among
    themselves as step 1: a warband's own list is the strongest statement that it may buy the thing, whatever the
@@ -50,20 +53,28 @@ def buyer_of(warband: Warband) -> Buyer:
     return Buyer(frozenset(row.pk for row in types), frozenset(groups), own.name if own else "this warband")
 
 
+def _names_type(lines: Iterable[Any], buyer: Buyer, *, excluded: bool) -> bool:
+    return any(line.warband_type_id in buyer.type_ids for line in lines if line.excluded == excluded)
+
+
+def _names_group(lines: Iterable[Any], buyer: Buyer, *, excluded: bool) -> bool:
+    return any(line.warband_group_id in buyer.group_ids for line in lines if line.excluded == excluded)
+
+
 def step(for_everyone: bool, lines: Iterable[Any], buyer: Buyer) -> int | None:
-    """Where a who-can list lets the buyer in (1 its type, 2 its group, 3 everyone), or None (not usually)."""
+    """Where a who-can list lets the buyer in (1 its type, 2 its group, 3 everyone), or None (not usually): a line
+    naming its type, then an excluded line naming its type, then a line naming its group, then an excluded line
+    naming its group, then everyone."""
     lines = list(lines)
-    named = [line for line in lines if not line.excluded]
-    if any(line.warband_type_id in buyer.type_ids for line in named):
+    if _names_type(lines, buyer, excluded=False):
         return 1
-    if any(line.warband_group_id in buyer.group_ids for line in named):
+    if _names_type(lines, buyer, excluded=True):
+        return None
+    if _names_group(lines, buyer, excluded=False):
         return 2
-    shut_out = any(
-        line.warband_type_id in buyer.type_ids or line.warband_group_id in buyer.group_ids
-        for line in lines
-        if line.excluded
-    )
-    return 3 if for_everyone and not shut_out else None
+    if _names_group(lines, buyer, excluded=True):
+        return None
+    return 3 if for_everyone else None
 
 
 def on_his_list(item: Any, buyer: Buyer) -> bool:

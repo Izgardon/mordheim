@@ -146,6 +146,29 @@ class PriceRowChoiceTests(WhoCanTestCase):
         self.assertTrue(offers[others.id]["can_buy"])
         self.assertEqual(offers[wardogs.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
 
+    def test_an_exclusion_naming_its_type_beats_a_group_row_that_lets_it_in(self) -> None:
+        """A row for the Skaven group excluding Clan Pestilens shuts it out: a named type is the most specific
+        statement there is, so the exclusion is read before the group lets it in."""
+        blades = self.item("Weeping Blades", {"groups": [self.skaven], "not_types": [self.pestilens]})
+        others = self.item("Fighting Claws", {"groups": [self.skaven], "not_types": [self.eshin]})
+        counted = self.item("Lizard Spear", {"groups": [self.skaven], "not_types": [self.lizardmen]})  # it counts as
+
+        offers = self.offers()
+
+        self.assertEqual((offers[blades.id]["can_buy"], offers[blades.id]["reason"]), (False, "Not usually available to Skaven of Clan Pestilens."))  # fmt: skip
+        self.assertTrue(offers[others.id]["can_buy"])  # the exclusion names another type
+        self.assertEqual(offers[counted.id]["can_buy"], False)
+
+    def test_a_row_naming_its_type_stands_though_an_exclusion_names_its_group(self) -> None:
+        """Step 1 is unchanged: an excluded group never beats a line naming the type itself."""
+        tail = self.item("Tail Blade", {"types": [self.pestilens], "not_groups": [self.skaven]})
+        both = self.item("Warplock Pistol", {"types": [self.pestilens], "not_types": [self.pestilens]})
+
+        offers = self.offers()
+
+        self.assertEqual(offers[tail.id]["can_buy"], True)
+        self.assertEqual(offers[both.id]["can_buy"], True)  # a line naming it wins over an exclusion naming it
+
     def test_a_setting_not_ticked_is_not_usually_available_and_named_and_custom_items_always_show(self) -> None:
         scorpion = self.item("Scorpion Ring", {"everyone": True}, campaign_type=self.khemri)
         barred = self.item("Bota Bag", {"groups": [self.humans]}, campaign_type=self.khemri)
@@ -201,6 +224,31 @@ class WhoCanHireAndLearnTests(WhoCanTestCase):
             [(True, ""), (False, not_usually), (False, not_usually), (False, "Khemri isn't in this campaign.")],
         )
         self.assertEqual(body["dramatis_personae"], [{"id": johann.id, "can_hire": True, "reason": ""}])
+
+    def test_a_hireling_for_a_group_but_not_its_type_cannot_be_hired(self) -> None:
+        """The Clan Eshin Assassin: Skaven may hire him, Clan Eshin's own may not, and the list says so instead of
+        the hire note."""
+        assassin = self.hireling(HiredSword, "Assassin", groups=[self.skaven], not_types=[self.pestilens])
+        ratcatcher = self.hireling(HiredSword, "Ratcatcher", groups=[self.skaven], not_types=[self.eshin])
+        shadow = self.hireling(DramatisPersona, "Shadow", types=[self.pestilens], not_groups=[self.skaven])
+
+        body = self.who_can()
+
+        hired = {row["id"]: (row["can_hire"], row["reason"]) for row in body["hired_swords"]}
+        self.assertEqual(hired[assassin.id], (False, "Not usually available to Skaven of Clan Pestilens."))
+        self.assertEqual(hired[ratcatcher.id], (True, ""))
+        self.assertEqual(body["dramatis_personae"], [{"id": shadow.id, "can_hire": True, "reason": ""}])
+
+    def test_a_skill_group_for_a_group_but_not_its_type_is_shut(self) -> None:
+        tail, leap = (Skill.objects.create(name=name) for name in ("Tail", "Leap"))
+        shut = self.group("Eshin", tail, groups=[self.skaven], not_types=[self.pestilens])
+        open_to_it = self.group("Skaven", leap, groups=[self.skaven], not_types=[self.eshin])
+
+        body = self.who_can()
+
+        self.assertEqual(body["skill_group_ids"], [self.combat.id, open_to_it.id])
+        self.assertNotIn(shut.id, body["skill_group_ids"])
+        self.assertEqual(body["special_skill_ids"], [leap.id])
 
     def test_the_groups_open_to_it_and_the_special_skills_its_types_may_learn(self) -> None:
         tail, leap, sprint, rally = (Skill.objects.create(name=name) for name in ("Tail", "Leap", "Sprint", "Rally"))
@@ -324,6 +372,17 @@ class HisListTests(WhoCanTestCase):
         self.template((cloak, ""), warband_type=self.reiklanders)
 
         self.assertEqual(self.offers()[cloak.id]["can_buy"], False)
+
+    def test_an_item_a_row_excludes_its_type_from_is_still_sold_by_its_own_list(self) -> None:
+        """The fallback fires whenever no row is usable, an exclusion naming its type included."""
+        arrows = self.item("Asp Arrows", {"groups": [self.skaven], "not_types": [self.pestilens], "cost": 10})
+        halberd = self.item("Halberd", {"groups": [self.skaven], "not_types": [self.pestilens]})
+        self.template((arrows, ""))
+
+        offers = self.offers()
+
+        self.assertEqual((offers[arrows.id]["can_buy"], offers[arrows.id]["reason"]), (True, ""))
+        self.assertEqual(offers[halberd.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
 
     def test_a_warband_with_no_template_reads_the_rows_alone(self) -> None:
         cloak = self.item("Sea Dragon Cloak", {"types": [self.reiklanders], "cost": 50})
