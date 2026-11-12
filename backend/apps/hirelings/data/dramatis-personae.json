@@ -1,1 +1,1274 @@
-[]
+[
+  {
+    "name": "Alchec of Strigos",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 2,
+    "initiative": 5,
+    "attacks": 3,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Sought Out",
+        "description": "There is no hire fee. He comes to the aid of a warband that may hire him only if it sends one or more of its heroes to look for him in the normal manner, rolling under or equal to their Initiative. Found, he may still decide not to come, and comes only if the enemy warband has the higher rating. Roll a D6 and consult the table.\n\nDifference in warband rating | D6 needed\n0-49 | no chance\n50-99 | 6+\n100-149 | 5+\n150-199 | 4+\n200+ | 3+"
+      },
+      {
+        "name": "Facing Skaven",
+        "description": "Add 1 to the roll if the warband faces Skaven. If the opposing warband has hired Neekit, Alchec comes on a 5+ whatever the difference in ratings."
+      },
+      {
+        "name": "Vampire",
+        "description": "Alchec is subject to all the normal vampire rules."
+      },
+      {
+        "name": "Bestial",
+        "description": "Alchec has a 6+ ward save against all attacks."
+      },
+      {
+        "name": "No Magic",
+        "description": "Although a Strigoi vampire, Alchec's animal nature stops him using magic."
+      },
+      {
+        "name": "Strigoi Lord",
+        "description": "Alchec is automatically the leader of any warband he joins."
+      },
+      {
+        "name": "Infinite Hatred",
+        "description": "Alchec may re-roll all failed to-hit rolls in the first round of each combat. Each dice may be re-rolled only once."
+      },
+      {
+        "name": "Blood Lust",
+        "description": "Alchec is subject to frenzy."
+      }
+    ],
+    "skills": [
+      "Combat Master",
+      "Strike to Injure",
+      "Jump Up"
+    ],
+    "spells": [],
+    "equipment": [],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No hire fee: he must be sought out before the battle."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 70,
+      "grade": "2b",
+      "race": "Vampire",
+      "unique_to": "Any Strigoi or Strigany warband may hire Alchec.",
+      "warbands": [
+        {
+          "type": "strigoi",
+          "excluded": false
+        },
+        {
+          "type": "survivors-of-strigos",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Dalla Burgansdotter, the Iron Maiden",
+    "description": "",
+    "movement": 3,
+    "weapon_skill": 5,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 2,
+    "attacks": 3,
+    "leadership": 9,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hates Skaven",
+        "description": "Dalla hates all Skaven."
+      },
+      {
+        "name": "No Slayer Oath",
+        "description": "Dalla follows the Dwarf rules of the Mordheim rulebook and the Karak Azgal setting, except the Karak Azgal rule for becoming a Slayer. The Slayer Cult is a male tradition, so where that rule would apply she gains hatred of that warband from then on instead, since she cannot redeem herself by becoming a Slayer."
+      },
+      {
+        "name": "Come On Boys!",
+        "description": "If Dalla charges an enemy model or group, any male Dwarf model may charge the same model, or one within 2\" of it, and makes its attacks at +1 Strength in the first round."
+      },
+      {
+        "name": "Look At Her Fight!",
+        "description": "Any Dwarf model within 6\" of Dalla attacks first in the second round only of any close combat it is in."
+      },
+      {
+        "name": "Goblin's Bane",
+        "description": "A large gromril Dwarf axe that Dalla uses as a double-handed weapon, gaining the normal +1 Strength but attacking in normal order instead of last. It also has the advantages of a Dwarf axe (parry) and of a gromril weapon. If captured it counts as a normal gromril Dwarf axe, and all Dwarfs of Karak Azgal hate a warrior using it as a captured weapon. If a warband authorised by Kargan to explore Karak Azgal recaptures it, it may be sold back to Kargan for twice the normal selling price."
+      }
+    ],
+    "skills": [
+      "Fearsome",
+      "Thick Skull"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Gromril Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 35,
+      "grade": "2b",
+      "race": "Dwarf",
+      "unique_to": "Any Dwarf or human warband may hire Dalla.",
+      "warbands": [
+        {
+          "group": "dwarfs",
+          "excluded": false
+        },
+        {
+          "group": "humans",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Eeza Ugezod, Orc Warlord",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 6,
+    "ballistic_skill": 3,
+    "strength": 5,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 4,
+    "leadership": 9,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Sought Out",
+        "description": "There is no hire fee. He comes to the aid of a warband that may hire him only if it sends one or more of its heroes to look for him in the normal manner, rolling under or equal to their Initiative. Found, he may still decide not to come, and comes only if the enemy warband has the higher rating. Roll a D6 and consult the table.\n\nDifference in warband rating | D6 needed\n0-49 | no chance\n50-99 | 6+\n100-149 | 5+\n150-199 | 4+\n200+ | 3+"
+      },
+      {
+        "name": "Facing Dwarfs or Strigoi",
+        "description": "Add 1 to the roll if the warband faces Dwarfs or Strigoi."
+      },
+      {
+        "name": "Kutta and Smasha",
+        "description": "Eeza Ugezod wields an axe and a choppa; the extra attack for the additional hand weapon is already in his profile. Smasha is an Orc choppa, which gives him +1 Strength when he charges. As he carries two hand weapons he must choose which one he attacks with normally and which makes the additional attack."
+      },
+      {
+        "name": "Raging Fury",
+        "description": "When Eeza Ugezod charges he attacks any enemy he can see. He charges and attacks as normal, but as soon as an enemy warrior suffers an injury he moves up to 2\" to engage another enemy, so he may attack several enemy warriors in one charge. With no enemy model within 2\" he moves 2\" towards the closest one and any remaining attacks are wasted. This applies only when he charges, not in later rounds of combat and not when he is charged."
+      },
+      {
+        "name": "Biggust",
+        "description": "Eeza Ugezod is automatically the leader of any warband he joins."
+      },
+      {
+        "name": "Hates Dwarfs",
+        "description": "Eeza Ugezod hates all Dwarfs, and all Dwarfs hate him."
+      }
+    ],
+    "skills": [
+      "Combat Master",
+      "Fearsome",
+      "Jump Up"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Cleaver",
+        "quantity": 1
+      },
+      {
+        "item": "Heavy Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No hire fee: he must be sought out before the battle."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 60,
+      "grade": "2b",
+      "race": "Orc",
+      "unique_to": "Any Orc or Goblin warband may hire Eeza Ugezod.",
+      "warbands": [
+        {
+          "group": "orcs-and-goblins",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Grey Seer Neekit",
+    "description": "",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Sought Out",
+        "description": "There is no hire fee. He comes to the aid of a warband that may hire him only if it sends one or more of its heroes to look for him in the normal manner, rolling under or equal to their Initiative. Found, he may still decide not to come, and comes only if the enemy warband has the higher rating. Roll a D6 and consult the table.\n\nDifference in warband rating | D6 needed\n0-49 | no chance\n50-99 | 6+\n100-149 | 5+\n150-199 | 4+\n200+ | 3+"
+      },
+      {
+        "name": "Facing Strigoi",
+        "description": "Add 1 to the roll if the warband faces Strigoi or a rebellious Skaven warband."
+      },
+      {
+        "name": "Rivalry",
+        "description": "If a rival warband is hiring Alchec, add 2 to the roll to see whether Neekit will join. Even where the difference in ratings means no chance, he will come along on a 5+."
+      },
+      {
+        "name": "Confident",
+        "description": "If Neekit wins two battles in succession he adds 1 to his Leadership, to a maximum of 10; if he loses two in succession he subtracts 1, to a minimum of 5."
+      },
+      {
+        "name": "Magic of the Horned Rat",
+        "description": "Neekit is a wizard and knows every spell of the Magic of the Horned Rat as well as his own."
+      },
+      {
+        "name": "Grey Seer",
+        "description": "Neekit is automatically the leader of any warband he joins."
+      },
+      {
+        "name": "Master Sorcerer",
+        "description": "Neekit may keep casting spells until he fails to cast one. Each attempt after the first is at +1 difficulty, cumulatively. When he casts more than one spell in a turn, a failure means he has eaten too much warpstone and must roll on the Injury chart at once. He may not cast the same spell more than once in a turn."
+      },
+      {
+        "name": "Staff of Authority",
+        "description": "While Neekit is not fleeing, stunned or out of action, any friendly Skaven warrior on the battlefield may use his Leadership."
+      },
+      {
+        "name": "Wyrdstone Amulet",
+        "description": "Neekit's player may re-roll any one dice for Neekit once during a battle."
+      },
+      {
+        "name": "Warpscroll",
+        "description": "Once per battle Neekit may read from the scroll. One model within 6\" must take a Leadership test using his own Leadership or age rapidly and be put out of action at once. In the post-battle sequence that victim does not roll to see if he is seriously injured. A henchman is simply removed from the roster, though the warband may keep his equipment. For a hero, one characteristic chosen by the Skaven player is reduced by one, to a minimum of 1, and its maximum is reduced by one too. A warrior hit by a Warpscroll more than once has each characteristic affected only once."
+      },
+      {
+        "name": "Neekit's Wares",
+        "description": "If a warband has fought alongside Neekit at least once he may sell it Skalm and Skavenbrew, at a rarity of 7 each with the usual bonus for Streetwise. Both are one use only and he will let a warband own only one of each at a time.\n\nSkalm, 20 gc: a thick black paste. At the end of each battle one Skaven warrior's wounds are automatically healed and he does not roll on the Serious Injury chart. Skalm works only on Skaven physiology, and Neekit himself has become immune to it. It is highly poisonous to non-Skaven and may be applied to weapons, with the same effects as Black Lotus; it cannot then also heal after that battle.\n\nSkavenbrew, 30 gc: given to a Skaven warrior at the start of a battle if he wants it. Roll a D6: 1, no effect; 2-3, he hates all enemy warriors; 4-5, he is subject to frenzy; 6, he is subject to frenzy and hates all enemy warriors. A Skaven sorcerer who drinks it may cast no spells for that battle, even on a result of no effect. It has no effect on non-Skaven."
+      },
+      {
+        "name": "Extra Spells",
+        "description": "Neekit may choose one of his own spells to add to the spells he may cast this battle. They affect friend and foe alike unless the spell says otherwise."
+      }
+    ],
+    "skills": [
+      "Sorcery",
+      "Wyrdstone Hunter",
+      "Dodge"
+    ],
+    "spells": [
+      {
+        "name": "Death Frenzy",
+        "description": "Difficulty 8. A Skaven warrior is automatically affected and gains +2 Movement, +2 Attacks and +2 Initiative. At the beginning of each of his turns he must take a Toughness test or suffer a wound. At the end of the battle he runs off in temporary madness and must roll on the Serious Injury table; a henchman must also take a Toughness test or die. The spell may be cast on an enemy Skaven warrior."
+      },
+      {
+        "name": "Pestilent Breath",
+        "description": "Difficulty 5. One model within 3\" must take a Toughness test or go out of action. If Neekit rolls a double when casting it he suffers a wound with no save, and recovers automatically after the battle if he goes out of action from it."
+      },
+      {
+        "name": "Poison Wind",
+        "description": "Difficulty 11. A poisonous wind blows in a straight line away from Neekit. Any model in its path must take a Toughness test or roll on the Injury chart, treating out of action as stunned."
+      },
+      {
+        "name": "Skitterleap",
+        "description": "Difficulty 7. Neekit teleports in any direction. Place a marker in that direction and roll 3D6 for the distance in inches. If he would land in a solid object he has teleported to his inner sanctum and counts as out of action with no injury roll, and must be hired again if the warband wants him back."
+      },
+      {
+        "name": "Veil of Darkness",
+        "description": "Difficulty 7. One enemy warrior within 12\" is blinded: his Weapon Skill is reduced to 1 and he may not attack, shoot or cast spells, and may only walk, at half pace. At the end of each of his turns he may take a Leadership test to shake the spell off."
+      },
+      {
+        "name": "Wither",
+        "description": "Difficulty 8. Neekit may give up all his normal attacks to make a single attack at twice his normal Strength. Roll to hit as normal. The victim may make no dodge, armour or ward save of any kind."
+      }
+    ],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No hire fee: he must be sought out before the battle."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 90,
+      "grade": "2b",
+      "race": "Skaven",
+      "unique_to": "Any Skaven warband may hire Grey Seer Neekit.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Okrinok Skrundigor, Dwarf Ghost",
+    "description": "",
+    "movement": 3,
+    "weapon_skill": 5,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 2,
+    "attacks": 2,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Sought Out",
+        "description": "There is no hire fee. He comes to the aid of a warband that may hire him only if it sends one or more of its heroes to look for him in the normal manner, rolling under or equal to their Initiative. Found, he may still decide not to come, and comes only if the enemy warband has the higher rating. Roll a D6 and consult the table.\n\nDifference in warband rating | D6 needed\n0-49 | no chance\n50-99 | 6+\n100-149 | 5+\n150-199 | 4+\n200+ | 3+"
+      },
+      {
+        "name": "Facing Skaven, Orcs or Goblins",
+        "description": "Add 1 to the roll if the warband faces Skaven or Orcs, or 2 if it faces a Goblin warband or one with Eeza Ugezod. He will never fight against Dwarfs or any warband with a Dwarf in it."
+      },
+      {
+        "name": "Master Hammerer",
+        "description": "Okrinok Skrundigor may parry with his hammer as with a Dwarf axe."
+      },
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Hates Greenskins",
+        "description": "Okrinok Skrundigor hates all greenskins, and his hatred keeps applying in later rounds of combat."
+      },
+      {
+        "name": "Immune to Psychology",
+        "description": "The model is immune to psychology and never leaves combat."
+      },
+      {
+        "name": "Ghostly",
+        "description": "Okrinok Skrundigor may run even within 8\" of an enemy, and ignores penalties for difficult terrain."
+      },
+      {
+        "name": "Dead",
+        "description": "Okrinok Skrundigor takes no injuries or benefits from the Serious Injury table. If he rolls a dead result he is laid to rest and takes no further part in the campaign. He can never suffer a critical hit."
+      },
+      {
+        "name": "Fate",
+        "description": "If Eeza Ugezod is killed outright during a campaign, Okrinok Skrundigor is laid to rest and takes no further part."
+      }
+    ],
+    "skills": [
+      "Weapons Expert",
+      "Ferocious Charge"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Hammer",
+        "quantity": 1
+      },
+      {
+        "item": "Gromril Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No hire fee: he must be sought out before the battle."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 50,
+      "grade": "2b",
+      "race": "Spirit",
+      "unique_to": "Any Dwarf or Adventurer warband may hire Okrinok Skrundigor.",
+      "warbands": [
+        {
+          "group": "dwarfs",
+          "excluded": false
+        },
+        {
+          "type": "adventurers",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Laure Croftenssen",
+    "description": "Also carries: the Adventurer's Pair of Handguns and a rifle.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 6,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Handgun Expert",
+        "description": "Laure may shoot twice in a round with any pair of handguns."
+      },
+      {
+        "name": "No Armour",
+        "description": "Laure wears no armour."
+      },
+      {
+        "name": "Hates the Undead",
+        "description": "Laure hates the undead."
+      },
+      {
+        "name": "Loner",
+        "description": "Laure suffers no ill effect from fighting alone against several enemies."
+      },
+      {
+        "name": "Adventurer's Pair of Handguns",
+        "description": "50 gc, rarity 11. Range 8\", Strength 4, -2 armour save, fast reload. Fast reload: Laure may fire once in every shooting phase, as with a normal pair of handguns, and in close combat she may either make two attacks in the first round and then pick up another weapon, or make one attack in every round of combat."
+      }
+    ],
+    "skills": [
+      "Leap",
+      "Acrobat",
+      "Dodge",
+      "Scale Sheer Surfaces",
+      "Step Aside",
+      "Lightning Reflexes"
+    ],
+    "spells": [],
+    "equipment": [],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 80,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "40 gc to a Sisters of Sigmar warband."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Treasure",
+            "amount": 1
+          }
+        ],
+        "note": "One piece of treasure."
+      },
+      "rating": 60,
+      "grade": "1b",
+      "race": "Human",
+      "unique_to": "Any non-evil warband may hire Laure Croftenssen.",
+      "warbands": [
+        {
+          "group": "evil",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Jeremiah Bane, the Devil King",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": 4,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 3,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Not Two Games Running",
+        "description": "Jeremiah Bane will not work for the same warband two games in a row."
+      },
+      {
+        "name": "Immune to Psychology",
+        "description": "The model is immune to psychology and never leaves combat."
+      },
+      {
+        "name": "Immune to Poison",
+        "description": "Not affected by any poison."
+      },
+      {
+        "name": "Ethereal (Jeremiah Bane)",
+        "description": "Jeremiah Bane has a 4+ unmodifiable save against all attacks. It may not be used with Dodge or Step Aside, and has no effect against magical attacks, artefacts, gromril, ithilmar and silver bullets among them. He may also take a Leadership test to move through any object, or even to walk on water; if he fails that test while standing on water he counts as taken out of action, sinking to the seafloor."
+      },
+      {
+        "name": "Festooned with Pistols (Jeremiah Bane)",
+        "description": "Jeremiah Bane carries so many double-barrelled pistols that he never has to reload, and always has a new one primed and ready to fire. In hand-to-hand combat he may only use pistols in the first round; in later rounds he draws his swords. He may draw another pair of pistols once he is out of combat, or once all of his opponents are knocked down or stunned."
+      },
+      {
+        "name": "Dread Pirate",
+        "description": "Any model wishing to board a boat Jeremiah Bane is on must first pass a fear test. This does not stack with Terrifying."
+      },
+      {
+        "name": "Terrifying",
+        "description": "Jeremiah Bane causes fear in all models, even those that already cause fear or are immune to psychology. Only daemons and undead models are immune."
+      }
+    ],
+    "skills": [
+      "Eagle Eyes",
+      "Pistolier",
+      "Strike to Injure",
+      "Sprint",
+      "Resilient"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 2
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      },
+      {
+        "item": "Double-barrelled Pistol",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 120,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 100,
+      "grade": "2b",
+      "race": "Undead",
+      "unique_to": "Undead warbands may hire Jeremiah Bane: Undead, Tomb Guardians, Ghost Pirates, Necrarchs, a Liche warband and the like.",
+      "warbands": [
+        {
+          "group": "undead",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Krushj the Anchorman",
+    "description": "",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 4,
+    "initiative": 4,
+    "attacks": 3,
+    "leadership": 8,
+    "armour_save": null,
+    "large": true,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Anchor",
+        "description": "Krushj's anchor counts as an axe and as a rope and hook."
+      },
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Large",
+        "description": "This unit is treated as a Large Target. They may always be shot at with ranged weapons with a +1 modifier to hit."
+      },
+      {
+        "name": "Brace of Handguns",
+        "description": "Krushj is so large that he counts his handguns as mere pistols, so Pistolier applies to them. They have a 24\" range, Strength 4 and an extra -1 save, and fire every other turn. They are move or fire weapons because of his size."
+      },
+      {
+        "name": "Giant Parrot",
+        "description": "In the first round of combat the parrot gives all of Krushj's opponents -1 to hit in close combat, unless they pass a Leadership test. It may also make a single attack with Weapon Skill 3 and Strength 2."
+      }
+    ],
+    "skills": [
+      "Pistolier",
+      "Mighty Blow",
+      "Unstoppable Charge"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Cutlass",
+        "quantity": 1
+      },
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      },
+      {
+        "item": "Handgun",
+        "quantity": 1
+      },
+      {
+        "item": "Parrot",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 140,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 65,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Half of it is spent on birdseed."
+      },
+      "rating": null,
+      "grade": "2b",
+      "race": "Ogre",
+      "unique_to": "Krushj does not work for Skaven or Undead warbands; otherwise he will work for anyone with enough money.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Fleur Mab",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 5,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hired with Her Sister",
+        "description": "Fleur and Estella may be hired at the same time without needing two Initiative rolls. They may not be fielded in the same game by separate warbands unless those warbands are allied or the scenario is Last Orders. If two opposing players both field them, both sisters leave the board and are removed from both warbands, taking the money with them."
+      },
+      {
+        "name": "Loaded Pistols",
+        "description": "Fleur's guns may be filled with refined powder or superior gun powder, as the player chooses."
+      },
+      {
+        "name": "Pistolier Extraordinaire",
+        "description": "Fleur may either fire three shots in one turn and take one turn to reload, or fire and reload two shots each round."
+      },
+      {
+        "name": "Bretonnian Blood",
+        "description": "When Fleur shoots a duelling pistol, the first 10\" count as close range."
+      },
+      {
+        "name": "Sheltered",
+        "description": "So long as Estella is on the board, Fleur is immune to fear."
+      }
+    ],
+    "skills": [
+      "Eagle Eyes",
+      "Trick Shooter"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Duelling Pistol",
+        "quantity": 2
+      },
+      {
+        "item": "Cutlass",
+        "quantity": 1
+      },
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Powder Horn",
+        "quantity": 2
+      },
+      {
+        "item": "Lucky Charm",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 50,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any non-chaotic, non-Skaven and non-Undead warband may hire Fleur.",
+      "warbands": [
+        {
+          "group": "chaos",
+          "excluded": true
+        },
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Estella Mab",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hired with Her Sister",
+        "description": "Fleur and Estella may be hired at the same time without needing two Initiative rolls. They may not be fielded in the same game by separate warbands unless those warbands are allied or the scenario is Last Orders. If two opposing players both field them, both sisters leave the board and are removed from both warbands, taking the money with them."
+      },
+      {
+        "name": "Main-Gauche",
+        "description": "Estella's main-gauche may be used as a dagger, for +1 attack, or to parry a single attack, with no attack. Used with another parrying weapon she may parry two attacks. The player chooses each turn."
+      },
+      {
+        "name": "Princess of Parries",
+        "description": "If Estella has a higher Weapon Skill than her attacker she gets +1 on her parry rolls, so she can parry attacks that hit on a 6. She may also try to parry attacks made with double or more her Strength."
+      },
+      {
+        "name": "Protective",
+        "description": "If Fleur is knocked down or stunned at the start of your turn, Estella will charge the enemy closest to Fleur, ignoring fear. While Fleur is knocked down or stunned, Estella fights, but does not move, as if she were frenzied. If Estella is not within charge range she moves 8\" directly towards Fleur, with the normal deductions for terrain."
+      }
+    ],
+    "skills": [
+      "Expert Swordsman",
+      "Mighty Blow",
+      "Strike to Injure",
+      "Swashbuckler",
+      "Riposte"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Rapier",
+        "quantity": 1
+      },
+      {
+        "item": "Main Gauche",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 50,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any non-chaotic, non-Skaven and non-Undead warband may hire Estella.",
+      "warbands": [
+        {
+          "group": "chaos",
+          "excluded": true
+        },
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Kromwell the Blackhearted",
+    "description": "",
+    "movement": 3,
+    "weapon_skill": 7,
+    "ballistic_skill": 4,
+    "strength": 4,
+    "toughness": 5,
+    "wounds": 2,
+    "initiative": 3,
+    "attacks": 2,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "War Frenzy",
+        "description": "Kromwell is frenzied. If he is knocked down or stunned he becomes frenzied again during your next recovery phase."
+      },
+      {
+        "name": "Loner",
+        "description": "Kromwell is immune to All Alone."
+      },
+      {
+        "name": "Hard Head and Hard to Kill",
+        "description": "Kromwell ignores the Concussion rule, and is only taken out of action on a 6: a 5 counts as a stunned result, as for other Dwarfs."
+      },
+      {
+        "name": "Possessed",
+        "description": "After each game in which Kromwell took at least one enemy warrior out of action, roll a Leadership test, deducting one point from his Leadership for each enemy he took out in close combat. If the test is failed he charges and fights a random hero from your roster for 3 rounds, then leaves, and may not be used next game. If that warrior takes him out within those 3 rounds, Kromwell will stay with the warband if you wish to pay upkeep for him."
+      }
+    ],
+    "skills": [
+      "Unstoppable Charge",
+      "Fearsome",
+      "Monster Slayer",
+      "Strike to Injure",
+      "Sprint"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 2
+      },
+      {
+        "item": "Double-barreled Blunderbuss",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 85,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 60,
+      "grade": "2b",
+      "race": "Dwarf",
+      "unique_to": "Any evil warband may hire Kromwell.",
+      "warbands": [
+        {
+          "group": "evil",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Im Abav Yub",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Sought Out",
+        "description": "There is no hire fee. He comes to the aid of a warband that may hire him only if it sends one or more of its heroes to look for him in the normal manner, rolling under or equal to their Initiative. Found, he may still decide not to come, and comes only if the enemy warband has the higher rating. Roll a D6 and consult the table.\n\nDifference in warband rating | D6 needed\n0-49 | no chance\n50-99 | 6+\n100-149 | 5+\n150-199 | 4+\n200+ | 3+"
+      },
+      {
+        "name": "Archer Extraordinaire",
+        "description": "Im Abav Yub may combine the Nimble and Quick Shot skills, so he may move and shoot twice with his bow."
+      },
+      {
+        "name": "Never Armoured",
+        "description": "The model never wears armour."
+      },
+      {
+        "name": "Gu Ag, Unga Zag and Leggit Er",
+        "description": "His bow Gu Ag and his sword Unga Zag are a bow and a sword. His cape Leggit Er counts as an Elven cloak."
+      }
+    ],
+    "skills": [
+      "Step Aside",
+      "Eagle Eyes",
+      "Dodge",
+      "Nimble",
+      "Quick Shot"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Bow",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Elven Cloak",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No hire fee: he must be sought out before the battle."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 70,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Im Abav Yub will only join Albion Barbarian tribes.",
+      "warbands": [
+        {
+          "type": "albion-barbarians",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Gaz Er Unga Og",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Two Small Staffs",
+        "description": "Gaz Er Unga Og fights with two small staffs and may parry once with them. She wears no armour to begin with, but may be given some."
+      },
+      {
+        "name": "Barbarian Shaman",
+        "description": "Gaz Er Unga Og knows all six spells of the Barbarian Shaman spell list."
+      },
+      {
+        "name": "Magical Experimentalist",
+        "description": "Every time a spell is used while she is around, the enemy's included, she may try to adapt it. Roll a D6: on a 6 she has an idea of how the spell works, and if she uses it as her next spell and manages its difficulty she has learnt it. Even after she leaves the warband that first engaged her, she keeps every spell she has learnt and any item she was given during the campaign, so a second employer gets more for his money than the first."
+      },
+      {
+        "name": "Knows the Land",
+        "description": "A warband that engages her always adds 2 to the roll to determine the supply source it reaches."
+      }
+    ],
+    "skills": [
+      "Sorcery",
+      "Warrior Wizard"
+    ],
+    "spells": [],
+    "equipment": [],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No gold: she claims an item from whoever hires her, a weapon or a magic item she has not met before, which must count as rare 8 or more."
+      },
+      "upkeep_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Common items she does not know, anything civilised enough that barbarians cannot buy it. When the warband has no more to give her, or stops giving them, she leaves."
+      },
+      "rating": 85,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Every warband except Witch Hunters may hire Gaz Er Unga Og.",
+      "warbands": [
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  }
+]

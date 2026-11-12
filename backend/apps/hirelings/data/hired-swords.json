@@ -5901,5 +5901,2533 @@
       "rating": 100,
       "race": "Halfling"
     }
+  },
+  {
+    "name": "Strigany Seer",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Always Goes to Battle",
+        "description": "The Seer always accompanies the warband into battle."
+      },
+      {
+        "name": "Never Armoured",
+        "description": "The model never wears armour."
+      },
+      {
+        "name": "No Heavy Weapons",
+        "description": "The Seer may not use a double-handed weapon or a shield."
+      },
+      {
+        "name": "Reading",
+        "description": "At the beginning of each battle every hero in the warband may ask the Seer for a single reading; he does not have to. A hero within 6\" of the Seer may instead ask for a reading during the battle: it costs double, 10 gc, and the result applies from the beginning of the following Seer player's turn. A reading's effects last for one battle."
+      },
+      {
+        "name": "Cards of Fortune",
+        "description": "Each result is the card the Seer picks. Roll two differently coloured D6: one for the column, one for the row.\n\nColumns: 1 Circle of Life (health); 2-3 Leaf of Fortune (good luck); 4-5 Stone of Riches (wealth); 6 Spear of Misfortune (bad luck).\n\nTwins (1-2)\nCircle of Life - Tough: the hero may force an opponent to re-roll a single injury roll made against him.\nLeaf of Fortune - Lucky: the hero may re-roll any one of his own dice during the battle, never an opponent's.\nStone of Riches - Finders Keepers: the hero finds a stash of 2D6 gc in the exploration phase, if he was not taken out of action.\nSpear of Misfortune - Unlucky: the enemy player may force the hero to re-roll a single dice during the game.\n\nServant (3)\nCircle of Life - Hard Nut: once per battle, the hero is knocked down instead of stunned.\nLeaf of Fortune - Very Lucky: the hero may adjust a single dice by 1 in the exploration phase, if he was not taken out of action.\nStone of Riches - Money Pouch: the hero finds 2D6+5 gc in the exploration phase, if he was not taken out of action.\nSpear of Misfortune - Poor Hunting: the enemy player may adjust a single dice rolled for the warband in the exploration phase by 1. It must always be to the warband's harm.\n\nMother (4)\nCircle of Life - Impervious to Pain: the hero may ignore the first wound he suffers during the battle.\nLeaf of Fortune - You're So Clumsy: the hero may name a single enemy warrior within 12\" at any time during the battle. The next time that warrior moves, he must roll under his Initiative on a D6 or trip and count as knocked down.\nStone of Riches - Jewellery Box: the hero finds jewellery worth 2D6+10 gc in the exploration phase, if he was not taken out of action.\nSpear of Misfortune - Accident Prone: roll a D6 each turn the hero moves. On a 6 he falls over and counts as knocked down.\n\nFather (5)\nCircle of Life - Constitution of an Ox: once per battle, the hero is knocked down instead of stunned or taken out of action.\nLeaf of Fortune - Butterfingers: the hero may name a single enemy warrior within 12\" at any time during the battle. That warrior at once drops one weapon, chosen by the hero. If he is in combat and wins the round he may recover it; if he loses, it is lost. A warrior not in combat may recover it at the end of his turn, and may not fire a missile weapon that turn.\nStone of Riches - Lady's Loss: the hero finds a coronet worth 3D6+20 gc in the exploration phase, if he was not taken out of action.\nSpear of Misfortune - Poor Morale: the warband loses faith in its leader. He loses the Leader rule for the rest of the battle.\n\nSpirit (6)\nCircle of Life - Charmed Life: the hero may force an opponent to re-roll every to-wound roll made against him during the battle.\nLeaf of Fortune - Family Loyalty: the hero may add one henchman to any henchmen group or start a new group with him. He is armed with a single-handed weapon or a missile weapon that is not a black powder weapon, and a dagger. This may take the warband over its maximum.\nStone of Riches - Hero's Loss: the hero finds a crown worth 6D6+20 gc in the exploration phase, if he was not taken out of action.\nSpear of Misfortune - Desertion: a single henchman of the player's choice who is not out of action, stunned or knocked down deserts the warband, catches a fatal disease or is otherwise lost. Remove him from the roster; the warband may not keep his equipment."
+      },
+      {
+        "name": "Curse",
+        "description": "If the Seer dies, roll a D6 at once for each hero in the warband and for the warrior who took her out of action. On a 4+ that warrior suffers an effect from the Spear of Misfortune column: roll a D6 for the row and apply it. If she is dismissed, the warband's leader has to test unless he pays her off with 8D6 gc, or 6D6 gc if he has the Haggle skill."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Club",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No hire fee: she takes a retainer of 15 gc before each battle."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "5 gc for each reading, and 10 gc for a reading made during the battle."
+      },
+      "rating": 15,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Only human and Vampire warbands may hire a Strigany Seer.",
+      "warbands": [
+        {
+          "group": "humans",
+          "excluded": false
+        },
+        {
+          "group": "undead",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Clan Eshin Assassin",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Chosen Weapons",
+        "description": "The Assassin starts with one of: fighting claws with either one dose of Black Lotus or one dose of Dark Venom; weeping blades; or a sword, a dagger and a blowpipe. He always has light armour and a helmet."
+      },
+      {
+        "name": "No Two Together",
+        "description": "An established Clan Eshin warband will not hire a freelance Assassin, and two Assassins will never fight for the same warband, even if one of them is sent on an assassination."
+      },
+      {
+        "name": "Perfect Killer",
+        "description": "Every attack the model makes, shooting or in close combat, has an extra -1 save modifier."
+      },
+      {
+        "name": "Disengage (Clan Eshin Assassin)",
+        "description": "At the beginning of his turn the Assassin may leave combat without his opponent getting a free hit, provided he is fighting a single enemy warrior. Fighting two or more, he may not leave combat. A model knocked down or stunned does not count as being in combat."
+      },
+      {
+        "name": "Assassinate",
+        "description": "Instead of taking part in a battle, the Assassin may be hired to take out the opposition. The warband names an enemy hero. When the enemy warband deploys, the Assassin is already lying in wait: he charges the named hero and the two fight one round of combat, after which the Assassin leaves the battlefield whatever the result. He automatically surprises his target and always strikes first, whatever weapon the target carries. The attempt happens immediately before the first turn of the battle."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 30,
+      "grade": "2b",
+      "race": "Skaven",
+      "unique_to": "Any Skaven warband except Clan Eshin may hire a Clan Eshin Assassin.",
+      "warbands": [
+        {
+          "type": "skaven-of-clan-pestilens-tc29",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-moulder",
+          "excluded": false
+        },
+        {
+          "type": "metal-mongers",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-mors",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-pestilens-lus",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-pestilens-mou",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-pristekk",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-skryre-kaz",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-skryre-rel",
+          "excluded": false
+        },
+        {
+          "type": "underworld-alliance",
+          "excluded": false
+        },
+        {
+          "type": "skaven-of-clan-skryre-ath",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength",
+        "Speed",
+        "Skaven"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Clan Skryre Engineer",
+    "type": "Hired Sword",
+    "description": "Also carries: a warp-glaive and a trained rat familiar.",
+    "movement": 5,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Tinkerer",
+        "description": "While the warband has a Clan Skryre Engineer it must use the misfire rules from the back of the Mordheim rulebook. The Engineer may tinker with pistols of any kind, handguns and jezzails. Each time a warrior in the warband fires such an upgraded weapon and rolls a 1 to hit, do not roll on the normal misfire chart; roll a D6 on this one instead.\n\nD6 | Effect\n1 | Boom! The shot explodes in the barrel. The shooter suffers a S4 hit, which causes no critical hits, and the weapon is destroyed.\n2-3 | Jammed. The bullet is stuck in the barrel and the weapon may not be fired again this battle. It is cleared in time for the next battle.\n4-5 | Phut. The black powder fails to ignite. The warrior may try to fire again next turn.\n6 | Ka-Boom! The upgrade works better than planned: the shot's Strength is increased by 1."
+      },
+      {
+        "name": "Warp-Glaive",
+        "description": "A halberd with a warpstone chamber at the base of the blade. Range close combat, Strength as user +2, two-handed and unstable. Two-handed: a model using it may not use a shield, buckler or additional hand weapon in close combat; with a shield he still gets +1 to his armour save against shooting. Unstable: on a natural 1 to wound, the wielder takes a S3 hit that ignores armour saves, the coils burn out and the glaive counts as a halberd (S+1) for the rest of the battle. It costs 45 gc, rarity 10, and only the Engineer may use it."
+      },
+      {
+        "name": "Upgrades",
+        "description": "A warband with a Clan Skryre Engineer may buy these upgrades for its weapons.\n\nTargeter, 15 gc, rarity 9: the shooter gets +1 BS.\nExtra strong warpstone ammunition, 25 gc, rarity 10: the weapon gets +1 S, but misfires on a roll of 1-2.\nTrained rat familiar, 30 gc, rarity 10: the rat recharges the weapon, so the warrior may shoot each turn as if with a brace. It works with every weapon that needs reloading, and gives no benefit to a warrior who already has a brace.\nIncreased barrel, 40 gc, rarity 9: the weapon's range grows by D6\", rolled once per battle.\nRatling gun, 200 gc, rarity 11: range 12\", Strength 4 with a -2 save modifier, move or fire, multiple shots, barrel-carrier. Barrel-carrier: two warriors must handle it, one holding the gun and one the barrel. Multiple shots: name the target and roll a dice; the result is how many shots you get, and you may keep rolling further dice for more shots as often as you like. If you ever roll the same result twice, consult the ratling gun misfire chart: double 1s or 2s, no shots are fired; double 3s or 4s, it shoots in a random direction, rolled with 2D6 for the distance and the artillery dice for the direction, and the first model in its path is hit; double 5s or 6s, it explodes, both warriors handling it are automatically out of action and every other warrior within 2\" takes a S4 hit."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Warplock pistol",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 15,
+      "grade": "2b",
+      "race": "Skaven",
+      "unique_to": "Only Skaven warbands may hire a Clan Skryre Engineer.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Academic",
+        "Shooting",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Reaper",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 2,
+    "attacks": 2,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Immune to Psychology",
+        "description": "The model is immune to psychology and never leaves combat."
+      },
+      {
+        "name": "Immune to Poison",
+        "description": "Not affected by any poison."
+      },
+      {
+        "name": "May Not Run",
+        "description": "The model may not run, but may charge normally."
+      },
+      {
+        "name": "Chill Touch",
+        "description": "The Reaper's attacks ignore armour."
+      },
+      {
+        "name": "Ethereal (Reaper)",
+        "description": "The Reaper may move through solid objects such as walls at will, but may not end his move inside one, and may not move through living beings. He cannot charge an enemy he cannot see."
+      },
+      {
+        "name": "Hard to Hit",
+        "description": "All shots at the Reaper are at -1 to hit. He may also take a Leadership test to avoid taking a wound. He gets no special save against magical attacks."
+      },
+      {
+        "name": "Combat Resolution",
+        "description": "The Reaper suffers no wounds from attacks themselves. When a combat involving him is finished, total the difference in wounds caused by each side, adding 1 if more than one enemy attacked him. If he suffered more wounds than the enemy, he must take a Leadership test with a penalty equal to that total. If he fails, he suffers a wound; with no wounds left he automatically goes out of action. He can never be knocked down or stunned."
+      },
+      {
+        "name": "Disrupted Essence",
+        "description": "When the Reaper is put out of action he does not roll on the Serious Injury chart. He must return to his crypt and misses the next battle. Roll a D6: on a 1 he has failed to recover and is laid to rest for good."
+      },
+      {
+        "name": "Maximum Profile",
+        "description": "The Reaper gains experience as other hired swords do, and his maximum profile is a human's."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Scythe",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 35,
+      "grade": "2b",
+      "race": "Wraith",
+      "unique_to": "Any Undead warband may hire a Reaper.",
+      "warbands": [
+        {
+          "group": "undead",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [
+        {
+          "name": "Combat Master",
+          "description": "The Reaper has the Combat Master skill."
+        },
+        {
+          "name": "Expert Scyther",
+          "description": "As Expert Swordsman, but for the Reaper's scythe instead of a sword."
+        },
+        {
+          "name": "Sorcery",
+          "description": "If the Reaper has his Arcane Lore skill, he gets +1 to his rolls to cast spells."
+        },
+        {
+          "name": "Arcane Lore (Reaper)",
+          "description": "The Reaper may learn Necromancy from his personal spellbook."
+        },
+        {
+          "name": "Death's Strength",
+          "description": "The Reaper ignores the usual penalty of always striking last with his scythe; work out the order of combat as with other weapons."
+        },
+        {
+          "name": "Death's Haste",
+          "description": "If the Reaper is charged, the order of attack is worked out by comparing Initiative instead of the charger striking first."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Halfling Thief (Karak Azgal)",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 4,
+    "strength": 2,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Starting Skills",
+        "description": "The Halfling Thief starts with Eagle Eyes or Quick Shot, and with one of his own thief skills."
+      },
+      {
+        "name": "Small",
+        "description": "The Halfling Thief may not use double-handed weapons, bows other than short bows, or any black powder weapon."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Sling",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 10,
+      "grade": "2b",
+      "race": "Halfling",
+      "unique_to": "Only 'good' warbands (human, High Elf, Wood Elf and Dwarf) may hire a Halfling Thief.",
+      "warbands": [
+        {
+          "group": "good",
+          "excluded": false
+        },
+        {
+          "group": "elves",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
+      "available_special_skills": [
+        {
+          "name": "Thieving",
+          "description": "At the end of a game, if he did not go out of action, the Thief may try to steal a single item he could normally use. Roll 2D6: a non-rare item is stolen on a 4+; a rare item needs a roll over (not equal to) its rarity, and a 12 always succeeds. On a failure he has been Sold to the Pits (65 on the heroes' Serious Injury chart)."
+        },
+        {
+          "name": "Pick Pocket",
+          "description": "Instead of attacking, the Thief may try to take an item from an enemy warrior in base contact at the beginning of a round of combat. The item may be anything up to the size of a single-handed weapon, but not one worn or held in the enemy's hands. For money, a henchman carries 5% of the warband's total wealth and a hero 10%, up to the warband's total; the rest is out of reach. He must declare what he is stealing and pass an Initiative test, where a 6 always fails. On a success he may not attack that round but may use the item from the beginning of the next turn, even the enemy's. On a failure every hit against him strikes on a 3+ and he goes last in that round of combat, for that round only. A Thief with this skill within 2\" of a disarmed enemy may pick the weapon up at once without an Initiative test, but may do nothing else that turn."
+        },
+        {
+          "name": "Trap Expert",
+          "description": "The Thief never sets off a trap himself, though he may suffer from one that goes off near him. He may try to disarm a trap he comes upon: he must stop at it in his movement and do nothing else that turn, then roll 2D6, needing 6+ for a simple trap or 8+ for a complex one. On a failure he must roll against his own Initiative, and a failed test means he has set the trap off. He may also restore a dud or disarmed trap: roll a D6 for what a dud becomes, 1-4 simple and 5-6 complex, while a disarmed trap returns to what it was, then roll 2D6, needing 6+ for a simple trap or 8+ for a complex one."
+        },
+        {
+          "name": "Hide In Shadows",
+          "description": "An enemy warrior trying to detect the hidden Thief must halve his Initiative before measuring the distance."
+        },
+        {
+          "name": "Backstabbing",
+          "description": "If the Thief is undetected by an enemy within his normal movement of 4\", he may charge him in his turn, 6\" with the Sprint skill. When he charges this way he adds 1 to his Strength and his enemy loses one attack, in the first round of combat only."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Prospector (Karak Azgal)",
+    "type": "Hired Sword",
+    "description": "The row is the human Prospector; the page also gives a Dwarf Prospector, whose hire fee, upkeep, rating and profile are in the fee notes. A Dwarf Prospector may also take Dwarf skills.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Crossbow for a Dwarf",
+        "description": "A human Prospector carries a bow; a Dwarf Prospector carries a crossbow instead."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Pick",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Bow",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "A Dwarf Prospector costs 30 gc to hire, and has the Dwarf profile: M3 WS4 BS3 S3 T4 W1 I2 A1 Ld9."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "A Dwarf Prospector costs 20 gc upkeep, and raises the warband's rating by 20 points plus 1 for each experience point."
+      },
+      "rating": 15,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any Dwarf or human warband may hire a Prospector.",
+      "warbands": [
+        {
+          "group": "humans",
+          "excluded": false
+        },
+        {
+          "group": "dwarfs",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": [
+        {
+          "name": "Luck (Prospector)",
+          "description": "The Prospector may re-roll a single dice in the game. He starts with this skill and may learn it twice more, for up to three re-rolls in a game. A re-roll not used during a battle may be used on a single dice in the post-battle sequence, exploration dice and his own serious injury included."
+        },
+        {
+          "name": "Prospector",
+          "description": "If the Prospector was not taken out of action he may go prospecting as well as exploring normally, and finds a further D6-1 gc for the warband."
+        },
+        {
+          "name": "Loner",
+          "description": "The Prospector never takes All Alone tests."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Necromancer",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Necromantic Magic",
+        "description": "The Necromancer is a wizard who uses Necromantic magic. He starts with the spells Awakening and Death Vision. When he would gain a new skill he may instead roll a new spell from the Necromantic spell list at random."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 18,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Clan Pestilens, Blood Dragons, Marienburgers, Dark Elf Raiders, a Strigoi warband or the Brigands may hire the Necromancer.",
+      "warbands": [
+        {
+          "type": "skaven-of-clan-pestilens-mou",
+          "excluded": false
+        },
+        {
+          "type": "blood-dragons",
+          "excluded": false
+        },
+        {
+          "type": "marienburgers",
+          "excluded": false
+        },
+        {
+          "type": "dark-elf-corsairs",
+          "excluded": false
+        },
+        {
+          "type": "strigoi",
+          "excluded": false
+        },
+        {
+          "type": "survivors-of-strigos",
+          "excluded": false
+        },
+        {
+          "type": "bretonnian-brigands",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Grave Robber (Mousillon)",
+    "type": "Hired Sword",
+    "description": "Also carries a shovel, a pick and a pry bar, which have no effect in the game.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Familiar with the Crypts",
+        "description": "The warband may change a single dice roll on the Exploration chart by 1 either way."
+      },
+      {
+        "name": "Trap Expert",
+        "description": "The Grave Robber has the Trap Expert skill."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Buckler",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 20,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Clan Pestilens, Blood Dragons, Marienburgers, Dark Elf Raiders, a Strigoi warband or the Brigands may hire the Grave Robber.",
+      "warbands": [
+        {
+          "type": "skaven-of-clan-pestilens-mou",
+          "excluded": false
+        },
+        {
+          "type": "blood-dragons",
+          "excluded": false
+        },
+        {
+          "type": "marienburgers",
+          "excluded": false
+        },
+        {
+          "type": "dark-elf-corsairs",
+          "excluded": false
+        },
+        {
+          "type": "strigoi",
+          "excluded": false
+        },
+        {
+          "type": "survivors-of-strigos",
+          "excluded": false
+        },
+        {
+          "type": "bretonnian-brigands",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Priest of Morr (Mousillon)",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "Priest",
+    "specials": [
+      {
+        "name": "My God Is With Me",
+        "description": "The Priest never needs to take All Alone tests."
+      },
+      {
+        "name": "Purification",
+        "description": "While a warband uses a Priest of Morr, no dead warrior of that warband may ever be raised to undeath by the Spell of Awakening, turned into a zombie as a sacrifice, or raised to undeath by any other means."
+      },
+      {
+        "name": "Poor",
+        "description": "The Priest comes armed only with a dagger. When he is hired the warband may give him a sword, a club or a scythe (a halberd) that it has, or buy one for him. If he ever leaves the warband, by death, failure to pay upkeep or otherwise, that weapon is lost with him, and it may not be traded from then on."
+      },
+      {
+        "name": "Rituals of Morr",
+        "description": "The Priest may perform ancient Rituals of Morr, which count as prayers in every respect. He begins with two, determined at random. When he gains an advance he may gain a new Ritual instead of a skill."
+      }
+    ],
+    "skills": [],
+    "spells": [
+      {
+        "name": "1 - Morr's Protection",
+        "description": "Difficulty 7. Any magical attack or prayer made by a spellcaster or priest who is not of Morr, and which would be a direct attack on the Priest, is negated on a 4+. While the protection lasts, a damaging spell may never put the Priest out of action: treat an out of action result as stunned. The prayer stays in play until it successfully saves against such an attack."
+      },
+      {
+        "name": "2 - Death Holds No Fear",
+        "description": "Difficulty 6. The Priest is immune to fear. Undead and chaos beings within 6\" must pass a Leadership test each combat phase or lose one attack, which can never reduce them to no attacks. They test even though they are immune to psychology, because this tests the will that holds them together. The Priest must pass a Leadership test at the start of his magic phases or the prayer ends."
+      },
+      {
+        "name": "3 - Sanctity From the Fallen",
+        "description": "Difficulty 7. Every friendly model within 6\" gets +1 to its armour save, and a 6+ save where it had none. Any undead model, or any creature tainted by chaos, is at -1 to hit those warriors."
+      },
+      {
+        "name": "4 - Hand of Morr",
+        "description": "Difficulty 9. One undead model in base contact with the Priest, a vampire, dire wolf, zombie or skeleton among them, goes out of action. A ghoul or chaos-tainted character he touches flees its full movement away from him. Every other character strikes last in the next round of combat."
+      },
+      {
+        "name": "5 - Presence of Morr",
+        "description": "Difficulty 8. Any one ordinary model within 6\" of the Priest suffers an automatic wound with no save allowed. A chaotic being is at +1 on the injury table if it is reduced to no wounds. The rite causes 2 wounds on an undead creature, and adds 1 to any injury rolls for it."
+      },
+      {
+        "name": "6 - I Am Death!",
+        "description": "Difficulty 9. The Priest fights with Weapon Skill 4 and +1 Attack, and gains a 6+ unmodifiable ward save. He must pass a Leadership test at the start of his magic phases or the prayer ends."
+      }
+    ],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 32,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 13,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Human warbands not associated with Chaos or Undead may hire a Priest of Morr. He may work alongside priests of another religion, though it is unusual.",
+      "warbands": [
+        {
+          "group": "humans",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Academic",
+        "Combat"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Alchemist",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Alchemist",
+        "description": "The Alchemist knows two potion recipes, determined at random, when he is hired. When he gains a new skill he may instead learn a new recipe, determined at random; roll again for a duplicate."
+      },
+      {
+        "name": "Potions (Alchemist)",
+        "description": "Potions are the results of the recipes the Alchemist knows. They are all used at the start of the battle, the exploding potion aside, and thrown potions follow the rules for thrown weapons. A potion lasts for one battle and is then useless. Before the battle the Alchemist may make potions from two different recipes he knows, D3-1 potions from each. If he uses a potion on himself or his own equipment he never suffers its bad consequences. If another warrior suffers from a potion, the Alchemist will refuse to make any further potions for him."
+      },
+      {
+        "name": "Potion Recipes",
+        "description": "1. Potion of Flames. Used on one weapon, which counts as +1 Strength. A creature susceptible to fire suffers 2 wounds instead of one. After the battle roll a D6: on a 1 the weapon is burnt and worthless.\n2. Leather Skin Potion. The drinker's skin gives a 5+ armour save, which may not be modified beyond 6+. It cannot be used while he wears body armour, but may be combined with a shield. After the battle roll a D6: on a 1 the skin tears and he must roll on the Serious Injury table, rolling again for death, capture and sold to the pits.\n3. Muscle Potion. The drinker is +1 Strength for the rest of the battle, which may take him beyond his racial maximum. After the battle roll a D6: on a 1 he is -1 Strength for the next battle.\n4. Exploding Potion. Thrown, and explodes on its target with a S5 hit. If it misses it rolls D3\" in a random direction and explodes there; on a 1 to hit it goes D3\" in a random direction from the thrower. Everything within 1\" of the explosion takes a S3 hit.\n5. Berserker Potion. The drinker becomes frenzied. After the battle roll a D6: on a 1 he is too ill to fight and misses the next battle.\n6. Potion of Speed. Rubbed on one warrior's legs and arms, he is +1 Movement and +1 Initiative for the battle. Drunk instead, his Initiative becomes 10 and his Movement 6, but he falls ill and misses the next game. The Alchemist will never drink it himself."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Handgun",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 20,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any warband not opposed to the use of gunpowder may hire the Alchemist.",
+      "warbands": [],
+      "available_skill_types": [
+        "Shooting"
+      ],
+      "available_special_skills": [
+        {
+          "name": "Adept Potionmaker",
+          "description": "The Alchemist may make one more potion of a recipe he knows before the battle. This may let him take three different potions to battle instead of two."
+        },
+        {
+          "name": "Powder and Gun Specialist",
+          "description": "One black powder weapon per game may add 6\" to its range and hit at +1 Strength. This cannot be combined with the Hunter skill, and the black powder misfire table becomes compulsory."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Dark Maiden",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Spells of Wrath",
+        "description": "The Dark Maiden is a wizard and uses the Spells of Wrath. She starts with two of them, determined at random. When she gains a new skill she may instead roll on the Spells of Wrath list."
+      }
+    ],
+    "skills": [],
+    "spells": [
+      {
+        "name": "1 - Dark Strength",
+        "description": "Difficulty 8. The Dark Maiden may pick herself or any one friendly model within 6\". That model gains +1 Attack and scores a critical hit on a 5+. The spell lasts until the beginning of her next magic or shooting phase."
+      },
+      {
+        "name": "2 - Ebony Blade",
+        "description": "Difficulty 6. The Dark Maiden enchants one bladed weapon within 6\". It gains +1 to the injury roll, and if it hits, its victim is -1 Toughness until the end of the next combat turn. The enchantment lasts for one turn of combat."
+      },
+      {
+        "name": "3 - Black Lightning",
+        "description": "Difficulty 7. Choose a target in sight within 12\". It suffers a S4 hit. If that causes a wound, D3 S2 hits strike models within 6\", one hit per model at most."
+      },
+      {
+        "name": "4 - Dark Infuse",
+        "description": "Difficulty 6. A single model within 2\", the Dark Maiden included, regains 1 lost wound. He stands up at once and may fight that round at +1 Strength, in normal order."
+      },
+      {
+        "name": "5 - Purple Aura",
+        "description": "Difficulty 7. Every model within 6\" of the Dark Maiden, herself included, gets +1 Weapon Skill and +1 Initiative. A friendly model within 6\" that has just recovered from being knocked down comes to its senses and fights as normal, so does not strike last."
+      },
+      {
+        "name": "6 - Cold Shadow",
+        "description": "Difficulty 8. One visible target within 12\" loses a wound unless it passes a Strength test, and keeps losing one each round until it passes. A model that loses its last wound, or has already lost it, rolls on the injury chart."
+      }
+    ],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 16,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any warband may use the Dark Maiden, so long as it has no White Lady or other law-enforcing hired sword.",
+      "warbands": [],
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "White Lady",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Herald of the Lady",
+        "description": "The White Lady will never work in a warband that already employs any other magic user, any assassin or a grave robber."
+      },
+      {
+        "name": "Spells of the Lake",
+        "description": "The White Lady is a wizard and uses the Spells of the Lake. She starts with one of them, determined at random. When she gains a new skill she may instead roll on the Spells of the Lake list."
+      }
+    ],
+    "skills": [],
+    "spells": [
+      {
+        "name": "1 - Early Morning Fog",
+        "description": "Difficulty 8. Anyone shooting at the White Lady, or at any friendly model within 6\", is at -1 to hit. Models in the mist suffer no critical hits. The spell lasts until the beginning of her next magic or shooting phase."
+      },
+      {
+        "name": "2 - Blade of Ice",
+        "description": "Difficulty 7. The White Lady enchants one bladed weapon within 6\". It gains +1 to hit, and if it hits, its victim automatically strikes last in the next round of combat. The enchantment lasts for one round of combat."
+      },
+      {
+        "name": "3 - Intangible Like the Mist",
+        "description": "Difficulty 7. The White Lady may pick herself or any one friendly model within 6\". That model may charge without being intercepted and may discard the first hit it takes. The spell lasts until the beginning of her next magic or shooting phase."
+      },
+      {
+        "name": "4 - Three Drops of Fortune",
+        "description": "Difficulty 6. A single model within 2\", the White Lady included, may re-roll D3 failed single dice rolls while he is blessed. The spell lasts until the beginning of her next turn."
+      },
+      {
+        "name": "5 - A Tear From the Lady",
+        "description": "Difficulty 5. Any one model within 2\" of the White Lady, herself included, is restored to his full wounds. A friendly model within 2\" that is stunned or knocked down also comes to its senses, stands up and fights as normal."
+      },
+      {
+        "name": "6 - Ice Gaze",
+        "description": "Difficulty 9. One visible target within 12\" takes a S5 hit that causes D3 wounds. Any model within 2\" of it takes a single S3 hit."
+      }
+    ],
+    "equipment": [
+      {
+        "item": "Club",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 16,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Knight Errant, Brigand and Woodsmen warbands may hire the White Lady.",
+      "warbands": [
+        {
+          "type": "bretonnian-knights-errant",
+          "excluded": false
+        },
+        {
+          "type": "bretonnian-brigands",
+          "excluded": false
+        },
+        {
+          "type": "woodsmen-de-artois",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Frankain Mercenary",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Two Weapons of His Choosing",
+        "description": "The Frankain Mercenary carries two of these weapons: a sword, an axe, a morning star or a club. He fights only on foot."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 21,
+      "grade": "1b",
+      "race": "Human",
+      "unique_to": "Any warband except Bretonnians may hire the Frankain Mercenary.",
+      "warbands": [
+        {
+          "type": "bretonnian-knights",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-knights-errant",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-brigands",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-buccaneers",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-chapel-guard",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-grail-companions",
+          "excluded": true
+        },
+        {
+          "type": "woodsmen-de-artois",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Genie",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 2,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Elemental Magic (Genie)",
+        "description": "A Genie is tied to one of the elements of water, fire, earth or air. Roll 2D6 when he is hired: 2-4 water, 5-6 fire, 7-8 air, 9-11 earth, 12 your choice. He may take spells from that element's list. He starts with one spell and one Genie power, and gains another when he advances."
+      },
+      {
+        "name": "Genie Powers",
+        "description": "A Genie may use one of these powers at the start of his turn, and it lasts until the end of his opponent's turn.\n\nWhirlwind: the Genie may run at triple his Movement but may not charge or be charged. He may make no attacks of any kind while he does, and is at -1 to hit with missile weapons.\nGenie's Curse: all of the Genie's enemies within 4\" are at -1 to their to-hit rolls and all of their saves. This power is active throughout the whole battle.\nLucky: the Genie has an unmodifiable 5+ save against all hits."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 80,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": null,
+      "grade": "1b",
+      "race": "Spirit",
+      "unique_to": "Any warband may hire a Genie.",
+      "warbands": [],
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Lazar",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Club or Staff",
+        "description": "The Lazar carries either a club or a staff as well as his dagger and sling."
+      },
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Recognised on Sight",
+        "description": "The Lazar causes fear in all living races. Followers of Nurgle and of Clan Pestilens are not frightened by his appearance and are not afraid of catching his diseases."
+      },
+      {
+        "name": "No Pain",
+        "description": "The model treats a stunned result on the Injury chart as knocked down."
+      },
+      {
+        "name": "The Disease Advances",
+        "description": "The Lazar gains no skills. Instead his disease advances: any model within 1\" of him must pass a psychology test or flee away from him, and that range grows by 1\" for each further skill advance he rolls."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Sling",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 12,
+      "grade": "1b",
+      "race": "Human",
+      "unique_to": "Any warband that dares approach him may hire the Lazar.",
+      "warbands": [],
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Cartographer",
+    "type": "Hired Sword",
+    "description": "Also carries a quarter map.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Uncharted No More",
+        "description": "Whenever the warband plays a scenario in which the Cartographer has taken part at least once already, it may change the roll to see which warband sets up first by 1 either way."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Rapier",
+        "quantity": 1
+      },
+      {
+        "item": "Lantern",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 8,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any human warband except the Maidens of Dusk and Dawn may hire a Cartographer.",
+      "warbands": [
+        {
+          "group": "humans",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Clocked Crook",
+    "type": "Hired Sword",
+    "description": "Also carries an in-built clockwork totem, which counts as a banner and a halberd.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Construct",
+        "description": "A construct as the Clockworkers warband list describes."
+      },
+      {
+        "name": "Gift of Sentience",
+        "description": "A Clocked crook has been given the Gift of Sentience and so ignores some of the constructs' usual rules."
+      },
+      {
+        "name": "Countermeasures",
+        "description": "A Clocked crook counts as having the Rogue control skill."
+      },
+      {
+        "name": "Moonstone Infusion",
+        "description": "A Clocked crook may learn the Clockworkers' special skill Moonstone infusion."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Moonstone",
+            "amount": 1
+          }
+        ],
+        "note": "1 moonstone."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Orichalcum token",
+            "amount": 2
+          }
+        ],
+        "note": "2 orichalcum tokens."
+      },
+      "rating": 12,
+      "grade": "2b",
+      "race": "",
+      "unique_to": "Any warband except the Clockworkers may hire a Clocked crook.",
+      "warbands": [
+        {
+          "type": "clockworkers",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Strength",
+        "Clockworkers"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Maiden Guide",
+    "type": "Hired Sword",
+    "description": "Also carries a clockwork rifle.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Native",
+        "description": "A Maiden guide counts as having the Archaeologist skill, and may learn the Academic skill Wyrdstone Hunter."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 14,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any warband which includes humans or Dwarfs may hire a Maiden guide.",
+      "warbands": [
+        {
+          "group": "humans",
+          "excluded": false
+        },
+        {
+          "group": "dwarfs",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Ogre Cannoneer",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 3,
+    "attacks": 2,
+    "leadership": 7,
+    "armour_save": null,
+    "large": true,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Huge Stamina",
+        "description": "The Ogre cannoneer ignores the swivel gun's Cumbersome rule."
+      },
+      {
+        "name": "Large",
+        "description": "This unit is treated as a Large Target. They may always be shot at with ranged weapons with a +1 modifier to hit."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Cutlass",
+        "quantity": 1
+      },
+      {
+        "item": "Swivel Gun",
+        "quantity": 1
+      },
+      {
+        "item": "Swivel Gun - Ball Shot",
+        "quantity": 1
+      },
+      {
+        "item": "Swivel Gun - Chain Shot",
+        "quantity": 1
+      },
+      {
+        "item": "Swivel Gun - Grape Shot",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 95,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 40,
+      "grade": "2b",
+      "race": "Ogre",
+      "unique_to": "Mercenaries and Pirates may hire an Ogre cannoneer.",
+      "warbands": [
+        {
+          "group": "mercenaries",
+          "excluded": false
+        },
+        {
+          "type": "pirates",
+          "excluded": false
+        },
+        {
+          "type": "araby-smugglers",
+          "excluded": false
+        },
+        {
+          "type": "bretonnian-buccaneers",
+          "excluded": false
+        },
+        {
+          "type": "estalian-corsairs",
+          "excluded": false
+        },
+        {
+          "type": "ghost-pirates",
+          "excluded": false
+        },
+        {
+          "type": "pirates-of-the-cathayan-sea",
+          "excluded": false
+        },
+        {
+          "type": "sartosan-pirates",
+          "excluded": false
+        },
+        {
+          "type": "slayer-pirates",
+          "excluded": false
+        },
+        {
+          "type": "wasteland-privateers",
+          "excluded": false
+        },
+        {
+          "type": "orc-pirates",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Reactivated Archivist",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 3,
+    "weapon_skill": 1,
+    "ballistic_skill": 1,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "No Weapons",
+        "description": "A Reactivated archivist carries no weapons or armour."
+      },
+      {
+        "name": "Collector",
+        "description": "If the Reactivated archivist was not taken out of action, the warband may re-roll a single dice in the exploration phase."
+      },
+      {
+        "name": "Construct",
+        "description": "A construct as the Clockworkers warband list describes."
+      },
+      {
+        "name": "Observer",
+        "description": "After each game the archivist may pass a Leadership test to grant the warband a single re-roll the next time it plays against the warband it has just fought. If the warband lost the game, the archivist passes the test automatically."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Moonstone",
+            "amount": 2
+          }
+        ],
+        "note": "2 moonstones."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Orichalcum token",
+            "amount": 1
+          }
+        ],
+        "note": "1 orichalcum token."
+      },
+      "rating": 8,
+      "grade": "2b",
+      "race": "",
+      "unique_to": "Any warband with access to the fourth ring may hire a Reactivated archivist.",
+      "warbands": [],
+      "available_skill_types": [
+        "Academic"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Warlock Engineer",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 5,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Spear or Halberd",
+        "description": "The Warlock engineer carries a spear or a halberd as well as his dagger."
+      },
+      {
+        "name": "Chain Lightning Only",
+        "description": "Warlock engineers count as spellcasters and know the Chain Lightning spell. They may not learn any other spell."
+      }
+    ],
+    "skills": [],
+    "spells": [
+      {
+        "name": "Chain Lightning",
+        "description": "Difficulty 7. This spell cannot be cast while in hand-to-hand combat. It summons a bolt of green lightning with a range of 24\", which the Warlock engineer shoots at one enemy model. Use his own Ballistic Skill to see whether he hits, but ignore movement, range and cover penalties. It causes one S3 hit with no armour save. After the hit is resolved roll a D6: on a 5+, or a 3+ if both models stand in the same water terrain, the bolt hits the closest model within 6\" of the last target; on a 1 the Warlock engineer is hit instead. It may bounce several times, but each model may only be hit once per turn."
+      }
+    ],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 20,
+      "grade": "2b",
+      "race": "Skaven",
+      "unique_to": "Any warband which includes Skaven may hire a Warlock engineer.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Academic",
+        "Speed"
+      ],
+      "available_special_skills": [
+        {
+          "name": "Supercharged Chain-Lightning Modulator",
+          "description": "The Warlock engineer may deliberately raise Chain Lightning's difficulty. For every 2 points of added difficulty, the spell's Strength is increased by 1 that turn."
+        },
+        {
+          "name": "Upgraded Warp-Energy Condenser",
+          "description": "The Warlock engineer permanently lowers Chain Lightning's difficulty by D3-1 points. It may be taken more than once."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Jezzail Gunner",
+    "type": "Hired Sword",
+    "description": "Also carries a scope. His profile is already reduced by the cannon's Cumbersome rule: before it he is M5 BS4 I4, and with the cannon M4 BS3(4 with the scope) I3.",
+    "movement": 5,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Homebound",
+        "description": "He is only found in the Sartosa campaign setting."
+      },
+      {
+        "name": "Jezzail Cannon",
+        "description": "The Jezzail Cannon always uses the Move or Fire and Prepare Shot rules. It may never be fired twice in a turn, nor fired if the user moved, whatever skills he has. It is cumbersome, which reduces the carrier's Movement and Initiative by 1 each."
+      },
+      {
+        "name": "Scope",
+        "description": "Most shots allow the use of the scope, and the warplock jezzail then fires at +1 Ballistic Skill."
+      },
+      {
+        "name": "Shot",
+        "description": "The Gunner carries two rounds of each of three types of shot into any game.\n\nSniper round: range 42\", Strength 4. It adds 1 to injury rolls, and all shots are at an extra -1 save. It may be used with the scope.\nMan stopper: range 18\", Strength 3. If it hits, roll a D6: on a 4+ the target is automatically stunned. It may be used with the scope.\nPoison gas spray: range 24\", no Strength. Anyone hit must take a Toughness test at -1; anyone else within 2\" is also hit on a 4+ and must take a Toughness test with no penalty. A failed test costs the victim one wound, with no save."
+      },
+      {
+        "name": "Highly Unstable",
+        "description": "The Jezzail Cannon uses this misfire chart on any natural roll of 1 to hit.\n\nD6 | Effect\n1 | Getitoffme! The jezzail is about to blow and is fused to the Gunner. In each movement phase he runs 2D6\" in a random direction, which will never bring him into base contact and always leaves him 1\" away. If charged, he automatically escapes from combat in your next movement phase. At the end of each of your movement phases roll a D6: on a 5+ the jezzail explodes, killing the Gunner at once and dealing a S4 hit to every model within 3\".\n2 | Own Medicine. The Gunner is hit by a blast of whatever he was firing, and the gun may not be used for the rest of the game.\n3 | Oops. The Gunner loses balance and spins round before firing. Roll a random direction from his position: the shot hits the first solid object in its path. The hit is automatic, but may be dodged by normal means. This uses up one round of ammunition.\n4-5 | Click-Click-Click. The weapon does not ignite. It may be fired as normal next round, and the shot is not wasted.\n6 | Mwah Ha Ha! The shot hits its target at +1 Strength. With the poison gas, its range is extended by a further 2\"."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Warplock Jezzail",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 2
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 20,
+      "grade": "2b",
+      "race": "Skaven",
+      "unique_to": "Skaven, Undead, Chaos and Dark Elf warbands may hire a Jezzail Gunner.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": false
+        },
+        {
+          "group": "undead",
+          "excluded": false
+        },
+        {
+          "group": "chaos",
+          "excluded": false
+        },
+        {
+          "type": "dark-elves",
+          "excluded": false
+        },
+        {
+          "type": "druchii",
+          "excluded": false
+        },
+        {
+          "type": "dark-elf-corsairs",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Leviathan Hunter",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 2,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Harpoon",
+        "description": "The Leviathan Hunter's harpoon counts as a javelin."
+      },
+      {
+        "name": "Skinner",
+        "description": "The Hunter may wield a spear and a sword at the same time."
+      },
+      {
+        "name": "Get Over 'Ere!",
+        "description": "Before throwing his harpoon the Hunter may try to pull the target closer. If the thrown spear hits, the target rolls a D6 and adds its Strength, and the Hunter rolls a D6 and adds his. The loser is moved towards the winner, in a straight line, as many inches as the difference between the two results; a tie moves neither. If the model being pulled reaches base contact with the winner, it counts as the winner charging the loser, even though the winner did not move. A model pulled this way may leave combat, and the models it was fighting do not get to attack it as it leaves. The Hunter may not throw his harpoon while he is engaged in combat. A large or mounted model adds 1 to its dice roll. If the target is pulled off a ledge it drops instead of being pulled the whole distance, and may try to jump down if the height is 6\" or less."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Spear",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      },
+      {
+        "item": "Javelins",
+        "quantity": 1
+      },
+      {
+        "item": "Norlander Net",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 22,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any warband except Undead and Skaven may hire a Leviathan Hunter.",
+      "warbands": [
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "skaven",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Strength"
+      ],
+      "available_special_skills": [
+        {
+          "name": "Reel In",
+          "description": "The Leviathan Hunter adds 2 to all Get Over 'Ere! rolls, or 3 if he has the Mighty Blow skill."
+        },
+        {
+          "name": "Lady Luck",
+          "description": "After any game in which the Hunter was not taken out of action, choose a hero and one of these items: a rabbit's foot on a 2+, a lucky charm on a 2+ or a whalebone charm on a 3+. Roll a D6: on a success that hero gains the item, which may never be resold. On a failure that hero rolls two dice for his first dice roll next game and takes the worse of the two. The Hunter may make luck items for himself instead, but takes them with him if he ever leaves the warband."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Swivel Gunner",
+    "type": "Hired Sword",
+    "description": "His profile is already reduced by the swivel gun: without it he is M4 I3, and with it M3 I2.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Swivel Gun",
+        "description": "The Swivel Gunner uses the swivel gun's rules from the Pirate warband section."
+      },
+      {
+        "name": "There Can Be Only One",
+        "description": "A warband may only ever have one swivel gun, hired or permanent. This does not count scenarios that give it extra swivel guns for a battle."
+      },
+      {
+        "name": "Limited Load",
+        "description": "A Swivel Gunner carries only two of each type of ammunition into each battle."
+      },
+      {
+        "name": "Homebound",
+        "description": "He is only found in the Sartosa campaign setting."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      },
+      {
+        "item": "Swivel Gun",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 20,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any warband except Skaven, Undead, Chaos and Dark Elf may hire a Swivel Gunner.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "chaos",
+          "excluded": true
+        },
+        {
+          "type": "dark-elves",
+          "excluded": true
+        },
+        {
+          "type": "druchii",
+          "excluded": true
+        },
+        {
+          "type": "dark-elf-corsairs",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Sartosa Pirate Skills"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Old Smuggler",
+    "type": "Hired Sword",
+    "description": "Also wears a great coat. His Movement is 4 without his peg leg and 3 with it.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Peg Leg",
+        "description": "The Old Smuggler's peg leg costs him 1 Movement and gives him a 6+ ward save."
+      },
+      {
+        "name": "Peek",
+        "description": "Once per exploration phase, when opening crates, the warband may re-roll the D66 for the crate's contents. The second result must be taken."
+      },
+      {
+        "name": "Auctioneer",
+        "description": "Once per post-game the warband may discard one cargo for the Smuggler to auction off. Choose any number of D6 from 1 to 6 and roll them. If none comes up a 1, the warband gains that many gold crowns. If any comes up a 1, the authorities confiscate the cargo and the warband gains nothing. None of these dice may be re-rolled."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Pistol",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Peg Leg",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 10,
+      "grade": "2b",
+      "race": "Human",
+      "unique_to": "Any warband except Witch Hunters, Sisters of Sigmar and the Lothern Sea Patrol may hire an Old Smuggler.",
+      "warbands": [
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        },
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        },
+        {
+          "type": "lothern-sea-patrol",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Academic",
+        "Sartosa Pirate Skills"
+      ],
+      "available_special_skills": [
+        {
+          "name": "Black Market (Old Smuggler)",
+          "description": "Once per post-game the warband may choose any item it could normally buy and pay half its price. The Old Smuggler takes a Leadership test: if he passes, the item is bought. Otherwise the authorities confiscate the money and he misses a number of games equal to the item's rarity minus 8. His upkeep is still paid."
+        },
+        {
+          "name": "Guardian (Old Smuggler)",
+          "description": "The Smuggler has acquired a bodyguard. The bodyguard only protects the Smuggler and cannot fulfil warband objectives, search, loot or do anything other than protect him, so he stays within 1\" of the Smuggler at all times. He gains no experience and is not paid. If the Smuggler is caught while using the Black Market skill, the bodyguard is not fielded until he returns. Bodyguard profile: M4 WS4 BS2 S4 T3 W1 I3 A1 Ld8, with a sword, light armour, a shield and a helmet. He will intercept any model shooting at or charging the man he guards: those attacks are directed at him, and if the man is charged, place the bodyguard in front of him. The bodyguard will not charge unless the man he guards charges, and cannot intercept an attack while already engaged in combat."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Orc Pirate",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hired in a Pair",
+        "description": "An Orc Pirate and a Goblin Swabbie must be hired at the same time."
+      },
+      {
+        "name": "Booma Pistol",
+        "description": "The Booma Pistol works exactly like a normal pistol, except that it has Strength 5. It also misfires on a natural 1 when rolling to hit and when rolling to wound."
+      },
+      {
+        "name": "'Spendible",
+        "description": "The Orc Pirate has no problem shooting into a combat that involves only his Swabbie and enemy models. The shots are distributed at random."
+      },
+      {
+        "name": "'Nessa-s'ry",
+        "description": "If the Swabbie dies in the post-game, the warband must buy a replacement Swabbie or the Orc Pirate will refuse to fight. There is no need to roll to find the replacement: one is found automatically."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Cutlass",
+        "quantity": 2
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Booma Pistol",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 12,
+      "grade": "2b",
+      "race": "Orc",
+      "unique_to": "Any Orc, Goblin or Ogre warband may hire an Orc Pirate. He must be hired at the same time as a Goblin Swabbie.",
+      "warbands": [
+        {
+          "group": "orcs-and-goblins",
+          "excluded": false
+        },
+        {
+          "group": "ogres",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Sartosa Pirate Skills"
+      ],
+      "available_special_skills": [
+        {
+          "name": "Booma Builda",
+          "description": "The Orc Pirate may at once build himself a second Booma pistol. If a Booma pistol is stolen or explodes he may replace it the next game for free. He may only carry or own two Booma pistols at a time, may not give one to another warrior and may not sell one."
+        }
+      ]
+    }
+  },
+  {
+    "name": "Goblin Swabbie",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hired in a Pair",
+        "description": "An Orc Pirate and a Goblin Swabbie must be hired at the same time."
+      },
+      {
+        "name": "'Spendible",
+        "description": "The Orc Pirate has no problem shooting into a combat that involves only his Swabbie and enemy models. The shots are distributed at random."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Boat Hook",
+        "quantity": 1
+      },
+      {
+        "item": "Belaying Pins",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": 1,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "1D6 gc."
+      },
+      "rating": 5,
+      "grade": "2b",
+      "race": "Goblin",
+      "unique_to": "Any Orc, Goblin or Ogre warband may hire a Goblin Swabbie. He must be hired at the same time as an Orc Pirate.",
+      "warbands": [
+        {
+          "group": "orcs-and-goblins",
+          "excluded": false
+        },
+        {
+          "group": "ogres",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Shooting",
+        "Speed",
+        "Sartosa Pirate Skills"
+      ],
+      "available_special_skills": [
+        {
+          "name": "Pin Thrower",
+          "description": "The Goblin may throw three belaying pins in a single shooting phase, so long as he has not moved. He may target several models. This may not be used with Quick Shot."
+        }
+      ]
+    }
   }
 ]

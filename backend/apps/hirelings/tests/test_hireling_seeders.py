@@ -189,14 +189,14 @@ class HirelingSeederTests(TestCase):
                     run(command, json_paths=[path])
         self.assertEqual((HiredSword.objects.count(), DramatisPersona.objects.count()), (0, 0))
 
-    def test_the_imports_thirty_dramatis_personae_are_seeded_with_who_may_hire_them_and_their_special_fees(self):
-        # next step 12: mordheimer's dramatis personae through the catalogue import (out/dramatis-personae.json)
+    def test_the_imports_dramatis_personae_are_seeded_with_who_may_hire_them_and_their_special_fees(self):
+        # mordheimer's and our own pages' dramatis personae, through the catalogue import (out/dramatis-personae.json)
         run("seed_settings")
         run("seed_warband_types")
 
         output = run("seed_dramatis_personae")
 
-        self.assertIn("Created: 30, updated: 0.", output)
+        self.assertIn("Created: 43, updated: 0.", output)
         aenur = DramatisPersona.objects.get(name="Aenur, the Sword of Twilight")
         self.assertEqual((aenur.hire_fee["gold"], aenur.stays, aenur.weapon_skill), (150, "one_battle", 8))
         self.assertFalse(aenur.for_everyone)
