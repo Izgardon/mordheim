@@ -2996,6 +2996,181 @@
       "name": "Sam Warble",
       "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
+    },
+    {
+      "name": "Strigany Seer",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Clan Eshin Assassin",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Clan Skryre Engineer",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Reaper",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Halfling Thief (Karak Azgal)",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Prospector (Karak Azgal)",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Necromancer",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Grave Robber (Mousillon)",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Priest of Morr (Mousillon)",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Alchemist",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Dark Maiden",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "White Lady",
+      "setting": "mousillon",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Frankain Mercenary",
+      "setting": "khemri",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Genie",
+      "setting": "khemri",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Lazar",
+      "setting": "khemri",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Cartographer",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Clocked Crook",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Maiden Guide",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Ogre Cannoneer",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Reactivated Archivist",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Warlock Engineer",
+      "setting": "sealed-city",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Jezzail Gunner",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Leviathan Hunter",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Swivel Gunner",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Old Smuggler",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Orc Pirate",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Goblin Swabbie",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Skink Hopper",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Barber Surgeon",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Bearserker",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Black Guard of Morr",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Body Snatcher",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Knight Panther",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Raving Straggler",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Tosher",
+      "setting": "grade-3",
+      "how": "overrides.json"
     }
   ],
   "dramatis_personae": [
@@ -3015,6 +3190,11 @@
       "how": "mordheimer"
     },
     {
+      "name": "Alchec of Strigos",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
       "name": "Belandysh, Condemned Champion of Chen",
       "setting": "border-town-burning",
       "how": "mordheimer"
@@ -3025,9 +3205,19 @@
       "how": "mordheimer"
     },
     {
+      "name": "Billie Rattenmörder and Butcher",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Countess Marianna Chevaux, Vampire Assassin",
       "setting": "mordheim",
       "how": "mordheimer"
+    },
+    {
+      "name": "Dalla Burgansdotter, the Iron Maiden",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
     },
     {
       "name": "Dark Emissary",
@@ -3035,9 +3225,19 @@
       "how": "mordheimer"
     },
     {
+      "name": "Dashing Swordsman",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Dijin Katal, the Renegade Assassin",
       "setting": "lustria",
       "how": "mordheimer"
+    },
+    {
+      "name": "Doctor Doppler and Mr. Genag",
+      "setting": "grade-3",
+      "how": "overrides.json"
     },
     {
       "name": "Drenok Johansen, Wielder of the Great Axe",
@@ -3045,9 +3245,34 @@
       "how": "mordheimer"
     },
     {
+      "name": "Eeza Ugezod, Orc Warlord",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Estella Mab",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fleur Mab",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Gaz Er Unga Og",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Grand Master Ippan Shu",
       "setting": "border-town-burning",
       "how": "mordheimer"
+    },
+    {
+      "name": "Grey Seer Neekit",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
     },
     {
       "name": "Heinrich 'Altdorf' Schmidt",
@@ -3055,9 +3280,24 @@
       "how": "mordheimer"
     },
     {
+      "name": "Im Abav Yub",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Innominatus, the Tilean Gladiator",
       "setting": "mordheim-1c",
       "how": "mordheimer"
+    },
+    {
+      "name": "Iñigo 'Toothpick' Tio",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Jeremiah Bane, the Devil King",
+      "setting": "sartosa",
+      "how": "overrides.json"
     },
     {
       "name": "Johann the Knife",
@@ -3068,6 +3308,31 @@
       "name": "Khar-mel the Djinn",
       "setting": "mordheim-1b",
       "how": "mordheimer"
+    },
+    {
+      "name": "Kromwell the Blackhearted",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Krushj the Anchorman",
+      "setting": "sartosa",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Laure Croftenssen",
+      "setting": "khemri",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Le Roi Ballaume",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Leonardo da Miragliano",
+      "setting": "grade-3",
+      "how": "overrides.json"
     },
     {
       "name": "Luthor the Looter",
@@ -3090,9 +3355,29 @@
       "how": "mordheimer"
     },
     {
+      "name": "Myrina and her Keiki",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Nicodemus, the Cursed Pilgrim",
       "setting": "mordheim",
       "how": "mordheimer"
+    },
+    {
+      "name": "No-Eyes Ned",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Okrinok Skrundigor, Dwarf Ghost",
+      "setting": "karak-azgal",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Orphan Assassins",
+      "setting": "grade-3",
+      "how": "overrides.json"
     },
     {
       "name": "Penthesilea, Mark of the Serpent",
@@ -3115,14 +3400,29 @@
       "how": "mordheimer"
     },
     {
+      "name": "The Fishmonger",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "The Foole",
       "setting": "mordheim-2a",
       "how": "mordheimer"
     },
     {
+      "name": "The Grandmother",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "The Headless Horseman",
       "setting": "mordheim-2a",
       "how": "mordheimer"
+    },
+    {
+      "name": "The Headsman",
+      "setting": "grade-3",
+      "how": "overrides.json"
     },
     {
       "name": "Truthsayer",
@@ -3143,6 +3443,11 @@
       "name": "William Schäkestange, Master Bard",
       "setting": "mordheim-2a",
       "how": "mordheimer"
+    },
+    {
+      "name": "Zleda the Jaded",
+      "setting": "grade-3",
+      "how": "overrides.json"
     },
     {
       "name": "“Busty” Gwen",

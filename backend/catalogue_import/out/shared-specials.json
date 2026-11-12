@@ -90,6 +90,14 @@
       "setting": null
     },
     {
+      "name": "Loner",
+      "type": "Trait",
+      "description": "The model is immune to All Alone tests.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
       "description": "The model hates Orcs and Goblins.",
@@ -607,6 +615,16 @@
       "owner": "Veskit, High Executioner of Clan Eshin",
       "rule": "No Pain",
       "name": "No Pain (Veskit)"
+    },
+    {
+      "owner": "Hobgoblin Scout",
+      "rule": "Loner",
+      "name": "Loner (Hobgoblin Scout)"
+    },
+    {
+      "owner": "Body Snatcher",
+      "rule": "Loner",
+      "name": "Loner (Body Snatcher)"
     }
   ],
   "own_names": [
@@ -794,36 +812,6 @@
       "owner": "Trancas Quendalmanliye",
       "rule": "Pick Locks",
       "name": "Pick Locks (Trancas Quendalmanliye)"
-    },
-    {
-      "owner": "Kislev Ranger",
-      "rule": "Loner",
-      "name": "Loner (Kislev Ranger)"
-    },
-    {
-      "owner": "Priest of Morr",
-      "rule": "Loner",
-      "name": "Loner (Priest of Morr)"
-    },
-    {
-      "owner": "Hobgoblin Scout",
-      "rule": "Loner",
-      "name": "Loner (Hobgoblin Scout)"
-    },
-    {
-      "owner": "Kromwell the Blackhearted",
-      "rule": "Loner",
-      "name": "Loner (Kromwell the Blackhearted)"
-    },
-    {
-      "owner": "Laure Croftenssen",
-      "rule": "Loner",
-      "name": "Loner (Laure Croftenssen)"
-    },
-    {
-      "owner": "The Dark Jester in Mordheim",
-      "rule": "Loner",
-      "name": "Loner (The Dark Jester in Mordheim)"
     },
     {
       "owner": "Old Prospector",

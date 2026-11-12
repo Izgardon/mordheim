@@ -93,9 +93,9 @@ class SeedAllTests(TestCase):
                 "Race": 51,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
                 "Item": 537,  # the import's 423 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
-                "Skill": 534,  # the import's 482 (one per name, Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 24 hired swords' own skills the book lacks; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
-                "SkillGroup": 133,  # the import's 110 (Athel Loren's three) + a group of his own for each of 19 hired swords
-                "Spell": 357,  # 312 (the PDFs' lores, the Mazzalupo's Commands and the Blessings of the Mare among them) + the Dark Mage's six (BUG-54)
+                "Skill": 554,  # the import's 510 (one per name, Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 44 hired swords' own skills the book lacks, 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
+                "SkillGroup": 142,  # the import's 110 (Athel Loren's three) + a group of his own for each of 28 hired swords, 9 of them broheim's hireling sections'
+                "Spell": 377,  # 312 (the PDFs' lores, the Mazzalupo's Commands and the Blessings of the Mare among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -123,17 +123,24 @@ class SeedAllTests(TestCase):
                 # the Savage Orcs (Athel Loren) Savage is the shared Frenzy (William, 12 Nov 2026): one row fewer
                 # the Mutiny in Marienburg main document adds 128: 40 for the Marienburg animals' rules, 47 for
                 # the seventeen creatures of Men and Monsters and 41 for the Specialists and Dramatis Personae
-                "Special": 1702,
+                # broheim's own hired sword and dramatis persona sections add 248 of their own (35 hired swords
+                # and 26 personae; their Fear, Immune to Psychology, Immune to Poison, No Pain, May Not Run,
+                # Frenzy, Cloven Hoofs, Large and Perfect Killer are the shared ones), less 6 for Loner, now one
+                # shared Trait with five rules kept apart (William, 12 Nov 2026)
+                "Special": 1944,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 14 mounts, 12 pets (the Sorcerous Society's four familiars, Marienburg's owl and falcon), 56
                 # creatures (17 Marienburg's shop animals, 17 its Men and Monsters, 28 Border Town Burning's
                 # Beasts of the East)
                 "BestiaryEntry": 83,
-                # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin) and Mutiny in
-                # Marienburg's eleven Specialists and three Dramatis Personae
-                "HiredSword": 89,
-                "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
+                # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin), Mutiny in
+                # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
+                # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)
+                "HiredSword": 124,
+                # mordheimer's 30 and our own 26 (apps/hirelings/data/dramatis-personae.json: Karak Azgal 5,
+                # Sartosa 5, Albion 2, Khemri 1, the fan-made trees 13), through the catalogue import
+                "DramatisPersona": 56,
                 "WarbandTemplate": 151,  # mordheimer's New Warband Format pages (Tileans (old) left out), the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them) and the two web pages'
             },
         )
@@ -288,13 +295,13 @@ class SeedAllTests(TestCase):
                 "Fear": (
                     114,
                     0,
-                    6,
-                    5,
+                    11,
+                    9,
                     29,
                 ),  # fighters, upgrades, hired swords, dramatis personae, beasts (14 of the East, 12 Marienburg's)
                 "Stupidity": (11, 0, 0, 0, 4),  # Marienburg's Troll and Chaos Troll
-                "Immune to Psychology": (66, 0, 1, 2, 1),  # Marienburg's Cultists of Chaos
-                "Immune to Poison": (63, 0, 3, 3, 8),
+                "Immune to Psychology": (66, 0, 2, 7, 1),  # Marienburg's Cultists of Chaos
+                "Immune to Poison": (63, 0, 4, 5, 8),
                 "Hideous": (
                     0,
                     7,
@@ -365,7 +372,7 @@ class SeedAllTests(TestCase):
                 # Totem Warrior, Berserker, Witch Elf, Cannibal Boy; Sigmund's Maddened; the Bloodletter
                 # the Witch Elf hired sword and the Skaven Slayer take it too, and the two Savage Orc (Athel
                 # Loren) fighters, whose Savage is one of Frenzy's names (William, 12 Nov 2026)
-                "Frenzy": (13, 1, 1, 2),  # Marienburg's Cathayan Temple Rooster
+                "Frenzy": (13, 2, 1, 2),  # Marienburg's Cathayan Temple Rooster, and the Bearserker hired sword
                 "Hate Orcs and Goblins": (5, 3, 0, 0),  # the Dwarf Treasure Hunter's Hates Orcs & Goblins now too
                 "Hate High Elves": (0, 1, 1, 0),  # the Dark Elf Assassin's and Dijin Katal's Kindred Hatred
                 "Hate Bandits and Outlaws": (2, 0, 0, 0),  # the Horned Hunters' Hang the Bandit!
@@ -643,7 +650,9 @@ class SeedAllTests(TestCase):
         self.assertLessEqual({"Combat", "Shooting", "Speed"}, set(scout.available_skill_types))
         self.assertLessEqual({"Combat", "Academic", "Strength"}, set(skinner.available_skill_types))
         races = dict(HiredSword.objects.values_list("name", "race__name"))
-        self.assertEqual({name for name, race in races.items() if race is None}, {"Chaos Fury"})
+        # the Sealed City's Clocked crook and Reactivated archivist are clockwork constructs, of no race at all
+        raceless = {"Chaos Fury", "Clocked Crook", "Reactivated Archivist"}
+        self.assertEqual({name for name, race in races.items() if race is None}, raceless)
         mapped = {"Chameleon Skink": "Skink", "Dark Elf Assassin": "Elf", "Shadow Warrior": "Elf"}
         mapped |= {"Wood Elf Hunter": "Elf", "Ungor Trapper": "Ungor"}
         mapped |= {"Chaos Centaur": "Centigor", "Ninja Gnoblar": "Goblin", "Bone Goliath": "Undead"}
@@ -679,7 +688,13 @@ class SeedAllTests(TestCase):
         # exclusions and he stays for everyone
         everyone = HiredSword.objects.filter(for_everyone=True)
         self.assertFalse(everyone.filter(warband_links__excluded=False).exists())
-        self.assertFalse(HiredSword.objects.filter(warband_links__isnull=True).exists())
+        # broheim's pages read "any warband may hire him" for seven, who name no warband at all; everyone else does
+        open_to_all = set(HiredSword.objects.filter(warband_links__isnull=True).values_list("name", flat=True))
+        self.assertEqual(
+            open_to_all,
+            {"Alchemist", "Barber Surgeon", "Dark Maiden", "Genie", "Knight Panther", "Lazar", "Reactivated Archivist"},
+        )
+        self.assertFalse(HiredSword.objects.filter(for_everyone=False, warband_links__isnull=True).exists())
         self.assertTrue(SkillGroup.objects.get(name="Speed").for_everyone)
         skaven = SkillGroup.objects.get(name="Skaven")
         self.assertFalse(skaven.for_everyone)
