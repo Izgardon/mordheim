@@ -84,7 +84,8 @@ HIRED_SWORDS = SeedSpec(HiredSword, "Hired sword", Path("apps/hirelings/data/hir
 DRAMATIS_PERSONAE = SeedSpec(
     DramatisPersona,
     "Dramatis persona",
-    IMPORT_OUT / "dramatis-personae.json",  # mordheimer's, made seed rows by the catalogue import (personae.py)
+    IMPORT_OUT
+    / "dramatis-personae.json",  # mordheimer's and our own pages', made seed rows by the catalogue import (personae.py)
     "dramatis_persona",
     "Dramatis Persona",
     "dramatis_personae",

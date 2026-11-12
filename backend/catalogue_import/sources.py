@@ -32,6 +32,9 @@ class Sources:
     our_skills: list[dict[str, Any]] = field(default_factory=list)
     our_hired_swords: list[dict[str, Any]] = field(default_factory=list)
     our_personae: list[dict[str, Any]] = field(default_factory=list)
+    # our own dramatis personae, read from their pages: apps/hirelings/data/dramatis-personae.json, which the
+    # build adds to mordheimer's (pipeline.py), so they get a setting, their shared specials and their own rules
+    our_extra_personae: list[dict[str, Any]] = field(default_factory=list)
     skill_files: dict[str, list[dict[str, Any]]] = field(default_factory=dict)  # SKILL_FILES, by file name
 
 
@@ -56,5 +59,6 @@ def load_sources(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> Source
         overrides=load_json(package / "overrides.json"),
         our_skills=_values(load_json(SKILL_DATA / "skills.json")),
         our_hired_swords=_values(load_json(HIRELING_DATA / "hired-swords.json")),
+        our_extra_personae=_values(load_json(HIRELING_DATA / "dramatis-personae.json")),
         skill_files={name: _values(load_json(src / name)) for name in SKILL_FILES},
     )

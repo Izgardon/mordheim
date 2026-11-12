@@ -288,7 +288,9 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
         [row["name"] for row in sources.our_skills],
         overrides.get("persona_item_names", {}),
     )
-    sources.our_personae = build_personae(sources.personae, names_we_have, overrides.get("fees_in_rules", {}))
+    personae = build_personae(sources.personae, names_we_have, overrides.get("fees_in_rules", {}))
+    # ours read from their pages, which mordheimer lacks (apps/hirelings/data/dramatis-personae.json)
+    sources.our_personae = sorted(personae + sources.our_extra_personae, key=lambda row: row["name"].lower())
     _resolve_everything(sources, resolver)
     assignment_log = AssignmentLog()
     assignments = build_assignments(sources, assignment_log)
