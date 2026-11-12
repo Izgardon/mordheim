@@ -338,5 +338,205 @@
     "type": "Animal",
     "description": "The model has a 5+ armour save.",
     "setting": "border-town-burning"
+  },
+  {
+    "name": "Trained (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "A trained animal is subject to the rules for stupidity. It need not take those tests while its handler is within 6\", and may use his Leadership within 6\" of him; it never uses the warband leader's Leadership. It may not be used in a battle its handler misses, and a warband with no handler must keep it caged until it hires one. Its handler must be a Beastmaster or have the animal's own handling skill."
+  },
+  {
+    "name": "Great Beast (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "The beast can only be used in multi-player games. Mighty blows rock it rather than fell it: each knocked down result takes 1 Attack from it until it recovers in the Recovery phase of its next turn, several results taking one each, and at 0 Attacks or fewer it may not attack until it recovers."
+  },
+  {
+    "name": "Familiar (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "A familiar may be included with any wizard model, or kept on a base of its own and ignored for game purposes. A wizard with a familiar may re-roll one failed roll to cast a spell each turn, and must accept the re-roll. A wizard hired as a Hired Sword may claim one."
+  },
+  {
+    "name": "Aquatic (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "The creature may move through water terrain without penalty."
+  },
+  {
+    "name": "Gigantic Monster (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "Huge Beast: any model may shoot at it with +2 to hit, even when it is not the closest target. Skull of Iron: it treats a stunned result as knocked down instead. Staggered, but not down: each knocked down result takes 1 Attack from it until it recovers in the Recovery phase of its next turn, several results taking one each. +1 for wounding: whatever the scenario, a Hero or Henchman earns +1 Experience for each wound he inflicts on it. Great Beast: it can only be used in multi-player games."
+  },
+  {
+    "name": "Superheated Breath (Geckamand)",
+    "type": "Animal",
+    "description": "Made in the shooting phase; the Geckamand may move and fire, and the target must be in line of sight. Place the small teardrop template with its narrow end at the Geckamand's mouth and its wide end towards the target, roll an artillery dice and move the template that many inches towards the target. Every model under the template takes a Strength 3 hit, and the gas ignores normal armour saves. On a Misfire the handler got in the way and the lizard attacks him this turn instead."
+  },
+  {
+    "name": "Tunnel Rat (Geckamand)",
+    "type": "Animal",
+    "description": "Any characteristic test taken for a scenario set in the sewers or elsewhere underground may be re-rolled."
+  },
+  {
+    "name": "Night Vision (Geckamand)",
+    "type": "Animal",
+    "description": "The Geckamand spots hidden enemies from twice its Initiative value in inches away."
+  },
+  {
+    "name": "Hot Blooded (Geckamand)",
+    "type": "Animal",
+    "description": "The Geckamand is immune to damage from fire and heat-based attacks."
+  },
+  {
+    "name": "Scaly Skin (Geckamand)",
+    "type": "Animal",
+    "description": "The Geckamand has a 6+ armour save, which is not modified by the Strength of attacks against it or by any other save modifier."
+  },
+  {
+    "name": "Bite Attack (Geckamand)",
+    "type": "Animal",
+    "description": "The Geckamand has a bite attack that wounds using its own Strength. The bite always strikes last, whoever charged and whatever weapon is used, and even after double-handed weapons."
+  },
+  {
+    "name": "Camouflage (Geckamand)",
+    "type": "Animal",
+    "description": "Missile attacks against the Geckamand suffer -1 to hit."
+  },
+  {
+    "name": "Tongue! (Geckamand)",
+    "type": "Animal",
+    "description": "The Geckamand may unfurl its tongue up to 3\", rolling to hit with its Ballistic Skill. A hit traps the target, which can do nothing but try to escape and against which no further attacks may be made until the tongue is retracted. The trapped model must pass a Strength test to wriggle free, with +1 to the test for a large model; if it succeeds, or the Geckamand lets go, it counts as knocked down. A knocked down mount throws its rider (see 3-4 on the Whoa Boy! chart)."
+  },
+  {
+    "name": "Cutting Edge (Cathayan Temple Rooster)",
+    "type": "Animal",
+    "description": "The rooster's attacks have an extra -1 armour save modifier."
+  },
+  {
+    "name": "Strike First (Cathayan Temple Rooster)",
+    "type": "Animal",
+    "description": "The rooster strikes first in the first round of a hand-to-hand combat."
+  },
+  {
+    "name": "Cock-a-doodle! (Cathayan Temple Rooster)",
+    "type": "Animal",
+    "description": "Every enemy in base contact with the rooster is at -2 to hit in their first round of combat unless they pass a Leadership test."
+  },
+  {
+    "name": "Cat Friend (Polecat)",
+    "type": "Animal",
+    "description": "A polecat cannot attack or be attacked, but needs a model because it may intercept a charge made against its Hero. The charging model counts as having entered close combat with the polecat; the charge is completed as normal, no combat follows, and on the charger's next turn it no longer counts as being in hand-to-hand combat. The polecat must always be within 3\" of the Hero. If the Hero is taken out of action it runs away and returns after the battle; if he is slain it is lost with him like any other equipment."
+  },
+  {
+    "name": "Snake Charming (Snake)",
+    "type": "Animal",
+    "description": "A snake may only be used by a Hero with a Snake Charmer's Flute or the special skill Snake Charmer."
+  },
+  {
+    "name": "Venomous (Snake)",
+    "type": "Animal",
+    "description": "A snake's attacks count as attacking with Black Lotus."
+  },
+  {
+    "name": "Provisions (Sacrificial Goat/Sheep)",
+    "type": "Animal",
+    "description": "The animal is provisions, used once after a battle. When the warband sells Treasures it counts as one size lower (a warband of 10-12 counts as 7-9), but never lower than 1-3 models."
+  },
+  {
+    "name": "Sacrifice (Sacrificial Goat/Sheep)",
+    "type": "Animal",
+    "description": "If the warband includes a wizard, the animal may be sacrificed in the recovery phase to add +1 to the result of any spell he casts in the next shooting phase. The wizard may not move in the turn of the sacrifice."
+  },
+  {
+    "name": "Dung (Fighting Monkey)",
+    "type": "Animal",
+    "description": "A monkey attempting a dung throw may not charge. Roll a D6: on a 3+ it finds something malleable, on a 1-2 nothing comes to hand. A monkey holding a dung projectile may not improvise another, and the projectile is lost once thrown. It is thrown as a missile at range 6\" and Strength as user -1, as a thrown weapon."
+  },
+  {
+    "name": "Beast of Burden (Camel)",
+    "type": "Animal",
+    "description": "A camel can carry up to two human-sized warriors or smaller, or the equivalent in cargo."
+  },
+  {
+    "name": "Unsettling (Camel)",
+    "type": "Animal",
+    "description": "A camel causes fear in every kind of equine animal."
+  },
+  {
+    "name": "Bear Hug (Bear)",
+    "type": "Animal",
+    "description": "If the bear hits the same enemy with both of its attacks in a round of combat, the player may make a single Bear Hug attack instead of resolving them normally. Each player rolls a D6 and adds his model's Strength. If the bear's total is higher, or the totals are equal, the enemy takes one automatic wound with no armour save allowed; if the enemy's total is higher he has broken the hold and takes no damage."
+  },
+  {
+    "name": "Fiercely Loyal (Bear)",
+    "type": "Animal",
+    "description": "As long as his bear is not taken out of action during a game, a Hero ignores the Serious Injury results Sold to the Pits, Robbed and Captured, and the matching results of a setting's own injury table: treat them as Full Recovery instead."
+  },
+  {
+    "name": "Scaly Skin (Dragon Turtle)",
+    "type": "Animal",
+    "description": "The Dragon Turtle has a 5+ armour save, which is not modified by the Strength of attacks against it or by any other save modifier."
+  },
+  {
+    "name": "Hard Shell (Dragon Turtle)",
+    "type": "Animal",
+    "description": "The Dragon Turtle is immune to being stunned: treat a stunned result from the Injury chart as knocked down."
+  },
+  {
+    "name": "Massive Beak (Dragon Turtle)",
+    "type": "Animal",
+    "description": "One of the Dragon Turtle's attacks is a bite from its beak. A model damaged by it suffers a further -1 to its armour save, for -3 in all."
+  },
+  {
+    "name": "Breathe Steam (Dragon Turtle)",
+    "type": "Animal",
+    "description": "Made in the shooting phase. Place the small teardrop template with its narrow end at the turtle's mouth; every model under it is hit on a roll of 4+ and takes a Strength 4 hit. Normal armour saves apply."
+  },
+  {
+    "name": "Gullet (Pelican)",
+    "type": "Animal",
+    "description": "At the end of the movement phase a pelican may fetch one piece of cargo within 12\" of its Hero, except a chest or anything that takes more than one model to lift: move that cargo marker next to the Hero."
+  },
+  {
+    "name": "Ill Omen (Raven)",
+    "type": "Animal",
+    "description": "Once per battle the raven may make an enemy model within line of sight of its Hero fail a roll. That roll may be re-rolled with a re-roll."
+  },
+  {
+    "name": "Ghastly (Lizard-Hawk)",
+    "type": "Animal",
+    "description": "At the start of the shooting phase the Hero's player may name an enemy warrior. That model is at -1 to hit in close combat and has -1 on any dice roll it makes in the player's next shooting phase. The lizard-hawk never harries the same warrior two turns running unless it is sent to spy."
+  },
+  {
+    "name": "Spy (Lizard-Hawk)",
+    "type": "Animal",
+    "description": "The player may name a model that was hidden. From then on that model cannot remain hidden, and the lizard-hawk harries it until the battle ends."
+  },
+  {
+    "name": "Bird Friend (Owl)",
+    "type": "Animal",
+    "description": "At the start of the shooting phase the Hero's player may name a warrior, who may re-roll any failed rolls to hit with missiles, including thrown items and magic missiles. The owl never settles on the same warrior two turns running."
+  },
+  {
+    "name": "Falconry (Falcon/Hawk)",
+    "type": "Animal",
+    "description": "A hunting bird may only be used by a Hero with the animal handling skill Falconer. Its range is 24\"; shooting rolls to hit with the warrior's Ballistic Skill, and the bird flies back to him after it attacks. In close combat it strikes first with a single attack using the warrior's Weapon Skill, and each hit inflicts a Strength 3 hit. A warrior using a hunting bird without a falconry glove rolls on the Serious Injury chart in the post-battle sequence. Unless stated otherwise a falconer may keep only one hunting bird."
+  },
+  {
+    "name": "Bird Companion (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "If the Hero is taken out of action the bird flies away and returns after the battle. Birds cannot be attacked or slain, but if the Hero is slain the bird is lost with him like any other equipment."
+  },
+  {
+    "name": "Fly (Wyvern)",
+    "type": "Animal",
+    "description": "The Wyvern may move three times its Movement in any direction."
+  },
+  {
+    "name": "Save (Wyvern)",
+    "type": "Animal",
+    "description": "The Wyvern has a 5+ armour save, which is not modified by the Strength of attacks against it or by any other save modifier."
+  },
+  {
+    "name": "Envenomed Tail (Wyvern)",
+    "type": "Animal",
+    "description": "Before its normal attacks in close combat the Wyvern makes a tail strike. Roll a D6: every enemy in base contact that it may attack in the close combat phase and whose Initiative is lower than the score is automatically hit and takes a Strength 4 hit. A model whose Initiative equals or beats the score has dodged the tail."
   }
 ]

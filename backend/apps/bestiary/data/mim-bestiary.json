@@ -5,7 +5,7 @@
     "has_profile": true,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Trained bear companion; causes fear; has bear hug and loyalty rules.",
+    "description": "A bear raised from a cub and trained by its tamer.",
     "movement": 6,
     "weapon_skill": 3,
     "ballistic_skill": 0,
@@ -18,7 +18,13 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Trained (Mutiny in Marienburg)",
+      "Fear",
+      "Bear Hug (Bear)",
+      "Fiercely Loyal (Bear)",
+      "Woodland Dwelling (Bear)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -38,7 +44,7 @@
     "has_profile": true,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Mount; beast of burden; unsettling to horses.",
+    "description": "An Arabyan mount, ill-tempered and hard on horses.",
     "movement": 6,
     "weapon_skill": 2,
     "ballistic_skill": 0,
@@ -51,7 +57,10 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Beast of Burden (Camel)",
+      "Unsettling (Camel)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -71,7 +80,7 @@
     "has_profile": true,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Frenzied fighting rooster from Cathay; strike first; cutting edge; special cock-a-doodle rule.",
+    "description": "A fighting rooster from Cathay, used in the baiting pits.",
     "movement": 4,
     "weapon_skill": 2,
     "ballistic_skill": 0,
@@ -84,7 +93,12 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Cutting Edge (Cathayan Temple Rooster)",
+      "Strike First (Cathayan Temple Rooster)",
+      "Frenzy",
+      "Cock-a-doodle! (Cathayan Temple Rooster)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -104,7 +118,7 @@
     "has_profile": true,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Large aquatic beast with hard shell and steam breath.",
+    "description": "A marine beast with a stony spiked shell, aggressive in its own territory.",
     "movement": 5,
     "weapon_skill": 3,
     "ballistic_skill": 0,
@@ -114,10 +128,19 @@
     "initiative": 2,
     "attacks": 4,
     "leadership": 6,
-    "armour_save": "",
-    "large": false,
+    "armour_save": "5+",
+    "large": true,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Large",
+      "Aquatic (Mutiny in Marienburg)",
+      "Fear",
+      "Great Beast (Mutiny in Marienburg)",
+      "Scaly Skin (Dragon Turtle)",
+      "Hard Shell (Dragon Turtle)",
+      "Massive Beak (Dragon Turtle)",
+      "Breathe Steam (Dragon Turtle)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -132,12 +155,48 @@
     }
   },
   {
+    "name": "Falcon/Hawk",
+    "kind": "pet",
+    "has_profile": false,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "description": "A hunting bird trained from the egg, flown by a falconer.",
+    "movement": 0,
+    "weapon_skill": 0,
+    "ballistic_skill": 0,
+    "strength": 0,
+    "toughness": 0,
+    "wounds": 0,
+    "initiative": 0,
+    "attacks": 0,
+    "leadership": 0,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Falconry (Falcon/Hawk)",
+      "Bird Companion (Mutiny in Marienburg)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2a",
+      "availabilities": [
+        {
+          "cost": 75,
+          "rarity": 12
+        }
+      ]
+    }
+  },
+  {
     "name": "Fighting Monkey",
     "kind": "creature",
     "has_profile": true,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Trained monkey; can throw dung as missile.",
+    "description": "A trained monkey from the jungles of the Southlands.",
     "movement": 6,
     "weapon_skill": 3,
     "ballistic_skill": 2,
@@ -150,8 +209,12 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
-    "skills": [],
+    "specials": [
+      "Dung (Fighting Monkey)"
+    ],
+    "skills": [
+      "Scale Sheer Surfaces"
+    ],
     "spells": [],
     "equipment": [],
     "shop_item": {
@@ -170,7 +233,7 @@
     "has_profile": true,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Dog-sized fire lizard; camouflage, superheated breath, tongue attack.",
+    "description": "A dog-sized fire lizard that changes the colour of its scales to match its surroundings.",
     "movement": 6,
     "weapon_skill": 3,
     "ballistic_skill": 4,
@@ -180,11 +243,22 @@
     "initiative": 5,
     "attacks": 1,
     "leadership": 6,
-    "armour_save": "",
+    "armour_save": "6+",
     "large": false,
     "caster": "No",
-    "specials": [],
-    "skills": [],
+    "specials": [
+      "Superheated Breath (Geckamand)",
+      "Tunnel Rat (Geckamand)",
+      "Night Vision (Geckamand)",
+      "Hot Blooded (Geckamand)",
+      "Scaly Skin (Geckamand)",
+      "Bite Attack (Geckamand)",
+      "Camouflage (Geckamand)",
+      "Tongue! (Geckamand)"
+    ],
+    "skills": [
+      "Scale Sheer Surfaces"
+    ],
     "spells": [],
     "equipment": [],
     "shop_item": {
@@ -198,78 +272,12 @@
     }
   },
   {
-    "name": "Lizard-Hawk",
-    "kind": "pet",
+    "name": "Giant Rat",
+    "kind": "creature",
     "has_profile": false,
     "rating_bonus": null,
-    "available_in_shop": true,
-    "description": "Exotic hunting bird/lizard hybrid; details in rules.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 0,
-    "initiative": 0,
-    "attacks": 0,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "grade": "2b",
-      "availabilities": [
-        {
-          "cost": 125,
-          "rarity": 15
-        }
-      ]
-    }
-  },
-  {
-    "name": "Polecat",
-    "kind": "pet",
-    "has_profile": false,
-    "rating_bonus": null,
-    "available_in_shop": true,
-    "description": "Elusive companion; can intercept charges (cat friend).",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 0,
-    "initiative": 0,
-    "attacks": 0,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "grade": "2a",
-      "availabilities": [
-        {
-          "cost": 50,
-          "rarity": 12
-        }
-      ]
-    }
-  },
-  {
-    "name": "Pelican",
-    "kind": "pet",
-    "has_profile": false,
-    "rating_bonus": null,
-    "available_in_shop": true,
-    "description": "Bird retainer; details in rules.",
+    "available_in_shop": false,
+    "description": "Clan Moulder giant rat (Skaven); animal; details in rules.",
     "movement": 0,
     "weapon_skill": 0,
     "ballistic_skill": 0,
@@ -290,19 +298,20 @@
       "grade": "1b",
       "availabilities": [
         {
-          "cost": 20,
-          "rarity": 9
+          "cost": 0,
+          "rarity": 9,
+          "variable_cost": "15 warptokens"
         }
       ]
     }
   },
   {
-    "name": "Raven",
+    "name": "Lizard-Hawk",
     "kind": "pet",
     "has_profile": false,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Bird retainer; details in rules.",
+    "description": "An ultra-rare winged lizard of Lustria, taken as a wizard's familiar.",
     "movement": 0,
     "weapon_skill": 0,
     "ballistic_skill": 0,
@@ -315,7 +324,157 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Familiar (Mutiny in Marienburg)",
+      "Ghastly (Lizard-Hawk)",
+      "Spy (Lizard-Hawk)",
+      "Bird Companion (Mutiny in Marienburg)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2b",
+      "availabilities": [
+        {
+          "cost": 125,
+          "rarity": 15
+        }
+      ]
+    }
+  },
+  {
+    "name": "Owl",
+    "kind": "pet",
+    "has_profile": false,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "description": "A trained owl, a wizard's companion and a herald of the Verenan and Morrian clergy.",
+    "movement": 0,
+    "weapon_skill": 0,
+    "ballistic_skill": 0,
+    "strength": 0,
+    "toughness": 0,
+    "wounds": 0,
+    "initiative": 0,
+    "attacks": 0,
+    "leadership": 0,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Familiar (Mutiny in Marienburg)",
+      "Bird Friend (Owl)",
+      "Bird Companion (Mutiny in Marienburg)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2a",
+      "availabilities": [
+        {
+          "cost": 75,
+          "rarity": 11
+        }
+      ]
+    }
+  },
+  {
+    "name": "Pelican",
+    "kind": "pet",
+    "has_profile": false,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "description": "A large water bird with a long beak and a great throat pouch.",
+    "movement": 0,
+    "weapon_skill": 0,
+    "ballistic_skill": 0,
+    "strength": 0,
+    "toughness": 0,
+    "wounds": 0,
+    "initiative": 0,
+    "attacks": 0,
+    "leadership": 0,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Gullet (Pelican)",
+      "Bird Companion (Mutiny in Marienburg)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "1b",
+      "availabilities": [
+        {
+          "cost": 20,
+          "rarity": 9
+        }
+      ]
+    }
+  },
+  {
+    "name": "Polecat",
+    "kind": "pet",
+    "has_profile": false,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "description": "A slender companion that can throw itself in front of a charge.",
+    "movement": 0,
+    "weapon_skill": 0,
+    "ballistic_skill": 0,
+    "strength": 0,
+    "toughness": 0,
+    "wounds": 0,
+    "initiative": 0,
+    "attacks": 0,
+    "leadership": 0,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Cat Friend (Polecat)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2a",
+      "availabilities": [
+        {
+          "cost": 50,
+          "rarity": 12
+        }
+      ]
+    }
+  },
+  {
+    "name": "Raven",
+    "kind": "pet",
+    "has_profile": false,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "description": "A carrion bird of the Old World, taken as a wizard's familiar.",
+    "movement": 0,
+    "weapon_skill": 0,
+    "ballistic_skill": 0,
+    "strength": 0,
+    "toughness": 0,
+    "wounds": 0,
+    "initiative": 0,
+    "attacks": 0,
+    "leadership": 0,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Familiar (Mutiny in Marienburg)",
+      "Ill Omen (Raven)",
+      "Bird Companion (Mutiny in Marienburg)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -335,7 +494,7 @@
     "has_profile": false,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Animal used for sacrifice; details in rules.",
+    "description": "A goat or sheep bought as provisions, or for sacrifice.",
     "movement": 0,
     "weapon_skill": 0,
     "ballistic_skill": 0,
@@ -348,7 +507,10 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Provisions (Sacrificial Goat/Sheep)",
+      "Sacrifice (Sacrificial Goat/Sheep)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -366,23 +528,26 @@
   {
     "name": "Snake",
     "kind": "pet",
-    "has_profile": false,
+    "has_profile": true,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Exotic venomous snake companion.",
-    "movement": 0,
-    "weapon_skill": 0,
+    "description": "A king cobra from Ind or a Lustrian devil python.",
+    "movement": 4,
+    "weapon_skill": 3,
     "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 0,
-    "initiative": 0,
-    "attacks": 0,
-    "leadership": 0,
+    "strength": 1,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 5,
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Snake Charming (Snake)",
+      "Venomous (Snake)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -402,7 +567,7 @@
     "has_profile": true,
     "rating_bonus": null,
     "available_in_shop": true,
-    "description": "Big cat from Ind/Chrace; causes fear.",
+    "description": "A big cat from Ind, Chrace or the jungles of Lustria.",
     "movement": 7,
     "weapon_skill": 4,
     "ballistic_skill": 0,
@@ -415,7 +580,10 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Trained (Mutiny in Marienburg)",
+      "Fear"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -481,7 +649,9 @@
     "armour_save": "",
     "large": false,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Animal"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
@@ -506,50 +676,22 @@
     "initiative": 4,
     "attacks": 3,
     "leadership": 5,
-    "armour_save": "",
-    "large": false,
+    "armour_save": "5+",
+    "large": true,
     "caster": "No",
-    "specials": [],
+    "specials": [
+      "Fear",
+      "Gigantic Monster (Mutiny in Marienburg)",
+      "Fly (Wyvern)",
+      "Save (Wyvern)",
+      "Envenomed Tail (Wyvern)"
+    ],
     "skills": [],
     "spells": [],
     "equipment": [],
     "shop_item": {
       "grade": "2b",
       "availabilities": []
-    }
-  },
-  {
-    "name": "Giant Rat",
-    "kind": "creature",
-    "has_profile": false,
-    "rating_bonus": null,
-    "available_in_shop": false,
-    "description": "Clan Moulder giant rat (Skaven); animal; details in rules.",
-    "movement": 0,
-    "weapon_skill": 0,
-    "ballistic_skill": 0,
-    "strength": 0,
-    "toughness": 0,
-    "wounds": 0,
-    "initiative": 0,
-    "attacks": 0,
-    "leadership": 0,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "grade": "1b",
-      "availabilities": [
-        {
-          "cost": 0,
-          "rarity": 9,
-          "variable_cost": "15 warptokens"
-        }
-      ]
     }
   }
 ]
