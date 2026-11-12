@@ -10,7 +10,7 @@
   "specialRules": [
     {"rulename": "Dead Leader", "ruleFull": "If the Vampire is killed he cannot be replaced for that battle: every undead creature of the warband crumbles and is lost with its equipment. Pick a new leader from among the Heroes as the rulebook says. After one game a new Vampire may be bought, who becomes the leader, and the acting leader returns to his former place."},
     {"rulename": "Bats or Fell Bats", "ruleFull": "The warband may hold up to 5 Bats or up to 2 Fell Bats, never both kinds at once."},
-    {"rulename": "Hired Swords", "ruleFull": "Besides any who name the warband themselves, the warband may hire the Strigani Seer, and a Necromancer only while it has no Vampire."}
+    {"rulename": "Hired Swords", "ruleFull": "Besides any who name the warband themselves, the warband may hire the Strigany Seer, and a Necromancer only while it has no Vampire."}
   ],
   "equipmentLists": [
     {
