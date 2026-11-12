@@ -150,8 +150,8 @@ class ReviewRulingsTests(SimpleTestCase):
 
     def test_the_druchii_sea_dragon_cloak_is_its_own_item_and_ours_stays_the_dark_elves(self) -> None:
         # ours is a flat 4+ save against missiles and 5+ in close combat; the PDF's adds +2 and +1 to a save he
-        # already has and may be worn with other armour. The brackets are the Druchii's, Mordheim 2a being the
-        # earliest setting of the two warbands that buy it (the Dark Elf Corsairs are Mousillon's).
+        # already has and may be worn with other armour. The brackets and the item are the Druchii's alone (the
+        # page's "Corsairs" is their own henchman unit; see the Corsairs' own test below).
         ours = self.items["Sea Dragon Cloak"]
         self.assertEqual(ours["setting"], "mordheim-1b")
         self.assertIn("5+ armour save in close combat", ours["rules"][0]["text"])
@@ -162,15 +162,14 @@ class ReviewRulingsTests(SimpleTestCase):
             with self.subTest(clause=clause):
                 self.assertIn(clause, text)
         self.assertEqual(self.rows("Sea Dragon Cloak (Druchii)", "druchii"), [(30, 2, 10, "")])
-        self.assertEqual(self.rows("Sea Dragon Cloak (Druchii)", "dark-elf-corsairs"), [(50, 2, 10, "")])
         shown = {
             (slug, line["shown_as"], line["cost"])
-            for slug in ("druchii", "dark-elf-corsairs")
+            for slug in ("druchii",)
             for row in self.templates[slug]["lists"]
             for line in row["lines"]
             if line["item"]["name"] == "Sea Dragon Cloak (Druchii)"
         }
-        self.assertEqual(shown, {("druchii", "Sea Dragon Cloak", 30), ("dark-elf-corsairs", "Dragon Cloak", 50)})
+        self.assertEqual(shown, {("druchii", "Sea Dragon Cloak", 30)})
 
     def test_the_altdorf_quarterstaff_is_just_a_mace(self) -> None:
         # William, 12 Nov 2026: 3 gc with Concussion is our Club, Mace or Hammer, so the item goes and the Wizard
@@ -289,10 +288,10 @@ class ReviewRulingsTests(SimpleTestCase):
                 }
                 self.assertIn(name, lines)
 
-    def test_the_sea_ghosts_join_our_sea_dragon_cloaks_row(self) -> None:
+    def test_the_sea_ghosts_and_the_corsairs_join_our_sea_dragon_cloaks_row(self) -> None:
         [row] = self.items["Sea Dragon Cloak"]["availabilities"]
         buyers = [entry["type"] for entry in row["warbands"]]
-        self.assertEqual(buyers, ["dark-elves", "sea-ghosts"])
+        self.assertEqual(buyers, ["dark-elves", "dark-elf-corsairs", "sea-ghosts"])
         self.assertEqual((row["cost"], row["dice"], row["rarity"]), (50, 2, 10))
 
     def test_the_glyph_of_blasting_and_the_grimoire_keep_the_expeditionary_partys_rows(self) -> None:
@@ -341,3 +340,22 @@ class ReviewRulingsTests(SimpleTestCase):
         ]
         self.assertNotIn("Hide In Shadows", [*rules, *specials])
         self.assertIn("Hide in Shadows", specials)
+
+    def test_the_dark_elf_corsairs_buy_our_standard_cloak_not_the_druchiis(self) -> None:
+        # William, 12 Nov 2026: "corsairs should point at the other sea dragon cloak i think which is 50+2d6 in
+        # store, and starting price of just 50 on their list". The +2/+1 stacking cloak the Druchii page prints is
+        # that warband's: its "Corsairs may wear Sea Dragon Cloaks though they are not Heroes" names the Druchii's
+        # own henchman unit, not the Mousillon warband of the same name, whose own page prints no rules for it.
+        # So the Corsairs take our flat 4+ against missiles and 5+ in close combat, not the stacking saves.
+        self.assertEqual(self.rows("Sea Dragon Cloak (Druchii)", "dark-elf-corsairs"), [])
+        [row] = self.items["Sea Dragon Cloak (Druchii)"]["availabilities"]
+        self.assertEqual(row["warbands"], [{"type": "druchii", "excluded": False}])
+        self.assertEqual(self.rows("Sea Dragon Cloak", "dark-elf-corsairs"), [(50, 2, 10, "")])
+        shown = {
+            (line["item"]["name"], line["shown_as"], line["cost"])
+            for row in self.templates["dark-elf-corsairs"]["lists"]
+            for line in row["lines"]
+            if "Sea Dragon Cloak" in line["item"]["name"]
+        }
+        self.assertEqual(shown, {("Sea Dragon Cloak", "Dragon Cloak", 50)})
+        self.assertIn("5+ armour save in close combat", self.items["Sea Dragon Cloak"]["rules"][0]["text"])

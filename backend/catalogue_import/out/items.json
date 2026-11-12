@@ -12291,6 +12291,10 @@
             "excluded": false
           },
           {
+            "type": "dark-elf-corsairs",
+            "excluded": false
+          },
+          {
             "type": "sea-ghosts",
             "excluded": false
           }
@@ -19120,22 +19124,6 @@
         "warbands": [
           {
             "type": "druchii",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      },
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 2,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "dark-elf-corsairs",
             "excluded": false
           }
         ],

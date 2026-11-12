@@ -262,9 +262,10 @@
     },
     "Sea Dragon Cloak": {
       "warbands": [
-        "sea-ghosts"
+        "sea-ghosts",
+        "dark-elf-corsairs"
       ],
-      "why": "William, 12 Nov 2026: the Sea Ghosts' list sells it at the same 50 gc, so they join our row rather than take one of their own; the Dark Elf Corsairs and the Druchii buy the PDF's cloak instead, Sea Dragon Cloak (Druchii)"
+      "why": "William, 12 Nov 2026: the Sea Ghosts' and the Dark Elf Corsairs' lists both sell it at the same 50 gc, so they join our row rather than take one of their own (\"corsairs should point at the other sea dragon cloak i think which is 50+2d6 in store, and starting price of just 50 on their list\"). Only the Druchii buy the +2/+1 stacking cloak their own page prints, Sea Dragon Cloak (Druchii), whose \"Corsairs\" is that warband's own henchman unit"
     },
     "Nightmare": {
       "warbands": [
