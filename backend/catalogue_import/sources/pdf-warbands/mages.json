@@ -119,7 +119,7 @@
     }
   ],
   "skillGroup": {
-    "name": "Magician Skills",
+    "name": "Mages",
     "new": true
   },
   "specialSkillsList": [
@@ -136,7 +136,7 @@
     {"page": 1, "what": "The Arch Mage takes spells from \"2 of the elemental spell lists\" and the Mage from one. The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), and its page in this PDF is an empty heading, so both are given our four Elemental Lores (Air, Earth, Fire, Water), which the Sorcerous Society brought. See the decisions."},
     {"page": 1, "what": "The Apprentices are \"0-3 per mage hero (max 6)\"; the simpler reading, 0-6, is imported (William: \"just keep 0-1 dont complicate it\")."},
     {"page": 1, "what": "\"Clockwork Beasts - 0-5\" in the choice of warriors is the entry headed \"Clockwork Construct - 30\"; the entry's name and count are taken."},
-    {"page": 1, "what": "Cantrip is printed under Magician Skills but is the Apprentices' spell (\"Cantrips - see above\"), so it is the Apprentice's rule with its difficulty, range and chart rather than a Hero's skill."},
+    {"page": 1, "what": "Cantrip is printed under the Magician Skills column but is the Apprentices' spell (\"Cantrips - see above\"), so it is the Apprentice's rule with its difficulty, range and chart rather than a Hero's skill."},
     {"page": 3, "what": "The Clockwork Construct's Leadership is printed as \"-\", and its profile has W2 and a 5+ save; as printed."},
     {"page": 2, "what": "The Apprentice's profile prints S2; as printed."},
     {"page": 4, "what": "The Familiar line prints no price, only \"per TC#10\". Our Familiar is 20+1D6 gc Rare 8 from Town Cryer 10, so the line carries 20 gc. Its \"Arch Mage only when creating a warband, Heroes after that\" cannot be read into a line note, so it is flagged here rather than imported."},

@@ -1,6 +1,6 @@
 {
   "warbandType": "arabyan-theives",
-  "name": "Arabyan Theives",
+  "name": "Arabyan Thieves",
   "source": "Khemri",
   "sourceLink": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Theives.pdf",
   "warbandRules": {
@@ -120,14 +120,14 @@
     }
   ],
   "skillGroup": {
-    "name": "Arabyan Theives",
+    "name": "Arabyan Thieves",
     "new": true
   },
   "specialSkillsList": [
     {"name": "Sticky Fingers", "description": "A model taken out of action is left on the table. If the Hero moves into base contact with him he may try to steal one of his weapons, succeeding on a 5+ on a D6. The attempt takes his whole turn and he may do nothing else that turn."},
     {"name": "Infiltration", "ours": "Infiltration"},
-    {"name": "Knife Fighting (Arabyan Theives)", "pdfName": "Knife fighting", "description": "While the Hero fights with knives in hand-to-hand combat he adds +1 to his Weapon Skill and +1 to the injury rolls he causes with them. His enemy still gets its +1 armour save against a knife."},
-    {"name": "Hide in Shadows (Arabyan Theives)", "pdfName": "Hide in Shadows", "description": "While the Hero is within 1\" of a wall or other linear obstacle, an opposing model must pass an Initiative test to charge him."},
+    {"name": "Knife Fighting (Arabyan Thieves)", "pdfName": "Knife fighting", "description": "While the Hero fights with knives in hand-to-hand combat he adds +1 to his Weapon Skill and +1 to the injury rolls he causes with them. His enemy still gets its +1 armour save against a knife."},
+    {"name": "Hide in Shadows (Arabyan Thieves)", "pdfName": "Hide in Shadows", "description": "While the Hero is within 1\" of a wall or other linear obstacle, an opposing model must pass an Initiative test to charge him."},
     {"name": "Sheer Speed", "description": "Guild Master and Master Thief only. The Hero adds +1 to his Movement."},
     {"name": "Disarm/Spot trap", "ours": "Trap Expert"}
   ],

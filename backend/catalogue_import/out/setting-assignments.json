@@ -136,9 +136,9 @@
       "how": "mordheimer"
     },
     {
-      "name": "Virtue of Valor",
-      "setting": "mordheim",
-      "how": "no match"
+      "name": "Virtue of Valour",
+      "setting": "mordheim-1b",
+      "how": "mordheimer"
     },
     {
       "name": "Virtue of Discipline",
@@ -1236,7 +1236,7 @@
       "how": "overrides.json"
     },
     {
-      "name": "Dispell (Altdorf Expeditionary Party)",
+      "name": "Dispel (Altdorf Expeditionary Party)",
       "setting": "grade-3",
       "how": "overrides.json"
     },
@@ -1276,12 +1276,12 @@
       "how": "overrides.json"
     },
     {
-      "name": "Knife Fighting (Arabyan Theives)",
+      "name": "Knife Fighting (Arabyan Thieves)",
       "setting": "khemri-3",
       "how": "overrides.json"
     },
     {
-      "name": "Hide in Shadows (Arabyan Theives)",
+      "name": "Hide in Shadows (Arabyan Thieves)",
       "setting": "khemri-3",
       "how": "overrides.json"
     },

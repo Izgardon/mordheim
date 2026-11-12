@@ -6293,8 +6293,8 @@
     "upgrades": []
   },
   {
-    "slug": "arabyan-theives",
-    "name": "Arabyan Theives",
+    "slug": "arabyan-thieves",
+    "name": "Arabyan Thieves",
     "setting": "khemri-3",
     "source": "Khemri",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/khemri/Arabyan%20Theives.pdf",
@@ -6599,7 +6599,7 @@
           "Shooting",
           "Academic",
           "Speed",
-          "Arabyan Theives"
+          "Arabyan Thieves"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -6615,12 +6615,12 @@
         "specials": [
           {
             "name": "Leader",
-            "type": "Warband - Arabyan Theives",
+            "type": "Warband - Arabyan Thieves",
             "description": "Any warrior within 6\" of the Guild Master may use his Leadership instead of his own."
           },
           {
             "name": "Known thief",
-            "type": "Warband - Arabyan Theives",
+            "type": "Warband - Arabyan Thieves",
             "description": "The Guild Master counts as a known thief."
           }
         ],
@@ -6653,7 +6653,7 @@
           "Combat",
           "Shooting",
           "Speed",
-          "Arabyan Theives"
+          "Arabyan Thieves"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -6669,7 +6669,7 @@
         "specials": [
           {
             "name": "Known thief",
-            "type": "Warband - Arabyan Theives",
+            "type": "Warband - Arabyan Thieves",
             "description": "The Guild Master counts as a known thief."
           }
         ],
@@ -6702,7 +6702,7 @@
           "Combat",
           "Shooting",
           "Speed",
-          "Arabyan Theives"
+          "Arabyan Thieves"
         ],
         "spell_types": [],
         "gains_xp": true,
@@ -6794,7 +6794,7 @@
         "specials": [
           {
             "name": "Begging",
-            "type": "Warband - Arabyan Theives",
+            "type": "Warband - Arabyan Thieves",
             "description": "Whenever the warband rolls for what it finds after a battle in a city or at an oasis with a caravan, each Beggar may beg. Roll a D6 for him: on a 2-6 he is given D3 gold crowns, and on a 1 he is beaten and misses the next battle."
           }
         ],
@@ -58080,7 +58080,7 @@
         ],
         "specials": [
           {
-            "name": "Hide In Shadows",
+            "name": "Hide in Shadows",
             "type": "Warband - Low Kings",
             "description": "While Rapscallions are within 1\" of a wall or other linear obstacle (a hedge, fence, well and the like), an enemy must pass an Initiative test to charge or shoot at them."
           }
@@ -59311,7 +59311,7 @@
         "skill_types": [
           "Academic",
           "Speed",
-          "Magician Skills"
+          "Mages"
         ],
         "spell_types": [
           {
@@ -59380,7 +59380,7 @@
         "skill_types": [
           "Academic",
           "Speed",
-          "Magician Skills"
+          "Mages"
         ],
         "spell_types": [
           {
@@ -59444,7 +59444,7 @@
         "skill_types": [
           "Academic",
           "Speed",
-          "Magician Skills"
+          "Mages"
         ],
         "spell_types": [
           {

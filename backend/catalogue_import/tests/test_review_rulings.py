@@ -302,3 +302,42 @@ class ReviewRulingsTests(SimpleTestCase):
                 [row] = self.items[name]["availabilities"]
                 self.assertFalse(row["for_everyone"])
                 self.assertEqual(row["warbands"], [{"type": "altdorf-expeditionary-party", "excluded": False}])
+
+    # 6. Spelling, aligned (William: "fix all spelling and keep it aligned")
+
+    def test_the_arabyan_thieves_are_spelt_the_same_everywhere(self) -> None:
+        # the warband type already read "Arabyan Thieves" (overrides.json warband_type_names) while its template,
+        # its skill group and two of its skills kept Broheim's "Theives"; the type's slug stays the source's
+        types = {row["slug"]: row["name"] for row in load_json(OUT / "warband-types.json")}
+        self.assertEqual(types["arabyan-theives"], "Arabyan Thieves")
+        template = next(row for row in self.templates.values() if "arabyan-th" in row["slug"])
+        self.assertEqual(template["name"], "Arabyan Thieves")
+        self.assertEqual([row["type"] for row in template["types"]], ["arabyan-theives"])
+        self.assertIn("Arabyan Thieves", self.groups)
+        self.assertLessEqual(
+            {"Knife Fighting (Arabyan Thieves)", "Hide in Shadows (Arabyan Thieves)"},
+            set(self.groups["Arabyan Thieves"]),
+        )
+        misspelt = [name for name in (*self.skills, *self.groups, *(row["name"] for row in self.templates.values())) if "Theives" in name]  # fmt: skip
+        self.assertEqual(misspelt, [])
+
+    def test_the_khemri_mage_warbands_group_is_named_after_its_warband(self) -> None:
+        # every other group is named after its warband; "Magician Skills" was the PDF's name for the column
+        self.assertNotIn("Magician Skills", self.groups)
+        self.assertEqual(self.groups["Mages"], ["Dispel", "Store Spell", "Clockwork Mage"])
+
+    def test_dispel_and_virtue_of_valour_are_spelt_as_the_catalogue_spells_them(self) -> None:
+        # the Altdorf skill was "Dispell", which its page prints and nothing else in the catalogue does; our own
+        # Bretonnian Knights row read "Virtue of Valor" where mordheimer, the Bitter Moors' skill and its own
+        # description all say "Valour"
+        self.assertEqual(sorted(name for name in self.skills if name.startswith("Dispel")), ["Dispel", "Dispel (Altdorf Expeditionary Party)"])  # fmt: skip
+        self.assertEqual(sorted(name for name in self.skills if "Valo" in name), ["Virtue of Valour", "Virtue of Valour (Knights of the Bitter Moors)"])  # fmt: skip
+        self.assertIn("valourous", self.skills["Virtue of Valour"])
+
+    def test_the_low_kings_hide_in_shadows_rule_is_cased_as_every_other_spelling_of_it(self) -> None:
+        rules = [row["title"] for row in self.templates["low-kings"]["rules"]]
+        specials = [
+            special["name"] for fighter in self.templates["low-kings"]["fighters"] for special in fighter["specials"]
+        ]
+        self.assertNotIn("Hide In Shadows", [*rules, *specials])
+        self.assertIn("Hide in Shadows", specials)

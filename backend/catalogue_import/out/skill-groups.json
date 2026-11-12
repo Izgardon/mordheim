@@ -174,7 +174,7 @@
       "Large Familiar",
       "Surveyor",
       "Hardened Will",
-      "Dispell (Altdorf Expeditionary Party)",
+      "Dispel (Altdorf Expeditionary Party)",
       "Fierce Casting"
     ]
   },
@@ -277,7 +277,7 @@
     ]
   },
   {
-    "name": "Arabyan Theives",
+    "name": "Arabyan Thieves",
     "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [
@@ -293,8 +293,8 @@
       "Infiltration",
       "Trap Expert",
       "Sticky Fingers",
-      "Knife Fighting (Arabyan Theives)",
-      "Hide in Shadows (Arabyan Theives)",
+      "Knife Fighting (Arabyan Thieves)",
+      "Hide in Shadows (Arabyan Thieves)",
       "Sheer Speed"
     ]
   },
@@ -421,7 +421,7 @@
     "how": "intersection",
     "skills": [
       "Virtue of Purity",
-      "Virtue of Valor",
+      "Virtue of Valour",
       "Virtue of Discipline",
       "Virtue of Noble Disdain",
       "Virtue of the Impetuous",
@@ -1315,7 +1315,7 @@
     ]
   },
   {
-    "name": "Magician Skills",
+    "name": "Mages",
     "setting": "khemri-3",
     "for_everyone": false,
     "warbands": [

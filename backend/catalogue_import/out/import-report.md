@@ -212,11 +212,11 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 500 | 152 | 311 | 37 |
+| skills | 500 | 153 | 311 | 36 |
 | hired swords | 75 | 71 | 4 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
-Not on mordheimer (skills), so Mordheim: [Animal] Handler, Ride [Animal], Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip, Falconer, Heron Strike, Swallow Kick, Water Form, Inch Punch, Virtue of Valor, Virtue of the Impetuous, Virtue of the Squire, Tunneler, Tinkerer, Quick Thinker, Animosity, Backstabber, Pick Locks, Slaver, Cutpurse, Infiltrate, ’ard ’ead, Captain Blood, Treasure Hunter, Luck, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat, Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form.
+Not on mordheimer (skills), so Mordheim: [Animal] Handler, Ride [Animal], Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip, Falconer, Heron Strike, Swallow Kick, Water Form, Inch Punch, Virtue of the Impetuous, Virtue of the Squire, Tunneler, Tinkerer, Quick Thinker, Animosity, Backstabber, Pick Locks, Slaver, Cutpurse, Infiltrate, ’ard ’ead, Captain Blood, Treasure Hunter, Luck, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat, Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form.
 
 Names mordheimer gives more than one setting; the entry for our list's warband was taken, else the one of our type, else the lowest. One set in overrides.json is settled:
 
@@ -261,7 +261,7 @@ Norse Shaman (hired swords) is in lustria, border-town-burning on mordheimer; it
 | hired swords | 72 | 0 | 0 | 72 |
 | dramatis personae | 30 | 1 | 0 | 29 |
 
-Skills mordheimer lacks, read from their list's name: Heron Strike (Battle Monks of Cathay) -> Battle Monks of Cathay; Swallow Kick (Battle Monks of Cathay) -> Battle Monks of Cathay; Water Form (Battle Monks of Cathay) -> Battle Monks of Cathay; Inch Punch (Battle Monks of Cathay) -> Battle Monks of Cathay; Virtue of Valor (Bretonnian Knights) -> Bretonnian Knights; Virtue of the Impetuous (Bretonnian Knights) -> Bretonnian Knights; Virtue of the Squire (Bretonnian Knights) -> Bretonnian Knights; Animosity (Forest Goblins) -> Forest Goblins; Tea-leaf (Militant Mootlanders) -> Militant Mootlanders; Flan-eater (Militant Mootlanders) -> Militant Mootlanders; Looter (Militant Mootlanders) -> Militant Mootlanders; Backstabber (Low Kings) -> Low Kings; Pick Locks (Low Kings) -> Low Kings; Slaver (Low Kings) -> Low Kings; Cutpurse (Low Kings) -> Low Kings; Infiltrate (Night Goblins) -> Night Goblins; ’ard ’ead (Orcs) -> Orcs; Luck (Sea Ghosts) -> Sea Ghosts.
+Skills mordheimer lacks, read from their list's name: Heron Strike (Battle Monks of Cathay) -> Battle Monks of Cathay; Swallow Kick (Battle Monks of Cathay) -> Battle Monks of Cathay; Water Form (Battle Monks of Cathay) -> Battle Monks of Cathay; Inch Punch (Battle Monks of Cathay) -> Battle Monks of Cathay; Virtue of the Impetuous (Bretonnian Knights) -> Bretonnian Knights; Virtue of the Squire (Bretonnian Knights) -> Bretonnian Knights; Animosity (Forest Goblins) -> Forest Goblins; Tea-leaf (Militant Mootlanders) -> Militant Mootlanders; Flan-eater (Militant Mootlanders) -> Militant Mootlanders; Looter (Militant Mootlanders) -> Militant Mootlanders; Backstabber (Low Kings) -> Low Kings; Pick Locks (Low Kings) -> Low Kings; Slaver (Low Kings) -> Low Kings; Cutpurse (Low Kings) -> Low Kings; Infiltrate (Night Goblins) -> Night Goblins; ’ard ’ead (Orcs) -> Orcs; Luck (Sea Ghosts) -> Sea Ghosts.
 
 Fees that aren't plain numbers, as structured fees (kind, gold, D6, resources and a note for the rest). A hire fee of n/a is in his rules (special: hired at 0 gc with a warning), an upkeep of n/a is none (no camp row), Hero takes a hero's place and a blank is a fee with no gold, filled in when hiring or at camp:
 
@@ -381,19 +381,19 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Speed | everyone | intersection | - | Leap, Sprint, Acrobat, Lightning Reflexes, Jump Up, Dodge, Scale Sheer Surfaces, Celebrity |
 | Adventurers | Adventurers | new group | Fey and Fey Quickness are the Elf's; Ferocious Charge the Barbarian's and the Dwarf's; Magic Resistant, Monster Slayer and Berserker the Dwarf's. | Fey, Fey Quickness, Ferocious Charge, Monster Slayer, Berserker, Chosen of the White Tower, Hard to Kill, Instinctive Warrior, Trading Flair, Taunt (Adventurers), Magic Resistant |
 | Albion Barbarians | Albion Barbarians | new group | - | Savage Fury, Experienced Fighter, Attack Howl, Master Shot, Concealment (Albion Barbarians) |
-| Altdorf Expeditionary Party | Altdorf Expeditionary Party | new group | - | Power Surge, Arcane Reach, Combat Wizard, Arcane Barrage, Large Familiar, Surveyor, Hardened Will, Dispell (Altdorf Expeditionary Party), Fierce Casting |
+| Altdorf Expeditionary Party | Altdorf Expeditionary Party | new group | - | Power Surge, Arcane Reach, Combat Wizard, Arcane Barrage, Large Familiar, Surveyor, Hardened Will, Dispel (Altdorf Expeditionary Party), Fierce Casting |
 | Amazons | Amazons (group) | new group | - | Skink Hunter, Elixir of Life, Mesmerising Dance, Savage Fury, Concealment |
 | Animal | everyone | skill_lists | - | [Animal] Handler, Ride [Animal], Falconer |
 | Animal Aspects | Wood Elves, the Asrai Way-farers | new group | Wood Elf heroes only. No more than two heroes in a warband may hold the same Aspect. | Aspect of the Hawk, Aspect of the Serpent, Aspect of the Panther, Aspect of the Fox, Aspect of the Stag, Aspect of the Rabbit |
 | Araby Smugglers | Araby Smugglers | new group | - | Hit and run, Slave Driver, Pious Fury, Pawnbroker, Black Market, Man of the World |
 | Arabyan Nomads | Arabyan Nomads | new group | - | Sand worm, Weather tolerant, Hit and run |
-| Arabyan Theives | Arabyan Thieves | new group | - | Infiltration, Trap Expert, Sticky Fingers, Knife Fighting (Arabyan Theives), Hide in Shadows (Arabyan Theives), Sheer Speed |
+| Arabyan Thieves | Arabyan Thieves | new group | - | Infiltration, Trap Expert, Sticky Fingers, Knife Fighting (Arabyan Thieves), Hide in Shadows (Arabyan Thieves), Sheer Speed |
 | Assassin Squad | Assassin Squad, Knives from the Dark | new group | - | Infiltration, Silent Strike (Assassin Squad), Ultimate Kill, Master of Poisons (Assassin Squad), Shadow Defense, Ultimate Specialist, Play Dead |
 | Battle Monks of Cathay | Battle Monks of Cathay | intersection | - | Heron Strike, Swallow Kick, Water Form, Inch Punch |
 | Beastmen Raiders | Beastmen Raiders | intersection | - | Shaggy Hide, Mutant, Fearless, Horned One, Bellowing Roar, Manhater |
 | Black Dwarfs | Black Dwarfs | new group | - | Extra Tough, Resource Hunter, True Grit, Thick Skull, Chaos Engineer, Tyrant |
 | Bretonnian Chapel Guard | Bretonnian Chapel Guard | new group | - | Renowned Virtue, Questing Vow, Shield Bash, Bulging Muscles, Untiring |
-| Bretonnian Knights | Bretonnian Knights | intersection | - | Virtue of Purity, Virtue of Valor, Virtue of Discipline, Virtue of Noble Disdain, Virtue of the Impetuous, Virtue of the Squire |
+| Bretonnian Knights | Bretonnian Knights | intersection | - | Virtue of Purity, Virtue of Valour, Virtue of Discipline, Virtue of Noble Disdain, Virtue of the Impetuous, Virtue of the Squire |
 | Brood of Ghurash | The Brood of Ghurash | new group | - | The Terror, Mother knows best, Ground Pounder, Titanic Strength, Hurl |
 | Call of the Night Haint | Call of the Night Haint | new group | Spirits only. | Wight Walk, Traumatic Passing, Possession, The Key and the Gate, Siren Song |
 | Cavalry | everyone | intersection | - | Cavalry Commander, Trick Riding, Combat Riding, Evade, Running Dismount, Athletic Mount, Horse Archer, Mounted Combat Master |
@@ -434,7 +434,7 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Lizardmen (Lustria) | Lizardmen (LUS) | new group | Infiltration and Great Hunter are for Skinks only; Bellowing Battle Roar and Toughened Hide for Saurus only. | Infiltration (Skink), Great Hunter, Bellowing Battle Roar, Toughened Hide |
 | Lothern Sea Patrol | Lothern Sea Patrol | new group | Infiltration: a Hero with the Ranger honour and a promoted Sea Ranger only. | Fey Quickness, Infiltration, Graceful Strength, Swordmasters Protege, Defending Guard, Swift Fighter |
 | Low Kings | Low Kings | skill_group_learners | - | Backstabber, Pick Locks, Poisoner, Slaver, Stealthy, Cutpurse |
-| Magician Skills | Mages | new group | - | Dispel, Store Spell, Clockwork Mage |
+| Mages | Mages | new group | - | Dispel, Store Spell, Clockwork Mage |
 | Marauders of Chaos | Marauders of Chaos | intersection | - | Chosen of chaos, Tattooed body, Sweeping blow, Mutant (Marauders of Chaos), Heart of the warrior |
 | Masters of Horror | Masters of Horror | new group | - | Surgeon, Alchemist, Apt Revitalist, Lunatic |
 | Merchant Caravans | Merchant Caravans | new group | - | Bribery, Dubious Income, Wholesale, Deal Breaker, Connected |
@@ -536,17 +536,17 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Large Familiar | Altdorf Expeditionary Party | grade-3 | Altdorf Expeditionary Party |
 | Surveyor | Altdorf Expeditionary Party | grade-3 | Altdorf Expeditionary Party |
 | Hardened Will | Altdorf Expeditionary Party | grade-3 | Altdorf Expeditionary Party |
-| Dispell (Altdorf Expeditionary Party) | Altdorf Expeditionary Party | grade-3 | Altdorf Expeditionary Party |
+| Dispel (Altdorf Expeditionary Party) | Altdorf Expeditionary Party | grade-3 | Altdorf Expeditionary Party |
 | Fierce Casting | Altdorf Expeditionary Party | grade-3 | Altdorf Expeditionary Party |
 | Slave Driver | Araby Smugglers | sartosa | Sartosa |
 | Pious Fury | Araby Smugglers | sartosa | Sartosa |
 | Pawnbroker | Araby Smugglers | sartosa | Sartosa |
 | Black Market | Araby Smugglers | sartosa | Sartosa |
 | Man of the World | Araby Smugglers | sartosa | Sartosa |
-| Sticky Fingers | Arabyan Theives | khemri-3 | Khemri |
-| Knife Fighting (Arabyan Theives) | Arabyan Theives | khemri-3 | Khemri |
-| Hide in Shadows (Arabyan Theives) | Arabyan Theives | khemri-3 | Khemri |
-| Sheer Speed | Arabyan Theives | khemri-3 | Khemri |
+| Sticky Fingers | Arabyan Thieves | khemri-3 | Khemri |
+| Knife Fighting (Arabyan Thieves) | Arabyan Thieves | khemri-3 | Khemri |
+| Hide in Shadows (Arabyan Thieves) | Arabyan Thieves | khemri-3 | Khemri |
+| Sheer Speed | Arabyan Thieves | khemri-3 | Khemri |
 | Silent Strike (Assassin Squad) | Assassin Squad | grade-3 | Assassin Squad, Knives from the Dark |
 | Ultimate Kill | Assassin Squad | grade-3 | Assassin Squad, Knives from the Dark |
 | Master of Poisons (Assassin Squad) | Assassin Squad | grade-3 | Assassin Squad, Knives from the Dark |
@@ -664,9 +664,9 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 | Swordmasters Protege | Lothern Sea Patrol | sartosa | Sartosa |
 | Defending Guard | Lothern Sea Patrol | sartosa | Sartosa |
 | Swift Fighter | Lothern Sea Patrol | sartosa | Sartosa |
-| Dispel | Magician Skills | khemri-3 | Khemri |
-| Store Spell | Magician Skills | khemri-3 | Khemri |
-| Clockwork Mage | Magician Skills | khemri-3 | Khemri |
+| Dispel | Mages | khemri-3 | Khemri |
+| Store Spell | Mages | khemri-3 | Khemri |
+| Clockwork Mage | Mages | khemri-3 | Khemri |
 | Surgeon | Masters of Horror | sylvania | Sylvania Supplement |
 | Alchemist | Masters of Horror | sylvania | Sylvania Supplement |
 | Apt Revitalist | Masters of Horror | sylvania | Sylvania Supplement |
@@ -1692,7 +1692,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): The Sheik and the Street Mage tick no Special column, so neither learns the warband's own skills.
 - Flag (p2): Blending into the Sands (hide in open ground) is our Sand worm, the Tomb Robbers' skill of the same setting, and is merged into it (William, 12 Nov 2026): the group learns ours and the PDF's name is dropped.
 
-### Arabyan Theives
+### Arabyan Thieves
 
 - Alias (p3): "jambiya" is our dagger.
 - Alias (p3): "light armor" is our light armour.
@@ -2398,7 +2398,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): The Arch Mage takes spells from "2 of the elemental spell lists" and the Mage from one. The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), and its page in this PDF is an empty heading, so both are given our four Elemental Lores (Air, Earth, Fire, Water), which the Sorcerous Society brought. See the decisions.
 - Flag (p1): The Apprentices are "0-3 per mage hero (max 6)"; the simpler reading, 0-6, is imported (William: "just keep 0-1 dont complicate it").
 - Flag (p1): "Clockwork Beasts - 0-5" in the choice of warriors is the entry headed "Clockwork Construct - 30"; the entry's name and count are taken.
-- Flag (p1): Cantrip is printed under Magician Skills but is the Apprentices' spell ("Cantrips - see above"), so it is the Apprentice's rule with its difficulty, range and chart rather than a Hero's skill.
+- Flag (p1): Cantrip is printed under the Magician Skills column but is the Apprentices' spell ("Cantrips - see above"), so it is the Apprentice's rule with its difficulty, range and chart rather than a Hero's skill.
 - Flag (p3): The Clockwork Construct's Leadership is printed as "-", and its profile has W2 and a 5+ save; as printed.
 - Flag (p2): The Apprentice's profile prints S2; as printed.
 - Flag (p4): The Familiar line prints no price, only "per TC#10". Our Familiar is 20+1D6 gc Rare 8 from Town Cryer 10, so the line carries 20 gc. Its "Arch Mage only when creating a warband, Heroes after that" cannot be read into a line note, so it is flagged here rather than imported.
@@ -2762,7 +2762,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p56): The warband's minimum of 3 models is not imported: our templates hold no minimum.
 - Flag (p56): Animosity is "See TC6 in WD243" and is not printed here, so the warband rule and the fighters' rules name it without repeating its table. Nothing was guessed and no other PDF was read.
 - Flag (p56): "Savage Orc heroes may use the Orc special skills from TC6": the Heroes name our Orcs group. Our Savage Orcs group, from the Sartosa Orc Pirates & Savage Orcs PDF, is a different list and is not used here. See the decisions.
-- Flag (p57): The Weirdo's "Spells: see TC6" and "uses Waagh! Magic" are read as our Waaaagh! Magic lore. The PDF spells his name both Weirdo and Wierdo; the fighter entry's "Wierdo" is imported.
+- Flag (p57): The Wierdo's "Spells: see TC6" and "uses Waagh! Magic" are read as our Waaaagh! Magic lore. The PDF spells his name both Weirdo and Wierdo; the fighter entry's "Wierdo" is imported.
 - Flag (p56): The Stone Dagger, Stone Hammer, Wooden Club and Stone Axe are our Dagger, Club, Mace or Hammer (twice, at 3 gc) and Axe, each shown under the list's name at the list's price.
 - Flag (p59): The Skull Busta (15 gc, Rare 6), Warpaint (5 gc, Rare 6, one use), Kumfy Gear (75 gc, no rarity printed) and the Effigy of Mork (30 gc, Rare 7) are stubs with the rules the page prints. Warpaint is also for Gobbo Boyz and Kumfy Gear for any Orc warband but no goblin; the limits are in each line's availability, and no price row was added for another warband's types.
 - Flag (p60): The War Boar (90 gc, Rare 11), Giant Wolf (40 gc, Rare 10) and Giant Spider (50 gc, Rare 11) are ours, with the same profiles, each a price row for this warband. Ours sell the Giant Wolf at 85 gc and the Giant Spider at 100 gc; the PDF's lower prices are its own, because neither may be ridden here.

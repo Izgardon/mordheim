@@ -683,7 +683,7 @@ class SeedAllTests(TestCase):
         # and nine groups are new, each its warband type's alone
         infiltration = Skill.objects.get(name="Infiltration")
         held_by = set(infiltration.group_links.values_list("group__name", flat=True))
-        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren", "Wood Elves of Arden", "Channel Rats", "Underworld Alliance", "Dark Elf Corsairs", "Woodsmen de Artois", "Lothern Sea Patrol", "Silent Brotherhood", "Arabyan Theives", "Skaven of Karak Azgal", "Night Goblins (Karak Azgal)", "Hobgoblin Horde", "The Innocents", "Assassin Squad", "Dwarf Grudgebearers", "Goblin Raiders", "Skaven Clan Skryre (Athel Loren)"})  # fmt: skip
+        self.assertEqual(held_by, {"Dark Elf", "Sea Ghosts", "Skaven", "Skaven Metal Mongers", "Horned Hunters", "Night Goblins (MIC)", "Druchii", "Ogre Hunting Party", "Wood Elves of Athel Loren", "Wood Elves of Arden", "Channel Rats", "Underworld Alliance", "Dark Elf Corsairs", "Woodsmen de Artois", "Lothern Sea Patrol", "Silent Brotherhood", "Arabyan Thieves", "Skaven of Karak Azgal", "Night Goblins (Karak Azgal)", "Hobgoblin Horde", "The Innocents", "Assassin Squad", "Dwarf Grudgebearers", "Goblin Raiders", "Skaven Clan Skryre (Athel Loren)"})  # fmt: skip
         self.assertTrue(infiltration.description.startswith("A warrior with this skill is always placed"))
         self.assertEqual(set(Skill.objects.get(name="Infiltration (Skink)").group_links.values_list("group__name", flat=True)), {"Skink", "Lizardmen (Lustria)"})  # fmt: skip
         self.assertTrue(Skill.objects.filter(name="Battle Tongue").exists())

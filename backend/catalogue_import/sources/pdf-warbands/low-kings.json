@@ -137,7 +137,7 @@
       "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
       "equipmentLists": ["mobsmen-equipment-list"],
       "specialRules": [
-        {"rulename": "Hide In Shadows", "ruleFull": "While Rapscallions are within 1\" of a wall or other linear obstacle (a hedge, fence, well and the like), an enemy must pass an Initiative test to charge or shoot at them."}
+        {"rulename": "Hide in Shadows", "ruleFull": "While Rapscallions are within 1\" of a wall or other linear obstacle (a hedge, fence, well and the like), an enemy must pass an Initiative test to charge or shoot at them."}
       ]
     },
     {

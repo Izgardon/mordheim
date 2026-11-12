@@ -108,7 +108,7 @@
     "description": "The Knight’s sole purpose is to serve the Lady of the Lake. His purity of heart and discipline endow him with the strength of spirit to resist enemy magic. Any spell cast against the knight will be dispelled on the D6 roll of a 4+. This is a natural dispel on account of the knights extreme piety.  (TC8)"
   },
   {
-    "name": "Virtue of Valor",
+    "name": "Virtue of Valour",
     "description": "The Knight has vowed to confront the biggest and strongest foes. The more awesome his enemy, the more valourous are his efforts. If fighting a model with a higher Strength characteristic than himself, the Knight may re-roll any failed to hit rolls in hand-to-hand combat.  (TC8)"
   },
   {
@@ -988,7 +988,7 @@
     "description": "Wizards only. He may re-roll his Leadership tests."
   },
   {
-    "name": "Dispell (Altdorf Expeditionary Party)",
+    "name": "Dispel (Altdorf Expeditionary Party)",
     "description": "Wizards and prayer users only. After an enemy wizard casts a spell, a wizard with this skill who can see him may try to dispel it: roll 2D6, and the spell is dispelled on a roll equal to or higher than the enemy's casting roll. Only one attempt may be made against each casting."
   },
   {
@@ -1020,11 +1020,11 @@
     "description": "A model taken out of action is left on the table. If the Hero moves into base contact with him he may try to steal one of his weapons, succeeding on a 5+ on a D6. The attempt takes his whole turn and he may do nothing else that turn."
   },
   {
-    "name": "Knife Fighting (Arabyan Theives)",
+    "name": "Knife Fighting (Arabyan Thieves)",
     "description": "While the Hero fights with knives in hand-to-hand combat he adds +1 to his Weapon Skill and +1 to the injury rolls he causes with them. His enemy still gets its +1 armour save against a knife."
   },
   {
-    "name": "Hide in Shadows (Arabyan Theives)",
+    "name": "Hide in Shadows (Arabyan Thieves)",
     "description": "While the Hero is within 1\" of a wall or other linear obstacle, an opposing model must pass an Initiative test to charge him."
   },
   {
