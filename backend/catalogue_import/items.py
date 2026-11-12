@@ -69,6 +69,9 @@ def mordheimer_item(
     kind, subtype = TYPES.get(item.get("type", ""), ("Miscellaneous", ""))
     kind = (renamed or {}).get("type") or kind  # William's kind for it: the Magic Carpet is a mount, so an Animal
     subtype = (renamed or {}).get("subtype") or clean_inline(item.get("group")) or subtype
+    # and his range, strength or save where mordheimer's is simply wrong (the Nehekharan Javelins' 8", 12" in the
+    # Nehekhara Tomb Guards' own PDF, which is the book for that warband)
+    stats = {name: (renamed or {}).get(name) for name in ("range", "strength", "save")}
     return {
         "slug": "",
         "name": name,
@@ -81,9 +84,9 @@ def mordheimer_item(
         "link_url": MORDHEIMER + item["link"] if item.get("link") else "",
         "tags": _item_tags(item, renamed),
         "flavour": clean_inline(item.get("flavour")),
-        "range": short_stat(item.get("range"), name, "range", log),
-        "strength": short_stat(item.get("strength"), name, "strength", log),
-        "save": short_stat(item.get("save"), name, "save", log),
+        "range": stats["range"] or short_stat(item.get("range"), name, "range", log),
+        "strength": stats["strength"] or short_stat(item.get("strength"), name, "strength", log),
+        "save": stats["save"] or short_stat(item.get("save"), name, "save", log),
         "statblock": statblock(item.get("statblock")),
         "notes": clean_inline(item.get("admonitions")),
         "needs_rules": False,

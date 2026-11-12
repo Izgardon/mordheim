@@ -1726,7 +1726,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p6): The Chain Axe, Wyrd Blade, Kill Knife, Body Armour, Short Spear, Assassin Bullets and Black Darts are stubs: none matches an item of ours. Each is Common, so its price row carries no rarity.
 - Flag (p6): The Kill Knife "is treated like being at the users strength with a maximum of S4", read as the wielder's Strength to a maximum of 4.
 - Flag (p7): The Black Darts are printed "S3 (S2 + dark venom, some creatures are immune to poison)", read as Strength 2 plus the venom's +1, so Strength 2 against a model immune to poison.
-- Flag (p7): Master of Poisons is kept apart as Master of Poisons (Assassin Squad): ours makes D3-1 doses of Dark Venom only, the PDF's "3D-1 portions of dark venom or black lotus". "3D-1" is as printed and is probably D3-1. See the decisions.
+- Flag (p7): Master of Poisons is kept apart as Master of Poisons (Assassin Squad): ours makes D3-1 doses of Dark Venom only, the PDF's portions of dark venom or black lotus. The PDF prints "3D-1", which is no dice we use anywhere; it is written D3-1 (William, 12 Nov 2026).
 - Flag (p7): Silent Strike is kept apart as Silent Strike (Assassin Squad): our skill of the name lets a warrior shoot while hidden, where this one charges out of hiding and back. See the decisions.
 - Flag (p8): The warband's Infiltration is word for word our Infiltration, so it is linked.
 - Flag (p8): The Development Progression and Designer Notes are not imported.

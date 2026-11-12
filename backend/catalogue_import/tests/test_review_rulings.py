@@ -12,7 +12,9 @@ from typing import Any, ClassVar
 from django.test import SimpleTestCase
 
 from catalogue_import.common import load_json
-from catalogue_import.sources import OUT
+from catalogue_import.sources import BACKEND, OUT
+
+SPELL_DATA = BACKEND / "apps" / "spells" / "data"
 
 
 class ReviewRulingsTests(SimpleTestCase):
@@ -199,3 +201,18 @@ class ReviewRulingsTests(SimpleTestCase):
         self.assertEqual([name for name in self.items if name.startswith("Tufenk")], ["Tufenk"])
         self.assertEqual(self.items["Tufenk"]["strength"], "2")
         self.assertEqual(self.rows("Tufenk", "arabian-tomb-raiders"), [(15, None, 10, "")])
+
+    # 3. Numbers where ours was wrong
+
+    def test_the_nehekharan_javelins_throw_12_inches(self) -> None:
+        self.assertEqual(self.items["Nehekharan Javelins"]["range"], '12"')
+
+    def test_the_scarab_song_is_12_inches_and_one_d6(self) -> None:
+        spells = {row["name"]: row["description"] for row in load_json(SPELL_DATA / "spells.json")}
+        song = spells["Merneptah's Scroll of the Scarab Song"]
+        self.assertEqual(song, 'Target within 12" suffers 1D6 S1 hits and cannot be shot at or fight in combat.')
+
+    def test_the_assassin_squads_master_of_poisons_brews_d3_minus_one(self) -> None:
+        text = self.skills["Master of Poisons (Assassin Squad)"]
+        self.assertIn("brew D3-1 portions", text)
+        self.assertNotIn("3D-1", text)
