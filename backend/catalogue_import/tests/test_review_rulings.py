@@ -265,3 +265,40 @@ class ReviewRulingsTests(SimpleTestCase):
         mim = settings["mutiny-in-marienburg"]
         self.assertEqual((mim["grade"], mim["grades_seen"]), ("2b", {"2b": 58}))
         self.assertEqual(mim["counts"]["items"], 45)
+
+    # 5. Price rows: the types join the row that already carries their price
+
+    def test_the_nehekhara_tomb_guards_may_buy_their_own_lists_three_khemri_items(self) -> None:
+        # their own template's lists sell all three, while our rows named the Tomb Guardians alone, so in the store
+        # they read "Not usually available"; the prices are identical, so the type joins the row
+        for name, cost in (("Asp Arrows", 10), ("Nehekharan Javelins", 10), ("Serpent Staff", 30)):
+            with self.subTest(item=name):
+                [(row_cost, _dice, _rarity, _note)] = self.rows(name, "nehekhara-tomb-guards")
+                self.assertEqual(row_cost, cost)
+                buyers = {
+                    entry["type"]
+                    for row in self.items[name]["availabilities"]
+                    for entry in row["warbands"]
+                    if "type" in entry and not entry["excluded"]
+                }
+                self.assertEqual(buyers, {"tomb-guardians", "nehekhara-tomb-guards"})
+                lines = {
+                    line["item"]["name"]
+                    for row in self.templates["nehekhara-tomb-guards"]["lists"]
+                    for line in row["lines"]
+                }
+                self.assertIn(name, lines)
+
+    def test_the_sea_ghosts_join_our_sea_dragon_cloaks_row(self) -> None:
+        [row] = self.items["Sea Dragon Cloak"]["availabilities"]
+        buyers = [entry["type"] for entry in row["warbands"]]
+        self.assertEqual(buyers, ["dark-elves", "sea-ghosts"])
+        self.assertEqual((row["cost"], row["dice"], row["rarity"]), (50, 2, 10))
+
+    def test_the_glyph_of_blasting_and_the_grimoire_keep_the_expeditionary_partys_rows(self) -> None:
+        # the one item in the price-row pile with nothing to do: both already name that warband and nothing else
+        for name in ("Glyph of Blasting", "Grimoire of Magic"):
+            with self.subTest(item=name):
+                [row] = self.items[name]["availabilities"]
+                self.assertFalse(row["for_everyone"])
+                self.assertEqual(row["warbands"], [{"type": "altdorf-expeditionary-party", "excluded": False}])

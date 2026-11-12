@@ -6757,6 +6757,10 @@
           {
             "type": "tomb-guardians",
             "excluded": false
+          },
+          {
+            "type": "nehekhara-tomb-guards",
+            "excluded": false
           }
         ],
         "note": "Liche Priest only"
@@ -7569,6 +7573,10 @@
         "warbands": [
           {
             "type": "tomb-guardians",
+            "excluded": false
+          },
+          {
+            "type": "nehekhara-tomb-guards",
             "excluded": false
           }
         ],
@@ -12281,6 +12289,10 @@
           {
             "type": "dark-elves",
             "excluded": false
+          },
+          {
+            "type": "sea-ghosts",
+            "excluded": false
           }
         ],
         "note": ""
@@ -14937,6 +14949,10 @@
         "warbands": [
           {
             "type": "tomb-guardians",
+            "excluded": false
+          },
+          {
+            "type": "nehekhara-tomb-guards",
             "excluded": false
           }
         ],

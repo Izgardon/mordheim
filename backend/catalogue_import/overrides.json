@@ -242,6 +242,30 @@
       ],
       "why": "the Tilean warbands' own pike, Pike (Tileans), is discontinued (William, 11 Nov 2026), so they buy this one, which item_names renames Pike; their list line keeps its own 12 gc"
     },
+    "Asp Arrows": {
+      "warbands": [
+        "nehekhara-tomb-guards"
+      ],
+      "why": "William, 12 Nov 2026: its row names the Tomb Guardians only, while the Nehekhara Tomb Guards' own template sells it on their lists at the same 10 gc, so they saw their own list's item as not usually available"
+    },
+    "Nehekharan Javelins": {
+      "warbands": [
+        "nehekhara-tomb-guards"
+      ],
+      "why": "William, 12 Nov 2026: its row names the Tomb Guardians only, while the Nehekhara Tomb Guards' own template sells it on their lists at the same 10 gc"
+    },
+    "Serpent Staff": {
+      "warbands": [
+        "nehekhara-tomb-guards"
+      ],
+      "why": "William, 12 Nov 2026: its row names the Tomb Guardians only, while the Nehekhara Tomb Guards' own template sells it on their lists at the same 30 gc"
+    },
+    "Sea Dragon Cloak": {
+      "warbands": [
+        "sea-ghosts"
+      ],
+      "why": "William, 12 Nov 2026: the Sea Ghosts' list sells it at the same 50 gc, so they join our row rather than take one of their own; the Dark Elf Corsairs and the Druchii buy the PDF's cloak instead, Sea Dragon Cloak (Druchii)"
+    },
     "Nightmare": {
       "warbands": [
         "cursed-cavalcade"
