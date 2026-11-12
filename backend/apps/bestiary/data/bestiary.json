@@ -642,7 +642,9 @@
       "Small Target (Familiar)",
       "Poison (Viper Familiar)"
     ],
-    "skills": ["Lightning Reflexes"],
+    "skills": [
+      "Lightning Reflexes"
+    ],
     "spells": [],
     "equipment": [],
     "shop_item": {
@@ -673,5 +675,39 @@
     "skills": [],
     "spells": [],
     "equipment": []
+  },
+  {
+    "name": "Beast of Burden",
+    "kind": "mount",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "description": "A clockwork creature that comes in many shapes and is used mostly as a packhorse: it may carry chests and other heavy items with no penalty. It follows every rule for clockwork constructs.",
+    "movement": 7,
+    "weapon_skill": 1,
+    "ballistic_skill": 0,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 2,
+    "attacks": 0,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "setting": "sealed-city",
+    "shop_item": {
+      "grade": "2b",
+      "availabilities": [
+        {
+          "cost": 25,
+          "rarity": 5
+        }
+      ]
+    }
   }
 ]

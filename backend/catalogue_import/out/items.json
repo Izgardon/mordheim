@@ -1563,6 +1563,38 @@
       },
       {
         "label": "",
+        "cost": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
         "cost": 50,
         "dice": null,
         "dice_multiplier": null,
@@ -2530,6 +2562,38 @@
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
         "rarity": 7,
         "for_everyone": false,
         "warbands": [
@@ -3170,15 +3234,31 @@
       },
       {
         "label": "",
-        "cost": 40,
+        "cost": 35,
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
-        "rarity": null,
+        "rarity": 9,
         "for_everyone": false,
         "warbands": [
           {
             "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
             "excluded": false
           }
         ],
@@ -3373,6 +3453,38 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 200,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -3559,15 +3671,31 @@
       },
       {
         "label": "",
-        "cost": 25,
+        "cost": 15,
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
-        "rarity": null,
+        "rarity": 9,
         "for_everyone": false,
         "warbands": [
           {
             "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
             "excluded": false
           }
         ],
@@ -6449,6 +6577,38 @@
           },
           {
             "type": "merchant-caravans",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 12,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
             "excluded": false
           }
         ],
@@ -12746,6 +12906,38 @@
         "rarity": 11,
         "for_everyone": true,
         "warbands": [],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
         "note": ""
       },
       {
@@ -20983,6 +21175,830 @@
         "warbands": [
           {
             "type": "clockworkers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "clockwork-pistol",
+    "name": "Clockwork Pistol",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "clockwork pistol"
+    ],
+    "flavour": "",
+    "range": "8\"",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Reload",
+        "summary": "",
+        "text": "After shooting more than one shot in a single turn the model must spend a whole shooting phase without shooting and out of combat before it may fire again.",
+        "tables": []
+      },
+      {
+        "name": "Salvo",
+        "summary": "",
+        "text": "The firer may choose to fire three times in the shooting phase. A salvo is at -1 to hit for every shot.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "clockwork-rifle",
+    "name": "Clockwork Rifle",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "clockwork rifle"
+    ],
+    "flavour": "",
+    "range": "18\"",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Reload",
+        "summary": "",
+        "text": "After shooting more than one shot in a single turn the model must spend a whole shooting phase without shooting and out of combat before it may fire again.",
+        "tables": []
+      },
+      {
+        "name": "Salvo",
+        "summary": "",
+        "text": "The firer may choose to fire three times in the shooting phase. A salvo is at -1 to hit for every shot.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "krakensilver-weapon",
+    "name": "Krakensilver Weapon",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "krakensilver weapon"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As the weapon",
+    "save": "",
+    "statblock": [],
+    "notes": "Four times the price of a normal weapon of its kind, so the price chart prints no figure.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Upgrade",
+        "summary": "",
+        "text": "The buyer chooses which hand-to-hand weapon is offered to him, and it costs four times the price of a normal weapon of that kind. Blunt weapons such as flails and hammers may not be made of krakensilver.",
+        "tables": []
+      },
+      {
+        "rule": "cannot-be-parried",
+        "text": "A model attacked by a krakensilver weapon may not parry with a sword, a buckler or the like."
+      },
+      {
+        "name": "Watery stance",
+        "summary": "",
+        "text": "On solid ground the wielder always loses the roll for who strikes first against an opponent of the same Initiative. Fighting in water he always wins it.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "clockwork-lenses",
+    "name": "Clockwork Lenses",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "clockwork lenses"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Effect",
+        "summary": "",
+        "text": "The wearer halves any penalty for bad sight conditions, rounding down, and his maximum sight range is 4\" longer.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "clockwork-prosthesis",
+    "name": "Clockwork Prosthesis",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "clockwork prosthesis"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "Rare 5 for the Clockworkers.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Effect",
+        "summary": "",
+        "text": "A model that lost a limb or an eye to a serious injury or to surgery may have the part replaced. The prosthesis lets him ignore that injury at the cost of one orichalcum token per game; unwilling or unable to pay, he is handicapped by the injury as usual. He does not have to retire if he loses both arms, both eyes or both legs, and may take part in the warband's battles as long as at least one prosthesis is powered; otherwise he misses the battle.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "quarter-map",
+    "name": "Quarter Map",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Equipment",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "quarter map"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "map",
+        "text": "Roll a D6 when the map is bought:\n\n{{table:1}}",
+        "tables": [
+          {
+            "columns": [
+              "D6",
+              "Result"
+            ],
+            "rows": [
+              [
+                "1",
+                "The map is useless."
+              ],
+              [
+                "2-3",
+                "The warband finds one more key fragment during its next exploration phase."
+              ],
+              [
+                "4-5",
+                "The warband may change one dice by -1 or +1 on its next exploration roll."
+              ],
+              [
+                "6",
+                "From now on the warband may always choose to play the city ring's own scenario instead of rolling on the random scenario chart."
+              ]
+            ]
+          }
+        ]
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": 3,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "lurking-fear",
+    "name": "Lurking Fear",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Poisons and Drugs",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "lurking fear"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar.",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "effect",
+        "text": "A warrior who takes Lurking Fear before a battle causes fear for that game. It has no effect on Undead such as Vampires and Zombies, or on the Possessed."
+      },
+      {
+        "rule": "side-effects",
+        "text": "Roll 2D6 after the battle. On a 2-3 the warrior is caught in his own aura of fear and from then on permanently treats every enemy model as though it caused fear."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "moonshine",
+    "name": "Moonshine",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Poisons and Drugs",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "moonshine"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "effect",
+        "text": "A warrior who takes Moonshine before a battle ignores any penalty for bad sight for that game. It has no effect on Undead such as Vampires and Zombies, or on the Possessed."
+      },
+      {
+        "rule": "side-effects",
+        "text": "Roll a D6 after the battle. On a 1 the warrior's eyesight degrades and he loses 1 Ballistic Skill permanently; if that takes his Ballistic Skill to 0 he is blind and is struck from the warband's roster."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": 3,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "stardust",
+    "name": "Stardust",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Poisons and Drugs",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "stardust"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "Rare 7 for the Maidens of Dusk and Dawn.",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "poisoned",
+        "text": "A model successfully wounded by a weapon coated with stardust must take a Toughness test at once. If it fails it loses 1 Weapon Skill and 1 Ballistic Skill until the end of the battle and always counts as visible, whatever the sight conditions. The loss is permanent."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "gaveleers",
+    "name": "Gaveleers",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Ammunition",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "gaveleers"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "Clockwork weapons only; one battle's worth.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "1-enemy-armour-save",
+        "text": "An enemy wounded by a gaveleer gains +1 on his armour save, and a 6+ armour save if he has none."
+      },
+      {
+        "name": "Smash",
+        "summary": "",
+        "text": "A model hit by a gaveleer and not wounded by it is knocked down on a 4+.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "shredders",
+    "name": "Shredders",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Ammunition",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "shredders"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "Clockwork weapons only; one battle's worth.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "concussion",
+        "text": "A roll of 2-4 on the injury chart counts as stunned."
+      },
+      {
+        "name": "Impale",
+        "summary": "",
+        "text": "A shredder sticks in the target on a 4+. The model hit and warriors in base contact with it may try to pull it out in their recovery phase on a 4+, and each attempt causes a Strength 1 hit on the model. While the shredder is stuck the model takes an automatic Strength 2 hit at the beginning of each recovery phase.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "splinters",
+    "name": "Splinters",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Ammunition",
+    "setting": "sealed-city",
+    "source": "Sealed City",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
+    "tags": [
+      "splinters"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "Clockwork weapons only; one battle's worth.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Slivers",
+        "summary": "",
+        "text": "Every hit is at -1 Strength.",
+        "tables": []
+      },
+      {
+        "name": "Shard plume",
+        "summary": "",
+        "text": "The firer is at +1 to hit and ignores cover modifiers. A successful shot hits the target and every warrior in base contact with him.",
+        "tables": []
+      },
+      {
+        "name": "Jamming",
+        "summary": "",
+        "text": "A roll of 1 to hit jams the weapon, which may not be fired again until the model spends a whole turn cleaning its barrel.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "clockworkers",
+            "excluded": false
+          },
+          {
+            "type": "house-guard",
+            "excluded": false
+          },
+          {
+            "type": "silent-brotherhood",
+            "excluded": false
+          },
+          {
+            "type": "skaven-of-clan-pristekk",
+            "excluded": false
+          },
+          {
+            "type": "the-brood-of-ghurash",
             "excluded": false
           }
         ],

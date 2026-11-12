@@ -26,12 +26,12 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 61 |
 | items (warband templates) | 17 |
-| price rows | 571 |
+| price rows | 588 |
 | skills | 510 |
 | skill groups | 114 |
 | skill group links | 660 |
 | serious injuries (D66) | 20 |
-| shared specials | 67 |
+| shared specials | 81 |
 | random mutation results (D66) | 36 |
 
 ## mordheimer's contradictions
@@ -932,7 +932,7 @@ Lines found other than by name or tag:
 | cursed-cavalcade | Misericordia | Misericordia (Cursed Cavalcade) | named for the warband |
 | cursed-dwarves | hand gun | Handgun | a loose match |
 
-617 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+613 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 
@@ -1330,6 +1330,20 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Resilient | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Stunted | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
 | Warts | Mutation | the list's text (the random mutation table) |  |  | 0 | 0 | 0 | 0 |
+| Warty Skin | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Brightly Patterned Skin (The Sealed City) | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Supplemental Leg | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Shark Bite | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Hollow Bones | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Atrophied Leg | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Warped Locomotion | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Acidic Stream | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Spiked Tail (The Sealed City) | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Sharp Beak | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Atrophied Arm | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Spit Venom | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Leech Maw | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
+| Atrophied Head | Mutation | the list's text (the Sealed City, Stygian Mutations) |  | sealed-city | 0 | 0 | 0 | 0 |
 
 List prices the pages differ from: none.
 
@@ -1527,7 +1541,7 @@ Kept apart from a family's, the effect differing:
 | call-of-the-night-haint | call-of-the-night-haint | 8 | 0 | 3 | 14 |
 | channel-rats | channel-rats | 8 | 0 | 2 | 10 |
 | circus-extraordinare | circus-extraordinare | 8 | 0 | 0 | 15 |
-| clockworkers | clockworkers | 7 | 0 | 2 | 10 |
+| clockworkers | clockworkers | 7 | 0 | 14 | 12 |
 | cursed-dwarves | cursed-dwarves | 7 | 3 | 0 | 11 |
 | dark-elf-corsairs | dark-elf-corsairs | 5 | 0 | 0 | 9 |
 | disciples-of-maldred | disciples-of-maldred | 5 | 0 | 0 | 10 |
@@ -1889,18 +1903,37 @@ Pages folded into another warband's list as one of its variants:
 
 - Stub: Orichalcum token, 10 gc, Common; its rules are on p2.
 - Stub: Bramstetter's Advanced Construct Thesis, 100+1D6x10 gc, Rare 8; its rules are on p6.
-- Price row (p2): our Pistol for clockworkers, Common.
-- Price row (p2): our Handgun for clockworkers, Common.
+- Stub: Clockwork Pistol, 25 gc, Rare 8; its rules are on p1.
+- Stub: Clockwork Rifle, 40 gc, Rare 9; its rules are on p1.
+- Stub: Krakensilver Weapon, , Rare 9; its rules are on p1.
+- Stub: Clockwork Lenses, 20+2D6 gc, Rare 5; its rules are on p2.
+- Stub: Clockwork Prosthesis, 10 gc, Rare 7; its rules are on p2.
+- Stub: Quarter Map, 15+3D6 gc, Rare 8; its rules are on p2.
+- Stub: Lurking Fear, 15+2D6 gc, Rare 8; its rules are on p2.
+- Stub: Moonshine, 10+3D6 gc, Rare 5; its rules are on p2.
+- Stub: Stardust, 20+1D6 gc, Rare 7; its rules are on p2.
+- Stub: Gaveleers, 5+1D6 gc, Rare 5; its rules are on p3.
+- Stub: Shredders, 5+1D6 gc, Rare 6; its rules are on p3.
+- Stub: Splinters, 5+1D6 gc, Rare 6; its rules are on p3.
+- Price row (p4): our Pike for clockworkers, house-guard, silent-brotherhood, skaven-of-clan-pristekk, the-brood-of-ghurash, Rare 9.
+- Price row (p4): our Blunderbuss for clockworkers, house-guard, silent-brotherhood, skaven-of-clan-pristekk, the-brood-of-ghurash, Rare 10.
+- Price row (p4): our Handgun for clockworkers, house-guard, silent-brotherhood, skaven-of-clan-pristekk, the-brood-of-ghurash, Rare 9.
+- Price row (p4): our Hunting Rifle for clockworkers, house-guard, silent-brotherhood, skaven-of-clan-pristekk, the-brood-of-ghurash, Rare 12.
+- Price row (p4): our Pistol for clockworkers, house-guard, silent-brotherhood, skaven-of-clan-pristekk, the-brood-of-ghurash, Rare 9.
+- Price row (p4): our Barding for clockworkers, house-guard, silent-brotherhood, skaven-of-clan-pristekk, the-brood-of-ghurash, Rare 8.
+- Price row (p5): our Superior Blackpowder for clockworkers, house-guard, silent-brotherhood, skaven-of-clan-pristekk, the-brood-of-ghurash, Rare 12.
 - Flag (p4): The skill table's ticks are glyphs the text layer drops: the table was read from p4's image. Master of Clocks: Combat, Shooting, Academic, Special. Dwarf engineer: Combat, Shooting, Strength, and no Special. Metallurgist and Apprentice: Academic, Speed, Special.
 - Flag (p1): The seven construct rules (Need Orders, Immune to Psychology, No Pain, May Not Run, Immune to Poison, Brainless, In-built equipment) are printed once as a block. They are carried as each construct's own rules, so the four that are shared specials of ours link them, and the slot counts each fighter's entry prints sit in his In-built equipment.
-- Flag (p2): The Clockwork pistol (25 gc) and Clockwork rifle (40 gc) have no rules anywhere in this PDF and are nicknames, not new weapons (William, 11 Nov 2026: "these are just nicknames"): they are our Pistol and our Handgun, shown under the Clockworkers' names on their lists, with a price row each for the Clockworkers at this PDF's 25 gc and 40 gc, Common. Ours keep their own 15 gc and 35 gc, Rare 8, for everyone.
+- Flag (p2): The Clockwork pistol (25 gc) and Clockwork rifle (40 gc) have no rules in this PDF, and were read as our Pistol and our Handgun under the Clockworkers' names (William, 11 Nov 2026: "these are just nicknames"). The Sealed City's own Lost and Found (https://www.broheim.net/downloads/campaigns/sealedcity/Lost%20And%20Found.pdf, 1-5, text layer; read 12 Nov 2026) gives each its own entry - Clockwork pistol 8", Strength as user, Reload and Salvo; Clockwork rifle 18", Strength as user, Reload and Salvo - and its price chart sells the Clockwork pistol (25 gc Rare 8) beside the Pistol (15 gc Rare 9) and the Clockwork rifle (40 gc Rare 9) beside the Handgun (35 gc Rare 9), as four separate lines. They are different weapons, so each is now its own item at the chart's price and rarity, the two lists sell them under their own names and the Pistol and Handgun price rows they carried are gone. See the decisions.
 - Flag (p2): The Heroes list prints Hammer and Staff at 3 gc each, both our Club, Mace or Hammer: carried as one line "Hammer/Staff". The Constructs list's Hammer and Mace, 3 gc each, are one line the same way.
 - Flag (p2): The Constructs list is printed as 1-Slot and 2-Slot sections; our lists have no sections, so the slots are said in the list's caveat and in the In-built equipment rule.
 - Flag (p6): The six Laws of Construction are carried as a new spell lore, Laws of Construction, with each law's difficulty, so the Master of Clocks can pick one. The PDF says a Law is not a spell: that is said in the warband rule of the same name.
-- Flag (p3): Experimental enhancements and the Stygian Mutation chart it rolls on are the Sealed City's own rules, which are not read.
-- Flag (p3): Moonstones are spent by Gift of Sentience and Moonstone refinery but are on no equipment list, so no item of ours is made for them.
+- Flag (p3): Experimental enhancements rolls on the Stygian Mutation chart, which the setting's own Stygian Mutations PDF (https://www.broheim.net/downloads/campaigns/sealedcity/Stygian%20Mutations.pdf, 1-7, text layer; read 12 Nov 2026) prints. Its thirty D66 results are now specials: the ones that match ours link ours, the fourteen that differ or are new are the Sealed City's own mutations. The chart itself is not a table of ours. See the decisions.
+- Flag (p3): Moonstones are spent by Gift of Sentience and Moonstone refinery. Lost and Found (read 12 Nov 2026) prices neither moonstones nor orichalcum tokens and is the only Sealed City document read, so the Orichalcum token stub still carries no rules and no moonstone item is made. See the decisions.
 - Flag (p1): A Clockwork expedition needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p7): Page 7 is a scan with no text layer: it holds a picture and its caption only (opened as an image).
+- Flag (p1): Lost and Found p1-3 brings the setting ten items we lacked - Krakensilver Weapon, Clockwork Lenses, Clockwork Prosthesis, Quarter Map, Lurking Fear, Moonshine, Stardust, Gaveleers, Shredders and Splinters - plus the Beast of Burden, a clockwork mount in the bestiary with the page's profile. Each is declared here for the setting's five warband types, since the price chart is the setting's shop and no warband list sells most of them. The Krakensilver Weapon is "4 x Price" on the chart, so its row carries no figure.
+- Flag (p4): Lost and Found p4-5 is the setting's price chart, read in place of the rulebook's. Every line but seven matches our own price and rarity, so only those seven take a row for the setting's types: Pike 12 gc Rare 9, Blunderbuss 30 gc Rare 10, Handgun 35 gc Rare 9, Hunting Rifle 200 gc Rare 12, Pistol 15 gc Rare 9, Barding 30 gc Rare 8 (ours is 80 gc) and Superior Blackpowder 30 gc Rare 12. The chart's Plate armour is 70 gc Rare 9 where the House Guard's own entry, already imported as the setting's item, is 70 gc Rare 7: ours is unchanged. Its River Boat is our Rowboat and its Superior Black powder our Superior Blackpowder. See the decisions.
 
 ### Cursed Dwarves
 
@@ -2926,7 +2959,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p5): The Shock rod is 10 gc on the Packmasters list and 15 gc Rare 6 in its own entry: the list price is the starting price and the entry's the trading price (William, 6 Nov 2026).
 - Flag (p5): The Thing-catcher is our Thingcatcher, stubbed for the Skaven of Clan Moulder with no rules; this PDF gives them (Two-handed and Capture), so they were added to that stub, and Clan Pristekk declares the same stub to get its own row at 25 gc Rare 9 (the Clan Moulder row is 20 gc). See the decisions.
 - Flag (p5): The Thinglash is a stub of its own. Our Beastlash carries the same Whipcrack and Cannot Be Parried, but is Strength as user -1 and causes fear in animals instead of +1 enemy armour save and Infuriate. See the decisions.
-- Flag (p2): Mutating Experiment and Breeder point at the Sealed City's own Stygian Mutation chart and at captured things, which are not read (William, 11 Nov 2026). Moonstones and orichalcum tokens are on no list of this warband, so no item of ours is made for them here.
+- Flag (p2): Mutating Experiment and Breeder point at the Sealed City's Stygian Mutation chart, now read (Stygian Mutations, 1-7, text layer; 12 Nov 2026) and carried as specials, and at captured things, which no document read explains. Moonstones and orichalcum tokens are on no list of this warband, so no item of ours is made for them here; the setting's price chart prices neither.
 - Flag (p1): A Clan Pristekk warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p3): No group sizes and no maximum profile are printed: the Skaven take our Skaven race, and the Giant rat and Rat Ogre are creatures with none.
 - Flag (p3): The Rat Ogre's Stupidity is the Skaven Rat Ogre's, not stupid while a Skaven Hero is within 6": its owner was added to the shared specials' Stupidity (Rat Ogre), which is kept apart.
@@ -3105,7 +3138,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): Brood Mentality makes every Brood member subject to stupidity. It is kept as one warband rule rather than our shared Stupidity on each fighter, because its Leadership bonus and the Baneworm's exemption go with it.
 - Flag (p2): The Dagger line reads "Dagger (Henchmen only)". Our line notes name fighters, so it is written "Children and Newborns only" (the Baneworm uses no weapons at all): the same models.
 - Flag (p1): The maximum profile is printed for the Troll only (M6 WS6 BS3 S6 T5 W5 I4 A6 Ld6), which is the new race Troll; the Baneworm has none and is an animal that gains no experience.
-- Flag (p4): Accelerated evolution and the Baneworm's Mer-creature point at the Sealed City's Stygian Mutations, which we do not read (William, 11 Nov 2026). The chart's names are carried as the rule prints them; Leech maw, Acidic stream and Shark bite are no special of ours.
+- Flag (p4): Accelerated evolution and the Baneworm's Mer-creature point at the Sealed City's Stygian Mutation chart, which the setting's own Stygian Mutations PDF (https://www.broheim.net/downloads/campaigns/sealedcity/Stygian%20Mutations.pdf, 1-7, text layer; read 12 Nov 2026) prints. The chart's names are still carried as the rule prints them, and each is now a special: Mer-creature is ours already, and Leech Maw, Acidic Stream and Shark Bite are three of the fourteen the Sealed City adds.
 - Flag (p1): A Brood family needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p3): No group sizes are printed for the Children, Newborns or Baneworms.
 - Flag (p2): A hire takes the list's first-free item even when the line's note shuts him out: a Broodmother hired in the app gets the free Dagger although the line reads "Children and Newborns only". See the decisions.

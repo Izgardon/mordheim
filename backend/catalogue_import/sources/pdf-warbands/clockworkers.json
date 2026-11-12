@@ -49,14 +49,14 @@
           }
         },
         {
-          "name": "Pistol",
+          "name": "Clockwork Pistol",
           "alias": "Clockwork pistol",
           "cost": {
             "cost": 25
           }
         },
         {
-          "name": "Handgun",
+          "name": "Clockwork Rifle",
           "alias": "Clockwork rifle",
           "cost": {
             "cost": 40,
@@ -192,7 +192,7 @@
           }
         },
         {
-          "name": "Pistol",
+          "name": "Clockwork Pistol",
           "alias": "Clockwork pistol",
           "cost": {
             "cost": 25
@@ -206,7 +206,7 @@
           }
         },
         {
-          "name": "Handgun",
+          "name": "Clockwork Rifle",
           "alias": "Clockwork rifle",
           "cost": {
             "cost": 40
@@ -628,8 +628,111 @@
   ],
   "aliases": [],
   "priceRows": [
-    {"name": "Pistol", "rarity": null, "dice": null, "note": "", "page": 2},
-    {"name": "Handgun", "rarity": null, "dice": null, "note": "", "page": 2}
+    {
+      "name": "Pike",
+      "cost": 12,
+      "rarity": 9,
+      "dice": null,
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ],
+      "note": "",
+      "page": 4
+    },
+    {
+      "name": "Blunderbuss",
+      "cost": 30,
+      "rarity": 10,
+      "dice": null,
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ],
+      "note": "",
+      "page": 4
+    },
+    {
+      "name": "Handgun",
+      "cost": 35,
+      "rarity": 9,
+      "dice": null,
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ],
+      "note": "",
+      "page": 4
+    },
+    {
+      "name": "Hunting Rifle",
+      "cost": 200,
+      "rarity": 12,
+      "dice": null,
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ],
+      "note": "",
+      "page": 4
+    },
+    {
+      "name": "Pistol",
+      "cost": 15,
+      "rarity": 9,
+      "dice": null,
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ],
+      "note": "",
+      "page": 4
+    },
+    {
+      "name": "Barding",
+      "cost": 30,
+      "rarity": 8,
+      "dice": null,
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ],
+      "note": "",
+      "page": 4
+    },
+    {
+      "name": "Superior Blackpowder",
+      "cost": 30,
+      "rarity": 12,
+      "dice": null,
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ],
+      "note": "",
+      "page": 5
+    }
   ],
   "stubs": [
     {
@@ -655,6 +758,349 @@
           "text": "A Clockworker carrying one of these adds 1 to the score when he works out whether a Law of Construction is used successfully."
         }
       ]
+    },
+    {
+      "name": "Clockwork Pistol",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "cost": 25,
+      "rarity": 8,
+      "dice": null,
+      "rulesPage": 1,
+      "range": "8\"",
+      "strength": "As user",
+      "rules": [
+        {
+          "name": "Reload",
+          "text": "After shooting more than one shot in a single turn the model must spend a whole shooting phase without shooting and out of combat before it may fire again."
+        },
+        {
+          "name": "Salvo",
+          "text": "The firer may choose to fire three times in the shooting phase. A salvo is at -1 to hit for every shot."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Clockwork Rifle",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "cost": 40,
+      "rarity": 9,
+      "dice": null,
+      "rulesPage": 1,
+      "range": "18\"",
+      "strength": "As user",
+      "rules": [
+        {
+          "name": "Reload",
+          "text": "After shooting more than one shot in a single turn the model must spend a whole shooting phase without shooting and out of combat before it may fire again."
+        },
+        {
+          "name": "Salvo",
+          "text": "The firer may choose to fire three times in the shooting phase. A salvo is at -1 to hit for every shot."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Krakensilver Weapon",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "cost": null,
+      "rarity": 9,
+      "dice": null,
+      "rulesPage": 1,
+      "range": "Close Combat",
+      "strength": "As the weapon",
+      "note": "Four times the price of a normal weapon of its kind, so the price chart prints no figure.",
+      "rules": [
+        {
+          "name": "Upgrade",
+          "text": "The buyer chooses which hand-to-hand weapon is offered to him, and it costs four times the price of a normal weapon of that kind. Blunt weapons such as flails and hammers may not be made of krakensilver."
+        },
+        {
+          "rule": "cannot-be-parried",
+          "text": "A model attacked by a krakensilver weapon may not parry with a sword, a buckler or the like."
+        },
+        {
+          "name": "Watery stance",
+          "text": "On solid ground the wielder always loses the roll for who strikes first against an opponent of the same Initiative. Fighting in water he always wins it."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Clockwork Lenses",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "cost": 20,
+      "rarity": 5,
+      "dice": 2,
+      "rulesPage": 2,
+      "rules": [
+        {
+          "name": "Effect",
+          "text": "The wearer halves any penalty for bad sight conditions, rounding down, and his maximum sight range is 4\" longer."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Clockwork Prosthesis",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "cost": 10,
+      "rarity": 7,
+      "dice": null,
+      "rulesPage": 2,
+      "note": "Rare 5 for the Clockworkers.",
+      "rules": [
+        {
+          "name": "Effect",
+          "text": "A model that lost a limb or an eye to a serious injury or to surgery may have the part replaced. The prosthesis lets him ignore that injury at the cost of one orichalcum token per game; unwilling or unable to pay, he is handicapped by the injury as usual. He does not have to retire if he loses both arms, both eyes or both legs, and may take part in the warband's battles as long as at least one prosthesis is powered; otherwise he misses the battle."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Quarter Map",
+      "type": "Miscellaneous",
+      "subtype": "Equipment",
+      "cost": 15,
+      "rarity": 8,
+      "dice": 3,
+      "rulesPage": 2,
+      "rules": [
+        {
+          "rule": "map",
+          "text": "Roll a D6 when the map is bought:\n\n{{table:1}}",
+          "tables": [
+            {
+              "columns": [
+                "D6",
+                "Result"
+              ],
+              "rows": [
+                [
+                  "1",
+                  "The map is useless."
+                ],
+                [
+                  "2-3",
+                  "The warband finds one more key fragment during its next exploration phase."
+                ],
+                [
+                  "4-5",
+                  "The warband may change one dice by -1 or +1 on its next exploration roll."
+                ],
+                [
+                  "6",
+                  "From now on the warband may always choose to play the city ring's own scenario instead of rolling on the random scenario chart."
+                ]
+              ]
+            }
+          ]
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Lurking Fear",
+      "type": "Miscellaneous",
+      "subtype": "Poisons and Drugs",
+      "cost": 15,
+      "rarity": 8,
+      "dice": 2,
+      "rulesPage": 2,
+      "note": "Not available to Witch Hunters, Warrior-Priests or Sisters of Sigmar.",
+      "rules": [
+        {
+          "rule": "effect",
+          "text": "A warrior who takes Lurking Fear before a battle causes fear for that game. It has no effect on Undead such as Vampires and Zombies, or on the Possessed."
+        },
+        {
+          "rule": "side-effects",
+          "text": "Roll 2D6 after the battle. On a 2-3 the warrior is caught in his own aura of fear and from then on permanently treats every enemy model as though it caused fear."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Moonshine",
+      "type": "Miscellaneous",
+      "subtype": "Poisons and Drugs",
+      "cost": 10,
+      "rarity": 5,
+      "dice": 3,
+      "rulesPage": 2,
+      "rules": [
+        {
+          "rule": "effect",
+          "text": "A warrior who takes Moonshine before a battle ignores any penalty for bad sight for that game. It has no effect on Undead such as Vampires and Zombies, or on the Possessed."
+        },
+        {
+          "rule": "side-effects",
+          "text": "Roll a D6 after the battle. On a 1 the warrior's eyesight degrades and he loses 1 Ballistic Skill permanently; if that takes his Ballistic Skill to 0 he is blind and is struck from the warband's roster."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Stardust",
+      "type": "Miscellaneous",
+      "subtype": "Poisons and Drugs",
+      "cost": 20,
+      "rarity": 7,
+      "dice": 1,
+      "rulesPage": 2,
+      "note": "Rare 7 for the Maidens of Dusk and Dawn.",
+      "rules": [
+        {
+          "rule": "poisoned",
+          "text": "A model successfully wounded by a weapon coated with stardust must take a Toughness test at once. If it fails it loses 1 Weapon Skill and 1 Ballistic Skill until the end of the battle and always counts as visible, whatever the sight conditions. The loss is permanent."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Gaveleers",
+      "type": "Miscellaneous",
+      "subtype": "Ammunition",
+      "cost": 5,
+      "rarity": 5,
+      "dice": 1,
+      "rulesPage": 3,
+      "note": "Clockwork weapons only; one battle's worth.",
+      "rules": [
+        {
+          "rule": "+1 Enemy armour save",
+          "text": "An enemy wounded by a gaveleer gains +1 on his armour save, and a 6+ armour save if he has none."
+        },
+        {
+          "name": "Smash",
+          "text": "A model hit by a gaveleer and not wounded by it is knocked down on a 4+."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Shredders",
+      "type": "Miscellaneous",
+      "subtype": "Ammunition",
+      "cost": 5,
+      "rarity": 6,
+      "dice": 1,
+      "rulesPage": 3,
+      "note": "Clockwork weapons only; one battle's worth.",
+      "rules": [
+        {
+          "rule": "concussion",
+          "text": "A roll of 2-4 on the injury chart counts as stunned."
+        },
+        {
+          "name": "Impale",
+          "text": "A shredder sticks in the target on a 4+. The model hit and warriors in base contact with it may try to pull it out in their recovery phase on a 4+, and each attempt causes a Strength 1 hit on the model. While the shredder is stuck the model takes an automatic Strength 2 hit at the beginning of each recovery phase."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
+    },
+    {
+      "name": "Splinters",
+      "type": "Miscellaneous",
+      "subtype": "Ammunition",
+      "cost": 5,
+      "rarity": 6,
+      "dice": 1,
+      "rulesPage": 3,
+      "note": "Clockwork weapons only; one battle's worth.",
+      "rules": [
+        {
+          "name": "Slivers",
+          "text": "Every hit is at -1 Strength."
+        },
+        {
+          "name": "Shard plume",
+          "text": "The firer is at +1 to hit and ignores cover modifiers. A successful shot hits the target and every warrior in base contact with him."
+        },
+        {
+          "name": "Jamming",
+          "text": "A roll of 1 to hit jams the weapon, which may not be fired again until the model spends a whole turn cleaning its barrel."
+        }
+      ],
+      "types": [
+        "clockworkers",
+        "house-guard",
+        "silent-brotherhood",
+        "skaven-of-clan-pristekk",
+        "the-brood-of-ghurash"
+      ]
     }
   ],
   "flags": [
@@ -668,7 +1114,7 @@
     },
     {
       "page": 2,
-      "what": "The Clockwork pistol (25 gc) and Clockwork rifle (40 gc) have no rules anywhere in this PDF and are nicknames, not new weapons (William, 11 Nov 2026: \"these are just nicknames\"): they are our Pistol and our Handgun, shown under the Clockworkers' names on their lists, with a price row each for the Clockworkers at this PDF's 25 gc and 40 gc, Common. Ours keep their own 15 gc and 35 gc, Rare 8, for everyone."
+      "what": "The Clockwork pistol (25 gc) and Clockwork rifle (40 gc) have no rules in this PDF, and were read as our Pistol and our Handgun under the Clockworkers' names (William, 11 Nov 2026: \"these are just nicknames\"). The Sealed City's own Lost and Found (https://www.broheim.net/downloads/campaigns/sealedcity/Lost%20And%20Found.pdf, 1-5, text layer; read 12 Nov 2026) gives each its own entry - Clockwork pistol 8\", Strength as user, Reload and Salvo; Clockwork rifle 18\", Strength as user, Reload and Salvo - and its price chart sells the Clockwork pistol (25 gc Rare 8) beside the Pistol (15 gc Rare 9) and the Clockwork rifle (40 gc Rare 9) beside the Handgun (35 gc Rare 9), as four separate lines. They are different weapons, so each is now its own item at the chart's price and rarity, the two lists sell them under their own names and the Pistol and Handgun price rows they carried are gone. See the decisions."
     },
     {
       "page": 2,
@@ -684,11 +1130,11 @@
     },
     {
       "page": 3,
-      "what": "Experimental enhancements and the Stygian Mutation chart it rolls on are the Sealed City's own rules, which are not read."
+      "what": "Experimental enhancements rolls on the Stygian Mutation chart, which the setting's own Stygian Mutations PDF (https://www.broheim.net/downloads/campaigns/sealedcity/Stygian%20Mutations.pdf, 1-7, text layer; read 12 Nov 2026) prints. Its thirty D66 results are now specials: the ones that match ours link ours, the fourteen that differ or are new are the Sealed City's own mutations. The chart itself is not a table of ours. See the decisions."
     },
     {
       "page": 3,
-      "what": "Moonstones are spent by Gift of Sentience and Moonstone refinery but are on no equipment list, so no item of ours is made for them."
+      "what": "Moonstones are spent by Gift of Sentience and Moonstone refinery. Lost and Found (read 12 Nov 2026) prices neither moonstones nor orichalcum tokens and is the only Sealed City document read, so the Orichalcum token stub still carries no rules and no moonstone item is made. See the decisions."
     },
     {
       "page": 1,
@@ -697,6 +1143,8 @@
     {
       "page": 7,
       "what": "Page 7 is a scan with no text layer: it holds a picture and its caption only (opened as an image)."
-    }
+    },
+    {"page": 1, "what": "Lost and Found p1-3 brings the setting ten items we lacked - Krakensilver Weapon, Clockwork Lenses, Clockwork Prosthesis, Quarter Map, Lurking Fear, Moonshine, Stardust, Gaveleers, Shredders and Splinters - plus the Beast of Burden, a clockwork mount in the bestiary with the page's profile. Each is declared here for the setting's five warband types, since the price chart is the setting's shop and no warband list sells most of them. The Krakensilver Weapon is \"4 x Price\" on the chart, so its row carries no figure."},
+    {"page": 4, "what": "Lost and Found p4-5 is the setting's price chart, read in place of the rulebook's. Every line but seven matches our own price and rarity, so only those seven take a row for the setting's types: Pike 12 gc Rare 9, Blunderbuss 30 gc Rare 10, Handgun 35 gc Rare 9, Hunting Rifle 200 gc Rare 12, Pistol 15 gc Rare 9, Barding 30 gc Rare 8 (ours is 80 gc) and Superior Blackpowder 30 gc Rare 12. The chart's Plate armour is 70 gc Rare 9 where the House Guard's own entry, already imported as the setting's item, is 70 gc Rare 7: ours is unchanged. Its River Boat is our Rowboat and its Superior Black powder our Superior Blackpowder. See the decisions."}
   ]
 }

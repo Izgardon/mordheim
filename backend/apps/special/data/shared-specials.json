@@ -219,7 +219,9 @@
       "from": "Mutiny in Marienburg, p160",
       "cost": 50,
       "text": "Unless it already has a bite attack, the model gains an extra attack in each hand-to-hand combat phase: a poisonous bite at Strength 5, or Strength 2 against a target immune to poison. A bite attack it already has becomes poisonous in this way instead.",
-      "aliases": []
+      "aliases": [
+        "Poisonous Fangs"
+      ]
     },
     {
       "name": "Prehensile Tail",
@@ -507,7 +509,9 @@
       "type": "Mutation",
       "from": "the random mutation table",
       "text": "The model's Toughness is halved, rounding up.",
-      "aliases": []
+      "aliases": [
+        "Emaciated Appearance"
+      ]
     },
     {
       "name": "Furry",
@@ -544,13 +548,127 @@
       "type": "Mutation",
       "from": "the random mutation table",
       "text": "The model's Movement and Initiative are reduced by 1.",
-      "aliases": []
+      "aliases": [
+        "Shrink"
+      ]
     },
     {
       "name": "Warts",
       "type": "Mutation",
       "from": "the random mutation table",
       "text": "Repellent warts cover the model. Its profile is unaffected.",
+      "aliases": []
+    },
+    {
+      "name": "Warty Skin",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "Repellent warts cover the model, making its appearance most unpleasant. It is at -1 when rolling to find rare items.",
+      "aliases": []
+    },
+    {
+      "name": "Brightly Patterned Skin (The Sealed City)",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model's skin becomes brightly coloured with contrasting patterns, making it difficult to hide. Unless it wears a cloak, enemy models may spot it at twice their Initiative in inches.",
+      "aliases": []
+    },
+    {
+      "name": "Supplemental Leg",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model grows an extra leg: +1 Movement, but it may no longer run. It still doubles its Movement when charging.",
+      "aliases": []
+    },
+    {
+      "name": "Shark Bite",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model's jaw grows and fills with rows of strong teeth: a close combat attack at its Strength +1. It is part of the model's body and counts as a normal weapon that can't be dropped, stolen or destroyed. A model may have only one bite attack, and a bite attack always strikes last, even after double-handed weapons.",
+      "aliases": []
+    },
+    {
+      "name": "Hollow Bones",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model develops a bird-like bone structure. It may re-roll a failed Initiative test when jumping or making a diving charge, and loses 1 Toughness.",
+      "aliases": []
+    },
+    {
+      "name": "Atrophied Leg",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "One of the model's legs is shrivelled and atrophied. Its Movement is halved, rounding up.",
+      "aliases": []
+    },
+    {
+      "name": "Warped Locomotion",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model's legs fuse and thicken until its lower body resembles a maggot or a snail. Its Movement is reduced by 2, but it ignores any knocked down result it would suffer, as though it had the Jump Up skill.",
+      "aliases": []
+    },
+    {
+      "name": "Acidic Stream",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model can spew a vaporous stream of acid at Strength 3. Draw a straight line 3\" long and 1\" wide in any direction from the model: every model in its path is hit automatically. It is part of the model's body and counts as a normal weapon that can't be dropped, stolen or destroyed. A model may have only one breath weapon, and suffers no penalty for range or for moving with it. Enemy warriors are at -2 on their armour save against the attack.",
+      "aliases": []
+    },
+    {
+      "name": "Spiked Tail (The Sealed City)",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model grows a flexible tail with a mace-like bony tip: a close combat attack at its own Strength. It is part of the model's body and counts as a normal weapon that can't be dropped, stolen or destroyed. Only one tail may be used in each close combat phase. A roll of 2-4 on the injury chart counts as stunned.",
+      "aliases": []
+    },
+    {
+      "name": "Sharp Beak",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The flesh around the model's mouth hardens into a long beak: a close combat attack at its own Strength. It is part of the model's body and counts as a normal weapon that can't be dropped, stolen or destroyed. A model may have only one bite attack, and a bite attack always strikes last, even after double-handed weapons. The target is at -2 on its armour save against the beak.",
+      "aliases": []
+    },
+    {
+      "name": "Atrophied Arm",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "One of the model's arms is shrivelled and atrophied. It is at -1 Weapon Skill and -1 Strength on every attack made with that arm.",
+      "aliases": []
+    },
+    {
+      "name": "Spit Venom",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model's mouth grows glands secreting contact venom, which it spits in globules: range 4\", Strength 5. It is part of the model's body and counts as a normal weapon that can't be dropped, stolen or destroyed. A model may have only one breath weapon, and suffers no penalty for range or for moving with it. Against a target immune to poison the Strength is reduced to 2. The model itself is immune to its own venom.",
+      "aliases": []
+    },
+    {
+      "name": "Leech Maw",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model grows a circular mouth full of serrated teeth: a close combat attack at its own Strength. It is part of the model's body and counts as a normal weapon that can't be dropped, stolen or destroyed. A model may have only one bite attack, and a bite attack always strikes last, even after double-handed weapons. A roll of 2-4 on the injury chart counts as stunned.",
+      "aliases": []
+    },
+    {
+      "name": "Atrophied Head",
+      "type": "Mutation",
+      "from": "the Sealed City, Stygian Mutations",
+      "setting": "sealed-city",
+      "text": "The model's head is shrivelled and atrophied. It loses 1 Initiative and 2 Leadership.",
       "aliases": []
     }
   ],

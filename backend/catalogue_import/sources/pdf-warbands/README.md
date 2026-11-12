@@ -147,9 +147,21 @@ as the shared group `sharedSkillGroup` in `sartosan-pirates.json`. Its Hired Swo
 The same setting's https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Equipment.pdf (10 pages, text layer; 11 Nov 2026) gives the Sartosa
 stubs their rules and settles their prices. The setting's other eight campaign PDFs are not read (William, 11 Nov 2026).
 
-The Sealed City's own campaign PDFs (Ambitions, Lost And Found, Madness Rules, Stygian Mutations) are not read (William, 11 Nov 2026): what its
-warbands point at - the Stygian Mutations, the moonstones and orichalcum they spend, and the Clockwork pistol's and rifle's rules - is stubbed or
-flagged and filled when that batch comes.
+The Sealed City's own campaign PDFs were read on 12 Nov 2026, for what its warbands point at. Its Stygian Mutations
+(https://www.broheim.net/downloads/campaigns/sealedcity/Stygian%20Mutations.pdf, 1-7, text layer) prints the D66 chart the Brood of Ghurash's Accelerated
+evolution, the Clockworkers' Experimental enhancements and Clan Pristekk's Mutating Experiment roll on: sixteen of its thirty results are specials of ours
+already, three of those under another name (Emaciated Appearance is our Extremely Thin, Shrink our Stunted, Poisonous Fangs our Poisonous Bite, each now an
+alias) and Moronic our Stupidity by an alias it held; the other fourteen are the setting's own mutations, among them Brightly Patterned Skin (The Sealed
+City) and Spiked Tail (The Sealed City), which share a name with ours and do something else, so ours keep the plain name as the earlier setting's. The
+chart itself is a second D66 table and is not imported. Its Lost And Found (1-5, text layer) is the setting's equipment chapter and price chart, read as
+Khemri's Equipment page was: ten items we lacked (Krakensilver Weapon, Clockwork Lenses, Clockwork Prosthesis, Quarter Map, Lurking Fear, Moonshine,
+Stardust, Gaveleers, Shredders, Splinters) are stubs for the setting's five warband types, the Beast of Burden is a clockwork mount in the bestiary, and the
+Clockwork pistol and Clockwork rifle, read as our Pistol and Handgun under other names in batch 11, are their own items now: the chapter gives each a range,
+Strength and two rules of its own and the price chart sells all four as separate lines. Seven of the chart's lines differ from our own price or rarity and
+take a row for the setting's types. Its Ambitions (1-7, the campaign-point ambitions and their achievement charts) and Madness Rules (1-3, Insanity
+Points on a reversed experience track and a 2D6 Insanity table) are campaign mechanisms and carry no catalogue rows; both name warbands of the
+setting we do not hold (Maidens of Dusk and Dawn, Pirates of the Great Ocean) and Ambitions names the hired sword Henrik Bramstetter. The moonstones and orichalcum tokens the
+Clockworkers and Clan Pristekk spend are priced in neither document, so the Orichalcum token stub still carries no rules and no moonstone item exists.
 
 The Khemri warbands' type rows carry Broheim's grade 3, while the grade that counts is their setting's: Khemri is graded 1b, because the
 setting also holds the 1b Arabian Tomb Raiders and Tomb Guardians (flagged for William, 11 Nov 2026; nothing of ours was changed).

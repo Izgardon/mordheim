@@ -21625,10 +21625,10 @@
           },
           {
             "item": {
-              "name": "Pistol",
+              "name": "Clockwork Pistol",
               "variant": ""
             },
-            "shown_as": "Clockwork pistol",
+            "shown_as": "",
             "cost": 25,
             "cost_note": "",
             "first_free": false,
@@ -21640,10 +21640,10 @@
           },
           {
             "item": {
-              "name": "Handgun",
+              "name": "Clockwork Rifle",
               "variant": ""
             },
-            "shown_as": "Clockwork rifle",
+            "shown_as": "",
             "cost": 40,
             "cost_note": "",
             "first_free": false,
@@ -21919,10 +21919,10 @@
           },
           {
             "item": {
-              "name": "Pistol",
+              "name": "Clockwork Pistol",
               "variant": ""
             },
-            "shown_as": "Clockwork pistol",
+            "shown_as": "",
             "cost": 25,
             "cost_note": "",
             "first_free": false,
@@ -21949,10 +21949,10 @@
           },
           {
             "item": {
-              "name": "Handgun",
+              "name": "Clockwork Rifle",
               "variant": ""
             },
-            "shown_as": "Clockwork rifle",
+            "shown_as": "",
             "cost": 40,
             "cost_note": "",
             "first_free": false,
