@@ -83,14 +83,19 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
   };
 
   const stepper = (label: string, value: string, onDown: () => void, onUp: () => void) => (
-    <div role="group" aria-label={label} className="flex items-center gap-1.5">
-      <IconButton aria-label={`Lower ${label.toLowerCase()}`} className="w-10" onClick={onDown}>
-        <Minus aria-hidden="true" />
-      </IconButton>
-      <span className="min-w-8 text-center font-mono text-lg font-bold text-head">{value}</span>
-      <IconButton aria-label={`Raise ${label.toLowerCase()}`} className="w-10" onClick={onUp}>
-        <Plus aria-hidden="true" />
-      </IconButton>
+    <div className="flex flex-col gap-1.5">
+      <span className="text-xs font-bold text-muted-foreground">{label}</span>
+      <div role="group" aria-label={label} className="flex items-center gap-1.5">
+        <IconButton aria-label={`Lower ${label.toLowerCase()}`} className="w-10" onClick={onDown}>
+          <Minus aria-hidden="true" />
+        </IconButton>
+        <span className="min-w-8 flex-1 text-center font-mono text-lg font-bold text-head">
+          {value}
+        </span>
+        <IconButton aria-label={`Raise ${label.toLowerCase()}`} className="w-10" onClick={onUp}>
+          <Plus aria-hidden="true" />
+        </IconButton>
+      </div>
     </div>
   );
 
@@ -113,25 +118,28 @@ export default function DicePanel({ campaignId, open, onOpenChange, trigger }: D
             </Chip>
           ))}
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs font-bold text-muted-foreground">Die</span>
+          <div role="group" aria-label="Die" className="grid grid-cols-4 gap-1.5">
+            {DICE.map((kind) => (
+              <Chip
+                key={kind}
+                pressed={die === kind}
+                onClick={() => setDie(kind)}
+                className="min-h-11 justify-center font-mono"
+              >
+                {kind}
+              </Chip>
+            ))}
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
           {stepper(
             "Dice",
             String(count),
             () => setCount((n) => Math.max(1, n - 1)),
             () => setCount((n) => Math.min(20, n + 1))
           )}
-          <div role="group" aria-label="Die" className="grid flex-1 grid-cols-4 gap-1">
-            {DICE.map((kind) => (
-              <Chip
-                key={kind}
-                pressed={die === kind}
-                onClick={() => setDie(kind)}
-                className="justify-center font-mono"
-              >
-                {kind}
-              </Chip>
-            ))}
-          </div>
           {stepper(
             "Modifier",
             modifier > 0 ? `+${modifier}` : String(modifier),
