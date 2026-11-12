@@ -26,6 +26,19 @@ export function fighterLines(fighter: TemplateFighter, lists: TemplateList[]): T
   );
 }
 
+/**
+ * His lists' lines grouped by the item's type ("Weapon", "Armour", "Miscellaneous"), each group
+ * in the lists' own order and the groups in the order they first appear (William, 12 Nov).
+ */
+export function linesByType(lines: TemplateLine[]): [string, TemplateLine[]][] {
+  const groups = new Map<string, TemplateLine[]>();
+  for (const line of lines) {
+    const type = line.item.type || "Other";
+    groups.set(type, [...(groups.get(type) ?? []), line]);
+  }
+  return [...groups];
+}
+
 /** "Mercenary list" or "Pit fighter list, Special equipment": the lists he buys from. */
 export const listNames = (fighter: TemplateFighter, lists: TemplateList[]) =>
   fighter.lists

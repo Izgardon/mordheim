@@ -3,6 +3,8 @@ import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 import type { TemplateFighter } from "../../types/hire-template-types";
+import ChosenFighter from "./ChosenFighter";
+import RecruitAsHeader from "./RecruitAsHeader";
 import { haveText, overCount } from "./hire-draft";
 
 export const BY_HAND = "by-hand";
@@ -40,7 +42,8 @@ function meta(fighter: TemplateFighter) {
 /**
  * Recruit as (the templates plan, "Add a hero"): the template's heroes (or henchmen), each with
  * his cost and what the warband has of him, warning past his most; then someone not in the
- * template, typed by hand as before.
+ * template, typed by hand as before. A pick closes the list and leaves that fighter alone on
+ * show (William, 12 Nov), with Change to come back to it.
  */
 export default function RecruitAsPicker({
   title,
@@ -51,15 +54,27 @@ export default function RecruitAsPicker({
   /** The warband type the template is for ("Reiklanders"). */
   title: string;
   fighters: TemplateFighter[];
-  /** The picked fighter's key, or BY_HAND. */
+  /** The picked fighter's key, BY_HAND, or "" before a pick. */
   value: string;
   onPick: (key: string) => void;
 }) {
+  const chosen = fighters.find((fighter) => fighter.key === value);
+  if (chosen) return <ChosenFighter fighter={chosen} onChange={() => onPick("")} />;
   const row = (picked: boolean) =>
     cn(
       "flex w-full min-h-11 items-start gap-3 border-t border-line px-3 py-2 text-left first:border-t-0",
       picked ? "bg-accent-soft" : "hover:bg-raised"
     );
+  if (value === BY_HAND) {
+    return (
+      <div className="flex flex-col gap-1.5">
+        <RecruitAsHeader onChange={() => onPick("")} />
+        <p className="m-0 border border-accent-line bg-accent-soft px-3 py-2.5 text-sm font-bold text-ink">
+          Someone not in the template
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-xs font-bold text-muted-foreground">Recruit as</span>
@@ -74,8 +89,8 @@ export default function RecruitAsPicker({
               key={fighter.key}
               type="button"
               role="radio"
-              aria-checked={value === fighter.key}
-              className={row(value === fighter.key)}
+              aria-checked={false}
+              className={row(false)}
               onClick={() => onPick(fighter.key)}
             >
               <span className="flex min-w-0 flex-1 flex-col gap-0.5">
@@ -92,8 +107,8 @@ export default function RecruitAsPicker({
         <button
           type="button"
           role="radio"
-          aria-checked={value === BY_HAND}
-          className={row(value === BY_HAND)}
+          aria-checked={false}
+          className={row(false)}
           onClick={() => onPick(BY_HAND)}
         >
           <Plus className="mt-0.5 h-4 w-4 text-accent-text" aria-hidden="true" />

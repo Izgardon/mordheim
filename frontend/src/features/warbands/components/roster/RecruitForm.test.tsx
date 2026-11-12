@@ -162,9 +162,9 @@ describe("Recruiting from the warband's template", () => {
     );
     await user.click(within(picker).getByRole("radio", { name: /Champion/ }));
     await user.type(screen.getByLabelText("Name"), "Ulrich");
-    await user.click(screen.getByRole("button", { name: "Sword 10" }));
-    await user.click(screen.getByRole("button", { name: "Pistol, brace 30" }));
-    expect(screen.getByRole("button", { name: /Steel Whip 10/ })).toHaveTextContent(
+    await user.click(screen.getByRole("button", { name: "Sword 10 gc" }));
+    await user.click(screen.getByRole("button", { name: "Pistol, brace 30 gc" }));
+    expect(screen.getByRole("button", { name: /Steel Whip 10 gc/ })).toHaveTextContent(
       "(Gaolers only)"
     );
 
@@ -195,7 +195,7 @@ describe("Recruiting from the warband's template", () => {
     const user = setupUser();
     await user.click(await screen.findByRole("radio", { name: /Champion/ }));
     expect(screen.getByText("His lists · Mercenary list")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Sword 10" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Sword 10 gc" })).toBeNull();
     await user.click(screen.getByRole("button", { name: "Recruit" }));
     await waitFor(() =>
       expect(fakeApi.bodyOf("POST /warbands/9/heroes/batch/")).toEqual({
@@ -224,6 +224,84 @@ describe("Recruiting from the warband's template", () => {
     expect(within(tally).getAllByText("free")).toHaveLength(2);
     expect(within(tally).getByText("Sharp Stuff")).toBeInTheDocument();
     expect(screen.getByText("Gold 74 → 39 gc")).toBeInTheDocument();
+  });
+
+  it("focuses the fighter picked: the list folds away, Change brings it back", async () => {
+    // William, 12 Nov: "when you click a unit it should minimise the unit list section"
+    fakeApi.on("GET /warbands/9/template/", answer(true));
+    renderForm();
+    const user = setupUser();
+    await user.click(await screen.findByRole("radio", { name: /Champion/ }));
+    expect(screen.queryByRole("radiogroup", { name: "Recruit as" })).toBeNull();
+    expect(screen.queryByText("Someone not in the template")).toBeNull();
+    const chosen = screen.getByRole("article", { name: "Champion" });
+    expect(within(chosen).getByText("35 gc")).toBeInTheDocument();
+    expect(within(chosen).getByText("0 of 0–2 · 8 XP · Human")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Change" }));
+    expect(screen.getByRole("radiogroup", { name: "Recruit as" })).toBeInTheDocument();
+  });
+
+  it("shows the chosen fighter's skill groups, starting skills and rules", async () => {
+    const base = answer(true);
+    const champion = fighter("champions", "Champion", 35, {
+      is_leader: true,
+      skills: [{ id: 7, name: "Hunter", description: "He may re-roll a missed shot." }],
+      rules: [{ id: 8, name: "Fear", kind: "bane", category: "aura", description: "Terrifying." }],
+    });
+    fakeApi.on("GET /warbands/9/template/", {
+      ...base,
+      template: base.template && { ...base.template, fighters: [champion] },
+    });
+    renderForm();
+    const user = setupUser();
+    await user.click(await screen.findByRole("radio", { name: /Champion/ }));
+    const chosen = screen.getByRole("article", { name: "Champion" });
+    expect(within(chosen).getByText("Leader", { exact: false })).toBeInTheDocument();
+    for (const group of ["Combat", "Shooting", "Strength"]) {
+      expect(within(chosen).getByText(group)).toBeInTheDocument();
+    }
+    expect(within(chosen).getByText("Starts with: Hunter")).toBeInTheDocument();
+    expect(within(chosen).getByText("He may re-roll a missed shot.")).toBeInTheDocument();
+    expect(within(chosen).getByText("Rules: Fear")).toBeInTheDocument();
+  });
+
+  it("groups the kit by the item's type and prices it in gc", async () => {
+    // William, 12 Nov: "separated by the items type with their prices listed still in gc"
+    const base = answer(true);
+    const lists = [
+      {
+        id: 1,
+        key: "mercenary",
+        name: "Mercenary list",
+        note: "",
+        lines: [
+          line(1, "Sword", 10),
+          line(2, "Helmet", 10, { item: { id: 20, name: "Helmet", variant: "", type: "Armour" } }),
+          line(3, "Axe", 5),
+        ],
+      },
+    ];
+    fakeApi.on("GET /warbands/9/template/", {
+      ...base,
+      template: base.template && { ...base.template, lists },
+    });
+    renderForm();
+    const user = setupUser();
+    await user.click(await screen.findByRole("radio", { name: /Champion/ }));
+    const weapons = screen.getByRole("group", { name: "Weapon" });
+    expect(
+      within(weapons)
+        .getAllByRole("button")
+        .map((chip) => chip.textContent)
+    ).toEqual(["Sword 10 gc", "Axe 5 gc"]);
+    const armour = screen.getByRole("group", { name: "Armour" });
+    expect(
+      within(armour)
+        .getAllByRole("button")
+        .map((chip) => chip.textContent)
+    ).toEqual(["Helmet 10 gc"]);
+    expect(screen.queryByText(/more$/)).toBeNull();
   });
 
   it("keeps the hand-typed recruit for someone not in the template", async () => {
@@ -258,7 +336,7 @@ describe("Recruiting on a phone", () => {
     const user = setupUser();
     const sheet = await screen.findByRole("dialog", { name: "Add a hero" });
     await user.click(await within(sheet).findByRole("radio", { name: /Champion/ }));
-    expect(within(sheet).getByRole("button", { name: "Sword 10" })).toBeInTheDocument();
+    expect(within(sheet).getByRole("button", { name: "Sword 10 gc" })).toBeInTheDocument();
     expect(within(sheet).getByRole("list", { name: "Tally" })).toBeInTheDocument();
     await user.click(within(sheet).getByRole("button", { name: "Cancel" }));
     expect(onCancel).toHaveBeenCalled();

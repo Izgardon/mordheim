@@ -78,14 +78,16 @@ describe("Upgrades in the hire dialog", () => {
     const user = setupUser();
     await user.click(await screen.findByRole("radio", { name: /Chieftain/ }));
     const mutations = screen.getByRole("group", { name: "Mutations" });
-    await user.click(within(mutations).getByRole("button", { name: "Tentacle 35" }));
-    expect(within(mutations).getByRole("button", { name: "Great Claw 100" })).toBeInTheDocument();
-    await user.click(within(mutations).getByRole("button", { name: "Great Claw 100" }));
+    await user.click(within(mutations).getByRole("button", { name: "Tentacle 35 gc" }));
+    expect(
+      within(mutations).getByRole("button", { name: "Great Claw 100 gc" })
+    ).toBeInTheDocument();
+    await user.click(within(mutations).getByRole("button", { name: "Great Claw 100 gc" }));
     const tally = screen.getByRole("list", { name: "Tally" });
     expect(within(tally).getByLabelText("Price for Great Claw")).toHaveValue(100);
 
     // the first goes: the second, not edited, is the first now
-    await user.click(within(mutations).getByRole("button", { name: "Tentacle 35" }));
+    await user.click(within(mutations).getByRole("button", { name: "Tentacle 35 gc" }));
     expect(within(tally).getByLabelText("Price for Great Claw")).toHaveValue(50);
 
     const theMarks = screen.getByRole("group", { name: "Mark of the Dark Gods" });

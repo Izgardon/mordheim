@@ -5,9 +5,9 @@ import type { TemplateUpgrade } from "../../types/hire-template-types";
 import { groupNote, upgradeGroups, upgradePrice } from "./upgrade-draft";
 import type { UpgradePicks } from "./useUpgradePicks";
 
-/** "50", "free" (the Marks), or "· price to type" where the book gives none: as the kit's chips read. */
+/** "50 gc", "free" (the Marks), or "· price to type" where the book gives none: as the kit's chips read. */
 const chipPrice = (price: string) =>
-  price.trim() === "" ? "· price to type" : Number(price) === 0 ? "free" : price;
+  price.trim() === "" ? "· price to type" : Number(price) === 0 ? "free" : `${price} gc`;
 
 /**
  * A hero's upgrades in a hire (the templates plan, phase 3): his template's Mutations, Blessings,
