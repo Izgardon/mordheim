@@ -1,5 +1,40 @@
 [
   {
+    "name": "Bandits",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Petty crooks prowling the wilderness for a treasure said to lie deep in the Cursed Marsh. May be allied by a warband following the Secret Deal or the Body Trade plot.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Swamp Striders (Bandits)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Long Bow",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "quantity": 1
+      }
+    ]
+  },
+  {
     "name": "Bear",
     "kind": "creature",
     "has_profile": true,
@@ -111,6 +146,168 @@
         }
       ]
     }
+  },
+  {
+    "name": "Chaos Troll (Mutiny in Marienburg)",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "The strongest breed of troll kind, mutated and rancid. May be allied by Maneaters, Chaos Dwarfs, Dark Elves, Marauders, Norse, Carnival of Chaos, Fimir and Possessed warbands. Needs no weapons to fight, but usually carries a big club.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 2,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 2,
+    "attacks": 4,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Stupidity",
+      "Regeneration (Chaos Troll, Mutiny in Marienburg)",
+      "Mutates (Chaos Troll, Mutiny in Marienburg)",
+      "Vomit Attack (Mutiny in Marienburg)",
+      "Large"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Colossal Squig",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "A fungoid beast of boundless appetite and mountainous size, fighting with teeth and claws. May be allied by Greenskin warbands.",
+    "movement": "2D6",
+    "weapon_skill": "*",
+    "ballistic_skill": 0,
+    "strength": 7,
+    "toughness": 6,
+    "wounds": 6,
+    "initiative": 3,
+    "attacks": "*",
+    "leadership": 6,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Stampede (Colossal Squig)",
+      "Gigantic Monster (Mutiny in Marienburg)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Crocagator",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "An ancient apex predator of the bay. May be allied by Stromfels Reavers, Dark Elves, Fimir and Clan Moulder; one of the warriors must have the Beastmaster skill.",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": "-",
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 3,
+    "initiative": 2,
+    "attacks": 2,
+    "leadership": 2,
+    "armour_save": "5+",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Animal (Mutiny in Marienburg)",
+      "Fear",
+      "Cold Blooded (Crocagator)",
+      "Aquatic (Crocagator)",
+      "Death Roll (Crocagator)",
+      "Scales (Crocagator)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Cultists of Chaos",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Crazed human followers of the cults of the dark gods, armed with sacrificial daggers that count as swords. May be allied by Chaos warbands.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Immune to Psychology",
+      "Focused (Cultists of Chaos)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Dark Elf Raiders",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Druchii roaming the Known World in search of slaves. May be allied by Dark Elf warbands and any warband following the Body Trade plot.",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 6,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Excellent Sight (Dark Elf Raiders)",
+      "Kindred Hatred (Dark Elf Raiders)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Repeater Crossbow",
+        "quantity": 1
+      },
+      {
+        "item": "Sea Dragon Cloak",
+        "quantity": 1
+      }
+    ]
   },
   {
     "name": "Dragon Turtle",
@@ -306,6 +503,41 @@
     }
   },
   {
+    "name": "Gutter Runners",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Clan Eshin's assassins-in-training, fast even by Skaven standards. May be allied by Skaven warbands or a warband following the Secret Deal.",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [],
+    "skills": [
+      "Scale Sheer Surfaces"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Fighting Claws",
+        "quantity": 1
+      },
+      {
+        "item": "Throwing Knives/Stars/Axes",
+        "quantity": 1
+      }
+    ]
+  },
+  {
     "name": "Lizard-Hawk",
     "kind": "pet",
     "has_profile": false,
@@ -342,6 +574,73 @@
         }
       ]
     }
+  },
+  {
+    "name": "Merwyrm",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "A primordial kin of dragon-kind from the deep oceans, fighting with claws, jaws and a freezing breath. May be allied by Stromfels Reavers, Channel Rats, Norse, Dark Elves and Lizardmen; the warband must contain a warrior with the Beastmaster skill.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 5,
+    "toughness": 6,
+    "wounds": 5,
+    "initiative": 3,
+    "attacks": 3,
+    "leadership": 6,
+    "armour_save": "",
+    "large": true,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Gigantic Monster (Mutiny in Marienburg)",
+      "Chilled Breath (Merwyrm)",
+      "Voracious Hunger (Merwyrm)",
+      "Sea Beast (Merwyrm)",
+      "Stench of the Deep (Merwyrm)",
+      "Abyssal Predator (Merwyrm)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Nuckelavee",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "A fleshless daemon of man and horse, riding from black water to avenge the wilds; it fights with a sword and the hooves of its horse body. May be allied by Fimir, Sea Ghost and Undead warbands.",
+    "movement": 8,
+    "weapon_skill": 4,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 4,
+    "attacks": 4,
+    "leadership": 8,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Poison Aura (Nuckelavee)",
+      "Daemonic (Mutiny in Marienburg)",
+      "Fen Striders (Nuckelavee)",
+      "Aquatic (Mutiny in Marienburg)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      }
+    ]
   },
   {
     "name": "Owl",
@@ -415,6 +714,41 @@
         }
       ]
     }
+  },
+  {
+    "name": "Pirates",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Free men of Sartosa who thieve as one class. May be allied by warbands following the Ten Great Families, the Secret Deal or the Body Trade plot, by Stromfels Reavers and by Channel Rats.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Sea Legs (Pirates)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Duelling Pistol",
+        "quantity": 1
+      },
+      {
+        "item": "Rapier",
+        "quantity": 1
+      }
+    ]
   },
   {
     "name": "Polecat",
@@ -526,6 +860,50 @@
     }
   },
   {
+    "name": "Skinks",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Great Crests, the scouts and ambushers who lead Lizardmen raiding parties; their short bows are coated in Dark Venom. May be allied by Lizardman warbands only.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Hatred (Skinks)",
+      "Artefact Retrieval (Skinks)",
+      "Scaly Skin (Lizardmen, Mutiny in Marienburg)",
+      "Cold Blooded (Lizardmen, Mutiny in Marienburg)",
+      "Aquatic (Skinks)",
+      "Jungle Born (Skinks)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Short Bow",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Dark Venom",
+        "quantity": 1
+      }
+    ]
+  },
+  {
     "name": "Snake",
     "kind": "pet",
     "has_profile": true,
@@ -562,6 +940,101 @@
     }
   },
   {
+    "name": "Swamp Goblins",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Forest Goblin tribes of the Great Forest, riding Giant Spiders; their spears and short bows are covered in spider spittle. May be allied by Greenskins and Chaos Dwarves.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Spider Spittle (Swamp Goblins)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Spear",
+        "quantity": 1
+      },
+      {
+        "item": "Short Bow",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "name": "Swamp Shark",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "The bane of sailors, fighting with teeth and claw. May be allied by Dark Elf, Stromfels Reavers, Fimir and Norse warbands and any warband with a Whaler Hired Sword; one warrior must have the Beastmaster skill.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": "-",
+    "strength": 5,
+    "toughness": 5,
+    "wounds": 3,
+    "initiative": 3,
+    "attacks": 2,
+    "leadership": 5,
+    "armour_save": "5+",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Animal (Mutiny in Marienburg)",
+      "Fear",
+      "Aquatic (Swamp Shark)",
+      "Ambush Predator (Swamp Shark)",
+      "Thick Skinned (Swamp Shark)",
+      "Smile you son of a... (Swamp Shark)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "The Bloated",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "Water-logged dead raised by Necromancers and Bokors, fighting with their rotting arms. May be allied by any Undead warband.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 1,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Undead (The Bloated)",
+      "May Not Run",
+      "Squishy (The Bloated)",
+      "Dead Man's Float (The Bloated)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
     "name": "Tiger",
     "kind": "creature",
     "has_profile": true,
@@ -596,6 +1069,102 @@
         }
       ]
     }
+  },
+  {
+    "name": "Townsfolk",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "The regular folk of Marienburg, who carry no weapons or armour and will ally with nobody.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": "-",
+    "strength": 2,
+    "toughness": 2,
+    "wounds": "-",
+    "initiative": 3,
+    "attacks": "-",
+    "leadership": 7,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Non-combatant (Townsfolk)",
+      "Leg it! (Townsfolk)",
+      "I'll Assist You Citizen (Townsfolk)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Troll",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "A troll kept loyal by large amounts of food; it needs no weapons but often carries a big club, and can never be given weapons or armour. May be allied by Beastmen, Greenskins, Fimir and Chaos Dwarves.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 1,
+    "strength": 5,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 1,
+    "attacks": 3,
+    "leadership": 4,
+    "armour_save": "",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Stupidity",
+      "Regeneration (Troll)",
+      "Dumb Monster (Troll)",
+      "Always Hungry (Troll)",
+      "Vomit Attack (Mutiny in Marienburg)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": []
+  },
+  {
+    "name": "Troll Hag",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": false,
+    "description": "A colossal river troll of malign cunning and innate arcane power, carrying a Deadwood staff that counts as a staff. May be allied by Greenskins, Fimir, Stromfels Reavers, Ogres or any warband with a Witch Hired Sword.",
+    "movement": 7,
+    "weapon_skill": 4,
+    "ballistic_skill": 2,
+    "strength": 6,
+    "toughness": 5,
+    "wounds": 4,
+    "initiative": 2,
+    "attacks": 3,
+    "leadership": 8,
+    "armour_save": "",
+    "large": true,
+    "caster": "No",
+    "specials": [
+      "Fear",
+      "Gigantic Monster (Mutiny in Marienburg)",
+      "Ancient Hexes (Troll Hag)",
+      "Spell-spite (Troll Hag)",
+      "Hag Regeneration (Troll Hag)",
+      "Terrible Stench (Troll Hag)",
+      "Copious Vomit (Troll Hag)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Quarter Staff",
+        "quantity": 1
+      }
+    ]
   },
   {
     "name": "Wild Boar/Pig",

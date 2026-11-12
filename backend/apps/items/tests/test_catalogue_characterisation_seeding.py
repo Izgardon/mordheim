@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 51,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 520,  # the import's 423 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon bring 2 Animal items more
+                "Item": 537,  # the import's 423 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 524,  # the import's 472 (one per name, Athel Loren's 14 among them) + the 24 hired swords' own skills the book lacks; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 133,  # the import's 110 (Athel Loren's three) + a group of his own for each of 19 hired swords
@@ -121,13 +121,15 @@ class SeedAllTests(TestCase):
                 # the Athel Loren batch's four templates add 41 of their own (9 the Dwarf Troll Slayers' runic tattoos);
                 # the two warbands read from their mordheimer pages add 18 (Mazzalupo 10, the Order of the Mare 8)
                 # the Savage Orcs (Athel Loren) Savage is the shared Frenzy (William, 12 Nov 2026): one row fewer
-                # the Marienburg animals' rules add 40 of their own (the Mutiny in Marienburg main document)
-                "Special": 1614,
+                # the Mutiny in Marienburg main document adds 87: 40 for the Marienburg animals' rules and 47
+                # for the seventeen creatures of Men and Monsters
+                "Special": 1661,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
-                # 14 mounts, 12 pets (the Sorcerous Society's four familiars, Marienburg's owl and falcon), 39
-                # creatures (17 from MiM, 28 Border Town Burning's Beasts of the East)
-                "BestiaryEntry": 66,
+                # 14 mounts, 12 pets (the Sorcerous Society's four familiars, Marienburg's owl and falcon), 56
+                # creatures (17 Marienburg's shop animals, 17 its Men and Monsters, 28 Border Town Burning's
+                # Beasts of the East)
+                "BestiaryEntry": 83,
                 "HiredSword": 75,  # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin)
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
                 "WarbandTemplate": 151,  # mordheimer's New Warband Format pages (Tileans (old) left out), the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them) and the two web pages'
@@ -286,10 +288,10 @@ class SeedAllTests(TestCase):
                     0,
                     5,
                     5,
-                    21,
-                ),  # fighters, upgrades, hired swords, dramatis personae, beasts (14 of the East, 4 Marienburg's)
-                "Stupidity": (11, 0, 0, 0, 2),
-                "Immune to Psychology": (66, 0, 1, 2, 0),
+                    29,
+                ),  # fighters, upgrades, hired swords, dramatis personae, beasts (14 of the East, 12 Marienburg's)
+                "Stupidity": (11, 0, 0, 0, 4),  # Marienburg's Troll and Chaos Troll
+                "Immune to Psychology": (66, 0, 1, 2, 1),  # Marienburg's Cultists of Chaos
                 "Immune to Poison": (63, 0, 3, 3, 8),
                 "Hideous": (
                     0,

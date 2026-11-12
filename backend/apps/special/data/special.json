@@ -538,5 +538,240 @@
     "name": "Envenomed Tail (Wyvern)",
     "type": "Animal",
     "description": "Before its normal attacks in close combat the Wyvern makes a tail strike. Roll a D6: every enemy in base contact that it may attack in the close combat phase and whose Initiative is lower than the score is automatically hit and takes a Strength 4 hit. A model whose Initiative equals or beats the score has dodged the tail."
+  },
+  {
+    "name": "Swamp Striders (Bandits)",
+    "type": "Animal",
+    "description": "The model moves through swamp and marshland terrain without penalty."
+  },
+  {
+    "name": "Undead (The Bloated)",
+    "type": "Animal",
+    "description": "As Zombies, the Bloated are immune to poison, immune to psychology and cause fear."
+  },
+  {
+    "name": "Squishy (The Bloated)",
+    "type": "Animal",
+    "description": "The Bloated are easier to break than normal Zombies: they do not treat a stunned result as knocked down."
+  },
+  {
+    "name": "Dead Man's Float (The Bloated)",
+    "type": "Animal",
+    "description": "While in the water the Bloated may move up to 4\" without penalty, a charge included, but never further."
+  },
+  {
+    "name": "Regeneration (Chaos Troll, Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "Whenever an enemy wounds the troll, roll a D6: on a 4+ the wound is ignored. A wound caused by fire or fire-based magic cannot be ignored this way."
+  },
+  {
+    "name": "Mutates (Chaos Troll, Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "If the troll is wounded 3 or more times and is not taken out of action, roll once on the random mutation table."
+  },
+  {
+    "name": "Vomit Attack (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "Instead of its normal attacks the creature may regurgitate its digestive juices over one opponent in hand-to-hand combat: a single attack that hits automatically at Strength 5 and ignores armour saves."
+  },
+  {
+    "name": "Stampede (Colossal Squig)",
+    "type": "Animal",
+    "description": "After it appears, the squig rampages straight towards the far side of the board, destroying anything in its way: a building is destroyed at once and anyone inside suffers the usual collapsing-building damage, and every warrior and vehicle in its path takes an automatic hit at Strength 7 plus the distance rolled for its movement that round. It then moves on until it leaves the board. While it is allied to a warband that warband may turn it by 90 degrees between turns, but it can never stop moving or turn right around."
+  },
+  {
+    "name": "Animal (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "The creature counts as an animal."
+  },
+  {
+    "name": "Aquatic (Crocagator)",
+    "type": "Animal",
+    "description": "The Crocagator can walk on land, but while in the water it has Movement 8, Initiative 5 and 3 Attacks."
+  },
+  {
+    "name": "Cold Blooded (Crocagator)",
+    "type": "Animal",
+    "description": "The Crocagator is immune to psychology."
+  },
+  {
+    "name": "Death Roll (Crocagator)",
+    "type": "Animal",
+    "description": "In its first round of combat the Crocagator ignores its normal attacks and makes one death roll instead: a Strength 5 attack that stuns its target even when it fails to wound."
+  },
+  {
+    "name": "Scales (Crocagator)",
+    "type": "Animal",
+    "description": "The Crocagator has an armour save of 5+."
+  },
+  {
+    "name": "Focused (Cultists of Chaos)",
+    "type": "Animal",
+    "description": "A group of cultists will always gang up and attack a single model where they can."
+  },
+  {
+    "name": "Excellent Sight (Dark Elf Raiders)",
+    "type": "Animal",
+    "description": "Elves spot hidden enemies from twice as far away as other warriors, that is twice their Initiative in inches."
+  },
+  {
+    "name": "Kindred Hatred (Dark Elf Raiders)",
+    "type": "Animal",
+    "description": "Dark Elves hate any Elf warrior, High Elf Hired Swords included."
+  },
+  {
+    "name": "Chilled Breath (Merwyrm)",
+    "type": "Animal",
+    "description": "In the shooting phase, if it is not in close combat, the Merwyrm breathes a jet of ice-cold air: range 8\", Strength 3, and a result of 1-5 on the injury table counts as stunned. The attack puts out fires."
+  },
+  {
+    "name": "Voracious Hunger (Merwyrm)",
+    "type": "Animal",
+    "description": "At the end of any combat phase in which the Merwyrm wounded with its jaws it may heal D3 wounds."
+  },
+  {
+    "name": "Sea Beast (Merwyrm)",
+    "type": "Animal",
+    "description": "The Merwyrm ignores all water and swamp scenery when it moves, crossing it as open ground."
+  },
+  {
+    "name": "Stench of the Deep (Merwyrm)",
+    "type": "Animal",
+    "description": "The Merwyrm is -1 to be hit in close combat."
+  },
+  {
+    "name": "Abyssal Predator (Merwyrm)",
+    "type": "Animal",
+    "description": "When the Merwyrm attacks a large model with its jaws and rolls a 6+ to wound, it inflicts 3 wounds instead of rolling for damage."
+  },
+  {
+    "name": "Poison Aura (Nuckelavee)",
+    "type": "Animal",
+    "description": "Any warrior in close combat with the Nuckelavee at the end of a round suffers a Strength 3 poisoned hit."
+  },
+  {
+    "name": "Daemonic (Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "The creature is immune to all poisons and immune to psychology, automatically passing any Leadership test it must take, and causes fear. It has a natural armour save of 5+, which magic weapons and spells negate, and its attacks count as magical."
+  },
+  {
+    "name": "Fen Striders (Nuckelavee)",
+    "type": "Animal",
+    "description": "The Nuckelavee moves through swamp and marshland terrain without penalty."
+  },
+  {
+    "name": "Sea Legs (Pirates)",
+    "type": "Animal",
+    "description": "Pirates re-roll any failed Initiative test while fighting on a causeway, a jetty, a boat deck or a gangplank."
+  },
+  {
+    "name": "Hatred (Skinks)",
+    "type": "Animal",
+    "description": "Skinks hate all Skaven, Clan Pestilens above all, and they hate Dark Elves."
+  },
+  {
+    "name": "Artefact Retrieval (Skinks)",
+    "type": "Animal",
+    "description": "Skinks will always attack a warrior who is not of Lustria and is using or holding a Lustrian weapon or artefact. If they take him, they take the item back and it is lost forever."
+  },
+  {
+    "name": "Scaly Skin (Lizardmen, Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "A natural save of 6+. Strength modifiers cannot push the save beyond 6, but any 'no save' result on the injury chart negates it."
+  },
+  {
+    "name": "Cold Blooded (Lizardmen, Mutiny in Marienburg)",
+    "type": "Animal",
+    "description": "Lizardmen are slow to react: roll 3D6 for a psychology test or a Rout test and take the lowest two dice."
+  },
+  {
+    "name": "Jungle Born (Skinks)",
+    "type": "Animal",
+    "description": "Skinks move through jungle and swamp terrain without penalty."
+  },
+  {
+    "name": "Aquatic (Skinks)",
+    "type": "Animal",
+    "description": "Skinks move through water terrain without penalty and count as in cover while in it."
+  },
+  {
+    "name": "Spider Spittle (Swamp Goblins)",
+    "type": "Animal",
+    "description": "A warrior hit by a weapon laced with spider spittle must pass an immediate Toughness test or be paralyzed. A paralyzed warrior cannot move or fight and is hit automatically in close combat, until he passes a Toughness test in his recovery phase."
+  },
+  {
+    "name": "Aquatic (Swamp Shark)",
+    "type": "Animal",
+    "description": "The Swamp Shark can walk on land, but while in the water it has Movement 8, Initiative 5 and 3 Attacks."
+  },
+  {
+    "name": "Ambush Predator (Swamp Shark)",
+    "type": "Animal",
+    "description": "In its first round of combat the Swamp Shark has +1 Weapon Skill and +1 Strength."
+  },
+  {
+    "name": "Thick Skinned (Swamp Shark)",
+    "type": "Animal",
+    "description": "The Swamp Shark has an armour save of 5+."
+  },
+  {
+    "name": "Smile you son of a... (Swamp Shark)",
+    "type": "Animal",
+    "description": "A blackpowder weapon that hits and wounds the Swamp Shark on a 6 makes it explode at once."
+  },
+  {
+    "name": "Non-combatant (Townsfolk)",
+    "type": "Animal",
+    "description": "A warrior earns no experience for taking a townsfolk out of action."
+  },
+  {
+    "name": "Leg it! (Townsfolk)",
+    "type": "Animal",
+    "description": "If any warrior comes within 8\" of a townsfolk, he flees his full running move away from the warriors to safety in his turn. Townsfolk do not flee a warband following Defending the Peace."
+  },
+  {
+    "name": "I'll Assist You Citizen (Townsfolk)",
+    "type": "Animal",
+    "description": "A member of a warband following Defending the Peace or the Ten Great Families may escort a townsfolk off the board for 1 experience."
+  },
+  {
+    "name": "Regeneration (Troll)",
+    "type": "Animal",
+    "description": "Whenever an enemy wounds the troll, roll a D6: on a 4+ the wound is ignored. A wound caused by fire or fire-based magic cannot be ignored this way. Trolls never roll for injury after a battle."
+  },
+  {
+    "name": "Dumb Monster (Troll)",
+    "type": "Animal",
+    "description": "A troll is too stupid to learn any skill, and gains no experience."
+  },
+  {
+    "name": "Always Hungry (Troll)",
+    "type": "Animal",
+    "description": "The warband must pay 15 gold crowns after every game to keep the troll fed. A Boss may instead sacrifice two Goblin Warriors or Cave Squigs to it. If neither is paid the troll wanders off in search of food."
+  },
+  {
+    "name": "Ancient Hexes (Troll Hag)",
+    "type": "Animal",
+    "description": "Each magic phase the Troll Hag casts a random spell from the Charms and Hexes list against a random warrior in range."
+  },
+  {
+    "name": "Spell-spite (Troll Hag)",
+    "type": "Animal",
+    "description": "Every time a spell is cast while the Troll Hag is present, roll a D6: on a 4+ the spell is cancelled, and if it was a spell that would wound, the caster suffers D3 wounds instead."
+  },
+  {
+    "name": "Hag Regeneration (Troll Hag)",
+    "type": "Animal",
+    "description": "Every time the Troll Hag suffers one or more wounds, roll a D6: on a 4+ every wound she has suffered is healed."
+  },
+  {
+    "name": "Terrible Stench (Troll Hag)",
+    "type": "Animal",
+    "description": "All rolls to hit the Troll Hag in close combat are -1."
+  },
+  {
+    "name": "Copious Vomit (Troll Hag)",
+    "type": "Animal",
+    "description": "In the shooting phase, if she is not engaged in combat, the Troll Hag shoots a small blast template of Strength 5 vomit, which ignores armour."
   }
 ]

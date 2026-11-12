@@ -137,11 +137,11 @@ class CommittedBestiaryTests(TestCase):
     def beasts(self) -> dict[str, BestiaryEntry]:
         return {beast.name: beast for beast in BestiaryEntry.objects.select_related("animal_item")}
 
-    def test_the_book_holds_15_mounts_12_pets_and_39_creatures_each_with_its_item(self):
+    def test_the_book_holds_15_mounts_12_pets_and_56_creatures_each_with_its_item(self):
         beasts = self.beasts()
 
-        self.assertEqual(Counter(beast.kind for beast in beasts.values()), {"mount": 15, "creature": 39, "pet": 12})
-        self.assertEqual(Item.objects.filter(type="Animal").count(), 66)
+        self.assertEqual(Counter(beast.kind for beast in beasts.values()), {"mount": 15, "creature": 56, "pet": 12})
+        self.assertEqual(Item.objects.filter(type="Animal").count(), 83)
         self.assertEqual({beast.animal_item.subtype for beast in beasts.values() if beast.kind == "pet"}, {"Pet"})
         self.assertIn("Wardogs", beasts)
         self.assertNotIn("Wardog", beasts)  # Mutiny in Marienburg's duplicate with an empty profile
@@ -155,7 +155,14 @@ class CommittedBestiaryTests(TestCase):
         bordertown = CampaignType.objects.get(slug="border-town-burning").id
         beasts_of_the_east = [name for name, beast in self.beasts().items() if beast.animal_item.campaign_type_id == bordertown]  # fmt: skip
         self.assertEqual(len(beasts_of_the_east), 28)
-        self.assertEqual(unsold, sorted(["Giant Rat", "Wild Dog", "Wyvern", *familiars, *beasts_of_the_east]))
+        # Men and Monsters of the River City: met in battle or allied, never bought
+        river_city = ["Bandits", "Chaos Troll (Mutiny in Marienburg)", "Colossal Squig", "Crocagator",
+                      "Cultists of Chaos", "Dark Elf Raiders", "Gutter Runners", "Merwyrm", "Nuckelavee", "Pirates",
+                      "Skinks", "Swamp Goblins", "Swamp Shark", "The Bloated", "Townsfolk", "Troll", "Troll Hag"]  # fmt: skip
+        self.assertEqual(
+            unsold,
+            sorted(["Giant Rat", "Wild Dog", "Wyvern", *familiars, *beasts_of_the_east, *river_city]),
+        )
         self.assertEqual(Item.objects.filter(type="Animal", listed=True).count(), 31)
         rat = self.beasts()["Giant Rat"].animal_item
         self.assertEqual(list(rat.availabilities.values_list("cost", "rarity", "cost_note")), [(0, 9, "15 warptokens")])  # fmt: skip
@@ -186,7 +193,7 @@ class CommittedBestiaryTests(TestCase):
     def test_every_item_has_its_setting_the_imports_animals_theirs_and_marienburgs_beasts_marienburg(self):
         settings = {name: beast.animal_item.campaign_type.slug for name, beast in self.beasts().items() if beast.animal_item.campaign_type}  # fmt: skip
 
-        self.assertEqual(len(settings), 66)
+        self.assertEqual(len(settings), 83)
         self.assertEqual({settings[name] for name in ("Dragon Turtle", "Geckamand", "Lizard-Hawk", "Tiger", "Wyvern")}, {"mutiny-in-marienburg"})  # fmt: skip
         self.assertEqual((settings["Warhorse"], settings["Chaos Steed"]), ("mordheim", "mordheim-1b"))
         self.assertEqual(settings["Viper Familiar"], "mordheim-2a")
@@ -199,5 +206,5 @@ class CommittedBestiaryTests(TestCase):
 
         output = run("seed_bestiary")
 
-        self.assertIn("Entries created: 0, updated: 66. Items created: 0, updated: 66.", output)
+        self.assertIn("Entries created: 0, updated: 83. Items created: 0, updated: 83.", output)
         self.assertEqual(sorted(Item.objects.filter(type="Animal").values_list("id", "bestiary_entry_id")), before)
