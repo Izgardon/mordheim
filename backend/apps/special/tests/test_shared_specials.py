@@ -107,13 +107,13 @@ class SharedSeedTests(TestCase):
         ]
         animosity = Special.objects.create(name="Animosity", type="Animal")
 
-        self.assertIn("Shared specials - Created: 66, Updated: 0, copies archived: 6.", seed())
+        self.assertIn("Shared specials - Created: 67, Updated: 0, copies archived: 6.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         animosity.refresh_from_db()
         self.assertIsNone(animosity.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 66, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 67, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):

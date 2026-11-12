@@ -77,6 +77,12 @@
       "aliases": []
     },
     {
+      "name": "Loner",
+      "type": "Trait",
+      "text": "The model is immune to All Alone tests.",
+      "aliases": []
+    },
+    {
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
       "text": "The model hates Orcs and Goblins.",
@@ -895,6 +901,59 @@
       ],
       "text": "The model hates every enemy model.",
       "why": "Hates every enemy: an open-ended target no shared row names, kept his own and worded short."
+    },
+    {
+      "name": "Loner (Hobgoblin Scout)",
+      "rule": "Loner",
+      "owners": [
+        {
+          "hired_sword": "Hobgoblin Scout"
+        }
+      ],
+      "why": "May never use the warband leader's Leadership for any test, and operates independently."
+    },
+    {
+      "name": "Loner (Wildkin)",
+      "rule": "Loner",
+      "owners": [
+        {
+          "warband": "Sea Ghosts",
+          "fighter": "Wildkin"
+        }
+      ],
+      "why": "Can never be the warband's leader."
+    },
+    {
+      "name": "Loner (Mountain Guide)",
+      "rule": "Loner",
+      "owners": [
+        {
+          "warband": "Maneaters",
+          "fighter": "Mountain Guide"
+        }
+      ],
+      "why": "Never claims a Gnoblar or takes one as a pet, and may never become the warband leader."
+    },
+    {
+      "name": "Loner (Shinobi)",
+      "rule": "Loner",
+      "owners": [
+        {
+          "warband": "Nipponese Expedition",
+          "fighter": "Shinobi"
+        }
+      ],
+      "why": "Only that he may never become the warband's leader: his rule grants no All Alone immunity at all."
+    },
+    {
+      "name": "Loner (Body Snatcher)",
+      "rule": "Loner",
+      "owners": [
+        {
+          "hired_sword": "Body Snatcher"
+        }
+      ],
+      "why": "Always strikes first while he is all alone: his page reuses the name for a different rule."
     }
   ]
 }

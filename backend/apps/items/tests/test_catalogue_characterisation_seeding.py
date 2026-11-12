@@ -400,6 +400,42 @@ class SeedAllTests(TestCase):
         )
         self.assertFalse(book.filter(name__in=merged).exists())
 
+    def test_loner_is_one_shared_special_and_a_rule_that_says_more_stays_its_owners(self):
+        # William, 12 Nov 2026 ("Yes merge loners (ironic isn't it!)"): six hireling rules named Loner said the same
+        # thing in six ways. One shared Trait now carries it, worded as the Kislev Ranger's, and every owner whose
+        # Loner says something the shared text does not keeps his own: the Hobgoblin Scout (may never use the
+        # leader's Leadership), the Wildkin and the Mountain Guide (may never lead), and the Shinobi, whose Loner is
+        # only that he may never lead and never granted the immunity at all.
+        book = Special.objects.filter(campaign__isnull=True, archived_at__isnull=True)
+        shared = book.get(name="Loner", type="Trait")
+        self.assertEqual(shared.description, "The model is immune to All Alone tests.")
+        self.assertEqual(
+            set(shared.hired_sword_specials.values_list("hired_sword__name", flat=True)),
+            {"Kislev Ranger", "Priest of Morr"},
+        )
+        self.assertEqual(
+            set(shared.dramatis_persona_specials.values_list("dramatis_persona__name", flat=True)),
+            {"Kromwell the Blackhearted", "Laure Croftenssen", "The Dark Jester in Mordheim"},
+        )
+        fighters = shared.template_fighter_links.values_list("fighter__template__name", "fighter__name")
+        self.assertEqual(
+            set(fighters),
+            {("Dreamwalkers, Cult Of Morr", "Priest of Morr"), ("Vampire Hunters of Sylvania", "Priest of Morr")},
+        )
+        apart = dict(book.filter(name__istartswith="Loner (").values_list("name", "owner_kind"))
+        self.assertEqual(
+            apart,
+            {
+                "Loner (Hobgoblin Scout)": "hired_sword",  # may never use the warband leader's Leadership
+                "Loner (Wildkin)": "warband",  # can never be the warband's leader
+                "Loner (Mountain Guide)": "warband",  # never claims a Gnoblar, and may never lead
+                "Loner (Shinobi)": "warband",  # only that he may never lead: no All Alone immunity at all
+                "Loner (Body Snatcher)": "hired_sword",  # strikes first while all alone: a different rule entirely
+            },
+        )
+        # nobody is left holding a Loner of his own under the plain name
+        self.assertFalse(book.filter(name="Loner").exclude(type="Trait").exists())
+
     def test_a_rule_that_only_named_a_skill_is_the_skill_he_starts_with(self):
         # William, 7 Nov 2026, of the Senior Gunnery Officer's Hunter ("See Shooting Skills."): should he start with
         # the skill itself, as one he'd learned? "yes please do that" (catalogue_import/pointer_rules.py)

@@ -27754,8 +27754,7 @@
           },
           {
             "name": "Loner",
-            "type": "Warband - Dreamwalkers, Cult Of Morr",
-            "description": "The Priest of Morr never takes All Alone tests."
+            "type": "Trait"
           },
           {
             "name": "Dagger and Scythe",
@@ -60221,7 +60220,7 @@
             "description": "A Mountain Guide is a dedicated tracker. If he’s not put out of action in the battle, you may roll two dice for Exploration and pick one as the result. Note that this is not a re-roll."
           },
           {
-            "name": "Loner",
+            "name": "Loner (Mountain Guide)",
             "type": "Warband - Maneaters",
             "description": "Mountain Guides are Ogre Hunters. They become used to the solitude of the highest peaks in the Mountains of Mourn. A Mountain Guide hunts the slopes alone and will never claim a Gnoblar or take one as a pet. They are immune to all alone tests and may never become the warband leader."
           }
@@ -75677,7 +75676,7 @@
             "description": "The Shinobi is set up after the opposing warband, anywhere on the table out of its sight and more than 12\" from every enemy model. If both sides have infiltrators, each rolls a D6 and the lowest sets up first."
           },
           {
-            "name": "Loner",
+            "name": "Loner (Shinobi)",
             "type": "Warband - Nipponese Expedition",
             "description": "The Shinobi may never become the warband's leader."
           }
@@ -91104,7 +91103,7 @@
         ],
         "specials": [
           {
-            "name": "Loner",
+            "name": "Loner (Wildkin)",
             "type": "Warband - Sea Ghosts",
             "description": "Wildkin are immune to All Alone tests and can never be the warband's leader."
           },
@@ -117131,8 +117130,7 @@
           },
           {
             "name": "Loner",
-            "type": "Warband - Vampire Hunters of Sylvania",
-            "description": "The Priest of Morr never takes All Alone tests."
+            "type": "Trait"
           },
           {
             "name": "Funerary Rites",
