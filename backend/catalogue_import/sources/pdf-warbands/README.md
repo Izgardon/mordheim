@@ -333,10 +333,18 @@ again.
   apart, confirmed.
 - **Where the rules really differ, separate them: the earliest keeps the true name and the later ones take their
   setting or warband in brackets.** Poison Wind Globe (Athel Loren) and Sea Dragon Cloak (Druchii) are items of
-  their own, the cloak's brackets taken from the earliest setting of the warbands that buy it. The Altdorf
-  Quarterstaff is "just a mace", so it is our Club, Mace or Hammer under the page's name; the House Guard's pike is
-  our one Pike; Khemri's Strength 1 Tufenk stays out, ours Strength 2; and our Magic Carpet takes the Khemri page's
-  fire rule.
+  their own. The Altdorf Quarterstaff is "just a mace", so it is our Club, Mace or Hammer under the page's name;
+  the House Guard's pike is our one Pike; Khemri's Strength 1 Tufenk stays out, ours Strength 2; and our Magic
+  Carpet takes the Khemri page's fire rule.
+- **A separated item serves only the warband whose page prints it.** The +2/+1 cloak that stacks with other armour
+  is the Druchii's alone, at their page's 30+2D6, Rare 10, because the page's "Corsairs may wear Sea Dragon Cloaks
+  though they are not Heroes" names that warband's own henchman unit, a Corsair, and not the Mousillon Dark Elf
+  Corsairs, whose own page prints the cloak at 50 gc with no rules. So the Corsairs buy our standard Sea Dragon
+  Cloak, 50+2D6 Rare 10 in the store and 50 on their list (William, 12 Nov 2026: "corsairs should point at the
+  other sea dragon cloak i think which is 50+2d6 in store, and starting price of just 50 on their list"), which
+  changes their cloak's rules as well as its price: they take our flat 4+ save against missiles and 5+ in close
+  combat rather than the Druchii's +2 and +1. A warband a separated item was pointed at on a guess goes back to
+  ours, it does not keep a row of its own.
 - **One of our own numbers may be the wrong one,** and then the book for its warband wins: the Nehekharan Javelins
   throw 12", Merneptah's Scroll of the Scarab Song reaches 12" and does 1D6 hits, and the Assassin Squad's Master
   of Poisons brews D3-1 portions.
