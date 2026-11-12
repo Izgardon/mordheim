@@ -15523,12 +15523,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Elven blade imbued with magic; details in rules.",
+        "summary": "An Elven blade that cannot be parried.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Blade of Leaping Gold",
+        "summary": "",
+        "text": "A Hero wielding the blade has +1 Attack. No parries may be made against it.",
         "tables": []
       }
     ],
@@ -15568,12 +15574,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Ogre weapon; heavy striking fist weapon.",
+        "summary": "Massive ogre gauntlets, worn and fought with as a close combat weapon.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Greedy Fist",
+        "summary": "",
+        "text": "The wearer has +1 Strength and -1 Toughness. When he charges, move him 1\" further forward than normal.",
         "tables": []
       }
     ],
@@ -15886,12 +15898,21 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Master-crafted throwing knife; critical hits on 5+ (weighted).",
+        "summary": "A master-crafted throwing knife.",
         "text": "",
+        "tables": []
+      },
+      {
+        "rule": "thrown-weapon"
+      },
+      {
+        "name": "Weighted",
+        "summary": "",
+        "text": "This knife scores a critical hit on a 5+.",
         "tables": []
       }
     ],
@@ -15926,13 +15947,16 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Fine throwing axe; Strength +1 when thrown.",
+        "summary": "A fine throwing axe taken from a huntsman.",
         "text": "",
         "tables": []
+      },
+      {
+        "rule": "thrown-weapon"
       }
     ],
     "availabilities": [
@@ -16301,15 +16325,21 @@
     "flavour": "",
     "range": "",
     "strength": "",
-    "save": "+? (see rules)",
+    "save": "6+",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Cloak made from beast or wyvern hide; provides protection.",
+        "summary": "A cloak of beast or wyvern hide.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Hide Cloak",
+        "summary": "",
+        "text": "The cloak gives a saving throw of 6+ which cannot be modified by the attacker's Strength, and can be combined with other armour saves.",
         "tables": []
       }
     ],
@@ -16341,15 +16371,21 @@
     "flavour": "",
     "range": "",
     "strength": "",
-    "save": "+? (see rules)",
+    "save": "6+",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Holy mail hauberk; protective blessings.",
+        "summary": "A mail hauberk blessed by priests.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Blessed Hauberk",
+        "summary": "",
+        "text": "The hauberk may be worn instead of light armour, for a saving throw of 6+. The wearer also has +1 Movement, +1 Toughness and +1 Wound.",
         "tables": []
       }
     ],
@@ -16448,15 +16484,21 @@
     "flavour": "",
     "range": "",
     "strength": "",
-    "save": "+? (see rules)",
+    "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Ogre skull cap helmet.",
+        "summary": "An ogre's metal skull cap.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Skull Cap",
+        "summary": "",
+        "text": "The wearer has +1 Toughness.",
         "tables": []
       }
     ],
@@ -16493,15 +16535,21 @@
     "flavour": "",
     "range": "",
     "strength": "",
-    "save": "+? (see rules)",
+    "save": "6+",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Unusual cloth with metal-like properties.",
+        "summary": "A shirt enchanted to be as strong as steel.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Steel Cloth",
+        "summary": "",
+        "text": "Worn under other armour the shirt adds a further +1 to the armour save; worn on its own it gives a saving throw of 6+. It is destroyed if the wearer is ever set on fire.",
         "tables": []
       }
     ],
@@ -16509,8 +16557,8 @@
       {
         "label": "",
         "cost": 75,
-        "dice": null,
-        "dice_multiplier": null,
+        "dice": 1,
+        "dice_multiplier": 10,
         "cost_note": "",
         "rarity": 13,
         "for_everyone": true,
@@ -16579,12 +16627,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Illicit drug/compound; details in rules.",
+        "summary": "A warpstone-derived narcotic.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Black Dust",
+        "summary": "",
+        "text": "A Hero using Black Dust may re-roll a failed check on the Warp-touch chart. Skaven may not use it. After the battle roll 2D6. On 2-3 he is addicted: you must buy him a new dose before every battle from now on, he gains no experience in the next battle if you do not, and he must search for Black Dust in the post-battle sequence. On 12 he has overdosed and gains a mutation, rolled once on the random mutation table. Once a Hero has found a supplier the warband locates the next supply at Rare 9; on a rarity roll of 2 that supplier is lost.",
         "tables": []
       }
     ],
@@ -16619,12 +16673,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Highly dangerous narcotic/warp-tainted dust; details in rules.",
+        "summary": "A herbal powder snorted by the berserkers of Norsca.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Daemon Dust",
+        "summary": "",
+        "text": "A warrior taking Daemon Dust has +1 Strength and +1 Initiative and is subject to frenzy. After the battle roll 2D6. On 2-3 he does nothing in the post-battle sequence, missing the exploration phase, and rolls on the Serious Injury chart. On 12 his Strength is increased by +1 permanently. Once a Hero has found a supplier the warband locates the next supply at Rare 10; on a rarity roll of 2 that supplier is lost.",
         "tables": []
       }
     ],
@@ -16659,12 +16719,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Rare narcotic; details in rules.",
+        "summary": "A drug drawn from the mud of the Cursed Marshes.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Slaaneshi's Dream",
+        "summary": "",
+        "text": "A warrior taking Slaaneshi's Dream is immune to psychology and immune to the effects of poison: resolve poison attacks as normal, but apply their outcome after the battle. After the battle roll 2D6. On 2-3 he loses 1 point of Leadership permanently. On 12 he is immune to psychology permanently. Once a Hero has found a supplier the warband locates the next supply at Rare 8; on a rarity roll of 2 that supplier is lost.",
         "tables": []
       }
     ],
@@ -16779,12 +16845,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Religious circlet for Warrior-Priests of Sigmar.",
+        "summary": "An iron circlet worn by a Warrior-Priest of Sigmar.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Burnished Circlet",
+        "summary": "",
+        "text": "The wearer has +1 Strength and +2 Wounds.",
         "tables": []
       }
     ],
@@ -16945,12 +17017,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Special witch hunter ammunition; details in rules.",
+        "summary": "Ammunition loaded with phosphorus powder that ignites when fired.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Flame Bullets",
+        "summary": "",
+        "text": "A shot fired with a flame bullet wounds for 2 Wounds instead of 1. Roll a D6 for each hit: on a 4+ the target is set on fire. A burning model must score 4+ in the Recovery phase or suffer a Strength 4 hit, and can do nothing but move while it burns. Another warrior of the same warband may put the flames out by moving into base contact and scoring 4+ in the Recovery phase.",
         "tables": []
       }
     ],
@@ -17089,12 +17167,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Ogre-only item; details in rules.",
+        "summary": "A Chaos Spawn's heart, eaten whole.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Hellheart",
+        "summary": "",
+        "text": "Once eaten, every enemy spellcaster in line of sight suffers D3 wounds. No armour saves are allowed, but magical saves may be taken.",
         "tables": []
       }
     ],
@@ -17134,12 +17218,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Magical gem of cold; details in rules.",
+        "summary": "A blue gem with a constant aura of cold about it.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Ice Gem",
+        "summary": "",
+        "text": "In the shooting phase the gem may be pointed at an enemy within 8\", who takes D3 Strength 1 hits. The model wearing it can never be set on fire, but takes damage from fire sources as normal.",
         "tables": []
       }
     ],
@@ -17174,12 +17264,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Fence's iron strongbox with hidden compartment; can conceal one item (including wyrdstone item).",
+        "summary": "A fence's iron strongbox with a hidden compartment.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Iron Strongbox",
+        "summary": "",
+        "text": "One item may be concealed in the strongbox. A wyrdstone item sealed in it does not inflict its hazardous side effects on the bearer. The strongbox never leaves the warband's possession, but cannot be used unless the warband includes a Fence, and two models are needed to move it.",
         "tables": []
       }
     ],
@@ -17214,12 +17310,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Expensive jewellery; details in rules.",
+        "summary": "Jewellery rich enough that merchants flock to its wearer.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Jewel Necklace",
+        "summary": "",
+        "text": "A Hero wearing the necklace gives +1 to the rolls for locating rare items.",
         "tables": []
       }
     ],
@@ -17254,12 +17356,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Musical instrument; details in rules.",
+        "summary": "An enchanted instrument handcrafted in Ulthuan.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Songs",
+        "summary": "",
+        "text": "While the Minstrels group carries enchanted instruments the warband may include one more warrior than its maximum. In the shooting phase a Minstrel, or the group of them together, may play; he may not play while running or charging, nor while in close combat. Roll a D6 for the song attempted, and lower its difficulty by 1 for each additional Minstrel playing. 1, Lay of Bravery (difficulty 7): friendly models within 6\" automatically pass all Leadership tests until a new song is played. 2, Marching Medley (8): friendly models within 6\" immediately move an extra D3\", counting as charging if moved into base contact; this move is not running and does not stop them shooting. 3, Litany of Deeds (9): friendly models within 6\" re-roll failed rolls to wound in the next round of combat. 4, Hymn of Glory (9): friendly models within 6\" re-roll failed rolls to hit in the next round of combat. 5, Call to Arms (9): friendly models within 6\" have +1 Attack in the next round of combat. 6, Ballad of Woe (10): enemy models within 6\" must pass a Leadership test or lose 1 Attack, down to a minimum of one attack in all, counting attacks from extra weapons and special attacks; models immune to psychology ignore the song.",
         "tables": []
       }
     ],
@@ -17294,12 +17402,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Rare magical acorn; details in rules.",
+        "summary": "A golden acorn woven with an enchantment of premonition.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Magic Acorn",
+        "summary": "",
+        "text": "In the first round of every close combat the Hero automatically hits with one attack that was rolled as a miss.",
         "tables": []
       }
     ],
@@ -17414,12 +17528,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Elf Ranger item; details in rules.",
+        "summary": "An Elven quiver whose arrows strike with shattering force.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Quiver of Shattering",
+        "summary": "",
+        "text": "Deduct 2 from the Toughness of an enemy hit by the Hero carrying the quiver before rolling to wound.",
         "tables": []
       }
     ],
@@ -17534,12 +17654,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Cloak used by thieves; details in rules.",
+        "summary": "A cloak that blends its wearer into his surroundings.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Thief's Cloak",
+        "summary": "",
+        "text": "The distance needed to spot the wearer while he is hidden is doubled.",
         "tables": []
       }
     ],
@@ -17574,12 +17700,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Human priest-only circlet; details in rules.",
+        "summary": "A plain old band of metal worn on the head.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Worn Circlet",
+        "summary": "",
+        "text": "The priest wearing it has +1 Wound.",
         "tables": []
       }
     ],
@@ -18059,12 +18191,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Explosive rigged cart/ship upgrade; can be detonated to destroy itself and hit all onboard with D3 S10 hits.",
+        "summary": "A vehicle rigged to be blown up with everyone aboard.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Grunweld's Last Resort",
+        "summary": "",
+        "text": "The vehicle is rigged with a hidden explosive only the warband knows how to set off. At any time in your turn, if at least one of your warband is aboard, they may trigger it: every model on board suffers D3 Strength 10 hits and the vehicle is destroyed and cannot be salvaged. You may instead arm it to blow on impact, declared at least a turn before the collision; if you do, any missile hit scored on a 6 sets it off early.",
         "tables": []
       }
     ],
@@ -18099,12 +18237,18 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Boat propulsion upgrade; adds D3+2\" movement; cannot combine with other propulsion modes.",
+        "summary": "A steam propulsion fitted to a boat or a cart.",
         "text": "",
+        "tables": []
+      },
+      {
+        "name": "Steam Engine",
+        "summary": "",
+        "text": "The engine is a propulsion of its own, adding D3+2\" to the vehicle's base speed, and replaces the need for any draft creature. On a boat it cannot be combined with any other propulsion, and cannot be fitted to a raft or a rowboat; a riverboat with one needs 1 fewer crew to be manned, and a barge 2 fewer. Full Steam Ahead!: the vehicle may burst forward in a straight line. Roll a D6: on a 6 roll for an engine malfunction, otherwise add the score to its total speed. A warrior with the Pilot skill (the Driver skill on a cart) may re-roll the malfunction, and must accept the new result. A boat with a steam engine rolls for a malfunction whenever it would roll on the Propulsion chart; a cart's engine is hit on a Draft Creature result, has Toughness 6, and rolls for a malfunction if wounded. Engine malfunction, D6: 1, the engine explodes, dealing D6 wounds to the hull, a Strength 5 flaming hit to every model within 4\" of the bow, and setting the vehicle on fire (on a boat every model aboard must test for Man Overboard); 2, the hull suffers 1 wound; 3-4, the vehicle cannot move next turn and models within 4\" of the bow suffer D3 Strength 2 flaming hits; 5, the vehicle cannot move next turn; 6, it moves 2D3\" this turn but cannot turn.",
         "tables": []
       }
     ],

@@ -7,9 +7,7 @@
     "description": "Large wooden/metal club used by Albion warriors; counts as a two-handed melee weapon.",
     "strength": "As user +?",
     "range": "Close Combat",
-    "properties": [
-      213
-    ],
+    "properties": [213],
     "availabilities": [
       {
         "cost": 25,
@@ -26,11 +24,7 @@
     "description": "Celestial iron fan used by Battle Monks; grants +1 Initiative and can parry missiles.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [
-      144,
-      237,
-      238
-    ],
+    "properties": [144, 237, 238],
     "availabilities": [
       {
         "cost": 125,
@@ -44,34 +38,36 @@
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "2b",
-    "description": "Elven blade imbued with magic; details in rules.",
+    "description": "An Elven blade that cannot be parried.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [],
+    "properties": [255],
     "availabilities": [
       {
         "cost": 200,
         "rarity": 13,
         "unique_to": "Elves only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Greedy Fist",
     "type": "Weapon",
     "subtype": "Melee",
     "grade": "2b",
-    "description": "Ogre weapon; heavy striking fist weapon.",
+    "description": "Massive ogre gauntlets, worn and fought with as a close combat weapon.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [],
+    "properties": [254],
     "availabilities": [
       {
         "cost": 65,
         "rarity": 11,
         "unique_to": "Ogres only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Kraken-tooth Sword",
@@ -81,11 +77,7 @@
     "description": "Saw-toothed blade made from kraken teeth; ignores armour saves and can cause extra wound on criticals.",
     "strength": "As user",
     "range": "Close Combat",
-    "properties": [
-      144,
-      233,
-      234
-    ],
+    "properties": [144, 233, 234],
     "availabilities": [
       {
         "cost": 165,
@@ -118,11 +110,7 @@
     "description": "Mechanical prosthetic weapon-hand; +1 Strength, parry, extra attack; replaces a lost hand/arm.",
     "strength": "As user +1",
     "range": "Close Combat",
-    "properties": [
-      144,
-      235,
-      236
-    ],
+    "properties": [144, 235, 236],
     "availabilities": [
       {
         "cost": 85,
@@ -184,32 +172,34 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "2b",
-    "description": "Master-crafted throwing knife; critical hits on 5+ (weighted).",
+    "description": "A master-crafted throwing knife.",
     "strength": "As user",
     "range": "8\"",
-    "properties": [],
+    "properties": [205, 265],
     "availabilities": [
       {
         "cost": 45,
         "rarity": 11
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Hunter's Throwing Axe",
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "2a",
-    "description": "Fine throwing axe; Strength +1 when thrown.",
+    "description": "A fine throwing axe taken from a huntsman.",
     "strength": "As user +1",
     "range": "6\"",
-    "properties": [],
+    "properties": [205],
     "availabilities": [
       {
         "cost": 30,
         "rarity": 10
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Nipponese Skyrocket",
@@ -254,12 +244,7 @@
     "description": "Harpoon launcher; can harpoon targets and reel them in.",
     "strength": "Varies",
     "range": "Varies",
-    "properties": [
-      130,
-      156,
-      168,
-      239
-    ],
+    "properties": [130, 156, 168, 239],
     "availabilities": [
       {
         "cost": 50,
@@ -275,10 +260,7 @@
     "description": "Large bolt thrower; S5, 36\" range, multiple wounds (D2), move or fire, prepare shot.",
     "strength": "5",
     "range": "36\"",
-    "properties": [
-      130,
-      156
-    ],
+    "properties": [130, 156],
     "availabilities": [
       {
         "cost": 85,
@@ -330,18 +312,19 @@
     "subtype": "Cloak",
     "grade": "2a",
     "single_use": false,
-    "description": "Cloak made from beast or wyvern hide; provides protection.",
+    "description": "A cloak of beast or wyvern hide.",
     "strength": null,
     "range": null,
-    "save": "+? (see rules)",
+    "save": "6+",
     "statblock": null,
-    "properties": [],
+    "properties": [274],
     "availabilities": [
       {
         "cost": 25,
         "rarity": 7
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Blessed Hauberk",
@@ -349,19 +332,20 @@
     "subtype": "Body Armour",
     "grade": "2b",
     "single_use": false,
-    "description": "Holy mail hauberk; protective blessings.",
+    "description": "A mail hauberk blessed by priests.",
     "strength": null,
     "range": null,
-    "save": "+? (see rules)",
+    "save": "6+",
     "statblock": null,
-    "properties": [],
+    "properties": [256],
     "availabilities": [
       {
         "cost": 165,
         "rarity": 12,
         "unique_to": "Witch Hunters only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "The Oaken Armour",
@@ -390,19 +374,20 @@
     "subtype": "Helmet",
     "grade": "2a",
     "single_use": false,
-    "description": "Ogre skull cap helmet.",
+    "description": "An ogre's metal skull cap.",
     "strength": null,
     "range": null,
-    "save": "+? (see rules)",
+    "save": "",
     "statblock": null,
-    "properties": [],
+    "properties": [257],
     "availabilities": [
       {
         "cost": 70,
         "rarity": 11,
         "unique_to": "Ogres only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Steel Cloth",
@@ -410,18 +395,20 @@
     "subtype": "Body Armour",
     "grade": "2b",
     "single_use": false,
-    "description": "Unusual cloth with metal-like properties.",
+    "description": "A shirt enchanted to be as strong as steel.",
     "strength": null,
     "range": null,
-    "save": "+? (see rules)",
+    "save": "6+",
     "statblock": null,
-    "properties": [],
+    "properties": [263],
     "availabilities": [
       {
         "cost": 75,
-        "rarity": 13
+        "rarity": 13,
+        "variable_cost": "+D6x10 gc"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Wolf Cloak/Norse Furs",
@@ -448,10 +435,10 @@
     "type": "Miscellaneous",
     "subtype": "Drug/Poison",
     "grade": "2b",
-    "description": "Illicit drug/compound; details in rules.",
+    "description": "A warpstone-derived narcotic.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [266],
     "single_use": true,
     "availabilities": [
       {
@@ -459,17 +446,18 @@
         "rarity": 11,
         "variable_cost": "+D6x10 gc"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Daemon Dust",
     "type": "Miscellaneous",
     "subtype": "Drug/Poison",
     "grade": "2b",
-    "description": "Highly dangerous narcotic/warp-tainted dust; details in rules.",
+    "description": "A herbal powder snorted by the berserkers of Norsca.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [267],
     "single_use": true,
     "availabilities": [
       {
@@ -477,17 +465,18 @@
         "rarity": 12,
         "variable_cost": "+D6 gc"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Slaaneshi's Dream",
     "type": "Miscellaneous",
     "subtype": "Drug/Poison",
     "grade": "2b",
-    "description": "Rare narcotic; details in rules.",
+    "description": "A drug drawn from the mud of the Cursed Marshes.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [268],
     "single_use": true,
     "availabilities": [
       {
@@ -495,7 +484,8 @@
         "rarity": 10,
         "variable_cost": "+D6 gc"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Albion Cloth",
@@ -537,10 +527,10 @@
     "type": "Miscellaneous",
     "subtype": "Wondrous Item",
     "grade": "2b",
-    "description": "Religious circlet for Warrior-Priests of Sigmar.",
+    "description": "An iron circlet worn by a Warrior-Priest of Sigmar.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [258],
     "single_use": false,
     "availabilities": [
       {
@@ -548,7 +538,8 @@
         "rarity": 12,
         "unique_to": "Warrior-Priests of Sigmar only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Dispel Scroll",
@@ -610,10 +601,10 @@
     "type": "Miscellaneous",
     "subtype": "Ammunition",
     "grade": "2b",
-    "description": "Special witch hunter ammunition; details in rules.",
+    "description": "Ammunition loaded with phosphorus powder that ignites when fired.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [261],
     "single_use": false,
     "availabilities": [
       {
@@ -621,7 +612,8 @@
         "rarity": 12,
         "unique_to": "Witch Hunters only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Fortune Ring",
@@ -664,28 +656,29 @@
     "type": "Miscellaneous",
     "subtype": "Wondrous Item",
     "grade": "2b",
-    "description": "Ogre-only item; details in rules.",
+    "description": "A Chaos Spawn's heart, eaten whole.",
     "strength": null,
     "range": null,
-    "properties": [],
-    "single_use": false,
+    "properties": [262],
+    "single_use": true,
     "availabilities": [
       {
         "cost": 100,
         "rarity": 12,
         "unique_to": "Ogres only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Ice Gem",
     "type": "Miscellaneous",
     "subtype": "Wondrous Item",
     "grade": "2b",
-    "description": "Magical gem of cold; details in rules.",
+    "description": "A blue gem with a constant aura of cold about it.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [264],
     "single_use": false,
     "availabilities": [
       {
@@ -693,17 +686,18 @@
         "rarity": 13,
         "variable_cost": "+D6x10 gc"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Iron Strongbox",
     "type": "Miscellaneous",
     "subtype": "Equipment",
     "grade": "1b",
-    "description": "Fence's iron strongbox with hidden compartment; can conceal one item (including wyrdstone item).",
+    "description": "A fence's iron strongbox with a hidden compartment.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [270],
     "single_use": false,
     "availabilities": [
       {
@@ -711,17 +705,18 @@
         "rarity": 10,
         "unique_to": "Requires warband includes a Fence"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Jewel Necklace",
     "type": "Miscellaneous",
     "subtype": "Wondrous Item",
     "grade": "2b",
-    "description": "Expensive jewellery; details in rules.",
+    "description": "Jewellery rich enough that merchants flock to its wearer.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [273],
     "single_use": false,
     "availabilities": [
       {
@@ -729,41 +724,44 @@
         "rarity": 13,
         "variable_cost": "+6D6 gc"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Lyre",
     "type": "Miscellaneous",
     "subtype": "Equipment",
     "grade": "1a",
-    "description": "Musical instrument; details in rules.",
+    "description": "An enchanted instrument handcrafted in Ulthuan.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [269],
     "single_use": false,
     "availabilities": [
       {
         "cost": 15,
         "rarity": 8
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Magic Acorn",
     "type": "Miscellaneous",
     "subtype": "Wondrous Item",
     "grade": "2b",
-    "description": "Rare magical acorn; details in rules.",
+    "description": "A golden acorn woven with an enchantment of premonition.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [272],
     "single_use": false,
     "availabilities": [
       {
         "cost": 250,
         "rarity": 15
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Medicine Chest",
@@ -806,10 +804,10 @@
     "type": "Miscellaneous",
     "subtype": "Arcane Item",
     "grade": "2b",
-    "description": "Elf Ranger item; details in rules.",
+    "description": "An Elven quiver whose arrows strike with shattering force.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [260],
     "single_use": false,
     "availabilities": [
       {
@@ -817,7 +815,8 @@
         "rarity": 12,
         "unique_to": "Elf Rangers only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Skinkskin Boots",
@@ -860,27 +859,28 @@
     "type": "Miscellaneous",
     "subtype": "Equipment",
     "grade": "1b",
-    "description": "Cloak used by thieves; details in rules.",
+    "description": "A cloak that blends its wearer into his surroundings.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [271],
     "single_use": false,
     "availabilities": [
       {
         "cost": 15,
         "rarity": 9
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Worn Circlet",
     "type": "Miscellaneous",
     "subtype": "Wondrous Item",
     "grade": "2b",
-    "description": "Human priest-only circlet; details in rules.",
+    "description": "A plain old band of metal worn on the head.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [259],
     "single_use": false,
     "availabilities": [
       {
@@ -888,7 +888,8 @@
         "rarity": 12,
         "unique_to": "Human Priests only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Stromfels Heart",
@@ -898,7 +899,20 @@
     "description": "Cursed trinket of Stromfels; transforms wearer into Harbinger under conditions.",
     "strength": null,
     "range": null,
-    "statblock": [{"profile": "Harbinger", "m": "6", "ws": "5", "bs": "0", "s": "5", "t": "6", "w": "4", "i": "4", "a": "4", "ld": "8"}],
+    "statblock": [
+      {
+        "profile": "Harbinger",
+        "m": "6",
+        "ws": "5",
+        "bs": "0",
+        "s": "5",
+        "t": "6",
+        "w": "4",
+        "i": "4",
+        "a": "4",
+        "ld": "8"
+      }
+    ],
     "properties": [245],
     "needs_rules": false,
     "single_use": false,
@@ -1071,27 +1085,28 @@
     "type": "Miscellaneous",
     "subtype": "Vehicle Upgrade",
     "grade": "2b",
-    "description": "Explosive rigged cart/ship upgrade; can be detonated to destroy itself and hit all onboard with D3 S10 hits.",
+    "description": "A vehicle rigged to be blown up with everyone aboard.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [276],
     "single_use": true,
     "availabilities": [
       {
         "cost": 250,
         "rarity": 12
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Steam Engine",
     "type": "Miscellaneous",
     "subtype": "Boat Part",
     "grade": "2b",
-    "description": "Boat propulsion upgrade; adds D3+2\" movement; cannot combine with other propulsion modes.",
+    "description": "A steam propulsion fitted to a boat or a cart.",
     "strength": null,
     "range": null,
-    "properties": [],
+    "properties": [275],
     "single_use": false,
     "availabilities": [
       {
@@ -1099,6 +1114,7 @@
         "rarity": 13,
         "variable_cost": "1/3 of the boat price"
       }
-    ]
+    ],
+    "needs_rules": false
   }
 ]

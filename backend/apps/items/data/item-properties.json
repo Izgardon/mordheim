@@ -1510,5 +1510,143 @@
     "name": "Save",
     "description": "A warrior wearing a Gas Mask is affected by poison wind only on a D6 roll of 6+.",
     "type": "Miscellaneous"
+  },
+  {
+    "id": 254,
+    "name": "Greedy Fist",
+    "description": "The wearer has +1 Strength and -1 Toughness. When he charges, move him 1\" further forward than normal.",
+    "type": "Weapon"
+  },
+  {
+    "id": 255,
+    "name": "Blade of Leaping Gold",
+    "description": "A Hero wielding the blade has +1 Attack. No parries may be made against it.",
+    "type": "Weapon"
+  },
+  {
+    "id": 256,
+    "name": "Blessed Hauberk",
+    "description": "The hauberk may be worn instead of light armour, for a saving throw of 6+. The wearer also has +1 Movement, +1 Toughness and +1 Wound.",
+    "type": "Armour"
+  },
+  {
+    "id": 257,
+    "name": "Skull Cap",
+    "description": "The wearer has +1 Toughness.",
+    "type": "Armour"
+  },
+  {
+    "id": 258,
+    "name": "Burnished Circlet",
+    "description": "The wearer has +1 Strength and +2 Wounds.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 259,
+    "name": "Worn Circlet",
+    "description": "The priest wearing it has +1 Wound.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 260,
+    "name": "Quiver of Shattering",
+    "description": "Deduct 2 from the Toughness of an enemy hit by the Hero carrying the quiver before rolling to wound.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 261,
+    "name": "Flame Bullets",
+    "description": "A shot fired with a flame bullet wounds for 2 Wounds instead of 1. Roll a D6 for each hit: on a 4+ the target is set on fire. A burning model must score 4+ in the Recovery phase or suffer a Strength 4 hit, and can do nothing but move while it burns. Another warrior of the same warband may put the flames out by moving into base contact and scoring 4+ in the Recovery phase.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 262,
+    "name": "Hellheart",
+    "description": "Once eaten, every enemy spellcaster in line of sight suffers D3 wounds. No armour saves are allowed, but magical saves may be taken.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 263,
+    "name": "Steel Cloth",
+    "description": "Worn under other armour the shirt adds a further +1 to the armour save; worn on its own it gives a saving throw of 6+. It is destroyed if the wearer is ever set on fire.",
+    "type": "Armour"
+  },
+  {
+    "id": 264,
+    "name": "Ice Gem",
+    "description": "In the shooting phase the gem may be pointed at an enemy within 8\", who takes D3 Strength 1 hits. The model wearing it can never be set on fire, but takes damage from fire sources as normal.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 265,
+    "name": "Weighted",
+    "description": "This knife scores a critical hit on a 5+.",
+    "type": "Weapon"
+  },
+  {
+    "id": 266,
+    "name": "Black Dust",
+    "description": "A Hero using Black Dust may re-roll a failed check on the Warp-touch chart. Skaven may not use it. After the battle roll 2D6. On 2-3 he is addicted: you must buy him a new dose before every battle from now on, he gains no experience in the next battle if you do not, and he must search for Black Dust in the post-battle sequence. On 12 he has overdosed and gains a mutation, rolled once on the random mutation table. Once a Hero has found a supplier the warband locates the next supply at Rare 9; on a rarity roll of 2 that supplier is lost.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 267,
+    "name": "Daemon Dust",
+    "description": "A warrior taking Daemon Dust has +1 Strength and +1 Initiative and is subject to frenzy. After the battle roll 2D6. On 2-3 he does nothing in the post-battle sequence, missing the exploration phase, and rolls on the Serious Injury chart. On 12 his Strength is increased by +1 permanently. Once a Hero has found a supplier the warband locates the next supply at Rare 10; on a rarity roll of 2 that supplier is lost.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 268,
+    "name": "Slaaneshi's Dream",
+    "description": "A warrior taking Slaaneshi's Dream is immune to psychology and immune to the effects of poison: resolve poison attacks as normal, but apply their outcome after the battle. After the battle roll 2D6. On 2-3 he loses 1 point of Leadership permanently. On 12 he is immune to psychology permanently. Once a Hero has found a supplier the warband locates the next supply at Rare 8; on a rarity roll of 2 that supplier is lost.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 269,
+    "name": "Songs",
+    "description": "While the Minstrels group carries enchanted instruments the warband may include one more warrior than its maximum. In the shooting phase a Minstrel, or the group of them together, may play; he may not play while running or charging, nor while in close combat. Roll a D6 for the song attempted, and lower its difficulty by 1 for each additional Minstrel playing. 1, Lay of Bravery (difficulty 7): friendly models within 6\" automatically pass all Leadership tests until a new song is played. 2, Marching Medley (8): friendly models within 6\" immediately move an extra D3\", counting as charging if moved into base contact; this move is not running and does not stop them shooting. 3, Litany of Deeds (9): friendly models within 6\" re-roll failed rolls to wound in the next round of combat. 4, Hymn of Glory (9): friendly models within 6\" re-roll failed rolls to hit in the next round of combat. 5, Call to Arms (9): friendly models within 6\" have +1 Attack in the next round of combat. 6, Ballad of Woe (10): enemy models within 6\" must pass a Leadership test or lose 1 Attack, down to a minimum of one attack in all, counting attacks from extra weapons and special attacks; models immune to psychology ignore the song.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 270,
+    "name": "Iron Strongbox",
+    "description": "One item may be concealed in the strongbox. A wyrdstone item sealed in it does not inflict its hazardous side effects on the bearer. The strongbox never leaves the warband's possession, but cannot be used unless the warband includes a Fence, and two models are needed to move it.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 271,
+    "name": "Thief's Cloak",
+    "description": "The distance needed to spot the wearer while he is hidden is doubled.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 272,
+    "name": "Magic Acorn",
+    "description": "In the first round of every close combat the Hero automatically hits with one attack that was rolled as a miss.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 273,
+    "name": "Jewel Necklace",
+    "description": "A Hero wearing the necklace gives +1 to the rolls for locating rare items.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 274,
+    "name": "Hide Cloak",
+    "description": "The cloak gives a saving throw of 6+ which cannot be modified by the attacker's Strength, and can be combined with other armour saves.",
+    "type": "Armour"
+  },
+  {
+    "id": 275,
+    "name": "Steam Engine",
+    "description": "The engine is a propulsion of its own, adding D3+2\" to the vehicle's base speed, and replaces the need for any draft creature. On a boat it cannot be combined with any other propulsion, and cannot be fitted to a raft or a rowboat; a riverboat with one needs 1 fewer crew to be manned, and a barge 2 fewer. Full Steam Ahead!: the vehicle may burst forward in a straight line. Roll a D6: on a 6 roll for an engine malfunction, otherwise add the score to its total speed. A warrior with the Pilot skill (the Driver skill on a cart) may re-roll the malfunction, and must accept the new result. A boat with a steam engine rolls for a malfunction whenever it would roll on the Propulsion chart; a cart's engine is hit on a Draft Creature result, has Toughness 6, and rolls for a malfunction if wounded. Engine malfunction, D6: 1, the engine explodes, dealing D6 wounds to the hull, a Strength 5 flaming hit to every model within 4\" of the bow, and setting the vehicle on fire (on a boat every model aboard must test for Man Overboard); 2, the hull suffers 1 wound; 3-4, the vehicle cannot move next turn and models within 4\" of the bow suffer D3 Strength 2 flaming hits; 5, the vehicle cannot move next turn; 6, it moves 2D3\" this turn but cannot turn.",
+    "type": "Miscellaneous"
+  },
+  {
+    "id": 276,
+    "name": "Grunweld's Last Resort",
+    "description": "The vehicle is rigged with a hidden explosive only the warband knows how to set off. At any time in your turn, if at least one of your warband is aboard, they may trigger it: every model on board suffers D3 Strength 10 hits and the vehicle is destroyed and cannot be salvaged. You may instead arm it to blow on impact, declared at least a turn before the collision; if you do, any missile hit scored on a 6 sets it off early.",
+    "type": "Miscellaneous"
   }
 ]
