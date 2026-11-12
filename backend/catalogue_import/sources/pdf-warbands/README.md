@@ -316,3 +316,34 @@ Each answers a question a batch raised; follow them without asking again.
 - **A fighter's buyable extra rules are template upgrades** (`mutations`: the Blood Dragon Vampire's bloodline
   abilities), **and a fighter who brings another model is a hired sword** (the Dark Elf Corsairs' Specialists);
   neither stays a warband rule (William, 11 Nov 2026).
+
+## William's review (12 Nov 2026)
+
+The answers to the questions the fifteen vetting documents left open. They are standing decisions: don't raise them
+again.
+
+- **Where only the name differs, merge into ours and drop the other name.** Blending into the Sands is our Sand
+  worm; No Pain and Numb are our Ignore Pain, whose "only with the Resilient Strength skill" condition goes with
+  them; Fear and Rotten Body (Mousillon) are our Fearsome; "Savage" is one of the shared Frenzy's names; the
+  Mazzalupo's Bearcloak is our Wolfcloak, reworded away from the wolf and from Middenheim; the Masters of Horror's
+  Repeater Pistol is ours, with a price row at its entry's 25+3D6; there is one Savage Fury ("keep as 1 add charm"),
+  reworded away from the Amazon, which the Albion Barbarians learn too; and the Mutiny in Marienburg Lamp of the
+  Djinn, which had no rules at all, folds into Khemri's. Expert Explorer, Silent Strike, Sword Master, Combat
+  Charge, Thinglash, Scourge, Leather Whip, Longsword, Kanabo, Cutlass, Great Scimitar and Scythe (Khemri) stay
+  apart, confirmed.
+- **Where the rules really differ, separate them: the earliest keeps the true name and the later ones take their
+  setting or warband in brackets.** Poison Wind Globe (Athel Loren) and Sea Dragon Cloak (Druchii) are items of
+  their own, the cloak's brackets taken from the earliest setting of the warbands that buy it. The Altdorf
+  Quarterstaff is "just a mace", so it is our Club, Mace or Hammer under the page's name; the House Guard's pike is
+  our one Pike; Khemri's Strength 1 Tufenk stays out, ours Strength 2; and our Magic Carpet takes the Khemri page's
+  fire rule.
+- **One of our own numbers may be the wrong one,** and then the book for its warband wins: the Nehekharan Javelins
+  throw 12", Merneptah's Scroll of the Scarab Song reaches 12" and does 1D6 hits, and the Assassin Squad's Master
+  of Poisons brews D3-1 portions.
+- **A Mutiny in Marienburg item of a Mordheim grade belongs to that Mordheim setting** (`grading.mim_setting`), and
+  the grades above the supplement's own 2b, which the system has no part for, are 2b: "2c should move to 2b", "put
+  all those 3a items in 2b MiM as well".
+- **A warband whose own list sells an item joins the price row that holds its price** rather than take one of its
+  own, where the price is the same (the Nehekhara Tomb Guards' three Khemri items, the Sea Ghosts' cloak).
+- **Spelling is aligned across the catalogue** ("fix all spelling and keep it aligned"), with a book's own wording
+  left alone and flagged (the Karak Azgal Savage Orcs' Wierdo and Spottaz).
