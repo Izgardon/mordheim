@@ -575,5 +575,41 @@
     "initiative": "6",
     "attacks": "3",
     "leadership": "7"
+  },
+  {
+    "name": "Hobgoblin (Hobgoblin Horde)",
+    "movement": "4",
+    "weapon_skill": "6",
+    "ballistic_skill": "6",
+    "strength": "4",
+    "toughness": "4",
+    "wounds": "3",
+    "initiative": "5",
+    "attacks": "4",
+    "leadership": "8"
+  },
+  {
+    "name": "Werewolf",
+    "movement": "6",
+    "weapon_skill": "6",
+    "ballistic_skill": "5",
+    "strength": "5",
+    "toughness": "5",
+    "wounds": "4",
+    "initiative": "7",
+    "attacks": "5",
+    "leadership": "9"
+  },
+  {
+    "name": "Wulfmaeg",
+    "movement": "9",
+    "weapon_skill": "6",
+    "ballistic_skill": "0",
+    "strength": "4",
+    "toughness": "4",
+    "wounds": "3",
+    "initiative": "6",
+    "attacks": "4",
+    "leadership": "8"
   }
 ]

@@ -796,6 +796,26 @@
     "description": "A warrior with this skill can scale even the highest wall or fence with ease. He can climb up or down a height equal to twice his normal Movement, and does not need to make Initiative tests when doing so."
   },
   {
+    "name": "Elusive",
+    "description": "If the model rolls 61 on the Serious Injury chart, the player may take a Leadership test on the model's own Leadership. If it passes, the roll counts as 41-55 instead."
+  },
+  {
+    "name": "Wilhelm Tellus",
+    "description": "The warrior may shoot into close combat. A failed roll to hit is a clean miss of every model in that combat, and nothing further is rolled."
+  },
+  {
+    "name": "Starstruck",
+    "description": "The warrior causes awe, which works exactly as fear, and is himself immune to fear and awe."
+  },
+  {
+    "name": "Rough and Tumble",
+    "description": "The warrior is immune to psychology."
+  },
+  {
+    "name": "Celebrity",
+    "description": "Opponents suffer -1 to hit the warrior."
+  },
+  {
     "name": "Master Inventor",
     "description": "The Engineer may now attempt D3+1 inventions in the post-game phase rather than 1. Expelled Engineer Only. (MiM)"
   },
@@ -1384,6 +1404,30 @@
     "description": "The Elf may re-roll any failed roll to wound."
   },
   {
+    "name": "Strict Leader",
+    "description": "Leader only. No Hobgoblin within 6\" of the leader rolls for Animosity, or within 12\" if the leader has Battle Tongue."
+  },
+  {
+    "name": "Sneaky (Hobgoblin Horde)",
+    "description": "May not be learned by a Sneaky Git, who has it already. When the warrior charges an opponent already engaged in combat he gains +1 Attack for the first round, and all his hand-to-hand attacks carry a -1 armour save modifier in that round. This applies only to attacks made with daggers of some kind: ordinary daggers, ithilmar daggers, Double-Dirks and the like."
+  },
+  {
+    "name": "Discretion",
+    "description": "The warrior may leave combat voluntarily. When he voluntarily escapes from combat he gains +1 Leadership for the test, and may re-roll a failed test once per turn, taking the second result."
+  },
+  {
+    "name": "Slaver (Hobgoblin Horde)",
+    "description": "At the start of any game, if one or more of the warband's Hobgoblins has this skill, you may deploy D3 Goblin warriors; it does not stack with a second warrior who has it. They carry daggers only, and count towards neither the warband's size nor its rating, casualties or rout tests. When every hero with this skill is taken out of action they break combat at once and are removed from the table. Their profile is M4 WS2 BS3 S3 T3 W1 I2 A1 Ld5."
+  },
+  {
+    "name": "Backstabber (Hobgoblin Horde)",
+    "description": "When the warrior tries to charge a model within 4\" that he cannot see and fails the Initiative test to detect it, he may re-roll that test once and must take the second result. If he does detect the hidden model and charges it, he surprises it and gains +1 to hit and +1 on any injury roll against it. The bonus lasts for the first round of combat only, and applies only to attacks on models he could not see."
+  },
+  {
+    "name": "Mystic Aura",
+    "description": "Maghu only. The Maghu causes fear."
+  },
+  {
     "name": "Ded Shooty (Hobgoblins)",
     "description": "The Hobgoblin ignores the penalties for moving when he shoots, from wolf back as well as on foot."
   },
@@ -1820,6 +1864,18 @@
     "description": "Instead of shooting, the Hero may grab a normal-sized model in base contact and hurl it. The model must be knocked down, stunned or willing. It is thrown up to BS+D6\" in a direction the Hero chooses. If it hits another warrior, both take one automatic hit at a Strength equal to the other model's Toughness. This counts as a charge unless the models are allied or from the same warband."
   },
   {
+    "name": "Taunt (The Innocents)",
+    "description": "In the shooting phase the warrior may taunt one enemy instead of shooting or casting, even while he is in hand-to-hand combat. The target is any enemy model in line of sight within 12\", and must pass a Leadership test at once or spend its next movement phase trying to charge the taunting warrior."
+  },
+  {
+    "name": "Humane",
+    "description": "Normal animals, among them warhorses, warhounds, rats, bats, snakes and spiders, ignore the warrior and will not attack him. One Stray Dog or Ratswarm also stops counting towards the warband's maximum size. The skill stacks, so six heroes with it keep six Stray Dogs or Ratswarms off the count."
+  },
+  {
+    "name": "Child of the Ruins",
+    "description": "The warrior adds +2 to the roll for finding an item while trading, and in the exploration phase the warband may re-roll one of its dice on the Exploration chart. The second result stands."
+  },
+  {
     "name": "Expert Explorer",
     "description": "The warrior may change one dice in the exploration phase by +1 or -1."
   },
@@ -1858,6 +1914,38 @@
   {
     "name": "Touch of Darkness",
     "description": "Vampire Hunter and Slayers only. The warrior ignores darkness penalties."
+  },
+  {
+    "name": "Hunter's Senses",
+    "description": "The werewolf may test to charge a model up to 6\" away and out of line of sight, instead of 4\"."
+  },
+  {
+    "name": "Complete Healing",
+    "description": "In each recovery phase the werewolf spends out of combat he rolls a D6 for every wound he has lost, and recovers it on a 4 or more. At the end of each post-game phase roll a D6: on a 6 he loses one lasting injury from the roster."
+  },
+  {
+    "name": "Terrible Claws",
+    "description": "Attacking with his claws, the werewolf causes a critical wound on a 5 or more instead of a 6. A 5 causes no critical where 5 is the lowest roll that wounds."
+  },
+  {
+    "name": "Bloodthirst",
+    "description": "The first time the werewolf causes an unsaved wounding hit he becomes frenzied."
+  },
+  {
+    "name": "Chilling Howl",
+    "description": "Instead of charging, and with no charge needed, the werewolf may take a Leadership test. If he passes, every enemy model on the table with no friendly model in line of sight must take an All Alone test as though engaged by several opponents, and breaks if it fails. It is a fear test too, so a model immune to fear is immune to it."
+  },
+  {
+    "name": "Bestial Savagery",
+    "description": "When the werewolf takes a model out of action, every enemy within 3\" must pass a fear test or break and flee as though it had failed an All Alone test. A model immune to fear is immune to this."
+  },
+  {
+    "name": "Pack Hunter",
+    "description": "The werewolf gains a bonus attack against a model that is also engaged by a member of his warband."
+  },
+  {
+    "name": "Heavy Pelt",
+    "description": "The werewolf gains +1 to his armour save, or a 6+ armour save if he had none."
   },
   {
     "name": "Infiltrate (Wood Elf Scouts)",
@@ -1902,6 +1990,30 @@
   {
     "name": "Seeker (Wood Elves of Athel Loren)",
     "description": "Only one Hero of the warband may have this skill. When rolling on the Exploration chart the Hero may change the result of one dice by +1 or -1."
+  },
+  {
+    "name": "Aspect of the Hawk",
+    "description": "Only a model with Quickshot may take this. He may shoot twice a turn with a bow, long bow, elf bow or gladewood bow and ignores the to-hit penalty for moving, though the normal limits on moving more than his base move still hold. It may not be combined with Quickshot to make more than two shots a turn."
+  },
+  {
+    "name": "Aspect of the Serpent",
+    "description": "If the model does not move, it scores a critical hit with a missile weapon against a target within short range on a roll of 5 or 6."
+  },
+  {
+    "name": "Aspect of the Panther",
+    "description": "While hidden, the warrior may shoot a missile weapon and stay hidden. If the target is neither stunned nor taken out of action by the attack it may take an Initiative test; if it passes, it sees the attacker, who is no longer hidden."
+  },
+  {
+    "name": "Aspect of the Fox",
+    "description": "The warrior is always placed on the battlefield after the opposing warband, anywhere on the table that is out of sight of it and more than 12\" from any enemy model. If both players have models with this skill or with Infiltration, roll a D6 for each and the lowest sets up first."
+  },
+  {
+    "name": "Aspect of the Stag",
+    "description": "Only one hero in a warband may take this, and a Spellweaver may not. He may now choose skills from the Strength list."
+  },
+  {
+    "name": "Aspect of the Rabbit",
+    "description": "The warrior avoids a melee or missile attack on a roll of 6. If he also has Step Aside or Dodge, that becomes a 4+ in the matching area."
   },
   {
     "name": "Staff Master",

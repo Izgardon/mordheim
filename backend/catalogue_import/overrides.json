@@ -405,6 +405,26 @@
     "Venom Ring": "Khemri's trading chart keeps it open to everyone; first-pass answers, 29 Oct 2026"
   },
   "item_own_rules": {
+    "Fire Bomb": {
+      "rules": [
+        {
+          "name": "",
+          "summary": "Thrown; D3 S4 hits with no armour save, S3 within 1\"",
+          "text": "A fire bomb is thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A hit causes D3 Strength 4 hits with no armour save, and every warrior within 1\", friend or foe, takes one Strength 3 hit with saves as normal. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower."
+        }
+      ],
+      "why": "The Innocents PDF (p8) prints the fire bomb's rules and ours had none"
+    },
+    "Smoke Bomb": {
+      "rules": [
+        {
+          "name": "",
+          "summary": "Thrown as an enemy charges; he strikes last unless he passes an Initiative test",
+          "text": "A smoke bomb may be thrown as an enemy charges the wielder, interrupting the charge. The charger is placed in base contact and must pass an Initiative test at once. If he fails he is blinded and strikes last in the hand-to-hand combat phase whatever his Initiative or his skills."
+        }
+      ],
+      "why": "The Innocents PDF (p8) prints the smoke bomb's rules and ours had none"
+    },
     "Rain Coat": {
       "rules": [
         {
@@ -509,6 +529,36 @@
   },
   "extra_skills": [
     {
+      "name": "Elusive",
+      "type": "Combat",
+      "description": "If the model rolls 61 on the Serious Injury chart, the player may take a Leadership test on the model's own Leadership. If it passes, the roll counts as 41-55 instead.",
+      "source": "the Tilean Thespian Troupe PDF (Broheim, Grade 3), New skills"
+    },
+    {
+      "name": "Wilhelm Tellus",
+      "type": "Shooting",
+      "description": "The warrior may shoot into close combat. A failed roll to hit is a clean miss of every model in that combat, and nothing further is rolled.",
+      "source": "the Tilean Thespian Troupe PDF (Broheim, Grade 3), New skills"
+    },
+    {
+      "name": "Starstruck",
+      "type": "Academic",
+      "description": "The warrior causes awe, which works exactly as fear, and is himself immune to fear and awe.",
+      "source": "the Tilean Thespian Troupe PDF (Broheim, Grade 3), New skills"
+    },
+    {
+      "name": "Rough and Tumble",
+      "type": "Strength",
+      "description": "The warrior is immune to psychology.",
+      "source": "the Tilean Thespian Troupe PDF (Broheim, Grade 3), New skills"
+    },
+    {
+      "name": "Celebrity",
+      "type": "Speed",
+      "description": "Opponents suffer -1 to hit the warrior.",
+      "source": "the Tilean Thespian Troupe PDF (Broheim, Grade 3), New skills"
+    },
+        {
       "name": "Master Inventor",
       "type": "Dwarf Exiled Engineers",
       "description": "The Engineer may now attempt D3+1 inventions in the post-game phase rather than 1. Expelled Engineer Only. (MiM)",
@@ -1018,7 +1068,12 @@
       "Wholesale (Merchant Caravans)": "border-town-burning",
       "Deal Breaker (Merchant Caravans)": "border-town-burning",
       "Connected (Merchant Caravans)": "border-town-burning",
-      "Axe Thrower (Shooting)": "sartosa"
+      "Axe Thrower (Shooting)": "sartosa",
+      "Elusive (Combat)": "grade-3",
+      "Wilhelm Tellus (Shooting)": "grade-3",
+      "Starstruck (Academic)": "grade-3",
+      "Rough and Tumble (Strength)": "grade-3",
+      "Celebrity (Speed)": "grade-3"
     },
     "hired_swords": {
       "Norse Shaman": "border-town-burning",

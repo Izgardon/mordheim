@@ -102,6 +102,13 @@ check over every file.
 | `drowned-dead.json` | drowned-dead (3, Grade 3) | https://www.broheim.net/downloads/warbands/facebook/Drowned%20Dead.pdf | 1-11 (text layer; 1-4 story, 10-11 modelling notes) | 11 Nov 2026 |
 | `dwarf-grudgebearers.json` | dwarf-grudgebearers (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Dwarf%20Grudgebearers.pdf | 1-6 (text layer; its skill table read from the page's own text columns) | 11 Nov 2026 |
 | `goblin-raiders.json` | goblin-raiders (3, Grade 3) | https://www.broheim.net/downloads/warbands/web/Goblin%20Raiders.pdf | 1-8 (text layer; page 2 as an image for its skill table) | 11 Nov 2026 |
+| `hobgoblin-horde.json` | hobgoblin-horde (3, Grade 3) | https://www.broheim.net/downloads/warbands/web/Hobgoblin%20Horde.pdf | 1-6 (text layer; page 1 as an image for its skill table) | 12 Nov 2026 |
+| `mordheimers-fanatics.json` | mordheimers-fanatics (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Mordheimer%20Fanatics.pdf | 1-7 (text layer; no images) | 12 Nov 2026 |
+| `ostermark-roadwardens.json` | ostermark-roadwardens (3, Grade 3) | https://www.broheim.net/downloads/warbands/facebook/Ostermark%20Roadwardens.pdf | 1-10 (text layer, the data on 1-3; no images) | 12 Nov 2026 |
+| `the-innocents.json` | the-innocents (3, Grade 3) | https://www.broheim.net/downloads/warbands/facebook/The%20Innocents.pdf | 1-12 (text layer; pages 4 and 11 as images, 1 and 12 cover and credits) | 12 Nov 2026 |
+| `tilean-thespian-troupe.json` | tilean-thespian-troupe (3, Grade 3) | https://www.broheim.net/downloads/warbands/facebook/Tilean%20Thespian%20Troupe.pdf | 1-7 (text layer; no images) | 12 Nov 2026 |
+| `werewolf-hunting-pack.json` | werewolf-hunting-pack (3, Grade 3) | https://www.broheim.net/downloads/warbands/web/Werewolf%20Hunting%20Pack.pdf | 1-7 (text layer; no images) | 12 Nov 2026 |
+| `wood-elves-the-asrai-way-farers.json` | wood-elves-the-asrai-way-farers (3, Grade 3) | https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf | 1-8 (its text layer holds no profiles or skill table; pages 2, 6 and 7 as images) | 12 Nov 2026 |
 | `savage-orcs-ath.json` | savage-orcs-ath (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=46 | 46-52 of the Athel Loren campaign rules (text layer; no images) | 11 Nov 2026 |
 | `wood-elf-scouts.json` | wood-elf-scouts (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=52 | 52-56 (text layer; no images) | 11 Nov 2026 |
 | `dwarf-troll-slayers.json` | dwarf-troll-slayers (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=56 | 56-65 (text layer; no images) | 11 Nov 2026 |
@@ -154,10 +161,16 @@ Cutlass and Great Scimitar are stubs with no rules, and the Mage and Street Mage
 
 Karak Azgal's eight warbands share one 76-page PDF, and only each warband's own pages were read; its campaign material (pages 1-18 and 62-76, the hired swords, exploration chart, runic artefacts and scenarios among them) is not imported. Four of them point at warbands we already hold for their lists, rules or skills ("all of the equipment lists from Town Crier 6 (or Best of Town Crier) apply", "the Orc special skills from TC6"): those were taken from our own Dwarf Treasure Hunters, Skaven and Mercenaries warbands and our Dwarves, Dwarf Troll Slayers and Orcs skill groups, never from another PDF.
 
-The first seven grade 3 warbands (Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Circus Extraordinaire, Drowned Dead,
-Dwarf Grudgebearers and Goblin Raiders) belong to no supplement and share the existing `grade-3` setting, which turns all fourteen of its
-warbands on at once (William, 11 Nov 2026). They share no content with one another: each brings its own skill group, and only the Dwarf
-Grudgebearers join a group of ours (the Dwarves list, which is their own skill table word for word).
+The fourteen grade 3 warbands above belong to no supplement and share the existing `grade-3` setting, which turns all fourteen of
+them on at once (William, 11 Nov 2026): Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Circus Extraordinaire, Drowned
+Dead, Dwarf Grudgebearers and Goblin Raiders, then Hobgoblin Horde, Mordheimers' Fanatics, Ostermark Roadwardens, The Innocents, Tilean
+Thespian Troupe, Werewolf Hunting Pack and the Wood Elves, the Asrai Way-farers. They share no content with one another: each brings its
+own skill group, and only the Dwarf Grudgebearers join a group of ours (the Dwarves list, which is their own skill table word for word).
+The Goblin Raiders' and the Hobgoblin Horde's Leather Whip is one item both pages declare, with a price row each at 7 gc.
+Four of the last seven sit near warbands we already hold and are none of them: the Hobgoblin Horde is not Khemri's Hobgoblins (its own
+skills, items and Hobgoblin maximum), the Werewolf Hunting Pack is not our Undead, the Strigoi or the Drowned Dead (its own Werewolf and
+Wulfmaeg races), the Asrai Way-farers are not Athel Loren's Wood Elf Scouts, which share five of their items at our prices and no skill
+or race, and the Ostermark Roadwardens are not the Mercenaries' Ostermarkers variant, whose Ostermark rule is untouched.
 
 ## Adding a warband
 

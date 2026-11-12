@@ -413,6 +413,13 @@ RACES_BY_PAGE: dict[tuple[str, str], str] = {
     ("wood-elves-of-arden", "spirit"): "Spirit",  # its Ivy Ferret, a woodland spirit (p5), with none printed
     # the Lustria Forest Goblins PDF's own maximum (p2): WS3, W2, A3, unlike our Goblin's
     ("forest-goblins-lus", "goblin"): "Goblin (Lustria)",
+    # the Hobgoblin Horde PDF's own maximum (p1): WS6, BS6, A4, unlike the Khemri Hobgoblins'
+    ("hobgoblin-horde", "hobgoblin"): "Hobgoblin (Hobgoblin Horde)",
+    # its Wood Spirit (p7), with no maximum printed
+    ("wood-elves-the-asrai-way-farers", "spirit"): "Spirit",
+    # the Werewolf Hunting Pack PDF's two maxima (p2); neither is our Werecreature's
+    ("werewolf-hunting-pack", "werewolf"): "Werewolf",
+    ("werewolf-hunting-pack", "wulfmaeg"): "Wulfmaeg",
 }
 CREATURES = frozenset(
     {

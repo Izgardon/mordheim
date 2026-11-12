@@ -1,0 +1,270 @@
+{
+  "warbandType": "tilean-thespian-troupe",
+  "name": "Tilean Thespian Troupe",
+  "source": "Tilean Thespian Troupe",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/facebook/Tilean%20Thespian%20Troupe.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "Expert Scroungers", "ruleFull": "The warband may re-roll any one die in the exploration phase and must accept the second result. It may do this whether or not a hero is able to search."},
+    {"rulename": "Fight Masters' Training", "ruleFull": "A Protagonist and a Sidekick each get +1 Weapon Skill from the Fight Masters' training, now and whenever one is hired later. The bonus is already in their profiles."},
+    {"rulename": "Townsfolk and Soldiers", "ruleFull": "The troupe may hold any number of Townsfolk and any number of Soldiers, but never more Soldiers than Townsfolk."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "mercenary-equipment-list",
+      "title": "Mercenary Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "morning star", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "duelling pistol", "alias": "Dueling pistol", "cost": {"cost": 25, "braceCost": 50}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "Light armor", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "Heavy armor", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "thespian-equipment-list",
+      "title": "Thespian Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Club", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "Rapier", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "duelling pistol", "alias": "Dueling pistol", "cost": {"cost": 25, "braceCost": 50}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "Light armor", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "Heavy armor", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "marksman-equipment-list",
+      "title": "Marksman Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "pistol", "alias": "", "cost": {"cost": 15, "braceCost": 30}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Long bow", "cost": {"cost": 15}},
+        {"name": "blunderbuss", "alias": "", "cost": {"cost": 30}},
+        {"name": "handgun", "alias": "", "cost": {"cost": 35}},
+        {"name": "Hunting Rifle", "alias": "Hunting rifle", "cost": {"cost": 200}},
+        {"name": "light armour", "alias": "Light armor", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "townsfolk-equipment-list",
+      "title": "Townsfolk Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "mace", "alias": "Mace/Club", "cost": {"cost": 3}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "Spear/Pitchfork", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "Halberd/Bill/Scythe", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Longbow", "cost": {"cost": 15}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "light armour", "alias": "Light armor", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "Helmet/Pot", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "narrator",
+      "type": "hero",
+      "name": "Narrator",
+      "plural": "Narrators",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["mercenary-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "spellLores": ["Thespian Magic", "Lesser Magic"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any thespian within 6\" of the Narrator may use his Leadership for a Leadership test."},
+        {"rulename": "Wizard", "ruleFull": "The Narrator is a warlock and casts from the Thespian or the Lesser Magic list."}
+      ]
+    },
+    {
+      "id": "villain",
+      "type": "hero",
+      "name": "The Villain",
+      "plural": "Villains",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["thespian-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": false, "speed": true, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "authority",
+      "type": "hero",
+      "name": "The Authority",
+      "plural": "Authorities",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["mercenary-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": false, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "protagonist",
+      "type": "hero",
+      "name": "The Protagonist",
+      "plural": "Protagonists",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["thespian-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "sidekick",
+      "type": "hero",
+      "name": "The Sidekick",
+      "plural": "Sidekicks",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["thespian-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "fight-masters",
+      "type": "henchman",
+      "name": "Fight Master",
+      "plural": "Fight Masters",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 2,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["thespian-equipment-list"],
+      "specialRules": [
+        {"rulename": "Expert Swordsman", "ruleFull": "A Fight Master may re-roll any failed roll to hit when he charges. This holds only while he fights with a normal sword or a rapier, not with a double-handed sword or any other weapon."}
+      ]
+    },
+    {
+      "id": "soldiers",
+      "type": "henchman",
+      "name": "Soldier",
+      "plural": "Soldiers",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["mercenary-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "forest-kin",
+      "type": "henchman",
+      "name": "Forest Kin",
+      "plural": "Forest Kin",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 7,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["marksman-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "townsfolk",
+      "type": "henchman",
+      "name": "Townsfolk",
+      "plural": "Townsfolk",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 10,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 2, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 5},
+      "equipmentLists": ["townsfolk-equipment-list"],
+      "specialRules": [
+        {"rulename": "Mob", "ruleFull": "Townsfolk are bought in groups of 2 to 5 and stay within 3\" of one another. While two or more of a group are left they are immune to fear."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "priceRows": [
+    {"name": "Rapier", "rarity": 5, "dice": null, "page": 6}
+  ],
+  "flags": [
+    {"page": 2, "what": "A thespian troupe needs at least three models: our templates hold no minimum, so it is not imported."},
+    {"page": 5, "what": "The PDF has no Special column, and its five new skills each name one of the standard lists instead, so the warband brings no skill group of its own: Elusive joins Combat, Wilhelm Tellus Shooting, Starstruck Academic, Rough and Tumble Strength and Celebrity Speed, each in the Grade 3 setting."},
+    {"page": 5, "what": "The skill table was read from the page's own text columns (Combat 30, Shooting 48, Academic 66, Strength 83, Speed 100). No page was opened as an image."},
+    {"page": 2, "what": "The Marquee players (Narrator, Villain, Authority, Protagonist, Sidekick) are the heroes: they have the skill table and their own starting experience. The Minor players (Fight Masters, Soldiers, Forest Kin, Townsfolk) all start with 0 and are the henchmen."},
+    {"page": 2, "what": "A troupe must hold at least one Fight Master and no more than two, so the group is imported as 1-2."},
+    {"page": 6, "what": "The Marksman Equipment List is headed \"for Marksmen only\" but the PDF has no Marksman; the Forest Kin are the only fighters sent to it, so it is theirs."},
+    {"page": 6, "what": "The Rapier is 15 gc here and ours is 15 gc Rare 5 but open to eight other warbands, so the troupe gets a price row. The Duelling pistol is 25 gc (50 for a brace) against our 30 (60), and the Hunting rifle, Blunderbuss, Handgun and Pistol are ours at the same prices."},
+    {"page": 6, "what": "\"Mace/Club\" is read as our Mace, \"Spear/Pitchfork\" as our Spear, \"Halberd/Bill/Scythe\" as our Halberd and \"Helmet/Pot\" as our Helmet, each shown under the list's own wording."},
+    {"page": 7, "what": "The Thespian spell list is imported as the lore Thespian Magic: Scripted 9, Soliloquy 11, Our Story Thus Far 10. The Narrator casts from it or from Lesser Magic, as the PDF allows."},
+    {"page": 2, "what": "No group sizes are printed except the Townsfolk's 2-5."}
+  ]
+}

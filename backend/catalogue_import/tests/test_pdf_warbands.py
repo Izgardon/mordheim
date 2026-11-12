@@ -679,9 +679,9 @@ class PdfImportTests(SimpleTestCase):
         self.assertEqual(sorted(name for name in wanted if name not in self.items), [])
         rows = {}
         for name in wanted:
-            [row] = self.items[name]["availabilities"]
+            # the Grade 3 Werewolf Hunting Pack buys Silver Bullets/Arrows too, at its own price (12 Nov 2026)
+            row = next(a for a in self.items[name]["availabilities"] if len(a["warbands"]) == 12)
             rows[name] = (row["cost"], row["dice"], row["rarity"])
-            self.assertEqual(len(row["warbands"]), 12, name)
             self.assertEqual(self.items[name]["setting"], "sartosa", name)
         self.assertEqual(rows, wanted)
         # each banner carries the shared Pirate Banner rule and then its own

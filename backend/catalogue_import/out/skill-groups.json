@@ -13,7 +13,8 @@
       "Weapons Training",
       "Web of Steel",
       "Expert Swordsman",
-      "Step Aside"
+      "Step Aside",
+      "Elusive"
     ]
   },
   {
@@ -33,6 +34,7 @@
       "Trick Shooter",
       "Hunter",
       "Knife-Fighter",
+      "Wilhelm Tellus",
       "Axe Thrower"
     ]
   },
@@ -60,7 +62,8 @@
       "Trap Expert",
       "Driver",
       "Strategist",
-      "Scholar"
+      "Scholar",
+      "Starstruck"
     ]
   },
   {
@@ -79,7 +82,8 @@
       "Strongman",
       "Unstoppable Charge",
       "Handyman",
-      "Beastmaster"
+      "Beastmaster",
+      "Rough and Tumble"
     ]
   },
   {
@@ -97,7 +101,8 @@
       "Lightning Reflexes",
       "Jump Up",
       "Dodge",
-      "Scale Sheer Surfaces"
+      "Scale Sheer Surfaces",
+      "Celebrity"
     ]
   },
   {
@@ -206,6 +211,28 @@
       "[Animal] Handler",
       "Ride [Animal]",
       "Falconer"
+    ]
+  },
+  {
+    "name": "Animal Aspects",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "wood-elves-the-asrai-way-farers",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "Wood Elf heroes only. No more than two heroes in a warband may hold the same Aspect.",
+    "how": "new group",
+    "skills": [
+      "Aspect of the Hawk",
+      "Aspect of the Serpent",
+      "Aspect of the Panther",
+      "Aspect of the Fox",
+      "Aspect of the Stag",
+      "Aspect of the Rabbit"
     ]
   },
   {
@@ -1025,6 +1052,29 @@
       "Stand and Fire",
       "Miniath",
       "Unerring Strike"
+    ]
+  },
+  {
+    "name": "Hobgoblin Horde",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "hobgoblin-horde",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Infiltration",
+      "Strict Leader",
+      "Sneaky (Hobgoblin Horde)",
+      "Discretion",
+      "Slaver (Hobgoblin Horde)",
+      "Backstabber (Hobgoblin Horde)",
+      "Mystic Aura"
     ]
   },
   {
@@ -2234,6 +2284,27 @@
     ]
   },
   {
+    "name": "The Innocents",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "the-innocents",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Step Aside",
+      "Infiltration",
+      "Taunt (The Innocents)",
+      "Humane",
+      "Child of the Ruins"
+    ]
+  },
+  {
     "name": "The Lost",
     "setting": null,
     "for_everyone": false,
@@ -2333,6 +2404,30 @@
       "Thirst for Vengeance",
       "Blessing of Morr",
       "Touch of Darkness"
+    ]
+  },
+  {
+    "name": "Werewolf Hunting Pack",
+    "setting": "grade-3",
+    "for_everyone": false,
+    "warbands": [
+      {
+        "type": "werewolf-hunting-pack",
+        "excluded": false
+      }
+    ],
+    "large_only": false,
+    "note": "",
+    "how": "new group",
+    "skills": [
+      "Hunter's Senses",
+      "Complete Healing",
+      "Terrible Claws",
+      "Bloodthirst",
+      "Chilling Howl",
+      "Bestial Savagery",
+      "Pack Hunter",
+      "Heavy Pelt"
     ]
   },
   {

@@ -1,0 +1,268 @@
+{
+  "warbandType": "the-innocents",
+  "name": "The Innocents",
+  "source": "The Innocents",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/facebook/The%20Innocents.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {"rulename": "They're Just Kids", "ruleFull": "No member of the warband may be Fearsome; roll again if Fearsome comes up. The Innocents are not evil and may ally with no evil warband, hired sword or dramatis persona, Chaos, Skaven and Undead among them."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "orphans-equipment-list",
+      "title": "Orphans Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club, Mace, or Hammer", "cost": {"cost": 3}},
+        {"name": "Throwing Stones", "alias": "", "cost": {"cost": 1}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "short bow", "alias": "Short Bow", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "Light Armour", "cost": {"cost": 20}}
+      ]
+    },
+    {
+      "id": "companions-equipment-list",
+      "title": "Companions Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club, Mace, or Hammer", "cost": {"cost": 3}},
+        {"name": "double-handed weapon", "alias": "Double-Handed Weapon", "cost": {"cost": 15}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "Light Armour", "cost": {"cost": 20}},
+        {"name": "heavy armour", "alias": "Heavy Armour", "cost": {"cost": 50}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "innocents-miscellaneous-equipment",
+      "title": "Miscellaneous Equipment",
+      "caveat": "",
+      "items": [
+        {"name": "Acid Bomb", "alias": "", "cost": {"cost": 20, "costSuffix": "(Heroes only)"}},
+        {"name": "Bait Bomb", "alias": "", "cost": {"cost": 5, "costSuffix": "(Heroes only)"}},
+        {"name": "Fire Bomb", "alias": "Firebomb", "cost": {"cost": 20, "costSuffix": "(Heroes only)"}},
+        {"name": "Stink Bomb", "alias": "", "cost": {"cost": 15, "costSuffix": "(Heroes only)"}},
+        {"name": "Smoke Bomb", "alias": "", "cost": {"cost": 15, "costSuffix": "(Heroes only)"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "siblings",
+      "type": "hero",
+      "name": "Siblings",
+      "plural": "Siblings",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 65,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 2, "bs": 4, "s": 2, "t": 3, "w": 2, "i": 6, "a": 2, "ld": 8},
+      "equipmentLists": ["orphans-equipment-list", "companions-equipment-list", "innocents-miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior within 6\" of the Siblings may use their Leadership instead of his own."},
+        {"rulename": "Close Knit", "ruleFull": "The Siblings share one base and count as a single model. Their +1 Wound and +1 Attack for it are already in the profile."},
+        {"rulename": "Irreplaceable", "ruleFull": "The Siblings may only be recruited when the warband is created."}
+      ]
+    },
+    {
+      "id": "alchemists-apprentice",
+      "type": "hero",
+      "name": "Alchemist's Apprentice",
+      "plural": "Alchemist's Apprentices",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 2, "bs": 4, "s": 2, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["orphans-equipment-list", "innocents-miscellaneous-equipment"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Heresy of Alchemy"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Alchemist's Apprentice works from the Heresy of Alchemy."}
+      ]
+    },
+    {
+      "id": "blacksmiths-apprentice",
+      "type": "hero",
+      "name": "Blacksmith's Apprentice",
+      "plural": "Blacksmith's Apprentices",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["companions-equipment-list", "innocents-miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "companions",
+      "type": "hero",
+      "name": "Companion",
+      "plural": "Companions",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["companions-equipment-list", "innocents-miscellaneous-equipment"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "petty-thieves",
+      "type": "henchman",
+      "name": "Petty Thief",
+      "plural": "Petty Thieves",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["companions-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "orphans",
+      "type": "henchman",
+      "name": "Orphan",
+      "plural": "Orphans",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 3, "s": 2, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 7},
+      "equipmentLists": ["orphans-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "stray-dogs",
+      "type": "henchman",
+      "name": "Stray Dog",
+      "plural": "Stray Dogs",
+      "race": "warhound",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 10,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 3, "bs": 0, "s": 3, "t": 4, "w": 1, "i": 5, "a": 1, "ld": 6},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "A Stray Dog gains no experience and uses no equipment."}
+      ]
+    },
+    {
+      "id": "ratswarms",
+      "type": "henchman",
+      "name": "Ratswarm",
+      "plural": "Ratswarms",
+      "race": "animal",
+      "minQty": 0,
+      "costGc": 10,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 2, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 5, "a": 3, "ld": 5},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "A Ratswarm gains no experience and uses no equipment."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "The Innocents",
+    "new": true
+  },
+  "specialSkillsList": [
+    {"name": "Step Aside", "ours": "Step Aside"},
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Taunt (The Innocents)", "pdfName": "Taunt", "description": "In the shooting phase the warrior may taunt one enemy instead of shooting or casting, even while he is in hand-to-hand combat. The target is any enemy model in line of sight within 12\", and must pass a Leadership test at once or spend its next movement phase trying to charge the taunting warrior."},
+    {"name": "Humane", "description": "Normal animals, among them warhorses, warhounds, rats, bats, snakes and spiders, ignore the warrior and will not attack him. One Stray Dog or Ratswarm also stops counting towards the warband's maximum size. The skill stacks, so six heroes with it keep six Stray Dogs or Ratswarms off the count."},
+    {"name": "Child of the Ruins", "description": "The warrior adds +2 to the roll for finding an item while trading, and in the exploration phase the warband may re-roll one of its dice on the Exploration chart. The second result stands."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Throwing Stones",
+      "type": "Weapon",
+      "subtype": "Missile",
+      "rarity": null,
+      "dice": null,
+      "range": "6\"",
+      "strength": "As user",
+      "rulesPage": 7,
+      "rules": [
+        {"rule": "Thrown Weapon", "text": "Throwing stones suffer no penalty for range or for moving. They may not be used in close combat, and may be used with the Knife-Fighter skill."}
+      ]
+    },
+    {
+      "name": "Acid Bomb",
+      "type": "Weapon",
+      "subtype": "Missile",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 7,
+      "rules": [
+        {"name": "Acid Bomb", "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A hit causes D3 Strength 5 hits with no armour save, and every warrior within 1\", friend or foe, takes one Strength 4 hit with saves as normal. A hit destroys all the target's normal armour at once: heavy armour, light armour, shields, bucklers and helmets, but not gromril or ithilmar. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower."}
+      ]
+    },
+    {
+      "name": "Bait Bomb",
+      "type": "Weapon",
+      "subtype": "Missile",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 7,
+      "rules": [
+        {"name": "Bait Bomb", "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A model hit draws every Stray Dog and Ratswarm: while it is alive, all of them within 12\" become frenzied in their next movement phase and must charge it, or move as close to it as they can, ignoring every other model, friend or foe. Where several models have been bait bombed they go for the nearest. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower."}
+      ]
+    },
+    {
+      "name": "Stink Bomb",
+      "type": "Weapon",
+      "subtype": "Missile",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 8,
+      "rules": [
+        {"name": "Stink Bomb", "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A model hit must pass a Toughness test or be knocked out, and every model within 4\" must pass a Toughness test or suffer -1 to hit until the end of its next recovery phase. A stink bomb has no effect on Chaos, Undead, Ostlanders or any other warband immune to a strong smell. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower."}
+      ]
+    }
+  ],
+  "priceRows": [
+    {"name": "Fire Bomb", "cost": 20, "rarity": null, "dice": null, "page": 4},
+    {"name": "Smoke Bomb", "cost": 15, "rarity": null, "dice": null, "page": 4}
+  ],
+  "flags": [
+    {"page": 2, "what": "Pages 1, 11 and 12 carry no text. Page 1 is the cover and page 12 the credits; page 11 holds the Stray Dogs, the Ratswarms and the Heresy of Alchemy table, and was opened as an image. Page 4 was opened as an image for the skill table, whose ticks are glyphs."},
+    {"page": 4, "what": "The skill table: Siblings Shooting, Academic, Speed, Special; Alchemist's Apprentice Shooting, Academic, Speed, Special; Blacksmith's Apprentice Combat, Strength, Special; Companions Combat and Strength only, so they tick no Special."},
+    {"page": 4, "what": "The Siblings buy from \"the Innocents Equipment List\", which is the heading over both lists, so they are given both. The Miscellaneous Equipment block spans both columns and is heroes only, so it is a third list every hero buys from."},
+    {"page": 5, "what": "An Innocents warband needs at least three models: our templates hold no minimum, so it is not imported."},
+    {"page": 5, "what": "The Blacksmith's Apprentice is headed 0-2 while Choice of warriors allows \"a single\" one. The simpler reading, 0-1, is imported."},
+    {"page": 5, "what": "The Companions are heroes: they have their own row in the skill table, their own line in the starting experience, and they sit in the heroes section."},
+    {"page": 4, "what": "The equipment is \"only available to The Innocents\", which the stubs' and price rows' warband lines already do; no rule is imported for it. No rarity is printed for any of it."},
+    {"page": 4, "what": "The Firebomb at 20 gc is our Fire Bomb (35 gc, no rules of its own) and the Smoke Bomb at 15 gc is our Smoke Bomb (30 gc, no rules of its own); both are linked with a price row at the list price, and ours take the PDF's rules. See the decisions."},
+    {"page": 6, "what": "Step Aside and Infiltration are ours word for word and are linked. The PDF's Taunt reaches 12\", may be used in hand-to-hand and takes any enemy in sight, where our Ostlander Taunt must take the nearest and says nothing of combat, so it is kept apart."},
+    {"page": 11, "what": "The Heresy of Alchemy is a D6 table of six results the Alchemist's Apprentice works from, not spells with a casting value, so each is imported with the difficulty Auto. See the decisions."},
+    {"page": 11, "what": "The Stray Dog is given the race warhound and the Ratswarm the race animal; neither is a race of ours and both gain no experience."},
+    {"page": 5, "what": "No group sizes are printed for the henchmen."}
+  ]
+}

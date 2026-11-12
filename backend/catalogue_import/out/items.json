@@ -398,6 +398,22 @@
       },
       {
         "label": "",
+        "cost": 85,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "hobgoblin-horde",
+            "excluded": false
+          }
+        ],
+        "note": "Heroes only"
+      },
+      {
+        "label": "",
         "cost": 40,
         "dice": null,
         "dice_multiplier": null,
@@ -1544,6 +1560,22 @@
         "for_everyone": true,
         "warbands": [],
         "note": "Warhorses only"
+      },
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "ostermark-roadwardens",
+            "excluded": false
+          }
+        ],
+        "note": "Warhorse only"
       }
     ]
   },
@@ -6641,6 +6673,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 5,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "tilean-thespian-troupe",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -7379,6 +7427,22 @@
         "warbands": [
           {
             "type": "skaven",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "hobgoblin-horde",
             "excluded": false
           }
         ],
@@ -8556,6 +8620,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 80,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -8917,8 +8997,8 @@
     "rules": [
       {
         "name": "",
-        "summary": "Throws like Blessed Water. Target takes D3 S4 hits (no armour saves). Others within 1\" take S3 hit. On '1' to hit, thrower is hit instead.",
-        "text": "The fire bomb may be thrown in the shooting phase in the same way as blessed water (see p53 Mordheim rule book). If the bomb lands on target the warrior hit takes D3 Strength 4 hits with no saves for armour and all warriors, friend or foe, within 1 inch of him take 1 Strength 3 hit with saves as normal. If the throwing warrior rolls a 1 when rolling to hit the bomb misfires and explodes just as if the throwing warrior had been hit by his own fire bomb!",
+        "summary": "Thrown; D3 S4 hits with no armour save, S3 within 1\"",
+        "text": "A fire bomb is thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A hit causes D3 Strength 4 hits with no armour save, and every warrior within 1\", friend or foe, takes one Strength 3 hit with saves as normal. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower.",
         "tables": []
       }
     ],
@@ -8932,6 +9012,22 @@
         "rarity": 9,
         "for_everyone": true,
         "warbands": [],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "the-innocents",
+            "excluded": false
+          }
+        ],
         "note": ""
       }
     ]
@@ -9368,6 +9464,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 20,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -9609,6 +9721,22 @@
           }
         ],
         "note": "Lothern Sea Guard only"
+      },
+      {
+        "label": "",
+        "cost": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -12270,8 +12398,8 @@
     "rules": [
       {
         "name": "",
-        "summary": "Creates a 2\" smoke cloud that blocks attacks and line of sight until next turn. Special interactions apply when used in melee or if carrier is taken down.",
-        "text": "At the beginning of the Movement phase, a smoke bomb may be thrown at any point within 4\" where it creates a thick smoke of 2\" radius that lasts until the beginning of the model's next turn. If the model is in close combat, it must pass an Initiative test or suffer one automatic hit from each enemy model. After that the bomb detonates anyhow – even if the model is wounded.\n\nModels within the smoke may not attack/shoot or be attacked/shot at. Same applies to casting spells and prayers. Models engaged in close combat are immediately moved 1\" away from each other.\n\nAs models cannot see through the smoke, they cannot attack through it either.\n\nHowever, models can move in the smoke, out of it and through it as normal. Note that the Augur of the Sisters of Sigmar is not affected by smoke bombs due to her Blessed Sight.\n\nWhenever a model carrying a smoke bomb is knocked down, stunned or out of action, the bomb detonates on a roll of 4+. Note that no extra roll is needed when a stunned model turns knocked down at the beginning of its turn.",
+        "summary": "Thrown as an enemy charges; he strikes last unless he passes an Initiative test",
+        "text": "A smoke bomb may be thrown as an enemy charges the wielder, interrupting the charge. The charger is placed in base contact and must pass an Initiative test at once. If he fails he is blinded and strikes last in the hand-to-hand combat phase whatever his Initiative or his skills.",
         "tables": []
       }
     ],
@@ -12285,6 +12413,22 @@
         "rarity": 10,
         "for_everyone": true,
         "warbands": [],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "the-innocents",
+            "excluded": false
+          }
+        ],
         "note": ""
       }
     ]
@@ -22795,6 +22939,22 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "werewolf-hunting-pack",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -26013,6 +26173,76 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 7,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "hobgoblin-horde",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "double-dirks",
+    "name": "Double-Dirks",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Hobgoblin Horde",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Hobgoblin%20Horde.pdf",
+    "tags": [
+      "double-dirks"
+    ],
+    "flavour": "",
+    "range": "Close combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "pair",
+        "text": "Double-Dirks are used in pairs, one in each hand, and a warrior armed with them gains an extra Attack."
+      },
+      {
+        "rule": "poisoned",
+        "summary": "Venomous",
+        "text": "Double-Dirks count as permanently coated in black lotus. No further poison may be applied to them."
+      },
+      {
+        "rule": "1-enemy-armour-save",
+        "text": "Double-Dirks count as daggers, so an enemy wounded by them gains a +1 bonus to his armour save, and a 6+ armour save if he has none."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "hobgoblin-horde",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -26497,6 +26727,767 @@
         "warbands": [
           {
             "type": "skaven-of-clan-skryre-ath",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "throwing-stones",
+    "name": "Throwing Stones",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Missile",
+    "setting": "grade-3",
+    "source": "The Innocents",
+    "link_url": "https://www.broheim.net/downloads/warbands/facebook/The%20Innocents.pdf",
+    "tags": [
+      "throwing stones"
+    ],
+    "flavour": "",
+    "range": "6\"",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "thrown-weapon",
+        "text": "Throwing stones suffer no penalty for range or for moving. They may not be used in close combat, and may be used with the Knife-Fighter skill."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 1,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "the-innocents",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "acid-bomb",
+    "name": "Acid Bomb",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Missile",
+    "setting": "grade-3",
+    "source": "The Innocents",
+    "link_url": "https://www.broheim.net/downloads/warbands/facebook/The%20Innocents.pdf",
+    "tags": [
+      "acid bomb"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Acid Bomb",
+        "summary": "",
+        "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A hit causes D3 Strength 5 hits with no armour save, and every warrior within 1\", friend or foe, takes one Strength 4 hit with saves as normal. A hit destroys all the target's normal armour at once: heavy armour, light armour, shields, bucklers and helmets, but not gromril or ithilmar. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "the-innocents",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "bait-bomb",
+    "name": "Bait Bomb",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Missile",
+    "setting": "grade-3",
+    "source": "The Innocents",
+    "link_url": "https://www.broheim.net/downloads/warbands/facebook/The%20Innocents.pdf",
+    "tags": [
+      "bait bomb"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Bait Bomb",
+        "summary": "",
+        "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A model hit draws every Stray Dog and Ratswarm: while it is alive, all of them within 12\" become frenzied in their next movement phase and must charge it, or move as close to it as they can, ignoring every other model, friend or foe. Where several models have been bait bombed they go for the nearest. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "the-innocents",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "stink-bomb",
+    "name": "Stink Bomb",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Missile",
+    "setting": "grade-3",
+    "source": "The Innocents",
+    "link_url": "https://www.broheim.net/downloads/warbands/facebook/The%20Innocents.pdf",
+    "tags": [
+      "stink bomb"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Stink Bomb",
+        "summary": "",
+        "text": "Thrown in the shooting phase, with a range of twice the thrower's Strength in inches. Roll to hit with his Ballistic Skill, with no modifier for range or moving. A model hit must pass a Toughness test or be knocked out, and every model within 4\" must pass a Toughness test or suffer -1 to hit until the end of its next recovery phase. A stink bomb has no effect on Chaos, Undead, Ostlanders or any other warband immune to a strong smell. On a roll of 1 to hit, the bomb misfires and explodes as though it had hit the thrower.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "the-innocents",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "silver-weapons",
+    "name": "Silver Weapons",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Werewolf Hunting Pack",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Werewolf%20Hunting%20Pack.pdf",
+    "tags": [
+      "silver weapons"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Silvered",
+        "summary": "",
+        "text": "A melee weapon covered in silver counts as a normal weapon against anyone but a werewolf. Against a werewolf each wound causes D3 wounds, and a roll of 4 or more wounds unless less was already needed. A wound caused by silver may be neither regenerated nor healed during the game.",
+        "tables": []
+      },
+      {
+        "name": "Buying it",
+        "summary": "",
+        "text": "Any weapon normally available to the warband may be bought already silvered: roll the weapon's rarity as 11, then roll for the weapon's cost in the normal way, and pay the weapon's cost plus 60 gc. To silver a weapon the warband already owns, roll the rarity all the same and pay 80 gc in all.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "werewolf-hunting-pack",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "silver-powder",
+    "name": "Silver Powder",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Werewolf Hunting Pack",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Werewolf%20Hunting%20Pack.pdf",
+    "tags": [
+      "silver powder"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Poison",
+        "summary": "",
+        "text": "Silver dust mixed with animal fat and smeared on a weapon. A weapon with silver powder on it counts as silver. It counts as a poison for equipment purposes, but may still be bought and used by a warband that normally may not use poison.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "werewolf-hunting-pack",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "wolfsbane",
+    "name": "Wolfsbane",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Werewolf Hunting Pack",
+    "link_url": "https://www.broheim.net/downloads/warbands/web/Werewolf%20Hunting%20Pack.pdf",
+    "tags": [
+      "wolfsbane"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Poison",
+        "summary": "",
+        "text": "Every wound caused by a weapon poisoned with wolfsbane is doubled, and such a wound never needs more than a 4 to be caused and may not be healed during the game. Wolfsbane affects wolves and werewolves only.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "werewolf-hunting-pack",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "thornblade",
+    "name": "Thornblade",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "thornblade"
+    ],
+    "flavour": "",
+    "range": "Close combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": true,
+    "rules": [
+      {
+        "rule": "concussion",
+        "text": "With this weapon a roll of 2-4 counts as Stunned when rolling for the extent of a model's injuries."
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 3,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "asrai-bladestaff",
+    "name": "Asrai Bladestaff",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "asrai bladestaff"
+    ],
+    "flavour": "",
+    "range": "Close combat",
+    "strength": "As user, +1 when charging",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "parry",
+        "text": "A wood elf with the Asrai Bladestaff may parry as a sword does. When his opponent rolls to hit, he may roll a D6; if it beats the opponent's highest roll to hit, the blow is parried and that attack is discarded. No attack made with double his own Strength or more may be parried."
+      },
+      {
+        "rule": "two-handed"
+      },
+      {
+        "name": "Additional attack",
+        "summary": "",
+        "text": "The user gains an extra attack with this weapon, and the normal rules for fighting with two weapons then apply.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "gladewood-bow",
+    "name": "Gladewood Bow",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Missile",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "gladewood bow"
+    ],
+    "flavour": "",
+    "range": "30\"",
+    "strength": "3",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Power shot",
+        "summary": "",
+        "text": "If the wielder does not move in his movement phase, every shot at a target within short range, 15\", counts as Strength 4.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 50,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "deerhide-leather-armour",
+    "name": "Deerhide Leather Armour",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Armour",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "deerhide leather armour"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "6+",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Deerhide",
+        "summary": "",
+        "text": "Deerhide leather armour works exactly as light armour, giving a 6+ armour save, but may not be combined with any other armour except a helmet or a buckler. It may not be sold back at the trading post.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 5,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "birch-wine",
+    "name": "Birch Wine",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "birch wine"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Birch Wine",
+        "summary": "",
+        "text": "A warband that drinks birch wine before a battle is immune to fear and to Stunned results for the whole of that battle. One use only.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 55,
+        "dice": 3,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "enchanted-acorns",
+    "name": "Enchanted Acorns",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "enchanted acorns"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Enchanted Acorns",
+        "summary": "",
+        "text": "Roll D3+1 for how many acorns are acquired. When a hero has to roll on the Serious Injury chart and the result is 11-35, he may consume one acorn, and only one, to re-roll the first die; so on a 14, with at least one acorn, the 1 may be re-rolled. The second result must be accepted and may not be re-rolled. Note the acorn used and remove it from his equipment.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 60,
+        "dice": 3,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "arrows-of-blood-ivy",
+    "name": "Arrows of Blood Ivy",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "Ammunition",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "arrows of blood ivy"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Blood Ivy",
+        "summary": "",
+        "text": "A model wounded by an arrow of blood ivy must pass a Toughness test at once or suffer -1 Strength for the rest of the battle. The effects of several such arrows do not stack. There are enough arrows to last one campaign.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 40,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "falcon",
+    "name": "Falcon",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "falcon"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Falcon",
+        "summary": "",
+        "text": "A falcon lets you change one die roll in the exploration phase by 1, up or down, as long as its owning hero was not taken out of action in the battle. Only one falcon per warband.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "forest-familiar",
+    "name": "Forest Familiar",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "grade-3",
+    "source": "Wood Elves, the Asrai Way-farers",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+    "tags": [
+      "forest familiar"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Forest Familiar",
+        "summary": "",
+        "text": "A forest familiar gives the Wild Hunter +2\" on his spotting distance for detecting hidden enemies. Once per game its presence may also allow any model within 6\" of the Wild Hunter to re-roll a roll; that re-roll may not itself be re-rolled.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "wood-elves-the-asrai-way-farers",
             "excluded": false
           }
         ],

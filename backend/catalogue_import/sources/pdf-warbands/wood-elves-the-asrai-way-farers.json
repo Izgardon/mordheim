@@ -1,0 +1,386 @@
+{
+  "warbandType": "wood-elves-the-asrai-way-farers",
+  "name": "Wood Elves, The Asrai Way-farers",
+  "source": "Wood Elves, the Asrai Way-farers",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Forest Walk", "ruleFull": "Wood elves move through forest and woodland terrain with no penalty."},
+    {"rulename": "Excellent Sight", "ruleFull": "A wood elf spots a hidden enemy from twice as far away as other warriors, so twice his Initiative in inches."},
+    {"rulename": "Subtle Nature", "ruleFull": "A wood elf will never use a blackpowder weapon, and will never wear heavy armour of any kind except ithilmar."},
+    {"rulename": "Clandestine", "ruleFull": "The warband will never hire a hired sword or dramatis persona who is not an elf."},
+    {"rulename": "Long Lived", "ruleFull": "The first time any wood elf henchman rolls That Lad's Got Talent, re-roll the dice and take the second result, even if it is That Lad's Got Talent again. Any later result of That Lad's Got Talent counts as normal; only the first rolled for each henchmen group is re-rolled."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "asrai-heroes-equipment-list",
+      "title": "Asrai Way-farers Heroes Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "Thornblade", "alias": "", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "Asrai Bladestaff", "alias": "", "cost": {"cost": 20}},
+        {"name": "Ithilmar Weapon", "alias": "", "cost": {"cost": 0, "costPrefix": "3 times the cost"}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Long Bow", "cost": {"cost": 15}},
+        {"name": "Elf Bow", "alias": "", "cost": {"cost": 35}},
+        {"name": "Gladewood Bow", "alias": "Glade-wood Bow", "cost": {"cost": 40}},
+        {"name": "light armour", "alias": "Light Armor", "cost": {"cost": 20}},
+        {"name": "Deerhide Leather Armour", "alias": "Deerhide Leather Armor", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "Ithilmar Armour", "alias": "Ithilmar Armor", "cost": {"cost": 80}},
+        {"name": "Elven Cloak", "alias": "", "cost": {"cost": 85}},
+        {"name": "Healing Herbs", "alias": "", "cost": {"cost": 25}},
+        {"name": "Birch Wine", "alias": "", "cost": {"cost": 35}},
+        {"name": "Enchanted Acorns", "alias": "", "cost": {"cost": 50}},
+        {"name": "Arrows of Blood Ivy", "alias": "", "cost": {"cost": 40}},
+        {"name": "Falcon", "alias": "", "cost": {"cost": 20}},
+        {"name": "Forest Familiar", "alias": "", "cost": {"cost": 20, "costSuffix": "(Wild Hunter only)"}}
+      ]
+    },
+    {
+      "id": "asrai-henchmen-equipment-list",
+      "title": "Asrai Henchmen Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "Thornblade", "alias": "", "cost": {"cost": 3}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double-handed weapon", "cost": {"cost": 15, "costSuffix": "(Wardancers only)"}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "long bow", "alias": "Long Bow", "cost": {"cost": 15}},
+        {"name": "Elf Bow", "alias": "", "cost": {"cost": 35}},
+        {"name": "light armour", "alias": "Light Armor", "cost": {"cost": 20}},
+        {"name": "Deerhide Leather Armour", "alias": "Deerhide Leather Armor", "cost": {"cost": 5}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "Hunting Arrows", "alias": "", "cost": {"cost": 35}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "way-warden",
+      "type": "hero",
+      "name": "Way-Warden",
+      "plural": "Way-Wardens",
+      "race": "elf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 75,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 5, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 6, "a": 1, "ld": 9},
+      "equipmentLists": ["asrai-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior within 6\" of the Way-Warden may use his Leadership for a Leadership test."}
+      ]
+    },
+    {
+      "id": "spellweaver",
+      "type": "hero",
+      "name": "Spellweaver",
+      "plural": "Spellweavers",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 12,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["asrai-heroes-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": true, "strength": false, "speed": true, "special": true},
+      "spellLores": ["Fey Magic"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Spellweaver casts from the Fey Magic list. He may cast no spell while he wears armour."}
+      ]
+    },
+    {
+      "id": "wild-hunter",
+      "type": "hero",
+      "name": "Wild Hunter",
+      "plural": "Wild Hunters",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "startingXp": 12,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["asrai-heroes-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Beast Empathy", "ruleFull": "While the warband holds a Wild Hunter it may buy 0-3 of each beast companion its lists allow. A beast bought this way may use the Wild Hunter's Leadership for a test while it is within 6\" of him."}
+      ]
+    },
+    {
+      "id": "pathfinders",
+      "type": "hero",
+      "name": "Pathfinder",
+      "plural": "Pathfinders",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["asrai-heroes-equipment-list"],
+      "equipment": "A Pathfinder must always carry a missile weapon.",
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Natural Stealth", "ruleFull": "While a Pathfinder is hiding, enemy models suffer -1 to their Initiative for working out whether they detect him."}
+      ]
+    },
+    {
+      "id": "glade-warriors",
+      "type": "henchman",
+      "name": "Glade Warrior",
+      "plural": "Glade Warriors",
+      "race": "elf",
+      "minQty": 0,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["asrai-henchmen-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "wardancers",
+      "type": "henchman",
+      "name": "Wardancer",
+      "plural": "Wardancers",
+      "race": "elf",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["asrai-henchmen-equipment-list"],
+      "specialRules": [
+        {"rulename": "No Missiles or Armour", "ruleFull": "A Wardancer may use neither a missile weapon nor armour."},
+        {"rulename": "Talismanic Tattoos", "ruleFull": "A Wardancer has a 6+ armour save that is never modified, and ignores a spell that targets or affects him on a D6 roll of 6."},
+        {"rulename": "Nimble Fighters", "ruleFull": "A Wardancer may always try to parry, whatever weapon he uses. Fighting with a sword he may re-roll a failed parry, as though he carried a buckler and a sword; two swords give him nothing more."}
+      ]
+    },
+    {
+      "id": "wolfhounds",
+      "type": "henchman",
+      "name": "Wolfhound",
+      "plural": "Wolfhounds",
+      "race": "warhound",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 20,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 4, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 5},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Animal", "ruleFull": "A Wolfhound is an animal and gains no experience."},
+        {"rulename": "Beast Companion", "ruleFull": "A Wolfhound may only be included while the warband holds a Wild Hunter."},
+        {"rulename": "Pack Sense", "ruleFull": "While one or more wolves are in base contact with the same opponent as the Wild Hunter, a Wolfhound gains +1 to hit that opponent. The bonus does not stack when more than one wolf is in base contact."}
+      ]
+    },
+    {
+      "id": "hunting-cats",
+      "type": "henchman",
+      "name": "Hunting Cat",
+      "plural": "Hunting Cats",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 25,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 6, "ws": 4, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 2, "ld": 5},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Animal", "ruleFull": "A Hunting Cat is an animal and gains no experience."},
+        {"rulename": "Beast Companion", "ruleFull": "A Hunting Cat may only be included while the warband holds a Wild Hunter."},
+        {"rulename": "Pounce", "ruleFull": "If a Hunting Cat charges an opponent and hits with both attacks, whether or not it wounds, the target must pass a Strength test or be knocked down. It has no effect on a large target."}
+      ]
+    },
+    {
+      "id": "wood-spirit",
+      "type": "henchman",
+      "name": "Wood Spirit",
+      "plural": "Wood Spirits",
+      "race": "spirit",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 190,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {"m": 5, "ws": 4, "bs": 0, "s": 4, "t": 4, "w": 3, "i": 4, "a": 2, "ld": 7},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Fear", "ruleFull": "The model causes fear."},
+        {"rulename": "Barkskin", "ruleFull": "A Wood Spirit has a 4+ armour save."},
+        {"rulename": "Immune to Poison", "ruleFull": "Not affected by any poison."},
+        {"rulename": "Vulnerable to Fire", "ruleFull": "A Wood Spirit takes double wounds from a fire attack."},
+        {"rulename": "Immune to Psychology", "ruleFull": "The model is immune to psychology and never leaves combat."},
+        {"rulename": "Elemental", "ruleFull": "A Wood Spirit gains experience at half rate and may never become a hero."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Animal Aspects",
+    "new": true,
+    "note": "Wood Elf heroes only. No more than two heroes in a warband may hold the same Aspect."
+  },
+  "specialSkillsList": [
+    {"name": "Aspect of the Hawk", "description": "Only a model with Quickshot may take this. He may shoot twice a turn with a bow, long bow, elf bow or gladewood bow and ignores the to-hit penalty for moving, though the normal limits on moving more than his base move still hold. It may not be combined with Quickshot to make more than two shots a turn."},
+    {"name": "Aspect of the Serpent", "description": "If the model does not move, it scores a critical hit with a missile weapon against a target within short range on a roll of 5 or 6."},
+    {"name": "Aspect of the Panther", "description": "While hidden, the warrior may shoot a missile weapon and stay hidden. If the target is neither stunned nor taken out of action by the attack it may take an Initiative test; if it passes, it sees the attacker, who is no longer hidden."},
+    {"name": "Aspect of the Fox", "description": "The warrior is always placed on the battlefield after the opposing warband, anywhere on the table that is out of sight of it and more than 12\" from any enemy model. If both players have models with this skill or with Infiltration, roll a D6 for each and the lowest sets up first."},
+    {"name": "Aspect of the Stag", "description": "Only one hero in a warband may take this, and a Spellweaver may not. He may now choose skills from the Strength list."},
+    {"name": "Aspect of the Rabbit", "description": "The warrior avoids a melee or missile attack on a roll of 6. If he also has Step Aside or Dodge, that becomes a 4+ in the matching area."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Thornblade",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "cost": 3,
+      "rarity": null,
+      "dice": null,
+      "range": "Close combat",
+      "strength": "As user",
+      "rulesPage": 5,
+      "rules": [
+        {"rule": "Concussion", "text": "With this weapon a roll of 2-4 counts as Stunned when rolling for the extent of a model's injuries."}
+      ]
+    },
+    {
+      "name": "Asrai Bladestaff",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "cost": 20,
+      "dice": 2,
+      "rarity": 7,
+      "range": "Close combat",
+      "strength": "As user, +1 when charging",
+      "rulesPage": 5,
+      "rules": [
+        {"rule": "Parry", "text": "A wood elf with the Asrai Bladestaff may parry as a sword does. When his opponent rolls to hit, he may roll a D6; if it beats the opponent's highest roll to hit, the blow is parried and that attack is discarded. No attack made with double his own Strength or more may be parried."},
+        {"rule": "Two-handed"},
+        {"name": "Additional attack", "text": "The user gains an extra attack with this weapon, and the normal rules for fighting with two weapons then apply."}
+      ]
+    },
+    {
+      "name": "Gladewood Bow",
+      "type": "Weapon",
+      "subtype": "Missile",
+      "cost": 50,
+      "dice": 2,
+      "rarity": 11,
+      "range": "30\"",
+      "strength": "3",
+      "rulesPage": 5,
+      "rules": [
+        {"name": "Power shot", "text": "If the wielder does not move in his movement phase, every shot at a target within short range, 15\", counts as Strength 4."}
+      ]
+    },
+    {
+      "name": "Deerhide Leather Armour",
+      "type": "Armour",
+      "subtype": "",
+      "cost": 5,
+      "rarity": null,
+      "dice": null,
+      "save": "6+",
+      "rulesPage": 6,
+      "rules": [
+        {"name": "Deerhide", "text": "Deerhide leather armour works exactly as light armour, giving a 6+ armour save, but may not be combined with any other armour except a helmet or a buckler. It may not be sold back at the trading post."}
+      ]
+    },
+    {
+      "name": "Birch Wine",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 55,
+      "dice": 3,
+      "rarity": 11,
+      "rulesPage": 5,
+      "rules": [
+        {"name": "Birch Wine", "text": "A warband that drinks birch wine before a battle is immune to fear and to Stunned results for the whole of that battle. One use only."}
+      ]
+    },
+    {
+      "name": "Enchanted Acorns",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 60,
+      "dice": 3,
+      "rarity": 12,
+      "rulesPage": 5,
+      "rules": [
+        {"name": "Enchanted Acorns", "text": "Roll D3+1 for how many acorns are acquired. When a hero has to roll on the Serious Injury chart and the result is 11-35, he may consume one acorn, and only one, to re-roll the first die; so on a 14, with at least one acorn, the 1 may be re-rolled. The second result must be accepted and may not be re-rolled. Note the acorn used and remove it from his equipment."}
+      ]
+    },
+    {
+      "name": "Arrows of Blood Ivy",
+      "type": "Miscellaneous",
+      "subtype": "Ammunition",
+      "cost": 40,
+      "dice": 2,
+      "rarity": 10,
+      "rulesPage": 5,
+      "rules": [
+        {"name": "Blood Ivy", "text": "A model wounded by an arrow of blood ivy must pass a Toughness test at once or suffer -1 Strength for the rest of the battle. The effects of several such arrows do not stack. There are enough arrows to last one campaign."}
+      ]
+    },
+    {
+      "name": "Falcon",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 20,
+      "rarity": 9,
+      "dice": null,
+      "rulesPage": 5,
+      "rules": [
+        {"name": "Falcon", "text": "A falcon lets you change one die roll in the exploration phase by 1, up or down, as long as its owning hero was not taken out of action in the battle. Only one falcon per warband."}
+      ]
+    },
+    {
+      "name": "Forest Familiar",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "cost": 20,
+      "rarity": 9,
+      "dice": null,
+      "rulesPage": 5,
+      "rules": [
+        {"name": "Forest Familiar", "text": "A forest familiar gives the Wild Hunter +2\" on his spotting distance for detecting hidden enemies. Once per game its presence may also allow any model within 6\" of the Wild Hunter to re-roll a roll; that re-roll may not itself be re-rolled."}
+      ]
+    }
+  ],
+  "priceRows": [
+    {"name": "Elven Cloak", "cost": 80, "dice": 2, "rarity": 10, "page": 5},
+    {"name": "Healing Herbs", "cost": 20, "dice": 2, "rarity": 7, "page": 5},
+    {"name": "Hunting Arrows", "cost": 35, "rarity": null, "dice": null, "page": 5}
+  ],
+  "flags": [
+    {"page": 2, "what": "The PDF's text layer is broken into single letters and holds none of the profiles or the skill table, so pages 2, 6 and 7 were opened as images to read them."},
+    {"page": 2, "what": "An Asrai Way-farers warband needs at least three models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "The skill table: Way-Warden Combat, Shooting, Academic, Speed, Special; Spellweaver Shooting, Academic, Speed, Special; Wild Hunter Combat, Strength, Speed, Special; Pathfinder Combat, Shooting, Speed, Special."},
+    {"page": 2, "what": "No maximum profile is printed, so every elf takes our Elf maximum."},
+    {"page": 3, "what": "The Aspect of the Stag is headed \"(0-1)\", so only one hero may take it; the group's own limit of two heroes per Aspect is its note."},
+    {"page": 4, "what": "The starred list prices are \"the cost of equipment purchased by starting warbands before leaving their homelands\", which is what a list price already is, so no rule is imported for it. The item entries' own prices and rarities are what the store uses."},
+    {"page": 4, "what": "The Ithilmar Weapon line is \"3x weapon cost\", which is kept as the line's note; ours already carries the same. Ithilmar Armour is 80 gc here against our 90: only the starting list price is theirs."},
+    {"page": 5, "what": "The Elven Cloak (80+2D6, Rare 10), the Healing Herbs (20+2D6, Rare 7) and the Hunting Arrows (35 gc, common) are ours with a price row each; ours are 100 gc Rare 12, 20 gc Rare 8 and 25 gc Rare 8."},
+    {"page": 5, "what": "The Forest Familiar (+2\" spotting for the Wild Hunter) is not our Familiar and is kept apart; the Enchanted Acorns are not the Marienburg Magic Acorn. See the decisions."},
+    {"page": 6, "what": "The Spellweaver's rules call him a \"Spellwalker\", as does the Aspect of the Stag; he is the Spellweaver throughout."},
+    {"page": 7, "what": "The Wood Spirit gains experience at half rate and may never become a hero; our templates hold no half rate, so he gains experience and is not promotable, and the rule says the rest."},
+    {"page": 8, "what": "The Fey Magic list is imported as the lore Fey Magic: Angering Spites 7, Oakskin 7, Terrifying Spites 8, Fury of the Wild 8, Ever-Living Resplendence 6, Call of the Hunt 9."},
+    {"page": 2, "what": "No group sizes are printed for the henchmen."}
+  ]
+}

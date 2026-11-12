@@ -996,6 +996,31 @@
       "how": "mordheimer"
     },
     {
+      "name": "Elusive",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Wilhelm Tellus",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Starstruck",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Rough and Tumble",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Celebrity",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Master Inventor",
       "setting": "mutiny-in-marienburg",
       "how": "overrides.json"
@@ -1731,6 +1756,36 @@
       "how": "overrides.json"
     },
     {
+      "name": "Strict Leader",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Sneaky (Hobgoblin Horde)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Discretion",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Slaver (Hobgoblin Horde)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Backstabber (Hobgoblin Horde)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Mystic Aura",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Ded Shooty (Hobgoblins)",
       "setting": "khemri-3",
       "how": "overrides.json"
@@ -2276,6 +2331,21 @@
       "how": "overrides.json"
     },
     {
+      "name": "Taunt (The Innocents)",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Humane",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Child of the Ruins",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Expert Explorer",
       "setting": "mousillon",
       "how": "overrides.json"
@@ -2323,6 +2393,46 @@
     {
       "name": "Touch of Darkness",
       "setting": "sylvania",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hunter's Senses",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Complete Healing",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Terrible Claws",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Bloodthirst",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Chilling Howl",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Bestial Savagery",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Pack Hunter",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Heavy Pelt",
+      "setting": "grade-3",
       "how": "overrides.json"
     },
     {
@@ -2378,6 +2488,36 @@
     {
       "name": "Seeker (Wood Elves of Athel Loren)",
       "setting": "mordheim-2a",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Aspect of the Hawk",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Aspect of the Serpent",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Aspect of the Panther",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Aspect of the Fox",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Aspect of the Stag",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Aspect of the Rabbit",
+      "setting": "grade-3",
       "how": "overrides.json"
     },
     {

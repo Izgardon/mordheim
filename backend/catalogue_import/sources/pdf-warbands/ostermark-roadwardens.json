@@ -1,0 +1,195 @@
+{
+  "warbandType": "ostermark-roadwardens",
+  "name": "Ostermark Roadwardens",
+  "source": "Ostermark Roadwardens",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/facebook/Ostermark%20Roadwardens.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Hired Swords", "ruleFull": "The warband may take only mounted hired swords, among them the Freelance Knight, the Roadwarden and the Halfling Knight. The Roadwarden costs 10 gc less than usual to hire, so 30 gc, and 5 gc more per game to keep, so 25 gc upkeep. The Highwayman may not be hired."},
+    {"rulename": "Horses", "ruleFull": "The warband is not limited to two horses. A horse adds +3 to the warband's rating and a warhorse +5."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "roadwardens-hand-to-hand-weapons",
+      "title": "Roadwardens Hand-to-hand Combat Weapons",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "hammer", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "Horseman's Hammer", "alias": "Horseman's Hammer", "cost": {"cost": 12}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "roadwardens-armour",
+      "title": "Roadwardens Armour",
+      "caveat": "",
+      "items": [
+        {"name": "Barding", "alias": "", "cost": {"cost": 50}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "heavy armour", "alias": "Heavy Armour", "cost": {"cost": 40}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "Light Armour", "cost": {"cost": 15}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "roadwardens-missile-weapons",
+      "title": "Roadwardens Missile Weapons",
+      "caveat": "",
+      "items": [
+        {"name": "crossbow", "alias": "", "cost": {"cost": 25}},
+        {"name": "crossbow pistol", "alias": "", "cost": {"cost": 35}}
+      ]
+    },
+    {
+      "id": "couriers-missile-weapons",
+      "title": "Couriers Missile Weapons",
+      "caveat": "",
+      "items": [
+        {"name": "Throwing Knives/Stars/Axes", "alias": "Throwing Knives", "cost": {"cost": 15}},
+        {"name": "crossbow pistol", "alias": "", "cost": {"cost": 35}},
+        {"name": "short bow", "alias": "Shortbow", "cost": {"cost": 5}}
+      ]
+    },
+    {
+      "id": "angry-mob-weapons",
+      "title": "Angry Mob Weapons",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "spear", "alias": "Pitchfork", "cost": {"cost": 10}},
+        {"name": "Torch", "alias": "Torch (perpetual)", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "warden",
+      "type": "hero",
+      "name": "Warden",
+      "plural": "Wardens",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 85,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
+      "equipmentLists": ["roadwardens-hand-to-hand-weapons", "roadwardens-armour", "roadwardens-missile-weapons"],
+      "equipment": "A Riding Horse, which may be upgraded to a Warhorse for 40 gc more.",
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": true, "special": false},
+      "skillGroups": ["Cavalry"],
+      "skills": ["Ride [Animal]"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior within 6\" of the Warden may use his Leadership for a Leadership test."}
+      ]
+    },
+    {
+      "id": "reeve",
+      "type": "hero",
+      "name": "Reeve",
+      "plural": "Reeves",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 60,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["roadwardens-hand-to-hand-weapons", "roadwardens-armour", "roadwardens-missile-weapons"],
+      "equipment": "A Riding Horse, which may be upgraded to a Warhorse for 40 gc more.",
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": true, "speed": false, "special": false},
+      "skillGroups": ["Cavalry"],
+      "skills": ["Ride [Animal]"],
+      "specialRules": []
+    },
+    {
+      "id": "courier",
+      "type": "hero",
+      "name": "Courier",
+      "plural": "Couriers",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["roadwardens-hand-to-hand-weapons", "roadwardens-armour", "couriers-missile-weapons"],
+      "equipment": "A Riding Horse.",
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": false, "speed": false, "special": false},
+      "skillGroups": ["Cavalry"],
+      "skills": ["Ride [Animal]"],
+      "specialRules": []
+    },
+    {
+      "id": "chasseur",
+      "type": "henchman",
+      "name": "Chasseur",
+      "plural": "Chasseurs",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 55,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["roadwardens-hand-to-hand-weapons", "roadwardens-missile-weapons"],
+      "equipment": "A Riding Horse.",
+      "skills": ["Ride [Animal]"],
+      "specialRules": []
+    },
+    {
+      "id": "groom",
+      "type": "henchman",
+      "name": "Groom",
+      "plural": "Grooms",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["roadwardens-hand-to-hand-weapons", "roadwardens-armour", "couriers-missile-weapons"],
+      "skills": ["Driver"],
+      "specialRules": [
+        {"rulename": "Horse Handling", "ruleFull": "A Groom has the Animal Handling skill from the Blazing Saddles article."}
+      ]
+    },
+    {
+      "id": "angry-mob",
+      "type": "henchman",
+      "name": "Angry Mob",
+      "plural": "Angry Mob",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["angry-mob-weapons"],
+      "specialRules": []
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "priceRows": [
+    {"name": "Barding", "cost": 50, "rarity": 8, "dice": null, "note": "Warhorse only", "page": 2}
+  ],
+  "flags": [
+    {"page": 1, "what": "A Roadwardens warband needs at least three models: our templates hold no minimum, so it is not imported."},
+    {"page": 1, "what": "The PDF prints no Heroes and Henchmen headings. The Warden, the Reeves and the Couriers have skill tables and named starting experience, so they are the heroes; the Chasseurs, Grooms and Angry Mob fall under \"All Henchmen start with 0 experience\"."},
+    {"page": 1, "what": "Each hero's table ends in Cavalry, which is our Cavalry skill group, so the three of them learn from it."},
+    {"page": 1, "what": "The one printed list is split into five here, because each fighter buys from a different part of it: the hand-to-hand weapons, the armour and the missile weapons separately, the Couriers' own missile weapons, and the Angry Mob's. A Chasseur buys no armour and an Angry Mob member only his own list, as the PDF says."},
+    {"page": 2, "what": "Barding is sold at 50 gc for a warhorse only; ours is 80 gc Rare 8, so the warband gets a price row at 50 with the note. Light armour is 15 gc here against our 20, and heavy armour 40 against our 50: only the starting list price is theirs."},
+    {"page": 2, "what": "The Warden's and Reeves' Ride Horse and Ride Warhorse, and the Couriers' and Chasseurs' Ride Horse, are all our one Ride [Animal] skill, which they start with. The Grooms' Driver is ours; their Animal Handling is not a skill of ours and stays a rule of theirs."},
+    {"page": 2, "what": "The Warden and each Reeve come with a Riding Horse that may be upgraded to a Warhorse for 40 gc more, and a Courier and a Chasseur with a Riding Horse. Neither horse is on an equipment list, so both are written in the fighter's equipment and nothing is bought."},
+    {"page": 3, "what": "The Angry Mob's Pitchfork is \"as spear\", so the line is our Spear under that name. Their Torch is 5 gc and perpetual on the list, while the item entry reprints the Empire in Flames torch at 2 gc, which is ours; the list's 5 gc is kept. See the decisions."},
+    {"page": 3, "what": "The Horseman's Hammer entry reprints the Empire in Flames rules, which our Horseman's Hammer already carries at the same 12 gc."},
+    {"page": 1, "what": "No group sizes are printed for the henchmen."}
+  ]
+}

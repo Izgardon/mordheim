@@ -1,0 +1,164 @@
+{
+  "warbandType": "mordheimers-fanatics",
+  "name": "Mordheimers' Fanatics",
+  "source": "Mordheimers' Fanatics",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/experimental/Mordheimer%20Fanatics.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {"rulename": "Hired Swords", "ruleFull": "The warband may employ only the hired swords open to every warband, and any dramatis persona who will work for anyone: the Pit Fighter, Warlock, Ogre Bodyguard, Halfling Cook, Imperial Assassin, Tilean Marksman, Johann the Knife, Aenur the Sword of Twilight and Nicodemus the Sage."},
+    {"rulename": "Prophetic Rants", "ruleFull": "Rants are not magic, and reach only members of the warband: never an enemy, an ally or a hired sword. They come into play as spells do, with the difficulty each one prints, and reach as far as the Prophet's Leader rule does, 6\" unless that range grows. A rant stays in play until the Prophet suffers a wound or chooses to stop, and only one rant may be in play at a time. A rant's psychological effect works on warband members who are immune to psychology, because it comes from their own belief in the Prophet.\n\nWhen the Prophet rolls a skill advance he may instead roll for another rant, or lower the difficulty of a rant he has by one. A rant rolled twice is rolled again."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "mordheimers-equipment-list",
+      "title": "Mordheimers Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double Handed Weapon", "cost": {"cost": 15}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "buckler", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    },
+    {
+      "id": "lunatics-and-maimed-ones-equipment-list",
+      "title": "Lunatics and Maimed Ones Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "flail", "alias": "", "cost": {"cost": 15}},
+        {"name": "double-handed weapon", "alias": "Double Handed Weapon", "cost": {"cost": 15}},
+        {"name": "sling", "alias": "", "cost": {"cost": 2}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "prophet",
+      "type": "hero",
+      "name": "Prophet",
+      "plural": "Prophets",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 4, "t": 4, "w": 1, "i": 3, "a": 1, "ld": 9},
+      "equipmentLists": ["mordheimers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": false},
+      "spellLores": ["Prophetic Rants"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any warrior within 6\" of the Prophet may use his Leadership for a Leadership test."},
+        {"rulename": "Fanatical", "ruleFull": "The Prophet is immune to fear."},
+        {"rulename": "Orator", "ruleFull": "The Prophet starts with one rant."}
+      ]
+    },
+    {
+      "id": "bleak-one",
+      "type": "hero",
+      "name": "Bleak One",
+      "plural": "Bleak Ones",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 4, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 9},
+      "equipmentLists": ["mordheimers-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": false},
+      "specialRules": [
+        {"rulename": "Fanatical", "ruleFull": "The Bleak One is immune to fear."},
+        {"rulename": "Deathwish", "ruleFull": "The Bleak One always moves towards the nearest enemy model he can see, and must advance at least 1\" in the movement phase. He need not run or charge."},
+        {"rulename": "Lost Everything", "ruleFull": "The Bleak One hates the warriors of every warband he faces, except the Sisters of Sigmar."}
+      ]
+    },
+    {
+      "id": "lunatic",
+      "type": "hero",
+      "name": "Lunatic",
+      "plural": "Lunatics",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["lunatics-and-maimed-ones-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": false, "special": false},
+      "specialRules": [
+        {"rulename": "Frenzy", "ruleFull": "The Lunatic is subject to frenzy."}
+      ]
+    },
+    {
+      "id": "orphan",
+      "type": "hero",
+      "name": "Orphan",
+      "plural": "Orphans",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": ["mordheimers-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": true, "academic": false, "strength": false, "speed": true, "special": false},
+      "specialRules": []
+    },
+    {
+      "id": "city-folk",
+      "type": "henchman",
+      "name": "City Folk",
+      "plural": "City Folk",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["mordheimers-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "maimed-ones",
+      "type": "henchman",
+      "name": "Maimed One",
+      "plural": "Maimed Ones",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 10,
+      "gainExp": true,
+      "promotable": true,
+      "groupSize": {"min": 1, "max": 5},
+      "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["lunatics-and-maimed-ones-equipment-list"],
+      "specialRules": [
+        {"rulename": "Maimed", "ruleFull": "Every member of a Maimed Ones group is crippled the same way. Roll a D6 when the group is made and change the profile of all of them to match.\n\nD6 | Result\n1 | Bad legs, back and the like: Movement and Initiative each -1.\n2 | Missing arms: Weapon Skill -1. He may use neither two weapons nor a weapon and a shield.\n3 | Bad vision or blindness: Ballistic Skill -1.\n4 | Infirm: Toughness -1.\n5 | Wyrdstone weakness: Strength -1.\n6 | Head injuries: unless he is within 6\" of a hero he is subject to stupidity."}
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {"page": 1, "what": "A Mordheimer warband needs at least three models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "The PDF has no Special skill column: each hero's lists are written out, so the warband brings no skill group of its own."},
+    {"page": 2, "what": "The two equipment lists were read from the page's own two columns in the -layout text; the reading order runs them together."},
+    {"page": 3, "what": "The Prophet's rants are not magic but \"come into play in the same way as magic spells\", so they are imported as the spell lore Prophetic Rants and he is a caster. His Orator rule gives him one of them at the start."},
+    {"page": 4, "what": "The Lunatics and Orphans sit under Heroes, so a full warband may hold six heroes: one Prophet, one Bleak One, two Lunatics and two Orphans."},
+    {"page": 5, "what": "Both henchmen entries are \"0+\" in groups of 1-5, so neither carries a maximum."},
+    {"page": 7, "what": "The rant difficulties are 6, 8, 8, 7, 9, 9 in the order the D6 gives them."}
+  ]
+}

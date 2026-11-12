@@ -1,0 +1,205 @@
+{
+  "warbandType": "werewolf-hunting-pack",
+  "name": "Werewolf Hunting Pack",
+  "source": "Werewolf Hunting Pack",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Werewolf%20Hunting%20Pack.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 12
+  },
+  "specialRules": [
+    {"rulename": "Excellent Senses", "ruleFull": "A werewolf detects a hidden enemy from twice as far away as other warriors, so twice his Initiative in inches."},
+    {"rulename": "Secretive", "ruleFull": "The warband may never include a hired sword or dramatis persona who is not of werewolf blood."},
+    {"rulename": "Regenerate", "ruleFull": "Whenever an enemy wounds a werewolf, roll a D6: on a 4 or more the wound is ignored. A wound caused by fire, including fire magic, by silver or by wolfsbane may not be regenerated."},
+    {"rulename": "Human Appearance", "ruleFull": "Out of combat a werewolf may look human or wolflike, so for any post-game event, an exploration roll among them, the warband counts as a human warband."},
+    {"rulename": "Claws and Teeth", "ruleFull": "In battle form a werewolf with no weapon does not count as unarmed, and his claws count as an additional weapon for the extra attack."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "werewolf-equipment-list",
+      "title": "Werewolf Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "Club/mace", "cost": {"cost": 3}},
+        {"name": "axe", "alias": "", "cost": {"cost": 5}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10, "costSuffix": "(Weremaeg only)"}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10, "costSuffix": "(Weremaeg only)"}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "Double-Handed Weapon", "cost": {"cost": 15, "costSuffix": "(Weremaeg only)"}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10, "costSuffix": "(Weremaeg only)"}},
+        {"name": "toughened leathers", "alias": "Toughened leathers", "cost": {"cost": 10}},
+        {"name": "light armour", "alias": "Light Armour", "cost": {"cost": 20, "costSuffix": "(Weremaeg only)"}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5, "costSuffix": "(Weremaeg only)"}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}}
+      ]
+    }
+  ],
+  "specialEquipment": [
+    {"title": "Silver Weapons", "cost": {"cost": 60}, "availability": "Rare 11"},
+    {"title": "Silver Bullets/Arrows", "cost": {"cost": 20}, "availability": "Rare 10"},
+    {"title": "Silver Powder", "cost": {"cost": 20}, "availability": "Rare 8"},
+    {"title": "Wolfsbane", "cost": {"cost": 15}, "availability": "Rare 10"}
+  ],
+  "fighters": [
+    {
+      "id": "beornwulf",
+      "type": "hero",
+      "name": "Beornwulf",
+      "plural": "Beornwulfs",
+      "race": "werewolf",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 75,
+      "startingXp": 20,
+      "statblock": {"m": 5, "ws": 4, "bs": 4, "s": 4, "t": 4, "w": 2, "i": 5, "a": 1, "ld": 8},
+      "equipmentLists": ["werewolf-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any model in the warband within 6\" of the Beornwulf may use his Leadership instead of its own."},
+        {"rulename": "Infectious Bite", "ruleFull": "If a human model is taken out of action by the Beornwulf and survives, he must take a Toughness test at the start of every post-game sequence after the one he was bitten in. For each test he fails he gains +1 Strength, and the moment his Strength reaches 6 he becomes a werewolf and leaves his warband. One dose of wolfsbane makes him pass the next test automatically; two taken at once cure him."}
+      ]
+    },
+    {
+      "id": "runwulf",
+      "type": "hero",
+      "name": "Rünwulf",
+      "plural": "Rünwulfs",
+      "race": "werewolf",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 80,
+      "startingXp": 8,
+      "statblock": {"m": 5, "ws": 4, "bs": 3, "s": 4, "t": 4, "w": 2, "i": 5, "a": 1, "ld": 7},
+      "equipmentLists": ["werewolf-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": true, "strength": true, "speed": true, "special": true},
+      "spellLores": ["Werewolf Runes"],
+      "specialRules": [
+        {"rulename": "Wizard", "ruleFull": "The Rünwulf casts from the Werewolf Runes and starts with one of them, chosen in the normal way. A rune counts as a spell, lasts one game only and is inscribed before the game starts, and the same rune may be inscribed only once on a given subject. Where he would roll a rune he already has, he may instead gain the ability to inscribe it on one more hero rather than lower its difficulty by one."}
+      ]
+    },
+    {
+      "id": "byrewulf",
+      "type": "hero",
+      "name": "Byrewulf",
+      "plural": "Byrewulfs",
+      "race": "werewolf",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 50,
+      "startingXp": 0,
+      "statblock": {"m": 5, "ws": 2, "bs": 2, "s": 3, "t": 4, "w": 2, "i": 4, "a": 1, "ld": 6},
+      "equipmentLists": ["werewolf-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "specialRules": []
+    },
+    {
+      "id": "weremaeg",
+      "type": "henchman",
+      "name": "Weremaeg",
+      "plural": "Weremaeg",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["werewolf-equipment-list"],
+      "specialRules": [
+        {"rulename": "Human enough", "ruleFull": "A Weremaeg is in human shape and counts as a human."},
+        {"rulename": "New Path", "ruleFull": "If a Weremaeg rolls That Lad's Got Talent you may send him off to learn a trade instead of making him a hero. Pay the hire fee of any human hired sword and roll a D6: he is away for that many games, and comes back as that hired sword, under every hired sword rule, upkeep included. He no longer counts as part of the warband except as a hired sword does, and you keep whatever equipment he carried."}
+      ]
+    },
+    {
+      "id": "wulfmaeg",
+      "type": "henchman",
+      "name": "Wulfmaeg",
+      "plural": "Wulfmaeg",
+      "race": "wulfmaeg",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 9, "ws": 3, "bs": 0, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 6},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Animal", "ruleFull": "A Wulfmaeg is in wolf shape and counts as an animal, a wolf, but still earns experience and advances as normal. He fights with claws and teeth and may never carry a weapon, nor armour that needs a hand such as a shield; his armour costs twice as much. A Wulfmaeg hero may carry only equipment with no active use, a lucky charm or a holy relic and the like, where no decision is needed about when to use it."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Werewolf Hunting Pack",
+    "new": true
+  },
+  "specialSkillsList": [
+    {"name": "Hunter's Senses", "description": "The werewolf may test to charge a model up to 6\" away and out of line of sight, instead of 4\"."},
+    {"name": "Complete Healing", "description": "In each recovery phase the werewolf spends out of combat he rolls a D6 for every wound he has lost, and recovers it on a 4 or more. At the end of each post-game phase roll a D6: on a 6 he loses one lasting injury from the roster."},
+    {"name": "Terrible Claws", "description": "Attacking with his claws, the werewolf causes a critical wound on a 5 or more instead of a 6. A 5 causes no critical where 5 is the lowest roll that wounds."},
+    {"name": "Bloodthirst", "description": "The first time the werewolf causes an unsaved wounding hit he becomes frenzied."},
+    {"name": "Chilling Howl", "description": "Instead of charging, and with no charge needed, the werewolf may take a Leadership test. If he passes, every enemy model on the table with no friendly model in line of sight must take an All Alone test as though engaged by several opponents, and breaks if it fails. It is a fear test too, so a model immune to fear is immune to it."},
+    {"name": "Bestial Savagery", "description": "When the werewolf takes a model out of action, every enemy within 3\" must pass a fear test or break and flee as though it had failed an All Alone test. A model immune to fear is immune to this."},
+    {"name": "Pack Hunter", "pdfName": "Pack hunter", "description": "The werewolf gains a bonus attack against a model that is also engaged by a member of his warband."},
+    {"name": "Heavy Pelt", "pdfName": "Heaby Pelt", "description": "The werewolf gains +1 to his armour save, or a 6+ armour save if he had none."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Silver Weapons",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 11,
+      "dice": null,
+      "rulesPage": 6,
+      "rules": [
+        {"name": "Silvered", "text": "A melee weapon covered in silver counts as a normal weapon against anyone but a werewolf. Against a werewolf each wound causes D3 wounds, and a roll of 4 or more wounds unless less was already needed. A wound caused by silver may be neither regenerated nor healed during the game."},
+        {"name": "Buying it", "text": "Any weapon normally available to the warband may be bought already silvered: roll the weapon's rarity as 11, then roll for the weapon's cost in the normal way, and pay the weapon's cost plus 60 gc. To silver a weapon the warband already owns, roll the rarity all the same and pay 80 gc in all."}
+      ]
+    },
+    {
+      "name": "Silver Bullets/Arrows",
+      "type": "Miscellaneous",
+      "subtype": "Ammunition",
+      "cost": 20,
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 6
+    },
+    {
+      "name": "Silver Powder",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 8,
+      "dice": null,
+      "rulesPage": 6,
+      "rules": [
+        {"name": "Poison", "text": "Silver dust mixed with animal fat and smeared on a weapon. A weapon with silver powder on it counts as silver. It counts as a poison for equipment purposes, but may still be bought and used by a warband that normally may not use poison."}
+      ]
+    },
+    {
+      "name": "Wolfsbane",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": 10,
+      "dice": null,
+      "rulesPage": 6,
+      "rules": [
+        {"name": "Poison", "text": "Every wound caused by a weapon poisoned with wolfsbane is doubled, and such a wound never needs more than a 4 to be caused and may not be healed during the game. Wolfsbane affects wolves and werewolves only."}
+      ]
+    }
+  ],
+
+  "flags": [
+    {"page": 1, "what": "A Werewolf warband needs at least three models: our templates hold no minimum, so it is not imported."},
+    {"page": 5, "what": "Page 5 holds little text, but its skill table reads from the page's own text columns, so no page was opened as an image. Beornwulf and Rünwulf Combat, Academic, Strength, Speed, Special; Byrewulf Combat, Strength, Speed, Special. None of them ticks Shooting."},
+    {"page": 2, "what": "The maximum profiles are the warband's own: Werewolf M6 WS6 BS5 S5 T5 W4 I7 A5 Ld9 and Wulfmaeg M9 WS6 BS0 S4 T4 W3 I6 A4 Ld8, both new races. The Weremaeg uses the human maximum, as the PDF says. Our Werecreature is a different maximum and is left alone. See the decisions."},
+    {"page": 3, "what": "The Byrewulf's entry misspells him \"Werewulfs\" in his Weapons/Armour line; he buys from the Werewolf Equipment List like the rest."},
+    {"page": 4, "what": "The Wulfmaeg is a henchman who counts as an animal but still earns experience, so he gains experience and may be promoted. His \"armour costs twice as much\" and his hero's equipment limit are kept in his rule; nothing is priced twice."},
+    {"page": 4, "what": "Toughened leathers are 10 gc here against our 5: only the starting list price is theirs."},
+    {"page": 6, "what": "The werewolf special equipment is \"available to all warbands in a campaign that includes werewolves\", but its rows name this warband only, so another warband reads \"Not usually available\", which warns and never blocks. See the decisions."},
+    {"page": 6, "what": "The PDF's \"Silver bullets\" at 20 gc Rare 10 are the Sartosa warbands' Silver Bullets/Arrows, so the same item takes a second price row at 20 for this warband and keeps the Sartosa name and rules. Silver Powder and Wolfsbane are its own."},
+    {"page": 6, "what": "Silver Weapons is priced as an addition to a weapon's own cost (+60 gc, or 80 gc to silver one already owned). Our catalogue has no weapon upgrade, so it is one item at 60 gc carrying both as its rules."},
+    {"page": 7, "what": "The Werewolf Runes are imported as the lore Werewolf Runes: Fehu 9, Algiz 6, Kenaz 8, Isa 6, Dagaz 9, Thurisaz 10."},
+    {"page": 7, "what": "\"Heaby Pelt\" and \"Pack hunter\" are printed so; both are imported as Heavy Pelt and Pack Hunter."},
+    {"page": 1, "what": "No group sizes are printed for the henchmen."}
+  ]
+}

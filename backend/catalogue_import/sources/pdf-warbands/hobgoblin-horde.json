@@ -1,0 +1,217 @@
+{
+  "warbandType": "hobgoblin-horde",
+  "name": "Hobgoblin Horde",
+  "source": "Hobgoblin Horde",
+  "sourceLink": "https://www.broheim.net/downloads/warbands/web/Hobgoblin%20Horde.pdf",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 20
+  },
+  "specialRules": [
+    {"rulename": "Distasteful Company", "ruleFull": "The warband may hire only Pit Fighters, Ogre Bodyguards, Hobgoblin Scouts and Warlocks, and any greenskin hired sword your group approves."},
+    {"rulename": "Animosity", "ruleFull": "Every Henchman in the warband suffers from Animosity, using Da Mob's rules for it."},
+    {"rulename": "Strength in Numbers", "ruleFull": "Each round the warband's leader gains +1 Leadership, to a maximum of 10, as long as no more than 75% of the warband has been taken out of action. At the start of any of your turns in which 25% of the warband is out of action, so that rout tests are called for, the leader loses the +1."},
+    {"rulename": "Great Gits", "ruleFull": "The warband may include up to three Great Gits in all, in any mix of Gasher Gits and Arrer Gits."}
+  ],
+  "equipmentLists": [
+    {
+      "id": "hobgoblin-equipment-list",
+      "title": "Hobgoblin Equipment List",
+      "caveat": "",
+      "items": [
+        {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
+        {"name": "club", "alias": "", "cost": {"cost": 3}},
+        {"name": "Axe", "alias": "Battle axe", "cost": {"cost": 5}},
+        {"name": "Leather Whip", "alias": "Leather-whip", "cost": {"cost": 7}},
+        {"name": "sword", "alias": "", "cost": {"cost": 10}},
+        {"name": "double-handed weapon", "alias": "", "cost": {"cost": 15}},
+        {"name": "spear", "alias": "", "cost": {"cost": 10}},
+        {"name": "halberd", "alias": "", "cost": {"cost": 10}},
+        {"name": "Double-Dirks", "alias": "", "cost": {"cost": 35}},
+        {"name": "Weeping Blades", "alias": "", "cost": {"cost": 50}},
+        {"name": "bow", "alias": "", "cost": {"cost": 10}},
+        {"name": "short bow", "alias": "", "cost": {"cost": 5}},
+        {"name": "light armour", "alias": "Light armor", "cost": {"cost": 20}},
+        {"name": "shield", "alias": "", "cost": {"cost": 5}},
+        {"name": "helmet", "alias": "", "cost": {"cost": 10}},
+        {"name": "Giant Wolf", "alias": "Giant Wolf Mount", "cost": {"cost": 85, "costSuffix": "(Heroes only)"}}
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "hobgoblin-chieftain",
+      "type": "hero",
+      "name": "Hobgoblin Chieftain",
+      "plural": "Hobgoblin Chieftains",
+      "race": "hobgoblin",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 20,
+      "statblock": {"m": 4, "ws": 4, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
+      "equipmentLists": ["hobgoblin-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": true, "strength": true, "speed": true, "special": true},
+      "skills": ["Ride [Animal]"],
+      "specialRules": [
+        {"rulename": "Leader", "ruleFull": "Any member of the warband within 6\" of the Chieftain may use his Leadership for a Psychology test."}
+      ]
+    },
+    {
+      "id": "hobgoblin-maghu",
+      "type": "hero",
+      "name": "Hobgoblin Maghu",
+      "plural": "Hobgoblin Maghus",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 40,
+      "startingXp": 10,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 4, "w": 1, "i": 2, "a": 1, "ld": 7},
+      "equipmentLists": ["hobgoblin-equipment-list"],
+      "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
+      "specialRules": [
+        {"rulename": "No Armour", "ruleFull": "The Maghu may not wear armour."},
+        {"rulename": "Poisons", "ruleFull": "At the start of any battle the Maghu can fight in, he laces one Hero's weapon with black lotus. Write down which hero and which weapon before the battle; the choice may not be changed, and you may reveal the poisoned weapon at any time."},
+        {"rulename": "Animal Link", "ruleFull": "Whenever an animal within 6\" of the Maghu takes a Leadership test, you may re-roll it once and must accept the second result. This covers a friendly animal's test, a test to control a mount and an enemy's fear test alike."}
+      ]
+    },
+    {
+      "id": "gasher-git",
+      "type": "hero",
+      "name": "Gasher Git",
+      "plural": "Gasher Gits",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["hobgoblin-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": false, "academic": false, "strength": true, "speed": true, "special": true},
+      "skills": ["Ride [Animal]"],
+      "specialRules": []
+    },
+    {
+      "id": "arrer-git",
+      "type": "hero",
+      "name": "Arrer Git",
+      "plural": "Arrer Gits",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "maxQty": 3,
+      "costGc": 30,
+      "startingXp": 8,
+      "statblock": {"m": 4, "ws": 3, "bs": 4, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["hobgoblin-equipment-list"],
+      "skillAccess": {"combat": true, "shooting": true, "academic": false, "strength": false, "speed": true, "special": true},
+      "skills": ["Ride [Animal]"],
+      "specialRules": []
+    },
+    {
+      "id": "hobgoblin-lads",
+      "type": "henchman",
+      "name": "Hobgoblin Lad",
+      "plural": "Hobgoblin Lads",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["hobgoblin-equipment-list"],
+      "specialRules": []
+    },
+    {
+      "id": "bonecruncha-wolves",
+      "type": "henchman",
+      "name": "Bonecruncha Wolf",
+      "plural": "Bonecruncha Wolves",
+      "race": "wolf",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 25,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {"m": 7, "ws": 3, "bs": 0, "s": 4, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 4},
+      "equipmentLists": [],
+      "specialRules": [
+        {"rulename": "Animals", "ruleFull": "A Bonecruncha Wolf gains no experience, and uses neither weapons nor armour."},
+        {"rulename": "Charge", "ruleFull": "A Bonecruncha Wolf fights with 2 Attacks instead of 1 in the turn it charges."}
+      ]
+    },
+    {
+      "id": "sneaky-gits",
+      "type": "henchman",
+      "name": "Sneaky Git",
+      "plural": "Sneaky Gits",
+      "race": "hobgoblin",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {"m": 4, "ws": 4, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 2, "a": 1, "ld": 6},
+      "equipmentLists": ["hobgoblin-equipment-list"],
+      "specialRules": [
+        {"rulename": "Sneaky", "ruleFull": "When the Git charges an opponent already engaged in combat he gains +1 Attack for the first round, and all his hand-to-hand attacks carry a -1 armour save modifier in that round. This applies only to attacks made with daggers of some kind: ordinary daggers, ithilmar daggers, Double-Dirks and the like."}
+      ]
+    }
+  ],
+  "skillGroup": {
+    "name": "Hobgoblin Horde",
+    "new": true
+  },
+  "specialSkillsList": [
+    {"name": "Strict Leader", "description": "Leader only. No Hobgoblin within 6\" of the leader rolls for Animosity, or within 12\" if the leader has Battle Tongue."},
+    {"name": "Sneaky (Hobgoblin Horde)", "pdfName": "Sneaky", "description": "May not be learned by a Sneaky Git, who has it already. When the warrior charges an opponent already engaged in combat he gains +1 Attack for the first round, and all his hand-to-hand attacks carry a -1 armour save modifier in that round. This applies only to attacks made with daggers of some kind: ordinary daggers, ithilmar daggers, Double-Dirks and the like."},
+    {"name": "Infiltration", "ours": "Infiltration"},
+    {"name": "Discretion", "description": "The warrior may leave combat voluntarily. When he voluntarily escapes from combat he gains +1 Leadership for the test, and may re-roll a failed test once per turn, taking the second result."},
+    {"name": "Slaver (Hobgoblin Horde)", "pdfName": "Slaver", "description": "At the start of any game, if one or more of the warband's Hobgoblins has this skill, you may deploy D3 Goblin warriors; it does not stack with a second warrior who has it. They carry daggers only, and count towards neither the warband's size nor its rating, casualties or rout tests. When every hero with this skill is taken out of action they break combat at once and are removed from the table. Their profile is M4 WS2 BS3 S3 T3 W1 I2 A1 Ld5."},
+    {"name": "Backstabber (Hobgoblin Horde)", "pdfName": "Backstabber", "description": "When the warrior tries to charge a model within 4\" that he cannot see and fails the Initiative test to detect it, he may re-roll that test once and must take the second result. If he does detect the hidden model and charges it, he surprises it and gains +1 to hit and +1 on any injury roll against it. The bonus lasts for the first round of combat only, and applies only to attacks on models he could not see."},
+    {"name": "Mystic Aura", "description": "Maghu only. The Maghu causes fear."}
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Double-Dirks",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": 8,
+      "dice": null,
+      "range": "Close combat",
+      "strength": "As user",
+      "rulesPage": 5,
+      "rules": [
+        {"rule": "Pair", "text": "Double-Dirks are used in pairs, one in each hand, and a warrior armed with them gains an extra Attack."},
+        {"rule": "Poisoned", "summary": "Venomous", "text": "Double-Dirks count as permanently coated in black lotus. No further poison may be applied to them."},
+        {"rule": "+1 Enemy armour save", "text": "Double-Dirks count as daggers, so an enemy wounded by them gains a +1 bonus to his armour save, and a 6+ armour save if he has none."}
+      ]
+    },
+    {
+      "name": "Leather Whip",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 5
+    }
+  ],
+  "priceRows": [
+    {"name": "Weeping Blades", "rarity": 9, "dice": null, "page": 3},
+    {"name": "Giant Wolf", "rarity": 10, "dice": null, "note": "Heroes only", "page": 5}
+  ],
+  "flags": [
+    {"page": 1, "what": "The skill table's ticks are images; page 1 was opened as an image to read them. Chieftain all six; Maghu Academic, Speed, Special; Gasher Git Combat, Strength, Speed, Special; Arrer Git Combat, Shooting, Speed, Special."},
+    {"page": 1, "what": "A Horde warband needs at least three models: our templates hold no minimum, so it is not imported."},
+    {"page": 2, "what": "The Chieftain's Leadership is printed \"7*\"; the asterisk is his Strength in Numbers bonus, so the profile is imported as Ld 7."},
+    {"page": 2, "what": "His entry repeats Strength in Numbers and Ride Giant Wolf; the first is kept as the warband rule, the second as the skill Ride [Animal] he starts with. The Great Gits' \"Knows skill 'Ride Giant Wolf'\" is the same skill."},
+    {"page": 2, "what": "The Maghu and the Sneaky Gits are sent to the \"Hobgoblin Warrior equipment list\"; the PDF prints one list only, the Hobgoblin Equipment List, so both buy from it."},
+    {"page": 2, "what": "The Great Gits are one 0-3 entry with two profiles, Gasher and Arrer. They are imported as two hero rows of 0-3 each, with a warband rule capping the pair at three in all."},
+    {"page": 3, "what": "No count is printed for the Hobgoblin Lads (\"any number\"), so they are imported with no maximum."},
+    {"page": 5, "what": "The Giant Wolf's profile reads \"9 3 0 33 141 4\" where the columns run together; the nine values are M9 WS3 BS0 S3 T3 W1 I4 A1 Ld4. Our Giant Wolf item carries the mount, so nothing of the profile is imported."},
+    {"page": 5, "what": "Double-Dirks (35 gc, Rare 8, Pair, Venomous, +1 enemy armour save) are close to our Hobgoblin Poisoned Daggers (15 gc, Rare 9, Pair, Swift, Poisoned, +1 enemy armour save) and are kept apart as their own item. See the decisions."},
+    {"page": 5, "what": "The Leather Whip (7 gc, cannot be parried, whipcrack, +1 enemy armour save) is not our Steel Whip (10 gc, no save bonus). The Goblin Raiders declare the same item, so this page declares it with no rules of its own and only adds its price row; their wording stands for both."},
+    {"page": 6, "what": "Backstabber and Slaver share their names with skills of ours that do something else, so both are kept apart under the warband's name. Infiltration is ours word for word and is linked."}
+  ]
+}
