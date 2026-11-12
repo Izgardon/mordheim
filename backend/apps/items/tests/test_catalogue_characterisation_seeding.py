@@ -121,16 +121,18 @@ class SeedAllTests(TestCase):
                 # the Athel Loren batch's four templates add 41 of their own (9 the Dwarf Troll Slayers' runic tattoos);
                 # the two warbands read from their mordheimer pages add 18 (Mazzalupo 10, the Order of the Mare 8)
                 # the Savage Orcs (Athel Loren) Savage is the shared Frenzy (William, 12 Nov 2026): one row fewer
-                # the Mutiny in Marienburg main document adds 87: 40 for the Marienburg animals' rules and 47
-                # for the seventeen creatures of Men and Monsters
-                "Special": 1661,
+                # the Mutiny in Marienburg main document adds 128: 40 for the Marienburg animals' rules, 47 for
+                # the seventeen creatures of Men and Monsters and 41 for the Specialists and Dramatis Personae
+                "Special": 1702,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 14 mounts, 12 pets (the Sorcerous Society's four familiars, Marienburg's owl and falcon), 56
                 # creatures (17 Marienburg's shop animals, 17 its Men and Monsters, 28 Border Town Burning's
                 # Beasts of the East)
                 "BestiaryEntry": 83,
-                "HiredSword": 75,  # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin)
+                # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin) and Mutiny in
+                # Marienburg's eleven Specialists and three Dramatis Personae
+                "HiredSword": 89,
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
                 "WarbandTemplate": 151,  # mordheimer's New Warband Format pages (Tileans (old) left out), the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them) and the two web pages'
             },
@@ -286,7 +288,7 @@ class SeedAllTests(TestCase):
                 "Fear": (
                     114,
                     0,
-                    5,
+                    6,
                     5,
                     29,
                 ),  # fighters, upgrades, hired swords, dramatis personae, beasts (14 of the East, 12 Marienburg's)
@@ -637,7 +639,10 @@ class SeedAllTests(TestCase):
     def test_who_may_hire_and_learn_comes_from_the_import(self):
         # the items rebuild: every hired sword names who may hire him (mordheimer's lists); since the skill groups
         # (phase 1a) the core groups are for everyone and a warband's group names its warbands
-        self.assertFalse(HiredSword.objects.filter(for_everyone=True).exists())
+        # Mutiny in Marienburg's "any warband except Skaven" is everyone with one exclusion, so his lines are only
+        # exclusions and he stays for everyone
+        everyone = HiredSword.objects.filter(for_everyone=True)
+        self.assertFalse(everyone.filter(warband_links__excluded=False).exists())
         self.assertFalse(HiredSword.objects.filter(warband_links__isnull=True).exists())
         self.assertTrue(SkillGroup.objects.get(name="Speed").for_everyone)
         skaven = SkillGroup.objects.get(name="Skaven")

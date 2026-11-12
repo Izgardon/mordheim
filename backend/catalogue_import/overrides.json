@@ -1198,7 +1198,21 @@
       "Norse Shaman": "border-town-burning",
       "Dark Elf Sorceress (Dark Elf Corsairs)": "mousillon",
       "Dark Elf Beastmaster (Dark Elf Corsairs)": "mousillon",
-      "Witch Elf (Dark Elf Corsairs)": "mousillon"
+      "Witch Elf (Dark Elf Corsairs)": "mousillon",
+      "Ogre Treasure Hunter": "mutiny-in-marienburg",
+      "Grave Warden": "mutiny-in-marienburg",
+      "Halfling Fence": "mutiny-in-marienburg",
+      "Halfling Pimp": "mutiny-in-marienburg",
+      "Albino Stormvermin": "mutiny-in-marienburg",
+      "Bearman Bodyguard": "mutiny-in-marienburg",
+      "Whaler": "mutiny-in-marienburg",
+      "Fire-eater": "mutiny-in-marienburg",
+      "Sister of Sigmar": "mutiny-in-marienburg",
+      "Midshipman": "mutiny-in-marienburg",
+      "Bog Hunter": "mutiny-in-marienburg",
+      "Lisette Leerer": "mutiny-in-marienburg",
+      "Trancas Quendalmanliye": "mutiny-in-marienburg",
+      "Sam Warble": "mutiny-in-marienburg"
     }
   }
 }

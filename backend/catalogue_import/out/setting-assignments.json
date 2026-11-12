@@ -2926,6 +2926,76 @@
       "name": "Witch Elf (Dark Elf Corsairs)",
       "setting": "mousillon",
       "how": "overrides.json"
+    },
+    {
+      "name": "Ogre Treasure Hunter",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Grave Warden",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Halfling Fence",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Halfling Pimp",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Albino Stormvermin",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Bearman Bodyguard",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Whaler",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Fire-eater",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Sister of Sigmar",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Midshipman",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Bog Hunter",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Lisette Leerer",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Trancas Quendalmanliye",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Sam Warble",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
     }
   ],
   "dramatis_personae": [

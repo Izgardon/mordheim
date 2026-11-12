@@ -4784,5 +4784,1122 @@
       "rating": 10,
       "race": "Elf"
     }
+  },
+  {
+    "name": "Ogre Treasure Hunter",
+    "type": "Hired Sword",
+    "description": "Rum-soaked ogre treasure hunters have sailed the high seas living the life of a pirate. Sea-dogs are haulage dealers and deep-sea divers, salvagers of maritime paraphernalia who dive off shipwrecks to collect trinkets, hoarding every piece of junk they ensnare along the way.",
+    "movement": 6,
+    "weapon_skill": 3,
+    "ballistic_skill": 2,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 3,
+    "attacks": 2,
+    "leadership": 7,
+    "armour_save": null,
+    "large": true,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Diver",
+        "description": "The Ogre Treasure Hunter's rusty diving gear lets him move and breathe in water without penalty. He counts as aquatic."
+      },
+      {
+        "name": "Fear",
+        "description": "Ogres are large, threatening creatures that cause fear."
+      },
+      {
+        "name": "Large Target",
+        "description": "Ogres are Large Targets as defined in the shooting rules."
+      },
+      {
+        "name": "Parrot Gnoblar",
+        "description": "The ogre is accompanied by a gnoblar dressed as a parrot, a claimed gnoblar represented on the ogre model. If the Ogre Treasure Hunter was not taken out of action, roll on the Cargo chart after each battle to see what salvage he swiped for the warband."
+      },
+      {
+        "name": "Scrap-Dealer",
+        "description": "A warband with an Ogre Treasure Hunter can arrange trade deals with other warbands without a wagon or other vehicle. A vehicle is still required to benefit from a reputation in trade deals."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Pistol",
+        "quantity": 2
+      },
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Man-catcher",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 95,
+      "hire_cost_expression": "",
+      "upkeep_cost": 40,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband with a riverboat or a barge except Skaven",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 35,
+      "race": "Ogre"
+    }
+  },
+  {
+    "name": "Grave Warden",
+    "type": "Hired Sword",
+    "description": "The priests of Morr cannot tend every Garden of Morr themselves, so Grave Wardens keep the grounds, walls and monuments, and patrol the perimeter against grave robbers, would-be necromancers and crypt ghouls. A Warden stands as the first line of defence against any unquiet undead.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Immune to Disease",
+        "description": "A Grave Warden is not affected by any disease."
+      },
+      {
+        "name": "Hardened",
+        "description": "Grave Wardens are immune to fear."
+      },
+      {
+        "name": "Gardener",
+        "description": "A Grave Warden must move towards the nearest model that attacked a grave marker, or trespassed in a tomb, if he has line of sight. He hates all models defiling graves and charges any trespassers."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      },
+      {
+        "item": "Wheelbarrow",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 10,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any Dwarf, Elf or Human warband",
+      "warbands": [
+        {
+          "group": "dwarfs"
+        },
+        {
+          "group": "elves"
+        },
+        {
+          "group": "humans"
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Speed"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 10,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Halfling Fence",
+    "type": "Hired Sword",
+    "description": "Not just anybody can run a fencing operation under the protection of the gangs that hire him. Halfling counterfeiters keep a low profile while they network independently of the racketeers in the city's underbelly.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 4,
+    "strength": 2,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Sham",
+        "description": "Every item bought through the Fence is at its base price, with no random gold modifier, and at half that price. Once such an item is first used, roll a D6: on a 1 it breaks and is useless, an elaborate fake. At the end of each battle, whether or not the Fence took part, roll a D6 for what he has come by: 1 a Halfling cookbook, 2 an Ithilmar weapon, 3 a Gromril weapon, 4 a Tome of Magic or a Holy Tome, 5 a hunting rifle or an Elf bow, 6 a brace of duelling pistols."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Pistol",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Skaven, Undead, Beastmen and Orcs & Goblins",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "beastmen",
+          "excluded": true
+        },
+        {
+          "group": "orcs-and-goblins",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Speed",
+        "Shooting"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 15,
+      "race": "Halfling"
+    }
+  },
+  {
+    "name": "Halfling Pimp",
+    "type": "Hired Sword",
+    "description": "Halfling agents make a career as sleazy expeditors in the seedier parts of the city, underworld guides and herders of harlots with delusional aspirations of becoming slave traffickers.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 4,
+    "strength": 2,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Underworld Contacts",
+        "description": "A Hero visiting a bordello, a casino, a dream parlour or another Infamous Haunt while accompanied by a Pimp the warband has hired may re-roll any dice he rolls there. The second result must always be accepted."
+      },
+      {
+        "name": "Flesh-peddler",
+        "description": "At the start of each battle nominate one of your opponent's female warriors as the Pimp's mark. Treat this as a Bounty Hunter's mark, except that the mark is captured by the Pimp instead of earning a reward after the battle. The Pimp has +1 to hit his mark and must always move towards her. He gains +D3 Experience for each mark he puts out of action if he survives and the battle was won. Do not roll on the Serious Injuries chart after the battle: marks count as captured, and any weapons may be kept by the warband or sold."
+      },
+      {
+        "name": "Playboy",
+        "description": "A mark works for the Pimp's warband as a Courtesan and must always remain within 8\" of him."
+      },
+      {
+        "name": "Courtesans",
+        "description": "If the Pimp is taken out of action and none of his warband is within 8\", his marks run for the nearest table edge in the hope of returning to their original warband. A mark that comes within 8\" of its original warband is instantly controlled by the original owner. If the Pimp is taken out of action while a mark is within 8\" of another warrior of his warband, the mark charges the closest model of that warband in range; treat the mark as having hatred."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Torch",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 20,
+      "hire_cost_expression": "",
+      "upkeep_cost": 10,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Skaven, Undead, Beastmen and Orcs & Goblins",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "beastmen",
+          "excluded": true
+        },
+        {
+          "group": "orcs-and-goblins",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Speed",
+        "Shooting"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 10,
+      "race": "Halfling"
+    }
+  },
+  {
+    "name": "Albino Stormvermin",
+    "type": "Hired Sword",
+    "description": "Hulking white-furred armoured mutes are Skavenblight's elite Stormvermin. Albino guard are granted sparingly, sent only to protect minions carrying out their dastardly assignments.",
+    "movement": 6,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 2,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hardened",
+        "description": "The Council's bodyguard are chosen for their strength and relative fearlessness. They are immune to fear."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Halberd",
+        "quantity": 1
+      },
+      {
+        "item": "Heavy Armour",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Warp tokens",
+            "amount": 75
+          }
+        ],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [
+          {
+            "resource": "Warp tokens",
+            "amount": 30
+          }
+        ],
+        "note": ""
+      },
+      "unique_to": "Skaven warbands only",
+      "warbands": [
+        {
+          "group": "skaven"
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength",
+        "Speed"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 30,
+      "race": "Skaven"
+    }
+  },
+  {
+    "name": "Bearman Bodyguard",
+    "type": "Hired Sword",
+    "description": "Norse retainers are all the fashion with the nobility. Norscan mercenaries from Ormsgard and Urslo serve numerous Merchant Houses, and thirsty bodyguards are always garrisoned away from strong ale, food stores and women.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 2,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Shieldmaster",
+        "description": "A Bearman Bodyguard may parry with his shield in addition to getting a saving throw."
+      },
+      {
+        "name": "Drunken",
+        "description": "Roll a D6 at the start of each turn. On a 1 he must test for stupidity that turn; on a 2-5 nothing happens; on a 6 he is subject to frenzy for that turn. While subject to stupidity or frenzy he is immune to all other forms of psychology."
+      }
+    ],
+    "skills": [
+      "Bulwark"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Wolfcloak",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 65,
+      "hire_cost_expression": "",
+      "upkeep_cost": 30,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Undead and Skaven",
+      "warbands": [
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "skaven",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 30,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Whaler",
+    "type": "Hired Sword",
+    "description": "Whaling is an important trade for Norsca, and whalers are respected even among the warriors. Norscan whale-hunters sailing out of Marienburg must be made of sterner stuff than ordinary fishermen, and some sell their services as mercenaries in dangerous locales.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Marine Hunter",
+        "description": "Double any wounds the Whaler inflicts on aquatic models."
+      },
+      {
+        "name": "Hardened",
+        "description": "The Whaler is immune to fear."
+      },
+      {
+        "name": "Harpooner",
+        "description": "When the Whaler hits and wounds a model in the shooting phase he may try to reel in the catch: if he passes a Strength test the target is pulled 8\" towards him. Neither model counts as charging if the target is reeled into close combat."
+      },
+      {
+        "name": "Whalebone Carver",
+        "description": "While a Whaler is with the warband, Heroes have +2 on search rolls for Scrimshaw Baubles."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Spear",
+        "quantity": 1
+      },
+      {
+        "item": "Net",
+        "quantity": 1
+      },
+      {
+        "item": "Harpoon Gun/Crossbow",
+        "quantity": 1
+      },
+      {
+        "item": "Javelins",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 70,
+      "hire_cost_expression": "",
+      "upkeep_cost": 30,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Undead and Skaven",
+      "warbands": [
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "skaven",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Strength",
+        "Shooting"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 30,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Fire-eater",
+    "type": "Hired Sword",
+    "description": "Fire-eaters of Ind, Cathay and the Ogre Kingdoms are entertainers and assassins both, letting loose a belch of fire that curses foes as hair and hemp fry. What starts as a show can end in a dangerous explosion. Hired by Ogre Maneaters he has Movement 6.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Fire-Stick",
+        "description": "In the shooting phase the Fire-Eater spits fire upon his enemies. Use the teardrop flame template to see which models suffer an automatic Strength 4 hit, and any model hit is set on fire on a roll of 4+. He can use this breath attack even while engaged in close combat."
+      },
+      {
+        "name": "Inhaling Fire",
+        "description": "After the first flume, roll a D6 each time the Fire-Eater makes another breath attack. On a 1 he has inhaled the fire he should have been spewing and suffers a Strength 4 hit instead of using the template."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "hired_sword": {
+      "hire_cost": 75,
+      "hire_cost_expression": "",
+      "upkeep_cost": 30,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any Human warband, the Battle Monks of Cathay, and Ogre Maneaters (with Movement 6)",
+      "warbands": [
+        {
+          "group": "humans"
+        },
+        {
+          "type": "battle-monks-of-cathay"
+        },
+        {
+          "type": "maneaters"
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 30,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Sister of Sigmar",
+    "type": "Hired Sword",
+    "description": "The Sisters of Sigmar have traditionally travelled the Empire tending to orphans, and their advice is sought by those about to make an important decision. Their popularity wanes as Witch Hunters denounce them as witches, but Wastelanders see them as anything but heretics.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Blessing of Sigmar",
+        "description": "The Sister has two of the Sisters of Sigmar special skills."
+      },
+      {
+        "name": "Candle Tree",
+        "description": "Her Arcane Candelabrum counts as a holy relic, a brazier iron and a lantern, and is used one-handed. Any mutant taken out of action by the Sister of Sigmar is captured."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sigmarite Warhammer",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Blessed Water",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 45,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any Dwarf, Elf or Human warband except Witch Hunters",
+      "warbands": [
+        {
+          "group": "dwarfs"
+        },
+        {
+          "group": "elves"
+        },
+        {
+          "group": "humans"
+        },
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Academic",
+        "Strength",
+        "Speed"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 15,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Midshipman",
+    "type": "Hired Sword",
+    "description": "Amidst the winding channels linking the River Reik to the Manaanspoort Sea, many Midshipmen lend their services to a warband willing to pay. Hardened by years at sea, they can rouse the most shambolic of men into a crew of reasonable aptitude.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "A Crew Fer Me!",
+        "description": "A Midshipman craves the comradery and adventure of the sea and a worthy crew, so any seafaring warband has +1 to its blood pact rolls with him."
+      }
+    ],
+    "skills": [
+      "Pilot",
+      "Rigger"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Boat Hook",
+        "quantity": 1
+      },
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Pistol",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Any warband except Skaven, Beastmen and Orcs & Goblins",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "beastmen",
+          "excluded": true
+        },
+        {
+          "group": "orcs-and-goblins",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Speed"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 8,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Bog Hunter",
+    "type": "Hired Sword",
+    "description": "Some men have lost so much, or want such strange things, that they have been shunned from normal society, and a few have befriended the creatures of the swamp. They work almost as slaves for the monsters, acting as spies and errand-runners in the human world. He may also learn the Academic skills Streetwise and Haggle.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Unholy Stink",
+        "description": "The Bog Hunter is covered in a thick layer of dung, and the smell is so distracting that all enemies are at -1 to hit him in close combat."
+      },
+      {
+        "name": "Gopher",
+        "description": "In place of a Hero's roll on either the Daemon Swamp or Trading, the Bog Hunter may visit any one place in the Craftsmarket, the Infamous Haunts or the Marketplace while the Hero waits outside town for his return."
+      },
+      {
+        "name": "Fenland Strider",
+        "description": "The Bog Hunter may re-roll any failed Initiative test while fighting on causeways, jetties and gangplanks, or crossing a marsh."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Beastlash",
+        "quantity": 1
+      },
+      {
+        "item": "Net",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_cost": 30,
+      "hire_cost_expression": "",
+      "upkeep_cost": 15,
+      "upkeep_cost_expression": "",
+      "unique_to": "Fimir, Beastmen and Greenskin warbands",
+      "warbands": [
+        {
+          "type": "lords-of-the-marsh"
+        },
+        {
+          "group": "beastmen"
+        },
+        {
+          "group": "orcs-and-goblins"
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 15,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Lisette Leerer",
+    "type": "Hired Sword",
+    "description": "Saleswoman and enforcer for the League of Gentlemen Entrepreneurs, the most powerful crime organisation in the Free City of Marienburg.",
+    "movement": 4,
+    "weapon_skill": 6,
+    "ballistic_skill": 6,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 7,
+    "attacks": 4,
+    "leadership": 9,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Iron Amulet",
+        "description": "Her amulet uses the natural properties of metal to resist magic: any spell that would target the area of the wearer has its casting difficulty increased by 2."
+      },
+      {
+        "name": "League Business",
+        "description": "Roll a D6 for every rare item the warband gets hold of whose rarity is at least Rare 12. On a 1 the item is appropriated by the League of Gentlemen Entrepreneurs."
+      },
+      {
+        "name": "Guild Membership",
+        "description": "Lisette is an appointed enforcer protected by the Marienburg Gentleman's Club. She may not be placed under arrest."
+      },
+      {
+        "name": "Protection Racket",
+        "description": "Any human Hired Sword the warband encounters through a random happening or an exploration result may join a warband Lisette accompanies. The player may not actively hire a Hired Sword the warband could not normally hire. Such a Hired Sword may only be removed from the roster if his upkeep is not paid, if he dies from being taken out of action, or if an enemy model has captured him."
+      }
+    ],
+    "skills": [
+      "Resilient",
+      "Lightning Reflexes",
+      "Scale Sheer Surfaces",
+      "Dodge",
+      "Mighty Blow",
+      "Hide in Shadows",
+      "Step Aside"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Rapier",
+        "quantity": 1
+      },
+      {
+        "item": "Stiletto Blade",
+        "quantity": 1
+      },
+      {
+        "item": "Knuckledusters",
+        "quantity": 1
+      },
+      {
+        "item": "Throwing Knives/Stars/Axes",
+        "quantity": 1
+      },
+      {
+        "item": "Blowpipe",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "D3+1 Treasures or wyrdstone shards after each game she took part in."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Her hire fee is paid after each game she took part in."
+      },
+      "unique_to": "Any warband except Skaven",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 100,
+      "race": "Human"
+    }
+  },
+  {
+    "name": "Trancas Quendalmanliye",
+    "type": "Hired Sword",
+    "description": "A Wood Elf charlatan who keeps the casino door, and a wizard's apprentice turned gambler.",
+    "movement": 5,
+    "weapon_skill": 5,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 8,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Wizard",
+        "description": "Trancas was a wizard's apprentice and has two spells generated at random from the Lesser Magic list."
+      },
+      {
+        "name": "Songster",
+        "description": "Any friendly model within 6\" of Trancas may re-roll a failed Leadership test with +1 Leadership. This includes Rout tests."
+      },
+      {
+        "name": "Pick Locks",
+        "description": "When testing to open a locked door, Trancas only needs to make an Initiative test."
+      },
+      {
+        "name": "Hate Orcs and Dark Elves",
+        "description": "Trancas hates Orcs and Goblins, and Dark Elves as well."
+      },
+      {
+        "name": "Amulet of Thrice-Blessed Copper",
+        "description": "On a successful Toughness test Trancas is unaffected by any poison attack. Non-magical weapons inflict 1 Wound less when he is attacked in hand-to-hand combat."
+      }
+    ],
+    "skills": [
+      "Excellent Sight",
+      "Luck"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Rapier",
+        "quantity": 1
+      },
+      {
+        "item": "Net",
+        "quantity": 1
+      },
+      {
+        "item": "Elven Boots",
+        "quantity": 1
+      },
+      {
+        "item": "Elven Cloak",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "A quarter of all gold crowns earned after each game he took part in. Wyrdstone shards and treasures found must all be sold after the battle to work out his fee."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "His hire fee is paid after each game he took part in."
+      },
+      "unique_to": "Any warband except Skaven and Undead",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 100,
+      "race": "Elf"
+    }
+  },
+  {
+    "name": "Sam Warble",
+    "type": "Hired Sword",
+    "description": "The diminutive sleuth is famous for solving Marienburgers' problems for the right price, delving into suspicious characters and uncovering secrets. With a network of more informants than anyone else in the city, Sam Warble can find anything or anyone at a price.",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": 7,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 3,
+    "initiative": 9,
+    "attacks": 4,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Bribery",
+        "description": "Sam Warble can never be placed under arrest. Any warrior being placed or already placed under arrest can be released without rolling on the Conviction chart by paying a bribe."
+      },
+      {
+        "name": "Jack of All Trades",
+        "description": "Sam may use any item or weapon he encounters and wear any cloak or armour, and equipment may be bought for him as for any other member of the warband. Any weapon given to Sam is his to keep: he will not pass it to another member later."
+      },
+      {
+        "name": "Night Vision",
+        "description": "In an underground scenario Sam spots hidden enemies from twice his Initiative value in inches away."
+      },
+      {
+        "name": "Sixth Sense",
+        "description": "Once per game Sam may choose the result of any dice roll he makes, but not one made by another member of the warband."
+      },
+      {
+        "name": "Stealthy",
+        "description": "Sam can hide even after running, and can run while within 8\" of enemy models if he starts and ends his move hidden."
+      },
+      {
+        "name": "True Detective",
+        "description": "A warrior taken out of action in close combat by Sam Warble is placed under arrest whenever the injury roll on a D6 is 5-6, unless Sam's warband routed. Equipment belonging to a warrior placed under arrest cannot be kept by the warband unless it was impounded under the campaign's objectives, and confiscated items cannot be sold or traded."
+      },
+      {
+        "name": "Private Eye",
+        "description": "At the start of each battle nominate one of your opponent's warriors as Sam's mark. Treat this as a Bounty Hunter's mark, except that the mark is placed under arrest instead of earning a reward after the battle. Sam has +1 to hit his mark and must always move towards him."
+      }
+    ],
+    "skills": [
+      "Pick Locks",
+      "Trap Expert",
+      "Haggle",
+      "Spry",
+      "Hide in Shadows",
+      "Step Aside"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 2
+      },
+      {
+        "item": "Sling",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      },
+      {
+        "item": "Thief's Cloak",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "30 gc after the first game he took part in, and 15 gc more for each later assignment with the same warband. If more than one player wants him, and the campaign's objectives do not say otherwise, he goes to the highest bidder."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "unique_to": "Any warband except Skaven, Undead, Beastmen and Orcs & Goblins",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "beastmen",
+          "excluded": true
+        },
+        {
+          "group": "orcs-and-goblins",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": [],
+      "grade": "2b",
+      "rating": 100,
+      "race": "Halfling"
+    }
   }
 ]
