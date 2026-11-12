@@ -91,11 +91,11 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 48,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 502,  # the import's 424 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's nine) + one Animal item per beast
+                "Item": 503,  # the import's 425 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's nine) + one Animal item per beast
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 502,  # the import's 478 (one per name, Athel Loren's 14 among them) + the 24 hired swords' own skills the book lacks
                 "SkillGroup": 129,  # the import's 110 (Athel Loren's three) + a group of his own for each of 19 hired swords
-                "Spell": 318,  # 300 (the PDFs' lores) + the Dark Mage's six (BUG-54)
+                "Spell": 330,  # 312 (the PDFs' lores, the Mazzalupo's Commands and the Blessings of the Mare among them) + the Dark Mage's six (BUG-54)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -118,14 +118,15 @@ class SeedAllTests(TestCase):
                 # more than the skill keeps its text (William, 11 Nov 2026): the Ogre Hunter's Sabre Trainer and the
                 # Watchmen Sergeant's Falconer are 2 more; the Sartosa Orc Pirates and Savage Orcs are two
                 # variants of the Orc Mob (William, 11 Nov 2026), so their pages bring no template of their own
-                # the Athel Loren batch's four templates add 41 of their own (9 the Dwarf Troll Slayers' runic tattoos)
-                "Special": 1517,
+                # the Athel Loren batch's four templates add 41 of their own (9 the Dwarf Troll Slayers' runic tattoos);
+                # the two warbands read from their mordheimer pages add 18 (Mazzalupo 10, the Order of the Mare 8)
+                "Special": 1535,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 64,
                 "HiredSword": 75,  # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin)
                 "DramatisPersona": 30,  # mordheimer's, through the catalogue import (next step 12)
-                "WarbandTemplate": 142,  # mordheimer's New Warband Format pages (Tileans (old) left out) and the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them)
+                "WarbandTemplate": 144,  # mordheimer's New Warband Format pages (Tileans (old) left out), the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them) and the two web pages'
             },
         )
         for model in BOOK_MODELS:
@@ -220,16 +221,16 @@ class SeedAllTests(TestCase):
 
     def test_the_warband_templates_come_in_whole(self):
         # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
-        self.assertIn("Warband templates import complete. Templates: 142, archived", self.output)
+        self.assertIn("Warband templates import complete. Templates: 144, archived", self.output)
         counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
         self.assertEqual(
             counts,
             {
-                "WarbandTemplateType": 150,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each; the Orc Mob serves three
-                "TemplateFighter": 923,  # the Orc Mob holds its two variants' five fighters of their own
-                "TemplateList": 346,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
-                "TemplateListItem": 3824,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 483,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                "WarbandTemplateType": 152,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each; the Orc Mob serves three
+                "TemplateFighter": 938,  # the Orc Mob holds its two variants' five fighters of their own
+                "TemplateList": 352,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
+                "TemplateListItem": 3899,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
+                "TemplateRule": 489,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin),
                 # the Fen Guard's 7 (Variations), the Lords of the Marsh's 15, the Shallows Beasts' 9, the Underworld
@@ -311,6 +312,7 @@ class SeedAllTests(TestCase):
                 "Stupidity (Rat Ogre)": "warband",  # the Skaven's and Clan Pestilens' one row
                 "Stupidity (Clan Moulder Rat Ogre)": "warband",  # unless a Clan Moulder Hero is within 6"
                 "Stupidity (Cold One Beasthounds)": "warband",
+                "Stupidity (Black sheep)": "warband",  # unless a Mazzalupo Sheepherder is within 6"
                 "Immune to Psychology (Plague Bearers)": "warband",
                 "Immune to Psychology (Nurglings)": "warband",  # their own text (the review, 5 Nov 2026: W6)
                 "Immune to Psychology (Plague Cart)": "warband",

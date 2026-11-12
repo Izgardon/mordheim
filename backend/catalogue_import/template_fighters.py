@@ -41,9 +41,10 @@ OURS = {"large": ("Large", "Trait"), "wizard": ("Wizard", "Caster"), "priest": (
 
 
 def is_prayers(lore: str) -> bool:
-    """A lore a priest casts from: prayers, or the Funerary Rites of a Priest of Morr, who "is not a wizard" (the
-    Vampire Hunters of Sylvania's PDF, p11)."""
-    return "Prayers" in lore or lore.startswith("Funerary Rites")
+    """A lore a priest casts from: prayers, the Funerary Rites of a Priest of Morr, who "is not a wizard" (the
+    Vampire Hunters of Sylvania's PDF, p11), the Blessings of the Mare, which the Dame of the Mare prays, or the
+    Mazzalupo's Commands, whose Wandering knight "does not count as a wizard" though he casts as one."""
+    return "Prayers" in lore or lore.startswith(("Funerary Rites", "Blessings of the Mare", "Commands ("))
 
 
 @dataclass

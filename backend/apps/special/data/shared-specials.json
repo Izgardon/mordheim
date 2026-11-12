@@ -862,6 +862,17 @@
       "why": "Hates vampires of every other bloodline, not High Elves."
     },
     {
+      "name": "Stupidity (Black sheep)",
+      "rule": "Stupidity",
+      "owners": [
+        {
+          "warband": "Mazzalupo",
+          "fighter": "Black sheep"
+        }
+      ],
+      "why": "Not stupid while a Sheepherder is within 6\"."
+    },
+    {
       "name": "Hatred",
       "rule": "Hatred",
       "owners": [

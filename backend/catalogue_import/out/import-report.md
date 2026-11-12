@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 62 |
 | items (warband templates) | 17 |
-| price rows | 542 |
+| price rows | 543 |
 | skills | 478 |
 | skill groups | 110 |
 | skill group links | 619 |
@@ -867,16 +867,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 142 |
-| warband types linked | 150 |
-| fighters (heroes, henchmen) | 923 (476, 447) |
-| henchmen that gain no XP | 127 |
-| henchmen that can't be promoted | 156 |
-| equipment lists | 346 |
-| list lines | 3824 |
-| warband rules | 483 |
+| templates | 144 |
+| warband types linked | 152 |
+| fighters (heroes, henchmen) | 938 (484, 454) |
+| henchmen that gain no XP | 129 |
+| henchmen that can't be promoted | 159 |
+| equipment lists | 352 |
+| list lines | 3899 |
+| warband rules | 489 |
 | upgrades | 179 |
-| the templates' own specials | 1109 |
+| the templates' own specials | 1127 |
 
 ### List lines
 
@@ -891,7 +891,7 @@ Lines found other than by name or tag:
 | cursed-cavalcade | Misericordia | Misericordia (Cursed Cavalcade) | named for the warband |
 | cursed-dwarves | hand gun | Handgun | a loose match |
 
-571 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+579 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 
@@ -930,7 +930,7 @@ Fighters with no race:
 | undead | Zombies |  |
 | witch-hunters | War hounds |  |
 
-94 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, giant spider, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
+96 creatures come in with no race: animal, bear, chaos hound, chaos spawn, cold one beasthound, construct, daemon, giant rat, giant spider, hawk, monkey, rat ogre, sabretusk, scorpion, skeleton, snotling, squig, stone golem, tomb scorpion, troll, warhound, wolf.
 
 Several profiles, the first kept:
 
@@ -1050,11 +1050,13 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | mages | Arch Mage | Wizard | Elemental Lore of Air, Elemental Lore of Earth, Elemental Lore of Fire, Elemental Lore of Water |
 | mages | Mage | Wizard | Elemental Lore of Air, Elemental Lore of Earth, Elemental Lore of Fire, Elemental Lore of Water |
 | mages | Warlock | Wizard | Lesser Magic |
+| mazzalupo | Wandering knight | Priest | Commands (Mazzalupo) |
 | necrarchs-the-soul-stealers | Necrarch Vampire | Wizard | Necromancy, Dreaded Scrolls of Nagash |
 | necrarchs | Nosferatu | Wizard | Necromancy |
 | necromancer | Necromancer | Wizard | Necromancy |
 | night-goblins-kaz | Shaman | Wizard | Waaaagh! Magic |
 | nipponese-expedition | Vim-To Mage | Wizard | Arabian Elemental Magic |
+| order-of-the-mare | Dame of the Mare | Priest | Blessings of the Mare |
 | outlaws-of-stirwood-forest-redux | Cleric | Priest | Prayers of Sigmar |
 | protectorate-of-sigmar | Warrior Priest | Priest | Prayers of Sigmar |
 | savage-orcs-ath | Savage Orc Shaman | Wizard | Waaaagh! Magic |
@@ -1362,6 +1364,7 @@ List prices the pages differ from: none.
 | Regeneration (Warpstone Troll) | Underworld Alliance: Warpstone Troll | Each wound ignored on a 4+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once, and the Trolls never roll for injury. |
 | Berserkers (Red Toof Goblin) | Forest Goblins: Red Toof Goblin | Frenzy, and immune to animosity in a turn he begins within charge range of an enemy. |
 | Kindred Hatred (Strigoi Vampire) | Survivors of Strigos: Strigoi Vampire | Hates vampires of every other bloodline, not High Elves. |
+| Stupidity (Black sheep) | Mazzalupo: Black sheep | Not stupid while a Sheepherder is within 6". |
 | Hatred | Bretonnian Chapel Guard: Battle Pilgrim | Hates every enemy: an open-ended target no shared row names, kept his own and worded short. |
 
 ### Own rules of one name
@@ -1441,7 +1444,7 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-94 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+96 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
@@ -1493,6 +1496,7 @@ Kept apart from a family's, the effect differing:
 | low-kings | low-kings | 7 | 1 | 1 | 10 |
 | mages | mages | 5 | 1 | 0 | 10 |
 | masters-of-horror | masters-of-horror | 7 | 1 | 3 | 11 |
+| mazzalupo | mazzalupo | 7 | 0 | 1 | 11 |
 | metal-mongers | metal-mongers | 6 | 0 | 3 | 12 |
 | militiant-mootlanders | militiant-mootlanders | 7 | 0 | 1 | 11 |
 | muzil | muzil | 5 | 0 | 0 | 7 |
@@ -1503,6 +1507,7 @@ Kept apart from a family's, the effect differing:
 | nipponese-expedition | nipponese-expedition | 7 | 3 | 4 | 9 |
 | ogre-hunting-party | ogre-hunting-party | 6 | 2 | 2 | 10 |
 | orc-pirates | orc-pirates | 8 | 0 | 1 | 10 |
+| order-of-the-mare | order-of-the-mare | 8 | 0 | 0 | 14 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
 | pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 12 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
@@ -2354,6 +2359,21 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p4): The Flesh Construct's Cannot Run ("may still charge normally") is our shared May Not Run. It gains experience only on a passed Leadership test, so it gains experience but never becomes a Hero. Both it and the Zombies ("Undead creatures") take our Undead race; Zombies gain no experience.
 - Flag (p4): No group sizes are printed: left open, but the Flesh Construct's is 1, as there may be only one.
 
+### Mazzalupo
+
+- Stub: Bearcloak, 10 gc, Common; its rules are on p1.
+- Flag (p1): This warband was read from its mordheimer.net page (https://mordheimer.net/docs/warbands/grade-2a-warbands/mazzalupo, last updated 12 Oct 2026, version V3.5), not from a PDF: broheim.net serves none for it and the page's own source is a Google Drive link. Every `page` below is 1, the page itself. See the decisions.
+- Flag (p1): The page's heroes are the Wandering knight (1), the Master of finances (0-1), the Fallen noble (0-2) and the Squire (0-1); its henchmen the Sheepherders (0-2), the Churls (any number) and the Black sheep (0-5). No henchmen group sizes and no maximum profile are printed, so the warriors take our Human race.
+- Flag (p1): A Mazzalupo warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p1): The skill table has no Special column, so the warband has no skill group of its own. The Wandering knight has no Academic tick and the Master of finances no Combat, Strength or Speed tick: as printed.
+- Flag (p1): "Riding (horse): The Wandering knight has the Riding (horses) skill" and the same rule on the Fallen noble name a skill only, so each starts with our Ride [Animal], as the Marauders' Hung heroes do, and the rule is not kept (William, 7 Nov 2026). The Master of finances' Haggle is the same: its sentence adds only flavour, so he starts with our Haggle.
+- Flag (p1): The Wandering knight's Commands are a lore of six, "acquired the same way new spells are learned" and "cast following the rules for Magic", so they come in as the spell lore Commands (Mazzalupo). The page prints them unnumbered, so each takes its D6 result from the page's order. He "does not count as a wizard", so he is a Priest in our model, as the Vampire Hunters' Priest of Morr is. See the decisions.
+- Flag (p1): The Black sheep's Stupidity is not our shared Stupidity: it holds only while no Sheepherder is within 6". Kept apart as "Stupidity (Black sheep)", as the Rat Ogre's is.
+- Flag (p1): The Bearcloak is word for word our Wolfcloak with a bear in place of the wolf, at the same 10 gc and with the same Strength test and +1 save against shooting. It is kept apart as a stub of its own, because the test is the Sheepherder's rather than a Hero's and the cloak is the Mazzalupo's; see the decisions for whether it should be our Wolfcloak instead.
+- Flag (p1): The Bearcloak's availability is printed as "Special" rather than a rarity, so its row is Common and its rule carries the Strength test.
+- Flag (p1): "Fallen nobles may not ride a horse unless the Captain of the warband is riding a horse" is a condition, not who may buy the line, so it is the Wandering Knight and Fallen Noble list's caveat. The page's "Captain" is the Wandering knight, the warband's only leader.
+- Flag (p1): The Horse line is 40 gc, our Riding/Draft Horse's own price; every other line matches our price but the Bearcloak, which we lack.
+
 ### Metal Mongers
 
 - Stub: Spike-jawed Snatcher, 25 gc, Rare 10; its rules are on p7.
@@ -2513,6 +2533,23 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p3): Goblin Swabbies replace Goblin Warriors at 12 gc and never gain experience, so unlike Da Mob's Goblin Warriors they may not be promoted.
 - Flag (p2): The Orc list's Toughened leathers are 7 gc, where every other Sartosa list and our catalogue have them at 5 gc: as printed, for both the Orc and the Goblin Swabbie lists.
 - Flag (p4): The Booma Pistol is a stub: 20 gc (40 for a brace), Common, Greenskins only, its rules on p4. The Fire Bomb line is 35 gc; ours is 35 + 2D6 gc, Rare 9, which is unchanged.
+
+### Order of the Mare
+
+- Flag (p1): This warband was read from its mordheimer.net page (https://mordheimer.net/docs/warbands/grade-2a-warbands/order-of-the-mare, last updated 12 Oct 2026), not from a PDF: https://www.broheim.net/downloads/warbands/web/Order%20Of%20The%20Mare.pdf answers 404. Every `page` below is 1, the page itself. See the decisions.
+- Flag (p1): The page's heroes are the Paragon (1), the Dame of the Mare (1), the Gallant (0-1) and the Esquiresses (0-2); its henchmen the Pilgrims (any number), the Bowmen (0-7), the Redeemed knights (0-5) and the Companion filly (0-1). No henchmen group sizes and no maximum profile are printed, so the warriors take our Human race.
+- Flag (p1): An Order of the Mare warband needs at least 3 models: our templates hold no minimum, so it is not imported.
+- Flag (p1): The page heads itself "Grade: Heroic" and "Setting: Bretonnia / Mordheim"; our warband type is grade 2a in Mordheim 2a, from mordheimer's own index, and is unchanged.
+- Flag (p1): The skill table has no Special column, so the warband has no skill group of its own. The Paragon and the Dame have no Shooting tick and the Esquiresses no Academic or Strength tick: as printed.
+- Flag (p1): "Each warband must have one Paragon" and "must include a single Dame of the Mare", so both are 1 exactly. That she is replaced without delay cannot be held as data, so it is the warband rule "A Dame without delay".
+- Flag (p1): Knight's virtue is printed as a warband special rule that the Paragon, the Gallant and the Redeemed knights each point at, so it is their own rule and no warband rule: one special, on the three of them.
+- Flag (p1): The Lance line is "(Knights only)" and the Paragon's Vow of poverty forbids him a Lance, so the line is the Gallant's and the Redeemed knights'; his rule is kept so the player sees why. The other "Knights only" lines (Heavy armour, Barding, Warhorse) name all three.
+- Flag (p1): "Weapons/Armour: Squires may be equipped from the Archer equipment list" is the Esquiresses' line; the page calls them Squires there.
+- Flag (p1): The Paragon's Leader rule names "the Questing knight", which is the Paragon.
+- Flag (p1): Barding is 30 gc on this list where ours is 80 gc: the line price stands and ours is unchanged. Every other line matches our price (Warhorse 80, Horse 40, Longbow 15).
+- Flag (p1): The Blessings of the Mare are a lore of six prayers, numbered 1 to 6 on the page. The Dame's rule calls them prayers, so she is a Priest. The Dame's charger (6) turns her into a warhorse-mounted model with the profile M8 WS4 BS0 S4 T4 W1 I4 A2 Ld7, which the prayer's own words carry; it is no mount of ours.
+- Flag (p1): "Horse and rider" halves the price of one horse or warhorse for the Paragon and the Gallant at recruitment. A conditional price cannot be held on a list line, so it stays a warband rule and the lines keep the full price.
+- Flag (p1): The page's "A Word from the Author", "About Balance" and lore sections are flavour and are not imported.
 
 ### Outlaws of Stirwood Forest, Redux
 

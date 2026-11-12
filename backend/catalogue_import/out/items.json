@@ -19249,6 +19249,53 @@
     ]
   },
   {
+    "slug": "bearcloak",
+    "name": "Bearcloak",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "Mordheim Italia, V3.5 (mordheimer.net)",
+    "link_url": "https://mordheimer.net/docs/warbands/grade-2a-warbands/mazzalupo",
+    "tags": [
+      "bearcloak"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "Sheepherders only.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Bearcloak",
+        "summary": "",
+        "text": "To acquire a Bearcloak a Sheepherder pays 10 gold crowns and rolls equal to or under his Strength on a D6. If he succeeds he finds and slays the bear and wears its cloak. A Sheepherder may buy a Bearcloak when the warband is raised without testing for availability. A model wearing a Bearcloak gains +1 to its armour saves against all shooting attacks.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "mazzalupo",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "staff-of-damnation",
     "name": "Staff of Damnation",
     "variant": "",

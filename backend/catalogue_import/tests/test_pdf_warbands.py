@@ -714,6 +714,47 @@ class PdfImportTests(SimpleTestCase):
             self.assertEqual(row["skills"], [skill])
             self.assertEqual([special["name"] for special in row["specials"]], ["Leader"])
 
+    def test_mazzalupo_and_the_order_of_the_mare_come_in_from_their_web_pages(self) -> None:
+        # William, 11 Nov 2026, who gave the two mordheimer links: these are the only two warbands read from a web
+        # page rather than a PDF (broheim.net serves no PDF for either, and the snapshot holds no grade 2a page),
+        # written in this directory's shape, which is the shape for a warband read by hand from a document.
+        for slug, link in (
+            ("mazzalupo", "https://mordheimer.net/docs/warbands/grade-2a-warbands/mazzalupo"),
+            ("order-of-the-mare", "https://mordheimer.net/docs/warbands/grade-2a-warbands/order-of-the-mare"),
+        ):
+            page, template = FILES[slug], self.templates[slug]
+            self.assertEqual(page["sourceLink"], link)
+            self.assertEqual(template["link_url"], link)
+            self.assertEqual(template["setting"], "mordheim-2a")
+            self.assertEqual((template["starting_gold"], template["max_models"]), (500, 15))
+            self.assertEqual([row["type"] for row in template["types"]], [slug])
+            self.assertEqual({flag["page"] for flag in page["flags"]}, {1})  # one page, the page itself
+            self.assertIn("read from its mordheimer.net page", page["flags"][0]["what"])
+
+        mazzalupo = self.templates["mazzalupo"]
+        knight = next(row for row in mazzalupo["fighters"] if row["name"] == "Wandering knight")
+        # his Commands are learned as spells are and cast as magic, so they are a lore; he "does not count as a
+        # wizard", which our model says as Priest, as the Vampire Hunters' Priest of Morr does
+        lores = [lore["name"] for lore in knight["spell_types"]]
+        self.assertEqual((knight["caster"], lores), ("Priest", ["Commands (Mazzalupo)"]))
+        self.assertEqual(knight["skills"], ["Ride [Animal]"])  # "has the Riding (horses) skill"
+        finances = next(row for row in mazzalupo["fighters"] if row["name"] == "Master of finances")
+        self.assertEqual(finances["skills"], ["Haggle"])
+        sheep = next(row for row in mazzalupo["fighters"] if row["name"] == "Black sheep")
+        # not our shared Stupidity: it holds only while no Sheepherder is within 6"
+        self.assertIn("Stupidity (Black sheep)", [special["name"] for special in sheep["specials"]])
+        self.assertEqual(self.items["Bearcloak"]["origin"], ORIGIN)  # our Wolfcloak's effect, kept apart
+
+        mare = self.templates["order-of-the-mare"]
+        dame = next(row for row in mare["fighters"] if row["name"] == "Dame of the Mare")
+        lores = [lore["name"] for lore in dame["spell_types"]]
+        self.assertEqual((dame["caster"], lores), ("Priest", ["Blessings of the Mare"]))
+        virtue = [row["name"] for row in mare["fighters"] if "Knight's virtue" in [s["name"] for s in row["specials"]]]
+        self.assertEqual(
+            virtue, ["Paragon", "Gallant", "Redeemed knight"]
+        )  # the rule they point at, not a warband rule
+        self.assertNotIn("Knight's virtue", [rule["title"] for rule in mare["rules"]])
+
     def test_the_orc_pirates_and_the_savage_orcs_are_variants_of_the_orc_mob(self) -> None:
         # William, 11 Nov 2026: "Orc Pirates & Savage Orcs should just be 2 variants of the orc mob if that still
         # works, correctly pointing at their settings". Their pages fold into the Orc Mob's (`variantOf`), which

@@ -1,0 +1,687 @@
+{
+  "warbandType": "mazzalupo",
+  "name": "Mazzalupo",
+  "source": "Mordheim Italia, V3.5 (mordheimer.net)",
+  "sourceLink": "https://mordheimer.net/docs/warbands/grade-2a-warbands/mazzalupo",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Hired Swords",
+      "ruleFull": "The warband may hire the same Hired Swords and Dramatis Personae as a Mercenary warband."
+    },
+    {
+      "rulename": "Commands",
+      "ruleFull": "During the recovery phase, if the Wandering knight is not knocked down, stunned or out of action, he may shout one Command instead of running. A Command affects friendly models within 6\" that can hear him, so neither a stunned nor a knocked down model. A model may benefit from only one Command per turn."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "wandering-knight-equipment-list",
+      "title": "Wandering Knight and Fallen Noble Equipment List",
+      "caveat": "A Fallen noble may not ride a horse unless the Wandering knight is riding one.",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "morning star",
+          "alias": "Morning Star",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "lance",
+          "alias": "Lance",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": {
+            "cost": 50
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "horse",
+          "alias": "Horse",
+          "cost": {
+            "cost": 40
+          }
+        }
+      ]
+    },
+    {
+      "id": "master-of-finances-equipment-list",
+      "title": "Master of Finances and Squire Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short bow",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sling",
+          "alias": "Sling",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": {
+            "cost": 50
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "buckler",
+          "alias": "Buckler",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        }
+      ]
+    },
+    {
+      "id": "sheepherder-equipment-list",
+      "title": "Sheepherder and Churl Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "morning star",
+          "alias": "Morning Star",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "crossbow",
+          "alias": "Crossbow",
+          "cost": {
+            "cost": 25
+          }
+        },
+        {
+          "name": "short bow",
+          "alias": "Short bow",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sling",
+          "alias": "Sling",
+          "cost": {
+            "cost": 2
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "Bearcloak",
+          "alias": "",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Sheepherders only"
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "wandering-knight",
+      "type": "hero",
+      "name": "Wandering knight",
+      "plural": "Wandering knights",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 70,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 4,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "wandering-knight-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "skills": [
+        "Ride [Animal]"
+      ],
+      "spellLores": [
+        "Commands (Mazzalupo)"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any member of the warband within 6\" of the Wandering knight may use his Leadership instead of his own."
+        },
+        {
+          "rulename": "Commands",
+          "ruleFull": "The Wandering knight issues Commands to his comrades. He knows one when the warband is raised and learns others as new spells are learned. Animals, allies, Dramatis Personae and Hired Swords may not be the target of a Command, and unless a Command says otherwise the Wandering knight is not affected by his own. He does not count as a wizard and a Command does not count as a spell, but a Command is cast following the rules for magic. If the Wandering knight dies, the new leader of the warband gains Commands and starts with one random Command."
+        }
+      ]
+    },
+    {
+      "id": "master-of-finances",
+      "type": "hero",
+      "name": "Master of finances",
+      "plural": "Masters of finances",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 25,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "master-of-finances-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": false,
+        "shooting": true,
+        "academic": true,
+        "strength": false,
+        "speed": false,
+        "special": false
+      },
+      "skills": [
+        "Haggle"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Corruption",
+          "ruleFull": "When the Master of finances is hit in close combat, but before the roll to wound, the Mazzalupo player may give the opponent 5 gold crowns for each model that hit him. A model so bribed must re-roll one successful attack roll. No model may re-roll more than one attack this way, but every model that hit may be bribed for 5 gold crowns each. A model immune to psychology may not be corrupted."
+        }
+      ]
+    },
+    {
+      "id": "fallen-noble",
+      "type": "hero",
+      "name": "Fallen noble",
+      "plural": "Fallen nobles",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 40,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "wandering-knight-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "skills": [
+        "Ride [Animal]"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Indolent",
+          "ruleFull": "A Fallen noble may never be the target of the Wandering knight's Commands."
+        },
+        {
+          "rulename": "Ye give way",
+          "ruleFull": "When the Fallen noble declares a charge against a Hero, he may challenge the target to yield the way. If the opponent refuses, the Fallen noble may not charge that model but may carry on his turn as normal, a new challenge included, and the warrior who refused suffers -1 to hit in hand-to-hand combat, not cumulative, until the end of the game. If the opponent accepts, the combat is fought as normal but no other warrior may join it, though both models may still suffer area effects and be the target of spells. If the Fallen noble puts the challenged opponent out of action he gains +1 to hit in hand-to-hand combat and +1 Strength, neither cumulative, until the end of the game."
+        }
+      ]
+    },
+    {
+      "id": "squire",
+      "type": "hero",
+      "name": "Squire",
+      "plural": "Squires",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 20,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "master-of-finances-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Petty thief",
+          "ruleFull": "If the Squire was not taken out of action, roll a D6 at the end of the game. On a 5 or more, take one wyrdstone shard from a randomly chosen opposing warband and add it to your own."
+        }
+      ]
+    },
+    {
+      "id": "sheepherders",
+      "type": "henchman",
+      "name": "Sheepherder",
+      "plural": "Sheepherders",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 30,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "sheepherder-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "churls",
+      "type": "henchman",
+      "name": "Churl",
+      "plural": "Churls",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "sheepherder-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "black-sheep",
+      "type": "henchman",
+      "name": "Black sheep",
+      "plural": "Black sheep",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 10,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 6,
+        "ws": 2,
+        "bs": 0,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 4
+      },
+      "equipmentLists": [],
+      "equipment": "None. A Black sheep may take no weapons and no armour.",
+      "specialRules": [
+        {
+          "rulename": "Stupidity",
+          "ruleFull": "A Black sheep is subject to stupidity unless a Sheepherder is within 6\" of it."
+        },
+        {
+          "rulename": "Animals",
+          "ruleFull": "A Black sheep is an animal and never gains experience."
+        },
+        {
+          "rulename": "Butcher's meat",
+          "ruleFull": "The opponent may ignore Black sheep when working out the closest target in the shooting phase. A Mazzalupo warrior may shoot at an enemy model engaged in hand-to-hand combat against Black sheep alone, choosing at random which of the models in that combat is hit."
+        },
+        {
+          "rulename": "Mountain animals",
+          "ruleFull": "A Black sheep may climb up and down following the normal rules, although it is an animal."
+        }
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [
+    {
+      "name": "Bearcloak",
+      "type": "Miscellaneous",
+      "subtype": "",
+      "rarity": null,
+      "dice": null,
+      "rulesPage": 1,
+      "note": "Sheepherders only.",
+      "rules": [
+        {
+          "name": "Bearcloak",
+          "summary": "Strength test to acquire; +1 armour save against shooting.",
+          "text": "To acquire a Bearcloak a Sheepherder pays 10 gold crowns and rolls equal to or under his Strength on a D6. If he succeeds he finds and slays the bear and wears its cloak. A Sheepherder may buy a Bearcloak when the warband is raised without testing for availability. A model wearing a Bearcloak gains +1 to its armour saves against all shooting attacks."
+        }
+      ]
+    }
+  ],
+  "flags": [
+    {
+      "page": 1,
+      "what": "This warband was read from its mordheimer.net page (https://mordheimer.net/docs/warbands/grade-2a-warbands/mazzalupo, last updated 12 Oct 2026, version V3.5), not from a PDF: broheim.net serves none for it and the page's own source is a Google Drive link. Every `page` below is 1, the page itself. See the decisions."
+    },
+    {
+      "page": 1,
+      "what": "The page's heroes are the Wandering knight (1), the Master of finances (0-1), the Fallen noble (0-2) and the Squire (0-1); its henchmen the Sheepherders (0-2), the Churls (any number) and the Black sheep (0-5). No henchmen group sizes and no maximum profile are printed, so the warriors take our Human race."
+    },
+    {
+      "page": 1,
+      "what": "A Mazzalupo warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 1,
+      "what": "The skill table has no Special column, so the warband has no skill group of its own. The Wandering knight has no Academic tick and the Master of finances no Combat, Strength or Speed tick: as printed."
+    },
+    {
+      "page": 1,
+      "what": "\"Riding (horse): The Wandering knight has the Riding (horses) skill\" and the same rule on the Fallen noble name a skill only, so each starts with our Ride [Animal], as the Marauders' Hung heroes do, and the rule is not kept (William, 7 Nov 2026). The Master of finances' Haggle is the same: its sentence adds only flavour, so he starts with our Haggle."
+    },
+    {
+      "page": 1,
+      "what": "The Wandering knight's Commands are a lore of six, \"acquired the same way new spells are learned\" and \"cast following the rules for Magic\", so they come in as the spell lore Commands (Mazzalupo). The page prints them unnumbered, so each takes its D6 result from the page's order. He \"does not count as a wizard\", so he is a Priest in our model, as the Vampire Hunters' Priest of Morr is. See the decisions."
+    },
+    {
+      "page": 1,
+      "what": "The Black sheep's Stupidity is not our shared Stupidity: it holds only while no Sheepherder is within 6\". Kept apart as \"Stupidity (Black sheep)\", as the Rat Ogre's is."
+    },
+    {
+      "page": 1,
+      "what": "The Bearcloak is word for word our Wolfcloak with a bear in place of the wolf, at the same 10 gc and with the same Strength test and +1 save against shooting. It is kept apart as a stub of its own, because the test is the Sheepherder's rather than a Hero's and the cloak is the Mazzalupo's; see the decisions for whether it should be our Wolfcloak instead."
+    },
+    {
+      "page": 1,
+      "what": "The Bearcloak's availability is printed as \"Special\" rather than a rarity, so its row is Common and its rule carries the Strength test."
+    },
+    {
+      "page": 1,
+      "what": "\"Fallen nobles may not ride a horse unless the Captain of the warband is riding a horse\" is a condition, not who may buy the line, so it is the Wandering Knight and Fallen Noble list's caveat. The page's \"Captain\" is the Wandering knight, the warband's only leader."
+    },
+    {
+      "page": 1,
+      "what": "The Horse line is 40 gc, our Riding/Draft Horse's own price; every other line matches our price but the Bearcloak, which we lack."
+    }
+  ]
+}

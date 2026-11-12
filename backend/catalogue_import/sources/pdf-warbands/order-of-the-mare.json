@@ -1,0 +1,641 @@
+{
+  "warbandType": "order-of-the-mare",
+  "name": "Order of the Mare",
+  "source": "Fredrik Edman (mordheimer.net)",
+  "sourceLink": "https://mordheimer.net/docs/warbands/grade-2a-warbands/order-of-the-mare",
+  "warbandRules": {
+    "startingGc": 500,
+    "maxModels": 15
+  },
+  "specialRules": [
+    {
+      "rulename": "Hired Swords",
+      "ruleFull": "The warband may hire the same Hired Swords and Dramatis Personae as a Mercenary warband."
+    },
+    {
+      "rulename": "Horse and rider",
+      "ruleFull": "When the Paragon and the Gallant are recruited, each may buy a single horse or warhorse at half the normal price."
+    },
+    {
+      "rulename": "A Dame without delay",
+      "ruleFull": "The warband must hold a Dame of the Mare. If she is lost, a new one is recruited before any other warrior."
+    },
+    {
+      "rulename": "Blazing Saddles",
+      "ruleFull": "If the Blazing Saddles supplement (Town Cryer 14) is in play, the Paragon, the Gallant, the Esquiresses and the Redeemed knights all have the Ride skill, and the warband may ignore the limit of two mounts in areas of dense terrain."
+    }
+  ],
+  "equipmentLists": [
+    {
+      "id": "footman-equipment-list",
+      "title": "Footman Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Pilgrims only"
+          }
+        },
+        {
+          "name": "halberd",
+          "alias": "Halberd",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Pilgrims only"
+          }
+        },
+        {
+          "name": "double-handed weapon",
+          "alias": "Double-handed weapon",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "flail",
+          "alias": "Flail",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "morning star",
+          "alias": "Morning star",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "lance",
+          "alias": "Lance",
+          "cost": {
+            "cost": 20,
+            "costSuffix": "Gallant & Redeemed knights only"
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Pilgrims only"
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "heavy armour",
+          "alias": "Heavy armour",
+          "cost": {
+            "cost": 50,
+            "costSuffix": "Paragon, Gallant & Redeemed knights only"
+          }
+        },
+        {
+          "name": "barding",
+          "alias": "Barding",
+          "cost": {
+            "cost": 30,
+            "costSuffix": "Paragon, Gallant & Redeemed knights only"
+          }
+        },
+        {
+          "name": "warhorse",
+          "alias": "Warhorse",
+          "cost": {
+            "cost": 80,
+            "costSuffix": "Paragon, Gallant & Redeemed knights only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "archer-equipment-list",
+      "title": "Archer Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "axe",
+          "alias": "Axe",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "spear",
+          "alias": "Spear",
+          "cost": {
+            "cost": 10,
+            "costSuffix": "Esquiresses only"
+          }
+        },
+        {
+          "name": "bow",
+          "alias": "Bow",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "long bow",
+          "alias": "Longbow",
+          "cost": {
+            "cost": 15
+          }
+        },
+        {
+          "name": "shield",
+          "alias": "Shield",
+          "cost": {
+            "cost": 5
+          }
+        },
+        {
+          "name": "helmet",
+          "alias": "Helmet",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "light armour",
+          "alias": "Light armour",
+          "cost": {
+            "cost": 20
+          }
+        },
+        {
+          "name": "horse",
+          "alias": "Horse",
+          "cost": {
+            "cost": 40,
+            "costSuffix": "Esquiresses only"
+          }
+        }
+      ]
+    },
+    {
+      "id": "dame-equipment-list",
+      "title": "Dame Equipment List",
+      "caveat": "",
+      "items": [
+        {
+          "name": "dagger",
+          "alias": "Dagger",
+          "cost": {
+            "costPrefix": "1st free/",
+            "cost": 2
+          }
+        },
+        {
+          "name": "mace",
+          "alias": "Mace",
+          "cost": {
+            "cost": 3
+          }
+        },
+        {
+          "name": "sword",
+          "alias": "Sword",
+          "cost": {
+            "cost": 10
+          }
+        },
+        {
+          "name": "morning star",
+          "alias": "Morning star",
+          "cost": {
+            "cost": 15
+          }
+        }
+      ]
+    }
+  ],
+  "fighters": [
+    {
+      "id": "paragon",
+      "type": "hero",
+      "name": "Paragon",
+      "plural": "Paragons",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 60,
+      "startingXp": 20,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 4,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "footman-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Leader",
+          "ruleFull": "Any member of the warband within 6\" of the Paragon may use his Leadership for a Leadership test."
+        },
+        {
+          "rulename": "Knight's virtue",
+          "ruleFull": "A knight never panics and never breaks from combat, and takes no Leadership test for being all alone."
+        },
+        {
+          "rulename": "Vow of poverty",
+          "ruleFull": "The Paragon may not use a Lance."
+        }
+      ]
+    },
+    {
+      "id": "dame-of-the-mare",
+      "type": "hero",
+      "name": "Dame of the Mare",
+      "plural": "Dames of the Mare",
+      "race": "human",
+      "minQty": 1,
+      "maxQty": 1,
+      "costGc": 55,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 8
+      },
+      "equipmentLists": [
+        "dame-equipment-list"
+      ],
+      "equipment": "An ancient armour that may never be taken off, traded or stolen. It does not stop her casting and gives a 5+ save that may not be modified, but does not work against a magical attack.",
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": true,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "spellLores": [
+        "Blessings of the Mare"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Prayers",
+          "ruleFull": "The Dame of the Mare prays from the Blessings of the Mare. She starts with one, chosen at random."
+        }
+      ]
+    },
+    {
+      "id": "gallant",
+      "type": "hero",
+      "name": "Gallant",
+      "plural": "Gallants",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 35,
+      "startingXp": 8,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "footman-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": false,
+        "academic": false,
+        "strength": true,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": [
+        {
+          "rulename": "Knight's virtue",
+          "ruleFull": "A knight never panics and never breaks from combat, and takes no Leadership test for being all alone."
+        }
+      ]
+    },
+    {
+      "id": "esquiresses",
+      "type": "hero",
+      "name": "Esquiress",
+      "plural": "Esquiresses",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 2,
+      "costGc": 15,
+      "startingXp": 0,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "archer-equipment-list"
+      ],
+      "skillAccess": {
+        "combat": true,
+        "shooting": true,
+        "academic": false,
+        "strength": false,
+        "speed": true,
+        "special": false
+      },
+      "specialRules": []
+    },
+    {
+      "id": "pilgrims",
+      "type": "henchman",
+      "name": "Pilgrim",
+      "plural": "Pilgrims",
+      "race": "human",
+      "minQty": 0,
+      "costGc": 25,
+      "gainExp": true,
+      "promotable": false,
+      "statblock": {
+        "m": 4,
+        "ws": 2,
+        "bs": 2,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "footman-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Hatred",
+          "ruleFull": "Pilgrims hate every enemy of the Dame of the Mare."
+        },
+        {
+          "rulename": "Peasants",
+          "ruleFull": "A Pilgrim may never become a Hero: re-roll any Lad's Got Talent result."
+        }
+      ]
+    },
+    {
+      "id": "bowmen",
+      "type": "henchman",
+      "name": "Bowman",
+      "plural": "Bowmen",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 7,
+      "costGc": 20,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 3,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 6
+      },
+      "equipmentLists": [
+        "archer-equipment-list"
+      ],
+      "specialRules": []
+    },
+    {
+      "id": "redeemed-knights",
+      "type": "henchman",
+      "name": "Redeemed knight",
+      "plural": "Redeemed knights",
+      "race": "human",
+      "minQty": 0,
+      "maxQty": 5,
+      "costGc": 35,
+      "gainExp": true,
+      "promotable": true,
+      "statblock": {
+        "m": 4,
+        "ws": 4,
+        "bs": 3,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 3,
+        "a": 1,
+        "ld": 7
+      },
+      "equipmentLists": [
+        "footman-equipment-list"
+      ],
+      "specialRules": [
+        {
+          "rulename": "Knight's virtue",
+          "ruleFull": "A knight never panics and never breaks from combat, and takes no Leadership test for being all alone."
+        }
+      ]
+    },
+    {
+      "id": "companion-filly",
+      "type": "henchman",
+      "name": "Companion filly",
+      "plural": "Companion fillies",
+      "race": "animal",
+      "minQty": 0,
+      "maxQty": 1,
+      "costGc": 45,
+      "gainExp": false,
+      "promotable": false,
+      "statblock": {
+        "m": 8,
+        "ws": 4,
+        "bs": 0,
+        "s": 3,
+        "t": 3,
+        "w": 1,
+        "i": 4,
+        "a": 2,
+        "ld": 5
+      },
+      "equipmentLists": [],
+      "equipment": "A covering that gives a 5+ save which may not be modified, but does not work against a magical attack. The filly may take no other equipment.",
+      "specialRules": [
+        {
+          "rulename": "Hooves",
+          "ruleFull": "The filly fights with its hooves and takes no penalty for fighting unarmed."
+        },
+        {
+          "rulename": "Horse",
+          "ruleFull": "The filly is an animal and never gains experience. It follows the movement rules for a mounted warrior."
+        }
+      ]
+    }
+  ],
+  "aliases": [],
+  "stubs": [],
+  "flags": [
+    {
+      "page": 1,
+      "what": "This warband was read from its mordheimer.net page (https://mordheimer.net/docs/warbands/grade-2a-warbands/order-of-the-mare, last updated 12 Oct 2026), not from a PDF: https://www.broheim.net/downloads/warbands/web/Order%20Of%20The%20Mare.pdf answers 404. Every `page` below is 1, the page itself. See the decisions."
+    },
+    {
+      "page": 1,
+      "what": "The page's heroes are the Paragon (1), the Dame of the Mare (1), the Gallant (0-1) and the Esquiresses (0-2); its henchmen the Pilgrims (any number), the Bowmen (0-7), the Redeemed knights (0-5) and the Companion filly (0-1). No henchmen group sizes and no maximum profile are printed, so the warriors take our Human race."
+    },
+    {
+      "page": 1,
+      "what": "An Order of the Mare warband needs at least 3 models: our templates hold no minimum, so it is not imported."
+    },
+    {
+      "page": 1,
+      "what": "The page heads itself \"Grade: Heroic\" and \"Setting: Bretonnia / Mordheim\"; our warband type is grade 2a in Mordheim 2a, from mordheimer's own index, and is unchanged."
+    },
+    {
+      "page": 1,
+      "what": "The skill table has no Special column, so the warband has no skill group of its own. The Paragon and the Dame have no Shooting tick and the Esquiresses no Academic or Strength tick: as printed."
+    },
+    {
+      "page": 1,
+      "what": "\"Each warband must have one Paragon\" and \"must include a single Dame of the Mare\", so both are 1 exactly. That she is replaced without delay cannot be held as data, so it is the warband rule \"A Dame without delay\"."
+    },
+    {
+      "page": 1,
+      "what": "Knight's virtue is printed as a warband special rule that the Paragon, the Gallant and the Redeemed knights each point at, so it is their own rule and no warband rule: one special, on the three of them."
+    },
+    {
+      "page": 1,
+      "what": "The Lance line is \"(Knights only)\" and the Paragon's Vow of poverty forbids him a Lance, so the line is the Gallant's and the Redeemed knights'; his rule is kept so the player sees why. The other \"Knights only\" lines (Heavy armour, Barding, Warhorse) name all three."
+    },
+    {
+      "page": 1,
+      "what": "\"Weapons/Armour: Squires may be equipped from the Archer equipment list\" is the Esquiresses' line; the page calls them Squires there."
+    },
+    {
+      "page": 1,
+      "what": "The Paragon's Leader rule names \"the Questing knight\", which is the Paragon."
+    },
+    {
+      "page": 1,
+      "what": "Barding is 30 gc on this list where ours is 80 gc: the line price stands and ours is unchanged. Every other line matches our price (Warhorse 80, Horse 40, Longbow 15)."
+    },
+    {
+      "page": 1,
+      "what": "The Blessings of the Mare are a lore of six prayers, numbered 1 to 6 on the page. The Dame's rule calls them prayers, so she is a Priest. The Dame's charger (6) turns her into a warhorse-mounted model with the profile M8 WS4 BS0 S4 T4 W1 I4 A2 Ld7, which the prayer's own words carry; it is no mount of ours."
+    },
+    {
+      "page": 1,
+      "what": "\"Horse and rider\" halves the price of one horse or warhorse for the Paragon and the Gallant at recruitment. A conditional price cannot be held on a list line, so it stays a warband rule and the lines keep the full price."
+    },
+    {
+      "page": 1,
+      "what": "The page's \"A Word from the Author\", \"About Balance\" and lore sections are flavour and are not imported."
+    }
+  ]
+}

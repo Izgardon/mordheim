@@ -106,6 +106,8 @@ check over every file.
 | `wood-elf-scouts.json` | wood-elf-scouts (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=52 | 52-56 (text layer; no images) | 11 Nov 2026 |
 | `dwarf-troll-slayers.json` | dwarf-troll-slayers (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=56 | 56-65 (text layer; no images) | 11 Nov 2026 |
 | `skaven-of-clan-skryre-ath.json` | skaven-of-clan-skryre-ath (3, Athel Loren) | https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=66 | 66-77 (text layer; no images) | 11 Nov 2026 |
+| `mazzalupo.json` | mazzalupo (2a, Mordheim 2a) | https://mordheimer.net/docs/warbands/grade-2a-warbands/mazzalupo | the whole page (a web page, not a PDF) | 11 Nov 2026 |
+| `order-of-the-mare.json` | order-of-the-mare (2a, Mordheim 2a) | https://mordheimer.net/docs/warbands/grade-2a-warbands/order-of-the-mare | the whole page (a web page, not a PDF) | 11 Nov 2026 |
 
 The six Relics of the Crusades warbands are one 16-page PDF (its pages 1 and 15-16 are the setting's other warbands, its hired swords
 and its dramatis persona, none of them imported). Its pages 2-4 are one Arabian Tribes warband list with three tribes - Ghutani, Muzil and Turjuk -
@@ -119,6 +121,13 @@ re-price and re-rarify our items per shop location rather than per warband, so t
 Three of the four share a name with a warband of another setting, so their skill groups and templates carry the setting in brackets: `Savage Orcs (Athel Loren)`
 beside `savage-orcs-sar` and `savage-orcs-kaz`, `Skaven of Clan Skryre (Athel Loren)` beside `-kaz` and `-rel`, and `Slayer Skills (Athel Loren)` because our
 `Dwarf Troll Slayers` skill group is mordheimer's list for the Dwarf Treasure Hunters, Dwarf Rangers and Pit Fighters, not this warband's.
+
+The last two rows are the only ones read from a web page rather than a PDF (William, 11 Nov 2026, who gave the two
+mordheimer links): broheim.net serves no PDF for either warband, and neither is in the mordheimer snapshot, whose
+grade 2a pages carry no structured JSON. They are written in this directory's shape because it is the shape for a
+warband read by hand from a document, whatever the document is, and `check_pdf.py` and `tests/test_pdf_warbands.py`
+check it; each file's first flag says it came from a web page, and every flag's `page` is 1, the page itself. A
+later batch that renames the directory should take them with it.
 
 The four Lustria warbands above are the supplement's own, not Town Cryer's: Lustria also holds a grade 1b Lizardmen warband
 (`lizardmen-tc11`) and the setting is a mixed-grade one (19 entries at 1b, 4 at 2b), left as one setting at its majority grade
