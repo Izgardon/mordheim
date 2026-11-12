@@ -56,7 +56,6 @@ SETTING_NAMES = {
     "karak-azgal": "Karak Azgal",
     "relics-of-the-crusades": "Relics of the Crusades",
     "sealed-city": "The Sealed City",
-    "karak-eight-peaks": "Karak Eight Peaks",
     "athel-loren": "Athel Loren",
     "grade-3": "Grade 3",
 }

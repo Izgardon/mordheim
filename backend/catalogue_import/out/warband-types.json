@@ -1190,20 +1190,6 @@
     "mordheimer_url": ""
   },
   {
-    "slug": "clan-angrund",
-    "name": "Clan Angrund",
-    "setting": "karak-eight-peaks",
-    "setting_assumed": false,
-    "race": "Dwarf",
-    "broheim_grade": "2b",
-    "mordheimer_grade": null,
-    "source": "",
-    "source_code": "KEP",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Clan%20Angrund.pdf",
-    "broheim_url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Clan%20Angrund.pdf",
-    "mordheimer_url": ""
-  },
-  {
     "slug": "clockworkers",
     "name": "Clockworkers",
     "setting": "sealed-city",
@@ -1215,20 +1201,6 @@
     "source_code": "SC",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
     "broheim_url": "https://www.broheim.net/downloads/warbands/supplement/sealedcity/Clockworkers.pdf",
-    "mordheimer_url": ""
-  },
-  {
-    "slug": "crooked-moon",
-    "name": "Crooked Moon",
-    "setting": "karak-eight-peaks",
-    "setting_assumed": false,
-    "race": "Night Goblin",
-    "broheim_grade": "2b",
-    "mordheimer_grade": null,
-    "source": "",
-    "source_code": "KEP",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Crooked%20Moon.pdf",
-    "broheim_url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Crooked%20Moon.pdf",
     "mordheimer_url": ""
   },
   {
@@ -1761,20 +1733,6 @@
     "source_code": "REL",
     "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf#page=9",
     "broheim_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf#page=9",
-    "mordheimer_url": ""
-  },
-  {
-    "slug": "slave-uprising",
-    "name": "Slave Uprising",
-    "setting": "karak-eight-peaks",
-    "setting_assumed": false,
-    "race": "All",
-    "broheim_grade": "2b",
-    "mordheimer_grade": null,
-    "source": "",
-    "source_code": "KEP",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Slave%20Uprising.pdf",
-    "broheim_url": "https://www.broheim.net/downloads/warbands/supplement/karakeightpeaks/Slave%20Uprising.pdf",
     "mordheimer_url": ""
   },
   {

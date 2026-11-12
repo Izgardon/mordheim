@@ -313,28 +313,10 @@
     }
   },
   {
-    "slug": "karak-eight-peaks",
-    "name": "Karak Eight Peaks",
-    "grade": "2b",
-    "sort_order": 18,
-    "always_on": false,
-    "grade_basis": "majority of 3 graded entries",
-    "counts": {
-      "warbands": 3,
-      "items": 0,
-      "skills": 0,
-      "hired_swords": 0,
-      "dramatis_personae": 0
-    },
-    "grades_seen": {
-      "2b": 3
-    }
-  },
-  {
     "slug": "athel-loren",
     "name": "Athel Loren",
     "grade": "3",
-    "sort_order": 19,
+    "sort_order": 18,
     "always_on": false,
     "grade_basis": "majority of 4 graded entries",
     "counts": {
@@ -352,7 +334,7 @@
     "slug": "grade-3",
     "name": "Grade 3",
     "grade": "3",
-    "sort_order": 20,
+    "sort_order": 19,
     "always_on": false,
     "grade_basis": "Mordheim split by grade",
     "counts": {

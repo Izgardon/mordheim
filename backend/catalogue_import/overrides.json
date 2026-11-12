@@ -47,7 +47,10 @@
     }
   ],
   "drop_warband_types": {
-    "Orc Pirates & Savage Orcs": "William, 11 Nov 2026: \"i prefer separate warbands as different settings and all\". The PDF is two warbands, each \"the exact same rules as the Da Mob Warband with the following changes\": they are the types orc-pirates and savage-orcs-sar, each with its own template, and this one is archived on the next seed"
+    "Orc Pirates & Savage Orcs": "William, 11 Nov 2026: \"i prefer separate warbands as different settings and all\". The PDF is two warbands, each \"the exact same rules as the Da Mob Warband with the following changes\": they are the types orc-pirates and savage-orcs-sar, each with its own template, and this one is archived on the next seed",
+    "Clan Angrund": "William, 11 Nov 2026, of Karak Eight Peaks' three warband PDFs: \"skip and remove the setting from options\". They are scans with no text layer, so nothing of theirs is imported and the Karak Eight Peaks setting goes with them (it held nothing else). The type is archived on the next seed rather than left without a setting, which would count as Mordheim's and put it in play in a plain Mordheim campaign (apps/campaigns/in_play.py)",
+    "Crooked Moon": "William, 11 Nov 2026, of Karak Eight Peaks' three warband PDFs: \"skip and remove the setting from options\". They are scans with no text layer, so nothing of theirs is imported and the Karak Eight Peaks setting goes with them (it held nothing else). The type is archived on the next seed rather than left without a setting, which would count as Mordheim's and put it in play in a plain Mordheim campaign (apps/campaigns/in_play.py)",
+    "Slave Uprising": "William, 11 Nov 2026, of Karak Eight Peaks' three warband PDFs: \"skip and remove the setting from options\". They are scans with no text layer, so nothing of theirs is imported and the Karak Eight Peaks setting goes with them (it held nothing else). The type is archived on the next seed rather than left without a setting, which would count as Mordheim's and put it in play in a plain Mordheim campaign (apps/campaigns/in_play.py)"
   },
   "warband_type_names": {
     "Arabyan Theives": "Arabyan Thieves",

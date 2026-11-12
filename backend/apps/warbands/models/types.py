@@ -1,6 +1,6 @@
 """Warband types and warband groups (grading phase 1), seeded from the catalogue import by `seed_warband_types`.
 
-A warband type is a kind of warband from the lists (Reiklanders, Skaven of Clan Eshin …): the book's 164 come from
+A warband type is a kind of warband from the lists (Reiklanders, Skaven of Clan Eshin …): the book's 161 come from
 Broheim's tables merged with mordheimer's index, each in one setting (`campaign_type`, which holds its grade). A
 campaign can add its own (custom: `campaign` set, no setting, so always in play there), and every player in it can
 pick them. A warband has one type and may count as others (`Warband.counts_as`). A warband group is a race or a side
