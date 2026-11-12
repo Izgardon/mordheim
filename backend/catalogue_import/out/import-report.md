@@ -1067,7 +1067,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | adventurers | Wizard | Wizard | Lesser Magic |
 | albion-barbarians | Shaman | Wizard | Barbarian Shaman Magic |
 | altdorf-expeditionary-party | Arch-Mage | Wizard | Common Magic |
-| arabyan-nomads | Street Mage | Wizard | Elemental Lore of Air, Elemental Lore of Earth, Elemental Lore of Fire, Elemental Lore of Water |
+| arabyan-nomads | Street Mage | Wizard | Ice Magic, Fire Magic, Wind Magic, Earth Magic |
 | bretonnian-grail-companions | Damsel | Wizard | Grail Magic |
 | call-of-the-night-haint | Cairn Wraith | Wizard | Necromancy (Call of the Night Haint) |
 | channel-rats | Petru | Wizard | Charms and Hexes, Necromancy |
@@ -1088,8 +1088,8 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | lizardmen-lus | Skink Priest | Wizard | Lizardmen Magic |
 | lords-of-the-marsh | Draich | Wizard | Chaos Rituals |
 | lothern-sea-patrol | Mist Mage | Wizard | Spells of the Lothern Sea |
-| mages | Arch Mage | Wizard | Elemental Lore of Air, Elemental Lore of Earth, Elemental Lore of Fire, Elemental Lore of Water |
-| mages | Mage | Wizard | Elemental Lore of Air, Elemental Lore of Earth, Elemental Lore of Fire, Elemental Lore of Water |
+| mages | Arch Mage | Wizard | Ice Magic, Fire Magic, Wind Magic, Earth Magic |
+| mages | Mage | Wizard | Ice Magic, Fire Magic, Wind Magic, Earth Magic |
 | mages | Warlock | Wizard | Lesser Magic |
 | mazzalupo | Wandering knight | Priest | Commands (Mazzalupo) |
 | mordheimers-fanatics | Prophet | Wizard | Prophetic Rants |
@@ -1559,7 +1559,7 @@ Kept apart from a family's, the effect differing:
 | lords-of-the-marsh | lords-of-the-marsh | 5 | 0 | 0 | 9 |
 | lothern-sea-patrol | lothern-sea-patrol | 7 | 0 | 0 | 12 |
 | low-kings | low-kings | 7 | 1 | 1 | 10 |
-| mages | mages | 5 | 1 | 0 | 10 |
+| mages | mages | 5 | 1 | 0 | 13 |
 | masters-of-horror | masters-of-horror | 7 | 1 | 2 | 11 |
 | mazzalupo | mazzalupo | 7 | 0 | 0 | 11 |
 | metal-mongers | metal-mongers | 6 | 0 | 3 | 12 |
@@ -1712,7 +1712,7 @@ Pages folded into another warband's list as one of its variants:
 - Stub: Bagh Nakh, , Common; its rules are on p1.
 - Flag (p1): The PDF prints no starting gold, only "Maximum warband number is 15". The template carries our 500 gc default.
 - Flag (p2): The Champion's profile reads S4 for a human champion; as printed.
-- Flag (p2): The Street Mage "starts with one Elemental Spell, whichever element they chose is the only one they can get". The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), so he is given our four Elemental Lores (Air, Earth, Fire, Water) and the one-element limit is left to his Wizard rule. See the decisions.
+- Flag (p2): The Street Mage "starts with one Elemental Spell, whichever element they chose is the only one they can get". Khemri's own Elemental Magic PDF (read 12 Nov 2026) holds four lists of six spells - Ice, Fire, Wind and Earth - so he is now given Khemri's Ice Magic, Fire Magic, Wind Magic and Earth Magic in place of our four Elemental Lores (Air, Earth, Fire, Water), which are the Sorcerous Society's Mordheim 2a lores. The one-element limit stays in his Wizard rule.
 - Flag (p3): The Khemri Equipment PDF (https://www.broheim.net/downloads/campaigns/khemri/Equipment.pdf, read 11 Nov 2026 at William's direction) gives these weapons their rules, and this page declares them for the setting. The Jambiya is our Dagger, "just a nicknamed dagger" (William), whose +1 enemy armour save is the Jambiya's rule. The Katar is ours already, the same -1 enemy armour save. "Scimitar" at 15 gc is its own item now (as user, Parry, Cutting edge, where our Sword parries only), so the tag that made this list sell our Sword twice is dropped. The Scythe is Scythe (Khemri) (as user, Cutting edge, Two Handed), kept apart from the Sylvania scythes (William: "in this list scythe is something unique so give it the 'khemri' treatment"). Ankus (as user, Strike first only when charged, Concussion), Cutlass (as user, Parry, an extra punch attack when a hit is successful) and Great Scimitar (+2, Two-handed, Strike last, Cutting edge) now carry their rules. The Bagh Nakh (+1, -1 enemy armour save, pair, cumbersome) is on the page but on no warband list and at no price: a row for the setting's warband types with no price. The page's Vanguards and Sword of Unholy Turning are not imported (William: "ignore both").
 - Flag (p3): The Warrior list's Scythe is 5 gc and its Katar 5 gc. The Ankus is "used as a spear, when charged and a staff in hth", and its rules line prints "Strike first (only when charged)": read as striking first in the turn he charges. The Cutlass's extra punch attack is printed with no Strength of its own. The Khemri page's Tufenk is Strength 1 where our Tufenk (mordheimer, Khemri 1b) is Strength 2, and its Genie lamp is our Lamp of the Djinn with two table rows worded otherwise (its Good 4 and 5 are an extra hero and an extra henchman, where ours are a random and a chosen item, and its Bad 6 is nothing where ours is a roll on the injury chart) and a Jinn who fights for D3x10 gc, which ours does not carry: all three are for William, and nothing of ours was changed.
 - Flag (p2): No group sizes are printed for the Warriors or the Slaves.
@@ -2421,7 +2421,10 @@ Pages folded into another warband's list as one of its variants:
 
 - Alias (p4): "dueling pistol" is our duelling pistol.
 - Flag (p1): The PDF prints no starting gold, only "Mage Warband -max 12". The template carries our 500 gc default.
-- Flag (p1): The Arch Mage takes spells from "2 of the elemental spell lists" and the Mage from one. The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), and its page in this PDF is an empty heading, so both are given our four Elemental Lores (Air, Earth, Fire, Water), which the Sorcerous Society brought. See the decisions.
+- Flag (p1): The Arch Mage takes spells from "2 of the elemental spell lists" and the Mage from one. The Khemri setting's own Elemental Magic PDF (https://www.broheim.net/downloads/campaigns/khemri/Elemental%20Magic.pdf, 1-2, text layer; read 12 Nov 2026) holds four lists of six spells - Ice, Fire, Wind and Earth - and none of them is any of our four Elemental Lores (Air, Earth, Fire, Water), the Sorcerous Society's Mordheim 2a lores, which both casters pointed at until now. Both are now given Khemri's Ice Magic, Fire Magic, Wind Magic and Earth Magic. The "two of them" and "one of them" limits stay in each one's Wizard rule.
+- Flag (p1): Elemental Magic p1-2: Numming Cold is spelt so on the page and kept as printed. Its "target model is at -1 to injury roll (If a 1 is rolled then the wound is useless)" does not say whose rolls, and is carried as written.
+- Flag (p1): Elemental Magic p2: Stone Hands prints "the target is attacked by two hands. The hands have WS4, S4, A2", which does not say whether the 2 Attacks are each hand's or the pair's; carried as written. Earth Lore's difficulty is printed "auto" and is carried as Auto.
+- Flag (p1): Elemental Magic p1: Fireball (difficulty 8, range 16", one S5 hit) is noted on the page as "the lesser magic version", but our Lesser Magic fireball is Fires of U'Zhul (difficulty 7, range 18", one S4 hit), so Khemri's Fireball is kept as its own spell with the page's numbers. Our Arabian Elemental Magic (Khemri 1b, the Arabian Tomb Raiders' Mystic, from mordheimer) is a six-spell list of its own that shares three names with these four (Riding the Wind, Burning Hand, Skin of Stone/Stone Skin) at different difficulties and holds two spells these lists do not (Quicksand, Storm of Magic): it is left untouched. See the decisions.
 - Flag (p1): The Apprentices are "0-3 per mage hero (max 6)"; the simpler reading, 0-6, is imported (William: "just keep 0-1 dont complicate it").
 - Flag (p1): "Clockwork Beasts - 0-5" in the choice of warriors is the entry headed "Clockwork Construct - 30"; the entry's name and count are taken.
 - Flag (p1): Cantrip is printed under the Magician Skills column but is the Apprentices' spell ("Cantrips - see above"), so it is the Apprentice's rule with its difficulty, range and chart rather than a Hero's skill.

@@ -156,8 +156,13 @@ setting also holds the 1b Arabian Tomb Raiders and Tomb Guardians (flagged for W
 The Nehekhara Tomb Guards' PDF (https://www.broheim.net/downloads/warbands/supplement/khemri/Nehekhara%20Tomb%20Guards.pdf, 1-9, text layer; read 11 Nov 2026)
 is the warband mordheimer's snapshot already holds as `testwarbands-2026-10-31/warbands/tomb-guardians-old.json`, so no source file was written for it:
 its numbers match ours and its differences are flagged in the vet file instead.
-Khemri's own campaign PDFs (Equipment, Elemental Magic, Dramatis Personae and a Town Cryer compilation) are not read (William, 11 Nov 2026): the Ankus,
-Cutlass and Great Scimitar are stubs with no rules, and the Mage and Street Mage cast from our four Elemental Lores until it is.
+Khemri's Equipment PDF gave the Ankus, Cutlass and Great Scimitar their rules (11 Nov 2026), and its Elemental Magic
+(https://www.broheim.net/downloads/campaigns/khemri/Elemental%20Magic.pdf, 1-2, text layer; read 12 Nov 2026) holds the setting's own four lores of six
+spells each - Ice Magic, Fire Magic, Wind Magic and Earth Magic, all Khemri 3's - which the Mages' Arch Mage and Mage and the Arabyan Nomads' Street Mage
+now cast from, in place of our Elemental Lores of Air, Earth, Fire and Water, the Sorcerous Society's Mordheim 2a lores they pointed at while the PDF went
+unread. Khemri 1b's Arabian Elemental Magic, a six-spell list of mordheimer's that the Arabian Tomb Raiders' Mystic casts, is none of the four and is left
+alone. The setting's Dramatis Personae PDF goes with Broheim's `downloads/dramatispersonae/` section (William, 12 Nov 2026), and its Town Cryer compilation
+is read only for what a gap points at.
 
 Karak Azgal's eight warbands share one 76-page PDF, and only each warband's own pages were read; its campaign material (pages 1-18 and 62-76, the hired swords, exploration chart, runic artefacts and scenarios among them) is not imported. Four of them point at warbands we already hold for their lists, rules or skills ("all of the equipment lists from Town Crier 6 (or Best of Town Crier) apply", "the Orc special skills from TC6"): those were taken from our own Dwarf Treasure Hunters, Skaven and Mercenaries warbands and our Dwarves, Dwarf Troll Slayers and Orcs skill groups, never from another PDF.
 

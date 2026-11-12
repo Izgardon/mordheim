@@ -38,7 +38,7 @@
       "statblock": {"m": 4, "ws": 3, "bs": 3, "s": 3, "t": 3, "w": 1, "i": 4, "a": 1, "ld": 8},
       "equipmentLists": ["mage-equipment-list"],
       "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
-      "spellLores": ["Elemental Lore of Air", "Elemental Lore of Earth", "Elemental Lore of Fire", "Elemental Lore of Water"],
+      "spellLores": ["Ice Magic", "Fire Magic", "Wind Magic", "Earth Magic"],
       "specialRules": [
         {"rulename": "Leader", "ruleFull": "Any member of the warband within 6\" of the Arch Mage may use his Leadership for a Leadership test."},
         {"rulename": "Wizard", "ruleFull": "The Arch Mage may take spells from two of the elemental lores, and starts with two spells, one from each."}
@@ -57,7 +57,7 @@
       "statblock": {"m": 4, "ws": 2, "bs": 2, "s": 3, "t": 3, "w": 1, "i": 3, "a": 1, "ld": 7},
       "equipmentLists": ["mage-equipment-list"],
       "skillAccess": {"combat": false, "shooting": false, "academic": true, "strength": false, "speed": true, "special": true},
-      "spellLores": ["Elemental Lore of Air", "Elemental Lore of Earth", "Elemental Lore of Fire", "Elemental Lore of Water"],
+      "spellLores": ["Ice Magic", "Fire Magic", "Wind Magic", "Earth Magic"],
       "specialRules": [
         {"rulename": "Wizard", "ruleFull": "The Mage casts from one elemental lore and starts with one spell from it."}
       ]
@@ -133,7 +133,10 @@
   "stubs": [],
   "flags": [
     {"page": 1, "what": "The PDF prints no starting gold, only \"Mage Warband -max 12\". The template carries our 500 gc default."},
-    {"page": 1, "what": "The Arch Mage takes spells from \"2 of the elemental spell lists\" and the Mage from one. The Khemri setting's own Elemental Magic PDF was not fetched (William, 11 Nov 2026), and its page in this PDF is an empty heading, so both are given our four Elemental Lores (Air, Earth, Fire, Water), which the Sorcerous Society brought. See the decisions."},
+    {"page": 1, "what": "The Arch Mage takes spells from \"2 of the elemental spell lists\" and the Mage from one. The Khemri setting's own Elemental Magic PDF (https://www.broheim.net/downloads/campaigns/khemri/Elemental%20Magic.pdf, 1-2, text layer; read 12 Nov 2026) holds four lists of six spells - Ice, Fire, Wind and Earth - and none of them is any of our four Elemental Lores (Air, Earth, Fire, Water), the Sorcerous Society's Mordheim 2a lores, which both casters pointed at until now. Both are now given Khemri's Ice Magic, Fire Magic, Wind Magic and Earth Magic. The \"two of them\" and \"one of them\" limits stay in each one's Wizard rule."},
+    {"page": 1, "what": "Elemental Magic p1-2: Numming Cold is spelt so on the page and kept as printed. Its \"target model is at -1 to injury roll (If a 1 is rolled then the wound is useless)\" does not say whose rolls, and is carried as written."},
+    {"page": 1, "what": "Elemental Magic p2: Stone Hands prints \"the target is attacked by two hands. The hands have WS4, S4, A2\", which does not say whether the 2 Attacks are each hand's or the pair's; carried as written. Earth Lore's difficulty is printed \"auto\" and is carried as Auto."},
+    {"page": 1, "what": "Elemental Magic p1: Fireball (difficulty 8, range 16\", one S5 hit) is noted on the page as \"the lesser magic version\", but our Lesser Magic fireball is Fires of U'Zhul (difficulty 7, range 18\", one S4 hit), so Khemri's Fireball is kept as its own spell with the page's numbers. Our Arabian Elemental Magic (Khemri 1b, the Arabian Tomb Raiders' Mystic, from mordheimer) is a six-spell list of its own that shares three names with these four (Riding the Wind, Burning Hand, Skin of Stone/Stone Skin) at different difficulties and holds two spells these lists do not (Quicksand, Storm of Magic): it is left untouched. See the decisions."},
     {"page": 1, "what": "The Apprentices are \"0-3 per mage hero (max 6)\"; the simpler reading, 0-6, is imported (William: \"just keep 0-1 dont complicate it\")."},
     {"page": 1, "what": "\"Clockwork Beasts - 0-5\" in the choice of warriors is the entry headed \"Clockwork Construct - 30\"; the entry's name and count are taken."},
     {"page": 1, "what": "Cantrip is printed under the Magician Skills column but is the Apprentices' spell (\"Cantrips - see above\"), so it is the Apprentice's rule with its difficulty, range and chart rather than a Hero's skill."},
