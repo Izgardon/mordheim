@@ -15440,14 +15440,9 @@
         "dice_multiplier": null,
         "cost_note": "",
         "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "albion-commandos",
-            "excluded": false
-          }
-        ],
-        "note": ""
+        "for_everyone": true,
+        "warbands": [],
+        "note": "Albion Commandos only"
       }
     ]
   },

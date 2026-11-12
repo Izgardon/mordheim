@@ -18,9 +18,11 @@ def seed() -> None:
 
 
 class SeedWarbandTypesTests(TestCase):
-    def test_the_import_seeds_161_types_in_their_settings_and_20_groups(self) -> None:
+    def test_the_import_seeds_160_types_in_their_settings_and_20_groups(self) -> None:
         seed()
-        self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 161)
+        # 161 until the Albion Commandos went: a phantom type the importer made from "Caber (Albion Commandos
+        # only)" in the Marienburg weapons list (William, 12 Nov 2026)
+        self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 160)
         self.assertFalse(WarbandType.objects.filter(campaign_type__isnull=True).exists())
         skaven_type = WarbandType.objects.select_related("campaign_type").get(slug="skaven")
         self.assertEqual(skaven_type.campaign_type and skaven_type.campaign_type.slug, "mordheim")
@@ -45,7 +47,7 @@ class SeedWarbandTypesTests(TestCase):
         self.assertEqual(reiklanders.name, "Reiklanders")
         self.assertNotEqual(reiklanders.link_url, "")
         self.assertEqual(WarbandGroup.objects.get(slug="skaven").members.count(), 13)
-        self.assertEqual(WarbandType.objects.count(), 161)
+        self.assertEqual(WarbandType.objects.count(), 160)
 
     def test_a_type_the_import_dropped_is_archived_and_campaign_types_are_left_alone(self) -> None:
         seed()

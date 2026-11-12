@@ -2238,19 +2238,5 @@
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
     "broheim_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf",
     "mordheimer_url": ""
-  },
-  {
-    "slug": "albion-commandos",
-    "name": "Albion Commandos",
-    "setting": "mutiny-in-marienburg",
-    "setting_assumed": false,
-    "race": "Human",
-    "broheim_grade": null,
-    "mordheimer_grade": null,
-    "source": "Mutiny in Marienburg",
-    "source_code": "",
-    "link_url": "",
-    "broheim_url": "",
-    "mordheimer_url": ""
   }
 ]

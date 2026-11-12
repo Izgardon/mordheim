@@ -38,12 +38,6 @@
       "source_code": "SAR",
       "broheim_grade": "2b",
       "broheim_pdf": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Orc%20Pirates%20&%20Savage%20Orcs.pdf"
-    },
-    {
-      "name": "Albion Commandos",
-      "race": "Human",
-      "setting": "mutiny-in-marienburg",
-      "source": "Mutiny in Marienburg"
     }
   ],
   "drop_warband_types": {

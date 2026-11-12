@@ -36,7 +36,7 @@ class WarbandTypeListTests(WarbandTypesTestCase):
         WarbandType.objects.create(name="Far Away", slug="far-away", campaign=self.elsewhere)
         WarbandType.objects.filter(slug="sartosan-pirates").update(archived_at=timezone.now())
         rows = {row["slug"]: row for row in self.get_as(self.player, self.types_url()).data}
-        self.assertEqual(len(rows), 162)  # the 161 and the tests' Mercenaries, one archived, plus the campaign's own
+        self.assertEqual(len(rows), 161)  # the 160 and the tests' Mercenaries, one archived, plus the campaign's own
         self.assertNotIn("far-away", rows)
         self.assertNotIn("sartosan-pirates", rows)
         self.assertEqual(rows["gutter-kings"]["campaign_id"], self.campaign.id)

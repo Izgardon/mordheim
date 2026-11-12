@@ -75871,6 +75871,10 @@
       {
         "type": "norse-explorers-tc13",
         "variant": ""
+      },
+      {
+        "type": "norse-explorers-btb",
+        "variant": ""
       }
     ],
     "rules": [

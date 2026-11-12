@@ -1,50 +1,17 @@
-"""William's rulings of 12 Nov 2026 on the catalogue data, group by group, against the build's output.
-
-The rulings answer the review's questions document: skills and items that do the same thing under different names
-are merged into one row (ours, the other's name dropped), ones whose rules really differ are separated with the
-later taking its setting or warband in brackets, three of our own numbers are put right, Mutiny in Marienburg's
-items move to the Mordheim setting of their own grade, a few warband types join a price row they were missing, and
-two misspelt names are spelt as the rest of the catalogue spells them.
+"""William's review of 12 Nov 2026: the skills and items merged into one row, the ones separated because their
+rules really differ, and the three numbers of ours that were wrong (groups 1 to 3 of the review), with its
+later rulings on the Sea Dragon Cloak and on the Druchii's two equipment lists. The settings, the price rows,
+the spelling and the two warband types are in test_review_rulings_data.py.
 """
 
-from typing import Any, ClassVar
-
-from django.test import SimpleTestCase
+import json
 
 from catalogue_import.common import load_json
-from catalogue_import.sources import BACKEND, ITEM_DATA, OUT
+from catalogue_import.sources import OUT
+from catalogue_import.tests.review_support import SPELL_DATA, ReviewCase
 
-SPELL_DATA = BACKEND / "apps" / "spells" / "data"
 
-
-class ReviewRulingsTests(SimpleTestCase):
-    """The committed `out/` (which test_build.py pins to a fresh run of build.py)."""
-
-    items: ClassVar[dict[str, dict[str, Any]]]
-    skills: ClassVar[dict[str, str]]
-    groups: ClassVar[dict[str, list[str]]]
-    templates: ClassVar[dict[str, dict[str, Any]]]
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.items = {row["name"]: row for row in load_json(OUT / "items.json")}
-        cls.skills = {row["name"]: row["description"] for row in load_json(OUT / "skills.json")}
-        cls.groups = {row["name"]: row["skills"] for row in load_json(OUT / "skill-groups.json")}
-        cls.templates = {row["slug"]: row for row in load_json(OUT / "warband-templates.json")}
-
-    def rows(self, item: str, slug: str) -> list[tuple[Any, ...]]:
-        """An item's price rows a warband type may buy from, as (cost, dice, rarity, note)."""
-        return [
-            (row["cost"], row["dice"], row["rarity"], row["note"])
-            for row in self.items[item]["availabilities"]
-            if {"type": slug, "excluded": False} in row["warbands"]
-        ]
-
-    def specials(self, slug: str, fighter: str) -> list[tuple[str, str]]:
-        found = next(row for row in self.templates[slug]["fighters"] if row["name"] == fighter)
-        return [(row["name"], row["type"]) for row in found["specials"]]
-
+class MergesAndSeparationsTests(ReviewCase):
     # 1. Merges: one row, the other's name dropped
 
     def test_blending_into_the_sands_is_our_sand_worm(self) -> None:
@@ -217,130 +184,6 @@ class ReviewRulingsTests(SimpleTestCase):
         self.assertIn("brew D3-1 portions", text)
         self.assertNotIn("3D-1", text)
 
-    # 4. Mutiny in Marienburg's items sit in the setting of their own grade
-
-    def test_each_mutiny_in_marienburg_item_sits_in_the_setting_of_its_grade(self) -> None:
-        # William, 12 Nov 2026: a MiM item of a Mordheim grade belongs to that Mordheim setting; the grades above
-        # the supplement's own 2b ("2c" and "3a", which the system has no part for) are 2b and stay in it
-        mim = [row for row in load_json(OUT / "items.json") if row["origin"] == "mim"]
-        by_setting: dict[str, list[str]] = {}
-        for row in mim:
-            by_setting.setdefault(row["setting"], []).append(row["name"])
-        self.assertEqual(
-            {setting: len(names) for setting, names in sorted(by_setting.items())},
-            {"mordheim": 3, "mordheim-1b": 7, "mordheim-2a": 6, "mutiny-in-marienburg": 45},
-        )
-        self.assertEqual(sorted(by_setting["mordheim"]), ["Caber", "Falconry Glove", "Lyre"])
-        self.assertEqual(
-            sorted(by_setting["mordheim-1b"]),
-            [
-                "Albion Cloth",
-                "Alcoholic Spirits",
-                "Fish-hook Shot/Hunting Lasso",
-                "Gas Mask",
-                "Iron Strongbox",
-                "Thief's Cloak",
-                "Wolf Cloak/Norse Furs",
-            ],  # fmt: skip
-        )
-        self.assertEqual(
-            sorted(by_setting["mordheim-2a"]),
-            [
-                "Beast Hide/Wyvern Hide Cloak",
-                "Hunter's Throwing Axe",
-                "Poison Wind Globe",
-                "Shark-tooth Necklace",
-                "Skull Cap",
-                "Stiletto Blade",
-            ],  # fmt: skip
-        )
-
-    def test_no_item_is_graded_2c_or_3a_any_more(self) -> None:
-        grades = {str(row.get("grade")) for row in load_json(ITEM_DATA / "mim-items.json")}
-        self.assertEqual(grades, {"1a", "1b", "2a", "2b"})
-
-    def test_mutiny_in_marienburg_is_a_one_grade_setting_now(self) -> None:
-        settings = {row["slug"]: row for row in load_json(OUT / "settings.json")}
-        mim = settings["mutiny-in-marienburg"]
-        self.assertEqual((mim["grade"], mim["grades_seen"]), ("2b", {"2b": 58}))
-        self.assertEqual(mim["counts"]["items"], 45)
-
-    # 5. Price rows: the types join the row that already carries their price
-
-    def test_the_nehekhara_tomb_guards_may_buy_their_own_lists_three_khemri_items(self) -> None:
-        # their own template's lists sell all three, while our rows named the Tomb Guardians alone, so in the store
-        # they read "Not usually available"; the prices are identical, so the type joins the row
-        for name, cost in (("Asp Arrows", 10), ("Nehekharan Javelins", 10), ("Serpent Staff", 30)):
-            with self.subTest(item=name):
-                [(row_cost, _dice, _rarity, _note)] = self.rows(name, "nehekhara-tomb-guards")
-                self.assertEqual(row_cost, cost)
-                buyers = {
-                    entry["type"]
-                    for row in self.items[name]["availabilities"]
-                    for entry in row["warbands"]
-                    if "type" in entry and not entry["excluded"]
-                }
-                self.assertEqual(buyers, {"tomb-guardians", "nehekhara-tomb-guards"})
-                lines = {
-                    line["item"]["name"]
-                    for row in self.templates["nehekhara-tomb-guards"]["lists"]
-                    for line in row["lines"]
-                }
-                self.assertIn(name, lines)
-
-    def test_the_sea_ghosts_and_the_corsairs_join_our_sea_dragon_cloaks_row(self) -> None:
-        [row] = self.items["Sea Dragon Cloak"]["availabilities"]
-        buyers = [entry["type"] for entry in row["warbands"]]
-        self.assertEqual(buyers, ["dark-elves", "dark-elf-corsairs", "sea-ghosts"])
-        self.assertEqual((row["cost"], row["dice"], row["rarity"]), (50, 2, 10))
-
-    def test_the_glyph_of_blasting_and_the_grimoire_keep_the_expeditionary_partys_rows(self) -> None:
-        # the one item in the price-row pile with nothing to do: both already name that warband and nothing else
-        for name in ("Glyph of Blasting", "Grimoire of Magic"):
-            with self.subTest(item=name):
-                [row] = self.items[name]["availabilities"]
-                self.assertFalse(row["for_everyone"])
-                self.assertEqual(row["warbands"], [{"type": "altdorf-expeditionary-party", "excluded": False}])
-
-    # 6. Spelling, aligned (William: "fix all spelling and keep it aligned")
-
-    def test_the_arabyan_thieves_are_spelt_the_same_everywhere(self) -> None:
-        # the warband type already read "Arabyan Thieves" (overrides.json warband_type_names) while its template,
-        # its skill group and two of its skills kept Broheim's "Theives"; the type's slug stays the source's
-        types = {row["slug"]: row["name"] for row in load_json(OUT / "warband-types.json")}
-        self.assertEqual(types["arabyan-theives"], "Arabyan Thieves")
-        template = next(row for row in self.templates.values() if "arabyan-th" in row["slug"])
-        self.assertEqual(template["name"], "Arabyan Thieves")
-        self.assertEqual([row["type"] for row in template["types"]], ["arabyan-theives"])
-        self.assertIn("Arabyan Thieves", self.groups)
-        self.assertLessEqual(
-            {"Knife Fighting (Arabyan Thieves)", "Hide in Shadows (Arabyan Thieves)"},
-            set(self.groups["Arabyan Thieves"]),
-        )
-        misspelt = [name for name in (*self.skills, *self.groups, *(row["name"] for row in self.templates.values())) if "Theives" in name]  # fmt: skip
-        self.assertEqual(misspelt, [])
-
-    def test_the_khemri_mage_warbands_group_is_named_after_its_warband(self) -> None:
-        # every other group is named after its warband; "Magician Skills" was the PDF's name for the column
-        self.assertNotIn("Magician Skills", self.groups)
-        self.assertEqual(self.groups["Mages"], ["Dispel", "Store Spell", "Clockwork Mage"])
-
-    def test_dispel_and_virtue_of_valour_are_spelt_as_the_catalogue_spells_them(self) -> None:
-        # the Altdorf skill was "Dispell", which its page prints and nothing else in the catalogue does; our own
-        # Bretonnian Knights row read "Virtue of Valor" where mordheimer, the Bitter Moors' skill and its own
-        # description all say "Valour"
-        self.assertEqual(sorted(name for name in self.skills if name.startswith("Dispel")), ["Dispel", "Dispel (Altdorf Expeditionary Party)"])  # fmt: skip
-        self.assertEqual(sorted(name for name in self.skills if "Valo" in name), ["Virtue of Valour", "Virtue of Valour (Knights of the Bitter Moors)"])  # fmt: skip
-        self.assertIn("valourous", self.skills["Virtue of Valour"])
-
-    def test_the_low_kings_hide_in_shadows_rule_is_cased_as_every_other_spelling_of_it(self) -> None:
-        rules = [row["title"] for row in self.templates["low-kings"]["rules"]]
-        specials = [
-            special["name"] for fighter in self.templates["low-kings"]["fighters"] for special in fighter["specials"]
-        ]
-        self.assertNotIn("Hide In Shadows", [*rules, *specials])
-        self.assertIn("Hide in Shadows", specials)
-
     def test_the_dark_elf_corsairs_buy_our_standard_cloak_not_the_druchiis(self) -> None:
         # William, 12 Nov 2026: "corsairs should point at the other sea dragon cloak i think which is 50+2d6 in
         # store, and starting price of just 50 on their list". The +2/+1 stacking cloak the Druchii page prints is
@@ -359,3 +202,39 @@ class ReviewRulingsTests(SimpleTestCase):
         }
         self.assertEqual(shown, {("Sea Dragon Cloak", "Dragon Cloak", 50)})
         self.assertIn("5+ armour save in close combat", self.items["Sea Dragon Cloak"]["rules"][0]["text"])
+
+    def test_no_template_list_holds_one_item_on_two_lines_that_say_the_same_thing(self) -> None:
+        # William, 12 Nov 2026, of the Druchii Sea Dragon Cloak: "collapse it". No list anywhere holds a line twice
+        # over: a repeated item on one list is always told apart by what it is shown as, or by its price (the books
+        # printing "Mace" and "Hammer" for our one Club, Mace or Hammer; the Pit Fighters (old) Spiked Gauntlet at
+        # 15 and 20 gc). This guards that, so a real duplicate cannot creep in unnoticed.
+        same = [
+            (row["slug"], equipment["key"], line)
+            for row in self.templates.values()
+            for equipment in row["lists"]
+            for line in [json.dumps(entry, sort_keys=True) for entry in equipment["lines"]]
+            if [json.dumps(entry, sort_keys=True) for entry in equipment["lines"]].count(line) > 1
+        ]
+        self.assertEqual(same, [])
+
+    def test_the_druchii_cloak_is_one_line_on_each_of_two_lists_not_one_list_twice(self) -> None:
+        # the two lines are the page's own, one on the Druchii Heroes list and one on the Corsairs list, which is
+        # why the warband carries the rule "Corsairs may wear Sea Dragon Cloaks though they are not Heroes": the
+        # Corsair is a henchman. Each list shows it once, no screen shows the two together, and collapsing them
+        # would take the cloak off either the Nobles or the Corsairs.
+        where = {
+            equipment["key"]: [
+                line["cost"] for line in equipment["lines"] if "Sea Dragon Cloak" in line["item"]["name"]
+            ]  # fmt: skip
+            for equipment in self.templates["druchii"]["lists"]
+        }
+        self.assertEqual(
+            {key: costs for key, costs in where.items() if costs},
+            {"druchii-heroes-equipment-list": [30], "corsairs-equipment-list": [30]},
+        )
+        buyers = {
+            fighter["name"]: fighter["lists"]
+            for fighter in self.templates["druchii"]["fighters"]
+            if fighter["name"] in ("Noble", "Corsair")
+        }
+        self.assertEqual(buyers, {"Noble": ["druchii-heroes-equipment-list"], "Corsair": ["corsairs-equipment-list"]})

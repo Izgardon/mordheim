@@ -347,3 +347,20 @@ again.
   own, where the price is the same (the Nehekhara Tomb Guards' three Khemri items, the Sea Ghosts' cloak).
 - **Spelling is aligned across the catalogue** ("fix all spelling and keep it aligned"), with a book's own wording
   left alone and flagged (the Karak Azgal Savage Orcs' Wierdo and Spottaz).
+- **One template may serve several warband types that share a page** (`template_answers.TEMPLATE_TYPES`), rather
+  than one of them going without: both Norse Explorers types point at the one mordheimer page, and the Border Town
+  Burning type has no page of its own, so the template serves both and the Norse stay raisable in a Border Town
+  Burning campaign, where deleting the type would have taken them out of it. Neither type presets a variant (the
+  page has none) and the template keeps Lustria, the first type's and the earlier setting. The two PDFs may differ -
+  the Lustria one is the errata'd Town Cryer 13 printing - and if the Border Town Burning version turns out to
+  differ materially it wants a template of its own; its 206-page book was not read to find out.
+- **A warband type the importer invented from a restriction in brackets is deleted, and the restriction stays the
+  item's note.** The Albion Commandos had no grade, no source code, no mordheimer page and no PDF, and existed
+  only because one line of the Marienburg weapons list reads "Caber (Albion Commandos only)"; the name is in the
+  whole corpus exactly once, in that bracket. The Caber is for everyone now, noted "Albion Commandos only".
+- **A repeated equipment line is not a duplicate** unless one list holds it twice over with nothing to tell the two
+  apart. A book printing "Mace" and "Hammer" as two lines of our one Club, Mace or Hammer keeps both, each under
+  its own name (60 such pairs), and an item on two of a template's lists is one line per list, each list a
+  different fighter's: the Druchii sell the Sea Dragon Cloak on the Heroes list and on the Corsairs list, which is
+  what their rule "Corsairs may wear Sea Dragon Cloaks though they are not Heroes" is for. No list anywhere holds a
+  line twice over, and a test guards that.

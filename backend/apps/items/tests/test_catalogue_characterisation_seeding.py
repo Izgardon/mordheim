@@ -199,7 +199,9 @@ class SeedAllTests(TestCase):
                 "DramatisPersona": 0,
             },
         )
-        self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 161)
+        # 161 until the Albion Commandos went: a phantom type the importer made from "Caber (Albion Commandos
+        # only)" in the Marienburg weapons list, whose restriction is the Caber's note now (William, 12 Nov 2026)
+        self.assertEqual(WarbandType.objects.filter(campaign__isnull=True).count(), 160)
         # the review (5 Nov 2026: D1): Broheim's typo and its capital "Of" and "The" are put right, the slug kept
         book_types = WarbandType.objects.filter(campaign__isnull=True)
         self.assertEqual(book_types.get(slug="arabyan-theives").name, "Arabyan Thieves")
@@ -227,7 +229,9 @@ class SeedAllTests(TestCase):
         self.assertEqual(
             counts,
             {
-                "WarbandTemplateType": 159,  # the snapshot's 57 types but Norse Explorers BTB (waiting for its PDF), the PDFs' one each; the Orc Mob serves three
+                # the snapshot's 57 types, the PDFs' one each; the Orc Mob serves three, and the Norse Explorers
+                # template serves both its types since 12 Nov 2026 (the BTB one has no PDF page of its own)
+                "WarbandTemplateType": 160,
                 "TemplateFighter": 988,  # the Orc Mob holds its two variants' five fighters of their own
                 "TemplateList": 371,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
                 "TemplateListItem": 4091,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)

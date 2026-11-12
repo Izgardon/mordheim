@@ -14,7 +14,11 @@ TEMPLATE_TYPES: dict[str, dict[str, str]] = {
         "ostermarkers": "",
     },
     "tileans": {"miragleans": "miragliano", "remasens": "remas", "trantios": "trantio", "tileans": ""},
-    "norse": {"norse-explorers-tc13": ""},
+    # William, 12 Nov 2026: one template, two types. Both Norse Explorers types point at this one mordheimer page;
+    # its Border Town Burning PDF has no page of its own, and deleting that type would take the Norse out of a
+    # Border Town Burning campaign, since a setting gates what is in play. The page has no variants, so neither
+    # type presets one, and the template keeps the first type's setting, Lustria, the earlier of the two.
+    "norse": {"norse-explorers-tc13": "", "norse-explorers-btb": ""},
     # William, 11 Nov 2026: "Orc Pirates & Savage Orcs should just be 2 variants of the orc mob ... correctly
     # pointing at their settings". Each type presets its own variant, so no one picks another setting's warband.
     "orc-mob": {"orc-mob": "orc-mob", "orc-pirates": "orc-pirates", "savage-orcs-sar": "savage-orcs"},
