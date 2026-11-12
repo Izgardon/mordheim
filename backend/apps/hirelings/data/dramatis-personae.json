@@ -110,7 +110,7 @@
     "specials": [
       {
         "name": "Hates Skaven",
-        "description": "Dalla hates all Skaven."
+        "description": "The model hates all Skaven."
       },
       {
         "name": "No Slayer Oath",
@@ -1263,6 +1263,1352 @@
         {
           "type": "witch-hunters",
           "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Orphan Assassins",
+    "description": "Harlan and Marlan VanEckelbropstien, twin brothers, hired only as a pair. The row's profile is Harlan's.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 5,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": "6+",
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "The Contract",
+        "description": "A target must be named when they are hired, either a single enemy model or a whole warband. The contract is done when the target is taken out of action, or, for a whole warband, when more than 2 of its models are. If the contract is not done in the first game they are hired for, they stay one more game to try to finish it; after that they take their losses, the half payment, and leave."
+      },
+      {
+        "name": "Marlan VanEckelbropstien",
+        "description": "Marlan's profile is M4 WS4 BS3 S4 T3 W1 I4 A2 Ld7 with a 6+ save. He carries a two-handed warhammer and light armour, and has the skills Infiltration, Lightning Reflexes, Mighty Blow, Strike to Injure, Step Aside and Dodge."
+      },
+      {
+        "name": "Inseparable (Orphan Assassins)",
+        "description": "Marlan must be hired with Harlan as a pair, and the two must stay within 4\" of each other unless one engages an enemy. Marlan will intercept any model that tries to charge his brother, with a 4\" intercept range. If one of them is taken out of action the other will try to drag him off the battlefield to safety. In a campaign, if one of them retires then so does the other."
+      }
+    ],
+    "skills": [
+      "Infiltration",
+      "Hunter",
+      "Trick Shooter",
+      "Eagle Eyes",
+      "Dodge"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Hochland Long Hunting Rifle",
+        "quantity": 1
+      },
+      {
+        "item": "Club",
+        "quantity": 1
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "70 gc for a single target, 120 gc for a whole warband, hired as a pair. Half up front, half when the contract is done."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 35,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband may hire the Orphan Assassins besides the Sisters of Sigmar, good Elves, Witch Hunters and Bretonnians, and any other good warband that would not hire the likes of an assassin.",
+      "warbands": [
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        },
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-knights",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-knights-errant",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-brigands",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-buccaneers",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-chapel-guard",
+          "excluded": true
+        },
+        {
+          "type": "bretonnian-grail-companions",
+          "excluded": true
+        },
+        {
+          "type": "woodsmen-de-artois",
+          "excluded": true
+        },
+        {
+          "type": "high-elves",
+          "excluded": true
+        },
+        {
+          "type": "shadow-warriors",
+          "excluded": true
+        },
+        {
+          "type": "lothern-sea-patrol",
+          "excluded": true
+        },
+        {
+          "type": "wood-elves-of-athel-loren",
+          "excluded": true
+        },
+        {
+          "type": "wood-elves-of-arden",
+          "excluded": true
+        },
+        {
+          "type": "wood-elf-scouts",
+          "excluded": true
+        },
+        {
+          "type": "wood-elves-the-asrai-way-farers",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Billie Rattenmörder and Butcher",
+    "description": "Billie, the last of Mordheim's ratcatchers, and her dog Butcher. The row's profile is Billie's.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hated Ratmen",
+        "description": "Billie hates Skaven. When fighting against Skaven she is also subject to frenzy, and she must always pick members of a Skaven warband over other enemies to charge."
+      },
+      {
+        "name": "Small But Vicious Dog",
+        "description": "Butcher's profile is M6 WS4 BS0 S4 T3 W1 I4 A1 Ld5. His bite causes a critical hit on a roll of 5-6 when rolling to wound."
+      },
+      {
+        "name": "Fiercely Loyal",
+        "description": "If Billie is taken out of action, place a marker where she falls. Butcher must move as quickly as he can to that spot, and once he gets there he must stay within a number of inches of it equal to his Leadership for the rest of the game, guarding her body. All his attacks are subject to hatred until the end of the battle."
+      }
+    ],
+    "skills": [
+      "Dodge"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Halberd",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 25,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Only Human Mercenaries and Witch Hunters can hire Billie and Butcher.",
+      "warbands": [
+        {
+          "group": "mercenaries",
+          "excluded": false
+        },
+        {
+          "type": "witch-hunters",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Dashing Swordsman",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 6,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 3,
+    "initiative": 6,
+    "attacks": 4,
+    "leadership": 9,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Sought Out by the Weak",
+        "description": "The Dashing Swordsman seeks no payment, but protects only the weak, and only those who really need his help. He joins a warband only if its rating is lower than its opponent's. Roll a dice and consult the table.\n\nDifference in warband rating | Dice needed\n0-49 | auto-failure\n50-99 | 6+\n100-149 | 5+\n150-199 | 4+\n200-249 | 3+\n250-299 | 2+\n300 or more | auto-success"
+      },
+      {
+        "name": "You Want My Help, Madam?",
+        "description": "Add 1 to the roll for him to come for each female model in the warband, counting auto-failure as 7+."
+      },
+      {
+        "name": "Wait, My Hero!",
+        "description": "After the battle the Dashing Swordsman vanishes. After determining injuries, but before allocating experience, each female model in the warband must pass a Leadership test on her own Leadership. A model that fails leaves the warband at once in pursuit of him and counts as dead. If the warband was defeated even with him in it, no tests are taken at all."
+      },
+      {
+        "name": "I Challenge You!",
+        "description": "The Dashing Swordsman must move towards the closest enemy warrior as far as he can and charge him if he can. He cannot charge an enemy who cannot see him."
+      },
+      {
+        "name": "Touché!",
+        "description": "The Dashing Swordsman may name one enemy model in base contact in the combat phase and take a Leadership test. If he passes, that model is confused and he is at +1 to hit and to wound it. If he fails, he is at -1 to hit and to wound it. This may not be used on undead other than vampires, on daemons, on animals or on a model that has failed a Stupidity test."
+      },
+      {
+        "name": "His Sharpened Skills",
+        "description": "His Expert Swordsman lets him re-roll missed hits when he charges. His Acrobat lets him make a diving charge from 12\" and take only one Initiative test to do so, which may be re-rolled. His Dodge and Step Aside saves are both 4+."
+      },
+      {
+        "name": "Cloak",
+        "description": "His cloak lets him fall further: he may make a diving charge on models within D6\" of where he lands."
+      },
+      {
+        "name": "Exquisite Rapier",
+        "description": "Turn Aside Blow: when an opponent hits the Dashing Swordsman in close combat, roll a dice; if the score is lower than his Weapon Skill, that opponent's first hit has no effect. Barrage: if he hits an enemy but does not wound him, he may make one more attack for each hit that did not wound, and may keep doing so as long as he hits and does not wound. Armour saves against it are at -1. Master-crafted: he cannot be disarmed and the weapon cannot be destroyed."
+      }
+    ],
+    "skills": [
+      "Strike to Injure",
+      "Combat Master",
+      "Unstoppable Charge",
+      "Leap",
+      "Lightning Reflexes",
+      "Jump Up"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No payment: he must be sought out, and comes only to the weaker warband."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 150,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "The Dashing Swordsman will join only good-aligned warbands.",
+      "warbands": [
+        {
+          "group": "good",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Doctor Doppler and Mr. Genag",
+    "description": "The row's profile is Dr. Doppler's, his base form.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 3,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "A Test Subject",
+        "description": "Where a test subject is given instead of the gold upkeep, roll a dice: on any result other than a 6 he dies, and on a 6 he gains +1 Strength permanently. If he belonged to a henchmen group, make a group for him alone; if he was an enemy, he returns to his warband free of cost."
+      },
+      {
+        "name": "Transformation",
+        "description": "At the beginning of each of his turns roll a dice: on a 5+ Dr. Doppler transforms into Mr. Genag. Once transformed, roll a dice at the beginning of each of his turns: on a 1-2 Mr. Genag transforms back. The transformation heals no wounds."
+      },
+      {
+        "name": "Experimental Potions",
+        "description": "Dr. Doppler is an academic and cannot wield weapons in close combat, but carries experimental potions. He may throw up to 3 per match, with a maximum range of 6\". On a hit, roll a dice.\n\nD6 | Result\n1 | The potion does not shatter. If the target passes an Initiative test it adds the potion to its inventory and may use it until the end of the match.\n2 | The potion has no effect.\n3-5 | The potion explodes in flames: 2 automatic S3 hits on the target and 1 automatic S3 hit on every model within 2\" of it.\n6 | The potion deforms and mutates its victim. For the rest of the match the target's Strength, Toughness and Initiative are each reduced by 2, to a minimum of 1."
+      },
+      {
+        "name": "Mr. Genag",
+        "description": "Mr. Genag's profile is M5 WS4 BS2 S5 T4 W3 I5 A2 Ld7. He uses no weapons or armour and suffers no penalty for it, and has the skills Sprint, Leap, Scale Sheer Surfaces and Combat Master."
+      },
+      {
+        "name": "Great Physical Build",
+        "description": "Mr. Genag has a natural 5+ armour save against all attacks."
+      },
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Evil",
+        "description": "Mr. Genag may attack knocked down or stunned enemies even while he is in combat with other models."
+      },
+      {
+        "name": "Hates Spellcasters and Priests",
+        "description": "Mr. Genag hates all spellcasters and any model able to use Sigmar's prayers."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 90,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Or a test subject for the experiments, who may be a warband member or a captured enemy, so long as he is not undead, possessed or a mutant."
+      },
+      "rating": 70,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband except Skaven and the Sisters of Sigmar may hire Dr. Doppler and Mr. Genag.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Iñigo 'Toothpick' Tio",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Thrice Spittin'",
+        "description": "Iñigo may shoot two pistols in one turn, as the Pistolier skill allows, and then shoot with his third the next turn while reloading the first two."
+      },
+      {
+        "name": "Dastardly Bravado",
+        "description": "Each successful hit with his pistols gives Iñigo +1 Ballistic Skill, to a maximum of 6. If he misses a shot or gets stuck, his Ballistic Skill returns to its original value. He may raise it again with later hits."
+      },
+      {
+        "name": "Ah Mathann, Not Again!",
+        "description": "At the beginning of each turn roll a single dice. On a 2-6 nothing happens. On a 1 Iñigo's peg leg gets stuck and he may not move at all until he frees it. While stuck he may shoot or fight as normal. To free himself he must spend a turn doing so and may not fight or shoot during it, and while he is freeing himself an enemy wanting to target him must first pass a Leadership test and otherwise target someone else if it can. Undead and animals do not take this test."
+      },
+      {
+        "name": "Blessing Nonetheless",
+        "description": "Each time a wound is allocated to Iñigo, roll a dice: on a 6 the wound is negated. This 6+ save may not be modified and is taken after normal armour saves. If the peg leg stops a wound while he is stuck, he is freed at once; he is also freed if he is knocked down or stunned."
+      },
+      {
+        "name": "Golden Greed",
+        "description": "When a warband holding Iñigo loses, the winning player may try to bribe him away. If the losing player wants to keep him he must say so; otherwise the winner simply pays Iñigo's upkeep and he joins him. If both want him, each writes down an amount of gold, at least 25, without showing the other; they are revealed together and Iñigo joins whoever offered more, and the other pays nothing. If both offer exactly the same, Iñigo takes both bribes and leaves, and may be found again after D3 games."
+      }
+    ],
+    "skills": [
+      "Dodge",
+      "Eagle Eyes",
+      "Pistolier",
+      "Trick Shooter"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Cutlass",
+        "quantity": 1
+      },
+      {
+        "item": "Pistol",
+        "quantity": 3
+      },
+      {
+        "item": "Light Armour",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 40,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband except Skaven, Undead, the Possessed and Ogres may hire Iñigo. He will also refuse to work alongside any ogre.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "group": "ogres",
+          "excluded": true
+        },
+        {
+          "type": "cult-of-the-possessed",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Le Roi Ballaume",
+    "description": "Ballaume le Brave, Bretonnian King-in-exile, and Geoffroy, Duke of the Nameless Dukedom, hired as a pair. The row's profile is Ballaume's.",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 2,
+    "leadership": 9,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "The Beastslayer of Fronsac",
+        "description": "Ballaume is not the one the sword deems worthy, so it counts as a magical sword that gives +1 to any parry roll, which means he can block an enemy to-hit roll of 6. Were he not a cursed outcast banished by the Fey Enchantress, it would instead give +2 Weapon Skill, +4 Strength, an automatic Master Strike on any critical hit, and strike first."
+      },
+      {
+        "name": "The Chalice of Fate",
+        "description": "Whenever Ballaume is not bound in close combat he may drink from the chalice once per turn, which gives him one D6 re-roll to use at any point. For every re-roll he uses, the opposing player may force Ballaume's player to re-roll any other D6 roll in the game, re-rolls excepted; that result cannot be modified in any way and must be accepted."
+      },
+      {
+        "name": "Geoffroy, Duke of the Nameless Dukedom",
+        "description": "Geoffroy's profile is M4 WS4 BS3 S4 T3 W2 I4 A2 Ld8. He carries heavy armour, a helmet, a shield and the Banner of the Exile, and has the skills Unstoppable Charge, Resilient and Combat Master."
+      },
+      {
+        "name": "The Banner of the Exile",
+        "description": "The banner combines the rules of a banner, so friendly warriors within 12\" may re-roll any failed All Alone test, and of a spear, so it strikes first and its bearer may only carry a shield or buckler in the other hand. It also counts as magical."
+      },
+      {
+        "name": "Armour Proficient",
+        "description": "Ballaume and Geoffroy suffer no movement penalty for their armour."
+      },
+      {
+        "name": "Unbreakable Ties",
+        "description": "The two must be hired as a pair and stay within 4\" of each other. Should either be taken out of action, the other stands guard over his fallen comrade: he may stay still or move at half speed, dragging him along, and either way he may not attack, though he defends himself as normal."
+      },
+      {
+        "name": "Doomed to Entropy",
+        "description": "Ballaume and Geoffroy are immune to any effect from the injury table, any curse, any special rule and any other effect lasting more than one game, and their equipment can never be permanently lost or stolen; anything taken during a game is returned after it. They can therefore never gain experience or new skills, and may never be given new equipment of any kind. They may also take no part in a scenario set outside the walls of Mordheim."
+      },
+      {
+        "name": "Oath of Penitence",
+        "description": "In any Bretonnian warband, Ballaume and Geoffroy may never benefit from the Blessing of the Lady."
+      },
+      {
+        "name": "You Owe Me, You Serve Me",
+        "description": "Should a warband ever fail to pay Ballaume his upkeep, the warband leader must at once roll on the Injury chart, rolling again for Dead, Robbed, Bitter Enmity, Captured and Sold to the Pits. Until the whole of the upkeep owed is paid, Ballaume counts as the leader of the warband, which may take it over its maximum of heroes, and the former leader is treated as a normal hero."
+      }
+    ],
+    "skills": [
+      "Expert Swordsman",
+      "Fearsome",
+      "Streetwise",
+      "Haggle",
+      "Wyrdstone Hunter"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Heavy Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 120,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 35,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 90,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any non-Chaos human warband except the Sisters of Sigmar and Witch Hunters, and any Elf or Dwarf warband, may hire the two.",
+      "warbands": [
+        {
+          "group": "humans",
+          "excluded": false
+        },
+        {
+          "group": "elves",
+          "excluded": false
+        },
+        {
+          "group": "dwarfs",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Leonardo da Miragliano",
+    "description": "Also carries a steam pistol, a flash bomb and a magnifying monocle, whose rules are below.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 2,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Sigismund's Scintillating Steam Pistol",
+        "description": "Range special, Strength 3, shot 12\", armour piercing, prepare shot. Shot: use the blunderbuss rules at the range given."
+      },
+      {
+        "name": "Leonardo's Incapacitating Flash Bomb",
+        "description": "Range 10\", Strength 5, thrown weapon, armour piercing, nonlethal. Nonlethal: if it inflicts the last wound on a model, any out of action result counts as stunned instead."
+      },
+      {
+        "name": "Magliano's Magnificent Magnifying Monocle",
+        "description": "Leonardo can spot hidden enemies within twice his Initiative in inches."
+      },
+      {
+        "name": "Master Engineer",
+        "description": "Leonardo's modifications add 3\" to the range of the warband's pistols and 6\" to that of its other gunpowder weapons; the steam pistol is not affected. This cannot be combined with any other range increase, and the increases last only while he stays with the warband."
+      }
+    ],
+    "skills": [
+      "Acrobat",
+      "Scale Sheer Surfaces",
+      "Dodge",
+      "Step Aside"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Ithilmar Armour",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 70,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "He may instead be hired with one item of rarity 10 or higher."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 60,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband except Skaven, Undead and the Possessed may hire Leonardo.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "type": "cult-of-the-possessed",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Myrina and her Keiki",
+    "description": "Myrina, an Amazon, and Keiki, the orphan girl she has taken in. The row's profile is Myrina's.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 2,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Light of the Ancients",
+        "description": "The Blessings of Rigg enchant Myrina's sword: it gives -1 armour save against enemies, and she may parry with it in the same way as with any standard sword."
+      },
+      {
+        "name": "Keiki",
+        "description": "Keiki's profile is M4 WS2 BS2 S2 T2 W1 I3 A1 Ld6 and she carries a spear."
+      },
+      {
+        "name": "Nervous",
+        "description": "Keiki must pass a Leadership test before charging an enemy; this does not stack with an enemy rule that would also cause it. If she fails she may still move elsewhere but may not try to charge another enemy. If she engages an enemy and causes a wound, she does not have to test under this rule before charging that enemy for the rest of the game."
+      },
+      {
+        "name": "Loyal",
+        "description": "Keiki stays within 8\" of Myrina at all times. If forced further away, she moves directly towards Myrina at every opportunity until she is within 8\" of her."
+      },
+      {
+        "name": "False Courage",
+        "description": "Keiki automatically passes any Leadership test to enter a combat that already involves Myrina."
+      },
+      {
+        "name": "Wanderers (Myrina and her Keiki)",
+        "description": "The pair only ever stays with a warband for the one battle. A warband that used Myrina and Keiki in its last battle may not seek them out until it has fought at least one battle without them."
+      },
+      {
+        "name": "A Found Family",
+        "description": "If Keiki is taken out of action, Myrina counts as frenzied and becomes immune to all psychology for the rest of the game; if she is knocked down and later gets up, she keeps the frenzy until she is taken out of action. If Myrina is taken out of action, leave her model face down on the board. Keiki then moves directly towards Myrina at every opportunity until she is in base contact with her. If enemy models block her path, roll a D6 each time: on a 3+ she slips past and carries on, and on a failure she engages that enemy and counts as having charged. Once she reaches Myrina she must stay within 1\" of her, and if any enemy model moves within 1\" of Myrina's body Keiki will attack it and always counts as having charged."
+      }
+    ],
+    "skills": [
+      "Strongman",
+      "Step Aside"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Double-handed weapon",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 70,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Hired as a pair."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 40,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband except Skaven, Undead and the Possessed may hire Myrina and Keiki.",
+      "warbands": [
+        {
+          "group": "skaven",
+          "excluded": true
+        },
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "type": "cult-of-the-possessed",
+          "excluded": true
+        }
+      ],
+      "stays": "one_battle",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "No-Eyes Ned",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 2,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Fear",
+        "description": "The model causes fear."
+      },
+      {
+        "name": "Immune to Psychology",
+        "description": "The model is immune to psychology and never leaves combat."
+      },
+      {
+        "name": "Immune to Poison",
+        "description": "Not affected by any poison."
+      },
+      {
+        "name": "No Pain",
+        "description": "The model treats a stunned result on the Injury chart as knocked down."
+      },
+      {
+        "name": "The Sailorman's Dirge",
+        "description": "Ned's great rifle is a magical hunting rifle that always hits on a 4+, ignoring any and all modifiers. Conditions that affect visibility do not affect its bearer, though other effects those conditions cause may still apply, and it is immune to misfires and dampening effects."
+      },
+      {
+        "name": "The Wreath of Albatrosses",
+        "description": "Instead of making a shooting attack, Ned may shoot down a seabird. He needs line of sight to the sky and must not have moved, despite having the Nimble skill. Roll a D6.\n\nD6 | Result\n1 | Miss! He must spend his next turn making another attempt, rolling again in his next shooting phase, and cannot move. If engaged in combat he will fight back, and must try again in the next shooting phase he is unengaged.\n2 | Pigeon, ugh. No effect.\n3 | Crow, or a raven? The enemy warbands suffer -1 to all later Leadership rolls for the rest of the game. Not cumulative.\n4 | Bat! One enemy model of your choice that is not indoors suffers -1 Weapon Skill, -1 Ballistic Skill and -1 Movement for the rest of the game; a vampire also suffers -1 Leadership. Not cumulative.\n5 | Whatever the hell that was. All enemy models must immediately test for fear.\n6 | Albatross, by Stromfels! All enemy models are at -1 Toughness for the rest of the game. Not cumulative."
+      }
+    ],
+    "skills": [
+      "Hunter",
+      "Nimble",
+      "Resilient"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Club",
+        "quantity": 1
+      },
+      {
+        "item": "Rope & Hook",
+        "quantity": 1
+      },
+      {
+        "item": "Lantern",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 90,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 80,
+      "grade": "3",
+      "race": "Undead",
+      "unique_to": "Any non-Khemric undead warband may hire No-Eyes Ned.",
+      "warbands": [
+        {
+          "group": "undead",
+          "excluded": false
+        },
+        {
+          "type": "tomb-guardians",
+          "excluded": true
+        },
+        {
+          "type": "nehekhara-tomb-guards",
+          "excluded": true
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "The Fishmonger",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "No Rating",
+        "description": "The Fishmonger does not change the warband's rating."
+      },
+      {
+        "name": "Always Has a Net",
+        "description": "The Fishmonger always has a net at the start of each game."
+      },
+      {
+        "name": "Underdogs",
+        "description": "The Fishmonger will only join a warband that is not the highest rated warband in the battle. If at the start of the battle his warband is the highest rated, he leaves before it deploys in the pre-battle sequence."
+      },
+      {
+        "name": "Wyrdstone for Souls",
+        "description": "If the player rolls 1-2 for a henchman or hired sword, or 11-15 for a hero, on the Serious Injury table, the Fishmonger can save that soul for 1 wyrdstone. The cost is exactly one wyrdstone after the battle however many warriors died that battle. If it is paid, ignore those rolls: they did not die, and return to good health for the next battle with their weapons and equipment intact. It cannot be used on animals."
+      },
+      {
+        "name": "Saving Souls",
+        "description": "If a henchman, hired sword or hero dies and the player does not pay the wyrdstone to save his soul, the Fishmonger leaves the warband."
+      },
+      {
+        "name": "Without a Trace",
+        "description": "If the Fishmonger is taken out of action during the battle, do not roll for serious injuries. After the battle he cannot be found, but is available for hire as usual for the next battle, the hire fee being paid again."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Bow",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Lucky Charm",
+        "quantity": 1
+      },
+      {
+        "item": "Net",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 70,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 0,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any human, Dwarf, Halfling or Elf warband may hire the Fishmonger.",
+      "warbands": [
+        {
+          "group": "humans",
+          "excluded": false
+        },
+        {
+          "group": "dwarfs",
+          "excluded": false
+        },
+        {
+          "group": "halflings",
+          "excluded": false
+        },
+        {
+          "group": "elves",
+          "excluded": false
+        }
+      ],
+      "stays": "always",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "The Grandmother",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "Wizard",
+    "specials": [
+      {
+        "name": "Permanently Poisoned Dagger",
+        "description": "The Grandmother's dagger is permanently coated in Black Lotus."
+      },
+      {
+        "name": "Wizard",
+        "description": "The Grandmother starts each battle with four spells: two different random spells from the Lesser Magic list and two different random spells from the Charms and Hexes list."
+      },
+      {
+        "name": "Magic Savant",
+        "description": "The Grandmother gains +1 to all difficulty rolls. In addition, while she is not in combat she may cast one more spell in her shooting phase; if the first spell was cast successfully she must pick a different spell for the second."
+      },
+      {
+        "name": "Garland of Skulls",
+        "description": "Her magic necklace gives a 5+ ward save against all wounds, and cannot be stolen or robbed from her."
+      },
+      {
+        "name": "Seeking Help",
+        "description": "To recruit the Grandmother a hero must search for her with a rarity roll of 5, as for a rare item. Record the result rolled: that number becomes her Leadership for the next game, or 10 if the roll is higher than 10."
+      },
+      {
+        "name": "Seeking Healing",
+        "description": "A warband may instead seek the Grandmother for healing, searching for her and paying the hire fee as above. The hero who searched for her is healed: remove any number of permanent injuries and mutations from him. She then takes no part in the battle and does not count towards the rating, but the warband must still test for Backpay after the next battle. She will never heal injuries she caused herself."
+      },
+      {
+        "name": "Lucky Day",
+        "description": "If the rarity roll to find her is a natural 7 she is suspiciously nice, and no Leadership test for Backpay is taken after the game. This only applies if she goes the whole game without being taken out of action; if she is taken out, she tests for Backpay as normal."
+      },
+      {
+        "name": "Backpay",
+        "description": "After the game, before rolling for exploration, the Grandmother takes a Leadership test on her modified Leadership, and may not use the leader's. If she fails, or on a natural roll of 7, roll 2D6.\n\n2D6 | Result\n2-3 | Pound of Flesh. The hero who first searched for her rolls a D6 and gains that serious injury, and may not explore or search for rare items this post-game: 1 Multiple Injuries (16-21), 2 Blinded in One Eye (31), 3 Leg Wound (22), 4 roll again, 1-3 Chest Wound (26), 4-6 Old Battle Wound (32), 5 Hand Injury (34), 6 roll again, 1-3 Madness (24), 4-6 Nervous Condition (33).\n4-5 | Spirited Away. The warband member with the least experience is removed from the roster along with his equipment; where several tie, pick one at random, animals included.\n6-8 | Cross My Palm with Silver. Pay 1D6x5 gc before the next game. If you cannot pay, treat it as Pound of Flesh instead.\n9-10 | To Grandmother's House. Pick a random hero who was not taken out of action: he must roll for injury, and does not roll for exploration or search for rare items.\n11-12 | Double or Nothing. She forgoes any payment and joins you for the next battle, rolling again for spells and for Leadership, treating any roll of 5 or less as 5. If she demands Backpay after that game, she demands two rolls on this chart, rolling again for any further Double or Nothing."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Quarter Staff",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Black Lotus",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 50,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "A Backpay cost may follow the battle."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 50,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Non-Chaos warbands and Chaos-renegade warbands may hire the Grandmother. She may not be hired by Witch Hunters.",
+      "warbands": [
+        {
+          "group": "chaos",
+          "excluded": true
+        },
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        }
+      ],
+      "stays": "one_battle",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "The Headsman",
+    "description": "His executioner's axe counts as a double-handed axe.",
+    "movement": 4,
+    "weapon_skill": 5,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 2,
+    "attacks": 2,
+    "leadership": 10,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Immune to Psychology",
+        "description": "The model is immune to psychology and never leaves combat."
+      },
+      {
+        "name": "Who Dares Summon Me?",
+        "description": "The Headsman is not found but summoned. Instead of the usual process for finding a dramatis persona, the leader of a warband that wants him may take a Leadership test; if he passes, the Headsman joins for their next game. He will not work for the same warband two games in a row."
+      },
+      {
+        "name": "Death Stalks All",
+        "description": "Instead of the usual process for setting up this model, when a friendly or enemy model is taken out of action the Headsman may be deployed in the controlling player's next movement phase, up to 6\" from where that model was removed and no closer than 4\" to an enemy model."
+      },
+      {
+        "name": "Ghostly Form",
+        "description": "The Headsman has a 4+ save against all attacks, which armour penetration cannot reduce. He is also immune to poison, cannot be set on fire, and ignores stun results, treating them as knocked down and standing back up in the recovery phase, though he strikes last if he is in close combat."
+      },
+      {
+        "name": "The Debt All Men Pay",
+        "description": "At the end of the game, even if the Headsman was taken out of action, roll a dice, adding 1 if he took an enemy model out of action.\n\nD6 | Result\n1 | Your life is forfeit. One model of the player's choice from the warband is slain, a prisoner included. The warband keeps his equipment.\n2-4 | Toll for the reaper. He demands D6xD6 gc; if the warband cannot pay, treat it as a roll of 1.\n5-6 | Enough death for now. He is satisfied and leaves the warband, with no payment."
+      }
+    ],
+    "skills": [
+      "Strongman",
+      "Fearsome",
+      "Fearless"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Double-handed weapon",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No gold: he is summoned, and takes his toll after the battle."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": null,
+      "grade": "3",
+      "race": "Spirit",
+      "unique_to": "Any warband except Witch Hunters, the Sisters of Sigmar, Elf warbands and Dwarf warbands may hire the Headsman.",
+      "warbands": [
+        {
+          "group": "elves",
+          "excluded": true
+        },
+        {
+          "group": "dwarfs",
+          "excluded": true
+        },
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        },
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        }
+      ],
+      "stays": "one_battle",
+      "payment_note": "",
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Zleda the Jaded",
+    "description": "Also carries a Kislev chain saw (35 gc, rarity 11), a patchy leather cloak and a wooden mask. Her lumberjack outfit of thick leather trousers and matching shirt counts as toughened leathers without the stench.",
+    "movement": 5,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 3,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Cloven Hoofs",
+        "description": "The Shadowlord has blessed Zleda with cloven feet."
+      },
+      {
+        "name": "Immune to Psychology",
+        "description": "The model is immune to psychology and never leaves combat."
+      },
+      {
+        "name": "Kislev Chain Saw",
+        "description": "Range close combat, Strength as user (special), two-handed, Chain-Saw-Dance. Two-handed: a model armed with it may not use a shield, buckler or additional weapon in close combat, though with a shield it still gets +1 to its armour save against shooting. Chain-Saw-Dance: for each successful hit beyond the first against the same opponent, the attacks gain +1 Strength, so three hits each wound at +2 Strength."
+      },
+      {
+        "name": "Chaos Traps",
+        "description": "Zleda may place up to six counters as traps, immediately after her model has been placed. They may be placed anywhere at ground level, at least 6\" apart. Any model except Zleda that moves within 3\" of a trap must roll a D6 and consult the table; the counter is then removed. A single model can only set off one trap at a time, and a model landing on a new trap because of a Kinetic Discharge triggers that second trap.\n\nD6 | Result\n1-3 | Nothing happens.\n4 | Kinetic Discharge.\n5 | Protoplasmic Sphere.\n6 | Temporal Fissure."
+      },
+      {
+        "name": "Kinetic Discharge",
+        "description": "The blast causes a S2 hit with normal saves and catapults the target into the air. The airborne warrior must take an Initiative test: on a success he lands on his feet unharmed and his movement ends at once; on a failure he suffers a single S4 hit with no armour save. The direction is rolled with a scatter dice, ignoring On Target results and using the arrow, and the distance flown is 2D6\"."
+      },
+      {
+        "name": "Protoplasmic Sphere",
+        "description": "A sphere 2\" across engulfs the warrior and rolls away at random with him inside, as Kinetic Discharge describes. Walls, objects and obstacles 2\" or less in height do not affect its movement; against a larger structure it bounces off at the angle it hit and carries on until its whole move is spent. A trapped warrior escapes by passing an Initiative test at the start of his turn, before the movement phase, and is then ejected 2D6\" in a random direction, taking a S3 hit with no armour save if he hits a wall or other solid object. Warriors the sphere touches as it moves are absorbed into it; space inside is warped, so it holds any number of warriors of any size while keeping its 2\" width. Warriors inside fight each round as normal, all counting as in base contact with each other and attacking in order of Initiative; spell casting and shooting are impossible inside. A warrior taken out of action inside is removed from the game as normal, and no model inside is ever considered All Alone. If the sphere empties it disappears at once, and if it moves off the table any warriors inside are removed from the game and rejoin their warband after the battle without rolling for injuries."
+      },
+      {
+        "name": "Temporal Fissure",
+        "description": "The affected model is trapped where time has stopped: it can take no action, and no action can be taken against it. It escapes as from a Protoplasmic Sphere. A warrior still trapped when the game ends is expelled unharmed and rejoins his warband."
+      }
+    ],
+    "skills": [
+      "Leap",
+      "Acrobat",
+      "Scale Sheer Surfaces",
+      "Step Aside",
+      "Sprint",
+      "Mighty Blow"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Axe",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "dramatis_persona": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 75,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 75,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "The Cult of the Possessed, the Carnival of Chaos and the Beastmen Raiders may hire Zleda.",
+      "warbands": [
+        {
+          "type": "cult-of-the-possessed",
+          "excluded": false
+        },
+        {
+          "type": "carnival-of-chaos",
+          "excluded": false
+        },
+        {
+          "type": "beastmen-raiders",
+          "excluded": false
         }
       ],
       "stays": "always",

@@ -8429,5 +8429,683 @@
         }
       ]
     }
+  },
+  {
+    "name": "Skink Hopper",
+    "type": "Hired Sword",
+    "description": "The page's Weapons/Armour paragraph is the Priest of Morr's by mistake, so his kit is not recorded here.",
+    "movement": 6,
+    "weapon_skill": 2,
+    "ballistic_skill": 4,
+    "strength": 3,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 6,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Committed",
+        "description": "The Skink Hopper will not leave the warband unless he dies. If he is taken out of action he is only removed from the roster on a roll of 1."
+      },
+      {
+        "name": "Cold Blooded (Skink Hopper)",
+        "description": "When taking a psychology test or a rout test the model rolls 3D6 and takes the lowest two dice."
+      },
+      {
+        "name": "Aquatic (Skink Hopper)",
+        "description": "The model moves through water terrain with no penalty and counts as being in cover while in the water."
+      }
+    ],
+    "skills": [
+      "Infiltration (Skink)",
+      "Scale Sheer Surfaces"
+    ],
+    "spells": [],
+    "equipment": [],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "No gold: the Plaque of the Comet is surrendered to the Skink Shaman."
+      },
+      "upkeep_fee": {
+        "kind": "none",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 16,
+      "grade": "3",
+      "race": "Skink",
+      "unique_to": "Only by surrendering the Plaque of the Comet. Witch Hunters and Sisters of Sigmar may not hire the Skink Hopper.",
+      "warbands": [
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        },
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Shooting",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Barber Surgeon",
+    "type": "Hired Sword",
+    "description": "His saw, scalpels, syringes, tooth-key, fleam, bleeding bowl and surgeon's mask count as a shortsword and a helmet, and may not be traded.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 2,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Familiar with the Crypts (Barber Surgeon)",
+        "description": "The Barber Surgeon lets the warband change a single dice roll on the Exploration chart by -1."
+      },
+      {
+        "name": "Aha!",
+        "description": "After each scenario he took part in without going out of action, the warband may change one of the dice on a single Serious Injuries roll by 1 either way: an 11 on a hero's injury roll could become a 12 or a 21."
+      },
+      {
+        "name": "You Call That Noxious?",
+        "description": "The Barber Surgeon is completely immune to poisons, wind globes, Nurgle's Rot and the like."
+      },
+      {
+        "name": "Which Skills He Learns",
+        "description": "When he gains a new skill the Barber Surgeon may take the Academic skill Haggle, roll on the Speed skills table, or take Strike to Injure from the Combat list."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Shortsword",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "30 gc for a Skaven, Beastmen, Chaos or Undead warband of any kind."
+      },
+      "rating": 20,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband may hire a Barber Surgeon. Skaven, Beastmen, Chaos and Undead warbands of all types pay 30 gc upkeep instead of 25 gc.",
+      "warbands": [],
+      "available_skill_types": [
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Bearserker",
+    "type": "Hired Sword",
+    "description": "He is equipped from the Ogre Bodyguard's list, which the page does not set out.",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 0,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Frenzy",
+        "description": "The model is subject to frenzy."
+      },
+      {
+        "name": "Werebear",
+        "description": "The ritual lets the Bearserker give up his human form, and always needs one wyrdstone and a dead body. If he suffers deadly injuries from being taken out of action, spend 1 wyrdstone and roll a D6: on a 1-3 he dies, on a 4-6 he sheds his flesh and becomes a werebear with a human mind and a heart of wyrdstone. As a werebear his profile is M6 WS4 BS0 S4 T4 W3 I4 A2 Ld7, he is a mutant, and he must replace all the experience and skills he earned as a human."
+      },
+      {
+        "name": "The Beast",
+        "description": "A werebear is Large and causes fear. His shaggy hide gives a 6+ armour save. He is bestial: ravenous, immune to psychology and too feral ever to lead a warband. He is slow witted, gaining advances at half rate, so he must earn twice the usual experience, and he adds 1 point to the warband's rating for every two experience points. He may still learn Combat and Strength skills and still handles tools, and he uses an Ogre Bodyguard's weapons, armour and profile maximums."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 60,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "20 gc while he is a werebear."
+      },
+      "rating": 22,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Every warband except Undead of any kind, Witch Hunters, Sisters of Sigmar and any warband employing a good priest may hire the Bearserker.",
+      "warbands": [
+        {
+          "group": "undead",
+          "excluded": true
+        },
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        },
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Black Guard of Morr",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Halberd or Greatsword",
+        "description": "The Black Guard carries a halberd or a double-handed weapon, as the player chooses."
+      },
+      {
+        "name": "Mounted",
+        "description": "Where the optional rules for mounted models or the Blazing Saddles expanded mounted rules are in use, the Black Guard may ride a warhorse. Mounted, his save becomes 4+, his upkeep is 5 gc more, and he may also take Cavalry skills."
+      },
+      {
+        "name": "Silent Guardian",
+        "description": "If a Black Guard has been declared hidden, enemies must take an Initiative test to spot him even when he moves so that he is in plain sight and would normally be revealed."
+      },
+      {
+        "name": "Inured to Horror",
+        "description": "The Black Guard is immune to psychological effects caused by undead creatures or entities, and never needs to take All Alone tests."
+      },
+      {
+        "name": "Shield of Dreams",
+        "description": "Any Necromantic or Dark Magic spell that targets a Black Guard of Morr counts as one difficulty level higher to cast."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Heavy Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Crossbow",
+        "quantity": 1
+      },
+      {
+        "item": "Halberd",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 55,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "5 gc more while he rides a warhorse."
+      },
+      "rating": 24,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any human warband that holds no follower of Chaos, no undead of any form and no follower of Khaine may hire a Black Guard of Morr.",
+      "warbands": [
+        {
+          "group": "humans",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Shooting",
+        "Strength"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Body Snatcher",
+    "type": "Hired Sword",
+    "description": "He also carries chloroform.",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Loner (Body Snatcher)",
+        "description": "The Body Snatcher always strikes first while he is all alone. This supersedes every other rule and weapon."
+      },
+      {
+        "name": "Stealthy (Body Snatcher)",
+        "description": "The Body Snatcher may run even while enemies are within 8\" of him."
+      },
+      {
+        "name": "Knows a Guy",
+        "description": "The warband may buy Healing Herbs without ever searching for them."
+      },
+      {
+        "name": "Abductions",
+        "description": "Whenever the Body Snatcher is in base contact with a model that is face down, he uses his chloroform on it. If the victim is a hero, he takes a Toughness test and resists capture by rolling equal to or under his Toughness. If he fails, or the stunned model is a henchman, both the Body Snatcher and the downed model are removed from the table at once and the model is automatically captured by the warband employing him."
+      },
+      {
+        "name": "Abhorrent",
+        "description": "Every enemy hates the Body Snatcher."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Lantern",
+        "quantity": 1
+      },
+      {
+        "item": "Halberd",
+        "quantity": 1
+      },
+      {
+        "item": "Crossbow",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 22,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "The Body Snatcher may not be hired by Witch Hunters, Sisters of Sigmar or any warband with a priest in it.",
+      "warbands": [
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        },
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Academic"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Knight Panther",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 4,
+    "ballistic_skill": 3,
+    "strength": 4,
+    "toughness": 4,
+    "wounds": 2,
+    "initiative": 4,
+    "attacks": 2,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Axe or Hammer",
+        "description": "The Knight carries an axe or a club, mace or hammer, as the player chooses."
+      },
+      {
+        "name": "Knight",
+        "description": "The Knight Panther suffers no movement penalty for carrying both a shield and heavy armour, and in close combat he always uses his shield."
+      },
+      {
+        "name": "True or Accursed",
+        "description": "In each of the first three games after he is recruited, roll 2D6. On 3+ the Knight acts normally. On a 2 he has turned: roll a D6. On 1-5 he is Betrayed, and from your opponent's next turn he is controlled by your opponent for the rest of the game as though your opponent had hired him. On a 6 he has Abandoned you, having found a sign of his true prey; remove him from the table. Either way, remove the Knight Panther from the roster at once and do not pay his upkeep at the end of the game."
+      },
+      {
+        "name": "Voluntary Rout",
+        "description": "While the Knight Panther on the roster is not out of action, a voluntary rout also removes him from the roster."
+      },
+      {
+        "name": "Nemesis",
+        "description": "The Knight hates other Knights Panther. If your opponent also has one on his roster, disregard the True or Accursed rule. In your turn your Knight Panther must move, run or charge at maximum speed towards your opponent's Knight Panther and engage him, taking risks such as climbing or jumping. If he is charged by another model he must move again towards the other Knight Panther, and all his attacks are directed at him. If the game ends before one of them is put out of action, keep resolving their combat until one is. A Knight Panther put out of action by another Knight Panther is automatically dead; do not roll for it."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Sword",
+        "quantity": 1
+      },
+      {
+        "item": "Shield",
+        "quantity": 1
+      },
+      {
+        "item": "Helmet",
+        "quantity": 1
+      },
+      {
+        "item": "Heavy Armour",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Axe",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "special",
+        "gold": null,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "One holy or unholy relic."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 20,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 25,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband may hire a Knight Panther. A good warband believes it hires a True Panther and an evil warband an Accursed Panther; for all game purposes the two are the same.",
+      "warbands": [],
+      "available_skill_types": [
+        "Combat",
+        "Strength"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Raving Straggler",
+    "type": "Hired Sword",
+    "description": "",
+    "movement": 4,
+    "weapon_skill": 3,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 3,
+    "wounds": 1,
+    "initiative": 4,
+    "attacks": 1,
+    "leadership": 5,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Frantic Searching",
+        "description": "If the Raving Straggler was not taken out of action, the warband may re-roll one D6 whenever it finds loot worth an amount of gold crowns during exploration, wine from the tavern or loot from the graveyard among them."
+      },
+      {
+        "name": "Unreliable (Raving Straggler)",
+        "description": "The Raving Straggler may never use the leader's Leadership when taking tests, and does not count as a friendly model for All Alone tests."
+      },
+      {
+        "name": "Raving Lunatic",
+        "description": "Roll a D6 at the beginning of each turn.\n\nD6 | Result\n1 | Confusion. The Straggler is subject to the rules for stupidity for the rest of the turn.\n2 | Hallucinations. The Straggler must pass a Leadership test this turn if he wishes to charge, as if every enemy model caused fear.\n3 | Eh, that way? The closest friendly model within 6\" must take a Leadership test. If it fails, treat that model as having to cross difficult terrain this turn.\n4 | I know a shortcut, sir! The closest friendly model within 6\" gains 1 Movement this turn.\n5 | Demented screams. The Straggler causes fear for the rest of this turn.\n6 | Crazed hysteria. The Straggler is subject to the rules for frenzy for the rest of the turn and must charge the closest enemy model. If he cannot charge, he must move as quickly as he can towards the closest enemy model he can see."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Club",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Lucky Charm",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 25,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Free if he is met during exploration on a 44 and the usual reward is given up."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 9,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband that can feed him may hire the Raving Straggler, except Witch Hunters and the Sisters of Sigmar.",
+      "warbands": [
+        {
+          "type": "witch-hunters",
+          "excluded": true
+        },
+        {
+          "type": "sisters-of-sigmar",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [
+        "Combat",
+        "Speed"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
+    "name": "Tosher",
+    "type": "Hired Sword",
+    "description": "Also carries a shovel, which counts as a double-handed bludgeoning weapon.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 2,
+    "strength": 3,
+    "toughness": 4,
+    "wounds": 1,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 8,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Hates Skaven",
+        "description": "The model hates all Skaven."
+      },
+      {
+        "name": "Knowledge of the Sewers",
+        "description": "The Tosher is placed with the Hunch skill, and never has to take All Alone tests."
+      },
+      {
+        "name": "No Skill Lists",
+        "description": "The Tosher can use no skill list: roll again on any New Skill result, so he may only take characteristic increases with the experience he earns."
+      },
+      {
+        "name": "Crappy Assets",
+        "description": "At the end of every game the Tosher finds one common item for free on a D6 roll of 4+. It may never be sold, for its disrepair and its revolting smell and look."
+      }
+    ],
+    "skills": [
+      "Foul Odour",
+      "Hunch"
+    ],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Lantern",
+        "quantity": 1
+      },
+      {
+        "item": "Double-handed weapon",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Crossbow",
+        "quantity": 1
+      },
+      {
+        "item": "Toughened Leathers",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 30,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 16,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Any warband willing to put up with his stench may hire a Tosher, except Dwarfs and Skaven.",
+      "warbands": [
+        {
+          "group": "dwarfs",
+          "excluded": true
+        },
+        {
+          "group": "skaven",
+          "excluded": true
+        }
+      ],
+      "available_skill_types": [],
+      "available_special_skills": []
+    }
   }
 ]
