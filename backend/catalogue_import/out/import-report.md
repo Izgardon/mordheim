@@ -335,6 +335,7 @@ Added: Spry (Speed), from the Mutiny in Marienburg main document (Broheim, Mutin
 Description put right: Mutant (Beastmen Raiders).
 Description put right: Quick Thinker (Dwarf Exiled Engineers).
 Description put right: Ignore Pain (Skaven Clan Pestilens).
+Description put right: Trap Expert (Academic).
 
 ## Skill groups
 
@@ -1743,7 +1744,7 @@ Pages folded into another warband's list as one of its variants:
 - Stub: Scythe (Khemri), 5 gc, Common; its rules are on p3.
 - Stub: Scimitar, 15 gc, Common; its rules are on p3.
 - Flag (p1): The PDF prints no starting gold, only "Maximum warband number is 15". The template carries our 500 gc default.
-- Flag (p1): Knowing the trade routes also says "All heroes in the thief warband may gain the Disarm/Spot trap skill". That is our Trap Expert, so it is a skill of the warband's own group (every Hero ticks Special) rather than a sentence in the warband rule. See the decisions.
+- Flag (p1): Knowing the trade routes also says "All heroes in the thief warband may gain the Disarm/Spot trap skill". That is our Trap Expert, so it is a skill of the warband's own group (every Hero ticks Special) rather than a sentence in the warband rule. Khemri's Campaign Rules (https://www.broheim.net/downloads/campaigns/khemri/Khemri%20Campaign%20Rules.pdf, 1-22, text layer; read 12 Nov 2026) print the skill in full on p8, as Spot/Disarm trap and Set Trap: ours already held both halves with the same rolls and lacked only the limit of four takes, now in its description. See the decisions.
 - Flag (p1): Known thieves: a captured thief sells for "1D6+ the model exprience", read as 1D6 gold crowns plus his experience. The chopped-off hand on a 1-3 is given no effect in the PDF; as printed.
 - Flag (p1): The PDF's Hide in Shadows (an Initiative test to charge him while he is within 1" of a wall, said to be the Imperial Assassin's skill) and Knife fighting (+1 WS and +1 to injury with knives) are not what our skills of those names do, so each is a new skill named apart. See the decisions.
 - Flag (p3): The Scimitar (15 gc) and the Scythe (5 gc) are their own Khemri items now, with the rules the Khemri Equipment PDF prints; the Scythe is Scythe (Khemri), kept apart from the Sylvania scythes, and the Jambiya is our Dagger. The Ankus and the Cutlass carry their rules too. All of them are declared on arabyan-nomads.json, the first page of the setting to sell them.
@@ -2594,7 +2595,7 @@ Pages folded into another warband's list as one of its variants:
 - Stub: Scythe (Khemri), 5 gc, Common; its rules are on p4.
 - Stub: Scimitar, 15 gc, Common; its rules are on p4.
 - Flag (p1): The PDF prints no starting gold, only "Max. Warband size is 15". The template carries our 500 gc default.
-- Flag (p2): The Tomb Robber "starts with Disarm/Spot traps skill". That is our Trap Expert, so he is given it as a starting skill. See the decisions.
+- Flag (p2): The Tomb Robber "starts with Disarm/Spot traps skill". That is our Trap Expert, so he is given it as a starting skill; Khemri's Campaign Rules p8 print the skill in full and only its limit of four takes was missing from ours. See the decisions.
 - Flag (p3): The Skeletons' maximum characteristics (WS6 BS5 S4 T3 W2 I4 A4 Ld8) are the only ones printed for a skeleton anywhere in this batch, so they become a new race, Skeleton, which the Lahmian skeletons take too (their PDF prints none).
 - Flag (p3): The undead rules are written "Immune to physiology", read as Immune to Psychology. The Skeletons are given Cause Fear, Immune to Poison, Immune to Psychology and May Not Run as printed, with no No Pain; the Undead Vulture's "does not suffer from stun" is No Pain.
 - Flag (p3): The Undead Golem costs 200 gc with an upkeep of 15 gc. A Henchman's upkeep is not something our templates hold, so it stays in his rules.

@@ -173,8 +173,13 @@ Khemri's Equipment PDF gave the Ankus, Cutlass and Great Scimitar their rules (1
 spells each - Ice Magic, Fire Magic, Wind Magic and Earth Magic, all Khemri 3's - which the Mages' Arch Mage and Mage and the Arabyan Nomads' Street Mage
 now cast from, in place of our Elemental Lores of Air, Earth, Fire and Water, the Sorcerous Society's Mordheim 2a lores they pointed at while the PDF went
 unread. Khemri 1b's Arabian Elemental Magic, a six-spell list of mordheimer's that the Arabian Tomb Raiders' Mystic casts, is none of the four and is left
-alone. The setting's Dramatis Personae PDF goes with Broheim's `downloads/dramatispersonae/` section (William, 12 Nov 2026), and its Town Cryer compilation
-is read only for what a gap points at.
+alone. Its Campaign Rules (https://www.broheim.net/downloads/campaigns/khemri/Khemri%20Campaign%20Rules.pdf, 1-22, text layer; read 12 Nov 2026) are the
+setting's own mechanisms - weather, tombs, traps, perception in darkness, concealed movement, water and a post-battle resupply table - and carry one
+catalogue row between them: p8 prints the Spot/Disarm trap and Set Trap skills in full, both halves of our Trap Expert at the same rolls, and only their
+limit of four takes was missing from its description (`skill_descriptions` in `overrides.json`). Its pages 19-20 are the Elemental Magic above; its
+Torch and Lantern are ours reworded for the optional perception rules and its Water is a warband counter, neither imported. The setting's Dramatis
+Personae PDF goes with Broheim's `downloads/dramatispersonae/` section (William, 12 Nov 2026), and its Town Cryer compilation is read only for what a gap
+points at.
 
 Karak Azgal's eight warbands share one 76-page PDF, and only each warband's own pages were read; its campaign material (pages 1-18 and 62-76, the hired swords, exploration chart, runic artefacts and scenarios among them) is not imported. Four of them point at warbands we already hold for their lists, rules or skills ("all of the equipment lists from Town Crier 6 (or Best of Town Crier) apply", "the Orc special skills from TC6"): those were taken from our own Dwarf Treasure Hunters, Skaven and Mercenaries warbands and our Dwarves, Dwarf Troll Slayers and Orcs skill groups, never from another PDF.
 

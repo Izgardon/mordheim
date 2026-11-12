@@ -189,7 +189,7 @@
   ],
   "flags": [
     {"page": 1, "what": "The PDF prints no starting gold, only \"Max. Warband size is 15\". The template carries our 500 gc default."},
-    {"page": 2, "what": "The Tomb Robber \"starts with Disarm/Spot traps skill\". That is our Trap Expert, so he is given it as a starting skill. See the decisions."},
+    {"page": 2, "what": "The Tomb Robber \"starts with Disarm/Spot traps skill\". That is our Trap Expert, so he is given it as a starting skill; Khemri's Campaign Rules p8 print the skill in full and only its limit of four takes was missing from ours. See the decisions."},
     {"page": 3, "what": "The Skeletons' maximum characteristics (WS6 BS5 S4 T3 W2 I4 A4 Ld8) are the only ones printed for a skeleton anywhere in this batch, so they become a new race, Skeleton, which the Lahmian skeletons take too (their PDF prints none)."},
     {"page": 3, "what": "The undead rules are written \"Immune to physiology\", read as Immune to Psychology. The Skeletons are given Cause Fear, Immune to Poison, Immune to Psychology and May Not Run as printed, with no No Pain; the Undead Vulture's \"does not suffer from stun\" is No Pain."},
     {"page": 3, "what": "The Undead Golem costs 200 gc with an upkeep of 15 gc. A Henchman's upkeep is not something our templates hold, so it stays in his rules."},

@@ -721,7 +721,7 @@
   },
   {
     "name": "Trap Expert",
-    "description": "This Hero is able to detect traps in the tombs with relative ease. A character who possesses this skill will never set off traps himself (but may be subject to their effects if he is too close when it goes off). He can attempt to disarm traps by stopping at the trap during his Movement phase. To disarm a Simple trap, roll 6+ on 2D6. To disarm a Complex trap, roll 8+ on 2D6. If unsuccessful, he must test against his Initiative; a failed test means he sets off the trap himself. He can also attempt to restore dud or previously de-activated traps: roll a D6 (1-4 Simple, 5-6 Complex), then roll 6+ on 2D6 to restore a Simple trap or 8+ on 2D6 for a Complex trap. Failure means the trap fails to activate."
+    "description": "This Hero is able to detect traps in the tombs with relative ease. A character who possesses this skill will never set off traps himself (but may be subject to their effects if he is too close when it goes off). He can attempt to disarm traps by stopping at the trap during his Movement phase, and may do nothing else that turn. To disarm a Simple trap, roll 6+ on 2D6. To disarm a Complex trap, roll 8+ on 2D6. If unsuccessful, he must test against his Initiative; a failed test means he sets off the trap himself. He can also attempt to restore dud or previously de-activated traps: roll a D6 (1-4 Simple, 5-6 Complex), then roll 6+ on 2D6 to restore a Simple trap or 8+ on 2D6 for a Complex trap. Failure means the trap fails to activate. Either half may be taken up to four times, taking 1 off its roll each time, so that at the limit a Simple trap is disarmed on a 2+ and a Complex trap on a 4+."
   },
   {
     "name": "Driver",
