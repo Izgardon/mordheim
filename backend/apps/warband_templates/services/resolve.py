@@ -69,6 +69,20 @@ def warband_variant(warband: Warband, template: WarbandTemplate) -> str:
     return warband.template_variant or str(getattr(template, "preset_variant", "") or "")
 
 
+def list_item_ids(warband: Warband) -> frozenset[int]:
+    """The items the warband's own template lists sell in its variant (two queries, whatever the lists' size): what
+    `warbands/services/who_can.py` reads as permission to buy. A line only in another variant is not one of them;
+    a warband with no type or no template sells nothing."""
+    if warband.warband_type_id is None:
+        return frozenset()
+    template = templates_for_type(warband.campaign_id, warband.warband_type_id).only("id").first()
+    if template is None:
+        return frozenset()
+    variant = warband_variant(warband, template)
+    lines = TemplateListItem.objects.filter(equipment_list__template_id=template.pk, variant__in=("", variant))
+    return frozenset(lines.values_list("item_id", flat=True))
+
+
 def variant_keys(template: WarbandTemplate) -> list[str]:
     return [str(entry.get("key")) for entry in template.variants or [] if entry.get("key")]
 

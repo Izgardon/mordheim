@@ -8,11 +8,14 @@ A list says whether it is for everyone and names warband types or groups, each i
 1. a line naming its type or a type it counts as;
 2. otherwise a line naming a group one of them is in;
 3. otherwise a row for everyone, unless an excluded line names one of its types or groups;
-4. otherwise the item is "not usually available": it can still be bought at its first row, with the reason.
+4. otherwise, for an item its own warband template list sells in its variant, every row of the item, ranked among
+   themselves as step 1: a warband's own list is the strongest statement that it may buy the thing, whatever the
+   rows name (William: the rows the Nehekharan arrows and the Sea Dragon Cloak name are another warband's);
+5. otherwise the item is "not usually available": it can still be bought at its first row, with the reason.
 
 Among an item's rows a warband may use, the lowest step wins, then a row without a label (a "Brace" or "Skink heroes"
 row is a variant, never the default), then the row naming the fewest warbands (the more specific), then the commonest,
-the cheapest and the first. An item from a setting the campaign hasn't ticked is treated like step 4, the setting named
+the cheapest and the first. An item from a setting the campaign hasn't ticked is treated like step 5, the setting named
 in the reason; a campaign's own item has no setting and is always in play there. Restrictions warn, they never
 block: `can_buy` and the reason are for the pages, purchases never read them.
 """
@@ -36,6 +39,7 @@ class Buyer:
     type_ids: frozenset[int]
     group_ids: frozenset[int]
     name: str
+    sells: frozenset[int] = frozenset()  # the items its own template list sells in its variant (step 4)
 
 
 def buyer_of(warband: Warband) -> Buyer:
@@ -60,6 +64,12 @@ def step(for_everyone: bool, lines: Iterable[Any], buyer: Buyer) -> int | None:
         if line.excluded
     )
     return 3 if for_everyone and not shut_out else None
+
+
+def on_his_list(item: Any, buyer: Buyer) -> bool:
+    """Whether the buyer's own template list sells the item: its id, or the book id a campaign's version of it stands
+    in for (a book template's lines name the book item)."""
+    return item.pk in buyer.sells or getattr(item, "replaces_id", None) in buyer.sells
 
 
 def _rank(row: Any, index: int, at: int) -> SortKey:
@@ -106,6 +116,8 @@ def offer(item: Any, buyer: Buyer, in_play: bool, setting: str) -> Offer | None:
         for index, row in enumerate(rows)
         if (at := step(row.for_everyone, row.warband_links.all(), buyer)) is not None
     )
+    if not usable and on_his_list(item, buyer):
+        usable = sorted((_rank(row, index, 1), row) for index, row in enumerate(rows))
     reasons = [] if usable else [not_usually(buyer)]
     if not in_play:
         reasons.append(out_of_play(setting))

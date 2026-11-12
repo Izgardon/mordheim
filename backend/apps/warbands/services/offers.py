@@ -5,9 +5,11 @@ the items with their settings, then their price rows, then the rows' who-can lin
 setting, then its lines; the skill groups (skill groups phase 1a), then their lines, then their skills. A group is
 open to the warband when its lines let it in (its type, its group, or everyone); the skills of a group not for
 everyone that names the warband's type or group are its special skills (a skill is learnable by whoever has a group
-holding it).
+holding it). The warband's own template lists are read too (two queries: its template, then its lines' items for
+its variant), so an item its own list sells is one it may buy whatever the price rows name (`who_can.py`, step 4).
 """
 
+from dataclasses import replace
 from typing import Any
 
 from django.db.models import Model, Prefetch, QuerySet
@@ -71,8 +73,10 @@ def who_can(warband: Warband) -> dict[str, Any]:
     """`{items: [{item_id, availability_id, options, can_buy, reason}], hired_swords: [{id, can_hire, reason}],
     dramatis_personae: [...], skill_group_ids: [...], special_skill_ids: [...]}`."""
     from apps.core.catalogue.kinds import DRAMATIS_PERSONAE, HIRED_SWORDS
+    from apps.warband_templates.services.resolve import list_item_ids  # it reads the warbands app
 
-    buyer, campaign_id = buyer_of(warband), warband.campaign_id
+    campaign_id = warband.campaign_id
+    buyer = replace(buyer_of(warband), sells=list_item_ids(warband))
     group_ids, special_ids = _skill_groups(campaign_id, buyer)
     return {
         "items": item_offers(campaign_id, buyer),

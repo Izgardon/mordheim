@@ -10,6 +10,7 @@ from apps.campaigns.models import CampaignType
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill, SkillGroupWarband
+from apps.warband_templates.models import TemplateList, TemplateListItem, WarbandTemplate, WarbandTemplateType
 from apps.warbands.models import WarbandGroup, WarbandType
 
 from .roster_support import RosterTestCase
@@ -243,9 +244,10 @@ class WhoCanReadTests(WhoCanTestCase):
             self.group(f"Tricks {index}", Skill.objects.create(name=f"Trick {index}"), groups=[self.skaven])
 
         self.assertEqual(count(), before)
-        # the warband and the membership, its types, the items, their rows and the rows' lines, each hireling kind
-        # and its lines, the skill groups, their lines and their skills
-        self.assertEqual(before, 13)
+        # the warband and the membership, its types, its warband template (its lists' items only when it has one:
+        # `HisListTests`), the items, their rows and the rows' lines, each hireling kind and its lines, the skill
+        # groups, their lines and their skills
+        self.assertEqual(before, 14)
         self.client.force_authenticate(user=self.viewer)
         self.assertEqual(self.client.get(f"/api/warbands/{self.warband.id}/who-can/").status_code, 200)
         self.client.force_authenticate(user=self.outsider)
@@ -257,3 +259,107 @@ class WhoCanReadTests(WhoCanTestCase):
         self.assertEqual(
             [(row["slug"], row["kind"]) for row in response.json()], [("humans", "race"), ("skaven", "race")]
         )
+
+
+class HisListTests(WhoCanTestCase):
+    """What the warband's own template list sells, it may buy (step 4): the Nehekharan Tomb Guards' Asp Arrows, whose
+    only price row names the Tomb Guardians, and the Corsairs' Sea Dragon Cloak, whose row names the Dark Elves."""
+
+    def template(self, *lines: tuple[Item, str], warband_type: WarbandType | None = None) -> WarbandTemplate:
+        """A book template serving the warband's type, with one list holding `lines` (an item and the variant its
+        line is for, blank for every variant)."""
+        template = WarbandTemplate.objects.create(
+            name="Nehekharan Tomb Guards",
+            slug=f"tomb-guards-{WarbandTemplate.objects.count()}",
+            variants=[{"key": "khemri", "name": "Khemri"}, {"key": "lahmia", "name": "Lahmia"}],
+        )
+        WarbandTemplateType.objects.create(template=template, warband_type=warband_type or self.pestilens)
+        kit = TemplateList.objects.create(template=template, key="kit", name="Equipment list")
+        for position, (item, variant) in enumerate(lines):
+            TemplateListItem.objects.create(equipment_list=kit, item=item, position=position, cost=10, variant=variant)
+        return template
+
+    def test_an_item_its_own_list_sells_is_one_it_may_buy(self) -> None:
+        arrows = self.item("Asp Arrows", {"types": [self.reiklanders], "cost": 10})
+        staff = self.item("Serpent Staff", {"types": [self.reiklanders], "cost": 30})
+        halberd = self.item("Halberd", {"types": [self.reiklanders]})
+        self.template((arrows, ""), (staff, ""))
+
+        offers = self.offers()
+
+        self.assertEqual((offers[arrows.id]["can_buy"], offers[arrows.id]["reason"]), (True, ""))
+        self.assertEqual((offers[staff.id]["can_buy"], offers[staff.id]["reason"]), (True, ""))
+        # an item no list of its own sells is unchanged
+        self.assertEqual(offers[halberd.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
+
+    def test_every_row_of_a_sold_item_is_an_option_the_unlabelled_cheapest_first(self) -> None:
+        pistol = self.item(
+            "Duelling Pistol",
+            {"label": "Brace", "types": [self.reiklanders], "cost": 60},
+            {"types": [self.reiklanders], "cost": 30},
+        )
+        brace, single = pistol.availabilities.order_by("id")
+        self.template((pistol, ""))
+
+        offer = self.offers()[pistol.id]
+
+        self.assertEqual((offer["can_buy"], offer["availability_id"], offer["options"]), (True, single.id, [single.id, brace.id]))  # fmt: skip
+
+    def test_a_line_only_in_another_variant_is_not_permission(self) -> None:
+        cloak = self.item("Sea Dragon Cloak", {"types": [self.reiklanders], "cost": 50})
+        self.template((cloak, "lahmia"))
+        self.warband.template_variant = "khemri"
+        self.warband.save(update_fields=["template_variant"])
+
+        offers = self.offers()
+
+        self.assertEqual(offers[cloak.id]["can_buy"], False)
+        self.assertEqual(offers[cloak.id]["reason"], "Not usually available to Skaven of Clan Pestilens.")
+        self.warband.template_variant = "lahmia"
+        self.warband.save(update_fields=["template_variant"])
+        self.assertTrue(self.offers()[cloak.id]["can_buy"])
+
+    def test_a_list_of_another_warbands_template_is_not_permission(self) -> None:
+        cloak = self.item("Sea Dragon Cloak", {"types": [self.reiklanders], "cost": 50})
+        self.template((cloak, ""), warband_type=self.reiklanders)
+
+        self.assertEqual(self.offers()[cloak.id]["can_buy"], False)
+
+    def test_a_warband_with_no_template_reads_the_rows_alone(self) -> None:
+        cloak = self.item("Sea Dragon Cloak", {"types": [self.reiklanders], "cost": 50})
+        everyone = self.item("Short Sword", {"everyone": True})
+
+        offers = self.offers()
+
+        self.assertEqual((offers[cloak.id]["can_buy"], offers[everyone.id]["can_buy"]), (False, True))
+
+    def test_the_campaigns_version_of_an_item_its_list_sells_is_sold_too(self) -> None:
+        arrows = self.item("Asp Arrows", {"types": [self.reiklanders], "cost": 10})
+        self.template((arrows, ""))
+        version = Item.objects.create(name="Asp Arrows", type="Weapon", campaign=self.campaign, replaces=arrows)
+        ItemAvailability.objects.create(item=version, cost=10, for_everyone=False)
+
+        offers = self.offers()
+
+        self.assertNotIn(arrows.id, offers)  # the version stands in for it
+        self.assertEqual((offers[version.id]["can_buy"], offers[version.id]["reason"]), (True, ""))
+
+    def test_reading_the_list_costs_two_queries_and_does_not_grow_with_the_items(self) -> None:
+        def count() -> int:
+            with CaptureQueriesContext(connection) as captured:
+                self.who_can()
+            return len(captured)
+
+        sold = self.item("Asp Arrows", {"types": [self.reiklanders], "cost": 10})
+        bare = count()
+        template = self.template((sold, ""))
+        kit = TemplateList.objects.get(template=template)
+        with_list = count()
+        sold_too = [self.item(f"Relic {index}", {"types": [self.reiklanders]}) for index in range(4)]
+        for index, item in enumerate(sold_too):
+            TemplateListItem.objects.create(equipment_list=kit, item=item, position=index + 1, cost=5)
+
+        self.assertEqual(count(), with_list)
+        self.assertEqual(with_list - bare, 1)  # the lines' items; the template itself is read either way
+        offers = self.offers()
+        self.assertTrue(all(offers[item.id]["can_buy"] for item in (sold, *sold_too)))
