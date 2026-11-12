@@ -140,7 +140,7 @@ export function campaignSummary(overrides: Partial<CampaignSummary> = {}): Campa
     hero_death_roll: "d66",
     hero_level_thresholds: [2, 4, 6, 8, 11, 14],
     henchmen_level_thresholds: [2, 5, 9, 14],
-    hired_sword_level_thresholds: [2, 4, 6, 8, 11, 14],
+    hired_sword_level_thresholds: [2, 5, 9, 14],
     enable_encampments: false,
     enable_locations: false,
     setting_ids: [1],

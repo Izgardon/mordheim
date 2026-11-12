@@ -47,13 +47,15 @@ class PostbattleXpTests(RosterTestCase):
         sword.refresh_from_db()
         self.assertEqual((group.level_up, sword.level_up), (1, 1))
 
-    def test_hirelings_level_on_the_hero_table_until_the_campaign_sets_theirs(self):
+    def test_hirelings_level_on_the_henchmen_table_until_the_campaign_sets_theirs(self):
+        # William, 12 Nov 2026: "hired swords level up like henchmen so get the same levels and gaps as them by
+        # default" (they still roll on the hero advance table, units/kinds.py)
         sword = make_unit(HIRELING, self.warband)
 
         self.play_battle({f"hireling:{sword.id}": 6})
 
         sword.refresh_from_db()
-        self.assertEqual(sword.level_up, 3)  # the book's hero table: 2, 4, 6, ...
+        self.assertEqual(sword.level_up, 2)  # the henchmen table: 2, 5, 9, 14 (the hero table would give 3)
 
     def test_half_rate_units_gain_half_the_xp(self):
         # ROST-TEST-05 and decision 6: an odd award leaves half a point

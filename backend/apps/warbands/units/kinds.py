@@ -39,7 +39,7 @@ from apps.warbands.prefetches import (
     item_detail_prefetches,
     item_links_prefetch,
 )
-from apps.warbands.utils.henchmen_level import count_new_henchmen_level_ups
+from apps.warbands.utils.henchmen_level import HENCHMEN_LEVEL_THRESHOLDS, count_new_henchmen_level_ups
 from apps.warbands.utils.hero_level import count_new_level_ups
 
 from .hooks import HenchmenHooks, LeaderHooks, UnitHooks
@@ -182,6 +182,13 @@ def _counted_hirelings(units: QuerySet[Any]) -> QuerySet[Any]:
     return on_roster(units).filter(blood_pacted=False, kind="hired_sword").exclude(**IN_A_HEROS_PLACE)
 
 
+def _count_new_hireling_level_ups(previous_xp, next_xp, thresholds=None) -> int:
+    """A hired sword counts level-ups as a hero does (whole XP of a half-rate unit reaches a threshold), against
+    the henchmen table when the campaign holds none usable: the same levels and gaps as henchmen by default
+    (William, 12 Nov 2026)."""
+    return count_new_level_ups(previous_xp, next_xp, thresholds, fallback=HENCHMEN_LEVEL_THRESHOLDS)
+
+
 def _outside_the_cap(data: Mapping[str, Any]) -> bool:
     """A new blood-pacted hired sword, a dramatis persona or one in a hero's place doesn't count towards the
     hired-sword cap."""
@@ -265,10 +272,10 @@ HIRELING = UnitKindSpec(
         "hireling_spells", HirelingSpell, "spell", "spell_ids", log_entry="hireling_spell", kept=("dc_change",)
     ),
     has_members=False,
-    # their own table, the hero table to begin with (William, 7 Nov 2026: "hired sword max level up options in
-    # settings"; "Yes just like the hero and henchman one does")
+    # their own table (William, 7 Nov 2026: "hired sword max level up options in settings"), the henchmen table to
+    # begin with: the same levels and gaps as henchmen (William, 12 Nov 2026), rolled on the hero advance table
     thresholds_setting="hired_sword_level_thresholds",
-    count_level_ups=count_new_level_ups,
+    count_level_ups=_count_new_hireling_level_ups,
     has_no_level_ups=True,
     stat_advances=STAT_FIELD_BY_ADVANCE,
     pick_advances=True,

@@ -145,9 +145,12 @@ class CampaignSettingsTests(CampaignTestCase):
         self.assertEqual((data["max_heroes"], data["max_hired_swords"], data["hero_death_roll"]), (0, 32767, "d100"))
         self.assertEqual(data["hero_level_thresholds"], [2, 5, 9])
 
-    def test_hired_swords_have_their_own_level_up_table_starting_as_the_heroes(self):
-        # William, 7 Nov 2026: "hired sword max level up options in settings"; "just like the hero and henchman one"
-        self.assertEqual(self.get_as(self.owner, self.url()).data["hired_sword_level_thresholds"][:3], [2, 4, 6])
+    def test_hired_swords_have_their_own_level_up_table_starting_as_the_henchmen(self):
+        # William, 7 Nov 2026: "hired sword max level up options in settings"; 12 Nov 2026: "hired swords level up
+        # like henchmen so get the same levels and gaps as them by default"
+        data = self.get_as(self.owner, self.url()).data
+        self.assertEqual(data["hired_sword_level_thresholds"], [2, 5, 9, 14])
+        self.assertEqual(data["hired_sword_level_thresholds"], data["henchmen_level_thresholds"])
         self.assertEqual(self.patch_as(self.owner, self.url(), {"hired_sword_level_thresholds": []}).status_code, 400)
 
         response = self.patch_as(self.owner, self.url(), {"hired_sword_level_thresholds": [12, 3, 3, 7]})
@@ -155,6 +158,7 @@ class CampaignSettingsTests(CampaignTestCase):
         self.assertEqual((response.status_code, response.data["hired_sword_level_thresholds"]), (200, [3, 7, 12]))
         settings = CampaignSettings.objects.get(campaign=self.campaign)
         self.assertEqual(settings.hero_level_thresholds[:3], [2, 4, 6])  # the heroes' table is left alone
+        self.assertEqual(settings.henchmen_level_thresholds, [2, 5, 9, 14])  # and so is the henchmen's
 
     def test_create_validates_every_number_against_its_column(self):
         # BUG-76, CAMP-TEST-22: only max_players was checked; the others reached the columns unchecked

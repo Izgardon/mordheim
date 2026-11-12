@@ -53,7 +53,7 @@ def count_level_thresholds(xp_value, thresholds=None) -> int:
     return sum(1 for threshold in decimal_thresholds if xp >= threshold)
 
 
-def count_new_level_ups(previous_xp, next_xp, thresholds=None) -> int:
+def count_new_level_ups(previous_xp, next_xp, thresholds=None, fallback=HERO_LEVEL_THRESHOLDS) -> int:
     prev = _to_decimal(previous_xp)
     nxt = _to_decimal(next_xp)
     if prev < 0:
@@ -62,6 +62,6 @@ def count_new_level_ups(previous_xp, next_xp, thresholds=None) -> int:
         nxt = Decimal(0)
     if nxt <= prev:
         return 0
-    resolved = resolve_hero_level_thresholds(thresholds)
+    resolved = resolve_hero_level_thresholds(thresholds, fallback=fallback)
     decimal_thresholds = _decimal_thresholds(resolved)
     return sum(1 for threshold in decimal_thresholds if prev < threshold <= nxt)

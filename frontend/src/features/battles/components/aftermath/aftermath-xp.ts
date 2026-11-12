@@ -58,7 +58,7 @@ export function buildXpRows(
   );
   const hiredSwordTable = normalizeThresholdList(
     campaign?.hired_sword_level_thresholds,
-    DEFAULT_HERO_LEVEL_THRESHOLDS
+    DEFAULT_HENCHMEN_LEVEL_THRESHOLDS // the same levels and gaps as henchmen (William, 12 Nov 2026)
   );
   const groupTable = normalizeThresholdList(
     campaign?.henchmen_level_thresholds,

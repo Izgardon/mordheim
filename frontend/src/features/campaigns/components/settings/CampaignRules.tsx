@@ -234,12 +234,12 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
               onReset={levelUps.resetHenchmen}
             />
             {/* William, 7 Nov 2026: "hired sword max level up options in settings (exp points
-                and max)"; "just like the hero and henchman one does" */}
+                and max)"; 12 Nov 2026: "like henchmen so get the same levels and gaps as them" */}
             <ThresholdField
               id="settings-hired-sword-thresholds"
               label="Hired swords"
               value={levelUps.hiredSwordText}
-              placeholder="2, 4, 6, 8, 11, 14…"
+              placeholder="2, 5, 9, 14"
               error={levelUps.errors.hiredSword}
               onChange={levelUps.setHiredSwordText}
               onReset={levelUps.resetHiredSword}

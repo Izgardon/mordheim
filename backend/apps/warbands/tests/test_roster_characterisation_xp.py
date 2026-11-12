@@ -28,8 +28,9 @@ class RosterXpCharacterisationTests(RosterTestCase):
         return response.json()
 
     def test_xp_gain_counts_default_thresholds_crossed(self):
-        # hero table 2, 4, 6, ... (hired swords' own table starts as it); henchmen 2, 5, 9, 14
-        expected = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 3}
+        # hero table 2, 4, 6, ...; henchmen 2, 5, 9, 14 (hired swords' own table starts as the henchmen's,
+        # William, 12 Nov 2026)
+        expected = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 2}
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, level_up=1)
@@ -54,7 +55,7 @@ class RosterXpCharacterisationTests(RosterTestCase):
     def test_a_thresholds_setting_that_is_not_a_list_falls_back_to_the_defaults(self):
         # BUG-97: an int stored through the admin made the PATCH a 500
         self.set_thresholds(hero_level_thresholds=5, henchmen_level_thresholds=5, hired_sword_level_thresholds="2,5")
-        expected = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 3}
+        expected = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 2}
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband)
@@ -64,7 +65,7 @@ class RosterXpCharacterisationTests(RosterTestCase):
         self.set_thresholds(
             hero_level_thresholds=["x"], henchmen_level_thresholds=[], hired_sword_level_thresholds=[0, 3]
         )
-        expected = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 3}
+        expected = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 2}
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband)
@@ -106,7 +107,7 @@ class RosterXpCharacterisationTests(RosterTestCase):
 
     def test_xp_lowered_and_raised_again_awards_its_level_ups_once(self):
         # BUG-27: the second climb used to award the same level-ups again (decision 5: high-water mark)
-        per_climb = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 3}  # thresholds crossed from 1 to 6
+        per_climb = {HERO.key: 3, HENCHMEN.key: 2, HIRELING.key: 2}  # thresholds crossed from 1 to 6
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, xp=1)
@@ -124,7 +125,7 @@ class RosterXpCharacterisationTests(RosterTestCase):
                 self.assertEqual(self._set_xp(kind, normal, 6)["level_up"], self._set_xp(kind, halved, 6)["level_up"])
 
     def test_half_steps_count_a_threshold_once_reached(self):
-        expected = {HERO.key: 2, HENCHMEN.key: 1, HIRELING.key: 2}  # (1.5, 4.5]: 2 and 4, or just 2
+        expected = {HERO.key: 2, HENCHMEN.key: 1, HIRELING.key: 1}  # (1.5, 4.5]: 2 and 4 of the hero table, else 2
         for kind in KINDS:
             with self.subTest(kind=kind.key):
                 unit = make_unit(kind, self.warband, xp=Decimal("1.5"))

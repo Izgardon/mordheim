@@ -106,8 +106,9 @@ class CampaignSettings(models.Model):
     starting_gold = models.PositiveIntegerField(default=500)
     hero_level_thresholds = models.JSONField(default=get_default_hero_level_thresholds)
     henchmen_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
-    # hired swords level on the book's hero table until the campaign sets their own (units/kinds.py)
-    hired_sword_level_thresholds = models.JSONField(default=get_default_hero_level_thresholds)
+    # hired swords level like henchmen until the campaign sets their own, so they get the same levels and gaps
+    # (William, 12 Nov 2026), while rolling on the hero advance table (units/kinds.py)
+    hired_sword_level_thresholds = models.JSONField(default=get_default_henchmen_level_thresholds)
     enable_encampments = models.BooleanField(default=False)
     enable_locations = models.BooleanField(default=False)
     hero_death_roll = models.CharField(

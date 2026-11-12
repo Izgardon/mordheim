@@ -1,12 +1,13 @@
 /**
  * Settings → Warband rules' Level-ups: the XP at which heroes, henchmen and hired swords level up
- * (William, 7 Nov 2026: "hired sword max level up options in settings"; "just like the hero and
- * henchman one does"), saved together with one PATCH. Hired swords reset to the book's hero table.
+ * (William, 7 Nov 2026: "hired sword max level up options in settings"), saved together with one
+ * PATCH. Hired swords reset to the henchmen table: "hired swords level up like henchmen so get the
+ * same levels and gaps as them by default" (William, 12 Nov 2026).
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DEFAULT_HERO_LEVEL_THRESHOLDS } from "@/features/warbands/utils/level-thresholds";
+import { DEFAULT_HENCHMEN_LEVEL_THRESHOLDS } from "@/features/warbands/utils/level-thresholds";
 import { campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
@@ -46,7 +47,7 @@ describe("Level-ups", () => {
     );
   });
 
-  it("resets the hired swords to the book's hero table, and refuses a table that isn't numbers", async () => {
+  it("resets the hired swords to the henchmen table, and refuses a table that isn't numbers", async () => {
     const user = setupUser();
     renderWithQueryClient(<CampaignRules campaign={campaign} />);
     const field = screen.getByRole("textbox", { name: "Hired swords" });
@@ -54,7 +55,7 @@ describe("Level-ups", () => {
     const reset = within(field.parentElement as HTMLElement).getByRole("button", { name: "Reset" });
 
     await user.click(reset);
-    expect(field).toHaveValue(DEFAULT_HERO_LEVEL_THRESHOLDS.join(", "));
+    expect(field).toHaveValue(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS.join(", "));
 
     await user.clear(field);
     await user.type(field, "two");

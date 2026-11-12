@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import type { HenchmenGroup, UnitKill } from "../../types/warband-types";
+import { campaignSummary } from "@/test/campaign-fixtures";
 import { makeHero } from "@/test/warband-fixtures";
 
 import {
@@ -10,6 +11,7 @@ import {
   memberName,
   statValues,
   unitTypeLine,
+  xpTable,
   type RosterUnit,
 } from "./unit-view";
 
@@ -125,5 +127,26 @@ describe("boxRows", () => {
       "Large",
     ]);
     expect(Object.keys(rows)).toEqual(["items", "skills", "specials", "spells"]);
+  });
+});
+
+describe("xpTable", () => {
+  it("falls back to the henchmen table for henchmen groups and hired swords", () => {
+    // William, 12 Nov 2026: "hired swords level up like henchmen so get the same levels and gaps
+    // as them by default" (they still roll on the hero advance table)
+    expect(xpTable("hireling", null)).toEqual([2, 5, 9, 14]);
+    expect(xpTable("henchmen_group", null)).toEqual([2, 5, 9, 14]);
+    expect(xpTable("hero", null).slice(0, 3)).toEqual([2, 4, 6]);
+  });
+
+  it("reads each kind's own campaign table", () => {
+    const campaign = campaignSummary({
+      hero_level_thresholds: [3, 7],
+      henchmen_level_thresholds: [1, 3],
+      hired_sword_level_thresholds: [4, 8],
+    });
+    expect(xpTable("hireling", campaign)).toEqual([4, 8]);
+    expect(xpTable("henchmen_group", campaign)).toEqual([1, 3]);
+    expect(xpTable("hero", campaign)).toEqual([3, 7]);
   });
 });

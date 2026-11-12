@@ -83,7 +83,7 @@ export function useWarbandRulesForm(campaign: CampaignSummary) {
     setHeroDeathRoll(hero_death_roll ?? "d66");
     setHeroText(formatThresholdList(heroThresholds(hero_level_thresholds)));
     setHenchmenText(formatThresholdList(henchmenThresholds(henchmen_level_thresholds)));
-    setHiredSwordText(formatThresholdList(heroThresholds(hired_sword_level_thresholds)));
+    setHiredSwordText(formatThresholdList(henchmenThresholds(hired_sword_level_thresholds)));
     setThresholdErrors({ hero: "", henchmen: "", hiredSword: "" });
     resetLevelUpsError("");
   }, [
@@ -156,8 +156,9 @@ export function useWarbandRulesForm(campaign: CampaignSummary) {
       setHiredSwordText,
       resetHero: () => setHeroText(formatThresholdList(DEFAULT_HERO_LEVEL_THRESHOLDS)),
       resetHenchmen: () => setHenchmenText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS)),
-      // the book's: hired swords level as heroes do
-      resetHiredSword: () => setHiredSwordText(formatThresholdList(DEFAULT_HERO_LEVEL_THRESHOLDS)),
+      // hired swords level up like henchmen, so the same levels and gaps (William, 12 Nov 2026)
+      resetHiredSword: () =>
+        setHiredSwordText(formatThresholdList(DEFAULT_HENCHMEN_LEVEL_THRESHOLDS)),
       heroCount: heroThresholds(hero_level_thresholds).length,
       henchmenCount: henchmenThresholds(henchmen_level_thresholds).length,
       errors: { ...thresholdErrors, save: levelUps.error },

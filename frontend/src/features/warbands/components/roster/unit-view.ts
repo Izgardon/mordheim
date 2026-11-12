@@ -108,8 +108,9 @@ export function statValues({ unit }: RosterUnit) {
 
 /** The kind's XP table in the campaign (the XP each advance comes at), cleaned as the level info reads it. */
 export const xpTable = (kind: UnitKindKey, campaign: CampaignSummary | null) => {
+  // hired swords fall back to the henchmen table with henchmen groups (William, 12 Nov 2026)
   const fallback =
-    kind === "henchmen_group" ? DEFAULT_HENCHMEN_LEVEL_THRESHOLDS : DEFAULT_HERO_LEVEL_THRESHOLDS;
+    kind === "hero" ? DEFAULT_HERO_LEVEL_THRESHOLDS : DEFAULT_HENCHMEN_LEVEL_THRESHOLDS;
   const table =
     kind === "henchmen_group"
       ? campaign?.henchmen_level_thresholds
