@@ -824,6 +824,46 @@
     "description": "The warrior is a master of the throwing axe. He may throw up to two Throwing Axes in his shooting phase and may divide the shots between any targets in range as he wishes, each attack at +1 Strength. He must own Throwing Axes to use it, and it may not be combined with Quick Shot."
   },
   {
+    "name": "Bulwark",
+    "description": "A warrior armed with a single-handed weapon (sword, spear, hammer and the like) and a shield has an additional +1 on his armour saving roll in close combat."
+  },
+  {
+    "name": "Lunge",
+    "description": "With a spear or a dagger the warrior may strike foes that would normally be out of reach: when he charges, move him 1\" further forward. A lunge can only be avoided with the Step Aside skill on a roll of 6, and armour saves apply as normal."
+  },
+  {
+    "name": "Target Practice",
+    "description": "The warrior may fire a single missile attack when he is charged. A model that stands and shoots is at -1 to hit."
+  },
+  {
+    "name": "Crossfire",
+    "description": "The Hero may use missile weapons while in close combat, shooting at enemy models not in that combat, at -1 to hit for moving. Friendly models in the way are ignored when checking line of sight."
+  },
+  {
+    "name": "Hunter's Eye",
+    "description": "Once per game the Hero may make as many ranged attacks in the turn as he has close combat attacks."
+  },
+  {
+    "name": "Pilot",
+    "description": "A boat piloted by the Hero may re-roll results on the Propulsion Damage chart once. The second result must be accepted even if it is worse."
+  },
+  {
+    "name": "Dirty Blow",
+    "description": "The attack ignores armour, but no weapon bonus and no Strength modifier applies to it."
+  },
+  {
+    "name": "Rigger",
+    "description": "The Hero is skilled in fixing minor damage to watercraft. If the boat or barge is stationary and did not move last turn, and the Hero is in contact with it, he may repair one location previously damaged or set on fire, such as a paddle or a mast. He may do nothing else that turn and the boat may not move. It cannot be repaired while an enemy model is in contact with the Hero or the watercraft."
+  },
+  {
+    "name": "Tunnel Rat",
+    "description": "Any characteristic test the Hero takes in a scenario set in the sewers or elsewhere underground may be re-rolled."
+  },
+  {
+    "name": "Spry",
+    "description": "The warrior may run or charge while climbing."
+  },
+  {
     "name": "Chaos Engineer",
     "description": "The Hero has great technical skill and can use this to craft wicked armours and weapons. Whenever a Hero with this skill searches for Chaos armour (including Mechanical Suits) or Obsidian Weapons, he gets +3 on the roll. This represents the Engineer’s ability to craft these items himself. The Hero ignores the Rarity and Gift of Chaos special rules and may never wear the Chaos Armours."
   },

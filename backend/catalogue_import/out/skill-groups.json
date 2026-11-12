@@ -14,7 +14,9 @@
       "Web of Steel",
       "Expert Swordsman",
       "Step Aside",
-      "Elusive"
+      "Elusive",
+      "Bulwark",
+      "Lunge"
     ]
   },
   {
@@ -35,7 +37,10 @@
       "Hunter",
       "Knife-Fighter",
       "Wilhelm Tellus",
-      "Axe Thrower"
+      "Axe Thrower",
+      "Target Practice",
+      "Crossfire",
+      "Hunter's Eye"
     ]
   },
   {
@@ -63,7 +68,8 @@
       "Driver",
       "Strategist",
       "Scholar",
-      "Starstruck"
+      "Starstruck",
+      "Pilot"
     ]
   },
   {
@@ -83,7 +89,9 @@
       "Unstoppable Charge",
       "Handyman",
       "Beastmaster",
-      "Rough and Tumble"
+      "Rough and Tumble",
+      "Dirty Blow",
+      "Rigger"
     ]
   },
   {
@@ -102,7 +110,9 @@
       "Jump Up",
       "Dodge",
       "Scale Sheer Surfaces",
-      "Celebrity"
+      "Celebrity",
+      "Tunnel Rat",
+      "Spry"
     ]
   },
   {

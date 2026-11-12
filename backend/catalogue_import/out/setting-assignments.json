@@ -1031,6 +1031,56 @@
       "how": "overrides.json"
     },
     {
+      "name": "Bulwark",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Lunge",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Target Practice",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Crossfire",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Hunter's Eye",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Pilot",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Dirty Blow",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Rigger",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Tunnel Rat",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
+      "name": "Spry",
+      "setting": "mutiny-in-marienburg",
+      "how": "overrides.json"
+    },
+    {
       "name": "Chaos Engineer",
       "setting": "border-town-burning",
       "how": "overrides.json"

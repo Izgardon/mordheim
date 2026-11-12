@@ -27,9 +27,9 @@ Answers go into `overrides.json`; the next build applies them.
 | items (MiM) | 61 |
 | items (warband templates) | 17 |
 | price rows | 571 |
-| skills | 500 |
+| skills | 510 |
 | skill groups | 114 |
-| skill group links | 650 |
+| skill group links | 660 |
 | serious injuries (D66) | 20 |
 | shared specials | 66 |
 | random mutation results (D66) | 36 |
@@ -211,7 +211,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
-| skills | 500 | 153 | 311 | 36 |
+| skills | 510 | 153 | 321 | 36 |
 | hired swords | 75 | 71 | 4 | 0 |
 | dramatis personae | 30 | 30 | 0 | 0 |
 
@@ -322,13 +322,23 @@ Added: Rough and Tumble (Strength), from the Tilean Thespian Troupe PDF (Broheim
 Added: Celebrity (Speed), from the Tilean Thespian Troupe PDF (Broheim, Grade 3), New skills.
 Added: Master Inventor (Dwarf Exiled Engineers), from the Guild of Disgraced Engineers PDF (Broheim, Mutiny in Marienburg), Dwarf Engineer Skill List.
 Added: Axe Thrower (Shooting), from the Sartosa campaign rules' Skills PDF (Broheim, Sartosa), New Shooting Skill.
+Added: Bulwark (Combat), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Lunge (Combat), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Target Practice (Shooting), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Crossfire (Shooting), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Hunter's Eye (Shooting), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Pilot (Academic), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Dirty Blow (Strength), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Rigger (Strength), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Tunnel Rat (Speed), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
+Added: Spry (Speed), from the Mutiny in Marienburg main document (Broheim, Mutiny in Marienburg), Epic Campaign Rules, New skills.
 Description put right: Mutant (Beastmen Raiders).
 Description put right: Quick Thinker (Dwarf Exiled Engineers).
 Description put right: Ignore Pain (Skaven Clan Pestilens).
 
 ## Skill groups
 
-`out/skills.json` is 500 skills, one per name; `out/skill-groups.json` is 114 groups holding them (650 links), the five core groups first.
+`out/skills.json` is 510 skills, one per name; `out/skill-groups.json` is 114 groups holding them (660 links), the five core groups first.
 
 ### Merged by name
 
@@ -373,11 +383,11 @@ Who learns from a group: `skill_group_learners`, else its list's decision (`skil
 
 | Group | Who learns from it | How | Note | Skills |
 | --- | --- | --- | --- | --- |
-| Combat | everyone | intersection | - | Strike to Injure, Combat Master, Weapons Training, Web of Steel, Expert Swordsman, Step Aside, Elusive |
-| Shooting | everyone | intersection | - | Quick Shot, Pistolier, Eagle Eyes, Weapons Expert, Nimble, Trick Shooter, Hunter, Knife-Fighter, Wilhelm Tellus, Axe Thrower |
-| Academic | everyone | intersection | - | Battle Tongue, Sorcery, Streetwise, Haggle, Arcane Lore, Wyrdstone Hunter, Warrior Wizard, Scribe, Mind Focus, Tactician, Hunch, Magical Aptitude, Trap Expert, Driver, Strategist, Scholar, Starstruck |
-| Strength | everyone | intersection | - | Mighty Blow, Pit Fighter, Resilient, Fearsome, Strongman, Unstoppable Charge, Handyman, Beastmaster, Rough and Tumble |
-| Speed | everyone | intersection | - | Leap, Sprint, Acrobat, Lightning Reflexes, Jump Up, Dodge, Scale Sheer Surfaces, Celebrity |
+| Combat | everyone | intersection | - | Strike to Injure, Combat Master, Weapons Training, Web of Steel, Expert Swordsman, Step Aside, Elusive, Bulwark, Lunge |
+| Shooting | everyone | intersection | - | Quick Shot, Pistolier, Eagle Eyes, Weapons Expert, Nimble, Trick Shooter, Hunter, Knife-Fighter, Wilhelm Tellus, Axe Thrower, Target Practice, Crossfire, Hunter's Eye |
+| Academic | everyone | intersection | - | Battle Tongue, Sorcery, Streetwise, Haggle, Arcane Lore, Wyrdstone Hunter, Warrior Wizard, Scribe, Mind Focus, Tactician, Hunch, Magical Aptitude, Trap Expert, Driver, Strategist, Scholar, Starstruck, Pilot |
+| Strength | everyone | intersection | - | Mighty Blow, Pit Fighter, Resilient, Fearsome, Strongman, Unstoppable Charge, Handyman, Beastmaster, Rough and Tumble, Dirty Blow, Rigger |
+| Speed | everyone | intersection | - | Leap, Sprint, Acrobat, Lightning Reflexes, Jump Up, Dodge, Scale Sheer Surfaces, Celebrity, Tunnel Rat, Spry |
 | Adventurers | Adventurers | new group | Fey and Fey Quickness are the Elf's; Ferocious Charge the Barbarian's and the Dwarf's; Magic Resistant, Monster Slayer and Berserker the Dwarf's. | Fey, Fey Quickness, Ferocious Charge, Monster Slayer, Berserker, Chosen of the White Tower, Hard to Kill, Instinctive Warrior, Trading Flair, Taunt (Adventurers), Magic Resistant |
 | Albion Barbarians | Albion Barbarians | new group | - | Savage Fury, Experienced Fighter, Attack Howl, Master Shot, Concealment (Albion Barbarians) |
 | Altdorf Expeditionary Party | Altdorf Expeditionary Party | new group | - | Power Surge, Arcane Reach, Combat Wizard, Arcane Barrage, Large Familiar, Surveyor, Hardened Will, Dispel (Altdorf Expeditionary Party), Fierce Casting |
