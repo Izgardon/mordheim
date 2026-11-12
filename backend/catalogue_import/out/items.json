@@ -15463,7 +15463,7 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
@@ -15625,7 +15625,7 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
@@ -15720,7 +15720,7 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
@@ -16104,16 +16104,16 @@
       "crossbow"
     ],
     "flavour": "",
-    "range": "Varies",
-    "strength": "Varies",
+    "range": "36\"",
+    "strength": "4",
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Harpoon launcher; can harpoon targets and reel them in.",
+        "summary": "A harpoon launcher mounted on a boat's railings, swivelling through a 90 degree arc.",
         "text": "",
         "tables": []
       },
@@ -16164,11 +16164,11 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
+    "needs_rules": false,
     "rules": [
       {
         "name": "",
-        "summary": "Large bolt thrower; S5, 36\" range, multiple wounds (D2), move or fire, prepare shot.",
+        "summary": "An Elven bolt thrower mounted on a boat's railings, swivelling through a 90 degree arc.",
         "text": "",
         "tables": []
       },
@@ -16177,6 +16177,15 @@
       },
       {
         "rule": "prepare-shot"
+      },
+      {
+        "name": "Multiple Wounds (D2)",
+        "summary": "",
+        "text": "A wound from this weapon inflicts D2 wounds instead of 1.",
+        "tables": []
+      },
+      {
+        "rule": "save-modifier"
       }
     ],
     "availabilities": [

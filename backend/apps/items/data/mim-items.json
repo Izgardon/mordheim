@@ -31,7 +31,8 @@
         "rarity": 15,
         "unique_to": "Battle Monks only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Blade of Leaping Gold",
@@ -83,7 +84,8 @@
         "cost": 165,
         "rarity": 15
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Stiletto Blade",
@@ -116,7 +118,8 @@
         "cost": 85,
         "rarity": 12
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Cathayan Firesticks/Firepots",
@@ -241,33 +244,35 @@
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "2b",
-    "description": "Harpoon launcher; can harpoon targets and reel them in.",
-    "strength": "Varies",
-    "range": "Varies",
-    "properties": [130, 156, 168, 239],
+    "description": "A harpoon launcher mounted on a boat's railings, swivelling through a 90 degree arc.",
+    "strength": "4",
+    "range": "36\"",
+    "properties": [281, 280, 277, 239],
     "availabilities": [
       {
         "cost": 50,
         "rarity": 10
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Eagle-eye Bolt Thrower",
     "type": "Weapon",
     "subtype": "Ranged",
     "grade": "2b",
-    "description": "Large bolt thrower; S5, 36\" range, multiple wounds (D2), move or fire, prepare shot.",
+    "description": "An Elven bolt thrower mounted on a boat's railings, swivelling through a 90 degree arc.",
     "strength": "5",
     "range": "36\"",
-    "properties": [130, 156],
+    "properties": [281, 280, 278, 279],
     "availabilities": [
       {
         "cost": 85,
         "rarity": 8,
         "unique_to": "Elves & Dark Elves only"
       }
-    ]
+    ],
+    "needs_rules": false
   },
   {
     "name": "Fish-hook Shot/Hunting Lasso",

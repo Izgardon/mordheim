@@ -1648,5 +1648,35 @@
     "name": "Grunweld's Last Resort",
     "description": "The vehicle is rigged with a hidden explosive only the warband knows how to set off. At any time in your turn, if at least one of your warband is aboard, they may trigger it: every model on board suffers D3 Strength 10 hits and the vehicle is destroyed and cannot be salvaged. You may instead arm it to blow on impact, declared at least a turn before the collision; if you do, any missile hit scored on a 6 sets it off early.",
     "type": "Miscellaneous"
+  },
+  {
+    "id": 277,
+    "name": "Save Modifier",
+    "description": "A wound from a harpoon gun has a further -1 to the armour save, for -2 in all.",
+    "type": "Weapon"
+  },
+  {
+    "id": 278,
+    "name": "Multiple Wounds (D2)",
+    "description": "A wound from this weapon inflicts D2 wounds instead of 1.",
+    "type": "Weapon"
+  },
+  {
+    "id": 279,
+    "name": "Save Modifier",
+    "description": "A wound from this weapon has a further -1 to the armour save, for -3 in all.",
+    "type": "Weapon"
+  },
+  {
+    "id": 280,
+    "name": "Prepare Shot",
+    "description": "The weapon can only shoot every other round, and no skill or ability can change that.",
+    "type": "Weapon"
+  },
+  {
+    "id": 281,
+    "name": "Move or Fire",
+    "description": "A model cannot move, moving to man the weapon included, and shoot in the same turn.",
+    "type": "Weapon"
   }
 ]
