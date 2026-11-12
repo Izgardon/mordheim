@@ -174,10 +174,10 @@ No membership questions left.
 
 | Setting | Grade | How | Grades of its contents |
 | --- | --- | --- | --- |
-| Mordheim 1a | 1a | Mordheim split by grade | 1a: 185 |
-| Mordheim 1b | 1b | Mordheim split by grade | 1b: 163 |
+| Mordheim 1a | 1a | Mordheim split by grade | 1a: 188 |
+| Mordheim 1b | 1b | Mordheim split by grade | 1b: 170 |
 | Mordheim 1c | 1c | Mordheim split by grade | 1c: 97 |
-| Mordheim 2a | 2a | Mordheim split by grade | 2a: 104, 2b: 6 |
+| Mordheim 2a | 2a | Mordheim split by grade | 2a: 110, 2b: 6 |
 | Empire in Flames | 1a | majority of 14 graded entries | 1a: 13, 1b: 1 |
 | Lustria | 1b | majority of 23 graded entries | 1b: 19, 2b: 4 |
 | Khemri 1b | 1b | Khemri split by grade | 1b: 20 |
@@ -185,7 +185,7 @@ No membership questions left.
 | The Nemesis Crown | 1b | majority of 41 graded entries | 1b: 41 |
 | Border Town Burning | 1c | majority of 31 graded entries | 1b: 1, 1c: 30 |
 | Sylvania | 2a | majority of 5 graded entries | 2a: 5 |
-| Mutiny in Marienburg | 2b | majority of 48 graded entries | 1a: 3, 1b: 7, 2a: 6, 2b: 32 |
+| Mutiny in Marienburg | 2b | majority of 58 graded entries | 2b: 58 |
 | Sartosa | 2b | majority of 12 graded entries | 2b: 12 |
 | Mousillon | 2b | majority of 10 graded entries | 2b: 10 |
 | Karak Azgal | 2b | majority of 8 graded entries | 2b: 8 |
@@ -194,10 +194,9 @@ No membership questions left.
 | Athel Loren | 3 | majority of 4 graded entries | 3: 4 |
 | Grade 3 | 3 | Mordheim split by grade | 3: 14 |
 
-Named settings that mix grades, kept whole at the majority grade: Empire in Flames, Lustria, Border Town Burning, Mutiny in Marienburg.
+Named settings that mix grades, kept whole at the majority grade: Empire in Flames, Lustria, Border Town Burning.
 Warband types with no setting in either source, placed in Mordheim's part for their grade: Pit Fighters (old), Bretonnian Grail Companions, Albion Barbarians, Altdorf Expeditionary Party, Assassin Squad, Knives from the Dark, Circus Extraordinaire, Drowned Dead, Dwarf Grudgebearers, Goblin Raiders, Hobgoblin Horde, Mordheimer's Fanatics, Ostermark Roadwardens, The Innocents, Tilean Thespian Troupe, Werewolf Hunting Pack, Wood Elves, the Asrai Way-farers.
 Warband types on neither site, added in overrides.json: Albion Commandos.
-Grades not counted (not 1a to 3): 2c, 3a, all on MiM items.
 
 ## Broheim and mordheimer grades
 

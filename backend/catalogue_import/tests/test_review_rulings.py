@@ -12,7 +12,7 @@ from typing import Any, ClassVar
 from django.test import SimpleTestCase
 
 from catalogue_import.common import load_json
-from catalogue_import.sources import BACKEND, OUT
+from catalogue_import.sources import BACKEND, ITEM_DATA, OUT
 
 SPELL_DATA = BACKEND / "apps" / "spells" / "data"
 
@@ -127,11 +127,12 @@ class ReviewRulingsTests(SimpleTestCase):
     # 2. Separations, nicknames and wordings: where the rules really differ, the later takes its brackets
 
     def test_the_athel_loren_poison_wind_globe_is_its_own_item(self) -> None:
-        # ours (Mutiny in Marienburg, the Relics of the Crusades wording) is Strength Special with a 2" splash and
+        # ours (Mutiny in Marienburg's item, the Relics of the Crusades wording) is Strength Special with a 2" splash and
         # no deviation; the Athel Loren PDF prints Strength 4, a 1" template, a D3" deviation and a globe that
         # bursts when its carrier goes down, so it is an item of its own and the Athel Loren lines name it
         ours = self.items["Poison Wind Globe"]
-        self.assertEqual((ours["setting"], ours["strength"]), ("mutiny-in-marienburg", "Special"))
+        # ours is Mutiny in Marienburg's, and a grade 2a one, so it reads in Mordheim 2a (see the setting moves)
+        self.assertEqual((ours["setting"], ours["strength"]), ("mordheim-2a", "Special"))
         theirs = self.items["Poison Wind Globe (Athel Loren)"]
         self.assertEqual((theirs["setting"], theirs["range"], theirs["strength"]), ("athel-loren", '6"', "4"))
         self.assertEqual(
@@ -216,3 +217,51 @@ class ReviewRulingsTests(SimpleTestCase):
         text = self.skills["Master of Poisons (Assassin Squad)"]
         self.assertIn("brew D3-1 portions", text)
         self.assertNotIn("3D-1", text)
+
+    # 4. Mutiny in Marienburg's items sit in the setting of their own grade
+
+    def test_each_mutiny_in_marienburg_item_sits_in_the_setting_of_its_grade(self) -> None:
+        # William, 12 Nov 2026: a MiM item of a Mordheim grade belongs to that Mordheim setting; the grades above
+        # the supplement's own 2b ("2c" and "3a", which the system has no part for) are 2b and stay in it
+        mim = [row for row in load_json(OUT / "items.json") if row["origin"] == "mim"]
+        by_setting: dict[str, list[str]] = {}
+        for row in mim:
+            by_setting.setdefault(row["setting"], []).append(row["name"])
+        self.assertEqual(
+            {setting: len(names) for setting, names in sorted(by_setting.items())},
+            {"mordheim": 3, "mordheim-1b": 7, "mordheim-2a": 6, "mutiny-in-marienburg": 45},
+        )
+        self.assertEqual(sorted(by_setting["mordheim"]), ["Caber", "Falconry Glove", "Lyre"])
+        self.assertEqual(
+            sorted(by_setting["mordheim-1b"]),
+            [
+                "Albion Cloth",
+                "Alcoholic Spirits",
+                "Fish-hook Shot/Hunting Lasso",
+                "Gas Mask",
+                "Iron Strongbox",
+                "Thief's Cloak",
+                "Wolf Cloak/Norse Furs",
+            ],  # fmt: skip
+        )
+        self.assertEqual(
+            sorted(by_setting["mordheim-2a"]),
+            [
+                "Beast Hide/Wyvern Hide Cloak",
+                "Hunter's Throwing Axe",
+                "Poison Wind Globe",
+                "Shark-tooth Necklace",
+                "Skull Cap",
+                "Stiletto Blade",
+            ],  # fmt: skip
+        )
+
+    def test_no_item_is_graded_2c_or_3a_any_more(self) -> None:
+        grades = {str(row.get("grade")) for row in load_json(ITEM_DATA / "mim-items.json")}
+        self.assertEqual(grades, {"1a", "1b", "2a", "2b"})
+
+    def test_mutiny_in_marienburg_is_a_one_grade_setting_now(self) -> None:
+        settings = {row["slug"]: row for row in load_json(OUT / "settings.json")}
+        mim = settings["mutiny-in-marienburg"]
+        self.assertEqual((mim["grade"], mim["grades_seen"]), ("2b", {"2b": 58}))
+        self.assertEqual(mim["counts"]["items"], 45)

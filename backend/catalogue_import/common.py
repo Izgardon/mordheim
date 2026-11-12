@@ -31,7 +31,7 @@ def slugify(name: str) -> str:
 
 
 def normalise_grade(grade: object) -> str | None:
-    """A grade code, with mordheimer's "core" as 1a. Anything else (MiM's "2c", "3a") is None."""
+    """A grade code, with mordheimer's "core" as 1a. Anything else is None."""
     if not isinstance(grade, str):
         return None
     code = grade.strip().lower()

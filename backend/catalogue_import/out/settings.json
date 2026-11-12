@@ -8,13 +8,13 @@
     "grade_basis": "Mordheim split by grade",
     "counts": {
       "warbands": 13,
-      "items": 95,
+      "items": 98,
       "skills": 60,
       "hired_swords": 10,
       "dramatis_personae": 7
     },
     "grades_seen": {
-      "1a": 185
+      "1a": 188
     }
   },
   {
@@ -26,13 +26,13 @@
     "grade_basis": "Mordheim split by grade",
     "counts": {
       "warbands": 10,
-      "items": 71,
+      "items": 78,
       "skills": 63,
       "hired_swords": 14,
       "dramatis_personae": 5
     },
     "grades_seen": {
-      "1b": 163
+      "1b": 170
     }
   },
   {
@@ -62,13 +62,13 @@
     "grade_basis": "Mordheim split by grade",
     "counts": {
       "warbands": 15,
-      "items": 0,
+      "items": 6,
       "skills": 68,
       "hired_swords": 20,
       "dramatis_personae": 7
     },
     "grades_seen": {
-      "2a": 104,
+      "2a": 110,
       "2b": 6
     }
   },
@@ -207,19 +207,16 @@
     "grade": "2b",
     "sort_order": 12,
     "always_on": false,
-    "grade_basis": "majority of 48 graded entries",
+    "grade_basis": "majority of 58 graded entries",
     "counts": {
       "warbands": 14,
-      "items": 61,
+      "items": 45,
       "skills": 0,
       "hired_swords": 0,
       "dramatis_personae": 0
     },
     "grades_seen": {
-      "1a": 3,
-      "1b": 7,
-      "2a": 6,
-      "2b": 32
+      "2b": 58
     }
   },
   {

@@ -1,19 +1,25 @@
-"""Our 62 Mutiny in Marienburg items: their current thin text kept, their restrictions read as warband lists where
+"""Our 61 Mutiny in Marienburg items: their current thin text kept, their restrictions read as warband lists where
 they name warbands, and every one flagged for the PDF pass but those whose rules William has given (`needs_rules`
-false: the Armour of the Wildwood and The Oaken Armour, 6 Nov 2026)."""
+false: the Armour of the Wildwood and The Oaken Armour, 6 Nov 2026).
+
+Each one sits in the setting of its own grade (William, 12 Nov 2026): the Mordheim part for a grade below the
+supplement's own 2b (3 items in Mordheim 1a, 7 in 1b, 6 in 2a), and Mutiny in Marienburg itself for the rest, so a
+2b campaign is still the one that sees the supplement. The grades above it were "2c" and "3a", which the system has
+no part for, and they are 2b now too ("2c should move to 2b", "put all those 3a items in 2b MiM as well")."""
 
 import re
 from dataclasses import dataclass, field
 from typing import Any
 
 from catalogue_import.common import norm_name
+from catalogue_import.grading import MIM, mim_setting
 from catalogue_import.groups import collapse
 from catalogue_import.prices import mim_cost, parse_rarity
 from catalogue_import.statements import SHORT_FORMS
 from catalogue_import.text import clean_inline
 from catalogue_import.warbands import ALIASES, Resolver
 
-SETTING = "mutiny-in-marienburg"
+SETTING = MIM
 
 
 @dataclass
@@ -111,7 +117,7 @@ def mim_item(
         "origin": "mim",
         "type": item.get("type") or "Miscellaneous",
         "subtype": item.get("subtype") or "",
-        "setting": SETTING,
+        "setting": mim_setting(item.get("grade")),
         "source": "Mutiny in Marienburg",
         "link_url": "",
         "tags": [part.strip().lower() for part in name.split("/")] if "/" in name else [],

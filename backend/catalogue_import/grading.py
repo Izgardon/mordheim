@@ -69,6 +69,18 @@ def setting_part(base: str, grade: str | None) -> str:
     return SPLIT_PARTS.get(base, {}).get(grade or "1a", base)
 
 
+MIM = "mutiny-in-marienburg"
+MIM_OWN_GRADES = ("2b",)  # the supplement's own grade; its items above it are 2b too (William, 12 Nov 2026)
+
+
+def mim_setting(grade: object) -> str:
+    """The setting one of our Mutiny in Marienburg items belongs to (William, 12 Nov 2026: a MiM item of a Mordheim
+    grade belongs to that Mordheim setting): the Mordheim part of its grade where that is below the supplement's
+    own 2b, else the supplement itself, so a 2b campaign is still the one that sees it."""
+    code = grade.strip() if isinstance(grade, str) else ""
+    return MIM if not code or code in MIM_OWN_GRADES else mordheim_part(code)
+
+
 def mordheim_part(grade: str | None) -> str:
     """The Mordheim setting for content outside the named settings, by its grade (core and unknown are 1a)."""
     return setting_part("mordheim", normalise_grade(grade))
@@ -115,8 +127,8 @@ def collect_evidence(warband_types: list[dict[str, Any]], sources: Any) -> Evide
         evidence.add(
             content_setting(item.get("campaignSetting"), item.get("grade")), "items", item.get("grade"), item["name"]
         )
-    for item in sources.mim_items:
-        evidence.add("mutiny-in-marienburg", "items", item.get("grade"), item["name"])
+    for item in sources.mim_items:  # each in the setting of its own grade (mim.py; William, 12 Nov 2026)
+        evidence.add(mim_setting(item.get("grade")), "items", item.get("grade"), item["name"])
     for kind, rows in (
         ("skills", sources.skills),
         ("hired_swords", sources.hired_swords),
