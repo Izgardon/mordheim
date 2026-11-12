@@ -130,6 +130,29 @@ class HirelingSeederTests(TestCase):
         self.assertEqual(row.hire_note, "Dark Elf Corsairs only")  # his own sentence, as before
         self.assertEqual(row.hire_fee["kind"], "special")
 
+    def test_a_row_whose_own_lines_only_exclude_stays_for_everyone(self):
+        # Mutiny in Marienburg's Specialists: "any warband except Skaven" is everyone with one exclusion, as the
+        # import reads mordheimer's excludedWarbands, so who-can says "not usually available" to the Skaven only
+        run("seed_settings")
+        run("seed_warband_types")
+        terms = {
+            "hire_cost": 95,
+            "upkeep_cost": 40,
+            "rating": 35,
+            "grade": "2b",
+            "race": "Ogre",
+            "unique_to": "Any warband except Skaven",
+            "warbands": [{"group": "skaven", "excluded": True}],
+        }
+        row = {**STATS, "name": "Ogre Treasure Hunter", "hired_sword": terms}
+        with data_file([row]) as path:
+            run("seed_hired_swords", json_paths=[path])
+
+        hired = HiredSword.objects.get(name="Ogre Treasure Hunter", campaign__isnull=True)
+        lines = hired.warband_links.values_list("warband_type_id", "warband_group__slug", "excluded")
+        self.assertTrue(hired.for_everyone)
+        self.assertEqual(list(lines), [(None, "skaven", True)])
+
     def test_a_second_run_updates_in_place_and_replaces_the_links(self):
         with data_file([OGRE]) as path:
             run("seed_hired_swords", json_paths=[path])

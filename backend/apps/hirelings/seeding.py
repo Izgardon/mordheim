@@ -142,7 +142,8 @@ class _Run:
         if imported is None:
             fees = {f"{fee}_fee": self.own_fee(terms, fee, name) for fee in FEES}
             own = self.own_lines(terms, name)
-            return {**fees, "for_everyone": not own, "hire_note": clean(terms.get("unique_to"))}
+            everyone = not any(not line.get("excluded") for line in own)  # only exclusions: everyone else may hire
+            return {**fees, "for_everyone": everyone, "hire_note": clean(terms.get("unique_to"))}
         return {
             "hire_fee": self.checked(imported["hire_fee"], name),
             "upkeep_fee": self.checked(imported["upkeep_fee"], name),
