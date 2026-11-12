@@ -89,7 +89,7 @@
           }
         },
         {
-          "name": "poison wind globe",
+          "name": "Poison Wind Globe (Athel Loren)",
           "alias": "Poison Wind Globes",
           "cost": {
             "cost": 50,
@@ -236,7 +236,7 @@
       "availability": "Rare 10"
     },
     {
-      "title": "Poison Wind Globe",
+      "title": "Poison Wind Globe (Athel Loren)",
       "alias": "Poison Wind Globes",
       "cost": {
         "cost": 50
@@ -704,6 +704,37 @@
           "text": "A Warlock Engineer may test a batch on a slave first. Roll a D6: on a 6 the slave is unharmed, otherwise remove him from the roster at once, dead. Whatever the roll, you may then add +1 or -1 to the D6 roll for the brew's effect."
         }
       ]
+    },
+    {
+      "name": "Poison Wind Globe (Athel Loren)",
+      "type": "Weapon",
+      "subtype": "Ranged",
+      "cost": 50,
+      "rarity": 6,
+      "dice": null,
+      "rulesPage": 71,
+      "range": "6\"",
+      "strength": "4",
+      "rules": [
+        {
+          "rule": "thrown-weapon"
+        },
+        {
+          "rule": "no-save",
+          "summary": "Wounded models receive no armour save",
+          "text": "A model wounded by a poison wind globe receives no armour save."
+        },
+        {
+          "name": "Template",
+          "summary": "Every model within 1\" of the point hit takes a Strength 4 hit",
+          "text": "The globe bursts over a 1\" template centred on the point hit, and every model under it, friend or foe, takes a single Strength 4 hit, so a model up to 7\" from the thrower may be hit. If the throw misses, the template deviates D3\" in a random direction from the point aimed at and is resolved where it lands."
+        },
+        {
+          "name": "Fragile",
+          "summary": "A 1 on a D6 bursts a globe when the carrier is knocked down or stunned",
+          "text": "Whenever the carrier is knocked down or stunned, roll a D6 for each globe he carries: on a 1 that globe bursts and is resolved as though it had been thrown at a point centred on him."
+        }
+      ]
     }
   ],
   "flags": [
@@ -737,7 +768,7 @@
     },
     {
       "page": 70,
-      "what": "Poison Wind Globes is our Poison Wind Globe (Mutiny in Marienburg), which the Relics of the Crusades batch has since given rules from its own PDF: 6\", Strength Special, Thrown Weapon, Poison wind (ignores cover penalties and armour saves, D3 wounds on a 3+ and one wound on a 4+ to anyone within 2\", magical so it affects undead) and Drop (a 1 to hit drops it on the thrower). This PDF words the same weapon differently: 6\", Strength 4, No Armour Save, Template (every model within 1\" of the point hit takes a Strength 4 hit, so a model up to 7\" from the thrower may be hit, and a miss deviates the template D3\" in a random direction) and Fragile (if the carrier is knocked down or stunned, a D6 of 1 bursts a globe, resolved as though thrown at a point centred on him). Ours is left exactly as Relics wrote it; the line links it at this list's 50 gc. Decision 13."
+      "what": "Poison Wind Globes is not our Poison Wind Globe: ours carries the Relics of the Crusades wording (6\", Strength Special, Thrown Weapon, Poison wind - it ignores cover penalties and armour saves, does D3 wounds on a 3+ and one wound on a 4+ to anyone within 2\", and is magical, so it affects undead - and Drop, a 1 to hit dropping it on the thrower), where this PDF prints a different mechanism: 6\", Strength 4, No Armour Save, Template (every model within 1\" of the point hit takes a Strength 4 hit, so a model up to 7\" from the thrower may be hit, and a miss deviates the template D3\" in a random direction) and Fragile (if the carrier is knocked down or stunned, a D6 of 1 bursts a globe, resolved as though thrown at a point centred on him). The rules really differ, so this one is an item of its own, Poison Wind Globe (Athel Loren), at this list's 50 gc, Rare 6, and the lines and the special equipment entry name it (William, 12 Nov 2026); ours keeps the plain name, as the earlier of the two. Decision 13."
     },
     {
       "page": 70,

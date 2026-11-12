@@ -10483,8 +10483,8 @@
     "rules": [
       {
         "name": "",
-        "summary": "Flying mount with 16\" movement",
-        "text": "A magic carpet is indeed just that – a carpet that flies! It counts as a mount and allows movement of 16\" with no restrictions for terrain. You can move onto the roofs of buildings and other high places with no penalty. The carpet may carry up to three men or one large creature and a man. One of the riders must be a character. Due to its magical nature it cannot be destroyed.",
+        "summary": "Flying mount with 16\" movement; destroyed outright by fire",
+        "text": "A magic carpet is indeed just that – a carpet that flies! It counts as a mount and allows movement of 16\" with no restrictions for terrain. You can move onto the roofs of buildings and other high places with no penalty. The carpet may carry up to three men or one large creature and a man. One of the riders must be a character. Due to its magical nature it cannot be destroyed, except by fire: taken out of action by fire it is destroyed outright, with no roll on the Henchmen injury chart.",
         "tables": []
       }
     ],
@@ -19065,6 +19065,69 @@
     ]
   },
   {
+    "slug": "sea-dragon-cloak-druchii",
+    "name": "Sea Dragon Cloak (Druchii)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Miscellaneous",
+    "subtype": "",
+    "setting": "mordheim-2a",
+    "source": "Mordheimer's Information Centre",
+    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Druchii.pdf",
+    "tags": [
+      "sea dragon cloak (druchii)"
+    ],
+    "flavour": "",
+    "range": "",
+    "strength": "",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Scales",
+        "summary": "",
+        "text": "A model wearing a sea dragon cloak adds +2 to his armour save against shooting, or has a 5+ save against shooting if he has none, and +1 to his armour save in close combat, or a 6+ save in close combat if he has none. It may be worn together with other armour, a shield and light armour among it, with no penalty.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 30,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "druchii",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
+        "cost": 50,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "dark-elf-corsairs",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
     "slug": "whirling-blades",
     "name": "Whirling Blades",
     "variant": "",
@@ -24850,57 +24913,6 @@
     ]
   },
   {
-    "slug": "quarterstaff-altdorf-expeditionary-party",
-    "name": "Quarterstaff (Altdorf Expeditionary Party)",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Melee",
-    "setting": "grade-3",
-    "source": "Altdorf Expeditionary Party",
-    "link_url": "https://www.broheim.net/downloads/warbands/experimental/Altdorf%20Expeditionary%20Party.pdf",
-    "tags": [
-      "quarterstaff (altdorf expeditionary party)"
-    ],
-    "flavour": "",
-    "range": "Close Combat",
-    "strength": "As user",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "rule": "concussion",
-        "text": "When the wielder rolls to see how badly a model is injured, a roll of 2-4 is treated as stunned."
-      },
-      {
-        "rule": "two-handed"
-      },
-      {
-        "rule": "parry"
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 3,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "altdorf-expeditionary-party",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "glyph-of-blasting",
     "name": "Glyph of Blasting",
     "variant": "",
@@ -26625,6 +26637,67 @@
         "label": "",
         "cost": 25,
         "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 6,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "skaven-of-clan-skryre-ath",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "poison-wind-globe-athel-loren",
+    "name": "Poison Wind Globe (Athel Loren)",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Ranged",
+    "setting": "athel-loren",
+    "source": "Athel Loren",
+    "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=66",
+    "tags": [
+      "poison wind globe (athel loren)"
+    ],
+    "flavour": "",
+    "range": "6\"",
+    "strength": "4",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "thrown-weapon"
+      },
+      {
+        "rule": "no-save",
+        "summary": "Wounded models receive no armour save",
+        "text": "A model wounded by a poison wind globe receives no armour save."
+      },
+      {
+        "name": "Template",
+        "summary": "",
+        "text": "The globe bursts over a 1\" template centred on the point hit, and every model under it, friend or foe, takes a single Strength 4 hit, so a model up to 7\" from the thrower may be hit. If the throw misses, the template deviates D3\" in a random direction from the point aimed at and is resolved where it lands.",
+        "tables": []
+      },
+      {
+        "name": "Fragile",
+        "summary": "",
+        "text": "Whenever the carrier is knocked down or stunned, roll a D6 for each globe he carries: on a 1 that globe bursts and is resolved as though it had been thrown at a point centred on him.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 50,
+        "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
         "rarity": 6,

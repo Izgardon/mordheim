@@ -1831,7 +1831,7 @@
           },
           {
             "item": {
-              "name": "Quarterstaff (Altdorf Expeditionary Party)",
+              "name": "Club, Mace or Hammer",
               "variant": ""
             },
             "shown_as": "Quarterstaff",
@@ -25091,7 +25091,7 @@
           },
           {
             "item": {
-              "name": "Sea Dragon Cloak",
+              "name": "Sea Dragon Cloak (Druchii)",
               "variant": ""
             },
             "shown_as": "Dragon Cloak",
@@ -29138,10 +29138,10 @@
           },
           {
             "item": {
-              "name": "Sea Dragon Cloak",
+              "name": "Sea Dragon Cloak (Druchii)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Sea Dragon Cloak",
             "cost": 30,
             "cost_note": "",
             "first_free": false,
@@ -29325,10 +29325,10 @@
           },
           {
             "item": {
-              "name": "Sea Dragon Cloak",
+              "name": "Sea Dragon Cloak (Druchii)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Sea Dragon Cloak",
             "cost": 30,
             "cost_note": "",
             "first_free": false,
@@ -99148,10 +99148,10 @@
           },
           {
             "item": {
-              "name": "Poison Wind Globe",
+              "name": "Poison Wind Globe (Athel Loren)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Poison Wind Globes",
             "cost": 50,
             "cost_note": "",
             "first_free": false,
@@ -99453,10 +99453,10 @@
           },
           {
             "item": {
-              "name": "Poison Wind Globe",
+              "name": "Poison Wind Globe (Athel Loren)",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Poison Wind Globes",
             "cost": 50,
             "cost_note": "",
             "first_free": false,

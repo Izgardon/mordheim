@@ -25,7 +25,7 @@
         {"name": "light armour", "alias": "", "cost": {"cost": 20}},
         {"name": "helmet", "alias": "", "cost": {"cost": 10}},
         {"name": "repeater crossbow", "alias": "Repeating Crossbow", "cost": {"cost": 35, "costSuffix": "not Corsairs"}},
-        {"name": "sea dragon cloak", "alias": "Dragon Cloak", "cost": {"cost": 50}}
+        {"name": "Sea Dragon Cloak (Druchii)", "alias": "Dragon Cloak", "cost": {"cost": 50}}
       ]
     },
     {
@@ -132,11 +132,13 @@
     {"name": "Infiltration", "ours": "Infiltration"}
   ],
   "aliases": [],
-  "stubs": [],
+  "stubs": [
+    {"name": "Sea Dragon Cloak (Druchii)", "type": "Miscellaneous", "subtype": "", "cost": 50, "rarity": 10, "dice": 2, "rulesPage": 2}
+  ],
   "flags": [
     {"page": 1, "what": "A Druchii Corsair warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed."},
     {"page": 1, "what": "The dark elves take the Elf (Druchii) race, the Druchii PDF's printed dark elf maximum (T3, where our Elf has T4); the PDF prints no maximum of its own. A decision for William."},
-    {"page": 2, "what": "The Reaver list's Repeating Crossbow and the Shades list's Repeater Crossbow are our Repeater Crossbow (ours 40 gc, the lists 35). The Dragon Cloak (50 gc) is our Sea Dragon Cloak, the same price."},
+    {"page": 2, "what": "The Reaver list's Repeating Crossbow and the Shades list's Repeater Crossbow are our Repeater Crossbow (ours 40 gc, the lists 35). The Dragon Cloak (50 gc) is not our Sea Dragon Cloak, whose save is a flat 4+ against missiles and 5+ in close combat, but the Druchii PDF's cloak, which adds +2 and +1 to a save and may be worn with other armour: Sea Dragon Cloak (Druchii), bought here at this list's 50 gc, shown as Dragon Cloak (William, 12 Nov 2026)."},
     {"page": 6, "what": "Corsairs buy from the Reaver list \"with the exception of Missile Weapons, of which they may have none\": the Repeating Crossbow line is read as not Corsairs."},
     {"page": 3, "what": "The four Specialists are hired swords in the catalogue, each hirable by the Dark Elf Corsairs alone (William, 11 Nov 2026: \"why cant specialists just be hired swords that only that warband can hire?\"): the Dark Elf Sorceress (70 gc to replace), the Dark Elf Beastmaster (110, his two Cold One Beasthounds his rule) and the Witch Elf (50), each hired for nothing with the tax and the replacement fine as his fees. Each is named for the warband, \"Dark Elf Sorceress (Dark Elf Corsairs)\" and so on, since only the Corsairs may hire him and the warband's name tells them apart (William, 11 Nov 2026); the Assassin is our Dark Elf Assassin, whose rules the PDF points at, with the Corsairs added to who may hire him. The warband rule keeps how a Specialist works and no longer lists them."},
     {"page": 5, "what": "The Assassin Specialist's profile (M5 WS5 BS5 S4 T4 W1 I7 A1 Ld8) and \"Same as Hired Sword from TC 12\" are our Dark Elf Assassin, the same profile: no second row was made, and the Corsairs were added to who may hire him instead. His fees stay ours (70 gc and 25); the warband's Specialists rule carries the Black Ark's terms."},

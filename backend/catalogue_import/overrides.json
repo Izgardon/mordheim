@@ -435,6 +435,16 @@
       ],
       "why": "William, 11 Nov 2026: the Sartosa Greatcoat is our Rain Coat (\"Based on 'Raincoat' from Border Town Burning\", 10 gc), and its two clauses - worn over armour but not with a cloak, and no help in water terrain - fold into ours, which said only that a Henchman may have one and left what it does to its flavour line"
     },
+    "Magic Carpet": {
+      "rules": [
+        {
+          "name": "",
+          "summary": "Flying mount with 16\" movement; destroyed outright by fire",
+          "text": "A magic carpet is indeed just that \u2013 a carpet that flies! It counts as a mount and allows movement of 16\" with no restrictions for terrain. You can move onto the roofs of buildings and other high places with no penalty. The carpet may carry up to three men or one large creature and a man. One of the riders must be a character. Due to its magical nature it cannot be destroyed, except by fire: taken out of action by fire it is destroyed outright, with no roll on the Henchmen injury chart."
+        }
+      ],
+      "why": "William, 12 Nov 2026: the Khemri equipment page destroys the carpet by fire where ours said only that its magical nature means it cannot be destroyed, so the fire rule is added to ours; the bestiary mount already carried it"
+    },
     "Wolfcloak": {
       "rules": [
         {

@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 51,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 517,  # the import's 422 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's nine) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol and the Mutiny in Marienburg Lamp of the Djinn merged into ours (William, 12 Nov 2026)
+                "Item": 518,  # the import's 423 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026)
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 524,  # the import's 472 (one per name, Athel Loren's 14 among them) + the 24 hired swords' own skills the book lacks; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 133,  # the import's 110 (Athel Loren's three) + a group of his own for each of 19 hired swords

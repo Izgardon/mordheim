@@ -121,3 +121,81 @@ class ReviewRulingsTests(SimpleTestCase):
         self.assertEqual([table["columns"][1] for table in rule["tables"]], ["Light", "Dark"])
         [row] = lamp["availabilities"]
         self.assertEqual((row["cost"], row["dice"], row["rarity"], row["for_everyone"]), (50, 2, 12, True))
+
+    # 2. Separations, nicknames and wordings: where the rules really differ, the later takes its brackets
+
+    def test_the_athel_loren_poison_wind_globe_is_its_own_item(self) -> None:
+        # ours (Mutiny in Marienburg, the Relics of the Crusades wording) is Strength Special with a 2" splash and
+        # no deviation; the Athel Loren PDF prints Strength 4, a 1" template, a D3" deviation and a globe that
+        # bursts when its carrier goes down, so it is an item of its own and the Athel Loren lines name it
+        ours = self.items["Poison Wind Globe"]
+        self.assertEqual((ours["setting"], ours["strength"]), ("mutiny-in-marienburg", "Special"))
+        theirs = self.items["Poison Wind Globe (Athel Loren)"]
+        self.assertEqual((theirs["setting"], theirs["range"], theirs["strength"]), ("athel-loren", '6"', "4"))
+        self.assertEqual(
+            [rule.get("rule") or rule.get("name") for rule in theirs["rules"]],
+            ["thrown-weapon", "no-save", "Template", "Fragile"],
+        )
+        self.assertEqual(self.rows("Poison Wind Globe (Athel Loren)", "skaven-of-clan-skryre-ath"), [(50, None, 6, "")])  # fmt: skip
+        shown = {
+            (line["item"]["name"], line["shown_as"])
+            for row in self.templates["skaven-of-clan-skryre-athel-loren"]["lists"]
+            for line in row["lines"]
+            if "Poison Wind Globe" in line["item"]["name"]
+        }
+        self.assertEqual(shown, {("Poison Wind Globe (Athel Loren)", "Poison Wind Globes")})
+
+    def test_the_druchii_sea_dragon_cloak_is_its_own_item_and_ours_stays_the_dark_elves(self) -> None:
+        # ours is a flat 4+ save against missiles and 5+ in close combat; the PDF's adds +2 and +1 to a save he
+        # already has and may be worn with other armour. The brackets are the Druchii's, Mordheim 2a being the
+        # earliest setting of the two warbands that buy it (the Dark Elf Corsairs are Mousillon's).
+        ours = self.items["Sea Dragon Cloak"]
+        self.assertEqual(ours["setting"], "mordheim-1b")
+        self.assertIn("5+ armour save in close combat", ours["rules"][0]["text"])
+        theirs = self.items["Sea Dragon Cloak (Druchii)"]
+        self.assertEqual(theirs["setting"], "mordheim-2a")
+        text = theirs["rules"][0]["text"]
+        for clause in ("+2 to his armour save against shooting", "5+ save against shooting if he has none", "+1 to his armour save in close combat", "6+ save in close combat if he has none", "worn together with other armour"):  # fmt: skip
+            with self.subTest(clause=clause):
+                self.assertIn(clause, text)
+        self.assertEqual(self.rows("Sea Dragon Cloak (Druchii)", "druchii"), [(30, 2, 10, "")])
+        self.assertEqual(self.rows("Sea Dragon Cloak (Druchii)", "dark-elf-corsairs"), [(50, 2, 10, "")])
+        shown = {
+            (slug, line["shown_as"], line["cost"])
+            for slug in ("druchii", "dark-elf-corsairs")
+            for row in self.templates[slug]["lists"]
+            for line in row["lines"]
+            if line["item"]["name"] == "Sea Dragon Cloak (Druchii)"
+        }
+        self.assertEqual(shown, {("druchii", "Sea Dragon Cloak", 30), ("dark-elf-corsairs", "Dragon Cloak", 50)})
+
+    def test_the_altdorf_quarterstaff_is_just_a_mace(self) -> None:
+        # William, 12 Nov 2026: 3 gc with Concussion is our Club, Mace or Hammer, so the item goes and the Wizard
+        # list buys ours under the page's name. Our Quarter Staff (15 gc, Balanced and Freestyle) is untouched.
+        self.assertNotIn("Quarterstaff (Altdorf Expeditionary Party)", self.items)
+        mace = self.items["Club, Mace or Hammer"]
+        self.assertEqual([rule["rule"] for rule in mace["rules"]], ["concussion"])
+        [row] = mace["availabilities"]
+        self.assertEqual((row["cost"], row["for_everyone"]), (3, True))
+        shown = {
+            (line["shown_as"], line["cost"])
+            for row in self.templates["altdorf-expeditionary-party"]["lists"]
+            for line in row["lines"]
+            if line["item"]["name"] == "Club, Mace or Hammer"
+        }
+        self.assertIn(("Quarterstaff", 3), shown)
+        self.assertEqual([row["cost"] for row in self.items["Quarter Staff"]["availabilities"]], [15])
+
+    def test_the_magic_carpet_is_destroyed_by_fire(self) -> None:
+        [rule] = self.items["Magic Carpet"]["rules"]
+        self.assertIn("cannot be destroyed, except by fire", rule["text"])
+        self.assertIn("taken out of action by fire it is destroyed outright", rule["text"])
+
+    def test_the_house_guards_pike_and_khemris_tufenk_are_already_ours(self) -> None:
+        # the two §2 items with nothing to do: the House Guard's pike is our Pike with a price row of its own, and
+        # the Khemri page's Strength 1 Tufenk was never imported, so our Strength 2 one stands alone
+        self.assertEqual([name for name in self.items if name.startswith("Pike")], ["Pike"])
+        self.assertEqual(self.rows("Pike", "house-guard"), [(10, None, 8, "House Guard only")])
+        self.assertEqual([name for name in self.items if name.startswith("Tufenk")], ["Tufenk"])
+        self.assertEqual(self.items["Tufenk"]["strength"], "2")
+        self.assertEqual(self.rows("Tufenk", "arabian-tomb-raiders"), [(15, None, 10, "")])

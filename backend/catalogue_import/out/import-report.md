@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 61 |
 | items (warband templates) | 17 |
-| price rows | 570 |
+| price rows | 572 |
 | skills | 500 |
 | skill groups | 114 |
 | skill group links | 650 |
@@ -919,7 +919,7 @@ Lines found other than by name or tag:
 | cursed-cavalcade | Misericordia | Misericordia (Cursed Cavalcade) | named for the warband |
 | cursed-dwarves | hand gun | Handgun | a loose match |
 
-614 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+617 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 
@@ -1484,7 +1484,7 @@ Kept apart from a family's, the effect differing:
 | --- | --- | --- | --- | --- | --- |
 | adventurers | adventurers | 6 | 0 | 0 | 17 |
 | albion-barbarians | albion-barbarians | 5 | 1 | 0 | 7 |
-| altdorf-expeditionary-party | altdorf-expeditionary-party | 4 | 0 | 3 | 18 |
+| altdorf-expeditionary-party | altdorf-expeditionary-party | 4 | 0 | 2 | 18 |
 | araby-smugglers | araby-smugglers | 6 | 0 | 0 | 10 |
 | arabyan-nomads | arabyan-nomads | 6 | 3 | 6 | 8 |
 | arabyan-theives | arabyan-theives | 5 | 3 | 4 | 6 |
@@ -1499,11 +1499,11 @@ Kept apart from a family's, the effect differing:
 | circus-extraordinare | circus-extraordinare | 8 | 0 | 0 | 15 |
 | clockworkers | clockworkers | 7 | 0 | 2 | 10 |
 | cursed-dwarves | cursed-dwarves | 7 | 3 | 0 | 11 |
-| dark-elf-corsairs | dark-elf-corsairs | 5 | 0 | 0 | 9 |
+| dark-elf-corsairs | dark-elf-corsairs | 5 | 0 | 1 | 9 |
 | disciples-of-maldred | disciples-of-maldred | 5 | 0 | 0 | 10 |
 | dreamwalkers-cult-of-morr | dreamwalkers-cult-of-morr | 6 | 0 | 0 | 11 |
 | drowned-dead | drowned-dead | 8 | 0 | 1 | 14 |
-| druchii | druchii | 8 | 0 | 1 | 11 |
+| druchii | druchii | 8 | 0 | 2 | 11 |
 | dwarf-grudgebearers | dwarf-grudgebearers | 7 | 0 | 0 | 15 |
 | dwarf-guildsmen | dwarf-guildsmen | 6 | 0 | 0 | 11 |
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 1 | 11 |
@@ -1560,7 +1560,7 @@ Kept apart from a family's, the effect differing:
 | skaven-of-clan-pestilens-lus | skaven-of-clan-pestilens-lus | 6 | 0 | 0 | 14 |
 | skaven-of-clan-pestilens-mou | skaven-of-clan-pestilens-mou | 6 | 0 | 1 | 13 |
 | skaven-of-clan-pristekk | skaven-of-clan-pristekk | 7 | 0 | 3 | 9 |
-| skaven-of-clan-skryre-ath | skaven-of-clan-skryre-ath | 6 | 0 | 7 | 20 |
+| skaven-of-clan-skryre-ath | skaven-of-clan-skryre-ath | 6 | 0 | 8 | 20 |
 | skaven-of-clan-skryre-kaz | skaven-of-clan-skryre-kaz | 6 | 0 | 1 | 8 |
 | skaven-of-clan-skryre-rel | skaven-of-clan-skryre-rel | 6 | 0 | 4 | 11 |
 | slavers | slavers | 6 | 0 | 4 | 9 |
@@ -1635,7 +1635,6 @@ Pages folded into another warband's list as one of its variants:
 
 ### Altdorf Expeditionary Party
 
-- Stub: Quarterstaff (Altdorf Expeditionary Party), 3 gc, Common; its rules are on p4.
 - Stub: Glyph of Blasting, 25 gc, Rare 10; its rules are on p5.
 - Stub: Grimoire of Magic, 200+1D6x50 gc, Rare 13; its rules are on p6.
 - Flag (p1): The warband's minimum of 3 models is not imported: our templates hold no minimum.
@@ -1648,10 +1647,10 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p3): The Halberd is 15 gc on the Wizard list and 10 gc on the Warrior list. Both are kept as printed.
 - Flag (p3): The Wizard list's Wand/Staff/Mace is our Club, Mace or Hammer at the same 3 gc, shown under the PDF's name; so is the Warrior list's Hammer/Mace.
 - Flag (p4): The Familiar is our Familiar: 20 gc on both, and ours is the same ritual and re-roll. Ours re-rolls one failed casting roll each turn where the PDF's does it once per game, and the PDF prints "Ld" where its rarity would go, which we cannot read, so ours (Rare 8) stands. See the decisions.
-- Flag (p4): The Quarterstaff is kept apart as Quarterstaff (Altdorf Expeditionary Party): ours is 15 gc with Balanced (+1 Initiative) and Freestyle, the PDF's 3 gc with Concussion, Two-handed and Parry. See the decisions.
+- Flag (p4): The Quarterstaff is "just a mace" (William, 12 Nov 2026): 3 gc with Concussion, which is our Club, Mace or Hammer word for word and price for price, so the line buys ours, shown as Quarterstaff. Its Two-handed and Parry are not carried, and our Quarter Staff (15 gc, Balanced and Freestyle) is a different weapon and untouched. The Wizard list sells our Club, Mace or Hammer twice, once as Wand/Staff/Mace and once as Quarterstaff, as the page does.
 - Flag (p5): The Glyph of Blasting is a stub typed Miscellaneous, not a weapon: it is inscribed on a weapon and is not wielded itself. Its Arcane bolt is part of its rules, not a spell of a lore.
 - Flag (p6): The Grimoire of Magic is printed "(Optional)", Rare 13, 200 + D6x50 gc, and no equipment list sells it, so it is a stub with a price row of its own for this warband.
-- Flag (p5): The PDF says the Familiar, Quarterstaff, Glyph of Blasting and Grimoire of Magic "are available to all warbands for any warrior that can use them". Our price rows name this warband, so another warband sees them as not usually available, which warns rather than blocks. See the decisions.
+- Flag (p5): The PDF says the Familiar, Quarterstaff, Glyph of Blasting and Grimoire of Magic "are available to all warbands for any warrior that can use them". The Quarterstaff is our Club, Mace or Hammer, which everyone buys already; the Glyph of Blasting and the Grimoire of Magic keep their rows for this warband alone (William, 12 Nov 2026), so another warband sees them as not usually available, which warns rather than blocks.
 - Flag (p7): Each special skill names who may take it beyond this warband ("may be taken by any College wizard", "any wizard or prayer user"). The limit within the warband opens the skill's description; the grant to other warbands is not imported (William, 11 Nov 2026).
 - Flag (p7): Dispell is kept apart as Dispell (Altdorf Expeditionary Party): our Dispel needs a roll higher than the casting roll, where the PDF's dispels on equal or higher, needs line of sight and allows one attempt per casting. See the decisions.
 - Flag (p7): The Large Familiar skill also lets a campaign using expanded mount rules take any mount's profile for half that mount's price. That is left out: it points at rules we do not hold. The wardog and giant rat profiles and their 25 gc and 15 gc are kept.
@@ -1894,9 +1893,10 @@ Pages folded into another warband's list as one of its variants:
 
 ### Dark Elf Corsairs
 
+- Stub: Sea Dragon Cloak (Druchii), 50+2D6 gc, Rare 10; its rules are on p2.
 - Flag (p1): A Druchii Corsair warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profiles are printed.
 - Flag (p1): The dark elves take the Elf (Druchii) race, the Druchii PDF's printed dark elf maximum (T3, where our Elf has T4); the PDF prints no maximum of its own. A decision for William.
-- Flag (p2): The Reaver list's Repeating Crossbow and the Shades list's Repeater Crossbow are our Repeater Crossbow (ours 40 gc, the lists 35). The Dragon Cloak (50 gc) is our Sea Dragon Cloak, the same price.
+- Flag (p2): The Reaver list's Repeating Crossbow and the Shades list's Repeater Crossbow are our Repeater Crossbow (ours 40 gc, the lists 35). The Dragon Cloak (50 gc) is not our Sea Dragon Cloak, whose save is a flat 4+ against missiles and 5+ in close combat, but the Druchii PDF's cloak, which adds +2 and +1 to a save and may be worn with other armour: Sea Dragon Cloak (Druchii), bought here at this list's 50 gc, shown as Dragon Cloak (William, 12 Nov 2026).
 - Flag (p6): Corsairs buy from the Reaver list "with the exception of Missile Weapons, of which they may have none": the Repeating Crossbow line is read as not Corsairs.
 - Flag (p3): The four Specialists are hired swords in the catalogue, each hirable by the Dark Elf Corsairs alone (William, 11 Nov 2026: "why cant specialists just be hired swords that only that warband can hire?"): the Dark Elf Sorceress (70 gc to replace), the Dark Elf Beastmaster (110, his two Cold One Beasthounds his rule) and the Witch Elf (50), each hired for nothing with the tax and the replacement fine as his fees. Each is named for the warband, "Dark Elf Sorceress (Dark Elf Corsairs)" and so on, since only the Corsairs may hire him and the warband's name tells them apart (William, 11 Nov 2026); the Assassin is our Dark Elf Assassin, whose rules the PDF points at, with the Corsairs added to who may hire him. The warband rule keeps how a Specialist works and no longer lists them.
 - Flag (p5): The Assassin Specialist's profile (M5 WS5 BS5 S4 T4 W1 I7 A1 Ld8) and "Same as Hired Sword from TC 12" are our Dark Elf Assassin, the same profile: no second row was made, and the Corsairs were added to who may hire him instead. His fees stay ours (70 gc and 25); the warband's Specialists rule carries the Black Ark's terms.
@@ -1952,6 +1952,7 @@ Pages folded into another warband's list as one of its variants:
 ### Druchii
 
 - Stub: Draich, 25+1D6 gc, Rare 8; its rules are on p7.
+- Stub: Sea Dragon Cloak (Druchii), 30+2D6 gc, Rare 10; its rules are on p8.
 - Price row (p7): our Dark Elf Blade for druchii, Rare 9, Heroes only.
 - Flag (p1): Most headings (fighters', lists', skills' and items' names) are images the text layer lacks; each fighter was matched by the name in his own text, and pages 2, 3 and 8 were read as images for the skill table, the list titles and the skill names.
 - Flag (p2): A Druchii warband needs at least 3 models: our templates hold no minimum, so it is not imported.
@@ -1961,7 +1962,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p3): The Darksteel blade is our Dark Elf Blade: the same Rare 9 and the same two rules, Critical Damage (+1 on the critical hit chart) and Wicked Edge (2-4 on the injury table is Stunned), so the two are one item, shown under this list's name (William, 11 Nov 2026: one entry for a weapon we already hold under another name). Its price is this list's "3 x price", in a price row for the Druchii; ours stays the Dark Elves' + 20 gc, Rare 9. Heroes only. The Draich is a stub at 25 gc (25+1D6, Rare 8, Strength as user +2, Two-handed, Swift), its rules on p7.
 - Flag (p3): The Beastlash links our Beastlash at the list's 10 gc (the PDF prices it 10+D6, Rare 8).
 - Flag (p6): Slavehounds come only with a Beastmaster (0-3, "if it also includes a Beastmaster"): our counts can't tie one fighter's to another's, so it is said in their Animals rule.
-- Flag (p8): The PDF's Sea Dragon Cloak gives +2 to the save against shooting (5+ with none) and +1 in close combat (6+ with none); ours gives a 5+ save in close combat and 4+ against missiles. Linked to ours as it is.
+- Flag (p8): The PDF's Sea Dragon Cloak gives +2 to the save against shooting (5+ with none) and +1 in close combat (6+ with none) and may be worn with other armour with no penalty; ours is a flat 4+ save against missiles and 5+ in close combat. The two mechanisms really differ, so the PDF's is an item of its own, Sea Dragon Cloak (Druchii), which the Dark Elf Corsairs buy too (William, 12 Nov 2026). The brackets are this warband's, Mordheim 2a being the earliest setting of the two that use it; ours keeps the plain name and stays the Dark Elves' and the Sea Ghosts'.
 - Flag (p8): The special skills are a new group, Druchii. Fey Quickness and Infiltration ("identical to the Skaven skill") are ours. Excellent Sight (hidden enemies spotted at twice his Initiative in inches) does what our Unblinking Eye does, but is kept apart (William, 6 Nov 2026: "keep both of those separate as they have a name that inspires a different idea behind it"); it is one skill with the Wood Elves' Excellent Sight. Fury of Khaine (ours adds no follow-up in the opponent's turn) and Master of Poisons (ours makes D3-1 doses, the PDF D2) are named apart. The blackletter heading reads "Vraithen Master", taken as printed.
 - Flag (p9): Dark Magic differs from our Dark Elf Magic (Doombolt is Difficulty 8, ours 9; Deathspasm 9, ours 10; spell 4 is Black Blade of Khaine, ours Flamesword), so it is a new lore, Dark Magic (Druchii), in spells.json.
 
@@ -2907,6 +2908,7 @@ Pages folded into another warband's list as one of its variants:
 - Stub: Warpfire Barrel, 20 gc, Common; its rules are on p74.
 - Stub: Warpstone Shard, 30 gc, Rare 10; its rules are on p74.
 - Stub: Skavenbrew, 25+2D6 gc, Rare 6; its rules are on p74.
+- Stub: Poison Wind Globe (Athel Loren), 50 gc, Rare 6; its rules are on p71.
 - Flag (p67): A Clan Skryre warband needs at least 3 models: our templates hold no minimum, so it is not imported.
 - Flag (p68): The skill table ticks the Warlock Engineer Shooting, Academic, Speed and Special, the Stormvermin Combat, Strength, Speed and Special, and the Warlock Apprentice Shooting, Speed and Special. Read from the tick positions against the column centres.
 - Flag (p68): Tail Fighting, Wall Runner and Infiltration are ours with the same words. Infiltration's "available to Stormvermin only" and Skavenbrew Master's "Warlock Engineers or Apprentices only" are in the group's note, not in a warband rule.
@@ -2914,7 +2916,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p69): The Engineers list prices a Helmet at 5 gc and the Henchmen list at 10 gc; both are imported as their list prints them.
 - Flag (p69): The Warplock Pistol line reads "30gc (70 brace)", so a brace is not twice the single price. Both numbers are imported as printed. The Clan Skryre Armoury chart prints 35 gc (70 brace) for the same weapon. Decision 12.
 - Flag (p70): Warplock Pistol is our Warplock pistol, with the same 8" range, Strength 5, Prepare Shot and -3 save modifier; ours adds its close combat use, which this PDF does not print.
-- Flag (p70): Poison Wind Globes is our Poison Wind Globe (Mutiny in Marienburg), which the Relics of the Crusades batch has since given rules from its own PDF: 6", Strength Special, Thrown Weapon, Poison wind (ignores cover penalties and armour saves, D3 wounds on a 3+ and one wound on a 4+ to anyone within 2", magical so it affects undead) and Drop (a 1 to hit drops it on the thrower). This PDF words the same weapon differently: 6", Strength 4, No Armour Save, Template (every model within 1" of the point hit takes a Strength 4 hit, so a model up to 7" from the thrower may be hit, and a miss deviates the template D3" in a random direction) and Fragile (if the carrier is knocked down or stunned, a D6 of 1 bursts a globe, resolved as though thrown at a point centred on him). Ours is left exactly as Relics wrote it; the line links it at this list's 50 gc. Decision 13.
+- Flag (p70): Poison Wind Globes is not our Poison Wind Globe: ours carries the Relics of the Crusades wording (6", Strength Special, Thrown Weapon, Poison wind - it ignores cover penalties and armour saves, does D3 wounds on a 3+ and one wound on a 4+ to anyone within 2", and is magical, so it affects undead - and Drop, a 1 to hit dropping it on the thrower), where this PDF prints a different mechanism: 6", Strength 4, No Armour Save, Template (every model within 1" of the point hit takes a Strength 4 hit, so a model up to 7" from the thrower may be hit, and a miss deviates the template D3" in a random direction) and Fragile (if the carrier is knocked down or stunned, a D6 of 1 bursts a globe, resolved as though thrown at a point centred on him). The rules really differ, so this one is an item of its own, Poison Wind Globe (Athel Loren), at this list's 50 gc, Rare 6, and the lines and the special equipment entry name it (William, 12 Nov 2026); ours keeps the plain name, as the earlier of the two. Decision 13.
 - Flag (p70): Warplock Jezzail, Warpfire Thrower, Warpstone Armour, Jezzail Support, Warpfire Barrel, Warpstone Shard and Skavenbrew are new items, each with the rules this PDF prints. Our Fog-enhancing Warpstone Shards and Warpstone Amulet are different items.
 - Flag (p74): Warpstone Shard and Skavenbrew are on no equipment list: the Clan Skryre Armoury chart sells them and the PDF prints their rules, so each is a stub whose one price row serves this warband type.
 - Flag (p71): The Warpstone Shard's own text repeats the Poison Wind Globes paragraph before its rules; only its rules were taken, since they are what it does.

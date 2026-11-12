@@ -22,7 +22,7 @@
       "items": [
         {"name": "dagger", "alias": "", "cost": {"costPrefix": "1st free/", "cost": 2}},
         {"name": "Club, Mace or Hammer", "alias": "Wand/Staff/Mace", "cost": {"cost": 3}},
-        {"name": "Quarterstaff (Altdorf Expeditionary Party)", "alias": "Quarterstaff", "cost": {"cost": 3}},
+        {"name": "Club, Mace or Hammer", "alias": "Quarterstaff", "cost": {"cost": 3}},
         {"name": "sword", "alias": "", "cost": {"cost": 10}},
         {"name": "spear", "alias": "", "cost": {"cost": 10}},
         {"name": "halberd", "alias": "", "cost": {"cost": 15}},
@@ -155,21 +155,6 @@
   "aliases": [],
   "stubs": [
     {
-      "name": "Quarterstaff (Altdorf Expeditionary Party)",
-      "type": "Weapon",
-      "subtype": "Melee",
-      "rarity": null,
-      "dice": null,
-      "rulesPage": 4,
-      "range": "Close Combat",
-      "strength": "As user",
-      "rules": [
-        {"rule": "Concussion", "text": "When the wielder rolls to see how badly a model is injured, a roll of 2-4 is treated as stunned."},
-        {"rule": "Two-handed"},
-        {"rule": "Parry"}
-      ]
-    },
-    {
       "name": "Glyph of Blasting",
       "type": "Miscellaneous",
       "subtype": "",
@@ -210,10 +195,10 @@
     {"page": 3, "what": "The Halberd is 15 gc on the Wizard list and 10 gc on the Warrior list. Both are kept as printed."},
     {"page": 3, "what": "The Wizard list's Wand/Staff/Mace is our Club, Mace or Hammer at the same 3 gc, shown under the PDF's name; so is the Warrior list's Hammer/Mace."},
     {"page": 4, "what": "The Familiar is our Familiar: 20 gc on both, and ours is the same ritual and re-roll. Ours re-rolls one failed casting roll each turn where the PDF's does it once per game, and the PDF prints \"Ld\" where its rarity would go, which we cannot read, so ours (Rare 8) stands. See the decisions."},
-    {"page": 4, "what": "The Quarterstaff is kept apart as Quarterstaff (Altdorf Expeditionary Party): ours is 15 gc with Balanced (+1 Initiative) and Freestyle, the PDF's 3 gc with Concussion, Two-handed and Parry. See the decisions."},
+    {"page": 4, "what": "The Quarterstaff is \"just a mace\" (William, 12 Nov 2026): 3 gc with Concussion, which is our Club, Mace or Hammer word for word and price for price, so the line buys ours, shown as Quarterstaff. Its Two-handed and Parry are not carried, and our Quarter Staff (15 gc, Balanced and Freestyle) is a different weapon and untouched. The Wizard list sells our Club, Mace or Hammer twice, once as Wand/Staff/Mace and once as Quarterstaff, as the page does."},
     {"page": 5, "what": "The Glyph of Blasting is a stub typed Miscellaneous, not a weapon: it is inscribed on a weapon and is not wielded itself. Its Arcane bolt is part of its rules, not a spell of a lore."},
     {"page": 6, "what": "The Grimoire of Magic is printed \"(Optional)\", Rare 13, 200 + D6x50 gc, and no equipment list sells it, so it is a stub with a price row of its own for this warband."},
-    {"page": 5, "what": "The PDF says the Familiar, Quarterstaff, Glyph of Blasting and Grimoire of Magic \"are available to all warbands for any warrior that can use them\". Our price rows name this warband, so another warband sees them as not usually available, which warns rather than blocks. See the decisions."},
+    {"page": 5, "what": "The PDF says the Familiar, Quarterstaff, Glyph of Blasting and Grimoire of Magic \"are available to all warbands for any warrior that can use them\". The Quarterstaff is our Club, Mace or Hammer, which everyone buys already; the Glyph of Blasting and the Grimoire of Magic keep their rows for this warband alone (William, 12 Nov 2026), so another warband sees them as not usually available, which warns rather than blocks."},
     {"page": 7, "what": "Each special skill names who may take it beyond this warband (\"may be taken by any College wizard\", \"any wizard or prayer user\"). The limit within the warband opens the skill's description; the grant to other warbands is not imported (William, 11 Nov 2026)."},
     {"page": 7, "what": "Dispell is kept apart as Dispell (Altdorf Expeditionary Party): our Dispel needs a roll higher than the casting roll, where the PDF's dispels on equal or higher, needs line of sight and allows one attempt per casting. See the decisions."},
     {"page": 7, "what": "The Large Familiar skill also lets a campaign using expanded mount rules take any mount's profile for half that mount's price. That is left out: it points at rules we do not hold. The wardog and giant rat profiles and their 25 gc and 15 gc are kept."},
