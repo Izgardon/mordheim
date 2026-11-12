@@ -26,7 +26,7 @@ from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APIClient
 
 from apps.campaigns.models import Campaign, CampaignMembership, CampaignRole
-from apps.core.testing import Rendezvous, run_concurrently
+from apps.core.testing import LockHandoff, run_concurrently
 from apps.warbands.models import HeroItem, LedgerAction, Warband, WarbandItem
 from apps.warbands.services import ledger
 from apps.warbands.units import hooks
@@ -143,8 +143,15 @@ class LockOrderTests(RosterTestCase):
 
 class LockOrderConcurrencyTests(TransactionTestCase):
     """Two real requests on two threads: a group PATCH recruiting a member and a purchase recruiting into the same
-    group, each held at a `Rendezvous` once it has taken its first lock. Locked in opposite orders they deadlocked
-    and Postgres aborted one (a 500); with the warband first, the second waits for the first and both go through."""
+    group. Locked in opposite orders they deadlocked and Postgres aborted one (a 500); with the warband first, the
+    second waits at the warband's row for the first and both go through.
+
+    A `LockHandoff` holds the PATCH where it has taken the warband's row and starts the purchase only then, so the
+    PATCH always commits first and the purchase recruits into the group it leaves behind. Without that order the two
+    writes still both land, but which one commits first is the thread scheduler's choice, and the PATCH committing
+    second dismisses the creature the purchase recruited, because its member list (sent before either ran) doesn't
+    name it and a list dismisses the living members it leaves out (BUG-94). That is the PATCH's own rule, not a lost
+    write, so the test fixes the order rather than asserting either outcome."""
 
     def setUp(self) -> None:
         role = CampaignRole.objects.get_or_create(slug="player", defaults={"name": "Player"})[0]
@@ -164,7 +171,7 @@ class LockOrderConcurrencyTests(TransactionTestCase):
 
         return call
 
-    def test_a_group_patch_and_a_purchase_recruiting_into_the_group_both_go_through(self):
+    def _bodies(self) -> tuple[dict[str, Any], dict[str, Any]]:
         rex = self.kennel.henchmen.get()
         patch = {"henchmen": [{"id": rex.id, "name": "Rex"}, {"name": "Grip", "cost": 25}]}
         purchase = {
@@ -173,16 +180,43 @@ class LockOrderConcurrencyTests(TransactionTestCase):
             "target_type": "stash",
             "recruit": {"group_id": self.kennel.id},
         }
-        rendezvous = Rendezvous()
+        return patch, purchase
 
-        with (
-            mock.patch.object(hooks, "sync_members", side_effect=rendezvous.before(hooks.sync_members)),
-            mock.patch.object(beasts, "lock_group", side_effect=rendezvous.before(beasts.lock_group)),
-        ):
+    def _living(self) -> int:
+        return int(self.kennel.henchmen.filter(dismissed_at__isnull=True).count())
+
+    def test_a_group_patch_and_a_purchase_recruiting_into_the_group_both_go_through(self):
+        patch, purchase = self._bodies()
+        handoff = LockHandoff()
+
+        with mock.patch.object(hooks, "sync_members", side_effect=handoff.holding(hooks.sync_members)):
             statuses = run_concurrently(
                 self._call("patch", f"henchmen-groups/{self.kennel.id}/", patch),
-                self._call("post", "purchases/", purchase),
+                handoff.behind(self._call("post", "purchases/", purchase)),
             )
 
+        self.assertIs(handoff.waited, True, "the purchase never waited on the row the PATCH had locked")
         self.assertEqual(statuses, [200, 201])
-        self.assertEqual(self.kennel.henchmen.filter(dismissed_at__isnull=True).count(), 3)
+        self.assertEqual(self._living(), 3)
+
+    def test_a_purchase_holding_the_warband_and_a_group_patch_behind_it_never_deadlock(self):
+        """The other order, which a wrong lock order would deadlock: the purchase holds the warband's row and the
+        PATCH comes up behind it. Taking the warband first too, the PATCH waits there and then runs whole, so both
+        answer and nothing is aborted. Taking the group's row first it would hold that while it waited, the purchase
+        would want it, and Postgres would abort one with a 500.
+
+        The PATCH's member list was sent before the creature was recruited and doesn't name it, so committing second
+        it dismisses him (BUG-94: a list dismisses the living members it leaves out). He stays as a record."""
+        patch, purchase = self._bodies()
+        handoff = LockHandoff()
+
+        with mock.patch.object(beasts, "lock_group", side_effect=handoff.holding(beasts.lock_group)):
+            statuses = run_concurrently(
+                self._call("post", "purchases/", purchase),
+                handoff.behind(self._call("patch", f"henchmen-groups/{self.kennel.id}/", patch)),
+            )
+
+        self.assertIs(handoff.waited, True, "the PATCH never waited on the row the purchase had locked")
+        self.assertEqual(statuses, [201, 200])
+        self.assertEqual(self.kennel.henchmen.count(), 3)  # Rex, the creature and Grip
+        self.assertEqual(self._living(), 2)

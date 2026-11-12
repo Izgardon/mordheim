@@ -7,6 +7,7 @@ can catch N+1 regressions (see apps/core/tests/test_query_budgets.py).
 """
 
 import threading
+import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -235,6 +236,55 @@ class Rendezvous:
             return function(*args, **kwargs)
 
         return waiting
+
+
+class LockHandoff:
+    """Orders two requests a row lock serialises, so the race has one outcome instead of two.
+
+    A `Rendezvous` can't order these: whichever request takes the contended row first keeps it until it
+    commits, so the other blocks in the database and never reaches a rendezvous point of its own, and which
+    one that is comes down to thread scheduling. This holds the first request where it has taken its lock
+    (`side_effect=handoff.holding(original)`, patched in just after it) until the second is blocked behind it
+    in `pg_locks`, and starts the second only then (`handoff.behind(call)`). So the first always commits
+    first, and `waited` records that the second really did wait on a lock the first held.
+
+    The second blocking is also what the lock order is for, so a wrong one still shows: locked in opposite
+    orders each request holds the row the other wants next, and releasing the first deadlocks them, which
+    Postgres ends by aborting one (a 500).
+    """
+
+    def __init__(self, timeout: float = 10.0) -> None:
+        self._holds_the_lock = threading.Event()
+        self._timeout = timeout
+        self.waited: bool | None = None  # whether the second request blocked on a lock the first one held
+
+    def _another_connection_is_blocked(self) -> bool:
+        """Whether another connection is waiting for a lock (`pg_locks` is live state, not this snapshot)."""
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT EXISTS (SELECT 1 FROM pg_locks WHERE NOT granted AND pid <> pg_backend_pid())")
+            return bool(cursor.fetchone()[0])
+
+    def holding(self, function: Callable[..., Any]) -> Callable[..., Any]:
+        """`function`, waiting here (its caller's lock taken) until the request behind it is blocked."""
+
+        def waiting(*args: Any, **kwargs: Any) -> Any:
+            self._holds_the_lock.set()
+            deadline = time.monotonic() + self._timeout
+            while not (blocked := self._another_connection_is_blocked()) and time.monotonic() < deadline:
+                time.sleep(0.01)
+            self.waited = blocked
+            return function(*args, **kwargs)
+
+        return waiting
+
+    def behind(self, call: Callable[[], Any]) -> Callable[[], Any]:
+        """`call`, made once the first request holds its lock, so it blocks behind it."""
+
+        def second() -> Any:
+            self._holds_the_lock.wait(timeout=self._timeout)
+            return call()
+
+        return second
 
 
 def run_concurrently(*calls: Callable[[], Any]) -> list[Any]:
