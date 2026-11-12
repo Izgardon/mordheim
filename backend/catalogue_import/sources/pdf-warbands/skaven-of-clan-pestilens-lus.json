@@ -149,8 +149,8 @@
     {"name": "Cloud of Flies", "description": "A cloud of flies surrounds the warrior. Any model in base contact with him has -1 to hit with every attack. Clan Pestilens Heroes and Plague Monks, undead and followers of Nurgle are not affected."},
     {"name": "Frenzy", "description": "The warrior is subject to frenzy."},
     {"name": "Resilience", "description": "The warrior's Toughness is increased by +1. This is the only way for a Skaven to reach Toughness 5."},
-    {"name": "No Pain", "description": "The warrior treats a stunned result as knocked down."},
-    {"name": "Fear", "description": "The warrior causes fear."}
+    {"name": "No Pain", "ours": "Ignore Pain"},
+    {"name": "Fear", "ours": "Fearsome"}
   ],
   "priceRows": [
     {"name": "censer", "cost": 75, "dice": 5, "rarity": 12, "note": "Plague Champions only", "page": 1}
@@ -162,7 +162,7 @@
     {"page": 1, "what": "The Skaven maximum profile printed (M6 WS6 BS6 S4 T4 W3 I7 A4 Ld7) is our plain Skaven race's, not our Skaven (Clan Pestilens) race's (M5 T5) which the Mordheim 1b and Mousillon warbands of the same name use. Imported as printed, so this warband's race is Skaven."},
     {"page": 1, "what": "The warband has no Special Rules section of its own: the PDF prints none."},
     {"page": 2, "what": "The skill table ticks the Plague Priest Combat, Academic, Strength, Speed and Special; the Plague Champions Combat, Strength, Speed and Special; and the Monk Initiates Combat, Speed and Special. Read from the tick positions."},
-    {"page": 2, "what": "The special skills are a new group, Clan Pestilens (Lustria). Cloud of Flies and Frenzy are ours, with the same words. Resilience (+1 Toughness) is a skill of its own: our Resilient takes -1 Strength off hits in close combat, which is a different rule. No Pain (stunned counts as knocked down) is what our Numb does and what our Ignore Pain does for the Mordheim 1b warband, and Fear (causes fear) is what our Fearsome does; both are kept apart because the names differ."},
+    {"page": 2, "what": "The special skills are a new group, Clan Pestilens (Lustria). Cloud of Flies and Frenzy are ours, with the same words. Resilience (+1 Toughness) is a skill of its own: our Resilient takes -1 Strength off hits in close combat, which is a different rule. No Pain (stunned counts as knocked down) is our Ignore Pain and Fear (causes fear) is our Fearsome: both are merged into ours (William, 12 Nov 2026), so the group learns ours and the PDF's names are dropped. Ignore Pain keeps its own wording with its \"only with the Resilient Strength skill\" condition dropped, since this warband's skill carries no such condition."},
     {"page": 1, "what": "The Plague Censer is our Censer. The equipment list sells it at 100 gc, a starting price, and its own entry prices it at 75+5D6, Rare 12, Plague Champions only, which is the price row. The Mousillon warband's censer is an item of its own, Plague Censer (Mousillon), because its Fog of Death rolls a D6 for every model in base contact at the end of each close-combat phase; this PDF's takes a Toughness test from the model it hits, which is what our Censer does, so this warband buys ours."},
     {"page": 1, "what": "This PDF's Fog of Death adds an extra -1 to hit for shooting at the wielder and says a roll of 6 always wounds whatever the Toughness. Our Censer takes the same Toughness test without those two lines; ours is unchanged."},
     {"page": 2, "what": "The Hero list's dagger is priced \"1st free/2 wt\" in warp tokens where every other line is in gold crowns; the PDF treats warp tokens as gold crowns, so it is imported as 2 gc."},

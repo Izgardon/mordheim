@@ -11762,7 +11762,7 @@
             "description": "Nuttaz always pass any Leadership-based Tests they have to take. A side effect of this is that their minds are too far-gone and they may never learn Academic Skills should they become a Hero on an Advance Roll."
           },
           {
-            "name": "Savage",
+            "name": "Savage (Orc Nutta)",
             "type": "Warband - Black Orcs",
             "description": "Nuttaz must always run or charge their maximum distance towards the nearest opponent they can see. Friendly models do not block line of sight. Additionally they fight with an extra attack whilst in combat. This does not appear on their profile nor does it count towards the racial maximum. If no enemy is visible they are moved under the player’s control. They can never use any form of armour or ranged weapons. Nuttaz are also too unstable for other Boyz and can never have the Leader ability or use their Ld stat for rout tests, excepting them as being the only models left on the board."
           }
@@ -62166,7 +62166,7 @@
           },
           {
             "item": {
-              "name": "Repeater Pistol (Masters of Horror)",
+              "name": "Repeater Pistol",
               "variant": ""
             },
             "shown_as": "",
@@ -63254,10 +63254,10 @@
           },
           {
             "item": {
-              "name": "Bearcloak",
+              "name": "Wolfcloak",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Bearcloak",
             "cost": 10,
             "cost_note": "",
             "first_free": false,
@@ -89492,9 +89492,8 @@
         ],
         "specials": [
           {
-            "name": "Savage",
-            "type": "Warband - Savage Orcs (Athel Loren)",
-            "description": "A Savage Orc Scarboy is subject to frenzy."
+            "name": "Frenzy",
+            "type": "Psychology"
           },
           {
             "name": "Animosity",
@@ -89585,9 +89584,8 @@
         ],
         "specials": [
           {
-            "name": "Savage",
-            "type": "Warband - Savage Orcs (Athel Loren)",
-            "description": "A Savage Orc Scarboy is subject to frenzy."
+            "name": "Frenzy",
+            "type": "Psychology"
           },
           {
             "name": "Animosity",

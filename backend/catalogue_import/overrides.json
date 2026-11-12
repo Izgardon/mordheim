@@ -434,6 +434,16 @@
         }
       ],
       "why": "William, 11 Nov 2026: the Sartosa Greatcoat is our Rain Coat (\"Based on 'Raincoat' from Border Town Burning\", 10 gc), and its two clauses - worn over armour but not with a cloak, and no help in water terrain - fold into ours, which said only that a Henchman may have one and left what it does to its flavour line"
+    },
+    "Wolfcloak": {
+      "rules": [
+        {
+          "name": "",
+          "summary": "Strength test to acquire; +1 armour save against shooting",
+          "text": "To acquire the cloak a warrior must pay 10 gc, for the travel and the hunt, and roll equal to or under his Strength on a D6. If he succeeds he finds and slays the beast and wears its cloak. A warband whose own equipment list sells the cloak may buy one when the warband is raised without testing for availability. A model wearing it gains +1 to his armour saves against all shooting attacks."
+        }
+      ],
+      "why": "William, 12 Nov 2026: the Mazzalupo's Bearcloak is our Wolfcloak, \"reworded away from the wolf\". Ours named the wolf, the Hero and Middenheim, where the Mazzalupo's names a bear and a Sheepherder; the numbers, the Strength test and the +1 save against shooting are the same in both, so one wording serves them both"
     }
   },
   "item_notes": {
@@ -573,7 +583,8 @@
   ],
   "skill_descriptions": {
     "Quick Thinker (Dwarf Exiled Engineers)": "The dwarf may add +1 to any roll on the experimental weapons chart. (MiM)",
-    "Mutant (Beastmen Raiders)": "The Hero may buy one mutation from the Possessed Mutation list. This skill may be taken only once. (EiF 74)"
+    "Mutant (Beastmen Raiders)": "The Hero may buy one mutation from the Possessed Mutation list. This skill may be taken only once. (EiF 74)",
+    "Ignore Pain (Skaven Clan Pestilens)": "A Clan Pestilens member with this skill treats “Stunned” injuries as “Knocked Down.” (TC 29)"
   },
   "skill_splits": {
     "Mutant (Marauders of Chaos)": {
@@ -837,7 +848,11 @@
         "Skink Hunter",
         "Elixir of Life",
         "Mesmerising Dance",
-        "Savage Fury",
+        {
+          "name": "Savage Fury",
+          "description": "The warrior gains +1 Attack when he charges, and is immune to charm effects and to fear.",
+          "why": "William, 12 Nov 2026: \"keep as 1 add charm\". The Albion Barbarians' Savage Fury is this skill, so ours serves both and is reworded away from the Amazon; ours already carried the immunity to charm, and the Albion wording's limit of the bonus to the first round of combat is dropped with its name"
+        },
         "Concealment"
       ]
     },

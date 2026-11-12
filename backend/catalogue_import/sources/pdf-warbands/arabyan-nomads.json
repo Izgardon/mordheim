@@ -155,7 +155,7 @@
     "new": true
   },
   "specialSkillsList": [
-    {"name": "Blending into the Sands", "description": "The warrior may hide in open ground."},
+    {"name": "Blending into the Sands", "ours": "Sand worm"},
     {"name": "Weather Tolerant", "ours": "Weather tolerant"},
     {"name": "Hit and Run", "ours": "Hit and run"}
   ],
@@ -179,6 +179,7 @@
     {"page": 3, "what": "The Khemri Equipment PDF (https://www.broheim.net/downloads/campaigns/khemri/Equipment.pdf, read 11 Nov 2026 at William's direction) gives these weapons their rules, and this page declares them for the setting. The Jambiya is our Dagger, \"just a nicknamed dagger\" (William), whose +1 enemy armour save is the Jambiya's rule. The Katar is ours already, the same -1 enemy armour save. \"Scimitar\" at 15 gc is its own item now (as user, Parry, Cutting edge, where our Sword parries only), so the tag that made this list sell our Sword twice is dropped. The Scythe is Scythe (Khemri) (as user, Cutting edge, Two Handed), kept apart from the Sylvania scythes (William: \"in this list scythe is something unique so give it the 'khemri' treatment\"). Ankus (as user, Strike first only when charged, Concussion), Cutlass (as user, Parry, an extra punch attack when a hit is successful) and Great Scimitar (+2, Two-handed, Strike last, Cutting edge) now carry their rules. The Bagh Nakh (+1, -1 enemy armour save, pair, cumbersome) is on the page but on no warband list and at no price: a row for the setting's warband types with no price. The page's Vanguards and Sword of Unholy Turning are not imported (William: \"ignore both\")."},
     {"page": 3, "what": "The Warrior list's Scythe is 5 gc and its Katar 5 gc. The Ankus is \"used as a spear, when charged and a staff in hth\", and its rules line prints \"Strike first (only when charged)\": read as striking first in the turn he charges. The Cutlass's extra punch attack is printed with no Strength of its own. The Khemri page's Tufenk is Strength 1 where our Tufenk (mordheimer, Khemri 1b) is Strength 2, and its Genie lamp is our Lamp of the Djinn with two table rows worded otherwise (its Good 4 and 5 are an extra hero and an extra henchman, where ours are a random and a chosen item, and its Bad 6 is nothing where ours is a roll on the injury chart) and a Jinn who fights for D3x10 gc, which ours does not carry: all three are for William, and nothing of ours was changed."},
     {"page": 2, "what": "No group sizes are printed for the Warriors or the Slaves."},
-    {"page": 1, "what": "The Sheik and the Street Mage tick no Special column, so neither learns the warband's own skills."}
+    {"page": 1, "what": "The Sheik and the Street Mage tick no Special column, so neither learns the warband's own skills."},
+    {"page": 2, "what": "Blending into the Sands (hide in open ground) is our Sand worm, the Tomb Robbers' skill of the same setting, and is merged into it (William, 12 Nov 2026): the group learns ours and the PDF's name is dropped."}
   ]
 }

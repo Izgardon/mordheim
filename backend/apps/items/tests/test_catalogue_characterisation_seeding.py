@@ -91,9 +91,9 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 51,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 520,  # the import's 425 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's nine) + one Animal item per beast
+                "Item": 517,  # the import's 422 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's nine) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol and the Mutiny in Marienburg Lamp of the Djinn merged into ours (William, 12 Nov 2026)
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
-                "Skill": 530,  # the import's 478 (one per name, Athel Loren's 14 among them) + the 24 hired swords' own skills the book lacks
+                "Skill": 524,  # the import's 472 (one per name, Athel Loren's 14 among them) + the 24 hired swords' own skills the book lacks; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 133,  # the import's 110 (Athel Loren's three) + a group of his own for each of 19 hired swords
                 "Spell": 357,  # 312 (the PDFs' lores, the Mazzalupo's Commands and the Blessings of the Mare among them) + the Dark Mage's six (BUG-54)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
@@ -120,7 +120,8 @@ class SeedAllTests(TestCase):
                 # variants of the Orc Mob (William, 11 Nov 2026), so their pages bring no template of their own
                 # the Athel Loren batch's four templates add 41 of their own (9 the Dwarf Troll Slayers' runic tattoos);
                 # the two warbands read from their mordheimer pages add 18 (Mazzalupo 10, the Order of the Mare 8)
-                "Special": 1575,
+                # the Savage Orcs (Athel Loren) Savage is the shared Frenzy (William, 12 Nov 2026): one row fewer
+                "Special": 1574,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 "BestiaryEntry": 64,
@@ -190,7 +191,7 @@ class SeedAllTests(TestCase):
                 "WarbandType": 8,
                 "WarbandTemplate": 8,
                 "Item": 7,
-                "Skill": 25,
+                "Skill": 24,  # the Arabyan Nomads' Blending into the Sands is our Sand worm (William, 12 Nov 2026)
                 "SkillGroup": 7,
                 "Race": 1,
                 "Spell": 6,
@@ -351,7 +352,9 @@ class SeedAllTests(TestCase):
             links,
             {
                 # Totem Warrior, Berserker, Witch Elf, Cannibal Boy; Sigmund's Maddened; the Bloodletter
-                "Frenzy": (11, 1, 1, 1),  # the Witch Elf hired sword and the Skaven Slayer take it too
+                # the Witch Elf hired sword and the Skaven Slayer take it too, and the two Savage Orc (Athel
+                # Loren) fighters, whose Savage is one of Frenzy's names (William, 12 Nov 2026)
+                "Frenzy": (13, 1, 1, 1),
                 "Hate Orcs and Goblins": (5, 3, 0, 0),  # the Dwarf Treasure Hunter's Hates Orcs & Goblins now too
                 "Hate High Elves": (0, 1, 1, 0),  # the Dark Elf Assassin's and Dijin Katal's Kindred Hatred
                 "Hate Bandits and Outlaws": (2, 0, 0, 0),  # the Horned Hunters' Hang the Bandit!
@@ -513,7 +516,7 @@ class SeedAllTests(TestCase):
         # the 2026-10-28 data audit: skills.json held a second Pirates list (sourced "TBMF") under the same type; since
         # the skill groups (phase 1a) its Sea Legs is its own skill, "Sea Legs (TBMF)" (William agreed the split), and
         # the two lists are two groups sharing Cutlass Master and Swashbuckler
-        self.assertIn("Skills import complete. Created: 506, Updated: 0", self.output)
+        self.assertIn("Skills import complete. Created: 500, Updated: 0", self.output)
         self.assertIn("If he Falls during a battle", Skill.objects.get(name="Sea Legs").description)
         self.assertIn("swings through rope and rigging", Skill.objects.get(name="Sea Legs (TBMF)").description)
         second = SkillGroup.objects.get(name="Pirates (TBMF)").skill_links.values_list("skill__name", flat=True)

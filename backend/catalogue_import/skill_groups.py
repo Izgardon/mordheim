@@ -258,7 +258,9 @@ class SkillGroupBuild:
         """Our skills a new group reuses: who could learn each before (its rows' who-can) and who can now (every group
         holding it), when they differ."""
         for name in skill_names:
-            skill = self.skills[norm_name(name)]
+            skill = self.skills.get(norm_name(name))
+            if skill is None:  # a skill another new group made, which has no rows of ours to compare (Savage Fury)
+                continue
             accesses = [self.row_access[label(row)] for row in skill.rows if label(row) in self.row_access]
             before = frozenset().union(*(self.type_set(access) for access in accesses))
             after = frozenset().union(*(self.type_set(group) for group in groups if name in group["skills"]))

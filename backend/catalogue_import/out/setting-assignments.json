@@ -1196,11 +1196,6 @@
       "how": "overrides.json"
     },
     {
-      "name": "Savage Fury (Albion Barbarians)",
-      "setting": "grade-3",
-      "how": "overrides.json"
-    },
-    {
       "name": "Concealment (Albion Barbarians)",
       "setting": "grade-3",
       "how": "overrides.json"
@@ -1273,11 +1268,6 @@
     {
       "name": "Man of the World",
       "setting": "sartosa",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Blending into the Sands",
-      "setting": "khemri-3",
       "how": "overrides.json"
     },
     {
@@ -2178,26 +2168,6 @@
     {
       "name": "Resilience",
       "setting": "lustria",
-      "how": "overrides.json"
-    },
-    {
-      "name": "No Pain",
-      "setting": "lustria",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Fear",
-      "setting": "lustria",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Numb",
-      "setting": "mousillon",
-      "how": "overrides.json"
-    },
-    {
-      "name": "Rotten Body (Mousillon)",
-      "setting": "mousillon",
       "how": "overrides.json"
     },
     {

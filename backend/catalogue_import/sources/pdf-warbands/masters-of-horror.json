@@ -49,7 +49,7 @@
       "caveat": "",
       "items": [
         {"name": "chainsaw sword", "alias": "", "cost": {"cost": 15}},
-        {"name": "Repeater Pistol (Masters of Horror)", "alias": "", "cost": {"cost": 25}},
+        {"name": "Repeater Pistol", "alias": "", "cost": {"cost": 25}},
         {"name": "electric trident", "alias": "", "cost": {"cost": 15}}
       ]
     }
@@ -201,8 +201,10 @@
   ],
   "stubs": [
     {"name": "Chainsaw Sword", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2},
-    {"name": "Electric Trident", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2},
-    {"name": "Repeater Pistol (Masters of Horror)", "type": "Weapon", "subtype": "Blackpowder", "rarity": null, "dice": 3, "rulesPage": 2}
+    {"name": "Electric Trident", "type": "Weapon", "subtype": "Melee", "rarity": null, "dice": 1, "rulesPage": 2}
+  ],
+  "priceRows": [
+    {"name": "Repeater Pistol", "cost": 25, "dice": 3, "rarity": null, "note": "Heroes only", "page": 2}
   ],
   "flags": [
     {"page": 1, "what": "A Horror warband needs at least 3 models: our templates hold no minimum, so it is not imported."},
@@ -211,7 +213,7 @@
     {"page": 2, "what": "The skill table is an image (read from it): Mad Scientist Academic, Speed; Thrall, Werewolf and Hunchback Combat, Strength, Speed. It names the Wolfman Werewolf."},
     {"page": 2, "what": "The Miscellaneous Equipment is Heroes only: a third list every hero but the Wolfman (who carries nothing) buys from."},
     {"page": 2, "what": "The Chainsaw Sword (15+D6 gc, MoH only; Fear, Shredder) and the Electric Trident (15+D6 gc, MoH only; Zzap!, Shocking, Nail in Boot) are stubs, read as Common and this warband's, their rules on p2."},
-    {"page": 2, "what": "The Repeater Pistol (25+3D6 gc, MoH only; range 8\", S4, Save Mod, Too Much Tinkering, Repeater) does other things than our Repeater Pistol, which stays the Gunnery School's, so it is a stub of its own, Repeater Pistol (Masters of Horror), at the list's 25 gc, read as Common and this warband's, its rules on p2 (William, 6 Nov 2026: \"keep as 2 separate\"). It rolls on the Misfire chart, so it is a blackpowder weapon."},
+    {"page": 2, "what": "The Repeater Pistol (25+3D6 gc, MoH only; range 8\", S4, Save Mod, Too Much Tinkering, Repeater) is our Repeater Pistol and merged into it (William, 12 Nov 2026), reversing the 6 Nov 2026 answer to keep the two apart: the line buys ours, with a price row for this warband at the entry's 25+3D6, read as Common. Ours keeps its own 6\" range and its five rules, so this page's 8\" range, Too Much Tinkering and Repeater are not carried."},
     {"page": 3, "what": "The Leader rule says \"within 6\" of the Necrarch Vampire\" (the page image shows the 6\"; the text layer drops it): read as the Mad Scientist, who leads."},
     {"page": 3, "what": "The Thrall's race is our Vampire."},
     {"page": 4, "what": "The Flesh Construct's Cannot Run (\"may still charge normally\") is our shared May Not Run. It gains experience only on a passed Leadership test, so it gains experience but never becomes a Hero. Both it and the Zombies (\"Undead creatures\") take our Undead race; Zombies gain no experience."},

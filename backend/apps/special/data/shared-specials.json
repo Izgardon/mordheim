@@ -92,7 +92,8 @@
       "text": "The model is subject to frenzy.",
       "aliases": [
         "Berserkers",
-        "Maddened"
+        "Maddened",
+        "Savage"
       ]
     },
     {
@@ -838,6 +839,17 @@
         }
       ],
       "why": "Each wound ignored on a 4+, never against fire; the Bounty of Arkhar heals every wound on a 4+, once, and the Trolls never roll for injury."
+    },
+    {
+      "name": "Savage (Orc Nutta)",
+      "rule": "Savage",
+      "owners": [
+        {
+          "warband": "Black Orcs",
+          "fighter": "Orc Nutta"
+        }
+      ],
+      "why": "He must always run or charge his full distance at the nearest enemy he can see, fights with an extra attack outside his profile and his racial maximum, may never use armour or missile weapons and may never lead or lend his Leadership to a rout test: the Savage Orcs' Savage, which is frenzy and nothing else, is the shared Frenzy."
     },
     {
       "name": "Berserkers (Red Toof Goblin)",

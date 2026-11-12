@@ -637,10 +637,11 @@ class PdfImportTests(SimpleTestCase):
 
     def test_a_warband_only_row_is_named_for_its_warband_or_for_its_setting(self) -> None:
         # William, 11 Nov 2026: the warband's name in brackets where that tells them apart, the setting's where it
-        # does not, and never both. Three warbands are Skaven of Clan Pestilens, so the Mousillon skill takes the
-        # setting; only the Dark Elf Corsairs hire their three Specialists, so those take the warband.
-        rotten = sorted(row["name"] for row in load_json(OUT / "skills.json") if row["name"].startswith("Rotten"))
-        self.assertEqual(rotten, ["Rotten Body", "Rotten Body (Mousillon)"])
+        # does not, and never both. Two warbands are Night Goblins, so the Karak Azgal skills take the setting;
+        # only the Dark Elf Corsairs hire their three Specialists, so those take the warband. (The Mousillon Clan
+        # Pestilens skill that used to stand here, Rotten Body (Mousillon), is our Fearsome since 12 Nov 2026.)
+        sneaky = sorted(row["name"] for row in load_json(OUT / "skills.json") if row["name"].startswith("Sneaky Git"))
+        self.assertEqual(sneaky, ["Sneaky Git", "Sneaky Git (Karak Azgal)"])
         hired = {row["name"] for row in load_json(HIRELING_DATA / "hired-swords.json")}
         self.assertLessEqual(
             {
@@ -743,7 +744,7 @@ class PdfImportTests(SimpleTestCase):
         sheep = next(row for row in mazzalupo["fighters"] if row["name"] == "Black sheep")
         # not our shared Stupidity: it holds only while no Sheepherder is within 6"
         self.assertIn("Stupidity (Black sheep)", [special["name"] for special in sheep["specials"]])
-        self.assertEqual(self.items["Bearcloak"]["origin"], ORIGIN)  # our Wolfcloak's effect, kept apart
+        self.assertNotIn("Bearcloak", self.items)  # our Wolfcloak under another name (William, 12 Nov 2026)
 
         mare = self.templates["order-of-the-mare"]
         dame = next(row for row in mare["fighters"] if row["name"] == "Dame of the Mare")

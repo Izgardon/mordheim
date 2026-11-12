@@ -585,7 +585,7 @@
   },
   {
     "name": "Ignore Pain",
-    "description": "Only a Clan Pestilens member with the Resilient Strength skill may choose the Ignore Pain special skill.  A Clan Pestilens member with this skill treats “Stunned” injuries as “Knocked Down.” (TC 29)"
+    "description": "A Clan Pestilens member with this skill treats “Stunned” injuries as “Knocked Down.” (TC 29)"
   },
   {
     "name": "Sand worm",
@@ -861,7 +861,7 @@
   },
   {
     "name": "Savage Fury",
-    "description": "The Amazon has learned to channel her anger and aggression making her a veritable animal while attacking her foes. Any Amazon model with this skill receives +1 Attack when charging and is immune to charm effects and fear."
+    "description": "The warrior gains +1 Attack when he charges, and is immune to charm effects and to fear."
   },
   {
     "name": "Concealment",
@@ -956,10 +956,6 @@
     "description": "The range of any bow he uses is 6\" longer."
   },
   {
-    "name": "Savage Fury (Albion Barbarians)",
-    "description": "He gains +1 Attack in the first round of combat when he charges, and is immune to fear."
-  },
-  {
     "name": "Concealment (Albion Barbarians)",
     "description": "Any enemy must halve the range at which he can spot this warrior while he is hidden. He may also shoot while hidden: roll a D6 afterwards, and on a 5 or 6 he stays hidden."
   },
@@ -1018,10 +1014,6 @@
   {
     "name": "Man of the World",
     "description": "Merchant only. If the Merchant was not taken out of action, in the post-battle sequence the warband may try to buy any item from any campaign setting or any other warband's list, at the warband's normal rarity roll; experimental or fan-made items need the group's agreement. It may hold only one of each item bought this way. A pair or a brace is bought together and may not be split between warriors. The skill works with Black Market, and a foreign item may be added to the Black Market list at the Merchant's next advance; a Black Market roll for a foreign item the warband already holds is wasted. A weapon may still need Weapons Training or Weapons Expert before it can be used."
-  },
-  {
-    "name": "Blending into the Sands",
-    "description": "The warrior may hide in open ground."
   },
   {
     "name": "Sticky Fingers",
@@ -1742,22 +1734,6 @@
   {
     "name": "Resilience",
     "description": "The warrior's Toughness is increased by +1. This is the only way for a Skaven to reach Toughness 5."
-  },
-  {
-    "name": "No Pain",
-    "description": "The warrior treats a stunned result as knocked down."
-  },
-  {
-    "name": "Fear",
-    "description": "The warrior causes fear."
-  },
-  {
-    "name": "Numb",
-    "description": "The warrior treats a stunned result on the Injury chart as knocked down."
-  },
-  {
-    "name": "Rotten Body (Mousillon)",
-    "description": "The warrior causes fear."
   },
   {
     "name": "Bloated",

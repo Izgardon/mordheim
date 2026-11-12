@@ -146,10 +146,10 @@
     "note": "",
     "how": "new group",
     "skills": [
+      "Savage Fury",
       "Experienced Fighter",
       "Attack Howl",
       "Master Shot",
-      "Savage Fury (Albion Barbarians)",
       "Concealment (Albion Barbarians)"
     ]
   },
@@ -271,9 +271,9 @@
     "note": "",
     "how": "new group",
     "skills": [
+      "Sand worm",
       "Weather tolerant",
-      "Hit and run",
-      "Blending into the Sands"
+      "Hit and run"
     ]
   },
   {
@@ -525,11 +525,11 @@
     "note": "",
     "how": "new group",
     "skills": [
+      "Ignore Pain",
+      "Fearsome",
       "Cloud of Flies",
       "Frenzy",
-      "Resilience",
-      "No Pain",
-      "Fear"
+      "Resilience"
     ]
   },
   {
@@ -546,11 +546,11 @@
     "note": "",
     "how": "new group",
     "skills": [
+      "Ignore Pain",
       "Resilient",
+      "Fearsome",
       "Cloud of Flies",
-      "Numb",
-      "Frenzy",
-      "Rotten Body (Mousillon)"
+      "Frenzy"
     ]
   },
   {

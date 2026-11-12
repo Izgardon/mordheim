@@ -153,10 +153,10 @@
   "skillGroup": {"name": "Clan Pestilens (Mousillon)", "new": true, "note": ""},
   "specialSkillsList": [
     {"name": "Cloud of Flies", "description": "A cloud of flies surrounds the warrior. Any model in base contact with him has -1 to hit with every attack. Clan Pestilens Heroes and Plague Monks, undead and followers of Nurgle are not affected."},
-    {"name": "Numb", "description": "The warrior treats a stunned result on the Injury chart as knocked down."},
+    {"name": "Numb", "ours": "Ignore Pain"},
     {"name": "Frenzy", "description": "The warrior is subject to frenzy."},
     {"name": "Resilient", "ours": "Resilient"},
-    {"name": "Rotten Body (Mousillon)", "pdfName": "Rotten Body", "description": "The warrior causes fear."}
+    {"name": "Rotten Body", "ours": "Fearsome"}
   ],
   "priceRows": [],
   "aliases": [],
@@ -176,7 +176,7 @@
     {"page": 4, "what": "The Plague Censer is its own item, Plague Censer (Mousillon), with the PDF's rules: As user +2, Heavy, Two Handed and a Fog of Death that rolls a D6 for every model in base contact at the end of each close-combat phase (a 6 wounds, no armour save, the wielder immune) and takes -1 to hit when shooting at the wielder. Our Censer (Town Cryer 29) keeps its own Fog of Death, a Toughness test, and is unchanged; this one takes the setting's name, since three warbands are called Skaven of Clan Pestilens (William, 11 Nov 2026)."},
     {"page": 3, "what": "The equipment lists' Staff (3 gc) and Club/Staff (3 gc) are our Club, Mace or Hammer, bought under the PDF's names."},
     {"page": 3, "what": "The Clanrat list's Flail is noted \"Plague Monks and Initiates only\": read as Plague Monks and Monk Initiates."},
-    {"page": 2, "what": "The special skills are a new group, Clan Pestilens (Mousillon). Our Skaven Clan Pestilens group (the Mordheim 1b warband's) holds different skills, so the two are kept apart. Resilient is ours. Rotten Body is named apart because our skill of that name makes a Skaven immune to poisons, diseases and the fog of death, where this one makes him cause fear; it takes the setting's name, Rotten Body (Mousillon), because three warbands are called Skaven of Clan Pestilens, so the warband's name would not tell them apart (William, 11 Nov 2026). Numb does what our Ignore Pain does, and Cloud of Flies what the shared special of that name does, both under another name: both are kept apart."},
+    {"page": 2, "what": "The special skills are a new group, Clan Pestilens (Mousillon). Our Skaven Clan Pestilens group (the Mordheim 1b warband's) holds different skills, so the two are kept apart. Resilient is ours. Rotten Body (causes fear) is our Fearsome and Numb is our Ignore Pain: both are merged into ours (William, 12 Nov 2026), so the group learns ours and the PDF's names are dropped. Our own Rotten Body, which makes a Skaven immune to poisons, diseases and the fog of death, is a different rule and keeps the name. Cloud of Flies does what the shared special of that name does, under another name: it is kept apart."},
     {"page": 6, "what": "Plague Monks have no maximum (\"any number\"). Plague Rats and Skaven Slaves gain no experience."},
     {"page": 1, "what": "Our catalogue already holds a Skaven of Clan Pestilens template, the Mordheim 1b warband's, and a template is kept by its name, so this one is named Skaven of Clan Pestilens (Mousillon). Its warband type is named Skaven of Clan Pestilens, as the PDF names it."},
     {"page": 7, "what": "Page 7 holds only the Skaven Slave's Abused rule; the measured scan page carries nothing else."}

@@ -732,24 +732,6 @@
     ]
   },
   {
-    "name": "Lamp of the Djinn",
-    "type": "Miscellaneous",
-    "subtype": "Wondrous Item",
-    "grade": "2c",
-    "description": "Magical lamp; details in rules.",
-    "strength": null,
-    "range": null,
-    "properties": [],
-    "single_use": false,
-    "availabilities": [
-      {
-        "cost": 50,
-        "rarity": 12,
-        "variable_cost": "+2D6 gc"
-      }
-    ]
-  },
-  {
     "name": "Lyre",
     "type": "Miscellaneous",
     "subtype": "Equipment",

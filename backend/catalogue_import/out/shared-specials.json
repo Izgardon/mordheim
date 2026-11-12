@@ -107,7 +107,8 @@
       "description": "The model is subject to frenzy.",
       "aliases": [
         "Berserkers",
-        "Maddened"
+        "Maddened",
+        "Savage"
       ],
       "cost": null,
       "setting": null

@@ -3765,6 +3765,22 @@
       },
       {
         "label": "",
+        "cost": 25,
+        "dice": 3,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "masters-of-horror",
+            "excluded": false
+          }
+        ],
+        "note": "Heroes only"
+      },
+      {
+        "label": "",
         "cost": 40,
         "dice": null,
         "dice_multiplier": null,
@@ -13799,8 +13815,8 @@
     "rules": [
       {
         "name": "",
-        "summary": "Requires Strength test to acquire, +1 armour save vs shooting",
-        "text": "To acquire a Wolfcloak, a Hero must pay 10 gc (to represent the expense of traveling to Middenheim and taking part in a hunt). In addition, the Hero must roll equal to or under his Strength on a D6. If successful, the Hero finds and slays the wolf and can wear its cloak as a mark of his skill and prowess. Note that Middenheimers may buy Wolfcloaks when starting their warband without making a test for availability. A model wearing a Wolfcloak will gain +1 to his armour saves against all shooting attacks.",
+        "summary": "Strength test to acquire; +1 armour save against shooting",
+        "text": "To acquire the cloak a warrior must pay 10 gc, for the travel and the hunt, and roll equal to or under his Strength on a D6. If he succeeds he finds and slays the beast and wears its cloak. A warband whose own equipment list sells the cloak may buy one when the warband is raised without testing for availability. A model wearing it gains +1 to his armour saves against all shooting attacks.",
         "tables": []
       }
     ],
@@ -13832,6 +13848,22 @@
           }
         ],
         "note": "Rarity in the source: Special"
+      },
+      {
+        "label": "",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "mazzalupo",
+            "excluded": false
+          }
+        ],
+        "note": "Sheepherders only"
       }
     ]
   },
@@ -17191,46 +17223,6 @@
     ]
   },
   {
-    "slug": "lamp-of-the-djinn-mim",
-    "name": "Lamp of the Djinn",
-    "variant": "Mutiny in Marienburg",
-    "origin": "mim",
-    "type": "Miscellaneous",
-    "subtype": "Wondrous Item",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Magical lamp; details in rules.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 2,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 12,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "lyre",
     "name": "Lyre",
     "variant": "",
@@ -19345,93 +19337,6 @@
         "warbands": [
           {
             "type": "masters-of-horror",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "repeater-pistol-masters-of-horror",
-    "name": "Repeater Pistol (Masters of Horror)",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Weapon",
-    "subtype": "Blackpowder",
-    "setting": "sylvania",
-    "source": "Sylvania Supplement",
-    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sylvania/Masters%20Of%20Horror.pdf",
-    "tags": [
-      "repeater pistol (masters of horror)"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 25,
-        "dice": 3,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "masters-of-horror",
-            "excluded": false
-          }
-        ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "bearcloak",
-    "name": "Bearcloak",
-    "variant": "",
-    "origin": "pdf-warbands",
-    "type": "Miscellaneous",
-    "subtype": "",
-    "setting": "mordheim-2a",
-    "source": "Mordheim Italia, V3.5 (mordheimer.net)",
-    "link_url": "https://mordheimer.net/docs/warbands/grade-2a-warbands/mazzalupo",
-    "tags": [
-      "bearcloak"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "Sheepherders only.",
-    "needs_rules": false,
-    "rules": [
-      {
-        "name": "Bearcloak",
-        "summary": "",
-        "text": "To acquire a Bearcloak a Sheepherder pays 10 gold crowns and rolls equal to or under his Strength on a D6. If he succeeds he finds and slays the bear and wears its cloak. A Sheepherder may buy a Bearcloak when the warband is raised without testing for availability. A model wearing a Bearcloak gains +1 to its armour saves against all shooting attacks.",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": false,
-        "warbands": [
-          {
-            "type": "mazzalupo",
             "excluded": false
           }
         ],

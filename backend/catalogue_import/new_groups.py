@@ -2,9 +2,11 @@
 
 A new group is open to its warband type only (``type``), or to the types it names (``types``; a list that is exactly a
 group's members is stored as that group), with the note shown when learning from it (``note``: who of the warband may
-take its shared skills, "Gnoblars only: Infiltration"). Its skills are ours by name (``skills``) and new ones
+take its shared skills, "Gnoblars only: Infiltration"). Its skills are ours by name (``skills``, which also names a
+skill an earlier group made: the Amazons' Savage Fury, which the Albion Barbarians learn too) and new ones
 (``new_skills``, title-cased; ``{"name", "rule"}`` names a new skill apart from the mordheimer skill whose rules it
-takes, "Pathfinder (Horned Hunters)") whose rules come from mordheimer's ``Rules`` (the entry naming the group's
+takes, "Pathfinder (Horned Hunters)", and ``description`` is William's own wording in place of mordheimer's) whose
+rules come from mordheimer's ``Rules`` (the entry naming the group's
 warband) or from a source file in ``sources/`` (``source``), each given a setting the way our rows are (assignments.py:
 mordheimer's for its name, else overrides.json's ``setting_assignments`` by "Name (Group)", else Mordheim's). A new
 name that a skill we have already holds (one of ours, or a hired sword's or dramatis persona's own special skill, which
@@ -41,11 +43,13 @@ def rules_text(entry: dict[str, Any]) -> str:
     return "\n\n".join(part for part in parts if part)
 
 
-def _named(raw: str | dict[str, str]) -> tuple[str, str]:
-    """A new skill's name and the name of the skill whose rules it takes: a bare name (title-cased) is both."""
+def _named(raw: str | dict[str, str]) -> tuple[str, str, str]:
+    """A new skill's name, the name of the skill whose rules it takes, and William's own wording for it where he
+    gives one (``description``: the Amazons' Savage Fury, reworded away from the Amazon now that the Albion
+    Barbarians learn the same skill). A bare name (title-cased) is its own rule's name and takes mordheimer's."""
     if isinstance(raw, dict):
-        return raw["name"], raw.get("rule", raw["name"])
-    return title_case(raw), title_case(raw)
+        return raw["name"], raw.get("rule", raw["name"]), raw.get("description", "")
+    return title_case(raw), title_case(raw), ""
 
 
 def hireling_skill_names(*profiles: list[dict[str, Any]]) -> dict[str, str]:
@@ -95,9 +99,9 @@ class NewGroups:
             skills = [self._ours(name, skill) for skill in decision.get("skills", [])]
             self.reused += [skill for skill in skills if skill not in self.reused]
             wanted = [_named(raw) for raw in decision.get("new_skills", [])]
-            made = [self._new(name, skill, rule, decision.get("source"), assign) for skill, rule in wanted]
+            made = [self._new(name, skill, rule, decision.get("source"), assign, text) for skill, rule, text in wanted]
             skills += [skill for skill in made if skill is not None]
-            self._left_out(name, slugs, [*skills, *(rule for _skill, rule in wanted)])
+            self._left_out(name, slugs, [*skills, *(rule for _skill, rule, _text in wanted)])
             access = self.build.access_of(frozenset(slugs))
             groups.append(
                 {
@@ -113,12 +117,16 @@ class NewGroups:
         return groups
 
     def _ours(self, group: str, name: str) -> str:
-        skill = self.build.skills.get(norm_name(name))
+        """One of our skills the group holds, or one an earlier group made (the Amazons' Savage Fury, which the
+        Albion Barbarians learn too: William, 12 Nov 2026, "keep as 1")."""
+        skill = self.build.skills.get(norm_name(name)) or self.made.get(norm_name(name))
         if skill is None:
             raise ValueError(f"overrides.json new_skill_groups {group!r}: no skill {name!r}")
         return skill.name
 
-    def _new(self, group: str, name: str, rule: str, source: str | None, assign: Assign) -> str | None:
+    def _new(
+        self, group: str, name: str, rule: str, source: str | None, assign: Assign, wording: str = ""
+    ) -> str | None:
         """A new skill of the group (made once for every group listing it), with the rules (and setting) of `rule`;
         None when a skill we have holds its name."""
         key = norm_name(name)
@@ -128,7 +136,7 @@ class NewGroups:
         if held:
             self.build.log.collisions.append((name, group, held))
             return None
-        text, origin = self._rule(group, rule, source)
+        text, origin = (wording, "overrides.json") if wording else self._rule(group, rule, source)
         self.made[key] = Skill(name, text)
         assigned = assign([{"name": rule, "type": group}])[0]
         self.settings.append({"name": name, "setting": assigned["setting"], "how": assigned["how"]})

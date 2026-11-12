@@ -335,8 +335,8 @@
           }
         },
         {
-          "name": "Bearcloak",
-          "alias": "",
+          "name": "Wolfcloak",
+          "alias": "Bearcloak",
           "cost": {
             "cost": 10,
             "costSuffix": "Sheepherders only"
@@ -620,22 +620,15 @@
     }
   ],
   "aliases": [],
-  "stubs": [
+  "stubs": [],
+  "priceRows": [
     {
-      "name": "Bearcloak",
-      "type": "Miscellaneous",
-      "subtype": "",
+      "name": "Wolfcloak",
+      "cost": 10,
       "rarity": null,
       "dice": null,
-      "rulesPage": 1,
-      "note": "Sheepherders only.",
-      "rules": [
-        {
-          "name": "Bearcloak",
-          "summary": "Strength test to acquire; +1 armour save against shooting.",
-          "text": "To acquire a Bearcloak a Sheepherder pays 10 gold crowns and rolls equal to or under his Strength on a D6. If he succeeds he finds and slays the bear and wears its cloak. A Sheepherder may buy a Bearcloak when the warband is raised without testing for availability. A model wearing a Bearcloak gains +1 to its armour saves against all shooting attacks."
-        }
-      ]
+      "note": "Sheepherders only",
+      "page": 1
     }
   ],
   "flags": [
@@ -669,11 +662,11 @@
     },
     {
       "page": 1,
-      "what": "The Bearcloak is word for word our Wolfcloak with a bear in place of the wolf, at the same 10 gc and with the same Strength test and +1 save against shooting. It is kept apart as a stub of its own, because the test is the Sheepherder's rather than a Hero's and the cloak is the Mazzalupo's; see the decisions for whether it should be our Wolfcloak instead."
+      "what": "The Bearcloak is word for word our Wolfcloak with a bear in place of the wolf, at the same 10 gc and with the same Strength test and +1 save against shooting, so it is our Wolfcloak (William, 12 Nov 2026): the line buys ours, shown as Bearcloak, with a price row for the Mazzalupo at 10 gc, Sheepherders only, and ours is reworded away from the wolf and from Middenheim so it serves both (overrides.json item_own_rules)."
     },
     {
       "page": 1,
-      "what": "The Bearcloak's availability is printed as \"Special\" rather than a rarity, so its row is Common and its rule carries the Strength test."
+      "what": "The Bearcloak's availability is printed as \"Special\" rather than a rarity, so its price row is Common and our Wolfcloak's rule carries the Strength test."
     },
     {
       "page": 1,
@@ -681,7 +674,7 @@
     },
     {
       "page": 1,
-      "what": "The Horse line is 40 gc, our Riding/Draft Horse's own price; every other line matches our price but the Bearcloak, which we lack."
+      "what": "The Horse line is 40 gc, our Riding/Draft Horse's own price; every other line matches our price, the Bearcloak's 10 gc being our Wolfcloak's."
     }
   ]
 }
