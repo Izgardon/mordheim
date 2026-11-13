@@ -1,10 +1,12 @@
 """William's review of 12 Nov 2026: the skills and items merged into one row, the ones separated because their
-rules really differ, and the three numbers of ours that were wrong (groups 1 to 3 of the review), with its
-later rulings on the Sea Dragon Cloak and on the Druchii's two equipment lists. The settings, the price rows,
-the spelling and the two warband types are in test_review_rulings_data.py.
+rules really differ, and the numbers of ours that were wrong (groups 1 to 3 of the review), with its later
+rulings on the Sea Dragon Cloak, on the Druchii's two equipment lists and on the Mortuary Cult scrolls, whose
+two printings became two lores (13 Nov 2026). The settings, the price rows, the spelling and the two warband
+types are in test_review_rulings_data.py.
 """
 
 import json
+from typing import Any, ClassVar
 
 from catalogue_import.common import load_json
 from catalogue_import.sources import OUT
@@ -176,11 +178,6 @@ class MergesAndSeparationsTests(ReviewCase):
     def test_the_nehekharan_javelins_throw_12_inches(self) -> None:
         self.assertEqual(self.items["Nehekharan Javelins"]["range"], '12"')
 
-    def test_the_scarab_song_is_12_inches_and_one_d6(self) -> None:
-        spells = {row["name"]: row["description"] for row in load_json(SPELL_DATA / "spells.json")}
-        song = spells["Merneptah's Scroll of the Scarab Song"]
-        self.assertEqual(song, 'Target within 12" suffers 1D6 S1 hits and cannot be shot at or fight in combat.')
-
     def test_the_assassin_squads_master_of_poisons_brews_d3_minus_one(self) -> None:
         text = self.skills["Master of Poisons (Assassin Squad)"]
         self.assertIn("brew D3-1 portions", text)
@@ -240,3 +237,65 @@ class MergesAndSeparationsTests(ReviewCase):
             if fighter["name"] in ("Noble", "Corsair")
         }
         self.assertEqual(buyers, {"Noble": ["druchii-heroes-equipment-list"], "Corsair": ["corsairs-equipment-list"]})
+
+
+class MortuaryCultScrollsTests(ReviewCase):
+    """William, 13 Nov 2026 ("Yes 2 lores seems best"): the Mortuary Cult scrolls are printed twice, and the two
+    printings differ on more than wording - Merneptah's tail is opposite in effect, Neferre's difficulty is 7 in one
+    and 8 in the other - so each warband's Liche Priest reads his own book's lore. The Tomb Guardians' printing is
+    the earliest, so it keeps the true name; the Nehekhara Tomb Guards' is named for the warband.
+    """
+
+    OLD = "Mortuary Cult Scrolls"
+    NEW = "Mortuary Cult Scrolls (Nehekhara Tomb Guards)"
+    spells: ClassVar[dict[str, dict[str, Any]]]
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.spells = {}
+        for row in load_json(SPELL_DATA / "spells.json"):
+            cls.spells.setdefault(row["type"], {})[row["name"]] = row
+
+    def test_both_printings_are_lores_of_their_own_with_the_same_six_scrolls(self) -> None:
+        self.assertIn(self.NEW, self.spells)
+        self.assertEqual(sorted(self.spells[self.OLD]), sorted(self.spells[self.NEW]))
+        self.assertEqual(len(self.spells[self.NEW]), 6)
+        # the Nehekhara printing is Khemri 3's, as that warband is
+        self.assertEqual({row.get("setting") for row in self.spells[self.NEW].values()}, {"khemri-3"})
+
+    def test_the_difficulties_are_each_printings_own(self) -> None:
+        old = {name: row["dc"] for name, row in self.spells[self.OLD].items()}
+        new = {name: row["dc"] for name, row in self.spells[self.NEW].items()}
+        self.assertEqual(old["Neferre's Scroll of Quaking Horror"], "7")
+        self.assertEqual(new["Neferre's Scroll of Quaking Horror"], "8")
+        self.assertEqual(old["Merneptah's Scroll of the Scarab Song"], "7")
+        self.assertEqual(new["Merneptah's Scroll of the Scarab Song"], "6")
+
+    def test_the_scarab_song_is_each_printings_own_range_dice_and_tail(self) -> None:
+        # ours carried printing B's 12"/1D6 on printing A's difficulty, with the tail cut off: a hybrid faithful to
+        # neither. The tails are opposite, which is what makes these two rules and not one transcribed twice.
+        old = self.spells[self.OLD]["Merneptah's Scroll of the Scarab Song"]["description"]
+        new = self.spells[self.NEW]["Merneptah's Scroll of the Scarab Song"]["description"]
+        self.assertIn('within 8"', old)
+        self.assertIn("2D6 Strength 1 hits", old)
+        self.assertIn("counts as having just stood up in the next turn", old)
+        self.assertIn('within 12"', new)
+        self.assertIn("1D6 Strength 1 hits", new)
+        self.assertIn("may be attacked and attack as normal in his next turn", new)
+
+    def test_djedres_summonation_keeps_each_printings_own_limits(self) -> None:
+        old = self.spells[self.OLD]["Djedre's Summonation of the Vengeful Dead"]["description"]
+        new = self.spells[self.NEW]["Djedre's Summonation of the Vengeful Dead"]["description"]
+        self.assertIn("during the last turn", old)
+        self.assertIn("not straight into hand-to-hand combat", old)
+        self.assertNotIn("during the last turn", new)
+        self.assertNotIn("not straight into hand-to-hand combat", new)
+
+    def test_each_liche_priest_casts_from_his_own_warbands_printing(self) -> None:
+        def lores(slug: str) -> list[str]:
+            found = next(row for row in self.templates[slug]["fighters"] if row["name"] == "Liche Priest")
+            return [lore["name"] for lore in found["spell_types"]]
+
+        self.assertEqual(lores("tomb-guardians"), [self.OLD])
+        self.assertEqual(lores("nehekhara-tomb-guards"), [self.NEW])

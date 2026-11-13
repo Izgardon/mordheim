@@ -1061,7 +1061,7 @@ Groups the fighters name whose learners (skill_group_learners) leave out a warba
 | the-restless-dead | Liche | Wizard | Necromancy (Restless Dead) |
 | the-restless-dead | Necromancer | Wizard | Necromancy (Restless Dead) |
 | the-sons-of-hashut | Apprentice Sorcerer | Wizard | Chaos Dwarfs Magic |
-| tomb-guardians-old | Liche Priest | Wizard | Mortuary Cult Scrolls |
+| tomb-guardians-old | Liche Priest | Wizard | Mortuary Cult Scrolls (Nehekhara Tomb Guards) |
 | tomb-guardians | Liche Priest | Wizard | Mortuary Cult Scrolls |
 | undead | Necromancer | Wizard | Necromancy |
 | witch-hunters | Warrior-Priest | Priest | Prayers of Sigmar |

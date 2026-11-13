@@ -457,7 +457,10 @@ CREATURES = frozenset(
 CASTERS: dict[tuple[str, str], str] = {
     ("court-of-the-profane-pleasures", "Slaaneshi Priest of Obscene"): "Chaos Rituals",
     ("merchant-caravans", "Magician"): "Lesser Magic",
-    ("tomb-guardians-old", "Liche Priest"): "Mortuary Cult Scrolls",
+    # the Nehekhara page prints the scrolls again, and not the same: Neferre's is difficulty 8 and Merneptah's
+    # 6 at 12" for 1D6 hits, with the opposite tail. Two lores (William, 13 Nov 2026: "Yes 2 lores seems best");
+    # the Tomb Guardians' printing is the earlier, so it keeps the true name.
+    ("tomb-guardians-old", "Liche Priest"): "Mortuary Cult Scrolls (Nehekhara Tomb Guards)",
 }
 MAGIC_WARBANDS: dict[str, str] = {"Ostlanders": "ostlander"}  # magic.json's warband names that aren't a page's
 LORES: dict[str, str] = {  # magic.json's lore names that differ from our spells' lores by more than punctuation
