@@ -616,24 +616,32 @@ class PdfImportTests(SimpleTestCase):
             },
         )
 
-    def test_the_clockworkers_pistol_and_rifle_are_our_pistol_and_handgun(self) -> None:
-        # William, 11 Nov 2026: "these are just nicknames". Their lines name ours, shown under the Clockworkers'
-        # names, with a price row each at this PDF's price; ours keep their own 15 gc and 35 gc, Rare 8.
-        self.assertEqual([name for name in ("Clockwork pistol", "Clockwork rifle") if name in self.items], [])
+    def test_the_clockwork_pistol_and_rifle_are_weapons_of_their_own(self) -> None:
+        # They were read as our Pistol and Handgun under other names (William, 11 Nov 2026: "these are just
+        # nicknames") while no document gave them rules. The Sealed City's Lost and Found does: each has its own
+        # range, Strength and two rules, and its price chart sells all four as separate lines, so each is its own
+        # item at the chart's price and rarity. Ours keep their own 15 gc and 35 gc, Rare 8, for everyone.
+        for name, reach, cost, rarity in (("Clockwork pistol", '8"', 25, 8), ("Clockwork rifle", '18"', 40, 9)):
+            item = self.items[name]
+            self.assertEqual((item["range"], item["strength"]), (reach, "As user"))
+            self.assertEqual([rule["name"] for rule in item["rules"]], ["Reload", "Salvo"])
+            self.assertEqual([(row["cost"], row["rarity"]) for row in item["availabilities"]], [(cost, rarity)])
         shown = {
             (line["item"]["name"], line["shown_as"], line["cost"])
             for row in self.templates["clockworkers"]["lists"]
             for line in row["lines"]
-            if line["item"]["name"] in ("Pistol", "Handgun")
+            if line["item"]["name"].startswith("Clockwork ")
         }
-        self.assertEqual(shown, {("Pistol", "Clockwork pistol", 25), ("Handgun", "Clockwork rifle", 40)})
-        for name, cost in (("Pistol", 25), ("Handgun", 40)):
+        # the line names it as the page does, so there is nothing to show it under
+        self.assertEqual(shown, {("Clockwork pistol", "", 25), ("Clockwork rifle", "", 40)})
+        # the setting's own price chart prices our two beside them, so they take a row for its five warband types
+        for name, cost, rarity in (("Pistol", 15, 9), ("Handgun", 35, 9)):
             rows = [
                 (row["cost"], row["rarity"])
                 for row in self.items[name]["availabilities"]
                 if {"type": "clockworkers", "excluded": False} in row["warbands"]
             ]
-            self.assertEqual(rows, [(cost, None)])
+            self.assertEqual(rows, [(cost, rarity)])
 
     def test_a_warband_only_row_is_named_for_its_warband_or_for_its_setting(self) -> None:
         # William, 11 Nov 2026: the warband's name in brackets where that tells them apart, the setting's where it

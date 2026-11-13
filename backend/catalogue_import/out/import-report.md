@@ -1904,8 +1904,8 @@ Pages folded into another warband's list as one of its variants:
 
 - Stub: Orichalcum token, 10 gc, Common; its rules are on p2.
 - Stub: Bramstetter's Advanced Construct Thesis, 100+1D6x10 gc, Rare 8; its rules are on p6.
-- Stub: Clockwork Pistol, 25 gc, Rare 8; its rules are on p1.
-- Stub: Clockwork Rifle, 40 gc, Rare 9; its rules are on p1.
+- Stub: Clockwork pistol, 25 gc, Rare 8; its rules are on p1.
+- Stub: Clockwork rifle, 40 gc, Rare 9; its rules are on p1.
 - Stub: Krakensilver Weapon, , Rare 9; its rules are on p1.
 - Stub: Clockwork Lenses, 20+2D6 gc, Rare 5; its rules are on p2.
 - Stub: Clockwork Prosthesis, 10 gc, Rare 7; its rules are on p2.

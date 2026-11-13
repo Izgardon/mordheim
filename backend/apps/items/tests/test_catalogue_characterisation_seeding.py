@@ -91,11 +91,11 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 51,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 537,  # the import's 423 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more
+                "Item": 550,  # the import's 436 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 554,  # the import's 510 (one per name, Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 44 hired swords' own skills the book lacks, 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 110 (Athel Loren's three) + a group of his own for each of 28 hired swords, 9 of them broheim's hireling sections'
-                "Spell": 377,  # 312 (the PDFs' lores, the Mazzalupo's Commands and the Blessings of the Mare among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's)
+                "Spell": 401,  # 336 (the PDFs' lores, the Mazzalupo's Commands, the Blessings of the Mare and Khemri's four elemental lores among them) + the Dark Mage's six (BUG-54) + 20 of broheim's hirelings' own (the Rituals of Morr, the Spells of Wrath, the Spells of the Lake, Chain Lightning and Grey Seer Neekit's)
                 # special.json's 24, 3 injury specials, the 57 shared (Fear, No Pain, May Not Run, the mutations of
                 # every family, Shornaal's six among them, and the random table's: its Beaked, Fangs and Burning Body
                 # are Tchar's and Arkhar's), the templates' 418 (the three Night Goblin and Orc Trolls' one
@@ -127,13 +127,15 @@ class SeedAllTests(TestCase):
                 # and 26 personae; their Fear, Immune to Psychology, Immune to Poison, No Pain, May Not Run,
                 # Frenzy, Cloven Hoofs, Large and Perfect Killer are the shared ones), less 6 for Loner, now one
                 # shared Trait with five rules kept apart (William, 12 Nov 2026)
-                "Special": 1944,
+                # the Sealed City's Stygian Mutation chart adds 14 shared mutations of its own (12 Nov 2026)
+                "Special": 1958,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
-                # 14 mounts, 12 pets (the Sorcerous Society's four familiars, Marienburg's owl and falcon), 56
+                # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
+                # familiars, Marienburg's owl and falcon), 56
                 # creatures (17 Marienburg's shop animals, 17 its Men and Monsters, 28 Border Town Burning's
                 # Beasts of the East)
-                "BestiaryEntry": 83,
+                "BestiaryEntry": 84,
                 # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin), Mutiny in
                 # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
                 # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)
@@ -161,7 +163,10 @@ class SeedAllTests(TestCase):
                         graded = Special.objects.filter(campaign_type__isnull=False)
                         slugs = Counter(graded.values_list("campaign_type__slug", flat=True))
                         # the Bloodletter's Frenzy is the shared one now (William, 7 Nov 2026)
-                        self.assertEqual(slugs, {"mutiny-in-marienburg": 10, "border-town-burning": 30})
+                        # and the Sealed City's 14 Stygian mutations (12 Nov 2026)
+                        self.assertEqual(
+                            slugs, {"mutiny-in-marienburg": 10, "border-town-burning": 30, "sealed-city": 14}
+                        )
                     elif model in (Race, Spell, SkillGroup):  # what the Khemri 3, Grade 3 and Athel Loren
                         # warbands brought: the Khemri races and lores, the Grade 3 lores and groups, and the
                         # three Athel Loren skill groups
@@ -197,7 +202,8 @@ class SeedAllTests(TestCase):
         # the PDF batch's seven and the Nehekhara Tomb Guards, their seven weapons (the Ankus, Cutlass, Great
         # Scimitar and Serpent Whip, and the Scimitar, Scythe (Khemri) and Bagh Nakh the Khemri equipment page
         # brought on 11 Nov 2026), their skills and the six warband groups plus the Cursed Dwarf Slayer Skills, the
-        # Skeleton race and the six Hobgoblin Magic spells; Khemri's own four hired swords and Abdul Alhazred are
+        # Skeleton race and the six Hobgoblin Magic spells and the twenty-four of Khemri's own four elemental lores
+        # (Ice, Fire, Wind and Earth Magic, read 12 Nov 2026); Khemri's own four hired swords and Abdul Alhazred are
         # 1b's, as are its Lamp of the Djinn, Monkey's Paw, Tufenk, Katar and Magic Carpet
         self.assertEqual(
             khemri_3,
@@ -208,7 +214,7 @@ class SeedAllTests(TestCase):
                 "Skill": 24,  # the Arabyan Nomads' Blending into the Sands is our Sand worm (William, 12 Nov 2026)
                 "SkillGroup": 7,
                 "Race": 1,
-                "Spell": 6,
+                "Spell": 30,
                 "HiredSword": 0,
                 "DramatisPersona": 0,
             },
@@ -592,6 +598,7 @@ class SeedAllTests(TestCase):
         knives |= {"Misericordia", "Poison Daggers", "Shortsword", "Spirit Knife", "Starblade", "Thinglash"}
         knives |= {"Leather Whip"}  # the Goblin Raiders' whip gives the enemy +1 to his save, as a dagger does
         knives |= {"Double-Dirks"}  # the Hobgoblin Horde's pair of poisoned daggers
+        knives |= {"Gaveleers"}  # the Sealed City's blunt clockwork ammunition gives the enemy +1 to his save
         self.assertEqual(holders("+1 Enemy armour save"), knives)
         self.assertEqual(ItemRule.objects.filter(name__iregex=r"^two.handed$").count(), 1)
         self.assertLessEqual({"Boat Hook", "Brazier Iron", "Pike", "Flail", "Halberd"}, holders("Two-handed"))  # fmt: skip

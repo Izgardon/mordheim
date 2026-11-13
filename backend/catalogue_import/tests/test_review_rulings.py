@@ -164,7 +164,9 @@ class MergesAndSeparationsTests(ReviewCase):
         # the two §2 items with nothing to do: the House Guard's pike is our Pike with a price row of its own, and
         # the Khemri page's Strength 1 Tufenk was never imported, so our Strength 2 one stands alone
         self.assertEqual([name for name in self.items if name.startswith("Pike")], ["Pike"])
-        self.assertEqual(self.rows("Pike", "house-guard"), [(10, None, 8, "House Guard only")])
+        # and the Sealed City's own price chart adds the setting's trading row beside its list's starting
+        # price (Lost and Found, 12 Nov 2026)
+        self.assertEqual(self.rows("Pike", "house-guard"), [(12, None, 9, ""), (10, None, 8, "House Guard only")])
         self.assertEqual([name for name in self.items if name.startswith("Tufenk")], ["Tufenk"])
         self.assertEqual(self.items["Tufenk"]["strength"], "2")
         self.assertEqual(self.rows("Tufenk", "arabian-tomb-raiders"), [(15, None, 10, "")])

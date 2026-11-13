@@ -63,9 +63,9 @@ class SharedSeedTests(TestCase):
         kinds = dict(mutations.filter(name__in=("Atrophy", "Warts", "Horns")).values_list("name", "kind"))
         self.assertEqual(kinds, {"Atrophy": BANE, "Warts": TRAIT, "Horns": BOON})
         counted = Counter(mutations.values_list("type", flat=True))
-        # the generic list's 15 and the random table's 11 of its own; the Nurgle family 7, Tchar's 6, Arkhar's 6 and
-        # Shornaal's 6 (its Elastic Limbs the table's)
-        families_counted = {"Mutation": 26, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
+        # the generic list's 15, the random table's 11 of its own and the Sealed City's Stygian chart's 14; the
+        # Nurgle family 7, Tchar's 6, Arkhar's 6 and Shornaal's 6 (its Elastic Limbs the table's)
+        families_counted = {"Mutation": 40, "Blessing of Nurgle": 7, "Favour of Tchar": 6, "Bounty of Arkhar": 6}
         self.assertEqual(counted, {**families_counted, "Grace of Shornaal": 6})
         twin, limbs = rows["Vestigial Twin"], rows["Elastic Limbs"]
         self.assertEqual((twin.cost, twin.kind, twin.category, limbs.cost), (60, BOON, MUTATION, 40))
@@ -107,13 +107,13 @@ class SharedSeedTests(TestCase):
         ]
         animosity = Special.objects.create(name="Animosity", type="Animal")
 
-        self.assertIn("Shared specials - Created: 67, Updated: 0, copies archived: 6.", seed())
+        self.assertIn("Shared specials - Created: 81, Updated: 0, copies archived: 6.", seed())
 
         archived = Special.objects.filter(archived_at__isnull=False)
         self.assertEqual(set(archived.values_list("id", flat=True)), {copy.id for copy in copies})
         animosity.refresh_from_db()
         self.assertIsNone(animosity.archived_at)
-        self.assertIn("Shared specials - Created: 0, Updated: 67, copies archived: 0.", seed())
+        self.assertIn("Shared specials - Created: 0, Updated: 81, copies archived: 0.", seed())
 
 
 class SharedLookupTests(TestCase):
