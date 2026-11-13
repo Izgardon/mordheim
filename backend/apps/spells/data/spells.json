@@ -147,9 +147,9 @@
   {"name": "Sorcerer's Curse", "type": "Magic of the Horned Rat", "dc": "6", "roll": 6, "description": "Targets a single enemy within 12\", forcing them to re-roll successful armour saves and to-hit rolls through both players' next combat phases."},
 
   {"name": "Menkare's Scroll of Urgency", "type": "Mortuary Cult Scrolls", "dc": "6", "roll": 1, "description": "A single Skeleton Soldier within 6\" may immediately move again up to its maximum Movement distance."},
-  {"name": "Horrebe's Curse of the Mummy", "type": "Mortuary Cult Scrolls", "dc": "8", "roll": 2, "description": "Inflicts -1 penalty on hit, wound, and armour save rolls for target in base contact with Mummy."},
-  {"name": "Tawosret's Scroll of Tomb Dust", "type": "Mortuary Cult Scrolls", "dc": "7", "roll": 3, "description": "The warrior is automatically knocked down as he chokes on the sand. Only affects living models."},
-  {"name": "Neferre's Scroll of Quaking Horror", "type": "Mortuary Cult Scrolls", "dc": "7", "roll": 4, "description": "Target must pass Leadership test or flee 2D6\" away; continues fleeing until rallied."},
+  {"name": "Horrebe's Curse of the Mummy", "type": "Mortuary Cult Scrolls", "dc": "8", "roll": 2, "description": "Inflicts -1 penalty on hit, wound, and armour save rolls for target in base contact with Mummy and within 18\" of the Liche Priest. Lasts until the start of the next Tomb Guardian shooting phase."},
+  {"name": "Tawosret's Scroll of Tomb Dust", "type": "Mortuary Cult Scrolls", "dc": "7", "roll": 3, "description": "A single warrior within 12\" is automatically knocked down as he chokes on the sand. Only affects living models."},
+  {"name": "Neferre's Scroll of Quaking Horror", "type": "Mortuary Cult Scrolls", "dc": "7", "roll": 4, "description": "Target within 12\" must pass Leadership test or flee 2D6\" directly away from the Liche Priest; continues fleeing until rallied. No effect on Undead models or models immune to psychology."},
   {"name": "Merneptah's Scroll of the Scarab Song", "type": "Mortuary Cult Scrolls", "dc": "7", "roll": 5, "description": "Target within 12\" suffers 1D6 S1 hits and cannot be shot at or fight in combat."},
   {"name": "Djedre's Summonation of the Vengeful Dead", "type": "Mortuary Cult Scrolls", "dc": "5", "roll": 6, "description": "Re-animate a Skeleton Soldier that went out of action during the last turn within 6\"."},
 

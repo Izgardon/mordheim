@@ -178,8 +178,13 @@ setting's own mechanisms - weather, tombs, traps, perception in darkness, concea
 catalogue row between them: p8 prints the Spot/Disarm trap and Set Trap skills in full, both halves of our Trap Expert at the same rolls, and only their
 limit of four takes was missing from its description (`skill_descriptions` in `overrides.json`). Its pages 19-20 are the Elemental Magic above; its
 Torch and Lantern are ours reworded for the optional perception rules and its Water is a warband counter, neither imported. The setting's Dramatis
-Personae PDF goes with Broheim's `downloads/dramatispersonae/` section (William, 12 Nov 2026), and its Town Cryer compilation is read only for what a gap
-points at.
+Personae PDF goes with Broheim's `downloads/dramatispersonae/` section (William, 12 Nov 2026), and its Town Cryer compilation
+(https://www.broheim.net/downloads/campaigns/khemri/Khemri%20Town%20Cryer%20Compilation.pdf, 57 pages, text layer; read 12 Nov 2026) was read only where a
+gap pointed at it: p19 and p22-23 (the setting's equipment entries and price chart), p31 (the Mortuary Cult Scroll), p35-38 (the treasure charts) and p51
+(Arabian Elemental Magic). Every item and both lores are ours already with the same numbers; three Mortuary Cult Scrolls took the ranges mordheimer's
+summaries left out, and the Tufenk's entry here is Strength 2 as ours is, settling the Khemri Equipment page's Strength 1 in our favour. Its five
+instalments' campaign mechanisms, scenarios, exploration and treasure charts, modelling articles and the Tomb Guardians and Arabian Tomb Raiders warbands
+we already hold were not read.
 
 Karak Azgal's eight warbands share one 76-page PDF, and only each warband's own pages were read; its campaign material (pages 1-18 and 62-76, the hired swords, exploration chart, runic artefacts and scenarios among them) is not imported. Four of them point at warbands we already hold for their lists, rules or skills ("all of the equipment lists from Town Crier 6 (or Best of Town Crier) apply", "the Orc special skills from TC6"): those were taken from our own Dwarf Treasure Hunters, Skaven and Mercenaries warbands and our Dwarves, Dwarf Troll Slayers and Orcs skill groups, never from another PDF.
 
