@@ -89,9 +89,7 @@ check over every file.
 | `night-goblins-kaz.json` | night-goblins-kaz (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=44 | 44-48 of Karak Azgal (text layer) | 11 Nov 2026 |
 | `strigoi.json` | strigoi (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=50 | 50-55 of Karak Azgal (text layer) | 11 Nov 2026 |
 | `savage-orcs-kaz.json` | savage-orcs-kaz (2b, Karak Azgal) | https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56 | 56-61 of Karak Azgal (text layer) | 11 Nov 2026 |
-| `ghutani.json` | ghutani (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 2-4 (text layer; page 3 as an image) | 11 Nov 2026 |
-| `muzil.json` | muzil (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 2-4 (text layer; page 3 as an image) | 11 Nov 2026 |
-| `turjuk.json` | turjuk (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 2-4 (text layer; page 3 as an image) | 11 Nov 2026 |
+| `ghutani.json` | ghutani, muzil, turjuk (2b, Relics of the Crusades; one Arabian Tribes list, a variant per tribe) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 2-4 (text layer; page 3 as an image) | 11 Nov 2026 |
 | `skaven-of-clan-skryre-rel.json` | skaven-of-clan-skryre-rel (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 5-8 (text layer; no images) | 11 Nov 2026 |
 | `slavers.json` | slavers (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 9-11 (text layer; no images) | 11 Nov 2026 |
 | `the-fallen.json` | the-fallen (2b, Relics of the Crusades) | https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf | 12-14 (text layer; no images) | 11 Nov 2026 |
@@ -119,7 +117,8 @@ check over every file.
 The six Relics of the Crusades warbands are one 16-page PDF (its pages 1 and 15-16 are the setting's other warbands, its hired swords
 and its dramatis persona, none of them imported). Its pages 2-4 are one Arabian Tribes warband list with three tribes - Ghutani, Muzil and Turjuk -
 that share every fighter, price and equipment list and differ only in their Special Rules and their skill table; our data holds the three as three
-warband types, so each is a source file of its own. The Clan Skryre template carries its setting in brackets, because Karak Azgal and Athel Loren
+warband types, so the one list is one source file, one template and three variants, each type presetting its own (William, 13 Nov 2026: "Make them
+variants"). The Clan Skryre template carries its setting in brackets, because Karak Azgal and Athel Loren
 hold a warband of that name too. The setting's own campaign PDFs (its part 1, which holds the slave rules, the Arabian Steed and the Holy skills its
 pages point at) are not read, so what they would fill is stubbed or flagged.
 
@@ -251,6 +250,10 @@ or race, and the Ostermark Roadwardens are not the Mercenaries' Ostermarkers var
    to (`variant`), and a fighter's `variantChanges` holds what a variant changes about him (`skillAccess`, `skills`
    he starts with, `stats`, `maxCount`), his own keys being the first variant's. A rule that only names a skill a
    fighter starts with is that skill, not a rule (the Fierezza Commander's Web of Steel).
+   Where our data holds those parts as warband types of their own (the Arabian Tribes' Ghutani, Muzil and Turjuk),
+   every variant names the type it presets (`type`), each type once, the first being the page's own, which names the
+   file: one page then builds one template serving all of them, each type raising its own variant, and the page's
+   stubs, price rows and skill group serve every type it serves.
 
 3. A race of the warband's own goes in `apps/races/data/races.json` and `template_answers.RACES_BY_PAGE` (one
    fighter's, `RACES_BY_FIGHTER`); a rule that is a shared special but does something else is kept apart in
@@ -349,6 +352,12 @@ Each answers a question a batch raised; follow them without asking again.
   entries, so the seeder archives the old type and warbands raised as it keep it. A name two settings already share
   keeps the house convention of its source code in the slug (`savage-orcs-sar`, beside `savage-orcs-kaz` and
   `savage-orcs-ath`).
+- **A book page that prints one list and splits it only by name is one template with a variant per part**
+  (William, 13 Nov 2026, of the Arabian Tribes' three tribes: "Make them variants"). Where the parts are warband
+  types of ours, the page's variants name the types they preset (`type`, above), so one file holds the shared
+  fighters, profiles and lists once and each tribe's Special Rules paragraph, skill sub-table and count are its
+  variant's. This is the other half of the ruling below it: a PDF that varies *another* warband's list folds into
+  that list (`variantOf`), and a PDF that prints a list of its own with several parts keeps them in its own file.
 - **A fighter's buyable extra rules are template upgrades** (`mutations`: the Blood Dragon Vampire's bloodline
   abilities), **and a fighter who brings another model is a hired sword** (the Dark Elf Corsairs' Specialists);
   neither stays a warband rule (William, 11 Nov 2026).

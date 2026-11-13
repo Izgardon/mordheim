@@ -247,11 +247,26 @@ def pdf_variants(page: dict[str, Any]) -> list[dict[str, Any]]:
     ]
 
 
+def served_types(page: dict[str, Any]) -> dict[str, str]:
+    """The warband types a PDF page serves, each with the variant it presets: its own type and no preset, or one type
+    per variant that names one (`type`), in the variants' order. One page's list may be several of our types where
+    the book prints it once and splits it by name only (the Relics PDF's one Arabian Tribes list, whose Ghutani,
+    Muzil and Turjuk are three Special Rules paragraphs and three sub-tables of its one skill table); each type
+    presets its own variant, so nobody raises another tribe's warband."""
+    named = {str(variant["type"]): str(variant["key"]) for variant in page.get("variants") or [] if variant.get("type")}  # fmt: skip
+    return named or {page[TYPE]: ""}
+
+
 def pdf_types(page: dict[str, Any], types: list[dict[str, Any]]) -> list[dict[str, str]]:
-    """The type a PDF page serves, by its slug, with no preset variant."""
-    if page[TYPE] not in {row["slug"] for row in types}:
-        raise ValueError(f"pdf-warbands: no warband type {page[TYPE]!r}")
-    return [{"type": page[TYPE], "variant": ""}]
+    """The types a PDF page serves (`served_types`), each with its preset variant, checked against ours."""
+    found = served_types(page)
+    known = {row["slug"] for row in types}
+    for slug in [*found, page[TYPE]]:
+        if slug not in known:
+            raise ValueError(f"pdf-warbands: no warband type {slug!r}")
+    if page[TYPE] not in found:
+        raise ValueError(f"pdf-warbands/{page[TYPE]}.json: its own type is served by no variant")
+    return [{"type": slug, "variant": variant} for slug, variant in found.items()]
 
 
 def special_groups(page: dict[str, Any]) -> list[str] | None:
@@ -349,8 +364,8 @@ def give_page_rules(pages: dict[str, dict[str, Any]], items: list[dict[str, Any]
 
 def row_types(slug: str, page: dict[str, Any], entry: dict[str, Any], known: set[str]) -> list[str]:
     """The warband types a price row serves: the ones it names (`types`: Sartosa's shop list, declared once for the
-    setting's eleven), else the page's own."""
-    found = list(entry.get("types") or [page[TYPE]])
+    setting's eleven), else every type the page serves (`served_types`: all three Arabian tribes)."""
+    found = list(entry.get("types") or served_types(page))
     for name in found:
         if name not in known:
             raise ValueError(f"pdf-warbands/{slug}.json: the price row's {name!r} is no warband type")
@@ -464,12 +479,13 @@ def _new_group(
 def declared_groups(
     slug: str, page: dict[str, Any]
 ) -> list[tuple[dict[str, Any], list[dict[str, Any]], str, list[str]]]:
-    """The new groups a page declares: its own (the Special tick's, for its type), then one it shares with other
-    warband types (`sharedSkillGroup`). Each as (the group, its skills, the source key its rules take, its types)."""
+    """The new groups a page declares: its own (the Special tick's, for every type it serves), then one it shares
+    with other warband types (`sharedSkillGroup`). Each as (the group, its skills, the source key its rules take,
+    its types)."""
     found = []
     own = page.get("skillGroup") or {}
     if own.get("new"):
-        found.append((own, page.get("specialSkillsList") or [], f"pdf-warbands/{slug}.json", [page[TYPE]]))
+        found.append((own, page.get("specialSkillsList") or [], f"pdf-warbands/{slug}.json", list(served_types(page))))
     shared = page.get(SHARED) or {}
     if shared:
         source = f"pdf-warbands/{slug}.json ({shared['name']})"

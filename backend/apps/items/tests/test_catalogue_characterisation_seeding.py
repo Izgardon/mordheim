@@ -135,7 +135,8 @@ class SeedAllTests(TestCase):
                 # a rule a page's fighters word differently now reads for every one of them (GENERAL_RULE_WORDINGS):
                 # 3 fewer, the Forest Goblins' Red Toof Goblin's Animosity and the Tomb Guardians' Skeleton Warrior's
                 # and Tomb Guardian's Undead, each named apart over a change of subject, folded back into one row
-                "Special": 1960,
+                # the three Arabian tribes are one template with a variant each (13 Nov 2026): 4 rows fewer
+                "Special": 1956,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -151,7 +152,7 @@ class SeedAllTests(TestCase):
                 # mordheimer's 30 and our own 26 (apps/hirelings/data/dramatis-personae.json: Karak Azgal 5,
                 # Sartosa 5, Albion 2, Khemri 1, the fan-made trees 13), through the catalogue import
                 "DramatisPersona": 56,
-                "WarbandTemplate": 151,  # mordheimer's New Warband Format pages (Tileans (old) left out), the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them) and the two web pages'
+                "WarbandTemplate": 149,  # mordheimer's New Warband Format pages (Tileans (old) left out), the PDFs' (the first seven grade 3 warbands and Athel Loren's four among them) and the two web pages'; the Arabian Tribes serve all three tribes
             },
         )
         for model in BOOK_MODELS:
@@ -254,18 +255,20 @@ class SeedAllTests(TestCase):
 
     def test_the_warband_templates_come_in_whole(self):
         # the templates plan, phase 1b: mordheimer's 50 pages with their fighters, lists, rules and upgrades
-        self.assertIn("Warband templates import complete. Templates: 151, archived", self.output)
+        self.assertIn("Warband templates import complete. Templates: 149, archived", self.output)
         counts = {model.__name__: model.objects.count() for model in TEMPLATE_ROWS}
         self.assertEqual(
             counts,
             {
-                # the snapshot's 57 types, the PDFs' one each; the Orc Mob serves three, and the Norse Explorers
-                # template serves both its types since 12 Nov 2026 (the BTB one has no PDF page of its own)
+                # the snapshot's 57 types, the PDFs' one each; the Orc Mob serves three, the Norse Explorers
+                # template serves both its types since 12 Nov 2026 (the BTB one has no PDF page of its own), and
+                # the Arabian Tribes serve the three tribes, a variant each (13 Nov 2026)
                 "WarbandTemplateType": 160,
-                "TemplateFighter": 988,  # the Orc Mob holds its two variants' five fighters of their own
-                "TemplateList": 371,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
-                "TemplateListItem": 4095,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
-                "TemplateRule": 513,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
+                # the Arabian Tribes hold the three tribes' five fighters once (13 Nov 2026): 10 rows fewer
+                "TemplateFighter": 978,  # the Orc Mob holds its two variants' five fighters of their own
+                "TemplateList": 367,  # mordheimer's 113, the Pit Fighters' four for their three, 6 special and the PDFs' (the Halfling Cook's his own)
+                "TemplateListItem": 4047,  # with the Kurgan's two bow lines and the Hung's warhorse (phase 3)
+                "TemplateRule": 512,  # 150, the Pit Fighters' style notes, 4 upgrade groups' texts, Poisoned Weapons, the PDFs'
                 # 24, less Poisoned Weapons, a warband rule (phase 3), and the tailored lists of the shared mutations: the
                 # Cult's other 6, the Court's 3, the Beastmen's 15, the Marauders' 15 and 6 Blessings, Clan Moulder's 9 (Twistkin),
                 # the Fen Guard's 7 (Variations), the Lords of the Marsh's 15, the Shallows Beasts' 9, the Underworld

@@ -179,16 +179,32 @@ def _fighters(slug: str, page: dict[str, Any], catalogue: Catalogue, problems: l
     problems += [f"list {key!r}: no fighter buys from it" for key in sorted(lists - named)]
 
 
-def _variants(page: dict[str, Any], problems: list[str]) -> set[str]:
-    """The page's own variants (`variants`: the House Guard's three houses), their shape and their keys."""
+def _variants(page: dict[str, Any], catalogue: Catalogue, problems: list[str]) -> set[str]:
+    """The page's own variants (`variants`: the House Guard's three houses), their shape and their keys. A variant
+    may name the warband type it presets (`type`: the Arabian Tribes' three tribes), and then every variant names one
+    of our types, each type once, the first being the page's own, which names the file."""
     keys: list[str] = []
-    for variant in _each(page.get("variants") or [], VARIANT, "variant", problems):
+    rows = _each(page.get("variants") or [], VARIANT, "variant", problems)
+    for variant in rows:
         key = variant["key"]
         if key in keys:
             problems.append(f"variant {key!r}: named twice")
         elif slugify(key) != key:
             problems.append(f"variant {key!r}: its key should be {slugify(key)!r}")
         keys.append(key)
+    named = [variant for variant in rows if variant.get("type")]
+    if named:
+        if len(named) != len(rows):
+            problems.append("variants: every variant names the warband type it presets, or none does")
+        elif named[0]["type"] != page["warbandType"]:
+            problems.append(f"variant {named[0]['key']!r}: the first variant presets {page['warbandType']!r}")
+        taken = [variant["type"] for variant in named]
+        problems += [
+            f"variant {variant['key']!r}: {variant['type']!r} is no warband type of ours"
+            for variant in named
+            if variant["type"] not in catalogue.types
+        ]
+        problems += [f"variants: {slug!r} is preset twice" for slug in sorted(set(taken)) if taken.count(slug) > 1]
     return set(keys)
 
 
@@ -364,7 +380,7 @@ def check_page(slug: str, page: dict[str, Any], catalogue: Catalogue) -> Found:
     shape(page["warbandRules"], WARBAND_RULES, "warband rules", problems)
     if VARIANT_OF in page:  # one variant of another warband's list, not a list of its own
         shape(page[VARIANT_OF], VARIANT_OF_SHAPE, VARIANT_OF, problems)
-    keys = _variants(page, problems)
+    keys = _variants(page, catalogue, problems)
     if ("skillGroup" in page) != ("specialSkillsList" in page):
         problems.append(f"{slug}: a skill group and its special skills, or neither (no Special column)")
     elif "skillGroup" in page:

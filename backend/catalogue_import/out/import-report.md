@@ -909,16 +909,16 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 
 | What | Rows |
 | --- | --- |
-| templates | 151 |
+| templates | 149 |
 | warband types linked | 160 |
-| fighters (heroes, henchmen) | 988 (511, 477) |
+| fighters (heroes, henchmen) | 978 (505, 473) |
 | henchmen that gain no XP | 134 |
 | henchmen that can't be promoted | 165 |
-| equipment lists | 371 |
-| list lines | 4095 |
-| warband rules | 513 |
+| equipment lists | 367 |
+| list lines | 4047 |
+| warband rules | 512 |
 | upgrades | 179 |
-| the templates' own specials | 1162 |
+| the templates' own specials | 1158 |
 
 ### List lines
 
@@ -933,7 +933,7 @@ Lines found other than by name or tag:
 | cursed-cavalcade | Misericordia | Misericordia (Cursed Cavalcade) | named for the warband |
 | cursed-dwarves | hand gun | Handgun | a loose match |
 
-613 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
+607 lines show the list's own name for their item. 10 notes were only an errata or FAQ marker and are dropped (the price already carries the fix).
 
 Notes it couldn't read, kept as the line's note:
 
@@ -1526,7 +1526,7 @@ Kept apart from a family's, the effect differing:
 
 ## PDF warbands
 
-103 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
+101 warbands read from their PDFs (`sources/pdf-warbands/`), built as templates beside the snapshot's.
 
 | Page | Type | Fighters | Aliases | Stubs | Flags |
 | --- | --- | --- | --- | --- | --- |
@@ -1561,7 +1561,7 @@ Kept apart from a family's, the effect differing:
 | fen-guard | fen-guard | 5 | 1 | 3 | 14 |
 | forest-goblins-lus | forest-goblins-lus | 7 | 0 | 0 | 17 |
 | ghost-pirates | ghost-pirates | 7 | 0 | 1 | 15 |
-| ghutani | ghutani | 5 | 0 | 0 | 8 |
+| ghutani | ghutani, muzil, turjuk | 5 | 0 | 0 | 11 |
 | goblin-raiders | goblin-raiders | 7 | 0 | 2 | 14 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
 | guild-of-disgraced-engineers | guild-of-disgraced-engineers | 6 | 0 | 2 | 10 |
@@ -1583,7 +1583,6 @@ Kept apart from a family's, the effect differing:
 | metal-mongers | metal-mongers | 6 | 0 | 3 | 12 |
 | militiant-mootlanders | militiant-mootlanders | 7 | 0 | 1 | 11 |
 | mordheimers-fanatics | mordheimers-fanatics | 6 | 0 | 0 | 7 |
-| muzil | muzil | 5 | 0 | 0 | 7 |
 | necrarchs-the-soul-stealers | necrarchs-the-soul-stealers | 7 | 1 | 2 | 11 |
 | necrarchs | necrarchs | 6 | 0 | 0 | 9 |
 | necromancer | necromancer | 6 | 3 | 5 | 9 |
@@ -1622,7 +1621,6 @@ Kept apart from a family's, the effect differing:
 | the-innocents | the-innocents | 8 | 0 | 4 | 12 |
 | the-lost | the-lost | 6 | 0 | 0 | 10 |
 | tilean-thespian-troupe | tilean-thespian-troupe | 9 | 0 | 0 | 10 |
-| turjuk | turjuk | 5 | 0 | 0 | 8 |
 | underworld-alliance | underworld-alliance | 9 | 0 | 0 | 10 |
 | vampire-hunters-of-sylvania | vampire-hunters-of-sylvania | 6 | 1 | 4 | 11 |
 | wasteland-privateers | wasteland-privateers | 7 | 0 | 0 | 10 |
@@ -2200,16 +2198,19 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p2): The Blunderbuss line is 30 gc and the Handgun line 35 gc, as the Sartosa Equipment PDF's trading list has them; our Blunderbuss is Rare 9 and our Handgun Rare 8, which are unchanged (open decision 20).
 - Flag (p16): Sartosa Errata p16-18: the Sea Singer's "Beauty of the Sea" is split into Allure and Frightening Form; the Gibbets count as Aquatic; a dead Ghost Captain may be replaced by purchase; the Bloated's "No Pain" was a typo (ours never had it) and the Choice of Warriors correction (up to 2 Screaming Ghosts, up to 2 Skeleton Mates) is what ours already holds. "All Models in the Ghost Pirate Warband have the same maximum stats as Humans": our Undead race maximums are the Human ones already, so nothing was changed.
 
-### Ghutani
+### Arabian Tribes
 
-- Flag (p2): The PDF prints one Arabian Tribes warband list (pages 2-4) with three tribes - Ghutani, Muzil and Turjuk - that share its choice of warriors, fighters, profiles, prices and equipment lists and differ only in their Special Rules and their skill table. Our data holds the three as three warband types, so each is a source file of its own, the shared parts repeated and the differences carried.
+- Flag (p2): The PDF prints one Arabian Tribes warband list (pages 2-4) with three tribes - Ghutani, Muzil and Turjuk - that share its choice of warriors, fighters, profiles, prices and equipment lists and differ only in their Special Rules and their skill table. The three are our three warband types, so this one file is one template with three variants, each type presetting its own (William, 13 Nov 2026: "Make them variants").
 - Flag (p2): An Arabian Tribe warband needs at least 3 models: our templates hold no minimum, so it is not imported.
-- Flag (p3): The three skill tables' ticks are glyphs the reading-order text drops; read from the -layout text's tick columns and checked against page 3 as an image. The tables have five columns and no Special column, so the tribes have no skill group of their own.
+- Flag (p3): The three skill tables' ticks are glyphs the reading-order text drops; read from the -layout text's tick columns and checked against page 3 as an image. The tables have five columns and no Special column, so the tribes have no skill group of their own. The Ghutani table is the fighters' own and the other two tribes' are their variants' changes.
 - Flag (p3): The Arabian Tribe and Townsmen lists print Mace and Hammer as two lines at 3 dinars each; both are our Club, Mace or Hammer, so each list carries one line for them.
 - Flag (p4): The Scholar's Theology field gives him Holy skills, and the Occult field makes him a Lesser Magic wizard. We hold no Holy skill group and a field is picked per model, so neither is a skill group or a spell lore on the Scholar: the choice stays in his rule.
 - Flag (p4): No maximum profile and no henchmen group sizes are printed: the warband takes our Human race.
-- Flag (p2): The Ghutani may hire up to 5 Flagellants as henchmen. No Flagellant profile or price is printed here, so no fighter is added and the rule carries it.
-- Flag (p2): "Ghutani scholar fields of study may only be poetry or theology" narrows the Scholar's own Field of Scholarship rule, so it sits in that rule rather than in a warband rule.
+- Flag (p2): The Ghutani may hire up to 5 Flagellants as henchmen. No Flagellant profile or price is printed here, so no fighter is added and the Ghutani rule carries it.
+- Flag (p2): "Ghutani scholar fields of study may only be poetry or theology" narrows the Scholar's Field of Scholarship, which the three tribes share, so it is the Ghutani's own warband rule rather than a sentence of his.
+- Flag (p2): "A Muzil tribe may include up to 2 Scholars" is a count, so the Scholar is 0-2 in the Muzil variant and 0-1 in the other two.
+- Flag (p2): "Every Turjuk Emir and Askar has the following skills: Ride Horse, Ride Arabian Steed and Horse Archer" names skills, so both start with them in the Turjuk variant. Ride Horse and Ride Arabian Steed are our one Ride [Animal] skill, which names its animal, so each starts with Ride [Animal] and Horse Archer.
+- Flag (p2): The Arabian Steed is named in the Turjuk rules but is in no equipment list and no profile or price is printed for it, so no item or beast is added.
 
 ### Goblin Raiders
 
@@ -2552,16 +2553,6 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p4): The Lunatics and Orphans sit under Heroes, so a full warband may hold six heroes: one Prophet, one Bleak One, two Lunatics and two Orphans.
 - Flag (p5): Both henchmen entries are "0+" in groups of 1-5, so neither carries a maximum.
 - Flag (p7): The rant difficulties are 6, 8, 8, 7, 9, 9 in the order the D6 gives them.
-
-### Muzil
-
-- Flag (p2): The PDF prints one Arabian Tribes warband list (pages 2-4) with three tribes - Ghutani, Muzil and Turjuk - that share its choice of warriors, fighters, profiles, prices and equipment lists and differ only in their Special Rules and their skill table. Our data holds the three as three warband types, so each is a source file of its own, the shared parts repeated and the differences carried.
-- Flag (p2): An Arabian Tribe warband needs at least 3 models: our templates hold no minimum, so it is not imported.
-- Flag (p3): The three skill tables' ticks are glyphs the reading-order text drops; read from the -layout text's tick columns and checked against page 3 as an image. The tables have five columns and no Special column, so the tribes have no skill group of their own.
-- Flag (p3): The Arabian Tribe and Townsmen lists print Mace and Hammer as two lines at 3 dinars each; both are our Club, Mace or Hammer, so each list carries one line for them.
-- Flag (p4): The Scholar's Theology field gives him Holy skills, and the Occult field makes him a Lesser Magic wizard. We hold no Holy skill group and a field is picked per model, so neither is a skill group or a spell lore on the Scholar: the choice stays in his rule.
-- Flag (p4): No maximum profile and no henchmen group sizes are printed: the warband takes our Human race.
-- Flag (p2): "A Muzil tribe may include up to 2 Scholars" is a count, so the Scholar is 0-2 here and 0-1 for the other two tribes; no warband rule repeats it.
 
 ### Necrarchs, the Soul Stealers
 
@@ -3218,17 +3209,6 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p6): "Mace/Club" is read as our Mace, "Spear/Pitchfork" as our Spear, "Halberd/Bill/Scythe" as our Halberd and "Helmet/Pot" as our Helmet, each shown under the list's own wording.
 - Flag (p7): The Thespian spell list is imported as the lore Thespian Magic: Scripted 9, Soliloquy 11, Our Story Thus Far 10. The Narrator casts from it or from Lesser Magic, as the PDF allows.
 - Flag (p2): No group sizes are printed except the Townsfolk's 2-5.
-
-### Turjuk
-
-- Flag (p2): The PDF prints one Arabian Tribes warband list (pages 2-4) with three tribes - Ghutani, Muzil and Turjuk - that share its choice of warriors, fighters, profiles, prices and equipment lists and differ only in their Special Rules and their skill table. Our data holds the three as three warband types, so each is a source file of its own, the shared parts repeated and the differences carried.
-- Flag (p2): An Arabian Tribe warband needs at least 3 models: our templates hold no minimum, so it is not imported.
-- Flag (p3): The three skill tables' ticks are glyphs the reading-order text drops; read from the -layout text's tick columns and checked against page 3 as an image. The tables have five columns and no Special column, so the tribes have no skill group of their own.
-- Flag (p3): The Arabian Tribe and Townsmen lists print Mace and Hammer as two lines at 3 dinars each; both are our Club, Mace or Hammer, so each list carries one line for them.
-- Flag (p4): The Scholar's Theology field gives him Holy skills, and the Occult field makes him a Lesser Magic wizard. We hold no Holy skill group and a field is picked per model, so neither is a skill group or a spell lore on the Scholar: the choice stays in his rule.
-- Flag (p4): No maximum profile and no henchmen group sizes are printed: the warband takes our Human race.
-- Flag (p2): "Every Turjuk Emir and Askar has the following skills: Ride Horse, Ride Arabian Steed and Horse Archer" names skills, so both start with them. Ride Horse and Ride Arabian Steed are our one Ride [Animal] skill, which names its animal, so each starts with Ride [Animal] and Horse Archer.
-- Flag (p2): The Arabian Steed is named in the Turjuk rules but is in no equipment list and no profile or price is printed for it, so no item or beast is added.
 
 ### Underworld Alliance
 

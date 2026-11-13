@@ -3,7 +3,7 @@ shared item rules, price rows and flags, for William's vetting."""
 
 from typing import Any
 
-from catalogue_import.pdf_warbands import TYPE
+from catalogue_import.pdf_warbands import TYPE, served_types
 
 
 def _cell(value: object) -> str:
@@ -25,7 +25,8 @@ def render_pdf(
     ]
     for slug, page in pages.items():
         counts = [len(page["fighters"]), len(page.get("aliases") or []), len(page.get("stubs") or [])]
-        lines.append(f"| {slug} | {page[TYPE]} | {' | '.join(map(str, counts))} | {len(page.get('flags') or [])} |")
+        served = ", ".join(served_types(page))  # a page may serve several of our types (the Arabian tribes)
+        lines.append(f"| {slug} | {served} | {' | '.join(map(str, counts))} | {len(page.get('flags') or [])} |")
     if folded:
         lines += ["", "Pages folded into another warband's list as one of its variants:", ""]
         lines += [f"- {slug} ({key}): {what}" for slug, key, what in folded]
@@ -51,7 +52,7 @@ def render_pdf(
         for row in page.get("priceRows") or []:
             rarity = f"Rare {row['rarity']}" if row.get("rarity") else "Common"
             note = f", {_cell(row['note'])}" if row.get("note") else ""
-            who = ", ".join(row.get("types") or [page[TYPE]])
+            who = ", ".join(row.get("types") or served_types(page))
             lines.append(f"- Price row (p{row['page']}): our {_cell(row['name'])} for {who}, {rarity}{note}.")
         for flag in page.get("flags") or []:
             lines.append(f"- Flag (p{flag['page']}): {_cell(flag['what'])}")

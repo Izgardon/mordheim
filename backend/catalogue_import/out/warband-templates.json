@@ -4680,6 +4680,727 @@
     "upgrades": []
   },
   {
+    "slug": "arabian-tribes",
+    "name": "Arabian Tribes",
+    "setting": "relics-of-the-crusades",
+    "source": "Relics of the Crusades",
+    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
+    "starting_gold": 500,
+    "max_models": 15,
+    "variants": [
+      {
+        "key": "ghutani",
+        "name": "Ghutani"
+      },
+      {
+        "key": "muzil",
+        "name": "Muzil"
+      },
+      {
+        "key": "turjuk",
+        "name": "Turjuk"
+      }
+    ],
+    "types": [
+      {
+        "type": "ghutani",
+        "variant": "ghutani"
+      },
+      {
+        "type": "muzil",
+        "variant": "muzil"
+      },
+      {
+        "type": "turjuk",
+        "variant": "turjuk"
+      }
+    ],
+    "rules": [
+      {
+        "title": "A slave may lead",
+        "description": "A slave, or the son of a slave, may become the warband's leader.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Blood for blood",
+        "description": "A Ghutani hero who rolls 51-56 on the Serious Injuries chart counts as having rolled Bitter Enmity.",
+        "variant": "ghutani",
+        "type": ""
+      },
+      {
+        "title": "Flagellants",
+        "description": "The warband may hire up to 5 Flagellants as henchmen. They pick their equipment from the Townsmen equipment list.",
+        "variant": "ghutani",
+        "type": ""
+      },
+      {
+        "title": "Fields of study",
+        "description": "A Ghutani Scholar may only take Poetry or Theology as his field of study.",
+        "variant": "ghutani",
+        "type": ""
+      },
+      {
+        "title": "Pride in horses",
+        "description": "A Turjuk leader who owns neither a Riding Horse nor an Arabian Steed has his Leadership reduced by 1.",
+        "variant": "turjuk",
+        "type": ""
+      }
+    ],
+    "lists": [
+      {
+        "key": "arabian-tribe-equipment-list",
+        "name": "Arabian Tribe Equipment List",
+        "note": "",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Mace or hammer",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Double-handed weapon",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Spear",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Halberd",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Crossbow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 25,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Long Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 15,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Light Armour",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Mule",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 30,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Riding/Draft Horse",
+              "variant": ""
+            },
+            "shown_as": "Riding Horse",
+            "cost": 40,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      },
+      {
+        "key": "townsmen-equipment-list",
+        "name": "Townsmen Equipment List",
+        "note": "This list is for Townsmen only.",
+        "lines": [
+          {
+            "item": {
+              "name": "Dagger",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": true,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Club, Mace or Hammer",
+              "variant": ""
+            },
+            "shown_as": "Mace or hammer",
+            "cost": 3,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Axe",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sword",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Sling",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 2,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Short Bow",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Toughened Leathers",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Shield",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 5,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Helmet",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 10,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          }
+        ]
+      }
+    ],
+    "fighters": [
+      {
+        "key": "emir",
+        "kind": "hero",
+        "name": "Emir",
+        "plural": "Emirs",
+        "race": "Human",
+        "cost": 60,
+        "starting_xp": 20,
+        "min_count": 1,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 4,
+          "attacks": 1,
+          "leadership": 8
+        },
+        "skill_types": [
+          "Combat",
+          "Shooting",
+          "Strength",
+          "Speed"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": true,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {
+          "muzil": {
+            "skill_types": [
+              "Combat",
+              "Shooting",
+              "Academic",
+              "Strength",
+              "Speed"
+            ]
+          },
+          "turjuk": {
+            "skill_types": [
+              "Combat",
+              "Shooting",
+              "Academic",
+              "Strength",
+              "Speed"
+            ],
+            "skills": [
+              "Ride [Animal]",
+              "Horse Archer"
+            ]
+          }
+        },
+        "fixed_kit": "",
+        "lists": [
+          "arabian-tribe-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Leader",
+            "type": "Warband - Arabian Tribes",
+            "description": "Any warrior within 6\" of the Emir may use his Leadership for a Leadership test."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "scholar",
+        "kind": "hero",
+        "name": "Scholar",
+        "plural": "Scholars",
+        "race": "Human",
+        "cost": 30,
+        "starting_xp": 8,
+        "min_count": 0,
+        "max_count": 1,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 2,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Academic",
+          "Strength"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {
+          "muzil": {
+            "skill_types": [
+              "Shooting",
+              "Academic",
+              "Speed"
+            ],
+            "max_count": 2
+          },
+          "turjuk": {
+            "skill_types": [
+              "Shooting",
+              "Academic",
+              "Speed"
+            ]
+          }
+        },
+        "fixed_kit": "",
+        "lists": [
+          "arabian-tribe-equipment-list"
+        ],
+        "specials": [
+          {
+            "name": "Field of Scholarship",
+            "type": "Warband - Arabian Tribes",
+            "description": "When the Scholar joins the warband, choose the field he has studied.\n\nCartography: add or subtract 1 from the D6 when exploring.\n\nPhysiology: after all serious injuries have been worked out, one hero may re-roll his result.\n\nPoetry: the warband's leader adds +1 to his Leadership for his first Leadership test of a scenario if the warband won its last battle. For one turn of a scenario, every friendly model within 6\" has +1 Weapon Skill and +1 Attack.\n\nTheology: the Scholar serves The One and learns Holy skills.\n\nThe Occult: the Scholar is a wizard and casts Lesser Magic."
+          }
+        ],
+        "skills": []
+      },
+      {
+        "key": "askar",
+        "kind": "hero",
+        "name": "Askar",
+        "plural": "Askars",
+        "race": "Human",
+        "cost": 35,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 3,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 3,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [
+          "Combat",
+          "Strength",
+          "Speed"
+        ],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {
+          "muzil": {
+            "skill_types": [
+              "Combat",
+              "Shooting",
+              "Academic"
+            ]
+          },
+          "turjuk": {
+            "skill_types": [
+              "Combat",
+              "Shooting",
+              "Speed"
+            ],
+            "skills": [
+              "Ride [Animal]",
+              "Horse Archer"
+            ]
+          }
+        },
+        "fixed_kit": "",
+        "lists": [
+          "arabian-tribe-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "townsman",
+        "kind": "henchman",
+        "name": "Townsman",
+        "plural": "Townsmen",
+        "race": "Human",
+        "cost": 20,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": null,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 3,
+          "ballistic_skill": 2,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 6
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "townsmen-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      },
+      {
+        "key": "mamluk",
+        "kind": "henchman",
+        "name": "Mamluk",
+        "plural": "Mamluks",
+        "race": "Human",
+        "cost": 35,
+        "starting_xp": 0,
+        "min_count": 0,
+        "max_count": 5,
+        "group_min": null,
+        "group_max": null,
+        "stats": {
+          "movement": 4,
+          "weapon_skill": 4,
+          "ballistic_skill": 4,
+          "strength": 3,
+          "toughness": 3,
+          "wounds": 1,
+          "initiative": 3,
+          "attacks": 1,
+          "leadership": 7
+        },
+        "skill_types": [],
+        "spell_types": [],
+        "gains_xp": true,
+        "promotable": true,
+        "is_leader": false,
+        "caster": "No",
+        "large": false,
+        "variant_changes": {},
+        "fixed_kit": "",
+        "lists": [
+          "arabian-tribe-equipment-list"
+        ],
+        "specials": [],
+        "skills": []
+      }
+    ],
+    "upgrades": []
+  },
+  {
     "slug": "araby-smugglers",
     "name": "Araby Smugglers",
     "setting": "sartosa",
@@ -40199,636 +40920,6 @@
     "upgrades": []
   },
   {
-    "slug": "ghutani",
-    "name": "Ghutani",
-    "setting": "relics-of-the-crusades",
-    "source": "Relics of the Crusades",
-    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
-    "starting_gold": 500,
-    "max_models": 15,
-    "variants": [],
-    "types": [
-      {
-        "type": "ghutani",
-        "variant": ""
-      }
-    ],
-    "rules": [
-      {
-        "title": "Blood for blood",
-        "description": "A Ghutani hero who rolls 51-56 on the Serious Injuries chart counts as having rolled Bitter Enmity.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "Flagellants",
-        "description": "The warband may hire up to 5 Flagellants as henchmen. They pick their equipment from the Townsmen equipment list.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "A slave may lead",
-        "description": "A slave, or the son of a slave, may become the warband's leader.",
-        "variant": "",
-        "type": ""
-      }
-    ],
-    "lists": [
-      {
-        "key": "arabian-tribe-equipment-list",
-        "name": "Arabian Tribe Equipment List",
-        "note": "",
-        "lines": [
-          {
-            "item": {
-              "name": "Dagger",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": true,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace or hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Axe",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sword",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Double-handed weapon",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Spear",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Halberd",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Crossbow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 25,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Long Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Light Armour",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 20,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Shield",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Helmet",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Mule",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 30,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Riding/Draft Horse",
-              "variant": ""
-            },
-            "shown_as": "Riding Horse",
-            "cost": 40,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      },
-      {
-        "key": "townsmen-equipment-list",
-        "name": "Townsmen Equipment List",
-        "note": "This list is for Townsmen only.",
-        "lines": [
-          {
-            "item": {
-              "name": "Dagger",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": true,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace or hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Axe",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sword",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sling",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Short Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Toughened Leathers",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Shield",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Helmet",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      }
-    ],
-    "fighters": [
-      {
-        "key": "emir",
-        "kind": "hero",
-        "name": "Emir",
-        "plural": "Emirs",
-        "race": "Human",
-        "cost": 60,
-        "starting_xp": 20,
-        "min_count": 1,
-        "max_count": 1,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 4,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 4,
-          "attacks": 1,
-          "leadership": 8
-        },
-        "skill_types": [
-          "Combat",
-          "Shooting",
-          "Strength",
-          "Speed"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": true,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [
-          {
-            "name": "Leader",
-            "type": "Warband - Ghutani",
-            "description": "Any warrior within 6\" of the Emir may use his Leadership for a Leadership test."
-          }
-        ],
-        "skills": []
-      },
-      {
-        "key": "scholar",
-        "kind": "hero",
-        "name": "Scholar",
-        "plural": "Scholars",
-        "race": "Human",
-        "cost": 30,
-        "starting_xp": 8,
-        "min_count": 0,
-        "max_count": 1,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 2,
-          "ballistic_skill": 2,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [
-          "Combat",
-          "Academic",
-          "Strength"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [
-          {
-            "name": "Field of Scholarship",
-            "type": "Warband - Ghutani",
-            "description": "When the Scholar joins the warband, choose the field he has studied. A Ghutani Scholar may only take Poetry or Theology.\n\nCartography: add or subtract 1 from the D6 when exploring.\n\nPhysiology: after all serious injuries have been worked out, one hero may re-roll his result.\n\nPoetry: the warband's leader adds +1 to his Leadership for his first Leadership test of a scenario if the warband won its last battle. For one turn of a scenario, every friendly model within 6\" has +1 Weapon Skill and +1 Attack.\n\nTheology: the Scholar serves The One and learns Holy skills.\n\nThe Occult: the Scholar is a wizard and casts Lesser Magic."
-          }
-        ],
-        "skills": []
-      },
-      {
-        "key": "askar",
-        "kind": "hero",
-        "name": "Askar",
-        "plural": "Askars",
-        "race": "Human",
-        "cost": 35,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": 3,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 3,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [
-          "Combat",
-          "Strength",
-          "Speed"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [],
-        "skills": []
-      },
-      {
-        "key": "townsman",
-        "kind": "henchman",
-        "name": "Townsman",
-        "plural": "Townsmen",
-        "race": "Human",
-        "cost": 20,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": null,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 3,
-          "ballistic_skill": 2,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 6
-        },
-        "skill_types": [],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "townsmen-equipment-list"
-        ],
-        "specials": [],
-        "skills": []
-      },
-      {
-        "key": "mamluk",
-        "kind": "henchman",
-        "name": "Mamluk",
-        "plural": "Mamluks",
-        "race": "Human",
-        "cost": 35,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": 5,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 4,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [],
-        "skills": []
-      }
-    ],
-    "upgrades": []
-  },
-  {
     "slug": "goblin-raiders",
     "name": "Goblin Raiders",
     "setting": "grade-3",
@@ -68136,625 +68227,6 @@
             "description": "Every member of a Maimed Ones group is crippled the same way. Roll a D6 when the group is made and change the profile of all of them to match.\n\nD6 | Result\n1 | Bad legs, back and the like: Movement and Initiative each -1.\n2 | Missing arms: Weapon Skill -1. He may use neither two weapons nor a weapon and a shield.\n3 | Bad vision or blindness: Ballistic Skill -1.\n4 | Infirm: Toughness -1.\n5 | Wyrdstone weakness: Strength -1.\n6 | Head injuries: unless he is within 6\" of a hero he is subject to stupidity."
           }
         ],
-        "skills": []
-      }
-    ],
-    "upgrades": []
-  },
-  {
-    "slug": "muzil",
-    "name": "Muzil",
-    "setting": "relics-of-the-crusades",
-    "source": "Relics of the Crusades",
-    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
-    "starting_gold": 500,
-    "max_models": 15,
-    "variants": [],
-    "types": [
-      {
-        "type": "muzil",
-        "variant": ""
-      }
-    ],
-    "rules": [
-      {
-        "title": "A slave may lead",
-        "description": "A slave, or the son of a slave, may become the warband's leader.",
-        "variant": "",
-        "type": ""
-      }
-    ],
-    "lists": [
-      {
-        "key": "arabian-tribe-equipment-list",
-        "name": "Arabian Tribe Equipment List",
-        "note": "",
-        "lines": [
-          {
-            "item": {
-              "name": "Dagger",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": true,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace or hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Axe",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sword",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Double-handed weapon",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Spear",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Halberd",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Crossbow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 25,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Long Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Light Armour",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 20,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Shield",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Helmet",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Mule",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 30,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Riding/Draft Horse",
-              "variant": ""
-            },
-            "shown_as": "Riding Horse",
-            "cost": 40,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      },
-      {
-        "key": "townsmen-equipment-list",
-        "name": "Townsmen Equipment List",
-        "note": "This list is for Townsmen only.",
-        "lines": [
-          {
-            "item": {
-              "name": "Dagger",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": true,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace or hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Axe",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sword",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sling",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Short Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Toughened Leathers",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Shield",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Helmet",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      }
-    ],
-    "fighters": [
-      {
-        "key": "emir",
-        "kind": "hero",
-        "name": "Emir",
-        "plural": "Emirs",
-        "race": "Human",
-        "cost": 60,
-        "starting_xp": 20,
-        "min_count": 1,
-        "max_count": 1,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 4,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 4,
-          "attacks": 1,
-          "leadership": 8
-        },
-        "skill_types": [
-          "Combat",
-          "Shooting",
-          "Academic",
-          "Strength",
-          "Speed"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": true,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [
-          {
-            "name": "Leader",
-            "type": "Warband - Muzil",
-            "description": "Any warrior within 6\" of the Emir may use his Leadership for a Leadership test."
-          }
-        ],
-        "skills": []
-      },
-      {
-        "key": "scholar",
-        "kind": "hero",
-        "name": "Scholar",
-        "plural": "Scholars",
-        "race": "Human",
-        "cost": 30,
-        "starting_xp": 8,
-        "min_count": 0,
-        "max_count": 2,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 2,
-          "ballistic_skill": 2,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [
-          "Shooting",
-          "Academic",
-          "Speed"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [
-          {
-            "name": "Field of Scholarship",
-            "type": "Warband - Muzil",
-            "description": "When the Scholar joins the warband, choose the field he has studied.\n\nCartography: add or subtract 1 from the D6 when exploring.\n\nPhysiology: after all serious injuries have been worked out, one hero may re-roll his result.\n\nPoetry: the warband's leader adds +1 to his Leadership for his first Leadership test of a scenario if the warband won its last battle. For one turn of a scenario, every friendly model within 6\" has +1 Weapon Skill and +1 Attack.\n\nTheology: the Scholar serves The One and learns Holy skills.\n\nThe Occult: the Scholar is a wizard and casts Lesser Magic."
-          }
-        ],
-        "skills": []
-      },
-      {
-        "key": "askar",
-        "kind": "hero",
-        "name": "Askar",
-        "plural": "Askars",
-        "race": "Human",
-        "cost": 35,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": 3,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 3,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [
-          "Combat",
-          "Shooting",
-          "Academic"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [],
-        "skills": []
-      },
-      {
-        "key": "townsman",
-        "kind": "henchman",
-        "name": "Townsman",
-        "plural": "Townsmen",
-        "race": "Human",
-        "cost": 20,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": null,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 3,
-          "ballistic_skill": 2,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 6
-        },
-        "skill_types": [],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "townsmen-equipment-list"
-        ],
-        "specials": [],
-        "skills": []
-      },
-      {
-        "key": "mamluk",
-        "kind": "henchman",
-        "name": "Mamluk",
-        "plural": "Mamluks",
-        "race": "Human",
-        "cost": 35,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": 5,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 4,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [],
         "skills": []
       }
     ],
@@ -114275,637 +113747,6 @@
             "description": "Scorpions attack using the poisonous sting in their tails. This attack is worked out exactly as if the scorpion was attacking with Black Lotus."
           }
         ],
-        "skills": []
-      }
-    ],
-    "upgrades": []
-  },
-  {
-    "slug": "turjuk",
-    "name": "Turjuk",
-    "setting": "relics-of-the-crusades",
-    "source": "Relics of the Crusades",
-    "link_url": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
-    "starting_gold": 500,
-    "max_models": 15,
-    "variants": [],
-    "types": [
-      {
-        "type": "turjuk",
-        "variant": ""
-      }
-    ],
-    "rules": [
-      {
-        "title": "Pride in horses",
-        "description": "A Turjuk leader who owns neither a Riding Horse nor an Arabian Steed has his Leadership reduced by 1.",
-        "variant": "",
-        "type": ""
-      },
-      {
-        "title": "A slave may lead",
-        "description": "A slave, or the son of a slave, may become the warband's leader.",
-        "variant": "",
-        "type": ""
-      }
-    ],
-    "lists": [
-      {
-        "key": "arabian-tribe-equipment-list",
-        "name": "Arabian Tribe Equipment List",
-        "note": "",
-        "lines": [
-          {
-            "item": {
-              "name": "Dagger",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": true,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace or hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Axe",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sword",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Double-handed weapon",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Spear",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Halberd",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Crossbow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 25,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Long Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 15,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Light Armour",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 20,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Shield",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Helmet",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Mule",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 30,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Riding/Draft Horse",
-              "variant": ""
-            },
-            "shown_as": "Riding Horse",
-            "cost": 40,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      },
-      {
-        "key": "townsmen-equipment-list",
-        "name": "Townsmen Equipment List",
-        "note": "This list is for Townsmen only.",
-        "lines": [
-          {
-            "item": {
-              "name": "Dagger",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": true,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Club, Mace or Hammer",
-              "variant": ""
-            },
-            "shown_as": "Mace or hammer",
-            "cost": 3,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Axe",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sword",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Sling",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 2,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Short Bow",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Toughened Leathers",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Shield",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 5,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          },
-          {
-            "item": {
-              "name": "Helmet",
-              "variant": ""
-            },
-            "shown_as": "",
-            "cost": 10,
-            "cost_note": "",
-            "first_free": false,
-            "brace_cost": null,
-            "who": {},
-            "warband_max": null,
-            "note": "",
-            "variant": ""
-          }
-        ]
-      }
-    ],
-    "fighters": [
-      {
-        "key": "emir",
-        "kind": "hero",
-        "name": "Emir",
-        "plural": "Emirs",
-        "race": "Human",
-        "cost": 60,
-        "starting_xp": 20,
-        "min_count": 1,
-        "max_count": 1,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 4,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 4,
-          "attacks": 1,
-          "leadership": 8
-        },
-        "skill_types": [
-          "Combat",
-          "Shooting",
-          "Academic",
-          "Strength",
-          "Speed"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": true,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [
-          {
-            "name": "Leader",
-            "type": "Warband - Turjuk",
-            "description": "Any warrior within 6\" of the Emir may use his Leadership for a Leadership test."
-          }
-        ],
-        "skills": [
-          "Ride [Animal]",
-          "Horse Archer"
-        ]
-      },
-      {
-        "key": "scholar",
-        "kind": "hero",
-        "name": "Scholar",
-        "plural": "Scholars",
-        "race": "Human",
-        "cost": 30,
-        "starting_xp": 8,
-        "min_count": 0,
-        "max_count": 1,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 2,
-          "ballistic_skill": 2,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [
-          "Shooting",
-          "Academic",
-          "Speed"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [
-          {
-            "name": "Field of Scholarship",
-            "type": "Warband - Turjuk",
-            "description": "When the Scholar joins the warband, choose the field he has studied.\n\nCartography: add or subtract 1 from the D6 when exploring.\n\nPhysiology: after all serious injuries have been worked out, one hero may re-roll his result.\n\nPoetry: the warband's leader adds +1 to his Leadership for his first Leadership test of a scenario if the warband won its last battle. For one turn of a scenario, every friendly model within 6\" has +1 Weapon Skill and +1 Attack.\n\nTheology: the Scholar serves The One and learns Holy skills.\n\nThe Occult: the Scholar is a wizard and casts Lesser Magic."
-          }
-        ],
-        "skills": []
-      },
-      {
-        "key": "askar",
-        "kind": "hero",
-        "name": "Askar",
-        "plural": "Askars",
-        "race": "Human",
-        "cost": 35,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": 3,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 3,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [
-          "Combat",
-          "Shooting",
-          "Speed"
-        ],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [],
-        "skills": [
-          "Ride [Animal]",
-          "Horse Archer"
-        ]
-      },
-      {
-        "key": "townsman",
-        "kind": "henchman",
-        "name": "Townsman",
-        "plural": "Townsmen",
-        "race": "Human",
-        "cost": 20,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": null,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 3,
-          "ballistic_skill": 2,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 6
-        },
-        "skill_types": [],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "townsmen-equipment-list"
-        ],
-        "specials": [],
-        "skills": []
-      },
-      {
-        "key": "mamluk",
-        "kind": "henchman",
-        "name": "Mamluk",
-        "plural": "Mamluks",
-        "race": "Human",
-        "cost": 35,
-        "starting_xp": 0,
-        "min_count": 0,
-        "max_count": 5,
-        "group_min": null,
-        "group_max": null,
-        "stats": {
-          "movement": 4,
-          "weapon_skill": 4,
-          "ballistic_skill": 4,
-          "strength": 3,
-          "toughness": 3,
-          "wounds": 1,
-          "initiative": 3,
-          "attacks": 1,
-          "leadership": 7
-        },
-        "skill_types": [],
-        "spell_types": [],
-        "gains_xp": true,
-        "promotable": true,
-        "is_leader": false,
-        "caster": "No",
-        "large": false,
-        "variant_changes": {},
-        "fixed_kit": "",
-        "lists": [
-          "arabian-tribe-equipment-list"
-        ],
-        "specials": [],
         "skills": []
       }
     ],

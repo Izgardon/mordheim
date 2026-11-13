@@ -35,6 +35,7 @@ RULE: Spec = {"rulename": (str, True), "ruleFull": (str, True), "variant": (str,
 VARIANT: Spec = {
     "key": (str, True),
     "name": (str, True),
+    "type": (str, False),  # the warband type this variant presets (pdf_warbands.served_types)
     "startingGc": (int, False),
     "maxModels": (int, False),
     "rareBonus": (int, False),

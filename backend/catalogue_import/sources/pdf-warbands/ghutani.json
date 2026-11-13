@@ -1,24 +1,53 @@
 {
   "warbandType": "ghutani",
-  "name": "Ghutani",
+  "name": "Arabian Tribes",
   "source": "Relics of the Crusades",
   "sourceLink": "https://www.broheim.net/downloads/fo/97RelicsoftheCrusadesPt2.pdf",
   "warbandRules": {
     "startingGc": 500,
     "maxModels": 15
   },
+  "variants": [
+    {
+      "key": "ghutani",
+      "name": "Ghutani",
+      "type": "ghutani"
+    },
+    {
+      "key": "muzil",
+      "name": "Muzil",
+      "type": "muzil"
+    },
+    {
+      "key": "turjuk",
+      "name": "Turjuk",
+      "type": "turjuk"
+    }
+  ],
   "specialRules": [
-    {
-      "rulename": "Blood for blood",
-      "ruleFull": "A Ghutani hero who rolls 51-56 on the Serious Injuries chart counts as having rolled Bitter Enmity."
-    },
-    {
-      "rulename": "Flagellants",
-      "ruleFull": "The warband may hire up to 5 Flagellants as henchmen. They pick their equipment from the Townsmen equipment list."
-    },
     {
       "rulename": "A slave may lead",
       "ruleFull": "A slave, or the son of a slave, may become the warband's leader."
+    },
+    {
+      "rulename": "Blood for blood",
+      "ruleFull": "A Ghutani hero who rolls 51-56 on the Serious Injuries chart counts as having rolled Bitter Enmity.",
+      "variant": "ghutani"
+    },
+    {
+      "rulename": "Flagellants",
+      "ruleFull": "The warband may hire up to 5 Flagellants as henchmen. They pick their equipment from the Townsmen equipment list.",
+      "variant": "ghutani"
+    },
+    {
+      "rulename": "Fields of study",
+      "ruleFull": "A Ghutani Scholar may only take Poetry or Theology as his field of study.",
+      "variant": "ghutani"
+    },
+    {
+      "rulename": "Pride in horses",
+      "ruleFull": "A Turjuk leader who owns neither a Riding Horse nor an Arabian Steed has his Leadership reduced by 1.",
+      "variant": "turjuk"
     }
   ],
   "equipmentLists": [
@@ -245,7 +274,33 @@
           "rulename": "Leader",
           "ruleFull": "Any warrior within 6\" of the Emir may use his Leadership for a Leadership test."
         }
-      ]
+      ],
+      "variantChanges": {
+        "muzil": {
+          "skillAccess": {
+            "combat": true,
+            "shooting": true,
+            "academic": true,
+            "strength": true,
+            "speed": true,
+            "special": false
+          }
+        },
+        "turjuk": {
+          "skillAccess": {
+            "combat": true,
+            "shooting": true,
+            "academic": true,
+            "strength": true,
+            "speed": true,
+            "special": false
+          },
+          "skills": [
+            "Ride [Animal]",
+            "Horse Archer"
+          ]
+        }
+      }
     },
     {
       "id": "scholar",
@@ -282,9 +337,32 @@
       "specialRules": [
         {
           "rulename": "Field of Scholarship",
-          "ruleFull": "When the Scholar joins the warband, choose the field he has studied. A Ghutani Scholar may only take Poetry or Theology.\n\nCartography: add or subtract 1 from the D6 when exploring.\n\nPhysiology: after all serious injuries have been worked out, one hero may re-roll his result.\n\nPoetry: the warband's leader adds +1 to his Leadership for his first Leadership test of a scenario if the warband won its last battle. For one turn of a scenario, every friendly model within 6\" has +1 Weapon Skill and +1 Attack.\n\nTheology: the Scholar serves The One and learns Holy skills.\n\nThe Occult: the Scholar is a wizard and casts Lesser Magic."
+          "ruleFull": "When the Scholar joins the warband, choose the field he has studied.\n\nCartography: add or subtract 1 from the D6 when exploring.\n\nPhysiology: after all serious injuries have been worked out, one hero may re-roll his result.\n\nPoetry: the warband's leader adds +1 to his Leadership for his first Leadership test of a scenario if the warband won its last battle. For one turn of a scenario, every friendly model within 6\" has +1 Weapon Skill and +1 Attack.\n\nTheology: the Scholar serves The One and learns Holy skills.\n\nThe Occult: the Scholar is a wizard and casts Lesser Magic."
         }
-      ]
+      ],
+      "variantChanges": {
+        "muzil": {
+          "skillAccess": {
+            "combat": false,
+            "shooting": true,
+            "academic": true,
+            "strength": false,
+            "speed": true,
+            "special": false
+          },
+          "maxCount": 2
+        },
+        "turjuk": {
+          "skillAccess": {
+            "combat": false,
+            "shooting": true,
+            "academic": true,
+            "strength": false,
+            "speed": true,
+            "special": false
+          }
+        }
+      }
     },
     {
       "id": "askar",
@@ -318,7 +396,33 @@
         "speed": true,
         "special": false
       },
-      "specialRules": []
+      "specialRules": [],
+      "variantChanges": {
+        "muzil": {
+          "skillAccess": {
+            "combat": true,
+            "shooting": true,
+            "academic": true,
+            "strength": false,
+            "speed": false,
+            "special": false
+          }
+        },
+        "turjuk": {
+          "skillAccess": {
+            "combat": true,
+            "shooting": true,
+            "academic": false,
+            "strength": false,
+            "speed": true,
+            "special": false
+          },
+          "skills": [
+            "Ride [Animal]",
+            "Horse Archer"
+          ]
+        }
+      }
     },
     {
       "id": "townsman",
@@ -379,7 +483,7 @@
   "flags": [
     {
       "page": 2,
-      "what": "The PDF prints one Arabian Tribes warband list (pages 2-4) with three tribes - Ghutani, Muzil and Turjuk - that share its choice of warriors, fighters, profiles, prices and equipment lists and differ only in their Special Rules and their skill table. Our data holds the three as three warband types, so each is a source file of its own, the shared parts repeated and the differences carried."
+      "what": "The PDF prints one Arabian Tribes warband list (pages 2-4) with three tribes - Ghutani, Muzil and Turjuk - that share its choice of warriors, fighters, profiles, prices and equipment lists and differ only in their Special Rules and their skill table. The three are our three warband types, so this one file is one template with three variants, each type presetting its own (William, 13 Nov 2026: \"Make them variants\")."
     },
     {
       "page": 2,
@@ -387,7 +491,7 @@
     },
     {
       "page": 3,
-      "what": "The three skill tables' ticks are glyphs the reading-order text drops; read from the -layout text's tick columns and checked against page 3 as an image. The tables have five columns and no Special column, so the tribes have no skill group of their own."
+      "what": "The three skill tables' ticks are glyphs the reading-order text drops; read from the -layout text's tick columns and checked against page 3 as an image. The tables have five columns and no Special column, so the tribes have no skill group of their own. The Ghutani table is the fighters' own and the other two tribes' are their variants' changes."
     },
     {
       "page": 3,
@@ -403,11 +507,23 @@
     },
     {
       "page": 2,
-      "what": "The Ghutani may hire up to 5 Flagellants as henchmen. No Flagellant profile or price is printed here, so no fighter is added and the rule carries it."
+      "what": "The Ghutani may hire up to 5 Flagellants as henchmen. No Flagellant profile or price is printed here, so no fighter is added and the Ghutani rule carries it."
     },
     {
       "page": 2,
-      "what": "\"Ghutani scholar fields of study may only be poetry or theology\" narrows the Scholar's own Field of Scholarship rule, so it sits in that rule rather than in a warband rule."
+      "what": "\"Ghutani scholar fields of study may only be poetry or theology\" narrows the Scholar's Field of Scholarship, which the three tribes share, so it is the Ghutani's own warband rule rather than a sentence of his."
+    },
+    {
+      "page": 2,
+      "what": "\"A Muzil tribe may include up to 2 Scholars\" is a count, so the Scholar is 0-2 in the Muzil variant and 0-1 in the other two."
+    },
+    {
+      "page": 2,
+      "what": "\"Every Turjuk Emir and Askar has the following skills: Ride Horse, Ride Arabian Steed and Horse Archer\" names skills, so both start with them in the Turjuk variant. Ride Horse and Ride Arabian Steed are our one Ride [Animal] skill, which names its animal, so each starts with Ride [Animal] and Horse Archer."
+    },
+    {
+      "page": 2,
+      "what": "The Arabian Steed is named in the Turjuk rules but is in no equipment list and no profile or price is printed for it, so no item or beast is added."
     }
   ]
 }

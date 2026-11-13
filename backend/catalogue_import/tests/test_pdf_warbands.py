@@ -15,7 +15,10 @@ from catalogue_import.pdf_warbands import (
     TYPE,
     add_price_rows,
     page_item_rules,
+    pdf_types,
+    pdf_variants,
     put_aliases_right,
+    served_types,
     skill_settings,
     stub_items,
     tables_as_html,
@@ -245,6 +248,38 @@ class PdfCheckTests(SimpleTestCase):
             ],
         )
 
+    def test_a_variant_may_preset_the_warband_type_it_serves(self) -> None:
+        # one book list may be several of our types (the Relics PDF's Arabian Tribes): then every variant names the
+        # type it presets, each type once, the first being the page's own, which names the file
+        catalogue = replace(CATALOGUE, types={"witch-hunters", "sisters-of-sigmar"})
+        page = good_page()
+        page["variants"] = [
+            {"key": "zealots", "name": "Zealots"},
+            {"key": "sisters", "name": "Sisters", "type": "sisters-of-sigmar"},
+        ]
+        self.assertEqual(
+            check_page("witch-hunters", page, catalogue).problems,
+            ["variants: every variant names the warband type it presets, or none does"],
+        )
+        page["variants"][0]["type"] = "no-such-band"
+        self.assertEqual(
+            check_page("witch-hunters", page, catalogue).problems,
+            [
+                "variant 'zealots': the first variant presets 'witch-hunters'",
+                "variant 'zealots': 'no-such-band' is no warband type of ours",
+            ],
+        )
+        page["variants"][0]["type"] = "sisters-of-sigmar"
+        self.assertEqual(
+            check_page("witch-hunters", page, catalogue).problems,
+            [
+                "variant 'zealots': the first variant presets 'witch-hunters'",
+                "variants: 'sisters-of-sigmar' is preset twice",
+            ],
+        )
+        page["variants"][0]["type"] = "witch-hunters"
+        self.assertEqual(check_page("witch-hunters", page, catalogue).problems, [])
+
     def test_a_price_row_may_name_a_stub_another_page_declares(self) -> None:
         # Sartosa's shop row on Throwing Axes, the Dwarf Slayer Cult's stub: price rows are added after the stubs
         page = good_page()
@@ -435,6 +470,72 @@ class PdfImportTests(SimpleTestCase):
         [row] = self.items["Bramstetter's Advanced Construct Thesis"]["availabilities"]
         self.assertEqual((row["cost"], row["dice"], row["dice_multiplier"], row["rarity"]), (100, 1, 10, 8))
         self.assertEqual(self.items["Bramstetter's Advanced Construct Thesis"]["notes"], "")
+
+    def test_a_page_serves_one_type_per_variant_that_names_one(self) -> None:
+        # a page with no variant types serves its own type and presets nothing; one whose variants name types serves
+        # each of them, presetting that variant
+        page = good_page()
+        self.assertEqual(pdf_types(page, TYPES), [{"type": "witch-hunters", "variant": ""}])
+        page["variants"] = [
+            {"key": "zealots", "name": "Zealots", "type": "witch-hunters"},
+            {"key": "sisters", "name": "Sisters", "type": "sisters-of-sigmar"},
+        ]
+        types = [*TYPES, {"slug": "sisters-of-sigmar", "setting": "mordheim-1a"}]
+        self.assertEqual(
+            pdf_types(page, types),
+            [{"type": "witch-hunters", "variant": "zealots"}, {"type": "sisters-of-sigmar", "variant": "sisters"}],
+        )
+        self.assertEqual(pdf_variants(page), [{"key": "zealots", "name": "Zealots"}, {"key": "sisters", "name": "Sisters"}])  # fmt: skip
+
+    def test_the_arabian_tribes_are_one_template_with_a_variant_per_tribe(self) -> None:
+        # William, 13 Nov 2026: "Make them variants". The Relics PDF (p2-p4) prints one Arabian Tribes warband list
+        # whose Ghutani, Muzil and Turjuk are three Special Rules paragraphs and three sub-tables of its one skill
+        # table, so the three are one template, each of our types presetting its own variant.
+        self.assertEqual([slug for slug in ("ghutani", "muzil", "turjuk") if slug in self.templates], [])
+        tribes = self.templates["arabian-tribes"]
+        self.assertEqual(
+            tribes["types"],
+            [
+                {"type": "ghutani", "variant": "ghutani"},
+                {"type": "muzil", "variant": "muzil"},
+                {"type": "turjuk", "variant": "turjuk"},
+            ],
+        )
+        self.assertEqual([row["key"] for row in tribes["variants"]], ["ghutani", "muzil", "turjuk"])
+        self.assertEqual((tribes["starting_gold"], tribes["max_models"]), (500, 15))
+        # each tribe's Special Rules paragraph is its variant's; the list's own rule is every tribe's
+        self.assertEqual(
+            [(row["title"], row["variant"]) for row in tribes["rules"]],
+            [
+                ("A slave may lead", ""),
+                ("Blood for blood", "ghutani"),
+                ("Flagellants", "ghutani"),
+                ("Fields of study", "ghutani"),
+                ("Pride in horses", "turjuk"),
+            ],
+        )
+        by_name = {row["name"]: row for row in tribes["fighters"]}
+        # the skill table's sub-tables, the Muzil's second Scholar and the Turjuk's horsemen's skills
+        self.assertEqual(by_name["Askar"]["skill_types"], ["Combat", "Strength", "Speed"])
+        self.assertEqual(
+            by_name["Askar"]["variant_changes"],
+            {
+                "muzil": {"skill_types": ["Combat", "Shooting", "Academic"]},
+                "turjuk": {
+                    "skill_types": ["Combat", "Shooting", "Speed"],
+                    "skills": ["Ride [Animal]", "Horse Archer"],
+                },
+            },
+        )
+        self.assertEqual(by_name["Scholar"]["variant_changes"]["muzil"]["max_count"], 2)
+        self.assertEqual(by_name["Scholar"]["max_count"], 1)
+        # the fighters, profiles and both equipment lists are the one list's, shared by all three tribes
+        self.assertEqual([row["name"] for row in tribes["fighters"]], ["Emir", "Scholar", "Askar", "Townsman", "Mamluk"])  # fmt: skip
+        self.assertEqual(
+            [(row["name"], len(row["lines"])) for row in tribes["lists"]],
+            [("Arabian Tribe Equipment List", 15), ("Townsmen Equipment List", 9)],
+        )
+        self.assertEqual([line["variant"] for row in tribes["lists"] for line in row["lines"]], [""] * 24)
 
     def test_the_house_guard_is_three_houses_as_three_variants(self) -> None:
         # the House Guard PDF (p2-p5): each house has its own rule, its own list lines and its own skill table
@@ -915,7 +1016,11 @@ class PdfImportTests(SimpleTestCase):
                 # a template is slugged by its name, which may spell its type otherwise (Militant Mootlanders is the
                 # type militiant-mootlanders, the source's spelling)
                 template = self.templates[slugify(page["name"])]
-                self.assertEqual(template["types"], [{"type": slug, "variant": ""}])
+                # a page serves its own type, or one per variant that names a type (the Arabian tribes)
+                self.assertEqual(
+                    template["types"],
+                    [{"type": name, "variant": variant} for name, variant in served_types(page).items()],
+                )
                 self.assertEqual(
                     (template["setting"], template["link_url"], len(template["fighters"])),
                     (types[slug]["setting"], page["sourceLink"], len(page["fighters"])),
