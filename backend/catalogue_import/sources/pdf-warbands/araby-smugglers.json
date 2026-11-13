@@ -373,7 +373,7 @@
       "minQty": 0,
       "maxQty": 3,
       "costGc": 25,
-      "startingXp": 8,
+      "startingXp": 6,
       "statblock": {
         "m": 4,
         "ws": 3,
@@ -606,6 +606,10 @@
     {
       "page": 1,
       "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
+    },
+    {
+      "page": 15,
+      "what": "Sartosa Errata p15: \"Mates start with 6 Experience, instead of 8 experience.\""
     }
   ]
 }

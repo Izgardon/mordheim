@@ -386,8 +386,8 @@
     "slug": "pirate-banner",
     "name": "Pirate Banner",
     "aliases": [],
-    "summary": "One flag per warband; one hand, no two-handed weapons",
-    "text": "A pirate warband may carry one pirate flag. Carrying it takes up one hand, so its bearer may carry or use no two-handed weapon during the game. A Swabbie gains no benefit from a Pirate Banner. A good warband (the Sisters of Sigmar, the Witch Hunters, the Lothern Sea Patrol) may carry only the Nation's Colors.",
+    "summary": "Heroes only; one per warband; one hand, no two-handed close combat weapons",
+    "text": "A warband may carry one banner. Only a Hero may carry it, never a Henchman, and carrying it takes up one hand, so its bearer may use no two-handed hand-to-hand weapon and may carry no large object (a crate, a treasure chest, a ladder) by himself, though he may carry one with another model as normal. He may fire a two-handed missile weapon as normal, but not a gigantic one such as a Swivel Gun. Banners may be carried by pirate, neutral and evil warbands only, never by a Navy warband (the Tilean Mercenaries, the Witch Hunters, the Sisters of Sigmar, the Gunnery School of Nuln, the Lothern Sea Patrol); the Nation's Colors is the exception, which a Navy warband may carry too. A Swabbie gains no benefit from a banner.",
     "tables": [],
     "used_by": 6,
     "wordings": 1

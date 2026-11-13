@@ -915,10 +915,10 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | henchmen that gain no XP | 134 |
 | henchmen that can't be promoted | 165 |
 | equipment lists | 371 |
-| list lines | 4091 |
-| warband rules | 511 |
+| list lines | 4095 |
+| warband rules | 513 |
 | upgrades | 179 |
-| the templates' own specials | 1164 |
+| the templates' own specials | 1166 |
 
 ### List lines
 
@@ -1530,13 +1530,13 @@ Kept apart from a family's, the effect differing:
 | adventurers | adventurers | 6 | 0 | 0 | 17 |
 | albion-barbarians | albion-barbarians | 5 | 1 | 0 | 7 |
 | altdorf-expeditionary-party | altdorf-expeditionary-party | 4 | 0 | 2 | 18 |
-| araby-smugglers | araby-smugglers | 6 | 0 | 0 | 10 |
+| araby-smugglers | araby-smugglers | 6 | 0 | 0 | 11 |
 | arabyan-nomads | arabyan-nomads | 6 | 3 | 6 | 8 |
 | arabyan-theives | arabyan-theives | 5 | 3 | 4 | 6 |
 | assassin-squad-knives-from-the-dark | assassin-squad-knives-from-the-dark | 6 | 0 | 7 | 16 |
 | blood-dragons | blood-dragons | 6 | 0 | 0 | 9 |
 | bretonnian-brigands | bretonnian-brigands | 6 | 0 | 0 | 9 |
-| bretonnian-buccaneers | bretonnian-buccaneers | 7 | 0 | 0 | 9 |
+| bretonnian-buccaneers | bretonnian-buccaneers | 7 | 0 | 0 | 10 |
 | bretonnian-grail-companions | bretonnian-grail-companions | 7 | 2 | 3 | 12 |
 | bretonnian-knights-errant | bretonnian-knights-errant | 2 | 0 | 0 | 8 |
 | call-of-the-night-haint | call-of-the-night-haint | 8 | 0 | 3 | 14 |
@@ -1554,10 +1554,10 @@ Kept apart from a family's, the effect differing:
 | dwarf-slayer-cult | dwarf-slayer-cult | 6 | 1 | 1 | 11 |
 | dwarf-slayers | dwarf-slayers | 6 | 0 | 0 | 12 |
 | dwarf-troll-slayers | dwarf-troll-slayers | 7 | 0 | 1 | 17 |
-| estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 9 |
+| estalian-corsairs | estalian-corsairs | 7 | 0 | 0 | 10 |
 | fen-guard | fen-guard | 5 | 1 | 3 | 14 |
 | forest-goblins-lus | forest-goblins-lus | 7 | 0 | 0 | 17 |
-| ghost-pirates | ghost-pirates | 7 | 0 | 1 | 14 |
+| ghost-pirates | ghost-pirates | 7 | 0 | 1 | 15 |
 | ghutani | ghutani | 5 | 0 | 0 | 8 |
 | goblin-raiders | goblin-raiders | 7 | 0 | 2 | 14 |
 | grave-robbers | grave-robbers | 5 | 2 | 4 | 6 |
@@ -1572,7 +1572,7 @@ Kept apart from a family's, the effect differing:
 | lahmian | lahmian | 10 | 3 | 1 | 10 |
 | lizardmen-lus | lizardmen-lus | 6 | 0 | 0 | 15 |
 | lords-of-the-marsh | lords-of-the-marsh | 5 | 0 | 0 | 9 |
-| lothern-sea-patrol | lothern-sea-patrol | 7 | 0 | 0 | 12 |
+| lothern-sea-patrol | lothern-sea-patrol | 7 | 0 | 0 | 13 |
 | low-kings | low-kings | 7 | 1 | 1 | 10 |
 | mages | mages | 5 | 1 | 0 | 13 |
 | masters-of-horror | masters-of-horror | 7 | 1 | 2 | 11 |
@@ -1591,9 +1591,9 @@ Kept apart from a family's, the effect differing:
 | order-of-the-mare | order-of-the-mare | 8 | 0 | 0 | 14 |
 | ostermark-roadwardens | ostermark-roadwardens | 6 | 0 | 0 | 10 |
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
-| pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 12 |
+| pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 13 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
-| sartosan-pirates | sartosan-pirates | 7 | 0 | 17 | 10 |
+| sartosan-pirates | sartosan-pirates | 7 | 0 | 17 | 12 |
 | savage-orcs-ath | savage-orcs-ath | 6 | 0 | 1 | 18 |
 | savage-orcs-kaz | savage-orcs-kaz | 7 | 0 | 4 | 11 |
 | savage-orcs-sar | savage-orcs-sar | 7 | 0 | 0 | 8 |
@@ -1713,6 +1713,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p4): The Merchant's Pawnbroker skill shares its name with our shared special Pawnbroker, which is a hired sword's rule: see the decisions.
 - Flag (p3): Fine Craftmenship is the PDF's spelling of the Merchant's rule, kept as printed.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p15): Sartosa Errata p15: "Mates start with 6 Experience, instead of 8 experience."
 
 ### Arabyan Nomads
 
@@ -1811,6 +1812,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p2): "at warband creation, you may purchase dueling pistols for 25gc each": list prices are starting prices in the app, so the Duelling Pistol's line is 25 gc (50 for a brace) and no rule repeats it.
 - Flag (p2): The rule names "a Bretonnian hero", so the short-range change is written for Heroes only, as printed.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p14): Sartosa Errata p14: "the Pirate Equipment List for all nationalities (including Cathayan) now has Handgun added on to it, making it available to all members of each warband" - a Handgun line at the setting's own 35 gc.
 
 ### Bretonnian Grail Companions
 
@@ -2124,6 +2126,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p2): Estalians add the Rapier and Heavy Armour to the Pirate Equipment list and lose the Crossbow, so the list carries the change and no warband rule repeats it.
 - Flag (p2): "All Estalian Captains and Champions start off with the skill Expert Swordsman": read as the Captain and the Ship's Mates, who start with our Expert Swordsman skill.
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
+- Flag (p14): Sartosa Errata p14: "the Pirate Equipment List for all nationalities (including Cathayan) now has Handgun added on to it, making it available to all members of each warband" - a Handgun line at the setting's own 35 gc.
 
 ### Fen Guard
 
@@ -2192,6 +2195,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p3): The Ghost Captain's profile is M4 WS4 BS3 S4 T3 W1 I4 A1 Ld8 and the Sea Singer's M4 WS2 BS2 S2 T3 W1 I3 A1 Ld7: as printed.
 - Flag (p2): The Boat Hook (8 gc), the Belaying Pin (3 gc) and the Cat O' Nine Tails (8 gc) are ours already, at the Sartosa campaign rules' Equipment PDF prices; the line's Cat O' Nine Tails is 8 gc, which that PDF's trading list prints as 3 gc (open decision 20).
 - Flag (p2): The Blunderbuss line is 30 gc and the Handgun line 35 gc, as the Sartosa Equipment PDF's trading list has them; our Blunderbuss is Rare 9 and our Handgun Rare 8, which are unchanged (open decision 20).
+- Flag (p16): Sartosa Errata p16-18: the Sea Singer's "Beauty of the Sea" is split into Allure and Frightening Form; the Gibbets count as Aquatic; a dead Ghost Captain may be replaced by purchase; the Bloated's "No Pain" was a typo (ours never had it) and the Choice of Warriors correction (up to 2 Screaming Ghosts, up to 2 Skeleton Mates) is what ours already holds. "All Models in the Ghost Pirate Warband have the same maximum stats as Humans": our Undead race maximums are the Human ones already, so nothing was changed.
 
 ### Ghutani
 
@@ -2434,6 +2438,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p5): The Spells of the Lothern Sea are the Spells of the Djedhi we already hold, with the fourth, Fleeting Shadows, replaced by Mistress of the Deep (difficulty 8). The lore is added as its own, taking our wording for the five that are the same.
 - Flag (p1): The warband must hold between 3 and 12 models: our templates hold no minimum, so only the maximum of 12 is imported. No henchmen group sizes and no maximum profile are printed: the warband takes our Elf race, the Raw Recruits included, though their entry says some are not full elves.
 - Flag (p3): The Commodore's profile is M5 WS5 BS4 S3 T3 W1 I5 A1 Ld9 and the Bossun's M5 WS4 BS4 S3 T3 W1 I5 A1 Ld8: as printed.
+- Flag (p18): Sartosa Errata p18: "Lothern Sea Patrol counts as 'Navy'. This means they may not buy pirate Banners (except for Nation's Colors). They do not count as Outlaws. They may still pressgang ... and may learn Pirate Skills as normal."
 
 ### Low Kings
 
@@ -2727,6 +2732,7 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): A Cathay Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
 - Flag (p4): The Martial Artist's Agile (he counts as carrying a Rope & Hook and re-rolls failed Initiative tests for climbing and leaping) is not the Grace of Shornaal mutation Agile (+1 to Initiative tests), so it is kept apart as "Agile (Martial Artist)". The Dragon Monk's rule Art of Silent Death and the special skill Art of the Silent Death are worded differently and do different things (the rule is about a quarterstaff, the skill about an extra attack), so both are kept.
 - Flag (p3): The Litter Bearer is listed under the Heroes, with a row in the skill table, and starts with 0 experience: as printed.
+- Flag (p14): Sartosa Errata p14: "the Pirate Equipment List for all nationalities (including Cathayan) now has Handgun added on to it, making it available to all members of each warband" - a Handgun line at the setting's own 35 gc.
 
 ### Protectorate Of Sigmar
 
@@ -2748,9 +2754,9 @@ Pages folded into another warband's list as one of its variants:
 
 - Stub: Duck-Footed Pistol, 50 gc, Rare 11; its rules are on p10.
 - Stub: Pocket Pistol, 5 gc, Rare 4; its rules are on p10.
-- Stub: Sword Pistol, 60 gc, Rare 11; its rules are on p10.
+- Stub: Sword Pistol, 40 gc, Rare 10; its rules are on p10.
 - Stub: Powder Horn, 10 gc, Rare 6; its rules are on p10.
-- Stub: Powder Monkey, 15 gc, Rare 8; its rules are on p10.
+- Stub: Refined Powder, 10 gc, Rare 5; its rules are on p10.
 - Stub: Grog, 10+1D6 gc, Common; its rules are on p10.
 - Stub: Raft, 40 gc, Common; its rules are on p10.
 - Stub: Norlander Net, 10 gc, Common; its rules are on p10.
@@ -2763,7 +2769,7 @@ Pages folded into another warband's list as one of its variants:
 - Stub: Banner - Nation's Colors, 40+2D6 gc, Rare 9; its rules are on p10.
 - Stub: Banner - Quarantine Flag, 30+2D6 gc, Rare 9; its rules are on p10.
 - Stub: Banner - Red Flag, 40+2D6 gc, Rare 9; its rules are on p10.
-- Shared item rule (p10): Pirate Banner.
+- Shared item rule (p11): Pirate Banner.
 - Price row (p10): our Cat O' Nine Tails for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Common, Heroes only.
 - Price row (p10): our Blunderbuss for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 7.
 - Price row (p10): our Crossbow for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 8.
@@ -2790,6 +2796,8 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p1): The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it.
 - Flag (p10): The Sartosa campaign rules' Equipment PDF (p10) prints one trading list for the whole setting. William, 11 Nov 2026 (decision 20): it goes in as price rows for the Sartosa warband types, and our own prices and rarities never change. Each row below is one the setting's shop prices differently from ours; the list is declared here once, for all twelve Sartosa warband types, and a warband's own list price still wins for that warband. Throwing Axes get no row: they are our Throwing Knives/Stars/Axes, 15 gc Rare 5 for everyone already (William, 11 Nov 2026).
 - Flag (p10): The setting's Equipment PDF prints eighteen items our catalogue lacks: they are stubs with the rules and prices it prints, one row for the setting's twelve warband types (William, 11 Nov 2026: "add them in as stubs if you dont have the rules for them yet, we will populate later but good to know they exist"). The Quarantine Flag is 40+2D6 on the trading chart and 30+2D6 in its entry: the entry's, as William settled for the Horn of the Wild Hunt. Each of the six Banners carries the shared Pirate Banner rule and its own. The Greatcoat (10 gc, Common) is our Rain Coat, "Based on 'Raincoat' from Border Town Burning" and the same price, so it is no new item: it is a tag on ours, and the PDF adds that it may be worn over armour without penalty but not with a cloak, and does not keep powder dry when walking through water. The Powder Monkey has no rules in either PDF read.
+- Flag (p14): Sartosa Errata p14: "the Pirate Equipment List for all nationalities (including Cathayan) now has Handgun added on to it, making it available to all members of each warband" - a Handgun line at the setting's own 35 gc.
+- Flag (p11): Sartosa Errata p11-13: the Sword Pistol is revised (Cost 40 gc, Rare 10, and the rules printed here in place of its own), the Pocket Pistol gains Easy to Use, every banner takes the reworded shared banner rule (Heroes only, no Henchman, one per warband, Navy warbands only the Nation's Colors), the 'Friendly' Flag grants the leader Tactician instead of its own rule, and Powder Monkey is renamed Refined Powder at 10 gc Rare 5 with the rules the errata prints ("'Powder Monkey' is removed from the Trading List (this was the original name of 'Refined Powder')").
 
 ### Savage Orcs (Athel Loren)
 

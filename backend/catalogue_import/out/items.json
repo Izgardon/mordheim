@@ -23173,6 +23173,12 @@
         "summary": "",
         "text": "The hero carries it even in a scenario that deprives heroes of their weapons. Whenever he is captured, by an injury roll, a bounty hunter, the Pressganger skill or anything else, he escapes unharmed with all his equipment on a 4+. Carrying two still gives one roll.",
         "tables": []
+      },
+      {
+        "name": "Easy to Use",
+        "summary": "",
+        "text": "A model with Pistols on his equipment list may use a Pocket Pistol without the Weapons Expert skill.",
+        "tables": []
       }
     ],
     "availabilities": [
@@ -23252,50 +23258,53 @@
       "sword pistol"
     ],
     "flavour": "",
-    "range": "10\"/Close Combat",
-    "strength": "4/As user",
+    "range": "Close Combat/10\"",
+    "strength": "As user/4",
     "save": "",
     "statblock": [],
     "notes": "",
     "needs_rules": false,
     "rules": [
       {
-        "name": "Pistol-Like",
+        "name": "Dual-Use",
         "summary": "",
-        "text": "Out of combat it works as a Duelling Pistol, with the rules for pistol fire, Accuracy, Prepare shot and its save modifier.",
+        "text": "A Sword Pistol counts as both a Sword and a Duelling Pistol. In the shooting phase it is treated exactly as a Duelling Pistol; in close combat it may be treated as either a sword or a duelling pistol. For bonuses and skills it counts as a true Sword or a true Duelling Pistol, so Expert Swordsman re-rolls its sword attacks only, never its pistol shot, even one fired while charging.",
         "tables": []
       },
       {
         "rule": "parry",
-        "text": "In close combat a model wielding a Sword Pistol gains one parry a turn, as with a sword."
+        "text": "A Sword Pistol gives one parry in close combat, as a sword does, in every turn and not only in a turn it is used as a sword. The parry may be used in the same turn as its pistol shot."
       },
       {
-        "name": "Intricate",
-        "summary": "",
-        "text": "If a parry with the Sword Pistol rolls a natural 1, it counts as a plain sword for the rest of the battle: it may no longer fire out of combat and loses Balanced and Blasting Charge.",
-        "tables": []
+        "rule": "accuracy",
+        "text": "A Sword Pistol adds +1 to its rolls to hit when firing its pistol shot."
       },
       {
-        "name": "Balanced",
-        "summary": "",
-        "text": "In the first round of close combat every attack with the Sword Pistol is at +1 to hit.",
-        "tables": []
+        "rule": "prepare-shot"
       },
       {
-        "name": "Blasting Charge",
+        "rule": "save-modifier",
+        "text": "Every pistol shot from a Sword Pistol applies a further -1 armour save modifier."
+      },
+      {
+        "rule": "hand-to-hand",
+        "text": "Once per combat a model armed with a loaded Sword Pistol may replace one of his normal attacks with a pistol shot, resolved at +1 to hit, Strength 4 and with a -1 armour save modifier, whatever his own Strength. His other attacks that combat are made with it as a sword. Only that one attack gains the +1 to hit."
+      },
+      {
+        "name": "Easy-to-Use",
         "summary": "",
-        "text": "The first hit it deals in the first round of close combat deals, besides the hit at the user's Strength, an extra attack at Strength 4 with a further -1 to the enemy's armour save. After the first round it counts as a sword with the Intricate rule. The Blasting Charge may be used at the beginning of each new combat.",
+        "text": "A model who may use both a Sword and a Duelling Pistol may use a Sword Pistol, and needs neither Weapons Training, Weapons Expert nor Pistol Expertise for it.",
         "tables": []
       }
     ],
     "availabilities": [
       {
         "label": "",
-        "cost": 60,
+        "cost": 40,
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
-        "rarity": 11,
+        "rarity": 10,
         "for_everyone": false,
         "warbands": [
           {
@@ -23443,8 +23452,8 @@
     ]
   },
   {
-    "slug": "powder-monkey",
-    "name": "Powder Monkey",
+    "slug": "refined-powder",
+    "name": "Refined Powder",
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Miscellaneous",
@@ -23453,7 +23462,7 @@
     "source": "Sartosa",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf",
     "tags": [
-      "powder monkey"
+      "refined powder"
     ],
     "flavour": "",
     "range": "",
@@ -23461,16 +23470,23 @@
     "save": "",
     "statblock": [],
     "notes": "",
-    "needs_rules": true,
-    "rules": [],
+    "needs_rules": false,
+    "rules": [
+      {
+        "name": "Refined Powder",
+        "summary": "",
+        "text": "A Hero carrying Refined Powder may roll 1D6 whenever he rolls a blackpowder misfire; on a 4+ the misfire is averted. There is enough of it to last that Hero the whole campaign, and between games it may be passed from Hero to Hero, but only one Hero may use it at a time. It may not be used at the same time as Superior Blackpowder.",
+        "tables": []
+      }
+    ],
     "availabilities": [
       {
         "label": "",
-        "cost": 15,
+        "cost": 10,
         "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
-        "rarity": 8,
+        "rarity": 5,
         "for_everyone": false,
         "warbands": [
           {
@@ -24215,7 +24231,7 @@
       {
         "name": "'Friendly' Flag",
         "summary": "",
-        "text": "After set-up the warband may advance a further 6\" in. The High Elf Lothern Sea Guard may not use it.",
+        "text": "The warband's leader has the Tactician skill while the warband owns the flag. He need not carry it himself.",
         "tables": []
       }
     ],

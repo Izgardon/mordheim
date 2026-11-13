@@ -153,6 +153,13 @@
           "cost": {
             "cost": 50
           }
+        },
+        {
+          "name": "handgun",
+          "alias": "Handgun",
+          "cost": {
+            "cost": 35
+          }
         }
       ]
     },
@@ -655,6 +662,10 @@
     {
       "page": 1,
       "what": "The Pirate column is the Pirate Skills list of the Sartosa campaign rules (Sartosa Skills, Hired Swords and Dramatis Personae, p1-2), not this PDF: it is the shared Sartosa Pirate Skills group, declared in sartosan-pirates.json and named by each hero who ticks it."
+    },
+    {
+      "page": 14,
+      "what": "Sartosa Errata p14: \"the Pirate Equipment List for all nationalities (including Cathayan) now has Handgun added on to it, making it available to all members of each warband\" - a Handgun line at the setting's own 35 gc."
     }
   ]
 }

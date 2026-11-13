@@ -35,6 +35,10 @@
     {
       "rulename": "A Note on Blackpowder",
       "ruleFull": "The warband starts with no blackpowder weapon of any kind and no list sells one, but nothing forbids one: a Hero with the Weapons Expert skill may use any powder weapon he finds."
+    },
+    {
+      "rulename": "Elven Navy",
+      "ruleFull": "The warband counts as Navy: it may buy no banner but the Nation's Colors, and it does not count as Outlaws. It may still pressgang, and may learn Pirate skills as normal."
     }
   ],
   "equipmentLists": [
@@ -668,6 +672,10 @@
     {
       "page": 3,
       "what": "The Commodore's profile is M5 WS5 BS4 S3 T3 W1 I5 A1 Ld9 and the Bossun's M5 WS4 BS4 S3 T3 W1 I5 A1 Ld8: as printed."
+    },
+    {
+      "page": 18,
+      "what": "Sartosa Errata p18: \"Lothern Sea Patrol counts as 'Navy'. This means they may not buy pirate Banners (except for Nation's Colors). They do not count as Outlaws. They may still pressgang ... and may learn Pirate Skills as normal.\""
     }
   ],
   "mutations": [

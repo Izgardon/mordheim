@@ -669,9 +669,9 @@ class PdfImportTests(SimpleTestCase):
         wanted = {
             "Duck-Footed Pistol": (50, None, 11),
             "Pocket Pistol": (5, None, 4),
-            "Sword Pistol": (60, None, 11),
+            "Sword Pistol": (40, None, 10),  # the errata revises it (p11-13)
             "Powder Horn": (10, None, 6),
-            "Powder Monkey": (15, None, 8),
+            "Refined Powder": (10, None, 5),  # the errata renames Powder Monkey and reprices it (p12-13)
             "Grog": (10, 1, None),
             "Raft": (40, None, None),
             "Norlander Net": (10, None, None),
@@ -696,7 +696,7 @@ class PdfImportTests(SimpleTestCase):
         # each banner carries the shared Pirate Banner rule and then its own
         banner = self.items["Banner - Red Flag"]["rules"]
         self.assertEqual([rule.get("rule") or rule.get("name") for rule in banner], ["pirate-banner", "Red Flag"])
-        self.assertEqual(self.items["Powder Monkey"]["needs_rules"], True)  # no rules in either PDF read
+        self.assertEqual(self.items["Refined Powder"]["needs_rules"], False)  # the errata gives it its rules
         # the Greatcoat is our Rain Coat under another name, so it is a tag on ours rather than an item
         self.assertNotIn("Greatcoat", self.items)
         self.assertIn("greatcoat", self.items["Rain Coat"]["tags"])

@@ -5387,7 +5387,7 @@
         "plural": "Mates",
         "race": "Human",
         "cost": 25,
-        "starting_xp": 8,
+        "starting_xp": 6,
         "min_count": 0,
         "max_count": 3,
         "group_min": null,
@@ -13901,6 +13901,21 @@
             },
             "shown_as": "",
             "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,
@@ -36246,6 +36261,21 @@
             "warband_max": null,
             "note": "",
             "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
           }
         ]
       },
@@ -39246,6 +39276,12 @@
         "description": "The Ghost Captain and the Screaming Ghosts are Ethereal. An Ethereal model has a 4+ unmodifiable save against every attack. It may not be used with Dodge or Step Aside, and it does nothing against a magical attack: a spell, a prayer, an artefact, gromril, ithilmar or a silver bullet. In the movement phase he may take a Leadership test; if he passes it he may move through any terrain piece and over water. If he begins his next movement phase in the middle of a terrain piece or over water he must take another Leadership test, and is taken out of action at once if he fails it. Once the warband is made, every item costs an Ethereal model double. When the crew finds an item, roll a D6: on a 5+ both Ethereal and non-Ethereal models may use it, and on a 1-4 only non-Ethereal models may, which is marked on the roster.",
         "variant": "",
         "type": ""
+      },
+      {
+        "title": "Succession",
+        "description": "If the Ghost Captain dies, the warband may buy a replacement Captain.",
+        "variant": "",
+        "type": ""
       }
     ],
     "lists": [
@@ -39945,9 +39981,14 @@
             "type": "Caster"
           },
           {
-            "name": "Beauty of the Sea",
+            "name": "Allure",
             "type": "Warband - Ghost Pirates",
-            "description": "A male enemy who is not an animal must pass a Leadership test to charge a Sea Singer; if he fails it he stays where he is. A model she charges may not attack back until he passes a Leadership test at the start of the combat phase, and once he passes one he need not test again for the rest of that combat. She causes fear in female models. Her Beauty counts as a form of psychology."
+            "description": "A male warrior who declares a charge against the Sea Singer must pass a Leadership test; if he fails it he may not move this turn, though he may shoot and cast spells as normal. A male warrior she charges must pass a Leadership test at the start of every combat phase he would fight in before he may attack her in hand-to-hand, and once he passes one he may attack her for the rest of that combat; he may attack other models as normal meanwhile. Allure has no effect on females, on animals or on a model immune to psychology."
+          },
+          {
+            "name": "Frightening Form",
+            "type": "Warband - Ghost Pirates",
+            "description": "The Sea Singer causes fear in female models that are not animals."
           }
         ],
         "skills": []
@@ -40066,6 +40107,11 @@
             "name": "Sink",
             "type": "Warband - Ghost Pirates",
             "description": "A Gibbet sinks to the bottom of any water he moves through. The bed counts as difficult terrain, so he moves at half speed, and while sunk he is at -2 to hit and -2 to be hit in combat and by missiles. He boards a ship by the normal rules. He is immune to any water or drowning damage."
+          },
+          {
+            "name": "Aquatic",
+            "type": "Warband - Ghost Pirates",
+            "description": "A Gibbet suffers no penalty for walking in water, never rolls for drowning and may hide in water. He may never swim, and his charge is not doubled in water: charging into or out of water, the water counts as difficult terrain."
           }
         ],
         "skills": []
@@ -56409,6 +56455,12 @@
       {
         "title": "A Note on Blackpowder",
         "description": "The warband starts with no blackpowder weapon of any kind and no list sells one, but nothing forbids one: a Hero with the Weapons Expert skill may use any powder weapon he finds.",
+        "variant": "",
+        "type": ""
+      },
+      {
+        "title": "Elven Navy",
+        "description": "The warband counts as Navy: it may buy no banner but the Nation's Colors, and it does not count as Outlaws. It may still pressgang, and may learn Pirate skills as normal.",
         "variant": "",
         "type": ""
       },
@@ -84428,6 +84480,21 @@
             "warband_max": null,
             "note": "",
             "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
           }
         ]
       },
@@ -88216,6 +88283,21 @@
             },
             "shown_as": "",
             "cost": 20,
+            "cost_note": "",
+            "first_free": false,
+            "brace_cost": null,
+            "who": {},
+            "warband_max": null,
+            "note": "",
+            "variant": ""
+          },
+          {
+            "item": {
+              "name": "Handgun",
+              "variant": ""
+            },
+            "shown_as": "",
+            "cost": 35,
             "cost_note": "",
             "first_free": false,
             "brace_cost": null,

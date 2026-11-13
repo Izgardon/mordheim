@@ -145,7 +145,12 @@ The Sartosa warbands' Pirate skill column is the Pirate Skills list of the setti
 https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Skills%2C%20Hired%20Swords%20%26%20Dramatis%20Personae.pdf (p1-2, text layer; 11 Nov 2026)
 as the shared group `sharedSkillGroup` in `sartosan-pirates.json`. Its Hired Swords and Dramatis Personae are not imported.
 The same setting's https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Equipment.pdf (10 pages, text layer; 11 Nov 2026) gives the Sartosa
-stubs their rules and settles their prices. The setting's other eight campaign PDFs are not read (William, 11 Nov 2026).
+stubs their rules and settles their prices.
+
+**Sartosa's errata is read and wins** (https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Errata.pdf, 26 pages, text layer; 12 Nov 2026):
+where it corrects a warband PDF the errata's reading stands, flagged on the page it changes. Its pages 1-10 (water, boats, swabbie
+clarifications) and 22-26 (scenarios) are campaign rules this project does not model; its pages 11-21 are what the data holds.
+The setting's other seven campaign PDFs are not read (William, 11 Nov 2026).
 
 The Sealed City's own campaign PDFs were read on 12 Nov 2026, for what its warbands point at. Its Stygian Mutations
 (https://www.broheim.net/downloads/campaigns/sealedcity/Stygian%20Mutations.pdf, 1-7, text layer) prints the D66 chart the Brood of Ghurash's Accelerated

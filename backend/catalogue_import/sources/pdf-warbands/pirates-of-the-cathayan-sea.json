@@ -193,6 +193,13 @@
           "cost": {
             "cost": 10
           }
+        },
+        {
+          "name": "handgun",
+          "alias": "Handgun",
+          "cost": {
+            "cost": 35
+          }
         }
       ]
     },
@@ -861,6 +868,10 @@
     {
       "page": 3,
       "what": "The Litter Bearer is listed under the Heroes, with a row in the skill table, and starts with 0 experience: as printed."
+    },
+    {
+      "page": 14,
+      "what": "Sartosa Errata p14: \"the Pirate Equipment List for all nationalities (including Cathayan) now has Handgun added on to it, making it available to all members of each warband\" - a Handgun line at the setting's own 35 gc."
     }
   ]
 }
