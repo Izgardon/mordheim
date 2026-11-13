@@ -773,5 +773,29 @@
     "name": "Copious Vomit (Troll Hag)",
     "type": "Animal",
     "description": "In the shooting phase, if she is not engaged in combat, the Troll Hag shoots a small blast template of Strength 5 vomit, which ignores armour."
+  },
+  {
+    "name": "Weapons (Trained Monkey)",
+    "type": "Animal",
+    "description": "The Monkey fights weaponless in hand-to-hand combat with no penalty. It may throw improvised missiles at an opponent in the shooting phase, treated as Belaying Pins. It may not be looted or given to another warrior.",
+    "setting": "sartosa"
+  },
+  {
+    "name": "Go'fer! (Trained Monkey)",
+    "type": "Animal",
+    "description": "The Monkey may pick up a Valuable or a wyrdstone shard, one at a time, and must hand it to a warrior of the warband before fetching another. Neither the Monkey nor the warrior it hands to gains experience for it. It may carry no heavy object (cargo, a treasure chest, a ladder) and may not search a building for hidden items.",
+    "setting": "sartosa"
+  },
+  {
+    "name": "Climbers (Trained Monkey)",
+    "type": "Animal",
+    "description": "The Monkey counts as having the Speed skills Scale Sheer Surfaces and Acrobat.",
+    "setting": "sartosa"
+  },
+  {
+    "name": "Highly Insignificant (Trained Monkey)",
+    "type": "Animal",
+    "description": "A Trained Monkey counts towards the number of warriors in a warband but is not counted for rout tests, neither in working out the warband's starting size nor as a model lost.",
+    "setting": "sartosa"
   }
 ]

@@ -150,7 +150,11 @@ stubs their rules and settles their prices.
 **Sartosa's errata is read and wins** (https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Errata.pdf, 26 pages, text layer; 12 Nov 2026):
 where it corrects a warband PDF the errata's reading stands, flagged on the page it changes. Its pages 1-10 (water, boats, swabbie
 clarifications) and 22-26 (scenarios) are campaign rules this project does not model; its pages 11-21 are what the data holds.
-The setting's other seven campaign PDFs are not read (William, 11 Nov 2026).
+The setting's Add On (https://www.broheim.net/downloads/campaigns/sartosa/Sartosa%20Additional%20Rules.pdf, 51 pages, text layer;
+12 Nov 2026) is read for its NEW EQUIPMENT section only (pp. 6-7): the Stegadon Gun and the Trained Monkey, which we lacked, and the Fire Bomb's
+Sartosa rarity. Its scenarios, house rules, optional Ghost Pirate skills and Dread Ship are not imported. Sartosa Locales (34 pages, text layer;
+12 Nov 2026) defines no item, beast or persona a warband can get - only per-port trading modifiers and scenario Unwanted Company profiles - so
+nothing was taken from it. The setting's other five campaign PDFs are not read (William, 11 Nov 2026).
 
 The Sealed City's own campaign PDFs were read on 12 Nov 2026, for what its warbands point at. Its Stygian Mutations
 (https://www.broheim.net/downloads/campaigns/sealedcity/Stygian%20Mutations.pdf, 1-7, text layer) prints the D66 chart the Brood of Ghurash's Accelerated

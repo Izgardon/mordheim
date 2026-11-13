@@ -967,6 +967,69 @@
         "wasteland-privateers"
       ],
       "page": 10
+    },
+    {
+      "name": "Fire Bomb",
+      "cost": 35,
+      "dice": 2,
+      "rarity": 7,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "page": 6
+    },
+    {
+      "name": "Hunting Rifle",
+      "cost": 200,
+      "dice": null,
+      "rarity": 9,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates",
+        "savage-orcs-sar",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "page": 10
+    },
+    {
+      "name": "Belaying Pins",
+      "cost": 3,
+      "dice": null,
+      "rarity": null,
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates",
+        "savage-orcs-sar",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "note": "In Sartosa the Knife-Fighter skill may be used with Belaying Pins, never with Throwing Axes.",
+      "page": 2
     }
   ],
   "aliases": [],
@@ -1549,6 +1612,50 @@
           "text": "Every member of the warband within 6\" of the banner causes fear. Only a warband that can take prisoners may fly it, and in any game you bring it you may take no prisoners afterwards."
         }
       ]
+    },
+    {
+      "name": "Stegadon Gun",
+      "type": "Weapon",
+      "subtype": "Blackpowder",
+      "cost": 200,
+      "dice": null,
+      "rarity": 9,
+      "rulesPage": 6,
+      "note": "With the optional blackpowder rules the price is 160 gold crowns. Rare 11 in any setting other than Sartosa.",
+      "types": [
+        "sartosan-pirates",
+        "araby-smugglers",
+        "bretonnian-buccaneers",
+        "estalian-corsairs",
+        "ghost-pirates",
+        "khorne-raiders",
+        "lothern-sea-patrol",
+        "orc-pirates",
+        "savage-orcs-sar",
+        "pirates-of-the-cathayan-sea",
+        "slayer-pirates",
+        "wasteland-privateers"
+      ],
+      "range": "24\"",
+      "strength": "5",
+      "rules": [
+        {
+          "rule": "prepare-shot",
+          "text": "A Stegadon Gun takes a whole turn to reload, so it may be fired only every other turn."
+        },
+        {
+          "rule": "move-or-fire",
+          "text": "A model may not move and fire a Stegadon Gun in the same turn, other than to pivot on the spot to face his target or to stand up."
+        },
+        {
+          "rule": "save-modifier",
+          "text": "A warrior wounded by a Stegadon Gun takes his armour save with a -3 modifier."
+        },
+        {
+          "name": "Already Superior",
+          "text": "A Stegadon Gun may not use Superior Blackpowder. It may use Refined Powder as normal."
+        }
+      ]
     }
   ],
   "flags": [
@@ -1599,6 +1706,18 @@
     {
       "page": 11,
       "what": "Sartosa Errata p11-13: the Sword Pistol is revised (Cost 40 gc, Rare 10, and the rules printed here in place of its own), the Pocket Pistol gains Easy to Use, every banner takes the reworded shared banner rule (Heroes only, no Henchman, one per warband, Navy warbands only the Nation's Colors), the 'Friendly' Flag grants the leader Tactician instead of its own rule, and Powder Monkey is renamed Refined Powder at 10 gc Rare 5 with the rules the errata prints (\"'Powder Monkey' is removed from the Trading List (this was the original name of 'Refined Powder')\")."
+    },
+    {
+      "page": 6,
+      "what": "Sartosa Add On p6-7 (NEW EQUIPMENT) gives the setting two items we lacked: the Stegadon Gun (200 gc, Rare 9 in Sartosa) and the Trained Monkey (a beast in apps/bestiary/data/bestiary.json, as the Wardogs are). It also prices the Fire Bomb we already hold at Rare 7 in Sartosa, where ours is Rare 9 for everyone, so the setting takes a row of its own; the PDF's \"except for Shadow Elves, Wood Elves, Forest Goblins, and Savage Orcs\" leaves the Savage Orcs off that row. The Add On's Dread Ship (+25% of a boat's cost, -1 Movement, Evil warbands only) is a change to a boat rather than an item with a price of its own, so it is flagged for William, not imported."
+    },
+    {
+      "page": 2,
+      "what": "Sartosa Skills PDF p2, SKILLS ADDITION: \"The skill 'Knife Thrower' may now be used with 'Belaying Pins'. It may not be used with Throwing Axes.\" Our skill of that rule is Knife-Fighter, a Mordheim 1a skill many warbands learn, so the addition sits on the setting's own Belaying Pins price row rather than in the skill's description. The same page's NEW SHOOTING SKILL, Axe Thrower, is already in our Shooting group as Sartosa's."
+    },
+    {
+      "page": 10,
+      "what": "Sartosa Equipment p10 prices the Hunting Rifle at 200 gc Rare 9 where ours is 200 gc Rare 11, so the setting takes a row of its own. Its \"Double-barreled Hunting Rifle 300 gc Rare 11\" is flagged instead: we hold two items of that profile (the Ostlander's and Mutiny in Marienburg's, both Rare 12) and which one the Sartosa list means is a question for William."
     }
   ],
   "sharedSkillGroup": {

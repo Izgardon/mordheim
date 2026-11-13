@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 51,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 550,  # the import's 436 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more
+                "Item": 552,  # the import's 437 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 554,  # the import's 510 (one per name, Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 44 hired swords' own skills the book lacks, 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 110 (Athel Loren's three) + a group of his own for each of 28 hired swords, 9 of them broheim's hireling sections'
@@ -128,14 +128,14 @@ class SeedAllTests(TestCase):
                 # Frenzy, Cloven Hoofs, Large and Perfect Killer are the shared ones), less 6 for Loner, now one
                 # shared Trait with five rules kept apart (William, 12 Nov 2026)
                 # the Sealed City's Stygian Mutation chart adds 14 shared mutations of its own (12 Nov 2026)
-                "Special": 1960,
+                "Special": 1964,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
-                # familiars, Marienburg's owl and falcon), 56
+                # familiars, Marienburg's owl and falcon), 57
                 # creatures (17 Marienburg's shop animals, 17 its Men and Monsters, 28 Border Town Burning's
-                # Beasts of the East)
-                "BestiaryEntry": 84,
+                # Beasts of the East, Sartosa's Trained Monkey)
+                "BestiaryEntry": 85,
                 # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin), Mutiny in
                 # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
                 # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)
@@ -164,8 +164,10 @@ class SeedAllTests(TestCase):
                         slugs = Counter(graded.values_list("campaign_type__slug", flat=True))
                         # the Bloodletter's Frenzy is the shared one now (William, 7 Nov 2026)
                         # and the Sealed City's 14 Stygian mutations (12 Nov 2026)
+                        # and Sartosa's Trained Monkey's four (12 Nov 2026)
                         self.assertEqual(
-                            slugs, {"mutiny-in-marienburg": 10, "border-town-burning": 30, "sealed-city": 14}
+                            slugs,
+                            {"mutiny-in-marienburg": 10, "border-town-burning": 30, "sealed-city": 14, "sartosa": 4},
                         )
                     elif model in (Race, Spell, SkillGroup):  # what the Khemri 3, Grade 3 and Athel Loren
                         # warbands brought: the Khemri races and lores, the Grade 3 lores and groups, and the

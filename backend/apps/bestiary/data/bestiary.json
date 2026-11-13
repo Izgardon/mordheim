@@ -709,5 +709,47 @@
         }
       ]
     }
+  },
+  {
+    "name": "Trained Monkey",
+    "kind": "creature",
+    "has_profile": true,
+    "rating_bonus": null,
+    "available_in_shop": true,
+    "setting": "sartosa",
+    "description": "A small pirate's monkey, an expert climber and thief. It follows every rule for Wardogs except those below.",
+    "movement": 5,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 2,
+    "wounds": 1,
+    "initiative": 5,
+    "attacks": 1,
+    "leadership": 4,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      "Animal",
+      "Weapons (Trained Monkey)",
+      "Go'fer! (Trained Monkey)",
+      "Climbers (Trained Monkey)",
+      "Highly Insignificant (Trained Monkey)"
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [],
+    "shop_item": {
+      "grade": "2b",
+      "availabilities": [
+        {
+          "cost": 20,
+          "rarity": 9,
+          "unique_to": "Any warband",
+          "variable_cost": "+D6"
+        }
+      ]
+    }
   }
 ]

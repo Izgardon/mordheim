@@ -3485,6 +3485,66 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 200,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
+            "type": "araby-smugglers",
+            "excluded": false
+          },
+          {
+            "type": "bretonnian-buccaneers",
+            "excluded": false
+          },
+          {
+            "type": "estalian-corsairs",
+            "excluded": false
+          },
+          {
+            "type": "ghost-pirates",
+            "excluded": false
+          },
+          {
+            "type": "khorne-raiders",
+            "excluded": false
+          },
+          {
+            "type": "lothern-sea-patrol",
+            "excluded": false
+          },
+          {
+            "type": "orc-pirates",
+            "excluded": false
+          },
+          {
+            "type": "savage-orcs-sar",
+            "excluded": false
+          },
+          {
+            "type": "pirates-of-the-cathayan-sea",
+            "excluded": false
+          },
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          },
+          {
+            "type": "wasteland-privateers",
+            "excluded": false
+          }
+        ],
+        "note": ""
       }
     ]
   },
@@ -9200,6 +9260,62 @@
       },
       {
         "label": "",
+        "cost": 35,
+        "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
+            "type": "araby-smugglers",
+            "excluded": false
+          },
+          {
+            "type": "bretonnian-buccaneers",
+            "excluded": false
+          },
+          {
+            "type": "estalian-corsairs",
+            "excluded": false
+          },
+          {
+            "type": "ghost-pirates",
+            "excluded": false
+          },
+          {
+            "type": "khorne-raiders",
+            "excluded": false
+          },
+          {
+            "type": "lothern-sea-patrol",
+            "excluded": false
+          },
+          {
+            "type": "orc-pirates",
+            "excluded": false
+          },
+          {
+            "type": "pirates-of-the-cathayan-sea",
+            "excluded": false
+          },
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          },
+          {
+            "type": "wasteland-privateers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      },
+      {
+        "label": "",
         "cost": 20,
         "dice": null,
         "dice_multiplier": null,
@@ -14181,6 +14297,66 @@
           }
         ],
         "note": ""
+      },
+      {
+        "label": "",
+        "cost": 3,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
+            "type": "araby-smugglers",
+            "excluded": false
+          },
+          {
+            "type": "bretonnian-buccaneers",
+            "excluded": false
+          },
+          {
+            "type": "estalian-corsairs",
+            "excluded": false
+          },
+          {
+            "type": "ghost-pirates",
+            "excluded": false
+          },
+          {
+            "type": "khorne-raiders",
+            "excluded": false
+          },
+          {
+            "type": "lothern-sea-patrol",
+            "excluded": false
+          },
+          {
+            "type": "orc-pirates",
+            "excluded": false
+          },
+          {
+            "type": "savage-orcs-sar",
+            "excluded": false
+          },
+          {
+            "type": "pirates-of-the-cathayan-sea",
+            "excluded": false
+          },
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          },
+          {
+            "type": "wasteland-privateers",
+            "excluded": false
+          }
+        ],
+        "note": "In Sartosa the Knife-Fighter skill may be used with Belaying Pins, never with Throwing Axes."
       }
     ]
   },
@@ -24616,6 +24792,109 @@
         "label": "",
         "cost": 40,
         "dice": 2,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": false,
+        "warbands": [
+          {
+            "type": "sartosan-pirates",
+            "excluded": false
+          },
+          {
+            "type": "araby-smugglers",
+            "excluded": false
+          },
+          {
+            "type": "bretonnian-buccaneers",
+            "excluded": false
+          },
+          {
+            "type": "estalian-corsairs",
+            "excluded": false
+          },
+          {
+            "type": "ghost-pirates",
+            "excluded": false
+          },
+          {
+            "type": "khorne-raiders",
+            "excluded": false
+          },
+          {
+            "type": "lothern-sea-patrol",
+            "excluded": false
+          },
+          {
+            "type": "orc-pirates",
+            "excluded": false
+          },
+          {
+            "type": "savage-orcs-sar",
+            "excluded": false
+          },
+          {
+            "type": "pirates-of-the-cathayan-sea",
+            "excluded": false
+          },
+          {
+            "type": "slayer-pirates",
+            "excluded": false
+          },
+          {
+            "type": "wasteland-privateers",
+            "excluded": false
+          }
+        ],
+        "note": ""
+      }
+    ]
+  },
+  {
+    "slug": "stegadon-gun",
+    "name": "Stegadon Gun",
+    "variant": "",
+    "origin": "pdf-warbands",
+    "type": "Weapon",
+    "subtype": "Blackpowder",
+    "setting": "sartosa",
+    "source": "Sartosa",
+    "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Human%20Pirates.pdf",
+    "tags": [
+      "stegadon gun"
+    ],
+    "flavour": "",
+    "range": "24\"",
+    "strength": "5",
+    "save": "",
+    "statblock": [],
+    "notes": "With the optional blackpowder rules the price is 160 gold crowns. Rare 11 in any setting other than Sartosa.",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "prepare-shot",
+        "text": "A Stegadon Gun takes a whole turn to reload, so it may be fired only every other turn."
+      },
+      {
+        "rule": "move-or-fire",
+        "text": "A model may not move and fire a Stegadon Gun in the same turn, other than to pivot on the spot to face his target or to stand up."
+      },
+      {
+        "rule": "save-modifier",
+        "text": "A warrior wounded by a Stegadon Gun takes his armour save with a -3 modifier."
+      },
+      {
+        "name": "Already Superior",
+        "summary": "",
+        "text": "A Stegadon Gun may not use Superior Blackpowder. It may use Refined Powder as normal.",
+        "tables": []
+      }
+    ],
+    "availabilities": [
+      {
+        "label": "",
+        "cost": 200,
+        "dice": null,
         "dice_multiplier": null,
         "cost_note": "",
         "rarity": 9,

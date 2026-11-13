@@ -392,5 +392,9 @@
   "Thick Skin (Wild Boar)": "boon",
   "Keen Senses (Ymir)": "boon",
   "Rover (Ymir)": "boon",
-  "Thick Fur (Ymir)": "boon"
+  "Thick Fur (Ymir)": "boon",
+  "Weapons (Trained Monkey)": "trait",
+  "Go'fer! (Trained Monkey)": "trait",
+  "Climbers (Trained Monkey)": "trait",
+  "Highly Insignificant (Trained Monkey)": "trait"
 }

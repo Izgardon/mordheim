@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 61 |
 | items (warband templates) | 17 |
-| price rows | 588 |
+| price rows | 592 |
 | skills | 510 |
 | skill groups | 114 |
 | skill group links | 660 |
@@ -1593,7 +1593,7 @@ Kept apart from a family's, the effect differing:
 | outlaws-of-stirwood-forest-redux | outlaws-of-stirwood-forest-redux | 6 | 0 | 0 | 6 |
 | pirates-of-the-cathayan-sea | pirates-of-the-cathayan-sea | 8 | 0 | 1 | 13 |
 | protectorate-of-sigmar | protectorate-of-sigmar | 7 | 2 | 2 | 9 |
-| sartosan-pirates | sartosan-pirates | 7 | 0 | 17 | 12 |
+| sartosan-pirates | sartosan-pirates | 7 | 0 | 18 | 15 |
 | savage-orcs-ath | savage-orcs-ath | 6 | 0 | 1 | 18 |
 | savage-orcs-kaz | savage-orcs-kaz | 7 | 0 | 4 | 11 |
 | savage-orcs-sar | savage-orcs-sar | 7 | 0 | 0 | 8 |
@@ -2769,6 +2769,7 @@ Pages folded into another warband's list as one of its variants:
 - Stub: Banner - Nation's Colors, 40+2D6 gc, Rare 9; its rules are on p10.
 - Stub: Banner - Quarantine Flag, 30+2D6 gc, Rare 9; its rules are on p10.
 - Stub: Banner - Red Flag, 40+2D6 gc, Rare 9; its rules are on p10.
+- Stub: Stegadon Gun, 200 gc, Rare 9; its rules are on p6.
 - Shared item rule (p11): Pirate Banner.
 - Price row (p10): our Cat O' Nine Tails for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Common, Heroes only.
 - Price row (p10): our Blunderbuss for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 7.
@@ -2786,6 +2787,9 @@ Pages folded into another warband's list as one of its variants:
 - Price row (p10): our Riverboat for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 6.
 - Price row (p10): our Rowboat for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 5.
 - Price row (p10): our Bugman's Ale for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 8.
+- Price row (p6): our Fire Bomb for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 7.
+- Price row (p10): our Hunting Rifle for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Rare 9.
+- Price row (p2): our Belaying Pins for sartosan-pirates, araby-smugglers, bretonnian-buccaneers, estalian-corsairs, ghost-pirates, khorne-raiders, lothern-sea-patrol, orc-pirates, savage-orcs-sar, pirates-of-the-cathayan-sea, slayer-pirates, wasteland-privateers, Common, In Sartosa the Knife-Fighter skill may be used with Belaying Pins, never with Throwing Axes..
 - Flag (p3): The skill table's ticks are glyphs the text layer drops: the table was read from p3's image. The Pirate column is ticked for the Captain, the Mate and the Cabin Boy.
 - Flag (p3): The Swabbie Equipment list's Missile Weapons (Belaying Pin 3 gc, Bow 10 gc) and Armour (Buckler 5 gc, Toughened leathers 5 gc) are printed at the top of the right column, continuing the left column; read that way, as the Araby Smugglers' and Slayer Pirates' pages are laid out the same.
 - Flag (p2): A Pirate warband needs at least 3 models: our templates hold no minimum, so it is not imported. No henchmen group sizes and no maximum profile are printed: the crew takes our Human race.
@@ -2798,6 +2802,9 @@ Pages folded into another warband's list as one of its variants:
 - Flag (p10): The setting's Equipment PDF prints eighteen items our catalogue lacks: they are stubs with the rules and prices it prints, one row for the setting's twelve warband types (William, 11 Nov 2026: "add them in as stubs if you dont have the rules for them yet, we will populate later but good to know they exist"). The Quarantine Flag is 40+2D6 on the trading chart and 30+2D6 in its entry: the entry's, as William settled for the Horn of the Wild Hunt. Each of the six Banners carries the shared Pirate Banner rule and its own. The Greatcoat (10 gc, Common) is our Rain Coat, "Based on 'Raincoat' from Border Town Burning" and the same price, so it is no new item: it is a tag on ours, and the PDF adds that it may be worn over armour without penalty but not with a cloak, and does not keep powder dry when walking through water. The Powder Monkey has no rules in either PDF read.
 - Flag (p14): Sartosa Errata p14: "the Pirate Equipment List for all nationalities (including Cathayan) now has Handgun added on to it, making it available to all members of each warband" - a Handgun line at the setting's own 35 gc.
 - Flag (p11): Sartosa Errata p11-13: the Sword Pistol is revised (Cost 40 gc, Rare 10, and the rules printed here in place of its own), the Pocket Pistol gains Easy to Use, every banner takes the reworded shared banner rule (Heroes only, no Henchman, one per warband, Navy warbands only the Nation's Colors), the 'Friendly' Flag grants the leader Tactician instead of its own rule, and Powder Monkey is renamed Refined Powder at 10 gc Rare 5 with the rules the errata prints ("'Powder Monkey' is removed from the Trading List (this was the original name of 'Refined Powder')").
+- Flag (p6): Sartosa Add On p6-7 (NEW EQUIPMENT) gives the setting two items we lacked: the Stegadon Gun (200 gc, Rare 9 in Sartosa) and the Trained Monkey (a beast in apps/bestiary/data/bestiary.json, as the Wardogs are). It also prices the Fire Bomb we already hold at Rare 7 in Sartosa, where ours is Rare 9 for everyone, so the setting takes a row of its own; the PDF's "except for Shadow Elves, Wood Elves, Forest Goblins, and Savage Orcs" leaves the Savage Orcs off that row. The Add On's Dread Ship (+25% of a boat's cost, -1 Movement, Evil warbands only) is a change to a boat rather than an item with a price of its own, so it is flagged for William, not imported.
+- Flag (p2): Sartosa Skills PDF p2, SKILLS ADDITION: "The skill 'Knife Thrower' may now be used with 'Belaying Pins'. It may not be used with Throwing Axes." Our skill of that rule is Knife-Fighter, a Mordheim 1a skill many warbands learn, so the addition sits on the setting's own Belaying Pins price row rather than in the skill's description. The same page's NEW SHOOTING SKILL, Axe Thrower, is already in our Shooting group as Sartosa's.
+- Flag (p10): Sartosa Equipment p10 prices the Hunting Rifle at 200 gc Rare 9 where ours is 200 gc Rare 11, so the setting takes a row of its own. Its "Double-barreled Hunting Rifle 300 gc Rare 11" is flagged instead: we hold two items of that profile (the Ostlander's and Mutiny in Marienburg's, both Rare 12) and which one the Sartosa list means is a question for William.
 
 ### Savage Orcs (Athel Loren)
 
