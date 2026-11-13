@@ -212,7 +212,7 @@ No conflicts: wherever both sites grade a warband they agree (mordheimer's "core
 | Kind | Ours | On mordheimer | Set in overrides.json | Mordheim by default |
 | --- | --- | --- | --- | --- |
 | skills | 510 | 153 | 321 | 36 |
-| hired swords | 124 | 71 | 53 | 0 |
+| hired swords | 125 | 71 | 54 | 0 |
 | dramatis personae | 56 | 30 | 26 | 0 |
 
 Not on mordheimer (skills), so Mordheim: [Animal] Handler, Ride [Animal], Seismic Toss, Juggernaut, Brick Wall, Frog Splash, Titanic Grip, Falconer, Heron Strike, Swallow Kick, Water Form, Inch Punch, Virtue of the Impetuous, Virtue of the Squire, Tunneler, Tinkerer, Quick Thinker, Animosity, Backstabber, Pick Locks, Slaver, Cutpurse, Infiltrate, ’ard ’ead, Captain Blood, Treasure Hunter, Luck, Unblinking Eye, Metallic Body, Respirator, Tinker-Rat, Transfixing Glare, Mist Form, Ratswarm Form, Bat Form, Giant Wolf Form.

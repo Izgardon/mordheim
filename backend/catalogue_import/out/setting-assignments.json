@@ -3158,6 +3158,11 @@
       "how": "overrides.json"
     },
     {
+      "name": "Cardinal of Contagion",
+      "setting": "grade-3",
+      "how": "overrides.json"
+    },
+    {
       "name": "Knight Panther",
       "setting": "grade-3",
       "how": "overrides.json"

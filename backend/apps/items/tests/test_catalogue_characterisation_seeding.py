@@ -130,7 +130,8 @@ class SeedAllTests(TestCase):
                 # the Sealed City's Stygian Mutation chart adds 14 shared mutations of its own (12 Nov 2026)
                 # Hardened is one shared Trait with two rules kept apart (William, 13 Nov 2026): the four hired
                 # swords' own and the Dark Elf Corsairs Captain's are 5 fewer, the shared row 1 more
-                "Special": 1960,
+                # the Cardinal of Contagion's four own rules (William, 13 Nov 2026) are 4 more
+                "Special": 1964,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -141,7 +142,8 @@ class SeedAllTests(TestCase):
                 # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin), Mutiny in
                 # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
                 # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)
-                "HiredSword": 124,
+                # the Cardinal of Contagion, whose stats William confirmed (13 Nov 2026), makes the fan-made trees 9
+                "HiredSword": 125,
                 # mordheimer's 30 and our own 26 (apps/hirelings/data/dramatis-personae.json: Karak Azgal 5,
                 # Sartosa 5, Albion 2, Khemri 1, the fan-made trees 13), through the catalogue import
                 "DramatisPersona": 56,
@@ -723,6 +725,48 @@ class SeedAllTests(TestCase):
         self.assertIn("one body part", sigmund.hire_fee["note"])
         self.assertEqual(HiredSword.objects.get(name="Halfling Thief").upkeep_fee, make_fee(gold=15, note="15 gc*"))
         self.assertEqual((ogre.race.name if ogre.race else None, ogre.race_label), ("Ogre", "Ogre"))
+
+    def test_the_cardinal_of_contagion_is_in_as_his_page_prints_him(self):
+        # he was left out of the facebook sheets because his stat line sits under a mangled header (A before W).
+        # William, 13 Nov 2026: "Those stats are correct he is meant to have lots of wounds", so he is read under
+        # the printed header: Toughness 1 and Wounds 3, deliberately. 40 gc plus the mutation he must buy, 15 gc
+        # upkeep, and only the three Chaos warbands his page names may hire him.
+        cardinal = HiredSword.objects.get(name="Cardinal of Contagion")
+        # his page prints "M Ws Bs S T A W I Ld" over "4 2 3 3 1 1 3 3 7": Attacks before Wounds, so A 1 and W 3
+        self.assertEqual(
+            {field: getattr(cardinal, field) for field in STAT_FIELDS},
+            {
+                "movement": 4,
+                "weapon_skill": 2,
+                "ballistic_skill": 3,
+                "strength": 3,
+                "toughness": 1,
+                "wounds": 3,
+                "initiative": 3,
+                "attacks": 1,
+                "leadership": 7,
+            },
+        )
+        self.assertEqual(cardinal.hire_fee, make_fee(gold=40, note="Plus the cost of the mutation he must buy."))
+        self.assertEqual(cardinal.upkeep_fee, make_fee(gold=15))
+        self.assertEqual((cardinal.rating, cardinal.grade, cardinal.race_label), (15, "3", "Human"))
+        self.assertFalse(cardinal.for_everyone)
+        self.assertEqual(
+            sorted(cardinal.warband_links.values_list("warband_type__slug", "excluded")),
+            [("beastmen-raiders", False), ("carnival-of-chaos", False), ("cult-of-the-possessed", False)],
+        )
+        self.assertEqual(cardinal.available_skill_types, ["Academic"])
+        # his Pox Staff is the club it counts as; the Toughness it takes is one of his own rules
+        self.assertEqual(
+            sorted(cardinal.item_links.values_list("item__name", flat=True)),
+            ["Club, Mace or Hammer", "Dagger", "Healing Herbs"],
+        )
+        rules = dict(cardinal.special_links.values_list("special__name", "special__type"))
+        own = "Hired Sword - Cardinal of Contagion"  # no earlier owner holds any of the four names
+        self.assertEqual(
+            rules,
+            {"Pox Staff": own, "Mutant": own, "Contagious": own, "Blessings of Nurgle": own},
+        )
 
     def test_who_may_hire_and_learn_comes_from_the_import(self):
         # the items rebuild: every hired sword names who may hire him (mordheimer's lists); since the skill groups

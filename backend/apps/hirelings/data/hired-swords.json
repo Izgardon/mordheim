@@ -8834,6 +8834,97 @@
     }
   },
   {
+    "name": "Cardinal of Contagion",
+    "type": "Hired Sword",
+    "description": "His Pox Staff counts as a club; the Toughness it takes is in his rules.",
+    "movement": 4,
+    "weapon_skill": 2,
+    "ballistic_skill": 3,
+    "strength": 3,
+    "toughness": 1,
+    "wounds": 3,
+    "initiative": 3,
+    "attacks": 1,
+    "leadership": 7,
+    "armour_save": null,
+    "large": false,
+    "caster": "No",
+    "specials": [
+      {
+        "name": "Pox Staff",
+        "description": "The Pox Staff counts as a club. On a roll of 6 to hit, the model he hit loses 1 Toughness for the rest of that combat phase. Undead, possessed and daemonic models are not affected."
+      },
+      {
+        "name": "Mutant",
+        "description": "The Cardinal of Contagion must buy one mutation from the Cult of the Possessed's Mutations list when he is hired, and its cost is added to his hire fee."
+      },
+      {
+        "name": "Contagious",
+        "description": "Every time an opponent wounds the Cardinal of Contagion in close combat, that model must pass a Toughness test or suffer 1 wound, with no armour saves allowed. Undead, possessed and daemonic models are not affected."
+      },
+      {
+        "name": "Blessings of Nurgle",
+        "description": "When he gains a new skill the Cardinal of Contagion may take a Blessing of Nurgle (Empire in Flames) instead, and pays nothing for it. A Blessing may take his Wounds above his original maximum."
+      }
+    ],
+    "skills": [],
+    "spells": [],
+    "equipment": [
+      {
+        "item": "Club, Mace or Hammer",
+        "quantity": 1
+      },
+      {
+        "item": "Dagger",
+        "quantity": 1
+      },
+      {
+        "item": "Healing Herbs",
+        "quantity": 1
+      }
+    ],
+    "hired_sword": {
+      "hire_fee": {
+        "kind": "gold",
+        "gold": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": "Plus the cost of the mutation he must buy."
+      },
+      "upkeep_fee": {
+        "kind": "gold",
+        "gold": 15,
+        "dice": null,
+        "dice_multiplier": null,
+        "resources": [],
+        "note": ""
+      },
+      "rating": 15,
+      "grade": "3",
+      "race": "Human",
+      "unique_to": "Only the Cult of the Possessed, the Carnival of Chaos and Beastmen Raiders may hire a Cardinal of Contagion.",
+      "warbands": [
+        {
+          "type": "cult-of-the-possessed",
+          "excluded": false
+        },
+        {
+          "type": "carnival-of-chaos",
+          "excluded": false
+        },
+        {
+          "type": "beastmen-raiders",
+          "excluded": false
+        }
+      ],
+      "available_skill_types": [
+        "Academic"
+      ],
+      "available_special_skills": []
+    }
+  },
+  {
     "name": "Knight Panther",
     "type": "Hired Sword",
     "description": "",
