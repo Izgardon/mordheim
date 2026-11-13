@@ -121,7 +121,8 @@ class Command(BaseCommand):
         and its category the book's classification; then every other unarchived book special of a shared name or
         alias, or of a rule kept apart under a name of its own (a mount's Fear, a fighter's Cause Fear, the
         Nightmare's Immune to Psychology (Mount) seeded before), is archived, since its owners link the shared one or
-        their own now."""
+        their own now. An injury table's special is never one of those copies: the shared Trait Hardened and the
+        injury of that name are two rules, and the injury's row stays the injury's (William, 13 Nov 2026)."""
         data = read_shared()
         entries = data["specials"]
         settings = dict(CampaignType.objects.values_list("slug", "id"))
@@ -146,7 +147,11 @@ class Command(BaseCommand):
                 updated += 1
         names = {lookup_key(name) for entry in entries for name in (entry["name"], *entry["aliases"])}
         names |= {lookup_key(line["rule"]) for line in data["apart"]}
-        live = Special.objects.filter(campaign__isnull=True, archived_at__isnull=True).exclude(pk__in=shared)
+        live = (
+            Special.objects.filter(campaign__isnull=True, archived_at__isnull=True)
+            .exclude(pk__in=shared)
+            .exclude(type=INJURY)  # the injury tables' own rows of a shared name (Hardened) are not copies of it
+        )
         copies = [row.pk for row in live.only("pk", "name") if lookup_key(row.name) in names]
         archived = Special.objects.filter(pk__in=copies).update(archived_at=timezone.now())
         return created, updated, archived

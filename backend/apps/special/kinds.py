@@ -52,7 +52,8 @@ OWNER_TYPES = {"Hired Sword": HIRED_SWORD, "Dramatis Persona": DRAMATIS_PERSONA,
 
 # The specials the serious injury tables grant by name (battles/services/injuries.py) are typed "Injury": the book's
 # are general, seeded with the book's rule text (seed_spells_and_special), and stay the injury's, so the hireling
-# seeders' book lookups leave them out and a hired sword's own rule of the name (the Old Prospector's Hardened) is his.
+# seeders' book lookups leave them out, the shared seeding never archives one, and a rule of the name an owner holds
+# is the shared special or his own (the Old Prospector's Hardened is the shared Trait: William, 13 Nov 2026).
 INJURY = "Injury"
 
 

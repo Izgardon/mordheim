@@ -25254,8 +25254,7 @@
           },
           {
             "name": "Hardened",
-            "type": "Warband - Dark Elf Corsairs",
-            "description": "The Captain is immune to fear."
+            "type": "Trait"
           },
           {
             "name": "Slaver",
@@ -47951,7 +47950,7 @@
         ],
         "specials": [
           {
-            "name": "Hardened",
+            "name": "Hardened (Blackheart)",
             "type": "Warband - Hochland Bandits",
             "description": "Blackhearts are not as put off by the evils of the world when they come across them… in fact persons of this nature are often more uncomfortable around situations where warmth and love are in abundance! Blackhearts are immune to Fear, and never have to take All-Alone tests (they prefer to work alone anyway…)."
           }
@@ -53446,7 +53445,7 @@
         ],
         "specials": [
           {
-            "name": "Hardened",
+            "name": "Hardened (Blood Sister)",
             "type": "Warband - Lahmian",
             "description": "A Blood Sister is immune to fear and never tests for being all alone."
           },

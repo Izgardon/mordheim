@@ -148,7 +148,7 @@ class BookLookups:
         book = {"campaign__isnull": True}  # the book: every setting's rows
         self.skills = {lookup_key(row.name): row for row in Skill.objects.filter(**book)}
         # not a warband template fighter's own rules ("Warband - Mercenaries"): they stay the template's; nor the
-        # injury tables' specials, worded for the injury: the Old Prospector keeps his own Hardened
+        # injury tables' specials, worded for the injury: a Hardened of an owner's is the shared Trait, not that one
         specials = list(Special.objects.filter(**book).exclude(owner_kind=WARBAND).exclude(type=INJURY))
         # a general special (Wizard, a mount's rule) by name; an owner's own only by his type and its name, so
         # no owner takes another's rule of the name (two share one only through the shared specials list)

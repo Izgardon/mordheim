@@ -98,6 +98,14 @@
       "setting": null
     },
     {
+      "name": "Hardened",
+      "type": "Trait",
+      "description": "The model is immune to fear.",
+      "aliases": [],
+      "cost": null,
+      "setting": null
+    },
+    {
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
       "description": "The model hates Orcs and Goblins.",
@@ -930,26 +938,6 @@
       "owner": "Trancas Quendalmanliye",
       "rule": "Pick Locks",
       "name": "Pick Locks (Trancas Quendalmanliye)"
-    },
-    {
-      "owner": "Old Prospector",
-      "rule": "Hardened",
-      "name": "Hardened (Old Prospector)"
-    },
-    {
-      "owner": "Grave Warden",
-      "rule": "Hardened",
-      "name": "Hardened (Grave Warden)"
-    },
-    {
-      "owner": "Albino Stormvermin",
-      "rule": "Hardened",
-      "name": "Hardened (Albino Stormvermin)"
-    },
-    {
-      "owner": "Whaler",
-      "rule": "Hardened",
-      "name": "Hardened (Whaler)"
     },
     {
       "owner": "Warrior Priest of Sigmar",

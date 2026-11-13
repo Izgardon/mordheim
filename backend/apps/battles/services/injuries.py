@@ -8,8 +8,9 @@ that roll, the re-rolls and what was applied. The D66 table is the book's (the c
 `out/serious-injuries.json`, from mordheimer's snapshot), its results named as the book names them; the D100 table's
 labels are the ones the postbattle page has always shown; its 100, Mutation, takes a follow-up D66 on the random
 mutation table, kept on the roll, whose special it grants (random_mutations.py). A named special is the book's general
-one ("Injury", seeded with the book's rule text by seed_spells_and_special), never a warband's, hired sword's or
-dramatis persona's own rule of the name; a campaign gets its own only for a name the book has none of.
+one typed "Injury" (seeded with the book's rule text by seed_spells_and_special), never a warband's, hired sword's or
+dramatis persona's own rule of the name, nor another general rule of it (the shared Trait Hardened); a campaign gets
+its own only for a name the book has none of.
 
 A result that keeps the unit out of games carries a hint, `misses` (the games, and the dice when the book rolls for
 them: Deep Wound's D3): postbattle offers it as the unit's missing games, set at finalise only when the player ticks
@@ -169,15 +170,17 @@ def injury_outcome(result: dict[str, Any], unit_name: str) -> InjuryOutcome:
 
 
 def injury_special(name: str, campaign_id: int) -> Special:
-    """The special an injury grants: the book's general special of that name (or the campaign's version of it,
-    CAT-TWEAK-03), else the campaign's own, created the first time (an injury, a bane unless the book's
-    classification says otherwise). Never a warband's, hired sword's or dramatis persona's own rule of the name (the
-    Hochland Bandits' Hardened, the Old Prospector's). One query to find it."""
+    """The special an injury grants: the book's general special of that name typed "Injury" (or the campaign's
+    version of it, CAT-TWEAK-03), else the campaign's own, created the first time (an injury, a bane unless the
+    book's classification says otherwise). Never a warband's, hired sword's or dramatis persona's own rule of the
+    name (the Hochland Bandits' Hardened, the Blood Sister's), and never another general rule of it either: the
+    shared Trait Hardened the hired swords link is a different rule (William, 13 Nov 2026). One query to find it."""
     named = Q(name__iexact=name) & (Q(campaign__isnull=True) | Q(campaign_id=campaign_id))
     versions = Q(campaign_id=campaign_id, replaces__campaign__isnull=True, replaces__name__iexact=name)
     general = Special.objects.filter(owner_kind=GENERAL)
     rows = list(general.filter(named | versions).order_by(F("campaign_id").asc(nulls_first=True), "id"))
-    book = next((row for row in rows if row.campaign_id is None), None)
+    books = [row for row in rows if row.campaign_id is None]
+    book = next((row for row in books if row.type == INJURY), None) or next(iter(books), None)
     if book is not None:
         return next((row for row in rows if row.replaces_id == book.id), book)
     own = next((row for row in rows if row.campaign_id is not None and row.name.lower() == name.lower()), None)

@@ -31,7 +31,7 @@ Answers go into `overrides.json`; the next build applies them.
 | skill groups | 114 |
 | skill group links | 660 |
 | serious injuries (D66) | 20 |
-| shared specials | 81 |
+| shared specials | 82 |
 | random mutation results (D66) | 36 |
 
 ## mordheimer's contradictions
@@ -918,7 +918,7 @@ mordheimer's New Warband Format snapshot (31 Oct 2026) as `out/warband-templates
 | list lines | 4095 |
 | warband rules | 513 |
 | upgrades | 179 |
-| the templates' own specials | 1166 |
+| the templates' own specials | 1165 |
 
 ### List lines
 
@@ -1275,6 +1275,7 @@ marauders-of-chaos: every hung hero has Ride [Animal].
 | Perfect Killer | Trait | the list's text |  |  | 3 | 2 | 1 | 0 |
 | Pawnbroker | Trait | the list's text |  |  | 0 | 2 | 0 | 0 |
 | Loner | Trait | the list's text |  |  | 2 | 2 | 3 | 0 |
+| Hardened | Trait | the list's text |  |  | 1 | 4 | 0 | 0 |
 | Hate Orcs and Goblins | Psychology | the list's text |  |  | 5 | 3 | 0 | 0 |
 | Frenzy | Psychology | the list's text |  |  | 13 | 2 | 1 | 2 |
 | Hate High Elves | Psychology | the list's text |  |  | 0 | 1 | 1 | 0 |
@@ -1361,6 +1362,7 @@ List prices the pages differ from: none.
 - Perfect Killer: Skaven: Assassin Adept; Assassin Squad, Knives from the Dark: Shadowblade; Silent Brotherhood: Silent Master; Dark Elf Assassin; Clan Eshin Assassin; Dijin Katal, the Renegade Assassin.
 - Pawnbroker: Arabian Merchant; Cathayan Merchant.
 - Loner: Dreamwalkers, Cult Of Morr: Priest of Morr; Vampire Hunters of Sylvania: Priest of Morr; Kislev Ranger; Priest of Morr; Kromwell the Blackhearted; Laure Croftenssen; The Dark Jester in Mordheim.
+- Hardened: Dark Elf Corsairs: Captain; Old Prospector; Grave Warden; Albino Stormvermin; Whaler.
 - Hate Orcs and Goblins: Pit Fighters (old): Dwarf Troll Slayer; Pit Fighters: Dwarf Troll Slayer; Dwarf Slayer Cult: Rememberer; Dwarf Slayer Cult: Stubble; Dwarf Slayer Cult: Axe Hurler; Dwarf Pathfinder; Dwarf Treasure Hunter (Hates Orcs & Goblins); Runesmith Journeyman.
 - Frenzy: Amazons (Mordheim): Totem Warrior; Norse Explorers: Berserker (Berserkers); Adventurers: Barbarian; Druchii: Witch Elf; Dwarf Troll Slayers: Skaven Slayer; Forest Goblins (Lustria): Red Toof Clan Goblin (Berserkers); Khorne Raiders: Cannibal Boy; Mordheimers' Fanatics: Lunatic; Savage Orcs (Athel Loren): Savage Orc Scarboy (Savage); Savage Orcs (Athel Loren): Savage Orc Boy (Savage); Savage Orcs (Karak Azgal): Nutta; Skaven of Clan Pestilens (Mousillon): Plague Priest; Skaven of Clan Pestilens (Mousillon): Plague Champion; Witch Elf (Dark Elf Corsairs); Bearserker; Sigmund Spindle, the Harvester of Flesh (Maddened); Cathayan Temple Rooster; Bloodletter.
 - Hate High Elves: Dark Elf Assassin (Kindred Hatred); Dijin Katal, the Renegade Assassin (Kindred Hatred).
@@ -1435,6 +1437,8 @@ List prices the pages differ from: none.
 | Loner (Mountain Guide) | Maneaters: Mountain Guide | Never claims a Gnoblar or takes one as a pet, and may never become the warband leader. |
 | Loner (Shinobi) | Nipponese Expedition: Shinobi | Only that he may never become the warband's leader: his rule grants no All Alone immunity at all. |
 | Loner (Body Snatcher) | Body Snatcher | Always strikes first while he is all alone: his page reuses the name for a different rule. |
+| Hardened (Blackheart) | Hochland Bandits: Blackheart | Immune to fear and never has to take All Alone tests: his rule says more than fear. |
+| Hardened (Blood Sister) | Lahmian: Blood Sister | Immune to fear and never tests for being all alone: her rule says more than fear. |
 
 ### Own rules of one name
 
@@ -1452,7 +1456,6 @@ A hired sword's or dramatis persona's own rule is a row of his own (two owners s
 - Wanderer: Elf Mage; Aenur, the Sword of Twilight; Dijin Katal, the Renegade Assassin; The Headless Horseman.
 - Hatred: Gaoler; Wolf Priest of Ulric; Grave Robber.
 - Pick Locks: Halfling Thief; Trancas Quendalmanliye.
-- Hardened: Old Prospector; Grave Warden; Albino Stormvermin; Whaler.
 - Prayers: Warrior Priest of Sigmar; Wolf Priest of Ulric.
 - Drunken: Chaos Centaur; Bearman Bodyguard.
 - Master Craftsman: Swordsmith; The Foole.

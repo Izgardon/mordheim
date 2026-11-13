@@ -83,6 +83,12 @@
       "aliases": []
     },
     {
+      "name": "Hardened",
+      "type": "Trait",
+      "text": "The model is immune to fear.",
+      "aliases": []
+    },
+    {
       "name": "Hate Orcs and Goblins",
       "type": "Psychology",
       "text": "The model hates Orcs and Goblins.",
@@ -1072,6 +1078,28 @@
         }
       ],
       "why": "Always strikes first while he is all alone: his page reuses the name for a different rule."
+    },
+    {
+      "name": "Hardened (Blackheart)",
+      "rule": "Hardened",
+      "owners": [
+        {
+          "warband": "Hochland Bandits",
+          "fighter": "Blackheart"
+        }
+      ],
+      "why": "Immune to fear and never has to take All Alone tests: his rule says more than fear."
+    },
+    {
+      "name": "Hardened (Blood Sister)",
+      "rule": "Hardened",
+      "owners": [
+        {
+          "warband": "Lahmian",
+          "fighter": "Blood Sister"
+        }
+      ],
+      "why": "Immune to fear and never tests for being all alone: her rule says more than fear."
     }
   ]
 }

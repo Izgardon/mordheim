@@ -128,7 +128,9 @@ class SeedAllTests(TestCase):
                 # Frenzy, Cloven Hoofs, Large and Perfect Killer are the shared ones), less 6 for Loner, now one
                 # shared Trait with five rules kept apart (William, 12 Nov 2026)
                 # the Sealed City's Stygian Mutation chart adds 14 shared mutations of its own (12 Nov 2026)
-                "Special": 1964,
+                # Hardened is one shared Trait with two rules kept apart (William, 13 Nov 2026): the four hired
+                # swords' own and the Dark Elf Corsairs Captain's are 5 fewer, the shared row 1 more
+                "Special": 1960,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -450,6 +452,38 @@ class SeedAllTests(TestCase):
         )
         # nobody is left holding a Loner of his own under the plain name
         self.assertFalse(book.filter(name="Loner").exclude(type="Trait").exists())
+
+    def test_hardened_is_one_shared_special_and_the_injurys_own_row_stays_the_injurys(self):
+        # William, 13 Nov 2026: "Yes one shared trait just for the ones that share it clearly". Five rules named
+        # Hardened said only "immune to fear", in five flavours; one shared Trait carries it now, worded as the
+        # Whaler's and the Captain's. The Blackheart and the Blood Sister keep their own, because each is immune to
+        # fear *and* never takes All Alone tests. The serious injury table's Hardened is a third thing: a general
+        # special typed "Injury", category injury, which the shared seeding must leave alone.
+        book = Special.objects.filter(campaign__isnull=True, archived_at__isnull=True)
+        shared = book.get(name="Hardened", type="Trait")
+        self.assertEqual((shared.description, shared.category), ("The model is immune to fear.", "aura"))
+        self.assertEqual(
+            set(shared.hired_sword_specials.values_list("hired_sword__name", flat=True)),
+            {"Old Prospector", "Grave Warden", "Albino Stormvermin", "Whaler"},
+        )
+        self.assertEqual(
+            set(shared.template_fighter_links.values_list("fighter__template__name", "fighter__name")),
+            {("Dark Elf Corsairs", "Captain")},
+        )
+        self.assertEqual(shared.dramatis_persona_specials.count(), 0)
+        apart = dict(book.filter(name__istartswith="Hardened (").values_list("name", "owner_kind"))
+        self.assertEqual(
+            apart,
+            {
+                "Hardened (Blackheart)": "warband",  # immune to fear and never has to take All Alone tests
+                "Hardened (Blood Sister)": "warband",  # immune to fear and never tests for being all alone
+            },
+        )
+        # the injury's row is not a copy of the shared rule: it is what a serious injury grants, and stays an injury
+        injury = book.get(name="Hardened", type="Injury")
+        self.assertEqual((injury.category, injury.owner_kind), ("injury", "general"))
+        self.assertTrue(injury.description.startswith("The warrior survives and becomes inured"))
+        self.assertEqual(set(book.filter(name="Hardened").values_list("type", flat=True)), {"Trait", "Injury"})
 
     def test_a_rule_that_only_named_a_skill_is_the_skill_he_starts_with(self):
         # William, 7 Nov 2026, of the Senior Gunnery Officer's Hunter ("See Shooting Skills."): should he start with
