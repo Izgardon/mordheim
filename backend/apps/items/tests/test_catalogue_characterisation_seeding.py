@@ -809,6 +809,26 @@ class SeedAllTests(TestCase):
         self.assertIn("Pox Staff", cardinal.item_links.values_list("item__name", flat=True))
         self.assertNotIn("Pox Staff", cardinal.special_links.values_list("special__name", flat=True))
 
+    def test_the_cardinals_blessings_of_nurgle_are_a_rule_of_his_and_never_a_skill_group(self):
+        # William, 13 Nov 2026: "yeah just give him the special dont make a skill out of it". His page lists the
+        # Blessings of Nurgle as a second skill list, but we hold the Blessings as specials (one per Blessing, each
+        # priced, bought as the Carnival's template upgrades), not as skills. So he holds one rule of his own that
+        # says what he may take, and no group is made for him: he learns Academic skills and nothing else.
+        cardinal = HiredSword.objects.get(name="Cardinal of Contagion")
+        self.assertEqual(cardinal.available_skill_types, ["Academic"])
+        self.assertFalse(SkillGroup.objects.filter(name__icontains="Blessing").exists())
+        self.assertFalse(SkillGroup.objects.filter(name__icontains="Cardinal of Contagion").exists())
+        self.assertFalse(cardinal.skill_links.exists())
+        # his own rule: no shared rule of ours says this
+        rule = Special.objects.get(name="Blessings of Nurgle", type="Hired Sword - Cardinal of Contagion")
+        self.assertIn(rule.pk, cardinal.special_links.values_list("special_id", flat=True))
+        self.assertIn("may take a Blessing of Nurgle", rule.description)
+        self.assertIn("above his original maximum", rule.description)  # the Wounds his page lets a Blessing raise
+        # he holds no Blessing yet: which one he takes is the player's, later, and each is a general special of ours
+        blessings = Special.objects.filter(campaign__isnull=True, archived_at__isnull=True, type="Blessing of Nurgle")
+        self.assertEqual(blessings.count(), 7)
+        self.assertFalse(cardinal.special_links.filter(special__in=blessings).exists())
+
     def test_who_may_hire_and_learn_comes_from_the_import(self):
         # the items rebuild: every hired sword names who may hire him (mordheimer's lists); since the skill groups
         # (phase 1a) the core groups are for everyone and a warband's group names its warbands
