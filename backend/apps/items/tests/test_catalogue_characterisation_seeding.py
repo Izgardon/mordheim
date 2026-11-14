@@ -487,6 +487,31 @@ class SeedAllTests(TestCase):
         self.assertTrue(injury.description.startswith("The warrior survives and becomes inured"))
         self.assertEqual(set(book.filter(name="Hardened").values_list("type", flat=True)), {"Trait", "Injury"})
 
+    def test_the_fanatics_fanatical_is_worded_for_both_fighters_who_hold_it(self):
+        # William, 13 Nov 2026: "We can keep fanatical as an alternative as it has a different flavour, can make it
+        # more general though if not worded well for those 2". So it stays the Fanatics' own rule beside the shared
+        # Hardened; but one special is seeded per name and type, so the page's "The Prophet is immune to fear." was
+        # the Bleak One's text too. The import words a rule two fighters share for both of them.
+        book = Special.objects.filter(campaign__isnull=True, archived_at__isnull=True)
+        fanatical = book.get(name="Fanatical", type="Warband - Mordheimers' Fanatics")
+        self.assertEqual(fanatical.description, "The model is immune to fear.")
+        self.assertEqual(
+            set(fanatical.template_fighter_links.values_list("fighter__name", flat=True)),
+            {"Prophet", "Bleak One"},
+        )
+        # its own rule, never an alias of Hardened: three other owners hold a Fanatical that means something else
+        # (the Flagellants' and the Pilgrims' auto-passed Leadership tests, Maximilian's those plus his hatreds)
+        self.assertNotEqual(fanatical.pk, book.get(name="Hardened", type="Trait").pk)
+        others = set(book.filter(name="Fanatical").exclude(pk=fanatical.pk).values_list("type", flat=True))
+        self.assertEqual(
+            others,
+            {
+                "Warband - Witch Hunters",
+                "Warband - Vampire Hunters of Sylvania",
+                "Dramatis Persona - Maximilian the Mad",
+            },
+        )
+
     def test_a_rule_that_only_named_a_skill_is_the_skill_he_starts_with(self):
         # William, 7 Nov 2026, of the Senior Gunnery Officer's Hunter ("See Shooting Skills."): should he start with
         # the skill itself, as one he'd learned? "yes please do that" (catalogue_import/pointer_rules.py)

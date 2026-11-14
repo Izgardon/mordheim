@@ -11,6 +11,7 @@ from catalogue_import.template_answers import (
     CASTERS,
     CORE_SKILLS,
     CREATURES,
+    GENERAL_RULE_WORDINGS,
     LORES,
     MAGIC_WARBANDS,
     RACES,
@@ -187,8 +188,9 @@ class Lores:
         return self.by_fighter.get((page, name), [])
 
 
-def rules(fighter: dict[str, Any], owner: str) -> tuple[list[dict[str, str]], bool, bool]:
-    """His rules as specials (ours for Large, Wizard and Priest), whether he leads and whether he is Large."""
+def rules(page: str, fighter: dict[str, Any], owner: str) -> tuple[list[dict[str, str]], bool, bool]:
+    """His rules as specials (ours for Large, Wizard and Priest), whether he leads and whether he is Large. A rule
+    William has worded for every fighter of the page who shares it takes that wording (GENERAL_RULE_WORDINGS)."""
     specials: list[dict[str, str]] = []
     leader = large = False
     for raw in fighter.get("specialRules") or []:
@@ -197,11 +199,8 @@ def rules(fighter: dict[str, Any], owner: str) -> tuple[list[dict[str, str]], bo
         leader = leader or key == "leader"
         large = large or key in LARGE_RULES
         ours = OURS.get("large" if key in LARGE_RULES else key)
-        special = (
-            {"name": ours[0], "type": ours[1]}
-            if ours
-            else {"name": name, "type": owner, "description": clean_rule(raw.get("ruleFull"))}
-        )
+        text = GENERAL_RULE_WORDINGS.get((page, name)) or clean_rule(raw.get("ruleFull"))
+        special = {"name": ours[0], "type": ours[1]} if ours else {"name": name, "type": owner, "description": text}
         if name and special["name"] not in [entry["name"] for entry in specials]:
             specials.append(special)
     return specials, leader, large
@@ -253,7 +252,7 @@ def build_fighter(
     """One fighter in the template's shape (`context`: variants, races, lores, owner)."""
     hero = fighter["type"] == "hero"
     lores = context["lores"].of(page, fighter["name"])
-    specials, leader, large = rules(fighter, context["owner"])
+    specials, leader, large = rules(page, fighter, context["owner"])
     base, changes = skill_types(page, fighter, context["variants"], log, context.get("special_groups"))
     stats = profile(page, fighter, log)
     variant_numbers(page, plain(fighter["name"]), stats, changes)

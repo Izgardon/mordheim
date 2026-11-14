@@ -329,6 +329,15 @@ RULE_TITLES: dict[tuple[str, int], str] = {
     ("outlaws-of-stirwood-forest", 0): "Bowmen",
 }
 
+# A rule two fighters of one page share, worded on the page for one of them. One special is seeded per name and
+# type, so the second holds the first's wording (templates.py `_specials_once`) and reads wrong on him. William,
+# 13 Nov 2026, of the Mordheimers' Fanatics' Fanatical, which stays its own rule beside the shared Hardened ("We can
+# keep fanatical as an alternative as it has a different flavour, can make it more general though if not worded well
+# for those 2"): word it for both. By page and rule name.
+GENERAL_RULE_WORDINGS: dict[tuple[str, str], str] = {
+    ("mordheimers-fanatics", "Fanatical"): "The model is immune to fear.",
+}
+
 # mordheimer's fighter races to ours (None: no race; the creatures that gain no XP come in with none)
 RACES: dict[str, str | None] = {
     "human": "Human",
