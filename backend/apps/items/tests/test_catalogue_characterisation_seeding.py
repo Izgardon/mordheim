@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 51,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 552,  # the import's 437 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey
+                "Item": 553,  # the import's 437 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026)
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 554,  # the import's 510 (one per name, Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 44 hired swords' own skills the book lacks, 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 110 (Athel Loren's three) + a group of his own for each of 28 hired swords, 9 of them broheim's hireling sections'
@@ -130,8 +130,9 @@ class SeedAllTests(TestCase):
                 # the Sealed City's Stygian Mutation chart adds 14 shared mutations of its own (12 Nov 2026)
                 # Hardened is one shared Trait with two rules kept apart (William, 13 Nov 2026): the four hired
                 # swords' own and the Dark Elf Corsairs Captain's are 5 fewer, the shared row 1 more
-                # the Cardinal of Contagion's four own rules (William, 13 Nov 2026) are 4 more
-                "Special": 1964,
+                # the Cardinal of Contagion's own rules (William, 13 Nov 2026) are 3 more, the Pox Staff's being
+                # the item's now
+                "Special": 1963,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -781,17 +782,32 @@ class SeedAllTests(TestCase):
             [("beastmen-raiders", False), ("carnival-of-chaos", False), ("cult-of-the-possessed", False)],
         )
         self.assertEqual(cardinal.available_skill_types, ["Academic"])
-        # his Pox Staff is the club it counts as; the Toughness it takes is one of his own rules
         self.assertEqual(
             sorted(cardinal.item_links.values_list("item__name", flat=True)),
-            ["Club, Mace or Hammer", "Dagger", "Healing Herbs"],
+            ["Dagger", "Healing Herbs", "Pox Staff"],
         )
         rules = dict(cardinal.special_links.values_list("special__name", "special__type"))
-        own = "Hired Sword - Cardinal of Contagion"  # no earlier owner holds any of the four names
-        self.assertEqual(
-            rules,
-            {"Pox Staff": own, "Mutant": own, "Contagious": own, "Blessings of Nurgle": own},
-        )
+        own = "Hired Sword - Cardinal of Contagion"  # no earlier owner holds any of the three names
+        self.assertEqual(rules, {"Mutant": own, "Contagious": own, "Blessings of Nurgle": own})
+
+    def test_the_pox_staff_is_an_item_with_no_price_row_so_the_store_never_offers_it(self):
+        # William, 13 Nov 2026: "Add it in, it should be an item ideally hidden from the store if specific to a
+        # hired sword/dramatis". No new flag: an item with no price row has nothing anyone can buy at, so who-can
+        # makes no offer for it (who_can.py: `offer` returns None) and the store leaves it out, as test_who_can.py's
+        # "Nothing to buy" already pins. It counts as a club, so it links the club's Concussion and adds its own.
+        staff = Item.objects.get(name="Pox Staff", campaign__isnull=True)
+        self.assertEqual((staff.type, staff.subtype, staff.strength), ("Weapon", "Melee", "As user"))
+        assert staff.campaign_type is not None
+        self.assertEqual(staff.campaign_type.slug, "grade-3")
+        self.assertEqual(staff.availabilities.count(), 0)
+        links = list(staff.rule_links.all())
+        self.assertEqual([link.rule.name if link.rule else link.name for link in links], ["Concussion", "Pox"])
+        self.assertIn("loses 1 Toughness for the rest of that combat phase", links[1].text)
+        self.assertTrue(links[1].text.endswith("Undead, possessed and daemonic models are not affected."))
+        # the Cardinal carries it, and no longer carries a rule of his own for it
+        cardinal = HiredSword.objects.get(name="Cardinal of Contagion")
+        self.assertIn("Pox Staff", cardinal.item_links.values_list("item__name", flat=True))
+        self.assertNotIn("Pox Staff", cardinal.special_links.values_list("special__name", flat=True))
 
     def test_who_may_hire_and_learn_comes_from_the_import(self):
         # the items rebuild: every hired sword names who may hire him (mordheimer's lists); since the skill groups

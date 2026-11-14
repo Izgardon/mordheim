@@ -1058,6 +1058,26 @@
       ],
       "note": "Pit Fighters (old) only",
       "why": "on the Pit Fighters (old) list; no rules for now (question 29); William, 4 Nov 2026"
+    },
+    {
+      "name": "Pox Staff",
+      "type": "Weapon",
+      "subtype": "Melee",
+      "setting": "grade-3",
+      "source": "Cardinal of Contagion",
+      "range": "Close Combat",
+      "strength": "As user",
+      "rules": [
+        {
+          "rule": "concussion"
+        },
+        {
+          "name": "Pox",
+          "summary": "A 6 to hit takes 1 Toughness for that combat phase",
+          "text": "On a roll of 6 to hit, the model hit loses 1 Toughness for the rest of that combat phase. Undead, possessed and daemonic models are not affected."
+        }
+      ],
+      "why": "the Cardinal of Contagion's own staff, which counts as a club; no cost, so it has no price row and the store never offers it (William, 13 Nov 2026: \"Add it in, it should be an item ideally hidden from the store if specific to a hired sword/dramatis\")"
     }
   ],
   "warband_items": {

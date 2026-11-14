@@ -18816,6 +18816,39 @@
     ]
   },
   {
+    "slug": "pox-staff",
+    "name": "Pox Staff",
+    "variant": "",
+    "origin": "templates",
+    "type": "Weapon",
+    "subtype": "Melee",
+    "setting": "grade-3",
+    "source": "Cardinal of Contagion",
+    "link_url": "",
+    "tags": [
+      "pox staff"
+    ],
+    "flavour": "",
+    "range": "Close Combat",
+    "strength": "As user",
+    "save": "",
+    "statblock": [],
+    "notes": "",
+    "needs_rules": false,
+    "rules": [
+      {
+        "rule": "concussion"
+      },
+      {
+        "name": "Pox",
+        "summary": "A 6 to hit takes 1 Toughness for that combat phase",
+        "text": "On a roll of 6 to hit, the model hit loses 1 Toughness for the rest of that combat phase. Undead, possessed and daemonic models are not affected.",
+        "tables": []
+      }
+    ],
+    "availabilities": []
+  },
+  {
     "slug": "hedonist-whip",
     "name": "Hedonist Whip",
     "variant": "",

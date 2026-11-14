@@ -3,8 +3,9 @@ our old seed, single use; the War Chain; and the warbands' special equipment we 
 warband at the book's price and rarity and its rules from mordheimer, cleaned.
 
 overrides.json says which: ``seed_items_back`` (an old seed row's name -> its setting, source and why),
-``extra_items`` (an item no source has) and ``warband_items`` (an item's name -> the snapshot page and special
-equipment it comes from, the warband type that buys it, its type and subtype)."""
+``extra_items`` (an item no source has; with no ``cost`` it gets no price row, so the store never offers it) and
+``warband_items`` (an item's name -> the snapshot page and special equipment it comes from, the warband type that
+buys it, its type and subtype)."""
 
 import re
 from collections.abc import Mapping
@@ -88,13 +89,37 @@ def seed_items_back(
     return items
 
 
-def extra_items(entries: list[dict[str, Any]], groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
-    """Items no source has, with one price row each for the warbands named."""
+def _extra_rules(entry: dict[str, Any], index: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+    """An extra item's rules as out/items.json holds them: `{"rule": slug}` for a shared rule (a slug no shared rule
+    has stops the build), else the item's own `{name, summary, text}`."""
+    slugs = {rule["slug"] for rule in index.values()}
+    rules = []
+    for rule in entry.get("rules", []):
+        if "rule" in rule:
+            if rule["rule"] not in slugs:
+                raise ValueError(f"overrides.json extra_items {entry['name']!r}: no shared rule {rule['rule']!r}")
+            rules.append({"rule": rule["rule"]})
+        else:
+            rules.append({**{"name": "", "summary": "", "text": "", "tables": []}, **rule})
+    return rules
+
+
+def extra_items(
+    entries: list[dict[str, Any]], groups: list[dict[str, Any]], index: dict[str, dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Items no source has, with one price row each for the warbands named. An entry with no `cost` gets no price
+    row at all, so nobody can buy it and the store never offers it (who_can.py: `offer`): what a named hired sword
+    or dramatis persona carries and nothing else (William, 13 Nov 2026, of the Pox Staff)."""
     items = []
     for entry in entries:
-        cost = {"cost": entry["cost"], "dice": None, "dice_multiplier": None, "cost_note": ""}
-        warbands = [{**line, "excluded": False} for line in collapse(entry["warbands"], groups)]
-        row = _row(cost, entry.get("rarity"), warbands, entry.get("note", ""))
+        fields: dict[str, Any] = {
+            "rules": _extra_rules(entry, index),
+            **{key: entry[key] for key in ("range", "strength") if key in entry},
+        }
+        if entry.get("cost") is not None:
+            cost = {"cost": entry["cost"], "dice": None, "dice_multiplier": None, "cost_note": ""}
+            warbands = [{**line, "excluded": False} for line in collapse(entry.get("warbands", []), groups)]
+            fields["availabilities"] = [_row(cost, entry.get("rarity"), warbands, entry.get("note", ""))]
         items.append(
             _item(
                 entry["name"],
@@ -102,7 +127,7 @@ def extra_items(entries: list[dict[str, Any]], groups: list[dict[str, Any]]) -> 
                 entry.get("subtype", ""),
                 entry["setting"],
                 entry["source"],
-                availabilities=[row],
+                **fields,
             )
         )
     return items
@@ -169,6 +194,6 @@ def template_items(
     """Every item the templates bring in, as overrides.json names them."""
     return [
         *seed_items_back(overrides.get("seed_items_back", {}), seed, properties),
-        *extra_items(overrides.get("extra_items", []), groups),
+        *extra_items(overrides.get("extra_items", []), groups, index),
         *special_equipment_items(overrides.get("warband_items", {}), pages, types, groups, index),
     ]

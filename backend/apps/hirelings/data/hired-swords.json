@@ -8836,7 +8836,7 @@
   {
     "name": "Cardinal of Contagion",
     "type": "Hired Sword",
-    "description": "His Pox Staff counts as a club; the Toughness it takes is in his rules.",
+    "description": "",
     "movement": 4,
     "weapon_skill": 2,
     "ballistic_skill": 3,
@@ -8850,10 +8850,6 @@
     "large": false,
     "caster": "No",
     "specials": [
-      {
-        "name": "Pox Staff",
-        "description": "The Pox Staff counts as a club. On a roll of 6 to hit, the model he hit loses 1 Toughness for the rest of that combat phase. Undead, possessed and daemonic models are not affected."
-      },
       {
         "name": "Mutant",
         "description": "The Cardinal of Contagion must buy one mutation from the Cult of the Possessed's Mutations list when he is hired, and its cost is added to his hire fee."
@@ -8871,7 +8867,7 @@
     "spells": [],
     "equipment": [
       {
-        "item": "Club, Mace or Hammer",
+        "item": "Pox Staff",
         "quantity": 1
       },
       {

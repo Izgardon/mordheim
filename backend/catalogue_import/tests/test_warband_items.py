@@ -69,12 +69,52 @@ class ExtraItemTests(SimpleTestCase):
             "warbands": ["pit-fighters"],
             "note": "Pit Fighters only",
         }
-        [chain] = extra_items([entry], groups)
+        [chain] = extra_items([entry], groups, {})
         [row] = chain["availabilities"]
         self.assertEqual(
             (chain["rules"], row["cost"], row["for_everyone"], row["note"]), ([], 20, False, "Pit Fighters only")
         )
         self.assertEqual(row["warbands"], [{"type": "pit-fighters", "excluded": False}])
+
+    def test_an_item_with_no_cost_gets_no_price_row_and_its_rules_shared_or_its_own(self) -> None:
+        # William, 13 Nov 2026, of the Pox Staff: "Add it in, it should be an item ideally hidden from the store if
+        # specific to a hired sword/dramatis". No price row is how: who_can.py's `offer` makes none for an item with
+        # no rows, so the store never shows it.
+        _types, _resolver, groups, _ctx = world()
+        entry = {
+            "name": "Pox Staff",
+            "type": "Weapon",
+            "subtype": "Melee",
+            "setting": "grade-3",
+            "source": "Cardinal of Contagion",
+            "strength": "As user",
+            "rules": [{"rule": "concussion"}, {"name": "Pox", "text": "A 6 to hit takes 1 Toughness."}],
+        }
+        index = {"concussion": {"slug": "concussion"}}
+
+        [staff] = extra_items([entry], groups, index)
+
+        self.assertEqual(staff["availabilities"], [])
+        self.assertEqual(
+            staff["rules"],
+            [
+                {"rule": "concussion"},
+                {"name": "Pox", "summary": "", "text": "A 6 to hit takes 1 Toughness.", "tables": []},
+            ],
+        )
+        self.assertEqual(staff["strength"], "As user")
+
+    def test_a_shared_rule_no_rule_of_ours_has_stops_the_build(self) -> None:
+        _types, _resolver, groups, _ctx = world()
+        entry = {
+            "name": "Pox Staff",
+            "type": "Weapon",
+            "setting": "grade-3",
+            "source": "Cardinal of Contagion",
+            "rules": [{"rule": "concusion"}],
+        }
+        with self.assertRaisesRegex(ValueError, "no shared rule 'concusion'"):
+            extra_items([entry], groups, {"concussion": {"slug": "concussion"}})
 
 
 class SpecialEquipmentTests(SimpleTestCase):
