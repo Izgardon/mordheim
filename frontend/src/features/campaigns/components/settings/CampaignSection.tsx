@@ -11,6 +11,7 @@ import { useUpdateCampaign } from "../../hooks/useCampaignQuery";
 import type { CampaignSummary, CampaignUpdatePayload } from "../../types/campaign-types";
 import CampaignRules from "./CampaignRules";
 import ContentInPlayCard from "./ContentInPlayCard";
+import ExplorationSection from "./ExplorationSection";
 import { SettingRow, SettingsCard } from "./settings-ui";
 
 /** One PATCH with its pending flag and error, for a setting saved on its own. */
@@ -117,8 +118,8 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
 /**
  * Settings → Campaign (`edit_settings`, the owner): its name, the pages and campaign points switched
  * on, the content
- * in play (grade presets and settings), then the warband rules (starting gold, the default
- * resource, limits, the death roll and the level-ups).
+ * in play (grade presets and settings), the warband rules (starting gold, the default
+ * resource, limits, the death roll and the level-ups), then the exploration chart.
  */
 export default function CampaignSection({ campaign }: { campaign: CampaignSummary }) {
   return (
@@ -129,6 +130,7 @@ export default function CampaignSection({ campaign }: { campaign: CampaignSummar
       </SettingsCard>
       <ContentInPlayCard campaign={campaign} />
       <CampaignRules campaign={campaign} />
+      <ExplorationSection campaign={campaign} />
     </>
   );
 }

@@ -2,6 +2,7 @@
 
 from typing import Any
 
+from apps.campaigns.models import Campaign
 from apps.core.catalogue.cache import bump
 from apps.exploration.models import ExplorationChart, ExplorationPlace
 from apps.warbands.tests.roster_support import RosterTestCase
@@ -60,3 +61,47 @@ class CampaignExplorationTests(RosterTestCase):
         self.assertEqual(self.client.get(self.url()).status_code, 404)
         self.client.logout()
         self.assertEqual(self.client.get(self.url()).status_code, 401)
+
+
+class PickTheChartTests(RosterTestCase):
+    """Settings → Exploration: the campaign picks the chart its post-game explores by."""
+
+    def patch(self, user: Any, chart_id: int | None) -> Any:
+        self.client.force_authenticate(user=user)
+        return self.client.patch(
+            f"/api/campaigns/{self.campaign.id}/", {"exploration_chart_id": chart_id}, format="json"
+        )
+
+    def read_chart_id(self) -> int | None:
+        self.client.force_authenticate(user=self.player)
+        body: dict[str, Any] = self.client.get(f"/api/campaigns/{self.campaign.id}/exploration/").json()
+        chart_id: int | None = body["id"]
+        return chart_id
+
+    def test_the_owner_picks_a_chart_and_the_endpoint_follows_it(self):
+        own = ExplorationChart.objects.create(campaign=self.campaign, name="Albion")
+
+        response = self.patch(self.campaign_owner, own.pk)
+
+        self.assertEqual(response.status_code, 200, response.data)
+        self.assertEqual(response.json()["exploration_chart_id"], own.pk)
+        self.assertEqual(self.read_chart_id(), own.pk)
+
+    def test_clearing_it_goes_back_to_the_book_chart(self):
+        own = ExplorationChart.objects.create(campaign=self.campaign, name="Albion")
+        self.patch(self.campaign_owner, own.pk)
+
+        self.assertEqual(self.patch(self.campaign_owner, None).status_code, 200)
+        self.assertEqual(self.read_chart_id(), self.exploration_chart.pk)
+
+    def test_another_campaigns_chart_is_refused(self):
+        elsewhere = Campaign.objects.create(name="Elsewhere two", join_code="ELSE02")
+        theirs = ExplorationChart.objects.create(campaign=elsewhere, name="Theirs")
+
+        response = self.patch(self.campaign_owner, theirs.pk)
+
+        self.assertEqual(response.status_code, 400, response.data)
+        self.assertEqual(self.read_chart_id(), self.exploration_chart.pk)
+
+    def test_a_player_may_not_pick_one(self):
+        self.assertEqual(self.patch(self.player, None).status_code, 403)

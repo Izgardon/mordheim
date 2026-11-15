@@ -29,6 +29,8 @@ export type CampaignSummary = {
   wyrdstone_prices?: number[][];
   /** Every warband holds Campaign points while on (hidden, their amounts kept, while off). */
   enable_campaign_points?: boolean;
+  /** The exploration chart the post-game explores by; null is the book's Mordheim chart. */
+  exploration_chart_id?: number | null;
   /** The settings in play (grading phase 1): the ones ticked, the always-on Mordheim among them. */
   setting_ids?: number[];
   player_count: number;
@@ -88,6 +90,8 @@ export type CampaignUpdatePayload = {
   /** The whole table: eight rows of six prices. */
   wyrdstone_prices?: number[][];
   enable_campaign_points?: boolean;
+  /** The exploration chart the post-game explores by; null is the book's Mordheim chart. */
+  exploration_chart_id?: number | null;
 };
 
 /** A PATCH's answer: the campaign, and what went ahead with a warning (a rename that merged). */

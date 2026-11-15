@@ -86,7 +86,7 @@ class CampaignDetailView(CampaignScopedView):
 
     def patch(self, request, campaign_id):
         self.check_rule(rule_for(request.data))  # admins may start and unstart only (BUG-13)
-        serializer = CampaignUpdateSerializer(data=request.data)
+        serializer = CampaignUpdateSerializer(data=request.data, context={"campaign_id": campaign_id})
         serializer.is_valid(raise_exception=True)
         warnings = update_campaign(self.access.campaign, serializer.validated_data)
         data = CampaignSerializer(campaign_for_user(campaign_id, request.user)).data

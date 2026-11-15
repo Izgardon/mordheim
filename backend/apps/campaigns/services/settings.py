@@ -26,6 +26,7 @@ SETTINGS_FIELDS = (
     "default_resource_name",
     "wyrdstone_prices",
     "enable_campaign_points",
+    "exploration_chart_id",
 )
 
 
@@ -63,6 +64,7 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
         # locked: a warband raised meanwhile gets the default resource's name and its campaign points either way
         settings, _ = CampaignSettings.objects.select_for_update().get_or_create(campaign=campaign)
         old_resource = settings.default_resource_name or DEFAULT_RESOURCE_NAME
+        old_chart = settings.exploration_chart_id
         for field, value in settings_updates.items():
             setattr(settings, field, value)
         settings.save(update_fields=list(settings_updates))
@@ -70,5 +72,7 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
             starting_gold.adjust_warbands(campaign, old_gold, settings_updates["starting_gold"])
         if settings_updates.get("enable_campaign_points"):  # on: every warband holds them (William, 7 Nov 2026)
             give_campaign_points(campaign.warbands.values_list("id", flat=True))
+        if "exploration_chart_id" in settings_updates and settings_updates["exploration_chart_id"] != old_chart:
+            bump(campaign.id, "exploration_charts")  # the campaign's cached chart body is another chart now
         renamed = settings_updates.get("default_resource_name", old_resource)
         return rename_default_resources(campaign, renamed) if renamed != old_resource else []

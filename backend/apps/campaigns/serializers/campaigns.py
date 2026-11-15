@@ -2,8 +2,10 @@
 
 from typing import Any
 
+from django.db.models import Q
 from rest_framework import serializers
 
+from apps.exploration.models import ExplorationChart
 from apps.warbands.services.campaign_points import CAMPAIGN_POINTS
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
@@ -56,6 +58,8 @@ class CampaignSerializer(serializers.ModelSerializer):
     default_resource_name = serializers.CharField(source="settings.default_resource_name", read_only=True)
     wyrdstone_prices = wyrdstone_prices_field(source="settings.wyrdstone_prices", read_only=True)
     enable_campaign_points = serializers.BooleanField(source="settings.enable_campaign_points", read_only=True)
+    # the exploration chart the post-game explores by (apps/exploration); null: the book's Mordheim chart
+    exploration_chart_id = serializers.IntegerField(source="settings.exploration_chart_id", read_only=True)
     setting_ids = serializers.SerializerMethodField()  # the settings in play (grading phase 1)
 
     def get_setting_ids(self, obj) -> list[int]:
@@ -81,6 +85,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "default_resource_name",
             "wyrdstone_prices",
             "enable_campaign_points",
+            "exploration_chart_id",
             "setting_ids",
             "in_progress",
             "archived_at",
@@ -165,6 +170,17 @@ class CampaignUpdateSerializer(serializers.Serializer):
     default_resource_name = serializers.CharField(required=False, max_length=120)  # renames every warband's
     wyrdstone_prices = wyrdstone_prices_field(required=False)  # the whole table (William, 8 Nov 2026)
     enable_campaign_points = serializers.BooleanField(required=False)  # William, 7 Nov 2026
+    exploration_chart_id = serializers.IntegerField(required=False, allow_null=True)  # null: the book's chart
+
+    def validate_exploration_chart_id(self, value):
+        """A chart the campaign may use: the book's or one of its own (apps/exploration). Null is the book's."""
+        if value is None:
+            return None
+        campaign_id = self.context.get("campaign_id")
+        charts = ExplorationChart.objects.filter(pk=value, archived_at__isnull=True)
+        if not charts.filter(Q(campaign__isnull=True) | Q(campaign_id=campaign_id)).exists():
+            raise serializers.ValidationError("That exploration chart isn't in this campaign.")
+        return value
 
     def validate_default_resource_name(self, value):
         """Not Campaign points: that is the campaign points counter's name, which a rename would merge away."""
