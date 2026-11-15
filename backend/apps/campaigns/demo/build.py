@@ -38,17 +38,17 @@ class Built:
     notes: list[str]  # what the post-game warned it skipped
 
 
-def own_campaigns() -> list[Campaign]:
-    """The demo campaigns an earlier run made: its name, owned by the captain."""
+def own_campaigns(name: str = CAMPAIGN_NAME, owner_email: str = CAPTAIN_EMAIL) -> list[Campaign]:
+    """The campaigns an earlier run of this seed made: its name, owned by its owner (the e2e seed passes its own)."""
     return list(
         Campaign.objects.filter(
-            name=CAMPAIGN_NAME, memberships__role__slug=OWNER, memberships__user__username=CAPTAIN_EMAIL
+            name=name, memberships__role__slug=OWNER, memberships__user__username=owner_email
         ).distinct()
     )
 
 
-def remove_old() -> int:
-    campaigns = own_campaigns()
+def remove_old(name: str = CAMPAIGN_NAME, owner_email: str = CAPTAIN_EMAIL) -> int:
+    campaigns = own_campaigns(name, owner_email)
     for campaign in campaigns:
         owner = campaign.memberships.get(role__slug=OWNER).user
         delete_permanently(campaign, campaign.name, owner)

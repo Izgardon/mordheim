@@ -17,16 +17,17 @@ def database_host() -> str:
     return str(connection.settings_dict.get("HOST") or "")
 
 
-def check_local(*, force_local: bool = False) -> None:
-    """CommandError unless DEBUG is on and the database is local (or `force_local` says it is)."""
+def check_local(*, force_local: bool = False, command: str = "seed_demo_campaign") -> None:
+    """CommandError unless DEBUG is on and the database is local (or `force_local` says it is). `command` is the
+    seed asking (seed_e2e guards itself the same way: its users' password is in the repository too)."""
     if not settings.DEBUG:
         raise CommandError(
-            "seed_demo_campaign only runs with DEBUG on (DJANGO_DEBUG=1): every demo user's password is 'password'."
+            f"{command} only runs with DEBUG on (DJANGO_DEBUG=1): every seeded user's password is in the repository."
         )
     host = database_host()
     if host not in LOCAL_HOSTS and not force_local:
         raise CommandError(
-            f"seed_demo_campaign only runs against a local database (host db, localhost or 127.0.0.1), not "
+            f"{command} only runs against a local database (host db, localhost or 127.0.0.1), not "
             f"{host or 'a socket'!r}. Pass --force-local if this database really is local."
         )
 
