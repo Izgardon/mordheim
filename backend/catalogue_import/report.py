@@ -320,6 +320,13 @@ def _mim(data: ReportData) -> list[str]:
         f"All {len(data.mim_items)} keep their one-line text as the summary of an unnamed rule: {names}.",
         "",
     ]
+    if data.mim_log.merged:
+        lines += [
+            'Stubs that duplicate a complete item of ours, left out with their price carried onto it as a row labelled "Mutiny in Marienburg" (William, 15 Nov 2026):',
+            "",
+            *_table(["Stub", "Joined", "Price carried"], [list(row) for row in data.mim_log.merged]),
+            "",
+        ]
     if data.mim_log.as_notes:
         rows = [[item, text] for item, text in data.mim_log.as_notes]
         lines += [

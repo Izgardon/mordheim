@@ -14,7 +14,7 @@ from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
 from catalogue_import.injuries import build_serious_injuries
 from catalogue_import.items import ItemLog, mordheimer_items
-from catalogue_import.mim import MimLog, MimReader, mim_item
+from catalogue_import.mim import MimLog, MimReader, merge_duplicates, mim_item
 from catalogue_import.new_groups import SkillGroups, build_skill_groups
 from catalogue_import.own_rules import own_rules
 from catalogue_import.pdf_report import render_pdf
@@ -264,6 +264,8 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     )
     reader = MimReader(resolver, groups)
     mim = [mim_item(item, sources.properties, index, reader, mim_log) for item in sources.mim_items]
+    # a stub that duplicates a complete item of ours is left out, its price carried onto that item (15 Nov 2026)
+    mim = merge_duplicates(mim, items, overrides.get("mim_merges", {}), mim_log)
     snapshot = load_snapshot(package / "sources" / SNAPSHOT.name)
     seed = [row for row in load_json(item_data / "standard-items.json") if isinstance(row, dict)]
     added = template_items(overrides, snapshot.pages, seed, sources.properties, types, groups, index)

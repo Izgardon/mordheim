@@ -3406,7 +3406,8 @@
       "hunting rifle",
       "hochland long rifle",
       "long rifle",
-      "hunting rifles"
+      "hunting rifles",
+      "hochland long hunting rifle"
     ],
     "flavour": "Hochland is a province famed for its hunters, and the preferred weapon of its nobility when they go hunting is a long-ranged rifle. They are extremely rare and precious weapons, and only the most experienced weaponsmiths are capable of manufacturing them.",
     "range": "48\"",
@@ -3452,6 +3453,17 @@
             "excluded": true
           }
         ],
+        "note": ""
+      },
+      {
+        "label": "Mutiny in Marienburg",
+        "cost": 200,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": true,
+        "warbands": [],
         "note": ""
       },
       {
@@ -3560,7 +3572,8 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/blackpowder#ostlander-double-barrelled-hunting-rifle",
     "tags": [
       "ostlander double-barrelled hunting rifle",
-      "ostlander double-barelled hunting rifles"
+      "ostlander double-barelled hunting rifles",
+      "double-barrelled hunting rifle"
     ],
     "flavour": "Knowing Ostlanders' penchant for impressive weaponry (and ready willingness to spend excessive amounts of money) a weaponsmith from Hochland decided to weld two barrels together on a pistol and sell it for twice the price. The warband was so impressed with their new weapon that they asked him to do the same to their hunting rifle. Since then, the weaponsmith has been flooded with orders from some of the most powerful warbands in Mordheim.",
     "range": "48\"",
@@ -3592,6 +3605,17 @@
             "excluded": false
           }
         ],
+        "note": ""
+      },
+      {
+        "label": "Mutiny in Marienburg",
+        "cost": 300,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 12,
+        "for_everyone": true,
+        "warbands": [],
         "note": ""
       }
     ]
@@ -11155,6 +11179,17 @@
         "for_everyone": true,
         "warbands": [],
         "note": ""
+      },
+      {
+        "label": "Mutiny in Marienburg",
+        "cost": 50,
+        "dice": 1,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
       }
     ]
   },
@@ -11365,6 +11400,17 @@
     "availabilities": [
       {
         "label": "",
+        "cost": 250,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 10,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      },
+      {
+        "label": "Mutiny in Marienburg",
         "cost": 250,
         "dice": null,
         "dice_multiplier": null,
@@ -12151,7 +12197,8 @@
     "tags": [
       "river barge",
       "river boat",
-      "rowboat"
+      "rowboat",
+      "rowing boat"
     ],
     "flavour": "",
     "range": "",
@@ -12171,6 +12218,17 @@
     "availabilities": [
       {
         "label": "",
+        "cost": 40,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      },
+      {
+        "label": "Mutiny in Marienburg",
         "cost": 40,
         "dice": null,
         "dice_multiplier": null,
@@ -12286,6 +12344,17 @@
         "note": ""
       },
       {
+        "label": "Mutiny in Marienburg",
+        "cost": 100,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 8,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      },
+      {
         "label": "",
         "cost": 100,
         "dice": null,
@@ -12360,7 +12429,8 @@
     "tags": [
       "river barge",
       "river boat",
-      "rowboat"
+      "rowboat",
+      "barge"
     ],
     "flavour": "",
     "range": "",
@@ -12380,6 +12450,17 @@
     "availabilities": [
       {
         "label": "",
+        "cost": 200,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 9,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      },
+      {
+        "label": "Mutiny in Marienburg",
         "cost": 200,
         "dice": null,
         "dice_multiplier": null,
@@ -13370,7 +13451,8 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/miscellaneous-equipment#trade-wagon",
     "tags": [
       "trade wagon",
-      "trade wagons"
+      "trade wagons",
+      "trade wagon/stage coach"
     ],
     "flavour": "The many vulnerable items such as Cathayan jewels, spices and silk cloths are stored in the Trade Cart.",
     "range": "",
@@ -13456,6 +13538,17 @@
             "excluded": false
           }
         ],
+        "note": ""
+      },
+      {
+        "label": "Mutiny in Marienburg",
+        "cost": 100,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": true,
+        "warbands": [],
         "note": ""
       }
     ]
@@ -14127,7 +14220,8 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/miscellaneous-equipment#wolfcloak",
     "tags": [
       "wolfcloak",
-      "wolfcloaks"
+      "wolfcloaks",
+      "wolf cloak/norse furs"
     ],
     "flavour": "In Middenheim it is still considered to be the feat of a true man to slay a great wolf single-handed. Warriors who accomplish such a deed will command the respect of their peers, and their cloaks will be blessed by the High Priest of the Cult of Ulric, the god of winter, war and wolves. Middenheimers only.",
     "range": "",
@@ -14172,6 +14266,17 @@
           }
         ],
         "note": "Rarity in the source: Special"
+      },
+      {
+        "label": "Mutiny in Marienburg",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": null,
+        "for_everyone": true,
+        "warbands": [],
+        "note": "Special availability"
       },
       {
         "label": "",
@@ -14989,7 +15094,9 @@
     "link_url": "https://mordheimer.net/docs/weapons-armour/missile#fish-hook-shot",
     "tags": [
       "fish-hook shot",
-      "fish-hook shots"
+      "fish-hook shots",
+      "fish-hook shot/hunting lasso",
+      "hunting lasso"
     ],
     "flavour": "",
     "range": "3\"",
@@ -15032,6 +15139,17 @@
             "excluded": false
           }
         ],
+        "note": ""
+      },
+      {
+        "label": "Mutiny in Marienburg",
+        "cost": 10,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 7,
+        "for_everyone": true,
+        "warbands": [],
         "note": ""
       },
       {
@@ -16170,86 +16288,6 @@
     ]
   },
   {
-    "slug": "double-barrelled-hunting-rifle",
-    "name": "Double-barrelled Hunting Rifle",
-    "variant": "",
-    "origin": "mim",
-    "type": "Weapon",
-    "subtype": "Blackpowder",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [],
-    "flavour": "",
-    "range": "Varies",
-    "strength": "Varies",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Expensive double-barrelled rifle; details in rules.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 300,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 12,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "hochland-long-hunting-rifle",
-    "name": "Hochland Long Hunting Rifle",
-    "variant": "",
-    "origin": "mim",
-    "type": "Weapon",
-    "subtype": "Blackpowder",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [],
-    "flavour": "",
-    "range": "Varies",
-    "strength": "Varies",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Long-range Hochland-pattern hunting rifle.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 200,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 11,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "magnin-throwing-knife",
     "name": "Magnin Throwing Knife",
     "variant": "",
@@ -16571,49 +16609,6 @@
             "excluded": false
           }
         ],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "fish-hook-shot-hunting-lasso-mim",
-    "name": "Fish-hook Shot/Hunting Lasso",
-    "variant": "Mutiny in Marienburg",
-    "origin": "mim",
-    "type": "Weapon",
-    "subtype": "Ranged",
-    "setting": "mordheim-1b",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [
-      "fish-hook shot",
-      "hunting lasso"
-    ],
-    "flavour": "",
-    "range": "Varies",
-    "strength": "Varies",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Special ammunition/weapon for entangling or hunting; details in rules.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": true,
-        "warbands": [],
         "note": ""
       }
     ]
@@ -16941,49 +16936,6 @@
         "for_everyone": true,
         "warbands": [],
         "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "wolf-cloak-norse-furs-mim",
-    "name": "Wolf Cloak/Norse Furs",
-    "variant": "Mutiny in Marienburg",
-    "origin": "mim",
-    "type": "Armour",
-    "subtype": "Cloak",
-    "setting": "mordheim-1b",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [
-      "wolf cloak",
-      "norse furs"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "+? (see rules)",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Warm fur cloak; special availability.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 10,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": null,
-        "for_everyone": true,
-        "warbands": [],
-        "note": "Special availability"
       }
     ]
   },
@@ -17849,46 +17801,6 @@
     ]
   },
   {
-    "slug": "monkeys-paw-mim",
-    "name": "Monkey's Paw",
-    "variant": "Mutiny in Marienburg",
-    "origin": "mim",
-    "type": "Miscellaneous",
-    "subtype": "Curio",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Lucky/accursed charm; details in rules.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 50,
-        "dice": 1,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
     "slug": "quiver-of-shattering",
     "name": "Quiver of Shattering",
     "variant": "",
@@ -18302,209 +18214,6 @@
         "dice_multiplier": null,
         "cost_note": "",
         "rarity": 5,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "trade-wagon-stage-coach-mim",
-    "name": "Trade Wagon/Stage Coach",
-    "variant": "Mutiny in Marienburg",
-    "origin": "mim",
-    "type": "Miscellaneous",
-    "subtype": "Vehicle/Watercraft",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [
-      "trade wagon",
-      "stage coach"
-    ],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Transport or watercraft item from the price chart.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "opulent-coach-mim",
-    "name": "Opulent Coach",
-    "variant": "Mutiny in Marienburg",
-    "origin": "mim",
-    "type": "Miscellaneous",
-    "subtype": "Vehicle/Watercraft",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Transport or watercraft item from the price chart.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 250,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "rowing-boat",
-    "name": "Rowing Boat",
-    "variant": "",
-    "origin": "mim",
-    "type": "Miscellaneous",
-    "subtype": "Vehicle/Watercraft",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Transport or watercraft item from the price chart.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "riverboat-mim",
-    "name": "Riverboat",
-    "variant": "Mutiny in Marienburg",
-    "origin": "mim",
-    "type": "Miscellaneous",
-    "subtype": "Vehicle/Watercraft",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Transport or watercraft item from the price chart.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      }
-    ]
-  },
-  {
-    "slug": "barge",
-    "name": "Barge",
-    "variant": "",
-    "origin": "mim",
-    "type": "Miscellaneous",
-    "subtype": "Vehicle/Watercraft",
-    "setting": "mutiny-in-marienburg",
-    "source": "Mutiny in Marienburg",
-    "link_url": "",
-    "tags": [],
-    "flavour": "",
-    "range": "",
-    "strength": "",
-    "save": "",
-    "statblock": [],
-    "notes": "",
-    "needs_rules": true,
-    "rules": [
-      {
-        "name": "",
-        "summary": "Transport or watercraft item from the price chart.",
-        "text": "",
-        "tables": []
-      }
-    ],
-    "availabilities": [
-      {
-        "label": "",
-        "cost": 200,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 9,
         "for_everyone": true,
         "warbands": [],
         "note": ""

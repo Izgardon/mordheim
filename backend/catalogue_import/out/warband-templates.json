@@ -37928,8 +37928,8 @@
           },
           {
             "item": {
-              "name": "Fish-hook Shot/Hunting Lasso",
-              "variant": "Mutiny in Marienburg"
+              "name": "Fish-Hook Shot",
+              "variant": ""
             },
             "shown_as": "Vine Tendril",
             "cost": 10,
@@ -80973,10 +80973,10 @@
           },
           {
             "item": {
-              "name": "Double-barrelled Hunting Rifle",
+              "name": "Ostlander Double-barrelled Hunting Rifle",
               "variant": ""
             },
-            "shown_as": "",
+            "shown_as": "Double-barrelled hunting rifle",
             "cost": 300,
             "cost_note": "",
             "first_free": false,
@@ -117593,8 +117593,8 @@
           },
           {
             "item": {
-              "name": "Trade Wagon/Stage Coach",
-              "variant": "Mutiny in Marienburg"
+              "name": "Wagon, Stagecoach",
+              "variant": ""
             },
             "shown_as": "Watch carriage/Stage coach",
             "cost": 100,

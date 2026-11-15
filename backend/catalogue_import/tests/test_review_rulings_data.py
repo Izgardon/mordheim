@@ -14,14 +14,15 @@ class NumbersSettingsRowsAndNamesTests(ReviewCase):
 
     def test_each_mutiny_in_marienburg_item_sits_in_the_setting_of_its_grade(self) -> None:
         # William, 12 Nov 2026: a MiM item of a Mordheim grade belongs to that Mordheim setting; the grades above
-        # the supplement's own 2b ("2c" and "3a", which the system has no part for) are 2b and stay in it
+        # the supplement's own 2b ("2c" and "3a", which the system has no part for) are 2b and stay in it. The ten
+        # stubs that duplicate an item of ours are gone (William, 15 Nov 2026), two of them 1b's
         mim = [row for row in load_json(OUT / "items.json") if row["origin"] == "mim"]
         by_setting: dict[str, list[str]] = {}
         for row in mim:
             by_setting.setdefault(row["setting"], []).append(row["name"])
         self.assertEqual(
             {setting: len(names) for setting, names in sorted(by_setting.items())},
-            {"mordheim": 3, "mordheim-1b": 7, "mordheim-2a": 6, "mutiny-in-marienburg": 45},
+            {"mordheim": 3, "mordheim-1b": 5, "mordheim-2a": 6, "mutiny-in-marienburg": 37},
         )
         self.assertEqual(sorted(by_setting["mordheim"]), ["Caber", "Falconry Glove", "Lyre"])
         self.assertEqual(
@@ -29,11 +30,9 @@ class NumbersSettingsRowsAndNamesTests(ReviewCase):
             [
                 "Albion Cloth",
                 "Alcoholic Spirits",
-                "Fish-hook Shot/Hunting Lasso",
                 "Gas Mask",
                 "Iron Strongbox",
                 "Thief's Cloak",
-                "Wolf Cloak/Norse Furs",
             ],  # fmt: skip
         )
         self.assertEqual(

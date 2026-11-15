@@ -11,7 +11,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from catalogue_import.common import norm_name
+from catalogue_import.common import norm_name, unique
 from catalogue_import.grading import MIM, mim_setting
 from catalogue_import.groups import collapse
 from catalogue_import.prices import mim_cost, parse_rarity
@@ -20,6 +20,7 @@ from catalogue_import.text import clean_inline
 from catalogue_import.warbands import ALIASES, Resolver
 
 SETTING = MIM
+MERGE_LABEL = "Mutiny in Marienburg"  # the label a carried price row wears (William, 15 Nov 2026)
 
 
 @dataclass
@@ -27,6 +28,7 @@ class MimLog:
     as_notes: list[tuple[str, str]] = field(default_factory=list)  # (item, restriction kept as a note)
     as_lists: list[tuple[str, str, str]] = field(default_factory=list)  # (item, restriction, warbands)
     missing_properties: list[tuple[str, int]] = field(default_factory=list)
+    merged: list[tuple[str, str, str]] = field(default_factory=list)  # (stub, the item it joined, the price carried)
 
 
 class MimReader:
@@ -131,3 +133,40 @@ def mim_item(
         "rules": _rules(item, properties, index, log),
         "availabilities": [_availability(item, row, reader, log) for row in item.get("availabilities") or []],
     }
+
+
+def _price(row: dict[str, Any]) -> str:
+    """A carried price row as the report prints it: "100 gc, Rare 8", "50 + D6 gc, Rare 10"."""
+    dice = f"{row['dice']}D6" if (row["dice"] or 0) > 1 else ("D6" if row["dice"] else "")
+    if dice and row.get("dice_multiplier"):
+        dice += f"x{row['dice_multiplier']}"
+    cost = " + ".join(filter(None, [str(row["cost"]) if row["cost"] is not None else "", dice])) or "-"
+    return f"{cost} gc, {'Rare ' + str(row['rarity']) if row['rarity'] else 'Common'}"
+
+
+def merge_duplicates(
+    stubs: list[dict[str, Any]], items: list[dict[str, Any]], decisions: dict[str, Any], log: MimLog
+) -> list[dict[str, Any]]:
+    """William's answers of 15 Nov 2026 (`mim_merges`): a Mutiny in Marienburg stub that duplicates a complete item of
+    ours is left out, and the book's price it carried becomes a price row of that item labelled "Mutiny in Marienburg",
+    since a price row has no setting of its own. The stub's name becomes a tag of that item, with any other name
+    William gives it (`tags`), so a search and a warband list naming the stub still find it."""
+    by_name = {item["name"]: item for item in items}
+    kept = []
+    for stub in stubs:
+        decision = decisions.get(stub["name"])
+        if decision is None:
+            kept.append(stub)
+            continue
+        target = by_name.get(decision["item"])
+        if target is None:
+            raise ValueError(f"overrides.json mim_merges {stub['name']!r}: we hold no item {decision['item']!r}")
+        for row in stub["availabilities"]:
+            target["availabilities"].append({**row, "label": MERGE_LABEL})
+            log.merged.append((stub["name"], target["name"], _price(row)))
+        names = [stub["name"].lower(), *(tag.lower() for tag in decision.get("tags") or [])]
+        target["tags"] = unique(target["tags"] + names)
+    missing = sorted(set(decisions) - {name for name, _item, _price_text in log.merged})
+    if missing:
+        raise ValueError(f"overrides.json mim_merges names MiM items we don't have: {', '.join(missing)}")
+    return kept
