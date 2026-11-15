@@ -454,6 +454,11 @@ export type BattlePostbattleRules = {
   /** Ascending; the first row whose `max_total` (null: no limit) covers the dice total. */
   exploration_table: { max_total: number | null; amount: number }[];
   exploration_dice: { max: number; max_chosen: number };
+  /**
+   * The chart's multiples: for each count of a face (doubles to six of a kind) the six places it
+   * finds, by the face shown (index 0 is a 1). The server's; the page never carries its own copy.
+   */
+  exploration_multiples: { count: number; label: string; places: string[] }[];
   /** Heroes' (and hero-table hirelings') serious-injury table; the rest roll d6. */
   hero_death_roll: CampaignHeroDeathRoll;
   /** Only the tables its units roll on: the d6 and the campaign's hero table. */

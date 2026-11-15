@@ -3,11 +3,11 @@ import { Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DiceEntry from "@/components/ui/dice-entry";
 import { IconButton } from "@/components/ui/icon-button";
+import { explorationMultiples } from "@/features/battles/components/postbattle/postbattle-rules";
 import {
   getSelectedExplorationDiceValues,
   setLocalExplorationResource,
 } from "@/features/battles/components/postbattle/postbattle-utils";
-import { explorationMultiples } from "@/features/battles/data/exploration-multiples";
 import type { ExplorationState } from "@/features/battles/hooks/useExploration";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 import { cn } from "@/lib/utils";
@@ -38,7 +38,7 @@ export default function ExploreTab({
   const rolled =
     exploration.diceValues.length > 0 && exploration.diceValues.every((v) => v !== null);
   const chosen = getSelectedExplorationDiceValues(exploration);
-  const multiples = rolled ? explorationMultiples(chosen) : [];
+  const multiples = rolled ? explorationMultiples(explore.rules, chosen) : [];
   const hot = new Set(multiples.map((entry) => entry.face));
   const total = chosen.reduce((sum, value) => sum + value, 0);
   const take = (faces: number[]) =>

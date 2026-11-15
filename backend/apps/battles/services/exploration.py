@@ -4,6 +4,10 @@ The draft keeps the roll (`dice_values`), the resource it goes to and any `amoun
 and can't be used for a free re-roll; the server computes the `amount` from its table. Changing dice that were
 already saved is a re-roll: it goes ahead, comes back as a warning, and the earlier dice are kept in
 `previous_rolls` (server-kept; a client can't erase them) for the finalise log.
+
+The chart itself is the server's too: the income table (`_TABLE`) and the multiples' thirty places (`_PLACES`),
+both served with the postbattle rules (services/postbattle/suggested.py). They are the rulebook's own; a campaign
+that replaces the chart replaces them here, so no client ever carries a copy.
 """
 
 from typing import Any
@@ -51,3 +55,42 @@ def exploration_table() -> list[dict[str, int | None]]:
     """The chart as postbattle shows it (IMP-52): the shards for a dice total up to `max_total` (None: any more)."""
     rows: list[dict[str, int | None]] = [{"max_total": highest, "amount": amount} for highest, amount in _TABLE]
     return [*rows, {"max_total": None, "amount": 7}]
+
+
+# The exploration chart's multiples: the place each count of a face finds, by the face shown (index 0 is a 1).
+# The rulebook's own thirty; a campaign that replaces the chart replaces this list, which is why the places are
+# served with the rest of the postbattle rules and never worked out by a client.
+_PLACES: tuple[tuple[int, str, tuple[str, ...]], ...] = (
+    (2, "Doubles", ("Well", "Shop", "Corpse", "Straggler", "Overturned Cart", "Ruined Hovels")),
+    (3, "Triples", ("Tavern", "Smithy", "Prisoners", "Fletcher", "Market Hall", "Returning a Favour")),
+    (4, "Four of a kind", ("Gunsmith", "Shrine", "Townhouse", "Armourer", "Graveyard", "Catacombs")),
+    (
+        5,
+        "Five of a kind",
+        (
+            "Moneylender's House",
+            "Alchemist's Laboratory",
+            "Jewelsmith",
+            "Merchant's House",
+            "Shattered Building",
+            "Entrance to the Catacombs",
+        ),
+    ),
+    (
+        6,
+        "Six of a kind",
+        (
+            "The Pit",
+            "Hidden Treasure",
+            "Dwarf Smithy",
+            "Slaughtered Warband",
+            "Fighting Arena",
+            "Noble's Villa",
+        ),
+    ),
+)
+
+
+def exploration_multiples() -> list[dict[str, Any]]:
+    """The chart's multiples as postbattle serves them: each count of a face, its label and the six places."""
+    return [{"count": count, "label": label, "places": list(places)} for count, label, places in _PLACES]

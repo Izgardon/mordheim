@@ -216,6 +216,33 @@ export const postbattleRules = (
     { max_total: null, amount: 7 },
   ],
   exploration_dice: { max: 10, max_chosen: 6 },
+  exploration_multiples: [
+    {
+      count: 2,
+      label: "Doubles",
+      places: ["Well", "Shop", "Corpse", "Straggler", "Cart", "Hovels"],
+    },
+    {
+      count: 3,
+      label: "Triples",
+      places: ["Tavern", "Smithy", "Prisoners", "Fletcher", "Hall", "Favour"],
+    },
+    {
+      count: 4,
+      label: "Four of a kind",
+      places: ["Gunsmith", "Shrine", "Townhouse", "Armourer", "Graveyard", "Catacombs"],
+    },
+    {
+      count: 5,
+      label: "Five of a kind",
+      places: ["Moneylender", "Alchemist", "Jewelsmith", "Merchant", "Shattered", "Entrance"],
+    },
+    {
+      count: 6,
+      label: "Six of a kind",
+      places: ["The Pit", "Hidden Treasure", "Dwarf Smithy", "Slaughtered", "Arena", "Villa"],
+    },
+  ],
   hero_death_roll: heroDeathRoll,
   injury_tables: {
     d6: [

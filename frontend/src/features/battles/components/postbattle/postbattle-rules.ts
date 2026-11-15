@@ -52,6 +52,36 @@ export function explorationAmount(rules: Rules, diceValues: Array<number | null>
   return row?.amount ?? 0;
 }
 
+export type ExplorationMultiple = { kicker: string; face: number; count: number; place: string };
+
+/**
+ * Each face rolled two or more times among the chosen dice, with the place it finds, from the
+ * server's chart; nothing without it (an older server), as the amount is 0 without its table.
+ */
+export function explorationMultiples(rules: Rules, values: number[]): ExplorationMultiple[] {
+  const chart = rules?.exploration_multiples ?? [];
+  if (chart.length === 0) return [];
+  const most = chart[chart.length - 1].count;
+  const counts = new Map<number, number>();
+  for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
+  return [...counts.entries()]
+    .filter(([, count]) => count >= 2)
+    .sort((a, b) => b[1] - a[1] || b[0] - a[0])
+    .flatMap(([face, count]) => {
+      const row = chart.find((entry) => entry.count === Math.min(count, most));
+      const place = row?.places[face - 1];
+      if (!place) return [];
+      return [
+        {
+          kicker: `${row.label} ${Array.from({ length: count }, () => face).join("\u00b7")}`,
+          face,
+          count,
+          place,
+        },
+      ];
+    });
+}
+
 /** The draft saved so far, with the server's suggested XP and upkeep for the rest. */
 export function suggestedDraft(
   participant: BattleParticipant,

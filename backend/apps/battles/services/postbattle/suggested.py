@@ -29,7 +29,7 @@ from apps.campaigns.models import CampaignSettings
 from ...models import Battle, BattleKill, BattleParticipant
 from ...validation.config import normalize_unit_information
 from ...validation.postbattle import MAX_EXPLORATION_DICE
-from ..exploration import exploration_table
+from ..exploration import exploration_multiples, exploration_table
 from ..injuries import injury_tables
 from ..kills import count_by_unit, live_kills
 from ..random_mutations import random_mutation_table
@@ -172,6 +172,7 @@ def postbattle_rules(hero_death_roll: str) -> dict:
     tables = injury_tables()
     rules = {
         "exploration_table": exploration_table(),
+        "exploration_multiples": exploration_multiples(),
         "exploration_dice": {"max": MAX_EXPLORATION_DICE, "max_chosen": MAX_CHOSEN_DICE},
         "hero_death_roll": hero_death_roll,
         "injury_tables": {roll: tables[roll] for roll in ("d6", hero_death_roll) if roll in tables},
