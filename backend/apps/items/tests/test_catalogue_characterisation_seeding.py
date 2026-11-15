@@ -132,7 +132,10 @@ class SeedAllTests(TestCase):
                 # swords' own and the Dark Elf Corsairs Captain's are 5 fewer, the shared row 1 more
                 # the Cardinal of Contagion's own rules (William, 13 Nov 2026) are 3 more, the Pox Staff's being
                 # the item's now
-                "Special": 1963,
+                # a rule a page's fighters word differently now reads for every one of them (GENERAL_RULE_WORDINGS):
+                # 3 fewer, the Forest Goblins' Red Toof Goblin's Animosity and the Tomb Guardians' Skeleton Warrior's
+                # and Tomb Guardian's Undead, each named apart over a change of subject, folded back into one row
+                "Special": 1960,
                 # 14 mounts, 10 pets (the Sorcerous Society's four familiars), 39 creatures (17 from MiM, 28 Border
                 # Town Burning's Beasts of the East)
                 # 15 mounts (the Sealed City's Beast of Burden the newest), 12 pets (the Sorcerous Society's four
@@ -512,6 +515,40 @@ class SeedAllTests(TestCase):
                 "Dramatis Persona - Maximilian the Mad",
             },
         )
+
+    def test_a_rule_two_fighters_share_is_worded_for_every_fighter_who_holds_it(self):
+        # One special is seeded per name and type, so the second fighter of a page to hold a rule took the first's
+        # wording (catalogue_import/templates.py `_specials_once`) and carried a sentence naming another fighter:
+        # the Hunting Cat held "A Wolfhound may only be included...". A wording settled for the page's rule
+        # (GENERAL_RULE_WORDINGS) reads for every fighter who holds it, as the Fanatics' Fanatical does.
+        book = Special.objects.filter(campaign__isnull=True, archived_at__isnull=True)
+        holders = {
+            ("Beast Companion", "Warband - Wood Elves, The Asrai Way-farers"): (
+                "The model may only be included while the warband holds a Wild Hunter.",
+                {"Wolfhound", "Hunting Cat"},
+            ),
+            ("No Brain", "Warband - The Restless Dead"): (
+                "The model never gains experience.",
+                {"Zombie", "Skeleton", "Scarecrow"},
+            ),
+            ("Animosity", "Warband - Forest Goblins"): (
+                "The model is subject to the rules for Animosity.",
+                {"Braves", "Forest Goblin", "Red Toof Goblin", "Slugga"},
+            ),
+            ("Undead", "Warband - Tomb Guardians"): (
+                "The model is undead and follows all rules for the Undead.",
+                {"Tomb Lord", "Liche Priest", "Acolyte", "Skeleton Warrior", "Tomb Guardian"},
+            ),
+        }
+        for (name, type_), (text, fighters) in holders.items():
+            rule = book.get(name=name, type=type_)
+            self.assertEqual(rule.description, text)
+            self.assertEqual(set(rule.template_fighter_links.values_list("fighter__name", flat=True)), fighters)
+            # one row, not one per fighter: nothing of this page's rule is named apart any more
+            self.assertEqual(list(book.filter(name__startswith=f"{name} (", type=type_)), [])
+        # a holder whose rule really says more is not one of them: the Fighting Ape's Animal keeps its own sentence
+        ape = book.get(name="Animal (Fighting Ape)", type="Warband - The Cursed Cavalcade")
+        self.assertIn("climb and enter buildings", ape.description)
 
     def test_a_rule_that_only_named_a_skill_is_the_skill_he_starts_with(self):
         # William, 7 Nov 2026, of the Senior Gunnery Officer's Hunter ("See Shooting Skills."): should he start with

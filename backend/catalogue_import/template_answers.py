@@ -334,8 +334,76 @@ RULE_TITLES: dict[tuple[str, int], str] = {
 # 13 Nov 2026, of the Mordheimers' Fanatics' Fanatical, which stays its own rule beside the shared Hardened ("We can
 # keep fanatical as an alternative as it has a different flavour, can make it more general though if not worded well
 # for those 2"): word it for both. By page and rule name.
+# The same first-wins wording reached 30 more rules: 25 of them are one rule for every holder and are worded
+# here, the number, table, skill or test each names kept word for word; where a page had already split one of
+# them in two over a change of subject (the Forest Goblins' Red Toof Goblin, the Tomb Guardians' Skeleton
+# Warrior and Tomb Guardian) one wording folds them back into one row. The other five are pages where another
+# holder's wording of the same rule says more and is kept apart (the Fighting Ape's Animal, the Rat Ogre's
+# Experience, the Tomb Guard's Undead, the Slayers' Doomed, the Forest Goblin's Animosity): a page wording
+# would wipe what his says, so they are left for William, with the list in .pdf-sources/work.
 GENERAL_RULE_WORDINGS: dict[tuple[str, str], str] = {
     ("mordheimers-fanatics", "Fanatical"): "The model is immune to fear.",
+    ("arabyan-theives", "Known thief"): "The model counts as a known thief.",
+    ("bretonnian", "Knights Virtue"): (
+        "The model is a chivalrous warrior who is superior to ordinary warriors. He will never panic and break from "
+        "combat and so does not have to pass a Leadership test for being all alone."
+    ),
+    ("bretonnian-chapel-guard", "Knight"): (
+        "The model has the following rules from above apply to him; Chivalry, Lord’s Boon and Virtue of Purity."
+    ),
+    ("bretonnian-chapel-guard", "Low Caste"): (
+        "The model is a peasant, and while he is not stupid, there is a glass ceiling to what he can attain in "
+        "Bretonnian society. Low Caste henchmen learn experience and advance as normal, but reroll any results of "
+        '"The Lad\'s Got Talent", and may never become heroes.'
+    ),
+    ("bretonnian-grail-companions", "Virtuous"): (
+        "When the model gains a skill he may roll on the Knight Virtues table instead of choosing a skill, "
+        "re-rolling a virtue he already has."
+    ),
+    ("call-of-the-night-haint", "No Brain"): "The model gains no experience.",
+    ("carnival-of-chaos", "Daemonic Instability"): (
+        "The model is bound to the world by Dark Sorcery that is highly volatile and unstable. If taken out of "
+        "action it is banished and effectively destroyed on a D6 roll of 1-3 (do not roll for injury). In addition, "
+        "if the warband routs then every model with this rule in the warband must take an immediate Leadership "
+        "test. If this test is failed, then the model counts as destroyed."
+    ),
+    ("fen-guard", "Hard to Kill"): (
+        "The model is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of "
+        "action. Not against fire attacks."
+    ),
+    ("forest-goblins", "Animosity"): "The model is subject to the rules for Animosity.",
+    ("forest-goblins-lus", "Animosity"): "The model is subject to animosity.",
+    ("ghost-pirates", "No Brain"): "The model never gains experience.",
+    ("goblin-raiders", "Animosity"): "The model is subject to animosity.",
+    ("necrarchs-the-soul-stealers", "No Brain"): "The model gains no experience.",
+    ("savage-orcs-kaz", "Animosity"): "The model is subject to animosity.",
+    ("skaven-of-clan-mors", "Experience"): "The model gains no experience.",
+    ("slayer-pirates", "Skittish"): (
+        "The model does not have the Death Wish skill and suffers psychology as normal. When he gains That Lad's "
+        "Got Talent, he must learn Death Wish instead of rolling on the Hero advance table, even if Special is not "
+        "one of his two skill lists."
+    ),
+    ("strigoi", "Animals"): "The model is an animal and gains no experience.",
+    ("strigoi", "Flyers"): (
+        "The model ignores terrain when it moves and may charge any model it can see, whatever its height and "
+        "whoever would intercept."
+    ),
+    ("the-fallen", "Eaters of Flesh"): (
+        "When the model takes a living enemy out of action and is in base contact with no enemy model, he takes a "
+        "Leadership test. Failed, he starts eating the body and may do nothing for D3 turns. He takes his turns as "
+        "normal once those turns are up, or as soon as he is hit by an attack."
+    ),
+    ("the-innocents", "Animals"): "The model gains no experience and uses no equipment.",
+    ("the-restless-dead", "No Brain"): "The model never gains experience.",
+    ("tomb-guardians", "Undead"): "The model is undead and follows all rules for the Undead.",
+    ("vampire-hunters-of-sylvania", "Stake the Vampire!"): (
+        "The model hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he "
+        "may choose."
+    ),
+    ("wood-elves-the-asrai-way-farers", "Animal"): "The model is an animal and gains no experience.",
+    ("wood-elves-the-asrai-way-farers", "Beast Companion"): (
+        "The model may only be included while the warband holds a Wild Hunter."
+    ),
 }
 
 # mordheimer's fighter races to ours (None: no race; the creatures that gain no XP come in with none)

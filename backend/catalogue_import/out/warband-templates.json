@@ -6621,7 +6621,7 @@
           {
             "name": "Known thief",
             "type": "Warband - Arabyan Thieves",
-            "description": "The Guild Master counts as a known thief."
+            "description": "The model counts as a known thief."
           }
         ],
         "skills": []
@@ -6670,7 +6670,7 @@
           {
             "name": "Known thief",
             "type": "Warband - Arabyan Thieves",
-            "description": "The Guild Master counts as a known thief."
+            "description": "The model counts as a known thief."
           }
         ],
         "skills": []
@@ -15369,7 +15369,7 @@
           {
             "name": "Knight",
             "type": "Warband - Bretonnian Chapel Guard",
-            "description": "The Questing Knight has the following rules from above apply to him; Chivalry, Lord’s Boon and Virtue of Purity."
+            "description": "The model has the following rules from above apply to him; Chivalry, Lord’s Boon and Virtue of Purity."
           },
           {
             "name": "Vow of Poverty",
@@ -15477,7 +15477,7 @@
           {
             "name": "Knight",
             "type": "Warband - Bretonnian Chapel Guard",
-            "description": "The Questing Knight has the following rules from above apply to him; Chivalry, Lord’s Boon and Virtue of Purity."
+            "description": "The model has the following rules from above apply to him; Chivalry, Lord’s Boon and Virtue of Purity."
           },
           {
             "name": "Vain",
@@ -15576,7 +15576,7 @@
           {
             "name": "Low Caste",
             "type": "Warband - Bretonnian Chapel Guard",
-            "description": "Battle Pilgrims are peasants, and while they are not stupid, there is a glass ceiling to what they can attain in Bretonnian society. Low Caste henchmen learn experience and advance as normal, but reroll any results of \"The Lad's Got Talent\", and may never become heroes."
+            "description": "The model is a peasant, and while he is not stupid, there is a glass ceiling to what he can attain in Bretonnian society. Low Caste henchmen learn experience and advance as normal, but reroll any results of \"The Lad's Got Talent\", and may never become heroes."
           },
           {
             "name": "Hatred",
@@ -15635,7 +15635,7 @@
           {
             "name": "Low Caste",
             "type": "Warband - Bretonnian Chapel Guard",
-            "description": "Battle Pilgrims are peasants, and while they are not stupid, there is a glass ceiling to what they can attain in Bretonnian society. Low Caste henchmen learn experience and advance as normal, but reroll any results of \"The Lad's Got Talent\", and may never become heroes."
+            "description": "The model is a peasant, and while he is not stupid, there is a glass ceiling to what he can attain in Bretonnian society. Low Caste henchmen learn experience and advance as normal, but reroll any results of \"The Lad's Got Talent\", and may never become heroes."
           }
         ],
         "skills": []
@@ -16310,7 +16310,7 @@
           {
             "name": "Virtuous",
             "type": "Warband - Bretonnian Grail Companions",
-            "description": "When the Grail Knight gains a skill he may roll on the Knight Virtues table instead of choosing a skill, re-rolling a virtue he already has."
+            "description": "When the model gains a skill he may roll on the Knight Virtues table instead of choosing a skill, re-rolling a virtue he already has."
           },
           {
             "name": "Honored Dead",
@@ -16428,7 +16428,7 @@
           {
             "name": "Virtuous",
             "type": "Warband - Bretonnian Grail Companions",
-            "description": "When the Grail Knight gains a skill he may roll on the Knight Virtues table instead of choosing a skill, re-rolling a virtue he already has."
+            "description": "When the model gains a skill he may roll on the Knight Virtues table instead of choosing a skill, re-rolling a virtue he already has."
           },
           {
             "name": "Skilled Rider",
@@ -17850,7 +17850,7 @@
           {
             "name": "Knights Virtue",
             "type": "Warband - Bretonnians",
-            "description": "A Questing Knight is a chivalrous warrior who is superior to ordinary warriors. He will never panic and break from combat and so does not have to pass a Leadership test for being all alone."
+            "description": "The model is a chivalrous warrior who is superior to ordinary warriors. He will never panic and break from combat and so does not have to pass a Leadership test for being all alone."
           }
         ],
         "skills": []
@@ -17898,7 +17898,7 @@
           {
             "name": "Knights Virtue",
             "type": "Warband - Bretonnians",
-            "description": "A Questing Knight is a chivalrous warrior who is superior to ordinary warriors. He will never panic and break from combat and so does not have to pass a Leadership test for being all alone."
+            "description": "The model is a chivalrous warrior who is superior to ordinary warriors. He will never panic and break from combat and so does not have to pass a Leadership test for being all alone."
           }
         ],
         "skills": []
@@ -18724,7 +18724,7 @@
           {
             "name": "No Brain",
             "type": "Warband - Call of the Night Haint",
-            "description": "The Mourngul gains no experience."
+            "description": "The model gains no experience."
           },
           {
             "name": "Nightmare Birth",
@@ -18810,7 +18810,7 @@
           {
             "name": "No Brain",
             "type": "Warband - Call of the Night Haint",
-            "description": "The Mourngul gains no experience."
+            "description": "The model gains no experience."
           },
           {
             "name": "Spectral Touch",
@@ -18897,7 +18897,7 @@
           {
             "name": "No Brain",
             "type": "Warband - Call of the Night Haint",
-            "description": "The Mourngul gains no experience."
+            "description": "The model gains no experience."
           },
           {
             "name": "Ignored",
@@ -19451,7 +19451,7 @@
           {
             "name": "Daemonic Instability",
             "type": "Warband - Carnival of Chaos",
-            "description": "Plague Bearers are bound to the world by Dark Sorcery that is highly volatile and unstable. If taken out of action a Plague Bearer is banished and effectively destroyed on a D6 roll of 1-3 (do not roll for injury). In addition, if the warband routs then every Plague Bearer in the warband must take an immediate Leadership test. If this test is failed, then the Plague Bearer counts as destroyed."
+            "description": "The model is bound to the world by Dark Sorcery that is highly volatile and unstable. If taken out of action it is banished and effectively destroyed on a D6 roll of 1-3 (do not roll for injury). In addition, if the warband routs then every model with this rule in the warband must take an immediate Leadership test. If this test is failed, then the model counts as destroyed."
           }
         ],
         "skills": []
@@ -19522,7 +19522,7 @@
           {
             "name": "Daemonic Instability",
             "type": "Warband - Carnival of Chaos",
-            "description": "Plague Bearers are bound to the world by Dark Sorcery that is highly volatile and unstable. If taken out of action a Plague Bearer is banished and effectively destroyed on a D6 roll of 1-3 (do not roll for injury). In addition, if the warband routs then every Plague Bearer in the warband must take an immediate Leadership test. If this test is failed, then the Plague Bearer counts as destroyed."
+            "description": "The model is bound to the world by Dark Sorcery that is highly volatile and unstable. If taken out of action it is banished and effectively destroyed on a D6 roll of 1-3 (do not roll for injury). In addition, if the warband routs then every model with this rule in the warband must take an immediate Leadership test. If this test is failed, then the model counts as destroyed."
           }
         ],
         "skills": []
@@ -37550,7 +37550,7 @@
           {
             "name": "Hard to Kill",
             "type": "Warband - Fen Guard",
-            "description": "A Spiteborn is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."
+            "description": "The model is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."
           }
         ],
         "skills": []
@@ -37608,7 +37608,7 @@
           {
             "name": "Hard to Kill",
             "type": "Warband - Fen Guard",
-            "description": "A Spiteborn is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."
+            "description": "The model is taken out of action only on a 6 on the Injury chart: 1-2 knocked down, 3-5 stunned, 6 out of action. Not against fire attacks."
           }
         ],
         "skills": []
@@ -38208,7 +38208,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Forest Goblins",
-            "description": "Braves are subject to the rules for Animosity."
+            "description": "The model is subject to the rules for Animosity."
           }
         ],
         "skills": []
@@ -38303,7 +38303,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Forest Goblins",
-            "description": "Braves are subject to the rules for Animosity."
+            "description": "The model is subject to the rules for Animosity."
           }
         ],
         "skills": []
@@ -38345,9 +38345,9 @@
         ],
         "specials": [
           {
-            "name": "Animosity (Red Toof Goblin)",
+            "name": "Animosity",
             "type": "Warband - Forest Goblins",
-            "description": "Red Toof Boyz are subject to the rules for Animosity."
+            "description": "The model is subject to the rules for Animosity."
           },
           {
             "name": "Berserkers (Red Toof Goblin)",
@@ -38396,7 +38396,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Forest Goblins",
-            "description": "Braves are subject to the rules for Animosity."
+            "description": "The model is subject to the rules for Animosity."
           },
           {
             "name": "Sluggas",
@@ -38978,7 +38978,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Forest Goblins (Lustria)",
-            "description": "A Boss is subject to animosity."
+            "description": "The model is subject to animosity."
           }
         ],
         "skills": []
@@ -39076,7 +39076,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Forest Goblins (Lustria)",
-            "description": "A Boss is subject to animosity."
+            "description": "The model is subject to animosity."
           }
         ],
         "skills": []
@@ -39121,7 +39121,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Forest Goblins (Lustria)",
-            "description": "A Boss is subject to animosity."
+            "description": "The model is subject to animosity."
           },
           {
             "name": "Frenzy",
@@ -39170,7 +39170,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Forest Goblins (Lustria)",
-            "description": "A Boss is subject to animosity."
+            "description": "The model is subject to animosity."
           },
           {
             "name": "Sluggas",
@@ -40091,7 +40091,7 @@
           {
             "name": "No Brain",
             "type": "Warband - Ghost Pirates",
-            "description": "A Gibbet never gains experience."
+            "description": "The model never gains experience."
           },
           {
             "name": "May Not Run",
@@ -40170,7 +40170,7 @@
           {
             "name": "No Brain",
             "type": "Warband - Ghost Pirates",
-            "description": "A Gibbet never gains experience."
+            "description": "The model never gains experience."
           },
           {
             "name": "Squishy",
@@ -41397,7 +41397,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Goblin Raiders",
-            "description": "A Goblin Warrior is subject to animosity."
+            "description": "The model is subject to animosity."
           }
         ],
         "skills": []
@@ -41441,7 +41441,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Goblin Raiders",
-            "description": "A Goblin Warrior is subject to animosity."
+            "description": "The model is subject to animosity."
           },
           {
             "name": "Reckless",
@@ -70354,7 +70354,7 @@
           {
             "name": "No Brain",
             "type": "Warband - Necrarchs, the Soul Stealers",
-            "description": "Skeletal Warriors gain no experience."
+            "description": "The model gains no experience."
           }
         ],
         "skills": []
@@ -70416,7 +70416,7 @@
           {
             "name": "No Brain",
             "type": "Warband - Necrarchs, the Soul Stealers",
-            "description": "Skeletal Warriors gain no experience."
+            "description": "The model gains no experience."
           }
         ],
         "skills": []
@@ -70474,7 +70474,7 @@
           {
             "name": "No Brain",
             "type": "Warband - Necrarchs, the Soul Stealers",
-            "description": "Skeletal Warriors gain no experience."
+            "description": "The model gains no experience."
           },
           {
             "name": "Large",
@@ -90238,7 +90238,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Savage Orcs (Karak Azgal)",
-            "description": "Brutes are subject to animosity."
+            "description": "The model is subject to animosity."
           }
         ],
         "skills": []
@@ -90283,7 +90283,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Savage Orcs (Karak Azgal)",
-            "description": "Brutes are subject to animosity."
+            "description": "The model is subject to animosity."
           },
           {
             "name": "Frenzy",
@@ -90337,7 +90337,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Savage Orcs (Karak Azgal)",
-            "description": "Brutes are subject to animosity."
+            "description": "The model is subject to animosity."
           }
         ],
         "skills": []
@@ -90382,7 +90382,7 @@
           {
             "name": "Animosity",
             "type": "Warband - Savage Orcs (Karak Azgal)",
-            "description": "Brutes are subject to animosity."
+            "description": "The model is subject to animosity."
           },
           {
             "name": "Ain't Orcz",
@@ -95384,7 +95384,7 @@
           {
             "name": "Experience",
             "type": "Warband - Skaven of Clan Mors",
-            "description": "Skavenslaves gain no experience."
+            "description": "The model gains no experience."
           },
           {
             "name": "All Races",
@@ -95445,7 +95445,7 @@
           {
             "name": "Experience",
             "type": "Warband - Skaven of Clan Mors",
-            "description": "Skavenslaves gain no experience."
+            "description": "The model gains no experience."
           },
           {
             "name": "Large",
@@ -102789,7 +102789,7 @@
           {
             "name": "Skittish",
             "type": "Warband - Slayer Pirates",
-            "description": "Gunners do not have the Death Wish skill and suffer psychology as normal. When a Gunner gains That Lad's Got Talent, he must learn Death Wish instead of rolling on the Hero advance table, even if Special is not one of his two skill lists."
+            "description": "The model does not have the Death Wish skill and suffers psychology as normal. When he gains That Lad's Got Talent, he must learn Death Wish instead of rolling on the Hero advance table, even if Special is not one of his two skill lists."
           }
         ],
         "skills": []
@@ -102833,7 +102833,7 @@
           {
             "name": "Skittish",
             "type": "Warband - Slayer Pirates",
-            "description": "Gunners do not have the Death Wish skill and suffer psychology as normal. When a Gunner gains That Lad's Got Talent, he must learn Death Wish instead of rolling on the Hero advance table, even if Special is not one of his two skill lists."
+            "description": "The model does not have the Death Wish skill and suffers psychology as normal. When he gains That Lad's Got Talent, he must learn Death Wish instead of rolling on the Hero advance table, even if Special is not one of his two skill lists."
           }
         ],
         "skills": []
@@ -105111,12 +105111,12 @@
           {
             "name": "Animals",
             "type": "Warband - Strigoi",
-            "description": "Bats are animals and gain no experience."
+            "description": "The model is an animal and gains no experience."
           },
           {
             "name": "Flyers",
             "type": "Warband - Strigoi",
-            "description": "A Bat ignores terrain when it moves and may charge any model it can see, whatever its height and whoever would intercept."
+            "description": "The model ignores terrain when it moves and may charge any model it can see, whatever its height and whoever would intercept."
           },
           {
             "name": "Squishy",
@@ -105163,12 +105163,12 @@
           {
             "name": "Animals",
             "type": "Warband - Strigoi",
-            "description": "Bats are animals and gain no experience."
+            "description": "The model is an animal and gains no experience."
           },
           {
             "name": "Flyers",
             "type": "Warband - Strigoi",
-            "description": "A Bat ignores terrain when it moves and may charge any model it can see, whatever its height and whoever would intercept."
+            "description": "The model ignores terrain when it moves and may charge any model it can see, whatever its height and whoever would intercept."
           },
           {
             "name": "Fear",
@@ -108153,7 +108153,7 @@
           {
             "name": "Eaters of Flesh",
             "type": "Warband - The Fallen",
-            "description": "When the Revenant takes a living enemy out of action and is in base contact with no enemy model, he takes a Leadership test. Failed, he starts eating the body and may do nothing for D3 turns. He takes his turns as normal once those turns are up, or as soon as he is hit by an attack."
+            "description": "When the model takes a living enemy out of action and is in base contact with no enemy model, he takes a Leadership test. Failed, he starts eating the body and may do nothing for D3 turns. He takes his turns as normal once those turns are up, or as soon as he is hit by an attack."
           }
         ],
         "skills": []
@@ -108205,7 +108205,7 @@
           {
             "name": "Eaters of Flesh",
             "type": "Warband - The Fallen",
-            "description": "When the Revenant takes a living enemy out of action and is in base contact with no enemy model, he takes a Leadership test. Failed, he starts eating the body and may do nothing for D3 turns. He takes his turns as normal once those turns are up, or as soon as he is hit by an attack."
+            "description": "When the model takes a living enemy out of action and is in base contact with no enemy model, he takes a Leadership test. Failed, he starts eating the body and may do nothing for D3 turns. He takes his turns as normal once those turns are up, or as soon as he is hit by an attack."
           }
         ],
         "skills": []
@@ -109093,7 +109093,7 @@
           {
             "name": "Animals",
             "type": "Warband - The Innocents",
-            "description": "A Stray Dog gains no experience and uses no equipment."
+            "description": "The model gains no experience and uses no equipment."
           }
         ],
         "skills": []
@@ -109135,7 +109135,7 @@
           {
             "name": "Animals",
             "type": "Warband - The Innocents",
-            "description": "A Stray Dog gains no experience and uses no equipment."
+            "description": "The model gains no experience and uses no equipment."
           }
         ],
         "skills": []
@@ -110259,7 +110259,7 @@
           {
             "name": "No Brain",
             "type": "Warband - The Restless Dead",
-            "description": "Zombies never gain experience."
+            "description": "The model never gains experience."
           }
         ],
         "skills": []
@@ -110323,7 +110323,7 @@
           {
             "name": "No Brain",
             "type": "Warband - The Restless Dead",
-            "description": "Zombies never gain experience."
+            "description": "The model never gains experience."
           }
         ],
         "skills": []
@@ -110445,7 +110445,7 @@
           {
             "name": "No Brain",
             "type": "Warband - The Restless Dead",
-            "description": "Zombies never gain experience."
+            "description": "The model never gains experience."
           },
           {
             "name": "No Substance",
@@ -114026,7 +114026,7 @@
           {
             "name": "Undead",
             "type": "Warband - Tomb Guardians",
-            "description": "The Tomb Lord is undead and follows all rules for the Undead."
+            "description": "The model is undead and follows all rules for the Undead."
           }
         ],
         "skills": []
@@ -114082,7 +114082,7 @@
           {
             "name": "Undead",
             "type": "Warband - Tomb Guardians",
-            "description": "The Tomb Lord is undead and follows all rules for the Undead."
+            "description": "The model is undead and follows all rules for the Undead."
           }
         ],
         "skills": []
@@ -114130,7 +114130,7 @@
           {
             "name": "Undead",
             "type": "Warband - Tomb Guardians",
-            "description": "The Tomb Lord is undead and follows all rules for the Undead."
+            "description": "The model is undead and follows all rules for the Undead."
           }
         ],
         "skills": []
@@ -114173,9 +114173,9 @@
         ],
         "specials": [
           {
-            "name": "Undead (Skeleton Warrior)",
+            "name": "Undead",
             "type": "Warband - Tomb Guardians",
-            "description": "Skeletons are undead and follow all rules for the Undead."
+            "description": "The model is undead and follows all rules for the Undead."
           }
         ],
         "skills": []
@@ -114218,9 +114218,9 @@
         ],
         "specials": [
           {
-            "name": "Undead (Tomb Guardian)",
+            "name": "Undead",
             "type": "Warband - Tomb Guardians",
-            "description": "The Tomb Guards are undead and follow all rules for the Undead."
+            "description": "The model is undead and follows all rules for the Undead."
           }
         ],
         "skills": []
@@ -117102,7 +117102,7 @@
           {
             "name": "Stake the Vampire!",
             "type": "Warband - Vampire Hunters of Sylvania",
-            "description": "The Vampire Hunter hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he may choose."
+            "description": "The model hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he may choose."
           }
         ],
         "skills": []
@@ -117153,7 +117153,7 @@
           {
             "name": "Stake the Vampire!",
             "type": "Warband - Vampire Hunters of Sylvania",
-            "description": "The Vampire Hunter hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he may choose."
+            "description": "The model hates Vampires. He must always move towards a Vampire he can see, unless he can shoot, when he may choose."
           }
         ],
         "skills": []
@@ -123448,12 +123448,12 @@
           {
             "name": "Animal",
             "type": "Warband - Wood Elves, The Asrai Way-farers",
-            "description": "A Wolfhound is an animal and gains no experience."
+            "description": "The model is an animal and gains no experience."
           },
           {
             "name": "Beast Companion",
             "type": "Warband - Wood Elves, The Asrai Way-farers",
-            "description": "A Wolfhound may only be included while the warband holds a Wild Hunter."
+            "description": "The model may only be included while the warband holds a Wild Hunter."
           },
           {
             "name": "Pack Sense",
@@ -123500,12 +123500,12 @@
           {
             "name": "Animal",
             "type": "Warband - Wood Elves, The Asrai Way-farers",
-            "description": "A Wolfhound is an animal and gains no experience."
+            "description": "The model is an animal and gains no experience."
           },
           {
             "name": "Beast Companion",
             "type": "Warband - Wood Elves, The Asrai Way-farers",
-            "description": "A Wolfhound may only be included while the warband holds a Wild Hunter."
+            "description": "The model may only be included while the warband holds a Wild Hunter."
           },
           {
             "name": "Pounce",
