@@ -122,6 +122,10 @@ class CampaignSettings(models.Model):
     wyrdstone_prices = models.JSONField(default=get_default_wyrdstone_prices)
     # every warband holds a Campaign points counter (WarbandResource.is_campaign_points), hidden while off
     enable_campaign_points = models.BooleanField(default=False)
+    # the post-game's exploration chart (apps/exploration): null is the book's Mordheim chart, a seeded row
+    exploration_chart = models.ForeignKey(
+        "exploration.ExplorationChart", related_name="+", null=True, blank=True, on_delete=models.SET_NULL
+    )
 
     class Meta:
         db_table = "campaign_settings"

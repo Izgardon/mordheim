@@ -18,4 +18,5 @@ urlpatterns = [
     path("api/", include("apps.notifications.urls")),
     path("api/", include("apps.bounties.urls")),
     path("api/", include("apps.warband_templates.urls")),
+    path("api/", include("apps.exploration.urls")),
 ]

@@ -119,7 +119,15 @@ class PostbattleDraftTests(BattleTestCase):
                 "previous_rolls": [],
                 "amount": 3,
                 # the places the multiples found, worked out by the server too (test_battle_explore_places)
-                "places": [{"face": 6, "count": 2, "label": "Doubles", "place": "Ruined Hovels"}],
+                "places": [
+                    {
+                        "face": 6,
+                        "count": 2,
+                        "label": "Doubles",
+                        "place": "Ruined Hovels",
+                        "place_id": self.exploration_chart.places.get(count=2, face=6).pk,
+                    }
+                ],
             },
         )
         self.assertEqual(

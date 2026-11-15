@@ -3,13 +3,14 @@
 `normalize_postbattle` cleans what a client sends; the draft save and finalise then check it against the
 participant's units and the campaign (services/postbattle/validate.py). Injury rolls get their result and effect
 from the server's tables (decision 7), and a Mutation's follow-up D66 from the random mutation table; the exploration
-amount comes from the server's chart (decision 9). A hero's or hired sword's result may carry the missing games its
+amount comes from the campaign's chart (decision 9, apps/exploration). A hero's or hired sword's result may carry the missing games its
 injury sets at finalise (`missing_games`, the player's opt-in). The post-game adds each unit's Aftermath `advances`, an
 upkeep entry's `paid` tick and `resources` and the `camp` record (validation/camp.py).
 """
 
 from typing import Any
 
+from apps.exploration.models import DEFAULT_MAX_DICE
 from apps.warbands.units.services.missing import MAX_MISSING_GAMES
 
 from ..services.injuries import describe_roll
@@ -18,7 +19,6 @@ from .camp import normalize_advances, normalize_camp, normalize_upkeep_resources
 from .coerce import coerce_bool, coerce_int, optional_cost
 from .unit_keys import parse_unit_key
 
-MAX_EXPLORATION_DICE = 10
 ROLL_MAXIMUM = {"d6": 6, "d66": 6, "d100": 100}
 ROLL_COUNT = {"d6": ("one", 1), "d66": ("two", 2), "d100": ("one", 1)}
 
@@ -50,7 +50,7 @@ def _listed(value: Any, message: str) -> list:
     return value
 
 
-def _exploration(raw: dict) -> dict[str, Any]:
+def _exploration(raw: dict, max_dice: int) -> dict[str, Any]:
     section = _section(raw, "exploration", "postbattle exploration")
     dice_raw = section.get("dice_values")
     if dice_raw is None:
@@ -60,8 +60,8 @@ def _exploration(raw: dict) -> dict[str, Any]:
         if isinstance(entry, dict):
             entry = entry.get("value", 1)
         dice.append(coerce_int(entry, field_name="exploration die value", minimum=1, maximum=6))
-    if len(dice) > MAX_EXPLORATION_DICE:
-        raise ValueError("postbattle exploration dice_values must contain at most 10 entries")
+    if len(dice) > max_dice:
+        raise ValueError(f"postbattle exploration dice_values must contain at most {max_dice} entries")
     resource_id = section.get("resource_id")
     if resource_id in ("", None):
         resource_id = None
@@ -281,15 +281,16 @@ def _mount_survival(raw: dict) -> dict[str, dict]:
     return entries
 
 
-def normalize_postbattle(raw_value: Any) -> dict[str, Any]:
+def normalize_postbattle(raw_value: Any, max_dice: int = DEFAULT_MAX_DICE) -> dict[str, Any]:
     """The cleaned draft, or ValueError for the first thing wrong (exploration, finds, upkeep, units, then mounts).
-    `mount_survival` and `camp` are left out when there is none."""
+    `mount_survival` and `camp` are left out when there is none. `max_dice` is the chart's cap on the dice a draft
+    may carry at all (apps/exploration); the chart's own default when the caller has read no chart."""
     if raw_value is None:
         return empty_draft()
     if not isinstance(raw_value, dict):
         raise ValueError("postbattle_json must be an object")
     draft = {
-        "exploration": _exploration(raw_value),
+        "exploration": _exploration(raw_value, max_dice),
         "finds": _finds(raw_value),
         "upkeep": _upkeep(raw_value),
         "unit_results": _unit_results(raw_value),

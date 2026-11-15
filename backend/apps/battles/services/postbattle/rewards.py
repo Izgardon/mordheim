@@ -39,9 +39,9 @@ class Finds:
 
 
 def apply_exploration(context: FinaliseContext, exploration: dict) -> Exploration:
-    """Add the shards found (the server's chart, or the override: decision 9) to the chosen resource."""
+    """Add the shards found (the campaign's chart, or the override: decision 9) to the chosen resource."""
     resource_id = exploration.get("resource_id")
-    amount = exploration_amount(exploration)
+    amount = exploration_amount(exploration, context.chart)
     if resource_id is None or amount <= 0:
         return Exploration(amount, None)
     resources = WarbandResource.objects.filter(id=resource_id, warband_id=context.warband.id)

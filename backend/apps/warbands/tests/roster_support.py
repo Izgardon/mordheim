@@ -23,6 +23,8 @@ from apps.campaigns.models import (
     CampaignRole,
     CampaignSettings,
 )
+from apps.exploration.models import ExplorationChart
+from apps.exploration.testing import seed_book_chart
 from apps.items.models import Item, ItemAvailability, ItemAvailabilityWarband, ItemRule, ItemRuleLink
 from apps.races.models import Race
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
@@ -254,6 +256,7 @@ class RosterTestCase(APITestCase):
     large: Special
     wizard: Special
     priest: Special
+    exploration_chart: ExplorationChart
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -308,6 +311,7 @@ class RosterTestCase(APITestCase):
         cls.large = Special.objects.create(name="Large", type="Trait")
         cls.wizard = Special.objects.create(name="Wizard", type="Trait")
         cls.priest = Special.objects.create(name="Priest", type="Trait")
+        cls.exploration_chart = seed_book_chart()  # the post-game explores by it (apps/exploration)
 
     def setUp(self) -> None:
         self.client.force_authenticate(user=self.player)

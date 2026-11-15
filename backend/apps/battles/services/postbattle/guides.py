@@ -9,6 +9,7 @@ frontend showed 0 exploration dice when it came straight from End battle).
 from dataclasses import dataclass
 
 from apps.campaigns.models import CampaignSettings
+from apps.exploration.selectors import chart_for
 
 from ...models import Battle, BattleParticipant
 from .suggested import broadcast_rules, rules_for, suggestions_for
@@ -40,10 +41,11 @@ class Guides:
 
 def postbattle_guides(battle: Battle, *, user_id: int | None = None) -> Guides:
     """For every player in his own postbattle (or only `user_id`): those players with their battle rosters, the live
-    kill events and their units' XP (up to five reads; the campaign's settings come with the battle when the view
-    reads them with it, else one more)."""
+    kill events and their units' XP (up to five reads, plus the campaign's exploration chart and its places; the
+    campaign's settings come with the battle when the view reads them with it, else one more)."""
     settings = settings_of(battle)
+    chart = chart_for(battle.campaign_id, settings.exploration_chart_id if settings else None)
     players = BattleParticipant.objects.filter(battle_id=battle.id, status=BattleParticipant.STATUS_FINISHED_BATTLE)
     if user_id is not None:
         players = players.filter(user_id=user_id)
-    return Guides(rules_for(settings), suggestions_for(battle, list(players.order_by("id")), settings))
+    return Guides(rules_for(settings, chart), suggestions_for(battle, list(players.order_by("id")), settings, chart))

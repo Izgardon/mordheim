@@ -1,0 +1,223 @@
+{
+  "slug": "mordheim",
+  "name": "Exploration",
+  "setting": "Mordheim 1a",
+  "summary": "",
+  "dice_per_hero": 1,
+  "dice_for_win": 1,
+  "max_dice": 10,
+  "max_chosen": 6,
+  "income": [
+    {
+      "max_total": 5,
+      "amount": 1
+    },
+    {
+      "max_total": 11,
+      "amount": 2
+    },
+    {
+      "max_total": 17,
+      "amount": 3
+    },
+    {
+      "max_total": 24,
+      "amount": 4
+    },
+    {
+      "max_total": 30,
+      "amount": 5
+    },
+    {
+      "max_total": 35,
+      "amount": 6
+    },
+    {
+      "max_total": null,
+      "amount": 7
+    }
+  ],
+  "income_note": "",
+  "places": [
+    {
+      "count": 2,
+      "face": 1,
+      "name": "Well",
+      "rules": "Choose one hero and take a Toughness test for him. If he passes he finds a shard of wyrdstone; if he fails he misses the next game."
+    },
+    {
+      "count": 2,
+      "face": 2,
+      "name": "Shop",
+      "rules": "D6 gc. If a 1 is rolled he also finds a Lucky Charm."
+    },
+    {
+      "count": 2,
+      "face": 3,
+      "name": "Corpse",
+      "rules": "Roll a D6: 1-2 D6 gc; 3 a Dagger; 4 an Axe; 5 a Sword; 6 a suit of Light Armour."
+    },
+    {
+      "count": 2,
+      "face": 4,
+      "name": "Straggler",
+      "rules": "Skaven: 2D6 gc. The Possessed: the leader gains +1 Experience. Undead: the warband gains a Zombie. Any other warband: roll one additional exploration die and drop the lowest."
+    },
+    {
+      "count": 2,
+      "face": 5,
+      "name": "Overturned Cart",
+      "rules": "Roll a D6: 1-2 a Mordheim Map; 3-4 2D6 gc; 5-6 a Jewelled Sword and Dagger."
+    },
+    {
+      "count": 2,
+      "face": 6,
+      "name": "Ruined Hovels",
+      "rules": "D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 1,
+      "name": "Tavern",
+      "rules": "The leader must take a Leadership test. If he passes the warband receives 4D6 gc; if he fails, D6 gc. Undead, Witch Hunter and Sisters of Sigmar warbands need no Leadership test."
+    },
+    {
+      "count": 3,
+      "face": 2,
+      "name": "Smithy",
+      "rules": "Roll a D6: 1 a Sword; 2 a Double-handed weapon; 3 a Flail; 4 D3 Halberds; 5 a Lance; 6 2D6 gc worth of metal."
+    },
+    {
+      "count": 3,
+      "face": 3,
+      "name": "Prisoners",
+      "rules": "The Possessed: D3 Experience for the heroes. Undead: D3 Zombies. Skaven: 3D6 gc. Any other warband: 2D6 gc and one Human henchman."
+    },
+    {
+      "count": 3,
+      "face": 4,
+      "name": "Fletcher",
+      "rules": "Roll a D6: 1-2 D3 Short bows; 3 D3 Bows; 4 D3 Long bows; 5 a Quiver of Hunting Arrows; 6 D3 Crossbows."
+    },
+    {
+      "count": 3,
+      "face": 5,
+      "name": "Market Hall",
+      "rules": "2D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 6,
+      "name": "Returning a Favour",
+      "rules": "A Hired Sword for one battle."
+    },
+    {
+      "count": 4,
+      "face": 1,
+      "name": "Gunsmith",
+      "rules": "Roll a D6: 1 a Blunderbuss; 2 a Brace of Pistols; 3 a Brace of Duelling Pistols; 4 D3 Handguns; 5 D3 doses of Superior Black Powder; 6 a Hochland Long Rifle."
+    },
+    {
+      "count": 4,
+      "face": 2,
+      "name": "Shrine",
+      "rules": "3D6 gc. Witch Hunters and Sisters of Sigmar may have one weapon blessed."
+    },
+    {
+      "count": 4,
+      "face": 3,
+      "name": "Townhouse",
+      "rules": "3D6 gc."
+    },
+    {
+      "count": 4,
+      "face": 4,
+      "name": "Armourer",
+      "rules": "Roll a D6: 1-2 D3 Shields or Bucklers; 3 D3 Helmets; 4 D3 suits of Light Armour; 5 D3 suits of Heavy Armour; 6 a suit of Ithilmar Armour."
+    },
+    {
+      "count": 4,
+      "face": 5,
+      "name": "Graveyard",
+      "rules": "D6x10 gc. Witch Hunter and Sisters of Sigmar warbands gain D6 Experience to share among their heroes."
+    },
+    {
+      "count": 4,
+      "face": 6,
+      "name": "Catacombs",
+      "rules": "Next game three fighters may be placed anywhere on the battlefield at ground level."
+    },
+    {
+      "count": 5,
+      "face": 1,
+      "name": "Moneylender's House",
+      "rules": "D6x10 gc."
+    },
+    {
+      "count": 5,
+      "face": 2,
+      "name": "Alchemist's Laboratory",
+      "rules": "3D6 gc and an Alchemist's Notebook: one warrior may now choose skills from the Academic skill list."
+    },
+    {
+      "count": 5,
+      "face": 3,
+      "name": "Jewelsmith",
+      "rules": "Roll a D6: 1-2 a Quartz worth D6x5 gc; 3-4 an Amethyst worth 20 gc; 5 a Necklace worth 50 gc; 6 a Ruby worth D6x15 gc. The warband may decide not to sell the jewels and gain +1 when locating rare items instead."
+    },
+    {
+      "count": 5,
+      "face": 4,
+      "name": "Merchant's House",
+      "rules": "2D6x5 gc, or, if doubles are rolled, a Symbol of the Order of the Freetraders."
+    },
+    {
+      "count": 5,
+      "face": 5,
+      "name": "Shattered Building",
+      "rules": "D3 shards of wyrdstone. If the leader passes a Leadership test the warband gains a War Dog."
+    },
+    {
+      "count": 5,
+      "face": 6,
+      "name": "Entrance to the Catacombs",
+      "rules": "From now on the warband may re-roll one die whenever it rolls on the exploration chart."
+    },
+    {
+      "count": 6,
+      "face": 1,
+      "name": "The Pit",
+      "rules": ""
+    },
+    {
+      "count": 6,
+      "face": 2,
+      "name": "Hidden Treasure",
+      "rules": "A treasure chest. Roll a D6 for each of these, keeping what reaches its number: 5D6x5 gc, automatic; D3 pieces of wyrdstone, 4+; a Holy Relic, 5+; a suit of Heavy Armour, 5+; D3 gems worth 10 gc each, 4+; an Elven Cloak, 5+; a Holy Tome, 5+; a Magical Artefact, 5+."
+    },
+    {
+      "count": 6,
+      "face": 3,
+      "name": "Dwarf Smithy",
+      "rules": "Roll a D6: 1 D3 Double-handed axes; 2 D3 suits of Heavy Armour; 3 a Gromril Axe; 4 a Gromril Hammer; 5 a Double-handed Gromril Axe; 6 Gromril Armour."
+    },
+    {
+      "count": 6,
+      "face": 4,
+      "name": "Slaughtered Warband",
+      "rules": "Roll a D6 for each of these, keeping what reaches its number: 3D6x5 gc, automatic; D6 Daggers, automatic; D3 suits of Light Armour, 4+; a suit of Heavy Armour, 5+; a Mordheim Map, 4+; D3 Halberds, 5+; D3 Swords, 3+; D3 Shields, 2+; D3 Bows, 4+; D3 Helmets, 2+."
+    },
+    {
+      "count": 6,
+      "face": 5,
+      "name": "Fighting Arena",
+      "rules": "A Training Manual. It can be sold for 100 gc, or one warrior may now choose skills from the Combat skill list and has +1 to his maximum Weapon Skill."
+    },
+    {
+      "count": 6,
+      "face": 6,
+      "name": "Noble's Villa",
+      "rules": "Roll a D6: 1-2 D6x10 gc; 3-4 D6 vials of Crimson Shade; 5-6 a Magical Artefact."
+    }
+  ]
+}

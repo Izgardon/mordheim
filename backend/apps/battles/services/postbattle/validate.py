@@ -11,6 +11,7 @@ from collections.abc import Callable
 from django.db.models import Q
 
 from apps.campaigns.models import CampaignSettings
+from apps.exploration.chart import Chart
 from apps.special.models import Special
 from apps.warbands.models import Hireling, WarbandResource
 
@@ -110,9 +111,9 @@ def check_draft(
         raise ValueError("One or more upkeep hired swords are invalid")
 
 
-def validate_postbattle(battle: Battle, participant: BattleParticipant, raw_draft: object) -> dict:
+def validate_postbattle(battle: Battle, participant: BattleParticipant, raw_draft: object, chart: Chart) -> dict:
     """A draft save's draft, normalised and checked against the database (ValueError for the first problem)."""
-    draft: dict = normalize_postbattle(raw_draft)
+    draft: dict = normalize_postbattle(raw_draft, chart.max_dice)
     warband_id = participant.warband_id
     check_draft(
         draft,

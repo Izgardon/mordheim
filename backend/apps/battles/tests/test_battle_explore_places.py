@@ -1,8 +1,9 @@
 """The places a warband found are kept with its draft and logged at finalise (BUG-NEW-03).
 
 They used to live only in the browser: the draft kept the dice, the re-rolls, the resource and the amount, so a
-closed tab lost them and no one else ever saw them. The server works them out from the chosen dice and its own
-chart (services/exploration.py) and keeps them beside the amount, which is why a client can't send its own.
+closed tab lost them and no one else ever saw them. The server works them out from the chosen dice and the campaign's
+chart (services/exploration.py, apps/exploration) and keeps them beside the amount, by name and by the chart row's
+id, which is why a client can't send its own and a later edit to the chart can't change them.
 """
 
 from typing import Any
@@ -14,10 +15,15 @@ from .battle_support import BattleTestCase, draft, unit_result
 
 # 3, 3, 3 is a triple of threes (Prisoners) and 1, 1 a double of ones (Well): two places in one roll
 DICE = [3, 3, 3, 1, 1]
-FOUND = [
-    {"face": 3, "count": 3, "label": "Triples", "place": "Prisoners"},
-    {"face": 1, "count": 2, "label": "Doubles", "place": "Well"},
-]
+
+
+def found(chart: Any, *places: tuple[int, int, str, str]) -> list[dict[str, Any]]:
+    """The places as the draft keeps them: the chart's own row id with the name it had (apps/exploration)."""
+    rows = {(place.count, place.face): place.pk for place in chart.places.all()}
+    return [
+        {"face": face, "count": count, "label": label, "place": name, "place_id": rows[(count, face)]}
+        for count, face, label, name in places
+    ]
 
 
 class ExplorePlacesTests(BattleTestCase):
@@ -40,19 +46,23 @@ class ExplorePlacesTests(BattleTestCase):
         exploration: dict[str, Any] = participant.postbattle_json["exploration"]
         return exploration
 
+    @property
+    def found(self) -> list[dict[str, Any]]:
+        return found(self.exploration_chart, (3, 3, "Triples", "Prisoners"), (2, 1, "Doubles", "Well"))
+
     def test_the_draft_keeps_the_places_the_multiples_found(self):
-        self.assertEqual(self.save(DICE)["places"], FOUND)
+        self.assertEqual(self.save(DICE)["places"], self.found)
 
     def test_a_reload_reads_them_back_from_the_server(self):
         self.save(DICE)
         url = f"{self.url(self.battle_id, 'state')}?view=postbattle"
         data = self.ok(self.get_as(self.player, url)).data
         mine = next(entry for entry in data["participants"] if entry["warband"]["id"] == self.warband.id)
-        self.assertEqual(mine["postbattle_json"]["exploration"]["places"], FOUND)
+        self.assertEqual(mine["postbattle_json"]["exploration"]["places"], self.found)
 
     def test_a_re_roll_keeps_only_the_places_of_the_dice_that_stand(self):
         self.save(DICE)
-        self.assertEqual(self.save([2, 2, 2, 2, 5])["places"], [{"face": 2, "count": 4, "label": "Four of a kind", "place": "Shrine"}])  # fmt: skip
+        self.assertEqual(self.save([2, 2, 2, 2, 5])["places"], found(self.exploration_chart, (4, 2, "Four of a kind", "Shrine")))  # fmt: skip
 
     def test_dice_with_no_multiple_find_nowhere(self):
         self.assertEqual(self.save([1, 2, 3])["places"], [])
@@ -63,7 +73,7 @@ class ExplorePlacesTests(BattleTestCase):
         log = WarbandLog.objects.get(warband=self.warband, entry_type="exploration")
         self.assertEqual(log.payload["places"], ["Prisoners", "Well"])
         participant = BattleParticipant.objects.get(battle_id=self.battle_id, warband=self.warband)
-        self.assertEqual(participant.postbattle_json["exploration"]["places"], FOUND)
+        self.assertEqual(participant.postbattle_json["exploration"]["places"], self.found)
 
     def test_the_places_are_the_servers_whatever_a_client_sends(self):
         body = self.body(DICE)
@@ -71,4 +81,4 @@ class ExplorePlacesTests(BattleTestCase):
         url = self.url(self.battle_id, "postbattle")
         self.ok(self.post_as(self.player, url, {"postbattle_json": body}))
         participant = BattleParticipant.objects.get(battle_id=self.battle_id, warband=self.warband)
-        self.assertEqual(participant.postbattle_json["exploration"]["places"], FOUND)
+        self.assertEqual(participant.postbattle_json["exploration"]["places"], self.found)

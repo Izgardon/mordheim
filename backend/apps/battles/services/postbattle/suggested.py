@@ -6,8 +6,8 @@
   earns 1 plus its selected members' kills, the same for each member (0 when any has no level-ups). Each unit's suggestion lists its `reasons`
   (`[{"label": "survived", "xp": 1}, {"label": "2 kills", "xp": 2}, {"label": "winning leader", "xp": 1}]`), which
   add up to its `xp_earned`, and the `level_ups` that XP would earn (services/postbattle/level_ups.py);
-- exploration dice: one per selected hero still in action, one more for a winner (the player's own declaration
-  while the others still fight, decision 4), at most 10;
+- exploration dice: the chart's `dice_per_hero` for each selected hero still in action, its `dice_for_win` more for a
+  winner (the player's own declaration while the others still fight, decision 4), at most its `max_dice`;
 - upkeep: every hireling on the battle's roster but one who stays for one battle, misses games or has no upkeep (a fee
   of kind none), at his upkeep fee: its gold as `cost` (none for a fee in his rules), its resource lines and its note
   when it has them (the fees and skill lists step);
@@ -16,7 +16,7 @@
 - mount survival (only when there is one): a D6 for each selected rider taken out of action on his mount
   (services/postbattle/mounts.py).
 
-`rules` are the exploration chart and dice limits, and the serious injury tables with the campaign's hero death roll
+`rules` are the campaign's exploration chart (apps/exploration) and its dice limits, and the serious injury tables with the campaign's hero death roll
 (henchmen, and hirelings on the henchman table, roll a d6; the battle roster shows each hireling's `injuryTable`):
 only the d6 and the campaign's hero table, the ones its units roll on, so the rules fit the end of the fight's
 broadcast (services/broadcast.py).
@@ -25,16 +25,16 @@ broadcast (services/broadcast.py).
 from collections.abc import Iterable
 
 from apps.campaigns.models import CampaignSettings
+from apps.exploration.chart import Chart
+from apps.exploration.selectors import chart_for
 
 from ...models import Battle, BattleKill, BattleParticipant
 from ...validation.config import normalize_unit_information
-from ...validation.postbattle import MAX_EXPLORATION_DICE
 from ..exploration import exploration_multiples, exploration_table
 from ..injuries import injury_tables
 from ..kills import count_by_unit, live_kills
 from ..random_mutations import random_mutation_table
 from ..selection import selected_unit_keys
-from ..unusual import MAX_EXPLORATION_DICE as MAX_CHOSEN_DICE
 from .kill_list import unit_kills
 from .level_ups import add_level_ups, unit_rows
 from .mounts import mount_survival
@@ -142,7 +142,15 @@ def won(battle: Battle, participant: BattleParticipant) -> bool:
     return participant.warband_id in (battle.winner_warband_ids_json or [])
 
 
-def suggested_postbattle(battle: Battle, participant: BattleParticipant, live: Iterable[BattleKill]) -> dict:
+def _dice_count(in_action: int, winner: bool, chart: Chart) -> int:
+    """The dice the chart suggests: one per hero still in action and one for a win, by the chart's own numbers."""
+    rolled = in_action * chart.dice_per_hero + int(winner) * chart.dice_for_win
+    return max(0, min(chart.max_dice, rolled))
+
+
+def suggested_postbattle(
+    battle: Battle, participant: BattleParticipant, live: Iterable[BattleKill], chart: Chart
+) -> dict:
     """The player's suggested XP per unit, exploration dice, upkeep and who leaves, from his battle roster."""
     roster = participant.roster_json or {}
     selected = selected_unit_keys(participant)
@@ -156,7 +164,7 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, live: I
     in_action = [hero for hero in heroes if not information.get(hero["key"], {}).get("out_of_action")]
     suggested = {
         "unit_results": unit_results,
-        "exploration": {"dice_count": max(0, min(MAX_EXPLORATION_DICE, len(in_action) + int(winner)))},
+        "exploration": {"dice_count": _dice_count(len(in_action), winner, chart)},
         "upkeep": {"entries": _upkeep(roster.get("hirelings", []))},
     }
     leaving = _dismiss(swords)
@@ -167,13 +175,15 @@ def suggested_postbattle(battle: Battle, participant: BattleParticipant, live: I
     return suggested
 
 
-def postbattle_rules(hero_death_roll: str) -> dict:
+def postbattle_rules(hero_death_roll: str, chart: Chart) -> dict:
     """The postbattle rules, and in a D100 campaign the random mutation table its 100, Mutation, rolls on."""
     tables = injury_tables()
     rules = {
-        "exploration_table": exploration_table(),
-        "exploration_multiples": exploration_multiples(),
-        "exploration_dice": {"max": MAX_EXPLORATION_DICE, "max_chosen": MAX_CHOSEN_DICE},
+        "exploration_chart": {"id": chart.id, "name": chart.name},
+        "exploration_table": exploration_table(chart),
+        "exploration_income_note": chart.income_note,  # a chart that pays no shards says what its total gives
+        "exploration_multiples": exploration_multiples(chart),
+        "exploration_dice": {"max": chart.max_dice, "max_chosen": chart.max_chosen},
         "hero_death_roll": hero_death_roll,
         "injury_tables": {roll: tables[roll] for roll in ("d6", hero_death_roll) if roll in tables},
     }
@@ -182,32 +192,43 @@ def postbattle_rules(hero_death_roll: str) -> dict:
     return rules
 
 
-def rules_for(settings: CampaignSettings | None) -> dict:
-    return postbattle_rules((settings.hero_death_roll if settings else None) or "d66")
+def rules_for(settings: CampaignSettings | None, chart: Chart) -> dict:
+    return postbattle_rules((settings.hero_death_roll if settings else None) or "d66", chart)
 
 
 def broadcast_rules(rules: dict) -> dict:
-    """The rules as a broadcast carries them: without the injury tables' book lines (some 4 KB of the message's 10 KB)
-    and the random mutation table, which every page has from its state or its write's answer and keeps
+    """The rules as a broadcast carries them: without the injury tables' book lines (some 4 KB of the message's 10 KB),
+    the random mutation table and the exploration places' rules text and faces (a place's face is its position in its
+    row), which every page has from its state, its write's answer or the campaign's exploration endpoint and keeps
     (useCampaignBattleRules)."""
     tables = {
         roll: [{key: value for key, value in row.items() if key != "text"} for row in rows]
         for roll, rows in rules["injury_tables"].items()
     }
-    return {**{key: value for key, value in rules.items() if key != "random_mutations"}, "injury_tables": tables}
+    dropped = ("rules", "face")
+    multiples = [
+        {
+            **row,
+            "places": [{key: value for key, value in place.items() if key not in dropped} for place in row["places"]],
+        }
+        for row in rules["exploration_multiples"]
+    ]
+    kept = {key: value for key, value in rules.items() if key != "random_mutations"}
+    return {**kept, "injury_tables": tables, "exploration_multiples": multiples}
 
 
 def suggestions_for(
     battle: Battle,
     participants: list[BattleParticipant],
     settings: CampaignSettings | None,
+    chart: Chart,
     live: list[BattleKill] | None = None,
 ) -> dict[int, dict]:
     """Each player's `suggested_postbattle` by user id (players read with their battle rosters), with the level-ups
     each unit's XP would earn: the live kills (unless given) and at most one read per unit kind for all."""
     if live is None:
         live = list(live_kills(battle.id))
-    suggestions = {entry.user_id: suggested_postbattle(battle, entry, live) for entry in participants}
+    suggestions = {entry.user_id: suggested_postbattle(battle, entry, live, chart) for entry in participants}
     keys = {key for suggestion in suggestions.values() for key in suggestion["unit_results"]}
     rows = unit_rows([entry.roster_json or {} for entry in participants], keys)
     for suggestion in suggestions.values():
@@ -220,9 +241,10 @@ def postbattle_guide(battle: Battle, participant: BattleParticipant) -> dict:
     page's state: the player's battle roster, the live kills (with their events, for the notes) and his units' XP (up to three reads); the
     campaign's settings come with the battle, the participants with the snapshot."""
     settings = getattr(battle.campaign, "settings", None)
+    chart = chart_for(battle.campaign_id, settings.exploration_chart_id if settings else None)
     kills = list(live_kills(battle.id).select_related("event").order_by("id"))
     return {
-        "suggested_postbattle": suggestions_for(battle, [participant], settings, kills)[participant.user_id],
-        "rules": rules_for(settings),
+        "suggested_postbattle": suggestions_for(battle, [participant], settings, chart, kills)[participant.user_id],
+        "rules": rules_for(settings, chart),
         "unit_kills": unit_kills(participant.warband_id, kills, battle.participants.all()),
     }

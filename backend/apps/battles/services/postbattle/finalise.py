@@ -19,6 +19,9 @@ from dataclasses import dataclass
 
 from django.utils import timezone
 
+from apps.exploration.chart import Chart
+from apps.exploration.selectors import chart_for, chart_for_campaign
+
 from ...models import Battle, BattleEvent, BattleParticipant
 from ...serializers import snapshot_participants
 from ...validation.config import normalize_unit_information
@@ -31,7 +34,7 @@ from ..locks import lock_battle
 from ..unusual import unusual_value_warnings
 from ..warnings import Warning
 from .advances import apply_advances
-from .context import FinaliseContext, load_context
+from .context import FinaliseContext, campaign_settings, load_context
 from .items import consume_single_use_items
 from .logs import write_battle_logs
 from .missing import apply_missing_games
@@ -41,19 +44,27 @@ from .units import UnitResults
 from .validate import check_draft, validate_postbattle
 
 
-def _keep_exploration(participant: BattleParticipant, draft: dict) -> list[Warning]:
-    """The draft keeps the exploration roll with the server's amount (decision 9, BUG-71); a re-roll warns."""
+def _chart(battle: Battle) -> Chart:
+    """The campaign's exploration chart (apps/exploration), by the settings finalise reads with the battle."""
+    settings = campaign_settings(battle)
+    return chart_for(battle.campaign_id, settings.exploration_chart_id if settings else None)
+
+
+def _keep_exploration(participant: BattleParticipant, draft: dict, chart: Chart) -> list[Warning]:
+    """The draft keeps the exploration roll with the chart's amount and places (decision 9, BUG-71); a re-roll
+    warns."""
     stored_exploration = (participant.postbattle_json or {}).get("exploration")
-    draft["exploration"], warnings = keep_exploration(stored_exploration, draft["exploration"])
+    draft["exploration"], warnings = keep_exploration(stored_exploration, draft["exploration"], chart)
     return warnings
 
 
 def save_draft(battle: Battle, participant: BattleParticipant, raw_draft: object) -> list[Warning]:
     """Save the player's draft: it logs nothing (finalise logs each unit's injury once, decision 7, BUG-47) and
     answers the unusual values it will log (decision 9)."""
-    draft = validate_postbattle(battle, participant, raw_draft)
-    warnings = _keep_exploration(participant, draft)
-    warnings += unusual_value_warnings(draft)
+    chart = chart_for_campaign(battle.campaign_id)  # a draft save holds no settings: it reads the picked chart
+    draft = validate_postbattle(battle, participant, raw_draft, chart)
+    warnings = _keep_exploration(participant, draft, chart)
+    warnings += unusual_value_warnings(draft, chart)
     participant.postbattle_json = draft
     participant.save(update_fields=["postbattle_json", "updated_at"])
     return warnings
@@ -86,7 +97,7 @@ def _apply(context: FinaliseContext, draft: dict) -> list[Warning]:
     # after upkeep, which reads who was missing for this battle; then the injuries' new counts
     units.missing_logs = apply_missing_games(context, draft["unit_results"])
     consume_single_use_items(context.battle, context.participant, context.item_uses)
-    unusual = unusual_value_warnings(draft)
+    unusual = unusual_value_warnings(draft, context.chart)
     write_battle_logs(context.battle, context.participant, draft["exploration"], explored, finds, units, unusual)
     return units.warnings + unusual
 
@@ -94,12 +105,13 @@ def _apply(context: FinaliseContext, draft: dict) -> list[Warning]:
 def apply_player_postbattle(battle: Battle, participant: BattleParticipant, raw_draft: object) -> list[Warning]:
     """Apply the player's postbattle and mark it finished, holding only his rows (ValueError for a draft that can't
     be applied, raised inside the transaction so nothing is kept: BUG-124). Returns the warnings."""
-    draft = normalize_postbattle(raw_draft)
-    context = load_context(battle, participant, draft)
+    chart = _chart(battle)
+    draft = normalize_postbattle(raw_draft, chart.max_dice)
+    context = load_context(battle, participant, draft, chart)
     if draft["exploration"].get("resource_id") is None:  # none picked: the shards go to the default resource
         draft["exploration"]["resource_id"] = context.resource_id
     check_draft_against(context, draft)
-    warnings = _keep_exploration(participant, draft)
+    warnings = _keep_exploration(participant, draft, chart)
     warnings += _apply(context, draft)
     participant.postbattle_json = draft
     participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE

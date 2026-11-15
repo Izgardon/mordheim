@@ -9,6 +9,7 @@ from django.test.utils import CaptureQueriesContext
 from apps.battles.services.exploration import table_amount
 from apps.battles.services.injuries import describe_roll
 from apps.battles.services.postbattle.suggested import postbattle_rules
+from apps.exploration.selectors import chart_for
 from apps.warbands.models import HenchmenGroup, Hero, Hireling
 
 from .battle_support import BattleTestCase, build_fixture_warband, catalogue_item
@@ -63,25 +64,29 @@ class PostbattleGuideTests(BattleTestCase):
         battle_id = self.to_postbattle({self.player: [f"hero:{self.fixture.heroes[0].id}"], self.viewer: [self.r]})
 
         rules = self.guide(battle_id)["rules"]
+        chart = chart_for(self.campaign.id)
 
         self.assertEqual(rules["hero_death_roll"], "d100")
+        self.assertEqual(rules["exploration_chart"], {"id": chart.id, "name": "Exploration"})
         self.assertEqual(rules["exploration_dice"], {"max": 10, "max_chosen": 6})
         # the multiples' thirty places are the server's too: the page shows what it is sent (BUG-NEW-02)
         multiples = rules["exploration_multiples"]
         self.assertEqual([row["count"] for row in multiples], [2, 3, 4, 5, 6])
         self.assertEqual([row["label"] for row in multiples][:2], ["Doubles", "Triples"])
         self.assertTrue(all(len(row["places"]) == 6 for row in multiples))
-        self.assertEqual(multiples[0]["places"][0], "Well")
-        self.assertEqual(multiples[4]["places"][5], "Noble's Villa")
+        # each place carries its chart row's id and its rules text (the broadcast drops the text)
+        well = self.exploration_chart.places.get(count=2, face=1)
+        self.assertEqual(multiples[0]["places"][0], {"id": well.pk, "face": 1, "name": "Well", "rules": well.rules})
+        self.assertEqual(multiples[4]["places"][5]["name"], "Noble's Villa")
         for total in range(0, 40):
             row = next(
                 row for row in rules["exploration_table"] if row["max_total"] is None or total <= row["max_total"]
             )
-            self.assertEqual(row["amount"], table_amount([total]), total)
+            self.assertEqual(row["amount"], table_amount([total], chart), total)
         # only the tables its units roll on, the henchman's D6 and the campaign's hero table, so they fit the end of
         # the fight's broadcast (services/broadcast.py)
         self.assertEqual(sorted(rules["injury_tables"]), ["d100", "d6"])
-        self.assertEqual(sorted(postbattle_rules("d66")["injury_tables"]), ["d6", "d66"])
+        self.assertEqual(sorted(postbattle_rules("d66", chart)["injury_tables"]), ["d6", "d66"])
         rolls = {"d6": [[value] for value in range(1, 7)], "d100": [[value] for value in range(1, 101)]}
         for roll_type, cases in rolls.items():
             for roll in cases:
@@ -100,9 +105,9 @@ class PostbattleGuideTests(BattleTestCase):
         self.client.force_authenticate(user=self.player)
         with CaptureQueriesContext(connection) as captured:
             self.ok(self.client.get(self.url(battle_id, "state") + "?view=postbattle"))
-        # state's 4, the player's battle roster, the live kill events, and his heroes', hired swords' and groups' XP for
-        # the level-ups (BATL-NEW-10)
-        self.assertLessEqual(len(captured), 9)
+        # state's 4, the player's battle roster, the live kill events, his heroes', hired swords' and groups' XP for
+        # the level-ups (BATL-NEW-10), and the campaign's exploration chart with its places (apps/exploration)
+        self.assertLessEqual(len(captured), 11)
 
     def test_only_a_winning_leader_gets_winning_leader(self):
         # BATL-NEW-09: the warband's leader, when it won (the player's own declaration while the others fight)

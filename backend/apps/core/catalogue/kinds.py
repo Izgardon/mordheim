@@ -22,6 +22,7 @@ from apps.bestiary.models import (
 )
 from apps.bestiary.selectors import by_kind
 from apps.bestiary.serializers import BestiaryEntryWriteSerializer
+from apps.exploration.models import ExplorationChart
 from apps.hirelings.models import DramatisPersona, HiredSword
 from apps.hirelings.serializers import DramatisPersonaWriteSerializer, HiredSwordWriteSerializer
 from apps.items.models import Item, ItemRule
@@ -62,6 +63,8 @@ from .rows import (
     BestiaryEntryRowSerializer,
     DramatisPersonaDetailRowSerializer,
     DramatisPersonaRowSerializer,
+    ExplorationChartDetailRowSerializer,
+    ExplorationChartRowSerializer,
     HiredSwordDetailRowSerializer,
     HiredSwordRowSerializer,
     ItemRowSerializer,
@@ -365,6 +368,18 @@ WARBAND_TEMPLATES = CatalogueKindSpec(  # written by the template editor's own r
     ),
     hooks=WarbandTemplateHooks(),
 )
+EXPLORATION_CHARTS = CatalogueKindSpec(  # the post-game's chart as data (William, 12 Nov 2026): places are text
+    key="exploration_charts",
+    noun="exploration chart",
+    model=ExplorationChart,
+    url_kwarg="chart_id",
+    row_serializer=ExplorationChartRowSerializer,
+    entry_serializer=ExplorationChartDetailRowSerializer,
+    named=True,
+    versioned=True,
+    filters={"search": NAME_AND_TYPE["search"]},
+    children=("places",),  # what a version copies
+)
 ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or deleted
     key="item_rules",
     noun="item rule",
@@ -391,6 +406,7 @@ CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
         HIRED_SWORDS,
         DRAMATIS_PERSONAE,
         WARBAND_TEMPLATES,
+        EXPLORATION_CHARTS,
     )
 }
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {

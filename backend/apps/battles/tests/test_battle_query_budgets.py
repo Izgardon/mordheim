@@ -104,7 +104,7 @@ class BattleQueryBudgetTests(BattleTestCase):
                 {"type": "item_used", "payload_json": {"unit_key": h, "item_id": self.rope.id}},
                 9,
             ),
-            ("finish_mine", "finish-mine", {"result": "won"}, 16),  # End was 16, without the suggestions
+            ("finish_mine", "finish-mine", {"result": "won"}, 18),  # End was 16, without the suggestions
         ]
         for name, action, body, budget in cases:
             with self.subTest(write=name):
@@ -121,12 +121,12 @@ class BattleQueryBudgetTests(BattleTestCase):
         battle_id = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
         self.ok(self.finish_mine(self.player, battle_id, "won"))
         last, _ = self.count(self.viewer, "post", self.url(battle_id, "finish-mine"), {"result": "lost"})
-        self.within("finish_mine_last", last, 18)
+        self.within("finish_mine_last", last, 20)
         results, _ = self.count(self.viewer, "post", self.url(battle_id, "results"), {"winners": [self.warband.id]})
-        self.within("results", results, 14)
+        self.within("results", results, 16)
         manager_end = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
         end, _ = self.count(self.campaign_owner, "post", self.url(manager_end, "finish"), {"winners": []})
-        self.within("finish_manager", end, 18)
+        self.within("finish_manager", end, 20)
 
     def test_a_nudge_stays_within_budget(self):
         # BATL-NEW-08: the battle and his participant locked, the target, his last nudge, the notification's
@@ -172,12 +172,13 @@ class BattleQueryBudgetTests(BattleTestCase):
         # The draft save is the player's own row: the battle with his membership and the campaign settings, his
         # participant, the catalogue items his finds name, his participant's UPDATE and the activity touch. The
         # exploration amount and the places the multiples found are worked out in Python from the dice and the
-        # server's chart (services/exploration.py), so they cost nothing and don't grow with the dice.
+        # campaign's chart (services/exploration.py), so they don't grow with the dice or with the chart; the chart
+        # itself costs three reads here (the chart it picked, that chart and its places: apps/exploration).
         battle_id, postbattle = self._fixture_postbattle()
         postbattle["exploration"]["dice_values"] = [3, 3, 3, 1, 1]
         body = {"postbattle_json": postbattle}
         first, _ = self.count(self.player, "post", self.url(battle_id, "postbattle"), body)
-        self.within("draft_save", first, 11)
+        self.within("draft_save", first, 14)
         participant = self.participant(battle_id, self.player)
         places = [row["place"] for row in participant.postbattle_json["exploration"]["places"]]
         self.assertEqual(places, ["Prisoners", "Well"])
@@ -193,7 +194,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         battle_id, postbattle = self._fixture_postbattle()
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
-        self.within("finalise_first", queries, 29)
+        self.within("finalise_first", queries, 31)
 
     def test_finalising_the_fixture_warband_last_stays_within_budget(self):
         # + ending the battle: its UPDATE and event, the wins and losses (one UPDATE each for winners and losers, from
@@ -204,7 +205,7 @@ class BattleQueryBudgetTests(BattleTestCase):
         body = {"postbattle_json": postbattle}
         queries, _ = self.count(self.player, "post", self.url(battle_id, "finalize-postbattle"), body)
         self.assertEqual(self.battle(battle_id).status, "ended")
-        self.within("finalise_last", queries, 38)
+        self.within("finalise_last", queries, 40)
 
     def test_a_locked_battle_write_locks_only_the_battle_and_participant_rows(self):
         # PERF-37, BATL-TEST-19: the battle row first, then the participant, whose query joins its user and warband

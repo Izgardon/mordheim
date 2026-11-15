@@ -8,6 +8,7 @@ from apps.bestiary.serializers import (
     BestiaryEntrySerializer,
     BestiaryEntrySummarySerializer,
 )
+from apps.exploration.serializers import ExplorationChartDetailSerializer, ExplorationChartSerializer
 from apps.hirelings.serializers import (
     DramatisPersonaDetailSerializer,
     DramatisPersonaSerializer,
@@ -94,3 +95,7 @@ WarbandTemplateDetailRowSerializer = with_badges(
 WarbandTemplateSearchRowSerializer = with_badges(
     WarbandTemplateSearchSerializer, book_fields=("name", "starting_gold", "max_models", "variants")
 )
+
+EXPLORATION_BOOK_FIELDS = ("name", "summary", "income", "income_note", "max_dice", "max_chosen")
+ExplorationChartRowSerializer = with_badges(ExplorationChartSerializer, book_fields=EXPLORATION_BOOK_FIELDS)
+ExplorationChartDetailRowSerializer = with_badges(ExplorationChartDetailSerializer, book_fields=EXPLORATION_BOOK_FIELDS)

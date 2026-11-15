@@ -11,6 +11,7 @@ from django.core.management import call_command
 from apps.battles.services.injuries import describe_roll
 from apps.battles.services.postbattle.suggested import broadcast_rules, postbattle_rules
 from apps.battles.services.random_mutations import describe_mutation, random_mutation_table
+from apps.exploration.selectors import chart_for
 from apps.special.categories import MUTATION
 from apps.special.models import Special
 from apps.warbands.models import HeroSpecial, WarbandLog
@@ -37,8 +38,9 @@ class MutationTableTests(BattleTestCase):
         self.assertTrue(all(row["text"] for row in table))  # each special's wording
 
     def test_the_rules_carry_the_table_in_a_d100_campaign_and_never_in_a_broadcast(self):
-        self.assertNotIn("random_mutations", postbattle_rules("d66"))
-        rules = postbattle_rules("d100")
+        chart = chart_for(self.campaign.id)
+        self.assertNotIn("random_mutations", postbattle_rules("d66", chart))
+        rules = postbattle_rules("d100", chart)
         self.assertEqual(len(rules["random_mutations"]), 36)
         self.assertNotIn("random_mutations", broadcast_rules(rules))
 

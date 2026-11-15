@@ -10,6 +10,7 @@ from apps.campaigns.models import (
     CampaignRole,
     PivotalMoment,
 )
+from apps.exploration.testing import seed_book_chart
 from apps.hirelings.fees import make_fee
 from apps.items.models import Item
 from apps.special.models import Special
@@ -42,6 +43,7 @@ class BattleApiTests(APITestCase):
     def setUp(self):
         self.client = APIClient()
         cache.clear()
+        seed_book_chart()  # the post-game explores by the book's chart (apps/exploration)
         self.user_model = get_user_model()
         self.password = "testpass123"
 

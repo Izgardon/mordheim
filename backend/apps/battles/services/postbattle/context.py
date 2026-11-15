@@ -14,6 +14,7 @@ from django.contrib.postgres.expressions import ArraySubquery
 from django.db.models import Exists, OuterRef, Subquery
 
 from apps.campaigns.models import CampaignSettings
+from apps.exploration.chart import Chart
 from apps.warbands.models import (
     Henchman,
     HenchmenGroup,
@@ -38,6 +39,7 @@ class FinaliseContext:
     battle: Battle
     participant: BattleParticipant
     settings: CampaignSettings | None
+    chart: Chart  # the campaign's exploration chart, read before the lock (apps/exploration)
     warband: Warband
     resource_id: int | None  # the draft's exploration resource, else the warband's default resource
     resource_found: bool
@@ -108,7 +110,7 @@ def _locked_units(warband_id: int, draft: dict) -> tuple[list[Hero], dict[int, H
     return list(heroes), {sword.id: sword for sword in swords}, list(henchmen)
 
 
-def load_context(battle: Battle, participant: BattleParticipant, draft: dict) -> FinaliseContext:
+def load_context(battle: Battle, participant: BattleParticipant, draft: dict, chart: Chart) -> FinaliseContext:
     """Lock and read what finalising this draft touches (the participant is locked already)."""
     warband = _locked_warband(battle.id, participant.warband_id, draft["exploration"].get("resource_id"))
     heroes, hirelings, henchmen = _locked_units(participant.warband_id, draft)
@@ -129,6 +131,7 @@ def load_context(battle: Battle, participant: BattleParticipant, draft: dict) ->
         battle=battle,
         participant=participant,
         settings=campaign_settings(battle),
+        chart=chart,
         warband=warband,
         resource_id=getattr(warband, "resource_pk", None),
         resource_found=getattr(warband, "resource_pk", None) is not None,
