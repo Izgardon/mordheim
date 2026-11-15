@@ -1,34 +1,5 @@
 [
   {
-    "name": "Bear (Border Town Burning)",
-    "kind": "creature",
-    "setting": "border-town-burning",
-    "has_profile": true,
-    "rating_bonus": null,
-    "available_in_shop": false,
-    "description": "May be allied by Marauders, Norse and Mercenary warbands; one of the warband's Heroes must have the Bear Handler skill. Fights with claws and teeth.",
-    "movement": 6,
-    "weapon_skill": 3,
-    "ballistic_skill": 0,
-    "strength": 5,
-    "toughness": 5,
-    "wounds": 2,
-    "initiative": 2,
-    "attacks": 2,
-    "leadership": 6,
-    "armour_save": null,
-    "large": false,
-    "caster": "No",
-    "specials": [
-      "Animal",
-      "Fear",
-      "Woodland Dwelling (Bear)"
-    ],
-    "skills": [],
-    "spells": [],
-    "equipment": []
-  },
-  {
     "name": "Bestigor",
     "kind": "creature",
     "setting": "border-town-burning",
