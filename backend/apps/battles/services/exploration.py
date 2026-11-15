@@ -4,7 +4,7 @@ The draft keeps the roll (`dice_values`), the resource it goes to and any `amoun
 and can't be used for a free re-roll; the server computes the `amount` from the chart's income table and the
 `places` the multiples found, and keeps both with the draft, so what a warband found is a record and not the
 browser's (a chart edited later doesn't change what was found: each place is kept by name and by `place_id`).
-Changing dice that were already saved is a re-roll: it goes ahead, comes back as a warning, and the earlier dice
+A die already saved whose value changes is a re-roll: it goes ahead, comes back as a warning, and the earlier dice
 are kept in `previous_rolls` (server-kept; a client can't erase them) for the finalise log.
 
 The chart is catalogue data now (apps/exploration): the campaign picks one, and every function here is handed the
@@ -38,8 +38,11 @@ def exploration_amount(exploration: dict[str, Any], chart: Chart) -> int:
 
 
 def _is_reroll(before: list[int], after: list[int]) -> bool:
-    """Dice already saved that are changed or taken away; adding dice after them isn't a re-roll."""
-    return bool(before) and after[: len(before)] != before
+    """A die already saved that shows a different value (William, 12 Nov 2026). Only the dice the two rolls have in
+    common are compared, so adding dice after them is no re-roll, and neither is taking one away: a player who
+    over-counted his heroes and corrects three dice to two has re-rolled nothing."""
+    shared = min(len(before), len(after))
+    return before[:shared] != after[:shared]
 
 
 def keep_exploration(stored: Any, exploration: dict[str, Any], chart: Chart) -> tuple[dict[str, Any], list[Warning]]:
