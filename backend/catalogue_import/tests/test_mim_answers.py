@@ -68,3 +68,19 @@ class MimMergeTests(ReviewCase):
         self.assertIn("Hunting Rifle", self.items)
         self.assertNotIn("Hochland Long Rifle", self.items)
         self.assertIn("hochland long hunting rifle", self.items["Hunting Rifle"]["tags"])
+
+
+class MimSkillTests(ReviewCase):
+    def test_the_handyman_covers_a_wagon_cart_or_coach_and_the_wheel_that_flew_off(self) -> None:
+        text = self.skills["Handyman"]
+        self.assertIn("minor damage on a wagon, cart or coach", text)
+        self.assertIn("He can even set in a new wheel if it flew off.", text)
+
+    def test_the_beastmaster_controls_one_animal_at_a_time(self) -> None:
+        self.assertIn("No more than one animal can be controlled this way.", self.skills["Beastmaster"])
+
+    def test_the_pawnbroker_and_the_energy_focus_keep_their_restrictions(self) -> None:
+        # William overruled the write-up here (decisions 19 and 20): a player who wants one gives the unit the
+        # skill group in Edit
+        self.assertTrue(self.skills["Pawnbroker"].startswith("Merchant only."))
+        self.assertTrue(self.skills["Energy Focus"].startswith("Dragon Monks only."))

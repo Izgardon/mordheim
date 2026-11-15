@@ -330,6 +330,8 @@ Description put right: Mutant (Beastmen Raiders).
 Description put right: Quick Thinker (Dwarf Exiled Engineers).
 Description put right: Ignore Pain (Skaven Clan Pestilens).
 Description put right: Trap Expert (Academic).
+Description put right: Handyman (Strength).
+Description put right: Beastmaster (Strength).
 
 ## Skill groups
 

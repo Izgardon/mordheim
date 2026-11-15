@@ -761,11 +761,11 @@
   },
   {
     "name": "Handyman",
-    "description": "The warrior is skilled in fixing minor damage on the wagon. If the wagon is stationary and has not moved during the last turn then if the warrior is in contact with the wagon, he may repair one previously damaged wheel. The Hero may do nothing else that turn and the wagon may not be moved. A wagon cannot be repaired if an enemy model is in contact with the handyman or the wagon."
+    "description": "The warrior is skilled in fixing minor damage on a wagon, cart or coach. If the wagon is stationary and has not moved during the last turn then if the warrior is in contact with the wagon, he may repair one previously damaged wheel. He can even set in a new wheel if it flew off. The Hero may do nothing else that turn and the wagon may not be moved. A wagon cannot be repaired if an enemy model is in contact with the handyman or the wagon. (MiM)"
   },
   {
     "name": "Beastmaster",
-    "description": "The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost."
+    "description": "The Hero is able to communicate on a primal level with any beast he encounters. If the model confronts an animal (not mount) in hand-to-hand combat, before combat he may take a Leadership test. If the test fails, combat proceeds as normal. If successful the animal falls under his command. Place the models 1\" apart. The player may control the animal, but the beastmaster must pass a Leadership test at the beginning of his turn or control is lost. The animal must remain within 6\" of the Hero or control is lost. No more than one animal can be controlled this way. (MiM)"
   },
   {
     "name": "Leap",
