@@ -8,8 +8,10 @@ rebuild) takes its item's text, rules, setting and price rows from there; any ot
 `shop_item` (open to everyone, a "unique to" text as the note) and its `setting`, else its setting by its file and
 grade. Hired swords and dramatis personae are their own catalogue (seed_hired_swords, seed_dramatis_personae).
 
-Links resolve against the book only (BUG-17), by name with apostrophes straightened. The run is all or nothing: an
-entry without a known kind, or with a rating bonus that isn't a whole number from 0, stops it.
+Links resolve against the book only (BUG-17), by name with apostrophes straightened. A book beast the data no longer
+lists is archived with its Animal item, not deleted (units and kits hold both with RESTRICT), and one the data lists
+again comes back, as seed_items does for the items. The run is all or nothing: an entry without a known kind, or with
+a rating bonus that isn't a whole number from 0, stops it.
 """
 
 from collections import Counter
@@ -18,6 +20,7 @@ from typing import Any
 
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.utils import timezone
 
 from apps.bestiary.animal_items import SUBTYPES, sync_item
 from apps.bestiary.models import (
@@ -72,6 +75,7 @@ def _upsert_entry(data: dict[str, Any], name: str, kind: str) -> tuple[BestiaryE
         "gains_xp": bool(data.get("gains_xp", False)),
         "rating_bonus": _rating_bonus(data, name),
         "available_in_shop": bool(data.get("available_in_shop", False)),
+        "archived_at": None,  # back in the data: back in the lists
         **read_written_stats(data, f"Bestiary entry '{name}'"),  # as written ("-", "5*"); fail loudly (BUG-54)
         **({} if has_profile else NO_PROFILE),
     }
@@ -143,9 +147,25 @@ def _sync_item(
     _adopt_book_item(entry)
     created = not Item.objects.filter(bestiary_entry=entry).exists()
     item = sync_item(entry, {})
+    Item.objects.filter(pk=item.pk, archived_at__isnull=False).update(archived_at=None)  # back in the data: back
     lookups.remember_item(item)  # a later entry may be equipped with it (the Freelancer's Warhorse, BUG-54)
     source.write(item, entry, data, path)
     return created
+
+
+def _archive_dropped(seen: list[int]) -> int:
+    """A book beast the data no longer lists leaves the lists, shops and pickers with its Animal item; what holds
+    either keeps it (CLAUDE.md: soft delete). One the data lists again is unarchived by its upsert."""
+    dropped = list(
+        BestiaryEntry.objects.filter(campaign__isnull=True, archived_at__isnull=True)
+        .exclude(pk__in=seen)
+        .values_list("pk", flat=True)
+    )
+    if not dropped:
+        return 0
+    now = timezone.now()
+    Item.objects.filter(bestiary_entry_id__in=dropped, archived_at__isnull=True).update(archived_at=now)
+    return BestiaryEntry.objects.filter(pk__in=dropped).update(archived_at=now)
 
 
 class Command(BaseCommand):
@@ -170,7 +190,9 @@ class Command(BaseCommand):
 
         lookups = BookLookups()
         with transaction.atomic():
-            counts = self._seed(paths, lookups, ItemSource())
+            seen: list[int] = []
+            counts = self._seed(paths, lookups, ItemSource(), seen)
+            counts["archived"] = _archive_dropped(seen)
             mark_book_rolls(Special, SPECIAL)  # a beast's own specials' pre-battle rolls (special/prebattle.py)
             mark_beast_rules()  # a rule only beasts hold leaves Boons & Banes (special/owners.py)
             bump(None)  # every cached catalogue list shows the book (PERF-13)
@@ -180,12 +202,13 @@ class Command(BaseCommand):
         self.stdout.write(
             self.style.SUCCESS(
                 f"Bestiary import complete. "
-                f"Entries created: {counts['created']}, updated: {counts['updated']}. "
+                f"Entries created: {counts['created']}, updated: {counts['updated']}, "
+                f"archived (no longer in the data): {counts['archived']}. "
                 f"Items created: {counts['items_created']}, updated: {counts['items_updated']}."
             )
         )
 
-    def _seed(self, paths: list[Path], lookups: BookLookups, source: ItemSource) -> Counter[str]:
+    def _seed(self, paths: list[Path], lookups: BookLookups, source: ItemSource, seen: list[int]) -> Counter[str]:
         counts: Counter[str] = Counter()
         for path in paths:
             if not path.exists():
@@ -196,6 +219,7 @@ class Command(BaseCommand):
                 if not name:
                     continue
                 entry, created = _upsert_entry(data, name, _kind(data, name))
+                seen.append(entry.pk)
                 counts["created" if created else "updated"] += 1
                 _sync_links(entry, data, lookups)
                 counts["items_created" if _sync_item(entry, data, lookups, source, path) else "items_updated"] += 1

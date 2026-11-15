@@ -57,6 +57,33 @@ class BestiarySeederKindTests(TestCase):
                 self.assertFalse(BestiaryEntry.objects.exists())
 
 
+class BestiarySeederArchiveTests(TestCase):
+    """A book beast the data no longer lists is archived with its Animal item, as seed_items does for the items:
+    nothing is deleted, because units and kits hold both (CLAUDE.md: soft delete)."""
+
+    def test_a_beast_the_data_no_longer_lists_is_archived_with_its_item(self):
+        seed([{"name": "Mule", "kind": "mount", **STATS}, {"name": "Bear", "kind": "creature", **STATS}])
+
+        output = seed([{"name": "Mule", "kind": "mount", **STATS}])
+
+        bear = BestiaryEntry.objects.get(name="Bear")
+        self.assertIsNotNone(bear.archived_at)
+        self.assertIsNotNone(Item.objects.get(bestiary_entry=bear).archived_at)
+        self.assertIsNone(BestiaryEntry.objects.get(name="Mule").archived_at)
+        self.assertIn("archived (no longer in the data): 1", output)
+
+    def test_a_beast_the_data_lists_again_comes_back_with_its_item(self):
+        rows = [{"name": "Bear", "kind": "creature", **STATS}]
+        seed(rows)
+        seed([{"name": "Mule", "kind": "mount", **STATS}])
+
+        seed(rows)
+
+        bear = BestiaryEntry.objects.get(name="Bear")
+        self.assertIsNone(bear.archived_at)
+        self.assertIsNone(Item.objects.get(bestiary_entry=bear).archived_at)
+
+
 class BestiarySeederBeastTests(TestCase):
     def test_a_row_takes_the_beast_fields_and_every_beast_gets_its_item(self):
         seed(
@@ -206,5 +233,6 @@ class CommittedBestiaryTests(TestCase):
 
         output = run("seed_bestiary")
 
-        self.assertIn("Entries created: 0, updated: 85. Items created: 0, updated: 85.", output)
+        self.assertIn("Entries created: 0, updated: 85, archived (no longer in the data): 0.", output)
+        self.assertIn("Items created: 0, updated: 85.", output)
         self.assertEqual(sorted(Item.objects.filter(type="Animal").values_list("id", "bestiary_entry_id")), before)
