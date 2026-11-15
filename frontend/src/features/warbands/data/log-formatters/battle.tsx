@@ -11,6 +11,7 @@ type BattleExplorationPayload = {
   amount?: number | null;
   resource?: string | null;
   rerolls?: unknown[];
+  places?: unknown[];
 };
 
 type ItemsLostPayload = { units?: Array<{ unit_name?: string; items?: unknown } | null> };
@@ -66,7 +67,9 @@ const exploration: LogFormatter = (log) => {
   const rerolls = Array.isArray(payload.rerolls) ? payload.rerolls.length : 0;
   const rerolled =
     rerolls > 0 ? ` (rolled again ${rerolls === 1 ? "once" : `${rerolls} times`})` : "";
-  return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}${found}${rerolled}.`;
+  const places = names(payload.places);
+  const visited = places.length > 0 ? ` Places: ${places.join(", ")}.` : "";
+  return `Exploration rolls: ${dice.length > 0 ? dice.join(", ") : "-"}${found}${rerolled}.${visited}`;
 };
 
 /** What dead units took with them (pass 2 decision 7). */

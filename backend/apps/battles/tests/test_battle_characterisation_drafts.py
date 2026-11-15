@@ -118,6 +118,8 @@ class PostbattleDraftTests(BattleTestCase):
                 "amount_override": 3,
                 "previous_rolls": [],
                 "amount": 3,
+                # the places the multiples found, worked out by the server too (test_battle_explore_places)
+                "places": [{"face": 6, "count": 2, "label": "Doubles", "place": "Ruined Hovels"}],
             },
         )
         self.assertEqual(
@@ -158,7 +160,7 @@ class PostbattleDraftTests(BattleTestCase):
         self.resource.refresh_from_db()
         self.assertEqual(self.resource.amount, 3)  # total 17: 12 to 17 give 3
         log = WarbandLog.objects.get(warband=self.warband, entry_type="exploration")
-        expected = {"dice": [6, 5, 6], "amount": 3, "amount_override": None, "resource": "Wyrdstone", "rerolls": []}
+        expected = {"dice": [6, 5, 6], "amount": 3, "amount_override": None, "resource": "Wyrdstone", "rerolls": [], "places": ["Ruined Hovels"]}  # fmt: skip
         self.assertEqual(log.payload, expected)
 
     def test_finalise_validation(self):

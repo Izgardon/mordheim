@@ -168,6 +168,20 @@ class BattleQueryBudgetTests(BattleTestCase):
             finds={"gold_crowns": 10, "items": [{"item_id": charm.id}]},
         )
 
+    def test_saving_the_postbattle_draft_stays_within_budget(self):
+        # The draft save is the player's own row: the battle with his membership and the campaign settings, his
+        # participant, the catalogue items his finds name, his participant's UPDATE and the activity touch. The
+        # exploration amount and the places the multiples found are worked out in Python from the dice and the
+        # server's chart (services/exploration.py), so they cost nothing and don't grow with the dice.
+        battle_id, postbattle = self._fixture_postbattle()
+        postbattle["exploration"]["dice_values"] = [3, 3, 3, 1, 1]
+        body = {"postbattle_json": postbattle}
+        first, _ = self.count(self.player, "post", self.url(battle_id, "postbattle"), body)
+        self.within("draft_save", first, 11)
+        participant = self.participant(battle_id, self.player)
+        places = [row["place"] for row in participant.postbattle_json["exploration"]["places"]]
+        self.assertEqual(places, ["Prisoners", "Well"])
+
     def test_finalising_the_fixture_warband_stays_within_budget(self):
         # BATL-TEST-07 (PERF-36): the first of two players to finalise, in two transactions. His own (the battle row
         # not held): the battle with his membership and the campaign settings, his participant, the warband (with the

@@ -102,7 +102,14 @@ class FixturePostbattleTests(BattleTestCase):
                 (
                     "battle",
                     "exploration",
-                    {"dice": [3, 4], "amount": 2, "amount_override": None, "resource": "Wyrdstone", "rerolls": []},
+                    {
+                        "dice": [3, 4],
+                        "amount": 2,
+                        "amount_override": None,
+                        "resource": "Wyrdstone",
+                        "rerolls": [],
+                        "places": [],
+                    },
                     None,
                 ),  # fmt: skip
                 ("battle", "finds", {"gold_crowns": 25, "items": [find]}, None),
@@ -195,7 +202,7 @@ class FixturePostbattleTests(BattleTestCase):
         logged = WarbandLog.objects.get(warband=self.warband, entry_type="warnings").payload["warnings"]
         self.assertEqual(logged, data["warnings"])
         self.assertEqual(data["warnings"][0]["message"], f"{h1} earned 9999 XP in one battle.")
-        exploration = {"dice": [1], "amount": 500, "amount_override": 500, "resource": "Wyrdstone", "rerolls": []}
+        exploration = {"dice": [1], "amount": 500, "amount_override": 500, "resource": "Wyrdstone", "rerolls": [], "places": []}  # fmt: skip
         self.assertEqual(log_rows(self.warband)[0][2], exploration)  # the override is logged (decision 9)
 
     def test_a_draft_answers_unusual_values_and_logs_nothing(self):

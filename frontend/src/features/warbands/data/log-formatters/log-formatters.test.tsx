@@ -77,6 +77,17 @@ describe("log formatters, by feature", () => {
         })
       )
     ).toBe("Exploration rolls: 3, 4, finding 2 Treasure (rolled again once).");
+    // the places the multiples found, kept with the draft and logged by the server
+    expect(
+      textOf(
+        log("battle", "exploration", {
+          dice: [3, 3, 3, 1, 1],
+          amount: 2,
+          resource: "Treasure",
+          places: ["Prisoners", "Well"],
+        })
+      )
+    ).toBe("Exploration rolls: 3, 3, 3, 1, 1, finding 2 Treasure. Places: Prisoners, Well.");
     expect(
       textOf(
         log("personnel", "serious_injury", {

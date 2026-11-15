@@ -552,6 +552,7 @@ class BattleApiTests(APITestCase):
                 "amount_override": None,
                 "previous_rolls": [],
                 "amount": 1,
+                "places": [],  # no multiple among the chosen dice
             },
         )
         self.assertFalse(  # drafts log nothing (BUG-47)
@@ -690,7 +691,7 @@ class BattleApiTests(APITestCase):
         assert exploration_log is not None
         self.assertEqual(
             exploration_log.payload,
-            {"dice": [5], "amount": 1, "amount_override": None, "resource": "Shards", "rerolls": []},
+            {"dice": [5], "amount": 1, "amount_override": None, "resource": "Shards", "rerolls": [], "places": []},
         )
         self.assertFalse(
             WarbandLog.objects.filter(
@@ -834,6 +835,7 @@ class BattleApiTests(APITestCase):
                 "amount_override": None,
                 "previous_rolls": [],
                 "amount": 1,
+                "places": [],  # no multiple among the chosen dice
             },
         )
         self.assertEqual(

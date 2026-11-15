@@ -26,6 +26,8 @@ def write_battle_logs(
         "amount_override": exploration.get("amount_override"),
         "resource": explored.resource_name,
         "rerolls": exploration.get("previous_rolls", []),  # kept by the server (services/exploration.py)
+        # the places the multiples found, kept with the draft by the server too
+        "places": [row.get("place") for row in exploration.get("places") or []],
     }
     entries.append(("battle", "exploration", exploration_log))
     if finds.gold_crowns > 0 or finds.items:
