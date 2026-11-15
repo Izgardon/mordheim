@@ -1,6 +1,6 @@
 {
   "slug": "albion",
-  "name": "Exploration",
+  "name": "Albion Exploration",
   "setting": "Albion",
   "summary": "Albion's exploration chart, for the fens and coasts of the Isle of Albion. The dice total finds a Supply Source rather than a number of wyrdstone shards.",
   "dice_per_hero": 1,
@@ -10,35 +10,185 @@
   "income": [],
   "income_note": "Albion replaces the rulebook's income table. Roll 1D6 for each Hero who survived the battle and one extra dice if you won, plus any extra dice allowed by skills or equipment, and pick a maximum of six dice however many you roll. A warband that includes an Elf ranger may modify one dice by +1 or -1. Add the results together and consult the Supply Source table: 1-6 Camping Site, 6-12 Hunting Party, 13-18 Abandoned Cave, 19-24 Barbarian Tribe, 25-30 Small Village, 30+ Bol-A-Hat. The supply source decides what recruiting and trading are possible. (The ranges as printed overlap at 6 and at 30.) Items of worth found in Albion are called valuables.",
   "places": [
-    {"count": 2, "face": 1, "name": "Spring-Pond", "rules": "Choose one of your Heroes and roll a D6. If the result is equal to or lower than his Toughness he grabs the offerings, which count as one valuable. If he fails, the spirit punishes him with sickness and he misses the next game.\nBarbarians may instead ask the spirit's blessing: choose a Hero to bathe in the pond and roll 2D6. If he passes a Leadership test the spirit blesses him and the next time he goes out of action he does not roll for serious injuries but counts as a full recovery. If he fails the test he misses the next fight."},
-    {"count": 2, "face": 2, "name": "Empty Village", "rules": "Inside the chest you find loot worth D6 gc. If you roll a 1 you also find a Lucky Charm."},
-    {"count": 2, "face": 3, "name": "Corpse", "rules": "Roll a D6 to see what you find:\n1-2 D6 gc\n3 Dagger\n4 Axe\n5 Sword\n6 Suit of light armour"},
-    {"count": 2, "face": 4, "name": "Hunter", "rules": "Skaven, Possessed or Dark Elf warbands may sacrifice the hunter and the warband leader gains +1 Experience.\nUndead warbands can kill him and add a zombie for free.\nAny other warband can interrogate him: next time you roll on the exploration chart, roll one more dice than usual and discard any one dice."},
-    {"count": 2, "face": 5, "name": "Thrown Resources", "rules": "Roll a D6 to see what you find:\n1-2 Map of Albion (treated as the Mordheim map in the rulebook)\n3-4 A purse with metal bits worth 2D6 gc\n5-6 A small chest holding a jewelled sword and dagger, which may be sold at double price"},
-    {"count": 2, "face": 6, "name": "Shattered Hut", "rules": "You find loot worth D6 gc."},
-    {"count": 3, "face": 1, "name": "Barrels", "rules": "The wreck of a Tilean cog holds barrels of fine Tilean wine.\nWitch Hunters and Undead, who are not tempted, may sell the barrels to the natives and gain 4D6 gc.\nAny other warband feasts instead: every member counts as having +1 Leadership in the next fight."},
-    {"count": 3, "face": 2, "name": "Smithy", "rules": "Roll a D6 to see what you find:\n1 D3 daggers\n2 A pretty amulet (counts as a lucky charm)\n3 Axe\n4 Sword\n5 Two-handed weapon\n6 2D6 gc worth of metal, added to your stash"},
-    {"count": 3, "face": 3, "name": "Shipwrecked", "rules": "You may add the two shipwrecked survivors to any henchman group you have, if you can equip them properly and will not go above your maximum warband size.\nDark Elf and Possessed warbands may instead sacrifice them and gain D3 Experience, distributed amongst the Heroes."},
-    {"count": 3, "face": 4, "name": "Fletcher", "rules": "Roll a D6 to see what you find:\n1-2 D3 short bows\n3 D3 bows\n4 D3 long bows\n5 Quiver of hunting arrows\n6 D3 quivers of hunting arrows"},
-    {"count": 3, "face": 5, "name": "Market Place", "rules": "Trade as usual. Thanks to wise investments and haggling you save 2D6 gc in total."},
-    {"count": 3, "face": 6, "name": "Lost Hired Sword", "rules": "You gain the services of any one Hired Sword available to your warband for the next battle, free of charge. After that he departs, or you may keep paying his upkeep as normal."},
-    {"count": 4, "face": 1, "name": "Treasure Stash", "rules": "You find loot worth D6x10 gc."},
-    {"count": 4, "face": 2, "name": "Fen Totem", "rules": "Your warband may loot the totem and finds loot worth 3D6 gc. Someone saw you: the next time you fight Barbarians, their entire warband hates yours.\nBarbarians may instead sacrifice 10 gc worth of goods and worship the totem. Roll a D6:\n1-3 Randomly choose one of your Heroes. He goes immediately out of action; roll on the serious injury chart, and if he survives he has been gifted by his gods and gains a single Academic skill.\n4-6 D6 Experience points are awarded to the warband, distributed at will among its Heroes and henchmen groups."},
-    {"count": 4, "face": 3, "name": "Landing Party", "rules": "Barbarians may trade with the Bretonnians and may also get items normally unavailable to them (not blackpowder weapons).\nAny other warband may also trade normally, without rolling for rarity. The Bretonnians offer to take you back to civilisation for 5 gc per warband member, should you wish to continue your campaign elsewhere; if you have natives in your ranks, half of them will come with you if you wish."},
-    {"count": 4, "face": 4, "name": "Coastal Raid", "rules": "When determining income, your warband counts as having fewer warriors than it has because of the food supply: reduce the warband's size by one category (10-12 warriors counts as 7-9 warriors)."},
-    {"count": 4, "face": 5, "name": "Wounded Warband", "rules": "If your warband helps the wounded warriors, they give you their stash: 2D6 gc and D3 valuables. If you dispatch them instead, you gain the stash and 1 Experience point each; roll for every model that did not go out of action before, and on a 1-2 it is out of action and must roll on the serious injury table."},
-    {"count": 4, "face": 6, "name": "Hunting Party", "rules": "The hunters show you secret ways and safe places. You may pick the next scenario, choose your table edge and choose whether you move first. If your adversary has the same bonus, roll a dice to see who gets it. Whatever happens, your warband also finds a small village as its supply source without having to roll for it."},
-    {"count": 5, "face": 1, "name": "Destroyed Village", "rules": "Amongst the debris you find 2D6x10 gc worth of loot."},
-    {"count": 5, "face": 2, "name": "Shaman's Tomb", "rules": "Choose a random Hero. If he passes an Initiative test he finds the hidden entrance to the grave of a Truthsayer and you find 3D6 gc of loot. If the roll comes up equal again and one of your Heroes is a spellcaster, he gains a random spell from the lore of light."},
-    {"count": 5, "face": 3, "name": "Pirate's Stash", "rules": "Roll a D6 for each item to see whether you find it:\n4D6x10 gc Auto\nD3 gems worth 10 gc each 4+\nD3 suits of light armour 5+\nSuit of heavy armour 5+\nCathayan silk cloak 4+\nTome of Magic 5+\nSuit of Ithilmar armour 6+"},
-    {"count": 5, "face": 4, "name": "Sacrifice to the Gods", "rules": "The bound warrior is a Hero of any type available to you, but never a leader. You may free him and add him to your ranks if you lack a Hero. If you already have all the Heroes you are allowed, treat him as a just-promoted henchman with no experience, of any type you are allowed. If every Hero slot is full the man is already dead and you gain nothing."},
-    {"count": 5, "face": 5, "name": "Fairy Ring", "rules": "Your warband may rest a full night in the circle. Any warriors taken out of action in the last battle are automatically healed to full health with no roll for serious injuries. Warriors with old wounds may try to shake them off: roll a D6 and on a 1 the wound disappears (this covers Old Battle Wound, a Smashed Leg result with may not run, and Horrible Scars). If a model has several, one chosen at random disappears, even if it has positive effects."},
-    {"count": 5, "face": 6, "name": "Dinghy", "rules": "If you dare, you may leave Albion with the dinghy. The whole warband can make a short journey in it, but roll a D6 for every member aboard: on a 1 he has gone overboard during the journey. You may then continue your campaign elsewhere. You may also choose not to leave and hide the dinghy to use it later."},
-    {"count": 6, "face": 1, "name": "Giant's Camp", "rules": "If you wish, send one of your Heroes to search the Giants' campsite for valuables and roll a D6. On a 1 the Giants return, catch him red-handed and kill him, and he is never seen again. On a 2 or more he returns with D6+1 valuables."},
-    {"count": 6, "face": 2, "name": "Familiar", "rules": "If the warband includes a spellcaster, he may take the familiar as an item of equipment. While he keeps it he gains an additional spell and adds +1 to the roll when casting his spells (cumulative with the Sorcery skill). A warband without a spellcaster does not interest the familiar and it hops away."},
-    {"count": 6, "face": 3, "name": "Dead Drake", "rules": "Roll a D6 for each item to see whether you find it:\n6D6x10 gc Auto\nD3 gems worth 10 gc each 4+\nSuit of Ithilmar armour 5+\nSuit of Gromril armour 5+\nElven Cloak 4+\nTome of Magic 4+"},
-    {"count": 6, "face": 4, "name": "Slaughtered Warband", "rules": "Roll a D6 for each item to see whether you find it:\n3D6x5 gc Auto\nD3 suits of light armour 4+\nSuit of heavy armour 5+\nD6 daggers Auto\nAlbion Map 4+\nD3 halberds 5+\nD3 swords 3+\nD3 shields 2+\nD3 bows 4+\nD3 helmets 2+"},
-    {"count": 6, "face": 5, "name": "Giant's Fighting Arena", "rules": "You bet on the right fighter and win 100 gc."},
-    {"count": 6, "face": 6, "name": "Brigantine", "rules": "If you take the ship you may either anchor it or leave Albion. If you anchor it you may keep it to leave later, but after each battle you fight with the brigantine left unguarded, roll a D6: on a 4+ the ship has gone. If you leave, you may sail wherever you like and draw 200 gc from selling the cargo. If the warband continues its campaign, one of your Heroes keeps the brigantine and becomes a sailor Captain."}
+    {
+      "count": 2,
+      "face": 1,
+      "name": "Spring-Pond",
+      "rules": "Choose one of your Heroes and roll a D6. If the result is equal to or lower than his Toughness he grabs the offerings, which count as one valuable. If he fails, the spirit punishes him with sickness and he misses the next game.\nBarbarians may instead ask the spirit's blessing: choose a Hero to bathe in the pond and roll 2D6. If he passes a Leadership test the spirit blesses him and the next time he goes out of action he does not roll for serious injuries but counts as a full recovery. If he fails the test he misses the next fight."
+    },
+    {
+      "count": 2,
+      "face": 2,
+      "name": "Empty Village",
+      "rules": "Inside the chest you find loot worth D6 gc. If you roll a 1 you also find a Lucky Charm."
+    },
+    {
+      "count": 2,
+      "face": 3,
+      "name": "Corpse",
+      "rules": "Roll a D6 to see what you find:\n1-2 D6 gc\n3 Dagger\n4 Axe\n5 Sword\n6 Suit of light armour"
+    },
+    {
+      "count": 2,
+      "face": 4,
+      "name": "Hunter",
+      "rules": "Skaven, Possessed or Dark Elf warbands may sacrifice the hunter and the warband leader gains +1 Experience.\nUndead warbands can kill him and add a zombie for free.\nAny other warband can interrogate him: next time you roll on the exploration chart, roll one more dice than usual and discard any one dice."
+    },
+    {
+      "count": 2,
+      "face": 5,
+      "name": "Thrown Resources",
+      "rules": "Roll a D6 to see what you find:\n1-2 Map of Albion (treated as the Mordheim map in the rulebook)\n3-4 A purse with metal bits worth 2D6 gc\n5-6 A small chest holding a jewelled sword and dagger, which may be sold at double price"
+    },
+    {
+      "count": 2,
+      "face": 6,
+      "name": "Shattered Hut",
+      "rules": "You find loot worth D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 1,
+      "name": "Barrels",
+      "rules": "The wreck of a Tilean cog holds barrels of fine Tilean wine.\nWitch Hunters and Undead, who are not tempted, may sell the barrels to the natives and gain 4D6 gc.\nAny other warband feasts instead: every member counts as having +1 Leadership in the next fight."
+    },
+    {
+      "count": 3,
+      "face": 2,
+      "name": "Smithy",
+      "rules": "Roll a D6 to see what you find:\n1 D3 daggers\n2 A pretty amulet (counts as a lucky charm)\n3 Axe\n4 Sword\n5 Two-handed weapon\n6 2D6 gc worth of metal, added to your stash"
+    },
+    {
+      "count": 3,
+      "face": 3,
+      "name": "Shipwrecked",
+      "rules": "You may add the two shipwrecked survivors to any henchman group you have, if you can equip them properly and will not go above your maximum warband size.\nDark Elf and Possessed warbands may instead sacrifice them and gain D3 Experience, distributed amongst the Heroes."
+    },
+    {
+      "count": 3,
+      "face": 4,
+      "name": "Fletcher",
+      "rules": "Roll a D6 to see what you find:\n1-2 D3 short bows\n3 D3 bows\n4 D3 long bows\n5 Quiver of hunting arrows\n6 D3 quivers of hunting arrows"
+    },
+    {
+      "count": 3,
+      "face": 5,
+      "name": "Market Place",
+      "rules": "Trade as usual. Thanks to wise investments and haggling you save 2D6 gc in total."
+    },
+    {
+      "count": 3,
+      "face": 6,
+      "name": "Lost Hired Sword",
+      "rules": "You gain the services of any one Hired Sword available to your warband for the next battle, free of charge. After that he departs, or you may keep paying his upkeep as normal."
+    },
+    {
+      "count": 4,
+      "face": 1,
+      "name": "Treasure Stash",
+      "rules": "You find loot worth D6x10 gc."
+    },
+    {
+      "count": 4,
+      "face": 2,
+      "name": "Fen Totem",
+      "rules": "Your warband may loot the totem and finds loot worth 3D6 gc. Someone saw you: the next time you fight Barbarians, their entire warband hates yours.\nBarbarians may instead sacrifice 10 gc worth of goods and worship the totem. Roll a D6:\n1-3 Randomly choose one of your Heroes. He goes immediately out of action; roll on the serious injury chart, and if he survives he has been gifted by his gods and gains a single Academic skill.\n4-6 D6 Experience points are awarded to the warband, distributed at will among its Heroes and henchmen groups."
+    },
+    {
+      "count": 4,
+      "face": 3,
+      "name": "Landing Party",
+      "rules": "Barbarians may trade with the Bretonnians and may also get items normally unavailable to them (not blackpowder weapons).\nAny other warband may also trade normally, without rolling for rarity. The Bretonnians offer to take you back to civilisation for 5 gc per warband member, should you wish to continue your campaign elsewhere; if you have natives in your ranks, half of them will come with you if you wish."
+    },
+    {
+      "count": 4,
+      "face": 4,
+      "name": "Coastal Raid",
+      "rules": "When determining income, your warband counts as having fewer warriors than it has because of the food supply: reduce the warband's size by one category (10-12 warriors counts as 7-9 warriors)."
+    },
+    {
+      "count": 4,
+      "face": 5,
+      "name": "Wounded Warband",
+      "rules": "If your warband helps the wounded warriors, they give you their stash: 2D6 gc and D3 valuables. If you dispatch them instead, you gain the stash and 1 Experience point each; roll for every model that did not go out of action before, and on a 1-2 it is out of action and must roll on the serious injury table."
+    },
+    {
+      "count": 4,
+      "face": 6,
+      "name": "Hunting Party",
+      "rules": "The hunters show you secret ways and safe places. You may pick the next scenario, choose your table edge and choose whether you move first. If your adversary has the same bonus, roll a dice to see who gets it. Whatever happens, your warband also finds a small village as its supply source without having to roll for it."
+    },
+    {
+      "count": 5,
+      "face": 1,
+      "name": "Destroyed Village",
+      "rules": "Amongst the debris you find 2D6x10 gc worth of loot."
+    },
+    {
+      "count": 5,
+      "face": 2,
+      "name": "Shaman's Tomb",
+      "rules": "Choose a random Hero. If he passes an Initiative test he finds the hidden entrance to the grave of a Truthsayer and you find 3D6 gc of loot. If the roll comes up equal again and one of your Heroes is a spellcaster, he gains a random spell from the lore of light."
+    },
+    {
+      "count": 5,
+      "face": 3,
+      "name": "Pirate's Stash",
+      "rules": "Roll a D6 for each item to see whether you find it:\n4D6x10 gc Auto\nD3 gems worth 10 gc each 4+\nD3 suits of light armour 5+\nSuit of heavy armour 5+\nCathayan silk cloak 4+\nTome of Magic 5+\nSuit of Ithilmar armour 6+"
+    },
+    {
+      "count": 5,
+      "face": 4,
+      "name": "Sacrifice to the Gods",
+      "rules": "The bound warrior is a Hero of any type available to you, but never a leader. You may free him and add him to your ranks if you lack a Hero. If you already have all the Heroes you are allowed, treat him as a just-promoted henchman with no experience, of any type you are allowed. If every Hero slot is full the man is already dead and you gain nothing."
+    },
+    {
+      "count": 5,
+      "face": 5,
+      "name": "Fairy Ring",
+      "rules": "Your warband may rest a full night in the circle. Any warriors taken out of action in the last battle are automatically healed to full health with no roll for serious injuries. Warriors with old wounds may try to shake them off: roll a D6 and on a 1 the wound disappears (this covers Old Battle Wound, a Smashed Leg result with may not run, and Horrible Scars). If a model has several, one chosen at random disappears, even if it has positive effects."
+    },
+    {
+      "count": 5,
+      "face": 6,
+      "name": "Dinghy",
+      "rules": "If you dare, you may leave Albion with the dinghy. The whole warband can make a short journey in it, but roll a D6 for every member aboard: on a 1 he has gone overboard during the journey. You may then continue your campaign elsewhere. You may also choose not to leave and hide the dinghy to use it later."
+    },
+    {
+      "count": 6,
+      "face": 1,
+      "name": "Giant's Camp",
+      "rules": "If you wish, send one of your Heroes to search the Giants' campsite for valuables and roll a D6. On a 1 the Giants return, catch him red-handed and kill him, and he is never seen again. On a 2 or more he returns with D6+1 valuables."
+    },
+    {
+      "count": 6,
+      "face": 2,
+      "name": "Familiar",
+      "rules": "If the warband includes a spellcaster, he may take the familiar as an item of equipment. While he keeps it he gains an additional spell and adds +1 to the roll when casting his spells (cumulative with the Sorcery skill). A warband without a spellcaster does not interest the familiar and it hops away."
+    },
+    {
+      "count": 6,
+      "face": 3,
+      "name": "Dead Drake",
+      "rules": "Roll a D6 for each item to see whether you find it:\n6D6x10 gc Auto\nD3 gems worth 10 gc each 4+\nSuit of Ithilmar armour 5+\nSuit of Gromril armour 5+\nElven Cloak 4+\nTome of Magic 4+"
+    },
+    {
+      "count": 6,
+      "face": 4,
+      "name": "Slaughtered Warband",
+      "rules": "Roll a D6 for each item to see whether you find it:\n3D6x5 gc Auto\nD3 suits of light armour 4+\nSuit of heavy armour 5+\nD6 daggers Auto\nAlbion Map 4+\nD3 halberds 5+\nD3 swords 3+\nD3 shields 2+\nD3 bows 4+\nD3 helmets 2+"
+    },
+    {
+      "count": 6,
+      "face": 5,
+      "name": "Giant's Fighting Arena",
+      "rules": "You bet on the right fighter and win 100 gc."
+    },
+    {
+      "count": 6,
+      "face": 6,
+      "name": "Brigantine",
+      "rules": "If you take the ship you may either anchor it or leave Albion. If you anchor it you may keep it to leave later, but after each battle you fight with the brigantine left unguarded, roll a D6: on a 4+ the ship has gone. If you leave, you may sail wherever you like and draw 200 gc from selling the cargo. If the warband continues its campaign, one of your Heroes keeps the brigantine and becomes a sailor Captain."
+    }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "slug": "khemri",
-  "name": "Exploration",
+  "name": "Khemri Exploration",
   "setting": "Khemri 1b",
   "summary": "The Khemrian exploration chart, for the tombs and necropoli of old Nehekhara. Exploration and income follow the rulebook; the warbands search for treasure instead of wyrdstone, and locating a supply source is a separate step of the post-battle sequence.",
   "dice_per_hero": 1,
@@ -8,45 +8,216 @@
   "max_dice": 10,
   "max_chosen": 6,
   "income": [
-    {"max_total": 5, "amount": 1},
-    {"max_total": 11, "amount": 2},
-    {"max_total": 17, "amount": 3},
-    {"max_total": 24, "amount": 4},
-    {"max_total": 30, "amount": 5},
-    {"max_total": 35, "amount": 6},
-    {"max_total": null, "amount": 7}
+    {
+      "max_total": 5,
+      "amount": 1
+    },
+    {
+      "max_total": 11,
+      "amount": 2
+    },
+    {
+      "max_total": 17,
+      "amount": 3
+    },
+    {
+      "max_total": 24,
+      "amount": 4
+    },
+    {
+      "max_total": 30,
+      "amount": 5
+    },
+    {
+      "max_total": 35,
+      "amount": 6
+    },
+    {
+      "max_total": null,
+      "amount": 7
+    }
   ],
   "income_note": "In Khemri the warbands search for treasure - gems, gold and ancient artifacts - rather than wyrdstone; wherever the rules say wyrdstone, read treasure. After exploration the warband checks its burden limit and then locates a supply source, which is a step of its own.",
   "places": [
-    {"count": 2, "face": 1, "name": "Stash", "rules": "Choose one of your Heroes and test against his Strength on a D6. If he passes he lifts the monolith and reveals the treasure beneath: add one valuable to the warband's treasury. If he fails he is injured and misses the next battle."},
-    {"count": 2, "face": 2, "name": "Lost Pouch", "rules": "The pouch contains D6 gc, and a Lucky Charm as well if a 1 is rolled."},
-    {"count": 2, "face": 3, "name": "Skeleton", "rules": "Roll a D6 to see what is found when the skeleton is searched:\n1-2 D6 gc\n3 Club\n4 Spear\n5 Scimitar (sword)\n6 Light armour"},
-    {"count": 2, "face": 4, "name": "Mad Man", "rules": "Good warbands (humans, Elves, Dwarfs and so on) can make sense of his madness and learn about the desert: in the next Exploration phase the warband may roll one more dice and then discard one dice.\nUndead warbands can kill him and gain a new Zombie or Skeleton, whichever is available to them.\nSkaven, Chaos or greenskin warbands can sacrifice him and the warband leader gains +1 Experience."},
-    {"count": 2, "face": 5, "name": "Dead Camel", "rules": "Roll a D6 to see what of value the chest contains:\n1-2 Map of the Desert\n3-4 A ring worth 2D6 gc\n5-6 A silver gilded sword and dagger set, which can be kept and used or sold for double the usual selling price of a sword and dagger"},
-    {"count": 2, "face": 6, "name": "Jackal", "rules": "The jackal can be skinned and the skin sold for D6 gc."},
-    {"count": 3, "face": 1, "name": "Lamp of Djinn", "rules": "The warband finds the Lamp of the Djinn (see the Khemri equipment list)."},
-    {"count": 3, "face": 2, "name": "Pool", "rules": "2D6 water units can be collected from the pool."},
-    {"count": 3, "face": 3, "name": "Old Campsite", "rules": "Your warband finds 2D6 gc worth of salvageable supplies."},
-    {"count": 3, "face": 4, "name": "Lost Zombie", "rules": "Roll a D6 to find out what the zombie was carrying:\n1 Club\n2 D6+3 gc\n3 Sword\n4 Lucky charm\n5 Throwing knives\n6 Light armour"},
-    {"count": 3, "face": 5, "name": "Rare Herb", "rules": "Any of the warband's Heroes who can gain experience and use drugs may consume the herbs and gain +1 Experience. The jar holds D3 doses, but once opened the herbs must be used immediately or they wither and become useless."},
-    {"count": 3, "face": 6, "name": "Signpost", "rules": "The warband gains +3 on the roll to see what supply source is available for its next skirmish."},
-    {"count": 4, "face": 1, "name": "Lost Mule", "rules": "If the warband gives the mule 3 water units it revives and follows the warband. Warbands not allowed to use animals must sell the mule at the first opportunity and cannot use it to carry anything or in battle."},
-    {"count": 4, "face": 2, "name": "Deep Well", "rules": "The warband gains as much water as it likes for free. You cannot have more water than you can carry."},
-    {"count": 4, "face": 3, "name": "Besieged Caravan", "rules": "The caravan leader sells you anything he has available at cost. All the normal rules for trading with a caravan apply, but everything is half price: roll the cost of an item and divide by two. This means you can buy and sell things for the same amount of money."},
-    {"count": 4, "face": 4, "name": "Lost Treasure", "rules": "The warband gains two items of treasure."},
-    {"count": 4, "face": 5, "name": "Wadi", "rules": "The warband gains 4D6 gc worth of gold nuggets."},
-    {"count": 4, "face": 6, "name": "Mausoleum", "rules": "Unscrupulous warbands can loot the tomb and gain D6x10 gc. Religious warbands or tomb guardians can seal it and gain D6 Experience, distributed amongst the Heroes at your discretion. You may choose how you treat the graves."},
-    {"count": 5, "face": 1, "name": "Treasury", "rules": "Hidden amongst the debris you find D6x10 gc worth of gold and treasure."},
-    {"count": 5, "face": 2, "name": "Snake Pit", "rules": "Roll for every item separately, apart from the gold crowns, to see if you find it:\nA purse with 2D6 gc Auto\nA duelling pistol 5+\nA sword 4+\nD3 valuables 4+"},
-    {"count": 5, "face": 3, "name": "Boulder Race", "rules": "Choose one Hero to recover the jade statue. He must roll less than or equal to his run distance on 2D6, and may use the Sprint skill if he has it. If he fails he dies and is removed from the roster. If he survives he may sell the jade statue for 50 gc and gains +1 Experience."},
-    {"count": 5, "face": 4, "name": "Maze", "rules": "Randomly select a Hero. He is lost in the maze and misses D3 games while he finds his way out. If you roll a 1 he is lost forever and is removed from the warband's roster, along with any equipment he carries."},
-    {"count": 5, "face": 5, "name": "Ruined Temple", "rules": "You find D3 pieces of treasure amongst the ruins. In addition take a Leadership test against the leader's Leadership. If it is passed, a black hound that was guarding the temple joins the warband; use the profile for a wardog."},
-    {"count": 5, "face": 6, "name": "Secret Door", "rules": "You may always re-roll one dice when doing exploration rolls. Note it on your roster. Second and further secret doors grant no additional re-rolls, although you may find further re-rolls from other sources."},
-    {"count": 6, "face": 1, "name": "The Tomb of The King", "rules": "If you wish, send one of your Heroes to search for treasure hidden here and roll a D6. On a 1 the Hero is captured and dragged away by Tomb Guardians to join the ranks of the Undead. On a 2 or more he returns with D6+1 pieces of treasure."},
-    {"count": 6, "face": 2, "name": "Statue of the Sphinx", "rules": "If you wish to challenge the Sphinx, pick a Hero. Roll a D6 and add +1 for each Academic skill he has. On a result of 6 or more he has solved the Riddle of the Sphinx: roll for each item below. On a 5 or less the Sphinx attacks him and he spends the next battle recovering.\nD3 pieces of treasure 4+\n5D6x5 gc Auto\nSnake Charmer's flute 4+\nSuit of heavy armour 5+\nD3 jewels worth 10 gc each 4+\nHoly (or Unholy) relic 5+\nNomad robes 5+\nMonkey's paw 5+"},
-    {"count": 6, "face": 3, "name": "Slaughtered Warband", "rules": "Roll for every item separately, apart from the gold crowns and daggers, to see if you find it:\n3D6x5 gc Auto\nD3 suits of light armour 4+\nSuit of heavy armour 5+\nD6 daggers Auto\nD3 halberds 5+\nD3 swords 3+\nD3 shields 2+\nD3 handguns 5+\nD3 helmets 2+\nD6 pistols 4+"},
-    {"count": 6, "face": 4, "name": "Lamp of the Djinn", "rules": "The warband finds the Lamp of the Djinn (see the Khemri equipment list)."},
-    {"count": 6, "face": 5, "name": "Flying Carpet", "rules": "The warband finds one of the flying carpets of Araby (see the Khemri equipment list)."},
-    {"count": 6, "face": 6, "name": "Magic Rope", "rules": "The rope allows the Hero to climb 12\" up or down without having to take an Initiative test."}
+    {
+      "count": 2,
+      "face": 1,
+      "name": "Stash",
+      "rules": "Choose one of your Heroes and test against his Strength on a D6. If he passes he lifts the monolith and reveals the treasure beneath: add one valuable to the warband's treasury. If he fails he is injured and misses the next battle."
+    },
+    {
+      "count": 2,
+      "face": 2,
+      "name": "Lost Pouch",
+      "rules": "The pouch contains D6 gc, and a Lucky Charm as well if a 1 is rolled."
+    },
+    {
+      "count": 2,
+      "face": 3,
+      "name": "Skeleton",
+      "rules": "Roll a D6 to see what is found when the skeleton is searched:\n1-2 D6 gc\n3 Club\n4 Spear\n5 Scimitar (sword)\n6 Light armour"
+    },
+    {
+      "count": 2,
+      "face": 4,
+      "name": "Mad Man",
+      "rules": "Good warbands (humans, Elves, Dwarfs and so on) can make sense of his madness and learn about the desert: in the next Exploration phase the warband may roll one more dice and then discard one dice.\nUndead warbands can kill him and gain a new Zombie or Skeleton, whichever is available to them.\nSkaven, Chaos or greenskin warbands can sacrifice him and the warband leader gains +1 Experience."
+    },
+    {
+      "count": 2,
+      "face": 5,
+      "name": "Dead Camel",
+      "rules": "Roll a D6 to see what of value the chest contains:\n1-2 Map of the Desert\n3-4 A ring worth 2D6 gc\n5-6 A silver gilded sword and dagger set, which can be kept and used or sold for double the usual selling price of a sword and dagger"
+    },
+    {
+      "count": 2,
+      "face": 6,
+      "name": "Jackal",
+      "rules": "The jackal can be skinned and the skin sold for D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 1,
+      "name": "Lamp of Djinn",
+      "rules": "The warband finds the Lamp of the Djinn (see the Khemri equipment list)."
+    },
+    {
+      "count": 3,
+      "face": 2,
+      "name": "Pool",
+      "rules": "2D6 water units can be collected from the pool."
+    },
+    {
+      "count": 3,
+      "face": 3,
+      "name": "Old Campsite",
+      "rules": "Your warband finds 2D6 gc worth of salvageable supplies."
+    },
+    {
+      "count": 3,
+      "face": 4,
+      "name": "Lost Zombie",
+      "rules": "Roll a D6 to find out what the zombie was carrying:\n1 Club\n2 D6+3 gc\n3 Sword\n4 Lucky charm\n5 Throwing knives\n6 Light armour"
+    },
+    {
+      "count": 3,
+      "face": 5,
+      "name": "Rare Herb",
+      "rules": "Any of the warband's Heroes who can gain experience and use drugs may consume the herbs and gain +1 Experience. The jar holds D3 doses, but once opened the herbs must be used immediately or they wither and become useless."
+    },
+    {
+      "count": 3,
+      "face": 6,
+      "name": "Signpost",
+      "rules": "The warband gains +3 on the roll to see what supply source is available for its next skirmish."
+    },
+    {
+      "count": 4,
+      "face": 1,
+      "name": "Lost Mule",
+      "rules": "If the warband gives the mule 3 water units it revives and follows the warband. Warbands not allowed to use animals must sell the mule at the first opportunity and cannot use it to carry anything or in battle."
+    },
+    {
+      "count": 4,
+      "face": 2,
+      "name": "Deep Well",
+      "rules": "The warband gains as much water as it likes for free. You cannot have more water than you can carry."
+    },
+    {
+      "count": 4,
+      "face": 3,
+      "name": "Besieged Caravan",
+      "rules": "The caravan leader sells you anything he has available at cost. All the normal rules for trading with a caravan apply, but everything is half price: roll the cost of an item and divide by two. This means you can buy and sell things for the same amount of money."
+    },
+    {
+      "count": 4,
+      "face": 4,
+      "name": "Lost Treasure",
+      "rules": "The warband gains two items of treasure."
+    },
+    {
+      "count": 4,
+      "face": 5,
+      "name": "Wadi",
+      "rules": "The warband gains 4D6 gc worth of gold nuggets."
+    },
+    {
+      "count": 4,
+      "face": 6,
+      "name": "Mausoleum",
+      "rules": "Unscrupulous warbands can loot the tomb and gain D6x10 gc. Religious warbands or tomb guardians can seal it and gain D6 Experience, distributed amongst the Heroes at your discretion. You may choose how you treat the graves."
+    },
+    {
+      "count": 5,
+      "face": 1,
+      "name": "Treasury",
+      "rules": "Hidden amongst the debris you find D6x10 gc worth of gold and treasure."
+    },
+    {
+      "count": 5,
+      "face": 2,
+      "name": "Snake Pit",
+      "rules": "Roll for every item separately, apart from the gold crowns, to see if you find it:\nA purse with 2D6 gc Auto\nA duelling pistol 5+\nA sword 4+\nD3 valuables 4+"
+    },
+    {
+      "count": 5,
+      "face": 3,
+      "name": "Boulder Race",
+      "rules": "Choose one Hero to recover the jade statue. He must roll less than or equal to his run distance on 2D6, and may use the Sprint skill if he has it. If he fails he dies and is removed from the roster. If he survives he may sell the jade statue for 50 gc and gains +1 Experience."
+    },
+    {
+      "count": 5,
+      "face": 4,
+      "name": "Maze",
+      "rules": "Randomly select a Hero. He is lost in the maze and misses D3 games while he finds his way out. If you roll a 1 he is lost forever and is removed from the warband's roster, along with any equipment he carries."
+    },
+    {
+      "count": 5,
+      "face": 5,
+      "name": "Ruined Temple",
+      "rules": "You find D3 pieces of treasure amongst the ruins. In addition take a Leadership test against the leader's Leadership. If it is passed, a black hound that was guarding the temple joins the warband; use the profile for a wardog."
+    },
+    {
+      "count": 5,
+      "face": 6,
+      "name": "Secret Door",
+      "rules": "You may always re-roll one dice when doing exploration rolls. Note it on your roster. Second and further secret doors grant no additional re-rolls, although you may find further re-rolls from other sources."
+    },
+    {
+      "count": 6,
+      "face": 1,
+      "name": "The Tomb of The King",
+      "rules": "If you wish, send one of your Heroes to search for treasure hidden here and roll a D6. On a 1 the Hero is captured and dragged away by Tomb Guardians to join the ranks of the Undead. On a 2 or more he returns with D6+1 pieces of treasure."
+    },
+    {
+      "count": 6,
+      "face": 2,
+      "name": "Statue of the Sphinx",
+      "rules": "If you wish to challenge the Sphinx, pick a Hero. Roll a D6 and add +1 for each Academic skill he has. On a result of 6 or more he has solved the Riddle of the Sphinx: roll for each item below. On a 5 or less the Sphinx attacks him and he spends the next battle recovering.\nD3 pieces of treasure 4+\n5D6x5 gc Auto\nSnake Charmer's flute 4+\nSuit of heavy armour 5+\nD3 jewels worth 10 gc each 4+\nHoly (or Unholy) relic 5+\nNomad robes 5+\nMonkey's paw 5+"
+    },
+    {
+      "count": 6,
+      "face": 3,
+      "name": "Slaughtered Warband",
+      "rules": "Roll for every item separately, apart from the gold crowns and daggers, to see if you find it:\n3D6x5 gc Auto\nD3 suits of light armour 4+\nSuit of heavy armour 5+\nD6 daggers Auto\nD3 halberds 5+\nD3 swords 3+\nD3 shields 2+\nD3 handguns 5+\nD3 helmets 2+\nD6 pistols 4+"
+    },
+    {
+      "count": 6,
+      "face": 4,
+      "name": "Lamp of the Djinn",
+      "rules": "The warband finds the Lamp of the Djinn (see the Khemri equipment list)."
+    },
+    {
+      "count": 6,
+      "face": 5,
+      "name": "Flying Carpet",
+      "rules": "The warband finds one of the flying carpets of Araby (see the Khemri equipment list)."
+    },
+    {
+      "count": 6,
+      "face": 6,
+      "name": "Magic Rope",
+      "rules": "The rope allows the Hero to climb 12\" up or down without having to take an Initiative test."
+    }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "slug": "karak-eight-peaks",
-  "name": "Exploration",
+  "name": "Karak Eight Peaks Exploration",
   "setting": "Karak Eight Peaks",
   "summary": "The exploration chart for the disputed Dwarf hold of Karak Eight Peaks, from Death Under the Eight Peaks. Exploration and income are the rulebook's.",
   "dice_per_hero": 1,
@@ -8,45 +8,216 @@
   "max_dice": 10,
   "max_chosen": 6,
   "income": [
-    {"max_total": 5, "amount": 1},
-    {"max_total": 11, "amount": 2},
-    {"max_total": 17, "amount": 3},
-    {"max_total": 24, "amount": 4},
-    {"max_total": 30, "amount": 5},
-    {"max_total": 35, "amount": 6},
-    {"max_total": null, "amount": 7}
+    {
+      "max_total": 5,
+      "amount": 1
+    },
+    {
+      "max_total": 11,
+      "amount": 2
+    },
+    {
+      "max_total": 17,
+      "amount": 3
+    },
+    {
+      "max_total": 24,
+      "amount": 4
+    },
+    {
+      "max_total": 30,
+      "amount": 5
+    },
+    {
+      "max_total": 35,
+      "amount": 6
+    },
+    {
+      "max_total": null,
+      "amount": 7
+    }
   ],
   "income_note": "Treasure and wyrdstone are both found in the hold. A Dwarf warband adds +1 to the number of pieces found when checking for treasure at the end of a game.",
   "places": [
-    {"count": 2, "face": 1, "name": "Mining Shaft", "rules": "Roll 1D6:\n1 A Troll! Your Hero must fight a Troll (see Crooked Moon). If he dies, roll as usual.\n2-3 Empty tunnel\n4+ The Hero finds a treasure"},
-    {"count": 2, "face": 2, "name": "Abandoned Room", "rules": "Rummaging through it you find loot worth D6 gc. If you roll a 1 you also find Bugman's Ale."},
-    {"count": 2, "face": 3, "name": "Skaven Corpse", "rules": "The Skaven carries a dagger and armour worth D6 gc. If you roll a 6 you also find 1 wyrdstone."},
-    {"count": 2, "face": 4, "name": "Madcap Mushrooms", "rules": "You find 1 Madcap Mushrooms."},
-    {"count": 2, "face": 5, "name": "Goblin Corpse", "rules": "The Goblin carries a spear, a helmet and a shield."},
-    {"count": 2, "face": 6, "name": "Skaven Slave", "rules": "Skaven warbands may sell the runaway slave back, earning 1D6 gc. Any other warband may kill him, earning a dagger and, rolling 1D6:\n1-3 A club\n4-5 A buckler\n6 Mines (Mordheim) map"},
-    {"count": 3, "face": 1, "name": "Mine Cart", "rules": "Roll 1D6:\n1-2 Rubble worth 0 gc\n3-5 Iron ore worth 5 gc\n6 Silver worth 20 gc"},
-    {"count": 3, "face": 2, "name": "Crumbling Tunnel", "rules": "Pick one of your Heroes. At the end of the tunnel he finds mining equipment worth D6x2 gc. If he rolls a 1 the tunnel collapses on him and he must miss the next battle."},
-    {"count": 3, "face": 3, "name": "Squig Cavern", "rules": "Pick one of your Heroes. He must fight D3 charging Squigs. If he defeats them he can search the cavern and finds a corpse carrying a helmet and an axe."},
-    {"count": 3, "face": 4, "name": "Madcap Farm", "rules": "You have entered a cavern with D6 Madcap Mushrooms in it. If you pick them up the shaman curses you and the first 6 you roll next game counts as a 1 instead."},
-    {"count": 3, "face": 5, "name": "Orc Corpse", "rules": "Roll 1D6:\n1 Choppa (morning star)\n2 Helmet\n3 Shield\n4-5 Spear\n6 Light armour"},
-    {"count": 3, "face": 6, "name": "Dwarf Miner", "rules": "Human or Dwarf warbands may help him with his work, earning 1D6 gc. Any other warband may send one Hero to fight him: he has the profile of a Clansman (see Clan Angrund) with a helmet and a two-handed weapon. If you kill him you loot a two-handed weapon and 1D6 gc."},
-    {"count": 4, "face": 1, "name": "Glowing Gems", "rules": "These rare runic stones can be sold for 1D3x10 gc."},
-    {"count": 4, "face": 2, "name": "Blind Fish", "rules": "You may count your warband's number as 1 when selling wyrdstone or treasure this phase, and you also pay any food upkeeps (for Ogres, Trolls and so on) for this campaign phase."},
-    {"count": 4, "face": 3, "name": "Skirmish", "rules": "Roll for each weapon once; if you match or pass the result needed you get it:\nAxe Automatically\nSword 6+\nLight armour 6+\nHelmet 5+\nBuckler 4+\nClub 4+"},
-    {"count": 4, "face": 4, "name": "Poisoned Well", "rules": "Pick one of your Heroes. He takes 1D3 wyrdstone, but must pass a Toughness test or miss the next game while recovering. Skaven may re-roll this test."},
-    {"count": 4, "face": 5, "name": "Ancient Dwarf Temple", "rules": "All warbands except Dwarfs may loot it, earning 1D6+5 gc. Dwarfs instead recover the relics and the warband's leader gains +1 Experience."},
-    {"count": 4, "face": 6, "name": "Bridgekeeper", "rules": "Dwarfs may pass unmolested. Any other warband must send a Hero to fight an Ironbreaker (Clan Angrund) equipped with gromril armour, shield and axe. If you kill him you keep his equipment as loot."},
-    {"count": 5, "face": 1, "name": "Dwarf Corpse", "rules": "Roll 1D6 to see what he was carrying:\n1 Helmet\n2-3 Axe\n4-5 Shield\n6 Heavy armour"},
-    {"count": 5, "face": 2, "name": "Abandoned Forge", "rules": "Roll 1D6 for each item; if you match or pass the number you get it:\nSword 5+\n2 axes 4+\n2 helmets 4+\n2 sets of heavy armour 6+"},
-    {"count": 5, "face": 3, "name": "Dusty Tomb", "rules": "Roll 1D6:\n1-2 A two-handed weapon\n3 A helmet\n4-5 Trinkets worth D6 gc\n6 Gromril armour"},
-    {"count": 5, "face": 4, "name": "Goblin Patrol", "rules": "Pick one of your Heroes. He must fight 3 charging Night Goblin henchmen (Crooked Moon) equipped with spear and shield. If he wins he can loot either one spear or a shield."},
-    {"count": 5, "face": 5, "name": "Edible Mushrooms", "rules": "You may count your warband's number as 1 when selling wyrdstone or treasure this phase, and you also pay any food upkeeps (for Ogres, Trolls and so on) for this campaign phase."},
-    {"count": 5, "face": 6, "name": "Skaven Warren", "rules": "Pick one of your Heroes. He must defeat 1D3 charging Verminkin (rulebook Skaven warband) armed with buckler and maul. If he wins he can search the place, rolling 1D6:\n1-2 Rubbish worth 1D3 gc\n3-5 A buckler and a maul\n6 1 wyrdstone"},
-    {"count": 6, "face": 1, "name": "Warplock Engineer's Workshop", "rules": "Roll 1D6:\n1-2 A warplock pistol\n3-4 A warpfire thrower\n5-6 1D3 shards of wyrdstone"},
-    {"count": 6, "face": 2, "name": "Stray Slayer", "rules": "Unless the warband is Dwarfs, it must send a Hero to fight a charging Troll Slayer (see Clan Angrund) equipped with a two-handed weapon. If the Slayer is defeated, the Hero takes the two-handed weapon and gold bracelets worth 1D6x5 gc."},
-    {"count": 6, "face": 3, "name": "Dwarf Hold", "rules": "The warband earns 1D6x10 gc."},
-    {"count": 6, "face": 4, "name": "Sealed Tomb", "rules": "Roll for each item; if you match or surpass the number you get it:\nRunic artifact Automatically\nHelmet 4+\nHeavy armour 5+\nShield 5+"},
-    {"count": 6, "face": 5, "name": "Skaven Patrol", "rules": "Pick one of your Heroes. He must fight 1D6 Verminkin (rulebook Skaven warband) armed with spear and shield. If he defeats them he can pillage the corpses, looting 1D6 gc."},
-    {"count": 6, "face": 6, "name": "Ancient Battlefield", "rules": "Each member of the warband may pick one item from his equipment list for free. All the items must be different and must be equipped by the warrior that picked it."}
+    {
+      "count": 2,
+      "face": 1,
+      "name": "Mining Shaft",
+      "rules": "Roll 1D6:\n1 A Troll! Your Hero must fight a Troll (see Crooked Moon). If he dies, roll as usual.\n2-3 Empty tunnel\n4+ The Hero finds a treasure"
+    },
+    {
+      "count": 2,
+      "face": 2,
+      "name": "Abandoned Room",
+      "rules": "Rummaging through it you find loot worth D6 gc. If you roll a 1 you also find Bugman's Ale."
+    },
+    {
+      "count": 2,
+      "face": 3,
+      "name": "Skaven Corpse",
+      "rules": "The Skaven carries a dagger and armour worth D6 gc. If you roll a 6 you also find 1 wyrdstone."
+    },
+    {
+      "count": 2,
+      "face": 4,
+      "name": "Madcap Mushrooms",
+      "rules": "You find 1 Madcap Mushrooms."
+    },
+    {
+      "count": 2,
+      "face": 5,
+      "name": "Goblin Corpse",
+      "rules": "The Goblin carries a spear, a helmet and a shield."
+    },
+    {
+      "count": 2,
+      "face": 6,
+      "name": "Skaven Slave",
+      "rules": "Skaven warbands may sell the runaway slave back, earning 1D6 gc. Any other warband may kill him, earning a dagger and, rolling 1D6:\n1-3 A club\n4-5 A buckler\n6 Mines (Mordheim) map"
+    },
+    {
+      "count": 3,
+      "face": 1,
+      "name": "Mine Cart",
+      "rules": "Roll 1D6:\n1-2 Rubble worth 0 gc\n3-5 Iron ore worth 5 gc\n6 Silver worth 20 gc"
+    },
+    {
+      "count": 3,
+      "face": 2,
+      "name": "Crumbling Tunnel",
+      "rules": "Pick one of your Heroes. At the end of the tunnel he finds mining equipment worth D6x2 gc. If he rolls a 1 the tunnel collapses on him and he must miss the next battle."
+    },
+    {
+      "count": 3,
+      "face": 3,
+      "name": "Squig Cavern",
+      "rules": "Pick one of your Heroes. He must fight D3 charging Squigs. If he defeats them he can search the cavern and finds a corpse carrying a helmet and an axe."
+    },
+    {
+      "count": 3,
+      "face": 4,
+      "name": "Madcap Farm",
+      "rules": "You have entered a cavern with D6 Madcap Mushrooms in it. If you pick them up the shaman curses you and the first 6 you roll next game counts as a 1 instead."
+    },
+    {
+      "count": 3,
+      "face": 5,
+      "name": "Orc Corpse",
+      "rules": "Roll 1D6:\n1 Choppa (morning star)\n2 Helmet\n3 Shield\n4-5 Spear\n6 Light armour"
+    },
+    {
+      "count": 3,
+      "face": 6,
+      "name": "Dwarf Miner",
+      "rules": "Human or Dwarf warbands may help him with his work, earning 1D6 gc. Any other warband may send one Hero to fight him: he has the profile of a Clansman (see Clan Angrund) with a helmet and a two-handed weapon. If you kill him you loot a two-handed weapon and 1D6 gc."
+    },
+    {
+      "count": 4,
+      "face": 1,
+      "name": "Glowing Gems",
+      "rules": "These rare runic stones can be sold for 1D3x10 gc."
+    },
+    {
+      "count": 4,
+      "face": 2,
+      "name": "Blind Fish",
+      "rules": "You may count your warband's number as 1 when selling wyrdstone or treasure this phase, and you also pay any food upkeeps (for Ogres, Trolls and so on) for this campaign phase."
+    },
+    {
+      "count": 4,
+      "face": 3,
+      "name": "Skirmish",
+      "rules": "Roll for each weapon once; if you match or pass the result needed you get it:\nAxe Automatically\nSword 6+\nLight armour 6+\nHelmet 5+\nBuckler 4+\nClub 4+"
+    },
+    {
+      "count": 4,
+      "face": 4,
+      "name": "Poisoned Well",
+      "rules": "Pick one of your Heroes. He takes 1D3 wyrdstone, but must pass a Toughness test or miss the next game while recovering. Skaven may re-roll this test."
+    },
+    {
+      "count": 4,
+      "face": 5,
+      "name": "Ancient Dwarf Temple",
+      "rules": "All warbands except Dwarfs may loot it, earning 1D6+5 gc. Dwarfs instead recover the relics and the warband's leader gains +1 Experience."
+    },
+    {
+      "count": 4,
+      "face": 6,
+      "name": "Bridgekeeper",
+      "rules": "Dwarfs may pass unmolested. Any other warband must send a Hero to fight an Ironbreaker (Clan Angrund) equipped with gromril armour, shield and axe. If you kill him you keep his equipment as loot."
+    },
+    {
+      "count": 5,
+      "face": 1,
+      "name": "Dwarf Corpse",
+      "rules": "Roll 1D6 to see what he was carrying:\n1 Helmet\n2-3 Axe\n4-5 Shield\n6 Heavy armour"
+    },
+    {
+      "count": 5,
+      "face": 2,
+      "name": "Abandoned Forge",
+      "rules": "Roll 1D6 for each item; if you match or pass the number you get it:\nSword 5+\n2 axes 4+\n2 helmets 4+\n2 sets of heavy armour 6+"
+    },
+    {
+      "count": 5,
+      "face": 3,
+      "name": "Dusty Tomb",
+      "rules": "Roll 1D6:\n1-2 A two-handed weapon\n3 A helmet\n4-5 Trinkets worth D6 gc\n6 Gromril armour"
+    },
+    {
+      "count": 5,
+      "face": 4,
+      "name": "Goblin Patrol",
+      "rules": "Pick one of your Heroes. He must fight 3 charging Night Goblin henchmen (Crooked Moon) equipped with spear and shield. If he wins he can loot either one spear or a shield."
+    },
+    {
+      "count": 5,
+      "face": 5,
+      "name": "Edible Mushrooms",
+      "rules": "You may count your warband's number as 1 when selling wyrdstone or treasure this phase, and you also pay any food upkeeps (for Ogres, Trolls and so on) for this campaign phase."
+    },
+    {
+      "count": 5,
+      "face": 6,
+      "name": "Skaven Warren",
+      "rules": "Pick one of your Heroes. He must defeat 1D3 charging Verminkin (rulebook Skaven warband) armed with buckler and maul. If he wins he can search the place, rolling 1D6:\n1-2 Rubbish worth 1D3 gc\n3-5 A buckler and a maul\n6 1 wyrdstone"
+    },
+    {
+      "count": 6,
+      "face": 1,
+      "name": "Warplock Engineer's Workshop",
+      "rules": "Roll 1D6:\n1-2 A warplock pistol\n3-4 A warpfire thrower\n5-6 1D3 shards of wyrdstone"
+    },
+    {
+      "count": 6,
+      "face": 2,
+      "name": "Stray Slayer",
+      "rules": "Unless the warband is Dwarfs, it must send a Hero to fight a charging Troll Slayer (see Clan Angrund) equipped with a two-handed weapon. If the Slayer is defeated, the Hero takes the two-handed weapon and gold bracelets worth 1D6x5 gc."
+    },
+    {
+      "count": 6,
+      "face": 3,
+      "name": "Dwarf Hold",
+      "rules": "The warband earns 1D6x10 gc."
+    },
+    {
+      "count": 6,
+      "face": 4,
+      "name": "Sealed Tomb",
+      "rules": "Roll for each item; if you match or surpass the number you get it:\nRunic artifact Automatically\nHelmet 4+\nHeavy armour 5+\nShield 5+"
+    },
+    {
+      "count": 6,
+      "face": 5,
+      "name": "Skaven Patrol",
+      "rules": "Pick one of your Heroes. He must fight 1D6 Verminkin (rulebook Skaven warband) armed with spear and shield. If he defeats them he can pillage the corpses, looting 1D6 gc."
+    },
+    {
+      "count": 6,
+      "face": 6,
+      "name": "Ancient Battlefield",
+      "rules": "Each member of the warband may pick one item from his equipment list for free. All the items must be different and must be equipped by the warrior that picked it."
+    }
   ]
 }

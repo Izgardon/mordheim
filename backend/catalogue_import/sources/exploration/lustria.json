@@ -1,6 +1,6 @@
 {
   "slug": "lustria",
-  "name": "Exploration",
+  "name": "Lustria Exploration",
   "setting": "Lustria",
   "summary": "The exploration chart for the jungles and temple ruins of Lustria. Exploration and income follow the rulebook; the warbands search for Valuables instead of wyrdstone.",
   "dice_per_hero": 1,
@@ -8,45 +8,216 @@
   "max_dice": 10,
   "max_chosen": 6,
   "income": [
-    {"max_total": 5, "amount": 1},
-    {"max_total": 11, "amount": 2},
-    {"max_total": 17, "amount": 3},
-    {"max_total": 24, "amount": 4},
-    {"max_total": 30, "amount": 5},
-    {"max_total": 35, "amount": 6},
-    {"max_total": null, "amount": 7}
+    {
+      "max_total": 5,
+      "amount": 1
+    },
+    {
+      "max_total": 11,
+      "amount": 2
+    },
+    {
+      "max_total": 17,
+      "amount": 3
+    },
+    {
+      "max_total": 24,
+      "amount": 4
+    },
+    {
+      "max_total": 30,
+      "amount": 5
+    },
+    {
+      "max_total": 35,
+      "amount": 6
+    },
+    {
+      "max_total": null,
+      "amount": 7
+    }
   ],
   "income_note": "In Lustria the warbands search for Valuables - gems, gold items, exotic furs and stones - rather than wyrdstone; wherever the rules say wyrdstone, read Valuables. All Heroes not taken out of action may search the ruins, but one of them must be nominated to lead the search, and several results put that Hero at risk.",
   "places": [
-    {"count": 2, "face": 1, "name": "Metal Axe", "rules": "A decorated metal axe worth 10 gc, which can be sold for half that price."},
-    {"count": 2, "face": 2, "name": "Stone Mace", "rules": "An obsidian mace that can be sold for 1D6 gc."},
-    {"count": 2, "face": 3, "name": "Sacrificial Dagger", "rules": "A Lizardmen sacrificial dagger that can be sold for 1D6 gc."},
-    {"count": 2, "face": 4, "name": "Onyx Spear", "rules": "A spear with an onyx tip, worth 20 gc, which can be sold for half that price."},
-    {"count": 2, "face": 5, "name": "Obsidian Shield", "rules": "A round obsidian shield with gem and gold insets. It can be sold for 2D6 gc."},
-    {"count": 2, "face": 6, "name": "Obsidian Buckler", "rules": "A small obsidian shield that fits a human as a buckler. It can be sold for 2D6 gc."},
-    {"count": 3, "face": 1, "name": "Dart Trap", "rules": "The Hero grabs a gold statuette and sets off a dart trap. 1D6 Strength 1 darts fly at him and hit on a 3+; on a to hit roll of 6 the dart wounds automatically. If the Hero has the Dodge skill he may try to save against each dart that hits. The statuette can be sold for 2D6 gc."},
-    {"count": 3, "face": 2, "name": "Stegadon Bone Armour", "rules": "A suit of armour made from a stegadon skeleton, with a bone helmet. It may only be worn by a model with Strength 4 or more and counts as a suit of heavy armour. It gives a -1 movement penalty to the wearer, or -2 if combined with a shield."},
-    {"count": 3, "face": 3, "name": "Cranium Helmet", "rules": "A helmet made from the cranium of a large beast. It counts as a helmet, or can be sold for 2D6 gc."},
-    {"count": 3, "face": 4, "name": "Exotic Fur", "rules": "The fur can be sold for 2D6 gc."},
-    {"count": 3, "face": 5, "name": "Beads", "rules": "A string of exotic beads worth 2D6 gc."},
-    {"count": 3, "face": 6, "name": "Marketplace", "rules": "Roll a D6 to see what you find:\n1-2 D3 short bows\n3 D3 daggers\n4 Blowpipe\n5 Spear\n6 Quiver of hunting arrows"},
-    {"count": 4, "face": 1, "name": "Gold Inlaid Plate Armour", "rules": "A suit of armour inlaid with gold. It counts as heavy armour, or can be sold for 4D6 gc."},
-    {"count": 4, "face": 2, "name": "Skink Corpse", "rules": "You take a short bow and D3 doses of Dark Venom from the body."},
-    {"count": 4, "face": 3, "name": "Feather Cloak", "rules": "A heavy cloak decorated with feathers and gold thread. It counts as a Middenheimer wolf cloak, or can be sold for 3D6 gc."},
-    {"count": 4, "face": 4, "name": "Artisan's Workshop", "rules": "Among the debris you find uncut gemstones worth D6x5 gc."},
-    {"count": 4, "face": 5, "name": "Human Corpse", "rules": "Roll a D6 to see what is still usable:\n1 Duelling pistol\n2-3 Brace of pistols\n4 Handgun\n5 Blunderbuss\n6 Brace of duelling pistols"},
-    {"count": 4, "face": 6, "name": "Tunnel Entrance", "rules": "You may use the tunnel in the next game you play. Position up to three warriors (but no large warriors such as a Rat Ogre or Ogre) anywhere on the battlefield, as long as they are placed on the top floor of a temple ruin. Place them at the end of your first turn; they cannot be placed within 8\" of any enemy model."},
-    {"count": 5, "face": 1, "name": "Map Room", "rules": "The Hero plucks the lower gems from the ceiling for a total value of D6x10 gc."},
-    {"count": 5, "face": 2, "name": "Snake Pit", "rules": "Roll for every item separately, apart from the gold crowns, to see if you find it:\nPurse with 2D6 gc Auto\nDuelling pistol 5+\nSword 4+\nD3 valuables 4+"},
-    {"count": 5, "face": 3, "name": "Boulder Race", "rules": "The Hero triggers a trap as he prises a jade statue from the wall. He must roll under his Movement value to escape the boulder or suffer D3 rolls on the Serious Injury table. If he has the Sprint skill he may roll two dice and choose the lower; a roll of 6 is always a failure. If the Hero survives he keeps the jade statue, which sells for 50 gc."},
-    {"count": 5, "face": 4, "name": "Maze Like Structure", "rules": "The Hero is lost. He misses the next game. At the start of the second game roll a D6: on a 5+ he has found his way out and joins the battle, and each later roll adds one to the result (3rd game 5+, 4th game 4+, 5th game 3+). After three rolls, if he still has not returned he is lost for good. The Hero finds 1 Valuable for each game he misses."},
-    {"count": 5, "face": 5, "name": "Nest", "rules": "The Hero finds a baby Cold One and must fight the returning mother, a small Cold One. Place the Hero and the Cold One 6\" apart; the Cold One automatically takes the first turn and charges. If the Hero wins the fight the baby Cold One attaches itself to him: treat it as a War Hound and note it on the Hero's equipment. He earns +1 Experience for the fight, and another +1 Experience if he kills the Cold One. If the Hero loses, roll on the Serious Injury chart as normal.\nCold One profile: M 8, WS 3, BS 0, S 4, T 4, W 2, I 5, A 2, Ld 6. It causes fear, and the mother is subject to frenzy."},
-    {"count": 5, "face": 6, "name": "Hidden Door", "rules": "You may always re-roll one dice when making exploration rolls. Note it on your roster. Second and further hidden doors grant no additional re-rolls, but you may find further re-rolls from other sources."},
-    {"count": 6, "face": 1, "name": "Pool of Insight", "rules": "The Hero gains +D6 Experience points but also gains the Old Battle Wound injury. Roll a D6 before each battle: on a 1 he recognises the battle from the pool and refuses to take part. In addition he may now learn from the Academic skill list, and may learn Lesser Magic if he is already a wizard or later learns the Arcane Lore skill."},
-    {"count": 6, "face": 2, "name": "Gold Plaque", "rules": "The plaque is worth 100+D6x10 gc. Word of it reaches the Lizardmen, who hate this warband for eternity. If a Lizardmen warband finds the plaque they earn 200 gc worth of rewards from the High Priests instead."},
-    {"count": 6, "face": 3, "name": "Dagger of Sotek", "rules": "The dagger always wounds Skaven on a roll of 2+ and causes critical hits on a 5+. The Hero wielding it is immune to all alone tests caused by Skaven; Giant Rats and Rat Ogres count as Skaven. A Skaven Hero may wield the dagger, but on a roll of 1 to wound he takes a wound himself."},
-    {"count": 6, "face": 4, "name": "Slaughtered Warband", "rules": "Roll for every item separately, apart from the gold crowns and daggers, to see if you find it:\n3D6x5 gc Auto\nD3 suits of light armour 4+\nHeavy armour 5+\nD6 daggers Auto\nD3 halberds 5+\nD3 swords 3+\nD3 shields 2+\nD3 handguns 5+\nD3 helmets 2+\nD6 pistols 4+"},
-    {"count": 6, "face": 5, "name": "Elven Explorer", "rules": "Roll for every item separately, apart from the gold crowns, to see if you find it:\n3D6x5 gc Auto\nIthilmar armour 4+\nSword Auto\nHoly relic 5+\nElf cloak 4+\nElf bow 4+"},
-    {"count": 6, "face": 6, "name": "Egg", "rules": "A large egg, which can be sold for 2D6x10 gc to a wizard or collector."}
+    {
+      "count": 2,
+      "face": 1,
+      "name": "Metal Axe",
+      "rules": "A decorated metal axe worth 10 gc, which can be sold for half that price."
+    },
+    {
+      "count": 2,
+      "face": 2,
+      "name": "Stone Mace",
+      "rules": "An obsidian mace that can be sold for 1D6 gc."
+    },
+    {
+      "count": 2,
+      "face": 3,
+      "name": "Sacrificial Dagger",
+      "rules": "A Lizardmen sacrificial dagger that can be sold for 1D6 gc."
+    },
+    {
+      "count": 2,
+      "face": 4,
+      "name": "Onyx Spear",
+      "rules": "A spear with an onyx tip, worth 20 gc, which can be sold for half that price."
+    },
+    {
+      "count": 2,
+      "face": 5,
+      "name": "Obsidian Shield",
+      "rules": "A round obsidian shield with gem and gold insets. It can be sold for 2D6 gc."
+    },
+    {
+      "count": 2,
+      "face": 6,
+      "name": "Obsidian Buckler",
+      "rules": "A small obsidian shield that fits a human as a buckler. It can be sold for 2D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 1,
+      "name": "Dart Trap",
+      "rules": "The Hero grabs a gold statuette and sets off a dart trap. 1D6 Strength 1 darts fly at him and hit on a 3+; on a to hit roll of 6 the dart wounds automatically. If the Hero has the Dodge skill he may try to save against each dart that hits. The statuette can be sold for 2D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 2,
+      "name": "Stegadon Bone Armour",
+      "rules": "A suit of armour made from a stegadon skeleton, with a bone helmet. It may only be worn by a model with Strength 4 or more and counts as a suit of heavy armour. It gives a -1 movement penalty to the wearer, or -2 if combined with a shield."
+    },
+    {
+      "count": 3,
+      "face": 3,
+      "name": "Cranium Helmet",
+      "rules": "A helmet made from the cranium of a large beast. It counts as a helmet, or can be sold for 2D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 4,
+      "name": "Exotic Fur",
+      "rules": "The fur can be sold for 2D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 5,
+      "name": "Beads",
+      "rules": "A string of exotic beads worth 2D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 6,
+      "name": "Marketplace",
+      "rules": "Roll a D6 to see what you find:\n1-2 D3 short bows\n3 D3 daggers\n4 Blowpipe\n5 Spear\n6 Quiver of hunting arrows"
+    },
+    {
+      "count": 4,
+      "face": 1,
+      "name": "Gold Inlaid Plate Armour",
+      "rules": "A suit of armour inlaid with gold. It counts as heavy armour, or can be sold for 4D6 gc."
+    },
+    {
+      "count": 4,
+      "face": 2,
+      "name": "Skink Corpse",
+      "rules": "You take a short bow and D3 doses of Dark Venom from the body."
+    },
+    {
+      "count": 4,
+      "face": 3,
+      "name": "Feather Cloak",
+      "rules": "A heavy cloak decorated with feathers and gold thread. It counts as a Middenheimer wolf cloak, or can be sold for 3D6 gc."
+    },
+    {
+      "count": 4,
+      "face": 4,
+      "name": "Artisan's Workshop",
+      "rules": "Among the debris you find uncut gemstones worth D6x5 gc."
+    },
+    {
+      "count": 4,
+      "face": 5,
+      "name": "Human Corpse",
+      "rules": "Roll a D6 to see what is still usable:\n1 Duelling pistol\n2-3 Brace of pistols\n4 Handgun\n5 Blunderbuss\n6 Brace of duelling pistols"
+    },
+    {
+      "count": 4,
+      "face": 6,
+      "name": "Tunnel Entrance",
+      "rules": "You may use the tunnel in the next game you play. Position up to three warriors (but no large warriors such as a Rat Ogre or Ogre) anywhere on the battlefield, as long as they are placed on the top floor of a temple ruin. Place them at the end of your first turn; they cannot be placed within 8\" of any enemy model."
+    },
+    {
+      "count": 5,
+      "face": 1,
+      "name": "Map Room",
+      "rules": "The Hero plucks the lower gems from the ceiling for a total value of D6x10 gc."
+    },
+    {
+      "count": 5,
+      "face": 2,
+      "name": "Snake Pit",
+      "rules": "Roll for every item separately, apart from the gold crowns, to see if you find it:\nPurse with 2D6 gc Auto\nDuelling pistol 5+\nSword 4+\nD3 valuables 4+"
+    },
+    {
+      "count": 5,
+      "face": 3,
+      "name": "Boulder Race",
+      "rules": "The Hero triggers a trap as he prises a jade statue from the wall. He must roll under his Movement value to escape the boulder or suffer D3 rolls on the Serious Injury table. If he has the Sprint skill he may roll two dice and choose the lower; a roll of 6 is always a failure. If the Hero survives he keeps the jade statue, which sells for 50 gc."
+    },
+    {
+      "count": 5,
+      "face": 4,
+      "name": "Maze Like Structure",
+      "rules": "The Hero is lost. He misses the next game. At the start of the second game roll a D6: on a 5+ he has found his way out and joins the battle, and each later roll adds one to the result (3rd game 5+, 4th game 4+, 5th game 3+). After three rolls, if he still has not returned he is lost for good. The Hero finds 1 Valuable for each game he misses."
+    },
+    {
+      "count": 5,
+      "face": 5,
+      "name": "Nest",
+      "rules": "The Hero finds a baby Cold One and must fight the returning mother, a small Cold One. Place the Hero and the Cold One 6\" apart; the Cold One automatically takes the first turn and charges. If the Hero wins the fight the baby Cold One attaches itself to him: treat it as a War Hound and note it on the Hero's equipment. He earns +1 Experience for the fight, and another +1 Experience if he kills the Cold One. If the Hero loses, roll on the Serious Injury chart as normal.\nCold One profile: M 8, WS 3, BS 0, S 4, T 4, W 2, I 5, A 2, Ld 6. It causes fear, and the mother is subject to frenzy."
+    },
+    {
+      "count": 5,
+      "face": 6,
+      "name": "Hidden Door",
+      "rules": "You may always re-roll one dice when making exploration rolls. Note it on your roster. Second and further hidden doors grant no additional re-rolls, but you may find further re-rolls from other sources."
+    },
+    {
+      "count": 6,
+      "face": 1,
+      "name": "Pool of Insight",
+      "rules": "The Hero gains +D6 Experience points but also gains the Old Battle Wound injury. Roll a D6 before each battle: on a 1 he recognises the battle from the pool and refuses to take part. In addition he may now learn from the Academic skill list, and may learn Lesser Magic if he is already a wizard or later learns the Arcane Lore skill."
+    },
+    {
+      "count": 6,
+      "face": 2,
+      "name": "Gold Plaque",
+      "rules": "The plaque is worth 100+D6x10 gc. Word of it reaches the Lizardmen, who hate this warband for eternity. If a Lizardmen warband finds the plaque they earn 200 gc worth of rewards from the High Priests instead."
+    },
+    {
+      "count": 6,
+      "face": 3,
+      "name": "Dagger of Sotek",
+      "rules": "The dagger always wounds Skaven on a roll of 2+ and causes critical hits on a 5+. The Hero wielding it is immune to all alone tests caused by Skaven; Giant Rats and Rat Ogres count as Skaven. A Skaven Hero may wield the dagger, but on a roll of 1 to wound he takes a wound himself."
+    },
+    {
+      "count": 6,
+      "face": 4,
+      "name": "Slaughtered Warband",
+      "rules": "Roll for every item separately, apart from the gold crowns and daggers, to see if you find it:\n3D6x5 gc Auto\nD3 suits of light armour 4+\nHeavy armour 5+\nD6 daggers Auto\nD3 halberds 5+\nD3 swords 3+\nD3 shields 2+\nD3 handguns 5+\nD3 helmets 2+\nD6 pistols 4+"
+    },
+    {
+      "count": 6,
+      "face": 5,
+      "name": "Elven Explorer",
+      "rules": "Roll for every item separately, apart from the gold crowns, to see if you find it:\n3D6x5 gc Auto\nIthilmar armour 4+\nSword Auto\nHoly relic 5+\nElf cloak 4+\nElf bow 4+"
+    },
+    {
+      "count": 6,
+      "face": 6,
+      "name": "Egg",
+      "rules": "A large egg, which can be sold for 2D6x10 gc to a wizard or collector."
+    }
   ]
 }

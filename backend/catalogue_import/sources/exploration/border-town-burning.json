@@ -1,6 +1,6 @@
 {
   "slug": "border-town-burning",
-  "name": "Exploration",
+  "name": "Border Town Burning Exploration",
   "setting": "Border Town Burning",
   "summary": "The exploration chart for campaigns set in the Northern Wastes and the Cathayan Borderlands. It replaces the rulebook's exploration tables; several results give campaign points, which become treasures in a campaign played without objectives.",
   "dice_per_hero": 1,
@@ -8,45 +8,216 @@
   "max_dice": 10,
   "max_chosen": 6,
   "income": [
-    {"max_total": 5, "amount": 1},
-    {"max_total": 11, "amount": 2},
-    {"max_total": 17, "amount": 3},
-    {"max_total": 24, "amount": 4},
-    {"max_total": 30, "amount": 5},
-    {"max_total": 35, "amount": 6},
-    {"max_total": null, "amount": 7}
+    {
+      "max_total": 5,
+      "amount": 1
+    },
+    {
+      "max_total": 11,
+      "amount": 2
+    },
+    {
+      "max_total": 17,
+      "amount": 3
+    },
+    {
+      "max_total": 24,
+      "amount": 4
+    },
+    {
+      "max_total": 30,
+      "amount": 5
+    },
+    {
+      "max_total": 35,
+      "amount": 6
+    },
+    {
+      "max_total": null,
+      "amount": 7
+    }
   ],
   "income_note": "The dice total gives the number of treasures secured, which are sold by the rules for selling wyrdstone. Which currency the warband hunts - gold, treasures or wyrdstone - is up to the players. If you play without campaign objectives, read \"treasures\" wherever the chart says \"campaign points\".",
   "places": [
-    {"count": 2, "face": 1, "name": "Watering Hole", "rules": "At the bottom of the pool you see D6 gc."},
-    {"count": 2, "face": 2, "name": "Razed Village", "rules": "If the warband searches, it finds 2D6 gc buried beneath one of the huts and a working wheelbarrow."},
-    {"count": 2, "face": 3, "name": "Mortally Wounded Warrior", "rules": "Undead warbands gain one zombie at no cost, as well as 2D6 gc. Any other warband can ransack the body to gain 2D6 gc."},
-    {"count": 2, "face": 4, "name": "Discarded Saddle Bags", "rules": "When calculating the next earnings from selling valuables, reduce the effective size of the warband by one (10-12 warriors counts as 7-9 warriors), as less money is spent on food. The warband also gains 2D6 gc."},
-    {"count": 2, "face": 5, "name": "Statue", "rules": "A petrified dwarf. Little can be salvaged, but you lift a not so shiny axe and a lucky charm from the bearer without a struggle."},
-    {"count": 2, "face": 6, "name": "Runaway Horse", "rules": "In the horse's saddlebags you find a rain coat, a net, a couple of garlic cloves and D6 gc. The horse may be kept if the warband can find a use for it."},
-    {"count": 3, "face": 1, "name": "Trembling Bushes", "rules": "You find a long strand of raw silk worth 50+2D6 gc."},
-    {"count": 3, "face": 2, "name": "Wounded Explorer", "rules": "Beastman, Possessed and Carnival of Chaos warbands may sacrifice this Norseman and their Leader gains +1 Experience.\nUndead warbands can finish him off and gain a zombie at no cost.\nHuman warbands can nurse him back to health and let him join: you must equip him with weapons and armour, and he may be added to an existing henchman group with the same characteristics as the rest of the group, even if they have already gained experience.\nChaos Dwarfs, Maneaters and any other warband can take him captive and sell him for 2D6 gc."},
-    {"count": 3, "face": 3, "name": "Unscrupulous Thief", "rules": "The warband may hire the thief for 30+2D6 gc to force any chosen warband to play as the defender in \"The Heist\" special scenario once.\nInstead of hiring him the warband may slay him for a dagger, a sword, a crossbow, 3D6 gc and D3 vials of Crimson Shade."},
-    {"count": 3, "face": 4, "name": "Dragon Monk", "rules": "If the warband is inclined towards good rather than evil, the Dragon Monk shows it a shortcut: in the next game the warband automatically chooses the scenario and takes the first turn (if both warbands have this benefit, roll off). The monk may also remove a curse placed on a member of the warband.\nIf the warband is evil or Chaotic it may kill the monk and take his possessions of D6 gc; Undead warbands also get a free zombie."},
-    {"count": 3, "face": 5, "name": "Secluded Cottage", "rules": "If the warband searches, it finds 2D6 gc, D6 daggers, a sword and a war horn."},
-    {"count": 3, "face": 6, "name": "Slave Mine", "rules": "Undead, Skaven, Orc & Goblin, Dark Elf and Chaos warbands must sacrifice a random henchman for their cause to gain +D3 campaign points.\nOtherwise the warband releases the captives and slays the gaoler, earning +1 Experience for the warband leader plus any one of its other Heroes.\nManeaters, Norse and Mercenary warbands may choose either to release the captives or to offer a sacrifice."},
-    {"count": 4, "face": 1, "name": "Crashed Caravan", "rules": "Looting the bodies gives D3 swords, a suit of light armour, D6 daggers, D3 spears, D6 shields and 2D6 gc. In addition roll a D6: on a 4, 5 or 6 the warband also finds a Map of Cathay on one of the bodies."},
-    {"count": 4, "face": 2, "name": "Tree of Woe", "rules": "Anyone searching the tree must roll a D6: on a 1 the model is impaled and removed from the roster sheet, along with any equipment he carries. Any member of the warband may be nominated to try to recover a lost member, at the same risk.\nRansacking the corpses gives 4D6x2 gc, D3 swords, D6 daggers and D6 gems worth 10 gc each. Also roll a D6: on a 5 or 6 one treasure is found."},
-    {"count": 4, "face": 3, "name": "Temple of Skulls", "rules": "Roll a D6 for every Hero in the warband. On a 1 that Hero is now subject to frenzy. At the start of every game roll another D6 for him: on a 1 he runs away northwards and is removed from the roster sheet along with all his equipment; on a 6 the frenzy ends permanently and he no longer rolls for this effect."},
-    {"count": 4, "face": 4, "name": "Khazag Horsemen", "rules": "Roll a D6 for every henchman in the warband: on a 1 or 2 he is killed. Roll on the Serious Injury table for each Hero. Models killed are removed from the roster sheet along with all their equipment.\nLooting the scene grants 3D6x3 gc, D6 daggers, D3 axes, D3 maces, D3 bows, D3 spears, D3 helmets, D6 winter clothes, D3 war horses and 2D6 gems worth 10 gc each."},
-    {"count": 4, "face": 5, "name": "Unlikely Guide", "rules": "In the next game the warband may choose which scenario is played, and may choose \"The Lost Caravans\" special scenario if it wishes."},
-    {"count": 4, "face": 6, "name": "Mutating Vault", "rules": "There is no treasure or loot here. The warband's leader may now automatically learn a single Academic skill, even if he would not normally be able to learn these skills."},
-    {"count": 5, "face": 1, "name": "Abandoned Trading Post", "rules": "Searching it, the warband finds D3 swords, D3 helmets, D3 suits of light armour, D3 Cathayan silk cloaks and D3 crossbow pistols.\nMerchant Caravans, Chaos Dwarfs, Norse Explorers, Shadow Warriors, Dwarf warbands, Pirate warbands and Mercenary warbands may restore the trading post. They need not decide at once and may return between battles until another warband restores it. The restoration costs 150+D6x25 gc and lasts four games in which at least one Hero and two henchmen must miss battles; each additional Hero or pair of henchmen helping speeds the rebuilding by one game, to a minimum of one.\nA warband controlling the restored trading post rolls 3D6 to determine the experience of henchmen available for hire after a battle, and gets +3 when searching for rare items. If the warband chose the \"The Lure of Fortune\" objective, it gets +D6 campaign points once for rebuilding the trading post.\nAny warband that discovers the trading post after it has been restored may choose at any time to play the special scenario \"Hostile Embargo\" with the warband that restored it; other warbands that have discovered it may join that battle."},
-    {"count": 5, "face": 2, "name": "Border Patrol", "rules": "If the warband is inclined towards good rather than evil, the Cathayan soldiers share their rations: when calculating the next earnings from selling valuables, reduce the effective size of the warband by two (10-12 warriors counts as 4-6 warriors).\nIf the warband is evil or Chaotic the soldiers attack. The warband receives D6 gc, D6 spears, D6 daggers and D3 Experience points to distribute amongst its Heroes, and may reduce its warband size by two for selling as above. In addition roll a D6 for each member of the warband: on a 1-2 he is ridden down, taken out of action and must roll for Serious Injuries as normal."},
-    {"count": 5, "face": 3, "name": "Fallen Priest", "rules": "The priest may be killed, in which case the warband leader gains +1 Experience and an Unholy Relic, or an Undead or Chaotic warband may seek his blessing, which removes all curses plaguing the warband. In addition roll a D6: on a 4+ he was carrying a tome that allows one Hero of the warband to choose skills from the Academic skill list from now on."},
-    {"count": 5, "face": 4, "name": "Magnificent Totem", "rules": "Designate a Hero to touch the totem and roll a D6. On a 1-3 the totem afflicts him with a random mutation (see page 76 of the Mordheim rulebook). On a 4+ he receives a blessing of D3 re-rolls for use in the next battle."},
-    {"count": 5, "face": 5, "name": "Ghartok's Tomb", "rules": "From now on, whenever the warband gets to choose which scenario is played, it may also choose the \"Ghartok's Tomb\" special scenario."},
-    {"count": 5, "face": 6, "name": "Satchel of Maps", "rules": "From now on the leader may take a Leadership test after each battle in which he was not taken out of action. Success allows him to modify one exploration dice by +1/-1. Only one Satchel of Maps can be found per warband."},
-    {"count": 6, "face": 1, "name": "Khan's Retinue", "rules": "You may hire the Dramatis Personae Maglah Khan and two of his Hobgoblin Boyz for the next battle at no cost."},
-    {"count": 6, "face": 2, "name": "Slaughtered Convoy", "rules": "Roll for every item separately to see if you find it:\n3D6x5 gc Auto\nD6 daggers Auto\nD3 helmets 2+\nD3 shields 2+\nD3 swords 3+\nD3 bows 4+\nMap of Cathay 4+\nD3 suits of light armour 4+\nSuit of heavy armour 5+\nD3 halberds 5+\nLesser Artefact 5+"},
-    {"count": 6, "face": 3, "name": "Herdstone", "rules": "If the warband is not Chaotic it may deface the herdstone and sift the offerings: the leader gains +2 Experience and the warband finds D6 treasures.\nIf the warband is Chaotic it may make an offering of 10 gc and ask either for a curse to be removed or for knowledge. If knowledge is sought, roll a D6: on a 1-3 a randomly chosen Hero is immediately taken out of action, rolls for Serious Injury as usual, and gains a single Academic skill if he survives; on a 4-6 the warband receives +D3 Experience points distributed randomly amongst the Heroes and henchmen groups, and gains +D3 campaign points."},
-    {"count": 6, "face": 4, "name": "Giant's Carcass", "rules": "The giant's bag holds D3+2 treasures, which the warband adds to its haul. Also roll a D6: on a 5 or 6 a Lesser Artefact is found. In addition, Restless Dead warbands get a 100 gc discount the next time they construct a Bone Goliath."},
-    {"count": 6, "face": 5, "name": "Chaos Champion", "rules": "Roll a D6 for every warband member: on a 1-2 he is killed by the Chaos Champion and removed from the roster. Afterwards the warband gets +D6 Experience points to spread across the surviving Heroes and henchmen. In addition the Chaos Champion carries a map. Roll a D6:\n1 Map to Belandysh's Hideout: whenever the warband rolls a 1 for random happenings it may choose to have the \"Belandysh comes!\" (42-43) event happen automatically instead of rolling at random.\n2-3 Map to Ghartok's Tomb: whenever the warband may choose the scenario it may pick the \"Ghartok's Tomb\" special scenario.\n4-6 Map to the Chaos Dragon's Lair: whenever the warband may choose the scenario it may pick the \"Chaos Dragon Hunt\" special scenario."},
-    {"count": 6, "face": 6, "name": "Tainted Ones", "rules": "A Chaos Dwarf patrol ambushes the party. Roll a D6 for every Hero and henchman in the warband: on a 1 he is taken captive and removed from the roster sheet, including any equipment he carries. Every Hero that survives gains +D3 Experience points and every henchman group receives +1 Experience. A Chaos Dwarf warband that meets the patrol is instead reinforced with D3 Informers, and one Chaos Dwarf on a successful Leadership test."}
+    {
+      "count": 2,
+      "face": 1,
+      "name": "Watering Hole",
+      "rules": "At the bottom of the pool you see D6 gc."
+    },
+    {
+      "count": 2,
+      "face": 2,
+      "name": "Razed Village",
+      "rules": "If the warband searches, it finds 2D6 gc buried beneath one of the huts and a working wheelbarrow."
+    },
+    {
+      "count": 2,
+      "face": 3,
+      "name": "Mortally Wounded Warrior",
+      "rules": "Undead warbands gain one zombie at no cost, as well as 2D6 gc. Any other warband can ransack the body to gain 2D6 gc."
+    },
+    {
+      "count": 2,
+      "face": 4,
+      "name": "Discarded Saddle Bags",
+      "rules": "When calculating the next earnings from selling valuables, reduce the effective size of the warband by one (10-12 warriors counts as 7-9 warriors), as less money is spent on food. The warband also gains 2D6 gc."
+    },
+    {
+      "count": 2,
+      "face": 5,
+      "name": "Statue",
+      "rules": "A petrified dwarf. Little can be salvaged, but you lift a not so shiny axe and a lucky charm from the bearer without a struggle."
+    },
+    {
+      "count": 2,
+      "face": 6,
+      "name": "Runaway Horse",
+      "rules": "In the horse's saddlebags you find a rain coat, a net, a couple of garlic cloves and D6 gc. The horse may be kept if the warband can find a use for it."
+    },
+    {
+      "count": 3,
+      "face": 1,
+      "name": "Trembling Bushes",
+      "rules": "You find a long strand of raw silk worth 50+2D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 2,
+      "name": "Wounded Explorer",
+      "rules": "Beastman, Possessed and Carnival of Chaos warbands may sacrifice this Norseman and their Leader gains +1 Experience.\nUndead warbands can finish him off and gain a zombie at no cost.\nHuman warbands can nurse him back to health and let him join: you must equip him with weapons and armour, and he may be added to an existing henchman group with the same characteristics as the rest of the group, even if they have already gained experience.\nChaos Dwarfs, Maneaters and any other warband can take him captive and sell him for 2D6 gc."
+    },
+    {
+      "count": 3,
+      "face": 3,
+      "name": "Unscrupulous Thief",
+      "rules": "The warband may hire the thief for 30+2D6 gc to force any chosen warband to play as the defender in \"The Heist\" special scenario once.\nInstead of hiring him the warband may slay him for a dagger, a sword, a crossbow, 3D6 gc and D3 vials of Crimson Shade."
+    },
+    {
+      "count": 3,
+      "face": 4,
+      "name": "Dragon Monk",
+      "rules": "If the warband is inclined towards good rather than evil, the Dragon Monk shows it a shortcut: in the next game the warband automatically chooses the scenario and takes the first turn (if both warbands have this benefit, roll off). The monk may also remove a curse placed on a member of the warband.\nIf the warband is evil or Chaotic it may kill the monk and take his possessions of D6 gc; Undead warbands also get a free zombie."
+    },
+    {
+      "count": 3,
+      "face": 5,
+      "name": "Secluded Cottage",
+      "rules": "If the warband searches, it finds 2D6 gc, D6 daggers, a sword and a war horn."
+    },
+    {
+      "count": 3,
+      "face": 6,
+      "name": "Slave Mine",
+      "rules": "Undead, Skaven, Orc & Goblin, Dark Elf and Chaos warbands must sacrifice a random henchman for their cause to gain +D3 campaign points.\nOtherwise the warband releases the captives and slays the gaoler, earning +1 Experience for the warband leader plus any one of its other Heroes.\nManeaters, Norse and Mercenary warbands may choose either to release the captives or to offer a sacrifice."
+    },
+    {
+      "count": 4,
+      "face": 1,
+      "name": "Crashed Caravan",
+      "rules": "Looting the bodies gives D3 swords, a suit of light armour, D6 daggers, D3 spears, D6 shields and 2D6 gc. In addition roll a D6: on a 4, 5 or 6 the warband also finds a Map of Cathay on one of the bodies."
+    },
+    {
+      "count": 4,
+      "face": 2,
+      "name": "Tree of Woe",
+      "rules": "Anyone searching the tree must roll a D6: on a 1 the model is impaled and removed from the roster sheet, along with any equipment he carries. Any member of the warband may be nominated to try to recover a lost member, at the same risk.\nRansacking the corpses gives 4D6x2 gc, D3 swords, D6 daggers and D6 gems worth 10 gc each. Also roll a D6: on a 5 or 6 one treasure is found."
+    },
+    {
+      "count": 4,
+      "face": 3,
+      "name": "Temple of Skulls",
+      "rules": "Roll a D6 for every Hero in the warband. On a 1 that Hero is now subject to frenzy. At the start of every game roll another D6 for him: on a 1 he runs away northwards and is removed from the roster sheet along with all his equipment; on a 6 the frenzy ends permanently and he no longer rolls for this effect."
+    },
+    {
+      "count": 4,
+      "face": 4,
+      "name": "Khazag Horsemen",
+      "rules": "Roll a D6 for every henchman in the warband: on a 1 or 2 he is killed. Roll on the Serious Injury table for each Hero. Models killed are removed from the roster sheet along with all their equipment.\nLooting the scene grants 3D6x3 gc, D6 daggers, D3 axes, D3 maces, D3 bows, D3 spears, D3 helmets, D6 winter clothes, D3 war horses and 2D6 gems worth 10 gc each."
+    },
+    {
+      "count": 4,
+      "face": 5,
+      "name": "Unlikely Guide",
+      "rules": "In the next game the warband may choose which scenario is played, and may choose \"The Lost Caravans\" special scenario if it wishes."
+    },
+    {
+      "count": 4,
+      "face": 6,
+      "name": "Mutating Vault",
+      "rules": "There is no treasure or loot here. The warband's leader may now automatically learn a single Academic skill, even if he would not normally be able to learn these skills."
+    },
+    {
+      "count": 5,
+      "face": 1,
+      "name": "Abandoned Trading Post",
+      "rules": "Searching it, the warband finds D3 swords, D3 helmets, D3 suits of light armour, D3 Cathayan silk cloaks and D3 crossbow pistols.\nMerchant Caravans, Chaos Dwarfs, Norse Explorers, Shadow Warriors, Dwarf warbands, Pirate warbands and Mercenary warbands may restore the trading post. They need not decide at once and may return between battles until another warband restores it. The restoration costs 150+D6x25 gc and lasts four games in which at least one Hero and two henchmen must miss battles; each additional Hero or pair of henchmen helping speeds the rebuilding by one game, to a minimum of one.\nA warband controlling the restored trading post rolls 3D6 to determine the experience of henchmen available for hire after a battle, and gets +3 when searching for rare items. If the warband chose the \"The Lure of Fortune\" objective, it gets +D6 campaign points once for rebuilding the trading post.\nAny warband that discovers the trading post after it has been restored may choose at any time to play the special scenario \"Hostile Embargo\" with the warband that restored it; other warbands that have discovered it may join that battle."
+    },
+    {
+      "count": 5,
+      "face": 2,
+      "name": "Border Patrol",
+      "rules": "If the warband is inclined towards good rather than evil, the Cathayan soldiers share their rations: when calculating the next earnings from selling valuables, reduce the effective size of the warband by two (10-12 warriors counts as 4-6 warriors).\nIf the warband is evil or Chaotic the soldiers attack. The warband receives D6 gc, D6 spears, D6 daggers and D3 Experience points to distribute amongst its Heroes, and may reduce its warband size by two for selling as above. In addition roll a D6 for each member of the warband: on a 1-2 he is ridden down, taken out of action and must roll for Serious Injuries as normal."
+    },
+    {
+      "count": 5,
+      "face": 3,
+      "name": "Fallen Priest",
+      "rules": "The priest may be killed, in which case the warband leader gains +1 Experience and an Unholy Relic, or an Undead or Chaotic warband may seek his blessing, which removes all curses plaguing the warband. In addition roll a D6: on a 4+ he was carrying a tome that allows one Hero of the warband to choose skills from the Academic skill list from now on."
+    },
+    {
+      "count": 5,
+      "face": 4,
+      "name": "Magnificent Totem",
+      "rules": "Designate a Hero to touch the totem and roll a D6. On a 1-3 the totem afflicts him with a random mutation (see page 76 of the Mordheim rulebook). On a 4+ he receives a blessing of D3 re-rolls for use in the next battle."
+    },
+    {
+      "count": 5,
+      "face": 5,
+      "name": "Ghartok's Tomb",
+      "rules": "From now on, whenever the warband gets to choose which scenario is played, it may also choose the \"Ghartok's Tomb\" special scenario."
+    },
+    {
+      "count": 5,
+      "face": 6,
+      "name": "Satchel of Maps",
+      "rules": "From now on the leader may take a Leadership test after each battle in which he was not taken out of action. Success allows him to modify one exploration dice by +1/-1. Only one Satchel of Maps can be found per warband."
+    },
+    {
+      "count": 6,
+      "face": 1,
+      "name": "Khan's Retinue",
+      "rules": "You may hire the Dramatis Personae Maglah Khan and two of his Hobgoblin Boyz for the next battle at no cost."
+    },
+    {
+      "count": 6,
+      "face": 2,
+      "name": "Slaughtered Convoy",
+      "rules": "Roll for every item separately to see if you find it:\n3D6x5 gc Auto\nD6 daggers Auto\nD3 helmets 2+\nD3 shields 2+\nD3 swords 3+\nD3 bows 4+\nMap of Cathay 4+\nD3 suits of light armour 4+\nSuit of heavy armour 5+\nD3 halberds 5+\nLesser Artefact 5+"
+    },
+    {
+      "count": 6,
+      "face": 3,
+      "name": "Herdstone",
+      "rules": "If the warband is not Chaotic it may deface the herdstone and sift the offerings: the leader gains +2 Experience and the warband finds D6 treasures.\nIf the warband is Chaotic it may make an offering of 10 gc and ask either for a curse to be removed or for knowledge. If knowledge is sought, roll a D6: on a 1-3 a randomly chosen Hero is immediately taken out of action, rolls for Serious Injury as usual, and gains a single Academic skill if he survives; on a 4-6 the warband receives +D3 Experience points distributed randomly amongst the Heroes and henchmen groups, and gains +D3 campaign points."
+    },
+    {
+      "count": 6,
+      "face": 4,
+      "name": "Giant's Carcass",
+      "rules": "The giant's bag holds D3+2 treasures, which the warband adds to its haul. Also roll a D6: on a 5 or 6 a Lesser Artefact is found. In addition, Restless Dead warbands get a 100 gc discount the next time they construct a Bone Goliath."
+    },
+    {
+      "count": 6,
+      "face": 5,
+      "name": "Chaos Champion",
+      "rules": "Roll a D6 for every warband member: on a 1-2 he is killed by the Chaos Champion and removed from the roster. Afterwards the warband gets +D6 Experience points to spread across the surviving Heroes and henchmen. In addition the Chaos Champion carries a map. Roll a D6:\n1 Map to Belandysh's Hideout: whenever the warband rolls a 1 for random happenings it may choose to have the \"Belandysh comes!\" (42-43) event happen automatically instead of rolling at random.\n2-3 Map to Ghartok's Tomb: whenever the warband may choose the scenario it may pick the \"Ghartok's Tomb\" special scenario.\n4-6 Map to the Chaos Dragon's Lair: whenever the warband may choose the scenario it may pick the \"Chaos Dragon Hunt\" special scenario."
+    },
+    {
+      "count": 6,
+      "face": 6,
+      "name": "Tainted Ones",
+      "rules": "A Chaos Dwarf patrol ambushes the party. Roll a D6 for every Hero and henchman in the warband: on a 1 he is taken captive and removed from the roster sheet, including any equipment he carries. Every Hero that survives gains +D3 Experience points and every henchman group receives +1 Experience. A Chaos Dwarf warband that meets the patrol is instead reinforced with D3 Informers, and one Chaos Dwarf on a successful Leadership test."
+    }
   ]
 }
