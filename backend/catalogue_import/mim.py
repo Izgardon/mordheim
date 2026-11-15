@@ -29,6 +29,7 @@ class MimLog:
     as_lists: list[tuple[str, str, str]] = field(default_factory=list)  # (item, restriction, warbands)
     missing_properties: list[tuple[str, int]] = field(default_factory=list)
     merged: list[tuple[str, str, str]] = field(default_factory=list)  # (stub, the item it joined, the price carried)
+    twins: list[tuple[str, str, str]] = field(default_factory=list)  # (stub, the item it joined, the price it had)
 
 
 class MimReader:
@@ -144,13 +145,22 @@ def _price(row: dict[str, Any]) -> str:
     return f"{cost} gc, {'Rare ' + str(row['rarity']) if row['rarity'] else 'Common'}"
 
 
+def _twin(row: dict[str, Any], held: dict[str, Any]) -> bool:
+    """Two price rows a player cannot tell apart: the same cost, dice and rarity, and the same reach (both open to
+    everyone with no warband lines). Carrying such a row over would only show the same line twice."""
+    if not (row["for_everyone"] and held["for_everyone"]) or row["warbands"] or held["warbands"]:
+        return False
+    return all(row.get(key) == held.get(key) for key in ("cost", "dice", "dice_multiplier", "rarity"))
+
+
 def merge_duplicates(
     stubs: list[dict[str, Any]], items: list[dict[str, Any]], decisions: dict[str, Any], log: MimLog
 ) -> list[dict[str, Any]]:
     """William's answers of 15 Nov 2026 (`mim_merges`): a Mutiny in Marienburg stub that duplicates a complete item of
     ours is left out, and the book's price it carried becomes a price row of that item labelled "Mutiny in Marienburg",
-    since a price row has no setting of its own. The stub's name becomes a tag of that item, with any other name
-    William gives it (`tags`), so a search and a warband list naming the stub still find it."""
+    since a price row has no setting of its own, unless our item already has that line: a price the player cannot tell
+    from one he is shown is carried no further (William, 15 Nov 2026). The stub's name becomes a tag of that item,
+    with any other name William gives it (`tags`), so a search and a warband list naming the stub still find it."""
     by_name = {item["name"]: item for item in items}
     kept = []
     for stub in stubs:
@@ -162,11 +172,15 @@ def merge_duplicates(
         if target is None:
             raise ValueError(f"overrides.json mim_merges {stub['name']!r}: we hold no item {decision['item']!r}")
         for row in stub["availabilities"]:
+            if any(_twin(row, held) for held in target["availabilities"]):
+                log.twins.append((stub["name"], target["name"], _price(row)))
+                continue
             target["availabilities"].append({**row, "label": MERGE_LABEL})
             log.merged.append((stub["name"], target["name"], _price(row)))
         names = [stub["name"].lower(), *(tag.lower() for tag in decision.get("tags") or [])]
         target["tags"] = unique(target["tags"] + names)
-    missing = sorted(set(decisions) - {name for name, _item, _price_text in log.merged})
+    joined = {name for name, _item, _price_text in log.merged + log.twins}
+    missing = sorted(set(decisions) - joined)
     if missing:
         raise ValueError(f"overrides.json mim_merges names MiM items we don't have: {', '.join(missing)}")
     return kept

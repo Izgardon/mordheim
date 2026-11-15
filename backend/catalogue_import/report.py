@@ -327,6 +327,14 @@ def _mim(data: ReportData) -> list[str]:
             *_table(["Stub", "Joined", "Price carried"], [list(row) for row in data.mim_log.merged]),
             "",
         ]
+    if data.mim_log.twins:
+        rows = [list(row) for row in data.mim_log.twins]
+        lines += [
+            "Their prices our item already showed, at the same cost, dice and rarity and open to everyone too, so they were not carried:",
+            "",
+            *_table(["Stub", "Joined", "The price it had"], rows),
+            "",
+        ]
     if data.mim_log.as_notes:
         rows = [[item, text] for item, text in data.mim_log.as_notes]
         lines += [

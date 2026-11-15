@@ -11179,17 +11179,6 @@
         "for_everyone": true,
         "warbands": [],
         "note": ""
-      },
-      {
-        "label": "Mutiny in Marienburg",
-        "cost": 50,
-        "dice": 1,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
       }
     ]
   },
@@ -11400,17 +11389,6 @@
     "availabilities": [
       {
         "label": "",
-        "cost": 250,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 10,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      },
-      {
-        "label": "Mutiny in Marienburg",
         "cost": 250,
         "dice": null,
         "dice_multiplier": null,
@@ -12228,17 +12206,6 @@
         "note": ""
       },
       {
-        "label": "Mutiny in Marienburg",
-        "cost": 40,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 7,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      },
-      {
         "label": "",
         "cost": 40,
         "dice": null,
@@ -12344,17 +12311,6 @@
         "note": ""
       },
       {
-        "label": "Mutiny in Marienburg",
-        "cost": 100,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 8,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      },
-      {
         "label": "",
         "cost": 100,
         "dice": null,
@@ -12450,17 +12406,6 @@
     "availabilities": [
       {
         "label": "",
-        "cost": 200,
-        "dice": null,
-        "dice_multiplier": null,
-        "cost_note": "",
-        "rarity": 9,
-        "for_everyone": true,
-        "warbands": [],
-        "note": ""
-      },
-      {
-        "label": "Mutiny in Marienburg",
         "cost": 200,
         "dice": null,
         "dice_multiplier": null,

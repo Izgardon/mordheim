@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 51 |
 | items (warband templates) | 18 |
-| price rows | 592 |
+| price rows | 587 |
 | skills | 510 |
 | skill groups | 114 |
 | skill group links | 660 |
@@ -882,8 +882,13 @@ Stubs that duplicate a complete item of ours, left out with their price carried 
 | Hochland Long Hunting Rifle | Hunting Rifle | 200 gc, Rare 11 |
 | Fish-hook Shot/Hunting Lasso | Fish-Hook Shot | 10 gc, Rare 7 |
 | Wolf Cloak/Norse Furs | Wolfcloak | 10 gc, Common |
-| Monkey's Paw | Monkey's Paw | 50 + D6 gc, Rare 10 |
 | Trade Wagon/Stage Coach | Trade Wagon | 100 gc, Rare 7 |
+
+Their prices our item already showed, at the same cost, dice and rarity and open to everyone too, so they were not carried:
+
+| Stub | Joined | The price it had |
+| --- | --- | --- |
+| Monkey's Paw | Monkey's Paw | 50 + D6 gc, Rare 10 |
 | Opulent Coach | Opulent Coach | 250 gc, Rare 10 |
 | Rowing Boat | Rowboat | 40 gc, Rare 7 |
 | Riverboat | Riverboat | 100 gc, Rare 8 |
