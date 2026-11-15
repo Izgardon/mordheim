@@ -8,6 +8,7 @@ import { usePostgameDraft } from "@/features/battles/hooks/usePostgameDraft";
 import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
 import { numberedOr } from "@/features/battles/utils/battle-number";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
+import { useCampaignExplorationChart } from "@/features/exploration/api/exploration-queries";
 import LocationsPanel from "@/features/warbands/components/panels/LocationsPanel";
 import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
@@ -56,6 +57,8 @@ export default function AftermathBody({
     battleState,
     participant: me,
   });
+  // the campaign's chart: its places and their rules text, which no broadcast carries (apps/exploration)
+  const { data: chart } = useCampaignExplorationChart(campaignId);
   const [tab, setTab] = useState<AftermathTab>("injuries");
   const tabs = useTabScroll();
   // a tab keeps the tab bar at the top of the screen; Next and Back land at the step's start
@@ -115,6 +118,7 @@ export default function AftermathBody({
       <>
         <ExploreTab
           explore={explore}
+          chart={chart}
           resources={postgame.resources}
           why={exploreWhy(battleState, me, heroesOnFeet)}
           isMobile={isMobile}

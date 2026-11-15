@@ -3,29 +3,38 @@ import { Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import DiceEntry from "@/components/ui/dice-entry";
 import { IconButton } from "@/components/ui/icon-button";
-import { explorationMultiples } from "@/features/battles/components/postbattle/postbattle-rules";
+import {
+  explorationIncomeNote,
+  paysShards,
+} from "@/features/battles/components/postbattle/postbattle-rules";
 import {
   getSelectedExplorationDiceValues,
   setLocalExplorationResource,
 } from "@/features/battles/components/postbattle/postbattle-utils";
 import type { ExplorationState } from "@/features/battles/hooks/useExploration";
+import type { ExplorationChart } from "@/features/exploration/types/exploration-types";
+import { placesFound } from "@/features/exploration/utils/places-found";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 import { cn } from "@/lib/utils";
+
+import ExplorePlaceCard from "./ExplorePlaceCard";
 
 /**
  * Explore (design E): the dice (one per hero on his feet, one more for a win), rolled once or
  * typed in a box each, and kept with the draft; the total and the shards it finds; which resource
- * they go to; and each multiple's place, whose rules "Read and roll" opens in the campaign's
- * locations.
+ * they go to; and each multiple's place with what the campaign's chart says it does.
  */
 export default function ExploreTab({
   explore,
+  chart,
   resources,
   why,
   isMobile,
   onReadAndRoll,
 }: {
   explore: ExplorationState;
+  /** The campaign's chart (`campaigns/:id/exploration/`): its places and their rules text. */
+  chart?: ExplorationChart;
   resources: WarbandResource[];
   /** "3 heroes on their feet, +1 for winning". */
   why: string;
@@ -38,8 +47,10 @@ export default function ExploreTab({
   const rolled =
     exploration.diceValues.length > 0 && exploration.diceValues.every((v) => v !== null);
   const chosen = getSelectedExplorationDiceValues(exploration);
-  const multiples = rolled ? explorationMultiples(explore.rules, chosen) : [];
-  const hot = new Set(multiples.map((entry) => entry.face));
+  const found = rolled ? placesFound(chart, chosen) : [];
+  const hot = new Set(found.map((entry) => entry.face));
+  const pays = paysShards(explore.rules);
+  const note = explorationIncomeNote(explore.rules);
   const total = chosen.reduce((sum, value) => sum + value, 0);
   const take = (faces: number[]) =>
     explore.setExploration({ ...exploration, diceValues: faces, hasRolledAllDice: true });
@@ -113,9 +124,11 @@ export default function ExploreTab({
         >
           <div className="flex items-baseline justify-between gap-6">
             <span className="text-text2">Total {rolled ? total : "–"}</span>
-            <span className="font-display text-[22px] font-semibold text-accent-hi">
-              {rolled ? `${amount} ${amount === 1 ? "shard" : "shards"}` : "Not rolled yet"}
-            </span>
+            {pays ? (
+              <span className="font-display text-[22px] font-semibold text-accent-hi">
+                {rolled ? `${amount} ${amount === 1 ? "shard" : "shards"}` : "Not rolled yet"}
+              </span>
+            ) : null}
           </div>
           <label
             className={cn(
@@ -148,30 +161,15 @@ export default function ExploreTab({
             </select>
           </label>
         </div>
+        {pays ? null : (
+          // this chart pays no wyrdstone: what the total gives is its own, in its own words
+          <p className="m-0 whitespace-pre-line border-t border-line pt-3 text-sm text-text2">
+            {note}
+          </p>
+        )}
       </article>
-      {multiples.map((multiple) => (
-        <article
-          key={multiple.face}
-          className="flex items-center justify-between gap-3 border border-accent-line bg-panel px-[18px] py-4"
-        >
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[11px] font-bold uppercase tracking-[0.12em] text-accent-text">
-              {multiple.kicker}
-            </span>
-            <span className="font-display text-[19px] font-semibold text-head">
-              {multiple.place}
-            </span>
-          </div>
-          {onReadAndRoll ? (
-            <Button
-              variant="secondary"
-              className="border-accent-line text-accent-hi"
-              onClick={() => onReadAndRoll(multiple.place)}
-            >
-              Read and roll
-            </Button>
-          ) : null}
-        </article>
+      {found.map((entry) => (
+        <ExplorePlaceCard key={entry.face} found={entry} onReadAndRoll={onReadAndRoll} />
       ))}
     </div>
   );

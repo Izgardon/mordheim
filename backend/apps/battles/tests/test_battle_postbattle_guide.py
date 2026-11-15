@@ -69,15 +69,10 @@ class PostbattleGuideTests(BattleTestCase):
         self.assertEqual(rules["hero_death_roll"], "d100")
         self.assertEqual(rules["exploration_chart"], {"id": chart.id, "name": "Exploration"})
         self.assertEqual(rules["exploration_dice"], {"max": 10, "max_chosen": 6})
-        # the multiples' thirty places are the server's too: the page shows what it is sent (BUG-NEW-02)
-        multiples = rules["exploration_multiples"]
-        self.assertEqual([row["count"] for row in multiples], [2, 3, 4, 5, 6])
-        self.assertEqual([row["label"] for row in multiples][:2], ["Doubles", "Triples"])
-        self.assertTrue(all(len(row["places"]) == 6 for row in multiples))
-        # each place carries its chart row's id and its rules text (the broadcast drops the text)
-        well = self.exploration_chart.places.get(count=2, face=1)
-        self.assertEqual(multiples[0]["places"][0], {"id": well.pk, "face": 1, "name": "Well", "rules": well.rules})
-        self.assertEqual(multiples[4]["places"][5]["name"], "Noble's Villa")
+        # the chart's places are not here: they come from campaigns/<id>/exploration/, so nothing carries 30 rows
+        # of rules text through a 10 KB broadcast (apps/exploration/tests/test_exploration_endpoint.py)
+        self.assertNotIn("exploration_multiples", rules)
+        self.assertEqual(rules["exploration_income_note"], "")
         for total in range(0, 40):
             row = next(
                 row for row in rules["exploration_table"] if row["max_total"] is None or total <= row["max_total"]

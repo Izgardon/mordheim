@@ -16,7 +16,7 @@ reads and gives himself.
 from typing import Any
 
 from apps.exploration.chart import Chart
-from apps.exploration.payload import income_payload, multiples_payload
+from apps.exploration.payload import income_payload
 
 from .warnings import Warning
 
@@ -66,11 +66,6 @@ def keep_exploration(stored: Any, exploration: dict[str, Any], chart: Chart) -> 
 def exploration_table(chart: Chart) -> list[dict[str, int | None]]:
     """The income table as postbattle shows it (IMP-52): the shards for a total up to `max_total` (None: any more)."""
     return income_payload(chart)
-
-
-def exploration_multiples(chart: Chart, *, rules: bool = True) -> list[dict[str, Any]]:
-    """The chart's multiples as postbattle serves them: each count of a face, its label and its places."""
-    return multiples_payload(chart, rules=rules)
 
 
 def places_found(dice_values: list[int], chart: Chart) -> list[dict[str, Any]]:

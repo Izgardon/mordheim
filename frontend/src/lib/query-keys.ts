@@ -115,6 +115,11 @@ export const queryKeys = {
     /** One battle's state (battle, participants, events), patched from its socket messages. */
     battleState: (campaignId: number, battleId: number) =>
       ["campaign", campaignId, "battle", battleId, "state"] as const,
+    /** The chart the post-game explores by, with its places and their rules text (apps/exploration). */
+    explorationChart: (campaignId: number) => ["campaign", campaignId, "exploration"] as const,
+    /** The charts the campaign may pick between (Settings → Exploration). */
+    explorationCharts: (campaignId: number) =>
+      ["campaign", campaignId, "exploration", "charts"] as const,
     /** The postbattle rules, the same for every battle of the campaign (broadcasts may omit them). */
     battleRules: (campaignId: number) => ["campaign", campaignId, "battle-rules"] as const,
     /** Every participant's roster for one battle (the start snapshot once it has started). */

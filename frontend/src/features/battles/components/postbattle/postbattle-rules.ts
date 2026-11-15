@@ -52,34 +52,17 @@ export function explorationAmount(rules: Rules, diceValues: Array<number | null>
   return row?.amount ?? 0;
 }
 
-export type ExplorationMultiple = { kicker: string; face: number; count: number; place: string };
-
 /**
- * Each face rolled two or more times among the chosen dice, with the place it finds, from the
- * server's chart; nothing without it (an older server), as the amount is 0 without its table.
+ * Whether the chart pays wyrdstone at all. One with an empty income table does not (Albion's gives
+ * a supply source instead): the page shows `exploration_income_note` and no shard figure.
  */
-export function explorationMultiples(rules: Rules, values: number[]): ExplorationMultiple[] {
-  const chart = rules?.exploration_multiples ?? [];
-  if (chart.length === 0) return [];
-  const most = chart[chart.length - 1].count;
-  const counts = new Map<number, number>();
-  for (const value of values) counts.set(value, (counts.get(value) ?? 0) + 1);
-  return [...counts.entries()]
-    .filter(([, count]) => count >= 2)
-    .sort((a, b) => b[1] - a[1] || b[0] - a[0])
-    .flatMap(([face, count]) => {
-      const row = chart.find((entry) => entry.count === Math.min(count, most));
-      const place = row?.places[face - 1];
-      if (!place) return [];
-      return [
-        {
-          kicker: `${row.label} ${Array.from({ length: count }, () => face).join("\u00b7")}`,
-          face,
-          count,
-          place,
-        },
-      ];
-    });
+export function paysShards(rules: Rules) {
+  return (rules?.exploration_table ?? []).length > 0;
+}
+
+/** What the dice total gives on a chart that pays no shards, in the chart's own words. */
+export function explorationIncomeNote(rules: Rules) {
+  return rules?.exploration_income_note ?? "";
 }
 
 /** The draft saved so far, with the server's suggested XP and upkeep for the rest. */

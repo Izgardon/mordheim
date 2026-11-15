@@ -50,6 +50,10 @@ class EndSnapshotTests(BattleTestCase):
         self.assertTrue(all(row["text"] for row in data["rules"]["injury_tables"]["d66"]))  # the book's lines
         self.assertEqual(message["postbattle"]["rules"], broadcast_rules(data["rules"]))  # without them: 10 KB
         self.assertNotIn("text", message["postbattle"]["rules"]["injury_tables"]["d66"][0])
+        # nor the exploration chart's places: thirty names and their rules text would crowd the budget out, and the
+        # page reads them from campaigns/<id>/exploration/ instead (apps/exploration)
+        self.assertNotIn("exploration_multiples", message["postbattle"]["rules"])
+        self.assertEqual(message["postbattle"]["rules"]["exploration_chart"], data["rules"]["exploration_chart"])
         self.assertLessEqual(len(json.dumps({key: message[key] for key in ("battle", "participants", "postbattle")})), 9000)  # fmt: skip
 
         data = self.ok(self.post_as(self.viewer, self.url(battle_id, "results"), {"winners": [self.warband.id]})).data

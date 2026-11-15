@@ -4,6 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { LocalExplorationState } from "@/features/battles/components/postbattle/postbattle-utils";
 import type { ExplorationState } from "@/features/battles/hooks/useExploration";
 import type { BattlePostbattleRules } from "@/features/battles/types/battle-types";
+import type { ExplorationChart } from "@/features/exploration/types/exploration-types";
 import { rollDie } from "@/lib/dice";
 import { setupUser } from "@/test/user-event";
 
@@ -23,21 +24,39 @@ const unrolled: LocalExplorationState = {
   hasRolledAllDice: false,
 };
 
-/** A campaign's own chart, to prove the places shown are the server's and not a copy of our own. */
 const rules = {
   exploration_table: [{ max_total: null, amount: 1 }],
   exploration_dice: { max: 10, max_chosen: 6 },
-  exploration_multiples: [
-    { count: 2, label: "Twice", places: ["Jetty", "b", "c", "d", "e", "f"] },
-    { count: 3, label: "Thrice", places: ["a", "b", "Daemon Swamp", "d", "e", "f"] },
-  ],
   hero_death_roll: "d66",
   injury_tables: {},
 } as BattlePostbattleRules;
 
-const rolled = (diceValues: number[], ruleset?: BattlePostbattleRules) => {
+/** A chart that pays no shards: the dice total gives what its note says (Albion's supply sources). */
+const noShards = { ...rules, exploration_table: [], exploration_income_note: "2-5 Camping Site." };
+
+const place = (face: number, name: string, placeRules = "") => ({
+  id: face,
+  face,
+  name,
+  rules: placeRules,
+});
+
+/** A campaign's own chart, to prove the places shown are the server's and not a copy of our own. */
+const chart = {
+  multiples: [
+    { count: 2, label: "Twice", places: [place(1, "Jetty", "D6 gc.")] },
+    { count: 3, label: "Thrice", places: [place(3, "Daemon Swamp")] },
+  ],
+} as ExplorationChart;
+
+const rolled = (
+  diceValues: number[],
+  ruleset?: BattlePostbattleRules,
+  found?: ExplorationChart
+) => {
   render(
     <ExploreTab
+      chart={found}
       explore={
         {
           exploration: {
@@ -106,8 +125,8 @@ describe("ExploreTab", () => {
     expect(setExploration.mock.calls[1]).toEqual(setExploration.mock.calls[0]);
   });
 
-  it("names each multiple's place from the server's chart, never a list of its own", () => {
-    rolled([3, 3, 3, 1, 1], rules);
+  it("names each multiple's place from the campaign's chart, never a list of its own", () => {
+    rolled([3, 3, 3, 1, 1], rules, chart);
     expect(screen.getByText("Daemon Swamp")).toBeInTheDocument();
     expect(screen.getByText("Thrice 3\u00b73\u00b73")).toBeInTheDocument();
     expect(screen.getByText("Jetty")).toBeInTheDocument();
@@ -116,8 +135,25 @@ describe("ExploreTab", () => {
     expect(screen.queryByText("Well")).not.toBeInTheDocument();
   });
 
-  it("names no place when the server sent no chart", () => {
-    rolled([3, 3, 3]);
+  it("shows what a found place does, in the chart's own words", () => {
+    rolled([1, 1], rules, chart);
+    expect(screen.getByText("D6 gc.")).toBeInTheDocument();
+  });
+
+  it("says nothing about a place nobody has written rules for", () => {
+    rolled([3, 3, 3], rules, chart);
+    const card = screen.getByText("Daemon Swamp").closest("article") as HTMLElement;
+    expect(card.querySelector("p")).toBeNull();
+  });
+
+  it("names no place when the campaign's chart hasn't arrived", () => {
+    rolled([3, 3, 3], rules);
     expect(screen.queryByText(/of a kind|Thrice/)).not.toBeInTheDocument();
+  });
+
+  it("shows a no-shards chart's note instead of a shard figure", () => {
+    rolled([3, 3], noShards as BattlePostbattleRules, chart);
+    expect(screen.getByText("2-5 Camping Site.")).toBeInTheDocument();
+    expect(screen.queryByText(/shard/)).not.toBeInTheDocument();
   });
 });

@@ -16,7 +16,9 @@
 - mount survival (only when there is one): a D6 for each selected rider taken out of action on his mount
   (services/postbattle/mounts.py).
 
-`rules` are the campaign's exploration chart (apps/exploration) and its dice limits, and the serious injury tables with the campaign's hero death roll
+`rules` are the campaign's exploration chart in outline (its id and name, its income table and note, and the dice
+limits: its places and their rules text are read from `campaigns/<id>/exploration/`, so no broadcast carries
+them), and the serious injury tables with the campaign's hero death roll
 (henchmen, and hirelings on the henchman table, roll a d6; the battle roster shows each hireling's `injuryTable`):
 only the d6 and the campaign's hero table, the ones its units roll on, so the rules fit the end of the fight's
 broadcast (services/broadcast.py).
@@ -30,7 +32,7 @@ from apps.exploration.selectors import chart_for
 
 from ...models import Battle, BattleKill, BattleParticipant
 from ...validation.config import normalize_unit_information
-from ..exploration import exploration_multiples, exploration_table
+from ..exploration import exploration_table
 from ..injuries import injury_tables
 from ..kills import count_by_unit, live_kills
 from ..random_mutations import random_mutation_table
@@ -182,7 +184,6 @@ def postbattle_rules(hero_death_roll: str, chart: Chart) -> dict:
         "exploration_chart": {"id": chart.id, "name": chart.name},
         "exploration_table": exploration_table(chart),
         "exploration_income_note": chart.income_note,  # a chart that pays no shards says what its total gives
-        "exploration_multiples": exploration_multiples(chart),
         "exploration_dice": {"max": chart.max_dice, "max_chosen": chart.max_chosen},
         "hero_death_roll": hero_death_roll,
         "injury_tables": {roll: tables[roll] for roll in ("d6", hero_death_roll) if roll in tables},
@@ -197,24 +198,14 @@ def rules_for(settings: CampaignSettings | None, chart: Chart) -> dict:
 
 
 def broadcast_rules(rules: dict) -> dict:
-    """The rules as a broadcast carries them: without the injury tables' book lines (some 4 KB of the message's 10 KB),
-    the random mutation table and the exploration places' rules text and faces (a place's face is its position in its
-    row), which every page has from its state, its write's answer or the campaign's exploration endpoint and keeps
+    """The rules as a broadcast carries them: without the injury tables' book lines (some 4 KB of the message's 10 KB)
+    and the random mutation table, which every page has from its state or its write's answer and keeps
     (useCampaignBattleRules)."""
     tables = {
         roll: [{key: value for key, value in row.items() if key != "text"} for row in rows]
         for roll, rows in rules["injury_tables"].items()
     }
-    dropped = ("rules", "face")
-    multiples = [
-        {
-            **row,
-            "places": [{key: value for key, value in place.items() if key not in dropped} for place in row["places"]],
-        }
-        for row in rules["exploration_multiples"]
-    ]
-    kept = {key: value for key, value in rules.items() if key != "random_mutations"}
-    return {**kept, "injury_tables": tables, "exploration_multiples": multiples}
+    return {**{key: value for key, value in rules.items() if key != "random_mutations"}, "injury_tables": tables}
 
 
 def suggestions_for(
