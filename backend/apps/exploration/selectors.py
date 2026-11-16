@@ -47,6 +47,15 @@ def chart_row(campaign_id: int | None, chart_id: int | None, *, in_play: bool = 
     return _book_chart(campaign_id, rows)
 
 
+def book_chart_id() -> int | None:
+    """The seeded Mordheim chart, which a new campaign is given (`campaigns/services/campaigns.py`): a Django field
+    can't default to a looked-up row. None until the catalogue is seeded, and null reads as this chart anyway."""
+    found: int | None = (
+        ExplorationChart.objects.filter(campaign__isnull=True, slug=BOOK_SLUG).values_list("id", flat=True).first()
+    )
+    return found
+
+
 def picked_chart_id(campaign_id: int) -> int | None:
     return (
         CampaignSettings.objects.filter(campaign_id=campaign_id).values_list("exploration_chart_id", flat=True).first()

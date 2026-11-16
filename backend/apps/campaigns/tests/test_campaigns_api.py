@@ -15,6 +15,7 @@ from apps.campaigns.models import (
     CampaignSettings,
 )
 from apps.core.testing import book_warband_type
+from apps.exploration.models import ExplorationChart
 from apps.items.models import (
     Item,
     ItemAvailability,
@@ -150,6 +151,26 @@ class CampaignApiTests(APITestCase):
         settings = CampaignSettings.objects.get(campaign_id=campaign["id"])
         self.assertFalse(settings.enable_encampments)
         self.assertFalse(settings.enable_locations)
+
+    def test_create_campaign_picks_the_mordheim_chart(self):
+        # William, 16 Nov 2026: "Make mordheim the default instead of null", so a new campaign is given the book's
+        # chart rather than a null the server reads as it
+        chart = ExplorationChart.objects.create(name="Exploration (Mordheim)", slug="mordheim")
+        owner = self._create_user("owner@example.com", "Owner")
+
+        campaign = self._create_campaign(owner)
+
+        settings = CampaignSettings.objects.get(campaign_id=campaign["id"])
+        self.assertEqual(settings.exploration_chart_id, chart.pk)
+        self.assertEqual(campaign["exploration_chart_id"], chart.pk)
+
+    def test_create_campaign_leaves_the_chart_null_with_none_seeded(self):
+        # a fresh database has no catalogue until seed_all runs; null still means the book's Mordheim chart
+        owner = self._create_user("owner@example.com", "Owner")
+
+        campaign = self._create_campaign(owner)
+
+        self.assertIsNone(CampaignSettings.objects.get(campaign_id=campaign["id"]).exploration_chart_id)
 
     def test_create_campaign_can_switch_on_encampments_and_locations(self):
         owner = self._create_user("owner@example.com", "Owner")

@@ -7,6 +7,8 @@ from typing import Any
 
 from django.db import transaction
 
+from apps.exploration.selectors import book_chart_id
+
 from ..constants import OWNER
 from ..in_play import DEFAULT_PRESET, preset_ids, set_settings
 from ..models import Campaign, CampaignMembership, CampaignSettings
@@ -30,7 +32,9 @@ def unique_join_code() -> str:
 
 def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
     """A new campaign with `owner` as its owner, from CampaignCreateSerializer's data; all or nothing. Its settings
-    in play are the ones sent, else its preset's (Up to 1c by default, in_play.py)."""
+    in play are the ones sent, else its preset's (Up to 1c by default, in_play.py), and it explores by the book's
+    Mordheim chart, which it is given rather than left to read out of a null (none seeded yet: null, which reads as
+    that chart all the same)."""
     picked = validated.get("setting_ids")
     setting_ids = (
         [row.pk for row in picked] if picked is not None else preset_ids(validated.get("preset", DEFAULT_PRESET))
@@ -46,6 +50,7 @@ def create_campaign(owner: Any, validated: dict[str, Any]) -> Campaign:
             starting_gold=validated.get("starting_gold", 500),
             enable_encampments=validated.get("enable_encampments", False),
             enable_locations=validated.get("enable_locations", False),
+            exploration_chart_id=book_chart_id(),  # Mordheim's, not a null that means it (William, 16 Nov 2026)
         )
         set_settings(campaign, setting_ids)
         CampaignMembership.objects.create(campaign=campaign, user=owner, role_id=codes.role_ref(OWNER))
