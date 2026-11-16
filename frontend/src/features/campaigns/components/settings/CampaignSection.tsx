@@ -74,8 +74,8 @@ function CampaignName({ campaign }: { campaign: CampaignSummary }) {
 }
 
 /**
- * The Encampments page, Locations and Campaign points (every warband's resource while on),
- * switched on or off for everyone; each saves as it flips.
+ * The Encampments page, Locations and Plots (campaign points: every warband's resource while on,
+ * William's label of 16 Nov 2026), switched on or off for everyone; each saves as it flips.
  */
 function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
   const { saving, error, save } = useCampaignSave(campaign.id, "Couldn't save that.");
@@ -92,7 +92,7 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
     },
     {
       key: "enable_campaign_points" as const,
-      label: "Campaign points",
+      label: "Plots (campaign points)",
       on: Boolean(campaign.enable_campaign_points),
     },
   ];
@@ -116,7 +116,7 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
 }
 
 /**
- * Settings → Campaign (`edit_settings`, the owner): its name, the pages and campaign points switched
+ * Settings → Campaign (`edit_settings`, the owner): its name, the pages and Plots switched
  * on, the content
  * in play (grade presets and settings), the warband rules (starting gold, the default
  * resource, limits, the death roll and the level-ups), then the exploration chart.

@@ -1,6 +1,6 @@
 /**
- * Settings → Campaign: Campaign points (William, 7 Nov 2026: "campaign points campaign wide
- * setting") is a switch beside Encampments and Locations, off at first, saved as it flips.
+ * Settings → Campaign: campaign points, labelled "Plots (campaign points)" (William, 16 Nov 2026),
+ * is a switch beside Encampments and Locations, off at first, saved as it flips.
  */
 import { screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,13 +24,13 @@ beforeEach(() => {
   fakeApi.on("GET /settings/", { settings: [], presets: [] });
 });
 
-describe("Campaign points", () => {
+describe("Plots (campaign points)", () => {
   it("is off at first and switches on for every warband", async () => {
     const user = setupUser();
     fakeApi.on(`PATCH /campaigns/${campaign.id}/`, (body: object) => ({ ...campaign, ...body }));
     renderWithQueryClient(<CampaignSection campaign={campaign} />);
 
-    const toggle = screen.getByRole("switch", { name: "Campaign points" });
+    const toggle = screen.getByRole("switch", { name: "Plots (campaign points)" });
     expect(toggle).not.toBeChecked();
     await user.click(toggle);
 
