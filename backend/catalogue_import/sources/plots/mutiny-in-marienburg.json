@@ -1,0 +1,250 @@
+[
+  {
+    "slug": "drowning-the-witch",
+    "name": "Drowning the Witch",
+    "setting": "Mutiny in Marienburg",
+    "summary": "A holy war on the witches, mutants and Undead of the city-port. The warband scores for burning and slaying heretics and for confiscating tainted artefacts, and wins by driving every follower of Chaos and every Undead warband out of the campaign.",
+    "who": ["Witch Hunters", "Sisters of Sigmar"],
+    "who_note": "Mercenaries who hire a Warrior-Priest of Sigmar.",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario."},
+      {"points": 1, "text": "A Tainted item confiscated from another warband. Roll a D6 and score on a 6, once for each type of artefact."},
+      {"points": null, "dice": "D3", "text": "Whenever the leader of any followers of Chaos or Undead warband is taken out of action."},
+      {"points": 1, "text": "Burnt heretic: a Mutant, Witch, Warlock or Hero of a Chaos or Undead warband taken out of action in close combat after being set on fire. Roll a D6 and score on a 6."},
+      {"points": 1, "text": "Slain heretic: a warrior of those kinds taken out of action by the warband who dies after the battle."},
+      {"points": -1, "text": "Whenever a warrior of a Guarding the Peace warband is taken out of action by the warband and dies after the battle."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "Judgement", "text": "Witch Hunters may use the Sisters of Sigmar special skill list, though only the Witch Hunter Captain may take Utter Determination. One holy Hero gains a special skill at once."},
+      {"points": 10, "name": "Church Sponsorship", "text": "The maximum warband size rises by 2, and the warband gains two free Henchmen."},
+      {"points": 15, "name": "Torture Chamber", "text": "Instead of searching for a rare item the leader interrogates a captured Mutant, Witch, Warlock, Necromancer, Undead creature or follower of Chaos. On a successful Strength test the warband gains 1 Campaign Point and the captive's warband loses 1; the captive then escapes back to his own warband. The Torture Chamber counts as a fortified encampment."},
+      {"points": 20, "name": "License Granted", "text": "Any of the warband's warriors held under arrest by another constabulary is released at once, and its own warriors go quietly instead of rolling on the Serious Injury chart. A non-law warrior it takes out of action is arrested on a natural 6, unless the warband routed."},
+      {"points": 25, "name": "Talismanic Seal of Sigmar", "text": "At the start of a new round of close combat with the leader, roll a D6 for an enemy who is not Undead or a follower of Chaos. On a 6 roll on the Random Mutation chart and apply the result: he was concealing it all along."},
+      {"points": 35, "name": "Arrest Warrant", "text": "Any warrior the warband chooses is taken captive at once, as a captured heretic."},
+      {"points": 40, "name": "Holy Crusade", "text": "Every heretical warband this warband routs is eliminated from the campaign. When every Witch and Warlock Hired Sword has been slain and every followers of Chaos and Undead warband has been eliminated, the warband wins the campaign."}
+    ]
+  },
+  {
+    "slug": "gaze-of-the-gods",
+    "name": "Gaze of the Gods",
+    "setting": "Mutiny in Marienburg",
+    "summary": "A cult courts the favour of the Dark Gods. The warband scores for mutations, sacrifices and tainted artefacts, and ends by sealing a pact with a chosen god in its own stronghold.",
+    "who": ["Beastmen", "Fimir", "Cult of the Possessed", "Carnival of Chaos", "Stromfels Reavers"],
+    "who_note": "Any other Cult of Chaos.",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario, unless information points were gathered."},
+      {"points": null, "dice": "D3", "text": "Taking the leader of a Witch Hunter, Sisters of Sigmar or rival followers of Chaos warband out of action."},
+      {"points": 1, "text": "Whenever a Hero receives a new mutation. Roll a D6 and score on a 6."},
+      {"points": 1, "text": "Each captured human sacrificed after a 6 on the Ceremony of Sacrifice chart. Roll a D6 and score on a 6."},
+      {"points": 1, "text": "Each Tainted item acquired. Roll a D6 and score on a 6, once for each type."},
+      {"points": -1, "text": "If a Hero becomes a Chaos Spawn."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "Sacrificial Stone", "text": "Every captive must be sacrificed, whatever a Slaver was hired for, but not immediately after the battle in which he was taken, so another player may still free him through Hangman's Square. Instead of searching for a rare item the Heroes hold a ceremony: roll once on the Ceremony of Sacrifice chart for each offering, with +1 for each Hero after the first. 1-5 Escaped, the warrior returns to his warband and he or his group gains D3 experience; 6 Sacrificed, each participating Hero gains 1 experience. A roll of 1 always means escape."},
+      {"points": 10, "name": "Flesh Market", "text": "The warband may play Swap Meat instead of a core scenario whenever it picks the scenario."},
+      {"points": 15, "name": "Master's Bidding", "text": "Nominate a human Hero from another warband, but not a leader, Witch Hunter, Witch-Finder, Sister of Sigmar or human Priest. He gains a mutation from the Random Mutation chart, cannot be retired, and re-rolls any Serious Injury result that kills him. Your wizard learns Lure of Chaos, or the leader does if you have no wizard, and casting it on the nominated Hero puts him under your control for the rest of that game with no further tests."},
+      {"points": 20, "name": "Chaos Moon Aligned", "text": "Discover the Mist Wreathed Stronghold, or claim it from whoever holds it with the Stockade scenario. Once it is held, the warband may play the Stronghold scenario the next time it may choose."},
+      {"points": 25, "name": "Bargain Struck", "text": "If the warband won the Stronghold scenario, pick a Chaos god, or keep the one it is dedicated to, or roll a D6: 1 Khorne, 2 Slaanesh, 3 Nurgle, 4 Tzeentch, 5 Undivided, 6 your choice. Two members, one wizard and one warrior, gain a Mark of Chaos if one applies. The warband now counts as a Cult of Chaos."},
+      {"points": 35, "name": "Essence Summoned", "text": "D3+1 Cultists arrive every round after the first and are lost at the end of the battle. They use human warrior statistics and carry Black Lotus covered daggers. In the magic phase any number of them may kill themselves, each giving +1 to your next casting roll."},
+      {"points": 40, "name": "Pact Sealed", "text": "The sacrifice takes place in a Hangman's Square scenario inside your Mist Wreathed Stronghold. For Nurgle, sacrifice the leader of a Drowning the Witch warband, else a priest of an enemy warband. For Slaanesh, an enemy Merchant Hero of a Ten Great Families warband, else any enemy merchant. For Khorne, the leader of an opposing Chaos warband or one following The Body Trade. For Tzeentch, the leader of an opposing warband who is a magic user, else an opposing wizard Hired Sword. For Undivided, the leader of a Guarding the Peace warband, else a Mercenary leader. The book stops there and never says the warband wins the campaign, where every other plot does."}
+    ]
+  },
+  {
+    "slug": "guarding-the-peace",
+    "name": "Guarding the Peace",
+    "setting": "Mutiny in Marienburg",
+    "summary": "A constabulary keeps the law. The warband scores for arrests and for confiscating illegal goods, and wins by arresting a named crime lord who is otherwise above the law.",
+    "who": ["Watch Patrols", "Tilean Mercenaries"],
+    "who_note": "Elf warbands.",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario."},
+      {"points": 1, "text": "An illegal item confiscated from another warband. Roll a D6 and score on a 6, once in the campaign for the same kind of Chaos artefact, tainted item, poison or drug."},
+      {"points": 1, "text": "Whenever a thief, assassin, backstabber, slaver, cutpurse, bandit, outlaw, fugitive, highwayman or necromancer is placed under arrest. Roll a D6 and score on a 6."},
+      {"points": null, "dice": "D3", "text": "Whenever the leader of a warband following The Secret Deal or The Body Trade is placed under arrest."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "Evidence", "text": "Roll on the Arcane Items chart for a clue."},
+      {"points": 10, "name": "Search Warrant", "text": "In the post-battle sequence the warband's Heroes may search any other warband's encampment. Its owner may pay 2D6 gold crowns for each visiting Hero as a bribe, and if he refuses the searcher may play The Sting against him next game. Winning without the building collapsing closes the encampment down; if the building collapses it is destroyed, except a Watch Station or an Armoury, which always transfer to the constabulary instead."},
+      {"points": 15, "name": "Swords of Solkan", "text": "Two Heroes become Knights of Purity and gain the Witch-finder talent from the Marks of Solkan. All the warband's Heroes hate followers of Chaos."},
+      {"points": 20, "name": "Private Consultant", "text": "Sam Warble joins as a Dramatis Personae with his fee waived, and ends any contract he has with another warband. If two constabularies reach this achievement he is contracted to both and does not appear when they face each other, unless it is a multiplayer game, in which case roll for control."},
+      {"points": 25, "name": "Martial Law", "text": "Heroes and Henchmen may take unlimited free black powder weapons of any kind, bows of any kind, superior black powder, crossbows, crossbow pistols, shields and heavy armour. The Armoury counts as an encampment."},
+      {"points": 35, "name": "Joint Operation", "text": "D3+1 Watch Officers arrive every turn after the first, with no need to whistle for help."},
+      {"points": 40, "name": "Arrest Warrant", "text": "Nominate the leader of a warband following The Ten Great Families, The Secret Deal or The Body Trade. He may be placed under arrest despite being above the law, and if he is, the constabulary is declared winner of the campaign."}
+    ]
+  },
+  {
+    "slug": "poisoning-the-well",
+    "name": "Poisoning the Well",
+    "setting": "Mutiny in Marienburg",
+    "summary": "Skaven taint the city from below. The warband scores for poisoned kills, tainted objectives and burnt encampments, and wins by assassinating the leader of every other plot and routing its rivals.",
+    "who": ["Skaven"],
+    "who_note": "",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario. The book's sentence qualifying this is cut off mid-sentence, as printed: unless the scenario played was."},
+      {"points": 1, "text": "Objective tainted: roll a D6 each time the warband taints an objective with wyrdstone, and score on a 6."},
+      {"points": null, "dice": "D3", "text": "Every encampment burnt to the ground."},
+      {"points": 1, "text": "Every warrior taken out of action with a poisoned or warpstone weapon, unless he dies permanently after the battle. Roll a D6 and score on a 6."},
+      {"points": null, "dice": "D3", "text": "Instead of the +1, whenever a Hero poisoned or hit with a warpstone weapon goes out of action and dies permanently."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "An Endless Web of Sewers", "text": "In any match fought inside the city the warband may begin underground."},
+      {"points": 10, "name": "Eye for Warpstone", "text": "The warband may declare any treasure it acquires to be tainted."},
+      {"points": 15, "name": "Emissary of Skavenblight", "text": "An Albino Stormvermin Hired Sword joins the warband by blood pact. If he dies permanently the warband loses 40 gold crowns and a replacement is sent."},
+      {"points": 20, "name": "The Gaze of the Council", "text": "The warband gains its clan's ability. Clan Pestilens, Unholy Chant: once per battle the leader makes every Skaven in the warband pass all Leadership-based tests that turn, Rout tests included. Clan Skryre, Fixer: a weapon broken by a misfire or malfunction is repaired for half its base price. Clan Eshin, Saboteurs: Black Lotus, Dark Venom, Spider Spittle and Manticore Spoor become Common, and one Henchman group at a time may use them, one dose per model."},
+      {"points": 25, "name": "Mortslieb Falling", "text": "The warband may turn any Random Happening it rolls into result 55, Shard of Wyrdstone, and may aim the meteor: pick a point, then roll the artillery and scatter dice, ignoring the hit symbol, as it always scatters."},
+      {"points": 35, "name": "Assassination Protocol", "text": "The first time the warband takes out the leader of a warband following each other plot, that leader is dead with no Serious Injury roll. This works once for each plot."},
+      {"points": 40, "name": "An Invitation to the Thirteen", "text": "Once the warband has assassinated the leader of every plot but its own, it must rout another Poisoning the Well warband to win. If there is no other Poisoning the Well player it wins automatically."}
+    ]
+  },
+  {
+    "slug": "promise-of-power",
+    "name": "Promise of Power",
+    "setting": "Mutiny in Marienburg",
+    "summary": "A Necromancer gathers corpses, arcane items and vehicles towards his own apotheosis, and wins by destroying a Greater Artefact in a final sacrifice at his soul-ark.",
+    "who": [],
+    "who_note": "Undead warbands led by a Necromancer.",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario."},
+      {"points": 1, "text": "Each fresh corpse obtained. Roll a D6 and score on a 6."},
+      {"points": 1, "text": "Each arcane item acquired, once for each type."},
+      {"points": null, "dice": "D3", "text": "Each Coach, Wagon, Riverboat or River Barge bought."},
+      {"points": 1, "text": "Each new feature bought at the Boatyard to improve a vehicle. Roll a D6 and score on a 6."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "Scavengers", "text": "Roll twice on the Booty chart and take your pick."},
+      {"points": 10, "name": "Mortuary", "text": "A Hero may carry a corpse to the lab in the post-battle sequence, and the Mortuary counts as a fortified encampment. Roll 2D6 for each corpse: 2-4 it is too old; 5-7 it sells for 12 gold crowns; 8-10 it sells for 24 gold crowns; 11-12 it is reanimated, adding a Flesh Golem that uses the Wicker Man's rules and profile."},
+      {"points": 15, "name": "Phylactery", "text": "A Hero becomes Undead, gaining No Pain, Immune to Poison and Immune to Psychology if he did not have them, +1 Wound and +1 Toughness, and he recovers from destruction. A soul devoured on an 11-15 Hero result, or a 1 on the Henchman or Hired Sword Serious Injury result, gives a free Advance. When he dies his soul is held for one battle and he revives without his equipment. The ark must be carried by two warriors or a vehicle. If an enemy captures and destroys it the warband loses D3+1 Campaign Points and the Hero loses the bonuses; destroyed while holding his soul, he is destroyed for good. A new ark costs 2 (Un)holy Relics, 2 Treasures and D2 Campaign Points, and the warband may only have one at a time."},
+      {"points": 20, "name": "Men O' Bones", "text": "A model taken out of action in water lets a Necromancy wizard raise a zombie in its place at once. The maximum number of warriors rises by 4. A Necromancy wizard may spend an advance on the Henchman table instead, applying a special increase to a zombie group."},
+      {"points": 25, "name": "Bring out your dead", "text": "With at least 5 corpses stored in a vehicle it becomes a Travelling Charnelhouse: all Undead within 12 inches re-roll To Hit rolls of 1 and ignore Cannot Run. Cadavers at the Abattoir cost 10 gold crowns instead of 12 and may be taken without rolling on the table."},
+      {"points": 35, "name": "Evocation of Death", "text": "Store the vampire's coffin or the phylactery ark in a vehicle. Each time a spell is cast roll a D6; each 6 adds +1 cumulatively along a six-step table of vehicle blessings that lasts until the end of the battle."},
+      {"points": 40, "name": "Apotheosis", "text": "With a captive of at least 15 experience, any Greater Artefact and an intact ark attuned to the leader, the warband may play Hangman's Square with two players against the defending team. The ark is placed by the altar, the warband takes no Rout tests until it has lost 50% of its members, and the leader cannot be taken out of action: each time that would happen he instead takes a cumulative -1 to hit, Strength, Initiative and Attacks. If the warband wins, the artefact is destroyed and the warband wins the campaign."}
+    ]
+  },
+  {
+    "slug": "price-of-power",
+    "name": "Price of Power",
+    "setting": "Mutiny in Marienburg",
+    "summary": "A vampire's court hoards corpses, arcane items and vehicles, and wins by destroying a Greater Artefact to lift the curse of its bloodline.",
+    "who": ["Strigany River Pirates"],
+    "who_note": "Undead warbands led by a Vampire.",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario."},
+      {"points": 1, "text": "Each fresh corpse obtained. Roll a D6 and score on a 6."},
+      {"points": 1, "text": "Each arcane item acquired, once for each type."},
+      {"points": null, "dice": "D3", "text": "Each Coach, Wagon, Riverboat or River Barge bought."},
+      {"points": 1, "text": "Each new feature bought at the Boatyard to improve a vehicle. Roll a D6 and score on a 6."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "Scavengers", "text": "Roll twice on the Booty chart and take your pick."},
+      {"points": 10, "name": "Mortuary", "text": "A Hero may carry a corpse to the lab in the post-battle sequence, and the Mortuary counts as a fortified encampment. Roll 2D6 for each corpse: 2-4 it is too old; 5-7 it sells for 12 gold crowns; 8-10 it sells for 24 gold crowns; 11-12 it is reanimated, adding a Flesh Golem that uses the Wicker Man's rules and profile."},
+      {"points": 15, "name": "Blood Kiss", "text": "A Hero receives the blood kiss and becomes a Son-in-Darkness. In multiplayer scenarios a coffin objective marker deploys with the warband, moved by two models, with two guards always assigned. An enemy touching the marker or a guard brings out the Old Father: M 6, WS 7, BS 5, S 5, T 5, W 3, I 7, A 4, Ld 10, immune to poison and regenerating on a 5 or more."},
+      {"points": 20, "name": "Men O' Bones", "text": "A model taken out of action in water lets a Necromancy wizard raise a zombie in its place at once. The maximum number of warriors rises by 4. A Necromancy wizard may spend an advance on the Henchman table instead, applying a special increase to a zombie group."},
+      {"points": 25, "name": "Bring out your dead", "text": "With at least 5 corpses stored in a vehicle it becomes a Travelling Charnelhouse: all Undead within 12 inches re-roll To Hit rolls of 1 and ignore Cannot Run. Cadavers at the Abattoir cost 10 gold crowns instead of 12 and may be taken without rolling on the table."},
+      {"points": 35, "name": "Evocation of Death", "text": "Store the vampire's coffin or the phylactery ark in a vehicle. Each time a spell is cast roll a D6; each 6 adds +1 cumulatively along a six-step table of vehicle blessings that lasts until the end of the battle."},
+      {"points": 40, "name": "Lifting the Curse", "text": "With a captive of at least 15 experience and any Greater Artefact the warband may play Kidnapped! from Town Cryer 6 with three players, the captive standing in for the sacrificial victim and the coffin with its guards next to the altar. If it loses it loses D6 Campaign Points. If it wins, the artefact is destroyed, the curse is lifted and the warband wins the campaign."}
+    ]
+  },
+  {
+    "slug": "the-body-trade",
+    "name": "The Body Trade",
+    "setting": "Mutiny in Marienburg",
+    "summary": "Slavers deal in living cargo. The warband scores for captives taken, traded and bought, and wins by smuggling twelve of them out of the city.",
+    "who": ["Dark Elf Corsairs", "Mobsmen", "Norse Explorers", "Arabyan Raiders", "Brionnese Pirates", "Maneaters", "Marauders of Chaos", "Chaos Dwarfs"],
+    "who_note": "",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario, unless information points were gathered."},
+      {"points": 1, "text": "Intelligence gathered: winning a scenario in which information points were used."},
+      {"points": 1, "text": "Each additional captive exchanged, slave bought or traded, captured warrior traded, straggler captured, and each time a warrior is captured. Roll a D6 and score on a 6."},
+      {"points": 1, "text": "Each bribe paid to a Guarding the Peace warband. Roll a D6 and score on a 6."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "Bribery", "text": "An arrested warrior can be released without a Conviction roll by paying the constabulary double his experience in gold crowns. The leader may be disguised in Cathayan silk clothes."},
+      {"points": 10, "name": "Slaver Ring", "text": "Whenever another player sells captives to slavers at D6 x 5 gold crowns they must first be offered to the ring, and if two or more warbands are in the ring, roll for who buys. The leader gains the Slaver skill, and the warband never holds more than two Slavers at once. Anyone put out of action in hand-to-hand combat by a Slaver is automatically captured, and captured Heroes may not be eaten or ransomed. Captives may be exchanged with their own warband for stragglers or other captives, and Campaign Points are only scored when the slaver receives more non-friendly models than he gives."},
+      {"points": 15, "name": "Kidnappings", "text": "Whenever the warband rolls on the Cargo chart for a barrel it may choose a hostage instead. It may lease any vehicle at half price with no search roll, though that vehicle may never be exchanged or sold. Captives travel bound in barrels as cargo markers, and at the end of a battle roll a D6 for every 4 captives still aboard, scoring 1 Campaign Point on a 6."},
+      {"points": 20, "name": "Tanners Alley", "text": "The warband must visit location 1-1-1-1-1 in the next exploration phase. If another warband already holds the Tannery it may be disputed with The Sting next game, with the usual take-it-or-raze-it outcome."},
+      {"points": 25, "name": "Sleeper Cell", "text": "Deploy an extra Henchman group of D3 warriors in any large confrontation. The warband maximum may be exceeded, but the limits on each type of Henchman may not."},
+      {"points": 35, "name": "Reluctant Overseers", "text": "The warband may play Swap Meat instead of a core scenario whenever it picks the scenario. Choose a Dark Elf or Fire Dwarf partner, and D3 Dark Elf Corsairs or Chaos Dwarfs deploy at the start of every battle."},
+      {"points": 40, "name": "Human Chattel", "text": "Once the warband has taken twelve captives it must play Burrow Town Collapsing as the smuggler, with twelve hostage markers in place of the contraband and a guard at each end of the chain for it to move. If it escapes through the sewers with the chain, or routs every enemy warband, the body trader wins the campaign. There is a second route, the Mouth of Morr: two warriors, at least one of them a Hero, miss the next battle to smuggle any number of captives out of the city, and each one smuggled reduces the number of markers needed by one. When the player has 40 Campaign Points and twelve captives and stragglers have gone through the Mouth of Morr, the body trader is declared winner. If two or more warbands discover the Mouth of Morr, neither may use it."}
+    ]
+  },
+  {
+    "slug": "the-secret-deal",
+    "name": "The Secret Deal",
+    "setting": "Mutiny in Marienburg",
+    "summary": "A criminal syndicate works the city's rarest goods and its encampments, and wins by stealing a Greater Artefact.",
+    "who": ["Mobsmen", "Mercenaries", "Norse Explorers", "Stromfels Reavers", "Merchants Caravans"],
+    "who_note": "Elf and Dwarf warbands.",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario, unless the scenario was The Heist."},
+      {"points": null, "dice": "D3", "text": "Winning The Heist."},
+      {"points": 1, "text": "Whenever the warband acquires an encampment."},
+      {"points": 1, "text": "Each rare item of Rare 12 or higher obtained, once for each kind of rare item. Roll a D6: on a 6 score 1 Campaign Point; on a 1 score 1 Campaign Point but the League of Gentlemen Entrepreneurs takes the item off the roster."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "Extortion Ring", "text": "Heroes may visit another warband's unfortified encampment in the post-battle sequence to extort D6 gold crowns for each visiting Hero. If the owner refuses, play The Sting next game, with the usual take-it-or-raze-it outcome. An encampment whose protection fee was paid cannot be contested by a third party."},
+      {"points": 10, "name": "Plundering", "text": "The warband may play The Heist instead of a core scenario whenever it picks the scenario, but never to steal a Greater Artefact."},
+      {"points": 15, "name": "Privateer", "text": "A Swashbuckler Hired Sword joins with no fee and an automatic Blood Pact."},
+      {"points": 20, "name": "Guild Membership", "text": "The leader and one appointed enforcer join the Marienburg Gentleman's Club and cannot be arrested."},
+      {"points": 25, "name": "Snitches", "text": "Erase the criminal records of D6 known felons in the warband and brand the same number of warriors from another warband as felons instead. Law-enforcement and Above the Law models cannot be chosen."},
+      {"points": 35, "name": "League Business", "text": "Lisette Leerer joins as a Dramatis Personae at her minimum fee of 2 Treasures, ending any contract she has with another warband. She is shared between syndicates on the same terms as Sam Warble."},
+      {"points": 40, "name": "Secret Deal", "text": "If another warband follows The Ten Great Families, or has hired a Merchant Hired Sword, and holds a Greater Artefact, the warband may play The Heist to steal it; if neither has one, pick another warband. If a Greater Artefact is acquired by any means, the syndicate is declared winner of the campaign."}
+    ]
+  },
+  {
+    "slug": "the-ten-great-families",
+    "name": "The Ten Great Families",
+    "setting": "Mutiny in Marienburg",
+    "summary": "A merchant house builds a trading empire, scoring for rescues, for slavers and poisoners it kills and for reporting to the Embassy, and wins by owning every city encampment.",
+    "who": ["Mercenaries", "Pit Fighters", "Battle Monks of Cathay", "Norse Explorers", "Maneaters", "Amazons", "Strigany River Pirates", "Albion Privateers"],
+    "who_note": "Dwarf warbands.",
+    "scoring": [
+      {"points": 1, "text": "Playing a scenario."},
+      {"points": 1, "text": "Winning a scenario."},
+      {"points": 1, "text": "Whenever the warband rescues a hostage or a captured warrior. Roll a D6 and score on a 6."},
+      {"points": 1, "text": "Whenever a slaver, or any warrior carrying poison, is taken out of action by the warband and dies after the battle."},
+      {"points": 1, "text": "Whenever the leader of a Poisoning the Well warband is taken out of action."},
+      {"points": null, "dice": "D3", "text": "Report to embassy: after a won battle in which the leader was not taken out of action, he may miss the next battle to report at the Embassy Office, gaining D3 Campaign Points instead of the +1 for winning. A new leader is determined by highest Leadership for that battle."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "House Guard", "text": "The warband may hire a Merchant Hired Sword, who takes one of the Hero slots and benefits from the leader's trading bonuses, such as an Opulent Coach or the Reputation bonus. Instead of searching for rare items the Merchant may sell one rare item stored in the trade cart during the preceding battle, before either warband's Heroes search: roll a D6, 1-2 half price, 3-4 full price, 5-6 one and a half times the price. He may decline and try again after the next battle. Combined with Wholesale he may sell up to D3+1 items a game."},
+      {"points": 10, "name": "Enmity", "text": "A Hero may issue a challenge twice per battle while a Merchant is in the warband, counting as having Taunt. Against a Norse warband, a warband with a Slaver, or a Body Trade warband, the warband re-rolls missed attacks in the first round of combat and re-rolls its first failed Rout test, and may never voluntarily rout against Slavers or Norse unless its leader is out of action."},
+      {"points": 15, "name": "Mystic Mentor", "text": "Nominate a Hero as Mentor and pick a combat or special skill he knows. Any warrior within 1 inch of him may use it. If he is killed or captured, appoint a new mentor and pick a new skill."},
+      {"points": 20, "name": "Wholesale", "text": "The Merchant searches for D3+1 rare items after each battle instead of one, if he was not taken out of action. Whenever the exploration dice come up five of a kind the warband may replace them with 3-3-3-3-3, Abandoned Trading Post."},
+      {"points": 25, "name": "Famed Employers", "text": "The warband may pay a new Hired Sword's upkeep cost instead of his hire fee, with upkeep still paid as normal. It gains +2 to Blood Pact rolls."},
+      {"points": 35, "name": "Real Estate Mogul", "text": "On discovering an occupied encampment the warband may pay 250 gold crowns for the deed instead of contesting it with The Sting or Stockade. It may rent its properties to any warband that discovers them for 20 gold crowns a match, and a renter may contest ownership by playing The Sting or Stockade as the defender. Its properties gain Consecrated Ground: a Price of Power or Gaze of the Gods warband wanting to settle there must spend D3+1 games removing the blessing, and while it is blessed any such warband fighting there suffers -1 Leadership on every unit."},
+      {"points": 40, "name": "Monopoly", "text": "The warband may visit any city-based encampment without discovering it first. When no other warband owns a city-based encampment it wins the campaign, provided at least 50% of the encampments are in working order."}
+    ]
+  },
+  {
+    "slug": "new-world-old-grudges",
+    "name": "New World, Old Grudges",
+    "setting": "Mutiny in Marienburg",
+    "summary": "Lizardmen hunt their natural enemies, the Dark Elf and Skaven warbands, scoring for Lustrian relics recovered and enemies sacrificed, and winning when every natural enemy is eliminated.",
+    "who": ["Lizardmen"],
+    "who_note": "Its natural enemies are Dark Elf and Skaven warbands. It hates Clan Pestilens particularly, with no effect in play.",
+    "scoring": [
+      {"points": 1, "text": "Playing a match."},
+      {"points": 1, "text": "Winning a match."},
+      {"points": 1, "text": "Each Lustrian item of at least Rare 8 recovered, counting items and not weapons. Roll a D6 and score on a 6, the first time only for each item."},
+      {"points": null, "dice": "D3", "text": "Whenever the leader of a natural enemy warband is taken out of action."},
+      {"points": 1, "text": "Each natural enemy successfully sacrificed. Roll a D6 and score on a 6."}
+    ],
+    "achievements": [
+      {"points": 5, "name": "Blood for the Snake God", "text": "As Gaze of the Gods' Sacrificial Stone, except that only captives from its natural enemies may be sacrificed and the ceremony is held to Sotek."},
+      {"points": 10, "name": "Fury of Lustria", "text": "A natural enemy immobilised by bolas or nets, or stunned rather than merely knocked down, may be captured if he is taken out of action, provided the warband does not rout before his does. The warband may buy Spider Spittle at 20 gold crowns without searching."},
+      {"points": 15, "name": "Awesome Savagery", "text": "Against Skaven, Dark Elves or any warband holding a Greater Artefact the warband re-rolls missed attacks in the first round of combat and re-rolls its first failed Rout test, and may never voluntarily rout against natural enemies unless its leader is out of action."},
+      {"points": 20, "name": "Sotek's Chosen", "text": "Nominate a Skink, who gains Strength and Combat skills and an advance for every three models sacrificed. If he dies, nominate a successor."},
+      {"points": 25, "name": "Spawning Pools", "text": "Whenever a Henchman dies after a match he may be replaced free from the spawning pool, rolling for veteran experience as usual. The pool counts as an encampment."},
+      {"points": 35, "name": "Cleansing", "text": "Each natural enemy warband the warband routs is eliminated from the campaign."},
+      {"points": 40, "name": "Eradication", "text": "When all its natural enemies are eliminated, the warband wins the campaign."}
+    ]
+  }
+]
