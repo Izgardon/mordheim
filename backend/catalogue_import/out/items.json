@@ -1185,6 +1185,17 @@
         "note": ""
       },
       {
+        "label": "Mutiny in Marienburg",
+        "cost": 90,
+        "dice": null,
+        "dice_multiplier": null,
+        "cost_note": "",
+        "rarity": 11,
+        "for_everyone": true,
+        "warbands": [],
+        "note": ""
+      },
+      {
         "label": "",
         "cost": 90,
         "dice": null,

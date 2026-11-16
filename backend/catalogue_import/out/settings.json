@@ -207,16 +207,16 @@
     "grade": "2b",
     "sort_order": 12,
     "always_on": false,
-    "grade_basis": "majority of 58 graded entries",
+    "grade_basis": "majority of 59 graded entries",
     "counts": {
       "warbands": 13,
-      "items": 45,
+      "items": 46,
       "skills": 0,
       "hired_swords": 0,
       "dramatis_personae": 0
     },
     "grades_seen": {
-      "2b": 58
+      "2b": 59
     }
   },
   {

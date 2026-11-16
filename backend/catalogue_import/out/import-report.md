@@ -26,7 +26,7 @@ Answers go into `overrides.json`; the next build applies them.
 | items (mordheimer) | 242 |
 | items (MiM) | 51 |
 | items (warband templates) | 18 |
-| price rows | 587 |
+| price rows | 588 |
 | skills | 510 |
 | skill groups | 114 |
 | skill group links | 660 |
@@ -183,7 +183,7 @@ No membership questions left.
 | The Nemesis Crown | 1b | majority of 41 graded entries | 1b: 41 |
 | Border Town Burning | 1c | majority of 31 graded entries | 1b: 1, 1c: 30 |
 | Sylvania | 2a | majority of 5 graded entries | 2a: 5 |
-| Mutiny in Marienburg | 2b | majority of 58 graded entries | 2b: 58 |
+| Mutiny in Marienburg | 2b | majority of 59 graded entries | 2b: 59 |
 | Sartosa | 2b | majority of 12 graded entries | 2b: 12 |
 | Mousillon | 2b | majority of 10 graded entries | 2b: 10 |
 | Karak Azgal | 2b | majority of 8 graded entries | 2b: 8 |
@@ -883,6 +883,7 @@ Stubs that duplicate a complete item of ours, left out with their price carried 
 | Fish-hook Shot/Hunting Lasso | Fish-Hook Shot | 10 gc, Rare 7 |
 | Wolf Cloak/Norse Furs | Wolfcloak | 10 gc, Common |
 | Trade Wagon/Stage Coach | Trade Wagon | 100 gc, Rare 7 |
+| Wild Boar/Pig | War Boar | 90 gc, Rare 11 |
 
 Their prices our item already showed, at the same cost, dice and rarity and open to everyone too, so they were not carried:
 

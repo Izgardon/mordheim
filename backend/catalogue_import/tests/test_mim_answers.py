@@ -30,6 +30,7 @@ CARRIED: list[tuple[str, str, Price]] = [
         (300, None, None, 12),
     ),  # Ostlanders'  # noqa: E501
     ("Wolf Cloak/Norse Furs", "Wolfcloak", (10, None, None, None)),  # ours: four warbands' row
+    ("Wild Boar/Pig", "War Boar", (90, None, None, 11)),  # ours: the Orc warbands' two rows (16 Nov 2026)
 ]
 # the stubs whose price our item already showed, line for line: nothing was carried
 TWINS: list[tuple[str, str]] = [
@@ -87,6 +88,9 @@ class MimMergeTests(ReviewCase):
         self.assertEqual((row["for_everyone"], row["warbands"]), (True, []))
         [cloak] = [row for row in self.items["Wolfcloak"]["availabilities"] if row["label"] == MERGE_LABEL]
         self.assertEqual(cloak["note"], "Special availability")  # the rarity the book prints for it
+        [boar] = [row for row in self.items["War Boar"]["availabilities"] if row["label"] == MERGE_LABEL]
+        # ours are the Orc warbands', so this row is what sells a boar to a Marienburg warband at all
+        self.assertEqual((boar["for_everyone"], boar["warbands"]), (True, []))
 
     def test_the_stubs_name_and_the_hunting_lasso_are_tags_of_the_item_that_kept_it(self) -> None:
         self.assertIn("hunting lasso", self.items["Fish-Hook Shot"]["tags"])  # decision 1

@@ -54,8 +54,9 @@ class NumbersSettingsRowsAndNamesTests(ReviewCase):
     def test_mutiny_in_marienburg_is_a_one_grade_setting_now(self) -> None:
         settings = {row["slug"]: row for row in load_json(OUT / "settings.json")}
         mim = settings["mutiny-in-marienburg"]
-        self.assertEqual((mim["grade"], mim["grades_seen"]), ("2b", {"2b": 58}))
-        self.assertEqual(mim["counts"]["items"], 45)
+        # 59 since the Wild Boar/Pig joined the item data as the stub it is, merged into our War Boar (16 Nov 2026)
+        self.assertEqual((mim["grade"], mim["grades_seen"]), ("2b", {"2b": 59}))
+        self.assertEqual(mim["counts"]["items"], 46)
 
     # 5. Price rows: the types join the row that already carries their price
 

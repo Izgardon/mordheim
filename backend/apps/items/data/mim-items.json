@@ -1121,5 +1121,18 @@
       }
     ],
     "needs_rules": false
+  },
+  {
+    "name": "Wild Boar/Pig",
+    "type": "Animal",
+    "subtype": "Mount",
+    "grade": "2b",
+    "description": "Boar/pig mount, sold by the city's traders to any warband.",
+    "availabilities": [
+      {
+        "cost": 90,
+        "rarity": 11
+      }
+    ]
   }
 ]
