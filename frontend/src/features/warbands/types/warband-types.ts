@@ -310,7 +310,12 @@ export type WarbandHireling = UnitCompanionFields &
     caster: HeroCaster | null;
     half_rate: boolean | null;
     no_level_ups?: boolean | null;
+    /** Sworn to a blood pact: outside the hired-sword cap, and asked for no upkeep. */
     blood_pacted?: boolean | null;
+    /** What the post-game's 2D6 adds for him: +1 per skill or characteristic increase (the server's count). */
+    blood_pact_bonus?: number;
+    /** Whether he could still swear one: a living hired sword without a pact (the server's rule). */
+    can_blood_pact?: boolean;
     dead: boolean | null;
     /** How many more battles it misses, and why (`MissingGamesFields`). */
     missing_games?: number;

@@ -94,7 +94,7 @@ export default function EditUnitFields({
         {toggle("Trading action", "trading_action")}
         {toggle("No level ups", "no_level_ups")}
         {toggle("Can be promoted", "promotable")}
-        {toggle("Bloodpacted", "blood_pacted")}
+        {campaign?.enable_blood_pacts ? toggle("Blood pact", "blood_pacted") : null}
         {"caster" in draft ? (
           <span
             role="group"

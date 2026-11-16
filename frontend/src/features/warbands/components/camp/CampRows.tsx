@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import DiceEntry from "@/components/ui/dice-entry";
 import { cn } from "@/lib/utils";
 
+import { pactLines } from "./blood-pacts";
+import BloodPactRows from "./BloodPactRows";
 import { dueText, upkeepCharged, upkeepLines } from "./camp-state";
 import type { CampRow, OpenCamp } from "./camp-types";
 import { campDone } from "./PostgameBar";
@@ -68,8 +70,8 @@ function Row(props: RowProps) {
 
 /**
  * Camp's rows (design E), top to bottom: Sell, Veterans (2D6 for the XP pool, rolled or typed in,
- * then Recruit), Hired swords (Hire), Upkeep (Pay all, and Pay or Let go per hired sword) and Buy
- * items.
+ * then Recruit), Hired swords (Hire), Upkeep (Pay all, and Pay or Let go per hired sword), Blood
+ * pacts while the campaign has them on, and Buy items.
  */
 export default function CampRows({
   camp,
@@ -85,6 +87,7 @@ export default function CampRows({
   const vet = record.veterans;
   const pool = vet ? vet.dice[0] + vet.dice[1] - vet.spent : 0;
   const lines = upkeepLines(camp);
+  const pacts = camp.campaign?.enable_blood_pacts ? pactLines(camp) : [];
   const lastSale = record.sold?.[record.sold.length - 1];
   const maxHired = camp.campaign?.max_hired_swords;
   const withCamp = (next: typeof record) => camp.save({ ...camp.draft, camp: next });
@@ -164,6 +167,15 @@ export default function CampRows({
       >
         <UpkeepRows camp={camp} lines={lines} />
       </Row>
+      {camp.campaign?.enable_blood_pacts ? (
+        <Row
+          {...row("pacts")}
+          title="Blood pacts"
+          sub={pacts.length ? `2D6 each, a 12 forms a pact` : "No hired sword can form one"}
+        >
+          <BloodPactRows camp={camp} lines={pacts} />
+        </Row>
+      ) : null}
       <Row
         {...row("buy")}
         title="Buy items"

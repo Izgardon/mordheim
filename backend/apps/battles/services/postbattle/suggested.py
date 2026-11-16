@@ -8,7 +8,8 @@
   add up to its `xp_earned`, and the `level_ups` that XP would earn (services/postbattle/level_ups.py);
 - exploration dice: the chart's `dice_per_hero` for each selected hero still in action, its `dice_for_win` more for a
   winner (the player's own declaration while the others still fight, decision 4), at most its `max_dice`;
-- upkeep: every hireling on the battle's roster but one who stays for one battle, misses games or has no upkeep (a fee
+- upkeep: every hireling on the battle's roster but one who stays for one battle, misses games, is sworn to a blood
+  pact (units/services/blood_pacts.py) or has no upkeep (a fee
   of kind none), at his upkeep fee: its gold as `cost` (none for a fee in his rules), its resource lines and its note
   when it has them (the fees and skill lists step);
 - dismiss (only when there is one): each selected hireling who stays for one battle, suggested to leave (never
@@ -109,10 +110,13 @@ def _upkeep_gold(fee: dict) -> int | None:
 
 def _upkeep(hirelings: list[dict]) -> dict[str, dict]:
     """Each hireling's upkeep, but for one who stays for one battle (he leaves after it, so nothing keeps him on), one
-    missing games (he missed this battle) or one with no upkeep."""
+    missing games (he missed this battle), one pact-sworn (a blood pact "pays no upkeep") or one with no upkeep.
+
+    A pact sworn during this post-game changes nothing here: the roster is the snapshot `start/` kept, and the book
+    rolls for the pact after the upkeep is paid, so he pays this battle's and none after it."""
     entries = {}
     for sword in hirelings:
-        if sword.get("stays") == "one_battle" or sword.get("missingGames"):
+        if sword.get("stays") == "one_battle" or sword.get("missingGames") or sword.get("bloodPacted"):
             continue
         fee = sword.get("upkeepFee") or {}
         if fee.get("kind") == "none":

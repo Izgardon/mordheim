@@ -6,6 +6,7 @@
 import { screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -20,12 +21,12 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 }));
 vi.mock("../../api/warband-cache", () => ({ useWarbandCacheUpdate: () => () => undefined }));
 
-const renderForm = (entry: RosterUnit) => {
+const renderForm = (entry: RosterUnit, campaign: CampaignSummary | null = null) => {
   const onClose = vi.fn();
   renderWithQueryClient(
     <EditUnitForm
       entry={entry}
-      campaign={null}
+      campaign={campaign}
       campaignId={1}
       warbandId={9}
       canCreateRace={false}
@@ -122,5 +123,34 @@ describe("The Edit form's profile and skill access", () => {
     for (const pill of within(pills).getAllByRole("button")) {
       expect(pill).toHaveClass("min-h-8", "md:min-h-9");
     }
+  });
+});
+
+/**
+ * The blood pact tick is a hired sword's, and only while the campaign has blood pacts on (William,
+ * 16 Nov 2026).
+ */
+describe("The Edit form's blood pact tick", () => {
+  const hireling: RosterUnit = {
+    kind: "hireling",
+    unit: { ...makeHero({ id: 6 }), kind: "hired_sword" } as never,
+  };
+
+  beforeEach(() => fakeApi.reset());
+
+  it("shows for a hired sword while they are on", () => {
+    renderForm(hireling, { enable_blood_pacts: true } as CampaignSummary);
+
+    expect(screen.getByRole("switch", { name: "Blood pact" })).toBeInTheDocument();
+  });
+
+  it("is absent while they are off, and for a hero either way", () => {
+    renderForm(hireling);
+    expect(screen.queryByRole("switch", { name: /blood/i })).toBeNull();
+
+    renderForm({ kind: "hero", unit: makeHero({ id: 5 }) }, {
+      enable_blood_pacts: true,
+    } as CampaignSummary);
+    expect(screen.queryByRole("switch", { name: /blood/i })).toBeNull();
   });
 });

@@ -225,6 +225,8 @@ HIRELING_SUMMARY = {
     "half_rate": "bool",
     "no_level_ups": "bool",
     "blood_pacted": "bool",
+    "blood_pact_bonus": "int",  # blood pacts: +1 per skill or characteristic increase on the post-game's 2D6
+    "can_blood_pact": "bool",
     "injury_table": "str",
     "stays": "str",
     "payment_note": "str",

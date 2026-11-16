@@ -8,8 +8,9 @@ import type { CampaignSummary } from "@/features/campaigns/types/campaign-types"
 
 import type { HenchmenGroup, WarbandHireling, WarbandResource } from "../../types/warband-types";
 
-/** Camp's rows (design E), top to bottom; Ready sits under them. */
-export type CampRow = "sell" | "recruit" | "hire" | "upkeep" | "buy";
+/** Camp's rows (design E), top to bottom; Ready sits under them. Pacts shows only while the
+ * campaign has blood pacts on, and sits after Upkeep, as the book rolls for a pact after it. */
+export type CampRow = "sell" | "recruit" | "hire" | "upkeep" | "pacts" | "buy";
 
 export type PostgameSlotProps = {
   /** "bar": the web's post-game bar; "aside": camp beside the roster, or the phone's card. */

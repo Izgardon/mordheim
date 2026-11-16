@@ -6,6 +6,7 @@
 import { screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { makeHero, makeVeteranHenchmenGroup } from "@/test/warband-fixtures";
 
@@ -16,11 +17,11 @@ import type { RosterUnit } from "./unit-view";
 const hired = (fields: Partial<WarbandHireling>) =>
   ({ ...makeHero({ id: 3 }), ...fields }) as WarbandHireling;
 
-const renderCard = (entry: RosterUnit, open = false) =>
+const renderCard = (entry: RosterUnit, open = false, campaign: CampaignSummary | null = null) =>
   renderWithQueryClient(
     <UnitCard
       entry={entry}
-      campaign={null}
+      campaign={campaign}
       warbandId={9}
       open={open}
       canEdit={false}
@@ -85,5 +86,30 @@ describe("A roster card's trim", () => {
     renderCard(entry, true);
 
     expect(screen.getByRole("article")).toHaveClass("col-span-full", "border-l-metal-gold");
+  });
+});
+
+describe("A hired sword's blood pact badge", () => {
+  const pacted: RosterUnit = {
+    kind: "hireling",
+    unit: hired({ name: "Grukk", unit_type: "Ogre Bodyguard", blood_pacted: true }),
+  };
+
+  it("shows while the campaign has blood pacts on", () => {
+    renderCard(pacted, false, { enable_blood_pacts: true } as CampaignSummary);
+
+    expect(screen.getByText("Blood pact")).toBeVisible();
+  });
+
+  it("stays off while they are off, and off a hired sword without one", () => {
+    renderCard(pacted);
+    expect(screen.queryByText("Blood pact")).toBeNull();
+
+    renderCard(
+      { kind: "hireling", unit: hired({ name: "Free", unit_type: "Pit Fighter" }) },
+      false,
+      { enable_blood_pacts: true } as CampaignSummary
+    );
+    expect(screen.queryByText("Blood pact")).toBeNull();
   });
 });

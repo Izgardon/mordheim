@@ -1,7 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { rollDie } from "@/lib/dice";
+import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 
 import CampRows from "./CampRows";
@@ -16,7 +17,7 @@ const draft = { unit_results: {}, upkeep: { pay_upkeep: true, entries: {} }, cam
 
 const show = (camp: Partial<OpenCamp> = {}) => {
   const save = vi.fn().mockResolvedValue(undefined);
-  render(
+  renderWithQueryClient(
     <CampRows
       camp={
         {
@@ -56,10 +57,31 @@ describe("CampRows", () => {
     expect(save.mock.calls[1]).toEqual(save.mock.calls[0]);
   });
 
+  it("has no Blood pacts row unless the campaign has them on", () => {
+    show();
+    expect(screen.queryByText("Blood pacts")).toBeNull();
+  });
+
   it("offers Recruit once the pool is rolled", () => {
     show({ draft: { ...draft, camp: { veterans: { dice: [5, 3], spent: 2 } } } as never });
     expect(screen.getByText("6 XP available")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Recruit" })).toBeInTheDocument();
     expect(screen.queryByLabelText("First D6 rolled")).toBeNull();
+  });
+
+  it("adds the Blood pacts row with its own 2D6 while they are on", () => {
+    show({
+      campaign: { enable_blood_pacts: true } as never,
+      hirelings: [
+        { id: 4, name: "Grukk", can_blood_pact: true, blood_pact_bonus: 1 },
+        { id: 5, name: "Sworn", can_blood_pact: false },
+      ] as never,
+    });
+
+    expect(screen.getByText("Blood pacts")).toBeVisible();
+    expect(screen.getByText("2D6 each, a 12 forms a pact")).toBeVisible();
+    expect(screen.getByText("Grukk")).toBeVisible();
+    expect(screen.queryByText("Sworn")).toBeNull();
+    expect(screen.getAllByLabelText("First D6 rolled")).toHaveLength(2); // the veterans' and his
   });
 });

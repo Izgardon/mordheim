@@ -183,6 +183,7 @@ def hireling_entry(hireling: Hireling) -> dict:
         **_profile(hireling),
         **_companions(hireling, links, owner="hireling"),
         "upkeepFee": hireling.upkeep_fee,  # a structured fee (apps/hirelings/fees.py): gold, resources, kind
+        "bloodPacted": bool(hireling.blood_pacted),  # a pact-sworn hired sword is asked for no upkeep
         "noLevelUps": bool(hireling.no_level_ups),
         "hirelingKind": hireling.kind,  # hired_sword | dramatis_persona
         "injuryTable": hireling.injury_table,  # henchman: a d6; hero: the campaign's hero death roll

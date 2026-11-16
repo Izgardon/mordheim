@@ -6,7 +6,8 @@ import UnitKills from "./UnitKills";
 import type { RosterUnit } from "./unit-view";
 
 /**
- * A card's top row of badges: the mount it rides, Missing, the kill count with its breakdown and a
+ * A card's top row of badges: the mount it rides, Missing, a pact-sworn hired sword's Blood pact
+ * (while the campaign has them on), the kill count with its breakdown and a
  * hero's trading action as a thin toggle. Advance ready sits on the card's top edge (UnitCard),
  * and a hero's bounties show only on the overview (William: "dont need to see the bounty on the
  * warband sheet for a unit").
@@ -47,6 +48,9 @@ export default function UnitBadges({
         <ChipLabel tone="danger">
           Missing · {unit.missing_games} {unit.missing_games === 1 ? "game" : "games"}
         </ChipLabel>
+      ) : null}
+      {campaign?.enable_blood_pacts && entry.kind === "hireling" && entry.unit.blood_pacted ? (
+        <ChipLabel tone="accent">Blood pact</ChipLabel>
       ) : null}
       <UnitKills campaignId={campaign?.id ?? 0} warbandId={warbandId} entry={entry} />
       {entry.kind === "hero" ? (
