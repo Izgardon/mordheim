@@ -467,6 +467,7 @@
     "large": false,
     "caster": "No",
     "specials": [
+      "Animal",
       "Ferocious Charge (War Boar)",
       "Thick Skinned (War Boar)"
     ],

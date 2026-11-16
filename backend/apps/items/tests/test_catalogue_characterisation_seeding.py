@@ -91,7 +91,7 @@ class SeedAllTests(TestCase):
             self.seeded,
             {
                 "Race": 51,  # 27, the templates' Undead, Other Beastmen, two Bull Centaur maximums, the Kroxigor, the Halflings' Ogre, the Grail Knight, the Druchii's Elf, the Wolfman, the Ogre Hunting Party's Ogre, the Gnoblar, the Snotling, the Necrarch Vampire, the Dryad, the Treekin, the Night Haint's Wraith and Spirit, the Fimir, the Brood of Ghurash's Troll and the Khemri Necromancer's Skeleton
-                "Item": 541,  # the import's 437 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026)
+                "Item": 540,  # the import's 437 (its 14 animals are beasts'; the PDFs' stubs among them, Athel Loren's ten and the Sealed City's thirteen) + one Animal item per beast; the Bearcloak, the Masters of Horror Repeater Pistol, the Mutiny in Marienburg Lamp of the Djinn and the Altdorf Quarterstaff merged into ours and the Athel Loren Poison Wind Globe and the Druchii Sea Dragon Cloak separated from ours (William, 12 Nov 2026); the Marienburg bestiary's owl and falcon and its seventeen Men and Monsters creatures bring 19 Animal items more; Sartosa's Stegadon Gun is one more of the import's and its Trained Monkey one more Animal item, while Refined Powder only renames Powder Monkey; the Cardinal of Contagion's Pox Staff is one more, with no price row, so nobody buys it (William, 13 Nov 2026); ten Mutiny in Marienburg stubs that duplicate an item of ours are merged away, their prices carried onto it, and the Border Town Burning bear and Marienburg's wild dogs join ours, two Animal items fewer (William, 15 Nov 2026); Marienburg's boar mount is our War Boar, one Animal item fewer (William, 16 Nov 2026)
                 "ItemRule": 54,  # the import's shared rules, the Metal Mongers' Experimental Technology, the Watchmen's Map and Sartosa's Pirate Banner among them
                 "Skill": 554,  # the import's 510 (one per name, Athel Loren's 14 and Mutiny in Marienburg's ten generic skills among them) + the 44 hired swords' own skills the book lacks, 20 of them broheim's hireling sections'; Blending into the Sands, No Pain, Numb, Fear, Rotten Body (Mousillon) and Savage Fury (Albion Barbarians) merged into ours (William, 12 Nov 2026)
                 "SkillGroup": 142,  # the import's 110 (Athel Loren's three) + a group of his own for each of 28 hired swords, 9 of them broheim's hireling sections'
@@ -143,8 +143,8 @@ class SeedAllTests(TestCase):
                 # familiars, Marienburg's owl and falcon), 57
                 # creatures (16 Marienburg's shop animals, 17 its Men and Monsters, 27 Border Town Burning's
                 # Beasts of the East, Sartosa's Trained Monkey); its bear and Marienburg's wild dogs joined ours
-                # (William, 15 Nov 2026)
-                "BestiaryEntry": 83,
+                # (William, 15 Nov 2026) and Marienburg's boar mount our War Boar (William, 16 Nov 2026)
+                "BestiaryEntry": 82,
                 # the Dark Elf Corsairs' three Specialists (their Assassin is our Dark Elf Assassin), Mutiny in
                 # Marienburg's eleven Specialists and three Dramatis Personae, and broheim's hired sword section's
                 # 35 (Karak Azgal 6, Mousillon 6, Khemri 3, the Sealed City 6, Sartosa 6, the fan-made trees 8)
@@ -583,7 +583,7 @@ class SeedAllTests(TestCase):
 
         temple_dog = {"Fear", "Save (Temple Dog)", "Ferocious Charge (Temple Dog)", "Magical attacks (Temple Dog)"}
         self.assertEqual(rules("Temple Dog"), temple_dog | {"Immune to Poison"})
-        self.assertEqual(rules("War Boar"), {"Ferocious Charge (War Boar)", "Thick Skinned (War Boar)"})
+        self.assertEqual(rules("War Boar"), {"Animal", "Ferocious Charge (War Boar)", "Thick Skinned (War Boar)"})
         self.assertEqual(rules("Rhinox"), {"Rarity (Rhinox)", "Fear", "Bad Tempered (Rhinox)", "Thunderous Charge (Rhinox)"})  # fmt: skip
         self.assertEqual(rules("Cold One"), {"Fear", "Stupidity", "Scaly (Cold One)"})
         self.assertEqual(rules("Gnoblar Fighter"), {"Weapons/Armour (Gnoblar)", "Largely Insignificant (Gnoblar)", "Bicker (Gnoblar)"})  # fmt: skip
@@ -635,9 +635,9 @@ class SeedAllTests(TestCase):
         own = Special.objects.filter(campaign__isnull=True, bestiary_entry_specials__bestiary_entry__in=beasts, type="Animal")  # fmt: skip
         self.assertEqual(set(own.exclude(name="Animal").values_list("campaign_type__slug", flat=True)), {"border-town-burning"})  # fmt: skip
 
-    def test_the_marienburg_bear_the_wild_dogs_and_the_boar_are_one_row_each(self):
+    def test_the_marienburg_bear_and_the_wild_dogs_are_one_row_each(self):
         # William, 15 Nov 2026 (decisions 11 to 13): the Border Town Burning bear and Marienburg's wild dogs are the
-        # same beast as ours, so one row holds each; the boar with no profile takes Border Town Burning's
+        # same beast as ours, so one row holds each
         book = BestiaryEntry.objects.filter(campaign__isnull=True)
         self.assertEqual(list(book.filter(name__in=("Bear (Border Town Burning)", "Wild Dog"))), [])
 
@@ -649,9 +649,19 @@ class SeedAllTests(TestCase):
         self.assertEqual(len(rules(bear)), 6)
         self.assertIn("Bear Handler skill", bear.description)  # who may ally it, from Border Town Burning
         self.assertIn("Dog Handler or Beast Master skill", book.get(name="Wardogs").description)
-        boar = book.get(name="Wild Boar/Pig")
-        self.assertEqual([getattr(boar, field) for field in STAT_FIELDS], [7, 3, 0, 3, 4, 1, 3, 1, 3])
-        self.assertEqual(rules(boar), {"Animal", "Ferocious Charge (Wild Boar)", "Thick Skin (Wild Boar)"})
+
+    def test_the_marienburg_boar_mount_is_the_war_boar(self):
+        # William, 16 Nov 2026: "if war boar seems like a copy then it is, make it just the war boar". Marienburg's
+        # Wild Boar/Pig was a mount the shop sold at the War Boar's 90 gc, Rare 11 with the War Boar's profile, so
+        # the two are one row; Border Town Burning's Wild Boar is a creature allied in battle and stays its own
+        book = BestiaryEntry.objects.filter(campaign__isnull=True)
+        self.assertEqual(list(book.filter(name="Wild Boar/Pig")), [])
+        boar = book.get(name="War Boar")
+        rules = set(boar.bestiary_entry_specials.values_list("special__name", flat=True))
+        self.assertIn("Animal", rules)  # Marienburg's rule, which the War Boar lacked
+        self.assertEqual(book.get(name="Wild Boar").kind, "creature")  # Border Town Burning's, never sold
+        item = Item.objects.get(bestiary_entry=boar)
+        self.assertIn("wild boar/pig", item.tags)  # a search and a list naming the Marienburg row still find ours
 
     def test_the_lizardmens_oversized_jaws_and_poison_glands_are_body(self):
         # William, 5 Nov 2026: two of the Sacred markings are bodily (data/special-categories.json), not auras

@@ -225,6 +225,13 @@
       ],
       "why": "William, 11 Nov 2026, of the Khemri equipment page's Scimitar: \"its own item, and drop the tag\". Ours is Parry only where theirs is Parry and Cutting edge, and the tag made three Khemri lists sell our Sword twice, at 10 gc and at 15 gc. The Arabian Tomb Raiders' and the Araby Smugglers' lines, which print \"Scimitar (Sword)\", name the sword themselves, and a book fighter's \"scimitar\" still reads as a Sword (apps/core/book_lookups.py)"
     },
+    "War Boar": {
+      "name": "War Boar",
+      "tags": [
+        "wild boar/pig"
+      ],
+      "why": "Mutiny in Marienburg's Wild Boar/Pig mount carried the War Boar's profile at the War Boar's 90 gc, Rare 11, so it is the same beast and leaves the bestiary data (William, 16 Nov 2026: \"if war boar seems like a copy then it is, make it just the war boar\"). Its name stays a tag so a search and a warband list naming it still find ours; Marienburg's chart already reads \"a wild pig (counts as a War Boar)\""
+    },
     "Rain Coat": {
       "name": "Rain Coat",
       "tags": [

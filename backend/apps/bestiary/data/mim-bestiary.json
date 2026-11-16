@@ -1168,43 +1168,6 @@
     ]
   },
   {
-    "name": "Wild Boar/Pig",
-    "kind": "mount",
-    "has_profile": true,
-    "rating_bonus": null,
-    "available_in_shop": true,
-    "description": "Boar/pig mount.",
-    "movement": 7,
-    "weapon_skill": 3,
-    "ballistic_skill": 0,
-    "strength": 3,
-    "toughness": 4,
-    "wounds": 1,
-    "initiative": 3,
-    "attacks": 1,
-    "leadership": 3,
-    "armour_save": "",
-    "large": false,
-    "caster": "No",
-    "specials": [
-      "Animal",
-      "Ferocious Charge (Wild Boar)",
-      "Thick Skin (Wild Boar)"
-    ],
-    "skills": [],
-    "spells": [],
-    "equipment": [],
-    "shop_item": {
-      "grade": "2b",
-      "availabilities": [
-        {
-          "cost": 90,
-          "rarity": 11
-        }
-      ]
-    }
-  },
-  {
     "name": "Wyvern",
     "kind": "creature",
     "has_profile": true,
