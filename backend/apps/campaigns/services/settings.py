@@ -26,6 +26,7 @@ SETTINGS_FIELDS = (
     "default_resource_name",
     "wyrdstone_prices",
     "enable_campaign_points",
+    "enable_blood_pacts",
     "exploration_chart_id",
 )
 

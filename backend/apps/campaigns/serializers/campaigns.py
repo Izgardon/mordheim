@@ -58,6 +58,8 @@ class CampaignSerializer(serializers.ModelSerializer):
     default_resource_name = serializers.CharField(source="settings.default_resource_name", read_only=True)
     wyrdstone_prices = wyrdstone_prices_field(source="settings.wyrdstone_prices", read_only=True)
     enable_campaign_points = serializers.BooleanField(source="settings.enable_campaign_points", read_only=True)
+    # Blood pacts (Mutiny in Marienburg's rule as a generic setting): the post-game's 2D6 per hired sword
+    enable_blood_pacts = serializers.BooleanField(source="settings.enable_blood_pacts", read_only=True)
     # the exploration chart the post-game explores by (apps/exploration); null: the book's Mordheim chart
     exploration_chart_id = serializers.IntegerField(source="settings.exploration_chart_id", read_only=True)
     setting_ids = serializers.SerializerMethodField()  # the settings in play (grading phase 1)
@@ -85,6 +87,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "default_resource_name",
             "wyrdstone_prices",
             "enable_campaign_points",
+            "enable_blood_pacts",
             "exploration_chart_id",
             "setting_ids",
             "in_progress",
@@ -170,6 +173,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
     default_resource_name = serializers.CharField(required=False, max_length=120)  # renames every warband's
     wyrdstone_prices = wyrdstone_prices_field(required=False)  # the whole table (William, 8 Nov 2026)
     enable_campaign_points = serializers.BooleanField(required=False)  # William, 7 Nov 2026
+    enable_blood_pacts = serializers.BooleanField(required=False)  # William, 16 Nov 2026
     exploration_chart_id = serializers.IntegerField(required=False, allow_null=True)  # null: the book's chart
 
     def validate_exploration_chart_id(self, value):

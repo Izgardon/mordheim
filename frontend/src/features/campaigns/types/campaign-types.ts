@@ -29,6 +29,11 @@ export type CampaignSummary = {
   wyrdstone_prices?: number[][];
   /** Every warband holds Campaign points while on (hidden, their amounts kept, while off). */
   enable_campaign_points?: boolean;
+  /**
+   * Blood pacts (Mutiny in Marienburg's rule, generic): while on, a hired sword's card carries the
+   * blood pact tick and the post-game rolls 2D6 for each hired sword who could still swear one.
+   */
+  enable_blood_pacts?: boolean;
   /** The exploration chart the post-game explores by; null is the book's Mordheim chart. */
   exploration_chart_id?: number | null;
   /** The settings in play (grading phase 1): the ones ticked, the always-on Mordheim among them. */
@@ -90,6 +95,7 @@ export type CampaignUpdatePayload = {
   /** The whole table: eight rows of six prices. */
   wyrdstone_prices?: number[][];
   enable_campaign_points?: boolean;
+  enable_blood_pacts?: boolean;
   /** The exploration chart the post-game explores by; null is the book's Mordheim chart. */
   exploration_chart_id?: number | null;
 };
