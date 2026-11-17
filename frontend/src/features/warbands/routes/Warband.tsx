@@ -12,12 +12,10 @@ import CreateWarband from "../components/page/CreateWarband";
 import { BackstoryTab, LogTab } from "../components/page/StoryAndLogTabs";
 import TreasuryTab from "../components/page/TreasuryTab";
 import WarbandHeader, { type WarbandPanel } from "../components/page/WarbandHeader";
-import WarbandResources from "../components/page/WarbandResources";
-import WarbandStats from "../components/page/WarbandStats";
+import WarbandInfo from "../components/page/WarbandInfo";
 import WarbandPanels, { storeFor } from "../components/page/WarbandPanels";
 import WarbandSkeleton from "../components/page/WarbandSkeleton";
 import WarbandTabs from "../components/page/WarbandTabs";
-import { WARBAND_INFO } from "../components/page/warband-layout";
 import PostgameSlot from "../components/camp/PostgameSlot";
 import LocationsPanel from "../components/panels/LocationsPanel";
 import AdvanceDialog from "../components/roster/AdvanceDialog";
@@ -137,22 +135,16 @@ export default function Warband() {
           onInviteOpenChange={setTradeInviteOpen}
         />
       ) : null}
-      <div className={WARBAND_INFO}>
-        <WarbandStats
-          warband={warband}
-          heroes={sheet.heroes}
-          hirelings={sheet.hirelings}
-          henchmenGroups={sheet.henchmenGroups}
-          breakdownOpen={breakdownOpen}
-          setBreakdownOpen={setBreakdownOpen}
-        />
-        <WarbandResources
-          warbandId={warbandId}
-          resources={warband.resources ?? []}
-          canEdit={canEdit}
-          pricing={{ table: campaign?.wyrdstone_prices, band: warband.size_band ?? 0 }}
-        />
-      </div>
+      <WarbandInfo
+        warband={warband}
+        heroes={sheet.heroes}
+        hirelings={sheet.hirelings}
+        henchmenGroups={sheet.henchmenGroups}
+        breakdownOpen={breakdownOpen}
+        setBreakdownOpen={setBreakdownOpen}
+        canEdit={canEdit}
+        pricing={{ table: campaign?.wyrdstone_prices, band: warband.size_band ?? 0 }}
+      />
       <WarbandRules
         campaignId={campaignId}
         warbandId={warbandId}
