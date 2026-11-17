@@ -1,7 +1,7 @@
 # Plot sources
 
 One file per setting, a list of that setting's plots, transcribed by hand from the setting's own book. A plot is
-never shared between settings: Border Town Burning's objectives and Mutiny in Marienburg's plots stand beside each
+never shared between settings: Border Town Burning's plots and Mutiny in Marienburg's stand beside each
 other, even where the same plot was reworked, so every plot carries the `setting` it was printed in and each file
 holds only that setting's.
 
@@ -17,9 +17,8 @@ rules, as `{"setting", "rules": [{"title", "text"}]}`.
 | `setting` | the setting's name, as `sources/settings` spells it |
 | `summary` | the book's own flavour paragraph, or `""`. Never write one: a summary we compose from the plot's own scoring and win is fluff, and reads as though the book said it |
 | `variant_of` | the parent plot's slug when the book prints this plot as a variant of another, else `""`. A variant is a plot row of its own with its whole ladder written out, not an overlay that replaces some of the parent's rungs |
-| `no_alliance_with` | slugs of plots this one may not ally with, `[]` for none. Mutiny in Marienburg has no alliances; Border Town Burning names them on five of its six objectives |
-| `who` | warband types as the **book** prints them, not matched to our rows. The seeder resolves what it can and reports the rest |
-| `who_note` | anything `who` cannot express: "Undead warbands led by a Necromancer", "Mercenaries who hire a Warrior-Priest of Sigmar" |
+| `no_alliance_with` | slugs of plots this one may not ally with, `[]` for none. Mutiny in Marienburg has no alliances; Border Town Burning names them on five of its six plots |
+| `who_text` | who may follow the plot, as prose the player reads and decides on. Deliberately unmatched: nothing resolves it to our warband types, nothing greys and nothing warns. Our own name where the book plainly means one of our warbands, the book's in brackets where the two differ ("Low Kings (Mobsmen)"), the book's name as printed where we hold nothing |
 | `scoring` | the plot's scoring lines, in the book's order |
 | `achievements` | one row per point total, in order: `{"points", "name", "text"}` |
 

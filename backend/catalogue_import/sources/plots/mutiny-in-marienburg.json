@@ -6,11 +6,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Witch Hunters",
-      "Sisters of Sigmar"
-    ],
-    "who_note": "Mercenaries who hire a Warrior-Priest of Sigmar.",
+    "who_text": "Witch Hunters, Sisters of Sigmar, and Mercenary warbands that hire a Warrior-Priest of Sigmar.",
     "scoring": [
       {
         "points": 1,
@@ -87,14 +83,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Beastmen",
-      "Fimir",
-      "Cult of the Possessed",
-      "Carnival of Chaos",
-      "Stromfels Reavers"
-    ],
-    "who_note": "Any other Cult of Chaos.",
+    "who_text": "Beastmen Raiders, Lords of the Marsh (Fimir), Cult of the Possessed, Carnival of Chaos, Shallows Beasts (Stromfels Reavers), and any other Cult of Chaos.",
     "scoring": [
       {
         "points": 1,
@@ -171,11 +160,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Watch Patrols",
-      "Tilean Mercenaries"
-    ],
-    "who_note": "Elf warbands.",
+    "who_text": "Watchmen (Watch Patrols), Tileans, and Elf warbands.",
     "scoring": [
       {
         "points": 1,
@@ -244,10 +229,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Skaven"
-    ],
-    "who_note": "",
+    "who_text": "Skaven warbands.",
     "scoring": [
       {
         "points": 1,
@@ -321,8 +303,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [],
-    "who_note": "Undead warbands led by a Necromancer.",
+    "who_text": "Undead warbands led by a Necromancer.",
     "scoring": [
       {
         "points": 1,
@@ -395,10 +376,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Strigany River Pirates"
-    ],
-    "who_note": "Undead warbands led by a Vampire.",
+    "who_text": "Channel Rats (Strigany River Pirates) and Undead warbands led by a Vampire.",
     "scoring": [
       {
         "points": 1,
@@ -471,17 +449,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Dark Elf Corsairs",
-      "Mobsmen",
-      "Norse Explorers",
-      "Arabyan Raiders",
-      "Brionnese Pirates",
-      "Maneaters",
-      "Marauders of Chaos",
-      "Chaos Dwarfs"
-    ],
-    "who_note": "",
+    "who_text": "Dark Elf Corsairs, Low Kings (Mobsmen), Norse Explorers, Araby Smugglers (Arabyan Raiders), Bretonnian Buccaneers (Brionnese Pirates), Maneaters, Marauders of Chaos, and Chaos Dwarf warbands (Black Dwarfs or Sons of Hashut).",
     "scoring": [
       {
         "points": 1,
@@ -549,14 +517,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Mobsmen",
-      "Mercenaries",
-      "Norse Explorers",
-      "Stromfels Reavers",
-      "Merchants Caravans"
-    ],
-    "who_note": "Elf and Dwarf warbands.",
+    "who_text": "Low Kings (Mobsmen), Mercenary warbands, Norse Explorers, Shallows Beasts (Stromfels Reavers), Merchant Caravans, and Elf and Dwarf warbands.",
     "scoring": [
       {
         "points": 1,
@@ -625,17 +586,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Mercenaries",
-      "Pit Fighters",
-      "Battle Monks of Cathay",
-      "Norse Explorers",
-      "Maneaters",
-      "Amazons",
-      "Strigany River Pirates",
-      "Albion Privateers"
-    ],
-    "who_note": "Dwarf warbands.",
+    "who_text": "Mercenary warbands, Pit Fighters, Battle Monks of Cathay, Norse Explorers, Maneaters, Amazons (Lustria) or Amazons (Mordheim), Channel Rats (Strigany River Pirates), Albion Privateers, and Dwarf warbands.",
     "scoring": [
       {
         "points": 1,
@@ -708,10 +659,7 @@
     "summary": "",
     "variant_of": "",
     "no_alliance_with": [],
-    "who": [
-      "Lizardmen"
-    ],
-    "who_note": "Its natural enemies are Dark Elf and Skaven warbands. It hates Clan Pestilens particularly, with no effect in play.",
+    "who_text": "Lizardmen. Its natural enemies are Dark Elf and Skaven warbands; it hates Clan Pestilens particularly, with no effect in play.",
     "scoring": [
       {
         "points": 1,
