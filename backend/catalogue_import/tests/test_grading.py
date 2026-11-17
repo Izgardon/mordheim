@@ -71,3 +71,29 @@ class SplitSettingTests(SimpleTestCase):
     def test_a_split_half_exists_even_with_nothing_in_it(self) -> None:
         rows = {row["slug"]: row for row in build_settings(Evidence(), {})}
         self.assertEqual(rows["khemri-3"]["counts"], {kind: 0 for kind in rows["khemri-3"]["counts"]})
+
+
+class EmptySettingTests(SimpleTestCase):
+    """A supplement we hold nothing graded of yet (Albion): its row is stated, so a campaign can tick it and its
+    exploration chart can be seeded."""
+
+    def test_albion_is_built_at_its_stated_grade_with_every_count_zero(self) -> None:
+        evidence = Evidence()
+        evidence.add("sealed-city", "warbands", "2b", "w")  # the 2b supplement it follows
+        evidence.add("athel-loren", "warbands", "3", "w")  # and the grade 3 setting it comes before
+        rows = {row["slug"]: row for row in build_settings(evidence, {})}
+        albion = rows["albion"]
+        self.assertEqual((albion["name"], albion["grade"]), ("Albion", "2b"))
+        self.assertEqual(albion["grade_basis"], "stated here: nothing graded in it yet")
+        self.assertEqual(albion["counts"], {kind: 0 for kind in albion["counts"]})
+        self.assertFalse(albion["always_on"])
+        self.assertEqual(albion["sort_order"], rows["sealed-city"]["sort_order"] + 1)
+        self.assertEqual(albion["sort_order"], rows["athel-loren"]["sort_order"] - 1)
+
+    def test_content_graded_into_it_takes_the_majority_rule_over(self) -> None:
+        evidence = Evidence()
+        for grade in ("1c",) * 3:
+            evidence.add("albion", "warbands", grade, "w")
+        rows = {row["slug"]: row for row in build_settings(evidence, {})}
+        self.assertEqual(rows["albion"]["grade"], "1c")
+        self.assertEqual(rows["albion"]["grade_basis"], "majority of 3 graded entries")

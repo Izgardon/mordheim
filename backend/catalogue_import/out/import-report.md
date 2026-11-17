@@ -19,7 +19,7 @@ Answers go into `overrides.json`; the next build applies them.
 
 | What | Rows |
 | --- | --- |
-| settings | 19 |
+| settings | 20 |
 | warband types | 160 |
 | warband groups | 20 |
 | shared item rules | 54 |
@@ -189,6 +189,7 @@ No membership questions left.
 | Karak Azgal | 2b | majority of 8 graded entries | 2b: 8 |
 | Relics of the Crusades | 2b | majority of 6 graded entries | 2b: 6 |
 | The Sealed City | 2b | majority of 5 graded entries | 2b: 5 |
+| Albion | 2b | stated here: nothing graded in it yet |  |
 | Athel Loren | 3 | majority of 4 graded entries | 3: 4 |
 | Grade 3 | 3 | Mordheim split by grade | 3: 14 |
 

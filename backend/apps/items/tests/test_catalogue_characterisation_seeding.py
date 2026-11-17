@@ -189,7 +189,9 @@ class SeedAllTests(TestCase):
                     else:  # the rest count as Mordheim's until they get theirs
                         self.assertFalse(model._default_manager.filter(**{"campaign_type__isnull": False}).exists())
         # grading phase 1: the settings, and the warband types and groups, from the catalogue import
-        self.assertEqual(CampaignType.objects.count(), 19)
+        # 20 since Albion joined them (17 Nov 2026): nothing of its content is graded yet, so its row is stated in
+        # catalogue_import/grading.py, which is what lets its exploration chart seed
+        self.assertEqual(CampaignType.objects.count(), 20)
         mordheim = CampaignType.objects.filter(slug__startswith="mordheim").order_by("sort_order")
         names = list(mordheim.values_list("name", flat=True))  # the review (5 Nov 2026: D4): 1a was "Mordheim"
         self.assertEqual(names, ["Mordheim 1a", "Mordheim 1b", "Mordheim 1c", "Mordheim 2a"])

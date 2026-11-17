@@ -6,6 +6,10 @@ for mordheim? we will need to make sure the items from those warbands and skills
 keeps the family's slug and carries its grade in its name ("mordheim" is "Mordheim 1a", "khemri" is "Khemri 1b"),
 and a grade the split names no part for stays in the base part. Splitting a setting is the only way a minority
 grade escapes the majority rule, which would otherwise bury Khemri's eight grade 3 warbands in its 1b.
+
+A setting exists here because content names it, because it is a part of a split, or because `EMPTY_SETTINGS` states
+it: a supplement we hold nothing graded of yet, which still needs its row so a campaign can tick it and what names
+it can be seeded.
 """
 
 from collections import Counter
@@ -56,11 +60,21 @@ SETTING_NAMES = {
     "karak-azgal": "Karak Azgal",
     "relics-of-the-crusades": "Relics of the Crusades",
     "sealed-city": "The Sealed City",
+    "albion": "Albion",  # last of the 2b supplements, which run from the most content to the least
     "athel-loren": "Athel Loren",
     "grade-3": "Grade 3",
 }
 SETTING_ORDER = list(SETTING_NAMES)
 KINDS = ("warbands", "items", "skills", "hired_swords", "dramatis_personae")
+# A setting we hold nothing graded of yet, with the grade it is put at. It is built all the same, so a campaign can
+# tick it and what names it can be seeded: Albion's exploration chart, which every run skipped for want of the
+# setting. Its content can't grade it (there is none, and the majority of nothing would read 1a), so the grade is
+# stated until some arrives, when the majority rule takes over as it does for every other named setting. Albion's
+# 2b is not William's call (17 Nov 2026): it follows every other campaign supplement of its kind (Mutiny in
+# Marienburg, Sartosa, Mousillon, Karak Azgal, Relics of the Crusades, The Sealed City). Our Albion Barbarians and
+# their two dramatis personae are no evidence against it: they are an experimental PDF, graded 3 by broheim and
+# left in Grade 3 by overrides.json, not the supplement's own content.
+EMPTY_SETTINGS = {"albion": "2b"}
 
 
 def setting_part(base: str, grade: str | None) -> str:
@@ -145,7 +159,7 @@ def _sort_key(slug: str) -> tuple[int, str]:
 
 
 def build_settings(evidence: Evidence, grade_overrides: dict[str, str]) -> list[dict[str, Any]]:
-    slugs = sorted(set(evidence.counts) | set(FIXED_GRADES), key=_sort_key)
+    slugs = sorted(set(evidence.counts) | set(FIXED_GRADES) | set(EMPTY_SETTINGS), key=_sort_key)
     rows = []
     for order, slug in enumerate(slugs, start=1):
         seen = evidence.grades.get(slug, [])
@@ -153,6 +167,8 @@ def build_settings(evidence: Evidence, grade_overrides: dict[str, str]) -> list[
             grade, basis = grade_overrides[slug], "set in overrides.json"
         elif slug in FIXED_GRADES:
             grade, basis = FIXED_GRADES[slug], f"{SPLIT_FAMILY.get(slug, slug).title()} split by grade"
+        elif slug in EMPTY_SETTINGS and not seen:
+            grade, basis = EMPTY_SETTINGS[slug], "stated here: nothing graded in it yet"
         else:
             grade = majority(seen, GRADE_RANK) or "1a"
             basis = f"majority of {len(seen)} graded entries"

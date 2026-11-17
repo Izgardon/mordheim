@@ -310,10 +310,26 @@
     }
   },
   {
+    "slug": "albion",
+    "name": "Albion",
+    "grade": "2b",
+    "sort_order": 18,
+    "always_on": false,
+    "grade_basis": "stated here: nothing graded in it yet",
+    "counts": {
+      "warbands": 0,
+      "items": 0,
+      "skills": 0,
+      "hired_swords": 0,
+      "dramatis_personae": 0
+    },
+    "grades_seen": {}
+  },
+  {
     "slug": "athel-loren",
     "name": "Athel Loren",
     "grade": "3",
-    "sort_order": 18,
+    "sort_order": 19,
     "always_on": false,
     "grade_basis": "majority of 4 graded entries",
     "counts": {
@@ -331,7 +347,7 @@
     "slug": "grade-3",
     "name": "Grade 3",
     "grade": "3",
-    "sort_order": 19,
+    "sort_order": 20,
     "always_on": false,
     "grade_basis": "Mordheim split by grade",
     "counts": {
