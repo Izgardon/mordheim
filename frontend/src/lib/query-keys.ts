@@ -120,6 +120,13 @@ export const queryKeys = {
     /** The charts the campaign may pick between (Settings → Exploration). */
     explorationCharts: (campaignId: number) =>
       ["campaign", campaignId, "exploration", "charts"] as const,
+    /** The plots the campaign plays with, each whole (apps/plots). */
+    plots: (campaignId: number) => ["campaign", campaignId, "plots"] as const,
+    /** One plot with its scoring and its ladder, open in the editor. */
+    plotEntry: (campaignId: number, plotId: number) =>
+      ["campaign", campaignId, "plots", "entry", plotId] as const,
+    /** Every plot the campaign can see, for Settings → Plots to pick from. */
+    plotCatalogue: (campaignId: number) => ["campaign", campaignId, "plots", "catalogue"] as const,
     /** The postbattle rules, the same for every battle of the campaign (broadcasts may omit them). */
     battleRules: (campaignId: number) => ["campaign", campaignId, "battle-rules"] as const,
     /** Every participant's roster for one battle (the start snapshot once it has started). */

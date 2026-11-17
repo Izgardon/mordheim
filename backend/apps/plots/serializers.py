@@ -21,7 +21,7 @@ PLOT_FIELDS = (
     "variant_of",
     "no_alliance_with",
     "campaign_id",
-    "campaign_type_id",
+    "setting_id",  # its setting, as every catalogue list names it (grading phase 1)
 )
 
 
@@ -38,12 +38,15 @@ class PlotAchievementSerializer(serializers.ModelSerializer):
 
 
 class PlotSerializer(serializers.ModelSerializer):
+    setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)
+
     class Meta:
         model = Plot
         fields = PLOT_FIELDS
 
 
 class PlotDetailSerializer(serializers.ModelSerializer):
+    setting_id = serializers.IntegerField(source="campaign_type_id", read_only=True)
     scoring = PlotScoringLineSerializer(many=True, read_only=True, source="scoring_lines")
     achievements = PlotAchievementSerializer(many=True, read_only=True)
 

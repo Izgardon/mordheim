@@ -40,7 +40,7 @@ export const catalogueKindOf = (serverKind: string): CatalogueKind | null =>
  * (BUG-80) marks that kind's lists stale (every variant, e.g. the Archived one) and its cached
  * single entries (a hired sword's detail): what is on screen reads again at once, the rest on its
  * next visit; `exploration_charts` marks the campaign's exploration chart stale instead, since the
- * page reads it from its own endpoint. For a kind units carry, the
+ * page reads it from its own endpoint, and `plots` the campaign's plots the same way. For a kind units carry, the
  * campaign's warband sheets (and stashes, for items) are marked stale too, since another member's
  * edit or Revert may have moved or changed their copies. `warband.changed {warband_id}` (another
  * member switched a companion, recruited creatures or sent some back to their item) marks that
@@ -55,6 +55,10 @@ export function useCampaignEvents(campaignId: number | null) {
     }
   });
   useCampaignCatalogueChanges(campaignId, ({ kind }) => {
+    if (campaignId && kind === "plots") {
+      // the plots the campaign plays with, and the ones Settings offers (apps/plots)
+      void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.plots(campaignId) });
+    }
     if (campaignId && kind === "exploration_charts") {
       // the chart the post-game explores by, and the charts Settings offers (apps/exploration)
       void queryClient.invalidateQueries({
