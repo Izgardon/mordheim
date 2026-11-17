@@ -25,6 +25,8 @@ from apps.hirelings import writes as hireling_writes
 from apps.hirelings.models import HirelingProfile
 from apps.items import writes as item_writes
 from apps.items.selectors import item_rows
+from apps.plots import checks as plot_checks
+from apps.plots import writes as plot_writes
 from apps.skills import writes as skill_writes
 from apps.skills.selectors import group_learners, group_skills, in_group_order
 from apps.spells import rolls as spell_rolls
@@ -244,6 +246,24 @@ class SkillGroupHooks(CatalogueHooks):
 
     def update(self, entry: Any, serializer: Serializer) -> None:
         skill_writes.update_group(entry, serializer.validated_data)
+
+
+class PlotHooks(CatalogueHooks):
+    """Plots (a warband's path through a campaign): the detail and a write's answer carry the plot's scoring lines
+    and its ladder, a list row doesn't, and a write answers with what the plot is missing (plots/checks.py warns;
+    only broken data is refused)."""
+
+    def detail_rows(self, kind: "CatalogueKindSpec") -> QuerySet[Any]:
+        return self.rows(kind).prefetch_related("scoring_lines", "achievements")
+
+    def create(self, serializer: Serializer, campaign_id: int) -> Model:
+        plot = plot_writes.create_plot(campaign_id, serializer.validated_data)
+        plot.write_warnings = plot_checks.warnings_for(plot)  # type: ignore[attr-defined]  # the answer's
+        return plot
+
+    def update(self, entry: Any, serializer: Serializer) -> None:
+        plot_writes.update_plot(entry, serializer.validated_data)
+        entry.write_warnings = plot_checks.warnings_for(entry)
 
 
 class RaceHooks(CatalogueHooks):

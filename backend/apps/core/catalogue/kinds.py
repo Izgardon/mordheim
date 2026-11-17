@@ -28,6 +28,8 @@ from apps.hirelings.serializers import DramatisPersonaWriteSerializer, HiredSwor
 from apps.items.models import Item, ItemRule
 from apps.items.selectors import by_listing
 from apps.items.serializers import ItemRuleSerializer, ItemWriteSerializer
+from apps.plots.models import Plot
+from apps.plots.serializers import PlotWriteSerializer
 from apps.races.models import Race
 from apps.races.serializers import RaceCreateSerializer
 from apps.skills.models import Skill, SkillGroup, SkillGroupSkill
@@ -52,6 +54,7 @@ from .hooks import (
     HirelingProfileHooks,
     ItemHooks,
     ItemRuleHooks,
+    PlotHooks,
     RaceHooks,
     SkillGroupHooks,
     SkillHooks,
@@ -68,6 +71,8 @@ from .rows import (
     HiredSwordDetailRowSerializer,
     HiredSwordRowSerializer,
     ItemRowSerializer,
+    PlotDetailRowSerializer,
+    PlotRowSerializer,
     RaceRowSerializer,
     SkillGroupRowSerializer,
     SkillRowSerializer,
@@ -380,6 +385,21 @@ EXPLORATION_CHARTS = CatalogueKindSpec(  # the post-game's chart as data (Willia
     filters={"search": NAME_AND_TYPE["search"]},
     children=("places",),  # what a version copies
 )
+PLOTS = CatalogueKindSpec(  # a warband's path through a campaign, scoring campaign points and winning at 40
+    key="plots",
+    noun="plot",
+    model=Plot,
+    url_kwarg="plot_id",
+    row_serializer=PlotRowSerializer,
+    entry_serializer=PlotDetailRowSerializer,
+    write_serializer=PlotWriteSerializer,
+    named=True,
+    versioned=True,
+    filters={"search": NAME_AND_TYPE["search"]},
+    reread=True,
+    children=("scoring_lines", "achievements"),  # what a version copies
+    hooks=PlotHooks(),
+)
 ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or deleted
     key="item_rules",
     noun="item rule",
@@ -407,6 +427,7 @@ CATALOGUE_KINDS: Mapping[str, CatalogueKindSpec] = {
         DRAMATIS_PERSONAE,
         WARBAND_TEMPLATES,
         EXPLORATION_CHARTS,
+        PLOTS,
     )
 }
 LIST_KINDS: Mapping[str, CatalogueKindSpec] = {

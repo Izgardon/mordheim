@@ -16,6 +16,7 @@ from apps.hirelings.serializers import (
     HiredSwordSerializer,
 )
 from apps.items.serializers import ItemSerializer
+from apps.plots.serializers import PlotDetailSerializer, PlotSerializer
 from apps.races.serializers import RaceSerializer
 from apps.skills.serializers import SkillGroupSerializer, SkillSerializer
 from apps.special.serializers import SpecialSerializer
@@ -95,6 +96,10 @@ WarbandTemplateDetailRowSerializer = with_badges(
 WarbandTemplateSearchRowSerializer = with_badges(
     WarbandTemplateSearchSerializer, book_fields=("name", "starting_gold", "max_models", "variants")
 )
+
+PLOT_BOOK_FIELDS = ("name", "summary", "who_text", "variant_of")
+PlotRowSerializer = with_badges(PlotSerializer, book_fields=PLOT_BOOK_FIELDS)
+PlotDetailRowSerializer = with_badges(PlotDetailSerializer, book_fields=PLOT_BOOK_FIELDS)
 
 EXPLORATION_BOOK_FIELDS = ("name", "summary", "income", "income_note", "max_dice", "max_chosen")
 ExplorationChartRowSerializer = with_badges(ExplorationChartSerializer, book_fields=EXPLORATION_BOOK_FIELDS)

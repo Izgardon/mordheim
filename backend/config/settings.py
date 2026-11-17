@@ -72,6 +72,7 @@ INSTALLED_APPS = [
     "apps.bounties.apps.BountiesConfig",
     "apps.warband_templates.apps.WarbandTemplatesConfig",
     "apps.exploration.apps.ExplorationConfig",
+    "apps.plots.apps.PlotsConfig",
 ]
 
 MIDDLEWARE = [

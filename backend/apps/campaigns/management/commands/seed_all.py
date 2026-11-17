@@ -10,6 +10,7 @@ class Command(BaseCommand):
             "seed_settings",  # first: warband types and the catalogue's rows point at their settings
             "seed_warband_types",  # the types and their groups
             "seed_exploration_charts",  # after the settings, whose names the charts name
+            "seed_plots",  # after the settings too, whose names the plots name
             "seed_races",
             "seed_items",
             "seed_skills",
