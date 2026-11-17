@@ -1,7 +1,7 @@
 """The whole warband sheet in one payload (PERF-24).
 
-Warband detail, summary, capabilities, its rules and the three unit lists in detail shape, the same bodies the
-separate endpoints return, in a fixed number of queries however big the roster is: each unit table and
+Warband detail, summary, capabilities, its rules, the plot it follows and the three unit lists in detail shape, the
+same bodies the separate endpoints return, in a fixed number of queries however big the roster is: each unit table and
 join table is read once, the item details once for every item on the roster, and the summary's unit
 lists and rating come from the units already loaded.
 """
@@ -10,6 +10,7 @@ from typing import Any
 
 from django.db.models import prefetch_related_objects
 
+from apps.plots.selectors import warband_plot
 from apps.warband_templates.services.item_names import template_item_names
 from apps.warbands.models import Warband
 from apps.warbands.prefetches import item_detail_prefetches
@@ -91,6 +92,8 @@ def warband_sheet(warband: Warband, capabilities: dict[str, bool]) -> dict[str, 
         "summary": WarbandSummarySerializer(warband, context=summary_context).data,
         "capabilities": capabilities,
         "rules": WarbandRuleSerializer(warband.rules.all(), many=True).data,
+        # the plot it follows and its ladder's points, for the campaign point track (apps/plots); null: none
+        "plot": warband_plot(warband.plot_id),
         # the list's own name for an item, by fighter key, from its template (the templates plan, question 12)
         "item_names": template_item_names(warband),
         **{kind.collection: UNIT_SERIALIZERS[key].detail(rosters[key], many=True).data for key, kind in KINDS.items()},

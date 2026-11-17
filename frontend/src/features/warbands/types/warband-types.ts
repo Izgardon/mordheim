@@ -69,6 +69,10 @@ export type Warband = {
   max_units?: number | null;
   /** Its template's variant (the templates plan, phase 2): its type's preset, else picked when raising. */
   template_variant?: string;
+  /** The plot it follows (apps/plots), one of its campaign's; null: none. Changed for nothing. */
+  plot_id?: number | null;
+  /** Its campaign point total, typed by the player: nothing computes, adds to or takes from it. */
+  campaign_points?: number;
   /** From the summary (the sheet merges it in): see `WarbandRosterCounts`. */
   unit_count?: number;
   size_band?: number;
@@ -133,6 +137,12 @@ export type WarbandRule = {
   description: string;
 };
 
+/**
+ * The plot a warband follows, as its page reads it (apps/plots): its name and its ladder's points,
+ * which the campaign point track draws as its heavy boxes. Its lines are in the rules it wrote.
+ */
+export type WarbandPlot = { id: number; name: string; rungs: number[] };
+
 export type WarbandRulePayload = { title: string; description: string };
 
 export type WarbandCreatePayload = {
@@ -143,6 +153,8 @@ export type WarbandCreatePayload = {
   max_units?: number;
   /** For a type whose template presets no variant. */
   template_variant?: string;
+  /** The plot it will follow, one of the campaign's (apps/plots). */
+  plot_id?: number | null;
 };
 
 export type WarbandUpdatePayload = {
@@ -158,6 +170,10 @@ export type WarbandUpdatePayload = {
   show_loadout_on_mobile?: boolean;
   warband_link?: string | null;
   template_variant?: string;
+  /** The plot it follows, one of the campaign's; null follows none (apps/plots). */
+  plot_id?: number | null;
+  /** Its campaign point total, as the player typed it. */
+  campaign_points?: number;
 };
 
 export type LevelUpHistoryEntry = {

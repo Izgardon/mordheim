@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils";
 import { useRaiseOutline } from "../../api/warband-template-queries";
 import { createWarband } from "../../api/warbands-api";
 import type { Warband, WarbandTypeBrief } from "../../types/warband-types";
+import PlotSelect from "../plot/PlotSelect";
 import WarbandTypePicker from "../type-picker/WarbandTypePicker";
 import { linkAfterPick } from "../type-picker/warband-type-picker";
 import RaiseOutline from "./RaiseOutline";
@@ -19,14 +20,18 @@ import RaiseOutline from "./RaiseOutline";
 /**
  * No warband in this campaign yet (design E): name one, pick its warband type (which fills the
  * warband link, the player's to replace, and shows its template in outline, with a variant to
- * pick where the type presets none), then raise it.
+ * pick where the type presets none), pick the plot it follows where the campaign plays with any
+ * (changed for nothing later), then raise it.
  */
 export default function CreateWarband({
   campaignId,
   onCreated,
+  showPlot = false,
 }: {
   campaignId: number;
   onCreated: (warband: Warband) => Promise<void>;
+  /** The campaign has Plots (campaign points) on: it picks one of its plots (apps/plots). */
+  showPlot?: boolean;
 }) {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [name, setName] = useState("");
@@ -36,6 +41,7 @@ export default function CreateWarband({
   // picked at first, and Raise waits for one (William, 5 Nov: the one block on raising), also while
   // the outline that says whether one is needed is still being read
   const [variant, setVariant] = useState("");
+  const [plotId, setPlotId] = useState<number | null>(null);
   const read = useRaiseOutline(campaignId, warbandType?.id ?? null, variant);
   const outline = read.data?.template;
   const needsVariant =
@@ -75,6 +81,7 @@ export default function CreateWarband({
                   warband_type_id: warbandType.id,
                   warband_link: link.trim() || null,
                   ...(variant ? { template_variant: variant } : {}),
+                  ...(plotId === null ? {} : { plot_id: plotId }),
                 })
               );
             } catch (error) {
@@ -118,6 +125,16 @@ export default function CreateWarband({
               className="h-11 text-base md:h-11"
             />
           </Field>
+          {showPlot ? (
+            <Field label="Plot" htmlFor="new-warband-plot">
+              <PlotSelect
+                id="new-warband-plot"
+                campaignId={campaignId}
+                value={plotId}
+                onChange={setPlotId}
+              />
+            </Field>
+          ) : null}
           {warbandType ? (
             <RaiseOutline
               campaignId={campaignId}

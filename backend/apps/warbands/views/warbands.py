@@ -18,6 +18,7 @@ from apps.warbands.serializers import (
     WarbandUpdateSerializer,
 )
 from apps.warbands.services import ledger
+from apps.warbands.services.plot_rules import check_plot, sync_plot_rules
 from apps.warbands.services.types import load_types, picked_types
 
 from .base import WarbandScopedView
@@ -49,6 +50,7 @@ class WarbandListCreateView(APIView):
             return Response({"detail": "Warband already exists"}, status=400)
 
         counts_as = picked_types(campaign_id, serializer.validated_data) or []  # 400 for a type it may not pick
+        check_plot(campaign_id, serializer.validated_data)  # 400 for a plot the campaign doesn't play with
         # its type's template (the templates plan, phase 2): the variant, the most warriors, the gold and its rules
         template = template_for_type(campaign_id, serializer.validated_data["warband_type"].pk)
         variant = picked_variant(template, serializer.validated_data.pop("template_variant", ""))
@@ -66,6 +68,7 @@ class WarbandListCreateView(APIView):
             ledger.record(warband, LedgerAction.STARTING_GOLD, starting_gold, "Starting Gold")
             if template is not None:
                 copy_rules(warband, template, variant)
+            sync_plot_rules(warband)  # its plot's own rule, after the template's (apps/plots)
         return Response(WarbandSerializer(warband).data, status=status.HTTP_201_CREATED)
 
 
@@ -80,11 +83,15 @@ class WarbandDetailView(WarbandScopedView):
         serializer.is_valid(raise_exception=True)
         counts_as = picked_types(self.warband.campaign_id, serializer.validated_data)  # a new type, what it counts as
         settle_variant(self.warband, serializer.validated_data)  # the variant follows a new type (templates plan)
+        check_plot(self.warband.campaign_id, serializer.validated_data)
         check_backstory_change(request.user, self.warband, self.membership, serializer.validated_data)
+        plotted = {"plot_id", "campaign_points"} & set(serializer.validated_data)
         with transaction.atomic():
             serializer.save()
             if counts_as is not None:
                 self.warband.counts_as.set(counts_as)
+            if plotted:  # a new plot, or a new total: its plot rules are written again (apps/plots)
+                sync_plot_rules(self.warband)
         return Response(WarbandSerializer(self.warband).data)
 
     def delete(self, request: Request, warband_id: int) -> Response:

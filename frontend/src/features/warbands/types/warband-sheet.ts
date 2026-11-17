@@ -3,6 +3,7 @@ import type {
   Warband,
   WarbandHero,
   WarbandHireling,
+  WarbandPlot,
   WarbandRule,
   WarbandUnitsSummary,
 } from "./warband-types";
@@ -41,6 +42,8 @@ export type WarbandSheet = {
   capabilities: WarbandCapabilities;
   /** The warband's own rules, in the order they were added. */
   rules: WarbandRule[];
+  /** The plot it follows, with its ladder's points for the track (apps/plots); null: none. */
+  plot?: WarbandPlot | null;
   /** The list's own name for an item, by fighter key and item id, from its template ("Jambiya"). */
   item_names?: Record<string, Record<string, string>>;
   heroes: WarbandHero[];

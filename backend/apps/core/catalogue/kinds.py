@@ -46,7 +46,7 @@ from apps.warband_templates.models import (
     TemplateUpgrade,
     WarbandTemplate,
 )
-from apps.warbands.models import HenchmenGroup, WarbandItem
+from apps.warbands.models import HenchmenGroup, Warband, WarbandItem
 from apps.warbands.units.kinds import KINDS as UNIT_KINDS
 
 from .hooks import (
@@ -398,6 +398,9 @@ PLOTS = CatalogueKindSpec(  # a warband's path through a campaign, scoring campa
     filters={"search": NAME_AND_TYPE["search"]},
     reread=True,
     children=("scoring_lines", "achievements"),  # what a version copies
+    # the warbands following it: a campaign's own plot one follows is archived, not deleted, and a version's first
+    # edit moves the followers onto the version as it moves every other copy (remap.py)
+    holders=(Holder(model=Warband, field="plot", campaign="campaign_id", counts_as="warbands", warband="id"),),
     hooks=PlotHooks(),
 )
 ITEM_RULES = CatalogueKindSpec(  # the shared rules: added, never edited or deleted

@@ -160,6 +160,26 @@ describe("Raising a warband from its type's template", () => {
     expect(screen.getByRole("button", { name: "Raise the warband" })).toBeDisabled();
   });
 
+  // the plots step: the campaign plays with plots, so the warband picks one as it is raised
+  it("picks the plot it will follow, with the plot's own words on who may follow it", async () => {
+    fakeApi.on(OUTLINE, outline({}));
+    fakeApi.on("GET /campaigns/4/plots/", [
+      { id: 8, name: "Drowning the Witch", who_text: "Witch Hunters." },
+    ]);
+    fakeApi.on("POST /warbands/", { id: 11, name: "The Gilded Wagon" });
+    renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} showPlot />);
+    const user = await pickType();
+
+    await user.selectOptions(
+      await screen.findByRole("combobox", { name: "Plot" }),
+      "Drowning the Witch"
+    );
+    expect(screen.getByText("Witch Hunters.")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Raise the warband" }));
+
+    await waitFor(() => expect(fakeApi.bodyOf("POST /warbands/")).toMatchObject({ plot_id: 8 }));
+  });
+
   it("shows no outline for a type with no template", async () => {
     fakeApi.on(OUTLINE, { template: null, gold: 500, campaign_gold: 500, most_warriors: 15 });
     renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} />);

@@ -21,10 +21,12 @@ HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
 class WarbandSerializer(serializers.ModelSerializer):
     """A warband: what it is (`warband_type` and `counts_as`, with their settings and groups: one query,
-    `services/types.py`), and its record and settings."""
+    `services/types.py`), its record and settings, the plot it follows and its campaign point total (apps/plots:
+    the plot's own lines come with the sheet, `services/plot_rules.py` wrote its rules)."""
 
     warband_type = serializers.SerializerMethodField()
     counts_as = serializers.SerializerMethodField()
+    plot_id = serializers.IntegerField(read_only=True, allow_null=True)
 
     def get_warband_type(self, obj: Warband) -> dict[str, Any] | None:
         own = types_of(obj)[0]
@@ -48,6 +50,8 @@ class WarbandSerializer(serializers.ModelSerializer):
             "warband_link",
             "max_units",
             "template_variant",
+            "plot_id",
+            "campaign_points",
             "dice_color",
             "show_loadout_on_mobile",
             "created_at",
@@ -157,12 +161,13 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
 
 
 class WarbandCreateSerializer(serializers.ModelSerializer):
-    """Raising a warband: its name and type (one the campaign may pick, services/types.py), and what it counts as and
-    its link (the picker fills it from the type) if sent."""
+    """Raising a warband: its name and type (one the campaign may pick, services/types.py), and what it counts as,
+    its link (the picker fills it from the type) and the plot it follows (one the campaign plays with) if sent."""
 
     campaign_id = serializers.IntegerField(write_only=True)
     warband_type_id = serializers.IntegerField(min_value=1)
     counts_as_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)
+    plot_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)
 
     class Meta:
         model = Warband
@@ -174,6 +179,7 @@ class WarbandCreateSerializer(serializers.ModelSerializer):
             "max_units",
             "warband_link",
             "template_variant",
+            "plot_id",
         )
 
     def validate_name(self, value):
@@ -187,6 +193,9 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
     dice_color = serializers.RegexField(regex=HEX_COLOR_REGEX, required=False)
     warband_type_id = serializers.IntegerField(min_value=1, required=False)  # never cleared: a warband has a type
     counts_as_ids = serializers.ListField(child=serializers.IntegerField(min_value=1), required=False)  # replaces
+    # its plot (apps/plots): changed for nothing, as often as the player likes (William: "editable for free"); null
+    # follows none. Its campaign point total is typed, and nothing but the player changes it
+    plot_id = serializers.IntegerField(min_value=1, required=False, allow_null=True)
 
     class Meta:
         model = Warband
@@ -202,6 +211,8 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
             "show_loadout_on_mobile",
             "warband_link",
             "template_variant",
+            "plot_id",
+            "campaign_points",
         )
 
     def validate_name(self, value):

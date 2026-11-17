@@ -36,6 +36,12 @@ class Warband(models.Model):
     max_units = models.PositiveSmallIntegerField(default=15)  # warband size: warn only (decision 12)
     # its template's variant (the templates plan, phase 2): its type's preset, else picked when raising; blank: none
     template_variant = models.CharField(max_length=40, blank=True, default="")
+    # the plot it follows (apps/plots), one of its campaign's, picked when it is raised and changed freely after
+    # (William: "editable for free"): null while it follows none, and never one the campaign doesn't play with
+    plot = models.ForeignKey("plots.Plot", related_name="warbands", null=True, blank=True, on_delete=models.RESTRICT)
+    # its campaign point total, typed by the player: nothing here adds to it or takes from it (William: "we dont
+    # need to manage cp or add to it or minus it, let the player do that"). Its plot's ladder is read off it
+    campaign_points = models.PositiveSmallIntegerField(default=0)
     show_loadout_on_mobile = models.BooleanField(default=False)
     # The sum of the ledger, changed only by services/ledger.py in the same transaction as each row (decision 4).
     gold = models.BigIntegerField(default=0, db_default=0)
@@ -135,12 +141,23 @@ MAX_RULE_TEXT = 8000  # mordheimer's longest warband rule, the Forest Goblins' A
 class WarbandRule(models.Model):
     """One of the warband's own rules (William, 3 Nov 2026: "an area of title+description entries so we can pill-ify
     them for quick access"): its title is the pill, its description what the pill opens. The warband's editors add,
-    edit and delete them; a template's rules will be copied in when a warband is raised from it (the templates plan),
-    and edited freely after."""
+    edit and delete them; a template's rules are copied in when a warband is raised from it (the templates plan),
+    and edited freely after.
+
+    A rule the server owns instead carries `from_plot`, the plot it was written from (services/plot_rules.py): the
+    plot's own rule, which carries the whole plan, with `plot_achievement` null, or the rule of the rung the
+    warband's total has reached, which names it. Both are rewritten whenever the plot or the total changes, so an
+    edit to one is lost; a rule with no `from_plot` is the player's and is never touched."""
 
     warband = models.ForeignKey(Warband, related_name="rules", on_delete=models.CASCADE)
     title = models.CharField(max_length=160)
     description = models.TextField(max_length=MAX_RULE_TEXT, blank=True, default="")
+    from_plot = models.ForeignKey(
+        "plots.Plot", related_name="warband_rules", null=True, blank=True, on_delete=models.CASCADE
+    )
+    plot_achievement = models.ForeignKey(
+        "plots.PlotAchievement", related_name="warband_rules", null=True, blank=True, on_delete=models.CASCADE
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -73,7 +73,11 @@ export default function Warband() {
       <p className="text-sm text-text2">No record of that warband.</p>
     ) : (
       <>
-        <CreateWarband campaignId={campaignId} onCreated={sheet.showCreated} />
+        <CreateWarband
+          campaignId={campaignId}
+          onCreated={sheet.showCreated}
+          showPlot={Boolean(campaign?.enable_campaign_points)}
+        />
         {/* Search everything's locations open here too: the list needs no warband */}
         <LocationsPanel
           campaignId={campaignId}
@@ -136,7 +140,9 @@ export default function Warband() {
         />
       ) : null}
       <WarbandInfo
+        campaignId={campaignId}
         warband={warband}
+        plot={campaign?.enable_campaign_points ? sheet.plot : undefined}
         heroes={sheet.heroes}
         hirelings={sheet.hirelings}
         henchmenGroups={sheet.henchmenGroups}

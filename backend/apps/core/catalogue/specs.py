@@ -14,7 +14,13 @@ from .hooks import CatalogueHooks
 
 Filter = Callable[[str], Q]  # a query parameter's stripped value -> the rows it keeps
 UsageKey = Literal[  # usage.py's counts
-    "units", "stashes", "bestiary_entries", "hired_swords", "dramatis_personae", "warband_templates"
+    "units",
+    "stashes",
+    "bestiary_entries",
+    "hired_swords",
+    "dramatis_personae",
+    "warband_templates",
+    "warbands",  # the warband row itself holds it (its plot): counted by `warband`, so nothing is added here
 ]
 
 

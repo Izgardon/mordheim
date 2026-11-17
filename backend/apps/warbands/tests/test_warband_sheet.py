@@ -48,7 +48,17 @@ class WarbandSheetTests(RosterTestCase):
 
         self.assertEqual(
             list(sheet),
-            ["warband", "summary", "capabilities", "rules", "item_names", "heroes", "henchmen_groups", "hirelings"],
+            [
+                "warband",
+                "summary",
+                "capabilities",
+                "rules",
+                "plot",  # the plot it follows and its ladder (apps/plots); null here: it follows none
+                "item_names",
+                "heroes",
+                "henchmen_groups",
+                "hirelings",
+            ],
         )
         self.assertEqual(sheet["rules"], self.client.get(f"{base}rules/").json())
         self.assertEqual(sheet["warband"], self.client.get(base).json())

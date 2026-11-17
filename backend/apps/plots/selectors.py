@@ -14,7 +14,7 @@ from django.db.models import QuerySet
 from apps.campaigns.in_play import in_play, with_in_play
 from apps.core.catalogue import current, merge
 
-from .models import CampaignPlot, Plot
+from .models import CampaignPlot, Plot, PlotAchievement
 
 
 def plot_rows() -> QuerySet[Plot]:
@@ -34,6 +34,29 @@ def default_plot_ids(campaign_id: int) -> list[int]:
 
     rows = merge.campaign_list(PLOTS, Plot.objects.all(), campaign_id).filter(in_play(campaign_id))
     return list(rows.order_by("name", "id").values_list("id", flat=True))
+
+
+def plays_with(campaign_id: int) -> set[int]:
+    """The ids the campaign's plots are known by now: each pick as the campaign's current entry for it (its version
+    of a book plot, else the plot itself). What a warband may follow (two queries)."""
+    picked = picked_plot_ids(campaign_id)
+    if not picked:
+        return set()
+    found = current.current_rows(Plot.objects.all(), picked, campaign_id)
+    return {plot.pk for plot in found.values()}
+
+
+def warband_plot(plot_id: int | None) -> dict[str, object] | None:
+    """The plot a warband follows, as its page reads it: its name, and its ladder's points for the track (two
+    queries; none when it follows none). Its lines are in the rules its plot wrote
+    (warbands/services/plot_rules.py)."""
+    if plot_id is None:
+        return None
+    row = Plot.objects.filter(pk=plot_id).values("id", "name").first()
+    if row is None:
+        return None
+    rungs = PlotAchievement.objects.filter(plot_id=plot_id).order_by("points", "id")
+    return {**row, "rungs": list(dict.fromkeys(rungs.values_list("points", flat=True)))}
 
 
 def campaign_plots(campaign_id: int) -> list[Plot]:

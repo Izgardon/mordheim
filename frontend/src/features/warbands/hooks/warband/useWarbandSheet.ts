@@ -11,7 +11,7 @@ import {
 
 import type { Unit, UnitKindKey } from "../../types/units";
 import { readCapabilities, type WarbandSheet } from "../../types/warband-sheet";
-import type { Warband, WarbandRule } from "../../types/warband-types";
+import type { Warband, WarbandPlot, WarbandRule } from "../../types/warband-types";
 
 type UseWarbandSheetOptions = {
   campaignId: number;
@@ -113,6 +113,8 @@ export function useWarbandSheet({ campaignId, hasCampaignId, warbandId }: UseWar
     henchmenGroups: data?.henchmen_groups ?? NO_GROUPS,
     hirelings: data?.hirelings ?? NO_HIRELINGS,
     rules: data?.rules ?? NO_RULES,
+    /** The plot it follows, with its ladder for the track (apps/plots); null: none. */
+    plot: (data?.plot ?? null) as WarbandPlot | null,
     isLoading,
     error: invalidError || (loadError ? messageOf(loadError) : ""),
     ...writers,
