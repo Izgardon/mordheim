@@ -1,12 +1,15 @@
 """The campaign's resources (William, 7 Nov 2026: "resource options should be options from the campaigns resources that
 still exist"): the names its warbands' counters hold now, which a hired sword's or dramatis persona's hire fee or upkeep
-picks its one resource from. Gold is the fee's own gold and never one of them."""
+picks its one resource from. Gold is the fee's own gold and never one of them.
+
+Campaign points are a name a fee may charge in, not a counter (`is_campaign_points`): a fee naming them is the
+player's own to pay (apps/hirelings/fees.py), so they are offered while the setting is on and nothing holds them.
+"""
 
 from typing import Any
 
-from apps.hirelings.fees import is_gold
+from apps.hirelings.fees import CAMPAIGN_POINTS, is_gold
 from apps.warbands.models import WarbandResource
-from apps.warbands.services.campaign_points import CAMPAIGN_POINTS
 
 from ..models import DEFAULT_RESOURCE_NAME, CampaignSettings
 
@@ -26,10 +29,10 @@ def campaign_resources(campaign_id: int) -> list[dict[str, Any]]:
     )
     rows = [_row((settings.default_resource_name if settings else "") or DEFAULT_RESOURCE_NAME, default=True)]
     if settings and settings.enable_campaign_points:
-        rows.append(_row(CAMPAIGN_POINTS, campaign_points=True))
+        rows.append(_row(CAMPAIGN_POINTS, campaign_points=True))  # a name only: no warband holds a counter of it
     taken = {row["name"].strip().casefold() for row in rows}
     held = (
-        WarbandResource.objects.filter(warband__campaign_id=campaign_id, is_default=False, is_campaign_points=False)
+        WarbandResource.objects.filter(warband__campaign_id=campaign_id, is_default=False)
         .values_list("name", flat=True)
         .distinct()
     )

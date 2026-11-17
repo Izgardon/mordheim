@@ -137,7 +137,15 @@ HIRE_FEE: dict[str, Any] = {
 }
 UPKEEP_FEE = {
     **HIRE_FEE,
-    "resources": [{"resource": "str", "amount": "int", "names": ["str"], "default_resource": "bool"}],
+    "resources": [
+        {
+            "resource": "str",
+            "amount": "int",
+            "names": ["str"],
+            "default_resource": "bool",
+            "campaign_points": "bool",
+        }
+    ],
 }  # with what pays it
 COMPANIONS: dict[str, Any] = {
     "effective_stats": None,

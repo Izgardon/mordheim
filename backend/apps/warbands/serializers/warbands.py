@@ -4,7 +4,6 @@ from rest_framework import serializers
 
 from apps.warbands.models import Warband, WarbandResource, WarbandRule
 from apps.warbands.models.warband import MAX_RULE_TEXT
-from apps.warbands.services.campaign_points import shown_resources
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.services.prices import sale_price
 from apps.warbands.services.resources import MAX_AMOUNT
@@ -100,7 +99,7 @@ class WarbandSummarySerializer(serializers.ModelSerializer):
         resources = getattr(obj, "resources", None)
         if resources is None:
             return []
-        return WarbandResourceSerializer(shown_resources(obj, resources.all()), many=True).data
+        return WarbandResourceSerializer(resources.all(), many=True).data
 
     def get_mounts_rating(self, obj) -> int:
         return self._units(obj).mounts_rating
@@ -213,14 +212,13 @@ class WarbandUpdateSerializer(serializers.ModelSerializer):
 
 
 class WarbandResourceSerializer(serializers.ModelSerializer):
-    """A resource; `is_default`: the campaign's default resource (first, never deleted, renamed by the campaign);
-    `is_campaign_points`: its campaign points (next, never deleted or renamed; services/campaign_points.py)."""
+    """A resource; `is_default`: the campaign's default resource (first, never deleted, renamed by the campaign)."""
 
     warband_id = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = WarbandResource
-        fields = ("id", "warband_id", "name", "amount", "is_default", "is_campaign_points")
+        fields = ("id", "warband_id", "name", "amount", "is_default")
 
 
 class WarbandResourceCreateSerializer(serializers.ModelSerializer):

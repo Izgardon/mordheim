@@ -75,9 +75,8 @@ function CampaignName({ campaign }: { campaign: CampaignSummary }) {
 }
 
 /**
- * The Encampments page, Locations, Plots (campaign points: every warband's resource while on,
- * William's label of 16 Nov 2026) and Blood pacts, switched on or off for everyone; each saves as
- * it flips.
+ * The Encampments page, Locations, Plots (campaign points: William's label of 16 Nov 2026) and
+ * Blood pacts, switched on or off for everyone; each saves as it flips.
  */
 function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
   const { saving, error, save } = useCampaignSave(campaign.id, "Couldn't save that.");

@@ -36,7 +36,9 @@ type FeePaymentProps = {
  * What is paid for a fee (the fees step), every part prefilled and editable: the gold (Roll for its
  * dice, rerollable, or the dice typed in, fills the gold) and each resource line's amount, paid
  * from a counter of the warband's (the one of its name to start, another, a new one, or not at
- * all). A counter short of the amount warns and offers to pay what it holds: a guide, never a block.
+ * all). A counter short of the amount warns and offers to pay what it holds: a guide, never a
+ * block. A line in campaign points is read only: nothing holds them, so it says what the player
+ * takes off the warband's total himself.
  */
 export default function FeePayment(props: FeePaymentProps) {
   const { payment, onChange, counters, idPrefix, compact } = props;
@@ -97,6 +99,18 @@ export default function FeePayment(props: FeePaymentProps) {
         ) : null}
       </div>
       {payment.lines.map((line, index) => {
+        if (line.campaign_points) {
+          // nothing holds campaign points: the player takes them off his warband's total himself
+          return (
+            <div
+              key={`${line.resource}-${index}`}
+              className="flex flex-wrap items-center gap-1.5 text-[13px] text-ink"
+            >
+              <span className="font-semibold">{`${line.amount} ${line.resource}`}</span>
+              <span className="text-text2">&mdash; yours to take off the warband&apos;s total</span>
+            </div>
+          );
+        }
         const counter = counterOf(line, counters);
         const warning = lineWarning(line, counters);
         const missing = !matchCounter(line, counters); // no counter of its name: offer to add one

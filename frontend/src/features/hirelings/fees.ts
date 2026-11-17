@@ -12,6 +12,11 @@ export type FeeResource = {
   names?: string[];
   /** Paid from the warband's default resource whatever the campaign calls it (Wyrdstone). */
   default_resource?: boolean;
+  /**
+   * Campaign points: no counter holds them (they are a number on the warband, apps/plots), so
+   * nothing is charged and the line says what the player takes off himself.
+   */
+  campaign_points?: boolean;
 };
 
 export type Fee = {
@@ -85,12 +90,14 @@ const key = (name: string) => name.trim().toLowerCase().replace(/\s+/g, " ");
 
 /**
  * The warband's counter that pays a fee's resource line, if any: its default resource for a line
- * the server marks `default_resource`, else the counter of one of the server's `names`.
+ * the server marks `default_resource`, else the counter of one of the server's `names`. A line the
+ * server marks `campaign_points` is paid by nothing: the player takes them off the warband himself.
  */
 export function matchCounter<T extends { name: string; is_default?: boolean }>(
-  line: Pick<FeeResource, "resource" | "names" | "default_resource">,
+  line: Pick<FeeResource, "resource" | "names" | "default_resource" | "campaign_points">,
   counters: T[]
 ) {
+  if (line.campaign_points) return null;
   const own = line.default_resource ? counters.find((counter) => counter.is_default) : undefined;
   if (own) return own;
   const names = line.names?.length ? line.names : [key(line.resource)];

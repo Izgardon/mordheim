@@ -6,7 +6,6 @@ from django.db import transaction
 
 from apps.core.catalogue.cache import bump
 from apps.plots.writes import give_default_plots
-from apps.warbands.services.campaign_points import give_campaign_points
 
 from ..errors import Refused
 from ..in_play import set_settings
@@ -72,9 +71,8 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
         settings.save(update_fields=list(settings_updates))
         if old_gold is not None and validated.get(starting_gold.ADJUST_FLAG):
             starting_gold.adjust_warbands(campaign, old_gold, settings_updates["starting_gold"])
-        if settings_updates.get("enable_campaign_points"):  # on: every warband holds them (William, 7 Nov 2026)
-            give_campaign_points(campaign.warbands.values_list("id", flat=True))
-            give_default_plots(campaign.id)  # and the campaign is given the plots of its settings in play
+        if settings_updates.get("enable_campaign_points"):  # on: the campaign is given its settings' plots
+            give_default_plots(campaign.id)
         if "exploration_chart_id" in settings_updates and settings_updates["exploration_chart_id"] != old_chart:
             bump(campaign.id, "exploration_charts")  # the campaign's cached chart body is another chart now
         renamed = settings_updates.get("default_resource_name", old_resource)

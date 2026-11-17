@@ -1,6 +1,7 @@
 """Upkeep in camp with structured fees (the fees and skill lists step): Ready charges each hired sword's gold and his
 resources, each line from the counter it names, else from the counter of its name, never below 0, noted on the
-Upkeep row; a line set not to be paid is noted, a short or missing counter warns, and an upkeep of none has no row."""
+Upkeep row; a line set not to be paid is noted, a short or missing counter warns, and an upkeep of none has no row.
+Campaign points are nobody's counter: a line naming them says what the player takes off himself (apps/plots)."""
 
 from typing import Any
 
@@ -44,7 +45,7 @@ class UpkeepFeeTests(BattleTestCase):
                 "cost": 0,
                 "resources": [
                     {"resource": "Wyrdstone", "amount": 1},  # the counter of its name
-                    {"resource": "Campaign points", "amount": 1, "resource_id": self.treasure.id},  # picked
+                    {"resource": "Gromril", "amount": 1, "resource_id": self.treasure.id},  # picked
                 ],
             },
         }
@@ -56,10 +57,26 @@ class UpkeepFeeTests(BattleTestCase):
             self.upkeep_row(),
             (
                 -20,
-                "Grukk: 20 gc\nRat Ogre: 0 gc; Paid 1 Wyrdstone from Wyrdstone shards, 1 Campaign points from Treasure.",
+                "Grukk: 20 gc\nRat Ogre: 0 gc; Paid 1 Wyrdstone from Wyrdstone shards, 1 Gromril from Treasure.",
             ),  # fmt: skip
         )
         self.assertNotIn("resource_short", [warning["code"] for warning in answer.get("warnings", [])])
+
+    def test_campaign_points_are_charged_nowhere_and_said_in_words(self):
+        # William, 16 Nov 2026: "when the post game section calls for upkeep it should say campaign points
+        # (still just let user do it themselves dont need to wire anything)"
+        lines = [{"resource": "Campaign points", "amount": 2, "resource_id": self.treasure.id}]
+        entries = {f"hireling:{self.rat_ogre.id}": {"unit_name": "Rat Ogre", "cost": 5, "resources": lines}}
+
+        answer = self.ready(entries)
+
+        self.assertEqual(self.amounts(), (2, 1))  # the counter it was pointed at pays nothing
+        self.assertEqual(self.upkeep_row(), (-5, "Rat Ogre: 5 gc; Yours to take off: 2 Campaign points."))
+        points = [warning for warning in answer.get("warnings", []) if warning["code"] == "campaign_points"]
+        self.assertEqual(
+            [warning["message"] for warning in points],
+            ["Rat Ogre: 2 Campaign points are yours to take off the warband's own total."],
+        )
 
     def test_a_short_counter_pays_what_it_holds_and_a_line_not_paid_is_noted(self):
         lines = [

@@ -6,17 +6,12 @@ from django.db.models.functions import Cast, Greatest, Least
 
 from apps.warbands.models import LedgerAction, Warband, WarbandResource, WarbandTrade
 from apps.warbands.services import economy_log, ledger
-from apps.warbands.services.campaign_points import resource_rows
 
 MAX_AMOUNT = 2_147_483_647  # WarbandResource.amount is a 32-bit integer column
 
 
 class ResourceShortage(ValueError):
     """The resource holds less than the sale takes; nothing was sold."""
-
-
-class NotSellable(ValueError):
-    """Campaign points are never sold (William, 8 Nov 2026: "it isnt sellable"); nothing was sold."""
 
 
 def change_resource(
@@ -28,9 +23,8 @@ def change_resource(
     name: str | None = None,
 ) -> WarbandResource | None:
     """Set the amount, or add `delta` to the stored amount (a concurrent change isn't lost), stopping at 0 and at
-    the column's limit, and rename it when `name` is given. None when the warband has no such resource (or it is
-    campaign points its campaign has off)."""
-    rows = resource_rows(warband).filter(id=resource_id)
+    the column's limit, and rename it when `name` is given. None when the warband has no such resource."""
+    rows = WarbandResource.objects.filter(warband=warband, id=resource_id)
     if name is not None and not rows.update(name=name):
         return None
     if delta is not None:
@@ -49,14 +43,11 @@ def sell_resource(
 ) -> tuple[WarbandResource, WarbandTrade] | None:
     """POST resources/<id>/sell/: take `quantity` off the resource and write its "Sell" ledger row (the price
     the player gave) and its log line ("Sold 3 Wyrdstone for 65 gc") in one transaction. None when there is no
-    such resource; NotSellable for campaign points; ResourceShortage when it holds less than `quantity`."""
-    rows = resource_rows(warband).filter(id=resource_id)
-    found = rows.values_list("name", "is_campaign_points").first()
-    if found is None:
+    such resource; ResourceShortage when it holds less than `quantity`."""
+    rows = WarbandResource.objects.filter(warband=warband, id=resource_id)
+    name = rows.values_list("name", flat=True).first()
+    if name is None:
         return None
-    name, campaign_points = found
-    if campaign_points:
-        raise NotSellable(f"{name} can't be sold.")
     with transaction.atomic():
         # the gold first: it locks the warband before the resource row, as postbattle does
         description = f"{name} x {quantity}" if quantity > 1 else name

@@ -14,6 +14,8 @@ export type PaymentLine = {
   amount: string;
   names?: string[];
   default_resource?: boolean;
+  /** Campaign points: nothing pays them, and the player takes them off the warband himself. */
+  campaign_points?: boolean;
   pick: LinePick;
 };
 
@@ -31,6 +33,7 @@ export function paymentOf(raw: Fee | null | undefined): Payment {
       amount: String(line.amount),
       names: line.names,
       default_resource: line.default_resource,
+      campaign_points: line.campaign_points,
       pick: undefined,
     })),
   };
@@ -40,14 +43,14 @@ const whole = (value: string) => Math.max(0, Math.trunc(Number(value) || 0));
 
 /** The counter that pays a line as it stands: the one picked, else the one of its name. */
 export function counterOf(line: PaymentLine, counters: Counter[]) {
-  if (line.pick === "none") return null;
+  if (line.pick === "none" || line.campaign_points) return null;
   if (typeof line.pick === "number") return counters.find((c) => c.id === line.pick) ?? null;
   return matchCounter(line, counters);
 }
 
 /** What a line warns about: no counter pays it, or its counter holds too few. */
 export function lineWarning(line: PaymentLine, counters: Counter[]) {
-  if (line.pick === "none") return "";
+  if (line.pick === "none" || line.campaign_points) return "";
   const counter = counterOf(line, counters);
   const amount = whole(line.amount);
   if (!counter) return amount ? `This warband has no ${line.resource}.` : "";

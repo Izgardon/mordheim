@@ -7,7 +7,9 @@ keep, on the catalogue entry and on the warband's copy, as one small JSON object
 - `gold` (null: none in the fee), `dice` and `dice_multiplier` ("70 + 3D6" is 70, 3 and null, as an item's price row;
   the roll is added when hiring);
 - `resources`: `{resource, amount}` lines ("1 Wyrdstone", "5 Campaign points"), paid from the warband's counters of
-  that name and never below 0 (units/services/fee_payments.py);
+  that name and never below 0 (units/services/fee_payments.py). Campaign points are the one resource no counter
+  pays: they are a number on the warband the player keeps himself (apps/plots), so a line naming them says so in
+  words and nothing is charged (William, 16 Nov 2026: "still just let user do it themselves");
 - `note`: the rest ("15 gc*", Sigmund's body part).
 
 A resource is named as fees name it. Wyrdstone is paid from the warband's default resource (`WarbandResource.is_default`)
@@ -29,6 +31,7 @@ MAX_RESOURCE_LINES = 6
 MAX_NOTE = 500
 
 WYRDSTONE = "Wyrdstone"  # the resource the warband's default counter pays, whatever the campaign calls it
+CAMPAIGN_POINTS = "Campaign points"  # no counter pays it: the player takes it off the warband's own total
 # A resource as fees name it -> every name a warband's counter of it may have (lower case).
 RESOURCE_NAMES: Mapping[str, tuple[str, ...]] = {
     WYRDSTONE: ("wyrdstone", "wyrdstones", "wyrdstone shard", "wyrdstone shards", "shard", "shards"),
@@ -93,9 +96,16 @@ def pays_from_default(resource: str) -> bool:
     return names_of(resource) == RESOURCE_NAMES[WYRDSTONE]
 
 
+def is_campaign_points(resource: str) -> bool:
+    """Whether `resource` is campaign points, by any of its spellings: the fee line nothing pays."""
+    return names_of(resource) == RESOURCE_NAMES[CAMPAIGN_POINTS]
+
+
 def match_counter(resource: str, counters: Iterable[Any]) -> Any:
     """The warband's counter (anything with a `name`, and `is_default`) that pays `resource`, or None: the default
-    resource for Wyrdstone, else the counter of one of its names."""
+    resource for Wyrdstone, else the counter of one of its names. Campaign points are never matched."""
+    if is_campaign_points(resource):
+        return None
     counters = list(counters)
     if pays_from_default(resource):
         default = next((counter for counter in counters if getattr(counter, "is_default", False)), None)
@@ -182,11 +192,17 @@ def clean_fee(value: Any) -> Fee:
 
 
 def fee_payload(fee: Mapping[str, Any] | None) -> dict[str, Any]:
-    """A stored fee as payloads show it: every key, and what pays each resource line (its `names`, and whether the
-    warband's default resource does: `default_resource`)."""
+    """A stored fee as payloads show it: every key, and what pays each resource line (its `names`, whether the
+    warband's default resource does: `default_resource`, and whether it is campaign points, which nothing pays:
+    `campaign_points`)."""
     stored = {**no_fee(), **(fee or {})}
     lines = [
-        {**line, "names": list(names_of(line["resource"])), "default_resource": pays_from_default(line["resource"])}
+        {
+            **line,
+            "names": list(names_of(line["resource"])),
+            "default_resource": pays_from_default(line["resource"]),
+            "campaign_points": is_campaign_points(line["resource"]),
+        }
         for line in stored["resources"]
     ]
     return {**stored, "resources": lines}

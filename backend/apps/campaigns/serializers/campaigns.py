@@ -6,7 +6,6 @@ from django.db.models import Q
 from rest_framework import serializers
 
 from apps.exploration.models import ExplorationChart
-from apps.warbands.services.campaign_points import CAMPAIGN_POINTS
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
 from apps.warbands.utils.hero_level import normalize_hero_level_thresholds
@@ -184,12 +183,6 @@ class CampaignUpdateSerializer(serializers.Serializer):
         charts = ExplorationChart.objects.filter(pk=value, archived_at__isnull=True)
         if not charts.filter(Q(campaign__isnull=True) | Q(campaign_id=campaign_id)).exists():
             raise serializers.ValidationError("That exploration chart isn't in this campaign.")
-        return value
-
-    def validate_default_resource_name(self, value):
-        """Not Campaign points: that is the campaign points counter's name, which a rename would merge away."""
-        if value.strip().lower() == CAMPAIGN_POINTS.lower():
-            raise serializers.ValidationError(f"{CAMPAIGN_POINTS} is the campaign points' own name.")
         return value
 
     def validate_hero_level_thresholds(self, value):

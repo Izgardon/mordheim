@@ -108,7 +108,11 @@ function AddResource({ props }: { props: FeeEditorProps }) {
 function ResourceLine({ props }: { props: FeeEditorProps }) {
   const { value, resources } = props;
   const line = value.resources[0];
-  const known = resources === undefined || matchCounter(line, resources) !== null;
+  // one of the campaign's resources by name (campaign points among them: no counter holds those)
+  const named = (resources ?? []).some(
+    (row) => row.name.trim().toLowerCase() === line.resource.trim().toLowerCase()
+  );
+  const known = resources === undefined || named || matchCounter(line, resources) !== null;
   return (
     <span className="flex flex-wrap items-center gap-1.5">
       <span className="text-sm text-text2">+</span>

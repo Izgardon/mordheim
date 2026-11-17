@@ -1,8 +1,7 @@
 /**
- * The warband's resources: the campaign's default resource comes first, with no icon, then its
- * campaign points; the default's ⋮ offers only Sell (the campaign names it, and it is never
- * deleted), campaign points have no ⋮ (never sold); the rest keep Rename, Sell and Delete, and a
- * Wyrdstone-named one keeps its icon. Add resource takes a name only.
+ * The warband's resources: the campaign's default resource comes first, with no icon, and its ⋮
+ * offers only Sell (the campaign names it, and it is never deleted); the rest keep Rename, Sell
+ * and Delete, and a Wyrdstone-named one keeps its icon. Add resource takes a name only.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -20,23 +19,16 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
   apiRequest: (await import("@/test/fake-api")).fakeApi.apiRequest,
 }));
 
-const resource = (
-  id: number,
-  name: string,
-  is_default = false,
-  is_campaign_points = false
-): WarbandResource => ({
+const resource = (id: number, name: string, is_default = false): WarbandResource => ({
   id,
   warband_id: 9,
   name,
   amount: id,
   is_default,
-  is_campaign_points,
 });
 
 const resources = [
   resource(1, "Amber"),
-  resource(4, "Campaign points", false, true),
   resource(2, "Wyrdstone shards"),
   resource(3, "Warpstone", true),
 ];
@@ -50,13 +42,13 @@ const renderResources = (canEdit = true) =>
   );
 
 describe("WarbandResources", () => {
-  it("lists the default resource first, with no icon, then campaign points", () => {
+  it("lists the default resource first, with no icon", () => {
     renderResources(false);
 
     const names = within(screen.getByRole("region", { name: "Resources" }))
-      .getAllByText(/^(Amber|Wyrdstone shards|Warpstone|Campaign points)$/)
+      .getAllByText(/^(Amber|Wyrdstone shards|Warpstone)$/)
       .map((label) => label.textContent);
-    expect(names).toEqual(["Warpstone", "Campaign points", "Amber", "Wyrdstone shards"]);
+    expect(names).toEqual(["Warpstone", "Amber", "Wyrdstone shards"]);
     expect(screen.getByText("Warpstone").querySelector("svg")).toBeNull();
     expect(screen.getByText("Wyrdstone shards").querySelector("svg")).not.toBeNull();
   });
@@ -68,16 +60,6 @@ describe("WarbandResources", () => {
     await user.click(screen.getByRole("button", { name: "Warpstone actions" }));
     const items = await screen.findAllByRole("menuitem");
     expect(items.map((item) => item.textContent)).toEqual(["Sell"]);
-  });
-
-  // William, 8 Nov 2026: "campaign points resource when on shouldnt have any menu options as it
-  // isnt sellable, just the +-"
-  it("gives campaign points only − and +, with no menu", () => {
-    renderResources();
-
-    expect(screen.getByRole("button", { name: "One Campaign points less" })).toBeVisible();
-    expect(screen.getByRole("button", { name: "One Campaign points more" })).toBeVisible();
-    expect(screen.queryByRole("button", { name: "Campaign points actions" })).toBeNull();
   });
 
   it("keeps Rename, Sell and Delete on the others", async () => {
@@ -104,7 +86,7 @@ describe("Sell", () => {
   it("prices the default resource from the table at the warband's band, which can be changed", async () => {
     const user = setupUser();
     fakeApi.on("POST /warbands/9/resources/3/sell/", {
-      resource: { ...resources[3], amount: 0 },
+      resource: { ...resources[2], amount: 0 },
       trade: { id: 1, action: "Sell", description: "Warpstone x 3", price: 72, children: [] },
       summary: {},
     });

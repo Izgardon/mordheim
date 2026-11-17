@@ -7,6 +7,9 @@ import { queryKeys } from "@/lib/query-keys";
  * One of the campaign's resources (`GET campaigns/<id>/resources/`): a name its warbands' counters
  * hold, its default resource first (named as its settings name it), then campaign points while
  * they are on, then the rest by name. Gold is never one.
+ *
+ * `is_campaign_points` marks the one resource no counter holds: a fee may charge in campaign
+ * points, and paying them is the player's own (apps/plots).
  */
 export type CampaignResource = { name: string; is_default: boolean; is_campaign_points: boolean };
 

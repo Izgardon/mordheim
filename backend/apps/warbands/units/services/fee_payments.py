@@ -5,6 +5,11 @@ counter never goes below 0, so a short one pays what it holds. A shortage, or a 
 never a refusal (a guide, not a gatekeeper); a line the player chose not to pay is noted, not warned about. What was
 paid goes in the note of the ledger row it goes with.
 
+Campaign points are the exception: no counter holds them (they are a number the player types on his warband,
+apps/plots), so a line naming them charges nothing whatever it was sent with. It says what is owed in words, on the
+ledger row and as a warning, and the player takes it off himself (William, 16 Nov 2026: "it should say campaign
+points (still just let user do it themselves dont need to wire anything)").
+
 Callers hold the warband's row (the gold's lock comes first, as everywhere); `locked_counters` then locks its
 counters in one query and `pay` writes their new amounts in one UPDATE, whatever the number of lines.
 """
@@ -15,9 +20,8 @@ from typing import Any
 
 from django.db.models import Case, IntegerField, Value, When
 
-from apps.hirelings.fees import match_counter
+from apps.hirelings.fees import is_campaign_points, match_counter
 from apps.warbands.models import WarbandResource
-from apps.warbands.services.campaign_points import SHOWN
 
 
 @dataclass(frozen=True)
@@ -38,6 +42,7 @@ class Paid:
     wanted: int
     taken: int
     counter: str | None  # the counter's name; None: nothing paid it
+    yours: bool = False  # campaign points: nothing was charged and the player takes them off himself
 
 
 @dataclass
@@ -47,16 +52,24 @@ class Payment:
 
     @property
     def note(self) -> str:
-        """What was paid, for the ledger: "Paid 1 Wyrdstone (from Wyrdstone shards). Not paid: 5 Campaign points."."""
-        paid, unpaid = [], []
+        """What was paid, for the ledger: "Paid 1 Wyrdstone from Wyrdstone shards. Not paid: 2 Treasure. Yours to
+        take off: 5 Campaign points."."""
+        paid, unpaid, yours = [], [], []
         for line in self.paid:
+            if line.yours:
+                yours.append(f"{line.wanted} {line.resource}")
+                continue
             if line.counter is None or not line.taken:
                 unpaid.append(f"{line.wanted} {line.resource}")
                 continue
             source = "" if line.counter.lower() == line.resource.lower() else f" from {line.counter}"
             short = "" if line.taken == line.wanted else f" of {line.wanted}"
             paid.append(f"{line.taken}{short} {line.resource}{source}")
-        parts = [f"Paid {', '.join(paid)}." if paid else "", f"Not paid: {', '.join(unpaid)}." if unpaid else ""]
+        parts = [
+            f"Paid {', '.join(paid)}." if paid else "",
+            f"Not paid: {', '.join(unpaid)}." if unpaid else "",
+            f"Yours to take off: {', '.join(yours)}." if yours else "",
+        ]
         return " ".join(part for part in parts if part)
 
 
@@ -75,9 +88,8 @@ def sent_lines(lines: Iterable[dict[str, Any]]) -> list[ResourceLine]:
 
 
 def locked_counters(warband_id: int) -> list[WarbandResource]:
-    """The warband's counters it may pay from (not campaign points its campaign has off), locked until the
-    caller's transaction ends: one query."""
-    rows = WarbandResource.objects.select_for_update(of=("self",)).filter(SHOWN, warband_id=warband_id)
+    """The warband's counters it may pay from, locked until the caller's transaction ends: one query."""
+    rows = WarbandResource.objects.select_for_update(of=("self",)).filter(warband_id=warband_id)
     return list(rows.order_by("id"))
 
 
@@ -86,6 +98,12 @@ def _counter(line: ResourceLine, counters: Sequence[WarbandResource]) -> Warband
         return next((counter for counter in counters if counter.id == line.counter_id), None)
     matched: WarbandResource | None = match_counter(line.resource, counters)
     return matched
+
+
+def _yours(line: ResourceLine, prefix: str) -> dict[str, Any]:
+    """Campaign points owed: said in words, charged nowhere."""
+    message = f"{prefix}{line.amount} {line.resource} are yours to take off the warband's own total."
+    return {"code": "campaign_points", "message": message, "resource": line.resource}
 
 
 def _unpaid(line: ResourceLine, what: str) -> dict[str, Any]:
@@ -100,6 +118,11 @@ def pay(lines: Sequence[ResourceLine], counters: Sequence[WarbandResource]) -> P
     left = {counter.id: counter.amount for counter in counters}
     for line in lines:
         prefix = f"{line.who}: " if line.who else ""
+        if is_campaign_points(line.resource):  # nothing holds them: the player takes them off his own total
+            payment.paid.append(Paid(line.resource, line.amount, 0, None, yours=True))
+            if line.amount:
+                payment.warnings.append(_yours(line, prefix))
+            continue
         counter = _counter(line, counters)
         if counter is None:
             payment.paid.append(Paid(line.resource, line.amount, 0, None))

@@ -50,7 +50,6 @@ class ResourceSaleTests(RosterTestCase):
                 "name": "Wyrdstone",
                 "amount": 1,
                 "is_default": False,
-                "is_campaign_points": False,
             },
         )
         self.assertEqual(

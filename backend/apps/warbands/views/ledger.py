@@ -2,7 +2,6 @@
 
 from typing import Any
 
-from django.db.models import Q
 from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -21,11 +20,10 @@ from apps.warbands.serializers import (
     WarbandTradeEditSerializer,
     WarbandTradeSerializer,
 )
-from apps.warbands.services.campaign_points import resource_rows
 from apps.warbands.services.ledger_manual import NotEditable, edit_row, enter_row
 from apps.warbands.services.ledger_reads import action_filter, log_features, log_rows, treasury_top_rows
 from apps.warbands.services.pagination import newest_first, paginate, requested_page
-from apps.warbands.services.resources import NotSellable, ResourceShortage, change_resource, sell_resource
+from apps.warbands.services.resources import ResourceShortage, change_resource, sell_resource
 
 from .base import WarbandScopedView
 
@@ -37,10 +35,6 @@ NOT_EDITABLE = {
 # the campaign's default resource: its settings rename it, and every warband keeps it (William, 3 Nov 2026)
 DEFAULT_RENAMED = {"detail": "The campaign's settings rename the default resource.", "code": "default_resource"}
 DEFAULT_DELETED = {"detail": "The default resource can't be deleted.", "code": "default_resource"}
-# the campaign's campaign points: every warband holds them while the setting is on (William, 7 Nov 2026)
-CAMPAIGN_POINTS_FIXED = {"detail": "Campaign points can't be renamed or deleted.", "code": "campaign_points"}
-# nor sold (William, 8 Nov 2026: "it isnt sellable, just the +-")
-CAMPAIGN_POINTS_UNSOLD = {"detail": "Campaign points can't be sold.", "code": "campaign_points"}
 
 
 class WarbandLogListView(WarbandScopedView):
@@ -69,7 +63,7 @@ class WarbandLogListView(WarbandScopedView):
 
 class WarbandResourceListCreateView(WarbandScopedView):
     def get(self, request: Request, warband_id: int) -> Response:
-        resources = resource_rows(self.warband).order_by("-is_default", "-is_campaign_points", "name")
+        resources = WarbandResource.objects.filter(warband=self.warband).order_by("-is_default", "name")
         return Response(WarbandResourceSerializer(resources, many=True).data)
 
     def post(self, request: Request, warband_id: int) -> Response:
@@ -91,10 +85,8 @@ class WarbandResourceDetailView(WarbandScopedView):
             if not name:
                 return Response({"detail": "Resource name is required"}, status=400)
             rows = WarbandResource.objects.filter(warband=self.warband)
-            fixed = rows.filter(Q(is_default=True) | Q(is_campaign_points=True), id=resource_id).exclude(name=name)
-            is_default = fixed.values_list("is_default", flat=True).first()
-            if is_default is not None:
-                return Response(DEFAULT_RENAMED if is_default else CAMPAIGN_POINTS_FIXED, status=400)
+            if rows.filter(is_default=True, id=resource_id).exclude(name=name).exists():
+                return Response(DEFAULT_RENAMED, status=400)
             if rows.exclude(id=resource_id).filter(name__iexact=name).exists():
                 return Response({"detail": "Resource already exists"}, status=400)
         resource = change_resource(self.warband, resource_id, **serializer.validated_data)
@@ -108,8 +100,6 @@ class WarbandResourceDetailView(WarbandScopedView):
             return Response(NOT_FOUND, status=404)
         if resource.is_default:
             return Response(DEFAULT_DELETED, status=400)
-        if resource.is_campaign_points:
-            return Response(CAMPAIGN_POINTS_FIXED, status=400)
         resource.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -124,8 +114,6 @@ class WarbandResourceSaleView(WarbandScopedView):
             sale = sell_resource(self.warband, resource_id, **serializer.validated_data)
         except ResourceShortage as shortage:
             return Response({"detail": str(shortage), "code": "not_enough_resource"}, status=400)
-        except NotSellable:
-            return Response(CAMPAIGN_POINTS_UNSOLD, status=400)
         if sale is None:
             return Response(NOT_FOUND, status=404)
         resource, trade = sale

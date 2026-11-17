@@ -123,6 +123,23 @@ class ResourceTests(HireTestCase):
         self.assertEqual((gold.amount, self.amounts(), codes(response)), (1, (3, 5), []))
         self.assertEqual(trade_rows(self.warband), [("Hire", "Ogre Bodyguard", 0, "Paid 3 Treasure from Gromril. Not paid: 1 Wyrdstone.")])  # fmt: skip
 
+    def test_a_campaign_points_line_charges_nothing_and_says_the_player_takes_them_off(self):
+        # William, 16 Nov 2026: campaign points are a number on the warband, so a fee naming them is his own to pay
+        fee = make_fee(gold=200, resources=[("Campaign points", 5)])
+        HiredSword.objects.filter(id=self.ogre.id).update(hire_fee=fee)
+        counter = WarbandResource.objects.create(warband=self.warband, name="Campaign points", amount=9)
+
+        response = self.hire()
+
+        counter.refresh_from_db()
+        self.assertEqual((response.status_code, counter.amount), (201, 9))  # a counter of that name pays nothing
+        self.assertEqual(codes(response), ["campaign_points"])
+        self.assertEqual(
+            [warning["message"] for warning in response.data["warnings"]],
+            ["Ogre Bodyguard: 5 Campaign points are yours to take off the warband's own total."],
+        )
+        self.assertEqual(trade_rows(self.warband)[0][3], "Yours to take off: 5 Campaign points.")
+
     def test_another_warbands_counter_pays_nothing(self):
         theirs = WarbandResource.objects.create(warband=self.rival, name="Treasure", amount=9)
 

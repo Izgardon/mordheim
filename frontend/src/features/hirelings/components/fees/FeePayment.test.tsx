@@ -24,17 +24,17 @@ const fee: Fee = {
 };
 
 /** The hire dialog's part: it keeps the payment. */
-function Paying({ onPaid }: { onPaid: (payment: Payment) => void }) {
-  const [payment, setPayment] = useState(() => paymentOf(fee));
+function Paying({ onPaid, paying = fee }: { onPaid: (payment: Payment) => void; paying?: Fee }) {
+  const [payment, setPayment] = useState(() => paymentOf(paying));
   return (
     <FeePayment
-      fee={fee}
+      fee={paying}
       payment={payment}
       onChange={(next) => {
         setPayment(next);
         onPaid(next);
       }}
-      counters={[]}
+      counters={[{ id: 1, name: "Campaign points", amount: 9 }]}
       onAddCounter={vi.fn()}
       idPrefix="hire"
     />
@@ -61,5 +61,27 @@ describe("FeePayment", () => {
     await user.click(screen.getByRole("button", { name: "Roll again 2D6×10" }));
     expect(onPaid).toHaveBeenLastCalledWith({ gold: "60", roll: 2, lines: [] });
     expect(screen.getByLabelText("First D6 rolled")).toHaveValue("1");
+  });
+
+  // William, 16 Nov 2026: campaign points are a number on the warband, so the player pays them
+  it("shows a campaign points line as words, with nothing to pay it from", () => {
+    const paying: Fee = {
+      ...fee,
+      dice: null,
+      dice_multiplier: null,
+      resources: [
+        {
+          resource: "Campaign points",
+          amount: 5,
+          names: ["campaign points"],
+          campaign_points: true,
+        },
+      ],
+    };
+    render(<Paying onPaid={vi.fn()} paying={paying} />);
+
+    expect(screen.getByText("5 Campaign points")).toBeVisible();
+    expect(screen.getByText(/yours to take off the warband's total/)).toBeVisible();
+    expect(screen.queryByLabelText("What pays Campaign points")).toBeNull();
   });
 });
