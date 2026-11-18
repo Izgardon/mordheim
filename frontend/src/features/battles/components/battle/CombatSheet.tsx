@@ -20,6 +20,7 @@ import {
   toWound,
 } from "./combat-helpers";
 import CombatPicker, { type CombatOption } from "./CombatPicker";
+import CriticalTables from "./CriticalTables";
 
 type CombatSheetProps = {
   kind: "melee" | "ranged" | null;
@@ -68,7 +69,7 @@ function Result({ label, value }: { label: string; value: string }) {
 
 /**
  * Melee and Ranged (design E): pick your model and theirs (or type the numbers) for the roll to
- * hit, to wound and the save left; the critical hit tables sit underneath.
+ * hit, to wound and the save left; the critical hit tables sit underneath, minimised.
  */
 export default function CombatSheet({ kind, yours, theirs, onOpenChange }: CombatSheetProps) {
   const [mineKey, setMineKey] = useState("");
@@ -195,24 +196,7 @@ export default function CombatSheet({ kind, yours, theirs, onOpenChange }: Comba
       <p className="m-0 text-xs text-muted-foreground">
         Strength {num(mine.strength) || "–"} takes {saveModifier(num(mine.strength))} off the save.
       </p>
-      {tables.map((table) => (
-        <section key={table.id} aria-label={table.label} className="flex flex-col">
-          <h3 className="m-0 pb-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-faint">
-            Critical hits · {table.label}
-          </h3>
-          <dl className="m-0 flex flex-col">
-            {table.entries.map((entry) => (
-              <div
-                key={entry.roll}
-                className="grid grid-cols-[3rem_minmax(0,1fr)] gap-3 border-t border-line py-2"
-              >
-                <dt className="font-mono text-sm font-bold text-accent-text">{entry.roll}</dt>
-                <dd className="m-0 text-sm text-text2">{entry.result}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
-      ))}
+      <CriticalTables tables={tables} />
     </ModalSheet>
   );
 }
