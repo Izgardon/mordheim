@@ -1,7 +1,15 @@
+import { Fragment, type ReactNode } from "react";
+
 import type { PrebattleUnit } from "@/features/battles/components/prebattle/prebattle-types";
 import { cn } from "@/lib/utils";
 
-import { canScore, distinctType, type BattleSections, type BattleUnitView } from "./battle-units";
+import {
+  battleSectionLabel,
+  canScore,
+  distinctType,
+  type BattleSections,
+  type BattleUnitView,
+} from "./battle-units";
 import GroupCard from "./GroupCard";
 import UnitCard from "./UnitCard";
 import type { GearTab } from "./UnitCardParts";
@@ -29,7 +37,8 @@ export type WarbandUnitActions = {
 
 /**
  * One warband's units in the fight: its heroes, hired swords, animals, henchmen groups and
- * temporary units as cards, and Add a unit at the end of your own.
+ * temporary units as cards under a heading each (William, 12 Nov 2026: sectioned "by unit type"),
+ * and Add a unit at the end of your own. An empty section has no heading.
  */
 export default function WarbandUnits({
   sections,
@@ -63,17 +72,13 @@ export default function WarbandUnits({
       }
     />
   );
-  return (
-    <div
-      className={cn(
-        "grid gap-2.5",
-        isMobile ? "" : "grid-cols-[repeat(auto-fill,minmax(320px,1fr))]"
-      )}
-    >
-      {sections.heroes.map(card)}
-      {sections.swords.map(card)}
-      {sections.pets.map(card)}
-      {sections.groups.map((entry) => (
+  const groups: { kind: PrebattleUnit["kind"]; cards: ReactNode[] }[] = [
+    { kind: "hero", cards: sections.heroes.map(card) },
+    { kind: "hireling", cards: sections.swords.map(card) },
+    { kind: "pet", cards: sections.pets.map(card) },
+    {
+      kind: "henchman",
+      cards: sections.groups.map((entry) => (
         <GroupCard
           key={entry.group.id}
           entry={entry}
@@ -98,8 +103,27 @@ export default function WarbandUnits({
             }
           }
         />
-      ))}
-      {sections.temporary.map(card)}
+      )),
+    },
+    { kind: "custom", cards: sections.temporary.map(card) },
+  ];
+  return (
+    <div
+      className={cn(
+        "grid gap-2.5",
+        isMobile ? "" : "grid-cols-[repeat(auto-fill,minmax(320px,1fr))]"
+      )}
+    >
+      {groups
+        .filter((section) => section.cards.length > 0)
+        .map((section) => (
+          <Fragment key={section.kind}>
+            <h2 className="col-span-full m-0 text-[11px] font-bold uppercase tracking-[0.12em] text-faint">
+              {battleSectionLabel({ kind: section.kind })}
+            </h2>
+            {section.cards}
+          </Fragment>
+        ))}
       {actions?.canAct ? (
         <button
           type="button"
