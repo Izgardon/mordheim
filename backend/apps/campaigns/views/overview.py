@@ -49,15 +49,15 @@ class CampaignBattleHistoryView(CampaignScopedView):
 
 
 class CampaignBattleRecordView(CampaignScopedView):
-    """GET: one ended battle round by round, then each warband's aftermath (the Battles page's open row, any member;
-    battles/services/record.py)."""
+    """GET: one ended battle round by round, then each warband's aftermath, and the caller's own battle notes (the
+    Battles page's open row, any member; battles/services/record.py). Nobody reads another player's notes."""
 
     def get(self, request, campaign_id, battle_id):
         battle = Battle.objects.filter(campaign_id=campaign_id, id=battle_id, status=Battle.STATUS_ENDED)
         found = battle.only("id", "neutral_groups_json").first()
         if found is None:
             return Response({"detail": "Not found"}, status=404)
-        return Response(battle_record(found))
+        return Response(battle_record(found, request.user.id))
 
 
 class CampaignChronicleView(CampaignScopedView):

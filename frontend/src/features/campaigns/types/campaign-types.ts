@@ -218,6 +218,8 @@ export type BattleRecordUnit = {
 export type BattleRecord = {
   rounds: { round: number; out_of_action: BattleRecordOut[] }[];
   aftermath: { warband_id: number; warband_name: string; units: BattleRecordUnit[] }[];
+  /** The battle notes you wrote in this battle; "" when you wrote none. Nobody else reads them. */
+  your_notes: string;
 };
 
 export type CampaignChronicleKind =

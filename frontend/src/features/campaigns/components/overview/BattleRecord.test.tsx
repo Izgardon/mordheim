@@ -2,7 +2,8 @@
  * The Battles page's open battle (William, 7 Nov 2026: "battles: just do put out of action, can
  * then also show what happened to units in that battle after if they got injuries or died"): turn
  * by turn, each unit put out of action and by whom, with the turn's moments; then After, each
- * warband's serious injuries and deaths. The overview's rows keep opening to their moments only.
+ * warband's serious injuries and deaths, and the notes you wrote, which nobody else reads. The
+ * overview's rows keep opening to their moments only.
  */
 import { screen, within } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
@@ -51,6 +52,7 @@ const out = (name: string, warband: string, by: string | null = null) => ({
   by,
 });
 const record: BattleRecord = {
+  your_notes: "",
   rounds: [
     { round: 1, out_of_action: [out("Tisk", "Rats", "Ott the Red"), out("Snik", "Rats")] },
     { round: 2, out_of_action: [out("Zombie 1", "", "Hans")] },
@@ -114,6 +116,20 @@ describe("The Battles page's open battle", () => {
     expect(after).toHaveTextContent("Wiped Out");
   });
 
+  it("shows the battle notes you wrote", async () => {
+    fakeApi.on(RECORD, { ...record, your_notes: "Hold the bridge" });
+    show(true);
+
+    expect(await screen.findByLabelText("Your battle notes")).toHaveTextContent("Hold the bridge");
+  });
+
+  it("shows no notes block where you wrote none", async () => {
+    show(true);
+
+    expect(await screen.findByText("Turn 1")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Your battle notes")).toBeNull();
+  });
+
   it("is the overview's moments only, without the record", async () => {
     show(false);
 
@@ -126,12 +142,9 @@ describe("The Battles page's open battle", () => {
 describe("recordGroups", () => {
   it("orders the turns, puts a kill logged after the fight under During, and the rest After", () => {
     const during = moment(3, null, "During");
-    const groups = recordGroups({ rounds: record.rounds, aftermath: [] }, [
-      moment(4, 3, "Turn 3"),
-      during,
-    ]);
+    const groups = recordGroups({ ...record, aftermath: [] }, [moment(4, 3, "Turn 3"), during]);
     expect(groups.map((group) => group.label)).toEqual(["Turn 1", "Turn 2", "Turn 3", "During"]);
-    expect(recordGroups({ rounds: [], aftermath: [] }, [])).toEqual([]);
+    expect(recordGroups({ ...record, rounds: [], aftermath: [] }, [])).toEqual([]);
   });
 
   it("says Dead once for a unit that died", () => {

@@ -2,7 +2,7 @@
 what happened to units in that battle after if they got injuries or died"; battles/services/record.py): round by
 round each unit put out of action in order, by whom where a kill was recorded, an out of action later unset or an
 undone kill's left out and nothing else from the log; then each warband's serious injuries and deaths from its
-Aftermath. Any member reads it, in a few queries whatever the battle holds.
+Aftermath, and the reader's own battle notes. Any member reads it, in a few queries whatever the battle holds.
 """
 
 from datetime import UTC, datetime
@@ -55,6 +55,7 @@ class BattleRecordTests(CampaignTestCase):
                 status=BattleParticipant.STATUS_CONFIRMED_POSTBATTLE,
                 roster_json=roster if warband == self.warband else {},
                 postbattle_json={"unit_results": results},
+                battle_notes="Hold the bridge" if warband == self.warband else "",
             )
         self.monks, self.rats = self.warband.id, self.rival_warband.id
 
@@ -140,7 +141,21 @@ class BattleRecordTests(CampaignTestCase):
         self.out(self.monks, "hero:1", 1)
         BattleParticipant.objects.filter(battle=self.battle, warband=self.warband).update(removed_from_record=True)
 
-        self.assertEqual(self.read().json(), {"rounds": [], "aftermath": []})
+        self.assertEqual(self.read().json(), {"rounds": [], "aftermath": [], "your_notes": ""})
         open_battle = Battle.objects.create(campaign=self.campaign, created_by_user=self.player, scenario="Ambush")
         self.assertEqual(self.read(open_battle.id).status_code, 404)
         self.assertEqual(self.read(user=self.outsider).status_code, 404)
+
+
+class BattleRecordNotesTests(BattleRecordTests):
+    """The battle notes a player wrote survive the battle and are read on its record, by him alone (William,
+    18 Nov 2026: "battle notes should be stored and visible in your own battle history somewhere")."""
+
+    def test_the_record_carries_your_own_battle_notes_and_nobody_elses(self):
+        self.assertEqual(self.read().json()["your_notes"], "Hold the bridge")
+        # the rival wrote none of his own, and never reads the player's
+        self.assertEqual(self.read(user=self.rival).json()["your_notes"], "")
+
+    def test_notes_cost_no_extra_query(self):
+        with self.assertNumQueries(4):  # the membership, the battle, its participants, its events
+            self.assertEqual(self.read().json()["your_notes"], "Hold the bridge")

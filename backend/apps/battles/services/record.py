@@ -183,12 +183,23 @@ def _aftermath(row: BattleParticipant) -> dict[str, Any] | None:
     return {"warband_id": row.warband_id, "warband_name": row.warband.name, "units": units}
 
 
-def battle_record(battle: Battle) -> dict[str, Any]:
-    """The battle round by round, then each warband's aftermath: two queries after the battle's."""
+def battle_record(battle: Battle, user_id: int | None = None) -> dict[str, Any]:
+    """The battle round by round, then each warband's aftermath, and the reader's own battle notes: two queries after
+    the battle's. `your_notes` is the notes he wrote in this battle (`battle_notes`, his alone: William, 18 Nov 2026,
+    "battle notes should be stored and visible in your own battle history somewhere"), "" when he wrote none, was not
+    in the battle, or a battle manager took his warband off the record."""
     rows = list(
         BattleParticipant.objects.filter(battle_id=battle.id, removed_from_record=False)
         .select_related("warband")
-        .only("warband_id", "warband__name", "roster_json", "custom_units_json", "postbattle_json")
+        .only(
+            "user_id",
+            "warband_id",
+            "warband__name",
+            "battle_notes",
+            "roster_json",
+            "custom_units_json",
+            "postbattle_json",
+        )
         .order_by("id")
     )
     warbands = {row.warband_id: row.warband.name for row in rows}
@@ -201,7 +212,9 @@ def battle_record(battle: Battle) -> dict[str, Any]:
         entry["out_of_action"] = [
             out for out in entry["out_of_action"] if out["warband_id"] is None or out["warband_id"] in warbands
         ]
+    mine = next((row for row in rows if user_id is not None and row.user_id == user_id), None)
     return {
         "rounds": [entry for entry in on_record if entry["out_of_action"]],
         "aftermath": [found for row in rows if (found := _aftermath(row)) is not None],
+        "your_notes": (mine.battle_notes or "") if mine else "",
     }
