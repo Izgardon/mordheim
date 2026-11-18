@@ -8,14 +8,16 @@ import {
   NotePreview,
   QuickRow,
   StatusButton,
+  StatusReadout,
   WoundsControl,
   type GearTab,
 } from "./UnitCardParts";
 
-type UnitCardProps = {
-  view: BattleUnitView;
-  /** "Champion · hired sword": the type line under the name. */
-  typeLine: string;
+/**
+ * What a card may do to the unit it shows. Left out for another warband's unit: everything about it
+ * is visible, nothing is editable (William, 12 Nov 2026).
+ */
+export type UnitCardActions = {
   canAct: boolean;
   saving: boolean;
   /** Left out for a temporary unit or a pet: a killer is always one of the warband's own. */
@@ -23,29 +25,28 @@ type UnitCardProps = {
   onCycle: () => void;
   onWounds: (delta: number) => void;
   onDismount: (dismounted: boolean) => void;
-  onOpen: (tab: GearTab) => void;
   /** Opens the unit's battle note (yours only). */
   onNote: () => void;
 };
 
+type UnitCardProps = {
+  view: BattleUnitView;
+  /** "Champion · hired sword": the type line under the name. */
+  typeLine: string;
+  onOpen: (tab: GearTab) => void;
+  actions?: UnitCardActions;
+};
+
 /**
- * One of your units in the fight (design E): name and type, the kill button (heroes and hired
- * swords only), the profile (hidden while out of action), the mount line with its Dismounted
- * switch, the status button that cycles beside the wounds, Gear and Skills or Spells, and the
- * small Note button for your battle note on it (its first line under the row when it has one).
+ * A unit in the fight (design E): name and type, the kill button (heroes and hired swords only),
+ * the profile (hidden while out of action), the mount line with its Dismounted switch, the status
+ * button that cycles beside the wounds, Gear and Skills or Spells, and the small Note button for
+ * your battle note on it (its first line under the row when it has one).
+ *
+ * Another warband's unit (no `actions`) shows the same profile, mount, gear, skills and rules, with
+ * its status and wounds as text and no control that changes anything.
  */
-export default function UnitCard({
-  view,
-  typeLine,
-  canAct,
-  saving,
-  onKill,
-  onCycle,
-  onWounds,
-  onDismount,
-  onOpen,
-  onNote,
-}: UnitCardProps) {
+export default function UnitCard({ view, typeLine, onOpen, actions }: UnitCardProps) {
   const { unit, status } = view;
   const out = status === "out_of_action";
   const note = view.info?.notes?.trim() ?? "";
@@ -64,12 +65,12 @@ export default function UnitCard({
           </h3>
           <span className="text-xs text-muted-foreground">{typeLine}</span>
         </div>
-        {onKill ? (
+        {actions?.onKill ? (
           <KillButton
             name={unit.displayName}
             kills={view.kills}
-            disabled={!canAct || out}
-            onClick={onKill}
+            disabled={!actions.canAct || out}
+            onClick={actions.onKill}
           />
         ) : null}
       </div>
@@ -86,46 +87,59 @@ export default function UnitCard({
               {view.dismounted ? "On foot" : `On a ${view.mount}`}
             </span>
           </span>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={view.dismounted}
-            disabled={!canAct || out}
-            onClick={() => onDismount(!view.dismounted)}
-            className="flex min-h-11 items-center gap-2 pl-2 pr-0.5 text-xs font-semibold text-text2 disabled:opacity-50"
-          >
-            Dismounted
-            <span
-              aria-hidden="true"
-              className={cn(
-                "flex h-[22px] w-10 border border-strong p-0.5",
-                view.dismounted ? "justify-end bg-primary" : "justify-start bg-page"
-              )}
+          {actions ? (
+            <button
+              type="button"
+              role="switch"
+              aria-checked={view.dismounted}
+              disabled={!actions.canAct || out}
+              onClick={() => actions.onDismount(!view.dismounted)}
+              className="flex min-h-11 items-center gap-2 pl-2 pr-0.5 text-xs font-semibold text-text2 disabled:opacity-50"
             >
+              Dismounted
               <span
-                className={cn("h-4 w-4", view.dismounted ? "bg-on-accent" : "bg-muted-foreground")}
-              />
-            </span>
-          </button>
+                aria-hidden="true"
+                className={cn(
+                  "flex h-[22px] w-10 border border-strong p-0.5",
+                  view.dismounted ? "justify-end bg-primary" : "justify-start bg-page"
+                )}
+              >
+                <span
+                  className={cn(
+                    "h-4 w-4",
+                    view.dismounted ? "bg-on-accent" : "bg-muted-foreground"
+                  )}
+                />
+              </span>
+            </button>
+          ) : null}
         </div>
       ) : null}
-      <div className="flex items-center gap-1.5">
-        <StatusButton
-          name={unit.displayName}
-          status={status}
-          disabled={!canAct || saving}
-          onClick={onCycle}
-        />
-        <WoundsControl
-          name={unit.displayName}
-          wounds={view.wounds}
-          max={view.maxWounds}
-          disabled={!canAct || out || saving}
-          onChange={onWounds}
-        />
-      </div>
-      <QuickRow unit={unit} onOpen={onOpen} note={{ text: note, onOpen: onNote }} />
-      {note ? <NotePreview text={note} onOpen={onNote} /> : null}
+      {actions ? (
+        <div className="flex items-center gap-1.5">
+          <StatusButton
+            name={unit.displayName}
+            status={status}
+            disabled={!actions.canAct || actions.saving}
+            onClick={actions.onCycle}
+          />
+          <WoundsControl
+            name={unit.displayName}
+            wounds={view.wounds}
+            max={view.maxWounds}
+            disabled={!actions.canAct || out || actions.saving}
+            onChange={actions.onWounds}
+          />
+        </div>
+      ) : (
+        <StatusReadout status={status} wounds={view.wounds} max={view.maxWounds} />
+      )}
+      <QuickRow
+        unit={unit}
+        onOpen={onOpen}
+        note={actions ? { text: note, onOpen: actions.onNote } : undefined}
+      />
+      {note && actions ? <NotePreview text={note} onOpen={actions.onNote} /> : null}
     </article>
   );
 }

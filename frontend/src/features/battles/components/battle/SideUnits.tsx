@@ -1,96 +1,46 @@
-import type { ParticipantRoster } from "@/features/battles/components/prebattle/prebattle-types";
+import type {
+  ParticipantRoster,
+  PrebattleUnit,
+} from "@/features/battles/components/prebattle/prebattle-types";
 import type { BattleNeutralGroup } from "@/features/battles/types/battle-types";
-import { cn } from "@/lib/utils";
 
 import {
+  allViews,
   battleSections,
   nextStatus,
-  STATUS_LABEL,
-  distinctType,
   type UnitStatus,
   type WarbandSide,
 } from "./battle-units";
-import { StatusButton, STATUS_TONE, WoundsControl } from "./UnitCardParts";
-
-function Row({
-  name,
-  detail,
-  status,
-  wounds,
-}: {
-  name: string;
-  detail: string;
-  status: UnitStatus;
-  wounds?: string;
-}) {
-  return (
-    <div className="flex items-center justify-between gap-2.5 border border-border bg-surface px-3 py-2.5">
-      <div className="flex min-w-0 flex-col">
-        <span className="truncate font-display text-[15px] font-semibold text-head">{name}</span>
-        <span className="text-xs text-muted-foreground">{detail}</span>
-      </div>
-      <div className="flex shrink-0 items-center gap-2">
-        {wounds ? <span className="font-mono text-xs text-text2">{wounds}</span> : null}
-        <span className={cn("border px-2 py-0.5 text-[11px] font-bold", STATUS_TONE[status])}>
-          {STATUS_LABEL[status]}
-        </span>
-      </div>
-    </div>
-  );
-}
+import { StatusButton, WoundsControl, type GearTab } from "./UnitCardParts";
+import WarbandUnits from "./WarbandUnits";
 
 /**
- * Another warband's units, view only (design E): its heroes, hired swords and the rest with their
- * status, and each henchmen group as one row with how many are out.
+ * Another warband's units (William, 12 Nov 2026): the same cards your own side shows — profile,
+ * mount, gear, skills, spells and rules — with no control that changes anything.
  */
 export function OtherWarband({
   side,
   roster,
+  isMobile,
+  onOpen,
 }: {
   side: WarbandSide;
   roster: ParticipantRoster | undefined;
+  isMobile: boolean;
+  onOpen: (unit: PrebattleUnit, tab: GearTab) => void;
 }) {
-  const sections = battleSections(side.participant, roster);
-  const singles = [
-    ...sections.heroes.map((view) => ({ view, kind: "hero" })),
-    ...sections.swords.map((view) => ({ view, kind: "hired sword" })),
-    ...sections.pets.map((view) => ({ view, kind: "animal" })),
-    ...sections.temporary.map((view) => ({ view, kind: "temporary" })),
-  ];
   if (!roster) return <p className="m-0 text-sm text-muted-foreground">Reading their roster…</p>;
+  const sections = battleSections(side.participant, roster);
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2.5">
       <span className="text-xs text-muted-foreground">
         {side.participant.user.label}&rsquo;s warband · view only
       </span>
-      {singles.map(({ view, kind }) => (
-        <Row
-          key={view.unit.key}
-          name={view.unit.displayName}
-          detail={`${[distinctType(view.unit), kind].filter(Boolean).join(" · ")}${view.kills ? ` · ${view.kills} kills` : ""}`}
-          status={view.status}
-          wounds={
-            view.status === "out_of_action" ? undefined : `W ${view.wounds}/${view.maxWounds}`
-          }
-        />
-      ))}
-      {sections.groups.map(({ group, members }) => {
-        const out = members.filter((member) => member.status === "out_of_action").length;
-        const down = members.find(
-          (member) => member.status !== "standing" && member.status !== "out_of_action"
-        );
-        return (
-          <Row
-            key={group.id}
-            name={`${group.name} ×${members.length}`}
-            detail={`Henchmen · ${out} out`}
-            status={out === members.length ? "out_of_action" : (down?.status ?? "standing")}
-          />
-        );
-      })}
-      {singles.length === 0 && sections.groups.length === 0 ? (
+      {allViews(sections).length === 0 ? (
         <p className="m-0 text-sm text-muted-foreground">No units in this battle.</p>
-      ) : null}
+      ) : (
+        <WarbandUnits sections={sections} isMobile={isMobile} onOpen={onOpen} />
+      )}
     </div>
   );
 }

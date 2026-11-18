@@ -32,14 +32,13 @@ import type { CombatOption } from "./CombatPicker";
 import CombatSheet from "./CombatSheet";
 import { EndFightSheet, FinishSheet } from "./FinishSheets";
 import GearSheet from "./GearSheet";
-import GroupCard from "./GroupCard";
 import KillSheet, { type Killer } from "./KillSheet";
 import RoundSheet from "./RoundSheet";
 import { NeutralGroupUnits, OtherWarband } from "./SideUnits";
 import SideStrip from "./SideStrip";
-import UnitCard from "./UnitCard";
 import UnitNoteSheet, { type NoteTarget } from "./UnitNoteSheet";
 import type { GearTab } from "./UnitCardParts";
+import WarbandUnits, { type WarbandUnitActions } from "./WarbandUnits";
 import {
   AddNeutralGroupSheet,
   AddUnitSheet,
@@ -50,9 +49,7 @@ import {
   allViews,
   battleSectionLabel,
   battleSections,
-  canScore,
   nextStatus,
-  distinctType,
   sideId,
   type BattleUnitView,
 } from "./battle-units";
@@ -68,12 +65,6 @@ type Panel =
   | "leave"
   | "cancel"
   | "end";
-
-const TYPE_SUFFIX: Record<string, string> = {
-  hireling: "hired sword",
-  pet: "animal",
-  custom: "temporary",
-};
 
 /**
  * The battle screen (design E's E-Mobile-Battle). On a phone it fills the screen: the
@@ -99,7 +90,10 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   const [panel, setPanel] = useState<Panel | null>(null);
   const [addGroupKey, setAddGroupKey] = useState<string | undefined>(undefined);
   const [killer, setKiller] = useState<Killer | null>(null);
-  const [gear, setGear] = useState<{ unit: PrebattleUnit; tab: GearTab } | null>(null);
+  // `theirs`: another warband's unit, so the sheet offers nothing (item use included)
+  const [gear, setGear] = useState<{ unit: PrebattleUnit; tab: GearTab; theirs?: boolean } | null>(
+    null
+  );
   const [combat, setCombat] = useState<"melee" | "ranged" | null>(null);
   const [noteTarget, setNoteTarget] = useState<NoteTarget | null>(null);
   const openNote = (view: BattleUnitView, name = view.unit.displayName) =>
@@ -278,68 +272,29 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   ];
 
   const killerFor = (name: string, models: BattleUnitView[]) => setKiller({ name, models });
-  const card = (view: BattleUnitView) => (
-    <UnitCard
-      key={view.unit.key}
-      view={view}
-      typeLine={[distinctType(view.unit), TYPE_SUFFIX[view.unit.kind]].filter(Boolean).join(" · ")}
-      canAct={canAct}
-      saving={Boolean(config.savingUnitKeys[view.unit.key])}
-      onKill={canScore(view.unit) ? () => killerFor(view.unit.displayName, [view]) : undefined}
-      onCycle={() => void screen.setStatus(view, nextStatus(view.status))}
-      onWounds={(delta) => void config.adjustUnitWounds(view.unit, delta)}
-      onDismount={(dismounted) => void screen.setDismounted(view.unit.key, dismounted)}
-      onOpen={(tab) => setGear({ unit: view.unit, tab })}
-      onNote={() => openNote(view)}
-    />
-  );
+  const myActions: WarbandUnitActions = {
+    canAct,
+    savingKeys: config.savingUnitKeys,
+    onKill: killerFor,
+    onStatus: (view) => void screen.setStatus(view, nextStatus(view.status)),
+    onWounds: (unit, delta) => void config.adjustUnitWounds(unit, delta),
+    onDismount: (key, dismounted) => void screen.setDismounted(key, dismounted),
+    onNote: (view, name) => openNote(view, name),
+    onAdd: () => {
+      setAddGroupKey(undefined);
+      setPanel("add");
+    },
+  };
+  const openGear = (unit: PrebattleUnit, tab: GearTab, theirs = false) =>
+    setGear({ unit, tab, theirs });
 
   const mine = sections ? (
-    <div
-      className={cn(
-        "grid gap-2.5",
-        isMobile ? "" : "grid-cols-[repeat(auto-fill,minmax(320px,1fr))]"
-      )}
-    >
-      {sections.heroes.map(card)}
-      {sections.swords.map(card)}
-      {sections.pets.map(card)}
-      {sections.groups.map((entry) => (
-        <GroupCard
-          key={entry.group.id}
-          entry={entry}
-          canAct={canAct}
-          savingKeys={config.savingUnitKeys}
-          onKill={() => killerFor(entry.group.name, entry.members)}
-          onCycle={(key) => {
-            const member = entry.members.find((candidate) => candidate.unit.key === key);
-            if (member) void screen.setStatus(member, nextStatus(member.status));
-          }}
-          onWounds={(key, delta) => {
-            const member = entry.members.find((candidate) => candidate.unit.key === key);
-            if (member) void config.adjustUnitWounds(member.unit, delta);
-          }}
-          onOpen={(tab) => setGear({ unit: entry.members[0].unit, tab })}
-          onNote={(key) => {
-            const member = entry.members.find((candidate) => candidate.unit.key === key);
-            if (member) openNote(member, entry.group.name);
-          }}
-        />
-      ))}
-      {sections.temporary.map(card)}
-      {canAct ? (
-        <button
-          type="button"
-          onClick={() => {
-            setAddGroupKey(undefined);
-            setPanel("add");
-          }}
-          className="col-span-full min-h-12 border border-dashed border-strong text-[13px] font-bold text-accent-text"
-        >
-          Add a unit
-        </button>
-      ) : null}
-    </div>
+    <WarbandUnits
+      sections={sections}
+      isMobile={isMobile}
+      onOpen={(unit, tab) => openGear(unit, tab)}
+      actions={myActions}
+    />
   ) : (
     <p className="m-0 text-sm text-muted-foreground">You aren't fighting in this battle.</p>
   );
@@ -359,7 +314,12 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
   ) : side.mine ? (
     mine
   ) : (
-    <OtherWarband side={side} roster={rosters[side.participant.user.id]} />
+    <OtherWarband
+      side={side}
+      roster={rosters[side.participant.user.id]}
+      isMobile={isMobile}
+      onOpen={(unit, tab) => openGear(unit, tab, true)}
+    />
   );
 
   const scenario = battleState.battle.scenario || `Battle #${battleId}`;
@@ -426,7 +386,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       <GearSheet
         campaignId={campaignId}
         target={gear}
-        canAct={canAct}
+        canAct={canAct && !gear?.theirs}
         usedCount={screen.getUsedSingleUseItemCount}
         busyKey={items.activeItemActionKey}
         onOpenChange={(open) => (open ? null : setGear(null))}

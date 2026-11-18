@@ -3046,6 +3046,32 @@ class BattleApiTests(APITestCase):
         self.assertEqual(len(henchmen_group_entry["members"]), 1)
         self.assertEqual(henchmen_group_entry["members"][0]["items"][0]["name"], "Healing Herbs")
 
+    def test_battle_rosters_give_every_player_the_other_warbands_whole(self):
+        """Another warband's units show everything yours do (William, 12 Nov 2026), so the read trims nothing
+        per viewer: both players get the same entry, profile, gear and rules included."""
+        data = self._create_battle()
+        battle_id = data["battle"]["id"]
+        hero = Hero.objects.create(
+            warband=self.owner_warband, name="Captain Wolf", unit_type="Captain", wounds=2, leadership=8
+        )
+        item = Item.objects.create(name="Elven Cloak", type="miscellaneous")
+        HeroItem.objects.create(hero=hero, item=item)
+        special = Special.objects.create(name="Fear", type="Psychology")
+        HeroSpecial.objects.create(hero=hero, special=special)
+
+        url = f"/api/campaigns/{self.campaign.id}/battles/{battle_id}/rosters/"
+        self.client.force_authenticate(user=self.owner)
+        mine = self.client.get(url)
+        self.client.force_authenticate(user=self.player)
+        theirs = self.client.get(url)
+
+        self.assertEqual(theirs.status_code, 200)
+        entry = theirs.data[str(self.owner.id)]["heroes"][0]
+        self.assertEqual(entry, mine.data[str(self.owner.id)]["heroes"][0])
+        self.assertEqual(entry["stats"]["leadership"], 8)
+        self.assertEqual(entry["items"][0]["name"], "Elven Cloak")
+        self.assertEqual([rule["name"] for rule in entry["specials"]], ["Fear"])
+
     def test_config_persists_battle_notes(self):
         data = self._create_battle()
         battle_id = data["battle"]["id"]

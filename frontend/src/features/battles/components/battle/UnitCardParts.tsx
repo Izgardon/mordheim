@@ -149,6 +149,33 @@ export function WoundsControl({
   );
 }
 
+/**
+ * A unit's status and wounds where nothing is editable: another warband's card shows the badge and
+ * the count in place of the status button and the wound steps (item 9).
+ */
+export function StatusReadout({
+  status,
+  wounds,
+  max,
+}: {
+  status: UnitStatus;
+  wounds: number;
+  max: number;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className={cn("border px-2 py-0.5 text-[11px] font-bold", STATUS_TONE[status])}>
+        {STATUS_LABEL[status]}
+      </span>
+      {status === "out_of_action" ? null : (
+        <span className="font-mono text-[13px] text-text2">
+          W {wounds}/{max}
+        </span>
+      )}
+    </div>
+  );
+}
+
 export function HorseIcon() {
   return (
     <svg

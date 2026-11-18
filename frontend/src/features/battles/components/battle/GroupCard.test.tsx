@@ -16,13 +16,15 @@ function renderGroup(information: Parameters<typeof myParticipant>[0] = {}) {
   render(
     <GroupCard
       entry={entry}
-      canAct
-      savingKeys={{}}
-      onKill={vi.fn()}
-      onCycle={vi.fn()}
-      onWounds={onWounds}
       onOpen={vi.fn()}
-      onNote={onNote}
+      actions={{
+        canAct: true,
+        savingKeys: {},
+        onKill: vi.fn(),
+        onCycle: vi.fn(),
+        onWounds,
+        onNote,
+      }}
     />
   );
   return { onWounds, onNote };
@@ -47,6 +49,25 @@ describe("GroupCard", () => {
     renderGroup({ unit_information_json: { "henchman:2": { out_of_action: true } } });
     const [, out] = screen.getAllByRole("button", { name: "Youngblood A loses a wound" });
     expect(out).toBeDisabled();
+  });
+});
+
+describe("GroupCard without actions", () => {
+  it("shows another warband's group whole, with its wounds as text and no control", () => {
+    const participant = myParticipant();
+    const [entry] = battleSections(
+      participant,
+      toParticipantRosters(battleRosters())[ME.id]
+    ).groups;
+    render(<GroupCard entry={entry} onOpen={vi.fn()} />);
+
+    expect(screen.getByRole("article", { name: "Youngbloods" })).toBeInTheDocument();
+    expect(screen.getByText("Youngblood A")).toBeInTheDocument();
+    expect(screen.getByText("1/1")).toBeInTheDocument();
+    expect(screen.queryByRole("group", { name: "Wounds for Youngblood A" })).toBeNull();
+    expect(screen.queryByRole("button", { name: /Kill/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /Tap for the next/ })).toBeNull();
+    expect(screen.getByRole("button", { name: /Gear/ })).toBeInTheDocument();
   });
 });
 
