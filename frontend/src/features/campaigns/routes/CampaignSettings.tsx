@@ -8,68 +8,18 @@ import { useMediaQuery } from "@/lib/use-media-query";
 import { useTabScroll } from "@/lib/use-tab-scroll";
 import { cn } from "@/lib/utils";
 
-import { campaignCapabilities, isArchived, type CampaignCapabilities } from "../capabilities";
-import ArchiveSection from "../components/settings/ArchiveSection";
+import { campaignCapabilities, isArchived } from "../capabilities";
 import BattlesSection from "../components/settings/BattlesSection";
 import CampaignSection from "../components/settings/CampaignSection";
 import FeedbackReportCard from "../components/settings/FeedbackReportCard";
 import JoinCode from "../components/settings/JoinCode";
 import PlayersSection from "../components/settings/PlayersSection";
+import { sectionFromUrl, settingsSections, type SectionId } from "../components/settings/sections";
 import WarbandSection from "../components/settings/WarbandSection";
 import type { CampaignSummary } from "../types/campaign-types";
 import type { CampaignLayoutContext } from "./CampaignLayout";
 
-type SectionId = "campaign" | "players" | "battles" | "warband" | "archive" | "feedback";
-
-type Section = {
-  id: SectionId;
-  label: string;
-  shown: (capabilities: CampaignCapabilities, campaign: CampaignSummary) => boolean;
-};
-
-/** The sections in order; each shows only to those today's capabilities let use it. */
-const SECTIONS: Section[] = [
-  {
-    id: "campaign",
-    label: "Campaign",
-    shown: (caps) => caps.edit_settings,
-  },
-  {
-    id: "players",
-    label: "Players",
-    shown: (caps) => caps.view_members,
-  },
-  {
-    id: "battles",
-    label: "Battles",
-    shown: (caps) => caps.manage_battles,
-  },
-  {
-    id: "warband",
-    label: "Your warband",
-    shown: () => true,
-  },
-  {
-    id: "archive",
-    label: "Archive",
-    shown: (caps) => caps.archive || caps.restore || caps.delete,
-  },
-  {
-    id: "feedback",
-    label: "Feedback",
-    shown: () => true,
-  },
-];
-
-/** Old links (`?tab=campaign&section=active-battles`) and anything unknown land somewhere real. */
-function sectionFromUrl(params: URLSearchParams, available: Section[]): SectionId | null {
-  const raw = params.get("section");
-  const asked = raw === "active-battles" ? "battles" : raw;
-  return available.find((section) => section.id === asked)?.id ?? null;
-}
-
 function SectionBody({ id, campaign }: { id: SectionId; campaign: CampaignSummary }) {
-  const capabilities = campaignCapabilities(campaign);
   const { warband } = useAppStore();
   switch (id) {
     case "campaign":
@@ -80,8 +30,6 @@ function SectionBody({ id, campaign }: { id: SectionId; campaign: CampaignSummar
       return <BattlesSection campaignId={campaign.id} />;
     case "warband":
       return <WarbandSection campaign={campaign} />;
-    case "archive":
-      return <ArchiveSection campaign={campaign} capabilities={capabilities} />;
     case "feedback":
       return (
         <FeedbackReportCard
@@ -105,9 +53,7 @@ export default function CampaignSettings() {
   const isMobile = useMediaQuery("(max-width: 960px)");
   const [params, setParams] = useSearchParams();
   const capabilities = campaignCapabilities(campaign);
-  const available = campaign
-    ? SECTIONS.filter((section) => section.shown(capabilities, campaign))
-    : [];
+  const available = campaign ? settingsSections(capabilities, campaign) : [];
   const asked = sectionFromUrl(params, available);
   // The web always shows a section; a phone shows the list until one is picked.
   const current = asked ?? (isMobile ? null : (available[0]?.id ?? null));

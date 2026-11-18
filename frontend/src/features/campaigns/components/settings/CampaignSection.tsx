@@ -8,8 +8,10 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
 import { usePresetLocks } from "../../api/preset-queries";
+import { campaignCapabilities } from "../../capabilities";
 import { useUpdateCampaign } from "../../hooks/useCampaignQuery";
 import type { CampaignSummary, CampaignUpdatePayload } from "../../types/campaign-types";
+import ArchiveSection from "./ArchiveSection";
 import CampaignPresetCard from "./CampaignPresetCard";
 import CampaignRules from "./CampaignRules";
 import PresetNote, { presetDim } from "./PresetNote";
@@ -135,20 +137,31 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
  * Settings → Campaign (`edit_settings`, the owner): the published campaign it plays, which sets
  * the rules, then its name, the pages and Plots switched on, the content in play (grade presets
  * and settings), the warband rules (starting gold, the default resource, limits, the death roll
- * and the level-ups), the plots it plays with while Plots is on, then the exploration chart.
+ * and the level-ups), the plots it plays with while Plots is on, then the exploration chart, and
+ * last of all archiving it (William, 18 Nov 2026: "The archive section can just be at the bottom
+ * of the campaign settings page for the owner only"), which is a section of its own no longer. An
+ * archived campaign keeps nothing but that card: every setting above it would be refused.
  */
 export default function CampaignSection({ campaign }: { campaign: CampaignSummary }) {
+  const capabilities = campaignCapabilities(campaign);
   return (
     <>
-      <CampaignPresetCard campaign={campaign} />
-      <SettingsCard title="Campaign">
-        <CampaignName campaign={campaign} />
-        <CampaignFeatures campaign={campaign} />
-      </SettingsCard>
-      <ContentInPlayCard campaign={campaign} />
-      <CampaignRules campaign={campaign} />
-      {campaign.enable_campaign_points ? <PlotsSection campaign={campaign} /> : null}
-      <ExplorationSection campaign={campaign} />
+      {capabilities.edit_settings ? (
+        <>
+          <CampaignPresetCard campaign={campaign} />
+          <SettingsCard title="Campaign">
+            <CampaignName campaign={campaign} />
+            <CampaignFeatures campaign={campaign} />
+          </SettingsCard>
+          <ContentInPlayCard campaign={campaign} />
+          <CampaignRules campaign={campaign} />
+          {campaign.enable_campaign_points ? <PlotsSection campaign={campaign} /> : null}
+          <ExplorationSection campaign={campaign} />
+        </>
+      ) : null}
+      {capabilities.archive || capabilities.restore || capabilities.delete ? (
+        <ArchiveSection campaign={campaign} capabilities={capabilities} />
+      ) : null}
     </>
   );
 }

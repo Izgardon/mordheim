@@ -1,14 +1,19 @@
 /**
  * Settings → Campaign: campaign points, labelled "Plots and CP" (William, 16 Nov 2026),
- * and Blood pacts are switches beside Encampments and Locations, off at first, saved as they flip.
+ * and Blood pacts are switches beside Encampments and Locations, off at first, saved as they flip;
+ * and archiving the campaign is the last card on the page (William, 18 Nov 2026), the only one an
+ * archived campaign keeps.
  */
-import { screen, waitFor } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { campaignSummary } from "@/test/campaign-fixtures";
+import { campaignFor, campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
+
+import type { CampaignSummary } from "../../types/campaign-types";
 
 import CampaignSection from "./CampaignSection";
 
@@ -18,6 +23,14 @@ vi.mock("@/lib/api-client", async (importOriginal) => ({
 }));
 
 const campaign = campaignSummary({ enable_campaign_points: false });
+
+/** The section needs a router: the archive card's Delete for good leaves the campaign. */
+const show = (shown: CampaignSummary) =>
+  renderWithQueryClient(
+    <MemoryRouter>
+      <CampaignSection campaign={shown} />
+    </MemoryRouter>
+  );
 
 const PRESET_STATE = {
   preset_id: 2,
@@ -46,7 +59,7 @@ describe("Plots and CP", () => {
   it("is off at first and switches on for every warband", async () => {
     const user = setupUser();
     fakeApi.on(`PATCH /campaigns/${campaign.id}/`, (body: object) => ({ ...campaign, ...body }));
-    renderWithQueryClient(<CampaignSection campaign={campaign} />);
+    show(campaign);
 
     const toggle = screen.getByRole("switch", { name: "Plots and CP" });
     expect(toggle).not.toBeChecked();
@@ -64,7 +77,7 @@ describe("Blood pacts", () => {
   it("is off at first and switches on for the whole campaign", async () => {
     const user = setupUser();
     fakeApi.on(`PATCH /campaigns/${campaign.id}/`, (body: object) => ({ ...campaign, ...body }));
-    renderWithQueryClient(<CampaignSection campaign={campaign} />);
+    show(campaign);
 
     const toggle = screen.getByRole("switch", { name: "Blood pacts" });
     expect(toggle).not.toBeChecked();
@@ -83,7 +96,7 @@ describe("a setting the campaign's preset sets", () => {
     const user = setupUser();
     fakeApi.on(`GET /campaigns/${campaign.id}/preset/`, PRESET_STATE);
     fakeApi.on(`PATCH /campaigns/${campaign.id}/`, (body: object) => ({ ...campaign, ...body }));
-    renderWithQueryClient(<CampaignSection campaign={{ ...campaign, preset_id: 2 }} />);
+    show({ ...campaign, preset_id: 2 });
 
     expect(await screen.findByText("Set by Mutiny in Marienburg")).toBeInTheDocument();
     const toggle = screen.getByRole("switch", { name: "Locations" });
@@ -107,9 +120,37 @@ describe("a setting the campaign's preset sets", () => {
         },
       ],
     });
-    renderWithQueryClient(<CampaignSection campaign={{ ...campaign, preset_id: 2 }} />);
+    show({ ...campaign, preset_id: 2 });
 
     expect(await screen.findByText("Mutiny in Marienburg sets Locations: on.")).toBeInTheDocument();
     expect(screen.getByRole("switch", { name: "Locations" })).toBeEnabled();
+  });
+});
+
+describe("Archive campaign", () => {
+  const cards = () => screen.getAllByRole("region").map((card) => card.getAttribute("aria-label"));
+
+  it("is the last card on the page for the owner, with Leave's full-width card shape", () => {
+    show(campaign);
+
+    expect(cards().slice(-1)).toEqual(["Archive campaign"]);
+    const card = screen.getByRole("region", { name: "Archive campaign" });
+    const row = within(card).getByRole("heading", { name: "Archive campaign" }).parentElement;
+    expect(row).toContainElement(within(card).getByRole("button", { name: "Archive campaign" }));
+    expect(row).not.toContainElement(screen.getByText("To delete it for good, archive it first."));
+  });
+
+  it("is all an archived campaign shows the owner: restoring it, or deleting it for good", () => {
+    show(campaignSummary({ archived_at: "2026-11-01T18:00:00Z" }));
+
+    expect(cards()).toEqual(["Archived campaign"]);
+    expect(screen.getByRole("button", { name: "Restore campaign" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Delete for good" })).toBeInTheDocument();
+  });
+
+  it("is nothing a player sees", () => {
+    show(campaignFor("player"));
+
+    expect(screen.queryAllByRole("region")).toEqual([]);
   });
 });
