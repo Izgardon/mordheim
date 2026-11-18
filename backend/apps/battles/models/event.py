@@ -30,7 +30,6 @@ class BattleEvent(models.Model):
     TYPE_BATTLE_ENDED = "battle_ended"
     TYPE_BATTLE_CANCELED = "battle_canceled"
     TYPE_BATTLE_RECORD_EDITED = "battle_record_edited"
-    TYPE_PARTICIPANT_NUDGED = "participant_nudged"
     TYPE_ROUND_REQUESTED = "round_requested"
     TYPE_ROUND_AGREED = "round_agreed"
     TYPE_ROUND_REQUEST_WITHDRAWN = "round_request_withdrawn"
@@ -65,7 +64,6 @@ class BattleEvent(models.Model):
         (TYPE_BATTLE_ENDED, "Battle ended"),
         (TYPE_BATTLE_CANCELED, "Battle canceled"),
         (TYPE_BATTLE_RECORD_EDITED, "Battle record edited"),
-        (TYPE_PARTICIPANT_NUDGED, "Participant nudged"),
         (TYPE_ROUND_REQUESTED, "Next round requested"),
         (TYPE_ROUND_AGREED, "Next round agreed"),
         (TYPE_ROUND_REQUEST_WITHDRAWN, "Next round request withdrawn"),

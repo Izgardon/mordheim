@@ -1,4 +1,4 @@
-"""The state's capabilities: what the reader may do now, by the server's own rules (PR B, BATL-NEW-08 groundwork).
+"""The state's capabilities: what the reader may do now, by the server's own rules (PR B).
 
 Each flag is checked against the action's endpoint: when it is false the endpoint refuses, when it is true it goes
 ahead. Reading them costs no query (the state budget in test_battle_query_budgets.py holds).
@@ -17,10 +17,8 @@ NONE = {
     "confirm_results": False,
     "cancel": False,
     "close_postbattle": False,
-    "nudge": False,
     "force_round": False,
 }
-OPEN = {**NONE, "nudge": True}  # any player still in an open battle can nudge (BATL-NEW-08)
 
 
 class BattleCapabilityTests(BattleTestCase):
@@ -34,26 +32,26 @@ class BattleCapabilityTests(BattleTestCase):
 
     def test_the_creator_cancels_before_the_fight_and_anyone_starts_once_everyone_is_ready(self):
         battle_id = self.create_battle()
-        self.assertEqual(self.capabilities(self.player, battle_id), {**OPEN, "cancel": True})
-        self.assertEqual(self.capabilities(self.viewer, battle_id), OPEN)
+        self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "cancel": True})
+        self.assertEqual(self.capabilities(self.viewer, battle_id), NONE)
 
         self.ok(self.post_as(self.viewer, self.url(battle_id, "join")))
         self.ok(self.post_as(self.player, self.url(battle_id, "ready"), {"ready": True}))
-        self.assertEqual(self.capabilities(self.player, battle_id), {**OPEN, "cancel": True})
+        self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "cancel": True})
         self.assertEqual(self.post_as(self.player, self.url(battle_id, "start")).status_code, 400)
 
         self.ok(self.post_as(self.viewer, self.url(battle_id, "ready"), {"ready": True}))
-        self.assertEqual(self.capabilities(self.player, battle_id), {**OPEN, "start": True, "cancel": True})
-        self.assertEqual(self.capabilities(self.viewer, battle_id), {**OPEN, "start": True})  # decision 4
+        self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "start": True, "cancel": True})
+        self.assertEqual(self.capabilities(self.viewer, battle_id), {**NONE, "start": True})  # decision 4
         self.ok(self.post_as(self.viewer, self.url(battle_id, "start")))
 
         # decision 4: each player finishes his own battle; nobody has an End
-        fighting = {**OPEN, "finish_mine": True}
+        fighting = {**NONE, "finish_mine": True}
         self.assertEqual(self.capabilities(self.player, battle_id), {**fighting, "cancel": True, "force_round": True})
         self.assertEqual(self.capabilities(self.viewer, battle_id), fighting)  # Start anyway is the creator's
         self.assertEqual(self.post_as(self.player, self.url(battle_id, "finish"), {"winners": []}).status_code, 403)
         self.ok(self.finish_mine(self.viewer, battle_id, "lost"))
-        self.assertEqual(self.capabilities(self.viewer, battle_id), OPEN)
+        self.assertEqual(self.capabilities(self.viewer, battle_id), NONE)
 
     def test_a_player_who_left_neither_starts_nor_is_offered_it(self):
         # Decision 4: the start is any participant's who is still in the battle
@@ -71,14 +69,14 @@ class BattleCapabilityTests(BattleTestCase):
 
     def test_postbattle_is_closed_by_the_creator_or_a_battle_manager(self):
         battle_id = self.to_postbattle()
-        self.assertEqual(self.capabilities(self.player, battle_id), {**OPEN, "close_postbattle": True})
-        self.assertEqual(self.capabilities(self.viewer, battle_id), OPEN)
+        self.assertEqual(self.capabilities(self.player, battle_id), {**NONE, "close_postbattle": True})
+        self.assertEqual(self.capabilities(self.viewer, battle_id), NONE)
         self.assertEqual(self.post_as(self.viewer, self.url(battle_id, "close-postbattle")).status_code, 403)
 
         self.grant_manage_battles(self.viewer)
         # the results were confirmed when the owner ended the fight, so there is nothing left to confirm here:
         # changing them is Settings > Battles' and the campaign's staff's (William, 18 Nov 2026)
-        manager = {**OPEN, "close_postbattle": True}
+        manager = {**NONE, "close_postbattle": True}
         self.assertEqual(self.capabilities(self.viewer, battle_id), manager)
         self.ok(self.post_as(self.viewer, self.url(battle_id, "close-postbattle")))
 
@@ -88,7 +86,7 @@ class BattleCapabilityTests(BattleTestCase):
     def test_owners_and_admins_manage_battles_without_a_grant(self):
         Warband.objects.create(campaign=self.campaign, user=self.admin, name="Crows")
         battle_id = self.to_postbattle({self.player: [], self.admin: []})
-        self.assertEqual(self.capabilities(self.admin, battle_id), {**OPEN, "close_postbattle": True})
+        self.assertEqual(self.capabilities(self.admin, battle_id), {**NONE, "close_postbattle": True})
         self.ok(self.post_as(self.admin, self.url(battle_id, "close-postbattle")))
         self.assertEqual(self.capabilities(self.admin, battle_id), NONE)
 

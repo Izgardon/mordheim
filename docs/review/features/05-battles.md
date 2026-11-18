@@ -435,6 +435,7 @@ State-endpoint query count is constant in the number of participants and events,
 - **Impact:** Players don't know whom to chase (feeds BUG-03); a sudden redirect feels like a crash.
 - **Fix:** A participant status strip on every phase page (Ready, In battle, Finalised, Skipped, Idle 2 h) with a "Nudge" action (send a campaign ping); a toast on redirect ("Battle cancelled by Alice", "Battle ended, Monks won"); after finalising, show a "Waiting for others" panel instead of navigating away.
 - **Effort:** S-M · **Confidence:** Confirmed
+- **18 Nov 2026:** the strip and Waiting for others shipped in pass 3; Nudge is gone, server and client (William: "Drop nudge").
 
 ### BATL-UX-03 · P2 · Kills and single-use items cannot be undone
 - **Where:** `frontend/src/features/battles/components/active/ActiveUnitCard.tsx:153-163,216-226`; `components/shared/BattleUnitStatsAndItems.tsx:251-282`; backend `combat.py:166-295`

@@ -14,7 +14,6 @@ import {
 } from "@/features/battles/api/battles-api";
 import type {
   BattleInviteNotification,
-  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import { acceptBountyClaim, declineBountyClaim } from "@/features/bounties/api/bounties-api";
@@ -22,10 +21,7 @@ import { settleBountyAnswer } from "@/features/bounties/api/bounty-queries";
 import { dropAnsweredClaims } from "@/features/bounties/notifications";
 import type { BountyClaimNotification } from "@/features/bounties/types";
 import { acceptTradeRequest, declineTradeRequest } from "@/features/campaigns/api/campaigns-api";
-import {
-  clearAllNotifications as apiClearAllNotifications,
-  clearNotification,
-} from "@/features/notifications/api/notifications-api";
+import { clearAllNotifications as apiClearAllNotifications } from "@/features/notifications/api/notifications-api";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { useAppStore } from "@/stores/app-store";
@@ -56,8 +52,6 @@ export function useNotifications() {
     removeTradeRequestNotification,
     removeBattleInviteNotification,
     removeBattleResultRequestNotification,
-    battleNudgeNotifications,
-    removeBattleNudgeNotification,
     bountyClaimNotifications,
     removeBountyClaimNotification,
     currentBattleSession,
@@ -140,28 +134,6 @@ export function useNotifications() {
     [queryClient, removeBattleResultRequestNotification]
   );
 
-  // A nudge (BATL-NEW-08): the tick goes to the battle's page, the X dismisses it; both clear it.
-  const dismissBattleNudge = useCallback(
-    async (notification: BattleNudgeNotification) => {
-      if (notification.notificationDbId > 0) {
-        await clearNotification(notification.notificationDbId);
-      }
-      removeBattleNudgeNotification(notification.id);
-    },
-    [removeBattleNudgeNotification]
-  );
-  const goToBattleNudge = useCallback(
-    async (notification: BattleNudgeNotification) => {
-      await dismissBattleNudge(notification);
-      navigate(
-        notification.page
-          ? `/campaigns/${notification.campaignId}/battles/${notification.battleId}/${notification.page}`
-          : `/campaigns/${notification.campaignId}`
-      );
-    },
-    [dismissBattleNudge, navigate]
-  );
-
   // A claim on your bounty: the tick accepts it (the gold moves), the X declines it. Either
   // answer takes every claim of that bounty no longer waiting out of the bell.
   const answerBountyClaim = useCallback(
@@ -201,9 +173,6 @@ export function useNotifications() {
     declineBattleInviteNotification,
     acceptBattleResultRequestNotification,
     declineBattleResultRequestNotification,
-    battleNudgeNotifications,
-    goToBattleNudge,
-    dismissBattleNudge,
     bountyClaimNotifications,
     acceptBountyClaimNotification: (notification: BountyClaimNotification) =>
       answerBountyClaim(notification, true),

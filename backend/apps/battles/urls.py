@@ -16,7 +16,6 @@ from .views import (
     CampaignBattleNeutralCreatureView,
     CampaignBattleNeutralGroupsView,
     CampaignBattleNeutralGroupView,
-    CampaignBattleNudgeView,
     CampaignBattlePostbattleSaveView,
     CampaignBattlePostbattleStepView,
     CampaignBattleReadyView,
@@ -166,11 +165,6 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/results/",
         CampaignBattleResultsView.as_view(),
         name="campaigns-battles-results",
-    ),
-    path(  # a notification to a player holding up the battle (BATL-NEW-08)
-        "campaigns/<int:campaign_id>/battles/<int:battle_id>/nudge/",
-        CampaignBattleNudgeView.as_view(),
-        name="campaigns-battles-nudge",
     ),
     path(  # a battle manager ends a stuck fight (BATL-NEW-03); players finish their own battle
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/finish/",

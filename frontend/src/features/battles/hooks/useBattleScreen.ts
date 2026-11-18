@@ -24,7 +24,6 @@ import { useActiveConfigSave } from "@/features/battles/hooks/useActiveConfigSav
 import { useCreatorCancel } from "@/features/battles/hooks/useCreatorCancel";
 import { useEventUndo } from "@/features/battles/hooks/useEventUndo";
 import { useFinishMine } from "@/features/battles/hooks/useFinishMine";
-import { useNudge } from "@/features/battles/hooks/useNudge";
 import {
   useSingleUseItemActions,
   useUsedSingleUseItems,
@@ -92,7 +91,6 @@ export function useBattleScreen() {
   const { undo, offerUndo } = useEventUndo({ campaignId, battleId, applyBattleResponse });
   const finishing = useFinishMine({ campaignId, battleId, applyBattleResponse });
   const creatorCancel = useCreatorCancel({ campaignId, battleId, applyBattleResponse });
-  const nudging = useNudge({ campaignId, battleId, events, userId, applyBattleResponse });
 
   const myRoster = me ? rosters[me.user.id] : undefined;
   const sections = useMemo(() => (me ? battleSections(me, myRoster) : null), [me, myRoster]);
@@ -244,7 +242,6 @@ export function useBattleScreen() {
     undo,
     finishing,
     creatorCancel,
-    nudging,
     setStatus,
     setDismounted,
     recordKill,
@@ -259,7 +256,6 @@ export function useBattleScreen() {
     canCancelBattle: capabilities
       ? capabilities.cancel
       : battleState.battle.created_by_user_id === userId,
-    canNudge: capabilities ? Boolean(capabilities.nudge) : false,
     // Start anyway: the creator or a battle manager still fighting (William); the others ask and agree.
     canForceRound:
       canAct &&

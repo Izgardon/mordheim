@@ -128,13 +128,6 @@ class BattleQueryBudgetTests(BattleTestCase):
         end, _ = self.count(self.campaign_owner, "post", self.url(manager_end, "finish"), {"winners": []})
         self.within("finish_manager", end, 20)
 
-    def test_a_nudge_stays_within_budget(self):
-        # BATL-NEW-08: the battle and his participant locked, the target, his last nudge, the notification's
-        # update_or_create (its own savepoint), the event, the version, the answer's snapshot
-        battle_id = self.to_active({self.player: [], self.viewer: [self.r]})
-        nudge, _ = self.count(self.player, "post", self.url(battle_id, "nudge"), {"user_id": self.viewer.id})
-        self.within("nudge", nudge, 16)
-
     def test_writes_leave_presence_alone(self):
         # PERF-35: no write updates the writer's presence (an UPDATE each); only reads do, at most once a minute
         battle_id = self.to_active({self.player: [f"hero:{self.fixture.heroes[0].id}"], self.viewer: [self.r]})

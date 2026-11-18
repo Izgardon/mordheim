@@ -3,7 +3,6 @@ import { Check, Loader2, X } from "lucide-react";
 
 import type {
   BattleInviteNotification,
-  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { BountyClaimNotification } from "@/features/bounties/types";
@@ -167,25 +166,6 @@ export function BattleInviteCard({
         battleId={notification.battleId}
         className="text-xs"
       />
-    </NotificationCard>
-  );
-}
-
-/** A nudge: the battle is waiting for you; the tick goes to it, the X dismisses it. */
-export function BattleNudgeCard({
-  notification,
-  state,
-  onAccept,
-  onDecline,
-}: CardProps<BattleNudgeNotification>) {
-  return (
-    <NotificationCard
-      title={`Nudge from ${notification.fromLabel}`}
-      {...state}
-      decline={{ label: "Dismiss nudge", onClick: onDecline }}
-      accept={{ label: "Go to the battle", onClick: onAccept }}
-    >
-      <p className="text-xs text-muted-foreground">{notification.scenario} is waiting for you.</p>
     </NotificationCard>
   );
 }

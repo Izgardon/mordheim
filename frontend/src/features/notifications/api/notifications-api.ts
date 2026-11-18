@@ -2,12 +2,7 @@ import { apiRequest } from "@/lib/api-client";
 
 export type AppNotification = {
   id: number;
-  notification_type:
-    | "trade_request"
-    | "battle_invite"
-    | "battle_result_request"
-    | "battle_nudge"
-    | "bounty_claim";
+  notification_type: "trade_request" | "battle_invite" | "battle_result_request" | "bounty_claim";
   campaign_id: number;
   reference_id: string;
   payload: Record<string, unknown>;

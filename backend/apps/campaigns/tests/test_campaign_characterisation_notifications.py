@@ -1,8 +1,8 @@
 """Clearing notifications that aren't battle results (IMP-78; CAMP-TWEAK-10).
 
 Clear all resolves only the notifications that can no longer be answered and answers nothing: a pending trade
-request, an invitation to a battle still inviting and a nudge about an open battle stay listed. It used to resolve
-everything and decline pending trade requests on the way. Clearing one notification still declines a pending trade
+request and an invitation to a battle still inviting stay listed, while a row of a type the server no longer sends
+goes. It used to resolve everything and decline pending trade requests on the way. Clearing one still declines a
 request. Battle-result requests are pass 3's and are characterised in `apps/battles/tests`. Events to the requester go
 out on commit; the helper is wrapped (still run, Pusher is off) to record them.
 """
@@ -64,24 +64,16 @@ class NotificationClearTests(CampaignTestCase):
         gone = self.open_battle(Battle.STATUS_CANCELED)
         for battle in (inviting, gone):
             self.notify(self.player, Notification.TYPE_BATTLE_INVITE, battle.id)
-            Notification.objects.create(
-                user=self.player,
-                notification_type=Notification.TYPE_BATTLE_NUDGE,
-                campaign_id=self.campaign.id,
-                reference_id=str(battle.id),
-                payload={},
-            )
         self.notify(self.player, Notification.TYPE_BATTLE_INVITE, 999999, campaign=self.elsewhere)
         self.notify(self.rival, Notification.TYPE_BATTLE_INVITE, inviting.id)
 
         response = self.clear_all(self.player)
 
-        self.assertEqual((response.status_code, response.json()), (200, {"ok": True, "cleared": 3, "kept": 3}))
+        self.assertEqual((response.status_code, response.json()), (200, {"ok": True, "cleared": 2, "kept": 2}))
         self.assertEqual(
             self.listed_notifications(self.player),
             [
                 (Notification.TYPE_BATTLE_INVITE, str(inviting.id), self.campaign.id),
-                (Notification.TYPE_BATTLE_NUDGE, str(inviting.id), self.campaign.id),
                 (Notification.TYPE_TRADE_REQUEST, str(trade.id), self.campaign.id),
             ],
         )
@@ -145,3 +137,15 @@ class NotificationClearTests(CampaignTestCase):
 
         self.assertEqual(response.json(), {"ok": True, "cleared": 5, "kept": 2})
         self.assertEqual(len(captured), 2)
+
+    def test_a_row_of_a_type_we_no_longer_send_is_neither_listed_nor_kept(self):
+        # A dropped feature's rows stay in the database (data is disposable; there is no backfill): the bell must
+        # not have to make sense of one, and Clear all must be able to see the back of it.
+        mine = self.notify(self.player, Notification.TYPE_BATTLE_INVITE, self.open_battle().id)
+        self.notify(self.player, "battle_nudge", 7)
+
+        self.assertEqual(
+            self.listed_notifications(self.player),
+            [(Notification.TYPE_BATTLE_INVITE, mine.reference_id, self.campaign.id)],
+        )
+        self.assertEqual(self.clear_all(self.player).json(), {"ok": True, "cleared": 1, "kept": 1})

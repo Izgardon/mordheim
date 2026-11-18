@@ -34,7 +34,7 @@ def clear(user: Any, notification_id: int) -> bool:
 
 def clear_all(user: Any) -> dict[str, int]:
     """Resolve the user's notifications that can no longer be answered (a trade request answered or run out, an
-    invitation to a battle past inviting, a settled result, a nudge about a finished battle) in one UPDATE, and
+    invitation to a battle past inviting, a settled result, a claim already answered) in one UPDATE, and
     decline nothing. Returns how many were cleared and how many are still listed."""
     stale = Notification.objects.filter(user=user, is_resolved=False).exclude(selectors.answerable(user))
     cleared = stale.update(is_resolved=True, resolved_at=timezone.now())

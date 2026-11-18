@@ -253,11 +253,6 @@ export function confirmBattleResults(
   return battleWrite(campaignId, battleId, "results/", results);
 }
 
-/** Nudges a player who is holding up the battle (BATL-NEW-08): 429 `retry_after` within 10 min. */
-export function nudgePlayer(campaignId: number, battleId: number, userId: number) {
-  return battleWrite(campaignId, battleId, "nudge/", { user_id: userId });
-}
-
 /** What a player says about his own fight when he finishes it (decision 4). */
 export type DeclaredResult = "won" | "lost" | "undecided";
 

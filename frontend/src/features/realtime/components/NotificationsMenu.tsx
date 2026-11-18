@@ -6,7 +6,6 @@ import { SidePanel } from "@/components/ui/side-panel";
 import { getErrorMessage } from "@/lib/get-error-message";
 import {
   BattleInviteCard,
-  BattleNudgeCard,
   BattleResultRequestCard,
   BountyClaimCard,
   TradeRequestCard,
@@ -14,7 +13,6 @@ import {
 
 import type {
   BattleInviteNotification,
-  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { BountyClaimNotification } from "@/features/bounties/types";
@@ -39,10 +37,6 @@ type NotificationsMenuProps = {
   onDeclineBattleResultRequest: (
     notification: BattleResultRequestNotification
   ) => NotificationAction;
-  /** Nudges from other players (BATL-NEW-08): go to the battle, or dismiss. */
-  battleNudgeNotifications?: BattleNudgeNotification[];
-  onGoToNudge?: (notification: BattleNudgeNotification) => NotificationAction;
-  onDismissNudge?: (notification: BattleNudgeNotification) => NotificationAction;
   /** Claims on your bounties: accept (the gold moves) or decline. */
   bountyClaimNotifications?: BountyClaimNotification[];
   onAcceptBountyClaim?: (notification: BountyClaimNotification) => NotificationAction;
@@ -64,9 +58,6 @@ export default function NotificationsMenu({
   onDeclineBattleInvite,
   onAcceptBattleResultRequest,
   onDeclineBattleResultRequest,
-  battleNudgeNotifications = [],
-  onGoToNudge,
-  onDismissNudge,
   bountyClaimNotifications = [],
   onAcceptBountyClaim,
   onDeclineBountyClaim,
@@ -79,7 +70,6 @@ export default function NotificationsMenu({
     tradeRequestNotifications.length +
     battleInviteNotifications.length +
     battleResultRequestNotifications.length +
-    battleNudgeNotifications.length +
     bountyClaimNotifications.length;
 
   const sortedTradeNotifications = useMemo(
@@ -166,17 +156,6 @@ export default function NotificationsMenu({
                 }
                 onDecline={() =>
                   void runAction(notification.id, () => onDeclineBattleResultRequest(notification))
-                }
-              />
-            ))}
-            {byNewest(battleNudgeNotifications).map((notification) => (
-              <BattleNudgeCard
-                key={notification.id}
-                notification={notification}
-                state={cardState(notification.id)}
-                onAccept={() => void runAction(notification.id, () => onGoToNudge?.(notification))}
-                onDecline={() =>
-                  void runAction(notification.id, () => onDismissNudge?.(notification))
                 }
               />
             ))}

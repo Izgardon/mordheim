@@ -12,13 +12,12 @@ const flags = (over: Partial<BattleMenuFlags> = {}): BattleMenuFlags => ({
 });
 
 describe("battleMenu", () => {
-  it("offers no chat, notifications or nudge (William, 18 Nov 2026)", () => {
+  it("offers no chat and no notifications (William, 18 Nov 2026)", () => {
     const labels = battleMenu(
       flags({ canFinishMine: true, canEndForEveryone: true, canCancel: true })
     ).map((row) => row.label);
     expect(labels).not.toContain("Chat");
     expect(labels).not.toContain("Notifications");
-    expect(labels.some((label) => label.startsWith("Nudge"))).toBe(false);
   });
 
   it("puts Leave battle above the rows that end it for everyone, and ends last", () => {

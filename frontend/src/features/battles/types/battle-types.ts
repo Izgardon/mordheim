@@ -271,7 +271,6 @@ export type BattleEventType =
   | "item_used_voided"
   | "battle_results_confirmed"
   | "battle_record_edited"
-  | "participant_nudged"
   | "round_requested"
   | "round_agreed"
   | "round_request_withdrawn"
@@ -537,7 +536,6 @@ export type BattleCapabilities = {
   finish_mine?: boolean;
   /** Confirm the results: the last player to finish, or a battle manager, in postbattle. */
   confirm_results?: boolean;
-  nudge?: boolean;
   /** Start the next round anyway: the creator or a battle manager, still fighting (William). */
   force_round?: boolean;
   /** The creator's End battle, before decision 4 (an older server). */
@@ -769,19 +767,6 @@ export type BattleInviteNotification = {
   battleDate: string;
   createdByUserId: number | null;
   createdByLabel: string;
-  createdAt: string;
-};
-
-/** Another player nudged you: the battle is waiting for you (BATL-NEW-08). */
-export type BattleNudgeNotification = {
-  id: string;
-  notificationDbId: number;
-  battleId: number;
-  campaignId: number;
-  scenario: string;
-  /** Where you carry on: "prebattle", "active" or "postbattle". */
-  page: "prebattle" | "active" | "postbattle" | null;
-  fromLabel: string;
   createdAt: string;
 };
 

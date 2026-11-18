@@ -15,11 +15,7 @@ import {
 } from "@/features/notifications/api/notifications-api";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import { useAppStore } from "@/stores/app-store";
-import {
-  notificationFromApi,
-  toBattleNudgeNotification,
-  type BattleNotificationPayload,
-} from "../utils/notification-mappers";
+import { notificationFromApi } from "../utils/notification-mappers";
 
 /** Puts a `GET /notifications/` list into the bell (`replace` drops what isn't listed). */
 export function useApplyNotificationList() {
@@ -30,8 +26,6 @@ export function useApplyNotificationList() {
     clearBattleInviteNotifications,
     addBattleResultRequestNotification,
     clearBattleResultRequestNotifications,
-    addBattleNudgeNotification,
-    clearBattleNudgeNotifications,
     addBountyClaimNotification,
     clearBountyClaimNotifications,
     setCurrentBattleSession,
@@ -43,19 +37,12 @@ export function useApplyNotificationList() {
         clearTradeRequestNotifications();
         clearBattleInviteNotifications();
         clearBattleResultRequestNotifications();
-        clearBattleNudgeNotifications();
         clearBountyClaimNotifications();
       }
       for (const n of notifications) {
         if (n.notification_type === "bounty_claim") {
           const claim = toBountyClaimNotification(n.payload as BountyClaimPayload, n.id);
           if (claim) addBountyClaimNotification(claim);
-          continue;
-        }
-        if (n.notification_type === "battle_nudge") {
-          // A nudge waiting since you were away (BATL-NEW-08).
-          const nudge = toBattleNudgeNotification(n.payload as BattleNotificationPayload, n.id);
-          if (nudge) addBattleNudgeNotification(nudge);
           continue;
         }
         const converted = notificationFromApi(n);
@@ -77,13 +64,11 @@ export function useApplyNotificationList() {
     },
     [
       addBattleInviteNotification,
-      addBattleNudgeNotification,
       addBountyClaimNotification,
       clearBountyClaimNotifications,
       addBattleResultRequestNotification,
       addTradeRequestNotification,
       clearBattleInviteNotifications,
-      clearBattleNudgeNotifications,
       clearBattleResultRequestNotifications,
       clearTradeRequestNotifications,
       setCurrentBattleSession,

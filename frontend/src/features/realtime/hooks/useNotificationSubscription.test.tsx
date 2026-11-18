@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { act, fireEvent, screen, waitFor, within } from "@testing-library/react";
+import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -58,7 +58,6 @@ function Harness() {
     setCurrentBattleSession,
     tradeRequestNotifications,
     battleInviteNotifications,
-    battleNudgeNotifications,
   } = useAppStore();
   const queryClient = useQueryClient();
   return (
@@ -66,7 +65,6 @@ function Harness() {
       <p>{tradeRequestNotifications.length} trade requests</p>
       <p>{battleInviteNotifications.length} battle invites</p>
       <p>{currentBattleSession ? `Rejoin battle ${currentBattleSession.battleId}` : "No battle"}</p>
-      <p>{battleNudgeNotifications.map((nudge) => nudge.fromLabel).join(", ") || "No nudges"}</p>
       <button
         onClick={() => setCurrentBattleSession({ battleId: 3, campaignId: 7, status: "prebattle" })}
       >
@@ -84,21 +82,23 @@ function Harness() {
   );
 }
 
-/** A nudge already in the bell when the subscription mounts: a previous user's, or one answered elsewhere. */
-function StaleNudge() {
-  const { addBattleNudgeNotification } = useAppStore();
+/** An invitation already in the bell when the subscription mounts: a previous user's, or one answered elsewhere. */
+function StaleInvite() {
+  const { addBattleInviteNotification } = useAppStore();
   useEffect(() => {
-    addBattleNudgeNotification({
-      id: "nudge-31",
+    addBattleInviteNotification({
+      id: "invite-31",
       notificationDbId: 31,
       battleId: 5,
       campaignId: 7,
+      title: "Street Fight",
       scenario: "Street Fight",
-      page: "active",
-      fromLabel: "Gone",
+      battleDate: "2026-10-20",
+      createdByUserId: 2,
+      createdByLabel: "Gone",
       createdAt: "2026-10-20T19:00:00Z",
     });
-  }, [addBattleNudgeNotification]);
+  }, [addBattleInviteNotification]);
   return null;
 }
 
@@ -309,67 +309,18 @@ describe("useNotificationSubscription", () => {
     expect(screen.getByText("Rejoin battle 3")).toBeInTheDocument();
   });
 
-  it("says who nudged you, with a way to the battle, and keeps the nudge in the bell (BATL-NEW-08)", async () => {
-    renderHarness("/campaigns/7/warband");
-    await waitFor(() => expect(notificationHandler()).toBeDefined());
-
-    act(() =>
-      notificationHandler()({
-        type: "battle_nudge",
-        payload: {
-          battle_id: 41,
-          campaign_id: 7,
-          scenario: "Ambush at the Well",
-          page: "postbattle",
-          nudged_by_user_label: "Mira",
-          notification_id: 12,
-        },
-      })
-    );
-
-    const toastText = await screen.findByText(
-      "Mira nudged you: Ambush at the Well is waiting for you."
-    );
-    expect(screen.getByText("Mira")).toBeInTheDocument();
-    const nudgeToast = toastText.closest("[data-sonner-toast]") as HTMLElement;
-    fireEvent.click(within(nudgeToast).getByRole("button", { name: "Go" }));
-    expect(screen.getByTestId("location")).toHaveTextContent("/campaigns/7/battles/41/postbattle");
-    await waitForToastToGo(toastText);
-  });
-
-  it("replaces the bell with its first list, so a nudge already in the store is dropped (BUG-157)", async () => {
+  it("replaces the bell with its first list, so an invitation already in the store goes (BUG-157)", async () => {
     vi.mocked(listNotifications).mockResolvedValueOnce([]);
     renderWithQueryClient(
       <AppStoreProvider>
         <MemoryRouter initialEntries={["/campaigns"]}>
-          <StaleNudge />
+          <StaleInvite />
           <Harness />
         </MemoryRouter>
       </AppStoreProvider>
     );
 
     await waitFor(() => expect(listNotifications).toHaveBeenCalledTimes(1));
-    expect(await screen.findByText("No nudges")).toBeInTheDocument();
-  });
-
-  it("puts a nudge sent while you were away in the bell (BATL-NEW-08)", async () => {
-    vi.mocked(listNotifications).mockResolvedValueOnce([
-      {
-        id: 12,
-        notification_type: "battle_nudge",
-        campaign_id: 7,
-        reference_id: "41",
-        payload: {
-          battle_id: 41,
-          campaign_id: 7,
-          scenario: "Ambush",
-          nudged_by_user_label: "Bors",
-        },
-        created_at: "2026-10-19T10:00:00Z",
-      },
-    ]);
-    renderHarness();
-
-    expect(await screen.findByText("Bors")).toBeInTheDocument();
+    expect(await screen.findByText("0 battle invites")).toBeInTheDocument();
   });
 });

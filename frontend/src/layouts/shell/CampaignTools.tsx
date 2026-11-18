@@ -96,9 +96,6 @@ export default function CampaignTools({
         onDeclineBattleInvite={notifications.declineBattleInviteNotification}
         onAcceptBattleResultRequest={notifications.acceptBattleResultRequestNotification}
         onDeclineBattleResultRequest={notifications.declineBattleResultRequestNotification}
-        battleNudgeNotifications={notifications.battleNudgeNotifications}
-        onGoToNudge={notifications.goToBattleNudge}
-        onDismissNudge={notifications.dismissBattleNudge}
         bountyClaimNotifications={notifications.bountyClaimNotifications}
         onAcceptBountyClaim={notifications.acceptBountyClaimNotification}
         onDeclineBountyClaim={notifications.declineBountyClaimNotification}

@@ -31,8 +31,8 @@ export type BattleMenuFlags = {
  * The battle menu's rows, in order (William, 18 Nov 2026, from his phone: "leave the battle
  * should move up one and not be red, end the fight for everyone should be red and at the bottom").
  * Leaving is yours alone and reversible, so it is the plain row above the ones that end the fight
- * for everybody else too; those are red and last. Chat, Notifications and Nudge are gone from
- * here ("Don't need chat, notifications or nudge"); the features stay where they live.
+ * for everybody else too; those are red and last. Chat and Notifications are gone from here
+ * ("Don't need chat, notifications or nudge"); Nudge went with the feature.
  */
 export function battleMenu(flags: BattleMenuFlags): BattleMenuItem[] {
   return [

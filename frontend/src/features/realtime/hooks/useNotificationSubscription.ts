@@ -12,7 +12,6 @@ import { useRealtimeReconnect, useUserNotifications } from "@/lib/realtime";
 import { useAppStore } from "@/stores/app-store";
 import {
   toBattleInviteNotification,
-  toBattleNudgeNotification,
   toBattleResultRequestNotification,
   type BattleNotificationPayload,
 } from "../utils/notification-mappers";
@@ -40,7 +39,6 @@ export function useNotificationSubscription() {
     removeBattleInviteNotification,
     addBattleResultRequestNotification,
     removeBattleResultRequestNotification,
-    addBattleNudgeNotification,
     addBountyClaimNotification,
     removeBountyClaimNotification,
     setCurrentBattleSession,
@@ -130,27 +128,6 @@ export function useNotificationSubscription() {
       }
       addBattleResultRequestNotification(notification);
       void invalidatePendingResults(queryClient, notification.campaignId);
-      return;
-    }
-
-    if (message.type === "battle_nudge") {
-      // Another player is waiting for you (BATL-NEW-08): a toast that goes there, and the bell.
-      const payload = message.payload as BattleNotificationPayload;
-      const nudge = toBattleNudgeNotification(payload, payload.notification_id ?? 0);
-      if (!nudge) {
-        return;
-      }
-      addBattleNudgeNotification(nudge);
-      const page = nudge.page
-        ? `/campaigns/${nudge.campaignId}/battles/${nudge.battleId}/${nudge.page}`
-        : null;
-      toast(`${nudge.fromLabel} nudged you: ${nudge.scenario} is waiting for you.`, {
-        id: `battle-nudge-${nudge.battleId}`,
-        duration: ACTIONABLE_TOAST_MS,
-        ...(page && !location.pathname.startsWith(page)
-          ? { action: { label: "Go", onClick: () => navigate(page) } }
-          : {}),
-      });
       return;
     }
 

@@ -12,7 +12,6 @@ from .combat import (
 )
 from .finishing import CampaignBattleFinishMineView, CampaignBattleFinishView, CampaignBattleResultsView
 from .invites import CampaignBattleDeclineView
-from .nudge import CampaignBattleNudgeView
 from .postbattle import (
     CampaignBattleFinalizePostbattleView,
     CampaignBattlePostbattleSaveView,
@@ -66,7 +65,6 @@ __all__ = [
     "CampaignBattleFinishView",
     "CampaignBattleFinishMineView",
     "CampaignBattleResultsView",
-    "CampaignBattleNudgeView",
     "CampaignBattlePostbattleSaveView",
     "CampaignBattleFinalizePostbattleView",
     "CampaignBattleSkipPostbattleView",

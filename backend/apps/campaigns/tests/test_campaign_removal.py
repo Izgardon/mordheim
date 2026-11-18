@@ -199,9 +199,9 @@ class RemovalTradeAndNotificationTests(RemovalTestCase):
         self.assertEqual(list(unresolved.values_list("reference_id", flat=True)), [str(others.id)])
 
     def test_his_notifications_for_the_campaign_are_resolved_and_the_rest_kept(self):
-        here = self.notify(self.player, Notification.TYPE_BATTLE_NUDGE, 7)
+        here = self.notify(self.player, Notification.TYPE_BATTLE_INVITE, 7)
         elsewhere = self.notify(self.player, Notification.TYPE_BATTLE_INVITE, 8, campaign=self.elsewhere)
-        theirs = self.notify(self.rival, Notification.TYPE_BATTLE_NUDGE, 7)
+        theirs = self.notify(self.rival, Notification.TYPE_BATTLE_INVITE, 7)
 
         self.remove(self.owner, self.player)
 

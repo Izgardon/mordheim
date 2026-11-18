@@ -8,7 +8,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { BattleNudgeNotification } from "@/features/battles/types/battle-types";
+import type { BattleInviteNotification } from "@/features/battles/types/battle-types";
 import { AppStoreProvider, useAppStore } from "@/stores/app-store";
 import {
   accessToken,
@@ -32,14 +32,16 @@ vi.mock("@/lib/realtime/client", () => ({ disconnectRealtime }));
 
 const RIVAL = { id: 3, email: "rival@example.com", name: "Rival" };
 
-const NUDGE: BattleNudgeNotification = {
-  id: "nudge-31",
+const INVITE: BattleInviteNotification = {
+  id: "invite-31",
   notificationDbId: 31,
   battleId: 5,
   campaignId: 1,
+  title: "Street Fight",
   scenario: "Street Fight",
-  page: "active",
-  fromLabel: "Raider",
+  battleDate: "2026-10-20",
+  createdByUserId: 2,
+  createdByLabel: "Raider",
   createdAt: "2026-10-20T19:00:00Z",
 };
 
@@ -127,12 +129,12 @@ describe("signing out", () => {
     expect(fakeApi.calls()).toEqual([]);
   });
 
-  it("drops the previous user's battle nudges, so the next one doesn't see them (BUG-157)", async () => {
+  it("drops the previous user's battle invitations, so the next one doesn't see them (BUG-157)", async () => {
     storeSession();
     fakeApi.on("GET /auth/me/", RAIDER);
     const { result } = renderSession();
     await waitFor(() => expect(result.current.auth.user).toEqual(RAIDER));
-    act(() => result.current.store.addBattleNudgeNotification(NUDGE));
+    act(() => result.current.store.addBattleInviteNotification(INVITE));
 
     act(() => result.current.auth.signOut());
     await waitFor(() => expect(result.current.auth.user).toBeNull());
@@ -145,7 +147,7 @@ describe("signing out", () => {
 
     expect(result.current.auth.user).toEqual(RIVAL);
     expect(result.current.store.tradeRequestNotifications).toEqual([]);
-    expect(result.current.store.battleNudgeNotifications).toEqual([]);
+    expect(result.current.store.battleInviteNotifications).toEqual([]);
   });
 });
 

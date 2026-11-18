@@ -10,7 +10,7 @@ import { AppStoreProvider, useAppStore } from "./app-store";
 
 import type {
   BattleInviteNotification,
-  BattleNudgeNotification,
+  BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import type { Warband } from "@/features/warbands/types/warband-types";
@@ -49,7 +49,7 @@ function seedAliceSession(
     store.setWarband({ id: 3, campaign_id: 7, name: "Alice's Wolves" } as Warband);
     store.addTradeRequestNotification({ id: "trade-1" } as TradeNotification);
     store.addBattleInviteNotification({ id: "invite-1" } as BattleInviteNotification);
-    store.addBattleNudgeNotification({ id: "nudge-1", battleId: 31 } as BattleNudgeNotification);
+    store.addBattleResultRequestNotification({ id: "result-1" } as BattleResultRequestNotification);
     store.setCurrentBattleSession({ battleId: 31, campaignId: 7, status: "active" });
   });
 }
@@ -63,7 +63,6 @@ function expectEmptySession(
   expect(store.tradeRequestNotifications).toEqual([]);
   expect(store.battleInviteNotifications).toEqual([]);
   expect(store.battleResultRequestNotifications).toEqual([]);
-  expect(store.battleNudgeNotifications).toEqual([]);
   expect(store.currentBattleSession).toBeNull();
 }
 

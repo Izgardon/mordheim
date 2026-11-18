@@ -10,7 +10,6 @@ import type { Warband } from "@/features/warbands/types/warband-types";
 import type { TradeNotification } from "@/features/warbands/types/trade-request-types";
 import type {
   BattleInviteNotification,
-  BattleNudgeNotification,
   BattleResultRequestNotification,
 } from "@/features/battles/types/battle-types";
 import type { CurrentBattleSession } from "@/features/battles/utils/battle-session";
@@ -24,7 +23,6 @@ type AppStoreValue = BountyClaimSlice & {
   tradeRequestNotifications: TradeNotification[];
   battleInviteNotifications: BattleInviteNotification[];
   battleResultRequestNotifications: BattleResultRequestNotification[];
-  battleNudgeNotifications: BattleNudgeNotification[];
   currentBattleSession: CurrentBattleSession | null;
   setWarband: (warband: Warband | null) => void;
   setWarbandLoading: (loading: boolean) => void;
@@ -38,9 +36,6 @@ type AppStoreValue = BountyClaimSlice & {
   addBattleResultRequestNotification: (notification: BattleResultRequestNotification) => void;
   removeBattleResultRequestNotification: (notificationId: string) => void;
   clearBattleResultRequestNotifications: () => void;
-  addBattleNudgeNotification: (notification: BattleNudgeNotification) => void;
-  removeBattleNudgeNotification: (notificationId: string) => void;
-  clearBattleNudgeNotifications: () => void;
   setCurrentBattleSession: (session: CurrentBattleSession | null) => void;
   clearCurrentBattleSession: () => void;
 };
@@ -63,10 +58,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
   >([]);
   const [currentBattleSession, setCurrentBattleSessionState] =
     useState<CurrentBattleSession | null>(null);
-  // Nudges (BATL-NEW-08): one per battle, the newest replacing an older one.
-  const [battleNudgeNotifications, setBattleNudgeNotifications] = useState<
-    BattleNudgeNotification[]
-  >([]);
   const bountyClaims = useBountyClaimSlice();
 
   // When the signed-in user changes (sign-out, expiry, another account), drop the previous
@@ -83,7 +74,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       setTradeRequestNotifications([]);
       setBattleInviteNotifications([]);
       setBattleResultRequestNotifications([]);
-      setBattleNudgeNotifications([]);
       bountyClaims.clearBountyClaimNotifications();
       setCurrentBattleSessionState(null);
     }
@@ -151,17 +141,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
     setBattleResultRequestNotifications([]);
   }, []);
 
-  const addBattleNudgeNotification = useCallback((notification: BattleNudgeNotification) => {
-    setBattleNudgeNotifications((prev) => [
-      notification,
-      ...prev.filter((entry) => entry.battleId !== notification.battleId),
-    ]);
-  }, []);
-  const removeBattleNudgeNotification = useCallback((notificationId: string) => {
-    setBattleNudgeNotifications((prev) => prev.filter((entry) => entry.id !== notificationId));
-  }, []);
-  const clearBattleNudgeNotifications = useCallback(() => setBattleNudgeNotifications([]), []);
-
   const setCurrentBattleSession = useCallback((session: CurrentBattleSession | null) => {
     setCurrentBattleSessionState(session);
   }, []);
@@ -180,7 +159,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       tradeRequestNotifications,
       battleInviteNotifications,
       battleResultRequestNotifications,
-      battleNudgeNotifications,
       currentBattleSession,
       setWarband,
       setWarbandLoading,
@@ -194,9 +172,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       addBattleResultRequestNotification,
       removeBattleResultRequestNotification,
       clearBattleResultRequestNotifications,
-      addBattleNudgeNotification,
-      removeBattleNudgeNotification,
-      clearBattleNudgeNotifications,
       setCurrentBattleSession,
       clearCurrentBattleSession,
     }),
@@ -209,7 +184,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       tradeRequestNotifications,
       battleInviteNotifications,
       battleResultRequestNotifications,
-      battleNudgeNotifications,
       currentBattleSession,
       addTradeRequestNotification,
       removeTradeRequestNotification,
@@ -220,9 +194,6 @@ export function AppStoreProvider({ children }: PropsWithChildren) {
       addBattleResultRequestNotification,
       removeBattleResultRequestNotification,
       clearBattleResultRequestNotifications,
-      addBattleNudgeNotification,
-      removeBattleNudgeNotification,
-      clearBattleNudgeNotifications,
       setCurrentBattleSession,
       clearCurrentBattleSession,
     ]

@@ -1,5 +1,9 @@
 """The notifications a user sees: his unresolved ones that can still be answered, newest first (one query); and
-which of them still need his answer (`answerable`, what Clear all keeps)."""
+which of them still need his answer (`answerable`, what Clear all keeps).
+
+A row of a type we no longer send (a dropped feature's, left in the database) is left out of both: `listed` keeps
+only the types in `Notification.TYPE_CHOICES`, so the bell never has to make sense of one, and `answerable` never
+names it, so Clear all resolves it."""
 
 from typing import Any
 
@@ -30,15 +34,6 @@ def _without_stale_trade_requests(rows: QuerySet[Notification]) -> QuerySet[Noti
     return rows.exclude(stale)
 
 
-def _without_stale_battle_nudges(rows: QuerySet[Notification]) -> QuerySet[Notification]:
-    """A nudge only while its battle is open (BATL-NEW-08): one about a finished battle reads as gone, without a
-    write. Same single query."""
-    from apps.battles.services.nudge import open_battle_refs
-
-    stale = Q(notification_type=Notification.TYPE_BATTLE_NUDGE) & ~Q(reference_id__in=open_battle_refs())
-    return rows.exclude(stale)
-
-
 def _without_stale_bounty_claims(rows: QuerySet[Notification]) -> QuerySet[Notification]:
     """A bounty claim only while it waits for the poster's answer (every answer resolves it too). Same query."""
     from apps.bounties.selectors import waiting_claim_refs
@@ -47,19 +42,20 @@ def _without_stale_bounty_claims(rows: QuerySet[Notification]) -> QuerySet[Notif
     return rows.exclude(stale)
 
 
+KNOWN_TYPES = [value for value, _label in Notification.TYPE_CHOICES]
+
+
 def listed(user: Any) -> QuerySet[Notification]:
-    unresolved = Notification.objects.filter(user=user, is_resolved=False)
-    fresh = _without_stale_bounty_claims(_without_stale_battle_nudges(_without_stale_trade_requests(unresolved)))
+    unresolved = Notification.objects.filter(user=user, is_resolved=False, notification_type__in=KNOWN_TYPES)
+    fresh = _without_stale_bounty_claims(_without_stale_trade_requests(unresolved))
     return fresh.order_by("-created_at")
 
 
 def answerable(user: Any) -> Q:
     """The notifications that still need the user's answer (CAMP-TWEAK-10): a trade request still pending and not
     run out, an invitation he hasn't answered to a battle still inviting and in time, a reported result still
-    waiting for his approval, a nudge about a battle still open, and a claim on his bounty still waiting.
-    Subqueries: no query of its own."""
+    waiting for his approval, and a claim on his bounty still waiting. Subqueries: no query of its own."""
     from apps.battles.models import Battle, BattleParticipant
-    from apps.battles.services.nudge import open_battle_refs
     from apps.bounties.selectors import waiting_claim_refs
     from apps.trades.selectors import answerable_request_refs
 
@@ -77,6 +73,5 @@ def answerable(user: Any) -> Q:
         Q(notification_type=Notification.TYPE_TRADE_REQUEST, reference_id__in=answerable_request_refs())
         | Q(notification_type=Notification.TYPE_BATTLE_INVITE, reference_id__in=invited)
         | Q(notification_type=Notification.TYPE_BATTLE_RESULT_REQUEST, reference_id__in=to_approve)
-        | Q(notification_type=Notification.TYPE_BATTLE_NUDGE, reference_id__in=open_battle_refs())
         | Q(notification_type=Notification.TYPE_BOUNTY_CLAIM, reference_id__in=waiting_claim_refs())
     )
