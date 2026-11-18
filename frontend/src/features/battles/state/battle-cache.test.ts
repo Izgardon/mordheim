@@ -91,6 +91,15 @@ describe("battle-cache", () => {
     expect(getBattleStateLastEventId(merged)).toBe(3);
   });
 
+  it("keeps the battle notes you read when an answer carries none (they are yours alone)", () => {
+    // Only your own reads and writes carry `your_notes`; a broadcast, which goes to every player,
+    // carries nobody's, and must not blank the ones you wrote.
+    const read = mergeBattleState(baseState, { ...baseState, your_notes: "Hold the bridge" });
+
+    expect(mergeBattleState(read, { ...baseState }).your_notes).toBe("Hold the bridge");
+    expect(mergeBattleState(read, { ...baseState, your_notes: "" }).your_notes).toBe("");
+  });
+
   it("drops an older answer's battle and participants but keeps its events (BUG-44)", () => {
     const newer = battleState({
       state_version: 6,

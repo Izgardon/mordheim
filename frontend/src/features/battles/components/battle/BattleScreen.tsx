@@ -412,7 +412,7 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
       {me ? (
         <BattleNotesSheet
           {...panelProps("notes")}
-          notes={me.battle_notes ?? ""}
+          notes={battleState.your_notes ?? ""}
           onSave={config.saveBattleNotes}
         />
       ) : null}

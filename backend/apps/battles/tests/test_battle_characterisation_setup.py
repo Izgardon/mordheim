@@ -49,7 +49,6 @@ PARTICIPANT_KEYS = [
     "selected_unit_keys_json",
     "unit_information_json",
     "custom_units_json",
-    "battle_notes",
     "declared_result",
     "user",
     "warband",
@@ -82,7 +81,8 @@ class BattleCreateTests(BattleTestCase):
 
         data = response.data
         battle_id = data["battle"]["id"]
-        self.assertEqual(list(data), ["battle", "participants", "events", "capabilities"])
+        # `your_notes` is the caller's own battle notes; no participant carries anyone's
+        self.assertEqual(list(data), ["battle", "participants", "your_notes", "events", "capabilities"])
         self.assertEqual(list(data["battle"]), BATTLE_KEYS)
         self.assertEqual(list(data["participants"][0]), PARTICIPANT_KEYS)
         self.assertEqual((data["battle"]["status"], data["battle"]["scenario"]), ("inviting", "Bridge"))

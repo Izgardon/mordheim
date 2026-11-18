@@ -138,7 +138,6 @@ const participant = (
   custom_units_json: [],
   postbattle_json: {},
   declared_rating: null,
-  battle_notes: "",
   user: { id: who.id, label: who.label },
   warband: who.warband,
   ...overrides,

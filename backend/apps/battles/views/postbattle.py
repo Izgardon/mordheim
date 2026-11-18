@@ -101,7 +101,7 @@ class CampaignBattlePostbattleStepView(BattleWriteView):
             warnings = apply_aftermath_step(scope.battle, scope.player, raw_draft, step)
         # his warband changed (injuries, XP, gold, shards): other members' open pages of it read it again
         send_warband_changed(scope.battle.campaign_id, scope.player.warband_id, sender_socket_id(request))
-        return answer(battle_snapshot(scope.battle.id), [], warnings=warnings)
+        return answer(battle_snapshot(scope.battle.id, viewer_user_id=scope.user.id), [], warnings=warnings)
 
 
 class CampaignBattleFinalizePostbattleView(BattleWriteView):

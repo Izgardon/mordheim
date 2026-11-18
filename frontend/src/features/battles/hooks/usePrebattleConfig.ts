@@ -26,11 +26,14 @@ export function usePrebattleConfig({
   currentParticipant,
   ownRoster,
   currentUserReady,
+  yourNotes,
 }: {
   battleId: number;
   currentParticipant: BattleParticipant | null;
   ownRoster: ParticipantRoster | undefined;
   currentUserReady: boolean;
+  /** Your own battle notes, from the state (`your_notes`): part of what Ready Up saves. */
+  yourNotes: string;
 }) {
   const [selectedUnitKeys, setSelectedUnitKeys] = useState<string[]>([]);
   const [overrides, setOverrides] = useState<Record<string, UnitOverride>>({});
@@ -54,14 +57,14 @@ export function usePrebattleConfig({
     if (!currentParticipant || !ownRoster || initializedRef.current) {
       return;
     }
-    const initial = initialPrebattleConfig(currentParticipant, ownRoster);
+    const initial = initialPrebattleConfig(currentParticipant, ownRoster, yourNotes);
     setCustomUnits(initial.customUnits);
     setSelectedUnitKeys(initial.selectedKeys);
     setOverrides(initial.overrides);
     setUnitNotes(initial.notes);
     savedHashRef.current = initial.savedHash;
     initializedRef.current = true;
-  }, [currentParticipant, ownRoster]);
+  }, [currentParticipant, ownRoster, yourNotes]);
 
   // Once you are ready the form is locked.
   useEffect(() => {

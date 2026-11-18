@@ -2870,7 +2870,7 @@ class BattleApiTests(APITestCase):
             owner_participant["unit_information_json"]["hero:1"]["notes"],
             "Charge the flank.",
         )
-        self.assertEqual(owner_participant["battle_notes"], "")
+        self.assertNotIn("battle_notes", owner_participant)  # his alone; the payload answers `your_notes`
         self.assertEqual(owner_participant["custom_units_json"][0]["name"], "Summoned Wolf")
         self.assertEqual(owner_participant["custom_units_json"][0]["rating"], 12)
 
@@ -2906,7 +2906,8 @@ class BattleApiTests(APITestCase):
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
         self.assertEqual(prebattle_participant["declared_rating"], 123)
-        self.assertEqual(prebattle_participant["battle_notes"], "Hold the center.")
+        self.assertEqual(response.data["your_notes"], "Hold the center.")
+        self.assertNotIn("battle_notes", prebattle_participant)
         self.assertNotIn("postbattle_json", prebattle_participant)
 
         self.client.force_authenticate(user=self.owner)
@@ -2936,7 +2937,8 @@ class BattleApiTests(APITestCase):
         active_participant = next(
             entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
         )
-        self.assertEqual(active_participant["battle_notes"], "Hold the center.")
+        self.assertEqual(response.data["your_notes"], "Hold the center.")
+        self.assertNotIn("battle_notes", active_participant)
         self.assertNotIn("declared_rating", active_participant)
         self.assertNotIn("postbattle_json", active_participant)
         self.assertNotIn("invited_at", active_participant)
@@ -3100,14 +3102,8 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        owner_participant = next(
-            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
-        )
-        player_participant = next(
-            entry for entry in response.data["participants"] if entry["user"]["id"] == self.player.id
-        )
-        self.assertEqual(owner_participant["battle_notes"], "Focus the flank and protect wyrdstone.")
-        self.assertEqual(player_participant["battle_notes"], "")
+        self.assertEqual(response.data["your_notes"], "Focus the flank and protect wyrdstone.")
+        self.assertTrue(all("battle_notes" not in entry for entry in response.data["participants"]))
 
         owner_db = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
         self.assertEqual(owner_db.battle_notes, "Focus the flank and protect wyrdstone.")
@@ -3146,10 +3142,7 @@ class BattleApiTests(APITestCase):
         )
         self.assertEqual(response.status_code, 200)
 
-        owner_participant = next(
-            entry for entry in response.data["participants"] if entry["user"]["id"] == self.owner.id
-        )
-        self.assertEqual(owner_participant["battle_notes"], "Postbattle note")
+        self.assertEqual(response.data["your_notes"], "Postbattle note")
 
         owner_db = BattleParticipant.objects.get(battle_id=battle_id, user=self.owner)
         self.assertEqual(owner_db.battle_notes, "Postbattle note")

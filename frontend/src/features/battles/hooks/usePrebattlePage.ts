@@ -46,6 +46,7 @@ export function usePrebattlePage() {
     currentParticipant,
     ownRoster: currentParticipant ? rosters[currentParticipant.user.id] : undefined,
     currentUserReady: currentParticipant?.status === "ready",
+    yourNotes: battleState.your_notes ?? "",
   });
   const ratings = usePrebattleRatings(participants, currentParticipant, config.customUnits);
   const ready = usePrebattleReady({
@@ -101,6 +102,8 @@ export function usePrebattlePage() {
 
   return {
     battle,
+    /** Your own battle notes ("Only you see these"): the state's, never a participant's. */
+    yourNotes: battleState.your_notes ?? "",
     selection,
     isOwnSelected,
     config,

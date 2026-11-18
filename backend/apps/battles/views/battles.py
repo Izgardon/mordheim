@@ -116,7 +116,9 @@ class CampaignBattleStateView(BattleScopedView):
         view = str(request.query_params.get("view", "full")).strip().lower() or "full"
         if view not in PARTICIPANT_VIEWS:
             return Response({"detail": "Invalid view"}, status=400)
-        payload = battle_state_payload(scope.battle, since_event_id, participant_view=view)
+        payload = battle_state_payload(
+            scope.battle, since_event_id, participant_view=view, viewer_user_id=request.user.id
+        )
         participants = scope.battle.participants.all()
         payload["capabilities"] = capabilities(scope.battle, request.user.id, participants)
         if payload["capabilities"]["confirm_results"]:  # where the Confirm results modal starts (decision 4)

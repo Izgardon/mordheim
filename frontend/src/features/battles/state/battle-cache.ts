@@ -90,6 +90,11 @@ export function mergeBattleState(previous: BattleState | null, next: BattleState
     ...((next.confirm_results ?? previous.confirm_results)
       ? { confirm_results: next.confirm_results ?? previous.confirm_results }
       : {}),
+    // Your own battle notes: only your reads and your own writes carry them, so a broadcast or an
+    // answer without them leaves what you read last in place.
+    ...((next.your_notes ?? previous.your_notes) !== undefined
+      ? { your_notes: next.your_notes ?? previous.your_notes }
+      : {}),
   };
   if (older) {
     return { battle: previous.battle, participants: previous.participants, events, ...extras };

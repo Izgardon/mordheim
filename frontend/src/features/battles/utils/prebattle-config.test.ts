@@ -105,6 +105,16 @@ describe("prebattle-config", () => {
     expect(ratings).toEqual({ 7: 77, 9: null });
   });
 
+  it("counts your own battle notes as saved, so Ready Up doesn't blank them", () => {
+    // They are no longer on the participant (nobody else may read them): the page is given the
+    // state's `your_notes`, and the saved hash must hold them or the next save would send "".
+    const participant = myParticipant({ selected_unit_keys_json: ["hero:1"] });
+
+    const initial = initialPrebattleConfig(participant, roster, "Hold the bridge");
+
+    expect(JSON.parse(initial.savedHash).battle_notes).toBe("Hold the bridge");
+  });
+
   it("builds the config body from the form", () => {
     const payload = buildConfigPayload(
       {},

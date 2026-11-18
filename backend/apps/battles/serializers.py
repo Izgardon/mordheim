@@ -2,6 +2,11 @@
 
 A snapshot is `{"battle": ..., "participants": [...]}`; reads and writes add the events they return. The participant
 shape depends on the page asking (`?view=`): `active` is the lightest, `full` has everything.
+
+A player's battle notes are his alone ("Only you see these"), so no participant carries them: a snapshot read for
+someone adds his own as `your_notes` (`snapshot(..., viewer_user_id=...)`, as `services/record.py` answers the
+finished battle's). A snapshot built for nobody — every broadcast, which one message sends to the whole channel —
+has no such key, so notes cannot ride it.
 """
 
 from django.db.models import Prefetch, prefetch_related_objects
@@ -82,7 +87,6 @@ def serialize_participant(participant: BattleParticipant, participant_view: str 
         "selected_unit_keys_json": participant.selected_unit_keys_json or [],
         "unit_information_json": unit_information_with_kills(participant),  # each unit's live kill_count
         "custom_units_json": participant.custom_units_json or [],
-        "battle_notes": participant.battle_notes or "",
         "declared_result": participant.declared_result or None,
         "user": {"id": participant.user_id, "label": display_name(participant.user)},
         "warband": {"id": participant.warband_id, "name": participant.warband.name},
@@ -122,29 +126,44 @@ def participants_prefetch() -> Prefetch:
     return Prefetch("participants", queryset=snapshot_participants())
 
 
-def snapshot(battle: Battle, participants, participant_view: str = "full") -> dict:
-    return {
+def your_notes(participants, user_id: int) -> str:
+    """The reader's own battle notes in this battle (no query: the participants are already read), "" when he
+    wrote none or isn't playing."""
+    mine = next((entry for entry in participants if entry.user_id == user_id), None)
+    return (mine.battle_notes or "") if mine else ""
+
+
+def snapshot(battle: Battle, participants, participant_view: str = "full", viewer_user_id: int | None = None) -> dict:
+    """The battle and its participants. With `viewer_user_id`, his own notes as `your_notes`; without one (every
+    broadcast) the key is left out, so a snapshot built for nobody carries nobody's notes."""
+    rows = list(participants)
+    payload = {
         "battle": serialize_battle(battle),
-        "participants": [serialize_participant(participant, participant_view) for participant in participants],
+        "participants": [serialize_participant(participant, participant_view) for participant in rows],
     }
+    if viewer_user_id is not None:
+        payload["your_notes"] = your_notes(rows, viewer_user_id)
+    return payload
 
 
-def snapshot_from_battle(battle: Battle, participant_view: str = "full") -> dict:
+def snapshot_from_battle(battle: Battle, participant_view: str = "full", viewer_user_id: int | None = None) -> dict:
     """Snapshot a battle loaded with participants_prefetch()."""
-    return snapshot(battle, battle.participants.all(), participant_view)
+    return snapshot(battle, battle.participants.all(), participant_view, viewer_user_id)
 
 
-def battle_snapshot(battle_id: int, participant_view: str = "full") -> dict:
+def battle_snapshot(battle_id: int, participant_view: str = "full", viewer_user_id: int | None = None) -> dict:
     battle = Battle.objects.filter(id=battle_id).prefetch_related(participants_prefetch()).first()
     if battle is None:
         return {"battle": None, "participants": []}
-    return snapshot_from_battle(battle, participant_view)
+    return snapshot_from_battle(battle, participant_view, viewer_user_id)
 
 
-def battle_state_payload(battle: Battle, since_event_id: int, participant_view: str = "full") -> dict:
+def battle_state_payload(
+    battle: Battle, since_event_id: int, participant_view: str = "full", viewer_user_id: int | None = None
+) -> dict:
     """State for an already-loaded battle: participants and new events, without re-reading the battle."""
     prefetch_related_objects([battle], participants_prefetch())
-    payload = snapshot_from_battle(battle, participant_view)
+    payload = snapshot_from_battle(battle, participant_view, viewer_user_id)
     events = BattleEvent.objects.filter(battle_id=battle.id, id__gt=since_event_id).order_by("id")
     payload["events"] = [serialize_event(event) for event in events]
     return payload

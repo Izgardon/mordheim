@@ -32,10 +32,11 @@ def with_capabilities(response: Response, user_id: int | None, manager: bool) ->
 
 
 def response_with_snapshot(
-    battle_id: int, events: list[dict], response_status=200, warnings=None, body=None
+    battle_id: int, events: list[dict], response_status=200, warnings=None, body=None, *, viewer_user_id: int | None
 ) -> Response:
-    """Answer with the fresh snapshot, broadcasting nothing (a write that changed nothing others see)."""
-    return answer(battle_snapshot(battle_id), events, response_status, warnings, body)
+    """Answer with the fresh snapshot, broadcasting nothing (a write that changed nothing others see). The reader's
+    id is what his own battle notes are read with (`your_notes`, nobody else's)."""
+    return answer(battle_snapshot(battle_id, viewer_user_id=viewer_user_id), events, response_status, warnings, body)
 
 
 def publish_snapshot(
@@ -70,7 +71,8 @@ def broadcast_response(
     """Answer a write that raised the battle's state_version (`version`) with the fresh snapshot, and send its
     events, or a battle_state_updated, to the other players with the snapshots of the participants it `changed`
     (and the `postbattle` guides, services/broadcast.py). Called after the write's transaction; the sends go out
-    in the background."""
-    payload = battle_snapshot(battle_id)
+    in the background. The answer carries the writer's own battle notes; the broadcast is built from the same
+    snapshot's battle, participants and capabilities, so it carries nobody's."""
+    payload = battle_snapshot(battle_id, viewer_user_id=request.user.id)
     publish_snapshot(request, payload, events, version, changed, reason, postbattle)
     return answer(payload, events, response_status, warnings, body)

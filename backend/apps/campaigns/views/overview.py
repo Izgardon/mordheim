@@ -98,5 +98,5 @@ class CampaignActiveBattleCancelView(CampaignScopedView):
         mode = "campaign_owner" if self.access.role == OWNER else "campaign_manager"
         cancelled = active_battles.cancel(campaign_id, battle_id, request.user, mode)
         if cancelled.version is None:  # already cancelled: the snapshot, nothing sent
-            return response_with_snapshot(cancelled.battle_id, cancelled.events)
+            return response_with_snapshot(cancelled.battle_id, cancelled.events, viewer_user_id=request.user.id)
         return broadcast_response(request, cancelled.battle_id, cancelled.events, cancelled.version, changed=ALL)

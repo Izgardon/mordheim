@@ -49,7 +49,6 @@ const participant: BattleParticipant = {
   custom_units_json: [],
   postbattle_json: {},
   declared_rating: null,
-  battle_notes: "",
   user: { id: 1, label: "Owner" },
   warband: { id: 10, name: "Iron Vultures" },
 };

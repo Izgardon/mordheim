@@ -198,7 +198,12 @@ class BattleWriteView(BattleScopedView):
                 if outcome.activity:
                     record_activity(scope.battle)
                 return response_with_snapshot(
-                    scope.battle.id, outcome.events, outcome.status, outcome.warnings, outcome.body
+                    scope.battle.id,
+                    outcome.events,
+                    outcome.status,
+                    outcome.warnings,
+                    outcome.body,
+                    viewer_user_id=request.user.id,
                 )
             version = bump_state_version(scope.battle)
         return broadcast_response(

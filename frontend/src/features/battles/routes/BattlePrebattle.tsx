@@ -80,7 +80,7 @@ export default function BattlePrebattle() {
         <BattleNotesSheet
           open={notesDialog.isOpen}
           onOpenChange={notesDialog.setIsOpen}
-          notes={me.battle_notes ?? ""}
+          notes={page.yourNotes}
           onSave={ready.saveBattleNotes}
         />
       ) : null}

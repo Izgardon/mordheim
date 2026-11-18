@@ -331,7 +331,6 @@ export type BattleParticipantCore = {
   last_activity_at?: string | null;
   unit_information_json: Record<string, BattleUnitInformationEntry>;
   custom_units_json: BattleCustomUnit[];
-  battle_notes: string;
   user: {
     id: number;
     label: string;
@@ -563,6 +562,11 @@ export type BattleStateOf<Participant extends BattleParticipantCore> = {
   confirm_results?: { winners: number[]; losers: number[]; undecided: number[] };
   /** The reader's place in the battle (BATL-NEW-01). */
   viewer?: BattleViewer;
+  /**
+   * Your own battle notes ("Only you see these"): in `state/` reads and your own write answers,
+   * never on a participant and never in a broadcast, which one message sends to every player.
+   */
+  your_notes?: string;
 };
 
 /** Where the reader stands in a battle, and the page where he carries on (BATL-NEW-01). */

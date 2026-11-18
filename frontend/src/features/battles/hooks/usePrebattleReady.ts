@@ -73,7 +73,7 @@ export function usePrebattleReady({
     if (!currentParticipant || !initializedRef.current) {
       return true;
     }
-    const payload = payloadFor(currentParticipant, currentParticipant.battle_notes ?? "");
+    const payload = payloadFor(currentParticipant, battleState.your_notes ?? "");
     const payloadHash = JSON.stringify(payload);
     if (payloadHash === savedHashRef.current) {
       return true;

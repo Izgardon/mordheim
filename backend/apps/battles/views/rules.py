@@ -40,9 +40,14 @@ def only(statuses: Collection[str], detail: str, *, code: str | None = None) -> 
     return lambda scope: None if scope.battle.status in statuses else _wrong_status(scope, detail, code)
 
 
+def _snapshot(scope: "Scope") -> Response:
+    """The battle as the caller reads it, with his own battle notes and nobody else's."""
+    return response_with_snapshot(scope.battle.id, [], viewer_user_id=scope.request.user.id)
+
+
 def snapshot_when(*statuses: str) -> Rule:
     """A repeat while the battle is in one of `statuses` answers the snapshot and changes nothing."""
-    return lambda scope: response_with_snapshot(scope.battle.id, []) if scope.battle.status in statuses else None
+    return lambda scope: _snapshot(scope) if scope.battle.status in statuses else None
 
 
 def refuse_player(statuses: Collection[str], detail: str, *, code: str | None = None) -> Rule:
@@ -57,7 +62,7 @@ def only_player(statuses: Collection[str], detail: str) -> Rule:
 
 def snapshot_when_player(*statuses: str) -> Rule:
     """A repeat once the caller's participant is in one of `statuses` answers the snapshot."""
-    return lambda scope: response_with_snapshot(scope.battle.id, []) if scope.player.status in statuses else None
+    return lambda scope: _snapshot(scope) if scope.player.status in statuses else None
 
 
 def creator_only(detail: str, *, code: str | None = None) -> Rule:

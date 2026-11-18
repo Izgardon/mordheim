@@ -84,7 +84,11 @@ function missingKeys(roster: ParticipantRoster) {
  * those missing games (and their pets), which the player may still pick; the saved hash is the
  * server's, so the first Ready Up saves that selection.
  */
-export function initialPrebattleConfig(participant: BattleParticipant, roster: ParticipantRoster) {
+export function initialPrebattleConfig(
+  participant: BattleParticipant,
+  roster: ParticipantRoster,
+  yourNotes = ""
+) {
   const customUnits = normalizeCustomUnits(participant.custom_units_json);
   const unitInformation = toUnitInformationMap(participant.unit_information_json);
   const overrides = unitInformationMapToOverrides(unitInformation);
@@ -102,7 +106,7 @@ export function initialPrebattleConfig(participant: BattleParticipant, roster: P
       overrides,
       notes,
       declaredRating: participant.declared_rating,
-      battleNotes: participant.battle_notes ?? "",
+      battleNotes: yourNotes,
     })
   );
   const missing = missingKeys(roster);
