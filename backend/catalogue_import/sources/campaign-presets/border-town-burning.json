@@ -5,5 +5,8 @@
   "settings": [
     "Border Town Burning"
   ],
-  "exploration_chart": "border-town-burning"
+  "exploration_chart": "border-town-burning",
+  "enable_campaign_points": true,
+  "hero_death_roll": "d66",
+  "rules": "border-town-burning"
 }

@@ -1,0 +1,41 @@
+{
+  "setting": "Border Town Burning",
+  "rules": [
+    {
+      "title": "Campaign points",
+      "text": "Every warband tracks Campaign Points. Mark a box for every Campaign Point the warband gets, as you would mark experience. Whenever the warband reaches a thick-bordered box, read its plot's achievement chart to see what it has gained. The marked boxes are at 5, 10, 15, 20, 25, 35 and 40; there is no step at 30."
+    },
+    {
+      "title": "Choosing a plot",
+      "text": "Each warband picks one plot at the beginning of the campaign, from those its warband type may follow. Every player may always see what every other player has picked. It does not matter which warbands take part and no player need fight for the side of good: the campaign works with every warband pursuing evil, or every one upholding law and order."
+    },
+    {
+      "title": "Changing plot",
+      "text": "A warband may switch to another plot it is allowed to follow between battles. It loses D6 Campaign Points for doing so."
+    },
+    {
+      "title": "Campaign points once lost",
+      "text": "Losing Campaign Points never takes back an achievement the warband has already reached. Lost points must still be earned again before the warband can reach its next achievement."
+    },
+    {
+      "title": "Winning the campaign",
+      "text": "A warband wins as soon as it completes its plot. A plot is complete when every box on its Campaign Point track is filled and whatever else its 40-point achievement asks for has been done."
+    },
+    {
+      "title": "Starting over",
+      "text": "A player who disbands his warband loses its progress and achievements along with its warriors. He picks a plot for the new warband as if the campaign were beginning. To make up the lost time, the new warband starts with Campaign Points equal to the next lowest amount among the other warbands in the campaign, less D3. The book's own worked example takes the lowest of them instead: the others hold 12, 8 and 9 Campaign Points, a D3 scores 2, and the new warband starts with 8 - 2 = 6."
+    },
+    {
+      "title": "Mounts",
+      "text": "A warband is not restricted to one horse. Every mounted warrior has the Large Target special rule, and every mount raises the warband rating by 20 points."
+    },
+    {
+      "title": "Get in the ring",
+      "text": "On the Heroes' Serious Injuries chart, result 65 is Get in the Ring instead of Sold to the Pits. Left for dead, the warrior is picked up by a passing horde of Chaos, given the mark by one of their seers and made to fight a Warrior of Chaos in the barbarian ring. Roll to see which side charges and fight the battle as normal. If the warrior loses, roll to see whether he is dead or injured, which is a D66 roll of 11-35; if he is not dead he is thrown out of the ring without his armour and weapons and rejoins his warband. If he wins he gains the mutation Blackblood, 2 Experience and 1 Campaign Point, and slips away to rejoin his warband with all his weapons and equipment."
+    },
+    {
+      "title": "Chaos artefacts",
+      "text": "There are four Chaos Artefacts: Ghartok's Skull, the Dragon Scale Armour, the Broadsword of Damnation and the Liber Chaotica. A Norse, Marauder, Possessed, Carnival of Chaos or Beastman warband always gives one to its leader, as the only warrior worthy of it. Any model carrying one who is not a Marauder, Beastman, Norseman, Mutant, Dark Elf, Undead or Chaos Dwarf Hero is subject to stupidity, and counts as having A Thousand Voices permanently cast on him, which lowers his Leadership by 4 and cannot be dispelled. A Chaos Artefact may never be left in the warband's stored equipment: a Hero must carry it, the leader in a Chaotic warband. The only exception is a Tilean Merchant Caravan, which may keep it in a Trade Wagon. Chaos Artefacts cannot be destroyed. If the model carrying one goes out of action, place a marker; any model may pick it up by moving into contact with the marker. If nobody takes it, the model that went out of action keeps it, and if he dies of his Serious Injuries it passes to the warband leader; if the leader dies after the battle, in the exploration phase, it passes to the new leader. If an artefact is ever lost with no owner to be found, the next warband to find a Lesser Artefact finds that Chaos Artefact instead."
+    }
+  ]
+}
