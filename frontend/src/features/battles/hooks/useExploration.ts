@@ -192,9 +192,15 @@ export function useExploration({
     [exploration?.resourceId, resources]
   );
 
+  // the dice as they stand: every one of them has a face, so the roll has happened
+  const rolled = Boolean(
+    exploration && exploration.diceValues.length > 0 && settledExploration !== null
+  );
+
   return {
     exploration,
     setExploration,
+    rolled,
     rules,
     limits,
     amountFromDice,

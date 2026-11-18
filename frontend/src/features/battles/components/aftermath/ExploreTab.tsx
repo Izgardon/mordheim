@@ -42,10 +42,8 @@ export default function ExploreTab({
   /** Opens the campaign's locations searched for the place (none when they're switched off). */
   onReadAndRoll?: (place: string) => void;
 }) {
-  const { exploration, amount } = explore;
+  const { exploration, amount, rolled } = explore;
   if (!exploration) return null;
-  const rolled =
-    exploration.diceValues.length > 0 && exploration.diceValues.every((v) => v !== null);
   const chosen = getSelectedExplorationDiceValues(exploration);
   const found = rolled ? placesFound(chart, chosen) : [];
   const hot = new Set(found.map((entry) => entry.face));

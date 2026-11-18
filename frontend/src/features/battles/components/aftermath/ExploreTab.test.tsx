@@ -66,6 +66,7 @@ const rolled = (
             selectedDice: diceValues.map(() => true),
             hasRolledAllDice: true,
           },
+          rolled: true,
           amount: 1,
           rules: ruleset,
           limits: { max: 10, max_chosen: 6 },
@@ -84,6 +85,7 @@ const show = () => {
   const setExploration = vi.fn();
   const explore = {
     exploration: unrolled,
+    rolled: false,
     amount: 0,
     limits: { max: 10, max_chosen: 6 },
     setExploration,

@@ -21,6 +21,7 @@ import AftermathMenu from "./AftermathMenu";
 import AftermathSkeleton from "./AftermathSkeleton";
 import { buildStatChangeRows, withKeptStats } from "./aftermath-stats";
 import { buildXpRows } from "./aftermath-xp";
+import { exploreWhy, useExploreWhy } from "./explore-why";
 import ExperienceTab from "./ExperienceTab";
 import ExploreTab from "./ExploreTab";
 import FindsCard from "./FindsCard";
@@ -36,12 +37,6 @@ type AftermathBodyProps = {
   me: BattleParticipant;
   isMobile: boolean;
 };
-
-/** "3 heroes on their feet, +1 for winning": why the exploration has the dice it has. */
-function exploreWhy(state: BattleState, me: BattleParticipant, onFeet: number) {
-  const won = resultText(state, me.warband.id, me.declared_result).startsWith("Won");
-  return `${onFeet} ${onFeet === 1 ? "hero" : "heroes"} on their feet${won ? ", +1 for winning" : ""}`;
-}
 
 /**
  * Over a step already applied: what it gave the warband, and where to change it now (William,
@@ -95,22 +90,27 @@ export default function AftermathBody({
   const { drafting, explore } = postgame;
   const { draft, persistDraft } = drafting;
   const warbandPath = `/campaigns/${campaignId}/warband`;
+  const result = resultText(battleState, me.warband.id, me.declared_result);
+  const heroesOnFeet = Object.values(draft?.unit_results ?? {}).filter(
+    (entry) => entry.unit_kind === "hero" && !entry.out_of_action
+  ).length;
+  // the words are held from the moment the draft is loaded and the dice are in, never before it
+  const why = useExploreWhy(
+    explore.rolled && draft !== null,
+    exploreWhy(heroesOnFeet, result.startsWith("Won"))
+  );
   if (!draft || !explore.exploration) {
     return <AftermathSkeleton />;
   }
   const save = (next: typeof draft) => void persistDraft(next);
   const index = AFTERMATH_TABS.findIndex((entry) => entry.id === tab);
   const opponents = opponentsOf(battleState, me);
-  const result = resultText(battleState, me.warband.id, me.declared_result);
   const subtitle = [
     `${result}${opponents.length ? ` against ${opponents.join(", ")}` : ""}`,
     isMobile ? null : battleState.battle.scenario,
   ]
     .filter(Boolean)
     .join(" · ");
-  const heroesOnFeet = Object.values(draft.unit_results).filter(
-    (entry) => entry.unit_kind === "hero" && !entry.out_of_action
-  ).length;
 
   const note = settled(tab, postgame.locks);
   const content =
@@ -142,7 +142,7 @@ export default function AftermathBody({
           explore={explore}
           chart={chart}
           resources={postgame.resources}
-          why={exploreWhy(battleState, me, heroesOnFeet)}
+          why={why}
           isMobile={isMobile}
           onReadAndRoll={campaign?.enable_locations ? setReadPlace : undefined}
         />
