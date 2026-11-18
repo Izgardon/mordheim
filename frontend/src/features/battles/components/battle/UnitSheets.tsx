@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { NumberInput } from "@/components/ui/number-input";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
 import { Input } from "@/components/ui/input";
 import { ModalSheet } from "@/components/ui/modal-sheet";
+import { SearchSelect } from "@/components/ui/search-select";
 import { SectionedSelect, sectionsOf } from "@/components/ui/sectioned-select";
 import { StatBoxes } from "@/components/ui/stat-boxes";
 import {
@@ -18,6 +19,7 @@ import type { CustomUnitDraftState } from "@/features/battles/hooks/useCustomUni
 import type { NeutralGroupInput } from "@/features/battles/hooks/useBattleScreen";
 import type { BattleNeutralGroup, BattleUnitStats } from "@/features/battles/types/battle-types";
 import { typedBattleStat } from "@/features/battles/utils/custom-unit-draft";
+import { beastOption } from "@/features/catalogue/search-options";
 import { STAT_FIELDS as PROFILE_FIELDS } from "@/features/catalogue/utils/statblock";
 import { useCatalogue } from "@/lib/catalogue-queries";
 import { getErrorMessage } from "@/lib/get-error-message";
@@ -236,7 +238,9 @@ export function AddUnitSheet({
 
 /**
  * Add a neutral group (design E): creatures nobody plays, a name, a creature type from the
- * bestiary (its profile comes with it) or typed, and how many.
+ * bestiary (its profile comes with it) or typed, and how many. The type is picked on the app's
+ * searchable select, as a race and a warband type are (William, 12 Nov 2026: the dropdown should
+ * read as one), and what is typed can be used as it stands.
  */
 export function AddNeutralGroupSheet({
   open,
@@ -265,12 +269,13 @@ export function AddNeutralGroupSheet({
       setError("");
     }
   }, [open]);
-  const matches = useMemo(() => {
-    const query = type.trim().toLowerCase();
-    if (!query || beastId !== null) return [];
-    return bestiary.filter((entry) => entry.name.toLowerCase().includes(query)).slice(0, 6);
-  }, [beastId, bestiary, type]);
   const beast = bestiary.find((entry) => entry.id === beastId);
+  const typed = type.trim();
+  const value = beast
+    ? beastOption(beast)
+    : typed
+      ? { id: "typed", title: typed, subtitle: "Typed in" }
+      : null;
 
   const add = async () => {
     const creatureType = type.trim();
@@ -322,46 +327,29 @@ export function AddNeutralGroupSheet({
         </div>
       }
     >
-      <label className="flex flex-col gap-1 text-xs font-bold text-text2">
+      <div className="flex flex-col gap-1 text-xs font-bold text-text2">
         Creature type
-        <Input
-          value={type}
+        <SearchSelect
+          label="Creature type"
           placeholder="Search creatures"
-          onChange={(event) => {
-            setType(event.target.value);
-            setBeastId(null);
+          emptyText="No creature matches."
+          options={bestiary.map(beastOption)}
+          value={value}
+          clearLabel="Clear the creature type"
+          onChange={(option) => {
+            const picked = option ? bestiary.find((entry) => entry.id === option.id) : undefined;
+            setBeastId(picked?.id ?? null);
+            setType(picked?.name ?? "");
+          }}
+          create={{
+            label: (text) => `Use “${text}” as the type`,
+            onCreate: (text) => {
+              setBeastId(null);
+              setType(text);
+            },
           }}
         />
-      </label>
-      {matches.length ? (
-        <div className="flex flex-col">
-          {matches.map((entry) => (
-            <button
-              key={entry.id}
-              type="button"
-              onClick={() => {
-                setBeastId(entry.id);
-                setType(entry.name);
-              }}
-              className="flex min-h-11 items-center justify-between border-t border-line px-2 text-left text-sm text-ink"
-            >
-              {entry.name}
-              <span className="text-xs text-muted-foreground">
-                {entry.has_profile ? `W ${entry.wounds}` : "No profile"}
-              </span>
-            </button>
-          ))}
-        </div>
-      ) : null}
-      {beast ? (
-        <p className="m-0 text-xs text-muted-foreground">
-          From the bestiary: {beast.name}
-          {beast.has_profile
-            ? `, M${beast.movement} WS${beast.weapon_skill} T${beast.toughness} W${beast.wounds}`
-            : ""}
-          .
-        </p>
-      ) : null}
+      </div>
       <div className="grid grid-cols-[2fr_1fr] gap-2">
         <label className="flex flex-col gap-1 text-xs font-bold text-text2">
           Group name

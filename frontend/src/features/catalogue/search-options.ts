@@ -2,6 +2,8 @@ import { createElement } from "react";
 
 import { SkillListIcon, SpecialIcon } from "@/components/ui/game-icons";
 import type { SearchOption } from "@/components/ui/search-select";
+import { beastKindLabel } from "@/features/bestiary/bestiary-kinds";
+import type { BestiaryEntrySummary } from "@/features/bestiary/types/bestiary-types";
 import { outOfPlay } from "@/features/campaigns/api/settings-queries";
 import type { Setting } from "@/features/campaigns/types/campaign-types";
 import type { Race } from "@/features/races/types/race-types";
@@ -136,3 +138,16 @@ export const raceOption = (race: Race, settings: Settings): SearchOption => ({
 /** Rows with no warning first, keeping their order otherwise (the greyed rows last). */
 export const warnedLast = (rows: SearchOption[]) =>
   [...rows].sort((a, b) => Number(Boolean(a.warning)) - Number(Boolean(b.warning)));
+
+/** "M6 WS4 S4 T3 W1" from a beast's profile, or nothing when it has none. */
+const beastProfile = (beast: BestiaryEntrySummary) =>
+  beast.has_profile
+    ? `M${beast.movement} WS${beast.weapon_skill} S${beast.strength} T${beast.toughness} W${beast.wounds}`
+    : "No profile";
+
+/** A beast's row in a search (the battle's neutral group, a recruit's type): its kind and profile. */
+export const beastOption = (beast: BestiaryEntrySummary): SearchOption => ({
+  id: beast.id,
+  title: beast.name,
+  subtitle: joined(beastKindLabel(beast.kind), beastProfile(beast)),
+});
