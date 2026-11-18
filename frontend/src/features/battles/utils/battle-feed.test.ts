@@ -50,4 +50,32 @@ describe("battleFeed and the rounds", () => {
     ]);
     expect(lines[1]).toMatchObject({ round: 2, text: "Cap finished his battle" });
   });
+
+  it("still logs everything else the battle does (William, 18 Nov 2026)", () => {
+    const lines = feed([
+      event(1, "battle_started"),
+      event(2, "round_requested", { round: 2 }),
+      event(3, "round_started", { round: 2, forced: false }),
+      event(4, "unit_kill_recorded", {
+        round: 2,
+        killer: { name: "Ulrich" },
+        victim: { type_name: "Darksoul" },
+        how: "melee",
+      }),
+      event(5, "unit_ooa_set", { round: 2, unit: { warband_id: 3, unit_key: "hero:9" } }),
+      event(6, "item_used", { unit_key: "hero:9", item_name: "Blessed Water" }),
+      event(7, "neutral_group_added", { round: 2, name: "Giant Rats", count: 3 }),
+      event(8, "participant_finished_battle"),
+    ]);
+    expect(lines.map((line) => line.text)).toEqual([
+      "Battle started",
+      "Round 2 started",
+      "Ulrich took a Darksoul out of action · melee",
+      "A model is out of action",
+      "A model used Blessed Water",
+      "Giant Rats joined the fight (3)",
+      "Cap finished his battle",
+    ]);
+    expect(lines.filter((line) => line.kill)).toHaveLength(1);
+  });
 });
