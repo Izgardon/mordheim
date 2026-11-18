@@ -6,9 +6,11 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { GameIcon } from "@/components/ui/game-icons";
 import { IconButton } from "@/components/ui/icon-button";
 import { queryKeys } from "@/lib/query-keys";
+import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/lib/use-media-query";
 
 import { unitApi } from "../../units/unit-api";
+import { BADGE } from "./badge-style";
 import { isGroup, killLine, unitKey, unitName, type RosterUnit } from "./unit-view";
 
 /** A unit's kills: its counter, or a henchmen group's members' together. */
@@ -98,7 +100,10 @@ export default function UnitKills({
         aria-haspopup="dialog"
         aria-label={`Kills ${count}: the breakdown`}
         onClick={() => setOpen((current) => !current)}
-        className="inline-flex min-h-[30px] items-center gap-1.5 border border-border px-2.5 text-xs font-bold text-ink hover:bg-raised"
+        className={cn(
+          BADGE,
+          "inline-flex items-center gap-1.5 border border-border text-ink hover:bg-raised"
+        )}
       >
         <GameIcon name="kills" className="h-3.5 w-3.5 text-danger" />
         Kills <span className="font-mono">{count}</span>

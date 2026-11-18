@@ -10,7 +10,7 @@ import type { CampaignSummary } from "@/features/campaigns/types/campaign-types"
 import { cn } from "@/lib/utils";
 
 import { useItemLabel } from "../../hooks/units/useItemLabel";
-import UnitBadges from "./UnitBadges";
+import UnitBadges, { UnitTradingAction } from "./UnitBadges";
 import UnitLines from "./UnitLines";
 import UnitProfile from "./UnitProfile";
 import {
@@ -194,11 +194,15 @@ export default function UnitCard(props: UnitCardProps) {
               warbandId={props.warbandId}
               canEdit={canEdit}
               onRide={props.onRide}
-              onTradingAction={props.onTradingAction}
             />
             {buttons}
           </div>
         </div>
+        <UnitTradingAction
+          entry={entry}
+          canEdit={canEdit}
+          onTradingAction={props.onTradingAction}
+        />
         {members.length ? (
           <div className="flex flex-wrap gap-1.5">
             {members.map((member) => (
