@@ -12,7 +12,7 @@ from typing import Any
 
 from apps.warbands.models import HenchmenGroupItem, HeroItem, HirelingItem
 
-from .beast_support import make_animal, raven, wardogs, warhorse
+from .beast_support import cold_one, make_animal, raven, wardogs, warhorse
 from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit, unit_url
 
 NO_ABILITIES: dict[str, list] = {"skills": [], "specials": [], "spells": []}  # the beast's entries (step 5)
@@ -68,6 +68,21 @@ class CompanionSwitchTests(CompanionTestCase):
 
         self.assertEqual((unit["mount"], unit["effective_stats"], unit["items"][0]["companion"]), (None, None, False))
         self.assertEqual(unit["armour_save"], 6)  # back to his own 6+
+
+    def test_a_two_step_mount_moves_the_save_two_and_gives_both_back_when_he_gets_off(self):
+        """A mount's steps are its beast's, not one for every mount (William, 18 Nov 2026: "yes let's make them 2
+        steps if that is possible"): a Cold One's rule prints "making +2 total"."""
+        row = HeroItem.objects.create(hero=self.hero, item=cold_one(), cost=100)  # the hero holds 6+
+
+        mounted = self.switch(row).data["unit"]
+
+        self.assertEqual(mounted["armour_save"], 4)  # 6+ and the Cold One's two steps
+        self.hero.refresh_from_db()
+        self.assertEqual(self.hero.armour_save, 4)
+
+        unswitched = self.switch(row, on=False).data["unit"]
+
+        self.assertEqual(unswitched["armour_save"], 6)  # both steps go back, to his own 6+
 
     def test_a_pet_goes_with_its_unit_and_one_without_a_profile_shows_none(self):
         row = HeroItem.objects.create(hero=self.hero, item=self.raven)

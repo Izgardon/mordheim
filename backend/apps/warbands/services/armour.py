@@ -13,8 +13,9 @@ a plain field the player can type over afterwards, and nothing is ever refused.
 `Item.save_slot` says whether an item competes. A `body` item counts one at a time, and the oldest row the unit
 carries is the one counting: a second adds nothing, and when the one counting leaves, the next oldest takes its place
 in the same move (light then heavy leaves 6+, and taking the light off then gives 5+). A `shield` and an `extra`
-always apply, with no checks at all. A `mount` applies only while it is switched on as the unit's, so its step comes
-and goes with the switch (units/services/companions.py). A henchmen group is one unit with one save: its loadout row
+always apply, with no checks at all. A `mount` applies only while it is switched on as the unit's, so its steps come
+and go with the switch (units/services/companions.py); they are its beast's own, so a Cold One is worth two
+(apps/bestiary/animal_items.py). A henchmen group is one unit with one save: its loadout row
 applies once to the group, and a member's gap on it changes nothing.
 
 Callers write inside their own transaction, under the warband's lock (every roster write takes it), so reading the

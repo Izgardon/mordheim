@@ -43,6 +43,11 @@ def warhorse(**fields: Any) -> Item:
     return make_animal("Warhorse", "mount", cost=80, rating_bonus=5, available_in_shop=True, **HORSE_PROFILE, **fields)
 
 
+def cold_one(**fields: Any) -> Item:
+    """A mount worth two steps in the saddle: its own rule prints "making +2 total" (seed_bestiary's data)."""
+    return make_animal("Cold One", "mount", cost=100, save_bonus=2, available_in_shop=True, **HORSE_PROFILE, **fields)
+
+
 def raven(**fields: Any) -> Item:
     return make_animal("Raven", "pet", cost=60, has_profile=False, available_in_shop=True, **fields)
 

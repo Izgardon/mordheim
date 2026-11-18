@@ -54,6 +54,8 @@ export type BestiaryEntrySummary = CatalogueBadgeFields & {
   gains_xp: boolean;
   /** Mounts: what the beast adds to its rider's rating. */
   rating_bonus: number | null;
+  /** Mounts: the steps riding it adds to its rider's armour save (a Cold One's 2, a Warhorse's 1). */
+  save_bonus: number;
   /** The beast's own rating, a whole number (William, 7 Nov 2026); null for none. */
   rating: number | null;
   /** The shop sells its item. */
@@ -98,6 +100,7 @@ export type BestiaryEntryWrite = {
   has_profile?: boolean;
   gains_xp?: boolean;
   rating_bonus?: number | null;
+  save_bonus?: number;
   rating?: number | null;
   available_in_shop?: boolean;
   item?: { availabilities: BestiaryAvailabilityWrite[] };

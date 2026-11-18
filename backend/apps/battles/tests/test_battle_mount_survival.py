@@ -18,7 +18,7 @@ from django.test.utils import CaptureQueriesContext
 from apps.bestiary.models import MOUNT
 from apps.special.models import Special
 from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, Hero, HeroItem, HirelingSpecial, WarbandLog
-from apps.warbands.tests.beast_support import make_animal, warhorse
+from apps.warbands.tests.beast_support import cold_one, make_animal, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, make_unit
 
 from ..services.postbattle.mounts import is_equine
@@ -125,6 +125,22 @@ class MountSurvivalTests(BattleTestCase):
         saves = dict(Hero.objects.filter(pk__in=(self.aldric.pk, other.pk)).values_list("name", "armour_save"))
         self.assertEqual(saves, {"Aldric": 6, "Bertrand": 5})  # the step goes with the mount that died
         self.assertIsNone(self.outriders.__class__.objects.get(pk=self.outriders.pk).armour_save)  # a gap moves none
+
+    def test_each_rider_gets_back_what_his_own_mount_was_worth(self):
+        """A mount's steps are its beast's, not one for every mount (William, 18 Nov 2026), so two riders losing
+        different mounts in the same finalise each move by their own: the Cold One's two, the Warhorse's one."""
+        scaly = Hero.objects.create(warband=self.warband, name="Scaly", unit_type="Knight")
+        HeroItem.objects.create(hero=scaly, item=cold_one(), companion=True)
+        Hero.objects.filter(pk__in=(self.aldric.pk, scaly.pk)).update(armour_save=4)  # what mounting them gave
+        s = f"hero:{scaly.id}"
+        battle_id = self.fought(self.a, s, out=(self.a, s))
+        mounts = {self.a: {"roll": 1, "dead": True}, s: {"roll": 2, "dead": True}}
+
+        self.ok(self.finalize(self.player, battle_id, draft(self.results(self.a, s), mount_survival=mounts)))
+
+        saves = dict(Hero.objects.filter(pk__in=(self.aldric.pk, scaly.pk)).values_list("name", "armour_save"))
+        self.assertEqual(saves, {"Aldric": 5, "Scaly": 6})
+        self.assertFalse(HeroItem.objects.filter(hero__in=(self.aldric, scaly)).exists())
 
     def test_a_henchman_who_died_took_his_mount_already(self):
         battle_id = self.fought(self.m1, self.m2, out=(self.m1,))

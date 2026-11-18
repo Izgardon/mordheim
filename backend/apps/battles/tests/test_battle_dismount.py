@@ -12,7 +12,7 @@ from typing import Any
 
 from apps.battles.models import BattleKill
 from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, Hero, HeroItem
-from apps.warbands.tests.beast_support import warhorse
+from apps.warbands.tests.beast_support import cold_one, warhorse
 from apps.warbands.tests.roster_support import HENCHMEN, HERO, make_unit, unit_url
 
 from .battle_support import BattleTestCase, status_changed
@@ -148,6 +148,16 @@ class DismountSaveTests(BattleTestCase):
         saddle = {name: entry["stats"]["armour_save"] for name, entry in shown.items()}
         self.assertEqual(saddle, {"Aldric": 5, "Ragged": 6, "Bare": None, "Walker": 5, "A": 5})
         self.assertEqual(shown["Aldric"]["effectiveStats"], {"movement": 8})
+
+    def test_a_rider_on_a_two_step_mount_shows_a_save_two_steps_worse_on_foot(self):
+        """A mount's steps are its beast's (William, 18 Nov 2026), so getting off a Cold One takes two back."""
+        scaly = Hero.objects.create(warband=self.warband, name="Scaly", unit_type="Knight", armour_save=4)
+        HeroItem.objects.create(hero=scaly, item=cold_one(), companion=True)  # riding it, so his 4+ has both steps
+        battle_id = self.to_prebattle()
+
+        entry = self.mine(battle_id)["Scaly"]
+
+        self.assertEqual((entry["stats"]["armour_save"], entry["footStats"]), (4, {"armour_save": 6}))
 
     def test_dismounting_and_mounting_again_writes_nothing_to_the_unit(self):
         battle_id = self.to_active({self.player: self.keys(), self.viewer: [f"hero:{self.rat.id}"]})

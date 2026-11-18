@@ -51,14 +51,38 @@ class AnimalItemWriteTests(CatalogueTestCase):
         self.assertEqual(answer["availabilities"][0]["warbands"][0]["name"], "Reiklanders")
 
     def test_a_mounts_item_arms_its_rider_and_a_creatures_does_not(self):
-        """Mounting a mount is +1 on the rider's save (William, 18 Nov 2026), from the beast's kind."""
+        """Mounting a mount is +1 on the rider's save (William, 18 Nov 2026) unless the beast says otherwise."""
         mount = self.create_as(self.owner, BESTIARY, "Destrier", **self.sold())
         creature = self.create_as(self.owner, BESTIARY, "Wyvern", kind="creature")
 
         ridden = Item.objects.get(bestiary_entry_id=mount.data["id"])
         self.assertEqual((ridden.save_bonus, ridden.save_slot), (1, "mount"))
+        self.assertEqual(mount.data["save_bonus"], 1)
         beast = Item.objects.get(bestiary_entry_id=creature.data["id"])
         self.assertEqual((beast.save_bonus, beast.save_slot), (None, ""))
+
+    def test_a_campaigns_own_mount_carries_the_steps_it_was_given(self):
+        """A mount's steps are the beast's own, so a campaign's own Cold One arms its rider +2 (William,
+        18 Nov 2026: "yes let's make them 2 steps if that is possible")."""
+        created = self.create_as(self.owner, BESTIARY, "Cold One", **self.sold(), save_bonus=2)
+
+        self.assertEqual(created.status_code, 201, created.data)
+        self.assertEqual(created.data["save_bonus"], 2)
+        item = Item.objects.get(bestiary_entry_id=created.data["id"])
+        self.assertEqual((item.save_bonus, item.save_slot), (2, "mount"))
+
+    def test_an_edit_moves_the_steps_onto_the_item_and_a_creature_keeps_none(self):
+        created = self.create_as(self.owner, BESTIARY, "Destrier", **self.sold())
+        url = BESTIARY.detail_url(created.data["id"])
+
+        raised = self.patch_as(self.owner, url, {"save_bonus": 2})
+        unridden = self.patch_as(self.owner, url, {"kind": "creature"})
+
+        self.assertEqual([r.status_code for r in (raised, unridden)], [200, 200])
+        self.assertEqual(raised.data["save_bonus"], 2)
+        item = Item.objects.get(bestiary_entry_id=created.data["id"])
+        self.assertEqual((item.save_bonus, item.save_slot), (None, ""))  # a creature is nobody's mount
+        self.assertEqual(BestiaryEntry.objects.get(pk=created.data["id"]).save_bonus, 2)  # kept for a mount again
 
     def test_a_beast_not_sold_still_has_its_item_unlisted(self):
         created = self.create_as(self.owner, BESTIARY, "Wyvern", kind="creature")

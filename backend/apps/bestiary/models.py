@@ -5,6 +5,7 @@ from apps.warbands.models.shared import WrittenStatBlock, stat_constraints
 
 MOUNT, PET, CREATURE = "mount", "pet", "creature"
 BEAST_KINDS = ((MOUNT, "Mount"), (PET, "Pet"), (CREATURE, "Creature"))  # the Animal item's subtype is the label
+MOUNT_SAVE_BONUS = 1  # what riding a mount is worth unless the beast says otherwise (`save_bonus`)
 
 
 class BestiaryEntry(WrittenStatBlock, CatalogueEntry):
@@ -12,8 +13,10 @@ class BestiaryEntry(WrittenStatBlock, CatalogueEntry):
     henchmen). `available_in_shop` decides whether the shop sells it.
 
     `has_profile` off: the beast has no stat line (most pets); its stats are kept at 0 and its save empty, and the
-    pages hide them rather than show zeros. `gains_xp` is for creatures, `rating_bonus` for mounts (what the rider's
-    rating gains: a horse 3, a warhorse 5). `rating` is the beast's own rating, a whole number or none (William,
+    pages hide them rather than show zeros. `gains_xp` is for creatures, `rating_bonus` and `save_bonus` for mounts
+    (what the rider's rating gains: a horse 3, a warhorse 5; and the steps riding it adds to his armour save: 1 for
+    almost every mount, 2 for a Cold One and a War Boar, whose own rules print "making +2 total"). `armour_save` is
+    the beast's own save, not the rider's. `rating` is the beast's own rating, a whole number or none (William,
     7 Nov 2026: "bestiary creatures need rating ... Just add field for now, will become clear when seeding"): the
     seeds leave it empty and nothing counts it yet.
     """
@@ -31,6 +34,9 @@ class BestiaryEntry(WrittenStatBlock, CatalogueEntry):
     has_profile = models.BooleanField(default=True)
     gains_xp = models.BooleanField(default=False)
     rating_bonus = models.PositiveSmallIntegerField(null=True, blank=True)
+    # A mount's only: the steps riding it adds to its rider's armour save, which its Animal item carries into the
+    # roster (animal_items.py -> warbands/services/armour.py). 0 for a mount that is worth nothing in the saddle.
+    save_bonus = models.PositiveSmallIntegerField(default=MOUNT_SAVE_BONUS)
     rating = models.PositiveSmallIntegerField(null=True, blank=True)
     available_in_shop = models.BooleanField(default=False)
     armour_save = models.SmallIntegerField(null=True, blank=True)

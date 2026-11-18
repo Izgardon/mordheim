@@ -197,14 +197,14 @@ def lose_mounts(context: FinaliseContext, draft: dict, unit_information: dict[st
 
 def _dismount_riders(unit_type: str, found: list[tuple[_Loss, int]], current: dict) -> None:
     """Each rider's save moves back by what riding the mount that died was worth (warbands/services/armour.py): he
-    rode it, so its step goes with it. One read and one write, however many riders lost one."""
-    save: Save | None = None
-    rows: defaultdict[int, list[tuple[int, bool]]] = defaultdict(list)
+    rode it, so its steps go with it. A mount's steps are its beast's (a Cold One's 2, a Warhorse's 1), so the losses
+    are grouped by what they were worth: one read and one write per value, however many riders lost one."""
+    by_save: defaultdict[Save, defaultdict[int, list[tuple[int, bool]]]] = defaultdict(lambda: defaultdict(list))
     for loss, row_id in found:
         item = current.get(loss.item_id)
         if item is None:
             continue
-        save = Save.of(item)  # every loss of this kind is a mount, so one step serves them all
-        rows[loss.owner_id].append((row_id, True))  # the ridden copy went first (`_rows_to_delete`)
-    if save is not None:
+        # the ridden copy went first (`_rows_to_delete`)
+        by_save[Save.of(item)][loss.owner_id].append((row_id, True))
+    for save, rows in by_save.items():
         mounts_lost(KINDS[cast(UnitKindKey, unit_type)], save, rows)

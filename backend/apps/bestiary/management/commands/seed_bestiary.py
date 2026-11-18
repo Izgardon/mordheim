@@ -2,7 +2,8 @@
 `mim-bestiary.json` and Border Town Burning's Beasts of the East, `btb-bestiary.json`): the beasts, each a mount, a pet
 or a creature (`kind`), with its profile (a stat as the book writes it, "-" or "5*", kept as written), whether it has
 one (`has_profile`: off, its stats are kept at 0 and its save empty), gains XP, what it adds to a rider's rating
-(`rating_bonus`) and whether the shop sells it (`available_in_shop`); their skills, specials, spells and equipment;
+(`rating_bonus`) and to his armour save (`save_bonus`, left out by every mount worth the standard step) and whether
+the shop sells it (`available_in_shop`); their skills, specials, spells and equipment;
 and every beast's Animal item, listed when it is sold. A beast the catalogue import has (`out/items.json`, the items
 rebuild) takes its item's text, rules, setting and price rows from there; any other keeps the prices of its
 `shop_item` (open to everyone, a "unique to" text as the note) and its `setting`, else its setting by its file and
@@ -24,6 +25,7 @@ from django.utils import timezone
 
 from apps.bestiary.animal_items import SUBTYPES, sync_item
 from apps.bestiary.models import (
+    MOUNT_SAVE_BONUS,
     BestiaryEntry,
     BestiaryEntryItem,
     BestiaryEntrySkill,
@@ -56,11 +58,19 @@ def _kind(data: dict[str, Any], name: str) -> str:
     return kind
 
 
-def _rating_bonus(data: dict[str, Any], name: str) -> int | None:
-    bonus = data.get("rating_bonus")
-    if bonus is not None and (isinstance(bonus, bool) or not isinstance(bonus, int) or bonus < 0):
-        raise CommandError(f"Bestiary entry '{name}': rating_bonus is {bonus!r}, not a whole number from 0 or null")
-    return bonus
+def _whole_number(data: dict[str, Any], name: str, field: str) -> int | None:
+    value = data.get(field)
+    if value is not None and (isinstance(value, bool) or not isinstance(value, int) or value < 0):
+        raise CommandError(f"Bestiary entry '{name}': {field} is {value!r}, not a whole number from 0 or null")
+    return value
+
+
+def _save_bonus(data: dict[str, Any], name: str) -> int:
+    """The steps riding the beast is worth to its rider's save: the data's where it says (a Cold One's and a War
+    Boar's 2, whose rules print "making +2 total"), else what riding any mount is worth. Written on every upsert, so
+    a value taken out of the data goes back to the standard step on the next reseed."""
+    bonus = _whole_number(data, name, "save_bonus")
+    return MOUNT_SAVE_BONUS if bonus is None else bonus
 
 
 def _upsert_entry(data: dict[str, Any], name: str, kind: str) -> tuple[BestiaryEntry, bool]:
@@ -73,7 +83,8 @@ def _upsert_entry(data: dict[str, Any], name: str, kind: str) -> tuple[BestiaryE
         "caster": data.get("caster", "No"),
         "has_profile": has_profile,
         "gains_xp": bool(data.get("gains_xp", False)),
-        "rating_bonus": _rating_bonus(data, name),
+        "rating_bonus": _whole_number(data, name, "rating_bonus"),
+        "save_bonus": _save_bonus(data, name),
         "available_in_shop": bool(data.get("available_in_shop", False)),
         "archived_at": None,  # back in the data: back in the lists
         **read_written_stats(data, f"Bestiary entry '{name}'"),  # as written ("-", "5*"); fail loudly (BUG-54)

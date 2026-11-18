@@ -2,7 +2,8 @@
  * A beast's rating on the Bestiary page (William, 7 Nov 2026: "bestiary creatures need rating ...
  * Just add field for now"), on the real routes over the fake API server: its row and its open row
  * name it when it has one, and the form's Rating field sends it, a blank one as none. And its shop
- * prices: the item form's price rows, in full.
+ * prices: the item form's price rows, in full. And a mount's armour save steps for its rider,
+ * its own field, asked of no other kind.
  */
 import { screen, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -11,7 +12,7 @@ import type { BestiaryEntry } from "@/features/bestiary/types/bestiary-types";
 import { RAIDER, storeSession } from "@/test/auth-fixtures";
 import { cleanupApps, renderApp } from "@/test/app-routes";
 import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
-import { bestiaryEntry } from "@/test/catalogue-fixtures";
+import { bestiaryEntry, warhorse } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
 import { setupUser } from "@/test/user-event";
@@ -49,8 +50,9 @@ beforeEach(() => {
   fakeApi.on("GET /auth/me/", RAIDER);
   fakeApi.on("GET /notifications/", []);
   fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignSummary());
-  fakeApi.on(`GET /bestiary/?campaign_id=${CAMPAIGN_ID}`, [ogre, warhound]);
+  fakeApi.on(`GET /bestiary/?campaign_id=${CAMPAIGN_ID}`, [ogre, warhound, warhorse]);
   fakeApi.on(`GET /bestiary/${ogre.id}/`, detail(ogre));
+  fakeApi.on(`GET /bestiary/${warhorse.id}/`, detail(warhorse));
 });
 
 afterEach(() => {
@@ -94,6 +96,45 @@ describe("A beast's rating", () => {
     await user.clear(rating);
     await user.click(within(editing).getByRole("button", { name: "Save changes" }));
     expect(fakeApi.bodyOf(`PATCH /bestiary/${ogre.id}/`)).toMatchObject({ rating: null });
+  });
+});
+
+// William, 18 Nov 2026: "yes let's make them 2 steps if that is possible" — a mount's steps are the
+// beast's own, so a campaign's own Cold One can be worth 2 where a Warhorse is worth 1.
+describe("A mount's armour save steps", () => {
+  it("are a mount's own field, sent as a whole number", async () => {
+    fakeApi.on(`PATCH /bestiary/${warhorse.id}/`, (body: object) => ({
+      ...detail(warhorse),
+      ...body,
+    }));
+    const user = setupUser();
+    renderApp(PAGE);
+
+    await user.click(await row("Warhorse"));
+    await user.click(await screen.findByRole("button", { name: "Edit entry" }));
+    const editing = await screen.findByRole("dialog", { name: "Edit bestiary entry" });
+    const steps = within(editing).getByRole("spinbutton", {
+      name: "Armour save steps for the rider",
+    });
+    expect(steps).toHaveValue(1);
+    await user.clear(steps);
+    await user.type(steps, "2");
+    await user.click(within(editing).getByRole("button", { name: "Save changes" }));
+
+    expect(fakeApi.bodyOf(`PATCH /bestiary/${warhorse.id}/`)).toMatchObject({ save_bonus: 2 });
+  });
+
+  it("are not asked of a creature", async () => {
+    const user = setupUser();
+    renderApp(PAGE);
+
+    await user.click(await row("Dragon Ogre"));
+    await user.click(await screen.findByRole("button", { name: "Edit entry" }));
+    const editing = await screen.findByRole("dialog", { name: "Edit bestiary entry" });
+
+    expect(
+      within(editing).queryByRole("spinbutton", { name: "Armour save steps for the rider" })
+    ).toBeNull();
   });
 });
 

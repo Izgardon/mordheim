@@ -9,7 +9,8 @@ import type { BestiaryEntryFormState } from "../../hooks/useBestiaryEntryForm";
 
 /**
  * The beast's profile and what its kind adds: "Has a profile" (off, the stats hide and are saved
- * empty), a mount's "Rating bonus for the rider", and a creature's "Gains experience".
+ * empty), a mount's "Rating bonus for the rider" and "Armour save steps for the rider" (the
+ * Cold One's and the War Boar's 2), and a creature's "Gains experience".
  */
 export default function BeastProfileFields({ form }: { form: BestiaryEntryFormState }) {
   const { values, change, fieldErrors } = form;
@@ -44,6 +45,16 @@ export default function BeastProfileFields({ form }: { form: BestiaryEntryFormSt
             aria-invalid={Boolean(fieldErrors.rating_bonus)}
           />
           <FieldError message={fieldErrors.rating_bonus} />
+          <Label htmlFor="bestiary-save-bonus">Armour save steps for the rider</Label>
+          <NumberInput
+            id="bestiary-save-bonus"
+            min={0}
+            step={1}
+            value={values.save_bonus}
+            onChange={(event) => change({ save_bonus: event.target.value })}
+            aria-invalid={Boolean(fieldErrors.save_bonus)}
+          />
+          <FieldError message={fieldErrors.save_bonus} />
         </div>
       ) : null}
 

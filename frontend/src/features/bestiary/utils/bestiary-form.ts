@@ -14,6 +14,9 @@ import type {
 
 export const CASTER_OPTIONS = ["No", "Wizard", "Priest"];
 
+/** What riding a mount is worth to its rider's save unless the beast says otherwise (the server's default). */
+export const MOUNT_SAVE_BONUS = 1;
+
 /** What a bestiary entry, a hired sword and a dramatis persona all hold, as their forms edit it. */
 export type BestiaryCoreValues = {
   name: string;
@@ -49,14 +52,15 @@ export function bestiaryCorePayload(values: BestiaryCoreValues) {
 
 /**
  * What the bestiary form edits: the beast's kind, profile and shop flag, a mount's rating bonus
- * and the beast's own rating (text, blank for none) and whether a creature gains experience. The
- * item's prices are the shop section's own rows.
+ * and save bonus and the beast's own rating (text, blank for none) and whether a creature gains
+ * experience. The item's prices are the shop section's own rows.
  */
 export type BestiaryEntryValues = BestiaryCoreValues & {
   kind: BeastKind;
   has_profile: boolean;
   gains_xp: boolean;
   rating_bonus: string;
+  save_bonus: string;
   rating: string;
   available_in_shop: boolean;
 };
@@ -76,6 +80,7 @@ export function bestiaryValuesOf(
       has_profile: true,
       gains_xp: false,
       rating_bonus: "",
+      save_bonus: String(MOUNT_SAVE_BONUS),
       rating: "",
       available_in_shop: false,
     };
@@ -85,6 +90,7 @@ export function bestiaryValuesOf(
     has_profile: entry.has_profile,
     gains_xp: entry.gains_xp,
     rating_bonus: text(entry.rating_bonus),
+    save_bonus: text(entry.save_bonus),
     rating: text(entry.rating),
     available_in_shop: entry.available_in_shop,
     name: entry.name,
@@ -101,7 +107,8 @@ type Links = Pick<BestiaryEntryWrite, "skill_ids" | "special_ids" | "spell_ids" 
 /**
  * The write body: the kind, the profile, the shop flag with the item's prices, and every link
  * list. A rating bonus is a mount's only and gaining experience a creature's only: another kind
- * sends none, so a beast whose kind changed keeps nothing hidden.
+ * sends none, so a beast whose kind changed keeps nothing hidden. A save bonus is always sent:
+ * only a mount's is read, and left blank it is what riding any mount is worth.
  */
 export function bestiaryPayload(
   values: BestiaryEntryValues,
@@ -109,6 +116,7 @@ export function bestiaryPayload(
   prices: BestiaryAvailabilityWrite[]
 ): BestiaryEntryWrite {
   const bonus = values.rating_bonus.trim();
+  const save = values.save_bonus.trim();
   const rating = values.rating.trim();
   return {
     kind: values.kind,
@@ -116,6 +124,7 @@ export function bestiaryPayload(
     has_profile: values.has_profile,
     gains_xp: values.kind === "creature" && values.gains_xp,
     rating_bonus: values.kind === "mount" && bonus ? Number(bonus) : null,
+    save_bonus: save ? Number(save) : MOUNT_SAVE_BONUS,
     rating: rating ? Number(rating) : null,
     available_in_shop: values.available_in_shop,
     item: { availabilities: prices },

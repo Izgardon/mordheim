@@ -22,14 +22,15 @@ SUBTYPES = dict(BEAST_KINDS)  # "mount" -> "Mount": the Animal item's subtype
 
 def item_fields(entry: BestiaryEntry) -> dict[str, Any]:
     """What the item takes from its beast on every write: its name, its kind as the subtype and, for a mount, the
-    step riding it adds to the rider's save (William, 18 Nov 2026: "mounting a mount when equipped should plus their
-    value"), which the mount's kind says rather than the catalogue import (seed_bestiary keeps it)."""
+    steps riding it adds to the rider's save (William, 18 Nov 2026: "mounting a mount when equipped should plus their
+    value"), which are the beast's own `save_bonus` rather than the catalogue import's (seed_bestiary keeps them),
+    so a Cold One is worth 2 and a campaign's own mount is worth whatever it was given."""
     mount = entry.kind == MOUNT
     return {
         "name": entry.name,
         "subtype": SUBTYPES[entry.kind],
         "listed": entry.available_in_shop,
-        "save_bonus": 1 if mount else None,
+        "save_bonus": entry.save_bonus if mount else None,
         "save_slot": SAVE_MOUNT if mount else "",
         "updated_at": entry.updated_at,
         "updated_by_id": entry.updated_by_id,

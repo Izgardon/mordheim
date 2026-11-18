@@ -4,7 +4,8 @@
 is a mount or a pet can be switched on (switching off always works, whatever the beast became). A henchmen group
 mounts as one: its row is what every member carries (services/loadouts.py), so switching it rides or dismounts them
 all, a member with a gap on it going on foot. The switch moves the unit's `updated_at`, like any loadout change, and
-his armour save by what riding the mount is worth (services/armour.py: +1 on, -1 off, from the value he holds).
+his armour save by what riding the mount is worth (services/armour.py: the beast's steps on, back off, from the
+value he holds).
 Warnings describe the state after the switch: two mounts on one rider, a group riding more than one kind of mount,
 more than two mounts in the warband (units/companions.py).
 """

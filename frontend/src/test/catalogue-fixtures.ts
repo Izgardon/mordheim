@@ -129,6 +129,7 @@ export const bestiaryEntry = (
   has_profile: true,
   gains_xp: false,
   rating_bonus: null,
+  save_bonus: 1,
   rating: null,
   available_in_shop: true,
   item: { id: 260, setting_id: null, availabilities: [availability({ id: 44, cost: 15 })] },

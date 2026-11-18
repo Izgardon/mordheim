@@ -2,7 +2,8 @@
 `mim-bestiary.json`; Border Town Burning's Beasts of the East (`btb-bestiary.json`) since 7 Nov 2026.
 
 Each row names its kind, whether it has a profile (off: the stats are kept at 0 and the save empty), what it adds to a
-rider's rating and whether the shop sells it; every beast gets its Animal item, listed when it is sold, with the
+rider's rating, how many steps riding it is worth to his armour save (`save_bonus`, the standard step where the data
+says nothing) and whether the shop sells it; every beast gets its Animal item, listed when it is sold, with the
 prices of its `shop_item` (or, once the settings and warband types are seeded, the catalogue import's entry of its
 name). A row without a known kind, or with a rating bonus that isn't a whole number from 0, stops the run with nothing
 kept. The whole catalogue's run is in test_catalogue_characterisation_seeding.py.
@@ -151,6 +152,44 @@ class BestiarySeederBeastTests(TestCase):
                     seed([{"name": "Rhinox", "kind": "mount", "rating_bonus": bonus, **STATS}])
                 self.assertFalse(BestiaryEntry.objects.exists())
 
+    def test_a_mounts_save_bonus_is_the_datas_and_the_standard_step_where_it_says_nothing(self):
+        """A mount's steps are the beast's own, so the Cold One and the War Boar can be worth 2 (William,
+        18 Nov 2026: "yes let's make them 2 steps if that is possible")."""
+        seed(
+            [
+                {"name": "Cold One", "kind": "mount", "save_bonus": 2, **STATS},
+                {"name": "Warhorse", "kind": "mount", **STATS},
+                {"name": "Magic Carpet", "kind": "mount", "save_bonus": 0, **STATS},
+                {"name": "Wyvern", "kind": "creature", **STATS},
+            ]
+        )
+
+        beasts = {beast.name: beast for beast in BestiaryEntry.objects.select_related("animal_item")}
+        self.assertEqual(
+            {name: beast.save_bonus for name, beast in beasts.items()},
+            {"Cold One": 2, "Warhorse": 1, "Magic Carpet": 0, "Wyvern": 1},
+        )
+        items = {name: beast.animal_item for name, beast in beasts.items()}
+        self.assertEqual(
+            {name: (item.save_bonus, item.save_slot) for name, item in items.items()},
+            {"Cold One": (2, "mount"), "Warhorse": (1, "mount"), "Magic Carpet": (0, "mount"), "Wyvern": (None, "")},
+        )
+
+    def test_a_save_bonus_taken_out_of_the_data_goes_back_to_the_standard_step(self):
+        seed([{"name": "Cold One", "kind": "mount", "save_bonus": 2, **STATS}])
+
+        seed([{"name": "Cold One", "kind": "mount", **STATS}])
+
+        beast = BestiaryEntry.objects.select_related("animal_item").get(name="Cold One")
+        self.assertEqual((beast.save_bonus, beast.animal_item.save_bonus), (1, 1))
+
+    def test_a_save_bonus_must_be_a_whole_number_from_zero(self):
+        for bonus in (-1, "lots", 2.5):
+            with self.subTest(bonus=bonus):
+                with self.assertRaisesMessage(CommandError, "Bestiary entry 'Cold One': save_bonus"):
+                    seed([{"name": "Cold One", "kind": "mount", "save_bonus": bonus, **STATS}])
+                self.assertFalse(BestiaryEntry.objects.exists())
+
 
 class CommittedBestiaryTests(TestCase):
     """The committed files: 82 beasts, each with its Animal item."""
@@ -217,6 +256,15 @@ class CommittedBestiaryTests(TestCase):
         bonuses = {name: beast.rating_bonus for name, beast in self.beasts().items() if beast.rating_bonus is not None}
 
         self.assertEqual(bonuses, {"Riding/Draft Horse": 3, "Warhorse": 5, "Rhinox": 20, "Temple Dog": 20})
+
+    def test_the_cold_one_and_the_war_boar_arm_their_rider_two_steps_and_every_other_mount_one(self):
+        """Their own rules print "making +2 total" (Scaly, Thick Skinned); no other beast's claims an extra step."""
+        steps = {name: beast.save_bonus for name, beast in self.beasts().items() if beast.kind == "mount"}
+
+        self.assertEqual({name for name, value in steps.items() if value == 2}, {"Cold One", "War Boar"})
+        self.assertEqual({value for value in steps.values()}, {1, 2})
+        items = {name: beast.animal_item.save_bonus for name, beast in self.beasts().items() if beast.kind == "mount"}
+        self.assertEqual(items, steps)  # each mount's item carries its beast's steps
 
     def test_every_item_has_its_setting_the_imports_animals_theirs_and_marienburgs_beasts_marienburg(self):
         settings = {name: beast.animal_item.campaign_type.slug for name, beast in self.beasts().items() if beast.animal_item.campaign_type}  # fmt: skip
