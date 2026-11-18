@@ -6,11 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Chip } from "@/components/ui/chip";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { cn } from "@/lib/utils";
 
+import { usePresetLocks } from "../../api/preset-queries";
 import { useWarbandRulesForm } from "../../hooks/settings/useWarbandRulesForm";
 import type { CampaignHeroDeathRoll, CampaignSummary } from "../../types/campaign-types";
 import { useCampaignSave } from "./CampaignSection";
 import DefaultResource from "./DefaultResource";
+import PresetNote, { presetDim } from "./PresetNote";
 import { Field, FormError, SettingRow, SettingsCard, TEXTAREA } from "./settings-ui";
 import WyrdstonePrices from "./WyrdstonePrices";
 
@@ -150,16 +153,21 @@ function ThresholdField(props: {
  * The warband rules (`edit_settings`): starting gold, the default resource and its sell prices,
  * the most heroes and hired swords, the table a hero's death is rolled on, and the XP at which
  * heroes, henchmen and hired swords level up. Each saves on its own; a settings answer resets the
- * drafts.
+ * drafts. A limit the campaign's preset sets is greyed, still operable, and warns once departed.
  */
 export default function CampaignRules({ campaign }: { campaign: CampaignSummary }) {
   const { limits, deathRoll, levelUps } = useWarbandRulesForm(campaign);
+  const locks = usePresetLocks(campaign.id);
   return (
     <SettingsCard title="Warband rules">
       <StartingGold campaign={campaign} />
       <DefaultResource campaign={campaign} />
       <WyrdstonePrices campaign={campaign} />
-      <SettingRow label="Warband limits" error={limits.error}>
+      <SettingRow
+        label="Warband limits"
+        hint={<PresetNote locks={locks} field="max_heroes" />}
+        error={limits.error}
+      >
         <label className="flex items-center gap-2 text-sm text-text2">
           Heroes
           <NumberInput
@@ -168,7 +176,7 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
             aria-label="Most heroes"
             value={limits.maxHeroes}
             onChange={(event) => limits.setMaxHeroes(event.target.value)}
-            className="w-[80px] font-mono"
+            className={cn("w-[80px] font-mono", presetDim(locks, "max_heroes"))}
           />
         </label>
         <label className="flex items-center gap-2 text-sm text-text2">
@@ -190,8 +198,16 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
           {limits.isSaving ? "Saving…" : "Save"}
         </Button>
       </SettingRow>
-      <SettingRow label="Hero death roll" error={deathRoll.error}>
-        <div role="group" aria-label="Hero death roll" className="flex gap-1.5">
+      <SettingRow
+        label="Hero death roll"
+        hint={<PresetNote locks={locks} field="hero_death_roll" />}
+        error={deathRoll.error}
+      >
+        <div
+          role="group"
+          aria-label="Hero death roll"
+          className={cn("flex gap-1.5", presetDim(locks, "hero_death_roll"))}
+        >
           {DEATH_ROLLS.map((roll) => (
             <Chip
               key={roll.id}

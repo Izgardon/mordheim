@@ -65,6 +65,37 @@ describe("Settings → Exploration", () => {
     );
   });
 
+  it("says which campaign set the chart, and warns once another is picked", async () => {
+    fakeApi.on(`GET /campaigns/${campaign.id}/preset/`, {
+      preset_id: 2,
+      preset_name: "Mutiny in Marienburg",
+      sets: [
+        {
+          field: "exploration_chart_id",
+          label: "Exploration chart",
+          value: 9,
+          text: "Albion",
+          departure: "Mutiny in Marienburg sets Exploration chart: Albion.",
+        },
+      ],
+      departures: [
+        {
+          field: "exploration_chart_id",
+          label: "Exploration chart",
+          message: "Mutiny in Marienburg sets Exploration chart: Albion.",
+        },
+      ],
+      rules: [],
+      rule_count: 18,
+    });
+    renderWithQueryClient(<ExplorationSection campaign={campaign} />);
+
+    expect(
+      await screen.findByText("Mutiny in Marienburg sets Exploration chart: Albion.")
+    ).toBeInTheDocument();
+    expect(await screen.findByRole("combobox", { name: "Exploration chart" })).toBeEnabled();
+  });
+
   it("offers a chart whose setting isn't ticked, and warns once it is picked", async () => {
     renderWithQueryClient(
       <ExplorationSection campaign={{ ...campaign, exploration_chart_id: 9 }} />

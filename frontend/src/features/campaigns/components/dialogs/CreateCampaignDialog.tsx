@@ -7,13 +7,18 @@ import { Chip } from "@components/chip";
 import { Input } from "@components/input";
 import { ModalSheet } from "@components/modal-sheet";
 import { NumberInput } from "@components/number-input";
+import { useCampaignPresets } from "../../api/preset-queries";
 import { useSettingsList } from "../../api/settings-queries";
 import ContentInPlay from "../settings/ContentInPlay";
+import { defaultPreset, pageDepartures, presetPages } from "../settings/campaign-preset";
 import { DEFAULT_PRESET } from "../settings/content-in-play";
+import { PRESET_DIM } from "../settings/PresetNote";
 import { Field, FormError } from "../settings/settings-ui";
+import CreateCampaignPreset from "./CreateCampaignPreset";
 // types
 import type { CampaignCreatePayload } from "../../types/campaign-types";
 import { getErrorMessage } from "@/lib/get-error-message";
+import { cn } from "@/lib/utils";
 
 const PAGES = [
   { key: "enable_encampments", label: "Encampments" },
@@ -31,28 +36,43 @@ type CreateCampaignDialogProps = {
 };
 
 /**
- * Start a campaign (design E): its name, seats, its pages and the content in play (a grade preset,
+ * Start a campaign (design E): which published campaign you are playing (Mordheim to begin with,
+ * William 17 Nov 2026), then its name, seats, its pages and the content in play (a grade preset,
  * Up to 1c to begin with, the settings adjustable); a modal on the web, a sheet on a phone.
+ *
+ * The campaign picked dictates the rules: its pages show its values, greyed and still clickable,
+ * and departing from one warns. The content in play is only guided by it: its settings are ticked
+ * on top of the grade preset's and can be unticked again.
  */
 export default function CreateCampaignDialog({ onCreate, className }: CreateCampaignDialogProps) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
   const [seats, setSeats] = useState(DEFAULT_SEATS);
-  const [pages, setPages] = useState<Pages>(NO_PAGES);
+  // the pages once the player touches them; until then the campaign preset's (null: untouched)
+  const [pages, setPages] = useState<Pages | null>(null);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const content = useSettingsList({ enabled: open }); // read as the dialog opens
+  const campaigns = useCampaignPresets({ enabled: open });
+  const [presetId, setPresetId] = useState<number | null>(null);
   // the ticked settings once the player touches them; until then the default preset's
   const [picked, setPicked] = useState<number[] | null>(null);
   const preset = content.data?.presets.find((entry) => entry.grade === DEFAULT_PRESET);
-  const settingIds = picked ?? preset?.setting_ids ?? [];
+  const rows = campaigns.data ?? [];
+  const playing = rows.find((row) => row.id === presetId) ?? defaultPreset(rows);
+  const shownPages: Pages = pages ?? { ...NO_PAGES, ...presetPages(playing) };
+  const departures = pageDepartures(playing, shownPages);
+  const settingIds = [
+    ...new Set([...(picked ?? preset?.setting_ids ?? []), ...(playing?.setting_ids ?? [])]),
+  ];
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
     if (!nextOpen) {
       setName("");
       setSeats(DEFAULT_SEATS);
-      setPages(NO_PAGES);
+      setPages(null);
+      setPresetId(null);
       setPicked(null);
       setError("");
     }
@@ -67,8 +87,12 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
       await onCreate({
         name: name.trim(),
         max_players: seats,
-        ...pages,
-        ...(picked ? { setting_ids: picked } : { preset: DEFAULT_PRESET }),
+        ...shownPages,
+        preset_id: playing?.id ?? null,
+        // the settings in play: the grade preset's unless adjusted, with the campaign's added
+        ...(picked || playing?.setting_ids.length
+          ? { setting_ids: settingIds }
+          : { preset: DEFAULT_PRESET }),
       });
       handleOpenChange(false);
     } catch (errorResponse) {
@@ -111,6 +135,15 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
         }
       >
         <form className="flex flex-col gap-5" onSubmit={(event) => void submit(event)}>
+          <CreateCampaignPreset
+            presets={rows}
+            picked={playing}
+            disabled={isSubmitting}
+            onPick={(next) => {
+              setPresetId(next.id);
+              setPages(null); // its pages show until the player departs from them
+            }}
+          />
           <Field label="Campaign name" htmlFor="campaign-name">
             <Input
               id="campaign-name"
@@ -133,16 +166,22 @@ export default function CreateCampaignDialog({ onCreate, className }: CreateCamp
               {PAGES.map((page) => (
                 <Chip
                   key={page.key}
-                  pressed={pages[page.key]}
-                  onClick={() =>
-                    setPages((current) => ({ ...current, [page.key]: !current[page.key] }))
-                  }
-                  className="min-h-11 px-3 text-sm font-bold"
+                  pressed={shownPages[page.key]}
+                  onClick={() => setPages({ ...shownPages, [page.key]: !shownPages[page.key] })}
+                  className={cn(
+                    "min-h-11 px-3 text-sm font-bold",
+                    page.key in presetPages(playing) && PRESET_DIM
+                  )}
                 >
                   {page.label}
                 </Chip>
               ))}
             </div>
+            {departures.map((warning) => (
+              <p key={warning} className="m-0 text-[13px] text-accent-text">
+                {warning}
+              </p>
+            ))}
           </div>
           <Field label="Seats" htmlFor="campaign-size" hint="2 to 16.">
             <NumberInput

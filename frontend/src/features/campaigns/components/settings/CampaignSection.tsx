@@ -7,9 +7,12 @@ import { Switch } from "@/components/ui/switch";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
+import { usePresetLocks } from "../../api/preset-queries";
 import { useUpdateCampaign } from "../../hooks/useCampaignQuery";
 import type { CampaignSummary, CampaignUpdatePayload } from "../../types/campaign-types";
+import CampaignPresetCard from "./CampaignPresetCard";
 import CampaignRules from "./CampaignRules";
+import PresetNote, { presetDim } from "./PresetNote";
 import ContentInPlayCard from "./ContentInPlayCard";
 import ExplorationSection from "./ExplorationSection";
 import PlotsSection from "./PlotsSection";
@@ -76,10 +79,12 @@ function CampaignName({ campaign }: { campaign: CampaignSummary }) {
 
 /**
  * The Encampments page, Locations, Plots (campaign points: William's label of 16 Nov 2026) and
- * Blood pacts, switched on or off for everyone; each saves as it flips.
+ * Blood pacts, switched on or off for everyone; each saves as it flips. One the campaign's preset
+ * sets is greyed and still operable, and warns once the owner has departed from it.
  */
 function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
   const { saving, error, save } = useCampaignSave(campaign.id, "Couldn't save that.");
+  const locks = usePresetLocks(campaign.id);
   const features = [
     {
       key: "enable_encampments" as const,
@@ -105,11 +110,16 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
   return (
     <>
       {features.map((feature) => (
-        <SettingRow key={feature.key} label={feature.label}>
+        <SettingRow
+          key={feature.key}
+          label={feature.label}
+          hint={<PresetNote locks={locks} field={feature.key} />}
+        >
           <Switch
             checked={feature.on}
             aria-label={feature.label}
             disabled={saving}
+            className={presetDim(locks, feature.key)}
             onCheckedChange={(next) => void save({ [feature.key]: next })}
           >
             {feature.on ? "On" : "Off"}
@@ -122,15 +132,15 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
 }
 
 /**
- * Settings → Campaign (`edit_settings`, the owner): its name, the pages and Plots switched
- * on, the content
- * in play (grade presets and settings), the warband rules (starting gold, the default
- * resource, limits, the death roll and the level-ups), the plots it plays with while Plots is on,
- * then the exploration chart.
+ * Settings → Campaign (`edit_settings`, the owner): the published campaign it plays, which sets
+ * the rules, then its name, the pages and Plots switched on, the content in play (grade presets
+ * and settings), the warband rules (starting gold, the default resource, limits, the death roll
+ * and the level-ups), the plots it plays with while Plots is on, then the exploration chart.
  */
 export default function CampaignSection({ campaign }: { campaign: CampaignSummary }) {
   return (
     <>
+      <CampaignPresetCard campaign={campaign} />
       <SettingsCard title="Campaign">
         <CampaignName campaign={campaign} />
         <CampaignFeatures campaign={campaign} />

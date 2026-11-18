@@ -38,6 +38,8 @@ export type CampaignSummary = {
   exploration_chart_id?: number | null;
   /** The settings in play (grading phase 1): the ones ticked, the always-on Mordheim among them. */
   setting_ids?: number[];
+  /** The published campaign it plays, which dictates its rules; null for one that picked none. */
+  preset_id?: number | null;
   player_count: number;
   role: CampaignRole;
   /** The caller's permission codes; only the campaign detail endpoint includes them. */
@@ -62,7 +64,10 @@ export type CampaignCreatePayload = {
   name: string;
   /** The settings in play; without them, the preset's (Up to 1c when neither is sent). */
   setting_ids?: number[];
+  /** The content grade preset ("1c"), not the campaign preset below. */
   preset?: string;
+  /** The published campaign it plays: what it dictates is applied, what is sent here winning. */
+  preset_id?: number | null;
   max_players?: number;
   max_heroes?: number;
   max_hired_swords?: number;
@@ -90,6 +95,12 @@ export type CampaignUpdatePayload = {
   hired_sword_level_thresholds?: number[];
   /** Replaces the settings in play (Mordheim stays). */
   setting_ids?: number[];
+  /**
+   * The published campaign it plays. Changeable at any time: what it dictates is re-applied, the
+   * settings it names are ticked on top of the campaign's own, and its rules are offered, not
+   * copied (`POST campaigns/<id>/preset/rules/`). Null picks none.
+   */
+  preset_id?: number | null;
   /** Renames every warband's default resource. */
   default_resource_name?: string;
   /** The whole table: eight rows of six prices. */
@@ -357,3 +368,44 @@ export type SettingPreset = {
 };
 
 export type SettingsList = { settings: Setting[]; presets: SettingPreset[] };
+
+/** One thing a preset dictates: the campaign settings field, its label and its value in words. */
+export type CampaignPresetSet = {
+  field: string;
+  label: string;
+  value: boolean | number | string;
+  /** "on", "6", "D66", "Wasteland Exploration". */
+  text: string;
+  /** The warning to show once the value is departed from, worded by the server. */
+  departure: string;
+};
+
+/** A published campaign on the creation and settings dropdown (`GET campaign-presets/`). */
+export type CampaignPreset = {
+  id: number;
+  slug: string;
+  name: string;
+  sort_order: number;
+  /** The settings it guides the content choice towards; they are ticked, never unticked for it. */
+  setting_ids: number[];
+  setting_names: string[];
+  /** What it dictates, in the pages' order; empty for a preset that dictates nothing (Mordheim). */
+  sets: CampaignPresetSet[];
+  /** How many rules it carries. */
+  rule_count: number;
+};
+
+/**
+ * What a campaign's preset means for it (`GET campaigns/<id>/preset/`): what it dictates, where
+ * the campaign departs from it (a warning beside a greyed, still operable control) and which of
+ * its rules the campaign lacks.
+ */
+export type CampaignPresetState = {
+  preset_id: number | null;
+  preset_name: string;
+  sets: CampaignPresetSet[];
+  departures: { field: string; label: string; message: string }[];
+  /** The titles it would add; the campaign keeps the rules it already holds by title. */
+  rules: string[];
+  rule_count: number;
+};

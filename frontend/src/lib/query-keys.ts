@@ -21,6 +21,8 @@ export type CatalogueKind =
 export const queryKeys = {
   /** Every setting and the grade presets (book data, not campaign-scoped). */
   settings: () => ["settings"] as const,
+  /** The published campaigns a campaign may play (the campaign presets), book data like the settings. */
+  campaignPresets: () => ["campaign-presets"] as const,
   /** The races and sides a who-can list may name (book data). */
   warbandGroups: () => ["warband-groups"] as const,
   /** Your campaigns, as the campaigns page lists them. */
@@ -115,6 +117,8 @@ export const queryKeys = {
     /** One battle's state (battle, participants, events), patched from its socket messages. */
     battleState: (campaignId: number, battleId: number) =>
       ["campaign", campaignId, "battle", battleId, "state"] as const,
+    /** Its preset: what the published campaign it plays dictates, and where it departs from that. */
+    preset: (campaignId: number) => ["campaign", campaignId, "preset"] as const,
     /** The chart the post-game explores by, with its places and their rules text (apps/exploration). */
     explorationChart: (campaignId: number) => ["campaign", campaignId, "exploration"] as const,
     /** The charts the campaign may pick between (Settings → Exploration). */

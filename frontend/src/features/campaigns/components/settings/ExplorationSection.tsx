@@ -8,9 +8,11 @@ import type { ExplorationChartRow } from "@/features/exploration/types/explorati
 import { queryKeys } from "@/lib/query-keys";
 import { cn } from "@/lib/utils";
 
+import { usePresetLocks } from "../../api/preset-queries";
 import { outOfPlay, useSettingsById } from "../../api/settings-queries";
 import type { CampaignSummary } from "../../types/campaign-types";
 import { useCampaignSave } from "./CampaignSection";
+import PresetNote, { presetDim } from "./PresetNote";
 import { SettingRow, SettingsCard } from "./settings-ui";
 
 const source = (chart: ExplorationChartRow) =>
@@ -19,12 +21,14 @@ const source = (chart: ExplorationChartRow) =>
 /**
  * Settings → Exploration (`edit_settings`, the owner): which chart the post-game explores by. The
  * book's Mordheim chart until another is picked. A chart whose setting isn't ticked is greyed and
- * still pickable, with the warning under it once picked (restrictions warn, they never block).
+ * still pickable, with the warning under it once picked (restrictions warn, they never block), and
+ * the chart the campaign's preset sets is greyed the same way, warning once another is picked.
  */
 export default function ExplorationSection({ campaign }: { campaign: CampaignSummary }) {
   const charts = useExplorationCharts(campaign.id);
   const inUse = useCampaignExplorationChart(campaign.id);
   const settings = useSettingsById();
+  const locks = usePresetLocks(campaign.id);
   const queryClient = useQueryClient();
   const { saving, error, save } = useCampaignSave(campaign.id, "Couldn't save that.");
   const rows = charts.data ?? [];
@@ -50,13 +54,26 @@ export default function ExplorationSection({ campaign }: { campaign: CampaignSum
       title="Exploration"
       description="The chart the post-game explores by: its income table and the places the multiples find."
     >
-      <SettingRow label="Chart" hint={inUse.data?.summary || undefined} error={error}>
+      <SettingRow
+        label="Chart"
+        hint={
+          locks.sets.has("exploration_chart_id") ? (
+            <PresetNote locks={locks} field="exploration_chart_id" />
+          ) : (
+            inUse.data?.summary || undefined
+          )
+        }
+        error={error}
+      >
         <select
           aria-label="Exploration chart"
           value={current ?? ""}
           disabled={saving || charts.isLoading || rows.length === 0}
           onChange={(event) => pick(event.target.value)}
-          className="min-h-10 border border-strong bg-page px-2.5 text-sm text-ink"
+          className={cn(
+            "min-h-10 border border-strong bg-page px-2.5 text-sm text-ink",
+            presetDim(locks, "exploration_chart_id")
+          )}
         >
           {current === null ? <option value="">Loading…</option> : null}
           {rows.map((chart) => (
