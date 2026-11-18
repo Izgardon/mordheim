@@ -99,7 +99,7 @@ export function campaignSectionTitle(pathname: string) {
   return SECTION_TITLES[section(pathname)] ?? "Overview";
 }
 
-export type MobileNavId = "campaign" | "warband" | "battle" | "reference" | "me";
+export type MobileNavId = "campaign" | "warband" | "battle" | "reference" | "settings";
 
 /** Which bottom-nav item a campaign path belongs to. */
 export function mobileNavActiveId(pathname: string): MobileNavId {
@@ -107,7 +107,7 @@ export function mobileNavActiveId(pathname: string): MobileNavId {
   if (isAftermathPath(pathname)) return "warband";
   // A battle and the Battles page (where Battle leads with none to rejoin).
   if (current === "battles") return "battle";
-  if (current === "settings" || current === "account") return "me";
+  if (current === "settings" || current === "account") return "settings";
   if (["warband", "warbands", "encampments", "locations"].includes(current)) return "warband";
   if (current === SEARCH_LINK.path) return "reference";
   if (REFERENCE_SECTIONS.some(({ links }) => links.some((link) => link.path === current)))

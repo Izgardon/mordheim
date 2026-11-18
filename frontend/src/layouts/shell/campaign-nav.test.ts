@@ -45,10 +45,10 @@ describe("References and Rules", () => {
 });
 
 describe("the campaign's Account page", () => {
-  it("is titled Account and belongs to Me, as Settings does", () => {
+  it("is titled Account and belongs to the Settings tab, as the campaign's settings do", () => {
     expect(campaignSectionTitle("/campaigns/1/account")).toBe("Account");
-    expect(mobileNavActiveId("/campaigns/1/account")).toBe("me");
-    expect(mobileNavActiveId("/campaigns/1/settings")).toBe("me");
+    expect(mobileNavActiveId("/campaigns/1/account")).toBe("settings");
+    expect(mobileNavActiveId("/campaigns/1/settings")).toBe("settings");
   });
 });
 

@@ -1,7 +1,7 @@
 /**
  * The phone's bottom nav on the real routes over the fake API server: Battle (back to your battle,
- * else Start a battle where you are) and the Me sheet (the campaign's settings and your account,
- * nothing of the warband's).
+ * else Start a battle where you are) and the Settings sheet (the campaign's settings and your
+ * account, nothing of the warband's, then Campaigns and Log out).
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -42,8 +42,13 @@ afterEach(() => {
   cleanupApps();
 });
 
-describe("the Me sheet", () => {
-  it("lists only Settings and Account, even with the Encampment and Locations on, and Account opens in the campaign", async () => {
+const openSettingsSheet = async (user: ReturnType<typeof setupUser>) => {
+  await user.click(within(await bottomNav()).getByRole("button", { name: "Settings" }));
+  return screen.findByRole("dialog", { name: "Settings" });
+};
+
+describe("the Settings sheet", () => {
+  it("lists only the campaign's settings and Account, even with the Encampment and Locations on, and Account opens in the campaign", async () => {
     fakeApi.on(
       `GET ${BASE}/`,
       campaignSummary({ enable_encampments: true, enable_locations: true })
@@ -51,15 +56,15 @@ describe("the Me sheet", () => {
     const user = setupUser();
     const app = renderApp(`${BASE}/house-rules`);
 
-    await user.click(within(await bottomNav()).getByRole("button", { name: "Me" }));
+    const sheet = await openSettingsSheet(user);
 
-    const sheet = await screen.findByRole("dialog", { name: "Me" });
+    // the two rows, then the footer's Campaigns
     expect(
       within(sheet)
         .getAllByRole("link")
         .map((link) => link.textContent)
-    ).toEqual(["Settings", "Account"]);
-    expect(within(sheet).getByRole("link", { name: "Settings" })).toHaveAttribute(
+    ).toEqual(["Campaign settings", "Account", "Campaigns"]);
+    expect(within(sheet).getByRole("link", { name: "Campaign settings" })).toHaveAttribute(
       "href",
       `${BASE}/settings`
     );
@@ -70,10 +75,34 @@ describe("the Me sheet", () => {
     expect(await screen.findAllByRole("heading", { name: "Account", level: 1 })).not.toHaveLength(
       0
     );
-    expect(within(await bottomNav()).getByRole("button", { name: "Me" })).toHaveAttribute(
+    expect(within(await bottomNav()).getByRole("button", { name: "Settings" })).toHaveAttribute(
       "aria-current",
       "page"
     );
+  });
+
+  it("ends in Campaigns, which leaves the campaign for the list (William: '2 buttons at bottom of sheet')", async () => {
+    fakeApi.on(`GET ${BASE}/`, campaignSummary());
+    fakeApi.on("GET /campaigns/", []);
+    const user = setupUser();
+    const app = renderApp(`${BASE}/house-rules`);
+
+    const sheet = await openSettingsSheet(user);
+    await user.click(within(sheet).getByRole("link", { name: "Campaigns" }));
+
+    expect(app.location().pathname).toBe("/campaigns");
+  });
+
+  it("ends in Log out, which signs this device out as the web bar's does", async () => {
+    fakeApi.on(`GET ${BASE}/`, campaignSummary());
+    const user = setupUser();
+    const app = renderApp(`${BASE}/house-rules`);
+
+    const sheet = await openSettingsSheet(user);
+    await user.click(within(sheet).getByRole("button", { name: "Log out" }));
+
+    await waitFor(() => expect(app.location().pathname).toBe("/"));
+    expect(localStorage.length).toBe(0);
   });
 });
 

@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Flag, Search, Shield, Swords, UserRound } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Flag, LayoutList, LogOut, Search, Settings, Shield, Swords } from "lucide-react";
 
 import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/features/auth/hooks/use-auth";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 
 import { REFERENCE_SECTIONS, SEARCH_LINK, mobileNavActiveId } from "../shell/campaign-nav";
@@ -23,11 +25,14 @@ type CampaignBottomNavProps = {
 };
 
 /**
- * The phone's bottom nav (design E): Campaign, Warband, Battle, Reference, Me. Flat; the current
- * item takes the accent and an inset top line. Reference and Me open sheets: the References and
- * Rules sections, each under its heading (William: "on mobile just clearly delineate the 2 sections
- * in the dropdown but still keep as one navbar button"), and you (the campaign's settings and your account; William: "just show Settings and account in
- * the Me modal on mobile, not the my warband stuff").
+ * The phone's bottom nav (design E): Campaign, Warband, Battle, Reference, Settings. Flat; the
+ * current item takes the accent and an inset top line. Reference and Settings open sheets: the
+ * References and Rules sections, each under its heading (William: "on mobile just clearly
+ * delineate the 2 sections in the dropdown but still keep as one navbar button"), and yours (the
+ * campaign's settings and your account; William: "just show Settings and account in the Me modal
+ * on mobile, not the my warband stuff"), which ends in Campaigns and Log out, the phone's only way
+ * to either inside a campaign (William: "when clicked they're should be 2 buttons at bottom of
+ * sheet. Campaigns and Log Out").
  */
 export default function CampaignBottomNav({
   campaign,
@@ -36,11 +41,12 @@ export default function CampaignBottomNav({
   onStartBattle,
 }: CampaignBottomNavProps) {
   const { pathname } = useLocation();
-  const [sheet, setSheet] = useState<"reference" | "me" | null>(null);
+  const { signOut } = useAuth();
+  const [sheet, setSheet] = useState<"reference" | "settings" | null>(null);
   const active = mobileNavActiveId(pathname);
   const base = `/campaigns/${campaign.id}`;
   const close = () => setSheet(null);
-  const onSheetChange = (which: "reference" | "me") => (open: boolean) =>
+  const onSheetChange = (which: "reference" | "settings") => (open: boolean) =>
     setSheet(open ? which : null);
 
   return (
@@ -79,11 +85,11 @@ export default function CampaignBottomNav({
           onClick={() => setSheet("reference")}
         />
         <BottomBarButton
-          label="Me"
-          icon={UserRound}
-          current={active === "me"}
+          label="Settings"
+          icon={Settings}
+          current={active === "settings"}
           aria-haspopup="dialog"
-          onClick={() => setSheet("me")}
+          onClick={() => setSheet("settings")}
         />
       </BottomBar>
 
@@ -117,13 +123,27 @@ export default function CampaignBottomNav({
       </BottomSheet>
 
       <BottomSheet
-        open={sheet === "me"}
-        onOpenChange={onSheetChange("me")}
+        open={sheet === "settings"}
+        onOpenChange={onSheetChange("settings")}
         kicker={userName}
-        title="Me"
+        title="Settings"
+        footer={
+          <div className="grid grid-cols-2 gap-2">
+            <Button variant="secondary" asChild>
+              <Link to="/campaigns" onClick={close}>
+                <LayoutList aria-hidden="true" />
+                Campaigns
+              </Link>
+            </Button>
+            <Button variant="ghost" className="text-danger" onClick={signOut}>
+              <LogOut aria-hidden="true" />
+              Log out
+            </Button>
+          </div>
+        }
       >
         <SheetRows>
-          <SheetLinkRow to={`${base}/settings`} label="Settings" onNavigate={close} />
+          <SheetLinkRow to={`${base}/settings`} label="Campaign settings" onNavigate={close} />
           <SheetLinkRow to={`${base}/account`} label="Account" onNavigate={close} />
         </SheetRows>
       </BottomSheet>

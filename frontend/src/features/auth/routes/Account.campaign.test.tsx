@@ -76,12 +76,15 @@ describe("Account inside a campaign, on a phone", () => {
     media.mobile = true;
   });
 
-  it("keeps the bottom nav, Me current, and the top bar titles it", async () => {
+  it("keeps the bottom nav, Settings current, and the top bar titles it", async () => {
     renderApp(`${BASE}/account`);
     await accountPage();
 
     const nav = screen.getByRole("navigation", { name: "Main" });
-    expect(within(nav).getByRole("button", { name: "Me" })).toHaveAttribute("aria-current", "page");
+    expect(within(nav).getByRole("button", { name: "Settings" })).toHaveAttribute(
+      "aria-current",
+      "page"
+    );
     const topBar = screen.getByRole("group", { name: "Table tools" }).closest("header")!;
     expect(within(topBar).getByRole("heading", { level: 1 })).toHaveTextContent("Account");
     for (const name of SECTIONS) {

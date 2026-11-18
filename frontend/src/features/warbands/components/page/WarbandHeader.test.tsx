@@ -1,6 +1,6 @@
 /**
- * The warband header's ⋯ menu carries the phone's way to the Encampment page, now the Me sheet
- * lists only Settings and Account.
+ * The warband header's ⋯ menu carries the phone's way to the Encampment page, now the Settings
+ * sheet lists only the campaign's settings and Account.
  */
 import { render, screen } from "@testing-library/react";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";

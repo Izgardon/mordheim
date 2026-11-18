@@ -24,7 +24,7 @@ type AccountProps = {
  * Your account (AUTH-NEW-01, decision 1; design E): the display name others see, light or dark,
  * your password, signing out everywhere else, and deleting the account. Reached from the bar of
  * the campaigns page (`/account`), and inside a campaign from the rail's footer and the phone's
- * Me sheet.
+ * Settings sheet.
  */
 export default function Account({ inCampaign = false }: AccountProps) {
   const { user } = useAuth();
