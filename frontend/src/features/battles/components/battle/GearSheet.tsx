@@ -45,8 +45,8 @@ function firstName(name: string) {
 }
 
 /**
- * The quick-gear sheet (design E): each item, skill or spell with its type, opening to its rules;
- * a single-use item has Use (today's item use), and once used says so with Undo.
+ * The quick-gear sheet (design E): each item, skill or spell with its type, opening to its rules
+ * and nothing else; a single-use item has Use (today's item use), and once used says so with Undo.
  */
 export default function GearSheet({
   campaignId,
@@ -83,7 +83,8 @@ export default function GearSheet({
             key: `item:${owned.id}`,
             name: owned.count > 1 ? `${owned.name} ×${owned.count}` : owned.name,
             kind: [item?.type, stats.join(" ")].filter(Boolean).join(" · ") || "Item",
-            rules: item?.flavour ? [...rules, { name: "About", text: item.flavour }] : rules,
+            // the fluff stays on the item's page: this is the quick reference (William, 12 Nov 2026)
+            rules,
             single:
               owned.singleUse || single
                 ? {

@@ -9,7 +9,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeApi } from "@/test/fake-api";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
-import { dagger, makeHero, sword } from "@/test/warband-fixtures";
+import { dagger, makeHero, makeItem, sword } from "@/test/warband-fixtures";
 
 import RosterSections from "./RosterSections";
 
@@ -150,5 +150,60 @@ describe("Selling an item from an open card", () => {
     expect(screen.queryByRole("button", { name: "Sell for 10 gc" })).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Sell" }));
     expect(screen.getByRole("button", { name: "Sell for 2 gc" })).toBeInTheDocument();
+  });
+});
+
+describe("An open card's items", () => {
+  beforeEach(() => {
+    fakeApi.reset();
+    fakeApi.on("GET /warbands/9/template/", {
+      template: null,
+      variant: "",
+      list_prices_open: true,
+    });
+  });
+
+  // William, 12 Nov 2026: the gear reference carries the rules, not the fluff
+  it("opens to the item's rules, not its flavour", async () => {
+    const holyWater = makeItem({
+      id: 103,
+      name: "Holy Water",
+      flavour: "Blessed in the cathedral of Sigmar before the comet fell.",
+      rules: [
+        {
+          id: 9,
+          rule_id: null,
+          shared: false,
+          name: "Thrown",
+          summary: "",
+          text: "Strength 3, no armour save.",
+          table: [],
+        },
+      ],
+    });
+    renderWithQueryClient(
+      <MemoryRouter initialEntries={["/campaigns/1/warband"]}>
+        <RosterSections
+          warbandId={9}
+          campaign={null}
+          heroes={[makeHero({ id: 5, name: "Konrad Adler", items: [holyWater] })]}
+          henchmenGroups={[]}
+          hirelings={[]}
+          canEdit={false}
+          canCreateRace={false}
+          onLoadout={vi.fn()}
+          onHire={vi.fn()}
+          onAdvance={vi.fn()}
+          onBuyAgain={vi.fn()}
+          renderEdit={() => null}
+        />
+      </MemoryRouter>
+    );
+    const user = setupUser();
+    await user.click(screen.getByRole("button", { name: "Open Konrad Adler" }));
+    await user.click(screen.getByRole("button", { name: /^Holy Water/ }));
+
+    expect(screen.getByText(/Strength 3, no armour save\./)).toBeInTheDocument();
+    expect(screen.queryByText(/Blessed in the cathedral/)).toBeNull();
   });
 });

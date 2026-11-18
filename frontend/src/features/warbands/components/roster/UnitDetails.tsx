@@ -4,6 +4,7 @@ import { BoxTile } from "@/components/ui/box-tile";
 import { ItemKindIcon } from "@/components/ui/game-icons";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { itemKind, itemStatsLine } from "@/features/items/item-kind";
+import { plainRuleText, ruleName } from "@/features/items/utils/item-rules";
 import type { Item } from "@/features/items/types/item-types";
 import { cameThrough, unitGroups, useSkillGroups } from "@/features/skills/skill-groups";
 import { skillList } from "@/features/skills/skill-list";
@@ -62,8 +63,10 @@ export default function UnitDetails(props: UnitDetailsProps) {
     boxes: lists.items.map((item) => ({
       name: itemLabel(entry.unit, item),
       kind: itemStatsLine(item),
-      text: item.flavour ?? "",
-      rules: item.rules?.map((rule) => rule.name).filter(Boolean),
+      rules: (item.rules ?? []).map((rule) => ({
+        name: ruleName(rule),
+        text: plainRuleText(rule),
+      })),
       item,
       boxKind: itemBoxKind(item),
       icon: <ItemKindIcon kind={itemKind(item)} />,

@@ -17,8 +17,8 @@ export type BoxDetail = {
   name: string;
   kind: string;
   text?: string | null;
-  /** Rule names (an item's rules). */
-  rules?: string[];
+  /** An item's rules, each read out: the fluff is not one of them (William, 12 Nov 2026). */
+  rules?: { name: string; text: string }[];
   item?: Item;
   /** A boon or bane: a psychology one links its part of the Rules page ("Fear in the rules"). */
   special?: boolean;
@@ -57,11 +57,12 @@ export default function RulesPanel({ detail, onClose, itemActions }: RulesPanelP
           <X aria-hidden="true" />
         </IconButton>
       </div>
-      {detail.rules?.length ? (
-        <p className="text-[13px] text-text2">
-          <span className="font-bold text-accent-hi">Rules</span> · {detail.rules.join(", ")}
+      {detail.rules?.map((rule) => (
+        <p key={rule.name} className="m-0 whitespace-pre-line text-[13px] text-text2">
+          <span className="font-bold text-accent-hi">{rule.name}</span>
+          {rule.text ? ` · ${rule.text}` : ""}
         </p>
-      ) : null}
+      ))}
       {detail.text ? (
         <p className="whitespace-pre-line text-[13px] text-text2">{detail.text}</p>
       ) : null}
