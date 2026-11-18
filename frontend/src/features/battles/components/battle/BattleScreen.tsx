@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import BattleDiceSheet from "./BattleDiceSheet";
 import BattleFeed from "./BattleFeed";
 import BattleMenuSheet, { type BattleMenuRow } from "./BattleMenuSheet";
+import { battleMenu } from "./battle-menu";
 import BattleRulesSheet from "./BattleRulesSheet";
 import type { CombatOption } from "./CombatPicker";
 import CombatSheet from "./CombatSheet";
@@ -74,7 +75,7 @@ type Panel =
  * and the cards in the main column, the feed as a side column.
  */
 export default function BattleScreen({ screen, isMobile }: { screen: Screen; isMobile: boolean }) {
-  const { campaign, openTool } = useOutletContext<CampaignLayoutContext>();
+  const { campaign } = useOutletContext<CampaignLayoutContext>();
   const { battle, me, round, sides, sections, feed, canAct, config, items, neutralGroups } = screen;
   const { campaignId, battleId, battleState, rosters } = battle;
   const { participants } = battleState;
@@ -193,83 +194,23 @@ export default function BattleScreen({ screen, isMobile }: { screen: Screen; isM
     : [];
 
   const manages = campaignCapabilities(campaign).manage_battles;
-  const fightingOthers = participants.filter(
-    (entry) => entry.status === "in_battle" && entry.user.id !== userId
-  );
-  const menuRows: BattleMenuRow[] = [
-    ...(screen.canFinishMine
-      ? [
-          {
-            label: "End my battle",
-            onSelect: () => screen.finishing.setIsOpen(true),
-          },
-        ]
-      : []),
-    ...(canAct
-      ? [
-          {
-            label: "Edit stats",
-            onSelect: () => setPanel("edit"),
-          },
-          {
-            label: "Add a unit",
-            onSelect: () => {
-              setAddGroupKey(undefined);
-              setPanel("add");
-            },
-          },
-          {
-            label: "Add a neutral group",
-            onSelect: () => setPanel("neutral"),
-          },
-        ]
-      : []),
-    ...(me
-      ? [
-          {
-            label: "Battle notes",
-            onSelect: () => setPanel("notes"),
-          },
-        ]
-      : []),
-    { label: "Chat", onSelect: () => openTool("chat") },
-    { label: "Notifications", onSelect: () => openTool("bell") },
-    ...(screen.canNudge
-      ? fightingOthers.map((entry) => {
-          const wait = screen.nudging.waitFor(entry.user.id);
-          return {
-            label: `Nudge ${entry.user.label}`,
-            detail: wait > 0 ? `Again in ${Math.ceil(wait / 60000)} min` : undefined,
-            disabled: wait > 0 || screen.nudging.sendingTo === entry.user.id,
-            onSelect: () => void screen.nudging.nudge(entry.user.id, entry.user.label),
-          };
-        })
-      : []),
-    ...(manages && battleState.battle.status === "active"
-      ? [
-          {
-            label: "End the fight for everyone",
-            onSelect: () => setPanel("end"),
-          },
-        ]
-      : []),
-    ...(screen.canCancelBattle
-      ? [
-          {
-            label: "Cancel the battle",
-            detail: "For everyone; nothing is kept",
-            danger: true,
-            onSelect: () => setPanel("cancel"),
-          },
-        ]
-      : []),
-    {
-      label: "Leave battle",
-      detail: "Back to the campaign; Rejoin brings you back",
-      danger: true,
-      onSelect: () => setPanel("leave"),
+  const menuRows: BattleMenuRow[] = battleMenu({
+    canFinishMine: screen.canFinishMine,
+    canAct,
+    fighting: Boolean(me),
+    canEndForEveryone: manages && battleState.battle.status === "active",
+    canCancel: screen.canCancelBattle,
+  }).map((row) => ({
+    ...row,
+    onSelect: () => {
+      if (row.action === "finish-mine") {
+        screen.finishing.setIsOpen(true);
+        return;
+      }
+      if (row.action === "add") setAddGroupKey(undefined);
+      setPanel(row.action);
     },
-  ];
+  }));
 
   const killerFor = (name: string, models: BattleUnitView[]) => setKiller({ name, models });
   const myActions: WarbandUnitActions = {

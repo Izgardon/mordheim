@@ -7,13 +7,13 @@ export type BattleMenuRow = {
   label: string;
   detail?: string;
   danger?: boolean;
-  disabled?: boolean;
   onSelect: () => void;
 };
 
 /**
  * The battle menu (design E): End my battle, Edit stats, Add a unit, Add a neutral group, Battle
- * notes, Chat, Notifications, the manager's actions when you have them, and Leave battle.
+ * notes, Leave battle, and the manager's actions when you have them. `battle-menu.ts` holds the
+ * rows and their order.
  */
 export default function BattleMenuSheet({
   open,
@@ -39,12 +39,11 @@ export default function BattleMenuSheet({
           <button
             key={row.label}
             type="button"
-            disabled={row.disabled}
             onClick={() => {
               onOpenChange(false);
               row.onSelect();
             }}
-            className="flex min-h-[52px] items-center justify-between gap-2.5 border-t border-line px-1 text-left disabled:opacity-50"
+            className="flex min-h-[52px] items-center justify-between gap-2.5 border-t border-line px-1 text-left"
           >
             <span className="flex flex-col">
               <span
