@@ -5,7 +5,9 @@ a 1 or 2, or only on a 1 when the rider carries Barding or, for a horse-type mou
 roster (`suggested_postbattle.mount_survival`, left out when nobody rides at risk). Like an injury, the roll and its result are
 the player's (`postbattle_json.mount_survival`: `{unit key: {roll, dead}}`), never automatic. At finalise a dead
 mount's copy leaves the rider (his ridden copy first), or a henchman gets a gap on his group's mount row (one who died
-takes nothing: henchmen loadouts), with a log row; one that survives stays. Finalise stays constant in units.
+takes nothing: henchmen loadouts), with a log row; one that survives stays. A rider's stored armour save moves back by
+what riding it was worth (warbands/services/armour.py), while a group's gap leaves its save alone. Finalise stays
+constant in units.
 """
 
 from typing import Any
@@ -105,6 +107,7 @@ class MountSurvivalTests(BattleTestCase):
         spare = HeroItem.objects.create(hero=self.aldric, item=self.horse)
         other = self.rider("Bertrand")
         b = f"hero:{other.id}"
+        Hero.objects.filter(pk__in=(self.aldric.pk, other.pk)).update(armour_save=5)  # the 5+ mounting them gave
         battle_id = self.fought(self.a, b, self.m1, self.m2, out=(self.a, b, self.m1))
         mounts = {self.a: {"roll": 2, "dead": True}, b: {"roll": 3, "dead": False}, self.m1: {"roll": 1, "dead": True}}
 
@@ -119,6 +122,9 @@ class MountSurvivalTests(BattleTestCase):
         log = WarbandLog.objects.get(warband=self.warband, entry_type="mounts_lost")
         lost = [(entry["unit_name"], entry["mount"], entry["roll"]) for entry in log.payload["mounts"]]
         self.assertEqual(lost, [("Aldric", "Warhorse", 2), ("A", "Warhorse", 1)])  # as the battle named them
+        saves = dict(Hero.objects.filter(pk__in=(self.aldric.pk, other.pk)).values_list("name", "armour_save"))
+        self.assertEqual(saves, {"Aldric": 6, "Bertrand": 5})  # the step goes with the mount that died
+        self.assertIsNone(self.outriders.__class__.objects.get(pk=self.outriders.pk).armour_save)  # a gap moves none
 
     def test_a_henchman_who_died_took_his_mount_already(self):
         battle_id = self.fought(self.m1, self.m2, out=(self.m1,))

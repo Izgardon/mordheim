@@ -150,7 +150,8 @@ def apply_lines(
 ) -> list[Warning]:
     """Inside the batch's transaction, after its creates: take the stash copies, then buy; the purchases' warnings."""
     ids = lines.unit_ids()
-    units = {unit.pk: unit for unit in kind.objects.filter(id__in=ids).only("id", "name", "unit_type")} if ids else {}
+    columns = ("id", "name", "unit_type", "armour_save")  # the save, which armour arriving moves
+    units = {unit.pk: unit for unit in kind.objects.filter(id__in=ids).only(*columns)} if ids else {}
     for line in lines.stash_takes:
         _take_from_stash(kind, warband, line, _unit(line, units, created))
     purchases = []

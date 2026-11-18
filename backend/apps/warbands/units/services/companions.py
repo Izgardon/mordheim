@@ -3,7 +3,8 @@
 `POST warbands/<id>/<kind>/<unit id>/items/<item row id>/companion/ {"on": bool}`. Only an Animal item whose beast
 is a mount or a pet can be switched on (switching off always works, whatever the beast became). A henchmen group
 mounts as one: its row is what every member carries (services/loadouts.py), so switching it rides or dismounts them
-all, a member with a gap on it going on foot. The switch moves the unit's `updated_at`, like any loadout change.
+all, a member with a gap on it going on foot. The switch moves the unit's `updated_at`, like any loadout change, and
+his armour save by what riding the mount is worth (services/armour.py: +1 on, -1 off, from the value he holds).
 Warnings describe the state after the switch: two mounts on one rider, a group riding more than one kind of mount,
 more than two mounts in the warband (units/companions.py).
 """
@@ -17,6 +18,7 @@ from django.db.models.functions import Coalesce
 
 from apps.bestiary.models import MOUNT
 from apps.warbands.models import RosterUnit, Warband
+from apps.warbands.services.armour import Save, mount_switched
 from apps.warbands.services.loadouts import carriers
 from apps.warbands.services.unit_items import touch_unit
 from apps.warbands.units.companions import (
@@ -48,6 +50,7 @@ def switch_companion(kind: UnitKindSpec, unit: RosterUnit, row_id: int, on: bool
         lock_warband(unit.warband_id)  # before the item row and the unit, as a PATCH sending items locks them
         links.filter(pk=row.pk).update(companion=on)
         touch_unit(kind.key, unit)
+        mount_switched(kind, unit, Save.of(row.item), on)
 
 
 def warband_mounts(warband_id: int) -> int:

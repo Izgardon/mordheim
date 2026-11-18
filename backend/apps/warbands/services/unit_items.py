@@ -7,7 +7,8 @@ first, a mount or pet switched on for him last (the one he rides stays with him)
 a companion unless the caller says so (a purchase "assigned straight away"): moving, selling or trading a copy clears
 the switch. A henchmen group holds a loadout (services/loadouts.py): copies arrive as one row, every member one each
 (the newest members past the copies get gaps), and leave as one row, a copy for each member who carries it. Either
-moves the unit's `updated_at`, the version a roster Save sends back (a stale one is a 409).
+moves the unit's `updated_at`, the version a roster Save sends back (a stale one is a 409), and moves his armour
+save by what the copies are worth (services/armour.py: a group's row once, whatever its members).
 """
 
 from typing import Any, cast
@@ -18,6 +19,7 @@ from rest_framework.exceptions import NotFound
 from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.prefetches import item_detail_prefetches
+from apps.warbands.services.armour import Save, equipped, unequipped
 from apps.warbands.services.loadouts import add_row, living_ids, take_row
 from apps.warbands.services.prices import house_rule_prices
 from apps.warbands.units.companions import with_beasts
@@ -51,22 +53,27 @@ def take_unit_copies(unit_type: str, unit: RosterUnit, item_id: int, quantity: i
     whatever `quantity`: a copy for each member who carries it."""
     kind = KINDS[cast(UnitKindKey, unit_type)]
     if kind.has_members:
-        costs = take_row(cast(Any, unit), item_id).costs
+        taken = take_row(cast(Any, unit), item_id)
         touch_unit(unit_type, unit)
-        return costs
+        unequipped(kind, unit, taken.save, [(taken.row_id, taken.companion)])
+        return taken.costs
     links: Any = kind.items.model._default_manager  # HeroItem or HirelingItem
+    columns = ("id", "cost", "companion", "item__save_bonus", "item__save_slot")
     rows = list(
         links.filter(**{kind.parent_field: unit, "item_id": item_id})
         .order_by("companion", "-id")
-        .values_list("id", "cost")[:quantity]
+        .values(*columns)[:quantity]
     )
     if len(rows) < quantity:
         raise ValueError("Item not found.")
-    deleted, _ = links.filter(id__in=[row_id for row_id, _cost in rows]).delete()
+    deleted, _ = links.filter(id__in=[row["id"] for row in rows]).delete()
     if deleted != quantity:
         raise ValueError("Item not found.")
     touch_unit(unit_type, unit)
-    return [cost for _row_id, cost in rows]
+    if rows:  # what the copies that left were worth, now that they are gone
+        save = Save(rows[0]["item__save_bonus"], rows[0]["item__save_slot"])
+        unequipped(kind, unit, save, [(row["id"], row["companion"]) for row in rows])
+    return [row["cost"] for row in rows]
 
 
 def add_unit_copies(
@@ -77,6 +84,8 @@ def add_unit_copies(
     if not costs:
         return
     kind = KINDS[cast(UnitKindKey, unit_type)]
+    copies = 1 if kind.has_members else len(costs)  # a group takes the copies as one row, so one piece of armour
+    equipped(kind, unit, Save.of(item), copies, companion=companion)  # before the rows: the body slot reads them
     if kind.has_members:
         add_row(cast(Any, unit), item, costs, companion=companion)
         touch_unit(unit_type, unit)

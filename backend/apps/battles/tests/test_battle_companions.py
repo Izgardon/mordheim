@@ -1,7 +1,8 @@
 """Battle rosters carry each unit's mount and pets (the bestiary rewrite step 4), read live until the battle starts and
 kept in the start/ snapshot after: the mount (its item, name, Move, rating bonus and profile), the pets, and the Move
-and armour save the mount gives the rider (`effectiveStats`), beside his own `stats`. A henchmen group's members ride
-one each of the group's mounts, in order, and a group recruited from a creature names its beast and kind.
+the mount gives the rider (`effectiveStats`), beside his own `stats`. His save isn't there: mounting writes the
+stored one (warbands/services/armour.py). A henchmen group's members ride one each of the group's mounts, in order,
+and a group recruited from a creature names its beast and kind.
 """
 
 from typing import Any
@@ -38,7 +39,8 @@ class BattleRosterCompanionTests(BattleTestCase):
         self.assertEqual({key: hero["mount"][key] for key in mount}, mount)
         self.assertEqual(hero["mount"]["stats"]["movement"], 8)
         self.assertEqual(hero["pets"], [{"itemId": self.raven.id, "name": "Raven", "hasProfile": False, "stats": None}])
-        self.assertEqual((hero["effectiveStats"], hero["stats"]["movement"]), ({"movement": 8, "armour_save": 6}, 4))
+        self.assertEqual((hero["effectiveStats"], hero["stats"]["movement"]), ({"movement": 8}, 4))
+        self.assertIsNone(hero["stats"]["armour_save"])  # his own, which the mount no longer dresses up
 
         for user in (self.player, self.viewer):
             self.ok(self.post_as(user, self.url(battle_id, "ready"), {"ready": True}))

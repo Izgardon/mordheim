@@ -7,20 +7,23 @@ or, for a horse-type mount (`is_equine`), a Farrier (a hired sword's special rul
 Barding keeps its own rule: it saves whatever wears it, as the shop sells it for a warhorse only. The roll and its result are the
 player's (`postbattle_json.mount_survival`), never automatic: at finalise a dead mount's copy leaves its rider, his
 ridden copy first, or for a henchman a gap on the group's mount row ("Skritt has no Horse": henchmen loadouts), with
-a `mounts_lost` log row for each; a mount that survives stays. Only a mount the server put at risk can die, and a
+a `mounts_lost` log row for each; a mount that survives stays. A hero's or hired sword's stored armour save moves
+back by what riding it was worth (warbands/services/armour.py), while a group's gap leaves its save alone. Only a mount the server put at risk can die, and a
 rider who died here keeps his with his items.
 """
 
 from collections import defaultdict
 from collections.abc import Iterator
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 from django.db.models import Model
 
 from apps.core.catalogue.current import resolve
 from apps.items.models import Item
 from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, HeroItem, HirelingItem
+from apps.warbands.services.armour import Save, mounts_lost
+from apps.warbands.units.kinds import KINDS, UnitKindKey
 
 from ...models import BattleParticipant
 from ...validation.unit_keys import parse_unit_key
@@ -175,7 +178,7 @@ def lose_mounts(context: FinaliseContext, draft: dict, unit_information: dict[st
     losses = _losses(context, chosen) if chosen else []
     if not losses:
         return []
-    items = Item.objects.only("id", "campaign_id", "replaces_id")
+    items = Item.objects.only("id", "campaign_id", "replaces_id", "save_bonus", "save_slot")
     current = resolve(items, "items", {loss.item_id for loss in losses}, context.battle.campaign_id)
     by_kind: defaultdict[str, list[_Loss]] = defaultdict(list)
     for loss in losses:
@@ -184,8 +187,24 @@ def lose_mounts(context: FinaliseContext, draft: dict, unit_information: dict[st
     for unit_type, kind_losses in by_kind.items():
         found = _rows_to_delete(context, unit_type, kind_losses, current)
         if unit_type == "henchman":
-            found = _gap_riders(found)
+            found = _gap_riders(found)  # a member's gap leaves the group's save alone (henchmen loadouts)
         else:
             ROWS[unit_type][0]._default_manager.filter(id__in=[row_id for _, row_id in found]).delete()
+            _dismount_riders(unit_type, found, current)
         removed += found
     return [loss.log for loss in losses if any(loss is gone for gone, _ in removed)]
+
+
+def _dismount_riders(unit_type: str, found: list[tuple[_Loss, int]], current: dict) -> None:
+    """Each rider's save moves back by what riding the mount that died was worth (warbands/services/armour.py): he
+    rode it, so its step goes with it. One read and one write, however many riders lost one."""
+    save: Save | None = None
+    rows: defaultdict[int, list[tuple[int, bool]]] = defaultdict(list)
+    for loss, row_id in found:
+        item = current.get(loss.item_id)
+        if item is None:
+            continue
+        save = Save.of(item)  # every loss of this kind is a mount, so one step serves them all
+        rows[loss.owner_id].append((row_id, True))  # the ridden copy went first (`_rows_to_delete`)
+    if save is not None:
+        mounts_lost(KINDS[cast(UnitKindKey, unit_type)], save, rows)

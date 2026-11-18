@@ -47,9 +47,9 @@ type ApiTargetType = "stash" | "hero" | "hireling" | "henchmen_group";
 
 /**
  * `POST warbands/<id>/purchases/`'s answer: what changed, slim (BUG-07). A unit target's
- * `mount`, `pets` and `effective_stats` describe it after the purchase, and a group comes whole as
- * `unit` (one loadout line: henchmen loadouts); a recruit's `group` is the group the copies joined
- * or formed.
+ * `mount`, `pets`, `effective_stats` and `armour_save` describe it after the purchase, and a group
+ * comes whole as `unit` (one loadout line: henchmen loadouts); a recruit's `group` is the group the
+ * copies joined or formed.
  */
 export type PurchaseAnswer = UnitCompanionFields & {
   target_type: ApiTargetType;
@@ -57,6 +57,8 @@ export type PurchaseAnswer = UnitCompanionFields & {
   updated_at: string | null;
   /** The unit's items in detail shape (null for the stash). */
   items: Item[] | null;
+  /** Its save after the purchase (null for the stash): armour and a mount move it, server-side. */
+  armour_save: number | null;
   stash_item: WarbandItemSummary | null;
   group?: HenchmenGroup | null;
   /** A henchmen group target's whole payload (null for any other target). */
@@ -149,6 +151,7 @@ export function applyPurchaseAnswer(
       id: answer.target_id,
       items: answer.items ?? [],
       updated_at: answer.updated_at,
+      armour_save: answer.armour_save,
       ...(answer.mount !== undefined ? { mount, pets, effective_stats } : {}),
     };
     Object.assign(update, { [LIST_KEYS[answer.target_type]]: [unit] });

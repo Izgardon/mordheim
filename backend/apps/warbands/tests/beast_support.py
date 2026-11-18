@@ -3,6 +3,7 @@ the bestiary's writes leave them."""
 
 from typing import Any
 
+from apps.bestiary.animal_items import create_item
 from apps.bestiary.models import BestiaryEntry, BestiaryEntrySkill, BestiaryEntrySpecial, BestiaryEntrySpell
 from apps.campaigns.models import Campaign
 from apps.items.models import Item, ItemAvailability
@@ -32,14 +33,7 @@ def make_animal(
 ) -> Item:
     """The Animal item of a new beast called `name` (its beast is `item.bestiary_entry`), priced at `cost`."""
     beast = BestiaryEntry.objects.create(name=name, kind=kind, campaign=campaign, **fields)
-    item = Item.objects.create(
-        name=name,
-        campaign=campaign,
-        type="Animal",
-        subtype=beast.get_kind_display(),
-        listed=beast.available_in_shop,
-        bestiary_entry=beast,
-    )
+    item = create_item(beast, {})  # as the bestiary writes it: its kind's subtype, and a mount's save bonus
     if cost is not None:
         ItemAvailability.objects.create(item=item, cost=cost, rarity=2)
     return item

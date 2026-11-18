@@ -60,8 +60,9 @@ export type UnitPet = CompanionAbilities & {
   stats: CompanionStats | null;
 };
 
-/** What a mounted unit shows (null on foot): shown beside its own stats, never written to them. */
-export type EffectiveStats = { movement: number | null; armour_save: number | null };
+/** What a mounted unit shows (null on foot): its mount's Move, beside its own. Its save isn't here:
+ * mounting writes the stored save (apps/warbands/services/armour.py). */
+export type EffectiveStats = { movement: number | null };
 
 /** The companion fields every unit payload carries (older caches may lack them). */
 export type UnitCompanionFields = {

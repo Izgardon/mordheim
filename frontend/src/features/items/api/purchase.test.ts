@@ -115,6 +115,7 @@ describe("applyPurchaseAnswer", () => {
     target_id: null,
     updated_at: null,
     items: null,
+    armour_save: null,
     stash_item: null,
     trade: null,
     summary: { gold: 80 },

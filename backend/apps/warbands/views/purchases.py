@@ -36,8 +36,9 @@ def scoped_item(warband: Any, item_id: int) -> Item:
 
 
 def purchase_answer(warband: Any, item: Item, bought: Purchase) -> dict[str, Any]:
-    """The slim answer (ECON-PERF-03): the touched unit's items with its mount, pets and mounted stats, or the stash
-    entry, or the group a creature was recruited into; the "Buy" row, the summary."""
+    """The slim answer (ECON-PERF-03): the touched unit's items with its mount, pets, Move while mounted and armour
+    save (which armour and a mount move: services/armour.py), or the stash entry, or the group a creature was
+    recruited into; the "Buy" row, the summary."""
     line = bought.line
     unit = line.unit
     rows = unit_item_rows(line.target_type, unit) if unit is not None else []
@@ -51,6 +52,7 @@ def purchase_answer(warband: Any, item: Item, bought: Purchase) -> dict[str, Any
         "target_id": unit.pk if unit is not None else None,
         "updated_at": serializers.DateTimeField().to_representation(unit.updated_at) if unit is not None else None,
         "items": detail_item_entries(rows) if unit is not None else None,
+        "armour_save": unit.armour_save if unit is not None else None,
         **companion_fields(unit, rows),
         "unit": loadout,
         "group": group,

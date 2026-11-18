@@ -96,7 +96,7 @@ export type BattleUnitView = {
   stats: UnitStats;
   /** The stats shown as the book writes them ("D6"), those no battle change replaced. */
   written: WrittenStats;
-  /** The cells to pick out: M and Sv while mounted, and any battle stat change. */
+  /** The cells to pick out: M while mounted, and any battle stat change. */
   highlighted: StripKey[];
   wounds: number;
   maxWounds: number;
@@ -116,10 +116,7 @@ export function unitView(
   const highlighted = new Set<StripKey>(
     Object.keys(overrides).map((key) => STAT_SHORT[key as keyof UnitStats])
   );
-  if (mounted) {
-    highlighted.add("M");
-    highlighted.add("Sv");
-  }
+  if (mounted) highlighted.add("M");
   return {
     unit,
     info,

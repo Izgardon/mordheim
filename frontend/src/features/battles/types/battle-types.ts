@@ -630,12 +630,12 @@ export type BattleRosterMount = BattleRosterCompanion & {
 /**
  * A unit's companions as its roster entry carries them (the bestiary rewrite, step 4): a group's
  * members ride its mounts one each, and every member lists its pets. `effectiveStats`: a mounted
- * unit's M and save, for display only (null on foot).
+ * unit's M, for display only (null on foot). Its save isn't here: mounting wrote it.
  */
 export type BattleRosterCompanionFields = {
   mount?: BattleRosterMount | null;
   pets?: BattleRosterCompanion[];
-  effectiveStats?: { movement: number | null; armour_save: number | null } | null;
+  effectiveStats?: { movement: number | null } | null;
 };
 
 /**

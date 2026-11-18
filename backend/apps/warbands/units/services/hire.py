@@ -157,7 +157,11 @@ def _warnings(source: str, entry: Any, warband: Warband) -> list[dict[str, Any]]
 
 def _kit(unit: Hireling, entry: Any, campaign_id: int) -> bool:
     """One item row per copy of each kit line (at most MAX_KIT_QUANTITY), as the campaign's current item, with no
-    cost, the first mount switched on as its mount (the Freelancer's warhorse): two queries. Whether it rides."""
+    cost, the first mount switched on as its mount (the Freelancer's warhorse): two queries. Whether it rides.
+
+    His kit leaves his armour save alone (services/armour.py moves it for every later equip and unequip): the save
+    his entry states is the book's, which already counts the armour and the mount he arrives with. The Freelancer's
+    4+ is his heavy armour, shield and warhorse; adding their steps again would make it 0+."""
     lines = list(entry.item_links.all())
     items = Item.objects.only("id", "campaign_id", "replaces_id").annotate(beast_kind=F("bestiary_entry__kind"))
     current = current_rows(items, [line.item_id for line in lines], campaign_id)

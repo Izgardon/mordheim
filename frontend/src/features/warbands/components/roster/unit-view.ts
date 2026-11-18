@@ -91,18 +91,18 @@ export function memberName(group: HenchmenGroup, member: { id: number; name?: st
 }
 
 /**
- * The profile for the stat strip: a written stat as the book writes it ("2(2)", "D6"), and M and
- * Sv as the ridden mount makes them (then highlighted).
+ * The profile for the stat strip: a written stat as the book writes it ("2(2)", "D6"), and M as the
+ * ridden mount makes it (then highlighted). Sv is the unit's own: mounting and armour write it.
  */
 export function statValues({ unit }: RosterUnit) {
   const effective = unit.effective_stats;
-  const save = effective?.armour_save ?? unit.armour_save;
+  const save = unit.armour_save;
   const written = unit.written_stats ?? {};
   const values: Partial<Record<StatKey, string | number>> = { Sv: save ? `${save}+` : "–" };
   for (const { key, label } of STAT_FIELDS) values[label] = statShown(unit[key], written[key]);
   if (effective?.movement !== undefined && effective.movement !== null)
     values.M = effective.movement;
-  const highlighted: StatKey[] = unit.mount ? ["M", "Sv"] : [];
+  const highlighted: StatKey[] = unit.mount ? ["M"] : [];
   return { values, highlighted };
 }
 

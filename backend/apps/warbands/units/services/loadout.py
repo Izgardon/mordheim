@@ -2,7 +2,9 @@
 
 A create or PATCH that sends a list (`items`, `skill_ids`, `special_ids`, `spell_ids`) replaces that whole
 list; unknown catalogue ids are skipped, and the items list keeps the unit's mounts and pets switched on unless an
-entry says otherwise (its `companion`). The trait flags keep their specials in step: `large` with the
+entry says otherwise (its `companion`). Replacing the items list leaves the unit's armour save alone: the same write
+carries `armour_save` as the player typed it, so what he sent wins (services/armour.py moves the save for the
+equips and unequips that go through the item services). The trait flags keep their specials in step: `large` with the
 "Large" special for every kind, and `caster` with "Wizard" / "Priest" where the kind has casters.
 """
 

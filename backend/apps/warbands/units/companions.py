@@ -2,8 +2,9 @@
 
 A companion is a state of one of the unit's item rows (`companion`), never a table of its own: only the unit holding
 the item can switch it on, and moving, selling or trading the copy clears it (the copy that arrives is a new row). A
-mount changes what the rider shows, never his stored stats: his Move is the mount's (when the mount has a profile)
-and his armour save one better, or 6+ when he has none; his rating gains the mount's `rating_bonus`. A henchmen group
+mount changes what the rider shows: his Move is the mount's (when the mount has a profile), while riding it writes
+his armour save, which the switch moves (services/armour.py; William, 18 Nov 2026: "Mounting can be real data
+then"), so nothing here recomputes a save. His rating gains the mount's `rating_bonus`. A henchmen group
 rides one mount per living member, and mounts as one: every member of a group carries the same gear, so the switch
 on a group's mount acts on every copy of it (units/services/companions.py). Two mounts on one rider, a mounted group
 whose mounts aren't one per living member or are of more than one kind, and more than two mounts in the warband
@@ -26,7 +27,6 @@ from django.db.models.functions import Coalesce, JSONObject
 
 from apps.bestiary.models import MOUNT, PET, BestiaryEntrySkill, BestiaryEntrySpecial, BestiaryEntrySpell
 from apps.warbands.models.shared import STAT_FIELDS
-from apps.warbands.utils.armour_save import BEST_ARMOUR_SAVE, WORST_ARMOUR_SAVE
 
 COMPANION_KINDS = (MOUNT, PET)
 MAX_WARBAND_MOUNTS = 2  # a Mordheim warband; the campaign settings will own it (grading and settings plan)
@@ -133,19 +133,13 @@ def pet_payload(row: Any) -> dict[str, Any]:
     }
 
 
-def mounted_save(save: int | None) -> int:
-    """A rider's armour save: one better than his own (never past the best save), or 6+ when he has none."""
-    return WORST_ARMOUR_SAVE if save is None else max(save - 1, BEST_ARMOUR_SAVE)
-
-
 def effective_stats(unit: Any, mount: Any | None) -> dict[str, Any] | None:
-    """What a mounted unit shows (None on foot): the mount's Move when it has a profile (his own otherwise) and the
-    mounted armour save. Shown beside the unit's stats, never written to them."""
+    """What a mounted unit shows (None on foot): the mount's Move when it has a profile, his own otherwise. Shown
+    beside the unit's stats, never written to them. His save isn't here: mounting wrote it (services/armour.py)."""
     if mount is None:
         return None
     beast = beast_of(mount.item)
-    movement = beast.movement if beast.has_profile else unit.movement
-    return {"movement": movement, "armour_save": mounted_save(unit.armour_save)}
+    return {"movement": beast.movement if beast.has_profile else unit.movement}
 
 
 def mount_rating_bonus(bonuses: Sequence[int | None] | None, riders: int) -> int:

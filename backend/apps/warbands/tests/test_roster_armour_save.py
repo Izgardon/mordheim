@@ -1,4 +1,5 @@
-"""Armour saves (decision 11, BUG-87): 5, "5" and "5+" all mean 5+, on every unit write path.
+"""Armour saves (decision 11, BUG-87): 5, "5" and "5+" all mean 5+, on every unit write path, and the steps
+equipping armour moves them (`move_armour_save`).
 
 Saves better than 1+ are allowed down to -5+ (Strength modifiers can get there on paper); 6+ is the worst
 save and empty means none. Anything else is a 400 on `armour_save`. Payloads answer the integer N.
@@ -9,7 +10,7 @@ from typing import Any
 from django.test import SimpleTestCase
 
 from apps.battles.services.unit_information import parse_armour_save_override
-from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, parse_armour_save
+from apps.warbands.utils.armour_save import ARMOUR_SAVE_ERROR, move_armour_save, parse_armour_save
 
 from .roster_support import KINDS, RosterTestCase, create_payload, make_unit, unit_url
 
@@ -48,6 +49,29 @@ class ArmourSaveParsingTests(SimpleTestCase):
         )
         with self.assertRaisesMessage(ValueError, "unit information armour_save"):
             parse_armour_save_override("9+")
+
+
+class ArmourSaveStepsTests(SimpleTestCase):
+    """`move_armour_save`: what equipping and unequipping armour moves (William, 18 Nov 2026), from the value held,
+    with no save as 7+."""
+
+    def test_steps_better_from_no_save_and_from_a_save_he_holds(self):
+        self.assertEqual(move_armour_save(None, 1), 6)
+        self.assertEqual(move_armour_save(None, 2), 5)
+        self.assertEqual(move_armour_save(None, 3), 4)
+        self.assertEqual(move_armour_save(4, 1), 3)
+
+    def test_steps_worse_and_7_plus_or_worse_is_no_save(self):
+        self.assertEqual(move_armour_save(5, -1), 6)
+        self.assertIsNone(move_armour_save(6, -1))
+        self.assertIsNone(move_armour_save(6, -3))
+        self.assertIsNone(move_armour_save(None, -1))
+
+    def test_it_stops_at_the_best_save_and_no_steps_changes_nothing(self):
+        self.assertEqual(move_armour_save(-5, 3), -5)
+        self.assertEqual(move_armour_save(-4, 3), -5)
+        self.assertEqual(move_armour_save(3, 0), 3)
+        self.assertIsNone(move_armour_save(None, 0))
 
 
 class ArmourSaveWriteTests(RosterTestCase):

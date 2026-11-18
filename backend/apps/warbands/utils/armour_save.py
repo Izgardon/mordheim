@@ -11,6 +11,7 @@ from typing import Any
 
 BEST_ARMOUR_SAVE = -5
 WORST_ARMOUR_SAVE = 6
+NO_ARMOUR_SAVE = WORST_ARMOUR_SAVE + 1  # no save at all counts as 7+ (William, 18 Nov 2026: "7+ is none")
 ARMOUR_SAVE_ERROR = (
     f'Enter a save from {BEST_ARMOUR_SAVE}+ to {WORST_ARMOUR_SAVE}+, such as "4+" or 4, or leave it empty.'
 )
@@ -36,3 +37,15 @@ def parse_armour_save(value: Any) -> int | None:
     if not BEST_ARMOUR_SAVE <= save <= WORST_ARMOUR_SAVE:
         raise ValueError(ARMOUR_SAVE_ERROR)
     return save
+
+
+def move_armour_save(save: int | None, steps: int) -> int | None:
+    """The save `steps` better than `save` (negative: worse), counting no save as 7+: one step on a unit with none
+    gives 6+, and a save moved to 7+ or worse is no save again. Never better than the best save; what equipping and
+    unequipping armour moves (apps/warbands/services/armour.py)."""
+    if not steps:
+        return save
+    moved = (NO_ARMOUR_SAVE if save is None else save) - steps
+    if moved >= NO_ARMOUR_SAVE:
+        return None
+    return max(moved, BEST_ARMOUR_SAVE)

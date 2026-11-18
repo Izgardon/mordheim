@@ -16,6 +16,7 @@ from django.db.models.functions import Coalesce, Greatest
 
 from apps.items.models import Item
 from apps.warbands.models import Henchman, HenchmanItemGap, HenchmenGroup, HenchmenGroupItem, on_roster
+from apps.warbands.services.armour import Save
 from apps.warbands.units.companions import beast_of, companions
 
 Costs = list[int | None]
@@ -79,13 +80,16 @@ def add_row(
 class TakenRow:
     item_id: int
     costs: Costs  # one per copy that left: the row's carriers
+    row_id: int  # the row that went, and what it was worth to the group's save (services/armour.py)
+    companion: bool
+    save: Save
 
 
 def peek_row(group: HenchmenGroup, item_id: int) -> Any:
     """The row of `item_id` a move or sale takes from the group: its newest, a row it rides last (annotated with its
     carriers); None when it carries none."""
     rows = HenchmenGroupItem.objects.filter(henchmen_group=group, item_id=item_id).order_by("companion", "-id")
-    return with_carriers(rows).first()
+    return with_carriers(rows).select_related("item").first()
 
 
 def take_row(group: HenchmenGroup, item_id: int) -> TakenRow:
@@ -97,7 +101,8 @@ def take_row(group: HenchmenGroup, item_id: int) -> TakenRow:
     deleted, _ = HenchmenGroupItem.objects.filter(pk=row.pk).delete()
     if not deleted:
         raise ValueError("Item not found.")
-    return TakenRow(row.item_id, [row.cost] * carriers_of(row))
+    costs = [row.cost] * carriers_of(row)
+    return TakenRow(row.item_id, costs, row.pk, row.companion, Save.of(row.item))
 
 
 def carried_rows(member: Henchman) -> list[HenchmenGroupItem]:

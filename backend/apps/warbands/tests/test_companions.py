@@ -3,9 +3,9 @@
 `POST warbands/<id>/<kind>/<unit id>/items/<item row id>/companion/ {"on": bool}` switches one of the unit's item
 rows on or off. Only an Animal item whose beast is a mount or a pet switches on; the answer is the unit, the summary
 and warnings (two mounts on one rider, a group's mounts against its living members, more than two mounts in the
-warband), never a refusal. A mount changes what the rider shows (`effective_stats`: the mount's Move, the save one
-better or 6+), never his stats. Every unit payload's items carry their row id, the switch and the beast's kind, and
-the unit its `mount` and `pets`.
+warband), never a refusal. A mount changes what the rider shows (`effective_stats`: the mount's Move) and writes
+his stored save, one step better while he rides it and back when he dismounts (services/armour.py). Every unit
+payload's items carry their row id, the switch and the beast's kind, and the unit its `mount` and `pets`.
 """
 
 from typing import Any
@@ -49,22 +49,25 @@ class CompanionSwitchTests(CompanionTestCase):
         profile |= {"initiative": 3, "attacks": 1, "leadership": 5, "armour_save": None}
         mount = {"item_row_id": row.id, "item_id": self.horse.id, "name": "Warhorse", "movement": 8, "rating_bonus": 5}
         self.assertEqual(unit["mount"], {**mount, "has_profile": True, "stats": profile, **NO_ABILITIES})
-        self.assertEqual(unit["effective_stats"], {"movement": 8, "armour_save": 5})
-        self.assertEqual((unit["movement"], unit["armour_save"], unit["pets"]), (4, 6, []))
+        self.assertEqual(unit["effective_stats"], {"movement": 8})  # his save is written, not shown beside it
+        self.assertEqual((unit["movement"], unit["armour_save"], unit["pets"]), (4, 5, []))
         [item] = unit["items"]
         self.assertEqual((item["row_id"], item["companion"], item["beast_kind"]), (row.id, True, "mount"))
         self.assertEqual(response.data["warnings"], [])
         self.assertIn("rating", response.data["summary"])
         self.assertTrue(HeroItem.objects.get(pk=row.pk).companion)
         self.hero.refresh_from_db()
-        self.assertEqual((self.hero.movement, self.hero.armour_save), (4, 6))
+        self.assertEqual((self.hero.movement, self.hero.armour_save), (4, 5))  # mounting wrote 5+ from his 6+
 
-    def test_switching_off_puts_him_back_on_foot(self):
+    def test_switching_off_puts_him_back_on_foot_and_takes_the_step_back(self):
         row = HeroItem.objects.create(hero=self.hero, item=self.horse, companion=True)
+        self.hero.armour_save = 5  # the 5+ mounting him gave
+        self.hero.save()
 
         unit = self.switch(row, on=False).data["unit"]
 
         self.assertEqual((unit["mount"], unit["effective_stats"], unit["items"][0]["companion"]), (None, None, False))
+        self.assertEqual(unit["armour_save"], 6)  # back to his own 6+
 
     def test_a_pet_goes_with_its_unit_and_one_without_a_profile_shows_none(self):
         row = HeroItem.objects.create(hero=self.hero, item=self.raven)
@@ -85,7 +88,8 @@ class CompanionSwitchTests(CompanionTestCase):
         unit = self.switch(row).data["unit"]
 
         self.assertEqual((unit["mount"]["movement"], unit["mount"]["stats"], unit["mount"]["rating_bonus"]), (None, None, 0))  # fmt: skip
-        self.assertEqual(unit["effective_stats"], {"movement": 4, "armour_save": 6})  # no save: 6+
+        self.assertEqual(unit["effective_stats"], {"movement": 4})  # his own Move
+        self.assertEqual(unit["armour_save"], 6)  # no save, and riding it gives 6+
 
     def test_only_a_mount_or_a_pet_switches_on(self):
         for item in (self.sword, self.dogs):

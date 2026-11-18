@@ -1,7 +1,8 @@
 """A henchmen group mounts as one (William's rule after the bestiary rewrite, with henchmen loadouts).
 
 A group's loadout row is what every member carries, so its mount is one row: the companion switch on it rides or
-dismounts every member who carries it (a member with a gap on it goes on foot, which his gap says). Heroes, hired
+dismounts every member who carries it (a member with a gap on it goes on foot, which his gap says) and moves the
+group's one save once, whatever its members (services/armour.py). Heroes, hired
 swords and a group's pets still switch one row. A group riding more than one kind of mount warns (never refuses): in
 the switch's answer and on the group's own payload (`mount_warnings`).
 """
@@ -49,7 +50,8 @@ class GroupMountSwitchTests(GroupMountTestCase):
 
         self.assertEqual(self.switched(self.horse), [True])
         unit = response.data["unit"]
-        self.assertEqual((unit["mount"]["name"], unit["effective_stats"]), ("Warhorse", {"movement": 8, "armour_save": 6}))  # fmt: skip
+        self.assertEqual((unit["mount"]["name"], unit["effective_stats"]), ("Warhorse", {"movement": 8}))
+        self.assertEqual(unit["armour_save"], 6)  # one save for the group: riding wrote 6+ from none
         self.assertEqual((self.group_warnings(response), unit["mount_warnings"]), ([], []))
         self.assertEqual([warning["code"] for warning in response.data["warnings"]], ["warband_mounts"])  # 3 riders
 

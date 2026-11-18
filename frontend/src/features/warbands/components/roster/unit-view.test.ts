@@ -109,6 +109,28 @@ describe("statValues", () => {
     const { values } = statValues({ kind: "hero", unit: hero });
     expect([values.A, values.WS, values.S, values.T]).toEqual(["2(2)", "-", 3, "4*"]);
   });
+
+  it("shows the mount's Move, picked out, and the save the unit holds", () => {
+    const hero = makeHero({
+      movement: 4,
+      armour_save: 5,
+      mount: { name: "Warhorse" },
+      effective_stats: { movement: 8 },
+    } as never);
+
+    const { values, highlighted } = statValues({ kind: "hero", unit: hero });
+
+    expect([values.M, values.Sv, highlighted]).toEqual([8, "5+", ["M"]]); // mounting wrote the 5+
+  });
+
+  it("shows a dash for no save and picks nothing out on foot", () => {
+    const { values, highlighted } = statValues({
+      kind: "hero",
+      unit: makeHero({ movement: 4, armour_save: null }),
+    });
+
+    expect([values.M, values.Sv, highlighted]).toEqual([4, "–", []]);
+  });
 });
 
 describe("boxRows", () => {

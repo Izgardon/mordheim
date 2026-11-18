@@ -3,7 +3,8 @@
 A purchase line for a unit may carry `companion: true` (a mount or pet: it lands switched on, with the companion
 warnings); POST purchases/ may carry `recruit` (a creature: recruited into a new group or one of the same beast
 instead of landing in the stash, with no RECRUIT row). A beast the shop doesn't sell is bought with `unlisted_beast`.
-A hired sword's kit mount is switched on as its mount when it is hired.
+A hired sword's kit mount is switched on as its mount when it is hired, and his kit leaves his save alone: his
+profile already states it (apps/warbands/services/armour.py).
 """
 
 from typing import Any
@@ -34,7 +35,8 @@ class AssignStraightAwayTests(BeastPurchaseTestCase):
 
         self.assertEqual(response.status_code, 201, response.data)
         body = response.data
-        self.assertEqual((body["mount"]["name"], body["effective_stats"], body["pets"]), ("Warhorse", {"movement": 8, "armour_save": 4}, []))  # fmt: skip
+        self.assertEqual((body["mount"]["name"], body["effective_stats"], body["pets"]), ("Warhorse", {"movement": 8}, []))  # fmt: skip
+        self.assertEqual(body["armour_save"], 4)  # riding it wrote 4+ from his 5+
         self.assertEqual([(item["companion"], item["beast_kind"]) for item in body["items"]], [(True, "mount")])
         self.assertEqual(body["warnings"], [])
         self.assertEqual(trade_rows(self.warband)[1:], [("Buy", "Warhorse", -80, None)])
@@ -132,7 +134,8 @@ class HiredMountTests(RosterTestCase):
         response = self.client.post(url, {"source": "hired_sword", "id": freelancer.id}, format="json")
 
         self.assertEqual(response.status_code, 201, response.data)
-        self.assertEqual((response.data["mount"]["name"], response.data["effective_stats"]), ("Warhorse", {"movement": 8, "armour_save": 3}))  # fmt: skip
+        self.assertEqual((response.data["mount"]["name"], response.data["effective_stats"]), ("Warhorse", {"movement": 8}))  # fmt: skip
+        self.assertEqual(response.data["armour_save"], 4)  # his book save, which his book kit doesn't move
         self.assertEqual(sorted(HirelingItem.objects.values_list("item__name", "companion")), [("Sword", False), ("Warhorse", True)])  # fmt: skip
         self.assertEqual(response.data["warnings"], [])
 
