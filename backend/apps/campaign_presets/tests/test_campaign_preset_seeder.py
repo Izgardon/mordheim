@@ -80,6 +80,38 @@ class PresetSeederTests(TestCase):
         )
         self.assertEqual((mordheim.hero_death_roll, mordheim.settings.count(), mordheim.rules.count()), ("", 0, 0))
 
+    def test_the_three_newest_campaigns_dictate_only_what_their_books_state(self) -> None:
+        call_command("seed_settings", stdout=StringIO())
+        call_command("seed_exploration_charts", stdout=StringIO())
+        out = StringIO()
+        call_command("seed_campaign_presets", stdout=out)
+        self.assertIn("skipped: 0", out.getvalue())
+        presets = {preset.slug: preset for preset in CampaignPreset.objects.all()}
+        expected = {
+            # Border Town Burning: its objectives chapter is campaign points, and its injury chart names a D66 result
+            "border-town-burning": (None, None, True, None, None, "d66", 9),
+            # Khemri dictates its chart and nothing else: it points at the rulebook for everything structural
+            "khemri": (None, None, None, None, None, "", 10),
+            # Sartosa: its Locales are the campaign's places, and pressganging names a D66 result
+            "sartosa": (True, None, None, None, None, "d66", 11),
+        }
+        for slug, row in expected.items():
+            preset = presets[slug]
+            self.assertEqual(
+                (
+                    preset.enable_locations,
+                    preset.enable_encampments,
+                    preset.enable_campaign_points,
+                    preset.enable_blood_pacts,
+                    preset.max_heroes,
+                    preset.hero_death_roll,
+                    preset.rules.count(),
+                ),
+                row,
+                slug,
+            )
+            self.assertEqual(preset.exploration_chart_id, ExplorationChart.objects.get(slug=slug).pk, slug)
+
     def test_a_field_left_out_stays_null_rather_than_taking_the_apps_default(self) -> None:
         self.seed({"slug": "sartosa", "name": "Sartosa", "settings": ["Mutiny in Marienburg"]})
         preset = CampaignPreset.objects.get(slug="sartosa")

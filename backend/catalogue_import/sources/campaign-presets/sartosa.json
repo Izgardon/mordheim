@@ -5,5 +5,8 @@
   "settings": [
     "Sartosa"
   ],
-  "exploration_chart": "sartosa"
+  "exploration_chart": "sartosa",
+  "enable_locations": true,
+  "hero_death_roll": "d66",
+  "rules": "sartosa"
 }

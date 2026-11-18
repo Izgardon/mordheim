@@ -1,0 +1,49 @@
+{
+  "setting": "Sartosa",
+  "rules": [
+    {
+      "title": "Cargo",
+      "text": "The common currency in Sartosa is raw goods, always kept in crates, barrels or similar containers. A crate is carried by one non-animal model at its base movement with no running, or by two models, who may run. A model carrying a crate may not fire a missile weapon or cast a spell, and drops the crate if attacked, ready for anyone who moves into contact with it. A model that leaves the board with a crate may not return. If a warband routs while its members hold crates, the goods are lost if the carrier is within charge range of any upright, unengaged opponent. On a boat each crate of Cargo takes the place of one passenger. For exploring and for selling, Cargo is treated exactly as wyrdstone."
+    },
+    {
+      "title": "Stashing cargo",
+      "text": "A warband may hide its Cargo in one place instead of carrying it about. Crates in a stash must be within 1 inch of each other. To claim a stash, a model must be in base contact with one of the crates, or be the only model within 1 inch of it apart from his friends. An animal may guard a stash even though it cannot carry a crate."
+    },
+    {
+      "title": "Opening a crate",
+      "text": "Once per Exploration phase a warband may open one crate of Cargo it is not selling. Subtract it from the total and roll D66 on the Cargo chart."
+    },
+    {
+      "title": "All hands on deck",
+      "text": "While all Sartosa is ablaze, a Pirate warband may recruit any model it comes across that is neither Large nor an animal. A warband that is not Undead may not recruit Undead models, and nobody may recruit daemons. This holds only in a Sartosa campaign: anywhere else a warband may take only humans and models of its own race."
+    },
+    {
+      "title": "Kidnapped",
+      "text": "A captured enemy human Hero - the Captured result, a D66 roll of 61 or 62 - may be offered one chance to join the crew, instead of being exchanged, ransomed or sold to slavers. Both players roll 2D6, the pirate adding his Captain's Leadership and the other player the captured Hero's, and either side adds 1 if it won the game. If the pirate's total is higher the Hero joins the Crew; otherwise he becomes a Swabbie. Every Henchman taken out of action during the game and then lost to his own warband for good, a post-game roll of 1-2, may be kidnapped as well: roll a D6 for each, and on a 4+ he is kidnapped and tested for in the same way. A player may make a captured model a Swabbie without testing at all, and a captured non-player model only ever becomes a Swabbie. A warband may never find and recruit its own dead Henchmen. A Hired Sword may never be recruited as a Swabbie."
+    },
+    {
+      "title": "Joining the crew",
+      "text": "A recruit who joins willingly either starts a new Crew group or joins an existing one that holds four models or fewer. There is no extra cost to add him to a group that has accumulated experience points. Any equipment or weapons he had are sold off at once to buy him the proper weapons and armour for his new unit in an even swap, and his skills, experience level and characteristics are changed to those of a starting Crewman, or to match his new crewmates if he joins an existing group."
+    },
+    {
+      "title": "Who takes the captive",
+      "text": "Whenever a Hero is captured or a Henchman kidnapped, roll a D6 to see who has him; he is never taken by his own side or its allies. On 1-3, Finders Keepers: he goes to the opposing warband that put him out of action, even if that player routed, and to a random opponent if no opposing player put him out of action, as with fall damage, a non-player model or friendly fire. On 4-6, To the Victors the Spoils: he goes to the opposing warband that won the scenario; if his own warband won, to the opposing warband that lasted longest on the board, and if more than one opponent was still on the board at the end, to a random opponent that did not rout. A player who cannot press-gang finds the near-dead model and finishes him off instead: he is truly dead and his equipment is discarded. Once a player holds a Hero he may ransom him as normal, or try to recruit him. A kidnapped Henchman must first recover on a D6 roll of 4+ before he can be asked to join."
+    },
+    {
+      "title": "Swabbies",
+      "text": "A Hero or Henchman who will not join the crew becomes a Swabbie. He is stripped of his equipment and weapons, which the player hands out as he likes, and may only be re-armed from the Swabbie equipment list. He keeps his skills, his characteristics and the experience level he had, which counts towards the warband rating as usual. A Swabbie never gains experience, and can never use magic or cast a spell of any sort whatever he was before. Swabbies need not all be armed alike. A Swabbie counts towards the number of models in the warband when the rout level is worked out, but a Swabbie who is running away or out of action does not count towards the models needed to force a Rout test. If the pirate warband itself routs, any Swabbie who had already left the table is taken off the roster as though he had been killed. A warband may hold no more than five Swabbies: it may recruit more than five, but must come back down to five by the end of the Post-Game phase."
+    },
+    {
+      "title": "Recruiting non-player models",
+      "text": "Any model opposing the warband that is not an animal, not Large and not a daemon is a possible recruit. Roll a D6 for each one the warband takes out of action, in the post-game phase: on a 1-2 he escapes with his equipment, and on a 3+ he becomes a Swabbie, losing everything but a dagger unless his own rules say otherwise. A non-player model never joins the Crew."
+    },
+    {
+      "title": "A locale campaign",
+      "text": "A locale campaign moves from place to place, each locale with its own rules and scenarios, and the warbands play for Battle Points. A win is worth 3 Battle Points, a draw 2 and a loss 1. A warband must hold 12 Battle Points at a locale to control it; if two warbands each hold 12 then nobody controls it, and if one holds 13 and another 12 the locale is controlled by the warband with the most Battle Points. A warband may control more than one locale. Pair the players at random at the start of a night's gaming and let both choose the locale they want to play at, picking between the two at random if they cannot agree; where more than one game is played in a day, the winners of two games play each other while the losers play each other, and the pairings are drawn again at the start of the next night. The campaign ends after an agreed number of games or weeks, and the player who controls the most locales wins; on a tie the tied player with the most Battle Points wins."
+    },
+    {
+      "title": "Trading at a locale",
+      "text": "After a game at a locale, trading follows that locale's own rules, which may raise or lower what the warband can buy. A warband that controls a locale also gets whatever bonus that locale grants."
+    }
+  ]
+}
