@@ -52,7 +52,7 @@ export default function PermissionGrantMenu({
           collisionPadding={8}
           aria-label={`Permissions for ${member.name}`}
           // Every code is taller than the room left on a phone: the list scrolls instead.
-          className="z-[70] flex max-h-[var(--radix-dropdown-menu-content-available-height)] w-80 max-w-[calc(100vw-1rem)] flex-col gap-0.5 overflow-y-auto border border-accent-line bg-panel p-1 shadow-[0_16px_40px_var(--color-shadow)]"
+          className="z-[70] flex max-h-[var(--radix-dropdown-menu-content-available-height)] w-80 max-w-[calc(100vw-1rem)] flex-col gap-0.5 overflow-y-auto overscroll-contain border border-accent-line bg-panel p-1 shadow-[0_16px_40px_var(--color-shadow)]"
         >
           {options.map((option) => (
             <DropdownMenu.CheckboxItem

@@ -67,7 +67,7 @@ export default function BattleFeed({ lines, onUndo, className }: BattleFeedProps
       <ol
         ref={listRef}
         aria-live="polite"
-        className={cn("m-0 flex list-none flex-col overflow-y-auto px-3 pb-2", className)}
+        className={cn("m-0 flex list-none flex-col overflow-y-auto overscroll-contain px-3 pb-2", className)}
       >
         {lines.length === 0 ? (
           <li className="py-1.5 text-xs text-muted-foreground">Nothing has happened yet.</li>

@@ -70,11 +70,11 @@ export function Drawer({
               </DialogPrimitive.Close>
             </div>
           </header>
-          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 pb-6 pt-[18px]">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto overscroll-contain px-6 pb-6 pt-[18px]">
             {children}
           </div>
           {dock ? (
-            <div className="max-h-[45dvh] shrink-0 overflow-y-auto border-t border-accent-line bg-surface px-6 py-4">
+            <div className="max-h-[45dvh] shrink-0 overflow-y-auto overscroll-contain border-t border-accent-line bg-surface px-6 py-4">
               {dock}
             </div>
           ) : null}

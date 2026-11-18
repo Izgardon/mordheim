@@ -78,7 +78,7 @@ export default function StandingsTable({
   }
 
   return (
-    <div className="overflow-x-auto border border-border bg-surface">
+    <div className="overflow-x-auto overscroll-x-contain border border-border bg-surface">
       <table className="w-full border-collapse text-sm">
         <thead>
           <tr className="bg-raised">

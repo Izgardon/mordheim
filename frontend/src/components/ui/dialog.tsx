@@ -183,7 +183,7 @@ const DialogContent = React.forwardRef<
             {/* the side padding is the body's own (William: "modal scroll bar is in a bad place as
                 it sits on top of content"): its scrollbar runs down the modal's edge, a gutter
                 away from the inputs and text */}
-            <div className="scrollbar-hidden-mobile flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto overscroll-x-none px-4 min-[960px]:px-8">
+            <div className="scrollbar-hidden-mobile flex min-h-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto overscroll-x-none overscroll-y-contain px-4 min-[960px]:px-8">
               {children}
             </div>
           </div>

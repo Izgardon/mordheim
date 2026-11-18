@@ -37,7 +37,7 @@ function HisRules({
         </p>
       ) : null}
       {rules.length ? (
-        <div className="flex max-h-48 flex-col gap-1.5 overflow-y-auto">
+        <div className="flex max-h-48 flex-col gap-1.5 overflow-y-auto overscroll-contain">
           {rules.map((rule) => (
             <p key={rule.id} className="m-0 text-text2">
               <span className="font-semibold text-ink">{rule.name}.</span> {rule.description}

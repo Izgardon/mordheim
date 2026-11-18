@@ -38,7 +38,7 @@ export default function SideStrip({
       ref={barRef}
       role="tablist"
       aria-label="Warbands in this battle"
-      className={cn("scrollbar-hidden flex gap-1.5 overflow-x-auto", className)}
+      className={cn("scrollbar-hidden flex gap-1.5 overflow-x-auto overscroll-x-contain", className)}
     >
       {sides.map((side) => {
         const on = side.id === selectedId;

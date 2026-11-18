@@ -108,11 +108,11 @@ export function BottomSheet({
               </IconButton>
             </DialogPrimitive.Close>
           </header>
-          <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 pb-4">
+          <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain px-4 pb-4">
             {children}
           </div>
           {dock ? (
-            <div className="max-h-[40dvh] shrink-0 overflow-y-auto border-t border-accent-line bg-surface px-4 py-3">
+            <div className="max-h-[40dvh] shrink-0 overflow-y-auto overscroll-contain border-t border-accent-line bg-surface px-4 py-3">
               {dock}
             </div>
           ) : null}

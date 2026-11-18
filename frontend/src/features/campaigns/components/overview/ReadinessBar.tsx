@@ -76,10 +76,10 @@ export default function ReadinessBar({
       className={cn(
         "m-0 flex list-none gap-1.5 p-0",
         isMobile
-          ? "-mx-3 overflow-x-auto px-3 pb-0.5"
+          ? "-mx-3 overflow-x-auto overscroll-x-contain px-3 pb-0.5"
           : // one row in the bar; past its end it scrolls, its right edge fading to say so
             cn(
-              "scrollbar-hidden min-w-0 flex-1 overflow-x-auto",
+              "scrollbar-hidden min-w-0 flex-1 overflow-x-auto overscroll-x-contain",
               overflows &&
                 "pr-8 [mask-image:linear-gradient(to_right,#000_calc(100%-32px),transparent)]"
             )

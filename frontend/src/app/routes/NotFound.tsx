@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
  */
 export default function NotFound() {
   return (
-    <main className="flex h-[100dvh] items-center justify-center overflow-y-auto bg-page px-4">
+    <main className="flex h-[100dvh] items-center justify-center overflow-y-auto overscroll-contain bg-page px-4">
       <div className="flex w-full max-w-[480px] flex-col items-start gap-4 border border-border bg-surface p-8 max-[960px]:p-6">
         <span className="font-mono text-xs uppercase tracking-[0.16em] text-accent-text">
           404 · Page not found

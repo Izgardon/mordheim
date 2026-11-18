@@ -97,7 +97,7 @@ export default function SitePage({
           <Wordmark />
         </WebTopBar>
       )}
-      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+      <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain">
         <div
           className={cn(
             "mx-auto flex w-full flex-col",

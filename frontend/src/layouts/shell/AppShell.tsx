@@ -71,7 +71,7 @@ export default function AppShell({
           data-testid="shell-scroll"
           className={
             isMobile
-              ? "scrollbar-hidden min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-4"
+              ? "scrollbar-hidden min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-contain pb-4"
               : "desktop-shell__content"
           }
         >

@@ -32,6 +32,18 @@ body {
   overflow: hidden;
 }
 
+/*
+ * No pull-to-refresh (William, 18 Nov 2026, from his phone: "here i scroll down the feed and it
+ * will refresh the page"). The app's pages scroll in their own panes, since the document can't
+ * (overflow: hidden above), and a pane that reaches its top passes the drag on to the document,
+ * where the browser takes it as the refresh gesture. Every pane carries `overscroll-contain` so
+ * it keeps the drag; this is the backstop for one that doesn't, and for a pane added later.
+ */
+html,
+body {
+  overscroll-behavior: none;
+}
+
 /* Form element fixes */
 input[type="search"]::-webkit-search-cancel-button,
 input[type="search"]::-ms-clear {

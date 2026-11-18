@@ -84,7 +84,7 @@ const SelectContent = React.forwardRef<
       >
         <div
           className={cn(
-            "max-h-60 w-full overflow-y-auto",
+            "max-h-60 w-full overflow-y-auto overscroll-contain",
             position === "popper" && "min-w-[var(--radix-select-trigger-width)]"
           )}
         >

@@ -84,7 +84,7 @@ export default function CampaignChatMenu({ campaignId, open, onOpenChange, trigg
         {/* Messages list */}
         <div
           ref={chat.listRef}
-          className="min-h-0 flex-1 space-y-3 overflow-y-auto py-1"
+          className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain py-1"
           onScroll={chat.handleScroll}
         >
           {isLoading && messages.length > 0 ? (

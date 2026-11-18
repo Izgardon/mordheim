@@ -28,7 +28,7 @@ export default function AuthShell({ children, video, credit }: AuthShellProps) {
   return (
     <main
       className={cn(
-        "auth-page h-[100dvh] w-full overflow-y-auto overflow-x-hidden bg-page",
+        "auth-page h-[100dvh] w-full overflow-y-auto overflow-x-hidden overscroll-contain bg-page",
         isMobile
           ? "auth-page--phone"
           : "grid grid-cols-[minmax(440px,520px)_minmax(0,1fr)] items-start"

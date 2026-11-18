@@ -45,7 +45,7 @@ export function CatalogueTypeField({ layout, id, copy, field }: CatalogueTypeFie
       >
         <ActionSearchDropdown open={field.isMenuOpen} onClose={field.closeMenu} className="z-50">
           {field.options.length > 0 ? (
-            <div className="max-h-40 w-full overflow-y-auto p-2 text-sm">
+            <div className="max-h-40 w-full overflow-y-auto overscroll-contain p-2 text-sm">
               <div className="space-y-1">
                 {field.options.map((option) => (
                   <button

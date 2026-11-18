@@ -41,7 +41,7 @@ function KillList({
   if (!kills.length)
     return <span className="text-[13px] text-text2">No kill in an ended battle.</span>;
   return (
-    <ol className="m-0 flex max-h-72 list-none flex-col overflow-y-auto p-0">
+    <ol className="m-0 flex max-h-72 list-none flex-col overflow-y-auto overscroll-contain p-0">
       {kills.map((kill) => (
         <li
           key={kill.id}

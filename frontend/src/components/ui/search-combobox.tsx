@@ -166,7 +166,7 @@ export function SearchCombobox(props: SearchComboboxProps) {
           aria-label={props.label}
           style={inline ? undefined : floating.style}
           className={cn(
-            "m-0 flex list-none flex-col overflow-y-auto border border-strong bg-panel p-0",
+            "m-0 flex list-none flex-col overflow-y-auto overscroll-contain border border-strong bg-panel p-0",
             inline
               ? "max-h-72 border-t-0"
               : cn(
