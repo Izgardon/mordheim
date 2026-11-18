@@ -17,6 +17,7 @@ import {
   resolveHero1d6Stat,
   resolveHero2d6Stat,
 } from "@/features/warbands/utils/levelup-utils";
+
 /** One unit's line on the Experience tab: a hero, a hired sword, or a henchmen group. */
 export type XpRow = {
   key: string;

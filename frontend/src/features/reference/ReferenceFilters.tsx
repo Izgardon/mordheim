@@ -149,7 +149,12 @@ export function ReferenceChips<T extends string>(props: ReferenceChipsProps<T>) 
     );
   }
   return (
-    <div className={cn("flex items-center gap-2", isMobile && "-mx-4 overflow-x-auto overscroll-x-contain px-4")}>
+    <div
+      className={cn(
+        "flex items-center gap-2",
+        isMobile && "-mx-4 overflow-x-auto overscroll-x-contain px-4"
+      )}
+    >
       {isMobile ? null : <span className={cn(CAPTION, "mr-2")}>{props.label}</span>}
       <div
         role="group"
