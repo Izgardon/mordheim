@@ -39,8 +39,11 @@ function rosterUnits(roster: ParticipantRoster | undefined): PrebattleUnit[] {
 /**
  * The battle's timeline in plain words, oldest first, each line under the round it
  * happened in: the start, kills ("Ulrich took a Darksoul out of action · melee"), models out of
- * action and back, items used, the rounds asked for and started, neutral creatures, and players
- * finishing. Everything else (invites, readies) stays out of it.
+ * action and back, items used, each round started, neutral creatures, and players finishing.
+ * Everything else stays out of it: invites, readies, and the asks, agreements and withdrawals a
+ * round took (William, 18 Nov 2026: a round boundary earns a line, the haggling over it doesn't).
+ * The events are still written and still broadcast; the feed is the only thing that drops them,
+ * so an old battle's stored asks simply don't show.
  */
 export function battleFeed(
   events: BattleEvent[],
@@ -120,23 +123,12 @@ export function battleFeed(
           true
         );
         break;
-      case "round_requested":
-        line(`${player(event.actor_user_id)} asked for round ${payload.round}`);
-        break;
-      case "round_agreed":
-        line(`${player(event.actor_user_id)} agreed to round ${payload.round}`);
-        break;
-      case "round_request_withdrawn":
-        line(`${player(event.actor_user_id)} took back the ask for round ${payload.round}`);
-        break;
       case "round_started":
         round = typeof payload.round === "number" ? payload.round : round + 1;
         lines.push({
           id: event.id,
           round,
-          text: payload.forced
-            ? `Round ${round} began. ${player(event.actor_user_id)} started it.`
-            : `Round ${round} began. Everyone agreed.`,
+          text: `Round ${round} started`,
           kill: false,
           voided: false,
           undoable: false,

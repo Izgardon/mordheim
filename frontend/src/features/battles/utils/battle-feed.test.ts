@@ -1,0 +1,53 @@
+import { describe, expect, it } from "vitest";
+
+import type { BattleEvent, BattleParticipant } from "@/features/battles/types/battle-types";
+
+import { battleFeed } from "./battle-feed";
+
+const PARTICIPANTS = [
+  {
+    user: { id: 7, label: "Cap" },
+    warband: { id: 3 },
+    status: "in_battle",
+  },
+] as unknown as BattleParticipant[];
+
+const event = (id: number, type: BattleEvent["type"], payload: Record<string, unknown> = {}) =>
+  ({
+    id,
+    type,
+    actor_user_id: 7,
+    payload_json: payload,
+    voided_at: null,
+    created_at: "2026-11-18T10:00:00Z",
+  }) as unknown as BattleEvent;
+
+const feed = (events: BattleEvent[]) => battleFeed(events, PARTICIPANTS, {}, 7);
+
+describe("battleFeed and the rounds", () => {
+  it("gives a round one line, the asks and agreements none (William, 18 Nov 2026)", () => {
+    const lines = feed([
+      event(1, "battle_started"),
+      event(2, "round_requested", { round: 2 }),
+      event(3, "round_agreed", { round: 2 }),
+      event(4, "round_started", { round: 2, forced: false }),
+      event(5, "round_requested", { round: 3 }),
+      event(6, "round_request_withdrawn", { round: 3 }),
+      event(7, "round_requested", { round: 3 }),
+      event(8, "round_started", { round: 3, forced: true }),
+    ]);
+    expect(lines.map((line) => `R${line.round} ${line.text}`)).toEqual([
+      "R1 Battle started",
+      "R2 Round 2 started",
+      "R3 Round 3 started",
+    ]);
+  });
+
+  it("keeps the round each later line fell in", () => {
+    const lines = feed([
+      event(1, "round_started", { round: 2, forced: false }),
+      event(2, "participant_finished_battle"),
+    ]);
+    expect(lines[1]).toMatchObject({ round: 2, text: "Cap finished his battle" });
+  });
+});
