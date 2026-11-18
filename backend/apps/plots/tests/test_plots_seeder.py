@@ -13,6 +13,7 @@ from apps.plots.models import Plot, PlotAchievement, PlotScoringLine
 from apps.plots.seeding import SeedResult, seed_book_plots
 
 MARIENBURG = "Mutiny in Marienburg"
+BORDER_TOWN = "Border Town Burning"
 RUNGS = (5, 10, 15, 20, 25, 35, 40)  # every book plot's ladder: there is no 30
 
 
@@ -37,11 +38,13 @@ def plot(**changes) -> dict:
 
 class PlotSeederTests(TestCase):
     setting: CampaignType
+    border_town: CampaignType
     result: SeedResult
 
     @classmethod
     def setUpTestData(cls) -> None:
         cls.setting = CampaignType.objects.create(slug="mutiny-in-marienburg", name=MARIENBURG, grade="2b")
+        cls.border_town = CampaignType.objects.create(slug="border-town-burning", name=BORDER_TOWN, grade="1c")
 
     def seed(self, *plots: dict, wrapped: bool = False) -> None:
         with TemporaryDirectory() as folder:
@@ -49,16 +52,47 @@ class PlotSeederTests(TestCase):
             (Path(folder) / "setting.json").write_text(json.dumps(body), encoding="utf-8")
             self.result = seed_book_plots(Path(folder))
 
-    def test_the_book_source_seeds_marienburgs_ten_plots_with_their_ladders(self):
+    def test_the_book_source_seeds_both_settings_plots_with_their_ladders(self):
         out = StringIO()
         call_command("seed_plots", stdout=out)
         plots = Plot.objects.filter(campaign__isnull=True)
-        self.assertEqual(plots.count(), 10)
-        self.assertEqual(len({row.name for row in plots}), 10)  # every plot is distinctly named
+        self.assertEqual(plots.count(), 19)
+        self.assertEqual(len({row.name for row in plots}), 19)  # every plot is distinctly named
         for row in plots:
-            self.assertEqual(row.campaign_type_id, self.setting.pk)
             self.assertEqual(tuple(row.achievements.values_list("points", flat=True)), RUNGS)
-        self.assertIn("Plots: 10", out.getvalue())
+        self.assertEqual(plots.filter(campaign_type=self.setting).count(), 10)
+        self.assertEqual(plots.filter(campaign_type=self.border_town).count(), 9)
+        self.assertIn("Plots: 19", out.getvalue())
+        self.assertIn("skipped: 0", out.getvalue())
+
+    def test_border_town_burnings_variants_name_the_plot_they_are_a_variant_of(self):
+        call_command("seed_plots", stdout=StringIO())
+        variants = Plot.objects.filter(campaign__isnull=True).exclude(variant_of="")
+        parents = dict(Plot.objects.filter(campaign__isnull=True).values_list("slug", "pk"))
+        self.assertEqual(
+            sorted(variants.values_list("slug", "variant_of")),
+            [
+                ("the-black-dwarfs", "the-lure-of-fortune"),
+                ("the-strangest-tribes-amazons", "the-damned-shall-burn"),
+                ("the-strangest-tribes-lizardmen", "the-damned-shall-burn"),
+            ],
+        )
+        for row in variants:
+            self.assertIn(row.variant_of, parents)
+
+    def test_border_town_burnings_alliance_bans_name_plots_of_the_same_setting(self):
+        call_command("seed_plots", stdout=StringIO())
+        slugs = set(Plot.objects.filter(campaign__isnull=True, campaign_type=self.border_town).values_list("slug", flat=True))  # fmt: skip
+        banned = {
+            row.slug: row.no_alliance_with
+            for row in Plot.objects.filter(campaign__isnull=True, campaign_type=self.border_town)
+            if row.no_alliance_with
+        }
+        self.assertEqual(len(banned), 4)
+        for slug, others in banned.items():
+            for other in others:
+                self.assertIn(other, slugs)
+                self.assertNotEqual(other, slug)
 
     def test_a_plot_keeps_its_scoring_lines_in_the_books_order_with_dice_and_negatives(self):
         self.seed(plot())
@@ -78,11 +112,11 @@ class PlotSeederTests(TestCase):
         self.assertEqual(PlotAchievement.objects.count(), 1)
 
     def test_a_plot_whose_setting_we_dont_hold_is_skipped_with_a_warning(self):
-        self.seed(plot(), plot(slug="the-shards", name="The Shards", setting="Border Town Burning"))
+        self.seed(plot(), plot(slug="the-shards", name="The Shards", setting="Albion"))
         self.assertEqual([row.slug for row in Plot.objects.all()], ["drowning-the-witch"])
         self.assertEqual(len(self.result.skipped), 1)
         self.assertIn("The Shards", self.result.skipped[0])
-        self.assertIn("'Border Town Burning' isn't seeded", self.result.skipped[0])
+        self.assertIn("'Albion' isn't seeded", self.result.skipped[0])
         self.assertEqual(self.result.plots, 1)
 
     def test_a_plot_the_sources_drop_is_archived_rather_than_deleted(self):
