@@ -17,8 +17,6 @@ import {
   resolveHero1d6Stat,
   resolveHero2d6Stat,
 } from "@/features/warbands/utils/levelup-utils";
-import { rollDie } from "@/lib/dice";
-
 /** One unit's line on the Experience tab: a hero, a hired sword, or a henchmen group. */
 export type XpRow = {
   key: string;
@@ -146,8 +144,19 @@ export function xpBlock(row: XpRow) {
 export function advancesWaiting(row: XpRow) {
   if (!row.canGainXp) return 0;
   const crossed = row.thresholds.filter((at) => at > row.from && at <= Math.floor(row.to)).length;
-  return Math.max(0, crossed - row.advances.length);
+  const rolled = row.advances.filter((advance) => !awaitsFollowUp(advance)).length;
+  return Math.max(0, crossed - rolled);
 }
+
+/**
+ * A hero's advance whose follow-up D6 hasn't been rolled or typed yet. The server takes it in the
+ * draft and leaves the level-up on his card if the battle is finalised with it still waiting.
+ */
+export const PENDING_ADVANCE = "Pending";
+const PENDING_LABEL = "Not rolled yet";
+
+/** An advance that still waits on its D6: its stat isn't known yet. */
+export const awaitsFollowUp = (advance: BattlePostbattleAdvance) => advance.id === PENDING_ADVANCE;
 
 /** How an advance reads: "+1 Toughness", "New skill", "The lad's got talent". */
 export function advanceLabel(id: string) {
@@ -158,8 +167,10 @@ export function advanceLabel(id: string) {
 }
 
 /**
- * The advance table's result for the 2D6 `faces` (rolled or typed), with the D6 that follows on a
- * 6, 8 or 9 for a hero rolled here (`withFollowUp` takes it typed over).
+ * The advance table's result for the 2D6 `faces` (rolled or typed). A hero's 6, 8 or 9 waits on its
+ * follow-up D6, which the app never rolls for him (William, 18 Nov 2026: "the second roll box that
+ * appears on certain level ups appears with a number already entered, it should be blank"), so it
+ * comes back pending until `withFollowUp` has the face he rolled or typed.
  */
 export function rollAdvance(group: boolean, at: number, faces: number[]): BattlePostbattleAdvance {
   const rolls = faces.slice(0, 2);
@@ -169,8 +180,7 @@ export function rollAdvance(group: boolean, at: number, faces: number[]): Battle
     const result = resolveHenchmen2d6Stat(total);
     id = result.ladsGotTalent ? "LGT" : result.stat;
   } else if (needsHero1d6Followup(total)) {
-    rolls.push(rollDie(6));
-    id = resolveHero1d6Stat(total, rolls[2]);
+    return { id: PENDING_ADVANCE, label: PENDING_LABEL, at, rolls };
   } else {
     id = resolveHero2d6Stat(total);
   }

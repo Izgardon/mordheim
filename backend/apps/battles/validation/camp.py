@@ -14,8 +14,9 @@ from .coerce import coerce_int
 
 MAX_ADVANCES = 20
 MAX_CAMP_ENTRIES = 20
-# What an Aftermath advance may be: a stat, a pending pick, or the lad's got talent (resolved from the card).
-ADVANCE_IDS = {"M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "Skill", "Spell", "Special", "LGT"}
+# What an Aftermath advance may be: a stat, a pending pick, the lad's got talent (resolved from the card), or
+# "Pending", a hero's 2D6 whose follow-up D6 the player hasn't rolled yet (left on his card at finalise).
+ADVANCE_IDS = {"M", "WS", "BS", "S", "T", "W", "I", "A", "Ld", "Skill", "Spell", "Special", "LGT", "Pending"}
 
 
 def _listed(value: Any, message: str) -> list:

@@ -5,7 +5,8 @@ Each is spent through the shared level-up service (`apply_advance`: the kind's a
 an advance), so the warband ends up as if the player had taken them on the card. A henchmen group's advances ride
 on its members' results; the first member's are the group's. The lad's got talent is left unspent, to be resolved
 from the group's card (the promotion picks a member and his hero advance). An advance the unit can't take (no
-level-up left, a dead unit, one gone since) is skipped with a warning: a guide, not a gatekeeper.
+level-up left, a dead unit, one gone since) is skipped with a warning: a guide, not a gatekeeper. So is one still
+waiting on its follow-up D6 ("Pending"), which the Aftermath never rolls for the player.
 """
 
 from typing import Any
@@ -20,6 +21,8 @@ from .context import FinaliseContext
 
 ADVANCE_SKIPPED = "advance_skipped"
 LADS_GOT_TALENT = "LGT"
+# A hero's 2D6 that still waits on its follow-up D6: nothing to spend, so the level-up stays on his card.
+PENDING = "Pending"
 
 
 def _skipped(name: str, label: str, reason: str) -> Warning:
@@ -69,6 +72,9 @@ def apply_advances(context: FinaliseContext, unit_results: dict[str, dict]) -> l
             label = advance["label"] or advance["id"]
             if unit is None or unit.dead:
                 warnings.append(_skipped(name, label, "the unit is no longer on the roster"))
+                continue
+            if advance["id"] == PENDING:
+                warnings.append(_skipped(name, label, "its D6 wasn't rolled, so the level-up is still on his card"))
                 continue
             try:
                 apply_advance(kind, context.warband, unit, _payload(name_key, name, advance))  # own savepoint

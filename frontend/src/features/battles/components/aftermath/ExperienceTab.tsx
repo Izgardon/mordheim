@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 
 import {
   advanceLabel,
+  awaitsFollowUp,
   rollAdvance,
   withAdvances,
   withCorrectedXp,
@@ -123,11 +124,11 @@ function XpCard({
           <span className="font-mono text-muted-foreground">
             2D6 {done.rolls.slice(0, 2).join(" · ")}
           </span>
-          {done.rolls.length > 2 ? (
+          {done.rolls.length > 2 || awaitsFollowUp(done) ? (
             <DiceEntry
               dice="D6"
               size="sm"
-              total={done.rolls[2]}
+              total={done.rolls[2] ?? null}
               onFaces={([face]) =>
                 onAdvances(
                   row.advances.map((entry, i) => (i === index ? withFollowUp(entry, face) : entry))
@@ -194,8 +195,9 @@ function XpCard({
 /**
  * Experience (design E): each unit's XP from the battle with its reasons, − and + to correct it,
  * the boxes of its current block, and Advance when a threshold is reached (its 2D6 rolled or typed
- * in, and a hero's follow-up D6 rolled again or typed over); the roll's result shows and the next
- * block follows, so a unit can advance twice. Saved with the draft and taken at Ready.
+ * in, and then a hero's follow-up D6 the same way, from an empty box: the app never rolls that one
+ * for him); the roll's result shows and the next block follows, so a unit can advance twice. Saved
+ * with the draft and taken at Ready.
  */
 export default function ExperienceTab({
   draft,

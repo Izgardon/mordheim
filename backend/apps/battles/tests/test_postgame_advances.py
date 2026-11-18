@@ -43,6 +43,18 @@ class AftermathAdvanceTests(RosterTestCase):
         self.assertEqual((marksmen.weapon_skill, marksmen.level_up), (4, 0))
         self.assertEqual(talent.level_up, 1)
 
+    def test_an_advance_still_waiting_on_its_d6_is_left_on_the_card(self):
+        """The Aftermath doesn't roll a hero's follow-up D6 for him (William, 18 Nov 2026), so an advance can
+        reach finalise unresolved: nothing is spent and the level-up stays on his card."""
+        hero = make_unit(HERO, self.warband, strength=3)
+        key = f"hero:{hero.id}"
+
+        answer = self.play_battle({key: 2}, {key: {"advances": [advance("Pending", 2, 5, 1)]}})
+
+        hero.refresh_from_db()
+        self.assertEqual((hero.strength, hero.level_up), (3, 1))
+        self.assertIn("advance_skipped", [warning["code"] for warning in answer["warnings"]])
+
     def test_an_advance_without_a_level_up_is_skipped_with_a_warning(self):
         hero = make_unit(HERO, self.warband, toughness=3)
         key = f"hero:{hero.id}"
@@ -73,6 +85,9 @@ class PostgameDraftTests(SimpleTestCase):
         self.assertEqual(draft["camp"]["veterans"], {"dice": [4, 5], "spent": 6})
         self.assertEqual(draft["camp"]["recruited"], [{"group": "The Dock Rats", "count": 2, "xp": 3}])
         self.assertNotIn("camp", normalize_postbattle({"unit_results": {}}))
+        # a hero's 2D6 whose follow-up D6 isn't rolled yet keeps its two dice
+        waiting = normalize_postbattle({"unit_results": {"hero:1": {"advances": [advance("Pending", 2, 5, 1)]}}})
+        self.assertEqual(waiting["unit_results"]["hero:1"]["advances"], [advance("Pending", 2, 5, 1)])
 
     def test_a_veterans_roll_is_two_dice_and_an_advance_names_a_known_one(self):
         with self.assertRaisesMessage(ValueError, "two dice"):

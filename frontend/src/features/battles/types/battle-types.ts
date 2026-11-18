@@ -149,9 +149,9 @@ export type BattlePostbattleUnitResult = {
 };
 
 /**
- * An advance rolled in the Aftermath: the advance id (a stat, Skill, Spell, Special, or LGT for
- * the lad's got talent, resolved from the card), the threshold it was for and the dice (2D6, then
- * the D6 that followed).
+ * An advance rolled in the Aftermath: the advance id (a stat, Skill, Spell, Special, LGT for the
+ * lad's got talent, resolved from the card, or Pending while a hero's follow-up D6 is still to be
+ * rolled or typed), the threshold it was for and the dice (2D6, then the D6 that followed).
  */
 export type BattlePostbattleAdvance = { id: string; label: string; at: number; rolls: number[] };
 
