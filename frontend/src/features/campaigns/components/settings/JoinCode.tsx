@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Copy } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { IconButton } from "@/components/ui/icon-button";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
 
@@ -53,19 +55,23 @@ export default function JoinCode({
   };
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-3", className)}>
-      <div className="flex flex-col gap-0.5">
-        <span className={CAPTION}>Join code</span>
+    <div className={cn("flex flex-col gap-0.5", className)}>
+      <span className={CAPTION}>Join code</span>
+      {/* the code, Copy beside it as its icon, New code against the far edge (William, 18 Nov 2026) */}
+      <div className="flex items-center gap-2">
         <span className="select-all font-mono text-xl font-bold tracking-[0.18em] text-head">
           {campaign.join_code}
         </span>
-      </div>
-      <div className="flex gap-2">
-        <Button size="sm" variant="secondary" onClick={() => void copy()}>
-          Copy
-        </Button>
+        <IconButton aria-label="Copy the join code" look="plain" onClick={() => void copy()}>
+          <Copy aria-hidden="true" />
+        </IconButton>
         {canRegenerate ? (
-          <Button size="sm" variant="secondary" onClick={() => setConfirming(true)}>
+          <Button
+            size="sm"
+            variant="secondary"
+            className="ml-auto"
+            onClick={() => setConfirming(true)}
+          >
             New code
           </Button>
         ) : null}
