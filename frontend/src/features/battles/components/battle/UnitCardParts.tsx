@@ -157,13 +157,15 @@ export function StatusReadout({
   status,
   wounds,
   max,
+  className,
 }: {
   status: UnitStatus;
   wounds: number;
   max: number;
+  className?: string;
 }) {
   return (
-    <div className="flex items-center gap-2">
+    <div className={cn("flex items-center gap-2", className)}>
       <span className={cn("border px-2 py-0.5 text-[11px] font-bold", STATUS_TONE[status])}>
         {STATUS_LABEL[status]}
       </span>

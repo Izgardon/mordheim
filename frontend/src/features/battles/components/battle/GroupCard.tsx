@@ -33,6 +33,8 @@ export type GroupCardActions = {
 
 type GroupCardProps = {
   entry: BattleGroupView;
+  /** The members whose status changed a moment ago: their tiles are marked briefly. */
+  recentKeys?: ReadonlySet<string>;
   onOpen: (tab: GearTab) => void;
   actions?: GroupCardActions;
 };
@@ -64,8 +66,11 @@ const TILE = "flex min-h-14 flex-col gap-px px-2 py-1.5 text-left text-ink";
  *
  * Another warband's group (no `actions`) shows the same profile, gear, rules and tiles, each
  * model's wounds as text and nothing that changes anything.
+ *
+ * A member in `recentKeys` wears a brief mark on his tile, which is both the model and the card's
+ * section holding his status (William, 12 Nov 2026).
  */
-export default function GroupCard({ entry, onOpen, actions }: GroupCardProps) {
+export default function GroupCard({ entry, recentKeys, onOpen, actions }: GroupCardProps) {
   const { group, members } = entry;
   const kills = members.reduce((sum, member) => sum + member.kills, 0);
   const allOut = members.every((member) => member.status === "out_of_action");
@@ -116,7 +121,11 @@ export default function GroupCard({ entry, onOpen, actions }: GroupCardProps) {
         {members.map((member) => (
           <div
             key={member.unit.key}
-            className={cn("flex flex-col border", STATUS_TONE[member.status])}
+            className={cn(
+              "flex flex-col border",
+              STATUS_TONE[member.status],
+              recentKeys?.has(member.unit.key) && "status-flash"
+            )}
           >
             {actions ? (
               <button

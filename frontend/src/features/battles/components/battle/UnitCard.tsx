@@ -33,6 +33,8 @@ type UnitCardProps = {
   view: BattleUnitView;
   /** "Champion · hired sword": the type line under the name. */
   typeLine: string;
+  /** His status changed a moment ago: the card and its status row are marked briefly. */
+  recent?: boolean;
   onOpen: (tab: GearTab) => void;
   actions?: UnitCardActions;
 };
@@ -45,8 +47,11 @@ type UnitCardProps = {
  *
  * Another warband's unit (no `actions`) shows the same profile, mount, gear, skills and rules, with
  * its status and wounds as text and no control that changes anything.
+ *
+ * `recent` marks the model and its status row for a moment after the status changes (William, 12
+ * Nov 2026); the mark clears itself, whoever changed it.
  */
-export default function UnitCard({ view, typeLine, onOpen, actions }: UnitCardProps) {
+export default function UnitCard({ view, typeLine, recent, onOpen, actions }: UnitCardProps) {
   const { unit, status } = view;
   const out = status === "out_of_action";
   const note = view.info?.notes?.trim() ?? "";
@@ -55,7 +60,8 @@ export default function UnitCard({ view, typeLine, onOpen, actions }: UnitCardPr
       aria-label={unit.displayName}
       className={cn(
         "flex flex-col gap-[9px] border bg-surface px-3 py-[11px]",
-        out ? "border-danger-line" : "border-border"
+        out ? "border-danger-line" : "border-border",
+        recent && "status-flash"
       )}
     >
       <div className="flex items-center justify-between gap-2">
@@ -116,7 +122,7 @@ export default function UnitCard({ view, typeLine, onOpen, actions }: UnitCardPr
         </div>
       ) : null}
       {actions ? (
-        <div className="flex items-center gap-1.5">
+        <div className={cn("flex items-center gap-1.5", recent && "status-flash")}>
           <StatusButton
             name={unit.displayName}
             status={status}
@@ -132,7 +138,12 @@ export default function UnitCard({ view, typeLine, onOpen, actions }: UnitCardPr
           />
         </div>
       ) : (
-        <StatusReadout status={status} wounds={view.wounds} max={view.maxWounds} />
+        <StatusReadout
+          status={status}
+          wounds={view.wounds}
+          max={view.maxWounds}
+          className={recent ? "status-flash" : undefined}
+        />
       )}
       <QuickRow
         unit={unit}

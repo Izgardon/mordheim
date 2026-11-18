@@ -604,7 +604,32 @@ table thead th {
   }
 }
 
+/* A battle model whose status just changed (UnitCard, GroupCard): one short mark on the model and
+   on its card's status section. The mark fades itself and the card drops it on a timer, so a
+   status cycled three times quickly restarts the one mark instead of stacking three. */
+.status-flash {
+  animation: status-flash 1500ms ease-out both;
+}
+
+@keyframes status-flash {
+  0% {
+    box-shadow: 0 0 0 2px var(--color-accent);
+  }
+  60% {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
+  /* no fade: the mark simply sits there until the card drops it */
+  .status-flash {
+    animation: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 55%, transparent);
+  }
+
   .xp-level-up,
   .xp-level-up::after,
   .advance-pop {

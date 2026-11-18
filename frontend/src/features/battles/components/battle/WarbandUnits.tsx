@@ -4,6 +4,7 @@ import type { PrebattleUnit } from "@/features/battles/components/prebattle/preb
 import { cn } from "@/lib/utils";
 
 import {
+  allViews,
   battleSectionLabel,
   canScore,
   distinctType,
@@ -13,6 +14,7 @@ import {
 import GroupCard from "./GroupCard";
 import UnitCard from "./UnitCard";
 import type { GearTab } from "./UnitCardParts";
+import { useRecentStatus } from "./use-recent-status";
 
 const TYPE_SUFFIX: Record<string, string> = {
   hireling: "hired sword",
@@ -39,6 +41,9 @@ export type WarbandUnitActions = {
  * One warband's units in the fight: its heroes, hired swords, animals, henchmen groups and
  * temporary units as cards under a heading each (William, 12 Nov 2026: sectioned "by unit type"),
  * and Add a unit at the end of your own. An empty section has no heading.
+ *
+ * A model whose status has just changed is marked for a moment, whoever changed it
+ * (`useRecentStatus`).
  */
 export default function WarbandUnits({
   sections,
@@ -51,10 +56,14 @@ export default function WarbandUnits({
   onOpen: (unit: PrebattleUnit, tab: GearTab) => void;
   actions?: WarbandUnitActions;
 }) {
+  const recent = useRecentStatus(
+    allViews(sections).map((view) => [view.unit.key, view.status] as const)
+  );
   const card = (view: BattleUnitView) => (
     <UnitCard
       key={view.unit.key}
       view={view}
+      recent={recent.has(view.unit.key)}
       typeLine={[distinctType(view.unit), TYPE_SUFFIX[view.unit.kind]].filter(Boolean).join(" · ")}
       onOpen={(tab) => onOpen(view.unit, tab)}
       actions={
@@ -82,6 +91,7 @@ export default function WarbandUnits({
         <GroupCard
           key={entry.group.id}
           entry={entry}
+          recentKeys={recent}
           onOpen={(tab) => onOpen(entry.members[0].unit, tab)}
           actions={
             actions && {
