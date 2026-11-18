@@ -46,6 +46,10 @@ class Campaign(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    # the published campaign it plays (apps/campaign_presets), which dictates its rules; null: none picked
+    preset = models.ForeignKey(
+        "campaign_presets.CampaignPreset", related_name="campaigns", null=True, blank=True, on_delete=models.SET_NULL
+    )
     # the settings in play: the ones its owner ticked, and the always-on ones (grading phase 1)
     campaign_types: models.ManyToManyField = models.ManyToManyField(
         "CampaignType", through="CampaignCampaignType", related_name="campaigns", blank=True

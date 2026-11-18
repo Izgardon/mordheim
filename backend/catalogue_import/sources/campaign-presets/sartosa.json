@@ -1,0 +1,9 @@
+{
+  "slug": "sartosa",
+  "name": "Sartosa",
+  "sort_order": 13,
+  "settings": [
+    "Sartosa"
+  ],
+  "exploration_chart": "sartosa"
+}

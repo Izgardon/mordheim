@@ -4,6 +4,7 @@ from typing import Any
 
 from django.db import transaction
 
+from apps.campaign_presets.services import apply as presets_apply
 from apps.core.catalogue.cache import bump
 from apps.plots.writes import give_default_plots
 
@@ -32,7 +33,9 @@ SETTINGS_FIELDS = (
 
 
 START_FIELDS = frozenset({"in_progress"})
-UPDATE_FIELDS = frozenset({*START_FIELDS, *SETTINGS_FIELDS, "name", "setting_ids", starting_gold.ADJUST_FLAG})
+UPDATE_FIELDS = frozenset(
+    {*START_FIELDS, *SETTINGS_FIELDS, "name", "setting_ids", "preset_id", starting_gold.ADJUST_FLAG}
+)
 
 
 def rule_for(data: Any) -> str:
@@ -50,15 +53,25 @@ def update_campaign(campaign: Campaign, validated: dict[str, Any]) -> list[dict[
     old_gold = starting_gold.changed_from(campaign, validated)
     settings_updates = {field: validated[field] for field in SETTINGS_FIELDS if field in validated}
     picked = validated.get("setting_ids")
+    picked_ids = None if picked is None else [row.pk for row in picked]
+    # the published campaign it plays: what it dictates is applied, then what this request sends, which wins; the
+    # settings it guides towards are ticked on top of the campaign's own, and its rules are offered, never copied
+    preset = validated.get("preset_id") if "preset_id" in validated else None
+    if preset is not None:
+        settings_updates = {**presets_apply.settings_values(preset), **settings_updates}
+        picked_ids = presets_apply.ticked_with(campaign.pk, preset, picked_ids)
     with transaction.atomic():
+        if "preset_id" in validated:
+            campaign.preset = preset
+            campaign.save(update_fields=["preset"])
         if "in_progress" in validated:
             campaign.in_progress = validated["in_progress"]
             campaign.save(update_fields=["in_progress"])
         if "name" in validated:  # a rename (the owner, next step 7b)
             campaign.name = validated["name"]
             campaign.save(update_fields=["name"])
-        if picked is not None:  # the settings in play (grading phase 1): every catalogue list's in_play changes
-            set_settings(campaign, [row.pk for row in picked])
+        if picked_ids is not None:  # the settings in play (grading phase 1): every list's in_play changes
+            set_settings(campaign, picked_ids)
             bump(campaign.id)  # no catalogue.changed: the pages read the lists again on campaign.updated
         if not settings_updates:
             return []

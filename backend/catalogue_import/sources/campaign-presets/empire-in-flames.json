@@ -1,0 +1,9 @@
+{
+  "slug": "empire-in-flames",
+  "name": "Empire in Flames",
+  "sort_order": 5,
+  "settings": [
+    "Empire in Flames"
+  ],
+  "exploration_chart": "empire-in-flames"
+}

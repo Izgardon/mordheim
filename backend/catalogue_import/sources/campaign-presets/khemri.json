@@ -1,0 +1,9 @@
+{
+  "slug": "khemri",
+  "name": "Khemri",
+  "sort_order": 7,
+  "settings": [
+    "Khemri 1b"
+  ],
+  "exploration_chart": "khemri"
+}

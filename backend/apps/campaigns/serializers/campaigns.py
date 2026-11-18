@@ -5,6 +5,7 @@ from typing import Any
 from django.db.models import Q
 from rest_framework import serializers
 
+from apps.campaign_presets.models import CampaignPreset
 from apps.exploration.models import ExplorationChart
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 from apps.warbands.utils.henchmen_level import normalize_henchmen_level_thresholds
@@ -21,6 +22,12 @@ def wyrdstone_prices_field(**kwargs: Any) -> Any:
     price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE)
     row = serializers.ListField(child=price, min_length=len(SIZE_BANDS), max_length=len(SIZE_BANDS))
     return serializers.ListField(child=row, min_length=SHARD_ROWS, max_length=SHARD_ROWS, **kwargs)
+
+
+def preset_field() -> Any:
+    """The published campaign being played (apps/campaign_presets), by id: one only, and null for none. What it
+    dictates is applied at once; the settings it names are a guide, ticked on top of the campaign's own."""
+    return serializers.PrimaryKeyRelatedField(queryset=CampaignPreset.objects.all(), required=False, allow_null=True)
 
 
 def setting_ids_field() -> Any:
@@ -62,6 +69,8 @@ class CampaignSerializer(serializers.ModelSerializer):
     # the exploration chart the post-game explores by (apps/exploration); null: the book's Mordheim chart
     exploration_chart_id = serializers.IntegerField(source="settings.exploration_chart_id", read_only=True)
     setting_ids = serializers.SerializerMethodField()  # the settings in play (grading phase 1)
+    # the published campaign it plays, which dictates its rules (apps/campaign_presets); null: none picked
+    preset_id = serializers.IntegerField(read_only=True, allow_null=True)
 
     def get_setting_ids(self, obj) -> list[int]:
         return sorted(link.campaign_type_id for link in obj.campaign_type_links.all())
@@ -89,6 +98,7 @@ class CampaignSerializer(serializers.ModelSerializer):
             "enable_blood_pacts",
             "exploration_chart_id",
             "setting_ids",
+            "preset_id",
             "in_progress",
             "archived_at",
             "player_count",
@@ -128,11 +138,13 @@ class CampaignCreateSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=120)
     # the settings in play: these, else the preset's (every setting at or below its grade; Up to 1c by default)
     setting_ids = setting_ids_field()
-    preset = serializers.ChoiceField(choices=GRADES, required=False)
-    enable_encampments = serializers.BooleanField(default=False)
-    enable_locations = serializers.BooleanField(default=False)
+    preset = serializers.ChoiceField(choices=GRADES, required=False)  # the content grade, not the campaign preset
+    preset_id = preset_field()  # the published campaign it plays, whose structural settings it starts on
+    # left out, the preset's value stands (and 500 gc, 6 heroes and the pages off where it says nothing either)
+    enable_encampments = serializers.BooleanField(required=False)
+    enable_locations = serializers.BooleanField(required=False)
     max_players = serializers.IntegerField(default=8)
-    max_heroes = serializers.IntegerField(default=6, min_value=0, max_value=SMALLINT_MAX)
+    max_heroes = serializers.IntegerField(required=False, min_value=0, max_value=SMALLINT_MAX)
     max_hired_swords = serializers.IntegerField(default=3, min_value=0, max_value=SMALLINT_MAX)
     max_games = serializers.IntegerField(default=10, min_value=0, max_value=SMALLINT_MAX)
     starting_gold = serializers.IntegerField(default=500, min_value=0, max_value=MAX_TRADE_PRICE)
@@ -168,6 +180,7 @@ class CampaignUpdateSerializer(serializers.Serializer):
         allow_empty=False,
     )
     setting_ids = setting_ids_field()  # the settings in play, replacing them
+    preset_id = preset_field()  # the published campaign it plays: changeable at any time, re-applying what it sets
     adjust_existing_warbands = serializers.BooleanField(required=False)  # with a new starting_gold (BUG-78)
     default_resource_name = serializers.CharField(required=False, max_length=120)  # renames every warband's
     wyrdstone_prices = wyrdstone_prices_field(required=False)  # the whole table (William, 8 Nov 2026)

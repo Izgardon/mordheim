@@ -1,0 +1,9 @@
+{
+  "slug": "karak-azgal",
+  "name": "Karak Azgal",
+  "sort_order": 15,
+  "settings": [
+    "Karak Azgal"
+  ],
+  "exploration_chart": "karak-azgal"
+}

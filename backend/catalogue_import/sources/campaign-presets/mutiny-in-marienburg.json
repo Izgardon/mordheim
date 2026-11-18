@@ -1,0 +1,16 @@
+{
+  "slug": "mutiny-in-marienburg",
+  "name": "Mutiny in Marienburg",
+  "sort_order": 12,
+  "settings": [
+    "Mutiny in Marienburg"
+  ],
+  "exploration_chart": "mutiny-in-marienburg",
+  "enable_locations": true,
+  "enable_encampments": true,
+  "enable_campaign_points": true,
+  "enable_blood_pacts": true,
+  "max_heroes": 6,
+  "hero_death_roll": "d66",
+  "rules": "mutiny-in-marienburg"
+}

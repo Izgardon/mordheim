@@ -1,0 +1,9 @@
+{
+  "slug": "lustria",
+  "name": "Lustria",
+  "sort_order": 6,
+  "settings": [
+    "Lustria"
+  ],
+  "exploration_chart": "lustria"
+}

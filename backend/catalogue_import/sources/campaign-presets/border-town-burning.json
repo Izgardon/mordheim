@@ -1,0 +1,9 @@
+{
+  "slug": "border-town-burning",
+  "name": "Border Town Burning",
+  "sort_order": 10,
+  "settings": [
+    "Border Town Burning"
+  ],
+  "exploration_chart": "border-town-burning"
+}

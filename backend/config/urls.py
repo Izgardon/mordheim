@@ -20,4 +20,5 @@ urlpatterns = [
     path("api/", include("apps.warband_templates.urls")),
     path("api/", include("apps.exploration.urls")),
     path("api/", include("apps.plots.urls")),
+    path("api/", include("apps.campaign_presets.urls")),
 ]

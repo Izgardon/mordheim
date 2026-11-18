@@ -1,0 +1,9 @@
+{
+  "slug": "albion",
+  "name": "Albion",
+  "sort_order": 18,
+  "settings": [
+    "Albion"
+  ],
+  "exploration_chart": "albion"
+}

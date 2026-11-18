@@ -1,0 +1,122 @@
+"""The campaign presets, seeded from the catalogue import's sources (apps/campaign_presets/seeding.py)."""
+
+import json
+from io import StringIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+from django.core.management import call_command
+from django.core.management.base import CommandError
+from django.test import TestCase
+
+from apps.campaign_presets.models import CampaignPreset, CampaignPresetRule
+from apps.campaign_presets.seeding import SeedResult, seed_presets
+from apps.campaigns.models import CampaignType
+from apps.exploration.models import ExplorationChart
+
+MARIENBURG = "Mutiny in Marienburg"
+
+
+class PresetSeederTests(TestCase):
+    result: SeedResult
+    mordheim: CampaignType
+    setting: CampaignType
+    chart: ExplorationChart
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.mordheim = CampaignType.objects.create(slug="mordheim", name="Mordheim 1a", grade="1a", always_on=True)
+        cls.setting = CampaignType.objects.create(slug="mutiny-in-marienburg", name=MARIENBURG, grade="2b")
+        cls.chart = ExplorationChart.objects.create(slug="mutiny-in-marienburg", name="Wasteland Exploration")
+
+    def seed(self, *presets: dict, rules: dict[str, list[dict]] | None = None) -> None:
+        with TemporaryDirectory() as presets_folder, TemporaryDirectory() as rules_folder:
+            for entry in presets:
+                (Path(presets_folder) / f"{entry['slug']}.json").write_text(json.dumps(entry), encoding="utf-8")
+            for name, rows in (rules or {}).items():
+                (Path(rules_folder) / f"{name}.json").write_text(json.dumps({"rules": rows}), encoding="utf-8")
+            self.result = seed_presets(Path(presets_folder), Path(rules_folder))
+
+    def test_the_real_sources_seed_every_published_campaign_and_marienburgs_rules(self) -> None:
+        call_command("seed_settings", stdout=StringIO())
+        call_command("seed_exploration_charts", stdout=StringIO())
+        out = StringIO()
+        call_command("seed_campaign_presets", stdout=out)
+        self.assertIn("skipped: 0", out.getvalue())
+        presets = {preset.slug: preset for preset in CampaignPreset.objects.all()}
+        self.assertEqual(len(presets), 15)
+        marienburg = presets["mutiny-in-marienburg"]
+        self.assertEqual(
+            (
+                marienburg.enable_locations,
+                marienburg.enable_encampments,
+                marienburg.enable_campaign_points,
+                marienburg.enable_blood_pacts,
+                marienburg.max_heroes,
+                marienburg.hero_death_roll,
+                marienburg.exploration_chart_id,
+            ),
+            (True, True, True, True, 6, "d66", ExplorationChart.objects.get(slug="mutiny-in-marienburg").pk),
+        )
+        self.assertEqual([setting.name for setting in marienburg.settings.all()], [MARIENBURG])
+        self.assertEqual(marienburg.rules.count(), 18)
+        self.assertEqual([rule.title for rule in marienburg.rules.all()][0], "Campaign points")
+
+    def test_mordheims_preset_dictates_nothing_and_names_no_settings(self) -> None:
+        call_command("seed_settings", stdout=StringIO())
+        call_command("seed_exploration_charts", stdout=StringIO())
+        call_command("seed_campaign_presets", stdout=StringIO())
+        mordheim = CampaignPreset.objects.get(slug="mordheim")
+        self.assertEqual(
+            [
+                mordheim.enable_locations,
+                mordheim.enable_encampments,
+                mordheim.enable_campaign_points,
+                mordheim.enable_blood_pacts,
+                mordheim.max_heroes,
+                mordheim.exploration_chart_id,
+            ],
+            [None, None, None, None, None, None],
+        )
+        self.assertEqual((mordheim.hero_death_roll, mordheim.settings.count(), mordheim.rules.count()), ("", 0, 0))
+
+    def test_a_field_left_out_stays_null_rather_than_taking_the_apps_default(self) -> None:
+        self.seed({"slug": "sartosa", "name": "Sartosa", "settings": ["Mutiny in Marienburg"]})
+        preset = CampaignPreset.objects.get(slug="sartosa")
+        self.assertEqual((preset.enable_locations, preset.max_heroes, preset.hero_death_roll), (None, None, ""))
+        self.assertEqual(self.result.presets, 1)
+
+    def test_a_preset_naming_a_setting_we_dont_hold_is_skipped_with_a_warning(self) -> None:
+        self.seed({"slug": "albion", "name": "Albion", "settings": ["Albion"]})
+        self.assertEqual(CampaignPreset.objects.count(), 0)
+        self.assertEqual(self.result.skipped, ["Albion: the setting 'Albion' isn't seeded; the preset is skipped."])
+
+    def test_a_preset_naming_a_chart_we_dont_hold_is_skipped_rather_than_seeded_without_one(self) -> None:
+        self.seed({"slug": "lustria", "name": "Lustria", "exploration_chart": "lustria"})
+        self.assertEqual(CampaignPreset.objects.count(), 0)
+        self.assertIn("the exploration chart 'lustria' isn't seeded", self.result.skipped[0])
+
+    def test_a_preset_whose_rules_file_is_missing_is_skipped_and_the_others_still_seed(self) -> None:
+        self.seed(
+            {"slug": "mordheim", "name": "Mordheim"},
+            {"slug": "sylvania", "name": "Sylvania", "rules": "sylvania"},
+        )
+        self.assertEqual([preset.slug for preset in CampaignPreset.objects.all()], ["mordheim"])
+        self.assertIn("its rules file sylvania.json isn't there", self.result.skipped[0])
+
+    def test_a_second_run_rewrites_the_rules_and_the_settings_rather_than_adding_them(self) -> None:
+        body = {"slug": "mim", "name": MARIENBURG, "settings": [MARIENBURG], "rules": "mim"}
+        self.seed(body, rules={"mim": [{"title": "Cargo", "text": "Crates."}]})
+        self.seed({**body, "settings": []}, rules={"mim": [{"title": "Prisoners", "text": "Ransom."}]})
+        preset = CampaignPreset.objects.get(slug="mim")
+        self.assertEqual([rule.title for rule in preset.rules.all()], ["Prisoners"])
+        self.assertEqual((CampaignPresetRule.objects.count(), preset.settings.count()), (1, 0))
+
+    def test_an_unknown_field_stops_the_run_rather_than_being_ignored(self) -> None:
+        with self.assertRaises(CommandError) as refused:
+            self.seed({"slug": "mim", "name": MARIENBURG, "starting_gold": 600})
+        self.assertIn("unknown fields: starting_gold", str(refused.exception))
+
+    def test_a_death_roll_outside_the_tables_stops_the_run(self) -> None:
+        with self.assertRaises(CommandError):
+            self.seed({"slug": "mim", "name": MARIENBURG, "hero_death_roll": "d20"})
