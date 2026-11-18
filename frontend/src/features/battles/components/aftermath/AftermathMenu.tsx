@@ -3,7 +3,6 @@ import { useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { MoreMenu } from "@/components/ui/more-menu";
 import { confirmBattlePostbattle } from "@/features/battles/api/battles-api";
-import { useClosePostbattle } from "@/features/battles/hooks/useClosePostbattle";
 import { useRefreshOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import type { PostgameBattle } from "@/features/battles/hooks/usePostgameBattle";
 import type { BattleState } from "@/features/battles/types/battle-types";
@@ -11,9 +10,10 @@ import { getErrorMessage } from "@/lib/get-error-message";
 import { useAppStore } from "@/stores/app-store";
 
 /**
- * The Aftermath's ⋯ menu: Skip post-battle (your part done, nothing from the page applied) and,
- * for the battle's creator or a battle manager, Close post-battle (ends it for everyone still in
- * theirs, BUG-09). Both ask first; the page then leaves for the warband.
+ * The Aftermath's ⋯ menu: Skip aftermath, which finishes your part of the battle (William,
+ * 18 Nov 2026: "skip post battle should just become skip aftermath"). It asks first; the page then
+ * leaves for the warband. Nobody ends another player's post-battle from here: closing one is a
+ * battle manager's, in Settings → Battles.
  */
 export default function AftermathMenu({
   battle,
@@ -34,7 +34,6 @@ export default function AftermathMenu({
     void refreshOpenBattles();
     battle.applyBattleResponse(next);
   };
-  const closing = useClosePostbattle({ campaignId, battleId, onClosed: done });
 
   const skip = async () => {
     setSkipping(true);
@@ -44,22 +43,20 @@ export default function AftermathMenu({
       setSkipOpen(false);
       done(next);
     } catch (error) {
-      setSkipError(getErrorMessage(error, "Unable to skip the post-battle"));
+      setSkipError(getErrorMessage(error, "Unable to skip the aftermath"));
     } finally {
       setSkipping(false);
     }
   };
+  // What a Next has already handed over stays in the warband; only the rest is given up.
+  const applied = battle.participant?.postbattle_json?.aftermath?.applied ?? [];
+  const kept = applied.length ? " The steps you have already confirmed stay in your warband." : "";
 
   return (
     <>
       <MoreMenu
         label="More post-battle actions"
-        entries={[
-          { label: "Skip post-battle", onSelect: () => setSkipOpen(true) },
-          ...(battle.capabilities?.close_postbattle
-            ? [{ label: "Close post-battle", onSelect: () => closing.openChange(true) }]
-            : []),
-        ]}
+        entries={[{ label: "Skip aftermath", onSelect: () => setSkipOpen(true) }]}
       />
       <ConfirmDialog
         open={skipOpen}
@@ -67,22 +64,12 @@ export default function AftermathMenu({
           setSkipOpen(open);
           setSkipError("");
         }}
-        title="Skip post-battle"
-        description="Skip your post-battle? Nothing from this page is applied: no experience, injuries, finds or shards. You are ready for the next battle."
-        confirmText={skipping ? "Skipping…" : "Skip post-battle"}
+        title="Skip aftermath"
+        description={`Skip the rest of your aftermath? Nothing else from this page is applied: no experience, injuries, finds or shards.${kept} You are ready for the next battle.`}
+        confirmText={skipping ? "Skipping…" : "Skip aftermath"}
         isConfirming={skipping}
         error={skipError}
         onConfirm={() => void skip()}
-      />
-      <ConfirmDialog
-        open={closing.isOpen}
-        onOpenChange={closing.openChange}
-        title="Close post-battle"
-        description="Close the post-battle for everyone? Players who haven't finished theirs keep nothing from it, and the battle ends."
-        confirmText={closing.isClosing ? "Closing…" : "Close post-battle"}
-        isConfirming={closing.isClosing}
-        error={closing.error}
-        onConfirm={() => void closing.close()}
       />
     </>
   );

@@ -2,6 +2,7 @@ import { apiRequest } from "@/lib/api-client";
 import { realtimeSocketId } from "@/lib/realtime/client";
 
 import type {
+  AftermathStep,
   BattleCreatureStatus,
   BattleCustomUnit,
   BattleCreatePayload,
@@ -299,7 +300,20 @@ export function saveBattlePostbattleDraft(
   return battleWrite(campaignId, battleId, "postbattle/", payload);
 }
 
-/** Ready: applies the draft sent, or (no payload: starting a battle readies you up) the saved one. */
+/**
+ * Next on an aftermath step: the step's results go to the warband there and then (William,
+ * 18 Nov 2026). Idempotent: a step already applied only saves the draft again.
+ */
+export function applyAftermathStep(
+  campaignId: number,
+  battleId: number,
+  step: AftermathStep,
+  payload: { postbattle_json: BattlePostbattleState }
+) {
+  return battleWrite(campaignId, battleId, "postbattle-step/", { step, ...payload });
+}
+
+/** Ready: applies what is left of the aftermath, charges upkeep and finishes your part. */
 export function finalizeBattlePostbattle(
   campaignId: number,
   battleId: number,
@@ -316,7 +330,7 @@ export function closePostbattle(campaignId: number, battleId: number) {
   return battleWrite(campaignId, battleId, "close-postbattle/");
 }
 
-/** Skips your postbattle: nothing from the page is applied (`skip-postbattle/`; `confirm/` is gone). */
+/** Skip aftermath: nothing more from the page is applied, and you are ready for the next battle. */
 export function confirmBattlePostbattle(campaignId: number, battleId: number) {
   return battleWrite(campaignId, battleId, "skip-postbattle/");
 }

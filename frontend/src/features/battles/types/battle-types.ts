@@ -196,6 +196,20 @@ export type BattlePostbattleFinds = {
   items: BattlePostbattleFindItem[];
 };
 
+/** The aftermath's three steps, in the order the page walks them. */
+export type AftermathStep = "injuries" | "xp" | "explore";
+
+/**
+ * What the aftermath has already handed over to the warband (the server's own record, never sent):
+ * the steps applied as the player pressed Next, when his aftermath was finished, and what the
+ * explore step gave him.
+ */
+export type BattlePostbattleApplied = {
+  applied: AftermathStep[];
+  done_at: string | null;
+  received: { shards?: number; resource?: string | null; gold?: number; items?: number };
+};
+
 export type BattlePostbattleState = {
   exploration: BattlePostbattleExploration;
   finds: BattlePostbattleFinds;
@@ -208,6 +222,8 @@ export type BattlePostbattleState = {
   mount_survival?: Record<string, BattlePostbattleMountSurvival>;
   /** The camp's record: the veterans' XP pool, what was sold and recruited. */
   camp?: BattlePostgameCamp;
+  /** Server-kept: the steps already applied to the warband. Ignored on input. */
+  aftermath?: BattlePostbattleApplied;
 };
 
 export type BattlePostgameCamp = {

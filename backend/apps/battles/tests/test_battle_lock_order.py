@@ -87,6 +87,11 @@ class BattleLockOrderTests(BattleTestCase):
                 "postbattle",
                 {"postbattle_json": draft({key: unit_result(key) for key in self.fixture.keys})},
             ),  # fmt: skip
+            (
+                self.player,
+                "postbattle-step",
+                {"step": "injuries", "postbattle_json": draft({key: unit_result(key) for key in self.fixture.keys})},
+            ),  # fmt: skip
             (self.viewer, "skip-postbattle", {}),
             (
                 self.player,
@@ -109,6 +114,18 @@ class BattleLockOrderTests(BattleTestCase):
 
         units = ["hero", "hireling", "henchman", "henchmen_group"]
         self.assertEqual(transactions, [["battle_participant", "warband", *units, "hero_item"], ["battle"]])
+
+    def test_an_aftermath_step_holds_the_players_rows_and_never_the_battle_row(self):
+        # William, 18 Nov 2026: Next applies the step. It takes the locks the first half of Ready does, so it can't
+        # deadlock with a write that locks the battle first (services/locks.py).
+        battle_id = self.to_active({self.player: self.fixture.keys, self.viewer: [self.r]})
+        self.finish(battle_id, [self.warband])
+        body = {"step": "injuries", "postbattle_json": draft({key: unit_result(key) for key in self.fixture.keys})}
+
+        transactions = self.locks(self.player, "postbattle-step", battle_id, body)
+
+        units = ["hero", "hireling", "henchman", "henchmen_group"]
+        self.assertEqual(transactions, [["battle_participant", "warband", *units]])
 
     def test_closing_postbattle_locks_the_battle_then_the_players_it_skips(self):
         battle_id = self.to_postbattle({self.player: [self.h], self.viewer: [self.r]})

@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import type { PostgameBattle } from "@/features/battles/hooks/usePostgameBattle";
-import { usePostgameDraft } from "@/features/battles/hooks/usePostgameDraft";
+import { usePostgameDraft, type PostgameDraft } from "@/features/battles/hooks/usePostgameDraft";
 import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
 import { numberedOr } from "@/features/battles/utils/battle-number";
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 
 import AftermathAside, { opponentsOf, resultText } from "./AftermathAside";
 import { AFTERMATH_BODY, AFTERMATH_MAIN } from "./aftermath-layout";
+import { receivedLine } from "./aftermath-locks";
 import AftermathHeader, { AFTERMATH_TABS, type AftermathTab } from "./AftermathHeader";
 import AftermathMenu from "./AftermathMenu";
 import AftermathSkeleton from "./AftermathSkeleton";
@@ -25,6 +26,7 @@ import ExploreTab from "./ExploreTab";
 import FindsCard from "./FindsCard";
 import InjuriesTab from "./InjuriesTab";
 import ResultsBanner from "./ResultsBanner";
+import SettledNote from "./SettledNote";
 import StatChangesCard from "./StatChangesCard";
 
 type AftermathBodyProps = {
@@ -41,7 +43,25 @@ function exploreWhy(state: BattleState, me: BattleParticipant, onFeet: number) {
   return `${onFeet} ${onFeet === 1 ? "hero" : "heroes"} on their feet${won ? ", +1 for winning" : ""}`;
 }
 
-/** The Aftermath of a loaded battle (design E): three tabs saved as you go, then camp. */
+/**
+ * Over a step already applied: what it gave the warband, and where to change it now (William,
+ * 18 Nov 2026). The injuries and experience are still editable here and change the battle's
+ * record; the gold and items found are read-only, and the exploration dice may still be corrected.
+ */
+function settled(tab: AftermathTab, locks: PostgameDraft["locks"]) {
+  if (tab === "injuries" && locks.injuries) {
+    return "These injuries are in your warband. A change here only corrects the battle's record: change a unit on his card.";
+  }
+  if (tab === "xp" && locks.xp) {
+    return "This experience and these advances are in your warband. A change here only corrects the battle's record: change a unit on his card.";
+  }
+  if (tab === "explore" && locks.explore) {
+    return `${receivedLine(locks.received)} already went to your warband. Sell or move an item from the stash, and change gold in the warband's ledger; the dice can still be corrected.`;
+  }
+  return null;
+}
+
+/** The Aftermath of a loaded battle (design E): three tabs, each applied when you leave it. */
 export default function AftermathBody({
   campaign,
   battle,
@@ -71,6 +91,7 @@ export default function AftermathBody({
     setTab(next);
   };
   const [readPlace, setReadPlace] = useState<string | null>(null);
+  const navigate = useNavigate();
   const { drafting, explore } = postgame;
   const { draft, persistDraft } = drafting;
   const warbandPath = `/campaigns/${campaignId}/warband`;
@@ -91,6 +112,7 @@ export default function AftermathBody({
     (entry) => entry.unit_kind === "hero" && !entry.out_of_action
   ).length;
 
+  const note = settled(tab, postgame.locks);
   const content =
     tab === "injuries" ? (
       <InjuriesTab
@@ -124,11 +146,24 @@ export default function AftermathBody({
           isMobile={isMobile}
           onReadAndRoll={campaign?.enable_locations ? setReadPlace : undefined}
         />
-        <FindsCard campaignId={campaignId} drafting={drafting} isMobile={isMobile} />
+        <FindsCard
+          campaignId={campaignId}
+          drafting={drafting}
+          isMobile={isMobile}
+          settled={postgame.locks.explore}
+        />
       </>
     );
   const back = () => (index > 0 ? step(AFTERMATH_TABS[index - 1].id) : undefined);
   const next = AFTERMATH_TABS[index + 1];
+  // Next applies the step it leaves, there and then (William, 18 Nov 2026); it stays put if that
+  // fails, so the error is read where the numbers are. After the last one his aftermath is done.
+  const onward = async () => {
+    if (!(await postgame.applyStep(tab))) return;
+    if (next) step(next.id);
+    else navigate(`${warbandPath}?camp=recruit`);
+  };
+  const applying = postgame.applyingStep !== null;
   const nav = (
     <div
       className={cn("flex items-center gap-2", isMobile ? "" : "mt-2.5 border-t border-line pt-5")}
@@ -142,22 +177,14 @@ export default function AftermathBody({
           <Link to={warbandPath}>{isMobile ? "Back" : "Back to warband"}</Link>
         </Button>
       )}
-      {next ? (
-        <Button
-          className={cn("min-h-12 text-[15px]", isMobile ? "flex-1" : "ml-auto")}
-          onClick={() => step(next.id)}
-        >
-          Next: {isMobile ? next.short : next.label}
-          {isMobile ? null : <ArrowRight aria-hidden="true" />}
-        </Button>
-      ) : (
-        <Button asChild className={cn("min-h-12 text-[15px]", isMobile ? "flex-1" : "ml-auto")}>
-          <Link to={`${warbandPath}?camp=recruit`}>
-            To camp
-            {isMobile ? null : <ArrowRight aria-hidden="true" />}
-          </Link>
-        </Button>
-      )}
+      <Button
+        className={cn("min-h-12 text-[15px]", isMobile ? "flex-1" : "ml-auto")}
+        disabled={applying || drafting.isSavingDraft}
+        onClick={() => void onward()}
+      >
+        {applying ? "Applying…" : next ? `Next: ${isMobile ? next.short : next.label}` : "To camp"}
+        {isMobile || applying ? null : <ArrowRight aria-hidden="true" />}
+      </Button>
     </div>
   );
 
@@ -182,6 +209,7 @@ export default function AftermathBody({
           {drafting.draftError ? (
             <p className="m-0 text-sm text-danger">{drafting.draftError}</p>
           ) : null}
+          {note ? <SettledNote>{note}</SettledNote> : null}
           {content}
           {isMobile ? null : nav}
         </div>

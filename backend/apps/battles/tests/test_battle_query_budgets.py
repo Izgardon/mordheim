@@ -183,6 +183,20 @@ class BattleQueryBudgetTests(BattleTestCase):
         places = [row["place"] for row in participant.postbattle_json["exploration"]["places"]]
         self.assertEqual(places, ["Prisoners", "Well"])
 
+    def test_an_aftermath_step_stays_within_budget_whatever_the_warband_holds(self):
+        # The aftermath's Next (William, 18 Nov 2026): the same reads as the first half of Ready, for one step's
+        # writes. It holds the player's rows only and never touches the battle row, so it costs no more than Ready
+        # and doesn't grow with the units: the fixture's 5 heroes, 2 hired swords and 8 henchmen in 3 groups.
+        battle_id, postbattle = self._fixture_postbattle()
+        url = self.url(battle_id, "postbattle-step")
+        for step in ("injuries", "xp", "explore"):
+            with self.subTest(step=step):
+                queries, _ = self.count(self.player, "post", url, {"step": step, "postbattle_json": postbattle})
+                self.within(f"step_{step}", queries, 25)
+        # pressed again, it writes nothing to the warband: the draft's own save and its checks
+        queries, _ = self.count(self.player, "post", url, {"step": "explore", "postbattle_json": postbattle})
+        self.within("step_again", queries, 14)
+
     def test_finalising_the_fixture_warband_stays_within_budget(self):
         # BATL-TEST-07 (PERF-36): the first of two players to finalise, in two transactions. His own (the battle row
         # not held): the battle with his membership and the campaign settings, his participant, the warband (with the

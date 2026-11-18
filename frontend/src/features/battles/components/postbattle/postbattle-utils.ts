@@ -391,6 +391,8 @@ export function buildPostbattleDraft(
     ...(existing?.mount_survival ? { mount_survival: existing.mount_survival } : {}),
     // The camp's record, kept as it was saved.
     ...(existing?.camp ? { camp: existing.camp } : {}),
+    // The server's record of the aftermath steps already applied (read only: it is never sent).
+    ...(existing?.aftermath ? { aftermath: existing.aftermath } : {}),
   };
 }
 

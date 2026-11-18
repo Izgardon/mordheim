@@ -1,6 +1,8 @@
-"""The warband log entries a finalise writes, in one INSERT and in this order: exploration, finds, each unit's
-serious injury, kept stat changes, missing games, items lost with dead units, mounts lost and the unusual values that were allowed (PERF-36:
-they were written one by one). The battle's result is logged when the battle ends (services/lifecycle.py)."""
+"""The warband log entries an aftermath step or Ready writes, in one INSERT and in this order: exploration, finds,
+each unit's serious injury, kept stat changes, missing games, items lost with dead units, mounts lost and the unusual
+values that were allowed (PERF-36: they were written one by one). Only the parts applied are logged, so each step
+logs its own and no other (`explored` is None where the exploration wasn't applied). The battle's result is logged
+when the battle ends (services/lifecycle.py)."""
 
 from apps.warbands.models import WarbandLog
 
@@ -14,22 +16,23 @@ def write_battle_logs(
     battle: Battle,
     participant: BattleParticipant,
     exploration: dict,
-    explored: Exploration,
+    explored: Exploration | None,
     finds: Finds,
     units: UnitOutcome,
     unusual: list[Warning],
 ) -> None:
     entries: list[tuple[str, str, dict]] = []
-    exploration_log = {
-        "dice": exploration.get("dice_values", []),
-        "amount": explored.amount,
-        "amount_override": exploration.get("amount_override"),
-        "resource": explored.resource_name,
-        "rerolls": exploration.get("previous_rolls", []),  # kept by the server (services/exploration.py)
-        # the places the multiples found, kept with the draft by the server too
-        "places": [row.get("place") for row in exploration.get("places") or []],
-    }
-    entries.append(("battle", "exploration", exploration_log))
+    if explored is not None:
+        exploration_log = {
+            "dice": exploration.get("dice_values", []),
+            "amount": explored.amount,
+            "amount_override": exploration.get("amount_override"),
+            "resource": explored.resource_name,
+            "rerolls": exploration.get("previous_rolls", []),  # kept by the server (services/exploration.py)
+            # the places the multiples found, kept with the draft by the server too
+            "places": [row.get("place") for row in exploration.get("places") or []],
+        }
+        entries.append(("battle", "exploration", exploration_log))
     if finds.gold_crowns > 0 or finds.items:
         entries.append(("battle", "finds", {"gold_crowns": finds.gold_crowns, "items": finds.items}))
     # one injury log per unit: the final roll, re-rolls, what was applied; kept stat changes before and after

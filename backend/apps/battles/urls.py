@@ -18,6 +18,7 @@ from .views import (
     CampaignBattleNeutralGroupView,
     CampaignBattleNudgeView,
     CampaignBattlePostbattleSaveView,
+    CampaignBattlePostbattleStepView,
     CampaignBattleReadyView,
     CampaignBattleReportedResultApproveView,
     CampaignBattleReportedResultCreateView,
@@ -180,6 +181,11 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/postbattle/",
         CampaignBattlePostbattleSaveView.as_view(),
         name="campaigns-battles-postbattle",
+    ),
+    path(  # the aftermath's Next: the step he leaves is applied there and then (William, 18 Nov 2026)
+        "campaigns/<int:campaign_id>/battles/<int:battle_id>/postbattle-step/",
+        CampaignBattlePostbattleStepView.as_view(),
+        name="campaigns-battles-postbattle-step",
     ),
     path(
         "campaigns/<int:campaign_id>/battles/<int:battle_id>/finalize-postbattle/",

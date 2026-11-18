@@ -16,6 +16,7 @@ from .nudge import CampaignBattleNudgeView
 from .postbattle import (
     CampaignBattleFinalizePostbattleView,
     CampaignBattlePostbattleSaveView,
+    CampaignBattlePostbattleStepView,
     CampaignBattleSkipPostbattleView,
 )
 from .results import (
@@ -36,6 +37,7 @@ from .setup import (
 from .undo import CampaignBattleEventVoidView
 
 __all__ = [
+    "CampaignBattlePostbattleStepView",
     "CampaignBattleEventVoidView",
     "CampaignBattleDeclineView",
     "CampaignBattleClosePostbattleView",

@@ -9,9 +9,9 @@ import { useMediaQuery } from "@/lib/use-media-query";
 
 /**
  * The Aftermath (design E), today's post-battle route rebuilt: your injuries, experience and
- * exploration after a battle, saved to the postbattle draft as you go and applied at Ready (on
- * the warband page's camp). Only while your post-game is open: before it, or once you are ready,
- * it says where to go instead.
+ * exploration after a battle, saved to the postbattle draft as you go and applied step by step as
+ * you press Next (William, 18 Nov 2026); camp's Ready applies whatever is left and charges upkeep.
+ * Only while your post-game is open: before it, or once you are ready, it says where to go instead.
  */
 export default function Aftermath() {
   const { id, battleId } = useParams();

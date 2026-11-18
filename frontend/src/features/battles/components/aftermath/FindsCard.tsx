@@ -13,16 +13,20 @@ import { cn } from "@/lib/utils";
 
 /**
  * Finds (design E's Explore tab): gold crowns and the items found in the battle, kept with the
- * draft and added to the warband (the gold) and the stash (the items) at Ready.
+ * draft and handed to the warband (the gold) and the stash (the items) when Next leaves the
+ * Explore step. `settled`: they have been handed over, so they are read-only here (William,
+ * 18 Nov 2026, "lock the item and gold section"); the server refuses a change to them.
  */
 export default function FindsCard({
   campaignId,
   drafting,
   isMobile,
+  settled = false,
 }: {
   campaignId: number;
   drafting: PostbattleDraft;
   isMobile: boolean;
+  settled?: boolean;
 }) {
   const finds = useFindItemSearch({ campaignId, drafting });
   const draft = drafting.draft;
@@ -35,6 +39,19 @@ export default function FindsCard({
     setGold(null);
   };
   const items = finds.catalogue.data;
+  if (settled) {
+    return (
+      <article className="flex flex-col gap-2 border border-border bg-surface p-[18px]">
+        <h2 className="m-0 font-display text-[19px] font-semibold text-head">Finds</h2>
+        <p className="m-0 font-mono text-sm text-ink">
+          {stored} gc
+          {draft.finds.items.length
+            ? ` · ${draft.finds.items.map((item) => item.name).join(", ")}`
+            : ""}
+        </p>
+      </article>
+    );
+  }
 
   return (
     <article className="flex flex-col gap-3 border border-border bg-surface p-[18px]">

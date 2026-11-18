@@ -32,7 +32,7 @@ type AftermathHeaderProps = {
   tabsRef?: Ref<HTMLDivElement>;
   warbandPath: string;
   isMobile: boolean;
-  /** The ⋯ menu (Skip and Close post-battle), beside the saved state. */
+  /** The ⋯ menu (Skip aftermath), beside the saved state. */
   menu?: ReactNode;
 };
 

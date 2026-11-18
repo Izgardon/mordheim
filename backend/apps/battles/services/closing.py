@@ -13,13 +13,20 @@ from .events import append_event
 from .lifecycle import end_battle, end_if_everyone_finished
 from .locks import locked
 from .postbattle.items import consume_single_use_items
+from .postbattle.steps import INJURIES
+from .postbattle.steps import applied as applied_steps
 
 
 def skip_postbattle(battle: Battle, participant: BattleParticipant, *, actor_user, closed_by=None) -> dict:
-    """Mark the participant's postbattle skipped and return its event: nothing applied, the items used in battle
-    used up, the draft cleared. `closed_by` is whoever closed postbattle for him."""
-    consume_single_use_items(battle, participant)
-    participant.postbattle_json = empty_draft()
+    """Mark the participant's postbattle skipped and return its event: nothing more applied, the items used in battle
+    used up, and the draft cleared unless an aftermath step of his was already applied, whose record stands (William,
+    18 Nov 2026: what has reached the warband is never rolled back). `closed_by` is whoever closed postbattle for
+    him."""
+    done = applied_steps(participant)
+    if INJURIES not in done:  # the injuries step used them up already (steps.py)
+        consume_single_use_items(battle, participant)
+    if not done:
+        participant.postbattle_json = empty_draft()
     participant.status = BattleParticipant.STATUS_CONFIRMED_POSTBATTLE
     participant.skipped_postbattle = True
     participant.confirmed_at = timezone.now()
