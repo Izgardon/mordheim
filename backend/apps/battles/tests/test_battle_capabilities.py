@@ -76,7 +76,9 @@ class BattleCapabilityTests(BattleTestCase):
         self.assertEqual(self.post_as(self.viewer, self.url(battle_id, "close-postbattle")).status_code, 403)
 
         self.grant_manage_battles(self.viewer)
-        manager = {**OPEN, "close_postbattle": True, "confirm_results": True}
+        # the results were confirmed when the owner ended the fight, so there is nothing left to confirm here:
+        # changing them is Settings > Battles' and the campaign's staff's (William, 18 Nov 2026)
+        manager = {**OPEN, "close_postbattle": True}
         self.assertEqual(self.capabilities(self.viewer, battle_id), manager)
         self.ok(self.post_as(self.viewer, self.url(battle_id, "close-postbattle")))
 
@@ -86,7 +88,7 @@ class BattleCapabilityTests(BattleTestCase):
     def test_owners_and_admins_manage_battles_without_a_grant(self):
         Warband.objects.create(campaign=self.campaign, user=self.admin, name="Crows")
         battle_id = self.to_postbattle({self.player: [], self.admin: []})
-        self.assertEqual(self.capabilities(self.admin, battle_id), {**OPEN, "close_postbattle": True, "confirm_results": True})  # fmt: skip
+        self.assertEqual(self.capabilities(self.admin, battle_id), {**OPEN, "close_postbattle": True})
         self.ok(self.post_as(self.admin, self.url(battle_id, "close-postbattle")))
         self.assertEqual(self.capabilities(self.admin, battle_id), NONE)
 

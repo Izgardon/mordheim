@@ -61,7 +61,11 @@ const createdOn = (value: string) => {
 
 type BattleAction = { label: string; danger: boolean; run: () => void };
 
-/** The battle manager's tools that apply to a battle now, as the server's `actions` say. */
+/**
+ * The battle manager's tools that apply to a battle now, as the server's `actions` say. Results
+ * already confirmed are the campaign's owner's and admins' to change, here and nowhere else
+ * (William, 18 Nov 2026), so the server leaves `confirm_results` off for anyone else.
+ */
 function battleActions(entry: CampaignActiveBattle, tools: ActiveBattleTools) {
   const actions = entry.actions ?? {
     end: false,
@@ -69,9 +73,10 @@ function battleActions(entry: CampaignActiveBattle, tools: ActiveBattleTools) {
     close_postbattle: entry.battle.status === "postbattle",
     cancel: entry.battle.status !== "postbattle",
   };
+  const results = entry.battle.results_pending ? "Confirm results" : "Change results";
   return [
     actions.confirm_results
-      ? { label: "Review results", danger: false, run: () => tools.askResults(entry, "confirm") }
+      ? { label: results, danger: false, run: () => tools.askResults(entry, "confirm") }
       : null,
     actions.end
       ? { label: "End the fight", danger: false, run: () => tools.askResults(entry, "end") }
@@ -144,6 +149,8 @@ function BattleCard({ entry, tools }: { entry: CampaignActiveBattle; tools: Acti
 function ResultsSheet({ tools }: { tools: ActiveBattleTools }) {
   const target = tools.results.target;
   const ending = target?.mode === "end";
+  // the results are already confirmed: this changes them (the owner's and admins' only, server-side)
+  const changing = !ending && target?.battle.battle.results_pending === false;
   const warbands = (target?.battle.participants ?? []).filter(
     (participant: BattleParticipant) => !LEFT.has(participant.status)
   );
@@ -169,7 +176,13 @@ function ResultsSheet({ tools }: { tools: ActiveBattleTools }) {
       open={Boolean(target)}
       onOpenChange={(open) => !open && tools.dismissResults()}
       kicker="Battle manager"
-      title={ending ? "End the fight for everyone" : "Review the results"}
+      title={
+        ending
+          ? "End the fight for everyone"
+          : changing
+            ? "Change the results"
+            : "Confirm the results"
+      }
       className="max-w-[480px]"
       footer={
         <div className="grid grid-cols-[1fr_2fr] gap-2">
@@ -183,7 +196,9 @@ function ResultsSheet({ tools }: { tools: ActiveBattleTools }) {
                 ? winners.length
                   ? "End it with these winners"
                   : "End it, no winner"
-                : "Confirm the results"}
+                : changing
+                  ? "Change the results"
+                  : "Confirm the results"}
           </Button>
         </div>
       }
@@ -191,7 +206,9 @@ function ResultsSheet({ tools }: { tools: ActiveBattleTools }) {
       <p className="m-0 text-sm text-text2">
         {ending
           ? "Everyone still fighting goes to his post-game with these results. Pick the warbands that won; none picked is no winner."
-          : "Pick the warbands that won; none picked is no winner. The battle ends once every post-game is done."}
+          : changing
+            ? "Pick the warbands that won; none picked is no winner. Wins and losses are recorded when the battle ends, so they follow this."
+            : "Pick the warbands that won; none picked is no winner. The battle ends once every post-game is done."}
       </p>
       <div className="flex flex-col gap-1.5">
         {warbands.map((participant) => {
@@ -228,8 +245,10 @@ function ResultsSheet({ tools }: { tools: ActiveBattleTools }) {
 
 /**
  * Settings → Battles (`manage_battles`, BATL-NEW-03): every open battle, stuck ones (idle over a
- * day) first, with the tools that apply now: Review results, End the fight, Close post-game and
- * Cancel, each behind its confirm. The overview's stuck-battles Review lands here.
+ * day) first, with the tools that apply now: Confirm or Change results, End the fight, Close
+ * post-game and Cancel, each behind its confirm. This is the only place a battle's confirmed
+ * results change, and only for the campaign's owner and admins (William, 18 Nov 2026). The
+ * overview's stuck-battles Review lands here.
  */
 export default function BattlesSection({ campaignId }: { campaignId: number }) {
   const section = useActiveBattlesSection(campaignId);

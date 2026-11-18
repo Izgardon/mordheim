@@ -132,8 +132,12 @@ class FinishMineTests(BattleTestCase):
         data = self.ok(self.results(self.campaign_owner, battle_id, [])).data  # "No winner" (decision 8)
         self.assertEqual((data["battle"]["winner_warband_ids_json"], data["battle"]["results_pending"]), ([], False))
         self.assertEqual(data["events"][0]["payload_json"]["loser_warband_ids"], [])
-        self.assertEqual(self.ok(self.results(self.viewer, battle_id, [])).data["events"], [])  # the same again
-        self.ok(self.results(self.viewer, battle_id, [self.rival.id]))  # changed until the battle ends
+        self.assertEqual(self.ok(self.results(self.campaign_owner, battle_id, [])).data["events"], [])  # again
+        # confirmed: only the campaign's owner and admins may change them now, from Settings > Battles (William,
+        # 18 Nov 2026: "lets make it changeable in the battle section of settings for owner and admin, nowhere else")
+        refused = self.results(self.viewer, battle_id, [self.rival.id])
+        self.assertEqual((refused.status_code, refused.data["code"]), (403, "change_results_not_allowed"))
+        self.ok(self.results(self.campaign_owner, battle_id, [self.rival.id]))  # changed until the battle ends
         self.assertEqual(self.battle(battle_id).winner_warband_ids_json, [self.rival.id])
 
     def test_closing_before_the_results_counts_the_declared_winners(self):

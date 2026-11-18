@@ -1,11 +1,16 @@
 """Finishing a battle (decision 4): each player finishes his own (`finish-mine/`), the last one confirms the results
 (`results/`), and a battle manager can end a stuck fight with its results (`finish/`, BATL-NEW-03). There is no End
-button for players (services/finishing.py)."""
+button for players (services/finishing.py).
+
+Once the results are confirmed, changing them is the campaign's owner's and admins' alone, from Settings > Battles
+(William, 18 Nov 2026: "lets make it changeable in the battle section of settings for owner and admin, nowhere
+else"); the aftermath no longer offers it."""
 
 from rest_framework.response import Response
 
 from ..models import Battle, BattleParticipant
 from ..serializers import snapshot_participants
+from ..services.access import is_campaign_staff
 from ..services.broadcast import ALL
 from ..services.errors import BattleError
 from ..services.finishing import check_sides, confirm_results, end_fight, finish_player, results_sides
@@ -49,7 +54,14 @@ class CampaignBattleFinishMineView(BattleWriteView):
         return Written(finished.events, changed=ALL, body=body, postbattle=guides.broadcast())
 
 
-def _confirmer_or_manager(scope: Scope) -> Response | None:
+def _may_set_results(scope: Scope) -> Response | None:
+    """Confirming the results while they are pending is the last player to finish's, or a battle manager's;
+    changing them once they are confirmed is the campaign's owner's and admins' alone (William, 18 Nov 2026)."""
+    if not scope.battle.results_pending:
+        if is_campaign_staff(scope.battle):
+            return None
+        detail = "Only the campaign's owner and admins can change the results, in Settings > Battles"
+        return refused(detail, code="change_results_not_allowed", status=403)
     if scope.battle.results_confirmer_id == scope.user.id or scope.manages_battles:
         return None
     detail = "Only the last player to finish, or a battle manager, can confirm the results"
@@ -64,14 +76,15 @@ def _parsed_results(request, *, legacy_winners: bool = False):
 
 
 class CampaignBattleResultsView(BattleWriteView):
-    """POST `{"winners": [...], "losers": [...]}`: the results from the Confirm results modal, until the battle ends.
-    The battle ends now if everyone has finished postbattle."""
+    """POST `{"winners": [...], "losers": [...]}`: the results, until the battle ends. The battle ends now if
+    everyone has finished postbattle. While they are pending it is the Confirm results modal in the aftermath;
+    afterwards only the campaign's owner and admins may change them, from Settings > Battles."""
 
     in_battle = False  # a battle manager needn't be in the battle
     battle_related = ("campaign__settings",)
     rules = (
         normal_flow("Reported results are confirmed by approving them"),
-        _confirmer_or_manager,
+        _may_set_results,
         only((Battle.STATUS_POSTBATTLE,), "Results can be confirmed in postbattle, until the battle ends"),
     )
 

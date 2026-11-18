@@ -29,8 +29,9 @@ from .removal_battles import OPEN_STATUSES
 STUCK_AFTER = timedelta(hours=24)  # idle this long, a battle shows on the overview's banner (decision 7)
 
 
-def listing(campaign_id: int) -> list[dict[str, Any]]:
-    """Each open battle, newest first, with its participants and the manager tools that apply."""
+def listing(campaign_id: int, *, staff: bool) -> list[dict[str, Any]]:
+    """Each open battle, newest first, with its participants and the manager tools that apply. `staff`: the reader is
+    the campaign's owner or an admin, so he may change results already confirmed (William, 18 Nov 2026)."""
     participants = with_live_kills(BattleParticipant.objects.select_related("user", "warband")).order_by("id")
     battles = (
         Battle.objects.filter(campaign_id=campaign_id, status__in=OPEN_STATUSES)
@@ -40,16 +41,16 @@ def listing(campaign_id: int) -> list[dict[str, Any]]:
     if expire_overdue(battles):  # settle what is past its deadline (decision 2), then read again
         battles = battles.all()
     now = timezone.now()
-    return [_active_battle(battle, now) for battle in battles]
+    return [_active_battle(battle, now, staff=staff) for battle in battles]
 
 
-def _active_battle(battle: Battle, now: datetime) -> dict[str, Any]:
+def _active_battle(battle: Battle, now: datetime, *, staff: bool) -> dict[str, Any]:
     participants = battle.participants.all()
     idle = max(now - battle.last_activity_at, timedelta(0))
     return {
         "battle": serialize_battle(battle),
         "participants": [serialize_participant(participant) for participant in participants],
-        "actions": manager_actions(battle, participants),  # the owner tools that apply (BATL-NEW-03)
+        "actions": manager_actions(battle, participants, staff=staff),  # the tools that apply (BATL-NEW-03)
         "idle_seconds": int(idle.total_seconds()),  # since its last write (last_activity_at)
         "stuck": idle >= STUCK_AFTER,
     }

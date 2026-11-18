@@ -4,7 +4,9 @@ Each flag is the server's own rule for that action, in the battle's current phas
 
 - `start`: any participant still in the battle, in prebattle, once everyone still in is ready (decision 4);
 - `finish_mine`: a participant still fighting, in an active battle (decision 4: there is no End button);
-- `confirm_results`: the last player to finish, or a battle manager, in postbattle (until the battle ends);
+- `confirm_results`: the last player to finish, or a battle manager, in postbattle while the results are still
+  pending; once they are confirmed only the campaign's owner and admins may change them, from Settings > Battles
+  (William, 18 Nov 2026), which reads `manager_actions` and not this flag;
 - `cancel`: the creator, before postbattle (postbattle is closed instead, decision 3), and only while nobody has
   applied his postbattle;
 - `close_postbattle`: the creator or a battle manager (`manage_battles`), in postbattle;
@@ -28,6 +30,8 @@ from ..models import Battle, BattleParticipant
 from .access import manages_battles
 from .unfinished import BUSY_BATTLE_STATUSES
 
+POSTBATTLE = Battle.STATUS_POSTBATTLE
+
 
 @dataclass(frozen=True)
 class Facts:
@@ -37,12 +41,20 @@ class Facts:
     flow_type: str
     created_by_user_id: int
     results_confirmer_user_id: int | None
+    results_pending: bool  # the fight is over and the results wait for the last player to finish (decision 4)
     statuses: dict[int, str]  # by user id
 
 
 def facts(battle: Battle, participants: Iterable[BattleParticipant]) -> Facts:
     statuses = {entry.user_id: entry.status for entry in participants}
-    return Facts(battle.status, battle.flow_type, battle.created_by_user_id, battle.results_confirmer_id, statuses)
+    return Facts(
+        battle.status,
+        battle.flow_type,
+        battle.created_by_user_id,
+        battle.results_confirmer_id,
+        battle.results_pending,
+        statuses,
+    )
 
 
 def snapshot_facts(snapshot: dict) -> Facts:
@@ -54,6 +66,7 @@ def snapshot_facts(snapshot: dict) -> Facts:
         battle["flow_type"],
         battle["created_by_user_id"],
         battle.get("results_confirmer_user_id"),
+        bool(battle.get("results_pending")),
         statuses,
     )
 
@@ -74,7 +87,8 @@ def capabilities_from(known: Facts, user_id: int | None, manager: bool) -> dict[
     return {
         "start": still_in and normal and status == Battle.STATUS_PREBATTLE and everyone_ready,
         "finish_mine": active and fighting,
-        "confirm_results": normal and (confirmer or manager) and status == Battle.STATUS_POSTBATTLE,
+        # confirming them, while they are pending; changing them afterwards is Settings > Battles' (William)
+        "confirm_results": normal and known.results_pending and (confirmer or manager) and status == POSTBATTLE,
         "cancel": creator and normal and status in before_postbattle and not applied,
         "close_postbattle": (creator or manager) and status == Battle.STATUS_POSTBATTLE,
         "nudge": still_in and normal and status in BUSY_BATTLE_STATUSES,
@@ -99,10 +113,11 @@ def everyones_capabilities(snapshot: dict) -> dict:
     }
 
 
-def manager_actions(battle: Battle, participants: Iterable[BattleParticipant]) -> dict[str, bool]:
+def manager_actions(battle: Battle, participants: Iterable[BattleParticipant], *, staff: bool) -> dict[str, bool]:
     """Settings > Active Battles, for a battle manager (BATL-NEW-03): end a stuck fight with its results
-    (`finish/`), confirm the results of a postbattle (`results/`), close a postbattle, or cancel the battle before
-    postbattle while nobody has applied his postbattle (`active-battles/:id/cancel/`)."""
+    (`finish/`), confirm or change the results of a postbattle (`results/`), close a postbattle, or cancel the battle
+    before postbattle while nobody has applied his postbattle (`active-battles/:id/cancel/`). Results already
+    confirmed are the campaign's owner's and admins' to change (`staff`), nobody else's (William, 18 Nov 2026)."""
     normal = battle.flow_type == Battle.FLOW_TYPE_NORMAL
     applied = any(entry.status == BattleParticipant.STATUS_CONFIRMED_POSTBATTLE for entry in participants)
     cancellable = (
@@ -113,7 +128,7 @@ def manager_actions(battle: Battle, participants: Iterable[BattleParticipant]) -
     )
     return {
         "end": normal and battle.status == Battle.STATUS_ACTIVE,
-        "confirm_results": normal and battle.status == Battle.STATUS_POSTBATTLE,
+        "confirm_results": normal and battle.status == POSTBATTLE and (battle.results_pending or staff),
         "close_postbattle": battle.status == Battle.STATUS_POSTBATTLE,
         "cancel": battle.status in cancellable and not applied,
     }

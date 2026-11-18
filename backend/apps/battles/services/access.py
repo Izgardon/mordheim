@@ -34,6 +34,13 @@ def is_member(battle: Battle) -> bool:
     return getattr(battle, "member_role", None) is not None
 
 
+def is_campaign_staff(battle: Battle) -> bool:
+    """The caller is the campaign's owner or an admin (a battle read through scoped_battles). Not the same as
+    manage_battles, which a player can be granted: changing a confirmed result is staff's alone (William,
+    18 Nov 2026: "lets make it changeable in the battle section of settings for owner and admin, nowhere else")."""
+    return getattr(battle, "member_role", None) in IMPLICIT_PERMISSION_ROLES
+
+
 def manages_battles(battle: Battle) -> bool:
     """The caller holds manage_battles in the battle's campaign (a battle read through scoped_battles)."""
     role = getattr(battle, "member_role", None)

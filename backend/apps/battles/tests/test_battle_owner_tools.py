@@ -1,9 +1,13 @@
 """Settings > Active Battles for a battle manager (BATL-NEW-03): each battle's idle time and the tools that apply to
-it, `actions`: End a stuck fight with its results (`finish/`), confirm a postbattle's results (`results/`), Close
-postbattle, and Cancel before postbattle while nobody has applied his postbattle. The manager needn't be in it."""
+it, `actions`: End a stuck fight with its results (`finish/`), confirm or change a postbattle's results (`results/`),
+Close postbattle, and Cancel before postbattle while nobody has applied his postbattle. The manager needn't be in it.
+
+Results already confirmed are the campaign's owner's and admins' to change, here and nowhere else (William,
+18 Nov 2026: "lets make it changeable in the battle section of settings for owner and admin, nowhere else")."""
 
 from typing import Any
 
+from apps.campaigns.models import CampaignMembership, CampaignMembershipPermission, CampaignPermission
 from apps.warbands.models import Warband
 
 from .battle_support import BattleTestCase, draft
@@ -51,3 +55,56 @@ class OwnerToolTests(BattleTestCase):
         self.assertEqual(self.battle(battle_id).status, "ended")
         self.assertNotIn(battle_id, self.listing())
         self.assertEqual((self.record(self.warband), self.record(self.rival)), ((1, None), (None, 1)))
+
+
+class ChangeResultsTests(BattleTestCase):
+    """Who may change the results of a battle whose results are confirmed: the campaign's owner and admins, from
+    Settings > Battles. A player granted manage_battles may confirm pending results but not change confirmed ones,
+    and the server says so (William, 18 Nov 2026)."""
+
+    def postbattle_with_results(self) -> int:
+        """A battle in postbattle whose results the owner's End already confirmed."""
+        battle_id = self.to_postbattle()  # finish/ by the campaign owner: the results come with it
+        self.assertFalse(self.battle(battle_id).results_pending)
+        return battle_id
+
+    def grant_manage_battles(self, user: Any) -> None:
+        membership = CampaignMembership.objects.get(campaign=self.campaign, user=user)
+        permission = CampaignPermission.objects.get(code="manage_battles")
+        CampaignMembershipPermission.objects.create(membership=membership, permission=permission)
+
+    def results(self, user: Any, battle_id: int, winners: list[int]) -> Any:
+        return self.post_as(user, self.url(battle_id, "results"), {"winners": winners})
+
+    def test_a_player_and_a_granted_battle_manager_are_both_refused(self):
+        battle_id = self.postbattle_with_results()
+        self.grant_manage_battles(self.viewer)
+
+        for user in (self.player, self.viewer):
+            with self.subTest(user=user.username):
+                answer = self.results(user, battle_id, [self.rival.id])
+                self.assertEqual(answer.status_code, 403, answer.data)
+                self.assertEqual(answer.data["code"], "change_results_not_allowed")
+                self.assertIn("Settings", answer.data["detail"])
+        self.assertEqual(self.battle(battle_id).winner_warband_ids_json, [self.warband.id])
+        # and neither page offers it: the aftermath's flag is for confirming pending results only
+        self.assertFalse(self.capabilities_of(self.viewer, battle_id)["confirm_results"])
+        self.assertFalse(self.listing(self.viewer)[battle_id]["actions"]["confirm_results"])
+
+    def test_the_owner_and_an_admin_change_them_from_settings(self):
+        battle_id = self.postbattle_with_results()
+
+        self.ok(self.results(self.campaign_owner, battle_id, [self.rival.id]))
+
+        self.assertEqual(self.battle(battle_id).winner_warband_ids_json, [self.rival.id])
+        self.assertTrue(self.listing(self.admin)[battle_id]["actions"]["confirm_results"])
+        self.ok(self.results(self.admin, battle_id, []))  # no winner
+        self.assertEqual(self.battle(battle_id).winner_warband_ids_json, [])
+
+    def capabilities_of(self, user: Any, battle_id: int) -> dict[str, bool]:
+        answer = self.ok(self.get_as(user, self.url(battle_id, "state")))
+        return dict(answer.data["capabilities"])
+
+    def listing(self, user: Any) -> dict[int, dict[str, Any]]:
+        rows = self.ok(self.get_as(user, f"/api/campaigns/{self.campaign.id}/active-battles/")).data
+        return {row["battle"]["id"]: row for row in rows}

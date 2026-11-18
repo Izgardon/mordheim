@@ -85,7 +85,7 @@ class CampaignActiveBattlesView(CampaignScopedView):
     rules = {"GET": "manage_battles"}
 
     def get(self, request, campaign_id):
-        return Response(active_battles.listing(campaign_id))
+        return Response(active_battles.listing(campaign_id, staff=self.access.is_staff))
 
 
 class CampaignActiveBattleCancelView(CampaignScopedView):

@@ -22,9 +22,11 @@ function startingWinners(state: BattleState) {
 }
 
 /**
- * The results (decision 4): waiting for the last player to finish, or Confirm results for him or
- * a battle manager, which picks the winners (none is No winner); changeable until the battle ends,
- * which is once every aftermath is done (the fight has ended already, so the banner says so).
+ * The results (decision 4): waiting for the last player to finish, or Confirm results for him or a
+ * battle manager, which picks the winners (none is No winner). Once they are confirmed the banner
+ * goes: changing them is the campaign's owner's and admins', in Settings → Battles, and nowhere
+ * else (William, 18 Nov 2026: "lets make it changeable in the battle section of settings for owner
+ * and admin, nowhere else"). The server refuses any other caller.
  */
 export default function ResultsBanner({
   state,
@@ -36,21 +38,15 @@ export default function ResultsBanner({
   const { battle, participants } = state;
   const warbands = participants.filter((participant) => !LEFT.has(participant.status));
   const [winners, setWinners] = useState<number[]>(() => startingWinners(state));
-  if (battle.status !== "postbattle") return null;
+  if (battle.status !== "postbattle" || !battle.results_pending) return null;
   const confirmer = participants.find(
     (entry) => entry.user.id === battle.results_confirmer_user_id
   );
   const names = (ids: number[]) =>
     warbands.filter((entry) => ids.includes(entry.warband.id)).map((entry) => entry.warband.name);
-  const confirmed = names(battle.winner_warband_ids_json ?? []);
-  const text = battle.results_pending
-    ? results.canConfirm
-      ? "Everyone has finished fighting. Confirm who won: the battle ends once the results are confirmed and every aftermath is done."
-      : `Waiting for ${confirmer?.user.label ?? "the last player to finish"} to confirm the results.`
-    : results.canConfirm
-      ? `Results confirmed: ${confirmed.length ? `${confirmed.join(" and ")} won` : "no winner"}. You can change them until every aftermath is done.`
-      : null;
-  if (!text) return null;
+  const text = results.canConfirm
+    ? "Everyone has finished fighting. Confirm who won: the battle ends once the results are confirmed and every aftermath is done."
+    : `Waiting for ${confirmer?.user.label ?? "the last player to finish"} to confirm the results.`;
   const open = (next: boolean) => {
     if (next) setWinners(startingWinners(state));
     results.openChange(next);
@@ -65,7 +61,7 @@ export default function ResultsBanner({
         <p className="m-0 text-sm text-ink">{text}</p>
         {results.canConfirm ? (
           <Button size="sm" onClick={() => open(true)}>
-            {battle.results_pending ? "Confirm results" : "Change results"}
+            Confirm results
           </Button>
         ) : null}
       </section>
