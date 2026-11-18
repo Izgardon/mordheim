@@ -64,7 +64,8 @@ describe("the warband's campaign points", () => {
     show();
 
     expect(await screen.findByText("Witch Hunters and Sisters of Sigmar.")).toBeVisible();
-    await user.selectOptions(screen.getByRole("combobox", { name: "Plot" }), "The Shards");
+    await user.click(screen.getByRole("button", { name: "Plot: Drowning the Witch" }));
+    await user.click(screen.getByRole("option", { name: /The Shards/ }));
 
     expect(fakeApi.bodyOf("PATCH /warbands/9/")).toEqual({ plot_id: 5 });
     expect(screen.queryByText("Witch Hunters and Sisters of Sigmar.")).toBeNull();
@@ -74,7 +75,7 @@ describe("the warband's campaign points", () => {
     const user = setupUser();
     show();
 
-    await user.selectOptions(screen.getByRole("combobox", { name: "Plot" }), "No plot");
+    await user.click(await screen.findByRole("button", { name: "No plot" }));
 
     expect(fakeApi.bodyOf("PATCH /warbands/9/")).toEqual({ plot_id: null });
   });
@@ -85,6 +86,7 @@ describe("the warband's campaign points", () => {
     expect(screen.getByText("Drowning the Witch")).toBeVisible();
     expect(screen.getByRole("img")).toBeVisible();
     expect(screen.queryByRole("combobox", { name: "Plot" })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Plot/ })).toBeNull();
     expect(screen.queryByRole("spinbutton", { name: "Campaign points" })).toBeNull();
   });
 });

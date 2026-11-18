@@ -170,10 +170,11 @@ describe("Raising a warband from its type's template", () => {
     renderWithQueryClient(<CreateWarband campaignId={4} onCreated={vi.fn()} showPlot />);
     const user = await pickType();
 
-    await user.selectOptions(
-      await screen.findByRole("combobox", { name: "Plot" }),
-      "Drowning the Witch"
-    );
+    await user.click(await screen.findByRole("combobox", { name: "Plot" }));
+    // the option reads its name over who may follow it (William, 18 Nov 2026)
+    const option = screen.getByRole("option", { name: /Drowning the Witch/ });
+    expect(within(option).getByText("Witch Hunters.")).toBeVisible();
+    await user.click(option);
     expect(screen.getByText("Witch Hunters.")).toBeVisible();
     await user.click(screen.getByRole("button", { name: "Raise the warband" }));
 

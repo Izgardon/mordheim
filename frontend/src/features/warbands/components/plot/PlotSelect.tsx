@@ -1,10 +1,20 @@
+import { SearchSelect, type SearchOption } from "@/components/ui/search-select";
 import { useCampaignPlots } from "@/features/plots/api/plots-queries";
+import type { PlotRow } from "@/features/plots/types/plot-types";
+
+const plotOption = (plot: PlotRow): SearchOption => ({
+  id: plot.id,
+  title: plot.name,
+  subtitle: plot.who_text,
+});
 
 /**
  * The plot a warband follows, picked from the campaign's list (apps/plots): one or none, changed
- * as often as the player likes for nothing. Under it, the plot's own words on who may follow it,
- * which the player reads and decides on: nothing is matched to warband types, greyed or warned
- * about (`Plot.who_text`).
+ * as often as the player likes for nothing. Every option carries the plot's own words on who may
+ * follow it under its name (William, 18 Nov 2026: "options should have title of name and
+ * subtitles of who can take it"), so the player chooses without picking one to find out, and the
+ * plot picked says them again in full underneath. Nothing is matched to warband types, greyed or
+ * warned about (`Plot.who_text`).
  */
 export default function PlotSelect({
   campaignId,
@@ -22,21 +32,20 @@ export default function PlotSelect({
   const picked = rows.find((row) => row.id === value);
 
   return (
-    <div className="flex min-w-[180px] max-w-[340px] flex-col gap-1">
-      <select
+    <div className="flex min-w-0 max-w-[340px] flex-1 basis-[180px] flex-col gap-1">
+      <SearchSelect
         id={id}
-        aria-label="Plot"
-        className="h-9 w-full border border-strong bg-page px-1.5 text-[13px] text-ink"
-        value={value === null ? "" : String(value)}
-        onChange={(event) => onChange(event.target.value ? Number(event.target.value) : null)}
-      >
-        <option value="">No plot</option>
-        {rows.map((row) => (
-          <option key={row.id} value={row.id}>
-            {row.name}
-          </option>
-        ))}
-      </select>
+        label="Plot"
+        placeholder="Search plots"
+        emptyText="No plot matches."
+        loading={offered.isLoading}
+        options={rows.map(plotOption)}
+        // the field keeps the name alone: the plot picked says who may follow it underneath
+        value={picked ? { id: picked.id, title: picked.name } : null}
+        clearLabel="No plot"
+        oneLine
+        onChange={(option) => onChange(option ? Number(option.id) : null)}
+      />
       {picked?.who_text ? <p className="m-0 text-xs text-text2">{picked.who_text}</p> : null}
     </div>
   );
