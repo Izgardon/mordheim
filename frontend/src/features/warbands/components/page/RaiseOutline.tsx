@@ -1,5 +1,5 @@
 import { Chip } from "@/components/ui/chip";
-import { countLabel, groupLabel } from "@/features/warband-templates/template-view";
+import { countLabel } from "@/features/warband-templates/template-view";
 
 import { useRaiseOutline } from "../../api/warband-template-queries";
 import type { OutlineFighter } from "../../types/hire-template-types";
@@ -24,7 +24,6 @@ function Fighters({ title, fighters }: { title: string; fighters: OutlineFighter
             <span className="font-mono text-[13px] text-head">{fighter.cost} gc</span>
             <span className="min-w-[3.5rem] text-right text-[13px] text-text2">
               {countLabel(fighter)}
-              {groupLabel(fighter) ? ` · ${groupLabel(fighter)}` : ""}
             </span>
           </li>
         ))}

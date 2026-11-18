@@ -102,7 +102,10 @@ describe("Raising a warband from its type's template", () => {
     ).toBeInTheDocument();
     expect(within(shown).getByText("Merchant")).toBeInTheDocument();
     expect(within(shown).getByText("0–2")).toBeInTheDocument();
-    expect(within(shown).getByText("any · groups of 1–5")).toBeInTheDocument();
+    // the hard cap alone: the group size is said on the fighter's own card, not here
+    // (William, 18 Nov 2026: "we dont need to say the groups of 1-5 for henchmen")
+    expect(within(shown).getByText("any")).toBeInTheDocument();
+    expect(within(shown).queryByText(/groups of/)).not.toBeInTheDocument();
     expect(within(shown).getByRole("button", { name: "Trade" })).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Raise the warband" }));
