@@ -223,6 +223,15 @@ const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
   />
 );
 DialogHeader.displayName = "DialogHeader";
+/**
+ * The buttons stay below the body as it scrolls (William, 12 Nov 2026: "yes, sticky to the bottom
+ * where it makes sense"), as the phone's bottom sheet already keeps its footer: the dialog scrolls
+ * its header, body and footer in one column, so a long form used to scroll its buttons out of
+ * sight. It spans the body's side gutter, so the content passes under it and not beside it.
+ */
+const STICKY_FOOTER =
+  "sticky bottom-0 z-10 -mx-4 border-t border-line bg-panel px-4 pt-3.5 min-[960px]:-mx-8 min-[960px]:px-8 min-[960px]:pt-4";
+
 const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => {
   const isMobile = useMediaQuery("(max-width: 960px)");
   return (
@@ -231,6 +240,7 @@ const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivEleme
         isMobile
           ? "flex flex-row flex-wrap justify-end gap-2 [&>*]:h-10 [&>*]:px-4 [&>*]:text-sm [&>*]:max-w-[50%] [&>*]:whitespace-nowrap"
           : "flex flex-row justify-end gap-2",
+        STICKY_FOOTER,
         className
       )}
       {...props}
