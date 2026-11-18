@@ -18,6 +18,11 @@ from apps.warbands.models.types import WarbandAccess, access_constraints
 
 ANIMAL = "Animal"  # the item type of a beast: one per bestiary entry, written by the bestiary only
 
+# The slots an item's `save_bonus` sits in: a wearer counts one `body` item at a time (a second adds nothing), while
+# a `shield`, the `mount` he rides and an `extra` (barding, a cloak worn over armour) always add and always subtract.
+SAVE_BODY, SAVE_SHIELD, SAVE_MOUNT, SAVE_EXTRA = "body", "shield", "mount", "extra"
+SAVE_SLOTS = [(SAVE_BODY, "Body"), (SAVE_SHIELD, "Shield"), (SAVE_MOUNT, "Mount"), (SAVE_EXTRA, "Extra")]
+
 
 class Item(CatalogueEntry):
     """A catalogue item. `listed`: the shop sells it (an Animal item's follows its beast's `available_in_shop`; an item
@@ -44,6 +49,11 @@ class Item(CatalogueEntry):
     strength = models.CharField(max_length=80, blank=True, null=True)
     range = models.CharField(max_length=80, blank=True, null=True)
     save_value = models.CharField(max_length=80, blank=True, null=True, db_column="save")
+    # What equipping it does to the wearer's armour save (apps/warbands/services/armour.py): `save_bonus` is how many
+    # steps it moves the save, null for an item that moves nothing by itself (almost every one), and `save_slot` says
+    # whether it competes: only one `body` item counts at a time, while a shield, a mount and an extra always apply.
+    save_bonus = models.SmallIntegerField(null=True, blank=True)
+    save_slot = models.CharField(max_length=10, choices=SAVE_SLOTS, blank=True, default="")
     statblock = models.TextField(blank=True, null=True)  # JSON: a vehicle's or an animal's profile rows
     source = models.CharField(max_length=200, blank=True, default="")  # "Town Cryer #6"
     link_url = models.URLField(max_length=500, blank=True, default="")  # mordheimer's or Broheim's page
@@ -72,6 +82,11 @@ class Item(CatalogueEntry):
                 fields=["campaign", "name", "variant", "generated_effect_key"],
                 name="item_unique_name_variant",
                 nulls_distinct=False,
+            ),
+            models.CheckConstraint(  # a save bonus names the slot it sits in, and a slot without one says nothing
+                check=models.Q(save_bonus__isnull=True, save_slot="")
+                | (models.Q(save_bonus__isnull=False) & ~models.Q(save_slot="")),
+                name="item_save_slot_with_bonus",
             ),
             models.CheckConstraint(  # an Animal item has its beast, and only an Animal item has one
                 check=models.Q(type=ANIMAL, bestiary_entry__isnull=False)

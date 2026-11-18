@@ -118,8 +118,8 @@ class ItemSource:
 
     def write(self, item: Item, entry: BestiaryEntry, data: dict[str, Any], path: Path) -> None:
         found = self.animals.get(entry.name.strip().lower())
-        if found is not None:  # the beast keeps its item's name, kind (subtype) and listing
-            self.imported.apply(item, found, keep=("type", "subtype"))
+        if found is not None:  # the beast keeps its item's name, kind (subtype), listing and mounted save bonus
+            self.imported.apply(item, found, keep=("type", "subtype", "save_bonus", "save_slot"))
             return
         shop = data.get("shop_item") or {}
         setting = clean(data.get("setting")) or (

@@ -12,20 +12,25 @@ bestiary's twin, `core/catalogue/kinds.py`).
 from collections.abc import Mapping
 from typing import Any
 
-from apps.items.models import ANIMAL, Item
+from apps.items.models import ANIMAL, SAVE_MOUNT, Item
 from apps.items.writes import replace_availabilities, write_availabilities
 
-from .models import BEAST_KINDS, BestiaryEntry
+from .models import BEAST_KINDS, MOUNT, BestiaryEntry
 
 SUBTYPES = dict(BEAST_KINDS)  # "mount" -> "Mount": the Animal item's subtype
 
 
 def item_fields(entry: BestiaryEntry) -> dict[str, Any]:
-    """What the item takes from its beast on every write."""
+    """What the item takes from its beast on every write: its name, its kind as the subtype and, for a mount, the
+    step riding it adds to the rider's save (William, 18 Nov 2026: "mounting a mount when equipped should plus their
+    value"), which the mount's kind says rather than the catalogue import (seed_bestiary keeps it)."""
+    mount = entry.kind == MOUNT
     return {
         "name": entry.name,
         "subtype": SUBTYPES[entry.kind],
         "listed": entry.available_in_shop,
+        "save_bonus": 1 if mount else None,
+        "save_slot": SAVE_MOUNT if mount else "",
         "updated_at": entry.updated_at,
         "updated_by_id": entry.updated_by_id,
     }

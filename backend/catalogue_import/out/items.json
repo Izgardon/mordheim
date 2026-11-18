@@ -1537,7 +1537,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Barding",
     "setting": "mordheim",
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#barding",
@@ -1621,7 +1621,9 @@
         ],
         "note": "Warhorse only"
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "extra"
   },
   {
     "slug": "bretonnian-barding",
@@ -1629,7 +1631,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Barding",
     "setting": "mordheim-1b",
     "source": "Town Cryer #8",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#bretonnian-barding",
@@ -1666,7 +1668,9 @@
         ],
         "note": "Warhorses only"
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "extra"
   },
   {
     "slug": "buckler",
@@ -1674,7 +1678,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "setting": "mordheim",
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#buckler",
@@ -1716,7 +1720,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "border-town-burning",
     "source": "Border Town Burning Supplement",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#chaos-armour",
@@ -1793,7 +1797,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 3,
+    "save_slot": "body"
   },
   {
     "slug": "cooking-pot-helmet",
@@ -1801,7 +1807,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Helmet",
     "setting": "mordheim-1b",
     "source": "Citadel Journal 36",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#cooking-pot-helmet",
@@ -1846,7 +1852,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mordheim-1b",
     "source": "Town Cryer #15",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#enchanted-skins",
@@ -1893,7 +1899,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mordheim",
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#gromril-armour",
@@ -1926,7 +1932,9 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 3,
+    "save_slot": "body"
   },
   {
     "slug": "heavy-armour",
@@ -1934,7 +1942,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mordheim",
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#heavy-armour",
@@ -2028,7 +2036,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 2,
+    "save_slot": "body"
   },
   {
     "slug": "helmet",
@@ -2036,7 +2046,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Helmet",
     "setting": "mordheim",
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#helmet",
@@ -2078,7 +2088,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mordheim",
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#ithilmar-armour",
@@ -2111,7 +2121,9 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 2,
+    "save_slot": "body"
   },
   {
     "slug": "kite-shield",
@@ -2119,7 +2131,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "setting": "mordheim-1c",
     "source": "Bretonnian Chapel Guard",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#kite-shield",
@@ -2166,7 +2178,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "border-town-burning",
     "source": "Border Town Burning Supplement",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#lamellar-armour",
@@ -2199,7 +2211,9 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 3,
+    "save_slot": "body"
   },
   {
     "slug": "light-armour",
@@ -2207,7 +2221,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mordheim",
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#light-armour",
@@ -2255,7 +2269,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "body"
   },
   {
     "slug": "masterwork-heavy-armour",
@@ -2263,7 +2279,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mordheim-1c",
     "source": "Lustrian Reavers",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#masterwork-heavy-armour",
@@ -2302,7 +2318,9 @@
         ],
         "note": "No rarity in the source; No price in the source"
       }
-    ]
+    ],
+    "save_bonus": 3,
+    "save_slot": "body"
   },
   {
     "slug": "mechanical-suit",
@@ -2310,7 +2328,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "border-town-burning",
     "source": "Border Town Burning Supplement",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#mechanical-suit",
@@ -2365,7 +2383,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 3,
+    "save_slot": "body"
   },
   {
     "slug": "pavise",
@@ -2373,7 +2393,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "setting": "mordheim",
     "source": "Ye Old Curiosity Shoppe, Mordheim Annual 2002",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#pavise",
@@ -2416,7 +2436,9 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "shield"
   },
   {
     "slug": "shield",
@@ -2424,7 +2446,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "setting": "mordheim",
     "source": "Mordheim Rulebook",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#shield",
@@ -2461,7 +2483,9 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "shield"
   },
   {
     "slug": "toughened-leathers",
@@ -2469,7 +2493,7 @@
     "variant": "",
     "origin": "mordheimer",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mordheim",
     "source": "Opulent Goods, Mordheim Annual 2002",
     "link_url": "https://mordheimer.net/docs/weapons-armour/armour#toughened-leathers",
@@ -2517,7 +2541,9 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "body"
   },
   {
     "slug": "blunderbuss",
@@ -16635,7 +16661,9 @@
         ],
         "note": "Heroes only"
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "body"
   },
   {
     "slug": "beast-hide-wyvern-hide-cloak",
@@ -16684,7 +16712,9 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "extra"
   },
   {
     "slug": "blessed-hauberk",
@@ -16735,7 +16765,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "body"
   },
   {
     "slug": "the-oaken-armour",
@@ -16797,7 +16829,9 @@
         ],
         "note": "Heroes only"
       }
-    ]
+    ],
+    "save_bonus": 2,
+    "save_slot": "body"
   },
   {
     "slug": "skull-cap",
@@ -16894,7 +16928,9 @@
         "warbands": [],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "extra"
   },
   {
     "slug": "black-dust",
@@ -18769,7 +18805,7 @@
     "variant": "",
     "origin": "templates",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mordheim-1c",
     "source": "Tuomas Pirinen",
     "link_url": "https://mordheimer.net/docs/warbands/grade-1c-warbands/cursed-cavalcade",
@@ -18808,7 +18844,9 @@
         ],
         "note": "Aristocrat only"
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "extra"
   },
   {
     "slug": "sun-king-mask",
@@ -19185,7 +19223,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "setting": "mordheim-2a",
     "source": "WEB",
     "link_url": "https://www.broheim.net/downloads/warbands/web/Bretonnian%20Grail%20CompanionsV0.7.pdf",
@@ -19802,7 +19840,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Cloak",
     "setting": "mordheim-2a",
     "source": "Nicholas ‘Jiro’ Ceccarani",
     "link_url": "https://www.broheim.net/downloads/warbands/web/Nipponese%20Expedition%20v2.2.pdf",
@@ -20018,7 +20056,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Shield",
     "setting": "mordheim-2a",
     "source": "LOD3",
     "link_url": "https://www.broheim.net/downloads/lod/LOD3.pdf#page=8",
@@ -20580,7 +20618,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Helmet",
     "setting": "sylvania",
     "source": "LOD5",
     "link_url": "https://www.broheim.net/downloads/lod/LOD5.pdf#page=9",
@@ -21927,7 +21965,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "mutiny-in-marienburg",
     "source": "Mutiny in Marienburg",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/mutinyinmarienburg/Fen%20Guard.pdf",
@@ -22318,7 +22356,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 3,
+    "save_slot": "body"
   },
   {
     "slug": "hellblade",
@@ -22847,7 +22887,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "Armour",
+    "subtype": "Body Armour",
     "setting": "sartosa",
     "source": "Sartosa",
     "link_url": "https://www.broheim.net/downloads/warbands/supplement/sartosa/Pirates%20of%20the%20Cathayan%20Sea.pdf",
@@ -22888,7 +22928,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 3,
+    "save_slot": "body"
   },
   {
     "slug": "duck-footed-pistol",
@@ -24770,7 +24812,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "karak-azgal",
     "source": "Karak Azgal",
     "link_url": "https://www.broheim.net/downloads/campaigns/karakazgal/Karak%20Azgal.pdf#page=56",
@@ -24809,7 +24851,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 2,
+    "save_slot": "body"
   },
   {
     "slug": "effigy-of-mork",
@@ -26858,7 +26902,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "grade-3",
     "source": "Assassin Squad, Knives from the Dark",
     "link_url": "https://www.broheim.net/downloads/warbands/experimental/Assassin%20Squad.pdf",
@@ -26903,7 +26947,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "body"
   },
   {
     "slug": "short-spear",
@@ -27386,7 +27432,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "athel-loren",
     "source": "Athel Loren",
     "link_url": "https://www.broheim.net/downloads/campaigns/athelloren/Athel%20Loren%20Campaign%20Rules.pdf#page=46",
@@ -27591,7 +27637,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 2,
+    "save_slot": "body"
   },
   {
     "slug": "jezzail-support",
@@ -28359,7 +28407,7 @@
     "variant": "",
     "origin": "pdf-warbands",
     "type": "Armour",
-    "subtype": "",
+    "subtype": "Body Armour",
     "setting": "grade-3",
     "source": "Wood Elves, the Asrai Way-farers",
     "link_url": "https://www.broheim.net/downloads/warbands/experimental/Wood%20Elves,%20the%20Asrai%20Way-farers.pdf",
@@ -28398,7 +28446,9 @@
         ],
         "note": ""
       }
-    ]
+    ],
+    "save_bonus": 1,
+    "save_slot": "body"
   },
   {
     "slug": "birch-wine",

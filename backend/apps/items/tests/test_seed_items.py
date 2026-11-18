@@ -85,6 +85,15 @@ class SeedItemsTests(TestCase):
         single = dict(Item.objects.filter(campaign__isnull=True).values_list("name", "single_use"))
         self.assertEqual(single, {"Swivel Gun - Ball Shot": True, "Sword": False})
 
+    def test_an_items_save_bonus_and_slot_come_from_the_import(self) -> None:
+        """What equipping it does to the wearer's save (William, 18 Nov 2026); an item without one moves nothing."""
+        seed([entry("Heavy Armour", type="Armour", save="5+", save_bonus=2, save_slot="body"), entry("Sword")])
+
+        saves = dict(Item.objects.values_list("name", "save_bonus"))
+        self.assertEqual(saves, {"Heavy Armour": 2, "Sword": None})
+        self.assertEqual(Item.objects.get(name="Heavy Armour").save_slot, "body")
+        self.assertEqual(Item.objects.get(name="Sword").save_slot, "")
+
     def test_an_item_is_written_with_its_setting_text_rules_and_price_rows(self) -> None:
         rows = [
             {**entry("x")["availabilities"][0], "cost": 25, "dice": 2, "rarity": 9, "note": "Heroes only"},
@@ -209,6 +218,8 @@ class BestiaryItemsFromTheImportTests(TestCase):
 
         horse = BestiaryEntry.objects.get(name="Warhorse").animal_item
         self.assertEqual((horse.type, horse.subtype), ("Animal", "Mount"))  # the beast's kind, not the import's group
+        # riding it is +1 on the save, from the beast's kind; the import never overrides an Animal item's save columns
+        self.assertEqual((horse.save_bonus, horse.save_slot), (1, "mount"))
         self.assertTrue(horse.flavour)
         self.assertEqual(horse.campaign_type_id, CampaignType.objects.get(slug="mordheim").id)
         [row] = horse.availabilities.all()
@@ -216,6 +227,7 @@ class BestiaryItemsFromTheImportTests(TestCase):
         self.assertTrue(row.warband_links.exists())
         self.assertTrue(horse.rule_links.exists())
         polecat = BestiaryEntry.objects.get(name="Polecat").animal_item
+        self.assertEqual((polecat.save_bonus, polecat.save_slot), (None, ""))  # a pet arms nobody
         [kept] = polecat.availabilities.all()
         self.assertEqual(
             (kept.cost, kept.dice, kept.rarity, kept.for_everyone, kept.note), (15, 1, 6, True, "Halflings only")

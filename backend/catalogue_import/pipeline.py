@@ -13,6 +13,7 @@ from catalogue_import.grading import build_settings, collect_evidence
 from catalogue_import.groups import build_groups
 from catalogue_import.hiring import HiringLog, build_who_can
 from catalogue_import.injuries import build_serious_injuries
+from catalogue_import.item_saves import set_saves
 from catalogue_import.items import ItemLog, mordheimer_items
 from catalogue_import.mim import MimLog, MimReader, merge_duplicates, mim_item
 from catalogue_import.new_groups import SkillGroups, build_skill_groups
@@ -284,6 +285,7 @@ def build(package: Path = PACKAGE, item_data: Path = ITEM_DATA) -> dict[str, str
     word_item_rules(everything, wordings)  # an item's own wording of a reworded rule: dropped, or only what is its own
     add_notes(everything, overrides.get("item_notes", {}))
     set_own_rules(everything, overrides.get("item_own_rules", {}))
+    set_saves(everything, overrides.get("item_saves", {}))  # what equipping it does to the save (18 Nov 2026)
     same_names = assign_slugs(everything, overrides.get("whole_names", []))
     names_we_have = Catalogue(
         [item["name"] for item in everything],

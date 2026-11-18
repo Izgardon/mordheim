@@ -50,6 +50,16 @@ class AnimalItemWriteTests(CatalogueTestCase):
         self.assertEqual((answer["id"], answer["setting_id"], len(answer["availabilities"])), (item.id, None, 1))
         self.assertEqual(answer["availabilities"][0]["warbands"][0]["name"], "Reiklanders")
 
+    def test_a_mounts_item_arms_its_rider_and_a_creatures_does_not(self):
+        """Mounting a mount is +1 on the rider's save (William, 18 Nov 2026), from the beast's kind."""
+        mount = self.create_as(self.owner, BESTIARY, "Destrier", **self.sold())
+        creature = self.create_as(self.owner, BESTIARY, "Wyvern", kind="creature")
+
+        ridden = Item.objects.get(bestiary_entry_id=mount.data["id"])
+        self.assertEqual((ridden.save_bonus, ridden.save_slot), (1, "mount"))
+        beast = Item.objects.get(bestiary_entry_id=creature.data["id"])
+        self.assertEqual((beast.save_bonus, beast.save_slot), (None, ""))
+
     def test_a_beast_not_sold_still_has_its_item_unlisted(self):
         created = self.create_as(self.owner, BESTIARY, "Wyvern", kind="creature")
 

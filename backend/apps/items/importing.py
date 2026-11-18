@@ -112,6 +112,10 @@ class ImportedItems:
             "range": clean(entry.get("range")) or None,
             "strength": clean(entry.get("strength")) or None,
             "save_value": clean(entry.get("save")) or None,
+            # what equipping it does to the save (overrides.json "item_saves"); a mount's is its kind's, not the
+            # import's, so seed_bestiary keeps an Animal item's (apps/bestiary/animal_items.py)
+            "save_bonus": entry.get("save_bonus"),
+            "save_slot": entry.get("save_slot") or "",
             "statblock": json.dumps(statblock, ensure_ascii=False) if statblock else None,
             "tags": list(entry.get("tags") or []),
             "single_use": bool(entry.get("single_use")),  # the Swivel Gun's shots, back from our old seed
