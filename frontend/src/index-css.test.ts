@@ -49,6 +49,27 @@ describe("global stylesheet", () => {
     expect(light).toMatch(/color-scheme: light;/);
   });
 
+  /**
+   * William, 18 Nov 2026, from his phone: "our dropdowns, the arrow is too close to the right hand
+   * side can we add some padding". A browser pins its own arrow to the right edge whatever padding
+   * the select carries, so the stylesheet draws the chevron itself, off the edge, for every native
+   * select in the app at once.
+   */
+  it("draws every native select's chevron itself, clear of the right edge, in both themes", () => {
+    const rule =
+      stylesheet.match(/\nselect:not\(\[multiple\]\):not\(\[size\]\) \{([\s\S]*?)\n\}/)?.[1] ?? "";
+
+    expect(rule).toMatch(/\n {2}appearance: none;/);
+    expect(rule).toMatch(/background-position: right 0.75rem center;/);
+    // room for the chevron, so the longest option can't run under it
+    expect(rule).toMatch(/padding-right: 2rem;/);
+    expect(rule).toContain("data:image/svg+xml");
+    // the light theme's own chevron: a data URI takes no custom property
+    expect(stylesheet).toMatch(
+      /:root\[data-theme="light"\] select:not\(\[multiple\]\):not\(\[size\]\) \{\n {2}background-image: url\("data:image\/svg\+xml/
+    );
+  });
+
   // William: "yes" to pushing the light gold and bronze apart (they read alike at #8a6a1c, #8a4f2a)
   it("keeps the light card's gold and bronze apart, each AA as small text on the card", () => {
     const light = block(LIGHT);

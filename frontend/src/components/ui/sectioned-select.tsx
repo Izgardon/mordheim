@@ -70,7 +70,8 @@ export function SectionedSelect({
 
 /** The trigger and list of a dropdown beside a row's buttons: the buttons' height, a wider list. */
 export const ROW_SELECT = {
-  className: "h-8 w-auto gap-1.5 pl-2.5 pr-2 text-xs md:h-8",
+  // pr-3: the chevron keeps off the border, as every other dropdown's does (William, 18 Nov 2026)
+  className: "h-8 w-auto gap-1.5 pl-2.5 pr-3 text-xs md:h-8",
   contentClassName: "w-56 max-w-[calc(100vw-2rem)]",
 };
 

@@ -162,6 +162,14 @@ describe("SearchSelect", () => {
     expect(within(field).getByText("Mighty Blow")).toHaveClass("truncate", "min-w-0");
     expect(within(field).getByText("Combat")).toHaveClass("truncate", "min-w-0");
   });
+
+  // William, 18 Nov 2026: "our dropdowns, the arrow is too close to the right hand side can we
+  // add some padding"; the native selects get theirs from the stylesheet.
+  it("keeps its chevron off the right border", () => {
+    render(<SearchSelect label="Race" options={SKILLS} value={SKILLS[0]} onChange={vi.fn()} />);
+
+    expect(screen.getByRole("button", { name: "Race: Mighty Blow" })).toHaveClass("pl-2.5", "pr-3");
+  });
 });
 
 function Multi({ initial }: { initial: SearchOption[] }) {

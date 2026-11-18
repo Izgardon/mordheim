@@ -114,7 +114,8 @@ export function SearchSelect({
         disabled={disabled}
         aria-label={value ? `${picker.label}: ${value.title}` : picker.label}
         onClick={() => setSearching(true)}
-        className="flex min-w-0 flex-1 items-center justify-between gap-2 px-2.5 py-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:opacity-60"
+        // pr-3: the chevron keeps off the border, as a native select's does (William, 18 Nov 2026)
+        className="flex min-w-0 flex-1 items-center justify-between gap-2 py-1 pl-2.5 pr-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring disabled:opacity-60"
       >
         {!value ? (
           <span className="text-sm text-faint">None</span>

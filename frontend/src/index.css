@@ -48,6 +48,28 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
+/*
+ * Every native dropdown's arrow, in one place (William, 18 Nov 2026, from his phone: "our
+ * dropdowns, the arrow is too close to the right hand side can we add some padding"). A browser
+ * draws its own arrow against the right edge whatever padding the select carries, so the arrow is
+ * ours: the chevron the rest of the app uses, 12 px off the edge, with the room its text needs to
+ * stay clear of it. The :not()s hold the specificity above a Tailwind padding utility, which every
+ * one of these selects sets. Light has its own, since a data URI takes no custom property.
+ */
+select:not([multiple]):not([size]) {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 2rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8977c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem 1rem;
+}
+
+:root[data-theme="light"] select:not([multiple]):not([size]) {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b5947' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
 /* Utility classes */
 .scrollbar-hidden {
   scrollbar-width: none;
