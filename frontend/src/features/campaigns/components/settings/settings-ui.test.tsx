@@ -9,7 +9,7 @@ import { describe, expect, it } from "vitest";
 
 import { Button } from "@/components/ui/button";
 
-import { SettingsCard } from "./settings-ui";
+import { SettingRow, SettingsCard } from "./settings-ui";
 
 const LOSSY = "You're the only member, so leaving archives the campaign.";
 
@@ -44,5 +44,22 @@ describe("SettingsCard", () => {
 
     expect(screen.getByRole("heading", { name: "Warband rules" })).toBeInTheDocument();
     expect(card).toHaveTextContent("Three rules.");
+  });
+});
+
+describe("SettingRow", () => {
+  it("holds its control against the right edge on a phone", () => {
+    // William, 12 Nov 2026: "more right-aligning on mobile for warband limits" — the control took
+    // the full width of the row under the label and sat at its left.
+    render(
+      <SettingRow label="Warband limits">
+        <Button variant="secondary">Save</Button>
+      </SettingRow>
+    );
+
+    const control = screen.getByRole("button", { name: "Save" }).parentElement;
+
+    expect(control).toHaveClass("max-[960px]:w-full");
+    expect(control).toHaveClass("max-[960px]:justify-end");
   });
 });

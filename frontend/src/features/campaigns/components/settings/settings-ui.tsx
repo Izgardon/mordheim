@@ -71,7 +71,11 @@ type SettingRowProps = {
   error?: string;
 };
 
-/** A labelled setting: the label and its hint on the left, the control on the right (stacked on a phone). */
+/**
+ * A labelled setting: the label and its hint on the left, the control on the right. On a phone the
+ * control takes the row under the label and stays against the right edge (William, 12 Nov 2026:
+ * "more right-aligning on mobile for warband limits"), so the fields of every row line up there.
+ */
 export function SettingRow({ label, hint, children, below, error }: SettingRowProps) {
   return (
     <div className="flex flex-col gap-2 border-t border-line pt-4 first:border-t-0 first:pt-0">
@@ -81,7 +85,9 @@ export function SettingRow({ label, hint, children, below, error }: SettingRowPr
           {hint ? <span className="text-[13px] text-text2">{hint}</span> : null}
         </div>
         {children ? (
-          <div className="flex flex-wrap items-center gap-2 max-[960px]:w-full">{children}</div>
+          <div className="flex flex-wrap items-center gap-2 max-[960px]:w-full max-[960px]:justify-end">
+            {children}
+          </div>
         ) : null}
       </div>
       {below}

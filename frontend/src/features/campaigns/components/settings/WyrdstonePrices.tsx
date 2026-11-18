@@ -24,8 +24,10 @@ const CELL = "h-8 w-full min-w-0 px-1.5 text-center font-mono md:h-9";
 
 /**
  * The wyrdstone sell prices (`edit_settings`; William, 8 Nov 2026: the rulebook's table): the gold
- * for selling 1 to 8+ shards of the default resource at once, by warband size. Each cell is
- * edited, Reset puts the book's back in the boxes, and Save sends the whole table.
+ * for selling 1 to 8+ shards of the default resource at once, by warband size. The table is named
+ * for that resource throughout and follows a rename (William, 12 Nov 2026: "the sell table's
+ * 'shards' should match the default resource name, read live"). Each cell is edited, Reset puts
+ * the book's back in the boxes, and Save sends the whole table.
  */
 export default function WyrdstonePrices({ campaign }: { campaign: CampaignSummary }) {
   const current = campaign.wyrdstone_prices?.length
@@ -37,7 +39,7 @@ export default function WyrdstonePrices({ campaign }: { campaign: CampaignSummar
     "Couldn't save the prices."
   );
   useEffect(() => setDraft(draftOf(current)), [current]);
-  const resource = campaign.default_resource_name ?? "Wyrdstone";
+  const resource = campaign.default_resource_name?.trim() || "Wyrdstone";
 
   const setCell = (shards: number, band: number, text: string) =>
     setDraft((rows) =>
@@ -63,7 +65,7 @@ export default function WyrdstonePrices({ campaign }: { campaign: CampaignSummar
             <thead>
               <tr className="text-[11px] font-bold uppercase tracking-[0.08em] text-faint">
                 <th scope="col" className="w-14 pb-1 text-left font-bold">
-                  Shards
+                  {resource}
                 </th>
                 <th scope="colgroup" colSpan={SIZE_BANDS.length} className="pb-1 font-bold">
                   Warriors
@@ -89,7 +91,7 @@ export default function WyrdstonePrices({ campaign }: { campaign: CampaignSummar
                       <Input
                         inputMode="numeric"
                         inputSize="sm"
-                        aria-label={`${shards} shards, ${band} warriors`}
+                        aria-label={`${shards} ${resource}, ${band} warriors`}
                         value={draft[row]?.[column] ?? ""}
                         onChange={(event) =>
                           setCell(row, column, event.target.value.replace(/\D/g, ""))

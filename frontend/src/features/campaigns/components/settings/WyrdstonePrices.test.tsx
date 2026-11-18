@@ -31,11 +31,24 @@ describe("Wyrdstone sell prices", () => {
     renderWithQueryClient(<WyrdstonePrices campaign={campaignSummary()} />);
 
     expect(screen.getByText("Wyrdstone sell prices")).toBeInTheDocument();
-    expect(cell("1 shards, 1-3 warriors")).toHaveValue("45");
-    expect(cell("3 shards, 7-9 warriors")).toHaveValue("65");
-    expect(cell("8+ shards, 16+ warriors")).toHaveValue("100");
+    expect(cell("1 Wyrdstone, 1-3 warriors")).toHaveValue("45");
+    expect(cell("3 Wyrdstone, 7-9 warriors")).toHaveValue("65");
+    expect(cell("8+ Wyrdstone, 16+ warriors")).toHaveValue("100");
     expect(screen.getAllByRole("textbox")).toHaveLength(48);
     expect(screen.getByRole("button", { name: "Save prices" })).toBeDisabled();
+  });
+
+  it('names its column and every cell for the campaign\'s resource, not "shards"', () => {
+    // William, 12 Nov 2026: "the sell table's 'shards' should match the default resource name,
+    // read live" — only the card's title followed it.
+    renderWithQueryClient(
+      <WyrdstonePrices campaign={campaignSummary({ default_resource_name: "Warpstone" })} />
+    );
+
+    expect(screen.getByText("Warpstone sell prices")).toBeInTheDocument();
+    expect(screen.getByRole("columnheader", { name: "Warpstone" })).toBeInTheDocument();
+    expect(cell("1 Warpstone, 1-3 warriors")).toHaveValue("45");
+    expect(screen.queryByRole("columnheader", { name: "Shards" })).not.toBeInTheDocument();
   });
 
   it("saves an edited cell with the rest of the table", async () => {
@@ -44,9 +57,9 @@ describe("Wyrdstone sell prices", () => {
     fakeApi.on(PATCH(campaign.id), (body: object) => ({ ...campaign, ...body }));
     renderWithQueryClient(<WyrdstonePrices campaign={campaign} />);
 
-    await user.clear(cell("3 shards, 7-9 warriors"));
-    await user.type(cell("3 shards, 7-9 warriors"), "7x0");
-    expect(cell("3 shards, 7-9 warriors")).toHaveValue("70");
+    await user.clear(cell("3 Wyrdstone, 7-9 warriors"));
+    await user.type(cell("3 Wyrdstone, 7-9 warriors"), "7x0");
+    expect(cell("3 Wyrdstone, 7-9 warriors")).toHaveValue("70");
     await user.click(screen.getByRole("button", { name: "Save prices" }));
 
     const edited = BOOK.map((row, shards) =>
@@ -61,7 +74,7 @@ describe("Wyrdstone sell prices", () => {
     const user = setupUser();
     renderWithQueryClient(<WyrdstonePrices campaign={campaignSummary()} />);
 
-    await user.clear(cell("5 shards, 13-15 warriors"));
+    await user.clear(cell("5 Wyrdstone, 13-15 warriors"));
     await user.click(screen.getByRole("button", { name: "Save prices" }));
 
     expect(screen.getByRole("alert")).toHaveTextContent("Give every cell a price in whole crowns.");
@@ -74,11 +87,11 @@ describe("Wyrdstone sell prices", () => {
     const campaign = campaignSummary({ wyrdstone_prices: changed });
     fakeApi.on(PATCH(campaign.id), (body: object) => ({ ...campaign, ...body }));
     renderWithQueryClient(<WyrdstonePrices campaign={campaign} />);
-    expect(cell("1 shards, 1-3 warriors")).toHaveValue("50");
+    expect(cell("1 Wyrdstone, 1-3 warriors")).toHaveValue("50");
 
     await user.click(screen.getByRole("button", { name: "Reset" }));
 
-    expect(cell("1 shards, 1-3 warriors")).toHaveValue("45");
+    expect(cell("1 Wyrdstone, 1-3 warriors")).toHaveValue("45");
     expect(fakeApi.calls()).toEqual([]);
     await user.click(screen.getByRole("button", { name: "Save prices" }));
     await waitFor(() =>

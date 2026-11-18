@@ -26,6 +26,18 @@ const patch = `PATCH /campaigns/${campaign.id}/`;
 beforeEach(() => fakeApi.reset());
 
 describe("Level-ups", () => {
+  it("keeps the buttons in their own row under the fields, not in the grid's last cell", () => {
+    // William, 12 Nov 2026: "level-ups as they are but in a 2x2 grid with the buttons in their own
+    // row underneath" — with three fields the Save used to sit in the grid's fourth cell.
+    renderWithQueryClient(<CampaignRules campaign={campaign} />);
+    const fields = screen.getByRole("textbox", { name: "Heroes" }).closest("div.grid");
+    const save = screen.getByRole("button", { name: "Save level-ups" });
+
+    expect(fields).toContainElement(screen.getByRole("textbox", { name: "Hired swords" }));
+    expect(fields).not.toContainElement(save);
+    expect(fields!.compareDocumentPosition(save)).toBe(Node.DOCUMENT_POSITION_FOLLOWING);
+  });
+
   it("edits the hired swords' table beside the heroes' and henchmen's, and saves all three", async () => {
     const user = setupUser();
     fakeApi.on(patch, (body: object) => ({ ...campaign, ...body }));

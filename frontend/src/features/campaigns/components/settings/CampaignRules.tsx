@@ -129,44 +129,49 @@ export default function CampaignRules({ campaign }: { campaign: CampaignSummary 
         label="Level-ups"
         error={levelUps.errors.save}
         below={
-          <div className="grid gap-3 min-[961px]:grid-cols-2">
-            <ThresholdField
-              id="settings-hero-thresholds"
-              label="Heroes"
-              value={levelUps.heroText}
-              placeholder="2, 4, 6, 8, 11, 14…"
-              error={levelUps.errors.hero}
-              onChange={levelUps.setHeroText}
-              onReset={levelUps.resetHero}
-            />
-            <ThresholdField
-              id="settings-henchmen-thresholds"
-              label="Henchmen"
-              value={levelUps.henchmenText}
-              placeholder="2, 5, 9, 14"
-              error={levelUps.errors.henchmen}
-              onChange={levelUps.setHenchmenText}
-              onReset={levelUps.resetHenchmen}
-            />
-            {/* William, 7 Nov 2026: "hired sword max level up options in settings (exp points
-                and max)"; 12 Nov 2026: "like henchmen so get the same levels and gaps as them" */}
-            <ThresholdField
-              id="settings-hired-sword-thresholds"
-              label="Hired swords"
-              value={levelUps.hiredSwordText}
-              placeholder="2, 5, 9, 14"
-              error={levelUps.errors.hiredSword}
-              onChange={levelUps.setHiredSwordText}
-              onReset={levelUps.resetHiredSword}
-            />
-            <Button
-              variant="secondary"
-              className="self-start"
-              disabled={levelUps.isSaving}
-              onClick={() => void levelUps.save()}
-            >
-              {levelUps.isSaving ? "Saving…" : "Save level-ups"}
-            </Button>
+          <div className="flex flex-col gap-3">
+            <div className="grid gap-3 min-[961px]:grid-cols-2">
+              <ThresholdField
+                id="settings-hero-thresholds"
+                label="Heroes"
+                value={levelUps.heroText}
+                placeholder="2, 4, 6, 8, 11, 14…"
+                error={levelUps.errors.hero}
+                onChange={levelUps.setHeroText}
+                onReset={levelUps.resetHero}
+              />
+              <ThresholdField
+                id="settings-henchmen-thresholds"
+                label="Henchmen"
+                value={levelUps.henchmenText}
+                placeholder="2, 5, 9, 14"
+                error={levelUps.errors.henchmen}
+                onChange={levelUps.setHenchmenText}
+                onReset={levelUps.resetHenchmen}
+              />
+              {/* William, 7 Nov 2026: "hired sword max level up options in settings (exp points
+                  and max)"; 12 Nov 2026: "like henchmen so get the same levels and gaps as them" */}
+              <ThresholdField
+                id="settings-hired-sword-thresholds"
+                label="Hired swords"
+                value={levelUps.hiredSwordText}
+                placeholder="2, 5, 9, 14"
+                error={levelUps.errors.hiredSword}
+                onChange={levelUps.setHiredSwordText}
+                onReset={levelUps.resetHiredSword}
+              />
+            </div>
+            {/* the buttons take the row under the fields, not the grid's last cell (William, 12
+                Nov 2026: "in a 2x2 grid with the buttons in their own row underneath") */}
+            <div className="flex flex-wrap gap-2 border-t border-line pt-3">
+              <Button
+                variant="secondary"
+                disabled={levelUps.isSaving}
+                onClick={() => void levelUps.save()}
+              >
+                {levelUps.isSaving ? "Saving…" : "Save level-ups"}
+              </Button>
+            </div>
           </div>
         }
       />
