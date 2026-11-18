@@ -15,8 +15,8 @@ import { useCampaignSave } from "./CampaignSection";
 import PresetNote, { presetDim } from "./PresetNote";
 import { SettingRow, SettingsCard } from "./settings-ui";
 
-const source = (chart: ExplorationChartRow) =>
-  chart.campaign_id === null ? "The book's" : "Yours";
+/** A campaign's own chart says so; a book chart is named for its setting already (William, 18 Nov 2026). */
+const source = (chart: ExplorationChartRow) => (chart.campaign_id === null ? "" : " (Yours)");
 
 /**
  * Settings → Exploration (`edit_settings`, the owner): which chart the post-game explores by. The
@@ -71,7 +71,8 @@ export default function ExplorationSection({ campaign }: { campaign: CampaignSum
           disabled={saving || charts.isLoading || rows.length === 0}
           onChange={(event) => pick(event.target.value)}
           className={cn(
-            "min-h-10 border border-strong bg-page px-2.5 text-sm text-ink",
+            // w-full and min-w-0: a select is as wide as its widest option, which ran off a phone
+            "min-h-10 w-full min-w-0 max-w-full border border-strong bg-page px-2.5 text-sm text-ink",
             presetDim(locks, "exploration_chart_id")
           )}
         >
@@ -82,7 +83,8 @@ export default function ExplorationSection({ campaign }: { campaign: CampaignSum
               value={chart.id}
               className={cn(chart.in_play === false && "text-faint")}
             >
-              {chart.name} ({source(chart)})
+              {chart.name}
+              {source(chart)}
               {chart.in_play === false ? " — not in this campaign" : ""}
             </option>
           ))}

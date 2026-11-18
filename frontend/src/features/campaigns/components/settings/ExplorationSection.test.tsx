@@ -104,4 +104,12 @@ describe("Settings → Exploration", () => {
     expect(await screen.findByRole("option", { name: /Albion/ })).toBeEnabled();
     expect(await screen.findByText(/isn't in this campaign/)).toBeInTheDocument();
   });
+
+  it("names a book chart without saying whose it is (William, 18 Nov 2026)", async () => {
+    renderWithQueryClient(<ExplorationSection campaign={campaign} />);
+
+    const book = await screen.findByRole("option", { name: "Exploration" });
+    expect(book).toBeInTheDocument();
+    expect(screen.queryByText(/The book's/)).not.toBeInTheDocument();
+  });
 });
