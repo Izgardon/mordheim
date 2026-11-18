@@ -49,6 +49,8 @@ const chart = {
   ],
 } as ExplorationChart;
 
+const setDie = vi.fn();
+
 const rolled = (
   diceValues: number[],
   ruleset?: BattlePostbattleRules,
@@ -67,6 +69,7 @@ const rolled = (
             hasRolledAllDice: true,
           },
           rolled: true,
+          setDie,
           amount: 1,
           rules: ruleset,
           limits: { max: 10, max_chosen: 6 },
@@ -105,6 +108,38 @@ const show = () => {
 describe("ExploreTab", () => {
   beforeEach(() => {
     vi.mocked(rollDie).mockReset();
+    setDie.mockReset();
+  });
+
+  // William's unanswered bullet: "exploration dice editable and individually re-rollable". Once
+  // rolled, each die was a plain span and the whole roll was fixed.
+  it("takes a rolled die typed over, leaving the rest of the roll as it was thrown", async () => {
+    const user = setupUser();
+    rolled([3, 3, 3], rules, chart);
+
+    await user.type(screen.getByLabelText("Die 2"), "5");
+
+    expect(setDie).toHaveBeenCalledWith(1, 5);
+    expect(rollDie).not.toHaveBeenCalled();
+  });
+
+  it("throws one die again on its own", async () => {
+    const user = setupUser();
+    vi.mocked(rollDie).mockReturnValueOnce(4);
+    rolled([3, 3, 3], rules, chart);
+
+    await user.click(screen.getByRole("button", { name: "Roll die 3 again" }));
+
+    expect(setDie).toHaveBeenCalledWith(2, 4);
+  });
+
+  it("keeps a die's face when what is typed is no face of a D6", async () => {
+    const user = setupUser();
+    rolled([3, 3, 3], rules, chart);
+
+    await user.type(screen.getByLabelText("Die 1"), "9");
+
+    expect(setDie).toHaveBeenCalledWith(0, 3);
   });
 
   it("has a box for each of the warband's dice and takes them typed in, as Roll does", async () => {

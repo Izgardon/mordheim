@@ -17,12 +17,15 @@ import { placesFound } from "@/features/exploration/utils/places-found";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 import { cn } from "@/lib/utils";
 
+import ExploreDie from "./ExploreDie";
 import ExplorePlaceCard from "./ExplorePlaceCard";
 
 /**
  * Explore (design E): the dice (one per hero on his feet, one more for a win), rolled once or
- * typed in a box each, and kept with the draft; the total and the shards it finds; which resource
- * they go to; and each multiple's place with what the campaign's chart says it does.
+ * typed in a box each, and kept with the draft; afterwards each die is still typed over or thrown
+ * again on its own (`ExploreDie`), and the rest of the roll stays put; the total and the shards it
+ * finds; which resource they go to; and each multiple's place with what the campaign's chart says
+ * it does.
  */
 export default function ExploreTab({
   explore,
@@ -63,21 +66,17 @@ export default function ExploreTab({
           <span className="text-xs text-muted-foreground">{why}</span>
         </div>
         {rolled ? (
-          <div className="flex flex-wrap gap-2">
+          <div role="group" aria-label="Exploration dice" className="flex flex-wrap gap-2">
             {exploration.diceValues.map((value, index) => (
-              <span
+              <ExploreDie
                 key={index}
-                className={cn(
-                  "box-border flex items-center justify-center font-mono font-bold",
-                  isMobile ? "h-[52px] w-[52px] text-[22px]" : "h-14 w-14 text-2xl",
-                  hot.has(value as number) && exploration.selectedDice[index]
-                    ? "border-2 border-primary text-accent-hi"
-                    : "border border-strong text-head",
-                  !exploration.selectedDice[index] && "opacity-40"
-                )}
-              >
-                {value}
-              </span>
+                index={index}
+                value={value as number}
+                found={hot.has(value as number)}
+                chosen={exploration.selectedDice[index]}
+                isMobile={isMobile}
+                onFace={(face) => explore.setDie(index, face)}
+              />
             ))}
           </div>
         ) : (

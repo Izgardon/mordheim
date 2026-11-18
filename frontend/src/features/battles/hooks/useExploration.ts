@@ -17,13 +17,13 @@ import type { ParticipantRoster } from "@/features/battles/components/prebattle/
 import { useLatestRef } from "@/features/battles/hooks/useLatestRef";
 import type { PostbattleDraft } from "@/features/battles/hooks/usePostbattleDraft";
 import type { BattleParticipant, BattleState } from "@/features/battles/types/battle-types";
-import { toD6Values } from "@/features/battles/utils/dice-results";
 import type { WarbandResource } from "@/features/warbands/types/warband-types";
 
 /**
  * The exploration roll: restored from the draft (or the suggested dice), rolled or typed in, and
  * saved with the draft as soon as every die is set, so a reload keeps it and allows no free
- * re-roll; changing saved dice is a re-roll the server warns about and logs (decision 9).
+ * re-roll; changing a saved die is a re-roll the server warns about and logs (decision 9), and it
+ * never moves what the explore step has already handed over.
  */
 export function useExploration({
   battleState,
@@ -42,11 +42,6 @@ export function useExploration({
   const { lastSettledExplorationRef, savedExplorationKeyRef } = drafting;
   const [exploration, setExploration] = useState<LocalExplorationState | null>(null);
   const [explorationKey, setExplorationKey] = useState<string | null>(null);
-  const [rollSignal, setRollSignal] = useState(0);
-  const [rerollSignal, setRerollSignal] = useState(0);
-  const [rerollIndex, setRerollIndex] = useState<number | null>(null);
-  const [isRolling, setIsRolling] = useState(false);
-
   const participantRef = useLatestRef(currentParticipant);
   const { battle, rules, suggested_postbattle: suggestion } = battleState;
   const limits = explorationDiceLimits(rules);
@@ -112,65 +107,21 @@ export function useExploration({
     settledExplorationKey,
   ]);
 
-  const rollAll = useCallback(() => {
-    setDraftError("");
-    setRerollIndex(null);
-    setRollSignal((prev) => prev + 1);
-  }, [setDraftError]);
-
-  const reroll = useCallback(
-    (index: number) => {
+  /** One die rolled again or typed over: the rest of the roll stays exactly as it was thrown. */
+  const setDie = useCallback(
+    (index: number, face: number) => {
       setDraftError("");
-      setRerollIndex(index);
-      setRerollSignal((prev) => prev + 1);
+      setExploration((current) =>
+        current
+          ? {
+              ...current,
+              hasRolledAllDice: true,
+              diceValues: current.diceValues.map((value, at) => (at === index ? face : value)),
+            }
+          : current
+      );
     },
     [setDraftError]
-  );
-
-  const completeRoll = useCallback(
-    (results: unknown) => {
-      setIsRolling(false);
-      setExploration((current) => {
-        if (!current) {
-          return current;
-        }
-        const nextValues = toD6Values(results, current.diceCount);
-        if (nextValues.length === 0) {
-          setDraftError("Unable to read exploration roll.");
-          return current;
-        }
-        return {
-          ...current,
-          hasRolledAllDice: true,
-          diceValues: current.diceValues.map((value, index) => nextValues[index] ?? value),
-        };
-      });
-    },
-    [setDraftError]
-  );
-
-  const completeReroll = useCallback(
-    (results: unknown) => {
-      setIsRolling(false);
-      setExploration((current) => {
-        if (!current || rerollIndex === null) {
-          return current;
-        }
-        const [nextValue] = toD6Values(results, 1);
-        if (!nextValue) {
-          setDraftError("Unable to read exploration roll.");
-          return current;
-        }
-        return {
-          ...current,
-          diceValues: current.diceValues.map((value, index) =>
-            index === rerollIndex ? nextValue : value
-          ),
-        };
-      });
-      setRerollIndex(null);
-    },
-    [rerollIndex, setDraftError]
   );
 
   const commitDiceCount = useCallback(
@@ -206,15 +157,7 @@ export function useExploration({
     amountFromDice,
     amount: exploration?.amountOverride ?? amountFromDice,
     resource,
-    rollSignal,
-    rerollSignal,
-    rerollIndex,
-    isRolling,
-    setIsRolling,
-    rollAll,
-    reroll,
-    completeRoll,
-    completeReroll,
+    setDie,
     commitDiceCount,
   };
 }
