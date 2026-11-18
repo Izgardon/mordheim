@@ -12,10 +12,32 @@ type PullToRefreshOptions = {
 };
 
 /**
+ * A pane of the page's own, between the touch and the scroll container: the battle feed, the
+ * battle screen's column, a sheet's body. A drag that starts in one is that pane's to scroll.
+ */
+function insideItsOwnPane(target: EventTarget | null, root: HTMLElement) {
+  let node = target instanceof Element ? target : null;
+  while (node && node !== root) {
+    const { overflowY } = getComputedStyle(node);
+    if ((overflowY === "auto" || overflowY === "scroll") && node.scrollHeight > node.clientHeight) {
+      return true;
+    }
+    node = node.parentElement;
+  }
+  return false;
+}
+
+/**
  * Pull down at the top of the scroll container to refresh. The touch listeners are native, and
  * touchmove is registered non-passive: React attaches touchmove as passive, so the old
  * onTouchMove's preventDefault() was ignored and iOS rubber-banding ran alongside the pull
  * (BUG-61).
+ *
+ * A drag that starts inside a pane of the page's own is left alone (William, 18 Nov 2026, from his
+ * phone, on the battle screen: "here i scroll down the feed and it will refresh the page"). The
+ * listeners sit on the scroll container, so every touch in the page reached them, and a screen
+ * built from panes leaves that container at scrollTop 0 behind them: scrolling the feed down was a
+ * pull, which cancelled the scroll and refreshed the page.
  */
 export function usePullToRefresh({ enabled, onRefresh }: PullToRefreshOptions) {
   const scrollRef = useRef<HTMLDivElement | null>(null);
@@ -47,7 +69,7 @@ export function usePullToRefresh({ enabled, onRefresh }: PullToRefreshOptions) {
 
     const handleTouchStart = (event: TouchEvent) => {
       if (gesture.current.refreshing) return;
-      if (element.scrollTop > 0) {
+      if (element.scrollTop > 0 || insideItsOwnPane(event.target, element)) {
         resetPull();
         return;
       }

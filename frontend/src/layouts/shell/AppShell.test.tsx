@@ -176,6 +176,33 @@ describe("AppShell (mobile)", () => {
     expect(reloadMobileLayout).not.toHaveBeenCalled();
   });
 
+  it("leaves a drag inside one of the page's own panes alone (William, 18 Nov 2026)", () => {
+    const queryClient = createTestQueryClient();
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+    renderWithQueryClient(
+      <AppShell variant="mobile" campaignId={7}>
+        <div data-testid="feed" style={{ overflowY: "auto" }}>
+          <p>Round 2 started</p>
+        </div>
+      </AppShell>,
+      { queryClient }
+    );
+    const feed = screen.getByTestId("feed");
+    Object.defineProperty(feed, "scrollHeight", { configurable: true, value: 280 });
+    Object.defineProperty(feed, "clientHeight", { configurable: true, value: 118 });
+    getScrollContainer(); // the shell behind it sits at the top, as it does on the battle screen
+
+    fireEvent.touchStart(feed, { touches: [{ clientY: 0 }] });
+    const move = createEvent.touchMove(feed, { touches: [{ clientY: 260 }], cancelable: true });
+    fireEvent(feed, move);
+    fireEvent.touchEnd(feed);
+
+    expect(move.defaultPrevented).toBe(false); // the feed keeps its scroll
+    expect(screen.queryByText("Release to refresh")).not.toBeInTheDocument();
+    expect(invalidate).not.toHaveBeenCalled();
+    expect(reloadMobileLayout).not.toHaveBeenCalled();
+  });
+
   it("stops the browser's own overscroll while pulling (BUG-61)", () => {
     renderWithQueryClient(
       <AppShell variant="mobile" campaignId={7}>
