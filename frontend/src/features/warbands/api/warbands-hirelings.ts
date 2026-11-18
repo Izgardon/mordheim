@@ -36,6 +36,8 @@ export type HireBody = {
   resources?: HirePaymentLine[];
   /** One who takes a hero's place, at the heroes' cap: the hero who goes. */
   dismiss_hero_id?: number | null;
+  /** Paid: the player settled what no gold settles (the fee's `settle`), recorded on the Hire row. */
+  fee_paid?: boolean;
 };
 
 /**

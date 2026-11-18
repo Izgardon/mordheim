@@ -5,7 +5,16 @@ from types import SimpleNamespace
 
 from django.test import SimpleTestCase
 
-from apps.hirelings.fees import clean_fee, fee_payload, fee_text, gold_due, make_fee, match_counter, names_of
+from apps.hirelings.fees import (
+    clean_fee,
+    fee_payload,
+    fee_text,
+    gold_due,
+    make_fee,
+    match_counter,
+    names_of,
+    settle_text,
+)
 
 
 def counters(*names: str) -> list[SimpleNamespace]:
@@ -55,7 +64,22 @@ class FeeTests(SimpleTestCase):
     def test_a_payload_names_what_pays_each_resource_and_fills_in_an_old_fee(self):
         payload = fee_payload(make_fee(resources=[("Wyrdstone", 1)]))
         self.assertEqual(payload["resources"][0]["names"][:2], ["wyrdstone", "wyrdstones"])
-        self.assertEqual(fee_payload({"gold": 5}), {**make_fee(gold=5), "resources": []})
+        self.assertEqual(fee_payload({"gold": 5}), {**make_fee(gold=5), "resources": [], "settle": ""})
+
+    def test_what_a_fee_asks_that_nothing_charges_is_its_words(self):
+        # William, 18 Nov 2026: a fee with no gold still asks for something, and Paid records it
+        self.assertEqual(
+            settle_text(make_fee("special", note="One holy or unholy relic.")), "One holy or unholy relic."
+        )
+        self.assertEqual(settle_text(make_fee("special")), "See his rules.")
+        self.assertEqual(settle_text(make_fee(note="She takes a retainer before each battle.")), "She takes a retainer before each battle.")  # fmt: skip
+        self.assertEqual(fee_payload(make_fee("special", note="A body part."))["settle"], "A body part.")
+        for charged in (make_fee(gold=15, note="15 gc*"), make_fee(dice=1, note="1D6 gc."), make_fee(resources=[("Wyrdstone", 1)], note="1 wyrdstone.")):  # fmt: skip
+            with self.subTest(fee=charged):  # gold, dice and resources are charged and written already
+                self.assertEqual(settle_text(charged), "")
+        for nothing in (make_fee("none", note="No hire fee."), make_fee("replaces_hero"), make_fee(gold=20)):
+            with self.subTest(fee=nothing):
+                self.assertEqual(settle_text(nothing), "")
 
     def test_a_fee_in_words(self):
         self.assertEqual(fee_text(make_fee(gold=90, resources=[("Campaign points", 5)])), "90 gc + 5 Campaign points")

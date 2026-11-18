@@ -8,7 +8,7 @@ in `test_catalogue_transactions.py`; what they tell the other members (BUG-80), 
 
 from apps.bestiary.models import BestiaryEntry
 from apps.core.testing import book_warband_type
-from apps.hirelings.fees import make_fee
+from apps.hirelings.fees import fee_payload, make_fee
 from apps.hirelings.models import HiredSword
 from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.races.models import Race
@@ -291,7 +291,8 @@ class BestiaryWriteTests(CatalogueTestCase):
         cleared = self.patch_as(
             self.owner, HIRED_SWORDS.detail_url(archer.id), {"hire_fee": {}, "upkeep_fee": {"gold": 0}}
         )
-        self.assertEqual((cleared.data["hire_fee"], cleared.data["upkeep_fee"]["gold"]), (make_fee(), 0))
+        empty = fee_payload(make_fee())  # the payload's shape: a blank fee, and nothing to settle by hand
+        self.assertEqual((cleared.data["hire_fee"], cleared.data["upkeep_fee"]["gold"]), (empty, 0))
 
     def test_deleting_a_hired_sword_deletes_it_with_its_links(self):
         archer = make_entry(HIRED_SWORDS, "Archer", campaign=self.campaign)

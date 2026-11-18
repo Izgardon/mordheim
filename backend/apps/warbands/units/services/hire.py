@@ -8,7 +8,9 @@ long it stays and what it is paid in. A hand-typed hire (`custom`) is the name, 
 
 What is paid is the player's to set (the fees and skill lists step): the gold sent, else the fee's gold plus the dice
 roll sent; each resource line from the counter sent, else the fee's lines from the counters of their names
-(fee_payments.py). A fee in his rules is hired at 0 gc with a warning; one who takes a hero's place warns at the hero
+(fee_payments.py). A fee that charges nothing but asks for something in words (a fee in his rules, `fees.settle_text`)
+is settled by the player himself: `fee_paid` records what it asked on the Hire row, and charges nothing
+(William, 18 Nov 2026). A fee in his rules is hired at 0 gc with a warning; one who takes a hero's place warns at the hero
 cap and may let a hero go in the same request (`dismiss_hero_id`). The unit goes through the shared recruit path, so
 the hired-sword cap, the HIRE ledger row (the gold, and the resources in its note) and the log are the generic
 create's. A dramatis persona sits outside the cap; hiring one the warband already has warns (one of each), and so does
@@ -27,7 +29,7 @@ from rest_framework.exceptions import NotFound
 from apps.bestiary.models import MOUNT
 from apps.core.catalogue.current import current_rows, resolve
 from apps.core.models import CatalogueRemoval
-from apps.hirelings.fees import gold_due, make_fee, no_fee
+from apps.hirelings.fees import gold_due, make_fee, no_fee, settle_text
 from apps.hirelings.models import MAX_KIT_QUANTITY, DramatisPersona, HiredSword, HirelingProfile
 from apps.hirelings.selectors import link_model
 from apps.items.models import Item
@@ -63,12 +65,14 @@ class Hired:
 
 @dataclass(frozen=True)
 class HireTerms:
-    """What the hire pays and the room it makes: the gold, the resource lines and a hero to let go."""
+    """What the hire pays and the room it makes: the gold, the resource lines, what the player settled himself
+    (`settled`: the words of a fee nothing charges, sent as `fee_paid`) and a hero to let go."""
 
     gold: int
     lines: list[ResourceLine]
     dismiss_hero_id: int | None = None
     warnings: tuple[dict[str, Any], ...] = ()
+    settled: str = ""
 
 
 def catalogue_entry(source: str, entry_id: int, campaign_id: int) -> Any:
@@ -91,7 +95,8 @@ def _ordered(model: type[HirelingProfile], relation: str) -> QuerySet[Any]:
 
 
 def hire_terms(body: Mapping[str, Any], fee: Mapping[str, Any], name: str) -> HireTerms:
-    """The gold and resources the request pays (each as sent, else as the fee asks) and its warnings."""
+    """The gold and resources the request pays (each as sent, else as the fee asks), what `fee_paid` settled by hand
+    and its warnings."""
     gold = body.get("price")
     warnings: list[dict[str, Any]] = []
     if gold is None:
@@ -101,7 +106,8 @@ def hire_terms(body: Mapping[str, Any], fee: Mapping[str, Any], name: str) -> Hi
             warnings.append({"code": "fee_not_rolled", "message": message})
     sent = body.get("resources")
     lines = sent_lines(sent) if sent is not None else fee_lines(fee)
-    return HireTerms(gold, lines, body.get("dismiss_hero_id"), tuple(warnings))
+    settled = settle_text(fee) if body.get("fee_paid") else ""
+    return HireTerms(gold, lines, body.get("dismiss_hero_id"), tuple(warnings), settled)
 
 
 def hire_payload(source: str, entry: Any, name: str | None, gold: int) -> dict[str, Any]:
@@ -191,7 +197,8 @@ def hire(warband: Warband, writer: Any, source: str, entry: Any, terms: HireTerm
         warnings += fee_warnings(warband, fee, name)
         lines = [replace(line, who=name) for line in terms.lines]
         payment = pay(lines, locked_counters(warband.id) if lines else [])
-        sent = {**writer.initial_data, "paid": payment.note}
+        settled = f"Paid: {terms.settled}" if terms.settled else ""
+        sent = {**writer.initial_data, "paid": " ".join(part for part in (payment.note, settled) if part)}
         unit: Hireling = recruit(HIRELING, warband, writer, sent=sent, locked=True)  # type: ignore[assignment]
         warnings += payment.warnings
         if entry is not None and _kit(unit, entry, warband.campaign_id):

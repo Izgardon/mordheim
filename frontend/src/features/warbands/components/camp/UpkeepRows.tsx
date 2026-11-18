@@ -3,8 +3,12 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import FeePayment from "@/features/hirelings/components/fees/FeePayment";
-import type { LinePick, Payment } from "@/features/hirelings/components/fees/fee-payment";
-import { feeOf } from "@/features/hirelings/fees";
+import {
+  paymentGold,
+  type LinePick,
+  type Payment,
+} from "@/features/hirelings/components/fees/fee-payment";
+import { feeOf, feeSettle } from "@/features/hirelings/fees";
 import type { BattlePostbattleUpkeepEntry } from "@/features/battles/types/battle-types";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { cn } from "@/lib/utils";
@@ -74,6 +78,10 @@ function UpkeepRow({ camp, line }: { camp: OpenCamp; line: UpkeepLine }) {
     return () => window.clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only an edit saves
   }, [payment]);
+  const settle = feeSettle(line.fee); // the server's words for what no gold or counter settles
+  // it records the words instead of paying: a fee with words of its own carries no resource line,
+  // so the gold the player typed is the only thing the tick could still charge
+  const records = Boolean(settle) && paymentGold(payment) === 0;
   const letGo = async () => {
     try {
       const result = await unitApi("hireling").batch(camp.warbandId, { dismiss: [line.id] });
@@ -128,7 +136,7 @@ function UpkeepRow({ camp, line }: { camp: OpenCamp; line: UpkeepLine }) {
               className={button}
               onClick={() => write({ ...entryOf(line.entry, payment), paid: true })}
             >
-              Pay
+              {records ? "Paid" : "Pay"}
             </Button>
             <Button size="sm" variant="ghost" className={button} onClick={() => setLettingGo(true)}>
               Let go
@@ -136,6 +144,9 @@ function UpkeepRow({ camp, line }: { camp: OpenCamp; line: UpkeepLine }) {
           </div>
         )}
       </div>
+      {line.status === "gone" || !settle ? null : (
+        <span className="text-xs text-text2">{settle}</span>
+      )}
       {line.status === "gone" ? null : (
         <FeePayment
           fee={line.fee}
@@ -157,7 +168,9 @@ function UpkeepRow({ camp, line }: { camp: OpenCamp; line: UpkeepLine }) {
 /**
  * Camp's upkeep (the fees step): each hired sword's fee, gold and resources, prefilled from his
  * upkeep and editable, each resource from one of the warband's resources (the one of its name to
- * start). Pay is a tick; Ready charges everyone still on the roster what their line holds.
+ * start). Pay is a tick; Ready charges everyone still on the roster what their line holds. An
+ * upkeep nothing charges says what it asks instead and reads Paid: Ready records it and moves
+ * nothing (William, 18 Nov 2026).
  */
 export default function UpkeepRows({ camp, lines }: { camp: OpenCamp; lines: UpkeepLine[] }) {
   return (

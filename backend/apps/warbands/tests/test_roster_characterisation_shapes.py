@@ -134,6 +134,7 @@ HIRE_FEE: dict[str, Any] = {
     "dice_multiplier": None,
     "resources": [],
     "note": "str",
+    "settle": "str",  # what nothing charges, which the Paid button records
 }
 UPKEEP_FEE = {
     **HIRE_FEE,

@@ -5,6 +5,8 @@ Upkeep (negative) and the battle reward (positive) are written together through 
 stash at their own cost (services/stash.py; BUG-117: nothing is re-priced).
 An upkeep's resources (the fees and skill lists step) are paid from the warband's counters, the one each line names or
 else the one of its name, never below 0 (apps/warbands/units/services/fee_payments.py), and noted on the Upkeep row.
+An upkeep that charges nothing but asks for something in words (a fee in his rules) is settled by the player himself:
+camp's Paid tick records what it asked on the same row and charges nothing (William, 18 Nov 2026).
 """
 
 from collections import defaultdict
@@ -13,6 +15,7 @@ from dataclasses import dataclass, field, replace
 from django.db.models import F, Min
 
 from apps.core.catalogue.current import resolve
+from apps.hirelings.fees import settle_text
 from apps.items.models import Item
 from apps.warbands.models import LedgerAction, WarbandResource
 from apps.warbands.services import ledger
@@ -59,9 +62,20 @@ class Upkeep:
     warnings: list[dict]
 
 
-def _owed(context: FinaliseContext, upkeep: dict) -> list[tuple[str, int, list[ResourceLine]]]:
-    """Each hired sword still on the roster after this battle, with the gold and resources the draft gives him; one
-    missing games owes none for the battle he missed."""
+@dataclass(frozen=True)
+class Owed:
+    """What the draft gives one hired sword: the gold, the resource lines, and the words of an upkeep nothing charges
+    that he ticked Paid in camp (`settled`), which are recorded and charged nowhere."""
+
+    name: str
+    gold: int
+    lines: list[ResourceLine]
+    settled: str = ""
+
+
+def _owed(context: FinaliseContext, upkeep: dict) -> list[Owed]:
+    """Each hired sword still on the roster after this battle, with the gold and resources the draft gives him and the
+    fee he settled himself; one missing games owes none for the battle he missed."""
     owed = []
     for unit_key, entry in upkeep.get("entries", {}).items():
         hireling = context.hirelings.get(parse_unit_key(unit_key)["unit_id"])
@@ -73,26 +87,28 @@ def _owed(context: FinaliseContext, upkeep: dict) -> list[tuple[str, int, list[R
         cost = entry.get("cost")
         gold = 0 if cost is None else coerce_int(cost, field_name="postbattle upkeep cost", minimum=0, maximum=999999)
         lines = [replace(line, who=name) for line in sent_lines(entry.get("resources") or [])]
-        if cost is not None or lines:
-            owed.append((name, gold, lines))
+        settled = settle_text(hireling.upkeep_fee or {}) if entry.get("paid") else ""
+        if cost is not None or lines or settled:
+            owed.append(Owed(name, gold, lines, settled))
     return owed
 
 
 def upkeep_charge(context: FinaliseContext, upkeep: dict) -> Upkeep:
-    """The Upkeep row: each hired sword's gold, and his resources paid from the warband's counters (locked and written
-    once, only when some are owed), each noted on its line."""
+    """The Upkeep row: each hired sword's gold, his resources paid from the warband's counters (locked and written
+    once, only when some are owed) and what he settled himself, each noted on its line."""
     if not upkeep.get("pay_upkeep", True):
         return Upkeep(None, [])
     owed = _owed(context, upkeep)
-    lines = [line for _name, _gold, resource_lines in owed for line in resource_lines]
+    lines = [line for row in owed for line in row.lines]
     payment = pay(lines, locked_counters(context.warband.id)) if lines else Payment()
     notes, start = [], 0
-    for name, gold, resource_lines in owed:
-        paid = Payment(payment.paid[start : start + len(resource_lines)]).note
-        start += len(resource_lines)
-        notes.append(f"{name}: {gold} gc" + (f"; {paid}" if paid else ""))
-    total = sum(gold for _name, gold, _lines in owed)
-    if total <= 0 and not lines:
+    for row in owed:
+        paid = Payment(payment.paid[start : start + len(row.lines)]).note
+        start += len(row.lines)
+        parts = [paid, f"Paid: {row.settled}" if row.settled else ""]
+        notes.append(f"{row.name}: {row.gold} gc" + "".join(f"; {part}" for part in parts if part))
+    total = sum(row.gold for row in owed)
+    if total <= 0 and not lines and not any(row.settled for row in owed):
         return Upkeep(None, payment.warnings)
     entry = ledger.Entry(context.warband, LedgerAction.UPKEEP, -total, "Post-battle upkeep", notes="\n".join(notes))
     return Upkeep(entry, payment.warnings)

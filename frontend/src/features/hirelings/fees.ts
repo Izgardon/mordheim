@@ -29,6 +29,13 @@ export type Fee = {
   resources: FeeResource[];
   /** The rest: a footnote ("15 gc*"), another way to pay. */
   note: string;
+  /**
+   * What the fee asks that no gold and no counter settles, in the server's words ("One holy or
+   * unholy relic.", "See his rules."), "" when there is nothing: what the Paid button goes by,
+   * which records it and charges nothing (William, 18 Nov 2026). The server owns the rule, as it
+   * owns `names` and `campaign_points`; a write never sends it.
+   */
+  settle?: string;
 };
 
 export const FEE_KINDS: { value: FeeKind; label: string }[] = [
@@ -53,6 +60,9 @@ export const blankFee = (): Fee => ({
 
 /** An older payload without a fee reads as a blank one. */
 export const feeOf = (fee: Fee | null | undefined): Fee => ({ ...blankFee(), ...(fee ?? {}) });
+
+/** The words a fee asks that nothing charges, which Paid records (the server's `settle`). */
+export const feeSettle = (fee: Fee | null | undefined): string => feeOf(fee).settle?.trim() ?? "";
 
 /** "70 gc + 3D6", "90 gc + 5 Campaign points", "1 Wyrdstone", "Takes a hero's place", "-". */
 export function formatFee(raw: Fee | null | undefined) {

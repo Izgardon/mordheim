@@ -352,7 +352,8 @@ class HireSerializer(serializers.Serializer):
     """POST .../hirelings/hire/: the catalogue entry to hire (`source` names its list, `id` the entry) or a hand-typed
     one (`custom`: `name`, `unit_type`, `upkeep_fee`), an optional name, and what it pays (the fees and skill lists
     step): `price` in gold (else the fee's gold and the `dice_roll`), `resources` (else the fee's lines, each from
-    the counter of its name) and `dismiss_hero_id` to let a hero go for one who takes a hero's place. The fields are
+    the counter of its name), `dismiss_hero_id` to let a hero go for one who takes a hero's place, and `fee_paid` for
+    the Paid button on a fee nothing charges (its words go on the Hire row; nothing is charged). The fields are
     built in get_fields() because `source` is also a Field attribute."""
 
     def get_fields(self) -> dict[str, serializers.Field]:
@@ -365,6 +366,7 @@ class HireSerializer(serializers.Serializer):
             "dice_roll": serializers.IntegerField(min_value=0, max_value=1000, allow_null=True, required=False),
             "resources": PaymentLineSerializer(many=True, required=False),
             "dismiss_hero_id": serializers.IntegerField(allow_null=True, required=False),
+            "fee_paid": serializers.BooleanField(required=False, default=False),
             "upkeep_fee": FeeField(required=False),
         }
 

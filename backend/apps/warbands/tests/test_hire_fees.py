@@ -4,7 +4,9 @@ The gold sent is what is charged, else the fee's gold plus the dice roll sent; e
 counter sent (null: not paid), else from the counter of its name ("Wyrdstone shards" pays Wyrdstone), never below 0,
 and noted on the Hire ledger row. A short counter, or none, warns; a fee in his rules hires at what is set with a
 warning; one who takes a hero's place counts towards the heroes' cap, warns when it is full and may let a hero go in
-the same request. A hand-typed hire (`custom`) pays the same way and keeps the fees it was given.
+the same request. A hand-typed hire (`custom`) pays the same way and keeps the fees it was given. A fee that charges
+nothing but asks for something in words is the player's own to settle: `fee_paid` records what it asked and charges
+nothing (William, 18 Nov 2026).
 """
 
 from typing import Any
@@ -192,6 +194,38 @@ class FeeKindTests(HireTestCase):
         self.assertEqual((made_room.status_code, codes(made_room)), (201, []))
         self.assertIsNotNone(Hero.objects.get(id=hero.id).dismissed_at)
         self.assertEqual((refused.status_code, list(refused.json())), (400, ["dismiss_hero_id"]))
+
+    def test_a_fee_in_his_rules_is_recorded_when_the_player_says_he_paid_it(self):
+        # William, 18 Nov 2026: a hire with no fee in gold "should still have a button that says Paid that logs
+        # their hire/upkeep string/resource fee just as a log line"
+        note = "One holy or unholy relic."
+        knight = HiredSword.objects.create(name="Knight Panther", hire_fee=make_fee("special", note=note), **STATS)
+
+        unpaid = self.hire(entry_id=knight.id)
+        paid = self.hire(entry_id=knight.id, fee_paid=True)
+
+        self.assertEqual((unpaid.status_code, paid.status_code), (201, 201))
+        self.assertEqual(paid.data["hire_fee"]["settle"], note)  # the server's words, what the button goes by
+        self.assertEqual(trade_rows(self.warband), [("Hire", "Knight Panther", 0, f"Paid: {note}")])
+
+    def test_a_fee_in_his_rules_with_no_words_of_its_own_records_his_rules(self):
+        bertha = DramatisPersona.objects.create(name="Bertha", hire_fee=make_fee("special"), **STATS)
+
+        paid = self.hire("dramatis_persona", bertha.id, fee_paid=True)
+
+        self.assertEqual(paid.status_code, 201, paid.data)
+        self.assertEqual(trade_rows(self.warband), [("Hire", "Bertha", 0, "Paid: See his rules.")])
+
+    def test_paid_adds_nothing_to_a_fee_the_hire_charges(self):
+        WarbandResource.objects.create(warband=self.warband, name="Wyrdstone shards", amount=2)
+        fee = make_fee(gold=80, resources=[("Wyrdstone", 1)], note="15 gc*")
+        HiredSword.objects.filter(id=self.ogre.id).update(hire_fee=fee)
+
+        response = self.hire(fee_paid=True)
+
+        self.assertEqual(response.status_code, 201, response.data)
+        notes = "Paid 1 Wyrdstone from Wyrdstone shards."  # the gold and the resource, as always; no extra line
+        self.assertEqual(trade_rows(self.warband), [("Hire", "Ogre Bodyguard", -80, notes)])
 
     def test_a_fee_of_none_hires_for_nothing(self):
         HiredSword.objects.filter(id=self.ogre.id).update(hire_fee=make_fee("none"))

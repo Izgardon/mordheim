@@ -1,6 +1,7 @@
 import { screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { blankFee } from "@/features/hirelings/fees";
 import { rollDie } from "@/lib/dice";
 import { renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -67,6 +68,53 @@ describe("CampRows", () => {
     expect(screen.getByText("6 XP available")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Recruit" })).toBeInTheDocument();
     expect(screen.queryByLabelText("First D6 rolled")).toBeNull();
+  });
+
+  // William, 18 Nov 2026: an upkeep with no gold still gets a button that says Paid, which logs it
+  it("says what an upkeep nothing charges asks, and its button reads Paid", async () => {
+    const user = setupUser();
+    const note = "Half of the warband's earnings, after each battle.";
+    const entries = { "hireling:4": { unit_name: "Sigmund", cost: null } };
+    const save = show({
+      draft: { ...draft, upkeep: { pay_upkeep: true, entries } } as never,
+      resources: [],
+      hirelings: [
+        { id: 4, name: "Sigmund", upkeep_fee: { ...blankFee(), kind: "special", settle: note } },
+      ] as never,
+    });
+
+    expect(screen.getByText(note)).toBeVisible();
+    await user.click(screen.getByRole("button", { name: "Paid" }));
+
+    expect(save).toHaveBeenCalledWith({
+      ...draft,
+      upkeep: {
+        pay_upkeep: true,
+        entries: { "hireling:4": { unit_name: "Sigmund", cost: 0, resources: [], paid: true } },
+      },
+    });
+  });
+
+  it("keeps the tick Pay where it charges, or has nothing to record", () => {
+    const note = "A relic.";
+    const words = { ...blankFee(), kind: "special" as const, settle: note };
+    const entries = {
+      "hireling:4": { unit_name: "Sigmund", cost: null },
+      "hireling:5": { unit_name: "The Foole", cost: null },
+      "hireling:6": { unit_name: "Gwen", cost: 20 },
+    };
+    show({
+      draft: { ...draft, upkeep: { pay_upkeep: true, entries } } as never,
+      resources: [],
+      hirelings: [
+        { id: 4, name: "Sigmund", upkeep_fee: words }, // his words are his to settle: Paid
+        { id: 5, name: "The Foole", upkeep_fee: blankFee() }, // no gold, no words: nothing to record
+        { id: 6, name: "Gwen", upkeep_fee: words }, // gold over the words, so the tick pays too
+      ] as never,
+    });
+
+    expect(screen.getAllByRole("button", { name: "Paid" })).toHaveLength(1);
+    expect(screen.getAllByRole("button", { name: "Pay" })).toHaveLength(2);
   });
 
   it("adds the Blood pacts row with its own 2D6 while they are on", () => {

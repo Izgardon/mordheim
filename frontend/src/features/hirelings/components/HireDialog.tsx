@@ -12,10 +12,11 @@ import { toastServerWarnings } from "@/features/warbands/utils/server-warnings";
 import { getErrorMessage } from "@/lib/get-error-message";
 import { queryKeys } from "@/lib/query-keys";
 
-import { feeOf, formatFee } from "../fees";
+import { feeOf, feeSettle, formatFee } from "../fees";
 import type { HirelingCatalogueConfig } from "../hireling-catalogue-kinds";
 import type { HirelingProfile } from "../types/hireling-catalogue-types";
 import FeePayment from "./fees/FeePayment";
+import FeeSettled from "./fees/FeeSettled";
 import HireTerms from "./fees/HireTerms";
 import { paymentGold, paymentLines, paymentOf, type Payment } from "./fees/fee-payment";
 
@@ -39,7 +40,9 @@ type HireDialogProps = {
  * (profile, kit, both fees, a dramatis persona's terms) and charges what you pay. Every part of the
  * fee is prefilled and editable (the fees step): the gold, with Roll for dice, and each resource
  * line from one of your resources. A fee in his rules shows them; one who takes a hero's place
- * offers to let a hero go at the cap. A name is optional; the sheet reloads with him on it.
+ * offers to let a hero go at the cap. What no gold settles (the server's `settle`) gets a Paid
+ * button, which records what the fee asked on the hire's ledger row and charges nothing. A name is
+ * optional; the sheet reloads with him on it.
  */
 export default function HireDialog(props: HireDialogProps) {
   const { config, campaignId, warband, entry, onClose } = props;
@@ -48,11 +51,14 @@ export default function HireDialog(props: HireDialogProps) {
   const [name, setName] = useState("");
   const [payment, setPayment] = useState<Payment>(() => paymentOf(entry?.hire_fee));
   const [dismissHeroId, setDismissHeroId] = useState<number | null>(null);
+  const [feePaid, setFeePaid] = useState(false);
   const [saving, setSaving] = useState(false);
   const counters = warband.resources ?? [];
+  const settle = feeSettle(entry?.hire_fee); // the server's words for what no gold settles
   useEffect(() => {
     setPayment(paymentOf(entry?.hire_fee));
     setDismissHeroId(null);
+    setFeePaid(false);
   }, [entry]);
 
   const hire = async () => {
@@ -67,6 +73,7 @@ export default function HireDialog(props: HireDialogProps) {
         dice_roll: payment.roll,
         resources: paymentLines(payment, counters),
         dismiss_hero_id: dismissHeroId,
+        ...(settle && feePaid ? { fee_paid: true } : {}),
       });
       toastServerWarnings(answer.warnings);
       toast.success(`${answer.name?.trim() || entry.name} joins ${warband.name}.`);
@@ -74,6 +81,7 @@ export default function HireDialog(props: HireDialogProps) {
         queryKey: queryKeys.campaign.warbandSheet(campaignId, warband.id),
       });
       setName("");
+      setFeePaid(false);
       onClose();
       props.onHired?.(answer.id);
     } catch (error) {
@@ -129,6 +137,7 @@ export default function HireDialog(props: HireDialogProps) {
               idPrefix="hire"
             />
           )}
+          {settle ? <FeeSettled settle={settle} paid={feePaid} onChange={setFeePaid} /> : null}
           <label className="flex flex-col gap-1 text-xs font-bold text-muted-foreground">
             Name (optional)
             <Input

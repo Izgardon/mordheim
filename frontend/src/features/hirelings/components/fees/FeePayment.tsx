@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import DiceEntry from "@/components/ui/dice-entry";
 import { cn } from "@/lib/utils";
 
-import { feeGold, feeOf, matchCounter, type Fee } from "../../fees";
+import { feeGold, feeOf, feeSettle, matchCounter, type Fee } from "../../fees";
 import {
   counterOf,
   lineWarning,
@@ -160,8 +160,8 @@ export default function FeePayment(props: FeePaymentProps) {
           </div>
         );
       })}
-      {fee.note && fee.kind !== "special" ? (
-        // a fee in his rules shows its words above, with his rules (HireTerms)
+      {fee.note && !feeSettle(fee) ? (
+        // the words of a fee nothing charges sit with its Paid button instead (FeeSettled, UpkeepRows)
         <span className="text-xs text-muted-foreground">{fee.note}</span>
       ) : null}
     </div>

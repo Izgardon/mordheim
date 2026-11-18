@@ -1,10 +1,15 @@
 """Upkeep in camp with structured fees (the fees and skill lists step): Ready charges each hired sword's gold and his
 resources, each line from the counter it names, else from the counter of its name, never below 0, noted on the
 Upkeep row; a line set not to be paid is noted, a short or missing counter warns, and an upkeep of none has no row.
-Campaign points are nobody's counter: a line naming them says what the player takes off himself (apps/plots)."""
+Campaign points are nobody's counter: a line naming them says what the player takes off himself (apps/plots).
+An upkeep that charges nothing but asks for something in words (a fee in his rules) is the player's own to settle:
+camp's Paid tick records what it asked on the Upkeep row and charges nothing (William, 18 Nov 2026)."""
 
-from typing import Any
+from types import SimpleNamespace
+from typing import Any, cast
 
+from apps.battles.services.postbattle.context import FinaliseContext
+from apps.battles.services.postbattle.rewards import upkeep_charge
 from apps.hirelings.fees import make_fee
 from apps.warbands.models import Hireling, WarbandResource, WarbandTrade
 
@@ -98,6 +103,48 @@ class UpkeepFeeTests(BattleTestCase):
         )
         warned = [warning["code"] for warning in answer.get("warnings", [])]
         self.assertEqual(sorted(code for code in warned if code.startswith("resource")), ["resource_short", "resource_unpaid"])  # fmt: skip
+
+    def test_an_upkeep_in_his_rules_is_recorded_when_it_is_ticked_paid_and_charges_nothing(self):
+        # William, 18 Nov 2026: a hired sword with no fee in gold "should still have a button that says Paid that
+        # logs their hire/upkeep string/resource fee just as a log line"
+        note = "Half of the warband's earnings in gold crowns, rounding up, after each battle."
+        Hireling.objects.filter(id=self.rat_ogre.id).update(upkeep_fee=make_fee("special", note=note))
+        entries = {f"hireling:{self.rat_ogre.id}": {"unit_name": "Rat Ogre", "cost": None, "paid": True}}
+
+        gold = self.warband.gold
+        self.ready(entries)
+
+        self.warband.refresh_from_db()
+        self.assertEqual(self.upkeep_row(), (0, f"Rat Ogre: 0 gc; Paid: {note}"))
+        self.assertEqual((self.warband.gold, self.amounts()), (gold, (2, 1)))  # it moves nothing
+
+    def test_an_upkeep_in_his_rules_is_recorded_only_once_it_is_ticked_paid(self):
+        Hireling.objects.filter(id=self.rat_ogre.id).update(upkeep_fee=make_fee("special", note="A relic."))
+        entries = {f"hireling:{self.rat_ogre.id}": {"unit_name": "Rat Ogre", "cost": None}}
+
+        self.ready(entries)
+
+        self.assertFalse(WarbandTrade.objects.filter(warband=self.warband, action="Upkeep").exists())
+
+    def test_a_tick_adds_nothing_to_an_upkeep_in_gold(self):
+        entries = {f"hireling:{self.ogre.id}": {"unit_name": "Grukk", "cost": 20, "paid": True}}
+
+        self.ready(entries)
+
+        self.assertEqual(self.upkeep_row(), (-20, "Grukk: 20 gc"))
+
+    def test_recording_what_an_upkeep_settled_reads_nothing_of_its_own(self):
+        # the words are on the hireling row finalise already holds, so the note costs no query per hired sword
+        self.rat_ogre.upkeep_fee = make_fee("special", note="A relic.")
+        hirelings = {self.rat_ogre.id: self.rat_ogre}
+        context = cast(FinaliseContext, SimpleNamespace(warband=self.warband, hirelings=hirelings))
+        entries = {f"hireling:{self.rat_ogre.id}": {"unit_name": "Rat Ogre", "cost": None, "paid": True}}
+
+        with self.assertNumQueries(0):
+            charged = upkeep_charge(context, {"pay_upkeep": True, "entries": entries})
+
+        assert charged.entry is not None
+        self.assertEqual((charged.entry.amount, charged.entry.notes), (0, "Rat Ogre: 0 gc; Paid: A relic."))
 
     def test_an_upkeep_of_none_is_suggested_no_row_and_resources_are_suggested_with_their_names(self):
         Hireling.objects.filter(id=self.ogre.id).update(upkeep_fee=make_fee("none"))

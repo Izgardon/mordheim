@@ -12,6 +12,10 @@ keep, on the catalogue entry and on the warband's copy, as one small JSON object
   words and nothing is charged (William, 16 Nov 2026: "still just let user do it themselves");
 - `note`: the rest ("15 gc*", Sigmund's body part).
 
+A fee that charges no gold and no resources still asks for something: its words. Payloads carry them as `settle`
+(`settle_text`), which is what the hire dialog's and camp's **Paid** button goes by: it moves nothing and writes what
+was settled on the Hire or Upkeep ledger row (William, 18 Nov 2026).
+
 A resource is named as fees name it. Wyrdstone is paid from the warband's default resource (`WarbandResource.is_default`)
 whatever the campaign calls it; the three the book uses also have their usual spellings (`RESOURCE_NAMES`), so a
 warband without a default counter pays Wyrdstone from its "Wyrdstone shards". Payloads list each line's `names` and
@@ -126,6 +130,24 @@ def gold_due(fee: Mapping[str, Any], dice_roll: int | None = None) -> int:
     return gold
 
 
+def settle_text(fee: Mapping[str, Any]) -> str:
+    """What a fee asks that no gold and no counter settles, in its own words: a fee in his rules ("One holy or unholy
+    relic.", else "See his rules."), or one that charges nothing and says something instead. "" when there is nothing
+    to settle by hand, which is what the Paid button goes by (William, 18 Nov 2026: a fee with no gold "should still
+    have a button that says Paid that logs their hire/upkeep string/resource fee just as a log line"): a fee of none
+    and a hero's place ask for nothing the player settles, and gold, dice and resources are charged and written on
+    their row already ("Paid 1 Wyrdstone from Wyrdstone shards.", "Yours to take off: 5 Campaign points."), which is
+    the "if it doesn't already" of what he asked."""
+    kind = fee.get("kind", "gold")
+    if kind in ("none", "replaces_hero"):
+        return ""
+    note = (fee.get("note") or "").strip()
+    if kind == "special":
+        return note or "See his rules."
+    charged = fee.get("gold") or fee.get("dice") or (fee.get("resources") or [])
+    return "" if charged else note
+
+
 def fee_text(fee: Mapping[str, Any]) -> str:
     """The fee in words, for notes and warnings: "70 gc + 3D6", "1 Wyrdstone", "Takes a hero's place"."""
     kind = fee.get("kind")
@@ -192,9 +214,9 @@ def clean_fee(value: Any) -> Fee:
 
 
 def fee_payload(fee: Mapping[str, Any] | None) -> dict[str, Any]:
-    """A stored fee as payloads show it: every key, and what pays each resource line (its `names`, whether the
+    """A stored fee as payloads show it: every key, what pays each resource line (its `names`, whether the
     warband's default resource does: `default_resource`, and whether it is campaign points, which nothing pays:
-    `campaign_points`)."""
+    `campaign_points`), and `settle`: the words nothing charges, which the pages offer a Paid button for."""
     stored = {**no_fee(), **(fee or {})}
     lines = [
         {
@@ -205,7 +227,7 @@ def fee_payload(fee: Mapping[str, Any] | None) -> dict[str, Any]:
         }
         for line in stored["resources"]
     ]
-    return {**stored, "resources": lines}
+    return {**stored, "resources": lines, "settle": settle_text(stored)}
 
 
 class FeeField(serializers.Field):
