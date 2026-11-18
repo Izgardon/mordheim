@@ -123,7 +123,10 @@ class ArchiveClosingTests(ArchiveTestCase):
         ended = self.battle_in(Battle.STATUS_ENDED, {self.player: BattleParticipant.STATUS_CONFIRMED_POSTBATTLE})
         sent = self.post_as(self.rival, self.url("trade-requests/"), {"target_user_id": self.player.id})
         self.notify(self.player, Notification.TYPE_BATTLE_INVITE, inviting.id)
-        elsewhere = self.notify(self.outsider, Notification.TYPE_BATTLE_INVITE, 9, campaign=self.elsewhere)
+        # a reference no battle of this campaign holds: a fixed number collided with one of theirs whenever the
+        # id sequence had drifted far enough, and cancelling that battle resolved this notification too
+        apart = max(inviting.id, postbattle.id, ended.id) + 1000
+        elsewhere = self.notify(self.outsider, Notification.TYPE_BATTLE_INVITE, apart, campaign=self.elsewhere)
 
         self.assertEqual(self.archive(self.owner).status_code, 200)
 
