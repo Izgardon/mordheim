@@ -13,7 +13,7 @@ vi.mock("@/lib/dice", async (importOriginal) => ({
   rollDie: vi.fn(),
 }));
 
-const row = (advances: XpRow["advances"] = []): XpRow => ({
+const row = (advances: XpRow["advances"] = [], over: Partial<XpRow> = {}): XpRow => ({
   key: "hero:1",
   resultKeys: ["hero:1"],
   name: "Dieter Brandt",
@@ -27,7 +27,20 @@ const row = (advances: XpRow["advances"] = []): XpRow => ({
   reasons: "Survived +1 · Kill +1",
   thresholds: [2, 4, 6, 8],
   advances,
+  history: [],
+  ...over,
 });
+
+const group = (advances: XpRow["advances"], history: string[] = []) =>
+  row(advances, {
+    name: "Marksmen",
+    type: "Henchmen x3",
+    group: true,
+    thresholds: [2, 5, 9, 14],
+    history,
+  });
+
+const TALENT = { id: "LGT", label: "The lad's got talent", at: 5, rolls: [5, 6] };
 
 const draft = {
   unit_results: { "hero:1": { unit_name: "Dieter Brandt", unit_kind: "hero", advances: [] } },
@@ -136,5 +149,48 @@ describe("ExperienceTab", () => {
       { id: "Pending", label: "Not rolled yet", at: 6, rolls: [4, 4] },
     ]);
     expect(rollDie).not.toHaveBeenCalled();
+  });
+});
+
+describe("a repeat advance", () => {
+  // William, 12 Nov 2026: "greyed with a warning, and a prompt to re-roll". The warband page's
+  // advance dialog bars a second lad's got talent before the roll; the Experience step rolls
+  // first, so it greys the result it got and offers the 2D6 again.
+  beforeEach(() => {
+    vi.mocked(rollDie).mockReset();
+  });
+
+  it("greys the lad's got talent when the group has just had it, and prompts a roll again", () => {
+    show(group([TALENT], ["I", "LGT"]));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "The lad's got talent already came up on this advance: roll again."
+    );
+    expect(screen.getByText("The lad's got talent")).toHaveClass("text-muted-foreground");
+    expect(screen.getByRole("button", { name: "Roll again" })).toBeInTheDocument();
+  });
+
+  it("bars it a second time inside one post-game, and takes the roll again typed in", async () => {
+    const user = setupUser();
+    const onChange = show(group([TALENT, { ...TALENT, at: 9 }]));
+
+    expect(screen.getAllByRole("alert")).toHaveLength(1);
+    const boxes = screen.getAllByLabelText("First D6 rolled");
+    await user.type(boxes[boxes.length - 1], "2");
+    await user.keyboard("3");
+
+    expect(advancesOf(onChange)).toEqual([
+      TALENT,
+      { id: "S", label: "+1 Strength", at: 9, rolls: [2, 3] },
+    ]);
+    expect(rollDie).not.toHaveBeenCalled();
+  });
+
+  it("leaves the first talent of a group that hasn't had one alone", () => {
+    show(group([TALENT]));
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Roll again" })).not.toBeInTheDocument();
+    expect(screen.getByText("The lad's got talent")).toHaveClass("text-head");
   });
 });

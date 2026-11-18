@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
-import { resolveAdvanceLabel } from "../../utils/levelup-utils";
+import { resolveAdvanceLabel, TALENT_AGAIN, TALENT_AGAIN_NOTE } from "../../utils/levelup-utils";
 import type { WarbandHero } from "../../types/warband-types";
 import AdvanceGain, { gainLine } from "./advance/AdvanceGain";
 import type { StatCode } from "./advance/advance-table";
@@ -83,14 +83,14 @@ export default function AdvanceDialog({
                 roll: span(row.from, row.to),
                 result:
                   row.outcome.kind === "talent" && flow.talentBarred
-                    ? `${row.label}: already came up, roll again`
+                    ? `${row.label}: ${TALENT_AGAIN}`
                     : row.label,
               }))}
             />
           </div>
           {flow.row?.outcome.kind === "talent" && flow.talentBarred ? (
             <p role="alert" className="m-0 text-sm font-semibold text-danger">
-              The lad&apos;s got talent already came up on this advance: roll again.
+              {TALENT_AGAIN_NOTE}
             </p>
           ) : null}
           {stats ? (

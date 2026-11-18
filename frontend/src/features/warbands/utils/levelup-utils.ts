@@ -144,6 +144,23 @@ export const buildLevelUpPayload = (opts: {
 
 // ── Henchmen LGT helpers ────────────────────────────────────────────────
 
+/** The advance code for the lad's got talent, in a level-up record and in a post-battle draft. */
+export const LADS_GOT_TALENT = "LGT";
+
+/** What a barred talent reads on the advance table's row, and the warning under it. */
+export const TALENT_AGAIN = "already came up, roll again";
+export const TALENT_AGAIN_NOTE =
+  "The lad's got talent already came up on this advance: roll again.";
+
+/**
+ * Whether the lad's got talent is barred for a henchmen group's next advance (William, 3 Nov 2026:
+ * "bar another lads got talent"): it is once the talent is the last advance the group took, so a
+ * group crossing two thresholds at once promotes one member, not two. `codes` are the group's
+ * advances in order, oldest first.
+ */
+export const isTalentBarred = (isGroup: boolean, codes: readonly string[]) =>
+  isGroup && codes[codes.length - 1] === LADS_GOT_TALENT;
+
 export const resolveHenchmanFromGroup = (group: HenchmenGroup, selectedHenchmanId: string) => {
   const list = group.henchmen ?? [];
   const index = list.findIndex(

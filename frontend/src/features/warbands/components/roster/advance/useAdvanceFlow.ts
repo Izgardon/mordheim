@@ -7,7 +7,7 @@ import { getErrorMessage } from "@/lib/get-error-message";
 
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../../api/warband-cache";
 import { unitApi, type AdvancePick } from "../../../units/unit-api";
-import { buildLevelUpPayload } from "../../../utils/levelup-utils";
+import { buildLevelUpPayload, isTalentBarred, LADS_GOT_TALENT } from "../../../utils/levelup-utils";
 import { LIST_KEY, unitName, type RosterUnit } from "../unit-view";
 import {
   HENCHMEN_TABLE,
@@ -42,7 +42,7 @@ function tableAdvance(
   if (!outcome) return null;
   if (outcome.kind === "skill") return kind;
   if (outcome.kind === "stat") return outcome.stat;
-  if (outcome.kind === "talent") return talentBarred ? null : "LGT";
+  if (outcome.kind === "talent") return talentBarred ? null : LADS_GOT_TALENT;
   return stat;
 }
 
@@ -74,7 +74,8 @@ export function useAdvanceFlow(entry: RosterUnit | null, warbandId: number, onDo
   // the talent came up on this level-up already (its record is the group's last; William: "bar
   // another lads got talent"): the rest of the group rolls again
   const history = isGroup ? (entry.unit.level_up_history ?? []) : [];
-  const talentBarred = isGroup && (talentTaken || history[history.length - 1]?.code === "LGT");
+  const codes = talentTaken ? [LADS_GOT_TALENT] : history.map((record) => record.code);
+  const talentBarred = isTalentBarred(isGroup, codes);
   const advance = tableAdvance(row, stat, kind, talentBarred);
   const list = advance && advance in PICKED ? PICKED[advance as PickKind] : undefined;
   const pick: AdvancePick | undefined =

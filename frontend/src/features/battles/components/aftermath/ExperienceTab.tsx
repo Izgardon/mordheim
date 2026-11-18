@@ -7,15 +7,14 @@ import type { BattlePostbattleState } from "@/features/battles/types/battle-type
 import { cn } from "@/lib/utils";
 
 import {
-  advanceLabel,
-  awaitsFollowUp,
+  isRepeat,
   rollAdvance,
   withAdvances,
   withCorrectedXp,
-  withFollowUp,
   xpBlock,
   type XpRow,
 } from "./aftermath-xp";
+import XpAdvanceLine from "./XpAdvanceLine";
 
 const BOX = { had: "bg-strong", earned: "bg-primary", empty: "bg-transparent" } as const;
 
@@ -116,64 +115,14 @@ function XpCard({
         </div>
         {row.canGainXp ? stepper : null}
       </div>
-      {row.advances.map((done, index) => (
-        <div key={index} className="flex flex-wrap items-center gap-2.5 text-[13px] text-text2">
-          <span className="border border-accent-line bg-accent-soft px-2 py-0.5 font-mono text-xs font-bold text-accent-hi">
-            {done.at} XP
-          </span>
-          <span className="font-mono text-muted-foreground">
-            2D6 {done.rolls.slice(0, 2).join(" · ")}
-          </span>
-          {done.rolls.length > 2 || awaitsFollowUp(done) ? (
-            <DiceEntry
-              dice="D6"
-              size="sm"
-              total={done.rolls[2] ?? null}
-              onFaces={([face]) =>
-                onAdvances(
-                  row.advances.map((entry, i) => (i === index ? withFollowUp(entry, face) : entry))
-                )
-              }
-              button={(roll) => (
-                <Button size="sm" variant="secondary" className="h-9" onClick={roll}>
-                  Roll D6
-                </Button>
-              )}
-            />
-          ) : null}
-          <span className="font-bold text-head">{done.label}</span>
-          {!row.group && done.rolls.length === 2 && done.rolls[0] + done.rolls[1] === 7
-            ? (["WS", "BS"] as const).map((stat) => (
-                <button
-                  key={stat}
-                  type="button"
-                  aria-pressed={done.id === stat}
-                  onClick={() =>
-                    onAdvances(
-                      row.advances.map((entry, i) =>
-                        i === index ? { ...entry, id: stat, label: advanceLabel(stat) } : entry
-                      )
-                    )
-                  }
-                  className={cn(
-                    "min-h-7 border px-2 text-xs font-bold",
-                    done.id === stat
-                      ? "border-accent-line bg-accent-soft text-accent-hi"
-                      : "border-border text-muted-foreground"
-                  )}
-                >
-                  {stat}
-                </button>
-              ))
-            : null}
-          <button
-            type="button"
-            className="text-xs font-semibold text-muted-foreground hover:text-ink"
-            onClick={() => onAdvances(row.advances.filter((_, i) => i !== index))}
-          >
-            Undo
-          </button>
-        </div>
+      {row.advances.map((_, index) => (
+        <XpAdvanceLine
+          key={index}
+          row={row}
+          index={index}
+          repeat={isRepeat(row, index)}
+          onAdvances={onAdvances}
+        />
       ))}
       {row.canGainXp ? (
         isMobile ? (
@@ -196,8 +145,9 @@ function XpCard({
  * Experience (design E): each unit's XP from the battle with its reasons, − and + to correct it,
  * the boxes of its current block, and Advance when a threshold is reached (its 2D6 rolled or typed
  * in, and then a hero's follow-up D6 the same way, from an empty box: the app never rolls that one
- * for him); the roll's result shows and the next block follows, so a unit can advance twice. Saved
- * with the draft and taken at Ready.
+ * for him); the roll's result shows and the next block follows, so a unit can advance twice. A
+ * repeat is greyed, warned about and rolled again (`XpAdvanceLine`). Saved with the draft and taken
+ * at Ready.
  */
 export default function ExperienceTab({
   draft,

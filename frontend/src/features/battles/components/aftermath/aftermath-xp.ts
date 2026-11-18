@@ -11,6 +11,8 @@ import {
   normalizeThresholdList,
 } from "@/features/warbands/utils/level-thresholds";
 import {
+  isTalentBarred,
+  LADS_GOT_TALENT,
   needsHero1d6Followup,
   resolveAdvanceLabel,
   resolveHenchmen2d6Stat,
@@ -34,6 +36,8 @@ export type XpRow = {
   reasons: string;
   thresholds: number[];
   advances: BattlePostbattleAdvance[];
+  /** A group's level-up codes before this battle, oldest first: what a repeat is measured against. */
+  history: string[];
 };
 
 const idOf = (unitKey: string) => Number(unitKey.split(":")[1]);
@@ -85,6 +89,7 @@ export function buildXpRows(
         reasons,
         thresholds: groupTable,
         advances: result.advances ?? [],
+        history: (group.level_up_history ?? []).map((record) => record.code),
       });
       groups.set(group.id, row);
       rows.push(row);
@@ -105,6 +110,7 @@ export function buildXpRows(
         reasons,
         thresholds: result.unit_kind === "hero" ? heroTable : hiredSwordTable,
         advances: result.advances ?? [],
+        history: [],
       })
     );
   }
@@ -188,6 +194,26 @@ export function rollAdvance(group: boolean, at: number, faces: number[]): Battle
   const advance = id ?? "Skill";
   return { id: advance, label: advanceLabel(advance), at, rolls };
 }
+
+/**
+ * The lad's got talent coming up again on a group that has just had it (William, 12 Nov 2026, on
+ * repeat advances: "greyed with a warning, and a prompt to re-roll"). It is what the warband page's
+ * advance dialog bars before the roll; here the roll has happened, so the result is greyed, warned
+ * about and rolled again. It is never refused: a guide, not a gatekeeper.
+ */
+export function isRepeat(row: XpRow, index: number) {
+  const advance = row.advances[index];
+  if (!advance || advance.id !== LADS_GOT_TALENT) return false;
+  const before = row.advances.slice(0, index).map((entry) => entry.id);
+  return isTalentBarred(row.group, [...row.history, ...before]);
+}
+
+/** The row's advances with the one at `index` replaced by what was rolled or typed instead. */
+export const withAdvanceAt = (
+  advances: BattlePostbattleAdvance[],
+  index: number,
+  advance: BattlePostbattleAdvance
+) => advances.map((entry, at) => (at === index ? advance : entry));
 
 /** A hero's advance with its follow-up D6 rolled again or typed: the stat follows the new face. */
 export function withFollowUp(advance: BattlePostbattleAdvance, face: number) {
