@@ -94,7 +94,7 @@ DICTATED: tuple[Dictated, ...] = (
     Dictated("exploration_chart_id", "Exploration chart"),
     Dictated("enable_locations", "Locations"),
     Dictated("enable_encampments", "Encampments"),
-    Dictated("enable_campaign_points", "Plots (campaign points)"),
+    Dictated("enable_campaign_points", "Plots and CP"),
     Dictated("enable_blood_pacts", "Blood pacts"),
     Dictated("max_heroes", "Most heroes"),
     Dictated("hero_death_roll", "Hero death roll"),

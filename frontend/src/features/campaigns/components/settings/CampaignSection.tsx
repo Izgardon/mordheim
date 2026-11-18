@@ -98,7 +98,7 @@ function CampaignFeatures({ campaign }: { campaign: CampaignSummary }) {
     },
     {
       key: "enable_campaign_points" as const,
-      label: "Plots (campaign points)",
+      label: "Plots and CP",
       on: Boolean(campaign.enable_campaign_points),
     },
     {

@@ -1,5 +1,5 @@
 /**
- * Settings → Campaign: campaign points, labelled "Plots (campaign points)" (William, 16 Nov 2026),
+ * Settings → Campaign: campaign points, labelled "Plots and CP" (William, 16 Nov 2026),
  * and Blood pacts are switches beside Encampments and Locations, off at first, saved as they flip.
  */
 import { screen, waitFor } from "@testing-library/react";
@@ -42,13 +42,13 @@ beforeEach(() => {
   fakeApi.on("GET /campaign-presets/", []);
 });
 
-describe("Plots (campaign points)", () => {
+describe("Plots and CP", () => {
   it("is off at first and switches on for every warband", async () => {
     const user = setupUser();
     fakeApi.on(`PATCH /campaigns/${campaign.id}/`, (body: object) => ({ ...campaign, ...body }));
     renderWithQueryClient(<CampaignSection campaign={campaign} />);
 
-    const toggle = screen.getByRole("switch", { name: "Plots (campaign points)" });
+    const toggle = screen.getByRole("switch", { name: "Plots and CP" });
     expect(toggle).not.toBeChecked();
     await user.click(toggle);
 

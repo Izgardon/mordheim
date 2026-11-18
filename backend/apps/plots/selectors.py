@@ -1,6 +1,6 @@
 """The plots a campaign plays with, read in a fixed number of queries whatever the plots hold.
 
-The campaign's own `CampaignPlot` rows are its whole list. They are written once, when Plots (campaign points) is
+The campaign's own `CampaignPlot` rows are its whole list. They are written once, when Plots and CP is
 switched on: the campaign is given the plots of the settings it has in play, which is William's guide ("Only on
 campaign selection do we just guide to a certain list of plots"). From then on the list is the rows, so no reader
 anywhere reasons about an empty list meaning something else — the mistake the exploration chart's null made.

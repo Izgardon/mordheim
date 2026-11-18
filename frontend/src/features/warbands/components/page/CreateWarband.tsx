@@ -30,7 +30,7 @@ export default function CreateWarband({
 }: {
   campaignId: number;
   onCreated: (warband: Warband) => Promise<void>;
-  /** The campaign has Plots (campaign points) on: it picks one of its plots (apps/plots). */
+  /** The campaign has Plots and CP on: it picks one of its plots (apps/plots). */
   showPlot?: boolean;
 }) {
   const isMobile = useMediaQuery("(max-width: 960px)");

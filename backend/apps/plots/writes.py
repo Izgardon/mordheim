@@ -71,7 +71,7 @@ def set_campaign_plots(campaign_id: int, plot_ids: Iterable[int], socket_id: str
 def give_default_plots(campaign_id: int, socket_id: str | None = None) -> list[int]:
     """The campaign is given its default plots unless it already holds a list of its own: what it holds after.
 
-    Called when Plots (campaign points) is switched on (apps/campaigns/services/settings.py). Writing the default
+    Called when Plots and CP is switched on (apps/campaigns/services/settings.py). Writing the default
     once is what keeps it a default: every reader afterwards reads the rows, and a campaign that unticks them all
     holds none rather than falling back to this."""
     held = picked_plot_ids(campaign_id)

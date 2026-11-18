@@ -64,7 +64,7 @@ function PlotRowView({
 }
 
 /**
- * Settings → Plots, shown while Plots (campaign points) is on: which plots the campaign plays
+ * Settings → Plots, shown while Plots and CP is on: which plots the campaign plays
  * with, from every setting, each marked with where it comes from. A plot whose setting isn't
  * ticked is greyed and still pickable, with the warning beside it once picked. Switching Plots on
  * gave the campaign the plots of the settings it has in play; from then on this list is the list.

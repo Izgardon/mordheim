@@ -27,7 +27,7 @@ export type CampaignSummary = {
    * until Settings changes it.
    */
   wyrdstone_prices?: number[][];
-  /** Plots (campaign points): each warband follows a plot and holds a campaign point total. */
+  /** Plots and CP: each warband follows a plot and holds a campaign point total. */
   enable_campaign_points?: boolean;
   /**
    * Blood pacts (Mutiny in Marienburg's rule, generic): while on, a hired sword's card carries the

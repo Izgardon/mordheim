@@ -124,7 +124,7 @@ class CampaignSettings(models.Model):
     default_resource_name = models.CharField(max_length=120, default=DEFAULT_RESOURCE_NAME)
     # what selling shards of the default resource fetches, by shards and warband size (warbands/utils/wyrdstone_prices)
     wyrdstone_prices = models.JSONField(default=get_default_wyrdstone_prices)
-    # "Plots (campaign points)": each warband follows a plot and holds a campaign point total (apps/plots)
+    # "Plots and CP": each warband follows a plot and holds a campaign point total (apps/plots)
     enable_campaign_points = models.BooleanField(default=False)
     # Blood pacts (Mutiny in Marienburg's rule, which William calls generic, so any campaign may switch it on):
     # the post-game rolls 2D6 for each hired sword, and a pact-sworn one pays no upkeep
