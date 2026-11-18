@@ -4,7 +4,15 @@ import { availability, item } from "@/test/catalogue-fixtures";
 
 import { diceLabel, priceLabel, rarityLabel, rolledPrice, whoLine } from "../utils/item-prices";
 import { itemKindLine } from "../item-kind";
-import { STORE_CATEGORIES, itemName, kindOf, searchWords, storeCategory } from "./store-items";
+import {
+  inStoreOrder,
+  itemName,
+  kindOf,
+  searchRank,
+  searchWords,
+  STORE_CATEGORIES,
+  storeCategory,
+} from "./store-items";
 
 const line = (name: string, excluded = false, group = false) => ({
   warband_type_id: group ? null : name.length,
@@ -82,5 +90,54 @@ describe("store items", () => {
       "Lamp (Mutiny in Marienburg)"
     );
     expect(searchWords(item({ tags: ["scimitar"] }))).toContain("scimitar");
+  });
+});
+
+describe("the store's order", () => {
+  const offer = (name: string, ...rarities: (number | null)[]) => ({
+    offer: { item: item({ name }), rows: rarities.map((rarity) => ({ rarity })) },
+  });
+  const names = (rows: { offer: { item: { name: string } } }[]) =>
+    rows.map((row) => row.offer.item.name);
+
+  it("ranks an exact name, then a prefix, then a name that holds it, then the rest", () => {
+    expect(searchRank("sword", "Sword")).toBe(0);
+    expect(searchRank("sword", "Sword of Rezhebel")).toBe(1);
+    expect(searchRank("sword", "Elven Sword")).toBe(2);
+    // found only by its kind, a rule or a tag, so its own name doesn't hold the term
+    expect(searchRank("sword", "Rapier")).toBe(3);
+    expect(searchRank("  ", "Rapier")).toBe(0);
+  });
+
+  it("puts the closest name match first, however rare it is", () => {
+    const rows = inStoreOrder(
+      [offer("Rapier", null), offer("Elven Sword", 9), offer("Sword", 11)],
+      "sword"
+    );
+
+    expect(names(rows)).toEqual(["Sword", "Elven Sword", "Rapier"]);
+  });
+
+  it("then the easiest to find, reading Common for no rarity, then by name", () => {
+    const rows = inStoreOrder(
+      [offer("Warhorse", 8), offer("Club", null), offer("Axe", null), offer("Lantern", 6)],
+      ""
+    );
+
+    expect(names(rows)).toEqual(["Axe", "Club", "Lantern", "Warhorse"]);
+  });
+
+  it("takes an item's lowest offered rarity, not the first row's", () => {
+    const rows = inStoreOrder([offer("Bow", 5), offer("Shield", 9, 4)], "");
+
+    expect(names(rows)).toEqual(["Shield", "Bow"]);
+  });
+
+  it("leaves what it was given alone", () => {
+    const given = [offer("Club", null), offer("Axe", null)];
+
+    inStoreOrder(given, "");
+
+    expect(names(given)).toEqual(["Club", "Axe"]);
   });
 });

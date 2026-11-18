@@ -15,7 +15,13 @@ import ItemFormDialog from "../components/ItemFormDialog";
 import type { ShownItem } from "../components/ItemInfo";
 import { isSold } from "../utils/item-listing";
 import { hisLine, hisRow, rareBonusFor, type HisList, type HisUpgrades } from "./his-list";
-import { STORE_CATEGORIES, searchWords, storeCategory, type StoreCategory } from "./store-items";
+import {
+  inStoreOrder,
+  STORE_CATEGORIES,
+  searchWords,
+  storeCategory,
+  type StoreCategory,
+} from "./store-items";
 import StoreRow, { type StoreOffer } from "./StoreRow";
 import StoreUpgrades from "./StoreUpgrades";
 import type { BasketLine, Recipient } from "./useStoreBasket";
@@ -83,19 +89,29 @@ export default function StoreList(props: StoreListProps) {
           matchesSearchQuery(query, upgrade.name, upgrade.group)
         )
       : [];
-  const rows = offers.flatMap((offer) => {
-    const line = his ? hisLine(his, offer.item.id) : null;
-    const shown =
-      offer.item.id === openId ||
-      ((!onlyMine || !offer.warning) &&
-        (!hisOn || line !== null) &&
-        (category === "all" || storeCategory(offer.item) === category) &&
-        matchesSearchQuery(query, ...searchWords(offer.item), hisOn ? (line?.shown_as ?? "") : ""));
-    if (!shown) return [];
-    const view =
-      hisOn && his && line ? hisRow(his, line, props.inBasket?.(offer.item.id) ?? 0, copies) : null;
-    return [{ offer, view }];
-  });
+  // the closest name match first, then the easiest to find (William, 18 Nov 2026)
+  const rows = inStoreOrder(
+    offers.flatMap((offer) => {
+      const line = his ? hisLine(his, offer.item.id) : null;
+      const shown =
+        offer.item.id === openId ||
+        ((!onlyMine || !offer.warning) &&
+          (!hisOn || line !== null) &&
+          (category === "all" || storeCategory(offer.item) === category) &&
+          matchesSearchQuery(
+            query,
+            ...searchWords(offer.item),
+            hisOn ? (line?.shown_as ?? "") : ""
+          ));
+      if (!shown) return [];
+      const view =
+        hisOn && his && line
+          ? hisRow(his, line, props.inBasket?.(offer.item.id) ?? 0, copies)
+          : null;
+      return [{ offer, view }];
+    }),
+    query
+  );
 
   return (
     <div className="flex flex-col gap-3.5">

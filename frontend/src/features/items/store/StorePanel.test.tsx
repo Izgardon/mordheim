@@ -265,12 +265,12 @@ describe("StorePanel, buying for a unit from the template", () => {
 
     // What I can buy off: a line he isn't meant to take shows dimmed with its reason
     await user.click(screen.getByRole("switch", { name: "What I can buy" }));
-    expect(names()).toEqual(["Jambiya (Dagger)", "Sword", "Steel Whip"]);
+    expect(names()).toEqual(["Jambiya (Dagger)", "Steel Whip", "Sword"]);
     expect(screen.getByText("Gaolers only")).toBeInTheDocument();
 
-    // His list off: the store as it always is
+    // His list off: the store as it always is, the common kit before the Rare 8 Lance
     await user.click(screen.getByRole("switch", { name: "His list" }));
-    expect(names()).toEqual(["Lance", "Dagger", "Sword", "Steel Whip"]);
+    expect(names()).toEqual(["Dagger", "Steel Whip", "Sword", "Lance"]);
     expect(screen.queryByText("Gaolers only")).toBeNull();
   });
 
@@ -278,7 +278,8 @@ describe("StorePanel, buying for a unit from the template", () => {
     const user = setupUser();
     renderHisStore({ key: "heroes:5", name: "Otto" });
     await user.click(screen.getByRole("switch", { name: "His list" }));
-    const row = screen.getAllByRole("listitem")[0];
+    // Lance by name, not by position: the store orders the common kit first
+    const row = screen.getByRole("button", { name: /^Lance/ }).closest("li") as HTMLElement;
     await user.click(within(row).getByRole("button", { name: "Get" }));
     expect(
       within(screen.getByRole("group", { name: "Search bonus" })).getByText("+1")
@@ -288,7 +289,7 @@ describe("StorePanel, buying for a unit from the template", () => {
   it("has no His list for a unit typed by hand", () => {
     renderHisStore({ key: "heroes:6", name: "Typed" });
     expect(screen.queryByRole("switch", { name: "His list" })).toBeNull();
-    expect(names()).toEqual(["Lance", "Dagger", "Sword"]);
+    expect(names()).toEqual(["Dagger", "Sword", "Lance"]);
   });
 });
 
