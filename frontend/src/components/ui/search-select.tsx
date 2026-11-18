@@ -52,11 +52,13 @@ function OptionLine({ option }: { option: SearchOption }) {
       title={[option.title, after].filter(Boolean).join(" · ")}
       className="flex min-w-0 items-baseline gap-2"
     >
-      <span className="shrink-0 text-[13px] font-bold text-ink">{option.title}</span>
+      {/* both lines truncate: a narrow field (a phone's two columns) cuts them short
+          rather than letting the text run over what sits beside it */}
+      <span className="min-w-0 truncate text-[13px] font-bold text-ink">{option.title}</span>
       {after ? (
         <span
           className={cn(
-            "truncate text-[11px]",
+            "min-w-0 truncate text-[11px]",
             option.warning ? "font-semibold text-danger" : "font-medium text-muted-foreground"
           )}
         >

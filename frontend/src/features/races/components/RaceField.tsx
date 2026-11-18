@@ -3,6 +3,7 @@ import { Plus } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { SearchSelect } from "@/components/ui/search-select";
 import { StatBoxes } from "@/components/ui/stat-boxes";
@@ -118,16 +119,17 @@ export default function RaceField({
             }
           />
           {canCreate && !custom ? (
-            <Button
+            /* the plus alone (William, 18 Nov 2026: "we dont need the text for add new just the
+               plus should be fine"), which gives the select the width back on a phone */
+            <IconButton
               type="button"
-              size="sm"
-              variant="secondary"
-              className="h-auto shrink-0"
+              aria-label="Add a new race"
+              title="Add a new race"
+              className="h-auto min-h-11 w-11 shrink-0"
               onClick={() => openNew(value === null ? unmatched : "")}
             >
               <Plus aria-hidden="true" />
-              Add new
-            </Button>
+            </IconButton>
           ) : null}
         </div>
         {unmatched && value === null && !custom ? (

@@ -151,6 +151,17 @@ describe("SearchSelect", () => {
     await userEvent.click(screen.getByRole("button", { name: "No race" }));
     expect(onChange).toHaveBeenLastCalledWith(null);
   });
+
+  // a narrow field (the race in a phone's two-column form) cut the name off over what sat
+  // beside it until both lines of the one-line value clamped (William, 18 Nov 2026)
+  it("cuts a one-line value short instead of letting it run over the field", () => {
+    render(
+      <SearchSelect label="Race" options={SKILLS} value={SKILLS[0]} onChange={vi.fn()} oneLine />
+    );
+    const field = screen.getByRole("button", { name: "Race: Mighty Blow" });
+    expect(within(field).getByText("Mighty Blow")).toHaveClass("truncate", "min-w-0");
+    expect(within(field).getByText("Combat")).toHaveClass("truncate", "min-w-0");
+  });
 });
 
 function Multi({ initial }: { initial: SearchOption[] }) {

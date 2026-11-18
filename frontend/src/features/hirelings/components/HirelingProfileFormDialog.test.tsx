@@ -1,6 +1,6 @@
 /**
  * The hired sword and dramatis persona form (William, 7 Nov 2026): its parts in order, the race
- * a dropdown with Add new (a name and its maximum profile, made a campaign race and picked), the
+ * a dropdown with a plus (a name and its maximum profile, made a campaign race and picked), the
  * hire fee and upkeep (gold, dice and one resource), no upkeep for one who takes a hero's place,
  * the skill groups as tick boxes, and a stored fee the form can't hold left out of the write.
  */
@@ -115,7 +115,7 @@ describe("The hired sword form", () => {
     const form = renderForm();
 
     await user.type(within(form).getByRole("textbox", { name: "Name" }), "Tilean Duellist");
-    await user.click(within(form).getByRole("button", { name: "Add new" }));
+    await user.click(within(form).getByRole("button", { name: "Add a new race" }));
     const race = within(form).getByRole("group", { name: "New race" });
     await user.type(within(race).getByRole("textbox", { name: "Race name" }), "Tilean");
     await user.clear(within(race).getByRole("textbox", { name: "WS maximum" }));
