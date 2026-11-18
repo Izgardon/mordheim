@@ -7,8 +7,10 @@
 import { screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { catalogueListKey } from "@/lib/catalogue-queries";
+import { bestiaryEntry } from "@/test/catalogue-fixtures";
 import { fakeApi } from "@/test/fake-api";
-import { renderWithQueryClient } from "@/test/query-test-utils";
+import { createTestQueryClient, renderWithQueryClient } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
 import { makeHero } from "@/test/warband-fixtures";
 
@@ -311,6 +313,86 @@ describe("Recruiting from the warband's template", () => {
     await user.click(await screen.findByRole("radio", { name: "Someone not in the template" }));
     expect(screen.getByRole("form", { name: "Recruit" })).toBeInTheDocument();
     expect(screen.getByLabelText("Type")).toBeInTheDocument();
+  });
+});
+
+/**
+ * William, 12 Nov 2026: adding a unit to your own warband offers the same creature search the
+ * battle's add sheets do, with what is typed used as it stands. The creature is still bought in
+ * the store to come with its profile (`beasts.py` recruits it from its Animal item), so the
+ * search names the type and says so; it recruits nothing by itself.
+ */
+describe("The hand-typed recruit's creature search", () => {
+  const renderByHand = () => {
+    const onCreated = vi.fn();
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(catalogueListKey(1, "bestiary"), [
+      bestiaryEntry(),
+      bestiaryEntry({ id: 6, name: "Warhorse", kind: "mount" }),
+    ]);
+    renderWithQueryClient(
+      <RecruitForm
+        kind="henchmen_group"
+        campaignId={1}
+        warbandId={9}
+        typeName="Reiklanders"
+        gold={74}
+        existingIds={[]}
+        canCreateRace={false}
+        onCancel={vi.fn()}
+        onCreated={onCreated}
+      />,
+      { queryClient }
+    );
+    return onCreated;
+  };
+
+  beforeEach(() => {
+    fakeApi.reset();
+    media.mobile = false;
+    fakeApi.on("GET /warbands/9/template/", {
+      template: null,
+      variant: "",
+      list_prices_open: true,
+    });
+    fakeApi.on("POST /warbands/9/henchmen-groups/batch/", {
+      units: [{ id: 3 }],
+      summary: {},
+      warnings: [],
+    });
+  });
+
+  it("names the type from a creature, and points at the store for its profile", async () => {
+    const user = setupUser();
+    renderByHand();
+
+    await user.type(await screen.findByLabelText("Type"), "hound");
+    await user.click(screen.getByRole("option", { name: /Warhound/ }));
+
+    expect(screen.getByText(/Bought in the store, Warhound comes with its profile/)).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toMatchObject({
+        create: [{ unit_type: "Warhound", henchmen: [{ name: "Warhound 1" }] }],
+      })
+    );
+  });
+
+  it("offers creatures only, and takes a type of its own as typed", async () => {
+    const user = setupUser();
+    renderByHand();
+
+    await user.type(await screen.findByLabelText("Type"), "War");
+    expect(screen.queryByRole("option", { name: /Warhorse/ })).toBeNull();
+    await user.click(screen.getByRole("option", { name: /Use “War” as the type/ }));
+
+    expect(screen.queryByText(/Bought in the store/)).toBeNull();
+    await user.click(screen.getByRole("button", { name: "Recruit" }));
+    await waitFor(() =>
+      expect(fakeApi.bodyOf("POST /warbands/9/henchmen-groups/batch/")).toMatchObject({
+        create: [{ unit_type: "War" }],
+      })
+    );
   });
 });
 

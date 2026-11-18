@@ -57,6 +57,11 @@ export type SearchComboboxProps = {
   onDismiss?: () => void;
   /** At most this many rows; typing finds the rest. */
   limit?: number;
+  /**
+   * What is typed, at each keystroke, for a field that is free text with suggestions (a recruit's
+   * type): the caller keeps it, so nothing is lost when the search is left without a pick.
+   */
+  onTyped?: (typed: string) => void;
   /** A pick closes the list (a single pick: the field stays for the next, closed). */
   closeOnPick?: boolean;
 };
@@ -142,6 +147,7 @@ export function SearchCombobox(props: SearchComboboxProps) {
           value={typed}
           onChange={(event) => {
             setTyped(event.target.value);
+            props.onTyped?.(event.target.value);
             setActive(0);
             setOpen(true);
           }}
