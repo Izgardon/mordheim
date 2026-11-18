@@ -4,7 +4,8 @@
 battle, or back on his mount. It is stored in his unit information (`dismounted: true`, left out when false), seen by
 the other players through the battle's broadcast, and kept by config saves, out-of-action taps and kills, which
 never undo it. Only a rider (a unit whose battle roster has a mount) dismounts, and not while out of action, so the
-state he was taken out of action in is the one postbattle reads.
+state he was taken out of action in is the one postbattle reads. What he shows on foot is his roster entry's
+`footStats`: his save less the step riding the mount is worth, which his stored save holds.
 """
 
 from typing import Any
@@ -12,7 +13,7 @@ from typing import Any
 from apps.battles.models import BattleKill
 from apps.warbands.models import HenchmanItemGap, HenchmenGroupItem, Hero, HeroItem
 from apps.warbands.tests.beast_support import warhorse
-from apps.warbands.tests.roster_support import HENCHMEN, make_unit
+from apps.warbands.tests.roster_support import HENCHMEN, HERO, make_unit, unit_url
 
 from .battle_support import BattleTestCase, status_changed
 
@@ -103,3 +104,67 @@ class DismountTests(BattleTestCase):
         self.assertEqual((codes["on foot"], codes["a member without a mount"]), ("not_mounted", "not_mounted"))
         self.assertEqual(codes["out of action"], "out_of_action")
         self.assertFalse(self.info(battle_id).get(self.a, {}).get("dismounted"))
+
+
+class DismountSaveTests(BattleTestCase):
+    """Getting off the mount takes the step riding it was worth off what the battle shows (William, 18 Nov 2026:
+    "this should take 1 away and add one when mounted, not when owned like items"). The rider's entry carries both
+    numbers, his ridden one in `stats` (the stored save, which has the step) and his foot one in `footStats`;
+    nothing is written to the unit, and the warband's own payload still shows what he holds."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.horse = warhorse()
+        self.riders = {}
+        for name, save in (("Aldric", 5), ("Ragged", 6), ("Bare", None)):
+            hero = Hero.objects.create(warband=self.warband, name=name, unit_type="Knight", armour_save=save)
+            HeroItem.objects.create(hero=hero, item=self.horse, companion=True)  # riding it, so his save has the step
+            self.riders[name] = hero
+        self.walker = Hero.objects.create(warband=self.warband, name="Walker", unit_type="Youngblood", armour_save=5)
+        self.group = make_unit(HENCHMEN, self.warband, name="Outriders", members=("A",), armour_save=5)
+        HenchmenGroupItem.objects.create(henchmen_group=self.group, item=self.horse, companion=True)
+        self.rat = Hero.objects.create(warband=self.rival, name="Rat", unit_type="Assassin")
+
+    def keys(self) -> list[str]:
+        members = [f"henchman:{member.id}" for member in self.group.henchmen.all()]
+        return [f"hero:{hero.id}" for hero in (*self.riders.values(), self.walker)] + members
+
+    def mine(self, battle_id: int) -> dict:
+        roster = self.ok(self.get_as(self.player, self.url(battle_id, "rosters"))).data[str(self.player.id)]
+        members = [member for group in roster["henchmenGroups"] for member in group["members"]]
+        return {entry["displayName"]: entry for entry in [*roster["heroes"], *members]}
+
+    def test_a_rider_shows_a_save_a_step_worse_on_foot_and_the_one_he_holds_in_the_saddle(self):
+        battle_id = self.to_prebattle()
+
+        shown = self.mine(battle_id)
+
+        foot = {name: entry["footStats"] for name, entry in shown.items()}
+        self.assertEqual(foot["Aldric"], {"armour_save": 6})  # 5+ in the saddle, 6+ on his feet
+        self.assertEqual(foot["Ragged"], {"armour_save": None})  # 6+ leaves him with none
+        self.assertEqual(foot["Bare"], {"armour_save": None})  # none stays none
+        self.assertEqual(foot["A"], {"armour_save": 6})  # the group's save, one worse for the member who gets off
+        self.assertIsNone(foot["Walker"])  # no mount, nothing to get off
+        saddle = {name: entry["stats"]["armour_save"] for name, entry in shown.items()}
+        self.assertEqual(saddle, {"Aldric": 5, "Ragged": 6, "Bare": None, "Walker": 5, "A": 5})
+        self.assertEqual(shown["Aldric"]["effectiveStats"], {"movement": 8})
+
+    def test_dismounting_and_mounting_again_writes_nothing_to_the_unit(self):
+        battle_id = self.to_active({self.player: self.keys(), self.viewer: [f"hero:{self.rat.id}"]})
+        aldric = f"hero:{self.riders['Aldric'].id}"
+        body = {"unit_key": aldric, "dismounted": True}
+
+        self.ok(self.post_as(self.player, self.url(battle_id, "unit-dismount"), body))
+        self.ok(self.post_as(self.player, self.url(battle_id, "unit-dismount"), {**body, "dismounted": False}))
+
+        self.riders["Aldric"].refresh_from_db()
+        self.assertEqual(self.riders["Aldric"].armour_save, 5)  # the saddle's save, untouched throughout
+        entry = self.mine(battle_id)["Aldric"]
+        self.assertEqual((entry["stats"]["armour_save"], entry["footStats"]), (5, {"armour_save": 6}))
+
+    def test_the_warbands_own_payload_shows_the_save_he_holds_and_no_foot_stats(self):
+        unit = self.ok(self.get_as(self.player, unit_url(HERO, self.warband.id, self.riders["Aldric"].id))).data
+
+        self.assertEqual((unit["armour_save"], unit["effective_stats"]), (5, {"movement": 8}))
+        self.assertNotIn("foot_stats", unit)
+        self.assertNotIn("footStats", unit)

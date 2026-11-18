@@ -1,8 +1,9 @@
 """Battle rosters carry each unit's mount and pets (the bestiary rewrite step 4), read live until the battle starts and
-kept in the start/ snapshot after: the mount (its item, name, Move, rating bonus and profile), the pets, and the Move
-the mount gives the rider (`effectiveStats`), beside his own `stats`. His save isn't there: mounting writes the
-stored one (warbands/services/armour.py). A henchmen group's members ride one each of the group's mounts, in order,
-and a group recruited from a creature names its beast and kind.
+kept in the start/ snapshot after: the mount (its item, name, Move, rating bonus and profile), the pets, the Move
+the mount gives the rider (`effectiveStats`), beside his own `stats`, and what he shows on foot (`footStats`, the
+save without the mount's step, for the battle's dismount: services/dismount.py). His ridden save isn't in
+`effectiveStats`: mounting writes the stored one (warbands/services/armour.py). A henchmen group's members ride one
+each of the group's mounts, in order, and a group recruited from a creature names its beast and kind.
 """
 
 from typing import Any
@@ -49,6 +50,7 @@ class BattleRosterCompanionTests(BattleTestCase):
 
         [kept] = self.roster(battle_id)["heroes"]
         self.assertEqual((kept["mount"]["name"], kept["effectiveStats"]["movement"]), ("Warhorse", 8))
+        self.assertEqual(kept["footStats"], {"armour_save": None})  # kept too: he has none to lose
 
     def test_a_groups_members_ride_its_mount_and_a_creature_group_names_its_beast(self):
         riders = make_unit(HENCHMEN, self.warband, name="Outriders", members=("A", "B"), movement=4)

@@ -3,9 +3,10 @@
 Read live from the warbands until the battle starts; `start/` stores each roster on its participant
 (`roster_json`), and from then on the battle keeps that snapshot, so a unit killed or dismissed on the sheet
 mid-battle stays in it. Every unit kind is read in one query plus its link tables, whatever the number of units.
-Each unit carries its mount, pets and the Move and save its mount gives it (`effectiveStats`, beside its own
-`stats`), and a group recruited from a creature its beast and kind, so the snapshot keeps them too. A mounted group
-carries its mount warnings (`mountWarnings`, the warband page's), which prebattle shows as a note: never a block.
+Each unit carries its mount, pets, the Move its mount gives it (`effectiveStats`, beside its own `stats`) and what
+it shows on foot (`footStats`: the save without the mount's step, for a rider who dismounts mid-battle,
+services/dismount.py), and a group recruited from a creature its beast and kind, so the snapshot keeps them too.
+A mounted group carries its mount warnings (`mountWarnings`, the warband page's), which prebattle shows as a note: never a block.
 A skill or special with a pre-battle roll carries its dice and text, and an item its rules' (`prebattleRolls`, a shared
 rule's with its name and one of the item's own with none, read with the copy), which prebattle shows under the unit
 (core/models.py: PrebattleRoll).
@@ -43,6 +44,7 @@ from apps.warbands.units.companions import (
 )
 
 from ..models import BattleParticipant
+from .dismount import foot_stats
 
 
 def _item_entries(links: Iterable) -> list[dict]:
@@ -110,7 +112,8 @@ def _beast(row, owner: str | None = None) -> dict:
 
 def _companions(unit, links: list, owner: str | None = None) -> dict:
     """The unit's mount (its first switched on: a henchman's, the group's if he carries it), its pets (keyed as models of an `owner` kind) and what the mount makes it show (the bestiary
-    rewrite step 4): snapshotted with the rest at start/, so the battle keeps what the rider rode in on."""
+    rewrite step 4), riding it (`effectiveStats`) and off it (`footStats`, services/dismount.py): snapshotted with
+    the rest at start/, so the battle keeps what the rider rode in on."""
     found = companions(links)
     mount = found.mounts[0] if found.mounts else None
     shown = None
@@ -118,7 +121,12 @@ def _companions(unit, links: list, owner: str | None = None) -> dict:
         payload = mount_payload(mount)
         shown = {**_beast(mount), "movement": payload["movement"], "ratingBonus": payload["rating_bonus"]}
     pets = [_beast(row, owner) for row in found.pets]
-    return {"mount": shown, "pets": pets, "effectiveStats": effective_stats(unit, mount)}
+    return {
+        "mount": shown,
+        "pets": pets,
+        "effectiveStats": effective_stats(unit, mount),
+        "footStats": foot_stats(unit, mount),
+    }
 
 
 def _stats(unit) -> dict:

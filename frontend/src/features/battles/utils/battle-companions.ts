@@ -49,12 +49,13 @@ export function rosterPetModels(
 type Dismountable = { dismounted?: boolean } | undefined;
 
 /**
- * A unit's stats as the battle helpers use them: its own, the mount's M and save while it rides
- * (the roster's `effectiveStats`; his foot ones once dismounted), then any battle stat change,
- * which wins.
+ * A unit's stats as the battle helpers use them: its own, the mount's M while it rides (the
+ * roster's `effectiveStats`), or its own M and the save it shows on foot once dismounted (the
+ * roster's `footStats`, where null means no save and counts), then any battle stat change, which
+ * wins. Both numbers come from the server; nothing here moves a save.
  */
 export function helperStats(
-  unit: Pick<PrebattleUnit, "stats" | "effectiveStats">,
+  unit: Pick<PrebattleUnit, "stats" | "effectiveStats" | "footStats">,
   overrides: Partial<UnitStats> = {},
   info?: Dismountable
 ): UnitStats {
@@ -63,5 +64,6 @@ export function helperStats(
       ([, value]) => value !== null
     )
   );
-  return { ...unit.stats, ...riding, ...overrides };
+  const onFoot = (info?.dismounted && unit.footStats) || {};
+  return { ...unit.stats, ...riding, ...onFoot, ...overrides };
 }
