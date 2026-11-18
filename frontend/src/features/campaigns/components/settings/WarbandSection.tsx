@@ -276,13 +276,14 @@ const HAND_OVER_FIRST =
 /**
  * Leave the campaign (decision 4, CAMP-NEW-03): players and admins leave with removal's clean-up;
  * the owner alone archives the campaign by leaving; the owner with company is told to hand it over
- * first, the button greyed but there (guide, not gatekeeper).
+ * first, the button greyed but there (guide, not gatekeeper). The button says Leave and what
+ * leaving does is the card's text (William, 18 Nov 2026: "The leave campaign button doesn't need
+ * that long text").
  */
 function LeaveCampaign({ campaign }: { campaign: CampaignSummary }) {
   const mode = leaveMode(campaign);
   const leaving = useLeaveCampaign(campaign);
   if (!mode) return null;
-  const label = mode === "archive" ? "Leave (archives the campaign)" : "Leave campaign";
   const blocked = mode === "hand_over_first";
   return (
     <SettingsCard
@@ -303,7 +304,7 @@ function LeaveCampaign({ campaign }: { campaign: CampaignSummary }) {
           title={blocked ? "Hand ownership to an admin first" : undefined}
           onClick={blocked ? undefined : leaving.openLeave}
         >
-          {label}
+          Leave
         </Button>
       }
     >
@@ -332,7 +333,7 @@ function LeaveCampaign({ campaign }: { campaign: CampaignSummary }) {
           </div>
         }
         error={leaving.error}
-        confirmText={leaving.isLeaving ? "Leaving…" : label}
+        confirmText={leaving.isLeaving ? "Leaving…" : "Leave"}
         confirmDisabled={leaving.preview.isPending}
         isConfirming={leaving.isLeaving}
         onConfirm={() => void leaving.leave()}

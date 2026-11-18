@@ -19,7 +19,13 @@ type SettingsCardProps = {
   children?: ReactNode;
 };
 
-/** One card of a settings section: its title, a line saying what it does, then its fields. */
+/**
+ * One card of a settings section: its title and its button on one row, the line saying what it
+ * does across the card below them, then its fields. The description is full width (William, 18 Nov
+ * 2026, from his phone: "In these kind of cards the subtitle text can live underneath the button
+ * too so be full width"): beside the button a phone squeezed it into a column a word wide, and a
+ * danger card's description is a lossy-action warning that has to be read.
+ */
 export function SettingsCard({
   title,
   description,
@@ -38,14 +44,16 @@ export function SettingsCard({
         className
       )}
     >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
+      <div className="flex flex-col gap-1.5">
+        {/* no min-w-0 on the title: a button too wide to sit beside it wraps to its own line
+            instead of squeezing the heading */}
+        <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
           <SectionTitle className={tone === "danger" ? "text-danger" : undefined}>
             {title}
           </SectionTitle>
-          {description ? <p className="m-0 text-sm text-text2">{description}</p> : null}
+          {action ? <div className="flex shrink-0 flex-wrap gap-2">{action}</div> : null}
         </div>
-        {action ? <div className="flex shrink-0 flex-wrap gap-2">{action}</div> : null}
+        {description ? <p className="m-0 text-sm text-text2">{description}</p> : null}
       </div>
       {children}
     </Card>
