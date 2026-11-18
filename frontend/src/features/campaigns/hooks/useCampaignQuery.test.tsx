@@ -127,4 +127,14 @@ describe("writeCampaignAnswer", () => {
     });
     expect(invalidate).toHaveBeenCalledWith({ queryKey: key, exact: true });
   });
+
+  it("reads the preset again when the answer changes the campaign being played", () => {
+    const queryClient = createTestQueryClient();
+    queryClient.setQueryData(key, { ...campaign, preset_id: null });
+    const invalidate = vi.spyOn(queryClient, "invalidateQueries");
+
+    writeCampaignAnswer(queryClient, 7, { ...campaign, preset_id: 2 });
+
+    expect(invalidate).toHaveBeenCalledWith({ queryKey: ["campaign", 7, "preset"] });
+  });
 });

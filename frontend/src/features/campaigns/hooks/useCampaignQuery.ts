@@ -83,6 +83,11 @@ export function writeCampaignAnswer(
     void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.warbandTypes(campaignId) });
     void invalidateWhoCan(queryClient, campaignId); // what each warband can usually buy and hire
   }
+  // the campaign it plays changed (an owner on another device, a `campaign.updated` event): what
+  // its preset sets, and what the campaign now departs from, is read again
+  if (previous && answer.preset_id !== undefined && previous.preset_id !== answer.preset_id) {
+    void queryClient.invalidateQueries({ queryKey: queryKeys.campaign.preset(campaignId) });
+  }
   // the default resource renamed (some merged): every warband's resources changed
   const renamed =
     answer.default_resource_name !== undefined &&
