@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from apps.core.catalogue.current import current_rows
-from apps.items.materials import named
+from apps.items.materials import copy_name
 from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.serializers.purchases import BatchPurchaseSerializer, StashTakeSerializer
@@ -140,9 +140,10 @@ def _take_from_stash(kind: "UnitKindSpec", warband: Warband, line: ItemLine, uni
     except StashShortage as shortage:
         message = f"The stash holds {shortage.held} of these."
         raise RosterError(message, "not_enough_in_stash", {f"{line.key}.quantity": [message]}) from None
-    add_unit_copies(kind.key, unit, item, take.costs, material=material)
+    add_unit_copies(kind.key, unit, item, take.costs, material=material, shown_as=take.shown_as)
     target = (kind.key, economy_log.unit_name(kind.key, unit))
-    economy_log.log_move(warband, named(material, item.name), len(take.costs), ("stash", None), target)
+    name = copy_name(material, take.shown_as, item.name)
+    economy_log.log_move(warband, name, len(take.costs), ("stash", None), target)
 
 
 def apply_lines(

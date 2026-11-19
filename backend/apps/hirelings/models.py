@@ -2,8 +2,8 @@
 step 2).
 
 Both carry the same columns (`HirelingProfile`) and the same five link tables: skills, specials, spells, items (with
-a quantity: the Ogre keeps both swords; and a material where the book makes his weapon of one: the Runesmith
-Journeyman's gromril hammer, weapon materials) and who may hire them (the items rebuild: warband types or groups, each
+a quantity: the Ogre keeps both swords; a material where the book makes his weapon of one, and the nickname his kit
+gives the item: the Runesmith Journeyman's gromril hammer, weapon materials) and who may hire them (the items rebuild: warband types or groups, each
 included or excluded, beside `for_everyone`; `hire_note` keeps the book's sentence, shown and never checked). A
 dramatis persona adds how long it stays and what it is paid in; it gains no XP and uses the Hero injury table, which
 come from its kind, not from columns. Hiring copies a row onto the warband as a `warbands.Hireling` that keeps no
@@ -19,7 +19,7 @@ from django.db import models
 
 from apps.core.models import CatalogueEntry, version_constraints
 from apps.hirelings.fees import no_fee
-from apps.items.materials import MAX_MATERIAL
+from apps.items.materials import MAX_MATERIAL, MAX_SHOWN_AS
 from apps.warbands.models.hirelings import STAYS
 from apps.warbands.models.shared import WrittenStatBlock, stat_constraints
 from apps.warbands.models.types import WarbandAccess, access_constraints
@@ -144,6 +144,9 @@ class ItemLink(Link):
     # What the book makes his weapon of (apps/items/materials.py; blank: plain): the Runesmith Journeyman's hammer
     # is gromril. Hiring copies it onto the owned row, which carries the same column.
     material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
+    # The name this kit gives the item, as a warband template's list line does (`TemplateListItem.shown_as`): the
+    # Runesmith Journeyman's hammer is our "Club, Mace or Hammer", so his reads "Gromril Hammer". Blank: its own name
+    shown_as = models.CharField(max_length=MAX_SHOWN_AS, blank=True, default="")
 
     class Meta:
         abstract = True

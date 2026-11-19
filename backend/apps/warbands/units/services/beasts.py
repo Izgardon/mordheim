@@ -23,7 +23,7 @@ from apps.warbands.services import economy_log
 from apps.warbands.services.prices import CampaignPrices
 from apps.warbands.services.stash import ANY_COST, StashEntry, StashTake, remove_from_stash
 from apps.warbands.services.summary import WarbandUnits
-from apps.warbands.services.unit_items import resolve_unit, take_unit_copies, touch_unit
+from apps.warbands.services.unit_items import TakenCopies, resolve_unit, take_unit_copies, touch_unit
 from apps.warbands.units.catalogue_scope import current_entry
 from apps.warbands.units.companions import Warning, beast_of
 from apps.warbands.units.errors import RosterError, validation_error
@@ -153,9 +153,7 @@ class Recruited:
     stash: StashEntry | None = None  # what is left of the item in the stash (a stash source)
 
 
-def _taken(
-    warband: Warband, item: Item, source: dict[str, Any], unit: Any, quantity: int
-) -> StashTake | list[int | None]:
+def _taken(warband: Warband, item: Item, source: dict[str, Any], unit: Any, quantity: int) -> StashTake | TakenCopies:
     """Take the copies out of the stash (newest row first, or of the cost sent) or the unit (its companions last);
     400 `not_enough` when there are fewer."""
     try:
@@ -185,7 +183,7 @@ def recruit_beasts(warband: Warband, data: dict[str, Any]) -> Recruited:
         else:
             lock_warband(warband.id)  # before the source's rows, as every roster write locks them
         taken = _taken(warband, item, source, unit, quantity)
-        costs = taken.costs if isinstance(taken, StashTake) else taken
+        costs = taken.costs
         moved_from = (source["type"], economy_log.unit_name(source["type"], unit))
         group = recruit_copies(warband, beast, item, costs, target, moved_from)
     stash = taken.remaining if isinstance(taken, StashTake) else None

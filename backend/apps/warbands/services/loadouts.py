@@ -64,13 +64,20 @@ def add_row(
     *,
     companion: bool = False,
     material: str = "",
+    shown_as: str = "",
     reason: str = HenchmanItemGap.SHORT,
 ) -> HenchmenGroupItem:
     """One loadout row for these copies, one each for the oldest living members: the newest members past the copies
-    get a gap. The row keeps the first known cost, and what the copies are made of (weapon materials)."""
+    get a gap. The row keeps the first known cost, what the copies are made of and the name they were given (weapon
+    materials)."""
     living = living_ids(group.pk)
     row = HenchmenGroupItem.objects.create(
-        henchmen_group=group, item=item, cost=first_known(costs), companion=companion, material=material
+        henchmen_group=group,
+        item=item,
+        cost=first_known(costs),
+        companion=companion,
+        material=material,
+        shown_as=shown_as,
     )
     short = living[len(costs) :]
     HenchmanItemGap.objects.bulk_create(HenchmanItemGap(henchman_id=pk, group_item=row, reason=reason) for pk in short)
@@ -85,6 +92,7 @@ class TakenRow:
     companion: bool
     save: Save
     material: str = ""  # what the copies were made of (weapon materials): they keep it wherever they go
+    shown_as: str = ""  # and the name they were given
 
 
 def peek_row(group: HenchmenGroup, item_id: int, material: str = "") -> Any:
@@ -104,7 +112,7 @@ def take_row(group: HenchmenGroup, item_id: int, material: str = "") -> TakenRow
     if not deleted:
         raise ValueError("Item not found.")
     costs = [row.cost] * carriers_of(row)
-    return TakenRow(row.item_id, costs, row.pk, row.companion, Save.of(row.item), row.material)
+    return TakenRow(row.item_id, costs, row.pk, row.companion, Save.of(row.item), row.material, row.shown_as)
 
 
 def carried_rows(member: Henchman) -> list[HenchmenGroupItem]:

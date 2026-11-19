@@ -352,7 +352,7 @@ class MaterialInAKitTests(RosterTestCase):
         self.runesmith = HiredSword.objects.create(
             name="Runesmith Journeyman", hire_fee=make_fee(gold=50), **HIRE_STATS
         )
-        self.runesmith.item_links.create(item=self.sword, quantity=1, material="gromril")
+        self.runesmith.item_links.create(item=self.sword, quantity=1, material="gromril", shown_as="Hammer")
         self.runesmith.item_links.create(item=self.axe, quantity=1)
 
     def test_hiring_him_puts_the_material_on_the_copy_he_carries(self) -> None:
@@ -364,15 +364,35 @@ class MaterialInAKitTests(RosterTestCase):
 
         self.assertEqual(response.status_code, 201, response.data)
         hireling = Hireling.objects.get(warband=self.warband)
-        carried = hireling.hireling_items.order_by("item__name").values_list("item__name", "material")
-        self.assertEqual(list(carried), [("Axe", ""), ("Sword", "gromril")])
+        carried = hireling.hireling_items.order_by("item__name").values_list("item__name", "material", "shown_as")
+        self.assertEqual(list(carried), [("Axe", "", ""), ("Sword", "gromril", "Hammer")])
+        # his card calls it what his kit calls it, not "Gromril Sword" nor the item's whole name
         copies = {row["name"]: row["material_name"] for row in response.data["items"]}
-        self.assertEqual(copies["Sword"], "Gromril Sword")
+        self.assertEqual(copies["Sword"], "Gromril Hammer")
 
     def test_the_catalogue_entry_says_what_his_kit_is_made_of(self) -> None:
         url = f"/api/hired-swords/{self.runesmith.id}/?campaign_id={self.campaign.id}"
         response = self.client.get(url)
 
         kit = {line["item"]["name"]: (line["material"], line["material_name"]) for line in response.data["equipment"]}
-        self.assertEqual(kit["Sword"], ("gromril", "Gromril Sword"))
+        self.assertEqual(kit["Sword"], ("gromril", "Gromril Hammer"))
         self.assertEqual(kit["Axe"], ("", "Axe"))
+
+    def test_the_copy_keeps_its_name_through_the_stash_and_reads_so_when_sold(self) -> None:
+        hero = make_unit(HERO, self.warband)
+        hero.hero_items.create(item=self.sword, cost=40, material="gromril", shown_as="Hammer")
+        move = {
+            "source_type": "hero",
+            "source_id": hero.id,
+            "target_type": "stash",
+            "item_id": self.sword.id,
+            "quantity": 1,
+            "material": "gromril",
+        }
+
+        moved = self.client.post(f"/api/warbands/{self.warband.id}/item-transfers/", move, format="json").json()
+
+        self.assertEqual(moved["stash_item"]["material_name"], "Gromril Hammer")
+        sale = {"source_type": "stash", "item_id": self.sword.id, "quantity": 1, "material": "gromril", "price": 20}
+        self.client.post(f"/api/warbands/{self.warband.id}/item-sales/", sale, format="json")
+        self.assertEqual(WarbandTrade.objects.get(action=LedgerAction.SELL).description, "Gromril Hammer")

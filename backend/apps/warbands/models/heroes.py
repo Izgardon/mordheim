@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.items.materials import MAX_MATERIAL
+from apps.items.materials import MAX_MATERIAL, MAX_SHOWN_AS
 
 from .shared import PendingPicks, RosterUnit, stat_constraints
 from .warband import Warband
@@ -72,6 +72,8 @@ class HeroItem(models.Model):
     companion = models.BooleanField(default=False)  # a mount or pet switched on for him (units/companions.py)
     # What the weapon is made of (apps/items/materials.py; blank: plain): the copy's own, never the item's
     material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
+    # The name it was given (the kit that armed him calls our Club, Mace or Hammer a "Hammer"); blank: its own name
+    shown_as = models.CharField(max_length=MAX_SHOWN_AS, blank=True, default="")
 
     class Meta:
         db_table = "hero_item"

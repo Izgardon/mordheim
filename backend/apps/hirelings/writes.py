@@ -31,15 +31,20 @@ def _replace(entry: HirelingProfile, relation: str, rows: list[dict[str, Any]], 
 
 
 def write_links(entry: HirelingProfile, data: Mapping[str, Any], *, replace: bool) -> None:
-    """Each list `data` holds: skill, special and spell ids, item entries (`item_id`, `quantity`, and `material`
-    where the book makes it of one: weapon materials, which only the seeders send) and who may hire (`warbands`: a
-    warband type or group each, and whether it is excluded)."""
+    """Each list `data` holds: skill, special and spell ids, item entries (`item_id`, `quantity`, `material` where
+    the book makes it of one (weapon materials) and `shown_as`, the name the kit gives the item) and who may hire
+    (`warbands`: a warband type or group each, and whether it is excluded)."""
     for key, relation, column in ID_LINKS:
         if key in data:
             _replace(entry, relation, [{column: pk} for pk in data[key]], replace=replace)
     if "item_entries" in data:
         rows = [
-            {"item_id": row["item_id"], "quantity": row["quantity"], "material": row.get("material") or ""}
+            {
+                "item_id": row["item_id"],
+                "quantity": row["quantity"],
+                "material": row.get("material") or "",
+                "shown_as": row.get("shown_as") or "",
+            }
             for row in data["item_entries"]
         ]
         _replace(entry, "item_links", rows, replace=replace)

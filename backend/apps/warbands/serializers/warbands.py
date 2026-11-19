@@ -2,7 +2,7 @@ from typing import Any
 
 from rest_framework import serializers
 
-from apps.items.materials import named, on_owned_only
+from apps.items.materials import copy_name, on_owned_only
 from apps.warbands.models import Warband, WarbandResource, WarbandRule
 from apps.warbands.models.warband import MAX_RULE_TEXT
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
@@ -294,7 +294,8 @@ class WarbandItemSummarySerializer(serializers.Serializer):
     id = serializers.IntegerField(source="item.id")
     name = serializers.CharField(source="item.name")
     material = serializers.CharField()  # "" for a plain copy
-    material_name = serializers.SerializerMethodField()  # "Gromril Sword": what the row is called
+    shown_as = serializers.CharField()  # the name the copies were given; "" the item's own
+    material_name = serializers.SerializerMethodField()  # "Gromril Hammer": what the row is called
     cost = serializers.IntegerField(allow_null=True)
     quantity = serializers.IntegerField()
     costs = StashCostSerializer(many=True)
@@ -304,7 +305,7 @@ class WarbandItemSummarySerializer(serializers.Serializer):
     beast_kind = serializers.SerializerMethodField()  # a beast's Animal item: a creature can be recruited from here
 
     def get_material_name(self, entry: Any) -> str:
-        return named(entry.material, entry.item.name)
+        return copy_name(entry.material, entry.shown_as, entry.item.name)
 
     def get_beast_kind(self, entry: Any) -> str | None:
         return beast_kind(entry.item)

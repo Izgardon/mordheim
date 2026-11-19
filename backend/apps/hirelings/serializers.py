@@ -18,7 +18,7 @@ from apps.core.catalogue.scope import (
     EquipmentInputSerializer,
     current_equipment,
 )
-from apps.items.materials import named
+from apps.items.materials import MAX_SHOWN_AS, SLUGS, copy_name
 from apps.items.serializers import MAX_COST, ItemSerializer
 from apps.races.models import Race
 from apps.skills.models import Skill
@@ -77,16 +77,18 @@ WRITE_FIELDS = (
 
 
 class EquipmentSerializer(serializers.Serializer):
-    """One kit line: the item, how many, and what the book makes it of (weapon materials; "" plain), with the name
-    the copy reads under, so the hire dialog calls the Runesmith Journeyman's hammer what his card will."""
+    """One kit line: the item, how many, what the book makes it of (weapon materials; "" plain) and the name this kit
+    gives it (`shown_as`; "" its own), with the name the copy reads under, so the hire dialog calls the Runesmith
+    Journeyman's hammer what his card will."""
 
     item = ItemSerializer(read_only=True)
     quantity = serializers.IntegerField(read_only=True)
     material = serializers.CharField(read_only=True)
+    shown_as = serializers.CharField(read_only=True)
     material_name = serializers.SerializerMethodField()
 
     def get_material_name(self, link: Any) -> str:
-        return named(link.material, link.item.name)
+        return copy_name(link.material, link.shown_as, link.item.name)
 
 
 class HirelingProfileSerializer(serializers.ModelSerializer):
@@ -151,6 +153,19 @@ def _cost() -> serializers.IntegerField:
     return serializers.IntegerField(min_value=0, max_value=MAX_COST, allow_null=True, required=False)
 
 
+class KitInputSerializer(EquipmentInputSerializer):
+    """One kit line a write sends: the item and how many, plus what it is made of (weapon materials) and the name
+    this kit gives it, so a save keeps the Runesmith Journeyman's hammer gromril and still called a "Hammer". The
+    bestiary's equipment keeps the plain shape: its rows hold neither."""
+
+    material = serializers.ChoiceField(choices=SLUGS, allow_blank=True, required=False, default="")
+    shown_as = serializers.CharField(max_length=MAX_SHOWN_AS, allow_blank=True, required=False, default="")
+
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
+        # in a PATCH too, where DRF skips defaults
+        return {"material": "", "shown_as": "", **super().validate(attrs)}
+
+
 class HirelingProfileWriteSerializer(WrittenStatsSerializer, serializers.ModelSerializer):
     """A create or an edit of a campaign's hired sword or dramatis persona. A list it sends (skills, specials, spells,
     equipment, who may hire) replaces that list; a list it leaves out stays. The armour save and the kit's quantities
@@ -167,7 +182,7 @@ class HirelingProfileWriteSerializer(WrittenStatsSerializer, serializers.ModelSe
     skill_ids = CatalogueIdsField(rows=Skill.objects.all(), required=False)
     special_ids = CatalogueIdsField(rows=Special.objects.all(), required=False)
     spell_ids = CatalogueIdsField(rows=Spell.objects.all(), required=False)
-    item_entries = EquipmentInputSerializer(many=True, required=False)
+    item_entries = KitInputSerializer(many=True, required=False)
     warbands = AccessLineInputSerializer(many=True, required=False)
 
     def validate_item_entries(self, rows: list[dict[str, Any]]) -> list[dict[str, Any]]:

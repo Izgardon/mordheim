@@ -25,6 +25,7 @@ from apps.campaigns.models import Campaign, CampaignHouseRule, CampaignType
 from apps.core.seeding import STAT_FIELDS
 from apps.hirelings.fees import make_fee
 from apps.hirelings.models import DramatisPersona, HiredSword, HiredSwordItem, HiredSwordSkill
+from apps.items.materials import copy_name
 from apps.items.models import Item, ItemAvailability, ItemRule
 from apps.items.services import sync_half_price_armour_for_campaign
 from apps.races.models import Race
@@ -763,9 +764,13 @@ class SeedAllTests(TestCase):
         # weapon materials (19 Nov 2026): the only weapon-material kit row in the catalogue. His "Gromril Hammer" is
         # our Club, Mace or Hammer made of gromril; before this it seeded as a plain hammer and the gromril was lost
         runesmith = HiredSword.objects.get(name="Runesmith Journeyman", campaign__isnull=True)
-        lines = runesmith.item_links.exclude(material="").values_list("item__name", "material")
+        lines = runesmith.item_links.exclude(material="").values_list("item__name", "material", "shown_as")
 
-        self.assertEqual(list(lines), [("Club, Mace or Hammer", "gromril")])
+        held = list(lines)
+        self.assertEqual(held, [("Club, Mace or Hammer", "gromril", "Hammer")])
+        # his kit's nickname for the item, so his card reads "Gromril Hammer", not the item's whole name
+        item_name, material, shown_as = held[0]
+        self.assertEqual(copy_name(material, shown_as, item_name), "Gromril Hammer")
 
     def test_every_seeded_link_resolves(self):
         # BUG-54, CAT-TEST-13 (was pinned: 16 links unresolved; flipped in PR A: prefixes stripped, apostrophes

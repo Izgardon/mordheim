@@ -62,6 +62,8 @@ export type HirelingEquipment = {
   item: Item;
   quantity: number;
   material?: string;
+  /** The name this kit gives the item ("Hammer" for our Club, Mace or Hammer); "" its own. */
+  shown_as?: string;
   material_name?: string;
 };
 
@@ -104,7 +106,7 @@ export type HirelingProfileWrite = {
   skill_ids: number[];
   special_ids: number[];
   spell_ids: number[];
-  item_entries: { item_id: number; quantity: number }[];
+  item_entries: { item_id: number; quantity: number; material?: string; shown_as?: string }[];
   for_everyone: boolean;
   warbands: AccessLineInput[];
   hire_note: string;

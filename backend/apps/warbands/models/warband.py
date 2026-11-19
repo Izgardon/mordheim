@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db import models
 
-from apps.items.materials import MAX_MATERIAL
+from apps.items.materials import MAX_MATERIAL, MAX_SHOWN_AS
 
 DEFAULT_DICE_COLOR = "#2e8555"
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
@@ -82,6 +82,8 @@ class WarbandItem(models.Model):
     cost = models.PositiveIntegerField(null=True, blank=True)
     # What the weapon is made of (apps/items/materials.py; blank: plain): a Gromril Sword is its own row
     material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
+    # The name it was given (the kit that armed him calls our Club, Mace or Hammer a "Hammer"); blank: its own name
+    shown_as = models.CharField(max_length=MAX_SHOWN_AS, blank=True, default="")
     quantity = models.PositiveIntegerField(default=1)
 
     class Meta:

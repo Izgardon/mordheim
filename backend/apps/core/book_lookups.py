@@ -79,10 +79,21 @@ EQUIPMENT_MATERIALS = {
     "gromril hammer": "gromril",
 }
 
+# The name a kit gives the item, as a warband template's list line does (`TemplateListItem.shown_as`): his kit calls
+# our Club, Mace or Hammer a "Hammer", so his copy reads "Gromril Hammer" and not "Gromril Club, Mace or Hammer".
+EQUIPMENT_SHOWN_AS = {
+    "gromril hammer": "Hammer",
+}
+
 
 def equipment_material(line):
     """What the book makes an equipment line of: a material's slug, "" for a plain copy."""
     return EQUIPMENT_MATERIALS.get(lookup_key(line.get("item", "")), "")
+
+
+def equipment_shown_as(line):
+    """The name the kit gives the item, "" where it uses the item's own."""
+    return EQUIPMENT_SHOWN_AS.get(lookup_key(line.get("item", "")), "")
 
 
 def lookup_key(value):
@@ -142,11 +153,13 @@ def shared_names(
 
 @dataclass(frozen=True)
 class KitLine:
-    """One line of a seeded entry's kit: how many copies, and what the book makes it of (weapon materials; "" plain,
-    which every line but the Runesmith Journeyman's gromril hammer is)."""
+    """One line of a seeded entry's kit: how many copies, what the book makes it of (weapon materials; "" plain,
+    which every line but the Runesmith Journeyman's gromril hammer is), and the name the kit gives the item
+    (`shown_as`; "" where it uses the item's own)."""
 
     quantity: int
     material: str = ""
+    shown_as: str = ""
 
 
 @dataclass
@@ -299,7 +312,8 @@ class BookLookups:
             item = self.equipment(line, owner)
             if item:  # an item listed twice keeps its last quantity
                 quantity = parse_int(line.get("quantity"), 1)
-                links.equipment[item.id] = KitLine(quantity, equipment_material(line))
+                extras = (equipment_material(line), equipment_shown_as(line))
+                links.equipment[item.id] = KitLine(quantity, *extras)
         return links
 
     def _special(self, name: str, description: str, owner: str) -> Special:

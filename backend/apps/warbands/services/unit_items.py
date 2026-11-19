@@ -11,6 +11,7 @@ moves the unit's `updated_at`, the version a roster Save sends back (a stale one
 save by what the copies are worth (services/armour.py: a group's row once, whatever its members).
 """
 
+from dataclasses import dataclass
 from typing import Any, cast
 
 from django.utils import timezone
@@ -47,9 +48,16 @@ def copies_wanted(unit_type: str, unit: RosterUnit, quantity: int) -> int:
     return min(quantity, len(living_ids(unit.pk))) if holds_loadout(unit_type) else quantity
 
 
-def take_unit_copies(
-    unit_type: str, unit: RosterUnit, item_id: int, quantity: int, material: str = ""
-) -> list[int | None]:
+@dataclass(frozen=True)
+class TakenCopies:
+    """The copies a take gave up: each one's cost, and the name they were given (weapon materials), read with them
+    so a move never costs a query to learn it."""
+
+    costs: list[int | None]
+    shown_as: str = ""
+
+
+def take_unit_copies(unit_type: str, unit: RosterUnit, item_id: int, quantity: int, material: str = "") -> TakenCopies:
     """Take the unit's newest `quantity` copies made of `material` ("" plain), its companions last; ValueError when it
     carries fewer, or when another request took some of them first (the delete count is checked, BUG-36). A group
     gives up one loadout row, whatever `quantity`: a copy for each member who carries it."""
@@ -58,9 +66,9 @@ def take_unit_copies(
         taken = take_row(cast(Any, unit), item_id, material)
         touch_unit(unit_type, unit)
         unequipped(kind, unit, taken.save, [(taken.row_id, taken.companion)])
-        return taken.costs
+        return TakenCopies(taken.costs, taken.shown_as)
     links: Any = kind.items.model._default_manager  # HeroItem or HirelingItem
-    columns = ("id", "cost", "companion", "item__save_bonus", "item__save_slot")
+    columns = ("id", "cost", "shown_as", "companion", "item__save_bonus", "item__save_slot")
     rows = list(
         links.filter(**{kind.parent_field: unit, "item_id": item_id, "material": material})
         .order_by("companion", "-id")
@@ -75,7 +83,7 @@ def take_unit_copies(
     if rows:  # what the copies that left were worth, now that they are gone
         save = Save(rows[0]["item__save_bonus"], rows[0]["item__save_slot"])
         unequipped(kind, unit, save, [(row["id"], row["companion"]) for row in rows])
-    return [row["cost"] for row in rows]
+    return TakenCopies([row["cost"] for row in rows], rows[0]["shown_as"] if rows else "")
 
 
 def add_unit_copies(
@@ -86,22 +94,29 @@ def add_unit_copies(
     *,
     companion: bool = False,
     material: str = "",
+    shown_as: str = "",
 ) -> None:
     """Append one copy per cost (None: unknown) to the unit, in one INSERT; `companion`: each switched on, `material`:
-    what they are made of (weapon materials). A group gets one loadout row for them (`copies_wanted` keeps them to
-    its members)."""
+    what they are made of and `shown_as` the name they were given (weapon materials). A group gets one loadout row
+    for them (`copies_wanted` keeps them to its members)."""
     if not costs:
         return
     kind = KINDS[cast(UnitKindKey, unit_type)]
     copies = 1 if kind.has_members else len(costs)  # a group takes the copies as one row, so one piece of armour
     equipped(kind, unit, Save.of(item), copies, companion=companion)  # before the rows: the body slot reads them
     if kind.has_members:
-        add_row(cast(Any, unit), item, costs, companion=companion, material=material)
+        add_row(cast(Any, unit), item, costs, companion=companion, material=material, shown_as=shown_as)
         touch_unit(unit_type, unit)
         return
     rows = []
     for cost in costs:
-        kwargs: dict[str, Any] = {kind.parent_field: unit, "item": item, "companion": companion, "material": material}
+        kwargs: dict[str, Any] = {
+            kind.parent_field: unit,
+            "item": item,
+            "companion": companion,
+            "material": material,
+            "shown_as": shown_as,
+        }
         if cost is not None:
             kwargs["cost"] = cost
         rows.append(kind.items.model(**kwargs))
