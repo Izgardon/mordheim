@@ -294,8 +294,9 @@ class WhoCanReadTests(WhoCanTestCase):
         self.assertEqual(count(), before)
         # the warband and the membership, its types, its warband template (its lists' items only when it has one:
         # `HisListTests`), the items, their rows and the rows' lines, each hireling kind and its lines, the skill
-        # groups, their lines and their skills
-        self.assertEqual(before, 14)
+        # groups, their lines and their skills, and the weapon materials' three (their excluded types, their
+        # excluded groups, their settings)
+        self.assertEqual(before, 17)
         self.client.force_authenticate(user=self.viewer)
         self.assertEqual(self.client.get(f"/api/warbands/{self.warband.id}/who-can/").status_code, 200)
         self.client.force_authenticate(user=self.outsider)

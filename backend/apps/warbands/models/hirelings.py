@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.hirelings.fees import no_fee
+from apps.items.materials import MAX_MATERIAL
 
 from .shared import PendingPicks, RosterUnit, stat_constraints
 from .warband import Warband
@@ -85,6 +86,8 @@ class HirelingItem(models.Model):
     item = models.ForeignKey("items.Item", related_name="hireling_items", on_delete=models.RESTRICT)
     cost = models.PositiveIntegerField(null=True, blank=True)
     companion = models.BooleanField(default=False)  # a mount or pet switched on for it (units/companions.py)
+    # What the weapon is made of (apps/items/materials.py; blank: plain): the copy's own, never the item's
+    material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
 
     class Meta:
         db_table = "hireling_item"

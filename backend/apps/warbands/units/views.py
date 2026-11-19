@@ -8,11 +8,10 @@ from rest_framework import status
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from apps.items.models import Item
 from apps.warbands.models import Henchman, HenchmanItemGap, not_dismissed, on_roster
 from apps.warbands.serializers import UNIT_SERIALIZERS, WarbandItemSummarySerializer, WarbandSummarySerializer
 from apps.warbands.serializers.beasts import BackToItemSerializer
-from apps.warbands.services.stash import stash_entry
+from apps.warbands.services.stash import entries_of
 from apps.warbands.utils.leaders import lock_warband
 from apps.warbands.views.base import WarbandScopedView
 from apps.warbands.views.beasts import back_to_item_answer
@@ -264,15 +263,17 @@ class UnitBackToItemView(UnitView):
 
 
 def _loadout_answer(view: UnitView, group_id: int, item_ids: Iterable[int]) -> dict[str, Any]:
-    """A loadout change's answer: the group, the summary, and each touched item's stash entry (or its id, gone)."""
-    items = Item.objects.select_related("bestiary_entry").in_bulk(list(dict.fromkeys(item_ids)))
-    stash = {item_id: stash_entry(view.warband.id, item) for item_id, item in items.items()}
+    """A loadout change's answer: the group, the summary, and each touched item's stash entries, of every material
+    it is held in (weapon materials), with the ids of the items the stash now holds none of."""
+    wanted = list(dict.fromkeys(item_ids))
+    entries = entries_of(view.warband.id, wanted)
+    held = {entry.item.id for entry in entries}
     loaded = view.kind.detail_queryset().get(id=group_id)
     return {
         "unit": view.serializers.detail(loaded).data,
         "summary": WarbandSummarySerializer(view.warband).data,
-        "stash_items": [WarbandItemSummarySerializer(entry).data for entry in stash.values() if entry is not None],
-        "removed_stash_item_ids": [item_id for item_id, entry in stash.items() if entry is None],
+        "stash_items": [WarbandItemSummarySerializer(entry).data for entry in entries],
+        "removed_stash_item_ids": [item_id for item_id in wanted if item_id not in held],
     }
 
 

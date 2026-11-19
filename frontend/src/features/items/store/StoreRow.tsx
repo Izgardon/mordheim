@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 import { ItemRowButton, type ShownItem } from "../components/ItemInfo";
 import { itemKind } from "../item-kind";
-import type { Item, ItemAvailability } from "../types/item-types";
+import type { Item, ItemAvailability, WeaponMaterial } from "../types/item-types";
 import { isCommon, priceLabel, rarityLabel } from "../utils/item-prices";
 import AcquireForm from "./AcquireForm";
 import { itemName, kindOf } from "./store-items";
@@ -35,6 +35,8 @@ type StoreRowProps = {
   startPrice: number | null;
   /** The bonus a rare search starts on (the variant's: Marienburg +1). */
   rareBonus: number;
+  /** The weapon materials the server offers this warband; empty for anything but a weapon. */
+  materials: WeaponMaterial[];
   onPick: (line: Omit<BasketLine, "id">) => void;
   isShown: (key: string) => boolean;
   onToggleShown: (next: ShownItem) => void;
@@ -124,6 +126,7 @@ export default function StoreRow({ offer, his, ...props }: StoreRowProps) {
           recipients={props.recipients}
           firstKey={props.firstKey}
           searchers={props.searchers}
+          materials={props.materials}
           isMobile={props.isMobile}
           onPick={props.onPick}
         />

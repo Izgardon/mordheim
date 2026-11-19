@@ -18,6 +18,7 @@ from django.utils import timezone
 
 from apps.campaigns.models import CampaignType
 from apps.core.seeding import IMPORT_OUT
+from apps.items.materials import FAKE_ITEM_NAMES
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.skills.models import Skill
@@ -205,6 +206,8 @@ def write_lists(template: WarbandTemplate, entries: list[dict[str, Any]], book: 
         for n, row in enumerate(entries)
     )
     owner = template.name
+    # A line naming one of the items the weapon materials replaced is dropped: gromril, ithilmar, obsidian and
+    # silver are what a weapon is made of now, chosen when it is bought, so no list sells them (19 Nov 2026)
     TemplateListItem.objects.bulk_create(
         TemplateListItem(
             equipment_list=made,
@@ -214,6 +217,7 @@ def write_lists(template: WarbandTemplate, entries: list[dict[str, Any]], book: 
         )
         for made, row in zip(lists, entries, strict=True)
         for n, line in enumerate(row["lines"])
+        if line["item"]["name"] not in FAKE_ITEM_NAMES
     )
     return {row.key: row.pk for row in lists}
 

@@ -16,6 +16,7 @@ from apps.warbands.access_lines import (
     unique_lines,
 )
 
+from .materials import MATERIALS, WEAPON
 from .models import ANIMAL, Item, ItemAvailability, ItemRule, ItemRuleLink
 
 NO_ROLL = {"prebattle_roll": "", "prebattle_text": ""}
@@ -143,6 +144,19 @@ class ItemSerializer(serializers.ModelSerializer):
     rules = ItemRuleLinkSerializer(source="rule_links", many=True, read_only=True)
     availabilities = ItemAvailabilitySerializer(many=True, read_only=True)
     bestiary_entry = ItemBestiaryEntrySummarySerializer(read_only=True)
+    material_prices = serializers.SerializerMethodField()
+
+    def get_material_prices(self, item: Item) -> dict[str, dict[str, int]]:
+        """What each price row comes to for a weapon made of each material (weapon materials), worked out here from
+        the rows already read, so no page ever multiplies a price itself: `{row id: {slug: price}}`. Only a weapon
+        has any, and a row with dice none, because its price isn't known until the dice are rolled (a purchase
+        derives that one from the roll it is sent)."""
+        if item.type != WEAPON:
+            return {}
+        rows = [row for row in item.availabilities.all() if row.cost is not None and not row.dice]
+        return {
+            str(row.id): {slug: material.price(row.cost or 0) for slug, material in MATERIALS.items()} for row in rows
+        }
 
     class Meta:
         model = Item
@@ -165,6 +179,7 @@ class ItemSerializer(serializers.ModelSerializer):
             "notes",
             "rules",
             "availabilities",
+            "material_prices",
             "listed",  # the shop sells it (an Animal item: its beast is sold)
             "bestiary_entry",
             "generated_effect_key",  # set on a house rule's clone, which can't be edited or deleted (BUG-51)

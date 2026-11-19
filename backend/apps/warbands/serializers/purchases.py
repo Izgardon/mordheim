@@ -4,6 +4,7 @@ from typing import Any
 
 from rest_framework import serializers
 
+from apps.items.materials import SLUGS
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
 
 from .beasts import RecruitTargetSerializer
@@ -23,12 +24,20 @@ class RarityRollSerializer(serializers.Serializer):
     success = serializers.BooleanField()
 
 
+class MaterialField(serializers.ChoiceField):
+    """What a weapon is made of (weapon materials): a material's slug, or blank for a plain copy."""
+
+    def __init__(self, **kwargs: Any) -> None:
+        super().__init__(choices=SLUGS, allow_blank=True, required=False, default="", **kwargs)
+
+
 class PurchaseLineSerializer(serializers.Serializer):
     """What is bought (or given, `is_buying: false`) and for how much: `price` per copy, or `availability_id`'s
     cost (plus `dice_roll`, the total rolled, where the row has dice), or with neither the item's current campaign
-    price."""
+    price; a weapon's `material` prices it through the material and the copies keep it."""
 
     item_id = serializers.IntegerField()
+    material = MaterialField()
     quantity = serializers.IntegerField(required=False, default=1, min_value=1, max_value=100)
     price = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=MAX_TRADE_PRICE)
     availability_id = serializers.IntegerField(required=False, allow_null=True)
@@ -78,7 +87,9 @@ class BatchPurchaseSerializer(BatchTargetSerializer, PurchaseLineSerializer):
 
 
 class StashTakeSerializer(BatchTargetSerializer):
-    """A roster Save's `stash_takes` entry: copies taken out of the stash for one of the batch's units (BUG-108)."""
+    """A roster Save's `stash_takes` entry: copies taken out of the stash for one of the batch's units (BUG-108);
+    `material` takes copies made of it (weapon materials), which they keep."""
 
     item_id = serializers.IntegerField()
+    material = MaterialField()
     quantity = serializers.IntegerField(required=False, default=1, min_value=1, max_value=100)

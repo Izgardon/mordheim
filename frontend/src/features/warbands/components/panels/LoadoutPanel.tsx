@@ -3,7 +3,9 @@ import { ItemKindIcon } from "@/components/ui/game-icons";
 import { ROW_SELECT, SectionedSelect } from "@/components/ui/sectioned-select";
 import { SidePanel } from "@/components/ui/side-panel";
 import { ItemRowButton, useShownItem } from "@/features/items/components/ItemInfo";
+import MaterialButton, { useOwnedMaterials } from "@/features/items/components/MaterialButton";
 import { itemKind } from "@/features/items/item-kind";
+import { isWeapon } from "@/features/items/store/store-items";
 
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { groupItemsById } from "../../utils/warband-utils";
@@ -19,8 +21,16 @@ type LoadoutPanelProps = {
   onOpenChange: (open: boolean) => void;
   canEdit: boolean;
   units: RosterUnit[];
-  onMove: (from: RosterUnit | null, itemId: number, to: ItemPlace, quantity?: number) => void;
+  onMove: (
+    from: RosterUnit | null,
+    itemId: number,
+    to: ItemPlace,
+    quantity?: number,
+    material?: string
+  ) => void;
   onSellFromStash: (item: WarbandItemSummary) => void;
+  /** Puts a material on a weapon the unit or the stash holds (weapon materials): silver only. */
+  onMaterial: (from: RosterUnit | null, item: WarbandItemSummary, material: string) => void;
   onOpenStore: () => void;
 };
 
@@ -29,11 +39,14 @@ const SECTION = "pb-1.5 font-sans text-[11px] font-bold uppercase tracking-[0.12
 /**
  * One unit's loadout (design E), from its armour button or Add item: what it carries (To stash,
  * Give to), the stash to equip from, and the way to the store; a click on an item, carried or in
- * the stash, shows its details at the foot of the panel.
+ * the stash, shows its details at the foot of the panel. A copy made of a material reads as the
+ * server names it, "Gromril Sword", and a plain weapon offers the material the book lets a warband
+ * add to a weapon it already owns (weapon materials).
  */
 export default function LoadoutPanel(props: LoadoutPanelProps) {
   const { entry } = props;
   const details = useShownItem(entry ? unitKey(entry) : "");
+  const ownedMaterials = useOwnedMaterials(props.campaignId, props.warbandId);
   // A group's rows are its loadout: each counts the members who carry it (henchmen loadouts)
   const group = entry !== null && isGroup(entry);
   const carrying = !entry
@@ -44,7 +57,10 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
           item,
           count: item.carriers ?? 0,
         }))
-      : groupItemsById(entry.unit.items).map((line) => ({ key: line.item.id, ...line }));
+      : groupItemsById(entry.unit.items).map((line) => ({
+          key: `${line.item.id}:${line.item.material ?? ""}`,
+          ...line,
+        }));
   const sections = unitSections(
     props.units.filter(
       (other) => entry && !(other.kind === entry.kind && other.unit.id === entry.unit.id)
@@ -74,6 +90,8 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
             {carrying.length === 0 ? <p className="text-sm text-text2">Nothing carried.</p> : null}
             {carrying.map((line) => {
               const key = `carried:${line.key}`;
+              const material = line.item.material ?? "";
+              const materials = !material && isWeapon(line.item) ? ownedMaterials : [];
               return (
                 <div
                   key={line.key}
@@ -85,7 +103,7 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
                   >
                     <ItemKindIcon kind={itemKind(line.item)} className="h-5 w-5 text-accent-text" />
                     <span className="item-name min-w-0 flex-1 font-bold text-ink">
-                      {line.item.name}
+                      {line.item.material_name || line.item.name}
                       {line.count > 1 ? (
                         <span className="ml-1.5 font-mono text-xs text-accent-text">
                           ×{line.count}
@@ -101,21 +119,36 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
                       <Button
                         size="sm"
                         variant="secondary"
-                        onClick={() => props.onMove(entry, line.item.id, { type: "stash" })}
+                        onClick={() =>
+                          props.onMove(entry, line.item.id, { type: "stash" }, 1, material)
+                        }
                       >
                         To stash
                       </Button>
                       <SectionedSelect
                         {...ROW_SELECT}
-                        aria-label={`Give ${line.item.name} to`}
+                        aria-label={`Give ${line.item.material_name || line.item.name} to`}
                         placeholder="Give to…"
                         value=""
                         sections={sections}
                         onValueChange={(value) => {
                           const to = placeOf(value);
-                          if (to) props.onMove(entry, line.item.id, to);
+                          if (to) props.onMove(entry, line.item.id, to, 1, material);
                         }}
                       />
+                      {materials.map((made) => (
+                        <MaterialButton
+                          key={made.slug}
+                          material={made}
+                          onApply={() =>
+                            props.onMaterial(
+                              entry,
+                              { id: line.item.id, name: line.item.name },
+                              made.slug
+                            )
+                          }
+                        />
+                      ))}
                     </div>
                   ) : null}
                 </div>
@@ -130,8 +163,11 @@ export default function LoadoutPanel(props: LoadoutPanelProps) {
               canEdit={props.canEdit}
               units={props.units}
               forUnit={entry}
-              onMove={(itemId, to, quantity) => props.onMove(null, itemId, to, quantity)}
+              onMove={(itemId, to, quantity, material) =>
+                props.onMove(null, itemId, to, quantity, material)
+              }
               onSell={props.onSellFromStash}
+              onMaterial={(item, material) => props.onMaterial(null, item, material)}
               isShown={details.isShown}
               onToggleShown={details.toggle}
             />

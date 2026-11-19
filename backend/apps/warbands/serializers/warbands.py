@@ -2,6 +2,7 @@ from typing import Any
 
 from rest_framework import serializers
 
+from apps.items.materials import named, on_owned_only
 from apps.warbands.models import Warband, WarbandResource, WarbandRule
 from apps.warbands.models.warband import MAX_RULE_TEXT
 from apps.warbands.services.ledger import MAX_TRADE_PRICE
@@ -14,7 +15,10 @@ from apps.warbands.units.services.create import cap_limit
 from apps.warbands.utils.wyrdstone_prices import size_band
 
 from ..services.types import types_of
+from .purchases import MaterialField, RarityRollSerializer
 from .types import WarbandTypeBriefSerializer
+
+ON_OWNED = on_owned_only()  # the materials the book lets a warband put on a weapon it already owns (silver)
 
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 
@@ -283,11 +287,14 @@ class StashCostSerializer(serializers.Serializer):
 
 
 class WarbandItemSummarySerializer(serializers.Serializer):
-    """A stash entry (services/stash.py StashEntry): the item, how many copies, the cost of the copies that leave
-    first, and how many copies of each cost (BUG-117), the copies that leave first first."""
+    """A stash entry (services/stash.py StashEntry): the item, what the copies are made of (weapon materials; one
+    entry per item and material, so a Gromril Sword is its own row), how many copies, the cost of the copies that
+    leave first, and how many copies of each cost (BUG-117), the copies that leave first first."""
 
     id = serializers.IntegerField(source="item.id")
     name = serializers.CharField(source="item.name")
+    material = serializers.CharField()  # "" for a plain copy
+    material_name = serializers.SerializerMethodField()  # "Gromril Sword": what the row is called
     cost = serializers.IntegerField(allow_null=True)
     quantity = serializers.IntegerField()
     costs = StashCostSerializer(many=True)
@@ -295,6 +302,9 @@ class WarbandItemSummarySerializer(serializers.Serializer):
     suggested_sale_price = serializers.SerializerMethodField()  # per copy, decision 3
     sale_price_basis = serializers.SerializerMethodField()
     beast_kind = serializers.SerializerMethodField()  # a beast's Animal item: a creature can be recruited from here
+
+    def get_material_name(self, entry: Any) -> str:
+        return named(entry.material, entry.item.name)
 
     def get_beast_kind(self, entry: Any) -> str | None:
         return beast_kind(entry.item)
@@ -310,6 +320,7 @@ class WarbandItemTransferSerializer(serializers.Serializer):
     source_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
     cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
+    material = MaterialField()  # only copies made of it (weapon materials); the copies keep it where they land
     target_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
     target_id = serializers.IntegerField(required=False, allow_null=True)
     item_id = serializers.IntegerField()
@@ -338,6 +349,7 @@ class WarbandItemSaleSerializer(serializers.Serializer):
     source_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
     source_id = serializers.IntegerField(required=False, allow_null=True)
     cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: only copies of this cost
+    material = MaterialField()  # only copies made of it (weapon materials)
     item_id = serializers.IntegerField()
     quantity = serializers.IntegerField(min_value=1)
     # the gold for all the copies; without it, the suggested sale price of each (decision 3)
@@ -350,4 +362,25 @@ class WarbandItemSaleSerializer(serializers.Serializer):
             attrs["source_id"] = None
         elif source_id is None:
             raise serializers.ValidationError({"source_id": "source_id is required for non-stash sources."})
+        return attrs
+
+
+class WarbandItemMaterialSerializer(serializers.Serializer):
+    """POST item-materials/: put a material on a weapon the warband already owns (weapon materials). Only a material
+    the book lets a warband add later (silver) is taken; the rarity roll is logged as a purchase's is, and `price`
+    overrides what the material asks for."""
+
+    source_type = serializers.ChoiceField(choices=("hero", "hireling", "henchmen_group", "stash"))
+    source_id = serializers.IntegerField(required=False, allow_null=True)
+    cost = serializers.IntegerField(required=False, allow_null=True)  # from the stash: a copy of this cost
+    item_id = serializers.IntegerField()
+    material = serializers.ChoiceField(choices=ON_OWNED)
+    price = serializers.IntegerField(min_value=0, max_value=MAX_TRADE_PRICE, required=False, allow_null=True)
+    rarity_roll = RarityRollSerializer(required=False, allow_null=True)
+
+    def validate(self, attrs: Any) -> Any:
+        if attrs["source_type"] == "stash":
+            attrs["source_id"] = None
+        elif attrs.get("source_id") is None:
+            raise serializers.ValidationError({"source_id": ["source_id is required for a unit."]})
         return attrs

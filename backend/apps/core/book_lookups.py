@@ -60,7 +60,9 @@ EQUIPMENT_NAME_ALIASES = {
     "longbow": "long bow",
     "shortbow": "short bow",
     "healing herb": "healing herbs",  # the catalogue import's name
-    "gromril hammer": "gromril weapon",
+    # weapon materials (19 Nov 2026): gromril is what a weapon is made of, so the Runesmith Journeyman's gromril
+    # hammer is our hammer; nothing here carries a material, and his rules say what his is made of
+    "gromril hammer": "club, mace or hammer",
     "hammer of sigmar": "sigmarite warhammer",
     "holy water": "blessed water",
     "wolf cloak": "wolfcloak",

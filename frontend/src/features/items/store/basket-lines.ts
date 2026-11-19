@@ -19,6 +19,9 @@ export type BasketLine = {
   diceRoll?: number | null;
   /** The price is the row's (with its roll): the server works it out. Off once it is edited. */
   rowPrice?: boolean;
+  /** What the weapon is made of (weapon materials): "" for plain, with the word for its name. */
+  material?: string;
+  materialName?: string;
 };
 
 /** An upgrade of the warband's template for a hero (the templates plan, phase 3), at its price. */
@@ -38,6 +41,12 @@ export type NewBasketLine = Omit<BasketLine, "id"> | Omit<UpgradeBasketLine, "id
 export const isUpgradeLine = (line: AnyBasketLine | NewBasketLine): line is UpgradeBasketLine =>
   "upgrade" in line;
 
-/** The line's name: the item's, or the upgrade's. */
+/** The line's name: the item's (with what it is made of), or the upgrade's. */
 export const lineName = (line: AnyBasketLine) =>
-  isUpgradeLine(line) ? line.upgrade.name : line.item.name;
+  isUpgradeLine(line) ? line.upgrade.name : materialName(line);
+
+/** "Gromril Sword": the material in front of the item's name (weapon materials). */
+const materialName = (line: BasketLine) => {
+  const name = line.materialName ?? "";
+  return name ? `${name} ${line.item.name}` : line.item.name;
+};

@@ -11,11 +11,14 @@ import {
   useShownItem,
   type ShownItem,
 } from "@/features/items/components/ItemInfo";
+import MaterialButton, { useOwnedMaterials } from "@/features/items/components/MaterialButton";
 import { itemKind } from "@/features/items/item-kind";
+import { isWeapon } from "@/features/items/store/store-items";
 import type { Item } from "@/features/items/types/item-types";
 import { useCatalogue } from "@/lib/catalogue-queries";
 
 import { warbandStashQuery } from "../../api/economy-queries";
+import { stashKey } from "../../api/warband-cache";
 import type { ItemPlace } from "../../hooks/units/useUnitActions";
 import { copiesForGroup } from "../../units/loadout";
 import { placeOf, unitSections } from "../roster/unit-sections";
@@ -33,8 +36,10 @@ type StashPanelProps = {
   /** When set, Equip goes straight to this unit (the loadout's stash). */
   forUnit?: RosterUnit | null;
   /** `quantity`: a group takes one copy for each member, up to what the stash holds. */
-  onMove: (itemId: number, to: ItemPlace, quantity?: number) => void;
+  onMove: (itemId: number, to: ItemPlace, quantity?: number, material?: string) => void;
   onSell: (item: WarbandItemSummary) => void;
+  /** Puts a material on a weapon in the stash (weapon materials): silver only. */
+  onMaterial?: (item: WarbandItemSummary, material: string) => void;
 };
 
 type StashListProps = Omit<StashPanelProps, "open" | "onOpenChange"> & {
@@ -51,7 +56,9 @@ function copiesFor(units: RosterUnit[], to: ItemPlace, inStash: number) {
 
 /**
  * The warband's stash (design E): each item with its count and cost, Equip and Sell; a click on an
- * item shows its details at the foot of the panel.
+ * item shows its details at the foot of the panel. A row is one item at one material (weapon
+ * materials), so a Gromril Sword sits apart from a plain one and reads as the server names it, and
+ * a plain weapon's row offers the material the book lets a warband add later.
  */
 export function StashList({
   campaignId,
@@ -61,10 +68,12 @@ export function StashList({
   forUnit,
   onMove,
   onSell,
+  onMaterial,
   isShown,
   onToggleShown,
 }: StashListProps) {
   const stash = useQuery(warbandStashQuery(campaignId, warbandId));
+  const ownedMaterials = useOwnedMaterials(campaignId, warbandId);
   const items = stash.data ?? [];
   // a stash row names only the item: its kind and its rules come from the cached catalogue
   const catalogue = useCatalogue("items", campaignId).data ?? [];
@@ -81,11 +90,12 @@ export function StashList({
   return (
     <ul className="m-0 flex list-none flex-col border-t border-line p-0">
       {items.map((item) => {
-        const key = `stash:${item.id}`;
+        const key = `stash:${stashKey(item)}`;
         const entry = entryOf(item);
+        const materials = onMaterial && !item.material && isWeapon(entry) ? ownedMaterials : [];
         return (
           <li
-            key={item.id}
+            key={stashKey(item)}
             className="flex flex-wrap items-center gap-3 border-b border-line py-2.5"
           >
             <ItemRowButton
@@ -95,7 +105,7 @@ export function StashList({
               <ItemKindIcon kind={itemKind(entry)} className="h-5 w-5 text-accent-text" />
               <div className="flex min-w-0 flex-1 flex-col">
                 <span className="item-name font-bold text-ink">
-                  {item.name}
+                  {item.material_name || item.name}
                   {item.quantity && item.quantity > 1 ? (
                     <span className="ml-1.5 font-mono text-xs text-accent-text">
                       ×{item.quantity}
@@ -115,7 +125,8 @@ export function StashList({
                     variant="secondary"
                     onClick={() => {
                       const to = { type: forUnit.kind, id: forUnit.unit.id };
-                      onMove(item.id, to, copiesFor([forUnit], to, item.quantity ?? 1));
+                      const copies = copiesFor([forUnit], to, item.quantity ?? 1);
+                      onMove(item.id, to, copies, item.material ?? "");
                     }}
                   >
                     Equip
@@ -123,16 +134,30 @@ export function StashList({
                 ) : (
                   <SectionedSelect
                     {...ROW_SELECT}
-                    aria-label={`Equip ${item.name}`}
+                    aria-label={`Equip ${item.material_name || item.name}`}
                     placeholder="Equip…"
                     value=""
                     sections={unitSections(units)}
                     onValueChange={(value) => {
                       const to = placeOf(value);
-                      if (to) onMove(item.id, to, copiesFor(units, to, item.quantity ?? 1));
+                      if (to) {
+                        onMove(
+                          item.id,
+                          to,
+                          copiesFor(units, to, item.quantity ?? 1),
+                          item.material
+                        );
+                      }
                     }}
                   />
                 )}
+                {materials.map((material) => (
+                  <MaterialButton
+                    key={material.slug}
+                    material={material}
+                    onApply={() => onMaterial?.(item, material.slug)}
+                  />
+                ))}
                 <Button size="sm" variant="ghost" onClick={() => onSell(item)}>
                   Sell
                 </Button>

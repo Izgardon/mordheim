@@ -180,6 +180,7 @@ export function useStoreBasket(warbandId: number) {
             availabilityId: line.availabilityId,
             diceRoll: line.diceRoll ?? null,
             rowPrice: Boolean(line.rowPrice) && !line.free,
+            material: line.material ?? "",
             // A mount bought for a unit lands ridden; in the stash it is carried.
             companion: line.recipient.target.kind !== "stash" && line.item.beast_kind === "mount",
             meta: {

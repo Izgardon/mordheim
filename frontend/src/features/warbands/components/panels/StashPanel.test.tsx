@@ -73,6 +73,20 @@ const whoCan: WhoCan = {
   dramatis_personae: [],
   skill_group_ids: [],
   special_skill_ids: [],
+  materials: [
+    {
+      slug: "silver",
+      name: "Silver",
+      rarity: 11,
+      price_note: "+60 gc",
+      multiplier: null,
+      addition: 60,
+      on_owned: 80,
+      rules: [],
+      can_take: true,
+      reason: "",
+    },
+  ],
 };
 const units: RosterUnit[] = [
   { kind: "henchmen_group", unit: makeHenchmenGroup({ id: 5, name: "Verminkin Pack" }) },
@@ -80,10 +94,11 @@ const units: RosterUnit[] = [
   { kind: "hero", unit: makeHero({ id: 2, name: "Krekk Blackfur" }) },
 ] as RosterUnit[];
 
-function renderStash(onMove = vi.fn()) {
+function renderStash(onMove = vi.fn(), onMaterial = vi.fn()) {
   const queryClient = createTestQueryClient();
   queryClient.setQueryData(queryKeys.campaign.warbandStash(CAMPAIGN, WARBAND), [
     makeStashItem({ id: 101, name: "Sword", cost: 10 }),
+    makeStashItem({ id: 101, name: "Sword", cost: 40, material: "gromril" }),
     makeStashItem({ id: 102, name: "Halberd", cost: 10, quantity: 2 }),
   ]);
   queryClient.setQueryData(catalogueListKey(CAMPAIGN, "items"), [sword, halberd]);
@@ -98,6 +113,7 @@ function renderStash(onMove = vi.fn()) {
       units={units}
       onMove={onMove}
       onSell={vi.fn()}
+      onMaterial={onMaterial}
     />,
     { queryClient }
   );
@@ -147,7 +163,40 @@ describe("StashPanel", () => {
 
     await pickOption(user, equip, "Krekk Blackfur");
 
-    expect(onMove).toHaveBeenCalledWith(101, { type: "hero", id: 2 }, 1);
+    expect(onMove).toHaveBeenCalledWith(101, { type: "hero", id: 2 }, 1, "");
     expect(screen.queryByRole("region", { name: "Sword" })).not.toBeInTheDocument();
+  });
+});
+
+describe("StashPanel materials", () => {
+  it("lists a copy made of a material as its own row, under the name the server gives it", () => {
+    renderStash();
+
+    expect(screen.getByRole("button", { name: /^Gromril Sword/ })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /^Sword/ })).toBeInTheDocument();
+  });
+
+  it("offers the material the book lets a warband add on a plain weapon only", async () => {
+    const user = setupUser();
+    const onMaterial = vi.fn();
+    renderStash(vi.fn(), onMaterial);
+
+    const plain = screen.getAllByRole("listitem")[0];
+    await user.click(within(plain).getByRole("button", { name: /Silver · 80 gc/ }));
+    expect(onMaterial).toHaveBeenCalledWith(expect.objectContaining({ id: 101 }), "silver");
+
+    // the gromril row and the Halberd, which is already made of something, offer none
+    const gromril = screen.getAllByRole("listitem")[1];
+    expect(within(gromril).queryByRole("button", { name: /Silver/ })).not.toBeInTheDocument();
+  });
+
+  it("equips the copies of the material the row names", async () => {
+    const user = setupUser();
+    const onMove = renderStash();
+
+    const equip = screen.getByRole("combobox", { name: "Equip Gromril Sword" });
+    await pickOption(user, equip, "Vrask the Hidden");
+
+    expect(onMove).toHaveBeenCalledWith(101, { type: "hero", id: 1 }, 1, "gromril");
   });
 });

@@ -1,7 +1,7 @@
 import { QueryObserver } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { applyWarbandUpdate, isWarbandQuery, mergeById } from "./warband-cache";
+import { applyWarbandUpdate, isWarbandQuery, mergeById, mergeStash } from "./warband-cache";
 import { mergeSheetWarband, sheetWarband, splitWarbandPatch } from "./warband-queries";
 import { queryKeys } from "@/lib/query-keys";
 import { createTestQueryClient } from "@/test/query-test-utils";
@@ -227,5 +227,32 @@ describe("applyWarbandUpdate", () => {
     await vi.waitFor(() => expect(queryClient.isFetching()).toBe(0));
     expect(sheetOf(queryClient).summary).toEqual({ gold: 100, rating: 90 });
     stopPage();
+  });
+});
+
+describe("mergeStash", () => {
+  // weapon materials: a stash row is one item at one material, so the two never overwrite each other
+  const plain = { id: 1, name: "Sword", material: "", quantity: 1 };
+  const gromril = { id: 1, name: "Sword", material: "gromril", quantity: 1 };
+
+  it("merges a row over the one of the same item and material", () => {
+    expect(mergeStash([plain, gromril], [{ ...gromril, quantity: 3 }])).toEqual([
+      plain,
+      { ...gromril, quantity: 3 },
+    ]);
+  });
+
+  it("appends a row of a material the stash held none of", () => {
+    expect(mergeStash([plain], [gromril])).toEqual([plain, gromril]);
+  });
+
+  it("drops only the row named when one is gone", () => {
+    expect(
+      mergeStash([plain, gromril], undefined, undefined, [{ id: 1, material: "gromril" }])
+    ).toEqual([plain]);
+  });
+
+  it("drops every row of an item when the stash holds no copy of it", () => {
+    expect(mergeStash([plain, gromril], undefined, [1])).toEqual([]);
   });
 });

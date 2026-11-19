@@ -6,7 +6,10 @@ hero's trading action. Nothing is refused for game reasons (decisions 2 and 9): 
 who already used his trading action may search again; each comes back as a warning (the client showed it before
 it confirmed). A copy costs the price sent, else the price row sent (`availability_id`) with the dice roll sent where
 the row has dice ("25 + 2D6", the items rebuild), else the item's current campaign price (decision 11, "Buy again").
-Who may usually buy a row is never checked here: the pages warn (`who-can/`).
+A weapon bought made of a material (`material`, weapon materials) costs that price through the material (four times
+it, or 60 gc on top: the server derives it, never the client) and the copies keep what they are made of.
+Who may usually buy a row is never checked here: the pages warn (`who-can/`, which also words who may take a
+material).
 
 Beasts (the bestiary rewrite step 4): a mount or pet bought for a unit may land switched on as his (`companion`), with
 the companion warnings; a creature may be recruited straight away (`recruit`, POST purchases/ only) into a new group
@@ -23,6 +26,7 @@ from typing import Any, cast
 from django.db import transaction
 
 from apps.bestiary.models import BestiaryEntry
+from apps.items.materials import named, priced
 from apps.items.models import ANIMAL, Item, ItemAvailability
 from apps.warbands.models import HenchmenGroup, LedgerAction, RosterUnit, Warband, WarbandTrade
 from apps.warbands.units.companions import COMPANION_KINDS, beast_kind
@@ -117,17 +121,17 @@ def row_price(row: ItemAvailability, roll: int | None, key: str = "") -> int | N
 
 
 def price_line(warband: Warband, item: Item, data: Mapping[str, Any], key: str = "") -> int | None:
-    """One copy's cost: the price sent, else the price row sent (with its dice roll), else the current campaign
-    price."""
+    """One copy's cost: the price sent, else the price row sent (with its dice roll) or the current campaign price,
+    either through the material it is made of (weapon materials; a price typed in is what it is)."""
     if data.get("price") is not None:
         price: int | None = int(data["price"])
     elif data.get("availability_id") is not None:
         row = CampaignPrices(warband.campaign_id).availability(item, data["availability_id"])
         if row is None:
             raise refused(key, "availability_id", "Not one of this item's availabilities.")
-        price = row_price(row, data.get("dice_roll"), key)
+        price = priced(data.get("material") or "", row_price(row, data.get("dice_roll"), key))
     else:
-        price = CampaignPrices(warband.campaign_id).current(item)
+        price = priced(data.get("material") or "", CampaignPrices(warband.campaign_id).current(item))
     if data["is_buying"] and price is None:
         raise refused(key, "price", "No price is known for this item; send one.")
     if data["is_buying"] and (price or 0) * data["quantity"] > ledger.MAX_TRADE_PRICE:
@@ -145,7 +149,7 @@ def _log(warband: Warband, line: Line) -> None:
     payload: dict[str, Any] = {}
     if line.unit is not None:
         payload["hero"] = economy_log.unit_name(line.target_type, line.unit)
-    payload["item"] = line.item.name
+    payload["item"] = named(line.data.get("material") or "", line.item.name)
     if line.total > 0:
         payload["price"] = line.total
     if line.data["quantity"] > 1:
@@ -157,7 +161,8 @@ def _log(warband: Warband, line: Line) -> None:
 
 def _description(line: Line) -> str:
     quantity = line.data["quantity"]
-    return f"{line.item.name} x {quantity}" if quantity > 1 else line.item.name
+    name = named(line.data.get("material") or "", line.item.name)
+    return f"{name} x {quantity}" if quantity > 1 else name
 
 
 def _header(warband: Warband, charged: Sequence[Line]) -> WarbandTrade | None:
@@ -172,12 +177,20 @@ def _header(warband: Warband, charged: Sequence[Line]) -> WarbandTrade | None:
 def _place(warband: Warband, line: Line) -> None:
     """The copies go to the unit (switched on when asked), into a creature group, or to the stash."""
     costs = [line.price] * line.data["quantity"]
+    material = line.data.get("material") or ""
     if line.recruit is not None:
         line.group = recruit_copies(warband, line.recruit.beast, line.item, costs, line.recruit.target, (STASH, None))
     elif line.unit is None:
-        add_to_stash(warband.id, line.item.id, line.data["quantity"], line.price)
+        add_to_stash(warband.id, line.item.id, line.data["quantity"], line.price, material)
     else:
-        add_unit_copies(line.target_type, line.unit, line.item, costs, companion=bool(line.data.get("companion")))
+        add_unit_copies(
+            line.target_type,
+            line.unit,
+            line.item,
+            costs,
+            companion=bool(line.data.get("companion")),
+            material=material,
+        )
 
 
 def _line_warnings(warband: Warband, line: Line) -> list[Warning]:

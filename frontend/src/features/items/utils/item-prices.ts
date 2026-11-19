@@ -1,4 +1,4 @@
-import type { AccessLine, ItemAvailability } from "../types/item-types";
+import type { AccessLine, Item, ItemAvailability, WeaponMaterial } from "../types/item-types";
 
 /** "Common", or "Rare 9": a price row's rarity (null is Common). */
 export const rarityLabel = (rarity: number | null | undefined) =>
@@ -38,6 +38,26 @@ export function priceLabel(row: Price | null | undefined) {
 /** What a rolled price comes to: the cost plus the pips, each worth the multiplier (or 1). */
 export const rolledPrice = (row: Price, pips: number) =>
   (row.cost ?? 0) + pips * (row.dice_multiplier ?? 1);
+
+/**
+ * What a weapon made of a material costs (weapon materials): the server's own price for the row
+ * (`item.material_prices`), which is what the store shows and what a purchase is charged. A row
+ * with dice carries none, because its price isn't known until they are rolled, so the material's
+ * stated shape applies to the rolled price, as `rolledPrice` applies the row's stated dice; the
+ * server still derives what it charges from the roll it is sent.
+ */
+export function materialPrice(
+  item: Pick<Item, "material_prices">,
+  row: Price & Pick<ItemAvailability, "id">,
+  material: Pick<WeaponMaterial, "slug" | "multiplier" | "addition"> | null,
+  pips: number | null = null
+) {
+  const base = pips == null ? (row.cost ?? 0) : rolledPrice(row, pips);
+  if (!material) return base;
+  const sent = item.material_prices?.[String(row.id)]?.[material.slug];
+  if (sent != null && pips == null) return sent;
+  return material.multiplier != null ? base * material.multiplier : base + (material.addition ?? 0);
+}
 
 /**
  * Each line's name, a type's with its source code where another line of the list has its name

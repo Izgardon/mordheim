@@ -10,13 +10,23 @@ from apps.warbands.models import WarbandItem, WarbandResource
 from .roster_support import HERO, RosterTestCase, make_unit
 
 # decision 3: half the item's current campaign price, rounded up (the Sword lists at 10, the Axe at 5 and 15)
+# material and material_name: weapon materials; every copy here is plain
 SWORD_SALE = {
     "current_price": 10,
     "suggested_sale_price": 5,
     "sale_price_basis": "campaign_price",
     "beast_kind": None,
+    "material": "",
+    "material_name": "Sword",
 }  # beast_kind: step 4
-AXE_SALE = {"current_price": 5, "suggested_sale_price": 3, "sale_price_basis": "campaign_price", "beast_kind": None}
+AXE_SALE = {
+    "current_price": 5,
+    "suggested_sale_price": 3,
+    "sale_price_basis": "campaign_price",
+    "beast_kind": None,
+    "material": "",
+    "material_name": "Axe",
+}
 
 
 class StashTests(RosterTestCase):

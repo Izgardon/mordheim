@@ -107,8 +107,10 @@ export default function RosterSections(props: RosterSectionsProps) {
             canEdit={canEdit}
             others={everyone.filter((other) => unitKey(other) !== key)}
             onXp={(change) => actions.patchUnit(entry, { xp_change: change })}
-            onMoveItem={(itemId, to) => actions.moveItem(entry, itemId, to)}
-            onSellItem={(itemId, price) => actions.sellItem(entry, itemId, price)}
+            onMoveItem={(itemId, to, material) => actions.moveItem(entry, itemId, to, 1, material)}
+            onSellItem={(itemId, price, material) =>
+              actions.sellItem(entry, itemId, price, 1, material)
+            }
             onBuyAgain={(item) => props.onBuyAgain(entry, item)}
             onLoadout={() => props.onLoadout(entry)}
             campaignId={campaign?.id ?? 0}

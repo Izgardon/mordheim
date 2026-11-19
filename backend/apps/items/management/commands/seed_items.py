@@ -4,7 +4,9 @@ variant) with its setting, text, rules and price rows. A beast's Animal item is 
 it the import's entry of its name.
 
 A book item the import no longer lists is archived, not deleted (units, stashes and kits hold items with RESTRICT),
-and an archived one the import lists again comes back. Owned copies keep the cost they were bought at. Campaign rows
+and an archived one the import lists again comes back. The four the weapon materials replaced (Gromril Weapon,
+Ithilmar Weapon, Obsidian Weapon, Silver Weapons) are skipped the same way, so the same archive writes them off: a
+material is a modifier on a weapon, not an item (`apps/items/materials.py`). Owned copies keep the cost they were bought at. Campaign rows
 are never read or written (BUG-17); the run is all or nothing. It ends by syncing every campaign's house rules
 again, so their clones take the reseeded book prices (BUG-51).
 """
@@ -19,6 +21,7 @@ from apps.campaigns.services.house_rules import resync_every_campaign
 from apps.core.catalogue.cache import bump
 from apps.core.seeding import upsert_global
 from apps.items.importing import ImportedItems
+from apps.items.materials import FAKE_ITEM_NAMES
 from apps.items.models import ANIMAL, Item, ItemRule
 from apps.special.prebattle import ITEM_RULE, mark_book_item_rolls, mark_book_rolls
 
@@ -39,6 +42,8 @@ class Command(BaseCommand):
             for entry in imported.items:
                 if entry["type"] == ANIMAL:
                     continue  # the bestiary's (seed_bestiary)
+                if entry["name"] in FAKE_ITEM_NAMES:
+                    continue  # a weapon material now, not an item: the archive below writes it off
                 item, was_created = upsert_global(
                     Item, {"name": entry["name"], "variant": entry.get("variant", "")}, imported.fields(entry)
                 )

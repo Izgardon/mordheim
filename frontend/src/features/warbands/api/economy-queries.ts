@@ -5,6 +5,7 @@ import { applyWarbandUpdate, isWarbandQuery, type WarbandUpdate } from "./warban
 import { sheetWarband } from "./warband-queries";
 import { prependTreasuryRow } from "./ledger-queries";
 import {
+  applyWarbandItemMaterial,
   createWarbandResource,
   deleteWarbandResource,
   listWarbandItems,
@@ -17,6 +18,7 @@ import {
 import type { WarbandSheet } from "../types/warband-sheet";
 import type { UnitListKey } from "../types/units";
 import type {
+  WarbandItemMaterialPayload,
   WarbandItemMutationResponse,
   WarbandItemSalePayload,
   WarbandItemTransferPayload,
@@ -150,6 +152,14 @@ export function useItemMove(warbandId: number) {
   });
 }
 
+/** Puts a material on a weapon the warband already owns; the answer carries what changed. */
+export function useItemMaterial(warbandId: number) {
+  return useMutation({
+    mutationFn: (payload: WarbandItemMaterialPayload) =>
+      applyWarbandItemMaterial(warbandId, payload),
+  });
+}
+
 /** The sheet list of each item-transfer target type ("stash" has none). */
 const LIST_KEY_BY_SECTION: Partial<Record<string, UnitListKey>> = {
   heroes: "heroes",
@@ -172,7 +182,10 @@ export function itemMutationUpdate(
   const update: WarbandUpdate = {
     summary: result.summary,
     stashItems: result.stash_item ? [result.stash_item] : undefined,
-    removedStashItemIds: result.removed_stash_item_id ? [result.removed_stash_item_id] : undefined,
+    // the one row that went: its item and what it was made of (weapon materials)
+    removedStashRows: result.removed_stash_item_id
+      ? [{ id: result.removed_stash_item_id, material: result.removed_stash_item_material ?? "" }]
+      : undefined,
   };
   const targetKey = LIST_KEY_BY_SECTION[result.targetUnitType ?? ""];
   const target = targetKey && isUnit(result.target) ? [result.target] : [];

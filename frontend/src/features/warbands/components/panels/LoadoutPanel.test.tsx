@@ -66,6 +66,7 @@ function renderLoadout(onMove = vi.fn()) {
       canEdit
       units={[vrask, krekk]}
       onMove={onMove}
+      onMaterial={vi.fn()}
       onSellFromStash={vi.fn()}
       onOpenStore={vi.fn()}
     />,
@@ -102,8 +103,9 @@ describe("LoadoutPanel", () => {
     );
     await user.click(screen.getByRole("button", { name: "To stash" }));
 
-    expect(onMove).toHaveBeenNthCalledWith(1, vrask, 102, { type: "hero", id: 2 });
-    expect(onMove).toHaveBeenNthCalledWith(2, vrask, 102, { type: "stash" });
+    // the last argument is what the copy is made of (weapon materials): "" for a plain one
+    expect(onMove).toHaveBeenNthCalledWith(1, vrask, 102, { type: "hero", id: 2 }, 1, "");
+    expect(onMove).toHaveBeenNthCalledWith(2, vrask, 102, { type: "stash" }, 1, "");
     expect(screen.queryByRole("region", { name: "Dagger" })).not.toBeInTheDocument();
   });
 });

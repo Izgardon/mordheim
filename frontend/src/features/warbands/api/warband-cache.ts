@@ -29,8 +29,38 @@ export type WarbandUpdate = {
   removedHeroIds?: number[];
   removedHirelingIds?: number[];
   removedHenchmenGroupIds?: number[];
+  /** Items the stash now holds no copy of, of any material. */
   removedStashItemIds?: number[];
+  /** One stash row that went: its item and what it was made of (weapon materials). */
+  removedStashRows?: { id: number; material?: string }[];
 };
+
+/** A stash row's key: its item and what the copies are made of (weapon materials). */
+export const stashKey = (row: { id: number; material?: string | null }) =>
+  `${row.id}:${row.material ?? ""}`;
+
+/**
+ * The stash merged by item and material, so a Gromril Sword's row never overwrites the plain
+ * one's: `removedIds` drops every row of an item, `removedRows` just the one row named.
+ */
+export function mergeStash(
+  current: WarbandItemSummary[],
+  incoming?: WarbandItemSummary[],
+  removedIds?: number[],
+  removedRows?: { id: number; material?: string }[]
+) {
+  if (!incoming && !removedIds?.length && !removedRows?.length) {
+    return current;
+  }
+  const goneItems = new Set(removedIds ?? []);
+  const goneRows = new Set((removedRows ?? []).map(stashKey));
+  const next = current.filter((row) => !goneItems.has(row.id) && !goneRows.has(stashKey(row)));
+  const byKey = new Map(next.map((row) => [stashKey(row), row]));
+  for (const row of incoming ?? []) {
+    byKey.set(stashKey(row), { ...(byKey.get(stashKey(row)) ?? {}), ...row });
+  }
+  return Array.from(byKey.values());
+}
 
 /** Drops the removed rows, then merges each incoming row over its cached copy (or appends it). */
 export function mergeById<T extends { id: number }>(
@@ -158,11 +188,18 @@ export function applyWarbandUpdate(
     { predicate: isWarbandQuery(warbandId, "sheet") },
     (sheet: WarbandSheet | undefined) => (sheet ? mergeSheetUpdate(sheet, update) : sheet)
   );
-  if (update.stashItems || update.removedStashItemIds?.length) {
+  if (update.stashItems || update.removedStashItemIds?.length || update.removedStashRows?.length) {
     queryClient.setQueriesData<WarbandItemSummary[]>(
       { predicate: isWarbandQuery(warbandId, "stash") },
       (current: WarbandItemSummary[] | undefined) =>
-        current ? mergeById(current, update.stashItems, update.removedStashItemIds) : current
+        current
+          ? mergeStash(
+              current,
+              update.stashItems,
+              update.removedStashItemIds,
+              update.removedStashRows
+            )
+          : current
     );
   }
   if (!update.summary && !update.summaryUnchanged) {

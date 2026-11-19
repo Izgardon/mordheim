@@ -6,7 +6,13 @@ import type { Special } from "../../special/types/special-types";
 import type { Fee } from "../../hirelings/fees";
 import type { BeastKind } from "../../bestiary/bestiary-kinds";
 import type { WrittenStats } from "../../catalogue/utils/statblock";
-import type { CreatureGroupFields, GroupMountFields, UnitCompanionFields } from "./companion-types";
+import type {
+  CreatureGroupFields,
+  GroupMountFields,
+  ServerWarning,
+  UnitCompanionFields,
+} from "./companion-types";
+import type { RarityRollLine } from "../../items/api/purchase";
 
 type RaceStatProfile = {
   id?: number;
@@ -753,12 +759,16 @@ export type UnitKillHistory = {
 export type StashCost = { cost: number | null; quantity: number };
 
 /**
- * A stash entry: one per item. `cost` is the cost of the copies that leave first, and `costs`
- * lists each cost's count in the order copies leave.
+ * A stash entry: one per item and material (weapon materials, so a Gromril Sword is its own row).
+ * `cost` is the cost of the copies that leave first, and `costs` lists each cost's count in the
+ * order copies leave.
  */
 export type WarbandItemSummary = {
   id: number;
   name: string;
+  /** What the copies are made of ("" for plain), and what the row is called: "Gromril Sword". */
+  material?: string;
+  material_name?: string;
   cost?: number | null;
   quantity?: number | null;
   costs?: StashCost[];
@@ -782,6 +792,8 @@ export type WarbandItemTransferPayload = {
   quantity: number;
   /** From the stash: only copies of this cost (null: of unknown cost). */
   cost?: number | null;
+  /** Only copies made of this material ("" or left out: plain copies); they keep it where they land. */
+  material?: string;
 };
 
 export type WarbandItemSalePayload = {
@@ -792,6 +804,23 @@ export type WarbandItemSalePayload = {
   price: number;
   /** From the stash: only copies of this cost (null: of unknown cost). */
   cost?: number | null;
+  /** Only copies made of this material ("" or left out: plain copies). */
+  material?: string;
+};
+
+/**
+ * `POST item-materials/`: puts a material on a weapon the warband already owns. The book allows it
+ * for silver, so the server takes that one only, and it charges what the material asks unless
+ * `price` says otherwise.
+ */
+export type WarbandItemMaterialPayload = {
+  source_type: "hero" | "hireling" | "henchmen_group" | "stash";
+  source_id?: number | null;
+  item_id: number;
+  cost?: number | null;
+  material: string;
+  price?: number | null;
+  rarity_roll?: RarityRollLine | null;
 };
 
 export type WarbandItemMutationResponse = {
@@ -800,6 +829,10 @@ export type WarbandItemMutationResponse = {
   target?: WarbandUnitDetail | WarbandItemSummary | null;
   stash_item?: WarbandItemSummary | null;
   removed_stash_item_id?: number | null;
+  /** Which of that item's stash rows went (weapon materials): "" for the plain one. */
+  removed_stash_item_material?: string;
+  /** `POST item-materials/` only: it charges gold, so it may leave the warband below 0. */
+  warnings?: ServerWarning[];
 };
 
 /** Who entered a ledger row by hand (decision 6); null for automatic and older rows. */

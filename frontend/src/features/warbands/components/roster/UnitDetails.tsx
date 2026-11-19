@@ -30,8 +30,8 @@ type UnitDetailsProps = {
   others: RosterUnit[];
   /** − and +: XP added or taken away (the server counts it half at half rate). */
   onXp: (change: number) => void;
-  onMoveItem: (itemId: number, to: ItemPlace) => void;
-  onSellItem: (itemId: number, price: number) => void;
+  onMoveItem: (itemId: number, to: ItemPlace, material?: string) => void;
+  onSellItem: (itemId: number, price: number, material?: string) => void;
   onBuyAgain: (item: Item) => void;
   /** Add item: the unit's loadout. */
   onLoadout: () => void;
@@ -182,11 +182,11 @@ export default function UnitDetails(props: UnitDetailsProps) {
                   targets: others,
                   onMove: (to) => {
                     setOpen(null);
-                    props.onMoveItem(selected.item!.id, to);
+                    props.onMoveItem(selected.item!.id, to, selected.item!.material ?? "");
                   },
                   onSell: (price) => {
                     setOpen(null);
-                    props.onSellItem(selected.item!.id, price);
+                    props.onSellItem(selected.item!.id, price, selected.item!.material ?? "");
                   },
                   onBuyAgain: () => props.onBuyAgain(selected.item!),
                 }

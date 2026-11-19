@@ -4,7 +4,13 @@ import { useQuery, type QueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/api-client";
 import { queryKeys } from "@/lib/query-keys";
 
-import type { HireAccess, ItemOffer, WarbandGroup, WhoCan } from "../types/item-types";
+import type {
+  HireAccess,
+  ItemOffer,
+  WarbandGroup,
+  WeaponMaterial,
+  WhoCan,
+} from "../types/item-types";
 
 /** What a warband can buy changes with the catalogue, its type or the settings in play. */
 const WHO_CAN_STALE_TIME_MS = 5 * 60_000;
@@ -22,7 +28,8 @@ export function listWarbandGroups() {
 /**
  * What a warband can usually buy, hire and learn, as the server decides it (the items rebuild):
  * each item's price row with `can_buy` and the reason, each hireling's `can_hire`, the skill
- * groups open to it and the special skills its types may learn, as maps by id. Empty maps while it loads, or with no warband.
+ * groups open to it and the special skills its types may learn, as maps by id, and the weapon
+ * materials it may take. Empty maps while it loads, or with no warband.
  */
 export function useWhoCan(campaignId: number, warbandId: number | null | undefined) {
   const query = useQuery({
@@ -43,6 +50,7 @@ export function useWhoCan(campaignId: number, warbandId: number | null | undefin
       ),
       specialSkillIds: new Set<number>(data?.special_skill_ids ?? []),
       skillGroupIds: new Set<number>(data?.skill_group_ids ?? []),
+      materials: (data?.materials ?? []) as WeaponMaterial[],
     }),
     [data]
   );

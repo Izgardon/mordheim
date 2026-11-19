@@ -12,12 +12,13 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from apps.core.catalogue.current import current_rows
+from apps.items.materials import named
 from apps.items.models import Item
 from apps.warbands.models import RosterUnit, Warband
 from apps.warbands.serializers.purchases import BatchPurchaseSerializer, StashTakeSerializer
 from apps.warbands.services import economy_log
 from apps.warbands.services.purchases import Line, Warning, buy_lines, check_companion, for_every_member, price_line
-from apps.warbands.services.stash import StashShortage, remove_from_stash
+from apps.warbands.services.stash import ANY_COST, StashShortage, remove_from_stash
 from apps.warbands.services.unit_items import add_unit_copies, copies_wanted
 from apps.warbands.units.catalogue_scope import shop_items
 from apps.warbands.units.errors import FieldErrors, RosterError, flatten_errors
@@ -132,14 +133,16 @@ def _unit(line: ItemLine, units: Mapping[int, RosterUnit], created: Sequence[Ros
 def _take_from_stash(kind: "UnitKindSpec", warband: Warband, line: ItemLine, unit: RosterUnit) -> None:
     item = line.item
     assert item is not None
+    material = str(line.data.get("material") or "")  # copies made of it (weapon materials); "" plain
+    wanted = copies_wanted(kind.key, unit, line.data["quantity"])
     try:
-        take = remove_from_stash(warband.id, item.id, copies_wanted(kind.key, unit, line.data["quantity"]))
+        take = remove_from_stash(warband.id, item.id, wanted, ANY_COST, material)
     except StashShortage as shortage:
         message = f"The stash holds {shortage.held} of these."
         raise RosterError(message, "not_enough_in_stash", {f"{line.key}.quantity": [message]}) from None
-    add_unit_copies(kind.key, unit, item, take.costs)
+    add_unit_copies(kind.key, unit, item, take.costs, material=material)
     target = (kind.key, economy_log.unit_name(kind.key, unit))
-    economy_log.log_move(warband, item.name, len(take.costs), ("stash", None), target)
+    economy_log.log_move(warband, named(material, item.name), len(take.costs), ("stash", None), target)
 
 
 def apply_lines(
