@@ -109,6 +109,10 @@ class PresetChartSeedTests(TestCase):
 
 
 class PresetContentCopyTests(TestCase):
+    preset: CampaignPreset
+    campaign: Campaign
+    loaded: CampaignPreset
+
     @classmethod
     def setUpTestData(cls) -> None:
         cls.preset = CampaignPreset.objects.create(slug="test", name="Test")

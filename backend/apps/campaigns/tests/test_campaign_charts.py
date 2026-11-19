@@ -32,7 +32,8 @@ class CampaignChartTests(CampaignTestCase):
         return self.post_as(user or self.admin, self.charts_url(), payload or WEATHER)
 
     def listed(self, user=None) -> list[dict]:
-        return self.get_as(user or self.player, self.charts_url()).json()
+        rows: list[dict] = self.get_as(user or self.player, self.charts_url()).json()
+        return rows
 
     def test_a_chart_holds_its_results_in_the_order_they_were_sent(self):
         response = self.add()
@@ -43,9 +44,7 @@ class CampaignChartTests(CampaignTestCase):
             (chart["title"], chart["dice"], chart["note"], chart["order"], chart["campaign_id"]),
             ("Spring weather", "D6", "Add 1 in the marsh.", 0, self.campaign.id),
         )
-        self.assertEqual(
-            [(row["result"], row["name"]) for row in chart["rows"]], [("1-2", "Clear"), ("3-6", "Rain")]
-        )
+        self.assertEqual([(row["result"], row["name"]) for row in chart["rows"]], [("1-2", "Clear"), ("3-6", "Rain")])
 
     def test_every_member_reads_them_in_their_order_and_an_outsider_reads_nothing(self):
         self.add({**WEATHER, "title": "Added first"})
@@ -54,9 +53,7 @@ class CampaignChartTests(CampaignTestCase):
 
         for user in (self.player, self.rival, self.admin, self.owner):
             with self.subTest(user=user.first_name):
-                self.assertEqual(
-                    [chart["title"] for chart in self.listed(user)], ["Added first", "Added second"]
-                )
+                self.assertEqual([chart["title"] for chart in self.listed(user)], ["Added first", "Added second"])
         self.assertEqual(self.get_as(self.outsider, self.charts_url()).status_code, 404)
 
     def test_a_player_cannot_write_one(self):

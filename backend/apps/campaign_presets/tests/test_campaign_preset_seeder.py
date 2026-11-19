@@ -59,8 +59,17 @@ class PresetSeederTests(TestCase):
             (True, True, True, True, 6, "d66", ExplorationChart.objects.get(slug="mutiny-in-marienburg").pk),
         )
         self.assertEqual([setting.name for setting in marienburg.settings.all()], [MARIENBURG])
-        self.assertEqual(marienburg.rules.count(), 18)
-        self.assertEqual([rule.title for rule in marienburg.rules.all()][0], "Campaign points")
+        # its campaign rules first, then its battle rules, then its charts with their results
+        rules = list(marienburg.rules.all())
+        self.assertEqual(
+            (sum(1 for rule in rules if rule.kind == "campaign"), sum(1 for rule in rules if rule.kind == "battle")),
+            (17, 38),
+        )
+        self.assertEqual(rules[0].title, "Campaign points")
+        charts = list(marienburg.charts.prefetch_related("rows"))
+        self.assertEqual(len(charts), 20)
+        seaside = next(chart for chart in charts if chart.title == "Seaside Situations")
+        self.assertEqual((seaside.dice, len(seaside.rows.all())), ("D66", 32))
 
     def test_mordheims_preset_dictates_nothing_and_names_no_settings(self) -> None:
         call_command("seed_settings", stdout=StringIO())
@@ -89,11 +98,11 @@ class PresetSeederTests(TestCase):
         presets = {preset.slug: preset for preset in CampaignPreset.objects.all()}
         expected = {
             # Border Town Burning: its objectives chapter is campaign points, and its injury chart names a D66 result
-            "border-town-burning": (None, None, True, None, None, "d66", 9),
+            "border-town-burning": (None, None, True, None, None, "d66", 23),
             # Khemri dictates its chart and nothing else: it points at the rulebook for everything structural
-            "khemri": (None, None, None, None, None, "", 10),
+            "khemri": (None, None, None, None, None, "", 20),
             # Sartosa: its Locales are the campaign's places, and pressganging names a D66 result
-            "sartosa": (True, None, None, None, None, "d66", 11),
+            "sartosa": (True, None, None, None, None, "d66", 32),
         }
         for slug, row in expected.items():
             preset = presets[slug]

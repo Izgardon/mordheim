@@ -1,45 +1,494 @@
 {
-  "setting": "Khemri 1b",
   "rules": [
     {
       "title": "Treasure, not wyrdstone",
-      "text": "In the Land of the Dead the warbands search for treasure - gems, gold and ancient artefacts - rather than wyrdstone. Wherever a rule or a scenario says wyrdstone, read treasure of an equivalent value."
+      "text": "In the Land of the Dead the warbands search for treasure - gems, gold and ancient artefacts - rather than wyrdstone. Wherever a rule or a scenario says wyrdstone, read treasure of an equivalent value.",
+      "umbrella": ""
     },
     {
       "title": "Post-battle sequence",
-      "text": "After the battle both players work through the sequence in this order: work out injuries, allocate experience, roll on the exploration chart, check the burden limit, locate a supply source, recruit and trade, then update the roster. Trading, recruitment and the roster need not be finished straight away, but every roll is made in front of the other player or a third party. A warrior who cannot take part in the next battle may carry no water and no treasure, and automatically fails his Toughness test if he is given no water."
+      "text": "After the battle both players work through the sequence in this order: work out injuries, allocate experience, roll on the exploration chart, check the burden limit, locate a supply source, recruit and trade, then update the roster. Trading, recruitment and the roster need not be finished straight away, but every roll is made in front of the other player or a third party. A warrior who cannot take part in the next battle may carry no water and no treasure, and automatically fails his Toughness test if he is given no water.",
+      "umbrella": ""
     },
     {
       "title": "Water",
-      "text": "Water is recorded on the roster exactly as the stash is: each unit the warband carries adds one to its water stash and each unit it uses up takes one away. Each warrior may carry a number of units equal to his Strength, and those Strengths added together are the most the water stash may ever hold. Every warband starts with a full water stash. Models that cannot use equipment, such as dogs and the Possessed, carry neither water nor treasure. Undead warriors need no water, but any living member of their warband does, and Undead warriors who can use weapons may carry water and treasure."
+      "text": "Water is recorded on the roster exactly as the stash is: each unit the warband carries adds one to its water stash and each unit it uses up takes one away. Each warrior may carry a number of units equal to his Strength, and those Strengths added together are the most the water stash may ever hold. Every warband starts with a full water stash. Models that cannot use equipment, such as dogs and the Possessed, carry neither water nor treasure. Undead warriors need no water, but any living member of their warband does, and Undead warriors who can use weapons may carry water and treasure.",
+      "umbrella": ""
     },
     {
       "title": "Burden limit",
-      "text": "The burden limit is the Strength of every member of the warband added together, and a unit of water and a unit of treasure each take up one point of Strength. After the battle, once injuries and exploration have been rolled, add the warband's water and treasure together: the total may not exceed the burden limit, it may be split between the two in any proportion, and anything over the limit is lost. A member who dies, takes a serious injury or loses Strength to thirst or heat lowers the limit, but water and treasure are pooled after each game, so nothing is lost merely because the man carrying it died. The book's worked example gives a warband of a Strength 4 Hero, eight warriors of Strength 3 and a horse of Strength 3 a burden limit of 34, worked as 4 + 8x3 + 2x3; the horse is counted twice there, and the warband as described comes to 31. At 34 it could carry 12 water and 22 treasure, or 4 water and 30 treasure, and if it held 38 units in all it would discard 4."
+      "text": "The burden limit is the Strength of every member of the warband added together, and a unit of water and a unit of treasure each take up one point of Strength. After the battle, once injuries and exploration have been rolled, add the warband's water and treasure together: the total may not exceed the burden limit, it may be split between the two in any proportion, and anything over the limit is lost. A member who dies, takes a serious injury or loses Strength to thirst or heat lowers the limit, but water and treasure are pooled after each game, so nothing is lost merely because the man carrying it died. The book's worked example gives a warband of a Strength 4 Hero, eight warriors of Strength 3 and a horse of Strength 3 a burden limit of 34, worked as 4 + 8x3 + 2x3; the horse is counted twice there, and the warband as described comes to 31. At 34 it could carry 12 water and 22 treasure, or 4 water and 30 treasure, and if it held 38 units in all it would discard 4.",
+      "umbrella": ""
     },
     {
       "title": "Water expenditure",
-      "text": "Water is expended before the start of each game. Each model in the warband uses up 1 unit, each large creature or animal uses up 1 more on top of that, and some weather conditions use up more again. A warband may refuse water to some of its members to keep it for the ones that matter, but every Hero except an accompanying mount must be given water before anyone else is. A warband need not hand out all its water and may keep some back for the next battle."
+      "text": "Water is expended before the start of each game. Each model in the warband uses up 1 unit, each large creature or animal uses up 1 more on top of that, and some weather conditions use up more again. A warband may refuse water to some of its members to keep it for the ones that matter, but every Hero except an accompanying mount must be given water before anyone else is. A warband need not hand out all its water and may keep some back for the next battle.",
+      "umbrella": ""
     },
     {
       "title": "Lack of water",
-      "text": "Before every game each member of the warband who was given no water must pass a Toughness test. A warrior who passes has resisted it. A warrior who fails rolls a D6 on the dehydration table, adding 1 for each battle in a row in which he has already failed the test. 1, Parched: he cannot speak, so he may no longer extend his Leadership to nearby models and may not cast spells. 2, Light-Headed: he is knocked out on a 2+ instead of a 3+ on the injury table. 3, Weakened: he starts the game with Toughness and Strength each lowered by 1. 4, Exhaustion: his Strength drops by 1 for each round after the first of a single hand-to-hand combat, and if it reaches zero he goes out of action automatically; a combat that lasts only one turn gives him time to recover. 5, Confused: he must take a Leadership test whenever he wishes to move, and moves D6 inches in a random direction if he fails; if he is forced to flee he must pass a Leadership test to flee as normal, and is removed as a casualty if he fails. 6, Passed out: he cannot take part in this battle and may carry no treasure or water after it."
+      "text": "Before every game each member of the warband who was given no water must pass a Toughness test. A warrior who passes has resisted it; one who fails rolls on the dehydration chart.",
+      "umbrella": ""
     },
     {
       "title": "Animals without water",
-      "text": "An animal is a warrior that cannot use equipment, and it carries neither water nor treasure. A ridden animal carries units like any other model, and most animals have the Beast of Burden special rule, which lets them carry twice their Strength; carrying more than their Strength they use up three water units instead of two, and carrying no more than their Strength they use up two as usual. A rider whose mount is exhausted or has collapsed fights on foot, and a henchman in a group that is all mounted cannot take part in the battle until his mount is replaced. An animal given no water rolls a D6. 1-2, Steadfast: it carries on as normal with no penalty. 3-5, Exhausted: it keeps up with the warband but cannot fight or carry any treasure or water. 6, Collapse: it is abandoned in the desert and counts as dead."
+      "text": "An animal is a warrior that cannot use equipment, and it carries neither water nor treasure. A ridden animal carries units like any other model, and most animals have the Beast of Burden special rule, which lets them carry twice their Strength; carrying more than their Strength they use up three water units instead of two, and carrying no more than their Strength they use up two as usual. A rider whose mount is exhausted or has collapsed fights on foot, and a henchman in a group that is all mounted cannot take part in the battle until his mount is replaced. An animal given no water rolls a D6. 1-2, Steadfast: it carries on as normal with no penalty. 3-5, Exhausted: it keeps up with the warband but cannot fight or carry any treasure or water. 6, Collapse: it is abandoned in the desert and counts as dead.",
+      "umbrella": ""
     },
     {
       "title": "Acquiring water",
-      "text": "A warband refills its water at a trading post, by gathering it during rain, from the rare pools in the tombs, or at one of the occasional oases that are not poisoned. A warband that finds a source may gather as many units as it likes, up to its burden limit. Water may be sold in the trading phase like any other equipment, at a price that depends on the supply source, but never at a source that gives water away free."
+      "text": "A warband refills its water at a trading post, by gathering it during rain, from the rare pools in the tombs, or at one of the occasional oases that are not poisoned. A warband that finds a source may gather as many units as it likes, up to its burden limit. Water may be sold in the trading phase like any other equipment, at a price that depends on the supply source, but never at a source that gives water away free.",
+      "umbrella": ""
     },
     {
-      "title": "Supply sources",
-      "text": "The tombs are far from any settlement, so after each battle every player rolls 2D6 to see where, or whether, he finds somewhere to resupply. The winner adds 1 to his roll. 2-3, Nothing: the warband is lost in the desert and must last to the end of the next battle on what it holds. 4-6, Merchant: a travelling merchant sells everything in his wagon, and horses or camels, at 25 per cent above cost, and Henchmen but no Heroes at the same mark-up, ready for the next battle; he sells water at D6 gc a unit and buys treasure at the usual price; a model with the Haggle skill pays no mark-up, and nothing of Rare 9 or above is available. 7-8, City: a desert outpost welcomes the warband, which may shop, trade and recruit as normal and buy water at D3 gc a unit. 9-10, Nomads at a well: D6+1 nomads guard it. The warband may trade with them, every item taking 3 on top of its rarity, common items included, at cost plus 25 per cent unless the model buying has the Haggle skill, with no more than three Henchmen for sale and water at D6 gc a unit; they buy treasure as though the warband were one size category larger, so a warband of 1-3 counts as one of 4-6. Or the warband may attack them, fighting them as usual: it then takes water free and finds only common items, which count as Rare 6 and cost nothing. 11-12, Oasis: on a 3+, adding 1 for every battle since the warband last found nothing this way, a caravan is there as well, and the warband may re-equip, recruit and sell as normal; the water here is plentiful and fills the stash for free. Some warbands native to the desert add 1 to the roll, and some warriors and items allow it to be re-rolled."
-    },
+      "title": "Finding a supply source",
+      "text": "The tombs are far from any settlement, so after each battle every player rolls on the supply source chart to see where, or whether, his warband finds somewhere to resupply.",
+      "umbrella": ""
+    }
+  ],
+  "battle_rules": [
     {
       "title": "Weather and water",
-      "text": "Rain fills every warband's water stash to its maximum. Hot as Hades uses up one extra water unit for each member of the warband, and Hot uses up an extra D6 units in all. A warrior who goes without because the warband has too few units left suffers mirages on top of any other effect of dehydration: roll a D6 for each of his hand-to-hand or shooting attacks, and on a 6 he attacks the mirage and the attack is wasted. The weather has no effect on either warband in a tunnel scenario, but water the weather uses up is still lost."
+      "text": "Rain fills every warband's water stash to its maximum. Hot as Hades uses up one extra water unit for each member of the warband, and Hot uses up an extra D6 units in all. A warrior who goes without because the warband has too few units left suffers mirages on top of any other effect of dehydration: roll a D6 for each of his hand-to-hand or shooting attacks, and on a 6 he attacks the mirage and the attack is wasted. The weather has no effect on either warband in a tunnel scenario, but water the weather uses up is still lost.",
+      "umbrella": ""
+    },
+    {
+      "title": "Building the tomb",
+      "text": "Each player starts with a small room in one corner of the table and builds the tomb as he goes, unless the scenario says otherwise. A large room goes in the centre as the objective.\n\nAt the start of each turn roll for the kind of tile you may place, then a D6 for where it goes. A new tile must join the tile placed last, at the end that is not already connected, and may not run off the table. Roll a D6 for which side of that end it goes off: give each side a value, 1-2, 3-4 and 5-6, and place the tile against the side you roll. Halls and rooms may connect to each other, but nothing may end up off the table.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Darkness",
+      "text": "In a scenario that uses the darkness rules every model counts as hidden, with no counter needed, unless he stands in a lighted field or within the distance his own Initiative allows for spotting hidden models. A lighted field is the light a torch, a lantern, glowing fungi or a light gem gives; a torch or lantern lights 9 inches around its bearer, and a hooded lantern lights a strip 1 inch by 9 instead.\n\nA warrior in darkness may not run, and may not add the charge multiple, unless his whole move is in a light field. He may not shoot at a hidden target, though a light source gives shooting no penalty, and shooting from darkness into light is allowed. Casting is allowed in darkness or in light, and a warrior who shoots or casts in the dark stays hidden, as does a stunned model. A warrior in close combat who cannot see is at -1 to hit.\n\nOptional: a warrior with a light behind him can be seen as a silhouette, and stays hidden only by hiding, which means moving half his move or less.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Seeing in the dark",
+      "text": "Darksight: the warrior sees as though everything within 9 inches of him were a light field, for himself alone, and may run in darkness without penalty. Skaven and Night Goblins have it; Dwarfs do not.\n\nDeadsight: as darksight, but the personal light field reaches the table edges. Only true Undead have it, so dregs and ghouls do not. A model with deadsight is repulsed by light and must pass a Leadership test to charge a warrior carrying a torch, a lantern or anything else that makes a light field; failing it counts as failing a fear test, and a model otherwise immune to Leadership tests is not immune to this one.\n\nEvery other warband has a free underground rule of its own in the same way.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Weapons underground",
+      "text": "A bow needs loft it cannot get in a tunnel: every bow is limited to 16 inches, and its other rules are unchanged.\n\nA blackpowder weapon fires as normal, but every warrior within 3 inches of it must test against his Toughness when it goes off. Pass or fail, for the rest of the battle he may no longer look to his leader and must use his own Leadership for psychology tests. A warrior who fails also misses the next game, deafened. A warplock pistol does this too.\n\nA weapon with the Two Handed rule may not be used underground. A large creature is held to the same restrictions, and one armed wrongly at the start of a scenario may re-equip himself at no cost.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Huge warriors underground",
+      "text": "A warrior with the Huge special rule may not run at all underground, and may move only as far as his Movement when charging.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Doors",
+      "text": "A door blocks movement and sight. Every door in a tunnel scenario starts closed and locked. Doors are open or closed, unlocked or locked, and spiked or clear.\n\nAn unlocked door opens or closes with no movement penalty, and a hero holding its key unlocks it and moves through with none either. Any other hero must spend a whole movement phase doing nothing but unlocking it, and it then stays unlocked until somebody locks it again. Henchmen and hirelings cannot unlock a door unless a rule lets them. A hero or henchman with the key, or with an academic skill that allows it, may lock doors.\n\nA spiked door cannot be opened and must be destroyed. Any warrior may attack a door and always hits. Treat a door as Toughness 3 with 2 wounds unless the scenario says otherwise, and only one warrior may attack it in each player's turn. A hammer, club, mace or axe adds 1 to his Strength for the wound, and an Orc does two wounds for every wound he scores. A destroyed door cannot be repaired.\n\nA hero may spike a door by spending a whole movement phase on it. Iron spikes come with the warband's supplies and need not be bought.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Concealed movement",
+      "text": "In a scenario that uses concealed movement each player writes his models onto cards during deployment and puts a token on the table for each group, with the group's type and a description of the token on one side and its models on the other. Every group gets a card even if the player puts no models in it.\n\nThe rearguard group may hold no more than one fifth of the warband, rounding up, and needs no hero; it holds the deployment area. The main group must include a hero and has no restriction on equipment. The three scout groups each need a hero and may carry no heavy armour; armour left behind goes to the stash.\n\nThe rearguard token is placed within 1 inch of the warband's entrance, the main group up to 3 inches from it, and the scout tokens as far out as three times their move. A token moves at the lowest unmodified Movement in its group.\n\nIf an enemy draws a clear line of sight to a token, allowing for cover and hiding, its card is shown and its models are placed at once, the first where the token stood and the rest behind it. A token in cover is not shown. If the group holds no models, roll a D6: on a 1 or 2 the token is dungeon fauna, with the profile M5 WS2 BS0 S2 T3 W1 I3 A1 Ld4. A player who would rather use a random encounter table of his own may put it here instead, rolled only when an empty token is reached.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Running in the dark",
+      "text": "A warrior may walk underground as he likes, but a running or charging warrior may spring a trap. He rolls a D6 for each extra multiple of his move used, and twice if he used the Sprint skill. On a 1 or 2 he rolls for an accident. A warrior with Initiative 6 or more adds 1 to that roll. A Rabbit's Foot may be used to re-roll the test, and a warrior with a Lucky Charm must use it to ignore the hit, which cancels the accident with no roll.\n\nThe accident happens at the point of his move where a failed charge would have stopped him. If a warrior with more than one wound has to roll, a result of 3-8 also costs him a wound, with no save of any kind, as well as the effect.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Traps",
+      "text": "Trap counters are placed as the tomb is built; four to six in a dungeon of about four feet square is usual.\n\nWhen a warrior moves within 1 inch of a trap counter he tests against his Initiative. Passing, he avoids it. Failing, he has set off its trigger: roll a D6 for the kind of trap.\n\n1-2 Simple. A jury-rigged trap. It affects only the warrior who trips it and causes a Strength 3 hit; roll to wound, with armour saves as normal.\n3-5 Dud. Useless with age, and harmless.\n6 Complex. Roll 2D6 on the complex trap chart. These can hurt more than one model; some fire every time and some only once.\n\nOnce the kind of a trap is known it cannot change, even if the trap is reset.\n\nA hero with the Trap Expert academic skill never sets off a trap himself, though he can still be caught by one going off nearby. He may disarm a trap by stopping at it and doing nothing else that turn: 6 or more on 2D6 for a simple trap, 8 or more for a complex one. If he fails he tests against his Initiative, and a failed test means he has set the trap off. He may also make a dud or a disarmed trap live again, on the same rolls; a dud becomes simple on a D6 roll of 1-4 and complex on a 5-6, while a disarmed trap goes back to what it was.",
+      "umbrella": "Tombs and tunnels"
+    },
+    {
+      "title": "Routing in a tunnel complex",
+      "text": "When a warband routs, forced or by choice, check the rearguard group: it must be no farther than twice its move from the deployment zone. If it is not in position the warband may not rout as normal.\n\nEvery unengaged warrior then moves to the deployment zone nearest him and leaves the table there. Engaged warriors try to escape from combat with the optional escape rules, then move to the nearest exit. A warrior leaving because of a failed all alone test does the same.\n\nAny warrior who leaves by an exit that is not his own deployment zone rolls on the Lost chart in the post-game sequence. A hero adds 1 to that roll, but may only score You Found What on a natural 6.",
+      "umbrella": "Tombs and tunnels"
+    }
+  ],
+  "charts": [
+    {
+      "title": "Trading: supply source",
+      "description": "Rolled after every battle, by every player, to see where the warband can resupply before the next one.",
+      "dice": "2D6",
+      "note": "The winner of the battle adds 1. Some warbands native to the desert add 1. The Signpost result on the exploration dice, a triple 6, adds 3 to the next roll. Some warriors and items allow it to be re-rolled.",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "2-3",
+          "name": "Nothing",
+          "text": "The warband is lost in the desert and finds nobody. It must last to the end of the next battle on what it holds."
+        },
+        {
+          "result": "4-6",
+          "name": "Merchant",
+          "text": "A travelling merchant sells anything in his wagon, and horses or camels, at 25 per cent above cost, and will sell to anyone. He also provides Henchmen, but no Heroes, at the same mark-up, ready for the next battle, and water at D6 gc a unit. He buys treasure at the usual price. A model with the Haggle skill pays no mark-up. Nothing of Rare 9 or above is available."
+        },
+        {
+          "result": "7-8",
+          "name": "City",
+          "text": "A desert outpost gives the warband a good welcome. It may shop, trade and recruit as normal, and buy water at D3 gc a unit."
+        },
+        {
+          "result": "9-10",
+          "name": "Nomads at a well",
+          "text": "D6+1 nomads guard a well. The warband may buy from them or attack them for the water.\n\nBuying: every item takes 3 on top of its rarity, common items included, at cost plus 25 per cent unless the model buying has the Haggle skill. Only Henchmen are for sale, and no more than three. Water is D6 gc a unit. They buy treasure as though the warband were one size category larger, so a warband of 1-3 counts as one of 4-6.\n\nAttacking: fight them as usual. The water is then free, and only common items are found, which count as Rare 6 and cost nothing."
+        },
+        {
+          "result": "11-12",
+          "name": "Oasis",
+          "text": "On a 3 or more, adding 1 for every battle since the warband last found nothing this way, a large caravan is at the oasis as well, and the warband may re-equip, recruit and sell as normal. The water here is plentiful and fills the stash for free."
+        }
+      ]
+    },
+    {
+      "title": "Weather conditions",
+      "description": "Rolled before the start of every game.",
+      "dice": "2D6",
+      "note": "Weather has no effect on Undead unless the result or the scenario says so, though a warband of Undead usually holds living warriors who suffer as normal. Weather affects neither warband in a tunnel scenario, but water the weather uses up is still lost.",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "2",
+          "name": "Rain",
+          "text": "A freak rainstorm soaks everything. All missile weapons are at -1 to hit for the poor visibility, and blackpowder weapons may not be used. Mummies ignore the flammable rule for this battle. Every warband has its water stash filled to its maximum."
+        },
+        {
+          "result": "3",
+          "name": "Hot as Hades",
+          "text": "All warriors are at -2 to WS and BS, and the warband uses up one extra water unit for each member. A warrior who gets none because too few units are left suffers mirages on top of any other effect of dehydration: roll a D6 for each of his hand-to-hand or shooting attacks, and on a 6 he attacks the mirage and the attack is wasted."
+        },
+        {
+          "result": "4-9",
+          "name": "No adverse conditions",
+          "text": "The desert is as harsh as ever, with no extra effect."
+        },
+        {
+          "result": "10-11",
+          "name": "Hot",
+          "text": "All models are at -1 to WS and BS, and the warband uses up an extra D6 water units. A warrior who gets none suffers mirages, as above."
+        },
+        {
+          "result": "12",
+          "name": "Dust storm",
+          "text": "A dust storm catches the warbands as they prepare for battle. It hits the battlefield for the first D3+2 turns: no missile attacks are possible, no model may run or charge farther than its normal move, no spells may be cast, and no model may use its leader's Leadership."
+        }
+      ]
+    },
+    {
+      "title": "Dehydration",
+      "description": "Rolled for a member of the warband who was given no water and then failed his Toughness test before the game.",
+      "dice": "D6",
+      "note": "Add 1 for each battle in a row in which he has already failed the test.",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "1",
+          "name": "Parched",
+          "text": "His mouth is too dry to speak. He may no longer extend his Leadership to nearby models, which matters for a leader or any similar ability, and may not cast spells."
+        },
+        {
+          "result": "2",
+          "name": "Light-headed",
+          "text": "He is knocked out on a 2 or more instead of a 3 or more on the injury table."
+        },
+        {
+          "result": "3",
+          "name": "Weakened",
+          "text": "He starts the game with Toughness and Strength each lowered by 1."
+        },
+        {
+          "result": "4",
+          "name": "Exhaustion",
+          "text": "His Strength drops by 1 for each round after the first of a single hand-to-hand combat, and he goes out of action automatically if it reaches zero. A combat that lasts one turn gives him time to recover."
+        },
+        {
+          "result": "5",
+          "name": "Confused",
+          "text": "He must take a Leadership test whenever he wishes to move, and moves D6 inches in a random direction if he fails. If he is forced to flee he must pass a Leadership test to flee as normal, and is removed as a casualty if he fails."
+        },
+        {
+          "result": "6",
+          "name": "Passed out",
+          "text": "He cannot take part in this battle and may carry no treasure or water after it."
+        }
+      ]
+    },
+    {
+      "title": "Tomb tile",
+      "description": "Rolled at the start of each turn in a tomb scenario to see what kind of tile may be placed.",
+      "dice": "2D6",
+      "note": "",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "2",
+          "name": "Large room",
+          "text": "Place a large room."
+        },
+        {
+          "result": "3-6",
+          "name": "Hall",
+          "text": "Place a hall."
+        },
+        {
+          "result": "7-8",
+          "name": "T junction",
+          "text": "Place a T junction."
+        },
+        {
+          "result": "9-11",
+          "name": "Small room",
+          "text": "Place a small room."
+        },
+        {
+          "result": "12",
+          "name": "Your choice",
+          "text": "Place whichever tile you like."
+        }
+      ]
+    },
+    {
+      "title": "Complex trap",
+      "description": "Rolled when a trap turns out to be complex.",
+      "dice": "2D6",
+      "note": "",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "2",
+          "name": "Boulder",
+          "text": "A boulder falls from the ceiling. The warrior takes another Initiative test; failing it he is too slow and takes D3 Strength 5 hits with no armour saves. The boulder then rolls D6 inches in a random direction, and any warrior in its way tests Initiative too, taking one Strength 5 hit if he fails. This trap works only once."
+        },
+        {
+          "result": "3-4",
+          "name": "Pit",
+          "text": "The floor opens and he drops D6 inches into a pit. Any warrior within 1 inch of the pit tests Initiative and falls in too if he fails. Use the usual falling rules. A warrior still alive in the pit has to climb out. The trap works only once, but a pit of the rolled depth stays in the tunnel."
+        },
+        {
+          "result": "5",
+          "name": "Arrows",
+          "text": "A hail of D6 Strength 3 arrows. Roll a D6 for each: 1-3 hit, 4-6 miss. A miss may hit a warrior within 2 inches, rolled for in the same way, misses divided among several targets starting with the closest; anything still missing hits the far wall. This trap works again and again, so a warrior crossing the counter later tests Initiative too."
+        },
+        {
+          "result": "6",
+          "name": "Curse",
+          "text": "Every warrior within 1 inch of the trap when it goes off must re-roll any successful roll to hit or armour save. An affected warrior takes a Leadership test in each of his recovery phases, and shakes the curse off when he passes."
+        },
+        {
+          "result": "7",
+          "name": "Swinging blades",
+          "text": "Razor blades swing out of the wall. The warrior takes another Initiative test or receives two Strength 5 hits, with armour saves as usual. If he stopped on the counter during his move he tests again at the start of his next turn, with two more Strength 5 hits for a failure. The trap strikes any warrior who crosses it and fails his Initiative test."
+        },
+        {
+          "result": "8",
+          "name": "Poison gas",
+          "text": "D3 Strength 4 hits as the warrior gasps for air. Any warrior within 2 inches takes one Strength 4 hit. A warrior immune to poison takes no damage."
+        },
+        {
+          "result": "9",
+          "name": "Sandbox",
+          "text": "Slabs fall before and behind, trapping every warrior within 2 inches of the one who set it off, and the space begins to fill with sand. The only way out is a loose stone with a switch beneath it that resets the trap and clears the area: a trapped warrior must pass an Initiative test to find it, with a cumulative -1 for each turn after the first. A warrior whose effective Initiative reaches 0 is trapped, can do nothing and counts as out of action.\n\nAfter the battle a hero who did not go out of action may search for the lost warriors instead of trading for rare goods, taking an Initiative test as he would to look for Dramatis Personae. If they are found they are all released and roll for injuries as normal. Search for each sandbox separately."
+        },
+        {
+          "result": "10",
+          "name": "Fire trap",
+          "text": "A pillar of fire blasts out of the wall. The warrior takes a Strength 5 hit at once, and on a 4 or more counts as being on fire. Every warrior within 2 inches rolls a D6 and is on fire on a 4 or more."
+        },
+        {
+          "result": "11",
+          "name": "Deadfall",
+          "text": "A block of stone descends slowly and blocks the passage for good. The warrior who set it off, and any warrior within 2 inches, may go forward to a new tile or back to any tile already placed; they step out from under the block easily and take no damage. The passage stays blocked."
+        },
+        {
+          "result": "12",
+          "name": "Collapsing walls",
+          "text": "The walls close in. The warrior takes an Initiative test; passing, he dodges clear, and if he had stopped on the counter it moves 1 inch to either side. Failing, he is crushed and takes a Strength 8 hit. The walls then open again at once, ready for the next intruder."
+        }
+      ]
+    },
+    {
+      "title": "Accident in the dark",
+      "description": "Rolled when a warrior running or charging underground springs something.",
+      "dice": "2D6",
+      "note": "The source labels this table 2D6 but gives it results of 1 and 2, which 2D6 cannot roll without the modifiers. Add 1 for Initiative 6 or more.",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "1",
+          "name": "Aaahhh",
+          "text": "The warrior is out of action, and lost."
+        },
+        {
+          "result": "2",
+          "name": "Yeowch",
+          "text": "The warrior is out of action."
+        },
+        {
+          "result": "3-5",
+          "name": "Ouch",
+          "text": "The warrior is knocked down."
+        },
+        {
+          "result": "6-8",
+          "name": "That smarts",
+          "text": "The warrior is stunned."
+        },
+        {
+          "result": "9-10",
+          "name": "Yikes",
+          "text": "Treat him as having failed a charge, with no other effect."
+        },
+        {
+          "result": "11-12",
+          "name": "Graceful turn",
+          "text": "He dodges a fatal accident. No effect."
+        }
+      ]
+    },
+    {
+      "title": "Lost",
+      "description": "Rolled in the post-game sequence for a warrior who left the table by an exit that was not his own deployment zone.",
+      "dice": "D6",
+      "note": "A hero adds 1, but may only score You Found What on a natural 6.",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "1",
+          "name": "Forever lost",
+          "text": "The warrior is removed from the roster."
+        },
+        {
+          "result": "2",
+          "name": "Almost made it",
+          "text": "Treat the warrior as having gone out of action."
+        },
+        {
+          "result": "3",
+          "name": "Temporarily lost",
+          "text": "He finds a way out but misses the next game, worn down by what he suffered."
+        },
+        {
+          "result": "4",
+          "name": "Muddled through",
+          "text": "He is back for the next battle but does not roll for exploration and does not search for rare items at the market."
+        },
+        {
+          "result": "5",
+          "name": "No problem",
+          "text": "He is back in time to roll for exploration and to search at the market."
+        },
+        {
+          "result": "6",
+          "name": "You found what",
+          "text": "As above, and he may re-roll one exploration dice and gains 1 Experience."
+        }
+      ]
+    },
+    {
+      "title": "Two-player scenario",
+      "description": "Rolled in place of the scenario chart in the rulebook, for a game between two warbands.",
+      "dice": "2D6",
+      "note": "",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "2",
+          "name": "Lower rating chooses",
+          "text": "The warband with the lower rating chooses which scenario is played."
+        },
+        {
+          "result": "3",
+          "name": "Hidden Treasure",
+          "text": ""
+        },
+        {
+          "result": "4",
+          "name": "Defend the Find",
+          "text": ""
+        },
+        {
+          "result": "5",
+          "name": "Breakthrough",
+          "text": ""
+        },
+        {
+          "result": "6-8",
+          "name": "Skirmish",
+          "text": ""
+        },
+        {
+          "result": "9",
+          "name": "Defend the Oasis",
+          "text": ""
+        },
+        {
+          "result": "10",
+          "name": "Defend the Tomb",
+          "text": ""
+        },
+        {
+          "result": "11",
+          "name": "Chance Encounter",
+          "text": ""
+        },
+        {
+          "result": "12",
+          "name": "Lower rating chooses",
+          "text": "The warband with the lower rating chooses which scenario is played."
+        }
+      ]
+    },
+    {
+      "title": "Multi-player scenario",
+      "description": "Rolled for a game between three or more warbands.",
+      "dice": "2D6",
+      "note": "",
+      "umbrella": "",
+      "rows": [
+        {
+          "result": "2",
+          "name": "Lower rating chooses",
+          "text": "The warband with the lower rating chooses which scenario is played."
+        },
+        {
+          "result": "3",
+          "name": "Monster Hunt",
+          "text": ""
+        },
+        {
+          "result": "4",
+          "name": "Tomb Raid",
+          "text": ""
+        },
+        {
+          "result": "5-6",
+          "name": "Treasure Hunt",
+          "text": ""
+        },
+        {
+          "result": "7",
+          "name": "Desert Skirmish",
+          "text": ""
+        },
+        {
+          "result": "8-9",
+          "name": "Ambush",
+          "text": ""
+        },
+        {
+          "result": "10",
+          "name": "Protect the Prince",
+          "text": ""
+        },
+        {
+          "result": "11",
+          "name": "One Man's Rescue",
+          "text": ""
+        },
+        {
+          "result": "12",
+          "name": "Lower rating chooses",
+          "text": "The warband with the lower rating chooses which scenario is played."
+        }
+      ]
     }
   ]
 }
