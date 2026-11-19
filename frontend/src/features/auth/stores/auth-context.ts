@@ -23,6 +23,8 @@ export type AuthContextValue = {
   retryConnection: () => void;
   signIn: (credentials: LoginCredentials) => Promise<AuthResponse>;
   signUp: (payload: RegisterPayload) => Promise<AuthResponse>;
+  /** Starts the session from a social sign-in's answer, which came with its user already. */
+  adoptSession: (data: AuthResponse) => void;
   signOut: () => void;
 };
 

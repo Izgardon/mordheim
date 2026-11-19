@@ -84,6 +84,8 @@ SCOPES: dict[str, type[Throttle]] = {
     "auth_password_reset_email_hour": EmailRateThrottle,
     "auth_password_reset_confirm_hour": IPRateThrottle,
     "auth_refresh_minute": IPRateThrottle,
+    "auth_sso_start_minute": IPRateThrottle,
+    "auth_sso_callback_minute": IPRateThrottle,
     "auth_account_user": UserOrIPRateThrottle,
     "feedback_report_user": UserOrIPRateThrottle,
     "feedback_report_ip": IPRateThrottle,
@@ -117,6 +119,9 @@ REGISTER_THROTTLE_CLASSES = throttle_classes("auth_register_hour", "auth_registe
 PASSWORD_RESET_REQUEST_THROTTLE_CLASSES = throttle_classes("auth_password_reset_hour", "auth_password_reset_email_hour")
 PASSWORD_RESET_CONFIRM_THROTTLE_CLASSES = throttle_classes("auth_password_reset_confirm_hour")
 REFRESH_THROTTLE_CLASSES = throttle_classes("auth_refresh_minute")
+# Social sign-in: a start writes an attempt row and a callback talks to the provider, so both count per address
+SSO_START_THROTTLE_CLASSES = throttle_classes("auth_sso_start_minute")
+SSO_CALLBACK_THROTTLE_CLASSES = throttle_classes("auth_sso_callback_minute")
 # The password change, "sign out everywhere else" and deleting the account share one budget per user
 ACCOUNT_THROTTLE_CLASSES = throttle_classes("auth_account_user")
 FEEDBACK_REPORT_THROTTLE_CLASSES = throttle_classes("feedback_report_user", "feedback_report_ip")

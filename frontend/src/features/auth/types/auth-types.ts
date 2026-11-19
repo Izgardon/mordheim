@@ -71,3 +71,27 @@ export type FeedbackReportPayload = {
   warband_id?: number;
   warband_name?: string;
 };
+
+/** One social sign-in provider this deploy has set up (`GET auth/sso/providers/`). */
+export type SsoProvider = {
+  slug: string;
+  label: string;
+};
+
+/**
+ * `GET auth/sso/<provider>/start/`: where to send the browser, and the two values the callback
+ * must send back. The client id and PKCE verifier stay on the server; `browser_token` is the
+ * secret that ties the attempt to this browser.
+ */
+export type SsoStart = {
+  authorize_url: string;
+  state: string;
+  browser_token: string;
+};
+
+/** `POST auth/sso/<provider>/callback/`: the provider's code and state, with the browser's secret. */
+export type SsoCallbackPayload = {
+  code: string;
+  state: string;
+  browser_token: string;
+};

@@ -23,7 +23,7 @@ from rest_framework.test import APIRequestFactory
 
 from apps.core.throttling import THROTTLES, EmailRateThrottle, IPRateThrottle, UserOrIPRateThrottle
 from apps.core.views import HealthView, KeepAwakeView
-from apps.users import views
+from apps.users import sso_views, views
 from apps.users.tests.auth_support import (
     LOGIN,
     PASSWORD,
@@ -183,6 +183,9 @@ class ThrottleConfigurationTests(AuthTestCase):
             views.PasswordChangeView: [("auth_account_user", "5/min", user)],
             views.SignOutOthersView: [("auth_account_user", "5/min", user)],
             views.FeedbackReportView: [("feedback_report_user", "3/min", user), ("feedback_report_ip", "10/min", ip)],
+            sso_views.SsoStartView: [("auth_sso_start_minute", "20/min", ip)],
+            sso_views.SsoCallbackView: [("auth_sso_callback_minute", "20/min", ip)],
+            sso_views.SsoProvidersView: [],
             views.MeView: [],
             HealthView: [],
             KeepAwakeView: [],

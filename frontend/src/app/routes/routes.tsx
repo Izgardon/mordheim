@@ -13,6 +13,7 @@ const ProtectedLayout = lazy(() => import("./ProtectedLayout"));
 const NotFound = lazy(() => import("./NotFound"));
 const Landing = lazy(() => import("../../features/auth/routes/Landing"));
 const ResetPassword = lazy(() => import("../../features/auth/routes/ResetPassword"));
+const SsoCallback = lazy(() => import("../../features/auth/routes/SsoCallback"));
 const Account = lazy(() => import("../../features/auth/routes/Account"));
 const CampaignLayout = lazy(() => import("../../features/campaigns/routes/CampaignLayout"));
 const Campaigns = lazy(() => import("../../features/campaigns/routes/Campaigns"));
@@ -63,6 +64,11 @@ export const routes: RouteObject[] = [
       {
         path: "/reset-password",
         element: <ResetPassword />,
+      },
+      {
+        // Where Google and Discord send the player back; registered with each provider.
+        path: "/auth/callback/:provider",
+        element: <SsoCallback />,
       },
       {
         // Signed-in routes share one auth gate and one realtime provider.

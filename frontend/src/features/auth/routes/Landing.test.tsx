@@ -7,6 +7,7 @@ import { MemoryRouter } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { AuthProvider } from "@/features/auth/stores/auth-store";
+import { withoutSsoProviders } from "@/test/auth-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import Landing from "./Landing";
@@ -29,6 +30,9 @@ function renderLanding() {
     { wrapper: createQueryWrapper() }
   );
 }
+
+/** The card reads which social providers are set up on mount; these tests are about the page. */
+const cardCalls = () => withoutSsoProviders(fakeApi.calls());
 
 beforeEach(() => {
   localStorage.clear();
@@ -94,7 +98,7 @@ describe("Landing on desktop", () => {
       "href",
       "https://broheim.net"
     );
-    expect(fakeApi.calls()).toEqual([]);
+    expect(cardCalls()).toEqual([]);
   });
 });
 

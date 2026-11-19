@@ -1,5 +1,6 @@
 from django.urls import path
 
+from .sso_views import SsoCallbackView, SsoProvidersView, SsoStartView
 from .views import (
     AccountDeletionView,
     FeedbackReportView,
@@ -22,6 +23,9 @@ urlpatterns = [
     path("password/", PasswordChangeView.as_view(), name="password_change"),
     path("sign-out-others/", SignOutOthersView.as_view(), name="sign_out_others"),
     path("feedback-report/", FeedbackReportView.as_view(), name="feedback_report"),
+    path("sso/providers/", SsoProvidersView.as_view(), name="sso_providers"),
+    path("sso/<slug:provider>/start/", SsoStartView.as_view(), name="sso_start"),
+    path("sso/<slug:provider>/callback/", SsoCallbackView.as_view(), name="sso_callback"),
     path("password-reset/", PasswordResetRequestView.as_view(), name="password_reset"),
     path(
         "password-reset-confirm/",

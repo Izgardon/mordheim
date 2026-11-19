@@ -23,6 +23,7 @@ import "@/app/routes/ProtectedLayout";
 import "@/features/auth/routes/Account";
 import "@/features/auth/routes/Landing";
 import "@/features/auth/routes/ResetPassword";
+import "@/features/auth/routes/SsoCallback";
 import "@/features/campaigns/routes/Campaigns";
 
 const clients: QueryClient[] = [];

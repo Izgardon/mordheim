@@ -159,6 +159,8 @@ REST_FRAMEWORK: dict[str, Any] = {
         "auth_password_reset_email_hour": "3/hour",
         "auth_password_reset_confirm_hour": "20/hour",
         "auth_refresh_minute": "60/min",
+        "auth_sso_start_minute": "20/min",
+        "auth_sso_callback_minute": "20/min",
         "auth_account_user": "5/min",
         "feedback_report_user": "3/min",
         "feedback_report_ip": "10/min",
@@ -255,7 +257,22 @@ if not DEBUG:
 # W003 (no CsrfViewMiddleware): nothing authenticates by cookie, and every view is a DRF view, exempt from CSRF.
 SILENCED_SYSTEM_CHECKS = ["security.W003", "security.W005", "security.W008", "security.W021"]
 
-FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:5173")
+_DEV_FRONTEND_URL = "http://localhost:5173"
+FRONTEND_URL = os.environ.get("FRONTEND_URL", _DEV_FRONTEND_URL)
+
+# FRONTEND_URL is now load-bearing twice over: it addresses the password-reset links, and the social sign-in
+# redirect URI registered with Google and Discord is derived from it (apps.users.services.sso). A production deploy
+# left on the local default would send players to localhost, so it stops startup instead (as the secret key does).
+if not DEBUG and (FRONTEND_URL == _DEV_FRONTEND_URL or not FRONTEND_URL.startswith("https://")):
+    raise ImproperlyConfigured("FRONTEND_URL must be the site's https:// address when DJANGO_DEBUG is off.")
+
+# Social sign-in (SSO). A provider with either value blank is left out of the sign-in page entirely
+# (apps.users.sso.registry), so a half-configured deploy shows no dead button. Secrets come from the environment
+# only, and are never sent to a browser: the code-for-token exchange happens on this server.
+GOOGLE_OAUTH_CLIENT_ID = os.environ.get("GOOGLE_OAUTH_CLIENT_ID", "")
+GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", "")
+DISCORD_OAUTH_CLIENT_ID = os.environ.get("DISCORD_OAUTH_CLIENT_ID", "")
+DISCORD_OAUTH_CLIENT_SECRET = os.environ.get("DISCORD_OAUTH_CLIENT_SECRET", "")
 
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@example.com")
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
@@ -267,8 +284,7 @@ PASSWORD_RESET_TIMEOUT = int(os.environ.get("PASSWORD_RESET_TIMEOUT", "3600"))
 # shared resend.dev sender is refused too: it delivers only to the Resend account's own address, so players would
 # never get their reset links.
 if not DEBUG and RESEND_API_KEY:
-    if not FRONTEND_URL.startswith("https://"):
-        raise ImproperlyConfigured("FRONTEND_URL must be the site's https:// address when RESEND_API_KEY is set.")
+    # FRONTEND_URL is checked unconditionally above, whether email is on or not.
     sender_domain = DEFAULT_FROM_EMAIL.strip().rstrip(">").rpartition("@")[2].strip().lower()
     if "@" not in DEFAULT_FROM_EMAIL or sender_domain.endswith(("example.com", "resend.dev")):
         raise ImproperlyConfigured(

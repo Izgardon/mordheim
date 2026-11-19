@@ -43,6 +43,16 @@ export function storeSession(user: AuthUser = RAIDER, { cachedUser = true } = {}
   return tokens;
 }
 
+/**
+ * The sign-in card asks which social providers this deploy has set up, so any screen holding it
+ * sends this one request. A test about the app's own requests reads them through
+ * `withoutSsoProviders`.
+ */
+export const SSO_PROVIDERS = "GET /auth/sso/providers/";
+
+export const withoutSsoProviders = (calls: string[]) =>
+  calls.filter((call) => call !== SSO_PROVIDERS);
+
 /** A promise with its resolve and reject in hand, to hold an answer back. */
 export function deferred<T>() {
   let resolve!: (value: T) => void;

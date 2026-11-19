@@ -21,6 +21,8 @@ export type CatalogueKind =
 export const queryKeys = {
   /** Every setting and the grade presets (book data, not campaign-scoped). */
   settings: () => ["settings"] as const,
+  /** The social sign-in providers this deploy has set up (read by the sign-in card). */
+  ssoProviders: () => ["sso-providers"] as const,
   /** The published campaigns a campaign may play (the campaign presets), book data like the settings. */
   campaignPresets: () => ["campaign-presets"] as const,
   /** The races and sides a who-can list may name (book data). */
