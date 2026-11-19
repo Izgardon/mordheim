@@ -12,6 +12,7 @@ import type {
 } from "@/features/warbands/types/warband-types";
 import { useMediaQuery } from "@/lib/use-media-query";
 
+import { useWhoCan } from "../api/who-can-queries";
 import ItemInfo, { useShownItem } from "../components/ItemInfo";
 import { hisListFor, hisUpgrades, variantTerms } from "./his-list";
 import StoreBasket from "./StoreBasket";
@@ -64,6 +65,8 @@ export default function StorePanel(props: StorePanelProps) {
   }));
   const details = useShownItem(props.open);
   const canAddItem = useCampaignCapabilities(props.campaignId).edit_catalogue;
+  // the weapon materials the server offers this warband (weapon materials)
+  const { materials } = useWhoCan(props.campaignId, warband.id);
   // the template the roster reads ahead: His list for a unit recruited from it, the variant's rare bonus
   const template = useWarbandHireTemplate(props.campaignId, warband.id, props.open).data;
   const his = hisListFor(template, { heroes, henchmenGroups }, firstKey);
@@ -147,6 +150,7 @@ export default function StorePanel(props: StorePanelProps) {
         isMobile={isMobile}
         his={his}
         variant={variantTerms(template)}
+        materials={materials}
         inBasket={inBasket}
         upgrades={upgrades ? { ...upgrades, onGet: getUpgrade } : null}
         onPick={basket.add}

@@ -4,7 +4,12 @@ import { toast } from "sonner";
 import { getErrorMessage } from "@/lib/get-error-message";
 
 import { switchCompanion } from "../../api/beasts-api";
-import { useItemMove, useItemSale, itemMutationUpdate } from "../../api/economy-queries";
+import {
+  useItemMaterial,
+  useItemMove,
+  useItemSale,
+  itemMutationUpdate,
+} from "../../api/economy-queries";
 import { useWarbandCacheUpdate, type WarbandUpdate } from "../../api/warband-cache";
 import { LIST_KEY, type RosterUnit } from "../../components/roster/unit-view";
 import { unitApi, type AdvancePick } from "../../units/unit-api";
@@ -25,6 +30,7 @@ export function useUnitActions(warbandId: number) {
   const updateCache = useWarbandCacheUpdate();
   const itemMove = useItemMove(warbandId);
   const itemSale = useItemSale(warbandId);
+  const itemMaterial = useItemMaterial(warbandId);
   const fail = (what: string) => (error: unknown) =>
     toast.error(what, { description: getErrorMessage(error) });
 
@@ -59,8 +65,14 @@ export function useUnitActions(warbandId: number) {
     units: [] as WarbandUnitDetail[],
   });
 
-  /** Moves copies of an item to another unit or to the stash. */
-  const moveItem = (from: RosterUnit | null, itemId: number, to: ItemPlace, quantity = 1) =>
+  /** Moves copies of an item to another unit or to the stash; `material` names which copies. */
+  const moveItem = (
+    from: RosterUnit | null,
+    itemId: number,
+    to: ItemPlace,
+    quantity = 1,
+    material = ""
+  ) =>
     itemMove.mutate(
       {
         source_type: from ? from.kind : "stash",
@@ -69,6 +81,7 @@ export function useUnitActions(warbandId: number) {
         target_id: to.id ?? null,
         item_id: itemId,
         quantity,
+        material,
       },
       {
         onSuccess: (result) =>
@@ -83,8 +96,14 @@ export function useUnitActions(warbandId: number) {
       }
     );
 
-  /** Sells copies of an item from a unit or the stash. */
-  const sellItem = (from: RosterUnit | null, itemId: number, price: number, quantity = 1) =>
+  /** Sells copies of an item from a unit or the stash; `material` names which copies. */
+  const sellItem = (
+    from: RosterUnit | null,
+    itemId: number,
+    price: number,
+    quantity = 1,
+    material = ""
+  ) =>
     itemSale.mutate(
       {
         source_type: from ? from.kind : "stash",
@@ -92,11 +111,33 @@ export function useUnitActions(warbandId: number) {
         item_id: itemId,
         quantity,
         price,
+        material,
       },
       {
         onSuccess: (result) =>
           updateCache(warbandId, itemMutationUpdate(result, from ? sourceOf(from) : undefined)),
         onError: fail("Couldn't sell the item."),
+      }
+    );
+
+  /**
+   * Puts a material on a weapon the warband already owns (weapon materials): the server charges
+   * what the material asks and may warn that the warband went below 0.
+   */
+  const materialItem = (from: RosterUnit | null, itemId: number, material: string) =>
+    itemMaterial.mutate(
+      {
+        source_type: from ? from.kind : "stash",
+        source_id: from?.unit.id ?? null,
+        item_id: itemId,
+        material,
+      },
+      {
+        onSuccess: (result) => {
+          updateCache(warbandId, itemMutationUpdate(result, from ? sourceOf(from) : undefined));
+          toastServerWarnings(result.warnings ?? []);
+        },
+        onError: fail("Couldn't change what it is made of."),
       }
     );
 
@@ -108,7 +149,13 @@ export function useUnitActions(warbandId: number) {
     rideMount: (entry: RosterUnit, rowId: number, on: boolean) => ride.mutate({ entry, rowId, on }),
     moveItem,
     sellItem,
-    isBusy: patch.isPending || ride.isPending || itemMove.isPending || itemSale.isPending,
+    materialItem,
+    isBusy:
+      patch.isPending ||
+      ride.isPending ||
+      itemMove.isPending ||
+      itemSale.isPending ||
+      itemMaterial.isPending,
   };
 }
 

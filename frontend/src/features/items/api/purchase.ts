@@ -80,6 +80,8 @@ export type PurchaseRequest = {
   rowPrice?: boolean;
   /** The total rolled for a row with dice. */
   diceRoll?: number | null;
+  /** What the weapon is made of (weapon materials): the server prices it through the material. */
+  material?: string;
   /** "Buy again" (decision 11): the server charges the campaign's current price. */
   atCurrentPrice?: boolean;
   rarityRoll?: RarityRollLine | null;
@@ -112,6 +114,7 @@ export function purchaseLine({
   atCurrentPrice,
   rarityRoll,
   companion,
+  material,
 }: Omit<PurchaseRequest, "warbandId" | "target" | "recruit">) {
   // A copy's price: what one costs when buying, the cost it keeps for resale when given.
   const price = meta.isBuying ? meta.unitPrice : getPersistedItemCost(item, meta);
@@ -129,6 +132,7 @@ export function purchaseLine({
     ...(reason ? { reason } : {}),
     ...(rarityRoll ? { rarity_roll: rarityRoll } : {}),
     ...(companion ? { companion: true } : {}),
+    ...(material ? { material } : {}),
   };
 }
 

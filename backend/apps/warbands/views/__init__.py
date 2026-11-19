@@ -1,5 +1,10 @@
 from .beasts import WarbandBeastRecruitView
-from .items import WarbandItemListView, WarbandItemSaleView, WarbandItemTransferView
+from .items import (
+    WarbandItemListView,
+    WarbandItemMaterialView,
+    WarbandItemSaleView,
+    WarbandItemTransferView,
+)
 from .ledger import (
     WarbandLogListView,
     WarbandResourceDetailView,
@@ -27,6 +32,7 @@ __all__ = [
     "WarbandDetailView",
     "WarbandListCreateView",
     "WarbandItemListView",
+    "WarbandItemMaterialView",
     "WarbandItemSaleView",
     "WarbandItemTransferView",
     "WarbandLogListView",

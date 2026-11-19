@@ -245,7 +245,8 @@ describe("itemMutationUpdate", () => {
     );
 
     expect(ids(update.heroes)).toEqual([3, 3]);
-    expect(update.removedStashItemIds).toEqual([120]);
+    // weapon materials: the one row that went, named by its item and what it was made of
+    expect(update.removedStashRows).toEqual([{ id: 120, material: "" }]);
     expect(update).not.toHaveProperty("henchmenGroups");
     expect(update).not.toHaveProperty("hirelings");
   });

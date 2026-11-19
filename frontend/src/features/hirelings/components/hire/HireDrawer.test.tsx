@@ -50,6 +50,7 @@ const whoCan: WhoCan = {
   dramatis_personae: [{ id: 60, can_hire: true, reason: "" }],
   skill_group_ids: [],
   special_skill_ids: [],
+  materials: [],
 } as WhoCan;
 
 // the one Add new makes

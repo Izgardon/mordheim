@@ -63,13 +63,14 @@ def add_row(
     costs: Sequence[int | None],
     *,
     companion: bool = False,
+    material: str = "",
     reason: str = HenchmanItemGap.SHORT,
 ) -> HenchmenGroupItem:
     """One loadout row for these copies, one each for the oldest living members: the newest members past the copies
-    get a gap. The row keeps the first known cost."""
+    get a gap. The row keeps the first known cost, and what the copies are made of (weapon materials)."""
     living = living_ids(group.pk)
     row = HenchmenGroupItem.objects.create(
-        henchmen_group=group, item=item, cost=first_known(costs), companion=companion
+        henchmen_group=group, item=item, cost=first_known(costs), companion=companion, material=material
     )
     short = living[len(costs) :]
     HenchmanItemGap.objects.bulk_create(HenchmanItemGap(henchman_id=pk, group_item=row, reason=reason) for pk in short)
@@ -83,26 +84,27 @@ class TakenRow:
     row_id: int  # the row that went, and what it was worth to the group's save (services/armour.py)
     companion: bool
     save: Save
+    material: str = ""  # what the copies were made of (weapon materials): they keep it wherever they go
 
 
-def peek_row(group: HenchmenGroup, item_id: int) -> Any:
-    """The row of `item_id` a move or sale takes from the group: its newest, a row it rides last (annotated with its
-    carriers); None when it carries none."""
-    rows = HenchmenGroupItem.objects.filter(henchmen_group=group, item_id=item_id).order_by("companion", "-id")
-    return with_carriers(rows).select_related("item").first()
+def peek_row(group: HenchmenGroup, item_id: int, material: str = "") -> Any:
+    """The row of `item_id` made of `material` ("" plain) a move or sale takes from the group: its newest, a row it
+    rides last (annotated with its carriers); None when it carries none."""
+    rows = HenchmenGroupItem.objects.filter(henchmen_group=group, item_id=item_id, material=material)
+    return with_carriers(rows.order_by("companion", "-id")).select_related("item").first()
 
 
-def take_row(group: HenchmenGroup, item_id: int) -> TakenRow:
+def take_row(group: HenchmenGroup, item_id: int, material: str = "") -> TakenRow:
     """Take one loadout row off the group: a copy for each living member who carries it, at the row's cost (the row and
     its gaps go). ValueError when the group carries none, or another request took it first."""
-    row = peek_row(group, item_id)
+    row = peek_row(group, item_id, material)
     if row is None:
         raise ValueError("Item not found.")
     deleted, _ = HenchmenGroupItem.objects.filter(pk=row.pk).delete()
     if not deleted:
         raise ValueError("Item not found.")
     costs = [row.cost] * carriers_of(row)
-    return TakenRow(row.item_id, costs, row.pk, row.companion, Save.of(row.item))
+    return TakenRow(row.item_id, costs, row.pk, row.companion, Save.of(row.item), row.material)
 
 
 def carried_rows(member: Henchman) -> list[HenchmenGroupItem]:

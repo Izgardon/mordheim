@@ -15,6 +15,7 @@ from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any
 
+from apps.items.materials import named, priced
 from apps.items.models import Item
 from apps.warbands.models import Henchman, HenchmanItemGap, HenchmenGroup, HenchmenGroupItem, LedgerAction, Warband
 from apps.warbands.services import economy_log, ledger
@@ -42,8 +43,8 @@ def _to_stash(warband: Warband, group: HenchmenGroup, rows: Iterable[HenchmenGro
     """One copy of each row into the stash at the row's cost, each move logged; the item ids."""
     moved = []
     for row in rows:
-        add_to_stash(warband.id, row.item_id, 1, row.cost)
-        economy_log.log_move(warband, row.item.name, 1, _group_end(group), ("stash", None))
+        add_to_stash(warband.id, row.item_id, 1, row.cost, row.material)
+        economy_log.log_move(warband, named(row.material, row.item.name), 1, _group_end(group), ("stash", None))
         moved.append(row.item_id)
     return moved
 
@@ -57,15 +58,17 @@ def share_to_stash(warband: Warband, group: HenchmenGroup, members: Iterable[Hen
     rows = list(HenchmenGroupItem.objects.filter(henchmen_group=group).select_related("item").order_by("id"))
     gaps = HenchmanItemGap.objects.filter(henchman_id__in=member_ids, group_item__henchmen_group=group)
     lacking = set(gaps.values_list("henchman_id", "group_item_id"))
-    copies = Counter((row.item_id, row.cost) for pk in member_ids for row in rows if (pk, row.pk) not in lacking)
-    names = {row.item_id: row.item.name for row in rows}
-    moved: Counter[int] = Counter()
-    for (item_id, cost), quantity in copies.items():
-        add_to_stash(warband.id, item_id, quantity, cost)
-        moved[item_id] += quantity
-    for item_id, quantity in moved.items():
-        economy_log.log_move(warband, names[item_id], quantity, _group_end(group), ("stash", None))
-    return list(moved)
+    copies = Counter(
+        (row.item_id, row.cost, row.material) for pk in member_ids for row in rows if (pk, row.pk) not in lacking
+    )
+    names = {(row.item_id, row.material): named(row.material, row.item.name) for row in rows}
+    moved: Counter[tuple[int, str]] = Counter()
+    for (item_id, cost, material), quantity in copies.items():
+        add_to_stash(warband.id, item_id, quantity, cost, material)
+        moved[(item_id, material)] += quantity
+    for key, quantity in moved.items():
+        economy_log.log_move(warband, names[key], quantity, _group_end(group), ("stash", None))
+    return [item_id for item_id, _material in moved]
 
 
 def take_kit(warband: Warband, group: HenchmenGroup, member: Henchman) -> list[int]:
@@ -111,11 +114,12 @@ def equip_recruits(
     for index, (entry, member) in enumerate(recruits):
         kit = Kit.of(entry, rows)
         for pk in kit.from_stash:
-            try:
-                remove_from_stash(warband.id, rows[pk].item_id, 1)
+            row = rows[pk]
+            try:  # a copy made of what the row is made of (weapon materials)
+                remove_from_stash(warband.id, row.item_id, 1, ANY_COST, row.material)
             except StashShortage as shortage:
-                raise _short(f"henchmen.{index}.from_stash", rows[pk].item, shortage.held) from None
-            economy_log.log_move(warband, rows[pk].item.name, 1, ("stash", None), _group_end(group))
+                raise _short(f"henchmen.{index}.from_stash", row.item, shortage.held) from None
+            economy_log.log_move(warband, named(row.material, row.item.name), 1, ("stash", None), _group_end(group))
         gaps += [HenchmanItemGap(henchman=member, group_item=rows[pk]) for pk in kit.without]
         saved[member.pk] = sum(int(rows[pk].cost or 0) for pk in [*kit.from_stash, *kit.without])
     HenchmanItemGap.objects.bulk_create(gaps)
@@ -130,20 +134,21 @@ def fill_gap(warband: Warband, group: HenchmenGroup, gap: HenchmanItemGap, body:
     if body["action"] == "leave":
         HenchmanItemGap.objects.filter(pk=gap.pk).update(left=True)
         return
+    name = named(row.material, row.item.name)
     if body["action"] == "buy":
-        data = {**body, "quantity": 1, "is_buying": True}
+        data = {**body, "quantity": 1, "is_buying": True, "material": row.material}
         price = price_line(warband, row.item, data) if _priced(body) else _current_or_row(warband, row)
-        description = f"{row.item.name} for {member_name(member)}"
+        description = f"{name} for {member_name(member)}"
         ledger.record(warband, LedgerAction.BUY, -int(price or 0), description)
-        payload = {"hero": economy_log.unit_name(GROUP, group), "item": row.item.name, "price": int(price or 0)}
+        payload = {"hero": economy_log.unit_name(GROUP, group), "item": name, "price": int(price or 0)}
         economy_log.write(warband, "loadout", "henchmen_item", payload)
     else:
         cost = body["cost"] if "cost" in body else ANY_COST
         try:
-            remove_from_stash(warband.id, row.item_id, 1, cost)
+            remove_from_stash(warband.id, row.item_id, 1, cost, row.material)
         except StashShortage as shortage:
             raise _short("action", row.item, shortage.held) from None
-        economy_log.log_move(warband, row.item.name, 1, ("stash", None), _group_end(group))
+        economy_log.log_move(warband, name, 1, ("stash", None), _group_end(group))
     HenchmanItemGap.objects.filter(pk=gap.pk).delete()
     touch_unit(GROUP, group)
 
@@ -153,7 +158,9 @@ def _priced(body: Mapping[str, Any]) -> bool:
 
 
 def _current_or_row(warband: Warband, row: HenchmenGroupItem) -> int | None:
-    current = CampaignPrices(warband.campaign_id).current(row.item)
+    """What one more copy of the row costs: the campaign's current price through the row's material, else what the
+    row cost."""
+    current = priced(row.material, CampaignPrices(warband.campaign_id).current(row.item))
     return current if current is not None else row.cost
 
 

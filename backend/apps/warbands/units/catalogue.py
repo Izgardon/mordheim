@@ -5,6 +5,7 @@ from typing import Any
 from rest_framework import serializers
 from rest_framework.fields import Field
 
+from apps.items.materials import named
 from apps.items.models import Item
 from apps.items.serializers import ItemAvailabilitySerializer, ItemRuleLinkSerializer, with_save
 from apps.skills.models import Skill
@@ -23,10 +24,15 @@ class ItemSummarySerializer(serializers.Serializer):
     cost = serializers.SerializerMethodField()
     row_id = serializers.IntegerField(source="pk")  # this copy: what the companion switch names
     companion = serializers.BooleanField()
+    material = serializers.CharField()  # what this copy is made of (weapon materials); "" plain
+    material_name = serializers.SerializerMethodField()  # "Gromril Sword"
     beast_kind = serializers.SerializerMethodField()  # mount, pet or creature for an Animal item
 
     def get_cost(self, obj):
         return getattr(obj, "cost", None)
+
+    def get_material_name(self, obj: Any) -> str:
+        return named(obj.material, obj.item.name)
 
     def get_beast_kind(self, obj: Any) -> str | None:
         return beast_kind(obj.item)

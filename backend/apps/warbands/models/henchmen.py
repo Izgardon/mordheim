@@ -1,5 +1,7 @@
 from django.db import models
 
+from apps.items.materials import MAX_MATERIAL
+
 from .shared import RosterUnit, stat_constraints
 from .warband import Warband
 
@@ -76,6 +78,8 @@ class HenchmenGroupItem(models.Model):
     companion = models.BooleanField(
         default=False
     )  # a mount the group rides, or a pet switched on (units/companions.py)
+    # What the weapon is made of (apps/items/materials.py; blank: plain): the row's own, never the item's
+    material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
 
     class Meta:
         db_table = "henchmen_group_item"

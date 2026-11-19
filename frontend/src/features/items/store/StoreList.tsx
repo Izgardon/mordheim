@@ -13,10 +13,12 @@ import { cn } from "@/lib/utils";
 import { useWhoCan } from "../api/who-can-queries";
 import ItemFormDialog from "../components/ItemFormDialog";
 import type { ShownItem } from "../components/ItemInfo";
+import type { WeaponMaterial } from "../types/item-types";
 import { isSold } from "../utils/item-listing";
 import { hisLine, hisRow, rareBonusFor, type HisList, type HisUpgrades } from "./his-list";
 import {
   inStoreOrder,
+  isWeapon,
   STORE_CATEGORIES,
   searchWords,
   storeCategory,
@@ -42,6 +44,8 @@ export type StoreListProps = {
   his?: HisList | null;
   /** The warband's variant's terms: where a rare search starts its bonus. */
   variant?: TemplateVariant | null;
+  /** The weapon materials the server offers this warband (weapon materials): a weapon's only. */
+  materials?: WeaponMaterial[];
   /** The copies of an item the basket holds, for a per-warband limit. */
   inBasket?: (itemId: number) => number;
   /** A hero from the template: his template's upgrades, put in the basket at their price. */
@@ -206,6 +210,7 @@ export default function StoreList(props: StoreListProps) {
             searchers={props.searchers}
             startPrice={props.again?.itemId === offer.item.id ? props.again.price : null}
             rareBonus={rareBonusFor(props.variant ?? null, offer.item)}
+            materials={isWeapon(offer.item) ? (props.materials ?? []) : []}
             onPick={(line) => {
               props.onPick(line);
               setOpenId(null);

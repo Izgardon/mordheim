@@ -14,6 +14,7 @@ from rest_framework import serializers
 
 from apps.core.catalogue.scope import CatalogueEntryField
 from apps.hirelings.fees import MAX_FEE, MAX_RESOURCE_LINES, FeeField
+from apps.items.materials import SLUGS, named, priced
 from apps.items.models import Item
 from apps.races.models import Race
 from apps.warbands.models import MAX_PENDING_PICKS, RosterUnit
@@ -168,8 +169,11 @@ def detail_item_entries(rows: Iterable[Any]) -> list[Any]:
             continue
         data = ItemDetailSerializer(row.item).data
         data["row_id"], data["companion"], data["beast_kind"] = row.pk, row.companion, beast_kind(row.item)
+        data["material"] = row.material  # what this copy is made of (weapon materials); "" plain
+        data["material_name"] = named(row.material, row.item.name)
         data["cost"] = getattr(row, "cost", None)
-        data["current_price"] = annotated_current(row, own_price(row.item))  # what Buy again charges
+        # what Buy again charges: the item's current price through this copy's material
+        data["current_price"] = priced(row.material, annotated_current(row, own_price(row.item)))
         sale = sale_price(data["current_price"], data["cost"])
         data["suggested_sale_price"], data["sale_price_basis"] = sale.price, sale.basis
         items.append(data)
@@ -185,6 +189,8 @@ class UnitItemEntrySerializer(serializers.Serializer):
     id = serializers.IntegerField()
     cost = serializers.IntegerField(required=False, allow_null=True, min_value=0, max_value=MAX_TRADE_PRICE)
     companion = serializers.BooleanField(required=False)  # left out: the copy keeps its switch (loadout.py)
+    # what the copy is made of (weapon materials); left out: it keeps what it was made of (loadout.py)
+    material = serializers.ChoiceField(choices=SLUGS, allow_blank=True, required=False)
 
     def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         if "id" not in attrs:  # a PATCH is partial all the way down, so `required` alone doesn't catch it

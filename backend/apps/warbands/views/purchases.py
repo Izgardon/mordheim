@@ -42,7 +42,8 @@ def purchase_answer(warband: Any, item: Item, bought: Purchase) -> dict[str, Any
     line = bought.line
     unit = line.unit
     rows = unit_item_rows(line.target_type, unit) if unit is not None else []
-    stash = stash_entry(warband.id, item) if unit is None and line.group is None else None
+    material = str(line.data.get("material") or "")
+    stash = stash_entry(warband.id, item, material) if unit is None and line.group is None else None
     group = unit_detail(HENCHMEN_GROUP.key, line.group.pk) if line.group is not None else None
     units = load_warband_units([warband.id])[warband.id]
     # A group's whole payload: its loadout line changes its mounts, warnings, loadout totals and hire cost

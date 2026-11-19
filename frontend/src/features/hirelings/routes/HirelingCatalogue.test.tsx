@@ -59,6 +59,7 @@ const whoCan = {
   dramatis_personae: [],
   skill_group_ids: [],
   special_skill_ids: [],
+  materials: [],
 } as WhoCan;
 
 function renderPage() {

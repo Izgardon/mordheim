@@ -2,9 +2,10 @@ import { useState } from "react";
 
 import { Chip } from "@/components/ui/chip";
 
-import type { Item, ItemAvailability } from "../types/item-types";
-import { isCommon, priceLabel, rarityLabel, rolledPrice } from "../utils/item-prices";
+import type { Item, ItemAvailability, WeaponMaterial } from "../types/item-types";
+import { isCommon, materialPrice, priceLabel, rarityLabel } from "../utils/item-prices";
 import AddToBasket from "./AddToBasket";
+import MaterialChips from "./MaterialChips";
 import PriceFields from "./PriceFields";
 import RareSearch, { type StoreSearch } from "./RareSearch";
 import type { BasketLine, Recipient } from "./useStoreBasket";
@@ -22,6 +23,8 @@ type AcquireFormProps = {
   /** The unit the store was opened for: its button comes first, highlighted. */
   firstKey: string | null;
   searchers: { id: number; name: string; spent: boolean }[];
+  /** The weapon materials the server offers this warband (weapon materials); empty for anything else. */
+  materials: WeaponMaterial[];
   isMobile: boolean;
   onPick: (line: Omit<BasketLine, "id">) => void;
 };
@@ -37,11 +40,15 @@ const heroOf = (key: string | null) =>
  * adds the roll; Free, for an item found or given; for a rare item the search beside the price
  * (layout D), then one button per recipient with its total, which puts the item in the basket. A
  * rare item's buttons wait until it was found, or No search is ticked, or it is free.
+ *
+ * A weapon also picks what it is made of (weapon materials): the material's price is the server's
+ * and the rarity rolled is the material's, not the weapon's.
  */
 export default function AcquireForm(props: AcquireFormProps) {
   const { item, rows } = props;
   const [rowId, setRowId] = useState(rows[0]?.id ?? 0);
   const row = rows.find((entry) => entry.id === rowId) ?? rows[0];
+  const [material, setMaterial] = useState<WeaponMaterial | null>(null);
   const [price, setPrice] = useState(String(props.startPrice ?? row?.cost ?? 0));
   const [edited, setEdited] = useState(props.startPrice != null);
   const [rolled, setRolled] = useState<number | null>(null);
@@ -50,24 +57,33 @@ export default function AcquireForm(props: AcquireFormProps) {
   const [search, setSearch] = useState<StoreSearch | null>(null);
   const [noSearch, setNoSearch] = useState(false);
   if (!row) return null;
-  const rare = !isCommon(row.rarity);
+  // the material's rarity is the one rolled for, never the weapon's
+  const rarity = material ? material.rarity : row.rarity;
+  const rare = !isCommon(rarity);
   const each = Math.max(0, Math.trunc(Number(price) || 0));
   const needsRoll = Boolean(row.dice) && rolled === null && !edited && !free;
   const cleared = (!rare || free || noSearch || Boolean(search?.found)) && !needsRoll;
 
-  const pickRow = (next: ItemAvailability) => {
-    setRowId(next.id);
-    setPrice(String(next.cost ?? 0));
+  const restart = (next: ItemAvailability, made: WeaponMaterial | null) => {
+    setPrice(String(materialPrice(item, next, made)));
     setEdited(false);
     setRolled(null);
     setSearch(null);
     setNoSearch(false);
   };
+  const pickRow = (next: ItemAvailability) => {
+    setRowId(next.id);
+    restart(next, material);
+  };
+  const pickMaterial = (_slug: string, made: WeaponMaterial | null) => {
+    setMaterial(made);
+    restart(row, made);
+  };
   const take = (faces: number[]) => {
     const pips = faces.reduce((sum, value) => sum + value, 0);
     setRolled(pips);
     setEdited(false);
-    setPrice(String(rolledPrice(row, pips)));
+    setPrice(String(materialPrice(item, row, material, pips)));
   };
   const pick = (recipient: Recipient) =>
     props.onPick({
@@ -80,6 +96,8 @@ export default function AcquireForm(props: AcquireFormProps) {
       reason: free ? reason : "",
       diceRoll: rolled,
       rowPrice: !edited && !free && row.cost != null,
+      material: material?.slug ?? "",
+      materialName: material?.name ?? "",
     });
   const fields = (
     <PriceFields
@@ -112,6 +130,14 @@ export default function AcquireForm(props: AcquireFormProps) {
           ))}
         </div>
       ) : null}
+      {props.materials.length ? (
+        <MaterialChips
+          materials={props.materials}
+          priceOf={(made) => materialPrice(item, row, made, rolled)}
+          chosen={material?.slug ?? ""}
+          onChoose={pickMaterial}
+        />
+      ) : null}
       {row.label || row.note || row.cost_note ? (
         <p className="m-0 text-xs text-text2">
           {[row.label, row.cost_note, row.note].filter(Boolean).join(" · ")}
@@ -119,10 +145,10 @@ export default function AcquireForm(props: AcquireFormProps) {
       ) : null}
       {rare ? (
         <RareSearch
-          key={row.id}
+          key={`${row.id}:${material?.slug ?? ""}`}
           warbandId={props.warbandId}
           item={item}
-          rarity={row.rarity ?? 2}
+          rarity={rarity ?? 2}
           startBonus={props.startBonus ?? 0}
           searchers={props.searchers}
           firstHeroId={heroOf(props.firstKey)}

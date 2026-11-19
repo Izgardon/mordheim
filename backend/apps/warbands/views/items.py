@@ -11,7 +11,8 @@ from apps.warbands.serializers import (
     WarbandItemSummarySerializer,
     WarbandItemTransferSerializer,
 )
-from apps.warbands.services.item_moves import Outcome, sell_item, transfer_item
+from apps.warbands.serializers.warbands import WarbandItemMaterialSerializer
+from apps.warbands.services.item_moves import Outcome, apply_material, sell_item, transfer_item
 from apps.warbands.services.stash import stash_entries
 from apps.warbands.units.catalogue_scope import current_entry
 
@@ -53,3 +54,13 @@ class WarbandItemSaleView(WarbandScopedView):
         serializer = WarbandItemSaleSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return _item_response(sell_item, self.warband, serializer.validated_data, scoped=False)
+
+
+class WarbandItemMaterialView(WarbandScopedView):
+    """POST item-materials/: put a material on a weapon the warband already owns (weapon materials). The book allows
+    it for silver only, so the body's `material` is limited to those; the server charges what the material asks."""
+
+    def post(self, request: Request, warband_id: int) -> Response:
+        serializer = WarbandItemMaterialSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return _item_response(apply_material, self.warband, serializer.validated_data, scoped=True)

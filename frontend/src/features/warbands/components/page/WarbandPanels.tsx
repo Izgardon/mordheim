@@ -60,7 +60,7 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
     setSearchParams(params, { replace: true });
   };
   const sellFromStash = (item: WarbandItemSummary) =>
-    actions.sellItem(null, item.id, item.suggested_sale_price ?? 0);
+    actions.sellItem(null, item.id, item.suggested_sale_price ?? 0, 1, item.material ?? "");
   const current = loadoutFor
     ? (units.find((u) => u.kind === loadoutFor.kind && u.unit.id === loadoutFor.unit.id) ?? null)
     : null;
@@ -76,6 +76,7 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
         units={units}
         onMove={actions.moveItem}
         onSellFromStash={sellFromStash}
+        onMaterial={(from, item, material) => actions.materialItem(from, item.id, material)}
         onOpenStore={() => {
           props.setLoadoutFor(null);
           if (current) props.openStore(storeFor(current));
@@ -88,8 +89,11 @@ export default function WarbandPanels(props: WarbandPanelsProps) {
         onOpenChange={(open) => props.setPanel(open ? "stash" : null)}
         canEdit={props.canManageItems}
         units={units}
-        onMove={(itemId, to, quantity) => actions.moveItem(null, itemId, to, quantity)}
+        onMove={(itemId, to, quantity, material) =>
+          actions.moveItem(null, itemId, to, quantity, material)
+        }
         onSell={sellFromStash}
+        onMaterial={(item, material) => actions.materialItem(null, item.id, material)}
       />
       <StorePanel
         open={props.panel === "store"}

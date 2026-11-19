@@ -26,16 +26,34 @@ from .roster_support import (
 )
 from .test_roster_characterisation_shapes import SHAPES
 
-RESPONSE_KEYS = ["summary", "source", "target", "stash_item", "removed_stash_item_id"]
+# removed_stash_item_material: which of an item's stash rows went (weapon materials)
+RESPONSE_KEYS = [
+    "summary",
+    "source",
+    "target",
+    "stash_item",
+    "removed_stash_item_id",
+    "removed_stash_item_material",
+]
 
 # decision 3: half the item's current campaign price, rounded up (the Sword lists at 10, the Axe at 5 and 15)
+# material and material_name: weapon materials; every copy here is plain
 SWORD_SALE = {
     "current_price": 10,
     "suggested_sale_price": 5,
     "sale_price_basis": "campaign_price",
     "beast_kind": None,
+    "material": "",
+    "material_name": "Sword",
 }  # beast_kind: step 4
-AXE_SALE = {"current_price": 5, "suggested_sale_price": 3, "sale_price_basis": "campaign_price", "beast_kind": None}
+AXE_SALE = {
+    "current_price": 5,
+    "suggested_sale_price": 3,
+    "sale_price_basis": "campaign_price",
+    "beast_kind": None,
+    "material": "",
+    "material_name": "Axe",
+}
 # Heroes and hired swords hold one row per copy; a henchmen group holds a loadout, one row for every member, which moves
 # and sells whole (test_henchmen_loadouts.py), so the per-copy tests below leave groups out.
 COPY_KINDS = (HERO, HIRELING)

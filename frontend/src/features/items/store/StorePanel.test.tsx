@@ -75,6 +75,7 @@ const whoCan: WhoCan = {
   dramatis_personae: [],
   skill_group_ids: [],
   special_skill_ids: [],
+  materials: [],
 };
 
 function renderStore(heroes: ReturnType<typeof makeHero>[] = []) {

@@ -130,6 +130,15 @@ export type Item = CatalogueBadgeFields & {
   carriers?: number;
   /** A unit's copy of a mount or pet: switched on for the unit (it rides it, it keeps it). */
   companion?: boolean;
+  /** A unit's copy: what it is made of (weapon materials; "" plain) and what it is called. */
+  material?: string;
+  material_name?: string;
+  /**
+   * What each price row comes to for a weapon made of each material, the server's prices:
+   * `{row id: {slug: price}}`. Only a weapon has any, and a row with dice none (its price isn't
+   * known until the dice are rolled).
+   */
+  material_prices?: Record<string, Record<string, number>>;
   /** A unit's copy of an Animal item: its beast's kind (null for any other item). */
   beast_kind?: BeastKind | null;
   single_use?: boolean;
@@ -205,6 +214,26 @@ export type ItemOffer = {
 /** Whether a warband can usually hire a hired sword or dramatis persona, and why not. */
 export type HireAccess = { id: number; can_hire: boolean; reason: string };
 
+/**
+ * One weapon material as the warband sees it (weapon materials): the word in front of a weapon's
+ * name, the rarity the purchase rolls (never the weapon's), how it prices in the book's words, the
+ * book's rules, what silvering a weapon the warband already owns costs (`on_owned`, null: it is
+ * only chosen when the weapon is bought), and whether this warband may usually take it. The
+ * server words the reason; pages show it and never re-derive it.
+ */
+export type WeaponMaterial = {
+  slug: string;
+  name: string;
+  rarity: number;
+  price_note: string;
+  multiplier: number | null;
+  addition: number | null;
+  on_owned: number | null;
+  rules: { name: string; text: string }[];
+  can_take: boolean;
+  reason: string;
+};
+
 /** `GET warbands/<id>/who-can/`: what the warband can usually buy, hire and learn. */
 export type WhoCan = {
   items: ItemOffer[];
@@ -214,6 +243,8 @@ export type WhoCan = {
   skill_group_ids: number[];
   /** The skills of the groups that name its type or group. */
   special_skill_ids: number[];
+  /** The four weapon materials, in registry order. */
+  materials: WeaponMaterial[];
 };
 
 /** A race or a side a who-can list may name (`GET warband-groups/`). */

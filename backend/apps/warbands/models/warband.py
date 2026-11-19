@@ -4,6 +4,8 @@ from django.conf import settings
 from django.core.validators import RegexValidator
 from django.db import models
 
+from apps.items.materials import MAX_MATERIAL
+
 DEFAULT_DICE_COLOR = "#2e8555"
 HEX_COLOR_REGEX = r"^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$"
 HEX_COLOR_VALIDATOR = RegexValidator(
@@ -78,6 +80,8 @@ class WarbandItem(models.Model):
     warband = models.ForeignKey(Warband, related_name="warband_items", on_delete=models.CASCADE)
     item = models.ForeignKey("items.Item", related_name="warband_items", on_delete=models.RESTRICT)
     cost = models.PositiveIntegerField(null=True, blank=True)
+    # What the weapon is made of (apps/items/materials.py; blank: plain): a Gromril Sword is its own row
+    material = models.CharField(max_length=MAX_MATERIAL, blank=True, default="")
     quantity = models.PositiveIntegerField(default=1)
 
     class Meta:
@@ -85,7 +89,9 @@ class WarbandItem(models.Model):
         constraints = [
             # an unknown cost (NULL) is one cost too: copies whose cost isn't known share a row
             models.UniqueConstraint(
-                fields=["warband", "item", "cost"], name="unique_warband_item_cost", nulls_distinct=False
+                fields=["warband", "item", "cost", "material"],
+                name="unique_warband_item_cost",
+                nulls_distinct=False,
             )
         ]
 

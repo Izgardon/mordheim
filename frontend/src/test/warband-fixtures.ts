@@ -50,13 +50,21 @@ export const makeHenchmenGroup = (overrides: Partial<HenchmenGroup> = {}): Hench
   ...overrides,
 });
 
-export const makeStashItem = (overrides: Partial<WarbandItemSummary> = {}): WarbandItemSummary => ({
-  id: 1,
-  name: "Sword",
-  cost: 10,
-  quantity: 1,
-  ...overrides,
-});
+export const makeStashItem = (overrides: Partial<WarbandItemSummary> = {}): WarbandItemSummary => {
+  const row = { id: 1, name: "Sword", cost: 10, quantity: 1, material: "", ...overrides };
+  // what the row is called, the material in front of the name (weapon materials)
+  const name = row.material
+    ? `${MATERIAL_NAMES[row.material] ?? row.material} ${row.name}`
+    : row.name;
+  return { material_name: name, ...row };
+};
+
+const MATERIAL_NAMES: Record<string, string> = {
+  gromril: "Gromril",
+  ithilmar: "Ithilmar",
+  obsidian: "Obsidian",
+  silver: "Silver",
+};
 
 // ── Catalogue entries ──────────────────────────────────────────────────────
 
