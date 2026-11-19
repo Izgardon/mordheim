@@ -2,7 +2,8 @@
 
 Both read the same shape (apps/hirelings/seeding.py): a row's links resolve in the book, its own specials, spells
 and special skills are created there under its type ("Hired Sword - <name>", "Dramatis Persona - <name>"), the kit
-keeps its quantities and the costs their formulas, the race is matched by name and its text kept as the label. A
+keeps its quantities, its materials (the Runesmith Journeyman's gromril hammer: weapon materials) and the costs
+their formulas, the race is matched by name and its text kept as the label. A
 dramatis persona's terms add `stays` and `payment_note`. A run is all or nothing, and a second run updates in place.
 The committed data's full run is in apps/items/tests/test_catalogue_characterisation_seeding.py.
 """
@@ -55,6 +56,14 @@ SPECIALIST = {
         "warbands": [{"type": "dark-elf-corsairs"}],
     },
 }
+# the Runesmith Journeyman's shape (hired-swords.json): his hammer is gromril, the only weapon-material kit row in
+# the catalogue (weapon materials). "Gromril Hammer" is our Club, Mace or Hammer made of gromril.
+RUNESMITH = {
+    "name": "Runesmith Journeyman",
+    **STATS,
+    "equipment": [{"item": "Gromril Hammer", "quantity": 1}, "Heavy Armour"],
+    "hired_sword": {"hire_cost": 50, "rating": 20, "grade": "1a", "race": "Ogre"},
+}
 AENUR = {
     "name": "Aenur",
     **STATS,
@@ -66,6 +75,8 @@ class HirelingSeederTests(TestCase):
     ogre_race: Race
     sword: Item
     axe: Item
+    hammer: Item
+    heavy_armour: Item
     sprint: Skill
     fear: Special
 
@@ -74,6 +85,8 @@ class HirelingSeederTests(TestCase):
         cls.ogre_race = Race.objects.create(name="Ogre", **STATS)
         cls.sword = Item.objects.create(name="Sword", type="Weapon")
         cls.axe = Item.objects.create(name="Axe", type="Weapon")
+        cls.hammer = Item.objects.create(name="Club, Mace or Hammer", type="Weapon")
+        cls.heavy_armour = Item.objects.create(name="Heavy Armour", type="Armour")
         cls.sprint = Skill.objects.create(name="Sprint")
         cls.fear = Special.objects.create(name="Fear", type="Psychology")  # shared: seed_spells_and_special seeds it
 
@@ -99,6 +112,15 @@ class HirelingSeederTests(TestCase):
         self.assertFalse(Special.objects.filter(type="Hired Sword - Ogre Bodyguard").exists())
         # the warband types aren't seeded: his own fees, everyone may hire him, and his "unique to" is the note
         self.assertEqual((ogre.for_everyone, ogre.hire_note, ogre.warband_links.count()), (True, "Mercenaries only", 0))
+
+    def test_a_kit_line_the_book_makes_of_a_material_keeps_it(self):
+        # weapon materials: his gromril hammer used to seed as a plain hammer, so the gromril was lost
+        with data_file([RUNESMITH]) as path:
+            run("seed_hired_swords", json_paths=[path])
+
+        row = HiredSword.objects.get(name="Runesmith Journeyman", campaign__isnull=True)
+        lines = row.item_links.order_by("item__name").values_list("item_id", "quantity", "material")
+        self.assertEqual(list(lines), [(self.hammer.id, 1, "gromril"), (self.heavy_armour.id, 1, "")])
 
     def test_with_the_warband_types_seeded_the_import_says_who_may_hire_and_what_he_costs(self):
         # the items rebuild: mordheimer's list for the Ogre Bodyguard through the Resolver, its fees and its sentence

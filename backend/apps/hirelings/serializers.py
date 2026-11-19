@@ -18,6 +18,7 @@ from apps.core.catalogue.scope import (
     EquipmentInputSerializer,
     current_equipment,
 )
+from apps.items.materials import named
 from apps.items.serializers import MAX_COST, ItemSerializer
 from apps.races.models import Race
 from apps.skills.models import Skill
@@ -76,8 +77,16 @@ WRITE_FIELDS = (
 
 
 class EquipmentSerializer(serializers.Serializer):
+    """One kit line: the item, how many, and what the book makes it of (weapon materials; "" plain), with the name
+    the copy reads under, so the hire dialog calls the Runesmith Journeyman's hammer what his card will."""
+
     item = ItemSerializer(read_only=True)
     quantity = serializers.IntegerField(read_only=True)
+    material = serializers.CharField(read_only=True)
+    material_name = serializers.SerializerMethodField()
+
+    def get_material_name(self, link: Any) -> str:
+        return named(link.material, link.item.name)
 
 
 class HirelingProfileSerializer(serializers.ModelSerializer):

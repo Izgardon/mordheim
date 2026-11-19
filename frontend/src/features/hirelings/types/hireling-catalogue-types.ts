@@ -54,7 +54,16 @@ export type HirelingProfile = CatalogueBadgeFields & {
   hire_note: string;
 };
 
-export type HirelingEquipment = { item: Item; quantity: number };
+/**
+ * One kit line: the item, how many, and what the book makes it of (weapon materials; "" plain),
+ * with the name the copy reads under, "Gromril Club, Mace or Hammer".
+ */
+export type HirelingEquipment = {
+  item: Item;
+  quantity: number;
+  material?: string;
+  material_name?: string;
+};
 
 /** One entry (`GET <kind>/:id/` and every write's answer): the row and what it knows and carries. */
 export type HirelingProfileDetail = HirelingProfile & {

@@ -73,9 +73,10 @@ export default function HirelingDetail(props: HirelingDetailProps) {
       {full?.equipment.length ? (
         <DetailSection title="Carries">
           <TagList
-            tags={full.equipment.map(({ item, quantity }) => ({
-              label: quantity > 1 ? `${item.name} ×${quantity}` : item.name,
-            }))}
+            tags={full.equipment.map(({ item, quantity, material_name }) => {
+              const name = material_name || item.name;
+              return { label: quantity > 1 ? `${name} ×${quantity}` : name };
+            })}
           />
         </DetailSection>
       ) : null}
