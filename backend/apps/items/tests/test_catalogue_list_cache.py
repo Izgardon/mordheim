@@ -9,15 +9,18 @@ version and every campaign's).
 
 import io
 from typing import Any
+from unittest import mock
 
 from django.core.cache import caches
 from django.core.management import call_command
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
+from rest_framework.renderers import BrowsableAPIRenderer, JSONRenderer
 
 from apps.battles.services.injuries import InjuryOutcome, apply_stat_and_special
 from apps.campaigns.models import CampaignSettings, CampaignType
 from apps.core.catalogue.cache import book_version
+from apps.core.catalogue.views import CatalogueListView
 from apps.items.services import HALF_PRICE_ARMOUR_EFFECT_KEY
 from apps.races.models import Race
 from apps.warbands.tests.roster_support import HERO, make_unit
@@ -36,6 +39,12 @@ from .test_catalogue_characterisation_seeders import data_file, import_folder, i
 
 HEADERS = ("Content-Type", "ETag", "Cache-Control", "Vary", "Allow")
 LISTS = (*(kind.path for kind in KINDS), "item-rules")
+
+# Production serves JSON only (settings.py strips the browsable renderer with DEBUG off), so a test about what the
+# browsable API does has to put it back, or it asserts nothing wherever DEBUG is off -- as CI runs it. It is patched
+# onto the view, not the setting: DRF binds `renderer_classes` as a class attribute when it imports, so
+# override_settings(REST_FRAMEWORK=...) reloads api_settings without the view ever reading it again.
+browsable_api = mock.patch.object(CatalogueListView, "renderer_classes", [JSONRenderer, BrowsableAPIRenderer])
 
 
 @catalogue_cache_on()
@@ -74,6 +83,7 @@ class CachedListTests(CatalogueListCacheTestCase):
         self.assertEqual([row["name"] for row in weapons], ["Axe", "Sword"])
         self.assertEqual([row["name"] for row in searched], ["Axe"])
 
+    @browsable_api
     def test_the_browsable_api_is_never_served_from_the_cache(self):
         url = SKILLS.list_url(self.campaign)
         self.read(url)
@@ -82,6 +92,20 @@ class CachedListTests(CatalogueListCacheTestCase):
 
         self.assertTrue(html["Content-Type"].startswith("text/html"))
         self.assertEqual(self.read(url)[0]["Content-Type"], "application/json")
+
+    @browsable_api
+    def test_one_members_browsable_page_is_never_served_to_another(self):
+        """Why the browsable API isn't cached: its navbar prints the viewer's address, so a stored copy would show
+        Pia Olga's. The key's digest alone doesn't save us -- both ask for the same media type."""
+        url = SKILLS.list_url(self.campaign)
+        olgas = self.client.get(url, HTTP_ACCEPT="text/html")
+        self.assertContains(olgas, self.owner.username, status_code=200)
+
+        self.client.force_authenticate(user=self.player)
+        pias = self.client.get(url, HTTP_ACCEPT="text/html")
+
+        self.assertContains(pias, self.player.username, status_code=200)
+        self.assertNotContains(pias, self.owner.username)
 
     def test_another_campaigns_write_leaves_this_campaigns_lists_cached(self):
         self.read(SKILLS.list_url(self.campaign))
