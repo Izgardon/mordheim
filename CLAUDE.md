@@ -75,7 +75,17 @@ The full rules and the definition of done are in **`docs/ENGINEERING_RULES.md`**
   one account. **Who it reaches**: the linked identity, else an active account matching a **verified** email
   (username or email), else a new account with an opaque `sso-<random>` username (never from the address) and no
   usable password; an unverified email never matches, and its address is kept on the identity row only. A deleted
-  (inactive) account is never matched or resurrected, and deletion unlinks its providers. **No refusal is ever a
+  (inactive) account is never matched or resurrected, and deletion unlinks its providers. **One account per address,
+  and only SSO may combine** (William, 19 Nov 2026: "lets combine if someone's account is the same email as their
+  Google or discord"): a verified email proves the person controls it, so SSO onto a password account links, but
+  typing an address into the register form proves nothing, so registration never attaches to an SSO account. It
+  refuses, naming the provider(s) that account has (`serializers.email_taken_message`), matching every active
+  account's `email` and not just the usernames, with `users/0003`'s partial unique index on `LOWER(email)` where
+  `is_active AND email <> ''` behind it (so a race is refused too, caught as BUG-84's already is, and the accounts
+  that keep no address — deleted, and an unverified-email SSO one — collide with nothing). **Forgot password is for
+  password accounts only** (William, 19 Nov 2026): a reset looks up `username=email`, which an SSO account's opaque
+  username never matches, so a request for its address sends nothing and gives the same generic answer as an unknown
+  one; a password account that later linked a provider keeps its reset. There is no "add a password" flow. **No refusal is ever a
   401** (400, 403 or 503 with a code: `sso_invalid_state`, `sso_not_configured`, ...), because the frontend signs out
   on a 401. A provider with either credential unset is left out of `GET auth/sso/providers/`, which is what the
   sign-in card's buttons read. The CSP needs nothing: the trip to the provider is a top-level navigation, the marks

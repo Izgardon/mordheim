@@ -7,11 +7,34 @@ from rest_framework import serializers
 
 from .names import NAME_MAX_LENGTH
 from .services.accounts import EmailTaken, create_account
+from .services.sso_accounts import account_for_email, linked_provider_labels
 
 EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
 EMAIL_TAKEN = "User already exists"
 CURRENT_PASSWORD_WRONG = "That isn't your current password."
 CONTEXT_NAME_MAX_LENGTH = 120  # Campaign.name and Warband.name
+
+
+def joined_with_or(labels: list[str]) -> str:
+    """ "Google", "Google or Discord", "Google, Discord or Apple"."""
+    if len(labels) < 2:
+        return "".join(labels)
+    return f"{', '.join(labels[:-1])} or {labels[-1]}"
+
+
+def email_taken_message(held: Any) -> str:
+    """How registration refuses an address another active account already holds (William, 19 Nov 2026: one account
+    per address).
+
+    An account made through a provider has no password, and registration must never set one on it: typing an address
+    into a form proves nothing, so letting it through would hand the account to anyone who knows the address. The
+    refusal names the provider instead, which is the only thing that gets the person unstuck. That an address is
+    taken is already disclosed by the old wording, so naming the provider gives nothing new away.
+    """
+    if held.has_usable_password():
+        return EMAIL_TAKEN
+    labels = linked_provider_labels(held)
+    return f"You already have an account. Sign in with {joined_with_or(labels)}." if labels else EMAIL_TAKEN
 
 
 def password_problems(password: str, user: Any) -> list[str]:
@@ -34,10 +57,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         fields = ("id", "email", "password", "name")
 
     def validate_email(self, value):
+        """The address must be free of every active account, not only of the usernames: an account made through a
+        provider holds it in `email` under an opaque username, and used to sail past this check into a second
+        account for the same person (William, 19 Nov 2026)."""
         email = value.strip().lower()
-        user_model = get_user_model()
-        if user_model.objects.filter(username=email).exists():
-            raise serializers.ValidationError(EMAIL_TAKEN)
+        held = account_for_email(email)
+        if held is not None:
+            raise serializers.ValidationError(email_taken_message(held))
         return email
 
     def validate(self, attrs):
@@ -52,7 +78,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         try:
             return create_account(validated_data["email"], validated_data["name"], validated_data["password"])
         except EmailTaken:  # a simultaneous sign-up took the address after validate_email's check (BUG-84)
-            raise serializers.ValidationError({"email": [EMAIL_TAKEN]}) from None
+            held = account_for_email(validated_data["email"])
+            message = email_taken_message(held) if held is not None else EMAIL_TAKEN
+            raise serializers.ValidationError({"email": [message]}) from None
 
 
 class NameSerializer(serializers.Serializer):
