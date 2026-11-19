@@ -163,7 +163,8 @@ def _warnings(source: str, entry: Any, warband: Warband) -> list[dict[str, Any]]
 
 def _kit(unit: Hireling, entry: Any, campaign_id: int) -> bool:
     """One item row per copy of each kit line (at most MAX_KIT_QUANTITY), as the campaign's current item, with no
-    cost, the first mount switched on as its mount (the Freelancer's warhorse): two queries. Whether it rides.
+    cost, what the book makes it of (the Runesmith Journeyman's gromril hammer: weapon materials) and the first
+    mount switched on as its mount (the Freelancer's warhorse): two queries. Whether it rides.
 
     His kit leaves his armour save alone (services/armour.py moves it for every later equip and unequip): the save
     his entry states is the book's, which already counts the armour and the mount he arrives with. The Freelancer's
@@ -172,7 +173,7 @@ def _kit(unit: Hireling, entry: Any, campaign_id: int) -> bool:
     items = Item.objects.only("id", "campaign_id", "replaces_id").annotate(beast_kind=F("bestiary_entry__kind"))
     current = current_rows(items, [line.item_id for line in lines], campaign_id)
     rows = [
-        HirelingItem(hireling=unit, item_id=current[line.item_id].pk, cost=None)
+        HirelingItem(hireling=unit, item_id=current[line.item_id].pk, cost=None, material=line.material)
         for line in lines
         if line.item_id in current
         for _copy in range(min(line.quantity, MAX_KIT_QUANTITY))  # a row written before the bound can't flood it

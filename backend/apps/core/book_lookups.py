@@ -60,9 +60,7 @@ EQUIPMENT_NAME_ALIASES = {
     "longbow": "long bow",
     "shortbow": "short bow",
     "healing herb": "healing herbs",  # the catalogue import's name
-    # weapon materials (19 Nov 2026): gromril is what a weapon is made of, so the Runesmith Journeyman's gromril
-    # hammer is our hammer; nothing here carries a material, and his rules say what his is made of
-    "gromril hammer": "club, mace or hammer",
+    "gromril hammer": "club, mace or hammer",  # what it is made of is in EQUIPMENT_MATERIALS
     "hammer of sigmar": "sigmarite warhammer",
     "holy water": "blessed water",
     "wolf cloak": "wolfcloak",
@@ -72,6 +70,19 @@ EQUIPMENT_NAME_ALIASES = {
     "bo": "quarter staff",
     "rope and hook": "rope & hook",
 }
+
+# What the book makes a kit line of (weapon materials; `EQUIPMENT_NAME_ALIASES` stays a name-to-name map): the
+# Runesmith Journeyman's gromril hammer is our Club, Mace or Hammer made of gromril, and it is the only weapon-
+# material kit row in the catalogue. Every other material line (the Dwarf Treasure Hunter's, Aenur's, Bertha's,
+# Dalla's, Leonardo's, Okrinok's) names Gromril Armour or Ithilmar Armour, which are items of their own.
+EQUIPMENT_MATERIALS = {
+    "gromril hammer": "gromril",
+}
+
+
+def equipment_material(line):
+    """What the book makes an equipment line of: a material's slug, "" for a plain copy."""
+    return EQUIPMENT_MATERIALS.get(lookup_key(line.get("item", "")), "")
 
 
 def lookup_key(value):
@@ -129,14 +140,23 @@ def shared_names(
     return names, by_owner(data["apart"]), by_owner(data.get("own_names", []))
 
 
+@dataclass(frozen=True)
+class KitLine:
+    """One line of a seeded entry's kit: how many copies, and what the book makes it of (weapon materials; "" plain,
+    which every line but the Runesmith Journeyman's gromril hammer is)."""
+
+    quantity: int
+    material: str = ""
+
+
 @dataclass
 class EntryLinks:
-    """What a seeded entry links: its skills, specials and spells, and its equipment (item id -> quantity)."""
+    """What a seeded entry links: its skills, specials and spells, and its equipment (item id -> its kit line)."""
 
     skills: list[Skill]
     specials: list[Special]
     spells: list[Spell]
-    quantities: dict[int, int]
+    equipment: dict[int, KitLine]
 
 
 class BookLookups:
@@ -253,7 +273,8 @@ class BookLookups:
         return spell
 
     def equipment(self, line: dict[str, Any], owner: str) -> Item | None:
-        """The item an equipment line names: by name and type when it gives a type, else by name."""
+        """The item an equipment line names: by name and type when it gives a type, else by name (what the book
+        makes it of is `equipment_material`)."""
         key = lookup_key(line.get("item", ""))
         alias, item_type = EQUIPMENT_NAME_ALIASES.get(key, key), lookup_key(line.get("item_type", ""))
         found = (self.items.get((alias, item_type)) if item_type else None) or self.item_names.get(alias)
@@ -271,13 +292,14 @@ class BookLookups:
             skills=[skill for name in data.get("skills", []) if (skill := self.skill(name, owner))],
             specials=list(dict.fromkeys(specials)),
             spells=[spell for item in data.get("spells", []) if (spell := self.spell(item, owner, lore))],
-            quantities={},
+            equipment={},
         )
         for equipment in data.get("equipment", []):
             line = {"item": equipment, "quantity": 1} if isinstance(equipment, str) else equipment
             item = self.equipment(line, owner)
             if item:  # an item listed twice keeps its last quantity
-                links.quantities[item.id] = parse_int(line.get("quantity"), 1)
+                quantity = parse_int(line.get("quantity"), 1)
+                links.equipment[item.id] = KitLine(quantity, equipment_material(line))
         return links
 
     def _special(self, name: str, description: str, owner: str) -> Special:

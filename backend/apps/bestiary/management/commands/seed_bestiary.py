@@ -107,10 +107,11 @@ def _sync_links(entry: BestiaryEntry, data: dict[str, Any], lookups: BookLookups
     BestiaryEntrySpell.objects.bulk_create(
         [BestiaryEntrySpell(bestiary_entry=entry, spell=row) for row in links.spells]
     )
+    # a beast's kit is never a weapon, so its lines' material is always "" (weapon materials)
     BestiaryEntryItem.objects.bulk_create(
         [
-            BestiaryEntryItem(bestiary_entry=entry, item_id=pk, quantity=quantity)
-            for pk, quantity in links.quantities.items()
+            BestiaryEntryItem(bestiary_entry=entry, item_id=pk, quantity=line.quantity)
+            for pk, line in links.equipment.items()
         ]
     )
 

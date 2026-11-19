@@ -182,7 +182,10 @@ class _Run:
             "skill_ids": [skill.id for skill in links.skills],
             "special_ids": [special.id for special in links.specials],
             "spell_ids": [spell.id for spell in links.spells],
-            "item_entries": [{"item_id": pk, "quantity": quantity} for pk, quantity in links.quantities.items()],
+            "item_entries": [
+                {"item_id": pk, "quantity": line.quantity, "material": line.material}
+                for pk, line in links.equipment.items()
+            ],
             "warbands": imported["lines"] if imported else self.own_lines(terms, row.name),
         }
         write_links(row, resolved, replace=True)

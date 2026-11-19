@@ -759,6 +759,14 @@ class SeedAllTests(TestCase):
             self.assertEqual(client.get(f"/api/hired-swords/{hunter.id}/").status_code, 200)
         self.assertEqual(len(captured), 9)  # constant whatever the equipment
 
+    def test_the_runesmith_journeymans_hammer_is_gromril(self):
+        # weapon materials (19 Nov 2026): the only weapon-material kit row in the catalogue. His "Gromril Hammer" is
+        # our Club, Mace or Hammer made of gromril; before this it seeded as a plain hammer and the gromril was lost
+        runesmith = HiredSword.objects.get(name="Runesmith Journeyman", campaign__isnull=True)
+        lines = runesmith.item_links.exclude(material="").values_list("item__name", "material")
+
+        self.assertEqual(list(lines), [("Club, Mace or Hammer", "gromril")])
+
     def test_every_seeded_link_resolves(self):
         # BUG-54, CAT-TEST-13 (was pinned: 16 links unresolved; flipped in PR A: prefixes stripped, apostrophes
         # straightened, aliases added, Animal items cached as they are written; the Giant Spider's S0, set aside by

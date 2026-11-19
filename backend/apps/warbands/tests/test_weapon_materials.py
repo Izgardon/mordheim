@@ -9,11 +9,23 @@ put on a weapon the warband already owns, which is the only one the book lets a 
 from typing import Any
 
 from apps.campaigns.models import CampaignType
+from apps.hirelings.fees import make_fee
+from apps.hirelings.models import HiredSword
 from apps.items.materials import GROMRIL, ITHILMAR, MATERIALS, OBSIDIAN, SILVER
 from apps.items.models import Item, ItemAvailability
-from apps.warbands.models import LedgerAction, WarbandGroup, WarbandItem, WarbandTrade, WarbandType
+from apps.warbands.models import (
+    Hireling,
+    LedgerAction,
+    WarbandGroup,
+    WarbandItem,
+    WarbandTrade,
+    WarbandType,
+)
 
-from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit
+from .roster_support import HENCHMEN, HERO, HIRELING, RosterTestCase, make_unit, unit_url
+
+HIRE_STATS = {"movement": 4, "weapon_skill": 4, "ballistic_skill": 3, "strength": 3, "toughness": 4, "wounds": 1}
+HIRE_STATS |= {"initiative": 2, "attacks": 1, "leadership": 9}
 
 
 class MaterialRegistryTests(RosterTestCase):
@@ -329,3 +341,38 @@ class MaterialMovesTests(RosterTestCase):
         )
 
         self.assertEqual(hero.hero_items.get().material, "")
+
+
+class MaterialInAKitTests(RosterTestCase):
+    """A hireling's kit line keeps what the book makes it of, and hiring copies it onto the owned row."""
+
+    def setUp(self) -> None:
+        super().setUp()
+        self.client.force_authenticate(user=self.player)
+        self.runesmith = HiredSword.objects.create(
+            name="Runesmith Journeyman", hire_fee=make_fee(gold=50), **HIRE_STATS
+        )
+        self.runesmith.item_links.create(item=self.sword, quantity=1, material="gromril")
+        self.runesmith.item_links.create(item=self.axe, quantity=1)
+
+    def test_hiring_him_puts_the_material_on_the_copy_he_carries(self) -> None:
+        response = self.client.post(
+            unit_url(HIRELING, self.warband.id, suffix="hire/"),
+            {"source": "hired_sword", "id": self.runesmith.id},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, 201, response.data)
+        hireling = Hireling.objects.get(warband=self.warband)
+        carried = hireling.hireling_items.order_by("item__name").values_list("item__name", "material")
+        self.assertEqual(list(carried), [("Axe", ""), ("Sword", "gromril")])
+        copies = {row["name"]: row["material_name"] for row in response.data["items"]}
+        self.assertEqual(copies["Sword"], "Gromril Sword")
+
+    def test_the_catalogue_entry_says_what_his_kit_is_made_of(self) -> None:
+        url = f"/api/hired-swords/{self.runesmith.id}/?campaign_id={self.campaign.id}"
+        response = self.client.get(url)
+
+        kit = {line["item"]["name"]: (line["material"], line["material_name"]) for line in response.data["equipment"]}
+        self.assertEqual(kit["Sword"], ("gromril", "Gromril Sword"))
+        self.assertEqual(kit["Axe"], ("", "Axe"))
