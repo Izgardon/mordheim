@@ -527,6 +527,26 @@
         }
       ],
       "why": "William, 12 Nov 2026: the Mazzalupo's Bearcloak is our Wolfcloak, \"reworded away from the wolf\". Ours named the wolf, the Hero and Middenheim, where the Mazzalupo's names a bear and a Sheepherder; the numbers, the Strength test and the +1 save against shooting are the same in both, so one wording serves them both"
+    },
+    "Dark Elf Blade": {
+      "_why": "William, 20 Nov 2026: 'It needs another rule saying only swords or daggers are allowed.' mordheimer's Druchii page says any close-combat weapon may carry a Darksteel blade, so the third rule is his ruling, not the page's. The first two are the page's own, kept word for word.",
+      "rules": [
+        {
+          "name": "Critical Damage",
+          "summary": "+1 to critical hit results",
+          "text": "Dark Elf Blades inflict serious damage on their opponents. When rolling on the critical hit chart a Dark Elf Blade will add +1 to the result."
+        },
+        {
+          "name": "Wicked Edge",
+          "summary": "2-4 on injury table is Stunned",
+          "text": "Dark Elf Blades are set with sharp protrusions and serrated edges which inflict serious damage on an opponent. A roll of 2-4 on the injury table is a Stunned result."
+        },
+        {
+          "name": "Swords and daggers only",
+          "summary": "Only a sword or a dagger may have one",
+          "text": "Only a sword or a dagger may be made with one of these blades."
+        }
+      ]
     }
   },
   "item_notes": {

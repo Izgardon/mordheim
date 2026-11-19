@@ -5337,6 +5337,12 @@
         "summary": "2-4 on injury table is Stunned",
         "text": "Dark Elf Blades are set with sharp protrusions and serrated edges which inflict serious damage on an opponent. A roll of 2-4 on the injury table is a Stunned result.",
         "tables": []
+      },
+      {
+        "name": "Swords and daggers only",
+        "summary": "Only a sword or a dagger may have one",
+        "text": "Only a sword or a dagger may be made with one of these blades.",
+        "tables": []
       }
     ],
     "availabilities": [
