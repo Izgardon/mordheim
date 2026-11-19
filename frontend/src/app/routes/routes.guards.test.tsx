@@ -6,7 +6,7 @@
 import { act, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { loginAnswer, RAIDER, storeSession } from "@/test/auth-fixtures";
+import { loginAnswer, RAIDER, storeSession, withoutSsoProviders } from "@/test/auth-fixtures";
 import { cleanupApps, renderApp } from "@/test/app-routes";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
@@ -59,7 +59,7 @@ describe("signed out", () => {
       from: { pathname: "/campaigns", search: "", hash: "" },
     });
     expect(screen.queryByText(SESSION_ENDED)).toBeNull();
-    expect(fakeApi.calls()).toEqual([]);
+    expect(withoutSsoProviders(fakeApi.calls())).toEqual([]);
   });
 
   it("a deep link comes back to the page it asked for after sign-in (AUTH-TEST-28, AUTH-UX-02)", async () => {
@@ -78,7 +78,7 @@ describe("an unknown URL", () => {
 
     expect(await screen.findByRole("heading", { name: "Lost in the ruins" })).toBeInTheDocument();
     expect(app.location().pathname).toBe("/nope");
-    expect(fakeApi.calls()).toEqual([]);
+    expect(withoutSsoProviders(fakeApi.calls())).toEqual([]);
 
     await setupUser().click(screen.getByRole("link", { name: "Back to the chronicle" }));
 
@@ -107,6 +107,15 @@ describe("an unknown URL", () => {
   });
 });
 
+/** What each cached query is keyed on, as plain strings. */
+const cachedKeys = (queryClient: {
+  getQueryCache: () => { getAll: () => { queryKey: unknown }[] };
+}) =>
+  queryClient
+    .getQueryCache()
+    .getAll()
+    .map((query) => String(query.queryKey));
+
 describe("a session that ends", () => {
   it("mid-visit lands on / saying so, and signing in again comes back to the page (AUTH-UX-02, AUTH-TWEAK-04)", async () => {
     storeSession();
@@ -125,7 +134,8 @@ describe("a session that ends", () => {
       },
     });
     expect(screen.getByRole("status")).toHaveTextContent(SESSION_ENDED);
-    expect(app.queryClient.getQueryCache().getAll()).toHaveLength(0);
+    // Everything of the previous user is gone; the sign-in card's provider read is all that is left.
+    expect(cachedKeys(app.queryClient)).toEqual(["sso-providers"]);
 
     await signInOnLanding();
 
@@ -145,7 +155,7 @@ describe("a session that ends", () => {
     expect(app.location()).toMatchObject({ pathname: "/", state: null });
     expect(screen.queryByText(SESSION_ENDED)).toBeNull();
     expect(localStorage.length).toBe(0);
-    expect(fakeApi.calls()).toEqual([]);
+    expect(withoutSsoProviders(fakeApi.calls())).toEqual([]);
   });
 });
 

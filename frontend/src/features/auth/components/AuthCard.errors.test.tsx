@@ -11,7 +11,7 @@ import { PASSWORD_HINT } from "@/features/auth/components/PasswordInput";
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError, SERVER_UNAVAILABLE_MESSAGE } from "@/lib/api-client";
 import { getErrorMessage, SERVER_ERROR_MESSAGE } from "@/lib/get-error-message";
-import { RAIDER } from "@/test/auth-fixtures";
+import { RAIDER, withoutSsoProviders } from "@/test/auth-fixtures";
 import { fakeFetch, json } from "@/test/fake-fetch";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -42,6 +42,11 @@ function renderCard() {
 
 const submitButton = () =>
   screen.getAllByRole("button").find((button) => button.getAttribute("type") === "submit")!;
+
+/** The card reads which social providers are set up on mount; these tests are about the forms. */
+const cardCalls = () => withoutSsoProviders(fakeFetch.calls());
+const registerBody = () =>
+  fakeFetch.requests().find((request) => request.path === "/auth/register/")?.body;
 
 async function signIn() {
   const user = setupUser();
@@ -137,7 +142,7 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
       "This field may not be blank."
     );
     expect(screen.queryByText(/Name:/)).toBeNull();
-    expect(fakeFetch.requests()[0].body).toMatchObject({ name: "   " });
+    expect(registerBody()).toMatchObject({ name: "   " });
   });
 
   it("shows the server's new password rule, a password too like the email, under the password (AUTH-CQ-04, BUG-171)", async () => {
@@ -185,7 +190,7 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     await signIn();
 
     expect(await screen.findByRole("alert")).toHaveTextContent("Invalid credentials");
-    expect(fakeFetch.calls()).toEqual(["POST /auth/login/"]);
+    expect(cardCalls()).toEqual(["POST /auth/login/"]);
     expect(localStorage.length).toBe(0);
   });
 });

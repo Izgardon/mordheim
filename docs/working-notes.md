@@ -44,6 +44,37 @@ A push to `main` deploys both halves. Then check:
 - after a wipe, prod's counts match a fresh local seed (templates, races, skills, items, specials, bestiary), read
   with the Neon connector.
 
+## Social sign-in (Google and Discord)
+
+Players can sign in without a password (`apps/users/sso/`, `services/sso.py`): OAuth 2.0 Authorization Code with
+PKCE, the code exchanged **server-side**, so no client secret ever reaches a browser. A provider whose credentials
+are unset is left out of `GET auth/sso/providers/`, so the sign-in page shows only what is set up.
+
+**Render environment variables** (the backend; Vercel needs none):
+- `FRONTEND_URL` = `https://mordheim-eight.vercel.app` — **required**: with `DJANGO_DEBUG` off the backend refuses
+  to start without an `https://` value, because both the reset links and the OAuth redirect URI are built from it.
+- `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`
+- `DISCORD_OAUTH_CLIENT_ID`, `DISCORD_OAUTH_CLIENT_SECRET`
+
+**The redirect URIs to register** (the provider sends the player back to the *frontend*, which posts the code to the
+backend, so no token ever rides in a URL):
+- `https://mordheim-eight.vercel.app/auth/callback/google` and `.../auth/callback/discord`
+- `http://localhost:5173/auth/callback/google` and `.../auth/callback/discord` (local)
+
+**Google Cloud Console**: APIs & Services → OAuth consent screen (External, the app's name, support email, scopes
+`openid`, `email`, `profile`), then Credentials → Create credentials → OAuth client ID → Web application, with the
+four redirect URIs above under "Authorised redirect URIs" and `https://mordheim-eight.vercel.app` plus
+`http://localhost:5173` under "Authorised JavaScript origins". While the consent screen is in Testing, only the
+accounts listed under Test users can sign in.
+
+**Discord developer portal**: New Application → OAuth2. Add the same redirects under Redirects, and reset the client
+secret to read it once. Scopes `identify` and `email` are requested by the app; nothing to tick.
+
+**Accounts.** A provider's **verified** email matching an active account links to it, so a player who signed up with
+a password keeps one account. An email a provider does not call verified never matches: that sign-in gets a new
+account, and the untrusted address is kept on the identity row only. A deleted account (inactive, no email) is never
+matched or resurrected, and deleting an account unlinks its providers.
+
 ## The content plan
 
 - **Sources, in order:** mordheimer.net first (a Docusaurus site whose JS chunks embed its JSON: warbands, items,

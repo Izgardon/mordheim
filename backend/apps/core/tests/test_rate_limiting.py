@@ -34,6 +34,8 @@ class RateLimitingApiTests(RateLimitTestCase):
                 "auth_password_reset_email_hour": "3/hour",
                 "auth_password_reset_confirm_hour": "20/hour",
                 "auth_refresh_minute": "60/min",
+                "auth_sso_start_minute": "20/min",
+                "auth_sso_callback_minute": "20/min",
                 "auth_account_user": "5/min",
                 "feedback_report_user": "3/min",
                 "feedback_report_ip": "10/min",

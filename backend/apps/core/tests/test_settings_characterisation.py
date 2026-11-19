@@ -31,6 +31,9 @@ UNSET = (
     "SECURE_HSTS_SECONDS",
 )
 LONG_KEY = "a-unique-production-key-for-the-settings-tests-0123456789"  # 57 characters
+# Production refuses a FRONTEND_URL left on the local default, so every DEBUG-off run needs a real one; a test
+# about that guard passes its own (test_settings_guards.py).
+PROD_FRONTEND_URL = "https://mordheim.example.org"
 SHORT_KEY = "short-unique-key"
 NO_DOTENV = "import dotenv; dotenv.load_dotenv = lambda *args, **kwargs: False\n"
 READ_SETTINGS = NO_DOTENV + (
@@ -65,6 +68,7 @@ CHECK_DEPLOY = NO_DOTENV + (
 
 def run(code: str, **env: str) -> subprocess.CompletedProcess[str]:
     base = {key: value for key, value in os.environ.items() if key not in UNSET}
+    base["FRONTEND_URL"] = PROD_FRONTEND_URL
     return subprocess.run(
         [sys.executable, "-c", code], cwd=BACKEND_DIR, env={**base, **env}, capture_output=True, text=True, timeout=60
     )
@@ -96,7 +100,7 @@ class ProductionStartupTests(SimpleTestCase):
 
         self.assertEqual(values["NUM_PROXIES"], 1)
         email = {name: values[name] for name in ("FRONTEND_URL", "DEFAULT_FROM_EMAIL", "RESEND_API_KEY", "PASSWORD_RESET_TIMEOUT")}  # fmt: skip
-        self.assertEqual(email, {"FRONTEND_URL": "http://localhost:5173", "DEFAULT_FROM_EMAIL": "no-reply@example.com", "RESEND_API_KEY": "", "PASSWORD_RESET_TIMEOUT": 3600})  # fmt: skip
+        self.assertEqual(email, {"FRONTEND_URL": PROD_FRONTEND_URL, "DEFAULT_FROM_EMAIL": "no-reply@example.com", "RESEND_API_KEY": "", "PASSWORD_RESET_TIMEOUT": 3600})  # fmt: skip
         hardening = [values[name] for name in ("SECURE_PROXY_SSL_HEADER", "SECURE_HSTS_SECONDS", "SESSION_COOKIE_SECURE", "CSRF_COOKIE_SECURE")]  # fmt: skip
         self.assertEqual(hardening, [["HTTP_X_FORWARDED_PROTO", "https"], 60 * 60 * 24 * 30, True, True])
 
@@ -124,13 +128,12 @@ class ProductionStartupTests(SimpleTestCase):
     def test_with_a_resend_key_production_needs_a_real_link_and_sender(self):
         # BUG-56 (was pinned: a key alone started with the localhost link and the example.com sender; flipped in PR A)
         key = {"DJANGO_DEBUG": "0", "DJANGO_SECRET_KEY": LONG_KEY, "RESEND_API_KEY": "re_not_a_real_key"}
-        real = {"FRONTEND_URL": "https://mordheim.example.org", "DEFAULT_FROM_EMAIL": "Mordheim <no-reply@mordheim.example.org>"}  # fmt: skip
-        url_message = "FRONTEND_URL must be the site's https:// address when RESEND_API_KEY is set."
+        real = {"FRONTEND_URL": PROD_FRONTEND_URL, "DEFAULT_FROM_EMAIL": "Mordheim <no-reply@mordheim.example.org>"}
         sender_message = "DEFAULT_FROM_EMAIL must be an address on Resend's verified domain when RESEND_API_KEY is set."
+        # FRONTEND_URL itself is now refused with DEBUG off whether email is on or not (SSO's redirect URI is built
+        # from it too): test_settings_guards.py keeps that guard.
         refused = {
-            "the key alone": ({}, url_message),
-            "a plain-http link": ({**real, "FRONTEND_URL": "http://mordheim.example.org"}, url_message),
-            "the placeholder sender": ({"FRONTEND_URL": real["FRONTEND_URL"]}, sender_message),
+            "the placeholder sender": ({}, sender_message),
             "a sender at example.com": ({**real, "DEFAULT_FROM_EMAIL": "Mordheim <bot@example.com>"}, sender_message),
         }
         for label, (env, message) in refused.items():
@@ -142,8 +145,8 @@ class ProductionStartupTests(SimpleTestCase):
 
         values = load_settings(**key, **real)
         self.assertEqual((values["FRONTEND_URL"], values["DEFAULT_FROM_EMAIL"]), (real["FRONTEND_URL"], real["DEFAULT_FROM_EMAIL"]))  # fmt: skip
-        local = load_settings(**{**key, "DJANGO_DEBUG": "1"})  # dev keeps its fallbacks
-        self.assertEqual(local["FRONTEND_URL"], "http://localhost:5173")
+        local = load_settings(**{**key, "DJANGO_DEBUG": "1"}, FRONTEND_URL="http://localhost:5173")
+        self.assertEqual(local["FRONTEND_URL"], "http://localhost:5173")  # dev keeps its fallbacks
 
     def test_an_explicit_proxy_count_always_wins_and_dev_keeps_drfs_default_when_unset(self):
         # SEC-04 (was: read only when set, else absent in production too)

@@ -13,7 +13,7 @@ import { AuthContext, type AuthContextValue } from "./auth-context";
 import { loadSessionProfile, revalidateSessionUser } from "../utils/fetch-profile";
 
 // types
-import type { LoginCredentials, RegisterPayload } from "../types/auth-types";
+import type { AuthResponse, LoginCredentials, RegisterPayload } from "../types/auth-types";
 
 export { useAuthContext } from "./auth-context";
 
@@ -95,6 +95,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   }, []);
 
+  // A social sign-in's answer has the same shape, so it starts a session the same way; the
+  // exchange itself is the callback route's (features/auth/hooks/use-sso.ts).
+  const adoptSession = useCallback((data: AuthResponse) => {
+    session.start(data, data.user);
+  }, []);
+
   const signOut = useCallback(() => {
     session.signOut();
     dropUserData();
@@ -112,9 +118,21 @@ export function AuthProvider({ children }: PropsWithChildren) {
       retryConnection,
       signIn,
       signUp,
+      adoptSession,
       signOut,
     }),
-    [status, token, user, isSubmitting, ended, retryConnection, signIn, signUp, signOut]
+    [
+      status,
+      token,
+      user,
+      isSubmitting,
+      ended,
+      retryConnection,
+      signIn,
+      signUp,
+      adoptSession,
+      signOut,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

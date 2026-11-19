@@ -12,7 +12,9 @@ import {
   NAMELESS,
   RAIDER,
   registerAnswer,
+  SSO_PROVIDERS,
   storeSession,
+  withoutSsoProviders,
 } from "@/test/auth-fixtures";
 import { cleanupApps, renderApp } from "@/test/app-routes";
 import { fakeApi } from "@/test/fake-api";
@@ -31,12 +33,14 @@ const submitButton = () =>
 
 /** Every request so far, sorted, once the signed-in shell has settled. */
 async function settledCalls(expectedCount: number) {
-  await waitFor(() => expect(fakeApi.calls()).toHaveLength(expectedCount));
+  // The sign-in card's provider read is left out: these counts are about the app's own requests.
+  const appCalls = () => withoutSsoProviders(fakeApi.calls());
+  await waitFor(() => expect(appCalls()).toHaveLength(expectedCount));
   // Anything a re-render would add has had its chance by now.
   await act(async () => {
     await new Promise((resolve) => setTimeout(resolve, 20));
   });
-  return [...fakeApi.calls()].sort();
+  return appCalls().sort();
 }
 
 beforeEach(() => {
@@ -53,12 +57,13 @@ afterEach(() => {
 
 describe("a cold start signed out", () => {
   it.each(["/", "/campaigns", "/campaigns/1/settings"])(
-    "sends no request at all from %s, and listens on no channel",
+    "sends only the sign-in card's provider read from %s, and listens on no channel",
     async (path) => {
       renderApp(path);
 
       await screen.findByRole("heading", { name: "Mordheim Chronicler" });
-      expect(fakeApi.calls()).toEqual([]);
+      // Nothing of the app's own: the one request is which social providers are set up.
+      expect(fakeApi.calls()).toEqual([SSO_PROVIDERS]);
       expect(fakeRealtime.channels()).toEqual([]);
     }
   );
@@ -91,7 +96,7 @@ describe("a cold start signed in", () => {
     fakeApi.on("GET /auth/me/", () => me.promise);
     renderApp("/campaigns");
 
-    await waitFor(() => expect(fakeApi.calls()).toEqual(["GET /auth/me/"]));
+    await waitFor(() => expect(withoutSsoProviders(fakeApi.calls())).toEqual(["GET /auth/me/"]));
     expect(screen.getByRole("status", { name: "Loading" })).toBeInTheDocument();
 
     await act(async () => me.resolve(RAIDER));
@@ -102,7 +107,7 @@ describe("a cold start signed in", () => {
       "GET /campaigns/",
       "GET /notifications/",
     ]);
-    expect(fakeApi.calls()[0]).toBe("GET /auth/me/");
+    expect(withoutSsoProviders(fakeApi.calls())[0]).toBe("GET /auth/me/");
   });
 
   it("from / reads the same three, on its way to /campaigns", async () => {

@@ -8,7 +8,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { apiRequest } from "@/lib/api-client";
 import { cleanupApps, renderApp } from "@/test/app-routes";
-import { RAIDER, storeSession } from "@/test/auth-fixtures";
+import { RAIDER, storeSession, withoutSsoProviders } from "@/test/auth-fixtures";
 import { fakeFetch, json } from "@/test/fake-fetch";
 import { fakeRealtime } from "@/test/fake-realtime";
 
@@ -52,7 +52,10 @@ describe("a session the server has ended (session_ended)", () => {
       pathname: "/",
       state: { from: { pathname: "/campaigns" }, reason: "session-ended" },
     });
-    expect(fakeFetch.calls()).toEqual(["GET /auth/me/", "POST /auth/refresh/"]);
+    expect(withoutSsoProviders(fakeFetch.calls())).toEqual([
+      "GET /auth/me/",
+      "POST /auth/refresh/",
+    ]);
     expect(localStorage.length).toBe(0);
   });
 
@@ -90,7 +93,12 @@ describe("a session the server has ended (session_ended)", () => {
       from: { pathname: "/campaigns" },
       reason: "session-ended",
     });
-    expect(app.queryClient.getQueryCache().getAll()).toHaveLength(0);
+    // The previous user's cache is gone; the sign-in card's provider read is all that is left.
+    const cachedKeys = app.queryClient
+      .getQueryCache()
+      .getAll()
+      .map((query) => String(query.queryKey));
+    expect(cachedKeys).toEqual(["sso-providers"]);
     expect(localStorage.length).toBe(0);
   });
 });

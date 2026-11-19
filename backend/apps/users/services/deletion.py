@@ -29,6 +29,7 @@ from apps.trades.models import TradeRequest
 from apps.trades.services.timing import OPEN_STATUSES as OPEN_TRADE_STATUSES
 from apps.warbands.models import Warband
 
+from ..models import SocialIdentity
 from ..names import FORMER_PLAYER
 from .tokens import end_all_sessions
 
@@ -123,6 +124,9 @@ def delete_account(user: Any) -> None:
 def _anonymise(user: Any) -> None:
     user.first_name, user.last_name = FORMER_PLAYER, ""
     user.username, user.email = f"deleted-{user.pk}", ""  # the address is free to sign up again
+    # Social sign-ins are unlinked, so a Google or Discord account that signed in here starts a fresh account rather
+    # than meeting this retired row (`services.sso_accounts`).
+    SocialIdentity.objects.filter(user_id=user.pk).delete()
     user.set_unusable_password()
     user.is_active = False
     user.save(update_fields=["first_name", "last_name", "username", "email", "password", "is_active"])

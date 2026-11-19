@@ -11,7 +11,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PASSWORD_HINT } from "@/features/auth/components/PasswordInput";
 import { AuthProvider } from "@/features/auth/stores/auth-store";
 import { ApiError } from "@/lib/api-client";
-import { deferred, loginAnswer, RAIDER, registerAnswer, storeSession } from "@/test/auth-fixtures";
+import {
+  deferred,
+  loginAnswer,
+  RAIDER,
+  registerAnswer,
+  storeSession,
+  withoutSsoProviders,
+} from "@/test/auth-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { createQueryWrapper } from "@/test/query-test-utils";
 import { setupUser } from "@/test/user-event";
@@ -41,6 +48,9 @@ function renderCard() {
     { wrapper: createQueryWrapper() }
   );
 }
+
+/** The card reads which social providers are set up on mount; these tests are about the forms. */
+const cardCalls = () => withoutSsoProviders(fakeApi.calls());
 
 /** The form's submit button (the mode switch has a "Sign in" button too). */
 const submitButton = () =>
@@ -97,7 +107,7 @@ describe("signing in", () => {
     renderCard();
 
     expect(await screen.findByText("Campaigns page")).toBeInTheDocument();
-    expect(fakeApi.calls()).toEqual(["GET /auth/me/"]);
+    expect(cardCalls()).toEqual(["GET /auth/me/"]);
   });
 });
 
@@ -142,7 +152,7 @@ describe("creating an account", () => {
     await user.type(screen.getByLabelText("Password"), "wyrdstone");
     await user.click(submitButton());
 
-    expect(fakeApi.calls()).toEqual([]);
+    expect(cardCalls()).toEqual([]);
     expect(screen.getByLabelText("Display name")).toBeInvalid();
   });
 
@@ -210,7 +220,7 @@ describe("the inline forgot-password form", () => {
     await user.type(screen.getByLabelText("Email"), RAIDER.email);
     await user.click(screen.getByRole("button", { name: "Send reset link" }));
 
-    expect(fakeApi.calls()).toEqual(["POST /auth/password-reset/"]);
+    expect(cardCalls()).toEqual(["POST /auth/password-reset/"]);
     expect(fakeApi.bodyOf("POST /auth/password-reset/")).toEqual({ email: RAIDER.email });
   });
 

@@ -4,6 +4,7 @@ import { AuthModeSwitch } from "./auth-card/AuthModeSwitch";
 import { ForgotForm } from "./auth-card/ForgotForm";
 import { LoginForm } from "./auth-card/LoginForm";
 import { RegisterForm } from "./auth-card/RegisterForm";
+import { SsoButtons } from "./auth-card/SsoButtons";
 
 // hooks
 import { useAuthCard } from "../hooks/use-auth-card";
@@ -40,9 +41,20 @@ export default function AuthCard() {
             onBack={() => card.setMode("login")}
           />
         ) : card.mode === "register" ? (
-          <RegisterForm form={card.register} error={card.error} />
+          <>
+            <RegisterForm form={card.register} error={card.error} />
+            {/* One button for both: a provider account reaches an account or makes one. */}
+            <SsoButtons action="Continue" />
+          </>
         ) : (
-          <LoginForm form={card.login} error={card.error} onForgot={() => card.setMode("forgot")} />
+          <>
+            <LoginForm
+              form={card.login}
+              error={card.error}
+              onForgot={() => card.setMode("forgot")}
+            />
+            <SsoButtons action="Sign in" />
+          </>
         )}
       </div>
     </>
