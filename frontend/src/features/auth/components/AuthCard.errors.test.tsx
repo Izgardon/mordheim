@@ -184,6 +184,19 @@ describe("refusals on the sign-in card (AUTH-TEST-26)", () => {
     expect(screen.getByLabelText("Email")).toHaveAccessibleDescription("User already exists");
   });
 
+  it("names the provider when the address already has an SSO account, under the email (William, 19 Nov 2026)", async () => {
+    // Registration can't attach itself to an account made through a provider, so the server's refusal says which
+    // button to press instead; it rides the same field-error path as "User already exists".
+    const refusal = "You already have an account. Sign in with Google or Discord.";
+    fakeFetch.on("POST /auth/register/", json(400, { email: [refusal] }));
+
+    await signUp();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(refusal);
+    expect(screen.getByLabelText("Email")).toHaveAccessibleDescription(refusal);
+    expect(screen.queryByText(/Email:/)).toBeNull();
+  });
+
   it("shows login's 'Invalid credentials' and stores no session", async () => {
     fakeFetch.on("POST /auth/login/", json(400, { non_field_errors: ["Invalid credentials"] }));
 

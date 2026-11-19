@@ -32,10 +32,12 @@ from typing import Any
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError, transaction
 from django.db.models import Q
+from django.db.models.functions import Lower
 
 from ..models import SocialIdentity, UserAccount
 from ..names import NAME_MAX_LENGTH
 from ..sso.base import ACCOUNT_UNAVAILABLE, SsoError, SsoProfile
+from ..sso.registry import PROVIDERS
 
 # How the account was reached, for the API's answer and the tests.
 BY_IDENTITY = "identity"
@@ -87,14 +89,30 @@ def _linked_user(provider: str, subject: str) -> SocialIdentity | None:
 
 
 def account_for_email(email: str) -> Any:
-    """The one active account that email signs in to, or None. Inactive (deleted) rows are never matched."""
+    """The one active account the (lowercased) `email` signs in to, or None.
+
+    Matched on the username, which registration stores as the lowercased email, and on the email column itself, so
+    an account made through a provider is found too. Inactive (deleted) rows are never matched: one holds a blank
+    email anyway, and resurrecting it is exactly what must not happen.
+
+    `Lower("email")`, not `iexact`: it is the expression the partial unique index is on (`users/0003`), so this is
+    the one lookup the database can answer from that index, and it compares what the index compares.
+    """
     return (
         get_user_model()
-        .objects.select_related("account")
-        .filter(Q(username=email) | Q(email__iexact=email), is_active=True)
+        .objects.annotate(lowered_email=Lower("email"))
+        .select_related("account")
+        .filter(Q(username=email) | Q(lowered_email=email), is_active=True)
         .order_by("id")
         .first()
     )
+
+
+def linked_provider_labels(user: Any) -> list[str]:
+    """The providers this account can sign in with, in the registry's order ("Google", "Discord"); empty for an
+    account with none. One query, so registration can name them in its refusal."""
+    linked = set(SocialIdentity.objects.filter(user_id=user.pk).values_list("provider", flat=True))
+    return [provider.label for provider in PROVIDERS.values() if provider.slug in linked]
 
 
 def _new_user(profile: SsoProfile) -> Any:

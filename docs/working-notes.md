@@ -75,6 +75,19 @@ a password keeps one account. An email a provider does not call verified never m
 account, and the untrusted address is kept on the identity row only. A deleted account (inactive, no email) is never
 matched or resurrected, and deleting an account unlinks its providers.
 
+**One account per address, combining in one direction only** (William, 19 Nov 2026: "lets combine if someone's
+account is the same email as their Google or discord"). A verified email proves the person controls it, so SSO onto
+an existing password account links. The reverse proves nothing, so registering with an address an SSO account holds
+is refused and names the provider — "You already have an account. Sign in with Google." — rather than setting a
+password on it, which would hand the account to anyone who knew the address. `users/0003` adds a partial unique
+index on `LOWER(email)` where `is_active AND email <> ''`, so the rule holds under a race too.
+
+**Forgot password is for password accounts only** (William, 19 Nov 2026: "forgot password route is only for people
+that create an account without sso"). A reset finds users by `username=email`, and an SSO account's username is
+opaque, so a request for its address sends nothing and answers exactly as it does for an unknown address. A player
+who registered with a password and later linked Google keeps their password and their reset. There is no flow for
+adding a password to an SSO account.
+
 ## The content plan
 
 - **Sources, in order:** mordheimer.net first (a Docusaurus site whose JS chunks embed its JSON: warbands, items,
