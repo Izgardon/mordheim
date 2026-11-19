@@ -502,13 +502,13 @@
     ]
   },
   {
-    "slug": "the-strangest-tribes-amazons",
-    "name": "The Strangest Tribes (Amazons)",
+    "slug": "the-strangest-tribes",
+    "name": "The Strangest Tribes",
     "setting": "Border Town Burning",
     "summary": "",
     "variant_of": "the-damned-shall-burn",
     "no_alliance_with": [],
-    "who_text": "Amazons may follow this plot, in place of The Damned Shall Burn!",
+    "who_text": "Amazons and Lizardmen may follow this plot, in place of The Damned Shall Burn!",
     "scoring": [
       {
         "points": 1,
@@ -524,75 +524,7 @@
       },
       {
         "points": 1,
-        "text": "Slain foe: whenever a Hero of a Marauders of Chaos or Norse Explorers warband taken out of action by the warband dies permanently after the battle. The book replaces every instance of Slain Heretics for this warband with its own natural foes; it does not say whether the Cleansing and Eradication achievements, which name heretical warbands, read the same way."
-      },
-      {
-        "points": 1,
-        "text": "Foiled Prophecy: for every Chaos Artefact the warband wrests from the clutches of The Scion of Chaos. The bonus applies only once per artefact."
-      }
-    ],
-    "achievements": [
-      {
-        "points": 5,
-        "name": "Vision",
-        "text": "The player may re-roll any one dice roll during a battle, or instead during exploration."
-      },
-      {
-        "points": 10,
-        "name": "Vision",
-        "text": "The player may re-roll two dice rolls during a battle, or instead during exploration."
-      },
-      {
-        "points": 15,
-        "name": "Awesome Savagery",
-        "text": "Every Hero in the warband is subject to frenzy when facing its natural foes in combat."
-      },
-      {
-        "points": 20,
-        "name": "Feral Revolt",
-        "text": "D3+1 wild animals join the warband. They are treated as War Dogs and do not count towards the maximum number of models in the warband."
-      },
-      {
-        "points": 25,
-        "name": "Vision",
-        "text": "The player may change any one dice roll by 1 either way during a battle, or instead during exploration."
-      },
-      {
-        "points": 35,
-        "name": "Cleansing",
-        "text": "Every heretical warband the warband routs is eliminated from the campaign."
-      },
-      {
-        "points": 40,
-        "name": "Eradication",
-        "text": "If every heretical warband has been eliminated from the campaign, the warband wins the campaign."
-      }
-    ]
-  },
-  {
-    "slug": "the-strangest-tribes-lizardmen",
-    "name": "The Strangest Tribes (Lizardmen)",
-    "setting": "Border Town Burning",
-    "summary": "",
-    "variant_of": "the-damned-shall-burn",
-    "no_alliance_with": [],
-    "who_text": "Lizardmen may follow this plot, in place of The Damned Shall Burn!",
-    "scoring": [
-      {
-        "points": 1,
-        "text": "Playing a scenario."
-      },
-      {
-        "points": 1,
-        "text": "Winning a scenario."
-      },
-      {
-        "points": 1,
-        "text": "Chieftain out of action: for taking out of action the leader of a Chaos warband (Marauders of Chaos, Beastmen, the Carnival of Chaos and so on) or an Undead warband (the Undead, the Restless Dead and so on)."
-      },
-      {
-        "points": 1,
-        "text": "Slain foe: whenever a Hero of a Skaven or Dark Elf warband taken out of action by the warband dies permanently after the battle. The book replaces every instance of Slain Heretics for this warband with its own natural foes; it does not say whether the Cleansing and Eradication achievements, which name heretical warbands, read the same way."
+        "text": "Slain foe: whenever a Hero of the warband's natural foes taken out of action by the warband dies permanently after the battle. The Amazons' natural foes are Marauders of Chaos and Norse Explorers; the Lizardmen's are Skaven and Dark Elves."
       },
       {
         "points": 1,

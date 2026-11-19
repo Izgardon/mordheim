@@ -168,7 +168,7 @@
       "title": "Random encounter",
       "description": "Rolled when a D6 at the start of a player's turn comes up 1, to see what has wandered into the battle.",
       "dice": "D66",
-      "note": "The source prints two entries numbered 23, Simian Escape and Collapsing Building, and prints no 35 and no 43. The numbering needs a decision before this chart is seeded.",
+      "note": "The book prints two results numbered 23 and none at 35 or 43. Collapsing Building is read as 35 and Unguarded Barrels covers 42-43, so every D66 roll has a result (William, 20 Nov 2026).",
       "umbrella": "",
       "rows": [
         {
@@ -217,11 +217,6 @@
           "text": "A local pet store has had an escape: 1D6+2 monkeys, with a few gibbons and chimps among them, are headed your way and raring to cause mischief. Taking out monkeys earns no experience, but the shopkeeper pays 3 gc for each monkey taken out of action. Get them all and he rewards you with a free Parrot, or you may keep a monkey, which uses the Wardog rules.\n\nM5 WS2 BS2 S2 T2 W1 I5 A1 Ld4. They fight unarmed without penalty and are good at throwing things, treated as throwing stars. Monkeys are skilled climbers and count as having Climb Sheer Surfaces."
         },
         {
-          "result": "23",
-          "name": "Collapsing Building",
-          "text": "Pick one building at random. Any model inside must pass an Initiative test or suffer a Strength 5 hit, with armour saves as normal, as the building collapses. Remove the building from the table, replacing it with ruins if you can, and put the models back where it stood. Any model climbing the sides or standing on the roof falls from whatever height it was at."
-        },
-        {
           "result": "24",
           "name": "Western Wind",
           "text": "Treat the weather as Dry: if a pirate and his powder get wet, roll a D6 in your recovery phase, and on a 4 or more the powder has dried and can be used as normal. All models add 1 to their Initiative when climbing or rolling to avoid a fall, their grip much improved on dry surfaces. The next time a hero rolls a 1 for random events, see Secret B."
@@ -252,6 +247,11 @@
           "text": "The market has erupted with shop owners and impromptu sales. Every area within 6 inches of a building counts as Crowded. See the Crowded rule."
         },
         {
+          "result": "35",
+          "name": "Collapsing Building",
+          "text": "Pick one building at random. Any model inside must pass an Initiative test or suffer a Strength 5 hit, with armour saves as normal, as the building collapses. Remove the building from the table, replacing it with ruins if you can, and put the models back where it stood. Any model climbing the sides or standing on the roof falls from whatever height it was at."
+        },
+        {
           "result": "36",
           "name": "South Eastern Wind",
           "text": "The weather counts as Baking Hot: the sun beats down and the sea reflects the glare. All warriors except Undead are at -1 to WS, BS and Initiative for the rest of the game. A model with wet powder has it dry in its next recovery phase. The next time a 1 is rolled for random events, see Secret E."
@@ -262,7 +262,7 @@
           "text": "A stubborn local merchant has set his cart between two buildings and blocks the passage completely. He stops any model climbing over, beating them with his cane until they fall."
         },
         {
-          "result": "42",
+          "result": "42-43",
           "name": "Unguarded Barrels",
           "text": "You find D3 barrels beside the building closest to you. When a model is in base contact with them, consult Secret H to see what they are."
         },

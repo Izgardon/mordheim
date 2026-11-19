@@ -6,7 +6,7 @@
     "Sartosa"
   ],
   "exploration_chart": "sartosa",
-  "enable_locations": true,
+  "enable_locations": false,
   "hero_death_roll": "d66",
   "rules": "sartosa"
 }

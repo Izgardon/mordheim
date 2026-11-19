@@ -56,13 +56,13 @@ class PlotSeederTests(TestCase):
         out = StringIO()
         call_command("seed_plots", stdout=out)
         plots = Plot.objects.filter(campaign__isnull=True)
-        self.assertEqual(plots.count(), 19)
-        self.assertEqual(len({row.name for row in plots}), 19)  # every plot is distinctly named
+        self.assertEqual(plots.count(), 18)
+        self.assertEqual(len({row.name for row in plots}), 18)  # every plot is distinctly named
         for row in plots:
             self.assertEqual(tuple(row.achievements.values_list("points", flat=True)), RUNGS)
         self.assertEqual(plots.filter(campaign_type=self.setting).count(), 10)
-        self.assertEqual(plots.filter(campaign_type=self.border_town).count(), 9)
-        self.assertIn("Plots: 19", out.getvalue())
+        self.assertEqual(plots.filter(campaign_type=self.border_town).count(), 8)
+        self.assertIn("Plots: 18", out.getvalue())
         self.assertIn("skipped: 0", out.getvalue())
 
     def test_border_town_burnings_variants_name_the_plot_they_are_a_variant_of(self):
@@ -73,8 +73,7 @@ class PlotSeederTests(TestCase):
             sorted(variants.values_list("slug", "variant_of")),
             [
                 ("the-black-dwarfs", "the-lure-of-fortune"),
-                ("the-strangest-tribes-amazons", "the-damned-shall-burn"),
-                ("the-strangest-tribes-lizardmen", "the-damned-shall-burn"),
+                ("the-strangest-tribes", "the-damned-shall-burn"),
             ],
         )
         for row in variants:

@@ -102,7 +102,8 @@ class PresetSeederTests(TestCase):
             # Khemri dictates its chart and nothing else: it points at the rulebook for everything structural
             "khemri": (None, None, None, None, None, "", 20),
             # Sartosa: its Locales are the campaign's places, and pressganging names a D66 result
-            "sartosa": (True, None, None, None, None, "d66", 32),
+            # Locations off (William, 20 Nov 2026): its locales are a document of their own, not the campaign's places
+            "sartosa": (False, None, None, None, None, "d66", 32),
         }
         for slug, row in expected.items():
             preset = presets[slug]

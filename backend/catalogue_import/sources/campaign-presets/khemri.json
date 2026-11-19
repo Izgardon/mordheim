@@ -3,7 +3,8 @@
   "name": "Khemri",
   "sort_order": 7,
   "settings": [
-    "Khemri 1b"
+    "Khemri 1b",
+    "Khemri 3"
   ],
   "exploration_chart": "khemri",
   "rules": "khemri"
