@@ -260,12 +260,6 @@ SILENCED_SYSTEM_CHECKS = ["security.W003", "security.W005", "security.W008", "se
 _DEV_FRONTEND_URL = "http://localhost:5173"
 FRONTEND_URL = os.environ.get("FRONTEND_URL", _DEV_FRONTEND_URL)
 
-# FRONTEND_URL is now load-bearing twice over: it addresses the password-reset links, and the social sign-in
-# redirect URI registered with Google and Discord is derived from it (apps.users.services.sso). A production deploy
-# left on the local default would send players to localhost, so it stops startup instead (as the secret key does).
-if not DEBUG and (FRONTEND_URL == _DEV_FRONTEND_URL or not FRONTEND_URL.startswith("https://")):
-    raise ImproperlyConfigured("FRONTEND_URL must be the site's https:// address when DJANGO_DEBUG is off.")
-
 # Social sign-in (SSO). A provider with either value blank is left out of the sign-in page entirely
 # (apps.users.sso.registry), so a half-configured deploy shows no dead button. Secrets come from the environment
 # only, and are never sent to a browser: the code-for-token exchange happens on this server.
@@ -274,17 +268,31 @@ GOOGLE_OAUTH_CLIENT_SECRET = os.environ.get("GOOGLE_OAUTH_CLIENT_SECRET", "")
 DISCORD_OAUTH_CLIENT_ID = os.environ.get("DISCORD_OAUTH_CLIENT_ID", "")
 DISCORD_OAUTH_CLIENT_SECRET = os.environ.get("DISCORD_OAUTH_CLIENT_SECRET", "")
 
+# Whether this deploy offers social sign-in at all, by the same rule the registry applies to each provider
+# (apps.users.sso.registry.is_configured), which settings cannot import because it reads settings.
+SSO_CONFIGURED = bool(
+    (GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET) or (DISCORD_OAUTH_CLIENT_ID and DISCORD_OAUTH_CLIENT_SECRET)
+)
+
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "no-reply@example.com")
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "")
 PASSWORD_RESET_EMAIL_SUBJECT = os.environ.get("PASSWORD_RESET_EMAIL_SUBJECT", "Reset your password")
 FEEDBACK_REPORT_TO_EMAIL = os.environ.get("FEEDBACK_REPORT_TO_EMAIL", "")
 PASSWORD_RESET_TIMEOUT = int(os.environ.get("PASSWORD_RESET_TIMEOUT", "3600"))
 
-# Once email is on in production, reset links and the sender must be real, not the local fallbacks (BUG-56). Resend's
-# shared resend.dev sender is refused too: it delivers only to the Resend account's own address, so players would
-# never get their reset links.
+# FRONTEND_URL addresses the password-reset links and the social sign-in redirect URI the providers are given
+# (apps.users.services.sso), so it must be the real site once either is on: a deploy left on the local default
+# would mail players localhost links and send them there after they signed in. With email and SSO both off no code
+# reads it, so a deploy that has configured neither is not stopped over a value nothing uses.
+if not DEBUG and (RESEND_API_KEY or SSO_CONFIGURED):
+    if FRONTEND_URL == _DEV_FRONTEND_URL or not FRONTEND_URL.startswith("https://"):
+        raise ImproperlyConfigured(
+            "FRONTEND_URL must be the site's https:// address when email or social sign-in is configured."
+        )
+
+# Once email is on, the sender must be real too, not the local fallback (BUG-56). Resend's shared resend.dev
+# sender is refused as well: it delivers only to the Resend account's own address, so no player would get a link.
 if not DEBUG and RESEND_API_KEY:
-    # FRONTEND_URL is checked unconditionally above, whether email is on or not.
     sender_domain = DEFAULT_FROM_EMAIL.strip().rstrip(">").rpartition("@")[2].strip().lower()
     if "@" not in DEFAULT_FROM_EMAIL or sender_domain.endswith(("example.com", "resend.dev")):
         raise ImproperlyConfigured(

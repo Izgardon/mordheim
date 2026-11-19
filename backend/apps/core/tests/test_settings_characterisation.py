@@ -31,8 +31,8 @@ UNSET = (
     "SECURE_HSTS_SECONDS",
 )
 LONG_KEY = "a-unique-production-key-for-the-settings-tests-0123456789"  # 57 characters
-# Production refuses a FRONTEND_URL left on the local default, so every DEBUG-off run needs a real one; a test
-# about that guard passes its own (test_settings_guards.py).
+# Production refuses a FRONTEND_URL left on the local default once email or SSO is on, so every DEBUG-off run that
+# switches one on needs a real one; a test about that guard passes its own (test_settings_guards.py).
 PROD_FRONTEND_URL = "https://mordheim.example.org"
 SHORT_KEY = "short-unique-key"
 NO_DOTENV = "import dotenv; dotenv.load_dotenv = lambda *args, **kwargs: False\n"
@@ -130,8 +130,8 @@ class ProductionStartupTests(SimpleTestCase):
         key = {"DJANGO_DEBUG": "0", "DJANGO_SECRET_KEY": LONG_KEY, "RESEND_API_KEY": "re_not_a_real_key"}
         real = {"FRONTEND_URL": PROD_FRONTEND_URL, "DEFAULT_FROM_EMAIL": "Mordheim <no-reply@mordheim.example.org>"}
         sender_message = "DEFAULT_FROM_EMAIL must be an address on Resend's verified domain when RESEND_API_KEY is set."
-        # FRONTEND_URL itself is now refused with DEBUG off whether email is on or not (SSO's redirect URI is built
-        # from it too): test_settings_guards.py keeps that guard.
+        # FRONTEND_URL itself is refused whenever email or social sign-in is on (SSO's redirect URI is built from
+        # it too), and asked for by neither while both are off: test_settings_guards.py keeps that guard.
         refused = {
             "the placeholder sender": ({}, sender_message),
             "a sender at example.com": ({**real, "DEFAULT_FROM_EMAIL": "Mordheim <bot@example.com>"}, sender_message),

@@ -51,8 +51,10 @@ PKCE, the code exchanged **server-side**, so no client secret ever reaches a bro
 are unset is left out of `GET auth/sso/providers/`, so the sign-in page shows only what is set up.
 
 **Render environment variables** (the backend; Vercel needs none):
-- `FRONTEND_URL` = `https://mordheim-eight.vercel.app` — **required**: with `DJANGO_DEBUG` off the backend refuses
-  to start without an `https://` value, because both the reset links and the OAuth redirect URI are built from it.
+- `FRONTEND_URL` = `https://mordheim-eight.vercel.app` — **set it before the provider credentials.** Both the
+  reset links and the OAuth redirect URI are built from it, so with `DJANGO_DEBUG` off the backend refuses to start
+  without an `https://` value once `RESEND_API_KEY` or a provider's pair is set. While all of them are unset
+  nothing reads it, so deploying social sign-in with no credentials yet cannot stop gunicorn.
 - `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`
 - `DISCORD_OAUTH_CLIENT_ID`, `DISCORD_OAUTH_CLIENT_SECRET`
 
