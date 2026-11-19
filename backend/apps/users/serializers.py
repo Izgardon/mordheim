@@ -5,9 +5,9 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
+from .names import NAME_MAX_LENGTH
 from .services.accounts import EmailTaken, create_account
 
-NAME_MAX_LENGTH = 40  # a display name (decision 2)
 EMAIL_MAX_LENGTH = 150  # the email is also the username, a varchar(150) (BUG-84)
 EMAIL_TAKEN = "User already exists"
 CURRENT_PASSWORD_WRONG = "That isn't your current password."

@@ -34,7 +34,7 @@ from django.db import IntegrityError, transaction
 from django.db.models import Q
 
 from ..models import SocialIdentity, UserAccount
-from ..serializers import NAME_MAX_LENGTH
+from ..names import NAME_MAX_LENGTH
 from ..sso.base import ACCOUNT_UNAVAILABLE, SsoError, SsoProfile
 
 # How the account was reached, for the API's answer and the tests.
@@ -86,7 +86,7 @@ def _linked_user(provider: str, subject: str) -> SocialIdentity | None:
     )
 
 
-def _account_for_verified_email(email: str) -> Any:
+def account_for_email(email: str) -> Any:
     """The one active account that email signs in to, or None. Inactive (deleted) rows are never matched."""
     return (
         get_user_model()
@@ -122,7 +122,7 @@ def link_or_create(provider: str, profile: SsoProfile) -> SignIn:
             identity.save(update_fields=["email", "email_verified", "last_login_at"])
             return SignIn(user=identity.user, how=BY_IDENTITY)
 
-        user = _account_for_verified_email(profile.email) if profile.email_verified else None
+        user = account_for_email(profile.email) if profile.email_verified else None
         how = BY_VERIFIED_EMAIL if user is not None else NEW_ACCOUNT
         if user is None:
             user = _new_user(profile)
