@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 // api
+import { listCampaignCharts } from "./campaign-charts-api";
 import { listCampaignRules } from "./campaign-rules-api";
 import { listCommonRules, listHouseRules } from "./rules-api";
 
@@ -24,6 +25,16 @@ export function useCampaignRules(campaignId: number) {
   return useQuery({
     queryKey: queryKeys.campaign.campaignRules(campaignId),
     queryFn: () => listCampaignRules(campaignId),
+    staleTime: CAMPAIGN_LIST_STALE_TIME_MS,
+    enabled: isCampaignId(campaignId),
+  });
+}
+
+/** The campaign's charts with their results, in their order, cached under the campaign. */
+export function useCampaignCharts(campaignId: number) {
+  return useQuery({
+    queryKey: queryKeys.campaign.campaignCharts(campaignId),
+    queryFn: () => listCampaignCharts(campaignId),
     staleTime: CAMPAIGN_LIST_STALE_TIME_MS,
     enabled: isCampaignId(campaignId),
   });

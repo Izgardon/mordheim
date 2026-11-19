@@ -5,7 +5,11 @@ import { useCampaignLocations } from "@/features/campaigns/api/campaign-queries"
 import type { CampaignSummary } from "@/features/campaigns/types/campaign-types";
 import { inPlayOnly } from "@/features/reference/in-play";
 import { referenceSpecials } from "@/features/special/boons-banes";
-import { useCampaignRules, useHouseRules } from "@/features/rules/api/rule-queries";
+import {
+  useCampaignCharts,
+  useCampaignRules,
+  useHouseRules,
+} from "@/features/rules/api/rule-queries";
 import { ruleEntries } from "@/features/rules/rules-index";
 import { useWarbandTemplateContents } from "@/features/warband-templates/api/template-queries";
 import { typeRows } from "@/features/warband-templates/template-view";
@@ -40,6 +44,7 @@ export function useSearchSources(
   const personae = useCatalogue("dramatis-personae", campaignId);
   const houseRules = useHouseRules(campaignId);
   const campaignRules = useCampaignRules(campaignId);
+  const campaignCharts = useCampaignCharts(campaignId);
   const withLocations = Boolean(campaign?.enable_locations);
   const locations = useCampaignLocations(campaignId, { enabled: withLocations });
   const mine = useQuery(myWarbandQuery(campaignId));
@@ -60,12 +65,14 @@ export function useSearchSources(
       rules: ruleEntries(),
       houseRules: houseRules.data ?? [],
       campaignRules: campaignRules.data ?? [],
+      campaignCharts: campaignCharts.data ?? [],
       locations: withLocations ? (locations.data ?? []) : [],
       campaign: server.data,
       myWarbandId: mine.data?.id ?? null,
     }),
     [
       beasts.data,
+      campaignCharts.data,
       campaignRules.data,
       hiredSwords.data,
       houseRules.data,

@@ -29,18 +29,24 @@ export default function EditCampaignRuleDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
-  const [form, setForm] = useState<CampaignRulePayload>({ title: rule.title, body: rule.body });
+  const blank = () => ({ title: rule.title, body: rule.body, umbrella: rule.umbrella });
+  const [form, setForm] = useState<CampaignRulePayload>(blank);
   const [error, setError] = useState("");
   const busy = writes.update.isPending || writes.remove.isPending;
 
   const openChange = (next: boolean) => {
     setOpen(next);
-    if (next) setForm({ title: rule.title, body: rule.body });
+    if (next) setForm(blank());
     setError("");
   };
   const save = () =>
     writes.update.mutate(
-      { id: rule.id, title: form.title.trim(), body: form.body.trim() },
+      {
+        id: rule.id,
+        title: form.title.trim(),
+        body: form.body.trim(),
+        umbrella: (form.umbrella ?? "").trim(),
+      },
       {
         onSuccess: () => setOpen(false),
         onError: (failure) => setError(getErrorMessage(failure, "Couldn't save the rule.")),
@@ -60,13 +66,13 @@ export default function EditCampaignRuleDialog({
     <Dialog open={open} onOpenChange={openChange}>
       <DialogTrigger asChild>
         <Button variant="secondary" className="min-h-10 self-start">
-          Edit campaign rule
+          Edit
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-[750px]">
         <DialogHeader>
-          <DialogKicker>Campaign rules</DialogKicker>
-          <DialogTitle>Edit the campaign rule</DialogTitle>
+          <DialogKicker>{rule.kind === "battle" ? "Battle rules" : "Campaign rules"}</DialogKicker>
+          <DialogTitle>Edit the rule</DialogTitle>
         </DialogHeader>
         <CampaignRuleFields value={form} onChange={setForm} />
         {error ? (

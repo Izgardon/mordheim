@@ -8,7 +8,10 @@ const LABEL = "text-[11px] font-bold uppercase tracking-[0.12em] text-faint";
 const TEXTAREA =
   "min-h-[140px] w-full border border-strong bg-page px-3 py-2 text-sm text-ink placeholder:text-faint focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring";
 
-/** A campaign rule's title and body, as the add form and the edit dialog show them. */
+/**
+ * A rule's title, body and umbrella, as the add form and the edit dialog show them. The umbrella is the
+ * heading it shares with the rules it belongs with, and rules sharing one open together.
+ */
 export default function CampaignRuleFields({
   value,
   onChange,
@@ -28,6 +31,18 @@ export default function CampaignRuleFields({
           maxLength={160}
           value={value.title}
           onChange={(event) => onChange({ ...value, title: event.target.value })}
+        />
+      </div>
+      <div className="flex flex-col gap-2">
+        <label htmlFor={`${id}-umbrella`} className={LABEL}>
+          Umbrella
+        </label>
+        <Input
+          id={`${id}-umbrella`}
+          maxLength={120}
+          placeholder="Weather"
+          value={value.umbrella ?? ""}
+          onChange={(event) => onChange({ ...value, umbrella: event.target.value })}
         />
       </div>
       <div className="flex flex-col gap-2">

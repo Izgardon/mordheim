@@ -11,8 +11,8 @@ import {
 import type { CampaignRule, CampaignRulePayload } from "../types/rule-types";
 
 /** The ids with `id` moved one place up (-1) or down (1); unchanged at either end. */
-export function movedIds(rules: CampaignRule[], id: number, by: -1 | 1): number[] {
-  const ids = rules.map((rule) => rule.id);
+export function movedIds(rows: { id: number }[], id: number, by: -1 | 1): number[] {
+  const ids = rows.map((row) => row.id);
   const from = ids.indexOf(id);
   const to = from + by;
   if (from < 0 || to < 0 || to >= ids.length) return ids;

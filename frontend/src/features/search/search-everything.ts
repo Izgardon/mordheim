@@ -7,7 +7,8 @@ import { kindOf } from "@/features/items/store/store-items";
 import type { Item, ItemRule } from "@/features/items/types/item-types";
 import type { RuleEntry } from "@/features/rules/rules-index";
 import { ruleSnippet } from "@/features/rules/rules-index";
-import type { CampaignRule, HouseRule } from "@/features/rules/types/rule-types";
+import { chartRowKey, ruleRowKey } from "@/features/rules/campaign-rule-rows";
+import type { CampaignChart, CampaignRule, HouseRule } from "@/features/rules/types/rule-types";
 import type { Skill, SkillGroup } from "@/features/skills/types/skill-types";
 import type { Special } from "@/features/special/types/special-types";
 import type { Spell } from "@/features/spells/types/spell-types";
@@ -37,7 +38,10 @@ export type SearchSources = {
   personae: HirelingProfile[];
   rules: RuleEntry[];
   houseRules: HouseRule[];
+  /** The campaign's own rules and its battle rules, which are one list told apart by their kind. */
   campaignRules: CampaignRule[];
+  /** Its charts: the dice tables a player looks up. */
+  campaignCharts: CampaignChart[];
   locations: CampaignLocation[];
   campaign: CampaignSearchAnswer | undefined;
   /** Your warband: its links go to `warband` rather than `warbands/:id`. */
@@ -47,7 +51,7 @@ export type SearchSources = {
 /**
  * Search everything: one search over the reference (warband types, items and their shared rules,
  * skills and skill groups, spells, Boons & Banes, beasts, hired swords, dramatis personae), the
- * rulebook's text, the house rules and the campaign rules, and this campaign's warbands, units
+ * rulebook's text, the house rules, the campaign's rules and charts, and this campaign's warbands, units
  * and locations; grouped by kind in the reference nav's order, empty groups left out.
  */
 export function searchEverything(query: string, sources: SearchSources): SearchGroup[] {
@@ -232,9 +236,34 @@ export function searchEverything(query: string, sources: SearchSources): SearchG
       ).map(({ entry, snippet }) => ({
         key: `campaign-rule-${entry.id}`,
         title: entry.title,
-        meta: "Campaign rule",
+        meta: entry.kind === "battle" ? "Battle rule" : "Campaign rule",
         snippet,
-        to: `campaign-rules?open=${entry.id}`,
+        // the row the rule sits in on that page: its umbrella's, or its own
+        to: `campaign-rules?open=${ruleRowKey(entry)}`,
+      })),
+    },
+    {
+      id: "charts",
+      label: "Charts",
+      hits: ranked(
+        sources.campaignCharts.map((chart) => ({
+          entry: chart,
+          name: chart.title,
+          text: words(
+            [
+              chart.description,
+              chart.note,
+              ...chart.rows.map((row) => `${row.result} ${row.name} ${row.text}`),
+            ].join(" ")
+          ),
+        })),
+        needle
+      ).map(({ entry, snippet }) => ({
+        key: `chart-${entry.id}`,
+        title: entry.title,
+        meta: entry.dice ? `Chart · ${entry.dice}` : "Chart",
+        snippet,
+        to: `campaign-rules?open=${chartRowKey(entry)}`,
       })),
     },
     {

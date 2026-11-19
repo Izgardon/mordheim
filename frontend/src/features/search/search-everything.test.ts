@@ -16,6 +16,8 @@ import type {
   WarbandTemplateSummary,
 } from "@/features/warband-templates/types/template-types";
 
+import type { CampaignChart, CampaignRule } from "@/features/rules/types/rule-types";
+
 import { searchEverything, type SearchSources } from "./search-everything";
 
 const nothing: SearchSources = {
@@ -32,6 +34,7 @@ const nothing: SearchSources = {
   rules: [],
   houseRules: [],
   campaignRules: [],
+  campaignCharts: [],
   locations: [],
   campaign: undefined,
   myWarbandId: null,
@@ -72,30 +75,63 @@ describe("Search everything's Boons & Banes", () => {
   });
 });
 
-describe("Search everything's campaign rules", () => {
+describe("Search everything's campaign rules and charts", () => {
+  const rule = (
+    overrides: Partial<CampaignRule> & Pick<CampaignRule, "id" | "title">
+  ): CampaignRule => ({
+    campaign_id: 1,
+    kind: "campaign",
+    body: "",
+    umbrella: "",
+    order: 0,
+    ...overrides,
+  });
+
   it("finds a campaign rule by its title or its text, each opening its row", () => {
     const campaignRules = [
-      {
-        id: 3,
-        campaign_id: 1,
-        title: "The Comet's Fall",
-        body: "Each night a shard falls.",
-        order: 0,
-      },
-      {
-        id: 4,
-        campaign_id: 1,
-        title: "Curfew",
-        body: "No warband leaves after the bell.",
-        order: 1,
-      },
+      rule({ id: 3, title: "The Comet's Fall", body: "Each night a shard falls." }),
+      rule({ id: 4, title: "Curfew", body: "No warband leaves after the bell.", order: 1 }),
     ];
 
     const groups = searchEverything("bell", { ...nothing, campaignRules });
 
     expect(groups.map((group) => group.label)).toEqual(["Campaign rules"]);
     expect(groups[0].hits.map((hit) => [hit.title, hit.to])).toEqual([
-      ["Curfew", "campaign-rules?open=4"],
+      ["Curfew", "campaign-rules?open=r4"],
+    ]);
+  });
+
+  it("says a battle rule is one, and opens the umbrella it shares", () => {
+    const campaignRules = [
+      rule({ id: 7, kind: "battle", title: "Fog", body: "It hides.", umbrella: "Weather" }),
+    ];
+
+    const groups = searchEverything("fog", { ...nothing, campaignRules });
+
+    expect(groups[0].hits.map((hit) => [hit.title, hit.meta, hit.to])).toEqual([
+      ["Fog", "Battle rule", "campaign-rules?open=bu:weather"],
+    ]);
+  });
+
+  it("finds a chart by a result on it and names its dice", () => {
+    const campaignCharts: CampaignChart[] = [
+      {
+        id: 9,
+        campaign_id: 1,
+        title: "Seaside Situations",
+        description: "Roll at the start of each turn.",
+        dice: "D66",
+        note: "",
+        umbrella: "",
+        order: 0,
+        rows: [{ id: 1, result: "16", name: "Mutiny!", text: "The crew turns." }],
+      },
+    ];
+
+    const groups = searchEverything("mutiny", { ...nothing, campaignCharts });
+
+    expect(groups[0].hits.map((hit) => [hit.title, hit.meta, hit.to])).toEqual([
+      ["Seaside Situations", "Chart · D66", "campaign-rules?open=c9"],
     ]);
   });
 });

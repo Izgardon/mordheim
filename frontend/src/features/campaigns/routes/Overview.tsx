@@ -7,7 +7,7 @@ import { SectionHead } from "@/components/ui/section-title";
 import { useAuth } from "@/features/auth/hooks/use-auth";
 import { useYourOpenBattles } from "@/features/battles/hooks/useOpenCampaignBattles";
 import OpenBounties from "@/features/bounties/components/OpenBounties";
-import CampaignRulesRow from "@/features/rules/components/CampaignRulesRow";
+import CampaignRulesLink from "@/features/rules/components/CampaignRulesLink";
 import { useMediaQuery } from "@/lib/use-media-query";
 import { queryKeys } from "@/lib/query-keys";
 import { useTabScroll } from "@/lib/use-tab-scroll";
@@ -164,11 +164,7 @@ export default function Overview() {
       />
       <OverviewNotices campaignId={campaignId} managesBattles={capabilities.manage_battles} />
       {stats}
-      <CampaignRulesRow
-        campaignId={campaignId}
-        campaignName={campaign.name}
-        canManage={capabilities.manage_campaign_rules}
-      />
+      <CampaignRulesLink campaignId={campaignId} canManage={capabilities.manage_campaign_rules} />
       {isMobile ? (
         <>
           <div

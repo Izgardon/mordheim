@@ -12,7 +12,7 @@ import type { CampaignPlayer } from "@/features/campaigns/types/campaign-types";
 import { ApiError } from "@/lib/api-client";
 import { RAIDER, storeSession } from "@/test/auth-fixtures";
 import { cleanupApps, renderApp } from "@/test/app-routes";
-import { CAMPAIGN_ID, campaignSummary } from "@/test/campaign-fixtures";
+import { CAMPAIGN_ID, campaignFor, campaignSummary } from "@/test/campaign-fixtures";
 import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
 import { setupUser } from "@/test/user-event";
@@ -210,18 +210,66 @@ describe("Start a battle's players", () => {
 });
 
 // William, 8 Nov 2026: "lets move the campaign rules underneath the info bar like in the warband
-// page but on overview"
-describe("the overview's campaign rules", () => {
-  it("sit right under the info bar, and only there", async () => {
+// page but on overview"; 19 Nov 2026: "in campaign page let us just link to that page rather than
+// show the rules there"
+describe("the overview's campaign rules link", () => {
+  it("sits right under the info bar and says how much is there", async () => {
     fakeApi.on(`GET ${BASE}/campaign-rules/`, [
-      { id: 4, campaign_id: CAMPAIGN_ID, title: "Curfew", body: "No warband leaves.", order: 0 },
+      {
+        id: 4,
+        campaign_id: CAMPAIGN_ID,
+        kind: "campaign",
+        title: "Curfew",
+        body: "No warband leaves.",
+        umbrella: "",
+        order: 0,
+      },
+      {
+        id: 5,
+        campaign_id: CAMPAIGN_ID,
+        kind: "battle",
+        title: "Fog",
+        body: "It hides.",
+        umbrella: "Weather",
+        order: 1,
+      },
+    ]);
+    fakeApi.on(`GET ${BASE}/campaign-charts/`, [
+      {
+        id: 9,
+        campaign_id: CAMPAIGN_ID,
+        title: "Monsters",
+        description: "",
+        dice: "2D6",
+        note: "",
+        umbrella: "",
+        order: 0,
+        rows: [],
+      },
     ]);
     renderApp(BASE);
 
-    const rules = await screen.findByRole("region", { name: "Campaign rules" });
-    expect(rules.previousElementSibling?.tagName).toBe("DL");
-    expect(rules.previousElementSibling).toHaveTextContent("Heroes lost");
-    expect(within(rules).getByRole("button", { name: "Curfew" })).toBeVisible();
-    expect(screen.getAllByRole("region", { name: "Campaign rules" })).toHaveLength(1);
+    // the rail has a Campaign rules link of its own, so this looks only at the page's own row
+    const row = await screen.findByRole("region", { name: "Campaign rules and charts" });
+    const link = within(row).getByRole("link", { name: /Campaign rules/ });
+    expect(row.previousElementSibling?.tagName).toBe("DL");
+    expect(row.previousElementSibling).toHaveTextContent("Heroes lost");
+    expect(link).toHaveAttribute("href", `/campaigns/${CAMPAIGN_ID}/campaign-rules`);
+    await waitFor(() =>
+      expect(link).toHaveTextContent("1 campaign rule · 1 battle rule · 1 chart")
+    );
+    // the rules themselves are read on that page now, not here
+    expect(screen.queryByText("No warband leaves.")).toBeNull();
+  });
+
+  it("says nothing to a player of a campaign with no rules or charts", async () => {
+    fakeApi.on(`GET ${BASE}/`, campaignFor("player"));
+    fakeApi.on(`GET ${BASE}/campaign-rules/`, []);
+    fakeApi.on(`GET ${BASE}/campaign-charts/`, []);
+    renderApp(BASE);
+
+    await screen.findByRole("heading", { level: 1 });
+    await waitFor(() => expect(fakeApi.countOf(`GET ${BASE}/campaign-rules/`)).toBe(1));
+    expect(screen.queryByRole("region", { name: "Campaign rules and charts" })).toBeNull();
   });
 });

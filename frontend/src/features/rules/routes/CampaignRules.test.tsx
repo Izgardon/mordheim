@@ -1,7 +1,8 @@
 /**
  * The Campaign rules page (William, 7 Nov 2026: "campaign wide rules that are not house rules ...
- * admin only"), on the real routes over the fake API server: every member reads the rules in
- * their order, each row opening to its text; the owner and admins add, edit, move and delete them.
+ * admin only"; 19 Nov 2026: three lists, each row its own modal, related rules under umbrellas),
+ * on the real routes over the fake API server: every member reads the campaign's rules, its battle
+ * rules and its charts; the owner and admins add, edit, move and delete all three.
  */
 import { screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -13,7 +14,7 @@ import { fakeApi } from "@/test/fake-api";
 import { fakeRealtime } from "@/test/fake-realtime";
 import { setupUser } from "@/test/user-event";
 
-import type { CampaignRule } from "../types/rule-types";
+import type { CampaignChart, CampaignRule } from "../types/rule-types";
 
 // The campaign's routes load on demand; importing them first lets each lazy() resolve at once.
 import "@/features/campaigns/routes/CampaignLayout";
@@ -28,21 +29,56 @@ vi.mock("@/lib/use-media-query", () => ({ useMediaQuery: () => false }));
 
 const PAGE = `/campaigns/${CAMPAIGN_ID}/campaign-rules`;
 const RULES = `/campaigns/${CAMPAIGN_ID}/campaign-rules/`;
-const rule = (id: number, title: string, body: string, order: number): CampaignRule => ({
-  id,
-  campaign_id: CAMPAIGN_ID,
-  title,
-  body,
-  order,
-});
-const comet = rule(3, "The Comet's Fall", "Each night a shard falls on the city.", 0);
-const curfew = rule(4, "Curfew", "No warband leaves after the bell.", 1);
+const CHARTS = `/campaigns/${CAMPAIGN_ID}/campaign-charts/`;
 
-/** The rows' titles, in the list's order. */
-const rowNames = () =>
-  screen
-    .getAllByRole("button", { name: /^(Curfew|The Comet's Fall)$/ })
-    .map((row) => row.textContent);
+const rule = (
+  overrides: Partial<CampaignRule> & Pick<CampaignRule, "id" | "title">
+): CampaignRule => ({
+  campaign_id: CAMPAIGN_ID,
+  kind: "campaign",
+  body: "",
+  umbrella: "",
+  order: 0,
+  ...overrides,
+});
+
+const comet = rule({ id: 3, title: "The Comet's Fall", body: "Each night a shard falls." });
+const curfew = rule({
+  id: 4,
+  title: "Curfew",
+  body: "No warband leaves after the bell.",
+  order: 1,
+});
+const fog = rule({
+  id: 5,
+  kind: "battle",
+  title: "Fog",
+  body: 'Visibility is 12".',
+  umbrella: "Weather",
+  order: 2,
+});
+const hail = rule({
+  id: 6,
+  kind: "battle",
+  title: "Hail",
+  body: "Missiles are at -1.",
+  umbrella: "Weather",
+  order: 3,
+});
+const monsters: CampaignChart = {
+  id: 9,
+  campaign_id: CAMPAIGN_ID,
+  title: "Monster encounters",
+  description: "Roll when a warrior enters the marsh.",
+  dice: "2D6",
+  note: "Add 1 at night.",
+  umbrella: "",
+  order: 0,
+  rows: [
+    { id: 1, result: "2", name: "Colossal Squig", text: "It charges the nearest warrior." },
+    { id: 2, result: "3-4", name: "Cultists", text: "" },
+  ],
+};
 
 beforeEach(() => {
   localStorage.clear();
@@ -51,7 +87,8 @@ beforeEach(() => {
   storeSession(RAIDER);
   fakeApi.on("GET /auth/me/", RAIDER);
   fakeApi.on("GET /notifications/", []);
-  fakeApi.on(`GET ${RULES}`, [comet, curfew]);
+  fakeApi.on(`GET ${RULES}`, [comet, curfew, fog, hail]);
+  fakeApi.on(`GET ${CHARTS}`, [monsters]);
   vi.spyOn(Element.prototype, "scrollIntoView").mockImplementation(() => undefined);
 });
 
@@ -61,95 +98,170 @@ afterEach(() => {
 });
 
 describe("The Campaign rules page", () => {
-  it("shows a player the rules in their order, each opening to its text, with nothing to change", async () => {
+  it("splits the campaign's rules, its battle rules and its charts into three lists", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
+    renderApp(PAGE);
+
+    for (const title of ["Campaign rules", "Battle rules", "Charts"]) {
+      expect(await screen.findByRole("heading", { level: 2, name: title })).toBeInTheDocument();
+    }
+    // the battle rules sharing an umbrella are one row, named by it
+    expect(await screen.findByRole("button", { name: /^Weather/ })).toHaveTextContent("2 rules");
+    expect(screen.queryByRole("button", { name: /^Fog/ })).toBeNull();
+    expect(screen.getByRole("button", { name: /^Monster encounters/ })).toHaveTextContent(
+      "2D6 · 2 results"
+    );
+  });
+
+  it("opens a lone rule in its own modal, and an umbrella's rules together in one", async () => {
     fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
     const user = setupUser();
     renderApp(PAGE);
 
-    await user.click(await screen.findByRole("button", { name: "Curfew" }));
+    await user.click(await screen.findByRole("button", { name: /^Curfew/ }));
+    const one = await screen.findByRole("dialog", { name: "Curfew" });
+    expect(within(one).getByText(curfew.body)).toBeInTheDocument();
+    expect(within(one).queryByText(comet.body)).toBeNull();
+    expect(within(one).queryByRole("button", { name: "Edit" })).toBeNull();
 
-    expect(screen.getByText(curfew.body)).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: comet.title })).toHaveAttribute(
-      "aria-expanded",
-      "false"
-    );
-    expect(screen.queryByRole("button", { name: "Add campaign rule" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "Edit campaign rule" })).toBeNull();
-    expect(screen.queryByRole("button", { name: "Move up" })).toBeNull();
+    await user.click(within(one).getByRole("button", { name: "Close" }));
+    await user.click(await screen.findByRole("button", { name: /^Weather/ }));
+
+    const both = await screen.findByRole("dialog", { name: "Weather" });
+    expect(within(both).getByText(fog.body)).toBeInTheDocument();
+    expect(within(both).getByText(hail.body)).toBeInTheDocument();
   });
 
-  it("lets an admin add a rule, which lands at the end, open", async () => {
+  it("shows a chart's results, its dice and its note in its modal", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
+    const user = setupUser();
+    renderApp(PAGE);
+
+    await user.click(await screen.findByRole("button", { name: /^Monster encounters/ }));
+
+    const modal = await screen.findByRole("dialog", { name: "Monster encounters" });
+    expect(within(modal).getByText(monsters.description)).toBeInTheDocument();
+    expect(within(modal).getByRole("columnheader", { name: "2D6" })).toBeInTheDocument();
+    expect(within(modal).getByRole("cell", { name: "Colossal Squig" })).toBeInTheDocument();
+    expect(within(modal).getByText("Add 1 at night.")).toBeInTheDocument();
+  });
+
+  it("finds a chart by one of its results, and a battle rule by its umbrella", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
+    const user = setupUser();
+    renderApp(PAGE);
+
+    const search = await screen.findByLabelText(
+      "Search the campaign rules, battle rules and charts"
+    );
+    await user.type(search, "squig");
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /^Monster encounters/ })).toBeInTheDocument()
+    );
+    expect(screen.queryByRole("button", { name: /^Curfew/ })).toBeNull();
+    expect(screen.queryByRole("button", { name: /^Weather/ })).toBeNull();
+  });
+
+  it("lets an admin add a battle rule under an umbrella, which opens that umbrella", async () => {
     fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("admin"));
-    fakeApi.on(`POST ${RULES}`, (body: { title: string; body: string }) =>
-      rule(5, body.title, body.body, 2)
+    fakeApi.on(`POST ${RULES}`, (body: Partial<CampaignRule>) =>
+      rule({ id: 7, title: body.title ?? "", ...body, order: 4 })
     );
     const user = setupUser();
     renderApp(PAGE);
 
-    await user.click(await screen.findByRole("button", { name: "Add campaign rule" }));
-    const form = screen.getByRole("form", { name: "Add a campaign rule" });
-    await user.type(within(form).getByLabelText("Title"), " Black Market ");
-    await user.type(within(form).getByLabelText("Rule"), "Rare items cost double.");
+    await user.click(await screen.findByRole("button", { name: "Add battle rule" }));
+    const form = screen.getByRole("form", { name: "Add a battle rule" });
+    await user.type(within(form).getByLabelText("Title"), " Blizzard ");
+    await user.type(within(form).getByLabelText("Umbrella"), "Weather");
+    await user.type(within(form).getByLabelText("Rule"), "Nobody may run.");
     await user.click(within(form).getByRole("button", { name: "Add rule" }));
 
-    expect(await screen.findByText("Rare items cost double.")).toBeInTheDocument();
     expect(fakeApi.bodyOf(`POST ${RULES}`)).toEqual({
-      title: "Black Market",
-      body: "Rare items cost double.",
+      title: "Blizzard",
+      body: "Nobody may run.",
+      umbrella: "Weather",
+      kind: "battle",
     });
-    expect(screen.queryByRole("form", { name: "Add a campaign rule" })).toBeNull();
+    const modal = await screen.findByRole("dialog", { name: "Weather" });
+    expect(within(modal).getByText("Nobody may run.")).toBeInTheDocument();
   });
 
-  it("lets an admin move a rule and edit it", async () => {
+  it("lets an admin edit a rule and move it from inside its modal", async () => {
     fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("admin"));
     fakeApi.on(`PUT ${RULES}order/`, () => [
       { ...curfew, order: 0 },
       { ...comet, order: 1 },
+      fog,
+      hail,
     ]);
-    fakeApi.on(`PATCH ${RULES}4/`, (body: { title: string; body: string }) => ({
-      ...curfew,
-      ...body,
-      order: 0,
-    }));
+    fakeApi.on(`PATCH ${RULES}4/`, (body: Partial<CampaignRule>) => ({ ...curfew, ...body }));
     const user = setupUser();
     renderApp(PAGE);
 
-    await user.click(await screen.findByRole("button", { name: "Curfew" }));
-    expect(screen.getByRole("button", { name: "Move down" })).toBeDisabled();
-    expect(rowNames()).toEqual([comet.title, curfew.title]);
-    await user.click(screen.getByRole("button", { name: "Move up" }));
+    await user.click(await screen.findByRole("button", { name: /^Curfew/ }));
+    const modal = await screen.findByRole("dialog", { name: "Curfew" });
+    await user.click(within(modal).getByRole("button", { name: "Move up" }));
 
-    await waitFor(() => expect(rowNames()).toEqual([curfew.title, comet.title]));
-    expect(fakeApi.bodyOf(`PUT ${RULES}order/`)).toEqual({ ids: [4, 3] });
+    await waitFor(() =>
+      expect(fakeApi.bodyOf(`PUT ${RULES}order/`)).toEqual({ ids: [4, 3, 5, 6] })
+    );
 
-    await user.click(screen.getByRole("button", { name: "Edit campaign rule" }));
-    const dialog = await screen.findByRole("dialog", { name: "Edit the campaign rule" });
+    await user.click(within(modal).getByRole("button", { name: "Edit" }));
+    const dialog = await screen.findByRole("dialog", { name: "Edit the rule" });
     await user.clear(within(dialog).getByLabelText("Title"));
     await user.type(within(dialog).getByLabelText("Title"), "Curfew Bell");
     await user.click(within(dialog).getByRole("button", { name: "Save changes" }));
 
-    expect(await screen.findByRole("button", { name: "Curfew Bell" })).toBeInTheDocument();
+    // the row it opened is its own, so the modal it is read in takes the new title with it
+    expect(await screen.findByRole("dialog", { name: "Curfew Bell" })).toBeInTheDocument();
     expect(fakeApi.bodyOf(`PATCH ${RULES}4/`)).toEqual({
       title: "Curfew Bell",
       body: curfew.body,
+      umbrella: "",
     });
   });
 
-  it("is under the Rules eyebrow, and hides its empty line while the first rule is added", async () => {
+  it("lets an admin add a chart with its results", async () => {
     fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("admin"));
-    fakeApi.on(`GET ${RULES}`, []);
+    fakeApi.on(`POST ${CHARTS}`, (body: Partial<CampaignChart>) => ({
+      ...monsters,
+      id: 11,
+      ...body,
+    }));
     const user = setupUser();
+    renderApp(PAGE);
+
+    await user.click(await screen.findByRole("button", { name: "Add chart" }));
+    const dialog = await screen.findByRole("dialog", { name: "Add a chart" });
+    await user.type(within(dialog).getByLabelText("Title"), "Spring weather");
+    await user.type(within(dialog).getByLabelText("Result 1 roll"), "1-2");
+    await user.type(within(dialog).getByLabelText("Result 1 name"), "Clear");
+    await user.click(within(dialog).getByRole("button", { name: "Add chart" }));
+
+    await waitFor(() =>
+      expect(fakeApi.bodyOf(`POST ${CHARTS}`)).toEqual({
+        title: "Spring weather",
+        description: "",
+        dice: "D6",
+        note: "",
+        umbrella: "",
+        rows: [{ result: "1-2", name: "Clear", text: "" }],
+      })
+    );
+  });
+
+  it("is under the Rules eyebrow and says when a list is empty", async () => {
+    fakeApi.on(`GET /campaigns/${CAMPAIGN_ID}/`, campaignFor("player"));
+    fakeApi.on(`GET ${RULES}`, []);
+    fakeApi.on(`GET ${CHARTS}`, []);
     renderApp(PAGE);
 
     const heading = await screen.findByRole("heading", { level: 1, name: "Campaign rules" });
     expect(heading.previousElementSibling).toHaveTextContent(/^Rules$/);
     expect(await screen.findByText("No campaign rules yet.")).toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "Add campaign rule" }));
-
-    expect(screen.getByRole("form", { name: "Add a campaign rule" })).toBeInTheDocument();
-    expect(screen.queryByText("No campaign rules yet.")).toBeNull();
-    await user.click(screen.getByRole("button", { name: "Cancel" }));
-    expect(screen.getByText("No campaign rules yet.")).toBeInTheDocument();
+    expect(screen.getByText("No battle rules yet.")).toBeInTheDocument();
+    expect(screen.getByText("No charts yet.")).toBeInTheDocument();
   });
 });

@@ -1,18 +1,35 @@
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import { Chip } from "@/components/ui/chip";
 import { ModalSheet } from "@/components/ui/modal-sheet";
-import { useHouseRules } from "@/features/rules/api/rule-queries";
+import { useCampaignCharts, useCampaignRules } from "@/features/rules/api/rule-queries";
+import { ruleRows } from "@/features/rules/campaign-rule-rows";
+import CampaignChartView from "@/features/rules/components/CampaignChartView";
 import { rulesTabs } from "@/features/rules/data/rules-content";
+import { useHouseRules } from "@/features/rules/api/rule-queries";
 
 import BattleWarbandRules from "./BattleWarbandRules";
 
 const HOUSE = "house";
 const WARBANDS = "warbands";
+const BATTLE = "battle-rules";
+const CHARTS = "charts";
+
+/** A titled block of text in a panel, as the house rules read. */
+function RuleEntry({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="flex flex-col gap-1 border-t border-line py-2.5">
+      <h3 className="m-0 font-bold text-head">{title}</h3>
+      {body ? <p className="m-0 whitespace-pre-line text-sm text-text2">{body}</p> : null}
+    </div>
+  );
+}
 
 /**
- * Rules during a battle: the scenario, the campaign's house rules (its rules endpoint), the
- * warbands' own rules as their pills (the templates plan), and the rulebook, one section at a time.
+ * Rules during a battle: the scenario, the campaign's house rules, its battle rules and charts
+ * (William, 19 Nov 2026: "We will need to make battle rules and charts accessible in the battle
+ * menu too"), the warbands' own rules, and the rulebook, one section at a time. A section with
+ * nothing in it shows no chip.
  */
 export default function BattleRulesSheet({
   open,
@@ -31,10 +48,68 @@ export default function BattleRulesSheet({
   warbands?: { id: number; name: string }[];
 }) {
   const houseRules = useHouseRules(campaignId).data ?? [];
+  const battleRules = ruleRows(useCampaignRules(campaignId).data ?? [], "battle");
+  const charts = useCampaignCharts(campaignId).data ?? [];
   const [tabId, setTabId] = useState<string>(HOUSE);
-  const showHouse = tabId === HOUSE && houseRules.length > 0;
-  const showWarbands = tabId === WARBANDS && warbands.length > 0;
-  const tab = rulesTabs.find((entry) => entry.id === tabId) ?? rulesTabs[0];
+
+  const own: { id: string; label: string; panel: ReactNode }[] = [
+    houseRules.length
+      ? {
+          id: HOUSE,
+          label: "House rules",
+          panel: (
+            <div className="flex flex-col">
+              {houseRules.map((rule) => (
+                <RuleEntry key={rule.id} title={rule.title} body={rule.description} />
+              ))}
+            </div>
+          ),
+        }
+      : null,
+    battleRules.length
+      ? {
+          id: BATTLE,
+          label: "Battle rules",
+          panel: (
+            <div className="flex flex-col">
+              {battleRules.flatMap((row) =>
+                row.rules.map((rule) => (
+                  <RuleEntry
+                    key={rule.id}
+                    title={row.umbrella ? `${row.umbrella}: ${rule.title}` : rule.title}
+                    body={rule.body}
+                  />
+                ))
+              )}
+            </div>
+          ),
+        }
+      : null,
+    charts.length
+      ? {
+          id: CHARTS,
+          label: "Charts",
+          panel: (
+            <div className="flex flex-col gap-5">
+              {charts.map((chart) => (
+                <CampaignChartView key={chart.id} chart={chart} heading />
+              ))}
+            </div>
+          ),
+        }
+      : null,
+    warbands.length
+      ? {
+          id: WARBANDS,
+          label: "Warband rules",
+          panel: <BattleWarbandRules campaignId={campaignId} warbands={warbands} />,
+        }
+      : null,
+  ].flatMap((entry) => entry ?? []);
+
+  const mine = own.find((entry) => entry.id === tabId) ?? null;
+  const book = mine ? null : (rulesTabs.find((entry) => entry.id === tabId) ?? rulesTabs[0]);
+
   return (
     <ModalSheet
       open={open}
@@ -60,40 +135,26 @@ export default function BattleRulesSheet({
         ) : null}
       </p>
       <div role="group" aria-label="Rules section" className="flex flex-wrap gap-1.5">
-        {houseRules.length ? (
-          <Chip pressed={showHouse} onClick={() => setTabId(HOUSE)}>
-            House rules
+        {own.map((entry) => (
+          <Chip key={entry.id} pressed={mine?.id === entry.id} onClick={() => setTabId(entry.id)}>
+            {entry.label}
           </Chip>
-        ) : null}
-        {warbands.length ? (
-          <Chip pressed={showWarbands} onClick={() => setTabId(WARBANDS)}>
-            Warband rules
-          </Chip>
-        ) : null}
+        ))}
         {rulesTabs.map((entry) => (
           <Chip
             key={entry.id}
-            pressed={!showHouse && !showWarbands && entry.id === tab.id}
+            pressed={book !== null && entry.id === book.id}
             onClick={() => setTabId(entry.id)}
           >
             {entry.label}
           </Chip>
         ))}
       </div>
-      {showWarbands ? (
-        <BattleWarbandRules campaignId={campaignId} warbands={warbands} />
-      ) : showHouse ? (
-        <dl className="m-0 flex flex-col">
-          {houseRules.map((rule) => (
-            <div key={rule.id} className="flex flex-col gap-1 border-t border-line py-2.5">
-              <dt className="font-bold text-head">{rule.title}</dt>
-              <dd className="m-0 whitespace-pre-line text-sm text-text2">{rule.description}</dd>
-            </div>
-          ))}
-        </dl>
+      {mine ? (
+        mine.panel
       ) : (
         // Static, bundled rules text (features/rules/data), not user content.
-        <div className="rules-content" dangerouslySetInnerHTML={{ __html: tab.content }} />
+        <div className="rules-content" dangerouslySetInnerHTML={{ __html: book!.content }} />
       )}
     </ModalSheet>
   );

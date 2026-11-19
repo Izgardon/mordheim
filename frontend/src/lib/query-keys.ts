@@ -67,6 +67,8 @@ export const queryKeys = {
     houseRules: (campaignId: number) => ["campaign", campaignId, "rules"] as const,
     /** Its own rules, not house rules (the overview, the Campaign rules page, Search everything). */
     campaignRules: (campaignId: number) => ["campaign", campaignId, "campaign-rules"] as const,
+    /** Its charts: the dice tables a player looks up (the Campaign rules page, the battle menu). */
+    campaignCharts: (campaignId: number) => ["campaign", campaignId, "campaign-charts"] as const,
     /** The warband types it may pick: the book's and its own, each in play or not. */
     warbandTypes: (campaignId: number) => ["campaign", campaignId, "warband-types"] as const,
     /** Its warband templates and the types each serves (Reference → Warbands), or one whole. */
