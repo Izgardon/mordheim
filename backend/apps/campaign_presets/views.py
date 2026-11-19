@@ -12,13 +12,16 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.campaigns.serializers.charts import CampaignChartSerializer
 from apps.campaigns.serializers.content import CampaignRuleSerializer
+from apps.campaigns.services.campaign_charts import campaign_charts
 from apps.campaigns.services.campaign_rules import campaign_rules
 from apps.campaigns.views.base import CampaignScopedView
 
 from .payload import campaign_preset_payload
 from .selectors import chart_names, preset_of, preset_rows
 from .serializers import CampaignPresetSerializer
+from .services.charts import copy_charts
 from .services.rules import copy_rules
 
 
@@ -45,14 +48,21 @@ class CampaignPresetView(CampaignScopedView):
 
 
 class CampaignPresetRulesView(CampaignScopedView):
-    """POST campaigns/<id>/preset/rules/: add the preset's rules the campaign holds none of by title, in the
-    preset's order (its owner and admins, as the campaign's own rules are theirs). Answers the campaign's rules as
-    they now stand."""
+    """POST campaigns/<id>/preset/rules/: add the preset's rules and charts the campaign holds none of by title, in
+    the preset's order (its owner and admins, as the campaign's own rules are theirs). Answers the campaign's rules
+    and charts as they now stand."""
 
     rules = {"POST": "manage_campaign_rules"}
 
     def post(self, request: Request, campaign_id: int) -> Response:
         campaign = self.access.campaign
         with transaction.atomic():
-            copy_rules(campaign, preset_of(campaign))
-        return Response(CampaignRuleSerializer(campaign_rules(campaign_id), many=True).data)
+            preset = preset_of(campaign)
+            copy_rules(campaign, preset)
+            copy_charts(campaign, preset)
+        return Response(
+            {
+                "rules": CampaignRuleSerializer(campaign_rules(campaign_id), many=True).data,
+                "charts": CampaignChartSerializer(campaign_charts(campaign_id), many=True).data,
+            }
+        )

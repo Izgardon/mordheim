@@ -180,7 +180,9 @@ class CampaignPresetTests(CampaignTestCase):
 
     def test_the_payload_names_the_preset_what_it_sets_and_nothing_departed_from(self) -> None:
         campaign_id = self.create(preset_id=self.marienburg.pk)["id"]
-        with self.assertNumQueries(5):
+        # the reader's access, the preset, its settings, its rules, its charts with their results, then the titles
+        # the campaign already holds of each: a fixed count, whatever the preset or the campaign holds
+        with self.assertNumQueries(7):
             data = self.preset_payload(campaign_id)
         self.assertEqual((data["preset_id"], data["preset_name"]), (self.marienburg.pk, MARIENBURG))
         self.assertEqual((data["departures"], data["rule_count"]), ([], 2))
@@ -211,14 +213,14 @@ class CampaignPresetTests(CampaignTestCase):
         CampaignRule.objects.create(campaign=self.campaign, title="Cargo", body="Ours.", order=0)
         response = self.post_as(self.owner, self.url("preset/rules/"))
         self.assertEqual(response.status_code, 200, response.data)
-        self.assertEqual([row["title"] for row in response.data], ["Cargo", "Campaign points"])
+        self.assertEqual([row["title"] for row in response.data["rules"]], ["Cargo", "Campaign points"])
         self.assertEqual(CampaignRule.objects.filter(campaign=self.campaign, title="Cargo").count(), 1)
         again = self.post_as(self.owner, self.url("preset/rules/"))
-        self.assertEqual([row["title"] for row in again.data], ["Cargo", "Campaign points"])
+        self.assertEqual([row["title"] for row in again.data["rules"]], ["Cargo", "Campaign points"])
 
     def test_adding_the_rules_of_no_preset_does_nothing(self) -> None:
         response = self.post_as(self.owner, self.url("preset/rules/"))
-        self.assertEqual((response.status_code, response.data), (200, []))
+        self.assertEqual((response.status_code, response.data), (200, {"rules": [], "charts": []}))
 
     def test_only_the_owner_and_admins_add_the_presets_rules(self) -> None:
         self.patch_as(self.owner, self.url(), {"preset_id": self.marienburg.pk})

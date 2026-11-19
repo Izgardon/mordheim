@@ -8,6 +8,7 @@ from apps.users.names import display_name
 from ..access import CAMPAIGN_RULES
 from ..effects import EFFECT_KEYS
 from ..models import (
+    CAMPAIGN_RULE_KINDS,
     MAX_CAMPAIGN_RULE_TEXT,
     CampaignEncampment,
     CampaignHouseRule,
@@ -40,17 +41,21 @@ class CampaignHouseRuleCreateSerializer(serializers.ModelSerializer):
 
 class CampaignRuleSerializer(serializers.ModelSerializer):
     """A campaign rule (models.CampaignRule): read, and written by POST campaign-rules/ and PATCH
-    campaign-rules/<id>/ (a PATCH may send either field); its place changes only through PUT campaign-rules/order/."""
+    campaign-rules/<id>/ (a PATCH may send any of the fields); its place changes only through PUT
+    campaign-rules/order/. `kind` tells a campaign rule from a battle rule and `umbrella` is the heading it shares
+    with the rules it belongs with (William, 19 Nov 2026)."""
 
     campaign_id = serializers.IntegerField(read_only=True)
+    kind = serializers.ChoiceField(choices=CAMPAIGN_RULE_KINDS, required=False)
     title = serializers.CharField(max_length=160, trim_whitespace=True)
     body = serializers.CharField(
         max_length=MAX_CAMPAIGN_RULE_TEXT, allow_blank=True, required=False, trim_whitespace=True
     )
+    umbrella = serializers.CharField(max_length=120, allow_blank=True, required=False, trim_whitespace=True)
 
     class Meta:
         model = CampaignRule
-        fields = ("id", "campaign_id", "title", "body", "order")
+        fields = ("id", "campaign_id", "kind", "title", "body", "umbrella", "order")
         read_only_fields = ("order",)
 
 

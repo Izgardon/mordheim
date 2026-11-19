@@ -107,6 +107,31 @@ class CampaignRuleTests(CampaignTestCase):
         self.assertEqual(twice.status_code, 400)
         self.assertEqual([title for title, _body, _order in self.listed()], ["Market", "The Comet", "Curfew"])
 
+    def test_a_rule_is_a_campaign_rule_unless_it_says_it_is_a_battle_rule(self):
+        """William, 19 Nov 2026: campaign rules and battle rules are one table told apart by their kind."""
+        plain = self.add("Curfew").json()
+        battle = self.post_as(
+            self.admin,
+            self.rules_url(),
+            {"title": "Fog", "body": "It hides.", "kind": "battle", "umbrella": "Weather"},
+        ).json()
+
+        self.assertEqual((plain["kind"], plain["umbrella"]), ("campaign", ""))
+        self.assertEqual((battle["kind"], battle["umbrella"]), ("battle", "Weather"))
+        self.assertEqual(
+            self.post_as(self.admin, self.rules_url(), {"title": "Odd", "kind": "skirmish"}).status_code, 400
+        )
+
+    def test_a_patch_moves_a_rule_between_the_two_and_renames_its_umbrella(self):
+        rule = self.add("Fog").json()
+
+        patched = self.patch_as(
+            self.owner, self.rules_url(f"{rule['id']}/"), {"kind": "battle", "umbrella": " Weather "}
+        ).json()
+
+        self.assertEqual((patched["kind"], patched["umbrella"]), ("battle", "Weather"))
+        self.assertEqual(CampaignRule.objects.get(pk=rule["id"]).kind, "battle")
+
     def test_an_archived_campaign_s_are_read_only(self):
         rule = CampaignRule.objects.create(campaign=self.campaign, title="Curfew")
         self.campaign.archived_at = timezone.now()

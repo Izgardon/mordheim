@@ -6,6 +6,9 @@ from .views import (
     CampaignArchiveView,
     CampaignBattleHistoryView,
     CampaignBattleRecordView,
+    CampaignChartDetailView,
+    CampaignChartOrderView,
+    CampaignChartsView,
     CampaignChatReadView,
     CampaignChronicleView,
     CampaignCommonRulesView,
@@ -172,6 +175,21 @@ urlpatterns = [
         "campaigns/<int:campaign_id>/campaign-rules/<int:rule_id>/",
         CampaignRuleDetailView.as_view(),
         name="campaigns-campaign-rules-detail",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/campaign-charts/",
+        CampaignChartsView.as_view(),
+        name="campaigns-campaign-charts",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/campaign-charts/order/",
+        CampaignChartOrderView.as_view(),
+        name="campaigns-campaign-charts-order",
+    ),
+    path(
+        "campaigns/<int:campaign_id>/campaign-charts/<int:chart_id>/",
+        CampaignChartDetailView.as_view(),
+        name="campaigns-campaign-charts-detail",
     ),
     path(
         "campaigns/<int:campaign_id>/messages/",

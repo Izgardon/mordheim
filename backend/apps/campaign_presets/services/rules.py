@@ -35,7 +35,14 @@ def copy_rules(campaign: Campaign, preset: CampaignPreset | None) -> int:
     last = CampaignRule.objects.filter(campaign=campaign).aggregate(last=Max("order"))["last"]
     start = 0 if last is None else last + 1
     CampaignRule.objects.bulk_create(
-        CampaignRule(campaign=campaign, title=rule.title, body=rule.text, order=start + place)
+        CampaignRule(
+            campaign=campaign,
+            kind=rule.kind,
+            title=rule.title,
+            body=rule.text,
+            umbrella=rule.umbrella,
+            order=start + place,
+        )
         for place, rule in enumerate(rules)
     )
     return len(rules)

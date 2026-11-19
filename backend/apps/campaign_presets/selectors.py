@@ -27,7 +27,8 @@ def chart_names(presets: list[CampaignPreset]) -> dict[int, str]:
 
 
 def preset_of(campaign: Campaign) -> CampaignPreset | None:
-    """The campaign's preset with its settings and its rules (four queries), or None for one that picked none."""
+    """The campaign's preset with its settings, its rules and its charts with their results (six queries), or None
+    for one that picked none."""
     if campaign.preset_id is None:
         return None
-    return preset_rows().prefetch_related("rules").filter(pk=campaign.preset_id).first()
+    return preset_rows().prefetch_related("rules", "charts__rows").filter(pk=campaign.preset_id).first()

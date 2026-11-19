@@ -18,7 +18,13 @@ from typing import Any
 
 from django.db import models
 
-from apps.campaigns.models import HERO_DEATH_ROLL_CHOICES, MAX_CAMPAIGN_RULE_TEXT
+from apps.campaigns.models import (
+    CAMPAIGN_RULE_KINDS,
+    CHART_DICE,
+    HERO_DEATH_ROLL_CHOICES,
+    MAX_CAMPAIGN_RULE_TEXT,
+    MAX_CHART_ROW_TEXT,
+)
 
 
 class CampaignPreset(models.Model):
@@ -55,12 +61,15 @@ class CampaignPreset(models.Model):
 
 
 class CampaignPresetRule(models.Model):
-    """One of the preset's rules, in the book's order, as `CampaignRule` holds a campaign's own."""
+    """One of the preset's rules, in the book's order, as `CampaignRule` holds a campaign's own: its `kind` tells a
+    campaign rule from a battle rule, and `umbrella` is the heading it shares with the rules it belongs with."""
 
     preset = models.ForeignKey(CampaignPreset, related_name="rules", on_delete=models.CASCADE)
     order = models.PositiveIntegerField(default=0)
+    kind = models.CharField(max_length=8, choices=CAMPAIGN_RULE_KINDS, default="campaign")
     title = models.CharField(max_length=160)
     text = models.TextField(max_length=MAX_CAMPAIGN_RULE_TEXT, blank=True, default="")
+    umbrella = models.CharField(max_length=120, blank=True, default="")
 
     class Meta:
         db_table = "campaign_preset_rule"
@@ -69,6 +78,43 @@ class CampaignPresetRule(models.Model):
 
     def __str__(self) -> str:
         return f"{self.preset_id}:{self.title}"
+
+
+class CampaignPresetChart(models.Model):
+    """One of the preset's charts, in the book's order, as `CampaignChart` holds a campaign's own."""
+
+    preset = models.ForeignKey(CampaignPreset, related_name="charts", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+    title = models.CharField(max_length=160)
+    description = models.TextField(max_length=2000, blank=True, default="")
+    dice = models.CharField(max_length=6, choices=[(die, die) for die in CHART_DICE], blank=True, default="")
+    note = models.TextField(max_length=2000, blank=True, default="")
+    umbrella = models.CharField(max_length=120, blank=True, default="")
+
+    class Meta:
+        db_table = "campaign_preset_chart"
+        ordering = ["order", "id"]
+        constraints = [models.UniqueConstraint(fields=["preset", "title"], name="campaign_preset_chart_unique_title")]
+
+    def __str__(self) -> str:
+        return f"{self.preset_id}:{self.title}"
+
+
+class CampaignPresetChartRow(models.Model):
+    """One result on a preset's chart, as `CampaignChartRow` holds a campaign's own."""
+
+    chart = models.ForeignKey(CampaignPresetChart, related_name="rows", on_delete=models.CASCADE)
+    order = models.PositiveIntegerField(default=0)
+    result = models.CharField(max_length=20)
+    name = models.CharField(max_length=160, blank=True, default="")
+    text = models.TextField(max_length=MAX_CHART_ROW_TEXT, blank=True, default="")
+
+    class Meta:
+        db_table = "campaign_preset_chart_row"
+        ordering = ["order", "id"]
+
+    def __str__(self) -> str:
+        return f"{self.chart_id}:{self.result}"
 
 
 class Dictated:

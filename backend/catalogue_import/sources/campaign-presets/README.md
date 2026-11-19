@@ -18,10 +18,42 @@ field in from another preset or from the app's defaults: silence is data.
 | `enable_locations`, `enable_encampments`, `enable_campaign_points`, `enable_blood_pacts` | `true` or `false`. |
 | `max_heroes` | The most heroes a warband may hold. |
 | `hero_death_roll` | `d66` or `d100`. |
-| `rules` | A file in `sources/campaign-rules/` (without `.json`) holding `{"rules": [{"title", "text"}]}`. Leave it out for a campaign whose rules we have not written yet. |
+| `rules` | A file in `sources/campaign-rules/` (without `.json`) holding the campaign's rules, battle rules and charts — see below. Leave it out for a campaign whose rules we have not written yet. |
 
 A preset naming a setting, a chart or a rules file we do not hold is **skipped with a warning** and never seeded
 half-built. A preset the folder drops is left where it is, because a campaign may have picked it.
 
 Nothing a preset dictates is a block: the pages grey the controls it sets, keep them operable, and warn when the
 owner departs from one.
+
+## A campaign's rules file
+
+One file per published campaign in `sources/campaign-rules/`, named by the preset's `rules` field. It holds three
+lists, each optional; a list left out is a list the campaign has none of.
+
+```json
+{
+  "rules": [{ "title": "Campaign points", "text": "…", "umbrella": "" }],
+  "battle_rules": [{ "title": "Fog", "text": "…", "umbrella": "Weather" }],
+  "charts": [
+    {
+      "title": "Seaside Situations",
+      "description": "Roll at the start of each of your turns.",
+      "dice": "D66",
+      "note": "Re-roll a result the ground doesn't allow.",
+      "umbrella": "",
+      "rows": [{ "result": "11-15", "name": "What is that!?", "text": "…" }]
+    }
+  ]
+}
+```
+
+- A **battle rule** only matters while a game is being set up or played (the weather, the ground, an encounter being
+  triggered); a **campaign rule** is about the campaign between games. They are one table told apart by their kind,
+  so a title must be unique across both lists.
+- `umbrella` is the heading clearly related rules or charts share (William, 19 Nov 2026: "one modal for all shared
+  rules"). Blank means it stands alone. Use one only where two or more belong together.
+- A chart's `dice` is one of `D3`, `D6`, `2D6`, `3D6`, `D66`, `D100`, or blank for a table with no dice of its own;
+  anything else is refused. `result` is what was rolled as the book writes it (`"2"`, `"3-4"`, `"11-15"`).
+- A rule may keep a **small** table inside its `text` (two or three lines). A longer table, or one a player would
+  look up on its own, is a chart.

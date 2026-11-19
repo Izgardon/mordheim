@@ -1,5 +1,5 @@
-"""The campaign's own content: its messages, house rules, campaign rules, encampments, locations and the pivotal
-moments its battles left.
+"""The campaign's own content: its messages, house rules, campaign and battle rules, charts, encampments,
+locations and the pivotal moments its battles left.
 """
 
 from typing import Any
@@ -61,16 +61,25 @@ class CampaignHouseRule(models.Model):
 
 
 MAX_CAMPAIGN_RULE_TEXT = 8000  # as a warband rule's (warbands/models/warband.py MAX_RULE_TEXT)
+# What a rule is about (William, 19 Nov 2026). A battle rule only matters while a game is being set up or played
+# (the weather, the ground, an encounter being triggered); a campaign rule is about the campaign between games. Both
+# are the same thing to write, read and order, so they are one table and one set of code, told apart by this.
+CAMPAIGN_RULE_KINDS = (("campaign", "Campaign rule"), ("battle", "Battle rule"))
 
 
 class CampaignRule(models.Model):
     """One of the campaign's own rules, not a house rule (William, 7 Nov 2026: "campaign wide rules that are not house
     rules, kind of like warband rules ... admin only", "more flavourful rulings on how the campaign works"): a title,
-    its body, and its place in the list. Its owner and admins write and order them; every member reads them."""
+    its body, and its place in the list. Its owner and admins write and order them; every member reads them.
+
+    `umbrella` is the heading clearly related rules share (William, 19 Nov 2026: "one modal for all shared rules"):
+    the rules naming the same umbrella show as one row and open together, and a blank umbrella stands alone."""
 
     campaign = models.ForeignKey(Campaign, related_name="campaign_rules", on_delete=models.CASCADE)
+    kind = models.CharField(max_length=8, choices=CAMPAIGN_RULE_KINDS, default="campaign")
     title = models.CharField(max_length=160)
     body = models.TextField(blank=True, default="")
+    umbrella = models.CharField(max_length=120, blank=True, default="")
     order = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

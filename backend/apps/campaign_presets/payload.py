@@ -11,6 +11,7 @@ from apps.campaigns.models import Campaign
 
 from .models import DICTATED, CampaignPreset
 from .selectors import chart_names, preset_of
+from .services.charts import missing_charts
 from .services.rules import missing_rules
 from .wording import departure, sets
 
@@ -40,10 +41,19 @@ def departures(
 
 def campaign_preset_payload(campaign: Campaign) -> dict[str, Any]:
     """`GET campaigns/<id>/preset/`: the campaign's preset, what it dictates, where the campaign departs from it and
-    which of its rules the campaign lacks. Five queries; none of them grows with the campaign."""
+    which of its rules and charts the campaign lacks. Eight queries; none of them grows with the campaign."""
     preset = preset_of(campaign)
     if preset is None:
-        return {"preset_id": None, "preset_name": "", "sets": [], "departures": [], "rules": [], "rule_count": 0}
+        return {
+            "preset_id": None,
+            "preset_name": "",
+            "sets": [],
+            "departures": [],
+            "rules": [],
+            "rule_count": 0,
+            "charts": [],
+            "chart_count": 0,
+        }
     charts = chart_names([preset])
     return {
         "preset_id": preset.pk,
@@ -53,4 +63,7 @@ def campaign_preset_payload(campaign: Campaign) -> dict[str, Any]:
         # the rules it would add: the ones the campaign holds none of by title (it is offered them, never given them)
         "rules": [rule.title for rule in missing_rules(campaign.pk, preset)],
         "rule_count": len(preset.rules.all()),
+        # the charts it would add, by the same rule: the ones the campaign holds none of by title
+        "charts": [chart.title for chart in missing_charts(campaign.pk, preset)],
+        "chart_count": len(preset.charts.all()),
     }

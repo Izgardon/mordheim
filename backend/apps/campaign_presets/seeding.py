@@ -21,11 +21,11 @@ from typing import Any
 from django.conf import settings as django_settings
 from django.core.management.base import CommandError
 
-from apps.campaigns.models import HERO_DEATH_ROLL_CHOICES, CampaignType
+from apps.campaigns.models import CHART_DICE, HERO_DEATH_ROLL_CHOICES, CampaignType
 from apps.core.seeding import clean, parse_int
 from apps.exploration.models import ExplorationChart
 
-from .models import CampaignPreset, CampaignPresetRule
+from .models import CampaignPreset, CampaignPresetChart, CampaignPresetChartRow, CampaignPresetRule
 
 PRESET_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" / "campaign-presets"
 RULE_SOURCES = Path(django_settings.BASE_DIR) / "catalogue_import" / "sources" / "campaign-rules"
@@ -62,27 +62,98 @@ def read_presets(folder: Path = PRESET_SOURCES) -> list[dict[str, Any]]:
     return presets
 
 
-def read_rules(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[str, str]]:
-    """The rules of `name.json` in `folder`, in its order: each a title and its text."""
-    path = folder / f"{name}.json"
-    if not path.is_file():
-        raise Skipped(label, f"its rules file {name}.json isn't there")
-    try:
-        data = json.loads(path.read_text(encoding="utf-8-sig"))
-    except (OSError, ValueError) as exc:
-        raise CommandError(f"Unable to read the campaign rules {path}: {exc}") from exc
-    rows = data.get("rules") if isinstance(data, dict) else data
+def _rules_of(rows: Any, kind: str, name: str, label: str) -> list[dict[str, str]]:
+    """One list of rules from a source file, each given `kind`: a title, its text and its umbrella."""
     if not isinstance(rows, list):
-        raise CommandError(f"The campaign rules {path} should hold a list of rules.")
+        raise CommandError(f"{label}: {name}.json should hold a list of rules under each of rules and battle_rules.")
     rules = []
     for row in rows:
         if not isinstance(row, dict) or not clean(row.get("title")):
             raise CommandError(f"{label}: each rule in {name}.json needs a title.")
-        rules.append({"title": clean(row.get("title")), "text": clean(row.get("text"))})
+        rules.append(
+            {
+                "kind": kind,
+                "title": clean(row.get("title")),
+                "text": clean(row.get("text")),
+                "umbrella": clean(row.get("umbrella")),
+            }
+        )
+    return rules
+
+
+def read_rules(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[str, str]]:
+    """The rules of `name.json` in `folder`, in its order: the campaign rules under `rules`, then the battle rules
+    under `battle_rules` (William, 19 Nov 2026). A plain list is read as campaign rules, as the first files held."""
+    data = _read_source(name, label, folder)
+    rows = data.get("rules") if isinstance(data, dict) else data
+    rules = _rules_of(rows, "campaign", name, label)
+    if isinstance(data, dict) and data.get("battle_rules") is not None:
+        rules += _rules_of(data["battle_rules"], "battle", name, label)
     titles = [rule["title"].lower() for rule in rules]
     if len(set(titles)) != len(titles):
         raise CommandError(f"{label}: {name}.json holds two rules of the same title.")
     return rules
+
+
+def read_charts(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict[str, Any]]:
+    """The charts of `name.json`, in its order: each its title, when it is rolled, its dice and a row per result.
+    A file with no `charts` key holds no charts, which is not the same as holding none we could read."""
+    data = _read_source(name, label, folder)
+    rows = data.get("charts") if isinstance(data, dict) else None
+    if rows is None:
+        return []
+    if not isinstance(rows, list):
+        raise CommandError(f"{label}: charts in {name}.json should be a list.")
+    charts: list[dict[str, Any]] = []
+    for row in rows:
+        if not isinstance(row, dict) or not clean(row.get("title")):
+            raise CommandError(f"{label}: each chart in {name}.json needs a title.")
+        dice = clean(row.get("dice"))
+        if dice and dice not in CHART_DICE:
+            raise CommandError(f"{label}: the chart '{row.get('title')}' rolls {dice}, which isn't a die we hold.")
+        charts.append(
+            {
+                "title": clean(row.get("title")),
+                "description": clean(row.get("description")),
+                "dice": dice,
+                "note": clean(row.get("note")),
+                "umbrella": clean(row.get("umbrella")),
+                "rows": _chart_rows(row.get("rows"), clean(row.get("title")), label),
+            }
+        )
+    titles = [chart["title"].lower() for chart in charts]
+    if len(set(titles)) != len(titles):
+        raise CommandError(f"{label}: {name}.json holds two charts of the same title.")
+    return charts
+
+
+def _chart_rows(rows: Any, title: str, label: str) -> list[dict[str, str]]:
+    """A chart's results, in the order the file gives them."""
+    if not isinstance(rows, list) or not rows:
+        raise CommandError(f"{label}: the chart '{title}' needs at least one result.")
+    results = []
+    for row in rows:
+        if not isinstance(row, dict) or not clean(row.get("result")):
+            raise CommandError(f"{label}: each result on the chart '{title}' needs what was rolled.")
+        results.append(
+            {
+                "result": clean(row.get("result")),
+                "name": clean(row.get("name")),
+                "text": clean(row.get("text")),
+            }
+        )
+    return results
+
+
+def _read_source(name: str, label: str, folder: Path) -> Any:
+    """One campaign's rules file, parsed."""
+    path = folder / f"{name}.json"
+    if not path.is_file():
+        raise Skipped(label, f"its rules file {name}.json isn't there")
+    try:
+        return json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, ValueError) as exc:
+        raise CommandError(f"Unable to read the campaign rules {path}: {exc}") from exc
 
 
 def _flags(entry: Mapping[str, Any], label: str) -> dict[str, bool | None]:
@@ -141,6 +212,7 @@ def write_preset(
     # everything the preset names is found before anything is written, so a skipped preset leaves no half-built row
     named = clean(entry.get("rules"))
     rules = read_rules(named, name, rule_folder) if named else []
+    preset_charts = read_charts(named, name, rule_folder) if named else []
     setting_ids = _setting_ids(entry, name, settings)
     defaults: dict[str, Any] = {
         "name": name,
@@ -156,13 +228,26 @@ def write_preset(
     CampaignPresetRule.objects.bulk_create(
         CampaignPresetRule(preset=preset, order=place, **rule) for place, rule in enumerate(rules)
     )
+    _write_charts(preset, preset_charts)
     return preset
+
+
+def _write_charts(preset: CampaignPreset, charts: list[dict[str, Any]]) -> None:
+    """The preset's charts, written afresh with their results."""
+    preset.charts.all().delete()
+    for place, chart in enumerate(charts):
+        rows = chart.pop("rows")
+        written = CampaignPresetChart.objects.create(preset=preset, order=place, **chart)
+        CampaignPresetChartRow.objects.bulk_create(
+            CampaignPresetChartRow(chart=written, order=index, **row) for index, row in enumerate(rows)
+        )
 
 
 @dataclass
 class SeedResult:
     presets: int = 0
     rules: int = 0
+    charts: int = 0
     skipped: list[str] = dataclass_field(default_factory=list)  # a preset naming something we don't hold, and why
 
 
@@ -179,8 +264,12 @@ def seed_presets(folder: Path = PRESET_SOURCES, rule_folder: Path = RULE_SOURCES
             seen.append(write_preset(entry, settings, charts, rule_folder).pk)
         except Skipped as skip:
             skipped.append(str(skip))
-    return SeedResult(len(seen), _rule_count(seen), skipped)
+    return SeedResult(len(seen), _rule_count(seen), _chart_count(seen), skipped)
 
 
 def _rule_count(preset_ids: Iterable[int]) -> int:
     return CampaignPresetRule.objects.filter(preset_id__in=list(preset_ids)).count()
+
+
+def _chart_count(preset_ids: Iterable[int]) -> int:
+    return CampaignPresetChart.objects.filter(preset_id__in=list(preset_ids)).count()
