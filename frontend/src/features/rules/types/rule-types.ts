@@ -29,12 +29,19 @@ export type CommonRule = {
   effect_key: string | null;
 };
 
-/** One result on a chart: what was rolled, its short name (may be blank) and what it does. */
+/**
+ * One result on a chart: what was rolled, its short name (may be blank) and what it does.
+ *
+ * `chart` is the table the book hangs off this result alone (William, 20 Nov 2026): Border Town
+ * Burning's Curious bloom under result 31 of Perilous phenomenon. It shows inside the result and
+ * is never a chart of its own. One level only: a result's table has plain results.
+ */
 export type CampaignChartRow = {
   id?: number;
   result: string;
   name: string;
   text: string;
+  chart?: RuleTable | null;
 };
 
 /** What a rule is about: the campaign between games, or a game being set up and played. */

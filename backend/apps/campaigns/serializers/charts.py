@@ -11,8 +11,21 @@ from ..models import CHART_DICE, MAX_CHART_ROW_TEXT, CampaignChart, CampaignChar
 MAX_ROWS = 100  # D100 is the longest table a book holds
 
 
+def table_payload(table: CampaignChart | None) -> dict | None:
+    """A table owned by a rule or a result, as the pages read it: the same shape a rule's own table has."""
+    if table is None:
+        return None
+    return {
+        "dice": table.dice,
+        "description": table.description,
+        "note": table.note,
+        "rows": [{"id": row.id, "result": row.result, "name": row.name, "text": row.text} for row in table.rows.all()],
+    }
+
+
 class CampaignChartRowSerializer(serializers.ModelSerializer):
-    """One result: what was rolled, its short name and what it does."""
+    """One result: what was rolled, its short name, what it does, and its own table where the book hangs one off
+    this result alone (Border Town Burning's Curious bloom). The table is read with the chart and never sent."""
 
     result = serializers.CharField(max_length=20, trim_whitespace=True)
     name = serializers.CharField(max_length=160, allow_blank=True, required=False, trim_whitespace=True)
@@ -20,7 +33,14 @@ class CampaignChartRowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CampaignChartRow
-        fields = ("id", "result", "name", "text")
+        fields = ("id", "result", "name", "text", "chart")
+        read_only_fields = ("chart",)
+
+    def to_representation(self, instance):
+        """The result with its own table, from the rows already read (no query)."""
+        data = super().to_representation(instance)
+        data["chart"] = table_payload(next(iter(instance.charts.all()), None))
+        return data
 
 
 class CampaignChartSerializer(serializers.ModelSerializer):

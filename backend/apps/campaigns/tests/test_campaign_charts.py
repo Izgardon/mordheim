@@ -128,11 +128,12 @@ class CampaignChartTests(CampaignTestCase):
             self.add({**WEATHER, "title": f"Chart {index}"})
         self.get_as(self.player, self.charts_url())  # the access rows, warmed
 
-        with self.assertNumQueries(3):  # the reader's access, the charts, their results
+        # the reader's access, the charts, their results, and the tables hanging off those results
+        with self.assertNumQueries(4):
             self.get_as(self.player, self.charts_url())
         for index in range(3, 9):
             self.add({**WEATHER, "title": f"Chart {index}"})
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.assertEqual(len(self.listed()), 9)
 
 
@@ -212,3 +213,77 @@ class RuleOwnedTableTests(CampaignTestCase):
 
         with self.assertNumQueries(4):  # the reader's access, the rules, their tables, the tables' results
             self.get_as(self.player, self.rule_url())
+
+
+class ResultOwnedTableTests(CampaignTestCase):
+    """A chart may belong to one *result* of another chart (William, 20 Nov 2026): a random occurrence is a
+    trigger, one big table, and sub-tables hanging off single results. Border Town Burning's Curious bloom is a
+    table under result 31 of Perilous phenomenon, so it shows inside that result and is not a chart of its own."""
+
+    def charts_url(self, suffix: str = "") -> str:
+        return self.url(f"campaign-charts/{suffix}")
+
+    def add_chart(self, **body):
+        return self.post_as(self.admin, self.charts_url(), {**WEATHER, **body})
+
+    def hang_a_table_off(self, row: CampaignChartRow, title: str = "Curious bloom") -> CampaignChart:
+        """The table the book hangs off that one result, as the seeder writes it."""
+        table = CampaignChart.objects.create(campaign=self.campaign, row=row, title=title, dice="D6")
+        CampaignChartRow.objects.create(chart=table, result="1", name="Nothing", text="The bloom is spent.")
+        return table
+
+    def first_row(self) -> CampaignChartRow:
+        chart = CampaignChart.objects.get(campaign=self.campaign, title="Spring weather")
+        return chart.rows.all()[0]
+
+    def test_a_result_carries_its_own_table(self):
+        self.add_chart()
+        self.hang_a_table_off(self.first_row())
+
+        listed = self.get_as(self.player, self.charts_url()).json()
+
+        self.assertEqual([chart["title"] for chart in listed], ["Spring weather"])
+        table = listed[0]["rows"][0]["chart"]
+        self.assertEqual((table["dice"], [row["name"] for row in table["rows"]]), ("D6", ["Nothing"]))
+
+    def test_a_result_without_one_reads_null(self):
+        self.add_chart()
+
+        listed = self.get_as(self.player, self.charts_url()).json()
+
+        self.assertIsNone(listed[0]["rows"][0]["chart"])
+
+    def test_a_results_table_is_left_out_of_the_charts_list(self):
+        self.add_chart()
+        self.hang_a_table_off(self.first_row())
+        self.add_chart(title="Summer weather")
+
+        listed = self.get_as(self.player, self.charts_url()).json()
+
+        self.assertEqual([chart["title"] for chart in listed], ["Spring weather", "Summer weather"])
+
+    def test_deleting_the_chart_takes_its_results_tables_with_it(self):
+        chart_id = self.add_chart().json()["id"]
+        self.hang_a_table_off(self.first_row())
+
+        self.delete_as(self.owner, self.charts_url(f"{chart_id}/"))
+
+        self.assertFalse(CampaignChart.objects.filter(campaign=self.campaign).exists())
+        self.assertFalse(CampaignChartRow.objects.exists())
+
+    def test_reading_costs_the_same_however_many_results_carry_tables(self):
+        self.add_chart()
+        for row in CampaignChart.objects.get(campaign=self.campaign, title="Spring weather").rows.all():
+            self.hang_a_table_off(row, title=f"Table {row.result}")
+        self.get_as(self.player, self.charts_url())  # the access row, warmed
+
+        # the reader's access, the charts, their results, those results' tables, and the tables' own results. One
+        # more than a list with no such table, where Django skips the last level for want of anything to read.
+        with self.assertNumQueries(5):
+            self.get_as(self.player, self.charts_url())
+
+        self.add_chart(title="Summer weather")
+        for row in CampaignChart.objects.get(campaign=self.campaign, title="Summer weather").rows.all():
+            self.hang_a_table_off(row, title=f"Summer table {row.result}")
+        with self.assertNumQueries(5):
+            self.assertEqual(len(self.get_as(self.player, self.charts_url()).json()), 2)

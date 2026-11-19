@@ -65,5 +65,5 @@ def campaign_preset_payload(campaign: Campaign) -> dict[str, Any]:
         "rule_count": len(preset.rules.all()),
         # the charts it would add, by the same rule: the ones the campaign holds none of by title
         "charts": [chart.title for chart in missing_charts(campaign.pk, preset)],
-        "chart_count": sum(1 for chart in preset.charts.all() if chart.rule_id is None),
+        "chart_count": sum(1 for chart in preset.charts.all() if chart.rule_id is None and chart.row_id is None),
     }

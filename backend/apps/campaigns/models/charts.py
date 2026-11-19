@@ -23,15 +23,25 @@ class CampaignChart(models.Model):
     member reads them. `note` carries what is true of the whole chart rather than one row: the modifiers, and what
     to do with a result the chart sends on elsewhere.
 
-    A chart may instead **belong to a rule** (William, 20 Nov 2026: "charts should only really be used for clear
-    reference charts"). Then it is that rule's own table: it shows inside the rule and is left out of the Charts
-    list, so a rule may hold a table of any size without pretending to be a chart a player looks up. It is the same
-    model and the same renderer either way; owning a table is all that tells them apart.
+    A chart may instead **belong to something** (William, 20 Nov 2026: "charts should only really be used for clear
+    reference charts"). Then it is that owner's own table: it shows inside the owner and is left out of the Charts
+    list, so a table of any size need not pretend to be a chart a player looks up. Two owners, because a random
+    occurrence is a trigger, one big table, and sub-tables hanging off single results:
+
+    - `rule`: the rule's own table (Khemri's Complex trap under its Traps rule).
+    - `row`: one result's own table (Border Town Burning's Curious bloom, a result of Perilous phenomenon, and its
+      Thunder and lightning, a result of the Weather chart).
+
+    It is the same model and the same renderer whichever owns it; owning a table is all that tells them apart, and a
+    chart with neither is one the player looks up.
     """
 
     campaign = models.ForeignKey(Campaign, related_name="charts", on_delete=models.CASCADE)
     rule = models.ForeignKey(
         "campaigns.CampaignRule", related_name="charts", null=True, blank=True, on_delete=models.CASCADE
+    )
+    row = models.ForeignKey(
+        "campaigns.CampaignChartRow", related_name="charts", null=True, blank=True, on_delete=models.CASCADE
     )
     title = models.CharField(max_length=160)
     description = models.TextField(max_length=2000, blank=True, default="")
@@ -48,6 +58,11 @@ class CampaignChart(models.Model):
 
     def __str__(self):
         return f"{self.campaign_id}:{self.title}"
+
+    @property
+    def is_owned(self) -> bool:
+        """A table belonging to a rule or a result, rather than a chart the player looks up."""
+        return self.rule_id is not None or self.row_id is not None
 
 
 class CampaignChartRow(models.Model):

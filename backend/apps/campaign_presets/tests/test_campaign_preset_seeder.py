@@ -66,11 +66,26 @@ class PresetSeederTests(TestCase):
             (17, 38),
         )
         self.assertEqual(rules[0].title, "Campaign points")
-        charts = list(marienburg.charts.prefetch_related("rows"))
-        # the burning-house table belongs to Setting buildings on fire, so it is not a chart of its own
-        self.assertEqual(sum(1 for chart in charts if chart.rule_id is None), 19)
+        charts = list(marienburg.charts.prefetch_related("rows").select_related("row__chart"))
+        # a table belonging to a rule or to one result is not a chart of its own (William, 20 Nov 2026)
+        self.assertEqual(sum(1 for chart in charts if chart.rule_id is None and chart.row_id is None), 14)
         owned = [chart.rule for chart in charts if chart.rule is not None]
-        self.assertEqual([rule.title for rule in owned], ["Setting buildings on fire"])
+        self.assertEqual(
+            sorted(rule.title for rule in owned),
+            ["Breaking into buildings", "Setting buildings on fire", "Under arrest"],
+        )
+        # the sewer and booty tables hang off single results of the charts that send the player to them
+        on_results = {
+            chart.title: (chart.row.chart.title, chart.row.result) for chart in charts if chart.row is not None
+        }
+        self.assertEqual(
+            on_results,
+            {
+                "Traps": ("Subterranean events", "7"),
+                "Sewer hazards": ("Subterranean events", "3"),
+                "Tainted items": ("Booty", "7"),
+            },
+        )
         seaside = next(chart for chart in charts if chart.title == "Seaside Situations")
         self.assertEqual((seaside.dice, len(seaside.rows.all())), ("D66", 32))
 
@@ -101,7 +116,9 @@ class PresetSeederTests(TestCase):
         presets = {preset.slug: preset for preset in CampaignPreset.objects.all()}
         expected = {
             # Border Town Burning: its objectives chapter is campaign points, and its injury chart names a D66 result
-            "border-town-burning": (None, None, True, None, None, "d66", 23),
+            # one battle rule fewer than the book's chapters: its Perilous phenomenon rule only repeated the
+            # chart's own trigger, so the chart says it (William, 20 Nov 2026)
+            "border-town-burning": (None, None, True, None, None, "d66", 22),
             # Khemri dictates its chart and nothing else: it points at the rulebook for everything structural
             "khemri": (None, None, None, None, None, "", 20),
             # Sartosa: its Locales are the campaign's places, and pressganging names a D66 result

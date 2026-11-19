@@ -16,12 +16,12 @@ ORDER_REFUSED = "Send every chart's id once, in its new order."
 
 
 def campaign_charts(campaign_id: int) -> "QuerySet[CampaignChart]":
-    """The campaign's charts with their results, in their order (two queries). A chart belonging to a rule is that
-    rule's own table and is left out: the Charts list is the reference charts a player looks up (William, 20 Nov
-    2026)."""
+    """The campaign's charts with their results, and each result's own table (four queries). A chart belonging to
+    a rule or to a result is that owner's table and is left out: the Charts list is the reference charts a player
+    looks up (William, 20 Nov 2026)."""
     return (
-        CampaignChart.objects.filter(campaign_id=campaign_id, rule__isnull=True)
-        .prefetch_related("rows")
+        CampaignChart.objects.filter(campaign_id=campaign_id, rule__isnull=True, row__isnull=True)
+        .prefetch_related("rows__charts__rows")
         .order_by("order", "id")
     )
 

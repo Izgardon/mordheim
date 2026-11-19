@@ -95,7 +95,7 @@ def _one_chart(row: Any, title: str, label: str, name: str) -> dict[str, Any]:
         "dice": dice,
         "note": clean(row.get("note")),
         "umbrella": clean(row.get("umbrella")),
-        "rows": _chart_rows(row.get("rows"), title, label),
+        "rows": _chart_rows(row.get("rows"), title, label, name),
     }
 
 
@@ -133,21 +133,24 @@ def read_charts(name: str, label: str, folder: Path = RULE_SOURCES) -> list[dict
     return charts
 
 
-def _chart_rows(rows: Any, title: str, label: str) -> list[dict[str, str]]:
-    """A chart's results, in the order the file gives them."""
+def _chart_rows(rows: Any, title: str, label: str, name: str) -> list[dict[str, Any]]:
+    """A chart's results, in the order the file gives them. A result carrying a `chart` is one the book hangs a
+    table of its own off (Border Town Burning's Curious bloom), read here and written with the result."""
     if not isinstance(rows, list) or not rows:
         raise CommandError(f"{label}: the chart '{title}' needs at least one result.")
     results = []
     for row in rows:
         if not isinstance(row, dict) or not clean(row.get("result")):
             raise CommandError(f"{label}: each result on the chart '{title}' needs what was rolled.")
-        results.append(
-            {
-                "result": clean(row.get("result")),
-                "name": clean(row.get("name")),
-                "text": clean(row.get("text")),
-            }
-        )
+        result: dict[str, Any] = {
+            "result": clean(row.get("result")),
+            "name": clean(row.get("name")),
+            "text": clean(row.get("text")),
+        }
+        if row.get("chart") is not None:
+            under = f"{title}: {result['name'] or result['result']}"
+            result["table"] = _one_chart(row["chart"], under, label, name)
+        results.append(result)
     return results
 
 
@@ -256,9 +259,25 @@ def _write_charts(
         written = CampaignPresetChart.objects.create(
             preset=preset, order=place, rule=rules[place] if rules else None, **chart
         )
-        CampaignPresetChartRow.objects.bulk_create(
+        tables = [row.pop("table", None) for row in rows]
+        stored = CampaignPresetChartRow.objects.bulk_create(
             CampaignPresetChartRow(chart=written, order=index, **row) for index, row in enumerate(rows)
         )
+        for row, table in zip(stored, tables, strict=True):
+            if table is not None:
+                _write_row_table(preset, row, table)
+
+
+def _write_row_table(preset: CampaignPreset, row: CampaignPresetChartRow, table: dict[str, Any]) -> None:
+    """The table the book hangs off one result, written under that result."""
+    rows = table.pop("rows")
+    written = CampaignPresetChart.objects.create(preset=preset, order=0, row=row, **table)
+    CampaignPresetChartRow.objects.bulk_create(
+        CampaignPresetChartRow(
+            chart=written, order=index, **{key: value for key, value in entry.items() if key != "table"}
+        )
+        for index, entry in enumerate(rows)
+    )
 
 
 @dataclass
