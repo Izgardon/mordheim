@@ -1,710 +1,708 @@
 {
-  "rules": [
+ "rules": [
+  {
+   "title": "Cargo",
+   "text": "The common currency in Sartosa is raw goods, always kept in crates, barrels or similar containers. A crate is carried by one non-animal model at its base movement with no running, or by two models, who may run. A model carrying a crate may not fire a missile weapon or cast a spell, and drops the crate if attacked, ready for anyone who moves into contact with it. A model that leaves the board with a crate may not return. If a warband routs while its members hold crates, the goods are lost if the carrier is within charge range of any upright, unengaged opponent. On a boat each crate of Cargo takes the place of one passenger. For exploring and for selling, Cargo is treated exactly as wyrdstone.",
+   "umbrella": ""
+  },
+  {
+   "title": "Opening a crate",
+   "text": "Once per Exploration phase a warband may open one crate of Cargo it is not selling. Subtract it from the total and roll D66 on the Cargo chart.",
+   "umbrella": ""
+  },
+  {
+   "title": "All hands on deck",
+   "text": "While all Sartosa is ablaze, a Pirate warband may recruit any model it comes across that is neither Large nor an animal. A warband that is not Undead may not recruit Undead models, and nobody may recruit daemons. This holds only in a Sartosa campaign: anywhere else a warband may take only humans and models of its own race.",
+   "umbrella": ""
+  },
+  {
+   "title": "Kidnapped",
+   "text": "A captured enemy human Hero - the Captured result, a D66 roll of 61 or 62 - may be offered one chance to join the crew, instead of being exchanged, ransomed or sold to slavers. Both players roll 2D6, the pirate adding his Captain's Leadership and the other player the captured Hero's, and either side adds 1 if it won the game. If the pirate's total is higher the Hero joins the Crew; otherwise he becomes a Swabbie. Every Henchman taken out of action during the game and then lost to his own warband for good, a post-game roll of 1-2, may be kidnapped as well: roll a D6 for each, and on a 4+ he is kidnapped and tested for in the same way. A player may make a captured model a Swabbie without testing at all, and a captured non-player model only ever becomes a Swabbie. A warband may never find and recruit its own dead Henchmen. A Hired Sword may never be recruited as a Swabbie.",
+   "umbrella": ""
+  },
+  {
+   "title": "Joining the crew",
+   "text": "A recruit who joins willingly either starts a new Crew group or joins an existing one that holds four models or fewer. There is no extra cost to add him to a group that has accumulated experience points. Any equipment or weapons he had are sold off at once to buy him the proper weapons and armour for his new unit in an even swap, and his skills, experience level and characteristics are changed to those of a starting Crewman, or to match his new crewmates if he joins an existing group.",
+   "umbrella": ""
+  },
+  {
+   "title": "Who takes the captive",
+   "text": "Whenever a Hero is captured or a Henchman kidnapped, roll a D6 to see who has him; he is never taken by his own side or its allies. On 1-3, Finders Keepers: he goes to the opposing warband that put him out of action, even if that player routed, and to a random opponent if no opposing player put him out of action, as with fall damage, a non-player model or friendly fire. On 4-6, To the Victors the Spoils: he goes to the opposing warband that won the scenario; if his own warband won, to the opposing warband that lasted longest on the board, and if more than one opponent was still on the board at the end, to a random opponent that did not rout. A player who cannot press-gang finds the near-dead model and finishes him off instead: he is truly dead and his equipment is discarded. Once a player holds a Hero he may ransom him as normal, or try to recruit him. A kidnapped Henchman must first recover on a D6 roll of 4+ before he can be asked to join.",
+   "umbrella": ""
+  },
+  {
+   "title": "Swabbies",
+   "text": "A Hero or Henchman who will not join the crew becomes a Swabbie. He is stripped of his equipment and weapons, which the player hands out as he likes, and may only be re-armed from the Swabbie equipment list. He keeps his skills, his characteristics and the experience level he had, which counts towards the warband rating as usual. A Swabbie never gains experience, and can never use magic or cast a spell of any sort whatever he was before. Swabbies need not all be armed alike. A Swabbie counts towards the number of models in the warband when the rout level is worked out, but a Swabbie who is running away or out of action does not count towards the models needed to force a Rout test. If the pirate warband itself routs, any Swabbie who had already left the table is taken off the roster as though he had been killed. A warband may hold no more than five Swabbies: it may recruit more than five, but must come back down to five by the end of the Post-Game phase.",
+   "umbrella": ""
+  },
+  {
+   "title": "Recruiting non-player models",
+   "text": "Any model opposing the warband that is not an animal, not Large and not a daemon is a possible recruit. Roll a D6 for each one the warband takes out of action, in the post-game phase: on a 1-2 he escapes with his equipment, and on a 3+ he becomes a Swabbie, losing everything but a dagger unless his own rules say otherwise. A non-player model never joins the Crew.",
+   "umbrella": ""
+  },
+  {
+   "title": "A locale campaign",
+   "text": "A locale campaign moves from place to place, each locale with its own rules and scenarios, and the warbands play for Battle Points. A win is worth 3 Battle Points, a draw 2 and a loss 1. A warband must hold 12 Battle Points at a locale to control it; if two warbands each hold 12 then nobody controls it, and if one holds 13 and another 12 the locale is controlled by the warband with the most Battle Points. A warband may control more than one locale. Pair the players at random at the start of a night's gaming and let both choose the locale they want to play at, picking between the two at random if they cannot agree; where more than one game is played in a day, the winners of two games play each other while the losers play each other, and the pairings are drawn again at the start of the next night. The campaign ends after an agreed number of games or weeks, and the player who controls the most locales wins; on a tie the tied player with the most Battle Points wins.",
+   "umbrella": ""
+  },
+  {
+   "title": "Trading at a locale",
+   "text": "After a game at a locale, trading follows that locale's own rules, which may raise or lower what the warband can buy. A warband that controls a locale also gets whatever bonus that locale grants.",
+   "umbrella": ""
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Stashing cargo",
+   "text": "A warband may hide its Cargo in one place instead of carrying it about. Crates in a stash must be within 1 inch of each other. To claim a stash, a model must be in base contact with one of the crates, or be the only model within 1 inch of it apart from his friends. An animal may guard a stash even though it cannot carry a crate.",
+   "umbrella": ""
+  },
+  {
+   "title": "Random encounters",
+   "text": "Before a game with Sartosan random events, name the north, south, east and west sides of the table: some events come from a named side or corner.\n\nAt the start of each player's turn roll a D6. On a 1 there is a random encounter: roll D66 on the random encounter chart. The player whose turn it is is the encountering player. He places any models the encounter brings and they act in each of his turns, though he does not control what they do; each entry says how they act, and an encounter often falls on his opponent or on everyone alike.\n\nThe models go within 6 inches of a randomly determined board edge, stay within 2 inches of another of their group at all times, and are placed at ground level in the open unless their entry says otherwise. They may not be placed within 12 inches of any warband model. Most then move as fast as they can, without running, towards the nearest warband model, meaning the one they can reach soonest, and they never climb the side of a building to get at anyone. A charging model engages as many warband members as it can reach, ganging up where it cannot reach separate models.\n\nAgree beforehand how many encounters a game allows, one per player or one in all. Where an entry counts game turns, that means both players' turns.\n\nSeveral entries send a player to a lettered secret. Do not read the secrets until one comes up.",
+   "umbrella": "Random events"
+  },
+  {
+   "title": "Secret A: the Brine Witch",
+   "text": "A Brine Witch comes from the eastern side. M4 WS4 BS4 S3 T4 W1 I7 A2 Ld8.\n\nClaws: all attacks are at -1 armour save, like axes.\nSpines: as the Possessed mutation, and they may be thrown 6 inches for a Strength 3 attack at -1 armour save.\nScales: a natural 5 or better armour save, reduced as normal.\nSwimmer: she counts as aquatic, and has Sprint and Leap while in water.\nMerciless: she charges injured models before uninjured ones, and henchmen before heroes, given equal opportunity.\nSpellcaster: she knows Visions of the Deep, difficulty 9. Make an injury roll on all enemies within 6 inches who are not immune to psychology. They must pass a Leadership test on their own Leadership or move 2D6 inches away from her at once, swimming if they must. For combat, rallying and charging, treat such a model as having failed an all alone test.",
+   "umbrella": "Random events"
+  },
+  {
+   "title": "Secret B: the drifting boat",
+   "text": "A small boat floats in from the western side carrying Cargo crates equal to 1D3 plus the number of players. It floats forward 6 inches each turn until it is stopped or hits land, where it drifts 2 inches in a random direction each turn. Any of these crates, if captured, may be opened immediately after the game.",
+   "umbrella": "Random events"
+  },
+  {
+   "title": "Secret C: Khorne pirates",
+   "text": "A boat comes from the northern edge carrying 1 Quartermaster and 1D6 Amoks, seeking blood.\n\nQuartermaster: M4 WS4 BS0 S4 T4 W1 I2 A2 Ld7, with a flail and an axe, and he may use both.\nAmok: M4 WS2 BS2 S4 T3 W1 I3 A1 Ld6, with a halberd.\n\nImmune to Psychology: an Amok passes any Leadership test he is required to take, and cannot be promoted to leader.\nReckless: an Amok adds 1 to all injury rolls he makes, and every opponent in hand-to-hand adds 1 to injuries made against him.",
+   "umbrella": "Random events"
+  },
+  {
+   "title": "Secret D: the rain worsens",
+   "text": "The weather changes from Raining to Heavy Rain. The next time a 1 is rolled for a random event it becomes a Thunderstorm, and the time after that a Maelstrom. Once it is a Maelstrom, the weather becomes normal the next time a 1 is rolled for a random event or after D3+2 turns of the Maelstrom, whichever comes first. Any further roll of a 1 for a random event is rolled on the encounter chart as normal.",
+   "umbrella": "Random events"
+  },
+  {
+   "title": "Secret E: the passing cloud",
+   "text": "A cloud moves into the south-east corner of the board. All models under that corner are immune to the Baking Hot rule. The next time a 1 is rolled for a random event the cloud shifts, and only the models in the north-west corner are immune. The next time a 1 is rolled the glare dies down and the weather is treated as normal, and that roll also brings a random event as normal.",
+   "umbrella": "Random events"
+  },
+  {
+   "title": "Crude gunpowder kegs",
+   "text": "A keg of crude gunpowder may be carried off the map. Each keg captured gives the warband 1 Cargo and one dose of Superior Gunpowder. The kegs have the following rules.\n\nUnstable: a dropped keg explodes on a D6 roll of 5 or more. The model carrying it takes a Strength 6 hit causing D3 wounds, with criticals if they apply, and any other model within 3 inches takes a single Strength 4 hit. Any keg within 3 inches of one that explodes counts as dropped.\n\nCareful with that powder keg: at the end of its move, roll a D6 for each model carrying a keg. Moving a normal distance it drops the keg on a 1; running, on a 1 or 2.\n\nDo or die: a model carrying a keg may deliberately charge an enemy or his stash. He must first pass a Leadership test unless he is immune to psychology. On reaching his target he throws the keg down, adding 1 to the roll to see if it explodes. If it explodes he may take an Initiative test to avoid the full force of the blast, though even passing he suffers damage as though within 3 inches. Any survivors fight on as normal.\n\nBombs away: a keg dropped from a height is more likely to explode, by 1 for every 2 inches of fall, so a keg dropped from a 4 inch platform explodes on a 3 or more. A 1 always fails.\n\nArgh: a warrior carrying a keg who is shot and knocked down or stunned must make an Initiative test or drop it, and drops it automatically if he is taken out of action. If he was shot with a blackpowder weapon, add 1 to the roll to see if the keg explodes.",
+   "umbrella": "Random events"
+  },
+  {
+   "title": "Secret F: the flying hat",
+   "text": "Rolled when a model catches the fancy hat blown through town by the North Western Wind.",
+   "umbrella": "Random events",
+   "chart": {
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1",
+      "name": "A leather hat",
+      "text": "Cheap but sturdy. Treat it as a helmet."
+     },
+     {
+      "result": "2-3",
+      "name": "A captain's hat",
+      "text": ""
+     },
+     {
+      "result": "4",
+      "name": "An expensive silk hat",
+      "text": "It sells for 5D6 gc."
+     },
+     {
+      "result": "5",
+      "name": "An executioner's hood",
+      "text": ""
+     },
+     {
+      "result": "6",
+      "name": "Sir Olivier Draco's felt hat",
+      "text": ""
+     }
+    ]
+   }
+  },
+  {
+   "title": "Secret G: a powerful warrior",
+   "text": "Rolled when the South West Wind sends somebody formidable into the battle.",
+   "umbrella": "Random events",
+   "chart": {
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1",
+      "name": "A beggar",
+      "text": "A powerful warrior indeed: you find a Beggar Hired Sword. He keeps walking aimlessly if left alone, but any warband may hire him by coming into base contact with him, or by paying him 10 gc or one item of food."
+     },
+     {
+      "result": "2-3",
+      "name": "A Pit Fighter",
+      "text": "A powerful Pit Fighter from the mainland offers his services to the warband with the lowest rating, rolling a dice to choose between two of equal rating. That warband must add the Hired Sword to its roster for this game. At the end of the game he demands payment, and the warband must pay his hire and upkeep fee. If it cannot or will not, he leaves, but takes his frustration out on a random member of the warband first, chosen from those not taken out of action during the game: roll for injuries for him as though he had been taken out of action."
+     },
+     {
+      "result": "4-6",
+      "name": "A legendary warrior of Sartosa",
+      "text": "Roll a D6 on the legendary warriors chart to find out who it is."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Secret H: unguarded barrels",
+   "text": "Rolled for all the barrels found by the Unguarded Barrels encounter, once a model is in base contact with them.",
+   "umbrella": "Random events",
+   "chart": {
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1",
+      "name": "Trash",
+      "text": "What a stink."
+     },
+     {
+      "result": "2",
+      "name": "Grog",
+      "text": "The barrels cannot be carried, but any model in your warband may drink from them for free this game and counts as having Grog: -1 WS, -1 BS, and he passes all fear and all alone tests."
+     },
+     {
+      "result": "3",
+      "name": "Cracker barrels",
+      "text": "Each holds 1D3 victuals and 1D3 hardtack, which your warriors may pocket at once."
+     },
+     {
+      "result": "4-5",
+      "name": "Cargo",
+      "text": "Treat them as cargo, with all the normal restrictions on moving them. Any of them may be opened in the Exploration phase."
+     },
+     {
+      "result": "6",
+      "name": "Crude gunpowder",
+      "text": "Any of them may be carried off the map. Each barrel captured gives the warband 1 Cargo and one dose of Superior Gunpowder. See the crude gunpowder kegs rule."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Ground",
+   "text": "Open ground, crossed without penalty: clear underground passages, unobstructed ruined streets, vines and ladders leading up or down, bridges with no gaps or gaps under 1 inch, and steps up or down.\n\nDifficult ground, crossed at half speed: steps higher than 1 inch, rubble and light shrub, shallow swamp or marsh, jungle, shallow rivers and calm water.",
+   "umbrella": "Terrain"
+  },
+  {
+   "title": "Ocean currents",
+   "text": "Unlike a river, the ocean has no upstream or downstream, only small currents running every way, so assume there is no current. Where a scenario makes the water turbulent, treat it as very difficult terrain, which has no effect on boats.",
+   "umbrella": "Terrain"
+  },
+  {
+   "title": "Soft landings",
+   "text": "Sartosa has softer places to break a fall. If a model falls within 2 inches of a soft landing, the Strength of the fall damage is halved, rounding up. This cannot be used with a diving charge.\n\nWater, a hay stack or hay cart, a canvas canopy over a shop and a rug stand all serve; so does a manure pile, which calls for a fear test before diving.",
+   "umbrella": "Terrain"
+  },
+  {
+   "title": "Swimming",
+   "text": "A model with no armour, or an armour save of 6 or more, may swim up to its base move each turn. A model with a better save than 6 must pass an Initiative test in each of its recovery phases or be taken out of action; it may instead take an Initiative test to discard the armour it wears, which is removed from its equipment for good. Shields and bucklers do not count here, being strapped to the back. An aquatic model moves and wears armour as normal.\n\nA swimming model counts all its gunpowder weapons as soaked and cannot fire them for the rest of the battle. A non-aquatic stunned model that falls in the water tests for drowning at once: it recovers on a D6 roll of 4 or more or is removed as a casualty, and is taken out of action without a roll if it wears armour with a save of 5 or better. A knocked down model that falls in recovers on a 2 or more and suffers nothing for its armour.\n\nA ship moving at 6 inches or less may pick up crew who pass within 1 inch during its movement. Enemies met this way may be treated as knocked down for hand-to-hand combat.\n\nOn reaching the shore or a friendly vessel, any remaining movement is lost while the model hauls itself out, unless it began the turn within 1 inch of the shore. On the turn it reaches shore it may not charge a model on land unless the enemy is physically keeping it from touching the shore; a charge needs an Initiative test, as running does. A swimmer reaching a stationary enemy vessel may climb aboard, but fights last and needs a 6 to hit in any combat that follows, exhausted and sopping wet. This is not the ideal way to board a ship.",
+   "umbrella": "Terrain"
+  },
+  {
+   "title": "Boats: moving",
+   "text": "A boat moves 6 inches forward through open water, and a rowboat with oars may also move 3 inches backwards. Unless stated otherwise a boat of any size may turn up to 45 degrees at the beginning or the end of its movement, but not both, and a rowboat may give up its movement to turn 180 degrees.\n\nOne crewman must be the pilot. He may do nothing but steer while the boat moves. If he is knocked down, stunned or taken out of action, any other crewman may take over. With no pilot the boat drifts 2 inches in a random direction.\n\nA raft follows the rowboat rules, but moves only 4 inches, forwards or backwards.\n\nAny boat over 11 inches is a large boat. It has no limit on warriors or cargo beyond what fits on board, counts as scenery, is deployed with the terrain and stays anchored throughout the scenario.",
+   "umbrella": "Boats"
+  },
+  {
+   "title": "Boats: crew and capacity",
+   "text": "Crew board a rowboat as normal, but a rowboat may not move in the turn warriors move onto it. Crew move about on deck as normal.\n\nA crewman leaving a moored vessel moves in proportion to the boat's remaining movement: if the boat moved half its move he may move half of his, if it moved a third he may move two thirds, and if it used its whole move he may not move at all. He may run or sprint, but needs an Initiative test; failing, he falls in the water at the shore edge and may move no further that turn.\n\nA boat carries crew equal to 2 plus the whole inches of its length, so a boat 5 and a half inches from stem to stern carries 7. A large or mounted model counts as two. If the model simply will not fit, the boat's size rules. A boat over capacity for any reason calls for a man overboard test. A raft's capacity is 4 plus its length, or its width if that is greater.\n\nCargo crates on a boat may not be stacked, and warriors may not stand on them. Each crate carried lowers the number of passengers by one.",
+   "umbrella": "Boats"
+  },
+  {
+   "title": "Boats: man overboard and ramming",
+   "text": "Man overboard: roll a D6 for each warrior on the boat, and on a 1 he is knocked overboard; the swimming rules then apply. If over capacity caused the test, test when the boat first becomes over capacity and again at the start of its controller's movement phase.\n\nIn the drink: a model knocked down or stunned within 1 inch of the edge of a vessel, walkway, pontoon or bridge must pass an Initiative test or fall overboard. A Cargo crate held by a falling model is lost on a 5 or more in a rowboat, 4 or more on a raft.\n\nRamming: a boat may ram an enemy boat of 11 inches or less. The rammer deals D2 hits, a sailboat or sloop D3, with Strength equal to the inches it moved that turn, and every model aboard the rammed boat takes a man overboard test. The ramming boat takes one hit of the same Strength, but tests for nobody overboard. A Norse boat deals 1 more Strength to the enemy boat. A boat stops for the turn once it has rammed.\n\nBoat profiles, for Toughness and Wounds: raft M4 T4 W3, rowboat M6 T5 W3, sailboat M6 T8 W4, sloop M6 T8 W8.\n\nAgainst a non-large enemy model in the water the most a ram can be is Strength 4: move the model 1 inch to the side, the controller choosing which way, and carry on with the boat's movement. A large model may be rammed at full Strength for 1 hit, but the boat then stops.",
+   "umbrella": "Boats"
+  },
+  {
+   "title": "Boarding a large ship",
+   "text": "The boarding boat must come alongside the enemy ship, or along the wharf touching it where it is docked. The difference in height of the two sides matters. If the ship being boarded is less than 1 inch higher, use the rules for the same or lower side; if it is 1 inch or more higher, use the rules for a higher side. Where a climbing roll would be needed, a ladder or scaling the hull, count the side as higher; where none is needed, an even plank or easy steps, count it the same or lower.\n\nSame or lower side: the boarders move up to their base move from their place on their own boat onto the boarded ship, counting as charging but moving only their normal distance. Combat follows as usual. Any defending model may move 2 inches towards the boarders if that brings it into base contact with one, which counts as intercepting a charge and lets the boarder attack first.\n\nHigher side: as above, but in the round they climb up the boarders need 6s to hit, the higher side counting as a defended barrier. After that first round they fight and move as normal.\n\nSwinging on board, optional: a model with a Rope and Hook, or standing on a large boat, may swing onto or off a boat. Name the direction, always a straight line, and roll 2D6 inches for the swing. Falling short of the other boat or the shore, the model lands in the water. Reaching it, the model takes an Initiative test: a natural 1 passes automatically, landing the full distance and letting it carry on moving; a failed test or a natural 6 fails and it falls in the water between; any other pass carries the full distance but allows no further move or charge that turn. A model may not swing onto a surface more than 1 inch higher than the one it stands on, nor more than 6 inches lower. A model that swings into an enemy on its path counts as charging, and in the first round of that combat may not use an extra hand weapon, a buckler or a shield, though a double-handed weapon works as normal.",
+   "umbrella": "Boats"
+  },
+  {
+   "title": "Crowded",
+   "text": "All movement on ground level counts as difficult terrain. Every warrior on ground level counts as being in soft cover from any other warrior on ground level while the crowd stays. Line of sight between warriors on ground level is 2D6 inches, rolled at the beginning of each player's turn.\n\nAfter the first attack of any kind against a target on ground level the crowd tries to escape. For D3 turns it stampedes through the streets, and at the beginning of each of those turns every warrior on ground level must take a Toughness test or be knocked down. The crowd then disperses, with no further effect on the scenario.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Darkness",
+   "text": "After both warbands have set up, the player with the lower rated warband rolls 3D6. That is how many inches members of both warbands can see this game. Undead, Skaven, orcs and goblins, elves and dwarfs add 6 inches to the range.\n\nAll shooting except magic missiles is at +1 to the roll needed, so a warrior who would hit on a 3 or more needs a 4 or more. A template weapon fired at a visible target may hit models in the open beyond the range of vision on a D6 roll of 4 or more.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Treacherous terrain",
+   "text": "In uncertain moonlight any model not carrying a light that wishes to run or charge must first roll a D6. On a 6 it is knocked down. Animals and Undead need not test, and ghouls count as Undead here. If a knocked down model with more than one wound is successfully wounded, it is taken out of action at once.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Stormy weather",
+   "text": "Roll twice on the weather chart and apply the worse result, the worse being the one with the most modifiers. At the beginning of the fourth game turn roll a D6: on a 6 the weather changes, so roll twice again and apply the worse result. On a 1 to 5 it stays as it is, but at the beginning of the fifth turn it changes on a 5 or more, on the sixth on a 4 or more, and so on.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Banned",
+   "text": "Orcs, goblins, Skaven, Undead and Chaos worshippers are not tolerated in some locales. At the start of the first banned player's turn roll a D6: that is how many turns it takes for 1D3 outraged Troll Slayers to reach this part of town. They arrive on the appointed turn by the Surprise Attack rules and always move towards the nearest banned model, needing no line of sight, and charge a banned model if it is in range. They ignore the other warbands unless attacked by them, and stay until the banned warband has routed or they are all out of action.",
+   "umbrella": "Locale battles"
+  },
+  {
+   "title": "Unwanted company",
+   "text": "At the start of each player's turn roll a D6. On a 1 some unwanted company has wandered into the battle: roll a D6 and read the bestiary list for the locale.\n\nSet them up near the centre of a random board edge, determined as in the Surprise Attack scenario. Once the edge is settled, players take turns placing models and roll off for any odd ones, and every model of a group goes within 3 inches of another of the group.\n\nUnwanted company moves and shoots in a non-player turn, after the player moving second has finished his turn. It moves towards the nearest enemy model it can see, and towards the opposite table edge by the most direct route if it can see none. A model with a missile weapon shoots at the nearest target, or the nearest in the open where there is a choice. Unwanted company charges if an enemy is within charge range at the beginning of its movement phase, and never takes rout tests.\n\nOnly one unwanted company event happens per game, so there is no need to roll again after the first 1.",
+   "umbrella": "Locale battles"
+  }
+ ],
+ "charts": [
+  {
+   "title": "Random encounter",
+   "description": "Rolled when a D6 at the start of a player's turn comes up 1, to see what has wandered into the battle.",
+   "dice": "D66",
+   "note": "The book prints two results numbered 23 and none at 35 or 43. Collapsing Building is read as 35 and Unguarded Barrels covers 42-43, so every D66 roll has a result (William, 20 Nov 2026).",
+   "umbrella": "",
+   "rows": [
     {
-      "title": "Cargo",
-      "text": "The common currency in Sartosa is raw goods, always kept in crates, barrels or similar containers. A crate is carried by one non-animal model at its base movement with no running, or by two models, who may run. A model carrying a crate may not fire a missile weapon or cast a spell, and drops the crate if attacked, ready for anyone who moves into contact with it. A model that leaves the board with a crate may not return. If a warband routs while its members hold crates, the goods are lost if the carrier is within charge range of any upright, unengaged opponent. On a boat each crate of Cargo takes the place of one passenger. For exploring and for selling, Cargo is treated exactly as wyrdstone.",
-      "umbrella": ""
+     "result": "11",
+     "name": "Captured Slayer",
+     "text": "A tied-up Slayer Pirate Hired Sword who cannot move or free himself. The encountering player places him 12 inches from the warband with the lowest rating, and at least 12 inches from every other warband. To free him a model must reach base contact and spend both the shooting and the combat phase doing nothing but undoing the ropes. Whichever warband frees him first he joins at once, so grateful that he helps them out. After the battle he leaves unless paid upkeep. Even a warband that may not normally hire a Slayer Pirate may keep him on."
     },
     {
-      "title": "Opening a crate",
-      "text": "Once per Exploration phase a warband may open one crate of Cargo it is not selling. Subtract it from the total and roll D66 on the Cargo chart.",
-      "umbrella": ""
+     "result": "12",
+     "name": "South West Wind",
+     "text": "A strong wind rips through the streets and masts. Every model within 1 inch of a ledge must make an immediate Initiative test or fall off. It blows through once and fades. The next time a random event is rolled, consult Secret G."
     },
     {
-      "title": "All hands on deck",
-      "text": "While all Sartosa is ablaze, a Pirate warband may recruit any model it comes across that is neither Large nor an animal. A warband that is not Undead may not recruit Undead models, and nobody may recruit daemons. This holds only in a Sartosa campaign: anywhere else a warband may take only humans and models of its own race.",
-      "umbrella": ""
+     "result": "13",
+     "name": "Shark Infestation",
+     "text": "The sharks have the scent of blood. Whenever a model enters the water, and in every movement phase it stays in the water, roll a D6: on a 6 it suffers a Strength 4 hit. The sharks cannot be attacked by any means and stay until the end of the game."
     },
     {
-      "title": "Kidnapped",
-      "text": "A captured enemy human Hero - the Captured result, a D66 roll of 61 or 62 - may be offered one chance to join the crew, instead of being exchanged, ransomed or sold to slavers. Both players roll 2D6, the pirate adding his Captain's Leadership and the other player the captured Hero's, and either side adds 1 if it won the game. If the pirate's total is higher the Hero joins the Crew; otherwise he becomes a Swabbie. Every Henchman taken out of action during the game and then lost to his own warband for good, a post-game roll of 1-2, may be kidnapped as well: roll a D6 for each, and on a 4+ he is kidnapped and tested for in the same way. A player may make a captured model a Swabbie without testing at all, and a captured non-player model only ever becomes a Swabbie. A warband may never find and recruit its own dead Henchmen. A Hired Sword may never be recruited as a Swabbie.",
-      "umbrella": ""
+     "result": "14",
+     "name": "Easterly Wind",
+     "text": "A powerful wind scatters debris and knocks down anything not anchored. Warband members are at -1 on all Initiative tests, climbing and jumping included, and -1 on rolls to hit in close combat and shooting for the rest of the game. The next time a 1 is rolled for random events, consult Secret A."
     },
     {
-      "title": "Joining the crew",
-      "text": "A recruit who joins willingly either starts a new Crew group or joins an existing one that holds four models or fewer. There is no extra cost to add him to a group that has accumulated experience points. Any equipment or weapons he had are sold off at once to buy him the proper weapons and armour for his new unit in an even swap, and his skills, experience level and characteristics are changed to those of a starting Crewman, or to match his new crewmates if he joins an existing group.",
-      "umbrella": ""
+     "result": "15",
+     "name": "Unhinged Sentry",
+     "text": "The battle is near an overwrought and sleepless Swivel Gunner guarding a small stash of cargo day and night. Pick the building nearest the centre of the map, or failing that a spot at ground level. There are 1D3 Cargo crates and a Swivel Gunner there. He fires at the closest model in sight, choosing at random between targets at the same range, and switches at random between ballshot, chainshot and grapeshot. If he is captured, you may open any number of the crates."
     },
     {
-      "title": "Who takes the captive",
-      "text": "Whenever a Hero is captured or a Henchman kidnapped, roll a D6 to see who has him; he is never taken by his own side or its allies. On 1-3, Finders Keepers: he goes to the opposing warband that put him out of action, even if that player routed, and to a random opponent if no opposing player put him out of action, as with fall damage, a non-player model or friendly fire. On 4-6, To the Victors the Spoils: he goes to the opposing warband that won the scenario; if his own warband won, to the opposing warband that lasted longest on the board, and if more than one opponent was still on the board at the end, to a random opponent that did not rout. A player who cannot press-gang finds the near-dead model and finishes him off instead: he is truly dead and his equipment is discarded. Once a player holds a Hero he may ransom him as normal, or try to recruit him. A kidnapped Henchman must first recover on a D6 roll of 4+ before he can be asked to join.",
-      "umbrella": ""
+     "result": "16",
+     "name": "Lucky Find",
+     "text": "One random model, on his feet and neither in hand-to-hand combat nor fleeing, has stumbled on a Cargo crate. To claim it you must carry it off the board or keep one model within 3 inches of it for the rest of the game without routing. Any model can find a crate, but only a non-animal may carry one. If it is captured you may open it as well as the crate you are normally allowed."
     },
     {
-      "title": "Swabbies",
-      "text": "A Hero or Henchman who will not join the crew becomes a Swabbie. He is stripped of his equipment and weapons, which the player hands out as he likes, and may only be re-armed from the Swabbie equipment list. He keeps his skills, his characteristics and the experience level he had, which counts towards the warband rating as usual. A Swabbie never gains experience, and can never use magic or cast a spell of any sort whatever he was before. Swabbies need not all be armed alike. A Swabbie counts towards the number of models in the warband when the rout level is worked out, but a Swabbie who is running away or out of action does not count towards the models needed to force a Rout test. If the pirate warband itself routs, any Swabbie who had already left the table is taken off the roster as though he had been killed. A warband may hold no more than five Swabbies: it may recruit more than five, but must come back down to five by the end of the Post-Game phase.",
-      "umbrella": ""
+     "result": "21",
+     "name": "Ghost Captain",
+     "text": "The spirit of a vile pirate has woken, bent on revenge. M4 WS4 BS3 S4 T3 W1 I4 A1 Ld8, with a sword, a pistol and a dagger. Immune to poison, immune to psychology, causes fear.\n\nEthereal: a 4 or better unmodifiable save against all attacks. It may not be used with Dodge or Step Aside and does nothing against magical attacks, artefacts, Gromril, Ithilmar or silver bullets. He may also take a Leadership test to move through any object or walk on water; failing that test while standing on water counts as being taken out of action as he sinks to the seafloor."
     },
     {
-      "title": "Recruiting non-player models",
-      "text": "Any model opposing the warband that is not an animal, not Large and not a daemon is a possible recruit. Roll a D6 for each one the warband takes out of action, in the post-game phase: on a 1-2 he escapes with his equipment, and on a 3+ he becomes a Swabbie, losing everything but a dagger unless his own rules say otherwise. A non-player model never joins the Crew.",
-      "umbrella": ""
+     "result": "22",
+     "name": "Deadly Spark",
+     "text": "One of the buildings or boats, chosen at random, bursts into flames. Any model inside or aboard may be moved by its player 2D6 inches off the structure, even out of turn. Any warrior still on it at the end of the turn suffers a Strength 3 hit. For the rest of the game the building or boat causes fear, and anyone wishing to enter must first pass a fear test as though charging a fear-causing enemy, and suffers a Strength 3 hit at the end of his player's turn. A small or medium boat set on fire sinks after D3 rounds, a large terrain boat after D6 turns."
     },
     {
-      "title": "A locale campaign",
-      "text": "A locale campaign moves from place to place, each locale with its own rules and scenarios, and the warbands play for Battle Points. A win is worth 3 Battle Points, a draw 2 and a loss 1. A warband must hold 12 Battle Points at a locale to control it; if two warbands each hold 12 then nobody controls it, and if one holds 13 and another 12 the locale is controlled by the warband with the most Battle Points. A warband may control more than one locale. Pair the players at random at the start of a night's gaming and let both choose the locale they want to play at, picking between the two at random if they cannot agree; where more than one game is played in a day, the winners of two games play each other while the losers play each other, and the pairings are drawn again at the start of the next night. The campaign ends after an agreed number of games or weeks, and the player who controls the most locales wins; on a tie the tied player with the most Battle Points wins.",
-      "umbrella": ""
+     "result": "23",
+     "name": "Simian Escape",
+     "text": "A local pet store has had an escape: 1D6+2 monkeys, with a few gibbons and chimps among them, are headed your way and raring to cause mischief. Taking out monkeys earns no experience, but the shopkeeper pays 3 gc for each monkey taken out of action. Get them all and he rewards you with a free Parrot, or you may keep a monkey, which uses the Wardog rules.\n\nM5 WS2 BS2 S2 T2 W1 I5 A1 Ld4. They fight unarmed without penalty and are good at throwing things, treated as throwing stars. Monkeys are skilled climbers and count as having Climb Sheer Surfaces."
     },
     {
-      "title": "Trading at a locale",
-      "text": "After a game at a locale, trading follows that locale's own rules, which may raise or lower what the warband can buy. A warband that controls a locale also gets whatever bonus that locale grants.",
-      "umbrella": ""
-    }
-  ],
-  "battle_rules": [
-    {
-      "title": "Stashing cargo",
-      "text": "A warband may hide its Cargo in one place instead of carrying it about. Crates in a stash must be within 1 inch of each other. To claim a stash, a model must be in base contact with one of the crates, or be the only model within 1 inch of it apart from his friends. An animal may guard a stash even though it cannot carry a crate.",
-      "umbrella": ""
+     "result": "24",
+     "name": "Western Wind",
+     "text": "Treat the weather as Dry: if a pirate and his powder get wet, roll a D6 in your recovery phase, and on a 4 or more the powder has dried and can be used as normal. All models add 1 to their Initiative when climbing or rolling to avoid a fall, their grip much improved on dry surfaces. The next time a hero rolls a 1 for random events, see Secret B."
     },
     {
-      "title": "Random encounters",
-      "text": "Before a game with Sartosan random events, name the north, south, east and west sides of the table: some events come from a named side or corner.\n\nAt the start of each player's turn roll a D6. On a 1 there is a random encounter: roll D66 on the random encounter chart. The player whose turn it is is the encountering player. He places any models the encounter brings and they act in each of his turns, though he does not control what they do; each entry says how they act, and an encounter often falls on his opponent or on everyone alike.\n\nThe models go within 6 inches of a randomly determined board edge, stay within 2 inches of another of their group at all times, and are placed at ground level in the open unless their entry says otherwise. They may not be placed within 12 inches of any warband model. Most then move as fast as they can, without running, towards the nearest warband model, meaning the one they can reach soonest, and they never climb the side of a building to get at anyone. A charging model engages as many warband members as it can reach, ganging up where it cannot reach separate models.\n\nAgree beforehand how many encounters a game allows, one per player or one in all. Where an entry counts game turns, that means both players' turns.\n\nSeveral entries send a player to a lettered secret. Do not read the secrets until one comes up.",
-      "umbrella": "Random events"
+     "result": "25",
+     "name": "Rowdy Drunks",
+     "text": "1D3 angry drunks stumble out of the building nearest you, looking for a fight, and another stumbles out in each of your turns until another player rolls a 1 for a random event. M4 WS3 BS3 S3 T3 W1 I3 A1 Ld7, each with one sword.\n\nRaging Drunk: each drunk suffers the rules for frenzy, and will not charge another drunk.\nPress Gang: if taken out of action, roll to see whether the drunk survives, as for a henchman. If he does you may add him to your warband as a Swabbie at once and take his sword. A warband that cannot take Swabbies may still take the sword."
     },
     {
-      "title": "Secret A: the Brine Witch",
-      "text": "A Brine Witch comes from the eastern side. M4 WS4 BS4 S3 T4 W1 I7 A2 Ld8.\n\nClaws: all attacks are at -1 armour save, like axes.\nSpines: as the Possessed mutation, and they may be thrown 6 inches for a Strength 3 attack at -1 armour save.\nScales: a natural 5 or better armour save, reduced as normal.\nSwimmer: she counts as aquatic, and has Sprint and Leap while in water.\nMerciless: she charges injured models before uninjured ones, and henchmen before heroes, given equal opportunity.\nSpellcaster: she knows Visions of the Deep, difficulty 9. Make an injury roll on all enemies within 6 inches who are not immune to psychology. They must pass a Leadership test on their own Leadership or move 2D6 inches away from her at once, swimming if they must. For combat, rallying and charging, treat such a model as having failed an all alone test.",
-      "umbrella": "Random events"
+     "result": "26",
+     "name": "Rough Waters",
+     "text": "Choose a random boat on the map. If it is shorter than 12 inches it capsizes. If it is longer, every model within 1 inch of the edge must take an Initiative test or fall over the side."
     },
     {
-      "title": "Secret B: the drifting boat",
-      "text": "A small boat floats in from the western side carrying Cargo crates equal to 1D3 plus the number of players. It floats forward 6 inches each turn until it is stopped or hits land, where it drifts 2 inches in a random direction each turn. Any of these crates, if captured, may be opened immediately after the game.",
-      "umbrella": "Random events"
+     "result": "31",
+     "name": "Riptide",
+     "text": "Pick at random a swimming model, rowboat or raft on the board. It is sucked up by the water and pushed 2D6 inches from land, or swept towards the nearest water table edge if there is no land or the distance to land is equal on both sides. If there is no swimming model or small boat in the water, the riptide instead catches anyone who enters the water on a D6 roll of 1 for the rest of the game."
     },
     {
-      "title": "Secret C: Khorne pirates",
-      "text": "A boat comes from the northern edge carrying 1 Quartermaster and 1D6 Amoks, seeking blood.\n\nQuartermaster: M4 WS4 BS0 S4 T4 W1 I2 A2 Ld7, with a flail and an axe, and he may use both.\nAmok: M4 WS2 BS2 S4 T3 W1 I3 A1 Ld6, with a halberd.\n\nImmune to Psychology: an Amok passes any Leadership test he is required to take, and cannot be promoted to leader.\nReckless: an Amok adds 1 to all injury rolls he makes, and every opponent in hand-to-hand adds 1 to injuries made against him.",
-      "umbrella": "Random events"
+     "result": "32",
+     "name": "Dog Pack",
+     "text": "A feral pack of 2D3 wild dogs, using the Hunting Dog profile from the Witch Hunter list, has found the warbands. They move as fast as they can towards the nearest models, dividing themselves as evenly as they can between several targets. If they take a warband member out of action he is eaten unless rescued: if no friendly model comes within 6 inches of where he fell by the end of that warband's next turn, he is lost. If the pack fails a rout test it leaves without its food, and any warband member taken out of action in the last turn of the game has not been eaten and follows the normal rules."
     },
     {
-      "title": "Secret D: the rain worsens",
-      "text": "The weather changes from Raining to Heavy Rain. The next time a 1 is rolled for a random event it becomes a Thunderstorm, and the time after that a Maelstrom. Once it is a Maelstrom, the weather becomes normal the next time a 1 is rolled for a random event or after D3+2 turns of the Maelstrom, whichever comes first. Any further roll of a 1 for a random event is rolled on the encounter chart as normal.",
-      "umbrella": "Random events"
+     "result": "33-34",
+     "name": "Street Bazaar",
+     "text": "The market has erupted with shop owners and impromptu sales. Every area within 6 inches of a building counts as Crowded. See the Crowded rule."
     },
     {
-      "title": "Secret E: the passing cloud",
-      "text": "A cloud moves into the south-east corner of the board. All models under that corner are immune to the Baking Hot rule. The next time a 1 is rolled for a random event the cloud shifts, and only the models in the north-west corner are immune. The next time a 1 is rolled the glare dies down and the weather is treated as normal, and that roll also brings a random event as normal.",
-      "umbrella": "Random events"
+     "result": "35",
+     "name": "Collapsing Building",
+     "text": "Pick one building at random. Any model inside must pass an Initiative test or suffer a Strength 5 hit, with armour saves as normal, as the building collapses. Remove the building from the table, replacing it with ruins if you can, and put the models back where it stood. Any model climbing the sides or standing on the roof falls from whatever height it was at."
     },
     {
-      "title": "Crude gunpowder kegs",
-      "text": "A keg of crude gunpowder may be carried off the map. Each keg captured gives the warband 1 Cargo and one dose of Superior Gunpowder. The kegs have the following rules.\n\nUnstable: a dropped keg explodes on a D6 roll of 5 or more. The model carrying it takes a Strength 6 hit causing D3 wounds, with criticals if they apply, and any other model within 3 inches takes a single Strength 4 hit. Any keg within 3 inches of one that explodes counts as dropped.\n\nCareful with that powder keg: at the end of its move, roll a D6 for each model carrying a keg. Moving a normal distance it drops the keg on a 1; running, on a 1 or 2.\n\nDo or die: a model carrying a keg may deliberately charge an enemy or his stash. He must first pass a Leadership test unless he is immune to psychology. On reaching his target he throws the keg down, adding 1 to the roll to see if it explodes. If it explodes he may take an Initiative test to avoid the full force of the blast, though even passing he suffers damage as though within 3 inches. Any survivors fight on as normal.\n\nBombs away: a keg dropped from a height is more likely to explode, by 1 for every 2 inches of fall, so a keg dropped from a 4 inch platform explodes on a 3 or more. A 1 always fails.\n\nArgh: a warrior carrying a keg who is shot and knocked down or stunned must make an Initiative test or drop it, and drops it automatically if he is taken out of action. If he was shot with a blackpowder weapon, add 1 to the roll to see if the keg explodes.",
-      "umbrella": "Random events"
+     "result": "36",
+     "name": "South Eastern Wind",
+     "text": "The weather counts as Baking Hot: the sun beats down and the sea reflects the glare. All warriors except Undead are at -1 to WS, BS and Initiative for the rest of the game. A model with wet powder has it dry in its next recovery phase. The next time a 1 is rolled for random events, see Secret E."
     },
     {
-      "title": "Secret F: the flying hat",
-      "text": "Rolled when a model catches the fancy hat blown through town by the North Western Wind.",
-      "umbrella": "Random events",
-      "chart": {
-        "dice": "D6",
-        "note": "",
-        "rows": [
-          {
-            "result": "1",
-            "name": "A leather hat",
-            "text": "Cheap but sturdy. Treat it as a helmet."
-          },
-          {
-            "result": "2-3",
-            "name": "A captain's hat",
-            "text": ""
-          },
-          {
-            "result": "4",
-            "name": "An expensive silk hat",
-            "text": "It sells for 5D6 gc."
-          },
-          {
-            "result": "5",
-            "name": "An executioner's hood",
-            "text": ""
-          },
-          {
-            "result": "6",
-            "name": "Sir Olivier Draco's felt hat",
-            "text": ""
-          }
-        ]
-      }
+     "result": "41",
+     "name": "Perfect Spot",
+     "text": "A stubborn local merchant has set his cart between two buildings and blocks the passage completely. He stops any model climbing over, beating them with his cane until they fall."
     },
     {
-      "title": "Secret G: a powerful warrior",
-      "text": "Rolled when the South West Wind sends somebody formidable into the battle.",
-      "umbrella": "Random events",
-      "chart": {
-        "dice": "D6",
-        "note": "",
-        "rows": [
-          {
-            "result": "1",
-            "name": "A beggar",
-            "text": "A powerful warrior indeed: you find a Beggar Hired Sword. He keeps walking aimlessly if left alone, but any warband may hire him by coming into base contact with him, or by paying him 10 gc or one item of food."
-          },
-          {
-            "result": "2-3",
-            "name": "A Pit Fighter",
-            "text": "A powerful Pit Fighter from the mainland offers his services to the warband with the lowest rating, rolling a dice to choose between two of equal rating. That warband must add the Hired Sword to its roster for this game. At the end of the game he demands payment, and the warband must pay his hire and upkeep fee. If it cannot or will not, he leaves, but takes his frustration out on a random member of the warband first, chosen from those not taken out of action during the game: roll for injuries for him as though he had been taken out of action."
-          },
-          {
-            "result": "4-6",
-            "name": "A legendary warrior of Sartosa",
-            "text": "Roll a D6 on the legendary warriors chart to find out who it is."
-          }
-        ]
-      }
+     "result": "42-43",
+     "name": "Unguarded Barrels",
+     "text": "You find D3 barrels beside the building closest to you. When a model is in base contact with them, consult Secret H to see what they are."
     },
     {
-      "title": "Secret H: unguarded barrels",
-      "text": "Rolled for all the barrels found by the Unguarded Barrels encounter, once a model is in base contact with them.",
-      "umbrella": "Random events",
-      "chart": {
-        "dice": "D6",
-        "note": "",
-        "rows": [
-          {
-            "result": "1",
-            "name": "Trash",
-            "text": "What a stink."
-          },
-          {
-            "result": "2",
-            "name": "Grog",
-            "text": "The barrels cannot be carried, but any model in your warband may drink from them for free this game and counts as having Grog: -1 WS, -1 BS, and he passes all fear and all alone tests."
-          },
-          {
-            "result": "3",
-            "name": "Cracker barrels",
-            "text": "Each holds 1D3 victuals and 1D3 hardtack, which your warriors may pocket at once."
-          },
-          {
-            "result": "4-5",
-            "name": "Cargo",
-            "text": "Treat them as cargo, with all the normal restrictions on moving them. Any of them may be opened in the Exploration phase."
-          },
-          {
-            "result": "6",
-            "name": "Crude gunpowder",
-            "text": "Any of them may be carried off the map. Each barrel captured gives the warband 1 Cargo and one dose of Superior Gunpowder. See the crude gunpowder kegs rule."
-          }
-        ]
-      }
-    },
-    {
-      "title": "Ground",
-      "text": "Open ground, crossed without penalty: clear underground passages, unobstructed ruined streets, vines and ladders leading up or down, bridges with no gaps or gaps under 1 inch, and steps up or down.\n\nDifficult ground, crossed at half speed: steps higher than 1 inch, rubble and light shrub, shallow swamp or marsh, jungle, shallow rivers and calm water.",
-      "umbrella": "Terrain"
-    },
-    {
-      "title": "Ocean currents",
-      "text": "Unlike a river, the ocean has no upstream or downstream, only small currents running every way, so assume there is no current. Where a scenario makes the water turbulent, treat it as very difficult terrain, which has no effect on boats.",
-      "umbrella": "Terrain"
-    },
-    {
-      "title": "Soft landings",
-      "text": "Sartosa has softer places to break a fall. If a model falls within 2 inches of a soft landing, the Strength of the fall damage is halved, rounding up. This cannot be used with a diving charge.\n\nWater, a hay stack or hay cart, a canvas canopy over a shop and a rug stand all serve; so does a manure pile, which calls for a fear test before diving.",
-      "umbrella": "Terrain"
-    },
-    {
-      "title": "Swimming",
-      "text": "A model with no armour, or an armour save of 6 or more, may swim up to its base move each turn. A model with a better save than 6 must pass an Initiative test in each of its recovery phases or be taken out of action; it may instead take an Initiative test to discard the armour it wears, which is removed from its equipment for good. Shields and bucklers do not count here, being strapped to the back. An aquatic model moves and wears armour as normal.\n\nA swimming model counts all its gunpowder weapons as soaked and cannot fire them for the rest of the battle. A non-aquatic stunned model that falls in the water tests for drowning at once: it recovers on a D6 roll of 4 or more or is removed as a casualty, and is taken out of action without a roll if it wears armour with a save of 5 or better. A knocked down model that falls in recovers on a 2 or more and suffers nothing for its armour.\n\nA ship moving at 6 inches or less may pick up crew who pass within 1 inch during its movement. Enemies met this way may be treated as knocked down for hand-to-hand combat.\n\nOn reaching the shore or a friendly vessel, any remaining movement is lost while the model hauls itself out, unless it began the turn within 1 inch of the shore. On the turn it reaches shore it may not charge a model on land unless the enemy is physically keeping it from touching the shore; a charge needs an Initiative test, as running does. A swimmer reaching a stationary enemy vessel may climb aboard, but fights last and needs a 6 to hit in any combat that follows, exhausted and sopping wet. This is not the ideal way to board a ship.",
-      "umbrella": "Terrain"
-    },
-    {
-      "title": "Boats: moving",
-      "text": "A boat moves 6 inches forward through open water, and a rowboat with oars may also move 3 inches backwards. Unless stated otherwise a boat of any size may turn up to 45 degrees at the beginning or the end of its movement, but not both, and a rowboat may give up its movement to turn 180 degrees.\n\nOne crewman must be the pilot. He may do nothing but steer while the boat moves. If he is knocked down, stunned or taken out of action, any other crewman may take over. With no pilot the boat drifts 2 inches in a random direction.\n\nA raft follows the rowboat rules, but moves only 4 inches, forwards or backwards.\n\nAny boat over 11 inches is a large boat. It has no limit on warriors or cargo beyond what fits on board, counts as scenery, is deployed with the terrain and stays anchored throughout the scenario.",
-      "umbrella": "Boats"
-    },
-    {
-      "title": "Boats: crew and capacity",
-      "text": "Crew board a rowboat as normal, but a rowboat may not move in the turn warriors move onto it. Crew move about on deck as normal.\n\nA crewman leaving a moored vessel moves in proportion to the boat's remaining movement: if the boat moved half its move he may move half of his, if it moved a third he may move two thirds, and if it used its whole move he may not move at all. He may run or sprint, but needs an Initiative test; failing, he falls in the water at the shore edge and may move no further that turn.\n\nA boat carries crew equal to 2 plus the whole inches of its length, so a boat 5 and a half inches from stem to stern carries 7. A large or mounted model counts as two. If the model simply will not fit, the boat's size rules. A boat over capacity for any reason calls for a man overboard test. A raft's capacity is 4 plus its length, or its width if that is greater.\n\nCargo crates on a boat may not be stacked, and warriors may not stand on them. Each crate carried lowers the number of passengers by one.",
-      "umbrella": "Boats"
-    },
-    {
-      "title": "Boats: man overboard and ramming",
-      "text": "Man overboard: roll a D6 for each warrior on the boat, and on a 1 he is knocked overboard; the swimming rules then apply. If over capacity caused the test, test when the boat first becomes over capacity and again at the start of its controller's movement phase.\n\nIn the drink: a model knocked down or stunned within 1 inch of the edge of a vessel, walkway, pontoon or bridge must pass an Initiative test or fall overboard. A Cargo crate held by a falling model is lost on a 5 or more in a rowboat, 4 or more on a raft.\n\nRamming: a boat may ram an enemy boat of 11 inches or less. The rammer deals D2 hits, a sailboat or sloop D3, with Strength equal to the inches it moved that turn, and every model aboard the rammed boat takes a man overboard test. The ramming boat takes one hit of the same Strength, but tests for nobody overboard. A Norse boat deals 1 more Strength to the enemy boat. A boat stops for the turn once it has rammed.\n\nBoat profiles, for Toughness and Wounds: raft M4 T4 W3, rowboat M6 T5 W3, sailboat M6 T8 W4, sloop M6 T8 W8.\n\nAgainst a non-large enemy model in the water the most a ram can be is Strength 4: move the model 1 inch to the side, the controller choosing which way, and carry on with the boat's movement. A large model may be rammed at full Strength for 1 hit, but the boat then stops.",
-      "umbrella": "Boats"
-    },
-    {
-      "title": "Boarding a large ship",
-      "text": "The boarding boat must come alongside the enemy ship, or along the wharf touching it where it is docked. The difference in height of the two sides matters. If the ship being boarded is less than 1 inch higher, use the rules for the same or lower side; if it is 1 inch or more higher, use the rules for a higher side. Where a climbing roll would be needed, a ladder or scaling the hull, count the side as higher; where none is needed, an even plank or easy steps, count it the same or lower.\n\nSame or lower side: the boarders move up to their base move from their place on their own boat onto the boarded ship, counting as charging but moving only their normal distance. Combat follows as usual. Any defending model may move 2 inches towards the boarders if that brings it into base contact with one, which counts as intercepting a charge and lets the boarder attack first.\n\nHigher side: as above, but in the round they climb up the boarders need 6s to hit, the higher side counting as a defended barrier. After that first round they fight and move as normal.\n\nSwinging on board, optional: a model with a Rope and Hook, or standing on a large boat, may swing onto or off a boat. Name the direction, always a straight line, and roll 2D6 inches for the swing. Falling short of the other boat or the shore, the model lands in the water. Reaching it, the model takes an Initiative test: a natural 1 passes automatically, landing the full distance and letting it carry on moving; a failed test or a natural 6 fails and it falls in the water between; any other pass carries the full distance but allows no further move or charge that turn. A model may not swing onto a surface more than 1 inch higher than the one it stands on, nor more than 6 inches lower. A model that swings into an enemy on its path counts as charging, and in the first round of that combat may not use an extra hand weapon, a buckler or a shield, though a double-handed weapon works as normal.",
-      "umbrella": "Boats"
-    },
-    {
-      "title": "Crowded",
-      "text": "All movement on ground level counts as difficult terrain. Every warrior on ground level counts as being in soft cover from any other warrior on ground level while the crowd stays. Line of sight between warriors on ground level is 2D6 inches, rolled at the beginning of each player's turn.\n\nAfter the first attack of any kind against a target on ground level the crowd tries to escape. For D3 turns it stampedes through the streets, and at the beginning of each of those turns every warrior on ground level must take a Toughness test or be knocked down. The crowd then disperses, with no further effect on the scenario.",
-      "umbrella": "Locale battles"
-    },
-    {
-      "title": "Darkness",
-      "text": "After both warbands have set up, the player with the lower rated warband rolls 3D6. That is how many inches members of both warbands can see this game. Undead, Skaven, orcs and goblins, elves and dwarfs add 6 inches to the range.\n\nAll shooting except magic missiles is at +1 to the roll needed, so a warrior who would hit on a 3 or more needs a 4 or more. A template weapon fired at a visible target may hit models in the open beyond the range of vision on a D6 roll of 4 or more.",
-      "umbrella": "Locale battles"
-    },
-    {
-      "title": "Treacherous terrain",
-      "text": "In uncertain moonlight any model not carrying a light that wishes to run or charge must first roll a D6. On a 6 it is knocked down. Animals and Undead need not test, and ghouls count as Undead here. If a knocked down model with more than one wound is successfully wounded, it is taken out of action at once.",
-      "umbrella": "Locale battles"
-    },
-    {
-      "title": "Stormy weather",
-      "text": "Roll twice on the weather chart and apply the worse result, the worse being the one with the most modifiers. At the beginning of the fourth game turn roll a D6: on a 6 the weather changes, so roll twice again and apply the worse result. On a 1 to 5 it stays as it is, but at the beginning of the fifth turn it changes on a 5 or more, on the sixth on a 4 or more, and so on.",
-      "umbrella": "Locale battles"
-    },
-    {
-      "title": "Banned",
-      "text": "Orcs, goblins, Skaven, Undead and Chaos worshippers are not tolerated in some locales. At the start of the first banned player's turn roll a D6: that is how many turns it takes for 1D3 outraged Troll Slayers to reach this part of town. They arrive on the appointed turn by the Surprise Attack rules and always move towards the nearest banned model, needing no line of sight, and charge a banned model if it is in range. They ignore the other warbands unless attacked by them, and stay until the banned warband has routed or they are all out of action.",
-      "umbrella": "Locale battles"
-    },
-    {
-      "title": "Unwanted company",
-      "text": "At the start of each player's turn roll a D6. On a 1 some unwanted company has wandered into the battle: roll a D6 and read the bestiary list for the locale.\n\nSet them up near the centre of a random board edge, determined as in the Surprise Attack scenario. Once the edge is settled, players take turns placing models and roll off for any odd ones, and every model of a group goes within 3 inches of another of the group.\n\nUnwanted company moves and shoots in a non-player turn, after the player moving second has finished his turn. It moves towards the nearest enemy model it can see, and towards the opposite table edge by the most direct route if it can see none. A model with a missile weapon shoots at the nearest target, or the nearest in the open where there is a choice. Unwanted company charges if an enemy is within charge range at the beginning of its movement phase, and never takes rout tests.\n\nOnly one unwanted company event happens per game, so there is no need to roll again after the first 1.",
-      "umbrella": "Locale battles"
-    }
-  ],
-  "charts": [
-    {
-      "title": "Random encounter",
-      "description": "Rolled when a D6 at the start of a player's turn comes up 1, to see what has wandered into the battle.",
-      "dice": "D66",
-      "note": "The book prints two results numbered 23 and none at 35 or 43. Collapsing Building is read as 35 and Unguarded Barrels covers 42-43, so every D66 roll has a result (William, 20 Nov 2026).",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "11",
-          "name": "Captured Slayer",
-          "text": "A tied-up Slayer Pirate Hired Sword who cannot move or free himself. The encountering player places him 12 inches from the warband with the lowest rating, and at least 12 inches from every other warband. To free him a model must reach base contact and spend both the shooting and the combat phase doing nothing but undoing the ropes. Whichever warband frees him first he joins at once, so grateful that he helps them out. After the battle he leaves unless paid upkeep. Even a warband that may not normally hire a Slayer Pirate may keep him on."
-        },
-        {
-          "result": "12",
-          "name": "South West Wind",
-          "text": "A strong wind rips through the streets and masts. Every model within 1 inch of a ledge must make an immediate Initiative test or fall off. It blows through once and fades. The next time a random event is rolled, consult Secret G."
-        },
-        {
-          "result": "13",
-          "name": "Shark Infestation",
-          "text": "The sharks have the scent of blood. Whenever a model enters the water, and in every movement phase it stays in the water, roll a D6: on a 6 it suffers a Strength 4 hit. The sharks cannot be attacked by any means and stay until the end of the game."
-        },
-        {
-          "result": "14",
-          "name": "Easterly Wind",
-          "text": "A powerful wind scatters debris and knocks down anything not anchored. Warband members are at -1 on all Initiative tests, climbing and jumping included, and -1 on rolls to hit in close combat and shooting for the rest of the game. The next time a 1 is rolled for random events, consult Secret A."
-        },
-        {
-          "result": "15",
-          "name": "Unhinged Sentry",
-          "text": "The battle is near an overwrought and sleepless Swivel Gunner guarding a small stash of cargo day and night. Pick the building nearest the centre of the map, or failing that a spot at ground level. There are 1D3 Cargo crates and a Swivel Gunner there. He fires at the closest model in sight, choosing at random between targets at the same range, and switches at random between ballshot, chainshot and grapeshot. If he is captured, you may open any number of the crates."
-        },
-        {
-          "result": "16",
-          "name": "Lucky Find",
-          "text": "One random model, on his feet and neither in hand-to-hand combat nor fleeing, has stumbled on a Cargo crate. To claim it you must carry it off the board or keep one model within 3 inches of it for the rest of the game without routing. Any model can find a crate, but only a non-animal may carry one. If it is captured you may open it as well as the crate you are normally allowed."
-        },
-        {
-          "result": "21",
-          "name": "Ghost Captain",
-          "text": "The spirit of a vile pirate has woken, bent on revenge. M4 WS4 BS3 S4 T3 W1 I4 A1 Ld8, with a sword, a pistol and a dagger. Immune to poison, immune to psychology, causes fear.\n\nEthereal: a 4 or better unmodifiable save against all attacks. It may not be used with Dodge or Step Aside and does nothing against magical attacks, artefacts, Gromril, Ithilmar or silver bullets. He may also take a Leadership test to move through any object or walk on water; failing that test while standing on water counts as being taken out of action as he sinks to the seafloor."
-        },
-        {
-          "result": "22",
-          "name": "Deadly Spark",
-          "text": "One of the buildings or boats, chosen at random, bursts into flames. Any model inside or aboard may be moved by its player 2D6 inches off the structure, even out of turn. Any warrior still on it at the end of the turn suffers a Strength 3 hit. For the rest of the game the building or boat causes fear, and anyone wishing to enter must first pass a fear test as though charging a fear-causing enemy, and suffers a Strength 3 hit at the end of his player's turn. A small or medium boat set on fire sinks after D3 rounds, a large terrain boat after D6 turns."
-        },
-        {
-          "result": "23",
-          "name": "Simian Escape",
-          "text": "A local pet store has had an escape: 1D6+2 monkeys, with a few gibbons and chimps among them, are headed your way and raring to cause mischief. Taking out monkeys earns no experience, but the shopkeeper pays 3 gc for each monkey taken out of action. Get them all and he rewards you with a free Parrot, or you may keep a monkey, which uses the Wardog rules.\n\nM5 WS2 BS2 S2 T2 W1 I5 A1 Ld4. They fight unarmed without penalty and are good at throwing things, treated as throwing stars. Monkeys are skilled climbers and count as having Climb Sheer Surfaces."
-        },
-        {
-          "result": "24",
-          "name": "Western Wind",
-          "text": "Treat the weather as Dry: if a pirate and his powder get wet, roll a D6 in your recovery phase, and on a 4 or more the powder has dried and can be used as normal. All models add 1 to their Initiative when climbing or rolling to avoid a fall, their grip much improved on dry surfaces. The next time a hero rolls a 1 for random events, see Secret B."
-        },
-        {
-          "result": "25",
-          "name": "Rowdy Drunks",
-          "text": "1D3 angry drunks stumble out of the building nearest you, looking for a fight, and another stumbles out in each of your turns until another player rolls a 1 for a random event. M4 WS3 BS3 S3 T3 W1 I3 A1 Ld7, each with one sword.\n\nRaging Drunk: each drunk suffers the rules for frenzy, and will not charge another drunk.\nPress Gang: if taken out of action, roll to see whether the drunk survives, as for a henchman. If he does you may add him to your warband as a Swabbie at once and take his sword. A warband that cannot take Swabbies may still take the sword."
-        },
-        {
-          "result": "26",
-          "name": "Rough Waters",
-          "text": "Choose a random boat on the map. If it is shorter than 12 inches it capsizes. If it is longer, every model within 1 inch of the edge must take an Initiative test or fall over the side."
-        },
-        {
-          "result": "31",
-          "name": "Riptide",
-          "text": "Pick at random a swimming model, rowboat or raft on the board. It is sucked up by the water and pushed 2D6 inches from land, or swept towards the nearest water table edge if there is no land or the distance to land is equal on both sides. If there is no swimming model or small boat in the water, the riptide instead catches anyone who enters the water on a D6 roll of 1 for the rest of the game."
-        },
-        {
-          "result": "32",
-          "name": "Dog Pack",
-          "text": "A feral pack of 2D3 wild dogs, using the Hunting Dog profile from the Witch Hunter list, has found the warbands. They move as fast as they can towards the nearest models, dividing themselves as evenly as they can between several targets. If they take a warband member out of action he is eaten unless rescued: if no friendly model comes within 6 inches of where he fell by the end of that warband's next turn, he is lost. If the pack fails a rout test it leaves without its food, and any warband member taken out of action in the last turn of the game has not been eaten and follows the normal rules."
-        },
-        {
-          "result": "33-34",
-          "name": "Street Bazaar",
-          "text": "The market has erupted with shop owners and impromptu sales. Every area within 6 inches of a building counts as Crowded. See the Crowded rule."
-        },
-        {
-          "result": "35",
-          "name": "Collapsing Building",
-          "text": "Pick one building at random. Any model inside must pass an Initiative test or suffer a Strength 5 hit, with armour saves as normal, as the building collapses. Remove the building from the table, replacing it with ruins if you can, and put the models back where it stood. Any model climbing the sides or standing on the roof falls from whatever height it was at."
-        },
-        {
-          "result": "36",
-          "name": "South Eastern Wind",
-          "text": "The weather counts as Baking Hot: the sun beats down and the sea reflects the glare. All warriors except Undead are at -1 to WS, BS and Initiative for the rest of the game. A model with wet powder has it dry in its next recovery phase. The next time a 1 is rolled for random events, see Secret E."
-        },
-        {
-          "result": "41",
-          "name": "Perfect Spot",
-          "text": "A stubborn local merchant has set his cart between two buildings and blocks the passage completely. He stops any model climbing over, beating them with his cane until they fall."
-        },
-        {
-          "result": "42-43",
-          "name": "Unguarded Barrels",
-          "text": "You find D3 barrels beside the building closest to you. When a model is in base contact with them, consult Secret H to see what they are."
-        },
-        {
-          "result": "44",
-          "name": "Northern Wind",
-          "text": "Clouds race in from the north carrying the taint of Chaos, taking the shapes of monstrous creatures, and thunder screams out in almost intelligible noises. Roll a D6 on the northern wind storm chart to see what the storm brings."
-        },
-        {
-          "result": "45",
-          "name": "Swashbuckler",
-          "text": "A Swashbuckler appears further down the street and offers his services to the warband with the lowest rating, rolling a dice to choose between two of equal rating. That warband must add the Hired Sword to its roster for this game. At the end of the game he demands payment, and the warband must pay his hire and upkeep fee. If it cannot or will not, he leaves, but takes his frustration out on a random member of the warband first, chosen from those not taken out of action during the game: roll for injuries for him just as though he had been taken out of action."
-        },
-        {
-          "result": "46",
-          "name": "Peddler",
-          "text": "Whichever turn this is rolled on, it happens at the end of the game. The winning warband has impressed, or frightened, a local peddler who carries his whole stock on his back and offers part of it at half the normal price: mace, hammer, sword, dagger, axe, helmet, boot hooks, pistol, duelling pistol, rope and hook, any poison, lucky charm, whalebone charms, healing herbs, pirate banners, lantern and Mordheim map. Roll a D3 for each item for how many he carries."
-        },
-        {
-          "result": "51",
-          "name": "Press Gang",
-          "text": "A group of 2D3 thugs attacks, ready to kidnap you for their crew. M4 WS3 BS3 S3 T3 W1 I3 A1 Ld7, each armed with two daggers.\n\nWhenever a ganger takes one of your warband out of action they throw him in a sack and try to carry him off: that model moves towards the closest table edge at -1 Movement, and has a boat waiting if the edge is water. Attacked in hand-to-hand, a kidnapping ganger drops the victim and fights back. If the gang fails a rout test it leaves without its recruit, and any warband member taken out of action in the last turn of the game has not been taken. If the kidnapped model is carried off the board, or your warband routs while a ganger still carries him, he is kidnapped: a henchman is lost at once, and a hero misses 1D3 games and is robbed.\n\nPress Gang: if a ganger is taken out of action, roll to see whether he survives, as for a henchman. If he does you may add him as a Swabbie at once and take his daggers. A warband that cannot take Swabbies may still take the daggers. Gangers never join the Crew."
-        },
-        {
-          "result": "52",
-          "name": "Beautiful Plumage",
-          "text": "A passing parrot has taken a liking to one of your models at random, and harasses him rather than helping. For the rest of the battle your warrior is at -1 to hit in the first round of each combat unless he passes a Leadership test. If he is attacking a model that has a parrot of its own, the effect does not stack."
-        },
-        {
-          "result": "53",
-          "name": "Giant Crab",
-          "text": "A crustacean of unusual size emerges from the sea. It starts at the table edge closest to your warband and moves across to the opposite edge, attacking any warband member in its path. Models gain 3 Experience for taking it out of action. M5 WS3 BS0 S4 T5 W4 I2 A2 Ld10.\n\nFearsome Beast: it causes fear.\nChitinous Hide: an armour save of 4 or more.\nCrushing Claws: any injury from it adds 1 to the injury roll."
-        },
-        {
-          "result": "54",
-          "name": "Southern Wind",
-          "text": "The weather counts as Raining: all missile and powder weapons are at -1 to hit, and anyone wishing to fire a blackpowder weapon must first roll 4 or more on a D6 or the powder is too wet. A model with a Powder Horn need not test. The next time a 1 is rolled for a random event, consult Secret D."
-        },
-        {
-          "result": "55",
-          "name": "Sirens Call",
-          "text": "A haunting voice rings out over the waves. Every non-animal member of your warband that is not immune to psychology must pass a Leadership test or move as fast as it can towards the nearest water edge. A model that passes need not roll again, but one that fails keeps moving each turn until it passes, is taken out of action or leaves the table. If the movement takes it into the water it swims on towards the table edge, or drowns.\n\nA model not under the spell may hold another back by moving into base contact with him. Neither model may do anything else while one tries to reach the water and the other tries to stop him. Both may react normally if attacked in close combat, and the restraining model may give up at any time. The encounter lasts until every spellbound member is free or off the board."
-        },
-        {
-          "result": "56",
-          "name": "Security Measures",
-          "text": "Whoever owns the ground your warriors are trespassing on does not think kindly of thieves, and has booby-trapped several of his ordinary looking chests. For the rest of the scenario, whenever a model picks up a Cargo crate, a barrel or the like, roll a D6: on a 1 or 2 it is booby-trapped. That cargo cannot be sold, and the model who picked it up must pass an Initiative test or suffer a Strength 4 hit. If any Cargo crates are being carried when this event is rolled, roll for those at once. Any further crates that appear through random events can be rigged too."
-        },
-        {
-          "result": "61",
-          "name": "Small Mutiny",
-          "text": "Your warband thinks this venture a foolish one and the men take sides. For the rest of the scenario every henchman of your warband counts as suffering Animosity. Any member within 6 inches of your leader is immune."
-        },
-        {
-          "result": "62",
-          "name": "Manaan Smiles",
-          "text": "Your warband finds an abandoned rowboat nearby, which the first man to reach it may claim. Place a rowboat at once wherever you like. If you do not rout this game you may add it to your inventory."
-        },
-        {
-          "result": "63",
-          "name": "Lil Cutpurse",
-          "text": "A halfling thief pops up and grabs something valuable. Determine a hero at random and roll on the stolen item chart. The thief is set up 1D6 inches from the hero and moves at once, away from him as fast as he can. If he is taken out of action the hero gets the item back and 1D6 gc besides, and a hero who takes him out of action gains 1 Experience. M4 WS2 BS4 S2 T2 W1 I5 A1 Ld8, with two daggers and a pistol."
-        },
-        {
-          "result": "64",
-          "name": "North Western Wind",
-          "text": "A fancy hat blows through the town, expensive enough to be worth stopping. It starts in the north-western corner, over land, and moves 3D6 inches each round towards the south-eastern corner by the straightest line possible, floating over man-sized and 1 inch obstacles. The first model to come into contact with it catches it. If it is caught, see Secret F."
-        },
-        {
-          "result": "65",
-          "name": "Hit Contract",
-          "text": "A wanted poster with your captain's own face on it floats past. Your leader, or the hero with the next highest Leadership if he is not on the battlefield, has a bounty on him for this game. Any hero or henchman group that takes him out of action earns an extra point of experience, and their warband gains 1D6x10 gc."
-        },
-        {
-          "result": "66",
-          "name": "North Eastern Wind",
-          "text": "The dormant volcano spits a small burp into the air, descending from the north-east side of the board. Standing at the north-eastern corner, every model not under some cover suffers a hit. Roll a D6 for each to see what hit him.\n\n1 Flaming rock: a Strength 3 hit, and on a 5 or more the model catches fire.\n2-3 Flaming soot: a Strength 1 hit, and on a 5 or more the model catches fire.\n4-5 Ash: the model is blinded for a turn and suffers -2 on all rolls to hit, in combat and with missiles, during that player's next turn, or the current turn if it is your own.\n6 Precious stone: the model suffers a Strength 2 hit, but the rock sells for 1D6 gc after the game if the model was not taken out of action."
-        }
-      ]
-    },
-    {
-      "title": "Cargo",
-      "description": "Rolled when a warband opens one of its Cargo crates, which it may do once per Exploration phase with a crate it is not selling. Subtract the crate from the total first.",
-      "dice": "D66",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "11-16",
-          "name": "Food",
-          "text": "Worth 1D6 gc. Roll another D6 for what else it holds.\n1-3 1D3 pieces of hardtack.\n4-5 Garlic, one clove for each hero.\n6 A stashed item. Roll a D6: 1 Dark Venom, one dose; 2 Black Lotus, one dose; 3 Crimson Shade, one dose; 4 Manticore Spoor, one dose; 5 Mad Cap Mushrooms, one dose; 6 no drugs at all, just a halfling cookbook."
-        },
-        {
-          "result": "21-26",
-          "name": "Alcohol",
-          "text": "Worth 2D6 gc. Roll another D6: on a 4 or 5 it holds a case of Grog, and on a 6 one dose of Bugman's Ale or Elven Wine, your pick."
-        },
-        {
-          "result": "31-36",
-          "name": "Clothing",
-          "text": "Worth 2D6 gc per crate. It also holds, on a D6: 1-3 1D3 toughened leathers; 4-5 1D3 greatcoats; 6 a captain's hat."
-        },
-        {
-          "result": "41",
-          "name": "Equipment",
-          "text": "1D3 bucklers and 1D3 swords."
-        },
-        {
-          "result": "42",
-          "name": "Jewelry",
-          "text": "1D3 lucky charms and a whalebone charm."
-        },
-        {
-          "result": "43",
-          "name": "Luxury Goods",
-          "text": "Worth 4D6 gc per crate. Hidden inside is, on a D6, 1-3 a set of tarot cards or 4-6 a set of Cathayan silks."
-        },
-        {
-          "result": "44",
-          "name": "Black Powder",
-          "text": "Worth 5D6 gc per crate, and it holds one pack of superior blackpowder."
-        },
-        {
-          "result": "45",
-          "name": "Foreign Wares",
-          "text": "Roll a D6.\n1 1D3 khufa beans, sell price 10 gc each.\n2 A dimashquine sword and a robe of honour, sell price 8 gc and 25 gc.\n3 Perfume, sell price 10 gc.\n4 One katana and 1D3 smokebombs, sell price 10 gc and 30 gc each.\n5 Ithilmar armour.\n6 An elven cloak."
-        },
-        {
-          "result": "46",
-          "name": "Blank Flag",
-          "text": "You may buy a pirate banner of any kind you would ordinarily be able to buy, for free and without rolling for rarity."
-        },
-        {
-          "result": "51-53",
-          "name": "Common Guns",
-          "text": "Roll a D6: 1 a blunderbuss; 2 a brace of pistols; 3 a duelling pistol; 4 a handgun; 5-6 choose one of the above."
-        },
-        {
-          "result": "54-56",
-          "name": "Exotic Guns",
-          "text": "Roll a D6: 1 a pocket pistol for each of your heroes; 2 a dwarven pistol; 3 a long barrelled pistol; 4 a double-barrelled pistol; 5 a duckfooted pistol; 6 your choice of a sword pistol, a warplock pistol or a repeating pistol."
-        },
-        {
-          "result": "61",
-          "name": "Medicine Chest",
-          "text": "It can be used as D6 doses of healing herbs, or once to allow a re-roll on the hero serious injury table, unless the result was Pit Fight, Captured or the like. It also holds 1D3 hook hands and 1D3 peg legs."
-        },
-        {
-          "result": "62",
-          "name": "Handguns",
-          "text": "1D3 handguns, each with a supply of refined gunpowder."
-        },
-        {
-          "result": "63",
-          "name": "Exotic Animals",
-          "text": "Worth 6D6 gc. Roll another D6: on a 5 it also holds a parrot, and on a 6 a baby cold one, treated as a Wardog."
-        },
-        {
-          "result": "64",
-          "name": "Gems",
-          "text": "Worth 100 gc but sold for only 40 after the fence. They may instead be worn, which adds 1 to rarity finds. The crate also holds 1D3 sets of silver arrows or bullets."
-        },
-        {
-          "result": "65",
-          "name": "A Hunting Rifle",
-          "text": ""
-        },
-        {
-          "result": "66",
-          "name": "A Swivel Gun",
-          "text": "While you own it you may buy shot for it as any human pirate warband does. Only one is allowed per warband each game, though you may keep a spare in your equipment in case you lose one."
-        }
-      ]
-    },
-    {
-      "title": "Weather",
-      "description": "Rolled for the weather over a battle in Sartosa.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Baking Hot",
-          "text": "The sun beats down and the sea reflects the glare. All warriors except Undead are at -1 to WS, BS and Initiative for the whole game. A model with wet powder has it dry in its next recovery phase."
-        },
-        {
-          "result": "3",
-          "name": "Foggy",
-          "text": "A thick fog has rolled in from the coast. Roll a D6. On a 1 to 5 all shooting is at half range for the poor visibility. On a 6 warriors cannot see where they are going and are disoriented: roll a random direction for each hero and henchman group, and they may walk in that direction. If they run into another warrior they may attack him; if he is friendly, roll a D6, and on a 5 or more they attack him thinking he is the enemy."
-        },
-        {
-          "result": "4",
-          "name": "Dry",
-          "text": "The sun beats down on the beaches. If a pirate and his powder get wet, roll a D6 in your recovery phase, and on a 4 or more the powder has dried and can be used as normal. All models add 1 to their Initiative when climbing or rolling to avoid a fall, their grip much improved on dry surfaces."
-        },
-        {
-          "result": "5",
-          "name": "Windy",
-          "text": "A hot wind from the south makes it hard to shoot and to leap. Roll a D6: on 1-3, -1 to hit with missile weapons and -1 to leap between buildings; on 4-6, -1 for shooting and -2 for leaping, with a further -1 for shooting arrows or bolts. If the scenario involves ships with sails, determine which board edge the wind comes from: a sailed ship moving with the wind gains 2 inches of movement, and one moving against it loses 2."
-        },
-        {
-          "result": "6-8",
-          "name": "Normal play",
-          "text": ""
-        },
-        {
-          "result": "9",
-          "name": "Raining",
-          "text": "All missile and powder weapons are at -1 to hit. Anyone wishing to fire a blackpowder weapon must first roll 4 or more on a D6 or the powder is too wet. A model with a Powder Horn need not test."
-        },
-        {
-          "result": "10",
-          "name": "Heavy Rain",
-          "text": "The monsoon makes movement slow and hazardous: -1 to all movement. All missile ranges are halved, and blackpowder weapons may not fire at all."
-        },
-        {
-          "result": "11",
-          "name": "Thunderstorm",
-          "text": "Lightning cracks the air. Each round choose a random quadrant of the board, then a random warrior in that quadrant, and roll a D6. On a 4 to 6 he is struck by lightning for a Strength 4 hit, Strength 5 if he wears heavy armour, Ithilmar or Gromril, with no armour save and no critical hits. On a 1 to 3 the bolt strikes the ground or a high surface near him and he jumps out of his skin: until the next round he may do nothing but fight back in combat."
-        },
-        {
-          "result": "12",
-          "name": "Maelstrom",
-          "text": "A monstrous storm hits the battlefield for the first D3+2 turns: no missile attacks are possible, all powder weapons count as wet, no model may run or charge further than its normal move, no spells may be cast and no model may use its leader's Leadership. Any boats on the board move 1D3 inches in a random direction each turn, and swimming models may not move until the storm ends. After the D3+2 turns re-roll the weather, re-rolling any further Maelstrom. A scenario with a limited number of rounds is extended by 2."
-        }
-      ]
-    },
-    {
+     "result": "44",
+     "name": "Northern Wind",
+     "text": "Clouds race in from the north carrying the taint of Chaos, taking the shapes of monstrous creatures, and thunder screams out in almost intelligible noises. Roll a D6 on the northern wind storm chart to see what the storm brings.",
+     "chart": {
       "title": "Northern wind storm",
       "description": "Rolled when the Northern Wind random encounter brings a storm tainted by Chaos.",
       "dice": "D6",
       "note": "",
-      "umbrella": "",
       "rows": [
-        {
-          "result": "1",
-          "name": "Warp lightning",
-          "text": "Lightning strikes the ground looking for a victim. It hits the warrior with the best armour save, drawn to the metal, for a Strength 5 hit with no armour save possible; choose at random between warriors with equally good saves. The warp lightning strikes for D3 turns before moving on to another part of the city."
-        },
-        {
-          "result": "2",
-          "name": "Falling fish",
-          "text": "Fish fall out of the sky. All movement is halved for one turn, on wet flapping fish, with no other effect."
-        },
-        {
-          "result": "3",
-          "name": "Tainted rain",
-          "text": "Wyrdstone dust in the water vapour brings down a rain that burns flesh and eats into stone and metal. Each warband member in the open takes a single Strength 2 hit, with normal armour saves, every turn the rain lasts until he gets under cover. The rain lasts D3 turns."
-        },
-        {
-          "result": "4",
-          "name": "Mass of lightning",
-          "text": "A magical mass of lightning forms near the ground with an eerie greenish glow and moves about, drawn to magic. Place a counter for it as the encounter rules describe, and move it 2D6 inches each turn towards the highest level spell user, the one with the most spells, rolling a D6 each turn to choose between equals. With no magic users in the game it moves towards the opposite table edge, blocking line of sight as it goes. If the model it moves towards casts a spell, move the counter another D6 inches towards him at once.\n\nIf the mass touches its target, the model is frozen in time and can do nothing. While frozen it cannot be attacked or harmed in any way: the lightning protects its prey. The lightning then stops moving and feeds for D3 turns before flying back to the clouds and freeing him. If the game ends first the victim is released at once. Victims suffer no lasting ill effects."
-        },
-        {
-          "result": "5",
-          "name": "Thunderclaps",
-          "text": "Heavy pulses of air bring warriors to their knees. D6 randomly selected models are knocked down. If any of them are in close combat, every other model in that melee is knocked down as well."
-        },
-        {
-          "result": "6",
-          "name": "Champions of the storm gods",
-          "text": "Tendrils of smoke wind around the heads of both warbands. Select one hero from each warband at random: these warriors have been chosen by rival storm gods as their champions. They must move towards each other every turn and get into close combat as quickly as they can. Once in combat they pass all Leadership tests automatically and fight until only one is left, the combat ending when one puts the other out of action. If a warband has no heroes left in play, a random henchman is chosen instead.\n\nThe next time you roll a 1 for a random event, see Secret C."
-        }
+       {
+        "result": "1",
+        "name": "Warp lightning",
+        "text": "Lightning strikes the ground looking for a victim. It hits the warrior with the best armour save, drawn to the metal, for a Strength 5 hit with no armour save possible; choose at random between warriors with equally good saves. The warp lightning strikes for D3 turns before moving on to another part of the city."
+       },
+       {
+        "result": "2",
+        "name": "Falling fish",
+        "text": "Fish fall out of the sky. All movement is halved for one turn, on wet flapping fish, with no other effect."
+       },
+       {
+        "result": "3",
+        "name": "Tainted rain",
+        "text": "Wyrdstone dust in the water vapour brings down a rain that burns flesh and eats into stone and metal. Each warband member in the open takes a single Strength 2 hit, with normal armour saves, every turn the rain lasts until he gets under cover. The rain lasts D3 turns."
+       },
+       {
+        "result": "4",
+        "name": "Mass of lightning",
+        "text": "A magical mass of lightning forms near the ground with an eerie greenish glow and moves about, drawn to magic. Place a counter for it as the encounter rules describe, and move it 2D6 inches each turn towards the highest level spell user, the one with the most spells, rolling a D6 each turn to choose between equals. With no magic users in the game it moves towards the opposite table edge, blocking line of sight as it goes. If the model it moves towards casts a spell, move the counter another D6 inches towards him at once.\n\nIf the mass touches its target, the model is frozen in time and can do nothing. While frozen it cannot be attacked or harmed in any way: the lightning protects its prey. The lightning then stops moving and feeds for D3 turns before flying back to the clouds and freeing him. If the game ends first the victim is released at once. Victims suffer no lasting ill effects."
+       },
+       {
+        "result": "5",
+        "name": "Thunderclaps",
+        "text": "Heavy pulses of air bring warriors to their knees. D6 randomly selected models are knocked down. If any of them are in close combat, every other model in that melee is knocked down as well."
+       },
+       {
+        "result": "6",
+        "name": "Champions of the storm gods",
+        "text": "Tendrils of smoke wind around the heads of both warbands. Select one hero from each warband at random: these warriors have been chosen by rival storm gods as their champions. They must move towards each other every turn and get into close combat as quickly as they can. Once in combat they pass all Leadership tests automatically and fight until only one is left, the combat ending when one puts the other out of action. If a warband has no heroes left in play, a random henchman is chosen instead.\n\nThe next time you roll a 1 for a random event, see Secret C."
+       }
       ]
+     }
     },
     {
+     "result": "45",
+     "name": "Swashbuckler",
+     "text": "A Swashbuckler appears further down the street and offers his services to the warband with the lowest rating, rolling a dice to choose between two of equal rating. That warband must add the Hired Sword to its roster for this game. At the end of the game he demands payment, and the warband must pay his hire and upkeep fee. If it cannot or will not, he leaves, but takes his frustration out on a random member of the warband first, chosen from those not taken out of action during the game: roll for injuries for him just as though he had been taken out of action."
+    },
+    {
+     "result": "46",
+     "name": "Peddler",
+     "text": "Whichever turn this is rolled on, it happens at the end of the game. The winning warband has impressed, or frightened, a local peddler who carries his whole stock on his back and offers part of it at half the normal price: mace, hammer, sword, dagger, axe, helmet, boot hooks, pistol, duelling pistol, rope and hook, any poison, lucky charm, whalebone charms, healing herbs, pirate banners, lantern and Mordheim map. Roll a D3 for each item for how many he carries."
+    },
+    {
+     "result": "51",
+     "name": "Press Gang",
+     "text": "A group of 2D3 thugs attacks, ready to kidnap you for their crew. M4 WS3 BS3 S3 T3 W1 I3 A1 Ld7, each armed with two daggers.\n\nWhenever a ganger takes one of your warband out of action they throw him in a sack and try to carry him off: that model moves towards the closest table edge at -1 Movement, and has a boat waiting if the edge is water. Attacked in hand-to-hand, a kidnapping ganger drops the victim and fights back. If the gang fails a rout test it leaves without its recruit, and any warband member taken out of action in the last turn of the game has not been taken. If the kidnapped model is carried off the board, or your warband routs while a ganger still carries him, he is kidnapped: a henchman is lost at once, and a hero misses 1D3 games and is robbed.\n\nPress Gang: if a ganger is taken out of action, roll to see whether he survives, as for a henchman. If he does you may add him as a Swabbie at once and take his daggers. A warband that cannot take Swabbies may still take the daggers. Gangers never join the Crew."
+    },
+    {
+     "result": "52",
+     "name": "Beautiful Plumage",
+     "text": "A passing parrot has taken a liking to one of your models at random, and harasses him rather than helping. For the rest of the battle your warrior is at -1 to hit in the first round of each combat unless he passes a Leadership test. If he is attacking a model that has a parrot of its own, the effect does not stack."
+    },
+    {
+     "result": "53",
+     "name": "Giant Crab",
+     "text": "A crustacean of unusual size emerges from the sea. It starts at the table edge closest to your warband and moves across to the opposite edge, attacking any warband member in its path. Models gain 3 Experience for taking it out of action. M5 WS3 BS0 S4 T5 W4 I2 A2 Ld10.\n\nFearsome Beast: it causes fear.\nChitinous Hide: an armour save of 4 or more.\nCrushing Claws: any injury from it adds 1 to the injury roll."
+    },
+    {
+     "result": "54",
+     "name": "Southern Wind",
+     "text": "The weather counts as Raining: all missile and powder weapons are at -1 to hit, and anyone wishing to fire a blackpowder weapon must first roll 4 or more on a D6 or the powder is too wet. A model with a Powder Horn need not test. The next time a 1 is rolled for a random event, consult Secret D."
+    },
+    {
+     "result": "55",
+     "name": "Sirens Call",
+     "text": "A haunting voice rings out over the waves. Every non-animal member of your warband that is not immune to psychology must pass a Leadership test or move as fast as it can towards the nearest water edge. A model that passes need not roll again, but one that fails keeps moving each turn until it passes, is taken out of action or leaves the table. If the movement takes it into the water it swims on towards the table edge, or drowns.\n\nA model not under the spell may hold another back by moving into base contact with him. Neither model may do anything else while one tries to reach the water and the other tries to stop him. Both may react normally if attacked in close combat, and the restraining model may give up at any time. The encounter lasts until every spellbound member is free or off the board."
+    },
+    {
+     "result": "56",
+     "name": "Security Measures",
+     "text": "Whoever owns the ground your warriors are trespassing on does not think kindly of thieves, and has booby-trapped several of his ordinary looking chests. For the rest of the scenario, whenever a model picks up a Cargo crate, a barrel or the like, roll a D6: on a 1 or 2 it is booby-trapped. That cargo cannot be sold, and the model who picked it up must pass an Initiative test or suffer a Strength 4 hit. If any Cargo crates are being carried when this event is rolled, roll for those at once. Any further crates that appear through random events can be rigged too."
+    },
+    {
+     "result": "61",
+     "name": "Small Mutiny",
+     "text": "Your warband thinks this venture a foolish one and the men take sides. For the rest of the scenario every henchman of your warband counts as suffering Animosity. Any member within 6 inches of your leader is immune."
+    },
+    {
+     "result": "62",
+     "name": "Manaan Smiles",
+     "text": "Your warband finds an abandoned rowboat nearby, which the first man to reach it may claim. Place a rowboat at once wherever you like. If you do not rout this game you may add it to your inventory."
+    },
+    {
+     "result": "63",
+     "name": "Lil Cutpurse",
+     "text": "A halfling thief pops up and grabs something valuable. Determine a hero at random and roll on the stolen item chart. The thief is set up 1D6 inches from the hero and moves at once, away from him as fast as he can. If he is taken out of action the hero gets the item back and 1D6 gc besides, and a hero who takes him out of action gains 1 Experience. M4 WS2 BS4 S2 T2 W1 I5 A1 Ld8, with two daggers and a pistol.",
+     "chart": {
       "title": "Stolen item",
       "description": "Rolled when the halfling cutpurse robs a hero, to see what he took.",
       "dice": "D6",
       "note": "If the warrior does not have the item rolled, roll again.",
-      "umbrella": "",
       "rows": [
-        {
-          "result": "1",
-          "name": "A hand-to-hand weapon",
-          "text": "Chosen at random."
-        },
-        {
-          "result": "2",
-          "name": "A missile weapon",
-          "text": "Chosen at random."
-        },
-        {
-          "result": "3",
-          "name": "A helmet, shield or armour",
-          "text": "Chosen at random."
-        },
-        {
-          "result": "4",
-          "name": "A miscellaneous item",
-          "text": "Chosen at random."
-        },
-        {
-          "result": "5",
-          "name": "Spare change",
-          "text": "1D6 gold from the warband treasury."
-        },
-        {
-          "result": "6",
-          "name": "The company purse",
-          "text": "3D6 gold from the warband treasury."
-        }
+       {
+        "result": "1",
+        "name": "A hand-to-hand weapon",
+        "text": "Chosen at random."
+       },
+       {
+        "result": "2",
+        "name": "A missile weapon",
+        "text": "Chosen at random."
+       },
+       {
+        "result": "3",
+        "name": "A helmet, shield or armour",
+        "text": "Chosen at random."
+       },
+       {
+        "result": "4",
+        "name": "A miscellaneous item",
+        "text": "Chosen at random."
+       },
+       {
+        "result": "5",
+        "name": "Spare change",
+        "text": "1D6 gold from the warband treasury."
+       },
+       {
+        "result": "6",
+        "name": "The company purse",
+        "text": "3D6 gold from the warband treasury."
+       }
       ]
+     }
     },
     {
-      "title": "Legendary warriors of Sartosa",
-      "description": "Rolled when Secret G brings a legend into the battle. He charges, shoots at or casts spells at the first model within range that meets his own criterion.",
-      "dice": "D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "Jeremiah Bane, the Devil King",
-          "text": "He charges the first model that is neither Undead nor a daemon."
-        },
-        {
-          "result": "2",
-          "name": "Kromwell the Black-Hearted",
-          "text": "He charges the first non-Chaotic warrior."
-        },
-        {
-          "result": "3",
-          "name": "Fleur and Estella Mab",
-          "text": "They shoot at and charge the warband with the highest rating, or the two highest ratings in a game of five or more players."
-        },
-        {
-          "result": "4",
-          "name": "Krushj the Anchorman",
-          "text": "He charges the first Skaven. Failing that, whenever he is within charge range of a model, roll a D6: on a 5 or more he sees a target worth having and charges."
-        },
-        {
-          "result": "5",
-          "name": "Dijin Katal",
-          "text": "A renegade Dark Elf assassin. He charges any target, preferring Dark Elves and High Elves. Roll again if you do not have his rules to hand."
-        },
-        {
-          "result": "6",
-          "name": "A wanderer",
-          "text": "Roll a D6. On 1-3 you are visited by the immortal wanderer Aenur, who attacks any evil warband. On 4-6 you meet Giovanni the Knife, Johan's Tilean descendant, treated as Johan, who attacks the first non-human he meets."
-        }
-      ]
+     "result": "64",
+     "name": "North Western Wind",
+     "text": "A fancy hat blows through the town, expensive enough to be worth stopping. It starts in the north-western corner, over land, and moves 3D6 inches each round towards the south-eastern corner by the straightest line possible, floating over man-sized and 1 inch obstacles. The first model to come into contact with it catches it. If it is caught, see Secret F."
+    },
+    {
+     "result": "65",
+     "name": "Hit Contract",
+     "text": "A wanted poster with your captain's own face on it floats past. Your leader, or the hero with the next highest Leadership if he is not on the battlefield, has a bounty on him for this game. Any hero or henchman group that takes him out of action earns an extra point of experience, and their warband gains 1D6x10 gc."
+    },
+    {
+     "result": "66",
+     "name": "North Eastern Wind",
+     "text": "The dormant volcano spits a small burp into the air, descending from the north-east side of the board. Standing at the north-eastern corner, every model not under some cover suffers a hit. Roll a D6 for each to see what hit him.\n\n1 Flaming rock: a Strength 3 hit, and on a 5 or more the model catches fire.\n2-3 Flaming soot: a Strength 1 hit, and on a 5 or more the model catches fire.\n4-5 Ash: the model is blinded for a turn and suffers -2 on all rolls to hit, in combat and with missiles, during that player's next turn, or the current turn if it is your own.\n6 Precious stone: the model suffers a Strength 2 hit, but the rock sells for 1D6 gc after the game if the model was not taken out of action."
     }
-  ]
+   ]
+  },
+  {
+   "title": "Cargo",
+   "description": "Rolled when a warband opens one of its Cargo crates, which it may do once per Exploration phase with a crate it is not selling. Subtract the crate from the total first.",
+   "dice": "D66",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "11-16",
+     "name": "Food",
+     "text": "Worth 1D6 gc. Roll another D6 for what else it holds.\n1-3 1D3 pieces of hardtack.\n4-5 Garlic, one clove for each hero.\n6 A stashed item. Roll a D6: 1 Dark Venom, one dose; 2 Black Lotus, one dose; 3 Crimson Shade, one dose; 4 Manticore Spoor, one dose; 5 Mad Cap Mushrooms, one dose; 6 no drugs at all, just a halfling cookbook."
+    },
+    {
+     "result": "21-26",
+     "name": "Alcohol",
+     "text": "Worth 2D6 gc. Roll another D6: on a 4 or 5 it holds a case of Grog, and on a 6 one dose of Bugman's Ale or Elven Wine, your pick."
+    },
+    {
+     "result": "31-36",
+     "name": "Clothing",
+     "text": "Worth 2D6 gc per crate. It also holds, on a D6: 1-3 1D3 toughened leathers; 4-5 1D3 greatcoats; 6 a captain's hat."
+    },
+    {
+     "result": "41",
+     "name": "Equipment",
+     "text": "1D3 bucklers and 1D3 swords."
+    },
+    {
+     "result": "42",
+     "name": "Jewelry",
+     "text": "1D3 lucky charms and a whalebone charm."
+    },
+    {
+     "result": "43",
+     "name": "Luxury Goods",
+     "text": "Worth 4D6 gc per crate. Hidden inside is, on a D6, 1-3 a set of tarot cards or 4-6 a set of Cathayan silks."
+    },
+    {
+     "result": "44",
+     "name": "Black Powder",
+     "text": "Worth 5D6 gc per crate, and it holds one pack of superior blackpowder."
+    },
+    {
+     "result": "45",
+     "name": "Foreign Wares",
+     "text": "Roll a D6.\n1 1D3 khufa beans, sell price 10 gc each.\n2 A dimashquine sword and a robe of honour, sell price 8 gc and 25 gc.\n3 Perfume, sell price 10 gc.\n4 One katana and 1D3 smokebombs, sell price 10 gc and 30 gc each.\n5 Ithilmar armour.\n6 An elven cloak."
+    },
+    {
+     "result": "46",
+     "name": "Blank Flag",
+     "text": "You may buy a pirate banner of any kind you would ordinarily be able to buy, for free and without rolling for rarity."
+    },
+    {
+     "result": "51-53",
+     "name": "Common Guns",
+     "text": "Roll a D6: 1 a blunderbuss; 2 a brace of pistols; 3 a duelling pistol; 4 a handgun; 5-6 choose one of the above."
+    },
+    {
+     "result": "54-56",
+     "name": "Exotic Guns",
+     "text": "Roll a D6: 1 a pocket pistol for each of your heroes; 2 a dwarven pistol; 3 a long barrelled pistol; 4 a double-barrelled pistol; 5 a duckfooted pistol; 6 your choice of a sword pistol, a warplock pistol or a repeating pistol."
+    },
+    {
+     "result": "61",
+     "name": "Medicine Chest",
+     "text": "It can be used as D6 doses of healing herbs, or once to allow a re-roll on the hero serious injury table, unless the result was Pit Fight, Captured or the like. It also holds 1D3 hook hands and 1D3 peg legs."
+    },
+    {
+     "result": "62",
+     "name": "Handguns",
+     "text": "1D3 handguns, each with a supply of refined gunpowder."
+    },
+    {
+     "result": "63",
+     "name": "Exotic Animals",
+     "text": "Worth 6D6 gc. Roll another D6: on a 5 it also holds a parrot, and on a 6 a baby cold one, treated as a Wardog."
+    },
+    {
+     "result": "64",
+     "name": "Gems",
+     "text": "Worth 100 gc but sold for only 40 after the fence. They may instead be worn, which adds 1 to rarity finds. The crate also holds 1D3 sets of silver arrows or bullets."
+    },
+    {
+     "result": "65",
+     "name": "A Hunting Rifle",
+     "text": ""
+    },
+    {
+     "result": "66",
+     "name": "A Swivel Gun",
+     "text": "While you own it you may buy shot for it as any human pirate warband does. Only one is allowed per warband each game, though you may keep a spare in your equipment in case you lose one."
+    }
+   ]
+  },
+  {
+   "title": "Weather",
+   "description": "Rolled for the weather over a battle in Sartosa.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Baking Hot",
+     "text": "The sun beats down and the sea reflects the glare. All warriors except Undead are at -1 to WS, BS and Initiative for the whole game. A model with wet powder has it dry in its next recovery phase."
+    },
+    {
+     "result": "3",
+     "name": "Foggy",
+     "text": "A thick fog has rolled in from the coast. Roll a D6. On a 1 to 5 all shooting is at half range for the poor visibility. On a 6 warriors cannot see where they are going and are disoriented: roll a random direction for each hero and henchman group, and they may walk in that direction. If they run into another warrior they may attack him; if he is friendly, roll a D6, and on a 5 or more they attack him thinking he is the enemy."
+    },
+    {
+     "result": "4",
+     "name": "Dry",
+     "text": "The sun beats down on the beaches. If a pirate and his powder get wet, roll a D6 in your recovery phase, and on a 4 or more the powder has dried and can be used as normal. All models add 1 to their Initiative when climbing or rolling to avoid a fall, their grip much improved on dry surfaces."
+    },
+    {
+     "result": "5",
+     "name": "Windy",
+     "text": "A hot wind from the south makes it hard to shoot and to leap. Roll a D6: on 1-3, -1 to hit with missile weapons and -1 to leap between buildings; on 4-6, -1 for shooting and -2 for leaping, with a further -1 for shooting arrows or bolts. If the scenario involves ships with sails, determine which board edge the wind comes from: a sailed ship moving with the wind gains 2 inches of movement, and one moving against it loses 2."
+    },
+    {
+     "result": "6-8",
+     "name": "Normal play",
+     "text": ""
+    },
+    {
+     "result": "9",
+     "name": "Raining",
+     "text": "All missile and powder weapons are at -1 to hit. Anyone wishing to fire a blackpowder weapon must first roll 4 or more on a D6 or the powder is too wet. A model with a Powder Horn need not test."
+    },
+    {
+     "result": "10",
+     "name": "Heavy Rain",
+     "text": "The monsoon makes movement slow and hazardous: -1 to all movement. All missile ranges are halved, and blackpowder weapons may not fire at all."
+    },
+    {
+     "result": "11",
+     "name": "Thunderstorm",
+     "text": "Lightning cracks the air. Each round choose a random quadrant of the board, then a random warrior in that quadrant, and roll a D6. On a 4 to 6 he is struck by lightning for a Strength 4 hit, Strength 5 if he wears heavy armour, Ithilmar or Gromril, with no armour save and no critical hits. On a 1 to 3 the bolt strikes the ground or a high surface near him and he jumps out of his skin: until the next round he may do nothing but fight back in combat."
+    },
+    {
+     "result": "12",
+     "name": "Maelstrom",
+     "text": "A monstrous storm hits the battlefield for the first D3+2 turns: no missile attacks are possible, all powder weapons count as wet, no model may run or charge further than its normal move, no spells may be cast and no model may use its leader's Leadership. Any boats on the board move 1D3 inches in a random direction each turn, and swimming models may not move until the storm ends. After the D3+2 turns re-roll the weather, re-rolling any further Maelstrom. A scenario with a limited number of rounds is extended by 2."
+    }
+   ]
+  },
+  {
+   "title": "Legendary warriors of Sartosa",
+   "description": "Rolled when Secret G brings a legend into the battle. He charges, shoots at or casts spells at the first model within range that meets his own criterion.",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "1",
+     "name": "Jeremiah Bane, the Devil King",
+     "text": "He charges the first model that is neither Undead nor a daemon."
+    },
+    {
+     "result": "2",
+     "name": "Kromwell the Black-Hearted",
+     "text": "He charges the first non-Chaotic warrior."
+    },
+    {
+     "result": "3",
+     "name": "Fleur and Estella Mab",
+     "text": "They shoot at and charge the warband with the highest rating, or the two highest ratings in a game of five or more players."
+    },
+    {
+     "result": "4",
+     "name": "Krushj the Anchorman",
+     "text": "He charges the first Skaven. Failing that, whenever he is within charge range of a model, roll a D6: on a 5 or more he sees a target worth having and charges."
+    },
+    {
+     "result": "5",
+     "name": "Dijin Katal",
+     "text": "A renegade Dark Elf assassin. He charges any target, preferring Dark Elves and High Elves. Roll again if you do not have his rules to hand."
+    },
+    {
+     "result": "6",
+     "name": "A wanderer",
+     "text": "Roll a D6. On 1-3 you are visited by the immortal wanderer Aenur, who attacks any evil warband. On 4-6 you meet Giovanni the Knife, Johan's Tilean descendant, treated as Johan, who attacks the first non-human he meets."
+    }
+   ]
+  }
+ ]
 }

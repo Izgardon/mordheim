@@ -1,1211 +1,1206 @@
 {
-  "rules": [
+ "rules": [
+  {
+   "title": "Campaign points",
+   "text": "Every warband tracks Campaign Points. A warband gets them for the things its plot rewards, and spends nothing to keep them. Mark one box for every Campaign Point, as you would mark experience. The track is 40 boxes long, with a marked box at 5, 10, 15, 20, 25, 35 and 40; reaching a marked box gives the warband that step of its plot's achievement chart. There is no step at 30.",
+   "umbrella": ""
+  },
+  {
+   "title": "Choosing a plot",
+   "text": "Each warband picks one plot at the beginning of the campaign, from those its warband type may follow. Every player may always see what every other player has picked.",
+   "umbrella": ""
+  },
+  {
+   "title": "Changing plot",
+   "text": "A warband may switch to another plot it is allowed to follow between battles. It loses D6 Campaign Points for doing so.",
+   "umbrella": ""
+  },
+  {
+   "title": "Campaign points once spent or lost",
+   "text": "Losing Campaign Points never takes back an achievement the warband has already reached. Lost points must still be earned again before the warband can reach its next achievement.",
+   "umbrella": ""
+  },
+  {
+   "title": "Winning the campaign",
+   "text": "A warband wins as soon as it completes its plot. A plot is complete when every box on its Campaign Point track is filled and whatever its 40-point achievement additionally asks for has been done.",
+   "umbrella": ""
+  },
+  {
+   "title": "Starting over",
+   "text": "A player who disbands his warband loses its progress and achievements along with its warriors. He picks a plot for the new warband as if the campaign were beginning. To make up the lost time, the new warband starts with Campaign Points equal to the lowest total among the other warbands in the campaign, less D3. For example, the others hold 12, 8 and 9 Campaign Points, the lowest of them is 8, and a D3 scores 2, so the new warband starts with 6. The book's wording is the next lowest amount of the other participating warbands, but its own worked example takes the lowest of them.",
+   "umbrella": ""
+  },
+  {
+   "title": "Encampments",
+   "text": "Important buildings around the city are encampments, and a warband that discovers one records it on its roster. There is only ever one encampment of each type. If a second warband discovers an encampment another player already holds, it may contest it in the next game: an unprotected business is contested with the scenario The Sting, and a tower or other fortified encampment with the scenario Stockade. If the challenger wins without the building collapsing he takes possession; if the burning building collapses the encampment is razed.",
+   "umbrella": ""
+  },
+  {
+   "title": "Rebuilding a razed encampment",
+   "text": "A razed encampment can be rebuilt for 150 + D6 x 25 gold crowns. The work takes four games, during which at least one Hero and two Henchmen must miss battles. Each further Hero, or each further two Henchmen, who help with the work shorten it by one game, down to a minimum of one game.",
+   "umbrella": ""
+  },
+  {
+   "title": "Warband categories",
+   "text": "These terms are used throughout the campaign. Mercenaries are the retinues of Marienburg, Middenheim, Reikland, Ostland, Averland and the other Imperial provinces, and also Kislevites, Estalians, Tileans, Arabyans, Norse, Pirates and Pit Fighters. Human warbands include any warp-touched gang or renegade warband made up mostly of humans, such as Cults of Chaos, Marauders of Chaos, Outlaws and Bandits. Followers of Chaos are the Cult of the Possessed, the Carnival of Chaos and any other Cult of Chaos, plus Beastmen, Marauders of Chaos, Norse and Chaos Dwarfs; Skaven and Dark Elves are not counted as Chaos warbands. Elf warbands do not include Dark Elves, and Dwarf warbands do not include Chaos Dwarfs. Any warband that includes a Vampire, a Necromancer or a Liche is an Undead warband.",
+   "umbrella": ""
+  },
+  {
+   "title": "Blood pacts",
+   "text": "Roll 2D6 for each Hired Sword in the post-battle sequence, after his upkeep is paid, adding 1 for each skill or characteristic increase he has gained. On a 12 he swears an oath in blood and forms a Blood Pact with the warband. Assassins, Thieves, Merchants, Fences and Slavers never form a pact. A Hired Sword in a pact still counts as a Hired Sword but pays no upkeep, and may be equipped from the warband's Heroes' equipment list. If the leader is slain and the pact-sworn warrior has the next highest Leadership, he takes command: he gains the Leader ability, keeping his own skill list, and counts as a Hero. If several are eligible, the one with the most experience takes over, and roll a D6 on a tie.",
+   "umbrella": ""
+  },
+  {
+   "title": "Greater Artefacts",
+   "text": "A Greater Artefact may never be left in the warband's stash: a Hero must carry it. The only exception is a warband following The Ten Great Families, which may keep it in a Trade Wagon or similar vehicle. Greater Artefacts cannot be destroyed. If the model carrying one goes out of action, place a marker; any model may pick it up by moving into contact with the marker. If nobody takes it, the model that went out of action keeps it, and if he dies of his injuries it passes to the warband leader; if the leader dies after the battle it passes to the new leader in the exploration phase. If an artefact is ever lost with no owner to be found, the next warband to find an Arcane Item finds that Greater Artefact instead. Once an artefact's whereabouts are known, it can only be taken by other means. There are six: the Devil's Box, the Mask of the Merlord, Van Horstmann's Speculum, Alfred's Casket of Sorcery, Radon's Whistle and a Runefang.",
+   "umbrella": ""
+  },
+  {
+   "title": "Hiring a priest",
+   "text": "Any warband that includes humans may hire a Priest, either in place of one of its starting Heroes or by retiring a Hero already in the warband. A warband may never include more than one Priest. Unless something says otherwise, human priests may not be hired by followers of Chaos, Orcs and Goblins, Dark Elves, Skaven or Undead warbands. A Priest counts as a Hero, and no warband may ever include more than six Heroes.",
+   "umbrella": ""
+  },
+  {
+   "title": "Trade deals",
+   "text": "A warband that has a Merchant, Fence or Slaver and a Trade Wagon or other suitable vehicle, such as a riverboat, river barge, stage coach, opulent coach or treasure cart, can be visited by Heroes from other warbands.\nStorage. Any of the warband's stored equipment may be stowed in the vehicle, but not gold crowns or treasures. If the vehicle is destroyed everything stored in it is lost, and nothing can be traded until a new vehicle is bought.\nReputation. For every five different rare items stored in the vehicle the leader gets +1 to his rolls for finding rare items. Any rare item brought down to Rare 2 or lower, by the wagon's reputation, the Streetwise skill or anything else, can be bought as a Common item. Rare 12 is the highest rarity that can ever become common.\nTreasure carts. A cart carries up to three human-sized warriors, or the same in cargo. Carts and rowboats hold at most five rare items.\nAbandoned. If the warband fails its Rout test and nobody is crewing the vehicle, it falls to the winning warband if one or more of their warriors is within 1 inch of it. They may steal the contents, keep the vehicle if they are allowed one, or cut a deal with the Merchant using the ransom rules from Captured on the Serious Injuries chart. A warband that captures a Trade Wagon may not search for rare items after that battle, unless every model of the Merchant's warband was taken out of action.\nTrading. A player may send a Hero to the trader instead of searching for rare items. He may buy from the other warband's stored equipment at a price the players agree, including exchanges for items, animals, vehicles and treasures, or sell him any number of items: rare, common, magical artefacts or wyrdstone shards. If no price is agreed the visit is wasted.\nCaptives may only be sold or traded to a Slaver, and only a warband with a Slaver Hired Sword or a Hero with the Slaver skill may receive captured warriors.",
+   "umbrella": ""
+  },
+  {
+   "title": "Merchant charters",
+   "text": "A warband with a Merchant may spend Campaign Points to charter a ship, which it then keeps for the rest of the campaign unless the ship is sunk. A riverboat costs 1 Campaign Point; a river barge costs D3 Campaign Points.",
+   "umbrella": ""
+  },
+  {
+   "title": "Prisoners of war",
+   "text": "Dark Elf and Chaos Dwarf warbands never free a captured warrior; they put him to work. After a battle, nominate which captured warriors are sent to search for treasure and wyrdstone. At the end of the exploration procedure roll a D6 for each, and add the results to the exploration dice total before reading the income chart. On a 1 the prisoner breaks free and returns to his own warband as a Hero: treat a Henchman as having rolled The lad's got talent, and the Hero gains D6+2 experience. On a 6 he has been worked to death. Either result removes him from the captor's roster. A captured Hired Sword or Dramatis Personae is treated like any other warrior, or, if the captor could have hired him anyway, he counts as hired with no hire fee, though upkeep is still paid after each battle.",
+   "umbrella": ""
+  },
+  {
+   "title": "Stragglers and corpses",
+   "text": "A straggler counts as a hostage captured by the warband. Undead warbands may kill a straggler to make a corpse, and a corpse gives a Zombie for no cost. Skaven may sell a straggler to Clan Eshin for 2D6 gold crowns. Followers of Chaos may sacrifice him, and the warband leader gains +1 experience. Dark Elves and Chaos Dwarfs only take prisoners of war. Any other warband may interrogate him: the next time it rolls on the exploration chart it rolls one die more than usual and discards any one die. A warband that is not Chaos, Skaven or Undead may sell corpses it finds to Undead warbands, or deliver them to the Temple of Morr for 1 experience point.",
+   "umbrella": ""
+  },
+  {
+   "title": "Uncommon sightings",
+   "text": "In a campaign set in the Old World, recruiting Lizardmen, Skinks, Kroxigors, Dark Elves, Hobgoblins or Chaos Dwarfs costs twice the normal hire fee. Upkeep is the usual amount. In a campaign set in Lustria they cost the normal fee.",
+   "umbrella": ""
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "Cargo",
+   "text": "Barrels, coffins and chests take two models to move. A crate or sack can be carried by one model at its normal move with no running, or by two models, who may run. A model carrying a crate may not fire a missile weapon or cast a spell, and drops the crate if attacked, ready for anyone who moves into contact with it. A model that leaves the board with cargo may not return. Unless a scenario says otherwise, if a warband routs while its warriors hold cargo, the goods are lost if the markers are within charge range of any unengaged opponent.",
+   "umbrella": ""
+  },
+  {
+   "title": "Choosing the territory",
+   "text": "Every scenario says which territory it is fought in. If it does not, roll a D6.\n\n1-2 Manannsport Sea.\n3-4 Marienburg city.\n5-6 Cursed Marshes.",
+   "umbrella": "Battle locations"
+  },
+  {
+   "title": "Marienburg city",
+   "text": "The city is famous for its bridges and canals and its tight alleyways packed with shops. No special rules apply to a battle fought inside the city.",
+   "umbrella": "Battle locations"
+  },
+  {
+   "title": "The Cursed Marshes",
+   "text": "The marshes are no friendly place. There are gangplanks and the occasional road, but the swamp itself is deadly. Swamp sections are always very difficult ground.",
+   "umbrella": "Battle locations"
+  },
+  {
+   "title": "Swamp sections",
+   "text": "Whenever a model moves through a swamp section, roll a D6. On a 1 he has stumbled into a sucking bog. He may not move until rescued, and if he is not rescued within D3+1 game turns he is sucked under and lost: remove him from the roster. Put a D6 beside him showing the turns left.\n\nTo rescue him, a friendly model moves within 2\" of him and passes a Strength test on a D6 in that player's next close combat phase. A success drags him free and he moves normally from then on; a failure can be tried again the next close combat phase. Further models may help, either testing themselves or adding +1 to the trapped model's Strength for the test. A roll of 6 on a Strength test always fails. A model engaged in close combat may neither pull a friend free nor help.",
+   "umbrella": "Battle locations"
+  },
+  {
+   "title": "The Manannsport Sea",
+   "text": "Small islands litter the sea, along with the wrecks of ships lost in raids and storms.\n\nRough seas: Man overboard tests at sea fail on a 1-2.",
+   "umbrella": "Battle locations"
+  },
+  {
+   "title": "Seasons",
+   "text": "The campaign runs over a year, each ten Campaign Points standing for three months. It starts in spring, and the season changes as soon as one player reaches 11 Campaign Points, then 21, then 31. Past 40 the track resets to spring. The season sets which weather table is rolled on.\n\nSpring, 0 to 10 CP, Hexenstag to Pflugzeit. New life, produce and animals are plentiful: whenever healing herbs or any other herb are found or bought, D3 more are available.\n\nSummer, 11 to 20 CP, Sigmarzeit to Vorgeheim. The main trading season, with ships from all over the world in dock: rarity rolls are at +1.\n\nAutumn, 21 to 30 CP, Nachgeheim to Brauzeit. The beer is brewed: whenever alcohol of any kind is found or bought, D3 more are available.\n\nWinter, 31 to 40 CP, Kaldezeit to Vorhexen. The water is not frozen but bitterly cold: all tests made in water are at +1 and all combat in water is a further -1 to hit. Cold-blooded creatures ignore the cold-blooded rule while in water.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Bitter cold",
+   "text": "Marienburg's seaside is temperate next to the north, but freezing winds blow in off the sea. Beastmen, Norse and Marauders of Chaos are not affected.\n\nBitter winds: If a model casts a spell or shoots while nothing is within 6\" of him (no models, no terrain feature taller than 1\"), roll a D6: on a 1 or 2 he misjudges the range and cannot shoot or cast this turn. Spells that affect all models in a range still work.\n\nWintery chill: A model without winter furs suffers -1 Leadership and -1 Initiative, and Initiative never falls below 1. Undead warbands are immune, except for their living members such as Necromancers, Ghouls and Dregs.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Blizzard",
+   "text": "Bad sight: The warriors can barely see through the snow. Every model's sight is reduced to 10\", the maximum range of missile weapons except blunderbusses is 10\", and no model can charge an enemy further than 10\" away. Long range modifiers still apply. Eagle Eyes cannot be used to see further in a blizzard.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Dry",
+   "text": "The sun beats down on the beaches. A warrior whose blackpowder weapons are wet rolls a D6 in his recovery phase: on a 4+ the powder has dried and can be used as normal. Every model adds +1 Initiative when climbing or rolling to avoid a fall, his grip being better on dry surfaces.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Fog",
+   "text": "Roll a D6 to see what kind of fog veils the battlefield.\n\n1 Haze. Maximum range for all missile weapons is 18\", following the Bad sight rule under Blizzard.\n2-5 Thick mist. Sight is reduced to 12\" and every model suffers -1 Ballistic Skill.\n6 Pea soup. Every model suffers -2 Ballistic Skill and maximum sight is 2D6\". A model who can see no friendly model is despondent and suffers the penalties for being all alone, taking a Leadership test at once.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Hail",
+   "text": "Hail normally lasts the opening D3+1 game turns.\n\nFreezing hail: A model not standing under cover suffers -1 to hit in combat and -1 Ballistic Skill. Spellcasters and prayer users make all difficulty tests at -1.\n\nSkull sized hail: Each player rolls a D6 at the start of his turn. On a 6 the hailstones grow dangerous for one game turn: every model not in cover suffers a Strength 1 hit, and the modifiers above are -2 instead of -1.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Heat wave",
+   "text": "Sweltering heat: Every model except the Undead has its Movement reduced by 1 for the rest of the battle, or until the weather changes. After rolling on the burning house chart, roll a D6 for each building within 6\": on a 4+ the fire has spread to it. A model with wet powder dries it in his next recovery phase.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Monsoon",
+   "text": "A monsoon hits the battlefield for the first D3+2 turns.\n\nMaelstrom: No missile attacks are possible, all powder weapons count as wet, no model may run and a charge is limited to normal movement, no spells may be cast, and no model benefits from the leader's Leadership. Any boat on the board moves 1D3\" in a random direction each turn. Swimming models may not move until the storm ends.\n\nAfter the D3+2 turns, roll the weather again, re-rolling further monsoons. A scenario with a limited number of rounds is extended by as long as the monsoon lasted.\n\nQuenches the fire: While it rains nothing can be set on fire except by lightning, neither models nor buildings nor trees. Models, buildings and forests already alight are put out at once, but a building that was burning cannot be entered for the rest of the battle.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Rain",
+   "text": "Rain usually lasts D3 turns from the start of the battle. All missile and powder weapons are at -1 to hit, and a warrior firing a blackpowder weapon must first roll 4+ on a D6 or the powder is too wet to fire.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Severe wind",
+   "text": "Not all cats land on their feet: Every attempt to leap a gap, make a jump attack or climb suffers -1 Initiative. Jumping down suffers no modifier.\n\nBlown out: Roll a D6 when a warrior fires a missile weapon that does not use blackpowder.\n1-3 He suffers -1 Ballistic Skill when shooting missile weapons.\n4-6 He gains +D6\" range on each shot, rolled for each missile fired.\n\nBlaze spreading: After rolling on the burning house chart, roll a D6 for each building within 6\" of a burning tree or building: on a 4+ the fire has spread to it.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Thunder and lightning",
+   "text": "Roll 3D6 at the start of each turn.\n\n11 or less Nothing happens.\n12-15 Thunder.\n16-17 Lightning.\n18 It must be fate.\n\nThunder: The roar unnerves animals. A ridden mount that is not battle-trained must pass a Leadership test or it cannot move this turn. Any other animal that fails a Leadership test, always taken on the animal's own Leadership and never a leader's, cannot move or charge, strikes last in close combat and needs a 6 to hit before modifiers.\n\nLightning: A random forest section or building is set on fire.\n\nIt must be fate: Determine a random warrior wearing a suit of armour (not lamellar armour, toughened leathers, a helmet or a shield) who is not inside a building or cave; ruins do not count. He is struck by lightning and taken out of action at once. Every model within 2\" of him is knocked down and suffers a Strength 4 hit with no armour save. If this result comes up again the lightning hits the same spot, even with nobody standing there.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Setting warriors on fire",
+   "text": "The chance of catching fire differs with the source, 5+ for a brazier iron and 4+ for fire arrows, but a burning warrior always follows the same rule.\n\nSet on fire: A warrior on fire rolls a D6 in the recovery phase and needs a 4+ to put himself out. Otherwise he suffers a Strength 4 hit and can do nothing but move, for each turn he is on fire. An ally in base contact may also try to put him out, needing a 4+.\n\nDuring a tempest or a blizzard nothing can be set on fire.",
+   "umbrella": "Fire"
+  },
+  {
+   "title": "Setting buildings on fire",
+   "text": "Only equipment that says so can set a building or forest on fire; otherwise only models may be set alight.\n\nA model in base contact with a building may use a brazier iron or torch to set it ablaze, as long as he neither shoots a missile weapon nor is engaged in close combat that turn. He may instead throw the torch or brazier iron up to 6\" to light a building, but the item is then lost. Fire arrows are shot at a building in the shooting phase. A model inside the building, setting fire to the furniture, starts the fire automatically.\n\nRoll a D6 to start the fire: 4+ for a wooden building, 6+ for a stone building. A torch or fire arrows give +1; a fire bomb, a brazier iron and other items give no bonus; after a tempest or hailstorm, or during a blizzard, the roll is at -2, and that modifier lasts the rest of the battle.\n\nOnce a building is lit, roll a D6 on the burning house chart at the start of each player's turn to see whether the fire is spreading, adding +1 for each turn it has been burning.",
+   "umbrella": "Fire",
+   "chart": {
+    "dice": "D6",
+    "note": "Add +1 to the roll for each turn the fire has been burning.",
+    "rows": [
+     {
+      "result": "1",
+      "name": "Gone out",
+      "text": "The fire has sputtered out of its own accord. Make no further rolls on the chart."
+     },
+     {
+      "result": "2-5",
+      "name": "Rising Flames",
+      "text": "Flames and smoke rise quickly. Any model within 2\" and inside the building must take a Toughness test; on a failure he suffers D3 Strength 2 hits with no armour save, from smoke and minor burns. Anyone wishing to enter the building must pass a Leadership test."
+     },
+     {
+      "result": "6",
+      "name": "Raging Inferno",
+      "text": "The building is totally ablaze. No model may enter it, and any model within 2\" and inside takes D3 Strength 3 hits from the flames and burning debris. A model wishing to get out must pass an Initiative test or stay trapped within."
+     },
+     {
+      "result": "7+",
+      "name": "Collapse!",
+      "text": "The timbers give way and the building collapses. Any model inside and not stunned must pass an Initiative test to escape, a knocked down model at -1 Initiative for the roll. A model who fails is crushed and taken out of action. The building now counts as impassable terrain."
+     }
+    ],
+    "description": "Rolled for a burning building at the start of each player's turn, to see whether the fire is spreading."
+   }
+  },
+  {
+   "title": "Setting forests on fire",
+   "text": "A forest is set on fire as a building is, and anything that can light a building can light a forest. Roll a D6 to start the fire: 2+ for rotting trees, 4+ for a normal forest, with the same modifiers as for buildings.\n\nBurning forests: A model within 2\" of a burning forest section suffers D3 Strength 3 hits with no armour save.",
+   "umbrella": "Fire"
+  },
+  {
+   "title": "Entering the sewers",
+   "text": "The sewers are entered and left through grates, breached outflow pipes and broken-gated canal inlets. A model that reaches an entry point in the movement phase can go below the battlefield. Place a marker beside him, or take him off the table and leave a marker in his place.\n\nAt the start of each recovery phase, roll a D6 for each warrior or group of warriors that went below together. On a 1, roll on the subterranean events chart to see what has waylaid them.",
+   "umbrella": "The sewers"
+  },
+  {
+   "title": "Moving in the sewers",
+   "text": "Dwarfs, goblins and skaven move as normal. A warrior who starts his turn in the sewers with a torch or lantern may move D3\" plus his Movement in any direction. A warrior without a light moves as normal if he passes a Leadership test; on a failed test he stays where he is, or may leave the sewer if he entered it the turn before. No model may run, but a charge is declared as normal.\n\nAn animal needs a warrior with it to enter or leave a sewer, and an animal that cannot get out is removed from the roster.",
+   "umbrella": "The sewers"
+  },
+  {
+   "title": "Fighting underground",
+   "text": "Night vision: The sewers are poorly lit. A warrior sees, hears or otherwise detects a foe only within his Initiative in inches. Excellent Sight does not apply underground. Dwarf, skaven and goblin warriors have night vision and spot hidden enemies at twice their Initiative in inches.\n\nShot in the dark: Shooting underground is at -2 when the nearest target cannot be seen. A warrior carrying a lantern or torch may be picked as a target freely, but the -2 still applies.\n\nLarge creatures: Ogres, trolls and the like move and run as normal in rooms and halls, but cannot run in a tunnel, and a charge down a tunnel is limited to normal movement.\n\nGrounded: No model may fly; there is not the height for it.\n\nChasms are 10\" deep. A warrior who survives the fall may try to climb out.\n\nExplosive charges: Roll a D6 whenever powder kegs, Cathayan firepots, bog fire or a hand-held mortar are set off underground. On a 4+ the blast caves the tunnel in.",
+   "umbrella": "The sewers"
+  },
+  {
+   "title": "Crew movement",
+   "text": "Crew board a rowboat as they would move normally, and the boat may not move the turn warriors move onto it. Crew move about the deck as normal.\n\nA warrior leaving a moored vessel moves in proportion to what the boat has left: if the boat moved half its maximum, he moves half; a third, two thirds; all of it, he may not move this turn. He may run or sprint, but must pass an Initiative test or fall in the water at the shore edge and move no further. The turn he reaches the shore he may not charge a model on land unless that model is physically keeping him from touching the shore, and a charge needs the same Initiative test as running.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "In the drink",
+   "text": "A model knocked down or stunned within 1\" of the edge of a vessel, walkway, pontoon or bridge must pass an Initiative test or fall overboard, and then the swimming rules apply. A cargo crate held by a falling model is lost on a 5+ in a rowboat and a 4+ on a raft.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Man overboard",
+   "text": "Roll a D6 for each warrior on the boat; on a 1 he is knocked overboard and swims. If the test is caused by overcapacity, take it when the boat first becomes overloaded and again at the start of its controller's movement phase.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Ramming boats",
+   "text": "A boat may ram an enemy boat 11\" or smaller. The ramming boat deals 1D2 hits at a Strength equal to the inches it has moved this turn, and everyone aboard it tests for man overboard. The ramming boat suffers one hit of the same Strength but does not test. Norse boats deal +1 Strength to the enemy boat. A riverbarge or ship of the line deals 1D3 hits instead of 1D2. A boat stops for the turn once it has rammed.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Boarding an enemy ship",
+   "text": "The boarding boat must move alongside the enemy ship, or along the wharf touching it if it is docked. What matters is the difference in height of the two sides. If the boarded ship is less than 1\" higher than the raiding height, or no climbing roll would be needed, use lower or equal sides; if it is 1\" or more higher, or a climbing roll would be needed, use higher sides.\n\nLower or equal sides: The boarders move up to their normal Movement from their position on their own ship onto the boarded ship. They count as charging but may only move their normal distance. Any defender may move 2\" to intercept, as against a charge, and the boarder still counts as charging.\n\nHigher sides: The boarders must climb the side of the ship, using rope and hooks if they have them. Each model that makes the climb is placed at the edge of the boarded ship and may move no further that turn. A defender standing where a boarder would be placed is pushed back far enough to let him on, and counts as charged. Once every boarder is placed, the defender may move any of his models 2\" to reach them, which counts as intercepting a charge and lets the boarder attack first. In the round they climbed, boarders need 6s to hit, the higher side counting as a defended barrier. After that round they fight and move as normal.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Swinging on board",
+   "text": "A model armed with a rope and hook, or standing on a large boat, may swing onto or off a boat. Nominate the direction and roll 2D6\" for how far the swing carries him, always in a straight line. If that falls short of the far boat or shore he falls into the water in between.\n\nIf the distance reaches, he takes an Initiative test. A natural 1 passes automatically: he lands the rolled distance and may carry on moving. A failed test, or a natural 6, drops him in the water. Any other pass carries him the full 2D6\" but he may neither move further nor charge this turn.\n\nA model may not swing onto a surface more than 1\" higher than the one he stands on, nor more than 6\" lower. A model he swings into counts as charged, and in the first round of combat the swinger may use no additional hand weapon, buckler or shield, though a double-handed weapon works as normal. If a fear-causing model is within 12\" of the direct line of the swing and the swinger is affected by fear, he must pass a Leadership test before swinging. A model who may re-roll diving charges may re-roll a failed swing once.\n\nSwinging also works anywhere else there are ropes, from a clothesline to a vine-covered tree.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Swimming",
+   "text": "A swimming model has all his gunpowder weapons soaked and cannot fire them for the rest of the battle.\n\nA non-aquatic stunned model that falls in the water tests for drowning at once: he recovers on a 4+ or is removed as a casualty. If he wears armour giving a 5+ or better save he is taken out of action without a roll; shields, scaly skin and other modifiers do not count, only armour. A knocked down model in the water recovers on a 2+.\n\nA ship moving at 6\" or less may pick up crew who pass within 1\" during its movement. An enemy picked up this way counts as knocked down for hand-to-hand combat. On reaching the shore or a friendly vessel the swimmer's remaining movement is lost, unless he started the turn within 1\" of the shore. A swimmer reaching a stationary enemy vessel may climb aboard, but fights last and needs 6s to hit in any combat that follows.\n\nA non-aquatic model fighting in water may not charge, is at -1 to hit and makes only one attack. A model in the water may also escape from close combat without passing a Leadership test.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Drowned",
+   "text": "A model who falls in deep water wearing heavy armour, or its equivalent in dark steel, gromril, lamellar, ithilmar or chaos armour, anything but light armour or a shield, drowns.\n\nIf a warrior is taken out of action by drowning, roll a D6 after the battle: on a 1 he is dead and his body was never recovered. This replaces his serious injury roll.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Ocean currents",
+   "text": "Ocean currents run in every direction at once, with no upstream or downstream, so no current is assumed. Where a scenario calls the water turbulent it counts as very difficult terrain, which has no effect on boats.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Rowing with and against the current",
+   "text": "The direction a river or canal flows is set before the game.\n\nA rowing boat or raft moves 6\" with the current. A raft moves 4\" against it if a warrior passes a Strength test, and stays where it is if he fails. A boat moves 4\" against the current and must move at least half its allowance unless anchored or tethered; dropping or hoisting anchor costs no movement. A rowing boat carrying one warrior moves 6\" against the current on a passed Strength test; with two or more warriors or the equivalent in cargo, two of the crew must pass, and if one fails the boat moves only 4\". A riverboat moves 6\" against the current if five of its crew pass a Strength test, and 6\" even if one of them fails. River barges move freely against the current.\n\nIf every model aboard is in combat or shooting, an untethered boat is adrift and moves 2D3\" with the current.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Building rafts",
+   "text": "In any scenario with waterways, a warband with no boat can build rafts. At the start of the movement phase any number of warriors not in the water may be set to building; they may not move, shoot, cast spells or do anything else. Two warriors take 2D3 turns to build a raft, one turn less for each further warrior who joins them. It takes two models to carry a raft, as for a chest. A raft carries up to three human-sized warriors or the equivalent in cargo, and has Toughness 4 and 2 Wounds.",
+   "umbrella": "Boats and water"
+  },
+  {
+   "title": "Soft landings",
+   "text": "Marienburg has its daring escapes and rooftop chases, and softer places to land. If a model falls within 2\" of a soft landing, the Strength of the fall damage is halved, rounding up. This does not apply to a diving charge.\n\nWater, a hay stack or hay cart, a canvas canopy over a shop, a carpet stand and a manure pile all count; a manure pile needs a fear test before diving.",
+   "umbrella": ""
+  },
+  {
+   "title": "Leaving the battlefield",
+   "text": "A model may only leave the battlefield if he is carrying an objective marker or its equivalent.",
+   "umbrella": ""
+  },
+  {
+   "title": "Breaking into buildings",
+   "text": "Each building that is not a ruin may be visited once per game, and every door and window counts as secured. At the start of his turn, a Hero or Hired Sword in base contact with an entry point of an unvisited building may try to enter.\n\nA warrior with the tools or the skill to pick the lock enters and then rolls once on the burglary chart. A warrior who breaks the door down rolls twice on the burglary chart and takes the worse result.\n\nUnless the building is an inn, whose doors are only locked at night, the doors are locked. The doors of shops, warehouses and hostels are not fortified; the doors of barracks, armouries and temples are. A fortified door can only be broken down by attacking it, and is destroyed when its Wounds reach 0. A fortified door has Toughness 8 and 4 Wounds.",
+   "umbrella": "",
+   "chart": {
+    "title": "Burglary",
+    "description": "Rolled when a warrior breaks into a building. Picking the lock is one roll; forcing the door is two rolls, taking the worse result.",
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1",
+      "name": "On the Lam!",
+      "text": "The crook is caught in the act. D3+1 Watch Officers, each armed with a club, arrive at the scene; place each one D6\" from the thief. The thief's player may use his next turn to stage an escape, or to charge the watch, and before the next player's turn the officers must pursue him, charging whenever they can. If the thief is taken out of action he is placed under arrest by the Watch."
+     },
+     {
+      "result": "2",
+      "name": "Vacant",
+      "text": "Nobody is home and there is nothing worth thieving."
+     },
+     {
+      "result": "3",
+      "name": "Occupied",
+      "text": "The thief has broken into an occupied property. On a passed Initiative test he plunders it as though it were empty. On a failure he ends up in close combat with an unarmed hostile patron, with the characteristics of a Mercenary warband warrior; the higher Initiative strikes first. If the thief is taken out of action he is placed under arrest by the Watch."
+     },
+     {
+      "result": "4-5",
+      "name": "Unoccupied",
+      "text": "The building is unattended and the thief bags loot worth 2D6 gold crowns."
+     },
+     {
+      "result": "6",
+      "name": "Swag!",
+      "text": "Ranald is smiling on the thief. Roll a D6 on the booty chart for what he has purloined."
+     }
+    ]
+   }
+  },
+  {
+   "title": "Under arrest",
+   "text": "A warrior taken out of action by a Watch Officer who belongs to no warband in the campaign is placed under arrest at once.",
+   "umbrella": "",
+   "chart": {
+    "title": "Conviction",
+    "description": "Rolled for a warrior who has been arrested, to see what the courts of Marienburg do with him.",
+    "dice": "D6",
+    "note": "",
+    "rows": [
+     {
+      "result": "1",
+      "name": "Gallows!",
+      "text": "The guilty verdict sends the felon to Rijker's Isle to await execution. If the arrest was made by a warband following Guarding the Peace, the other warband may play the special scenario Hangman's Square instead of choosing a core scenario. Otherwise the felon is never seen or heard of again."
+     },
+     {
+      "result": "2",
+      "name": "Sentenced",
+      "text": "The punishment fits the crime. The warrior misses the next D3 games before he is released."
+     },
+     {
+      "result": "3",
+      "name": "Holding",
+      "text": "Thrown behind bars to cool off. The warrior misses the next battle."
+     },
+     {
+      "result": "4",
+      "name": "Bail",
+      "text": "The warrior is sentenced, but bail is set. The warband may pay the constabulary gold crowns equal to his experience points, and he misses the next battle before release; paying double bribes someone high up to sign his release papers and frees him at once."
+     },
+     {
+      "result": "5",
+      "name": "Drunk-Tank",
+      "text": "A night in the clink. The warrior is released before the next battle but misses the post-battle sequence, and gains +1 experience."
+     },
+     {
+      "result": "6",
+      "name": "Acquittal!",
+      "text": "A legal associate of the warband makes the case for the defence. The warrior is released and the constabulary pays 2D6 gold crowns in compensation."
+     }
+    ]
+   }
+  }
+ ],
+ "charts": [
+  {
+   "title": "Seaside Situations",
+   "description": "Random happenings during a battle in Marienburg. At the start of each player's turn he rolls a D6; on a 1 he rolls a D66 on this chart. A player whose happening has come up need not roll again, and the others keep rolling until every player has had one. If the result needs a forest or swamp and there is none, or it does not apply to the warband, roll again.",
+   "dice": "D66",
+   "note": "",
+   "umbrella": "",
+   "rows": [
     {
-      "title": "Campaign points",
-      "text": "Every warband tracks Campaign Points. A warband gets them for the things its plot rewards, and spends nothing to keep them. Mark one box for every Campaign Point, as you would mark experience. The track is 40 boxes long, with a marked box at 5, 10, 15, 20, 25, 35 and 40; reaching a marked box gives the warband that step of its plot's achievement chart. There is no step at 30.",
-      "umbrella": ""
+     "result": "11-15",
+     "name": "What is that!?",
+     "text": "Someone or something draws near. Roll on one of the three monster encounter tables to see what the warbands have run into, and place the non-player models as the bestiary describes. They always attack the nearest model that this encounter did not bring. If that model is already in close combat they attack both fighters, dividing their attacks evenly between opposing models where they can."
     },
     {
-      "title": "Choosing a plot",
-      "text": "Each warband picks one plot at the beginning of the campaign, from those its warband type may follow. Every player may always see what every other player has picked.",
-      "umbrella": ""
+     "result": "16",
+     "name": "Mutiny!",
+     "text": "Trouble is brewing in the warband. Pick a model at random, not the leader, and roll a D6.\n\n1 The Black Spot. Make a Leadership test to calm the men. If it fails, roll a D6 again: on a 1-2 the leader is hung from a mast and removed from the warband; on a 3-6 he is cast away on a deserted island, found later by passing merchants, and becomes a Dramatis Persona anyone but you may hire, for a hire fee of twice his experience in gold crowns and an upkeep of his total experience. He hates his old warband, and in a battle against it moves as fast as he can towards the man who usurped him; if he takes him out of action that man counts as dead and he takes his place as leader again.\n\n2-5 The Devil You Know. Through fear, charm or sheer will you quell the uprising. The mutineer is made an example of: he is taken out of action, and a Hero loses D3 Leadership.\n\n6 You've got balls. The temerity of the ringleader impresses you and you promote him. A Henchman gains The lad's got talent at once; a Hero gains +D6 experience."
     },
     {
-      "title": "Changing plot",
-      "text": "A warband may switch to another plot it is allowed to follow between battles. It loses D6 Campaign Points for doing so.",
-      "umbrella": ""
+     "result": "21",
+     "name": "Wave!",
+     "text": "A ship or a large creature submerging throws a wave against the shore. Roll for the direction it comes from, re-rolling edges with no water; if there is only a river or canal, it comes up both sides. Every model within 2\" of a terrain feature facing the wave is soaked, and must take an Initiative test or be knocked into the water. Building fires are put out, along with torches and flaming weapons, though not burning body mutations or magic, and blackpowder cannot be used until the weapon is reloaded next turn."
     },
     {
-      "title": "Campaign points once spent or lost",
-      "text": "Losing Campaign Points never takes back an achievement the warband has already reached. Lost points must still be earned again before the warband can reach its next achievement.",
-      "umbrella": ""
+     "result": "22",
+     "name": "Breath of Stromfels",
+     "text": "The landscape is immersed in thick mist. Use the rules for fog."
     },
     {
-      "title": "Winning the campaign",
-      "text": "A warband wins as soon as it completes its plot. A plot is complete when every box on its Campaign Point track is filled and whatever its 40-point achievement additionally asks for has been done.",
-      "umbrella": ""
+     "result": "23",
+     "name": "Vampire Blood",
+     "text": "A human warrior has caught the hypnotic interest of the Unquiet Dead. Choose a Hero in the warband, not the leader and not a spellcaster, and roll on the Father-in-darkness chart from the River Strigany special rules. Vampire Blood only affects humans."
     },
     {
-      "title": "Starting over",
-      "text": "A player who disbands his warband loses its progress and achievements along with its warriors. He picks a plot for the new warband as if the campaign were beginning. To make up the lost time, the new warband starts with Campaign Points equal to the lowest total among the other warbands in the campaign, less D3. For example, the others hold 12, 8 and 9 Campaign Points, the lowest of them is 8, and a D3 scores 2, so the new warband starts with 6. The book's wording is the next lowest amount of the other participating warbands, but its own worked example takes the lowest of them.",
-      "umbrella": ""
+     "result": "24",
+     "name": "Harbour Master",
+     "text": "A daredevil dockworker leaps out and joins your warband as a Hired Sword. Roll a D6: 1 Boatman, 2 Poacher (Big Game Hunter), 3 Bearman Bodyguard, 4 Swashbuckler, 5 Whaler, 6 Dwarf Slayer Pirate."
     },
     {
-      "title": "Encampments",
-      "text": "Important buildings around the city are encampments, and a warband that discovers one records it on its roster. There is only ever one encampment of each type. If a second warband discovers an encampment another player already holds, it may contest it in the next game: an unprotected business is contested with the scenario The Sting, and a tower or other fortified encampment with the scenario Stockade. If the challenger wins without the building collapsing he takes possession; if the burning building collapses the encampment is razed.",
-      "umbrella": ""
+     "result": "25",
+     "name": "Head Hunter",
+     "text": "A Bounty Hunter Hired Sword joins the warband for the rest of this battle. Name his mark and deploy him next to any friendly model. A warband of followers of Chaos, or a Beastmen, Fimir or Goblin warband, is joined by Krogh the Mutant Bounty Killer instead, using the same rules, with the mutation Great Claw that doubles as a mancatcher. There is no hire fee; upkeep is paid as normal after each battle."
     },
     {
-      "title": "Rebuilding a razed encampment",
-      "text": "A razed encampment can be rebuilt for 150 + D6 x 25 gold crowns. The work takes four games, during which at least one Hero and two Henchmen must miss battles. Each further Hero, or each further two Henchmen, who help with the work shorten it by one game, down to a minimum of one game.",
-      "umbrella": ""
+     "result": "26",
+     "name": "Cargo!",
+     "text": "A random warband member has found D3+1 cargo crates. For each one roll a scatter dice and a direction dice and place it that far from him."
     },
     {
-      "title": "Warband categories",
-      "text": "These terms are used throughout the campaign. Mercenaries are the retinues of Marienburg, Middenheim, Reikland, Ostland, Averland and the other Imperial provinces, and also Kislevites, Estalians, Tileans, Arabyans, Norse, Pirates and Pit Fighters. Human warbands include any warp-touched gang or renegade warband made up mostly of humans, such as Cults of Chaos, Marauders of Chaos, Outlaws and Bandits. Followers of Chaos are the Cult of the Possessed, the Carnival of Chaos and any other Cult of Chaos, plus Beastmen, Marauders of Chaos, Norse and Chaos Dwarfs; Skaven and Dark Elves are not counted as Chaos warbands. Elf warbands do not include Dark Elves, and Dwarf warbands do not include Chaos Dwarfs. Any warband that includes a Vampire, a Necromancer or a Liche is an Undead warband.",
-      "umbrella": ""
+     "result": "31",
+     "name": "Courtesan",
+     "text": "A Courtesan has followed one of your Heroes to watch him fight. Name the Hero; if he survives the battle he wins her favour. If a Hero of another warband already has a Courtesan, that favour is lost and she joins your warband."
     },
     {
-      "title": "Blood pacts",
-      "text": "Roll 2D6 for each Hired Sword in the post-battle sequence, after his upkeep is paid, adding 1 for each skill or characteristic increase he has gained. On a 12 he swears an oath in blood and forms a Blood Pact with the warband. Assassins, Thieves, Merchants, Fences and Slavers never form a pact. A Hired Sword in a pact still counts as a Hired Sword but pays no upkeep, and may be equipped from the warband's Heroes' equipment list. If the leader is slain and the pact-sworn warrior has the next highest Leadership, he takes command: he gains the Leader ability, keeping his own skill list, and counts as a Hero. If several are eligible, the one with the most experience takes over, and roll a D6 on a tie.",
-      "umbrella": ""
+     "result": "32",
+     "name": "Secret Passageway",
+     "text": "The warband has found a secret passage it can use whenever it plays this scenario again. Three warriors may deploy using the Infiltration rules."
     },
     {
-      "title": "Greater Artefacts",
-      "text": "A Greater Artefact may never be left in the warband's stash: a Hero must carry it. The only exception is a warband following The Ten Great Families, which may keep it in a Trade Wagon or similar vehicle. Greater Artefacts cannot be destroyed. If the model carrying one goes out of action, place a marker; any model may pick it up by moving into contact with the marker. If nobody takes it, the model that went out of action keeps it, and if he dies of his injuries it passes to the warband leader; if the leader dies after the battle it passes to the new leader in the exploration phase. If an artefact is ever lost with no owner to be found, the next warband to find an Arcane Item finds that Greater Artefact instead. Once an artefact's whereabouts are known, it can only be taken by other means. There are six: the Devil's Box, the Mask of the Merlord, Van Horstmann's Speculum, Alfred's Casket of Sorcery, Radon's Whistle and a Runefang.",
-      "umbrella": ""
+     "result": "33",
+     "name": "Old Well",
+     "text": "A random model that is not large takes a single Strength 3 hit from the remains of an old well. If he is not taken out of action by the fall, he finds the gear of the man who broke his neck before him. Roll a D6: 1 a rusty sword, worth nothing; 2 two daggers; 3 a wallet holding 10 gc; 4 a sword and a shield; 5 a long bow; 6 a light armour.\n\nThe well is filled with ivy. He may climb out at the start of his next turn by passing a single Initiative test; on a failure he stays another round. If he passes he is out of the well, may move no further that turn and may still use magic. A player may leave him in the well if he wishes: a model in the well cannot be attacked or affected by any spell or missile, is completely out of sight, and can do nothing but climb."
     },
     {
-      "title": "Hiring a priest",
-      "text": "Any warband that includes humans may hire a Priest, either in place of one of its starting Heroes or by retiring a Hero already in the warband. A warband may never include more than one Priest. Unless something says otherwise, human priests may not be hired by followers of Chaos, Orcs and Goblins, Dark Elves, Skaven or Undead warbands. A Priest counts as a Hero, and no warband may ever include more than six Heroes.",
-      "umbrella": ""
+     "result": "34",
+     "name": "Bogtopus",
+     "text": "The model closest to the largest swamp or water feature is attacked by a Bog Octopus. Re-roll this result if there is no such scenery. If he fails a Strength test he is dragged under, counts as drowned and is taken out of action; roll for his injuries at the end of the game."
     },
     {
-      "title": "Trade deals",
-      "text": "A warband that has a Merchant, Fence or Slaver and a Trade Wagon or other suitable vehicle, such as a riverboat, river barge, stage coach, opulent coach or treasure cart, can be visited by Heroes from other warbands.\nStorage. Any of the warband's stored equipment may be stowed in the vehicle, but not gold crowns or treasures. If the vehicle is destroyed everything stored in it is lost, and nothing can be traded until a new vehicle is bought.\nReputation. For every five different rare items stored in the vehicle the leader gets +1 to his rolls for finding rare items. Any rare item brought down to Rare 2 or lower, by the wagon's reputation, the Streetwise skill or anything else, can be bought as a Common item. Rare 12 is the highest rarity that can ever become common.\nTreasure carts. A cart carries up to three human-sized warriors, or the same in cargo. Carts and rowboats hold at most five rare items.\nAbandoned. If the warband fails its Rout test and nobody is crewing the vehicle, it falls to the winning warband if one or more of their warriors is within 1 inch of it. They may steal the contents, keep the vehicle if they are allowed one, or cut a deal with the Merchant using the ransom rules from Captured on the Serious Injuries chart. A warband that captures a Trade Wagon may not search for rare items after that battle, unless every model of the Merchant's warband was taken out of action.\nTrading. A player may send a Hero to the trader instead of searching for rare items. He may buy from the other warband's stored equipment at a price the players agree, including exchanges for items, animals, vehicles and treasures, or sell him any number of items: rare, common, magical artefacts or wyrdstone shards. If no price is agreed the visit is wasted.\nCaptives may only be sold or traded to a Slaver, and only a warband with a Slaver Hired Sword or a Hero with the Slaver skill may receive captured warriors.",
-      "umbrella": ""
+     "result": "35",
+     "name": "Priest Hole",
+     "text": "The warband has uncovered a hidden sanctum of the Church of Sigmar. A Hero visiting an infamous haunt gets +1 to every dice roll he makes in the next post-battle sequence."
     },
     {
-      "title": "Merchant charters",
-      "text": "A warband with a Merchant may spend Campaign Points to charter a ship, which it then keeps for the rest of the campaign unless the ship is sunk. A riverboat costs 1 Campaign Point; a river barge costs D3 Campaign Points.",
-      "umbrella": ""
+     "result": "36",
+     "name": "Harpy Hunting Grounds",
+     "text": "A migrating brood has nested in a warehouse attic or temple belfry near the docks. The tallest building on the table holds D3 harpies and D3 egg-shaped wyrdstone shards along with other valuables. The harpies move at the end of each round, after the players have taken their turns. If they are all taken out of action, the warband that wins the battle claims the nest.\n\nRoll a D6 for each entry:\nRope, found automatically.\n2D6 gold crowns, 2+.\nLucky Charm, 3+.\nD3 Gems worth 10 gold crowns each, 3+.\nD3 Shields, 4+.\nHeavy Armour, 4+.\nStraggler, counts as a hostage, 5+.\nD3 Helmets, 5+.\nD3 Swords, 6+.\nIthilmar Sword, 6+.\nWolf Cloak, 6+.\n\nThe harpy's profile and its special rules are in the bestiary."
     },
     {
-      "title": "Prisoners of war",
-      "text": "Dark Elf and Chaos Dwarf warbands never free a captured warrior; they put him to work. After a battle, nominate which captured warriors are sent to search for treasure and wyrdstone. At the end of the exploration procedure roll a D6 for each, and add the results to the exploration dice total before reading the income chart. On a 1 the prisoner breaks free and returns to his own warband as a Hero: treat a Henchman as having rolled The lad's got talent, and the Hero gains D6+2 experience. On a 6 he has been worked to death. Either result removes him from the captor's roster. A captured Hired Sword or Dramatis Personae is treated like any other warrior, or, if the captor could have hired him anyway, he counts as hired with no hire fee, though upkeep is still paid after each battle.",
-      "umbrella": ""
+     "result": "41",
+     "name": "The South Dock Strangler",
+     "text": "Determine a random Henchman who is not in combat and is either 12\" from every friendly model or out of their line of sight. If no model qualifies, choose two Henchmen in combat who do; if there is still no victim the strangler retreats and the happening is re-rolled. The chosen models are killed by the South Dock Strangler.\n\nEvery kill by the Strangler is recorded. Once he has claimed three victims he grows ambitious and moves on to Heroes, chosen the same way. He appears in base contact with the victim, who is stunned even if he is normally immune to being stunned, and the warbands have one turn to take the Strangler out of action before he kills him.\n\nThe Strangler has Weapon Skill 3, 1 Wound and Toughness 4, and vanishes as soon as he is wounded. The exception is a warband following Defending the Peace, which may arrest him in the usual way on an out-of-action roll of 6. An arrested Strangler has his identity revealed as his Dramatis Personae entry describes, and is hung before the next match unless another warband rescues him by playing Hangman's Square against every Defending the Peace warband. A warband following Drowning the Witch or Defending the Peace may neither hire nor rescue him."
     },
     {
-      "title": "Stragglers and corpses",
-      "text": "A straggler counts as a hostage captured by the warband. Undead warbands may kill a straggler to make a corpse, and a corpse gives a Zombie for no cost. Skaven may sell a straggler to Clan Eshin for 2D6 gold crowns. Followers of Chaos may sacrifice him, and the warband leader gains +1 experience. Dark Elves and Chaos Dwarfs only take prisoners of war. Any other warband may interrogate him: the next time it rolls on the exploration chart it rolls one die more than usual and discards any one die. A warband that is not Chaos, Skaven or Undead may sell corpses it finds to Undead warbands, or deliver them to the Temple of Morr for 1 experience point.",
-      "umbrella": ""
+     "result": "42",
+     "name": "Zombie outbreak!",
+     "text": "A man comes running down the street shouting that zombies infest the mausoleum. Each player in the battle may now play Midnight at the Mausoleum once as a future scenario. Being chosen as the opponent in that scenario uses up a player's one time as well. Rolling this result again before a player has played it gives him no extra go; rolling it after he has played it lets him play again."
     },
     {
-      "title": "Uncommon sightings",
-      "text": "In a campaign set in the Old World, recruiting Lizardmen, Skinks, Kroxigors, Dark Elves, Hobgoblins or Chaos Dwarfs costs twice the normal hire fee. Upkeep is the usual amount. In a campaign set in Lustria they cost the normal fee.",
-      "umbrella": ""
+     "result": "43",
+     "name": "Rats!",
+     "text": "Something in the sewers has frightened the rats, and they attack anything in their way. Use a template 80mm by 120mm, or six monster bases in a rectangle with one short side as the front. The rats move 2D6\" each turn, always forward down the centre of the street; at an intersection roll randomly for the direction, for example a D6 at a four-way crossing: 1-2 right, 3-4 straight on, 5-6 left.\n\nThe rats cannot be engaged in close combat. A model they touch is picked up and carried for D3 turns, then dropped behind them. Several warriors carried at once may fight each other by passing an Initiative test, with one attack only. A warrior carried off the board rejoins his warband after the battle."
+    },
+    {
+     "result": "44",
+     "name": "Peddler",
+     "text": "Whatever turn it is rolled on, this happens at the end of the game. The winning warband has impressed, or terrified, a local peddler who carries his whole stock on his back and offers part of it at half price: mace, hammer, sword, dagger, axe, helmet, boat hooks, pistol, duelling pistol, rope and hook, any poison, lucky charm, whalebone charms, healing herbs, lantern, heavy armour and Marienburg map. Roll a D3 for each item for how many he carries."
+    },
+    {
+     "result": "45",
+     "name": "Manann Smiles",
+     "text": "An abandoned rowboat lies nearby, claimed by the first man to reach it. Place a rowboat anywhere you choose. If you do not rout this game you may add it to your inventory."
+    },
+    {
+     "result": "46",
+     "name": "The Old Crone",
+     "text": "A withered hag stumbles about on her crook. Determine at random which terrain feature she inhabits. For 3D6 gold crowns she works a miracle or a malediction, once per turn. If a Hero pays her, roll a D6.\n\n1 Cursed. The approaching model is cursed instead: a randomly determined characteristic drops by 1 permanently.\n2-3 Hex. She lays her malady on a Hero of another warband, treated as the curse above.\n4+ Miracle. She lifts any curse, heals any lost wounds, cures any mutation or removes a serious injury from a Hero of your choice."
+    },
+    {
+     "result": "51",
+     "name": "Cellars",
+     "text": "The warband has camped in a long forgotten cellar with tunnels running off it. Cellars count as an encampment, and they adjoin the sewers, so up to three warriors may set up each battle using the Infiltration rules.\n\nRoll a D6: on a 1 a swarm of giant rats attacks and D3 of the infiltrating warriors fall ill from the bites and miss the next game. Skaven are immune, tame the rats instead and gain D3 giant rats for the game."
+    },
+    {
+     "result": "52",
+     "name": "Hostelry",
+     "text": "You have found a deserted flophouse, spacious and dry. Hostelry counts as an encampment, and adds +1 to the maximum size of the warband."
+    },
+    {
+     "result": "53",
+     "name": "Tavern",
+     "text": "You hold the deeds to a tavern or a makeshift drinking hole. Tavern counts as an encampment, and after each battle you may roll a D6.\n\n1 Bar room brawl. Pay D6x20 gold crowns for the damage.\n2 Profits down. Lose D6x10 gold crowns.\n3 Profits up. Gain D6 gold crowns.\n4 Sell-sword. A Hired Sword cannot pay his bar bill and serves you free next battle.\n5 Father. A Priest cannot pay his bar bill and joins the warband free. This cannot take the warband over its maximum Heroes or warriors; you may retire a Hero to make room.\n6 Business booming. Gain D6x20 gold crowns."
+    },
+    {
+     "result": "54",
+     "name": "Tilean Ludus",
+     "text": "The warband has secured quarters in a gladiator school. Tilean Ludus counts as an encampment, and every new Hero, Hired Sword or Henchmen group that joins the warband learns the Pit Fighter skill."
+    },
+    {
+     "result": "55",
+     "name": "Shard of Wyrdstone",
+     "text": "A 2\" by 2\" shard of wyrdstone falls in the centre of the battlefield, destroying any building or vehicle in its way. Anyone it hits suffers a Strength 8 hit unless he passes an Initiative test.\n\nAny warband member may approach it, at his peril. A model that starts his turn within 4\" of the shard rolls 2D6: on a 2 he is turned into a Spawn of Chaos, removed from the roster and moved at random; on a 12 he permanently gains a random mutation. A model who reaches the shard may spend a turn chipping D3 shards from it. It is so volatile that no warrior will stay long enough to make more than one roll."
+    },
+    {
+     "result": "56",
+     "name": "Old Merchant Villa",
+     "text": "You have acquired the deeds to an abandoned merchant house in the Old Money Ward and patched it up. Old Merchant Villa counts as an encampment, and adds +2 to one of your rolls when searching for rare items in the post-battle sequence."
+    },
+    {
+     "result": "61",
+     "name": "Street Urchins",
+     "text": "Roll a D6.\n\n1-3 Pickpockets. A random warrior is robbed: a Henchman costs the warband 2D6 gold crowns, a Hero loses a random item.\n\n4-6 Detectives. The orphans are the local watch's eyes and ears. A warband following Guarding the Peace may pay 2D6 gc to have them finger a random Hero of an opposing warband in the battle for a crime, adding him to the wanted list. Any other warband must pay 3D6 gc or they finger it instead, adding a random Hero of its own to the wanted list."
+    },
+    {
+     "result": "62",
+     "name": "Runaway Wagon",
+     "text": "A blazing caravan wagon comes barrelling in from a random table edge. The horses are frantic and run in a random direction at the end of each turn. Any warband can take control by boarding it with a warrior, and it takes at least two warband members a full turn to put the fire out.\n\nAt the end of the game, whoever controls the wagon rolls for its cargo if the fire was put out; the different odds stand for the goods catching fire. Roll a D6 for each: D3 Cathayan Silk Cloaks, 5+. Tome of Magic, 5+. D3 Longbows and D3 quivers of hunting arrows, 4+. D3 Swords, 3+. The wagon itself, automatically.\n\nA human warband also keeps any surviving draft horses, for the wagon or as riding horses."
+    },
+    {
+     "result": "63",
+     "name": "Security Measures",
+     "text": "Whoever owns the ground your warriors are trespassing on has booby-trapped his chests. For the rest of the scenario, whenever a model picks up a cargo crate, barrel or the like, roll a D6: on a 1 or 2 it is booby-trapped. A trapped item cannot be sold, and the model who picked it up must pass an Initiative test or suffer a Strength 4 hit. Roll at once for any cargo crates already being carried when this happening comes up, and for any crate that appears later."
+    },
+    {
+     "result": "64",
+     "name": "Hit Contract",
+     "text": "A wanted poster with your captain's face on it floats past. Your leader, or the Hero with the next highest Leadership if he is not on the battlefield, has a bounty on him for this game. Any Hero or Henchmen group that takes him out of action earns an extra experience point, and that warband gains 1D6x10 gold crowns."
+    },
+    {
+     "result": "65",
+     "name": "The Storm Festival Curse",
+     "text": "A random warrior who is neither an animal nor a leader, from a random warband in the battle, goes missing. Roll a D6.\n\n1-3 Worthy. Cultists abduct him for a ritual sacrifice. A random warband following Gaze of the Gods receives him and may sacrifice him in the usual way, after the next battle.\n\n4-6 Drunkard. He sobers up in the cells, under arrest by the watch. A random Guarding the Peace warband takes him and rolls on the under arrest chart to see what he is charged with."
+    },
+    {
+     "result": "66",
+     "name": "Flood Season",
+     "text": "The whole battlefield is waterlogged. Unless a model is on the first floor of a building or on top of a wagon or other vehicle, it counts as moving and fighting in water. Every model may immediately move its full Movement to try to get out of the water."
     }
-  ],
-  "battle_rules": [
+   ]
+  },
+  {
+   "title": "Monster encounters: Marienburg city",
+   "description": "Rolled for a monster encounter in the city, whether from a random happening, an exploration result or anything else that calls for one.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Monster encounters",
+   "rows": [
     {
-      "title": "Cargo",
-      "text": "Barrels, coffins and chests take two models to move. A crate or sack can be carried by one model at its normal move with no running, or by two models, who may run. A model carrying a crate may not fire a missile weapon or cast a spell, and drops the crate if attacked, ready for anyone who moves into contact with it. A model that leaves the board with cargo may not return. Unless a scenario says otherwise, if a warband routs while its warriors hold cargo, the goods are lost if the markers are within charge range of any unengaged opponent.",
-      "umbrella": ""
+     "result": "2",
+     "name": "Colossal Squig",
+     "text": ""
     },
     {
-      "title": "Choosing the territory",
-      "text": "Every scenario says which territory it is fought in. If it does not, roll a D6.\n\n1-2 Manannsport Sea.\n3-4 Marienburg city.\n5-6 Cursed Marshes.",
-      "umbrella": "Battle locations"
+     "result": "3-4",
+     "name": "Cultists of Chaos",
+     "text": "D3 Cultists of Chaos."
     },
     {
-      "title": "Marienburg city",
-      "text": "The city is famous for its bridges and canals and its tight alleyways packed with shops. No special rules apply to a battle fought inside the city.",
-      "umbrella": "Battle locations"
+     "result": "5-6",
+     "name": "Wild Dogs",
+     "text": "D3 Wild Dogs."
     },
     {
-      "title": "The Cursed Marshes",
-      "text": "The marshes are no friendly place. There are gangplanks and the occasional road, but the swamp itself is deadly. Swamp sections are always very difficult ground.",
-      "umbrella": "Battle locations"
+     "result": "7",
+     "name": "Townsfolk",
+     "text": "D3+1 Townsfolk, as hostages."
     },
     {
-      "title": "Swamp sections",
-      "text": "Whenever a model moves through a swamp section, roll a D6. On a 1 he has stumbled into a sucking bog. He may not move until rescued, and if he is not rescued within D3+1 game turns he is sucked under and lost: remove him from the roster. Put a D6 beside him showing the turns left.\n\nTo rescue him, a friendly model moves within 2\" of him and passes a Strength test on a D6 in that player's next close combat phase. A success drags him free and he moves normally from then on; a failure can be tried again the next close combat phase. Further models may help, either testing themselves or adding +1 to the trapped model's Strength for the test. A roll of 6 on a Strength test always fails. A model engaged in close combat may neither pull a friend free nor help.",
-      "umbrella": "Battle locations"
+     "result": "8-9",
+     "name": "Gutter Runners",
+     "text": "D3+1 Gutter Runners."
     },
     {
-      "title": "The Manannsport Sea",
-      "text": "Small islands litter the sea, along with the wrecks of ships lost in raids and storms.\n\nRough seas: Man overboard tests at sea fail on a 1-2.",
-      "umbrella": "Battle locations"
+     "result": "10-11",
+     "name": "Thief",
+     "text": "A Thief Hired Sword."
     },
     {
-      "title": "Seasons",
-      "text": "The campaign runs over a year, each ten Campaign Points standing for three months. It starts in spring, and the season changes as soon as one player reaches 11 Campaign Points, then 21, then 31. Past 40 the track resets to spring. The season sets which weather table is rolled on.\n\nSpring, 0 to 10 CP, Hexenstag to Pflugzeit. New life, produce and animals are plentiful: whenever healing herbs or any other herb are found or bought, D3 more are available.\n\nSummer, 11 to 20 CP, Sigmarzeit to Vorgeheim. The main trading season, with ships from all over the world in dock: rarity rolls are at +1.\n\nAutumn, 21 to 30 CP, Nachgeheim to Brauzeit. The beer is brewed: whenever alcohol of any kind is found or bought, D3 more are available.\n\nWinter, 31 to 40 CP, Kaldezeit to Vorhexen. The water is not frozen but bitterly cold: all tests made in water are at +1 and all combat in water is a further -1 to hit. Cold-blooded creatures ignore the cold-blooded rule while in water.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Bitter cold",
-      "text": "Marienburg's seaside is temperate next to the north, but freezing winds blow in off the sea. Beastmen, Norse and Marauders of Chaos are not affected.\n\nBitter winds: If a model casts a spell or shoots while nothing is within 6\" of him (no models, no terrain feature taller than 1\"), roll a D6: on a 1 or 2 he misjudges the range and cannot shoot or cast this turn. Spells that affect all models in a range still work.\n\nWintery chill: A model without winter furs suffers -1 Leadership and -1 Initiative, and Initiative never falls below 1. Undead warbands are immune, except for their living members such as Necromancers, Ghouls and Dregs.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Blizzard",
-      "text": "Bad sight: The warriors can barely see through the snow. Every model's sight is reduced to 10\", the maximum range of missile weapons except blunderbusses is 10\", and no model can charge an enemy further than 10\" away. Long range modifiers still apply. Eagle Eyes cannot be used to see further in a blizzard.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Dry",
-      "text": "The sun beats down on the beaches. A warrior whose blackpowder weapons are wet rolls a D6 in his recovery phase: on a 4+ the powder has dried and can be used as normal. Every model adds +1 Initiative when climbing or rolling to avoid a fall, his grip being better on dry surfaces.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Fog",
-      "text": "Roll a D6 to see what kind of fog veils the battlefield.\n\n1 Haze. Maximum range for all missile weapons is 18\", following the Bad sight rule under Blizzard.\n2-5 Thick mist. Sight is reduced to 12\" and every model suffers -1 Ballistic Skill.\n6 Pea soup. Every model suffers -2 Ballistic Skill and maximum sight is 2D6\". A model who can see no friendly model is despondent and suffers the penalties for being all alone, taking a Leadership test at once.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Hail",
-      "text": "Hail normally lasts the opening D3+1 game turns.\n\nFreezing hail: A model not standing under cover suffers -1 to hit in combat and -1 Ballistic Skill. Spellcasters and prayer users make all difficulty tests at -1.\n\nSkull sized hail: Each player rolls a D6 at the start of his turn. On a 6 the hailstones grow dangerous for one game turn: every model not in cover suffers a Strength 1 hit, and the modifiers above are -2 instead of -1.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Heat wave",
-      "text": "Sweltering heat: Every model except the Undead has its Movement reduced by 1 for the rest of the battle, or until the weather changes. After rolling on the burning house chart, roll a D6 for each building within 6\": on a 4+ the fire has spread to it. A model with wet powder dries it in his next recovery phase.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Monsoon",
-      "text": "A monsoon hits the battlefield for the first D3+2 turns.\n\nMaelstrom: No missile attacks are possible, all powder weapons count as wet, no model may run and a charge is limited to normal movement, no spells may be cast, and no model benefits from the leader's Leadership. Any boat on the board moves 1D3\" in a random direction each turn. Swimming models may not move until the storm ends.\n\nAfter the D3+2 turns, roll the weather again, re-rolling further monsoons. A scenario with a limited number of rounds is extended by as long as the monsoon lasted.\n\nQuenches the fire: While it rains nothing can be set on fire except by lightning, neither models nor buildings nor trees. Models, buildings and forests already alight are put out at once, but a building that was burning cannot be entered for the rest of the battle.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Rain",
-      "text": "Rain usually lasts D3 turns from the start of the battle. All missile and powder weapons are at -1 to hit, and a warrior firing a blackpowder weapon must first roll 4+ on a D6 or the powder is too wet to fire.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Severe wind",
-      "text": "Not all cats land on their feet: Every attempt to leap a gap, make a jump attack or climb suffers -1 Initiative. Jumping down suffers no modifier.\n\nBlown out: Roll a D6 when a warrior fires a missile weapon that does not use blackpowder.\n1-3 He suffers -1 Ballistic Skill when shooting missile weapons.\n4-6 He gains +D6\" range on each shot, rolled for each missile fired.\n\nBlaze spreading: After rolling on the burning house chart, roll a D6 for each building within 6\" of a burning tree or building: on a 4+ the fire has spread to it.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Thunder and lightning",
-      "text": "Roll 3D6 at the start of each turn.\n\n11 or less Nothing happens.\n12-15 Thunder.\n16-17 Lightning.\n18 It must be fate.\n\nThunder: The roar unnerves animals. A ridden mount that is not battle-trained must pass a Leadership test or it cannot move this turn. Any other animal that fails a Leadership test, always taken on the animal's own Leadership and never a leader's, cannot move or charge, strikes last in close combat and needs a 6 to hit before modifiers.\n\nLightning: A random forest section or building is set on fire.\n\nIt must be fate: Determine a random warrior wearing a suit of armour (not lamellar armour, toughened leathers, a helmet or a shield) who is not inside a building or cave; ruins do not count. He is struck by lightning and taken out of action at once. Every model within 2\" of him is knocked down and suffers a Strength 4 hit with no armour save. If this result comes up again the lightning hits the same spot, even with nobody standing there.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Setting warriors on fire",
-      "text": "The chance of catching fire differs with the source, 5+ for a brazier iron and 4+ for fire arrows, but a burning warrior always follows the same rule.\n\nSet on fire: A warrior on fire rolls a D6 in the recovery phase and needs a 4+ to put himself out. Otherwise he suffers a Strength 4 hit and can do nothing but move, for each turn he is on fire. An ally in base contact may also try to put him out, needing a 4+.\n\nDuring a tempest or a blizzard nothing can be set on fire.",
-      "umbrella": "Fire"
-    },
-    {
-      "title": "Setting buildings on fire",
-      "text": "Only equipment that says so can set a building or forest on fire; otherwise only models may be set alight.\n\nA model in base contact with a building may use a brazier iron or torch to set it ablaze, as long as he neither shoots a missile weapon nor is engaged in close combat that turn. He may instead throw the torch or brazier iron up to 6\" to light a building, but the item is then lost. Fire arrows are shot at a building in the shooting phase. A model inside the building, setting fire to the furniture, starts the fire automatically.\n\nRoll a D6 to start the fire: 4+ for a wooden building, 6+ for a stone building. A torch or fire arrows give +1; a fire bomb, a brazier iron and other items give no bonus; after a tempest or hailstorm, or during a blizzard, the roll is at -2, and that modifier lasts the rest of the battle.\n\nOnce a building is lit, roll a D6 on the burning house chart at the start of each player's turn to see whether the fire is spreading, adding +1 for each turn it has been burning.",
-      "umbrella": "Fire",
-      "chart": {
-        "dice": "D6",
-        "note": "Add +1 to the roll for each turn the fire has been burning.",
-        "rows": [
-          {
-            "result": "1",
-            "name": "Gone out",
-            "text": "The fire has sputtered out of its own accord. Make no further rolls on the chart."
-          },
-          {
-            "result": "2-5",
-            "name": "Rising Flames",
-            "text": "Flames and smoke rise quickly. Any model within 2\" and inside the building must take a Toughness test; on a failure he suffers D3 Strength 2 hits with no armour save, from smoke and minor burns. Anyone wishing to enter the building must pass a Leadership test."
-          },
-          {
-            "result": "6",
-            "name": "Raging Inferno",
-            "text": "The building is totally ablaze. No model may enter it, and any model within 2\" and inside takes D3 Strength 3 hits from the flames and burning debris. A model wishing to get out must pass an Initiative test or stay trapped within."
-          },
-          {
-            "result": "7+",
-            "name": "Collapse!",
-            "text": "The timbers give way and the building collapses. Any model inside and not stunned must pass an Initiative test to escape, a knocked down model at -1 Initiative for the roll. A model who fails is crushed and taken out of action. The building now counts as impassable terrain."
-          }
-        ],
-        "description": "Rolled for a burning building at the start of each player's turn, to see whether the fire is spreading."
-      }
-    },
-    {
-      "title": "Setting forests on fire",
-      "text": "A forest is set on fire as a building is, and anything that can light a building can light a forest. Roll a D6 to start the fire: 2+ for rotting trees, 4+ for a normal forest, with the same modifiers as for buildings.\n\nBurning forests: A model within 2\" of a burning forest section suffers D3 Strength 3 hits with no armour save.",
-      "umbrella": "Fire"
-    },
-    {
-      "title": "Entering the sewers",
-      "text": "The sewers are entered and left through grates, breached outflow pipes and broken-gated canal inlets. A model that reaches an entry point in the movement phase can go below the battlefield. Place a marker beside him, or take him off the table and leave a marker in his place.\n\nAt the start of each recovery phase, roll a D6 for each warrior or group of warriors that went below together. On a 1, roll on the subterranean events chart to see what has waylaid them.",
-      "umbrella": "The sewers"
-    },
-    {
-      "title": "Moving in the sewers",
-      "text": "Dwarfs, goblins and skaven move as normal. A warrior who starts his turn in the sewers with a torch or lantern may move D3\" plus his Movement in any direction. A warrior without a light moves as normal if he passes a Leadership test; on a failed test he stays where he is, or may leave the sewer if he entered it the turn before. No model may run, but a charge is declared as normal.\n\nAn animal needs a warrior with it to enter or leave a sewer, and an animal that cannot get out is removed from the roster.",
-      "umbrella": "The sewers"
-    },
-    {
-      "title": "Fighting underground",
-      "text": "Night vision: The sewers are poorly lit. A warrior sees, hears or otherwise detects a foe only within his Initiative in inches. Excellent Sight does not apply underground. Dwarf, skaven and goblin warriors have night vision and spot hidden enemies at twice their Initiative in inches.\n\nShot in the dark: Shooting underground is at -2 when the nearest target cannot be seen. A warrior carrying a lantern or torch may be picked as a target freely, but the -2 still applies.\n\nLarge creatures: Ogres, trolls and the like move and run as normal in rooms and halls, but cannot run in a tunnel, and a charge down a tunnel is limited to normal movement.\n\nGrounded: No model may fly; there is not the height for it.\n\nChasms are 10\" deep. A warrior who survives the fall may try to climb out.\n\nExplosive charges: Roll a D6 whenever powder kegs, Cathayan firepots, bog fire or a hand-held mortar are set off underground. On a 4+ the blast caves the tunnel in.",
-      "umbrella": "The sewers"
-    },
-    {
-      "title": "Crew movement",
-      "text": "Crew board a rowboat as they would move normally, and the boat may not move the turn warriors move onto it. Crew move about the deck as normal.\n\nA warrior leaving a moored vessel moves in proportion to what the boat has left: if the boat moved half its maximum, he moves half; a third, two thirds; all of it, he may not move this turn. He may run or sprint, but must pass an Initiative test or fall in the water at the shore edge and move no further. The turn he reaches the shore he may not charge a model on land unless that model is physically keeping him from touching the shore, and a charge needs the same Initiative test as running.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "In the drink",
-      "text": "A model knocked down or stunned within 1\" of the edge of a vessel, walkway, pontoon or bridge must pass an Initiative test or fall overboard, and then the swimming rules apply. A cargo crate held by a falling model is lost on a 5+ in a rowboat and a 4+ on a raft.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Man overboard",
-      "text": "Roll a D6 for each warrior on the boat; on a 1 he is knocked overboard and swims. If the test is caused by overcapacity, take it when the boat first becomes overloaded and again at the start of its controller's movement phase.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Ramming boats",
-      "text": "A boat may ram an enemy boat 11\" or smaller. The ramming boat deals 1D2 hits at a Strength equal to the inches it has moved this turn, and everyone aboard it tests for man overboard. The ramming boat suffers one hit of the same Strength but does not test. Norse boats deal +1 Strength to the enemy boat. A riverbarge or ship of the line deals 1D3 hits instead of 1D2. A boat stops for the turn once it has rammed.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Boarding an enemy ship",
-      "text": "The boarding boat must move alongside the enemy ship, or along the wharf touching it if it is docked. What matters is the difference in height of the two sides. If the boarded ship is less than 1\" higher than the raiding height, or no climbing roll would be needed, use lower or equal sides; if it is 1\" or more higher, or a climbing roll would be needed, use higher sides.\n\nLower or equal sides: The boarders move up to their normal Movement from their position on their own ship onto the boarded ship. They count as charging but may only move their normal distance. Any defender may move 2\" to intercept, as against a charge, and the boarder still counts as charging.\n\nHigher sides: The boarders must climb the side of the ship, using rope and hooks if they have them. Each model that makes the climb is placed at the edge of the boarded ship and may move no further that turn. A defender standing where a boarder would be placed is pushed back far enough to let him on, and counts as charged. Once every boarder is placed, the defender may move any of his models 2\" to reach them, which counts as intercepting a charge and lets the boarder attack first. In the round they climbed, boarders need 6s to hit, the higher side counting as a defended barrier. After that round they fight and move as normal.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Swinging on board",
-      "text": "A model armed with a rope and hook, or standing on a large boat, may swing onto or off a boat. Nominate the direction and roll 2D6\" for how far the swing carries him, always in a straight line. If that falls short of the far boat or shore he falls into the water in between.\n\nIf the distance reaches, he takes an Initiative test. A natural 1 passes automatically: he lands the rolled distance and may carry on moving. A failed test, or a natural 6, drops him in the water. Any other pass carries him the full 2D6\" but he may neither move further nor charge this turn.\n\nA model may not swing onto a surface more than 1\" higher than the one he stands on, nor more than 6\" lower. A model he swings into counts as charged, and in the first round of combat the swinger may use no additional hand weapon, buckler or shield, though a double-handed weapon works as normal. If a fear-causing model is within 12\" of the direct line of the swing and the swinger is affected by fear, he must pass a Leadership test before swinging. A model who may re-roll diving charges may re-roll a failed swing once.\n\nSwinging also works anywhere else there are ropes, from a clothesline to a vine-covered tree.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Swimming",
-      "text": "A swimming model has all his gunpowder weapons soaked and cannot fire them for the rest of the battle.\n\nA non-aquatic stunned model that falls in the water tests for drowning at once: he recovers on a 4+ or is removed as a casualty. If he wears armour giving a 5+ or better save he is taken out of action without a roll; shields, scaly skin and other modifiers do not count, only armour. A knocked down model in the water recovers on a 2+.\n\nA ship moving at 6\" or less may pick up crew who pass within 1\" during its movement. An enemy picked up this way counts as knocked down for hand-to-hand combat. On reaching the shore or a friendly vessel the swimmer's remaining movement is lost, unless he started the turn within 1\" of the shore. A swimmer reaching a stationary enemy vessel may climb aboard, but fights last and needs 6s to hit in any combat that follows.\n\nA non-aquatic model fighting in water may not charge, is at -1 to hit and makes only one attack. A model in the water may also escape from close combat without passing a Leadership test.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Drowned",
-      "text": "A model who falls in deep water wearing heavy armour, or its equivalent in dark steel, gromril, lamellar, ithilmar or chaos armour, anything but light armour or a shield, drowns.\n\nIf a warrior is taken out of action by drowning, roll a D6 after the battle: on a 1 he is dead and his body was never recovered. This replaces his serious injury roll.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Ocean currents",
-      "text": "Ocean currents run in every direction at once, with no upstream or downstream, so no current is assumed. Where a scenario calls the water turbulent it counts as very difficult terrain, which has no effect on boats.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Rowing with and against the current",
-      "text": "The direction a river or canal flows is set before the game.\n\nA rowing boat or raft moves 6\" with the current. A raft moves 4\" against it if a warrior passes a Strength test, and stays where it is if he fails. A boat moves 4\" against the current and must move at least half its allowance unless anchored or tethered; dropping or hoisting anchor costs no movement. A rowing boat carrying one warrior moves 6\" against the current on a passed Strength test; with two or more warriors or the equivalent in cargo, two of the crew must pass, and if one fails the boat moves only 4\". A riverboat moves 6\" against the current if five of its crew pass a Strength test, and 6\" even if one of them fails. River barges move freely against the current.\n\nIf every model aboard is in combat or shooting, an untethered boat is adrift and moves 2D3\" with the current.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Building rafts",
-      "text": "In any scenario with waterways, a warband with no boat can build rafts. At the start of the movement phase any number of warriors not in the water may be set to building; they may not move, shoot, cast spells or do anything else. Two warriors take 2D3 turns to build a raft, one turn less for each further warrior who joins them. It takes two models to carry a raft, as for a chest. A raft carries up to three human-sized warriors or the equivalent in cargo, and has Toughness 4 and 2 Wounds.",
-      "umbrella": "Boats and water"
-    },
-    {
-      "title": "Soft landings",
-      "text": "Marienburg has its daring escapes and rooftop chases, and softer places to land. If a model falls within 2\" of a soft landing, the Strength of the fall damage is halved, rounding up. This does not apply to a diving charge.\n\nWater, a hay stack or hay cart, a canvas canopy over a shop, a carpet stand and a manure pile all count; a manure pile needs a fear test before diving.",
-      "umbrella": ""
-    },
-    {
-      "title": "Leaving the battlefield",
-      "text": "A model may only leave the battlefield if he is carrying an objective marker or its equivalent.",
-      "umbrella": ""
-    },
-    {
-      "title": "Breaking into buildings",
-      "text": "Each building that is not a ruin may be visited once per game, and every door and window counts as secured. At the start of his turn, a Hero or Hired Sword in base contact with an entry point of an unvisited building may try to enter.\n\nA warrior with the tools or the skill to pick the lock enters and then rolls once on the burglary chart. A warrior who breaks the door down rolls twice on the burglary chart and takes the worse result.\n\nUnless the building is an inn, whose doors are only locked at night, the doors are locked. The doors of shops, warehouses and hostels are not fortified; the doors of barracks, armouries and temples are. A fortified door can only be broken down by attacking it, and is destroyed when its Wounds reach 0. A fortified door has Toughness 8 and 4 Wounds.",
-      "umbrella": ""
-    },
-    {
-      "title": "Under arrest",
-      "text": "A warrior taken out of action by a Watch Officer who belongs to no warband in the campaign is placed under arrest at once.",
-      "umbrella": ""
+     "result": "12",
+     "name": "Wyvern",
+     "text": ""
     }
-  ],
-  "charts": [
+   ]
+  },
+  {
+   "title": "Monster encounters: The Cursed Marsh",
+   "description": "Rolled for a monster encounter in the marshes, whether from a random happening, an exploration result or anything else that calls for one.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Monster encounters",
+   "rows": [
     {
-      "title": "Seaside Situations",
-      "description": "Random happenings during a battle in Marienburg. At the start of each player's turn he rolls a D6; on a 1 he rolls a D66 on this chart. A player whose happening has come up need not roll again, and the others keep rolling until every player has had one. If the result needs a forest or swamp and there is none, or it does not apply to the warband, roll again.",
-      "dice": "D66",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "11-15",
-          "name": "What is that!?",
-          "text": "Someone or something draws near. Roll on one of the three monster encounter tables to see what the warbands have run into, and place the non-player models as the bestiary describes. They always attack the nearest model that this encounter did not bring. If that model is already in close combat they attack both fighters, dividing their attacks evenly between opposing models where they can."
-        },
-        {
-          "result": "16",
-          "name": "Mutiny!",
-          "text": "Trouble is brewing in the warband. Pick a model at random, not the leader, and roll a D6.\n\n1 The Black Spot. Make a Leadership test to calm the men. If it fails, roll a D6 again: on a 1-2 the leader is hung from a mast and removed from the warband; on a 3-6 he is cast away on a deserted island, found later by passing merchants, and becomes a Dramatis Persona anyone but you may hire, for a hire fee of twice his experience in gold crowns and an upkeep of his total experience. He hates his old warband, and in a battle against it moves as fast as he can towards the man who usurped him; if he takes him out of action that man counts as dead and he takes his place as leader again.\n\n2-5 The Devil You Know. Through fear, charm or sheer will you quell the uprising. The mutineer is made an example of: he is taken out of action, and a Hero loses D3 Leadership.\n\n6 You've got balls. The temerity of the ringleader impresses you and you promote him. A Henchman gains The lad's got talent at once; a Hero gains +D6 experience."
-        },
-        {
-          "result": "21",
-          "name": "Wave!",
-          "text": "A ship or a large creature submerging throws a wave against the shore. Roll for the direction it comes from, re-rolling edges with no water; if there is only a river or canal, it comes up both sides. Every model within 2\" of a terrain feature facing the wave is soaked, and must take an Initiative test or be knocked into the water. Building fires are put out, along with torches and flaming weapons, though not burning body mutations or magic, and blackpowder cannot be used until the weapon is reloaded next turn."
-        },
-        {
-          "result": "22",
-          "name": "Breath of Stromfels",
-          "text": "The landscape is immersed in thick mist. Use the rules for fog."
-        },
-        {
-          "result": "23",
-          "name": "Vampire Blood",
-          "text": "A human warrior has caught the hypnotic interest of the Unquiet Dead. Choose a Hero in the warband, not the leader and not a spellcaster, and roll on the Father-in-darkness chart from the River Strigany special rules. Vampire Blood only affects humans."
-        },
-        {
-          "result": "24",
-          "name": "Harbour Master",
-          "text": "A daredevil dockworker leaps out and joins your warband as a Hired Sword. Roll a D6: 1 Boatman, 2 Poacher (Big Game Hunter), 3 Bearman Bodyguard, 4 Swashbuckler, 5 Whaler, 6 Dwarf Slayer Pirate."
-        },
-        {
-          "result": "25",
-          "name": "Head Hunter",
-          "text": "A Bounty Hunter Hired Sword joins the warband for the rest of this battle. Name his mark and deploy him next to any friendly model. A warband of followers of Chaos, or a Beastmen, Fimir or Goblin warband, is joined by Krogh the Mutant Bounty Killer instead, using the same rules, with the mutation Great Claw that doubles as a mancatcher. There is no hire fee; upkeep is paid as normal after each battle."
-        },
-        {
-          "result": "26",
-          "name": "Cargo!",
-          "text": "A random warband member has found D3+1 cargo crates. For each one roll a scatter dice and a direction dice and place it that far from him."
-        },
-        {
-          "result": "31",
-          "name": "Courtesan",
-          "text": "A Courtesan has followed one of your Heroes to watch him fight. Name the Hero; if he survives the battle he wins her favour. If a Hero of another warband already has a Courtesan, that favour is lost and she joins your warband."
-        },
-        {
-          "result": "32",
-          "name": "Secret Passageway",
-          "text": "The warband has found a secret passage it can use whenever it plays this scenario again. Three warriors may deploy using the Infiltration rules."
-        },
-        {
-          "result": "33",
-          "name": "Old Well",
-          "text": "A random model that is not large takes a single Strength 3 hit from the remains of an old well. If he is not taken out of action by the fall, he finds the gear of the man who broke his neck before him. Roll a D6: 1 a rusty sword, worth nothing; 2 two daggers; 3 a wallet holding 10 gc; 4 a sword and a shield; 5 a long bow; 6 a light armour.\n\nThe well is filled with ivy. He may climb out at the start of his next turn by passing a single Initiative test; on a failure he stays another round. If he passes he is out of the well, may move no further that turn and may still use magic. A player may leave him in the well if he wishes: a model in the well cannot be attacked or affected by any spell or missile, is completely out of sight, and can do nothing but climb."
-        },
-        {
-          "result": "34",
-          "name": "Bogtopus",
-          "text": "The model closest to the largest swamp or water feature is attacked by a Bog Octopus. Re-roll this result if there is no such scenery. If he fails a Strength test he is dragged under, counts as drowned and is taken out of action; roll for his injuries at the end of the game."
-        },
-        {
-          "result": "35",
-          "name": "Priest Hole",
-          "text": "The warband has uncovered a hidden sanctum of the Church of Sigmar. A Hero visiting an infamous haunt gets +1 to every dice roll he makes in the next post-battle sequence."
-        },
-        {
-          "result": "36",
-          "name": "Harpy Hunting Grounds",
-          "text": "A migrating brood has nested in a warehouse attic or temple belfry near the docks. The tallest building on the table holds D3 harpies and D3 egg-shaped wyrdstone shards along with other valuables. The harpies move at the end of each round, after the players have taken their turns. If they are all taken out of action, the warband that wins the battle claims the nest.\n\nRoll a D6 for each entry:\nRope, found automatically.\n2D6 gold crowns, 2+.\nLucky Charm, 3+.\nD3 Gems worth 10 gold crowns each, 3+.\nD3 Shields, 4+.\nHeavy Armour, 4+.\nStraggler, counts as a hostage, 5+.\nD3 Helmets, 5+.\nD3 Swords, 6+.\nIthilmar Sword, 6+.\nWolf Cloak, 6+.\n\nThe harpy's profile and its special rules are in the bestiary."
-        },
-        {
-          "result": "41",
-          "name": "The South Dock Strangler",
-          "text": "Determine a random Henchman who is not in combat and is either 12\" from every friendly model or out of their line of sight. If no model qualifies, choose two Henchmen in combat who do; if there is still no victim the strangler retreats and the happening is re-rolled. The chosen models are killed by the South Dock Strangler.\n\nEvery kill by the Strangler is recorded. Once he has claimed three victims he grows ambitious and moves on to Heroes, chosen the same way. He appears in base contact with the victim, who is stunned even if he is normally immune to being stunned, and the warbands have one turn to take the Strangler out of action before he kills him.\n\nThe Strangler has Weapon Skill 3, 1 Wound and Toughness 4, and vanishes as soon as he is wounded. The exception is a warband following Defending the Peace, which may arrest him in the usual way on an out-of-action roll of 6. An arrested Strangler has his identity revealed as his Dramatis Personae entry describes, and is hung before the next match unless another warband rescues him by playing Hangman's Square against every Defending the Peace warband. A warband following Drowning the Witch or Defending the Peace may neither hire nor rescue him."
-        },
-        {
-          "result": "42",
-          "name": "Zombie outbreak!",
-          "text": "A man comes running down the street shouting that zombies infest the mausoleum. Each player in the battle may now play Midnight at the Mausoleum once as a future scenario. Being chosen as the opponent in that scenario uses up a player's one time as well. Rolling this result again before a player has played it gives him no extra go; rolling it after he has played it lets him play again."
-        },
-        {
-          "result": "43",
-          "name": "Rats!",
-          "text": "Something in the sewers has frightened the rats, and they attack anything in their way. Use a template 80mm by 120mm, or six monster bases in a rectangle with one short side as the front. The rats move 2D6\" each turn, always forward down the centre of the street; at an intersection roll randomly for the direction, for example a D6 at a four-way crossing: 1-2 right, 3-4 straight on, 5-6 left.\n\nThe rats cannot be engaged in close combat. A model they touch is picked up and carried for D3 turns, then dropped behind them. Several warriors carried at once may fight each other by passing an Initiative test, with one attack only. A warrior carried off the board rejoins his warband after the battle."
-        },
-        {
-          "result": "44",
-          "name": "Peddler",
-          "text": "Whatever turn it is rolled on, this happens at the end of the game. The winning warband has impressed, or terrified, a local peddler who carries his whole stock on his back and offers part of it at half price: mace, hammer, sword, dagger, axe, helmet, boat hooks, pistol, duelling pistol, rope and hook, any poison, lucky charm, whalebone charms, healing herbs, lantern, heavy armour and Marienburg map. Roll a D3 for each item for how many he carries."
-        },
-        {
-          "result": "45",
-          "name": "Manann Smiles",
-          "text": "An abandoned rowboat lies nearby, claimed by the first man to reach it. Place a rowboat anywhere you choose. If you do not rout this game you may add it to your inventory."
-        },
-        {
-          "result": "46",
-          "name": "The Old Crone",
-          "text": "A withered hag stumbles about on her crook. Determine at random which terrain feature she inhabits. For 3D6 gold crowns she works a miracle or a malediction, once per turn. If a Hero pays her, roll a D6.\n\n1 Cursed. The approaching model is cursed instead: a randomly determined characteristic drops by 1 permanently.\n2-3 Hex. She lays her malady on a Hero of another warband, treated as the curse above.\n4+ Miracle. She lifts any curse, heals any lost wounds, cures any mutation or removes a serious injury from a Hero of your choice."
-        },
-        {
-          "result": "51",
-          "name": "Cellars",
-          "text": "The warband has camped in a long forgotten cellar with tunnels running off it. Cellars count as an encampment, and they adjoin the sewers, so up to three warriors may set up each battle using the Infiltration rules.\n\nRoll a D6: on a 1 a swarm of giant rats attacks and D3 of the infiltrating warriors fall ill from the bites and miss the next game. Skaven are immune, tame the rats instead and gain D3 giant rats for the game."
-        },
-        {
-          "result": "52",
-          "name": "Hostelry",
-          "text": "You have found a deserted flophouse, spacious and dry. Hostelry counts as an encampment, and adds +1 to the maximum size of the warband."
-        },
-        {
-          "result": "53",
-          "name": "Tavern",
-          "text": "You hold the deeds to a tavern or a makeshift drinking hole. Tavern counts as an encampment, and after each battle you may roll a D6.\n\n1 Bar room brawl. Pay D6x20 gold crowns for the damage.\n2 Profits down. Lose D6x10 gold crowns.\n3 Profits up. Gain D6 gold crowns.\n4 Sell-sword. A Hired Sword cannot pay his bar bill and serves you free next battle.\n5 Father. A Priest cannot pay his bar bill and joins the warband free. This cannot take the warband over its maximum Heroes or warriors; you may retire a Hero to make room.\n6 Business booming. Gain D6x20 gold crowns."
-        },
-        {
-          "result": "54",
-          "name": "Tilean Ludus",
-          "text": "The warband has secured quarters in a gladiator school. Tilean Ludus counts as an encampment, and every new Hero, Hired Sword or Henchmen group that joins the warband learns the Pit Fighter skill."
-        },
-        {
-          "result": "55",
-          "name": "Shard of Wyrdstone",
-          "text": "A 2\" by 2\" shard of wyrdstone falls in the centre of the battlefield, destroying any building or vehicle in its way. Anyone it hits suffers a Strength 8 hit unless he passes an Initiative test.\n\nAny warband member may approach it, at his peril. A model that starts his turn within 4\" of the shard rolls 2D6: on a 2 he is turned into a Spawn of Chaos, removed from the roster and moved at random; on a 12 he permanently gains a random mutation. A model who reaches the shard may spend a turn chipping D3 shards from it. It is so volatile that no warrior will stay long enough to make more than one roll."
-        },
-        {
-          "result": "56",
-          "name": "Old Merchant Villa",
-          "text": "You have acquired the deeds to an abandoned merchant house in the Old Money Ward and patched it up. Old Merchant Villa counts as an encampment, and adds +2 to one of your rolls when searching for rare items in the post-battle sequence."
-        },
-        {
-          "result": "61",
-          "name": "Street Urchins",
-          "text": "Roll a D6.\n\n1-3 Pickpockets. A random warrior is robbed: a Henchman costs the warband 2D6 gold crowns, a Hero loses a random item.\n\n4-6 Detectives. The orphans are the local watch's eyes and ears. A warband following Guarding the Peace may pay 2D6 gc to have them finger a random Hero of an opposing warband in the battle for a crime, adding him to the wanted list. Any other warband must pay 3D6 gc or they finger it instead, adding a random Hero of its own to the wanted list."
-        },
-        {
-          "result": "62",
-          "name": "Runaway Wagon",
-          "text": "A blazing caravan wagon comes barrelling in from a random table edge. The horses are frantic and run in a random direction at the end of each turn. Any warband can take control by boarding it with a warrior, and it takes at least two warband members a full turn to put the fire out.\n\nAt the end of the game, whoever controls the wagon rolls for its cargo if the fire was put out; the different odds stand for the goods catching fire. Roll a D6 for each: D3 Cathayan Silk Cloaks, 5+. Tome of Magic, 5+. D3 Longbows and D3 quivers of hunting arrows, 4+. D3 Swords, 3+. The wagon itself, automatically.\n\nA human warband also keeps any surviving draft horses, for the wagon or as riding horses."
-        },
-        {
-          "result": "63",
-          "name": "Security Measures",
-          "text": "Whoever owns the ground your warriors are trespassing on has booby-trapped his chests. For the rest of the scenario, whenever a model picks up a cargo crate, barrel or the like, roll a D6: on a 1 or 2 it is booby-trapped. A trapped item cannot be sold, and the model who picked it up must pass an Initiative test or suffer a Strength 4 hit. Roll at once for any cargo crates already being carried when this happening comes up, and for any crate that appears later."
-        },
-        {
-          "result": "64",
-          "name": "Hit Contract",
-          "text": "A wanted poster with your captain's face on it floats past. Your leader, or the Hero with the next highest Leadership if he is not on the battlefield, has a bounty on him for this game. Any Hero or Henchmen group that takes him out of action earns an extra experience point, and that warband gains 1D6x10 gold crowns."
-        },
-        {
-          "result": "65",
-          "name": "The Storm Festival Curse",
-          "text": "A random warrior who is neither an animal nor a leader, from a random warband in the battle, goes missing. Roll a D6.\n\n1-3 Worthy. Cultists abduct him for a ritual sacrifice. A random warband following Gaze of the Gods receives him and may sacrifice him in the usual way, after the next battle.\n\n4-6 Drunkard. He sobers up in the cells, under arrest by the watch. A random Guarding the Peace warband takes him and rolls on the under arrest chart to see what he is charged with."
-        },
-        {
-          "result": "66",
-          "name": "Flood Season",
-          "text": "The whole battlefield is waterlogged. Unless a model is on the first floor of a building or on top of a wagon or other vehicle, it counts as moving and fighting in water. Every model may immediately move its full Movement to try to get out of the water."
-        }
-      ]
+     "result": "2",
+     "name": "Swamp Shark",
+     "text": ""
     },
     {
-      "title": "Monster encounters: Marienburg city",
-      "description": "Rolled for a monster encounter in the city, whether from a random happening, an exploration result or anything else that calls for one.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Colossal Squig",
-          "text": ""
-        },
-        {
-          "result": "3-4",
-          "name": "Cultists of Chaos",
-          "text": "D3 Cultists of Chaos."
-        },
-        {
-          "result": "5-6",
-          "name": "Wild Dogs",
-          "text": "D3 Wild Dogs."
-        },
-        {
-          "result": "7",
-          "name": "Townsfolk",
-          "text": "D3+1 Townsfolk, as hostages."
-        },
-        {
-          "result": "8-9",
-          "name": "Gutter Runners",
-          "text": "D3+1 Gutter Runners."
-        },
-        {
-          "result": "10-11",
-          "name": "Thief",
-          "text": "A Thief Hired Sword."
-        },
-        {
-          "result": "12",
-          "name": "Wyvern",
-          "text": ""
-        }
-      ]
+     "result": "3-4",
+     "name": "Nuckelavee",
+     "text": ""
     },
     {
-      "title": "Monster encounters: The Cursed Marsh",
-      "description": "Rolled for a monster encounter in the marshes, whether from a random happening, an exploration result or anything else that calls for one.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Swamp Shark",
-          "text": ""
-        },
-        {
-          "result": "3-4",
-          "name": "Nuckelavee",
-          "text": ""
-        },
-        {
-          "result": "5-6",
-          "name": "Gors and Ungors",
-          "text": "D3 Gors and D3 Ungors."
-        },
-        {
-          "result": "7",
-          "name": "Swamp Goblins",
-          "text": "D3 Swamp Goblins."
-        },
-        {
-          "result": "8-9",
-          "name": "Bandits",
-          "text": "2D3 Bandits."
-        },
-        {
-          "result": "10-11",
-          "name": "Troll",
-          "text": "Roll a D6: 1-3 Troll, 4-6 Chaos Troll."
-        },
-        {
-          "result": "12",
-          "name": "Troll Hag",
-          "text": ""
-        }
-      ]
+     "result": "5-6",
+     "name": "Gors and Ungors",
+     "text": "D3 Gors and D3 Ungors."
     },
     {
-      "title": "Monster encounters: Manannsport Sea",
-      "description": "Rolled for a monster encounter at sea, whether from a random happening, an exploration result or anything else that calls for one.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Crocogator",
-          "text": ""
-        },
-        {
-          "result": "3-4",
-          "name": "Lizardmen",
-          "text": "D3 Lizardmen."
-        },
-        {
-          "result": "5-6",
-          "name": "Dark Elf Raiders",
-          "text": "D3 Dark Elf Raiders, with a riverbarge."
-        },
-        {
-          "result": "7",
-          "name": "Human Pirates",
-          "text": "D3 Human Pirates, with a rowboat."
-        },
-        {
-          "result": "8-9",
-          "name": "Bloated",
-          "text": "D6 Bloated."
-        },
-        {
-          "result": "10-11",
-          "name": "Ogre Treasure Hunter",
-          "text": "An Ogre Treasure Hunter Hired Sword."
-        },
-        {
-          "result": "12",
-          "name": "Merwyrm",
-          "text": ""
-        }
-      ]
+     "result": "7",
+     "name": "Swamp Goblins",
+     "text": "D3 Swamp Goblins."
     },
     {
-      "title": "Spring weather",
-      "description": "Rolled for the weather at the start of a battle while the campaign is in spring, 0 to 10 Campaign Points.",
-      "dice": "2D6",
-      "note": "The book heads each seasonal table D6, but its results run from 2 to 12, so roll 2D6. Fine weather has no rules of its own.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2-3",
-          "name": "Fog",
-          "text": ""
-        },
-        {
-          "result": "4-5",
-          "name": "Rain",
-          "text": ""
-        },
-        {
-          "result": "6-8",
-          "name": "Fine",
-          "text": ""
-        },
-        {
-          "result": "9-10",
-          "name": "Monsoon",
-          "text": ""
-        },
-        {
-          "result": "11-12",
-          "name": "Hail",
-          "text": ""
-        }
-      ]
+     "result": "8-9",
+     "name": "Bandits",
+     "text": "2D3 Bandits."
     },
     {
-      "title": "Summer weather",
-      "description": "Rolled for the weather at the start of a battle while the campaign is in summer, 11 to 20 Campaign Points.",
-      "dice": "2D6",
-      "note": "The book heads each seasonal table D6, but its results run from 2 to 12, so roll 2D6. Fine weather has no rules of its own.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2-3",
-          "name": "Monsoon",
-          "text": ""
-        },
-        {
-          "result": "4-5",
-          "name": "Hail",
-          "text": ""
-        },
-        {
-          "result": "6-8",
-          "name": "Fine",
-          "text": ""
-        },
-        {
-          "result": "9-10",
-          "name": "Heat Wave",
-          "text": ""
-        },
-        {
-          "result": "11-12",
-          "name": "Thunder and Lightning",
-          "text": ""
-        }
-      ]
+     "result": "10-11",
+     "name": "Troll",
+     "text": "Roll a D6: 1-3 Troll, 4-6 Chaos Troll."
     },
     {
-      "title": "Autumn weather",
-      "description": "Rolled for the weather at the start of a battle while the campaign is in autumn, 21 to 30 Campaign Points.",
-      "dice": "2D6",
-      "note": "The book heads each seasonal table D6, but its results run from 2 to 12, so roll 2D6. Fine weather has no rules of its own.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2-3",
-          "name": "Thunder and Lightning",
-          "text": ""
-        },
-        {
-          "result": "4-5",
-          "name": "Dry",
-          "text": ""
-        },
-        {
-          "result": "6-8",
-          "name": "Fine",
-          "text": ""
-        },
-        {
-          "result": "9-10",
-          "name": "Fog",
-          "text": ""
-        },
-        {
-          "result": "11-12",
-          "name": "Severe Wind",
-          "text": ""
-        }
-      ]
+     "result": "12",
+     "name": "Troll Hag",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Monster encounters: Manannsport Sea",
+   "description": "Rolled for a monster encounter at sea, whether from a random happening, an exploration result or anything else that calls for one.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Monster encounters",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Crocogator",
+     "text": ""
     },
     {
-      "title": "Winter weather",
-      "description": "Rolled for the weather at the start of a battle while the campaign is in winter, 31 to 40 Campaign Points.",
-      "dice": "2D6",
-      "note": "The book heads each seasonal table D6, but its results run from 2 to 12, so roll 2D6. Fine weather has no rules of its own.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2-3",
-          "name": "Fog",
-          "text": ""
-        },
-        {
-          "result": "4-5",
-          "name": "Severe Wind",
-          "text": ""
-        },
-        {
-          "result": "6-8",
-          "name": "Fine",
-          "text": ""
-        },
-        {
-          "result": "9-10",
-          "name": "Blizzard",
-          "text": ""
-        },
-        {
-          "result": "11-12",
-          "name": "Bitter Cold",
-          "text": ""
-        }
-      ]
+     "result": "3-4",
+     "name": "Lizardmen",
+     "text": "D3 Lizardmen."
     },
     {
-      "title": "Cargo",
-      "description": "Rolled for each piece of freight dredged up or smuggled off the board, to see what the container is. Freight cannot be opened during a battle; roll for its contents in the post-battle sequence.",
-      "dice": "D6",
-      "note": "A Medicine Chest works as D6 doses of healing herbs, or once only to re-roll a serious injury, unless the result was Captured or Sold to the Pits.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "Crest!",
-          "text": "A wave smashes the cargo and its contents to smithereens."
-        },
-        {
-          "result": "2",
-          "name": "Crate",
-          "text": "2D6 gold crowns worth of light goods."
-        },
-        {
-          "result": "3",
-          "name": "Chest",
-          "text": "Two models are needed to move a chest. Roll a D6 for the contents: 1-3 Treasure, 4-5 D3 Treasures, 6 Medicine Chest."
-        },
-        {
-          "result": "4",
-          "name": "Barrel",
-          "text": "Two models are needed to move a keg. Roll a D6 to prise it open: 1 Hostage, 2 Powder Keg, 3 Superior Blackpowder, 4 Alcoholic Spirits, 5 Elven Wine, 6 Bugman's Ale."
-        },
-        {
-          "result": "5",
-          "name": "Coffin!",
-          "text": "Two models are needed to move a coffin. Roll a D6 for what the casket holds: 1-3 Waterlogged Corpse, 4 Blunderbuss, 5 D3 Handguns, 6 Hochland Long Rifle."
-        },
-        {
-          "result": "6",
-          "name": "Booty Sack!",
-          "text": "An exquisite commodity packed in a grain sack. Roll on the booty chart."
-        }
-      ]
+     "result": "5-6",
+     "name": "Dark Elf Raiders",
+     "text": "D3 Dark Elf Raiders, with a riverbarge."
     },
     {
-      "title": "Booty",
-      "description": "Rolled for a looted article of real value, from a booty sack, a burglary, a tomb or a plundered heirloom.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Arcane item",
-          "text": "Roll on the Arcane Items chart."
-        },
-        {
-          "result": "3",
-          "name": "Herbs and potions",
-          "text": "Roll on the Herbs and Potions chart."
-        },
-        {
-          "result": "4",
-          "name": "Telescope",
-          "text": ""
-        },
-        {
-          "result": "5",
-          "name": "Compass",
-          "text": ""
-        },
-        {
-          "result": "6",
-          "name": "Holy or unholy relic",
-          "text": ""
-        },
-        {
-          "result": "7",
-          "name": "Tainted item",
-          "text": "Roll on the tainted items chart."
-        },
-        {
-          "result": "8",
-          "name": "Duelling pistol",
-          "text": ""
-        },
-        {
-          "result": "9",
-          "name": "Marienburg map",
-          "text": ""
-        },
-        {
-          "result": "10",
-          "name": "Elven boots",
-          "text": ""
-        },
-        {
-          "result": "11",
-          "name": "Custom weapon",
-          "text": "Roll on the Custom Weapons chart."
-        },
-        {
-          "result": "12",
-          "name": "Profane book",
-          "text": "Roll on the Profane Books chart."
-        }
-      ]
+     "result": "7",
+     "name": "Human Pirates",
+     "text": "D3 Human Pirates, with a rowboat."
     },
     {
+     "result": "8-9",
+     "name": "Bloated",
+     "text": "D6 Bloated."
+    },
+    {
+     "result": "10-11",
+     "name": "Ogre Treasure Hunter",
+     "text": "An Ogre Treasure Hunter Hired Sword."
+    },
+    {
+     "result": "12",
+     "name": "Merwyrm",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Spring weather",
+   "description": "Rolled for the weather at the start of a battle while the campaign is in spring, 0 to 10 Campaign Points.",
+   "dice": "2D6",
+   "note": "The book heads each seasonal table D6, but its results run from 2 to 12, so roll 2D6. Fine weather has no rules of its own.",
+   "umbrella": "Weather",
+   "rows": [
+    {
+     "result": "2-3",
+     "name": "Fog",
+     "text": ""
+    },
+    {
+     "result": "4-5",
+     "name": "Rain",
+     "text": ""
+    },
+    {
+     "result": "6-8",
+     "name": "Fine",
+     "text": ""
+    },
+    {
+     "result": "9-10",
+     "name": "Monsoon",
+     "text": ""
+    },
+    {
+     "result": "11-12",
+     "name": "Hail",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Summer weather",
+   "description": "Rolled for the weather at the start of a battle while the campaign is in summer, 11 to 20 Campaign Points.",
+   "dice": "2D6",
+   "note": "The book heads each seasonal table D6, but its results run from 2 to 12, so roll 2D6. Fine weather has no rules of its own.",
+   "umbrella": "Weather",
+   "rows": [
+    {
+     "result": "2-3",
+     "name": "Monsoon",
+     "text": ""
+    },
+    {
+     "result": "4-5",
+     "name": "Hail",
+     "text": ""
+    },
+    {
+     "result": "6-8",
+     "name": "Fine",
+     "text": ""
+    },
+    {
+     "result": "9-10",
+     "name": "Heat Wave",
+     "text": ""
+    },
+    {
+     "result": "11-12",
+     "name": "Thunder and Lightning",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Autumn weather",
+   "description": "Rolled for the weather at the start of a battle while the campaign is in autumn, 21 to 30 Campaign Points.",
+   "dice": "2D6",
+   "note": "The book heads each seasonal table D6, but its results run from 2 to 12, so roll 2D6. Fine weather has no rules of its own.",
+   "umbrella": "Weather",
+   "rows": [
+    {
+     "result": "2-3",
+     "name": "Thunder and Lightning",
+     "text": ""
+    },
+    {
+     "result": "4-5",
+     "name": "Dry",
+     "text": ""
+    },
+    {
+     "result": "6-8",
+     "name": "Fine",
+     "text": ""
+    },
+    {
+     "result": "9-10",
+     "name": "Fog",
+     "text": ""
+    },
+    {
+     "result": "11-12",
+     "name": "Severe Wind",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Winter weather",
+   "description": "Rolled for the weather at the start of a battle while the campaign is in winter, 31 to 40 Campaign Points.",
+   "dice": "2D6",
+   "note": "The book heads each seasonal table D6, but its results run from 2 to 12, so roll 2D6. Fine weather has no rules of its own.",
+   "umbrella": "Weather",
+   "rows": [
+    {
+     "result": "2-3",
+     "name": "Fog",
+     "text": ""
+    },
+    {
+     "result": "4-5",
+     "name": "Severe Wind",
+     "text": ""
+    },
+    {
+     "result": "6-8",
+     "name": "Fine",
+     "text": ""
+    },
+    {
+     "result": "9-10",
+     "name": "Blizzard",
+     "text": ""
+    },
+    {
+     "result": "11-12",
+     "name": "Bitter Cold",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Cargo",
+   "description": "Rolled for each piece of freight dredged up or smuggled off the board, to see what the container is. Freight cannot be opened during a battle; roll for its contents in the post-battle sequence.",
+   "dice": "D6",
+   "note": "A Medicine Chest works as D6 doses of healing herbs, or once only to re-roll a serious injury, unless the result was Captured or Sold to the Pits.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "1",
+     "name": "Crest!",
+     "text": "A wave smashes the cargo and its contents to smithereens."
+    },
+    {
+     "result": "2",
+     "name": "Crate",
+     "text": "2D6 gold crowns worth of light goods."
+    },
+    {
+     "result": "3",
+     "name": "Chest",
+     "text": "Two models are needed to move a chest. Roll a D6 for the contents: 1-3 Treasure, 4-5 D3 Treasures, 6 Medicine Chest."
+    },
+    {
+     "result": "4",
+     "name": "Barrel",
+     "text": "Two models are needed to move a keg. Roll a D6 to prise it open: 1 Hostage, 2 Powder Keg, 3 Superior Blackpowder, 4 Alcoholic Spirits, 5 Elven Wine, 6 Bugman's Ale."
+    },
+    {
+     "result": "5",
+     "name": "Coffin!",
+     "text": "Two models are needed to move a coffin. Roll a D6 for what the casket holds: 1-3 Waterlogged Corpse, 4 Blunderbuss, 5 D3 Handguns, 6 Hochland Long Rifle."
+    },
+    {
+     "result": "6",
+     "name": "Booty Sack!",
+     "text": "An exquisite commodity packed in a grain sack. Roll on the booty chart."
+    }
+   ]
+  },
+  {
+   "title": "Booty",
+   "description": "Rolled for a looted article of real value, from a booty sack, a burglary, a tomb or a plundered heirloom.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Arcane item",
+     "text": "Roll on the Arcane Items chart."
+    },
+    {
+     "result": "3",
+     "name": "Herbs and potions",
+     "text": "Roll on the Herbs and Potions chart."
+    },
+    {
+     "result": "4",
+     "name": "Telescope",
+     "text": ""
+    },
+    {
+     "result": "5",
+     "name": "Compass",
+     "text": ""
+    },
+    {
+     "result": "6",
+     "name": "Holy or unholy relic",
+     "text": ""
+    },
+    {
+     "result": "7",
+     "name": "Tainted item",
+     "text": "Roll on the tainted items chart.",
+     "chart": {
       "title": "Tainted items",
       "description": "Rolled when a tainted item is found, to see what wyrdstone-touched thing the warrior is carrying.",
       "dice": "D6",
       "note": "",
-      "umbrella": "",
       "rows": [
-        {
-          "result": "1",
-          "name": "Wyrdstone Shard",
-          "text": "He carries a wyrdstone shard."
-        },
-        {
-          "result": "2",
-          "name": "Wyrdstone Pendulum",
-          "text": "He wears the necklace."
-        },
-        {
-          "result": "3",
-          "name": "Wyrdstone Poultice",
-          "text": "A sealed poultice of wyrdstone ink, applied as a salve to promote fortitude and fertility. A Hero may use it once only, at the start of a recovery phase, as long as he is not in hand-to-hand combat. Roll a D6: on a 1-3 he gains a mutation, rolled on the random mutation chart; on a 4-6 he instead restores every wound he has lost during the game."
-        },
-        {
-          "result": "4",
-          "name": "Wyrdstone Tattoo Ink",
-          "text": "A sealed vial of the ink the northern tribes and other cultists tattoo with. It has one use: roll on the random mutation chart and apply the result. From then on, whenever a double is rolled for the Hero's advance, roll for a new mutation."
-        },
-        {
-          "result": "5",
-          "name": "Wyrdstone Spyglass",
-          "text": "A wyrdstone-lensed telescope. It helps a Hero spot hidden enemies from twice as far away as other warriors, at twice his Initiative in inches."
-        },
-        {
-          "result": "6",
-          "name": "Power in the Stones!",
-          "text": "He carries a magic stone. Roll 2D6 on the Evaluation chart for its power."
-        }
+       {
+        "result": "1",
+        "name": "Wyrdstone Shard",
+        "text": "He carries a wyrdstone shard."
+       },
+       {
+        "result": "2",
+        "name": "Wyrdstone Pendulum",
+        "text": "He wears the necklace."
+       },
+       {
+        "result": "3",
+        "name": "Wyrdstone Poultice",
+        "text": "A sealed poultice of wyrdstone ink, applied as a salve to promote fortitude and fertility. A Hero may use it once only, at the start of a recovery phase, as long as he is not in hand-to-hand combat. Roll a D6: on a 1-3 he gains a mutation, rolled on the random mutation chart; on a 4-6 he instead restores every wound he has lost during the game."
+       },
+       {
+        "result": "4",
+        "name": "Wyrdstone Tattoo Ink",
+        "text": "A sealed vial of the ink the northern tribes and other cultists tattoo with. It has one use: roll on the random mutation chart and apply the result. From then on, whenever a double is rolled for the Hero's advance, roll for a new mutation."
+       },
+       {
+        "result": "5",
+        "name": "Wyrdstone Spyglass",
+        "text": "A wyrdstone-lensed telescope. It helps a Hero spot hidden enemies from twice as far away as other warriors, at twice his Initiative in inches."
+       },
+       {
+        "result": "6",
+        "name": "Power in the Stones!",
+        "text": "He carries a magic stone. Roll 2D6 on the Evaluation chart for its power."
+       }
       ]
+     }
     },
     {
-      "title": "Grave robbery",
-      "description": "Rolled when a warrior digs up a grave.",
-      "dice": "D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1-2",
-          "name": "Zombie!",
-          "text": "A zombie rises from the grave."
-        },
-        {
-          "result": "3",
-          "name": "Fresh Corpse",
-          "text": "Collect a corpse."
-        },
-        {
-          "result": "4",
-          "name": "Trinket",
-          "text": "2D6 gold crowns worth of goods."
-        },
-        {
-          "result": "5",
-          "name": "Drugs",
-          "text": "Drugs sewn into the corpse, in the time-honoured tradition. Roll a D6: 1 Mandrake Root, 2 Madcap Mushrooms, 3 Crimson Shade, 4 Slaaneshi's Dream, 5 Black Dust, 6 Daemon Dust."
-        },
-        {
-          "result": "6",
-          "name": "Heirloom!",
-          "text": "Roll on the booty chart."
-        }
-      ]
+     "result": "8",
+     "name": "Duelling pistol",
+     "text": ""
     },
     {
-      "title": "Burglary",
-      "description": "Rolled when a warrior breaks into a building. Picking the lock is one roll; forcing the door is two rolls, taking the worse result.",
-      "dice": "D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "On the Lam!",
-          "text": "The crook is caught in the act. D3+1 Watch Officers, each armed with a club, arrive at the scene; place each one D6\" from the thief. The thief's player may use his next turn to stage an escape, or to charge the watch, and before the next player's turn the officers must pursue him, charging whenever they can. If the thief is taken out of action he is placed under arrest by the Watch."
-        },
-        {
-          "result": "2",
-          "name": "Vacant",
-          "text": "Nobody is home and there is nothing worth thieving."
-        },
-        {
-          "result": "3",
-          "name": "Occupied",
-          "text": "The thief has broken into an occupied property. On a passed Initiative test he plunders it as though it were empty. On a failure he ends up in close combat with an unarmed hostile patron, with the characteristics of a Mercenary warband warrior; the higher Initiative strikes first. If the thief is taken out of action he is placed under arrest by the Watch."
-        },
-        {
-          "result": "4-5",
-          "name": "Unoccupied",
-          "text": "The building is unattended and the thief bags loot worth 2D6 gold crowns."
-        },
-        {
-          "result": "6",
-          "name": "Swag!",
-          "text": "Ranald is smiling on the thief. Roll a D6 on the booty chart for what he has purloined."
-        }
-      ]
+     "result": "9",
+     "name": "Marienburg map",
+     "text": ""
     },
     {
-      "title": "Conviction",
-      "description": "Rolled for a warrior who has been arrested, to see what the courts of Marienburg do with him.",
-      "dice": "D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "Gallows!",
-          "text": "The guilty verdict sends the felon to Rijker's Isle to await execution. If the arrest was made by a warband following Guarding the Peace, the other warband may play the special scenario Hangman's Square instead of choosing a core scenario. Otherwise the felon is never seen or heard of again."
-        },
-        {
-          "result": "2",
-          "name": "Sentenced",
-          "text": "The punishment fits the crime. The warrior misses the next D3 games before he is released."
-        },
-        {
-          "result": "3",
-          "name": "Holding",
-          "text": "Thrown behind bars to cool off. The warrior misses the next battle."
-        },
-        {
-          "result": "4",
-          "name": "Bail",
-          "text": "The warrior is sentenced, but bail is set. The warband may pay the constabulary gold crowns equal to his experience points, and he misses the next battle before release; paying double bribes someone high up to sign his release papers and frees him at once."
-        },
-        {
-          "result": "5",
-          "name": "Drunk-Tank",
-          "text": "A night in the clink. The warrior is released before the next battle but misses the post-battle sequence, and gains +1 experience."
-        },
-        {
-          "result": "6",
-          "name": "Acquittal!",
-          "text": "A legal associate of the warband makes the case for the defence. The warrior is released and the constabulary pays 2D6 gold crowns in compensation."
-        }
-      ]
+     "result": "10",
+     "name": "Elven boots",
+     "text": ""
     },
     {
-      "title": "Sinking ship",
-      "description": "Rolled when a boat or ship is holed and starts to go down.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "All Hands Are Lost!",
-          "text": "The boat dives beneath the waves and is gone. Every model aboard is taken out of action."
-        },
-        {
-          "result": "3-4",
-          "name": "Abandon Ship!",
-          "text": "The boat tilts and goes down. Every model may make a normal move, with no running, to leap into the water. A model who cannot get off, or is trapped on a lower deck, is taken out of action."
-        },
-        {
-          "result": "5-10",
-          "name": "Man Overboard!",
-          "text": "The boat will go down in D3 turns. Each warrior must pass a Leadership test to stay aboard and act; otherwise he flings himself overboard. The ship is adrift and cannot move of its own accord."
-        },
-        {
-          "result": "11-12",
-          "name": "Running Repairs!",
-          "text": "A crewman with some carpentry has patched the worst of the damage. The hull has 1 wound and the ship is no longer sinking, but it has taken on so much water that it suffers a -2\" movement penalty."
-        }
-      ]
+     "result": "11",
+     "name": "Custom weapon",
+     "text": "Roll on the Custom Weapons chart."
     },
     {
-      "title": "Subterranean events",
-      "description": "Rolled when a warrior is waylaid in the sewers, and when a model moves onto an unexplored tile underground.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Cave-in!",
-          "text": "The roof has collapsed. Place a marker; the tile is impassable."
-        },
-        {
-          "result": "3",
-          "name": "Sewer Hazard",
-          "text": "Roll a D6 on the sewer hazards chart."
-        },
-        {
-          "result": "4",
-          "name": "Mould",
-          "text": "Every model is stunned by soporific spores unless it passes a Toughness test. The spores have no effect on daemons or undead."
-        },
-        {
-          "result": "5",
-          "name": "Spiders",
-          "text": "Place 2D3 Giant Spiders on the tile."
-        },
-        {
-          "result": "6",
-          "name": "Rats",
-          "text": "Place 2D3 Giant Rats on the tile."
-        },
-        {
-          "result": "7",
-          "name": "Trap",
-          "text": "Roll a D6 on the traps chart."
-        },
-        {
-          "result": "8",
-          "name": "Sconce",
-          "text": "One of the Heroes in the warband takes a torch from the sconce."
-        },
-        {
-          "result": "9",
-          "name": "Fungus",
-          "text": "A Hero collects a batch of Madcap Mushrooms."
-        },
-        {
-          "result": "10",
-          "name": "Powder Store",
-          "text": "Place D3 powder kegs anywhere on the tile."
-        },
-        {
-          "result": "11",
-          "name": "Ratskin Map",
-          "text": "When a warrior holding the ratskin map is first onto an unexplored tile, the tile placed may be re-rolled, and the second result must be accepted. Discard the map after the battle if it was used."
-        },
-        {
-          "result": "12",
-          "name": "Aqueduct!",
-          "text": "A rushing sound takes the party by surprise. Each model entering the tile must pass an Initiative test or fall into the subterranean waterway, and is washed to another tile: determine a random unexplored tile for him to appear on, or any tile that is not a cellar if every tile is revealed."
-        }
-      ]
+     "result": "12",
+     "name": "Profane book",
+     "text": "Roll on the Profane Books chart."
+    }
+   ]
+  },
+  {
+   "title": "Grave robbery",
+   "description": "Rolled when a warrior digs up a grave.",
+   "dice": "D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "1-2",
+     "name": "Zombie!",
+     "text": "A zombie rises from the grave."
     },
     {
-      "title": "Traps",
-      "description": "Rolled when a trap is triggered underground.",
-      "dice": "D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1",
-          "name": "Complex Trap!",
-          "text": "The builder wanted nobody in this place, and the trap can hurt more than one model at a time. Some complex traps go off every time they are triggered, others once only. Roll 2D6 on the complex traps chart."
-        },
-        {
-          "result": "2-5",
-          "name": "Simple Trap",
-          "text": "A quickly rigged device. It only ever affects the model that trips it, and causes a Strength 3 hit with armour saves as normal."
-        },
-        {
-          "result": "6",
-          "name": "Dud!",
-          "text": "The simple trap is broken and will not work unless a trap expert repairs it."
-        }
-      ]
+     "result": "3",
+     "name": "Fresh Corpse",
+     "text": "Collect a corpse."
     },
     {
-      "title": "Complex traps",
-      "description": "Rolled for a complex trap triggered underground.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Boulder!",
-          "text": "A giant boulder falls from the ceiling. The model beneath must pass an Initiative test or take D3 Strength 5 hits with no armour save. The boulder then rolls D6\" in a random direction, and any warrior in its path must pass an Initiative test or take a Strength 5 hit. This trap works only once."
-        },
-        {
-          "result": "3-4",
-          "name": "Chasm!",
-          "text": "The floor splits open and the model drops into a fissure. Any model on the previous tile within 1\" of the edge must take an Initiative test or fall in too. This trap works only once, but a gaping chasm now splits the tile in two."
-        },
-        {
-          "result": "5",
-          "name": "Arrows!",
-          "text": "A hail of D6 Strength 3 arrows. Roll a D6 for each: 1-3 hits, 4-6 misses. Any model on the previous tile within 2\" of the edge rolls again for every arrow that missed its original target, the misses divided among several targets starting with the closest. This trap triggers again: each model entering the tile must pass an Initiative test to avoid it, and a failure resolves the trap afresh."
-        },
-        {
-          "result": "6",
-          "name": "Curse!",
-          "text": "The wizard who oversaw the building hexed every trespasser. Every warrior on the tile next to the unexplored tile is cursed until the end of the game, and a cursed warrior must re-roll any successful to-hit roll or armour save."
-        },
-        {
-          "result": "7",
-          "name": "Swinging Blades!",
-          "text": "Razor-sharp blades swing out from the walls. The first warrior through, and everyone after him, must pass an Initiative test or take two Strength 5 hits. A model that stops on the tile must pass an Initiative test at the start of the next player's turn or take two more Strength 5 hits."
-        },
-        {
-          "result": "8",
-          "name": "Poison Gas!",
-          "text": "Poisoned gas engulfs the warrior, causing D3 Strength 4 hits as he gasps for air. Any other model on the previous tile within 2\" of the edge takes one Strength 4 hit. A warrior immune to poison takes no damage."
-        },
-        {
-          "result": "9",
-          "name": "Sandbox!",
-          "text": "Stone slabs drop from the roof in front of and behind the warband, trapping whoever is on the tile behind the first model onto the unexplored tile, and the space begins to fill with sand. The only way out is a loose stone hiding a switch that resets the trap. Once per turn a different trapped warrior may take an Initiative test to find it, with a cumulative -1 each turn after the first. If their effective Initiative reaches 0 they are taken out of action; make a Toughness test for each model, those that fail did not survive and those that pass recover fully after the battle."
-        },
-        {
-          "result": "10",
-          "name": "Fireball!",
-          "text": "A pillar of fire blasts from the wall. The warrior takes a Strength 5 hit and on a 4+ counts as set on fire. Roll a D6 for each model on the previous tile within 2\" of the edge: on a 4+ he is set on fire too."
-        },
-        {
-          "result": "11",
-          "name": "Deadfall!",
-          "text": "A block of stone descends from the ceiling and blocks all passage. The model who triggered it is cut off from the rest of the warband, but any model on the previous tile within 2\" of the edge may be moved across before the block lands. A model trapped on the wrong side who finds no other way out before the game ends misses the next D3 games."
-        },
-        {
-          "result": "12",
-          "name": "Collapsing Walls!",
-          "text": "The sewer walls close in. The model must pass an Initiative test to dodge, and if he had stopped on the unexplored tile he is moved to within 1\" of the opposite side. On a failure he is crushed and takes a Strength 8 hit. The walls then spring open again, ready for the next intruder."
-        }
-      ]
+     "result": "4",
+     "name": "Trinket",
+     "text": "2D6 gold crowns worth of goods."
     },
     {
+     "result": "5",
+     "name": "Drugs",
+     "text": "Drugs sewn into the corpse, in the time-honoured tradition. Roll a D6: 1 Mandrake Root, 2 Madcap Mushrooms, 3 Crimson Shade, 4 Slaaneshi's Dream, 5 Black Dust, 6 Daemon Dust."
+    },
+    {
+     "result": "6",
+     "name": "Heirloom!",
+     "text": "Roll on the booty chart."
+    }
+   ]
+  },
+  {
+   "title": "Sinking ship",
+   "description": "Rolled when a boat or ship is holed and starts to go down.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2",
+     "name": "All Hands Are Lost!",
+     "text": "The boat dives beneath the waves and is gone. Every model aboard is taken out of action."
+    },
+    {
+     "result": "3-4",
+     "name": "Abandon Ship!",
+     "text": "The boat tilts and goes down. Every model may make a normal move, with no running, to leap into the water. A model who cannot get off, or is trapped on a lower deck, is taken out of action."
+    },
+    {
+     "result": "5-10",
+     "name": "Man Overboard!",
+     "text": "The boat will go down in D3 turns. Each warrior must pass a Leadership test to stay aboard and act; otherwise he flings himself overboard. The ship is adrift and cannot move of its own accord."
+    },
+    {
+     "result": "11-12",
+     "name": "Running Repairs!",
+     "text": "A crewman with some carpentry has patched the worst of the damage. The hull has 1 wound and the ship is no longer sinking, but it has taken on so much water that it suffers a -2\" movement penalty."
+    }
+   ]
+  },
+  {
+   "title": "Subterranean events",
+   "description": "Rolled when a warrior is waylaid in the sewers, and when a model moves onto an unexplored tile underground.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Cave-in!",
+     "text": "The roof has collapsed. Place a marker; the tile is impassable."
+    },
+    {
+     "result": "3",
+     "name": "Sewer Hazard",
+     "text": "Roll a D6 on the sewer hazards chart.",
+     "chart": {
       "title": "Sewer hazards",
       "description": "Rolled for the creatures a warband runs into in the sewers. Another player deploys them in the vacant spaces beside the first model onto the unexplored tile.",
       "dice": "D6",
       "note": "A newly arrived sewer monster always strikes first in the opening round of combat in a player's turn, and surprise-attacks the nearest enemy; other attacks happen in order of Initiative. After every player has taken his turn there is a further turn in which the hazards recover, then move and charge. A sewer monster must always charge the nearest enemy and never attacks another hazard unless a special rule forces it. Warp Bats are only deployed in combat with a model carrying a wyrdstone item.",
-      "umbrella": "",
       "rows": [
-        {
-          "result": "1",
-          "name": "Mutants",
-          "text": "D3 Mutants armed with clubs. Roll once for each on the random mutation chart."
-        },
-        {
-          "result": "2",
-          "name": "Ghoul Nest",
-          "text": "D3 Ghouls."
-        },
-        {
-          "result": "3",
-          "name": "Albino Sewer Lizard",
-          "text": ""
-        },
-        {
-          "result": "4",
-          "name": "Tregara",
-          "text": ""
-        },
-        {
-          "result": "5",
-          "name": "Wolf Rat",
-          "text": ""
-        },
-        {
-          "result": "6",
-          "name": "Warp Bat",
-          "text": ""
-        }
+       {
+        "result": "1",
+        "name": "Mutants",
+        "text": "D3 Mutants armed with clubs. Roll once for each on the random mutation chart."
+       },
+       {
+        "result": "2",
+        "name": "Ghoul Nest",
+        "text": "D3 Ghouls."
+       },
+       {
+        "result": "3",
+        "name": "Albino Sewer Lizard",
+        "text": ""
+       },
+       {
+        "result": "4",
+        "name": "Tregara",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "Wolf Rat",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "Warp Bat",
+        "text": ""
+       }
       ]
+     }
+    },
+    {
+     "result": "4",
+     "name": "Mould",
+     "text": "Every model is stunned by soporific spores unless it passes a Toughness test. The spores have no effect on daemons or undead."
+    },
+    {
+     "result": "5",
+     "name": "Spiders",
+     "text": "Place 2D3 Giant Spiders on the tile."
+    },
+    {
+     "result": "6",
+     "name": "Rats",
+     "text": "Place 2D3 Giant Rats on the tile."
+    },
+    {
+     "result": "7",
+     "name": "Trap",
+     "text": "Roll a D6 on the traps chart.",
+     "chart": {
+      "title": "Traps",
+      "description": "Rolled when a trap is triggered underground.",
+      "dice": "D6",
+      "note": "",
+      "rows": [
+       {
+        "result": "1",
+        "name": "Complex Trap!",
+        "text": "The builder wanted nobody in this place, and the trap can hurt more than one model at a time. Some complex traps go off every time they are triggered, others once only. Roll 2D6 on the complex traps chart."
+       },
+       {
+        "result": "2-5",
+        "name": "Simple Trap",
+        "text": "A quickly rigged device. It only ever affects the model that trips it, and causes a Strength 3 hit with armour saves as normal."
+       },
+       {
+        "result": "6",
+        "name": "Dud!",
+        "text": "The simple trap is broken and will not work unless a trap expert repairs it."
+       }
+      ]
+     }
+    },
+    {
+     "result": "8",
+     "name": "Sconce",
+     "text": "One of the Heroes in the warband takes a torch from the sconce."
+    },
+    {
+     "result": "9",
+     "name": "Fungus",
+     "text": "A Hero collects a batch of Madcap Mushrooms."
+    },
+    {
+     "result": "10",
+     "name": "Powder Store",
+     "text": "Place D3 powder kegs anywhere on the tile."
+    },
+    {
+     "result": "11",
+     "name": "Ratskin Map",
+     "text": "When a warrior holding the ratskin map is first onto an unexplored tile, the tile placed may be re-rolled, and the second result must be accepted. Discard the map after the battle if it was used."
+    },
+    {
+     "result": "12",
+     "name": "Aqueduct!",
+     "text": "A rushing sound takes the party by surprise. Each model entering the tile must pass an Initiative test or fall into the subterranean waterway, and is washed to another tile: determine a random unexplored tile for him to appear on, or any tile that is not a cellar if every tile is revealed."
     }
-  ]
+   ]
+  },
+  {
+   "title": "Complex traps",
+   "description": "Rolled for a complex trap triggered underground.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Boulder!",
+     "text": "A giant boulder falls from the ceiling. The model beneath must pass an Initiative test or take D3 Strength 5 hits with no armour save. The boulder then rolls D6\" in a random direction, and any warrior in its path must pass an Initiative test or take a Strength 5 hit. This trap works only once."
+    },
+    {
+     "result": "3-4",
+     "name": "Chasm!",
+     "text": "The floor splits open and the model drops into a fissure. Any model on the previous tile within 1\" of the edge must take an Initiative test or fall in too. This trap works only once, but a gaping chasm now splits the tile in two."
+    },
+    {
+     "result": "5",
+     "name": "Arrows!",
+     "text": "A hail of D6 Strength 3 arrows. Roll a D6 for each: 1-3 hits, 4-6 misses. Any model on the previous tile within 2\" of the edge rolls again for every arrow that missed its original target, the misses divided among several targets starting with the closest. This trap triggers again: each model entering the tile must pass an Initiative test to avoid it, and a failure resolves the trap afresh."
+    },
+    {
+     "result": "6",
+     "name": "Curse!",
+     "text": "The wizard who oversaw the building hexed every trespasser. Every warrior on the tile next to the unexplored tile is cursed until the end of the game, and a cursed warrior must re-roll any successful to-hit roll or armour save."
+    },
+    {
+     "result": "7",
+     "name": "Swinging Blades!",
+     "text": "Razor-sharp blades swing out from the walls. The first warrior through, and everyone after him, must pass an Initiative test or take two Strength 5 hits. A model that stops on the tile must pass an Initiative test at the start of the next player's turn or take two more Strength 5 hits."
+    },
+    {
+     "result": "8",
+     "name": "Poison Gas!",
+     "text": "Poisoned gas engulfs the warrior, causing D3 Strength 4 hits as he gasps for air. Any other model on the previous tile within 2\" of the edge takes one Strength 4 hit. A warrior immune to poison takes no damage."
+    },
+    {
+     "result": "9",
+     "name": "Sandbox!",
+     "text": "Stone slabs drop from the roof in front of and behind the warband, trapping whoever is on the tile behind the first model onto the unexplored tile, and the space begins to fill with sand. The only way out is a loose stone hiding a switch that resets the trap. Once per turn a different trapped warrior may take an Initiative test to find it, with a cumulative -1 each turn after the first. If their effective Initiative reaches 0 they are taken out of action; make a Toughness test for each model, those that fail did not survive and those that pass recover fully after the battle."
+    },
+    {
+     "result": "10",
+     "name": "Fireball!",
+     "text": "A pillar of fire blasts from the wall. The warrior takes a Strength 5 hit and on a 4+ counts as set on fire. Roll a D6 for each model on the previous tile within 2\" of the edge: on a 4+ he is set on fire too."
+    },
+    {
+     "result": "11",
+     "name": "Deadfall!",
+     "text": "A block of stone descends from the ceiling and blocks all passage. The model who triggered it is cut off from the rest of the warband, but any model on the previous tile within 2\" of the edge may be moved across before the block lands. A model trapped on the wrong side who finds no other way out before the game ends misses the next D3 games."
+    },
+    {
+     "result": "12",
+     "name": "Collapsing Walls!",
+     "text": "The sewer walls close in. The model must pass an Initiative test to dodge, and if he had stopped on the unexplored tile he is moved to within 1\" of the opposite side. On a failure he is crushed and takes a Strength 8 hit. The walls then spring open again, ready for the next intruder."
+    }
+   ]
+  }
+ ]
 }

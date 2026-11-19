@@ -1,753 +1,745 @@
 {
-  "rules": [
+ "rules": [
+  {
+   "title": "Campaign points",
+   "text": "Every warband tracks Campaign Points. Mark a box for every Campaign Point the warband gets, as you would mark experience. Whenever the warband reaches a thick-bordered box, read its plot's achievement chart to see what it has gained. The marked boxes are at 5, 10, 15, 20, 25, 35 and 40; there is no step at 30.",
+   "umbrella": ""
+  },
+  {
+   "title": "Choosing a plot",
+   "text": "Each warband picks one plot at the beginning of the campaign, from those its warband type may follow. Every player may always see what every other player has picked. It does not matter which warbands take part and no player need fight for the side of good: the campaign works with every warband pursuing evil, or every one upholding law and order.",
+   "umbrella": ""
+  },
+  {
+   "title": "Changing plot",
+   "text": "A warband may switch to another plot it is allowed to follow between battles. It loses D6 Campaign Points for doing so.",
+   "umbrella": ""
+  },
+  {
+   "title": "Campaign points once lost",
+   "text": "Losing Campaign Points never takes back an achievement the warband has already reached. Lost points must still be earned again before the warband can reach its next achievement.",
+   "umbrella": ""
+  },
+  {
+   "title": "Winning the campaign",
+   "text": "A warband wins as soon as it completes its plot. A plot is complete when every box on its Campaign Point track is filled and whatever else its 40-point achievement asks for has been done.",
+   "umbrella": ""
+  },
+  {
+   "title": "Starting over",
+   "text": "A player who disbands his warband loses its progress and achievements along with its warriors. He picks a plot for the new warband as if the campaign were beginning. To make up the lost time, the new warband starts with Campaign Points equal to the next lowest amount among the other warbands in the campaign, less D3. The book's own worked example takes the lowest of them instead: the others hold 12, 8 and 9 Campaign Points, a D3 scores 2, and the new warband starts with 8 - 2 = 6.",
+   "umbrella": ""
+  },
+  {
+   "title": "Mounts",
+   "text": "A warband is not restricted to one horse. Every mounted warrior has the Large Target special rule, and every mount raises the warband rating by 20 points.",
+   "umbrella": ""
+  },
+  {
+   "title": "Get in the ring",
+   "text": "On the Heroes' Serious Injuries chart, result 65 is Get in the Ring instead of Sold to the Pits. Left for dead, the warrior is picked up by a passing horde of Chaos, given the mark by one of their seers and made to fight a Warrior of Chaos in the barbarian ring. Roll to see which side charges and fight the battle as normal. If the warrior loses, roll to see whether he is dead or injured, which is a D66 roll of 11-35; if he is not dead he is thrown out of the ring without his armour and weapons and rejoins his warband. If he wins he gains the mutation Blackblood, 2 Experience and 1 Campaign Point, and slips away to rejoin his warband with all his weapons and equipment.",
+   "umbrella": ""
+  },
+  {
+   "title": "Chaos artefacts",
+   "text": "There are four Chaos Artefacts: Ghartok's Skull, the Dragon Scale Armour, the Broadsword of Damnation and the Liber Chaotica. A Norse, Marauder, Possessed, Carnival of Chaos or Beastman warband always gives one to its leader, as the only warrior worthy of it. Any model carrying one who is not a Marauder, Beastman, Norseman, Mutant, Dark Elf, Undead or Chaos Dwarf Hero is subject to stupidity, and counts as having A Thousand Voices permanently cast on him, which lowers his Leadership by 4 and cannot be dispelled. A Chaos Artefact may never be left in the warband's stored equipment: a Hero must carry it, the leader in a Chaotic warband. The only exception is a Tilean Merchant Caravan, which may keep it in a Trade Wagon. Chaos Artefacts cannot be destroyed. If the model carrying one goes out of action, place a marker; any model may pick it up by moving into contact with the marker. If nobody takes it, the model that went out of action keeps it, and if he dies of his Serious Injuries it passes to the warband leader; if the leader dies after the battle, in the exploration phase, it passes to the new leader. If an artefact is ever lost with no owner to be found, the next warband to find a Lesser Artefact finds that Chaos Artefact instead.",
+   "umbrella": ""
+  }
+ ],
+ "battle_rules": [
+  {
+   "title": "The Northern Wastes",
+   "text": "Some scenarios are set in the Northern Wastes, which the scenario always states. The territory is frozen wasteland and forests of darkness and ice, with open woodlands of rotting trees further north.\n\nBitter Cold applies here.\n\nMagical Boon: the winds of magic are strong. A spellcaster, though not a prayer user, gets +1 when rolling for Difficulty. The bonus does not apply on a natural 2.\n\nWinds of Magic: whenever a spellcaster rolls an unmodified 2 for Difficulty he rolls at once on the miscasting chart, and the spell always fails. A roll of 2 may not be re-rolled by any means, a Familiar, a Rabbit's Foot or the Mind Focus skill included.",
+   "umbrella": "Territories"
+  },
+  {
+   "title": "The Cathayan borderlands",
+   "text": "Most scenarios are set in the borderlands, and a scenario that names no territory is played here. The land is blackened forest and wide marsh, with houses on stakes, lake dwellings and ruined temples on firmer ground.\n\nDead Branches: the forest floor is littered with dead branches. A model may not hide in a forest section if it moved that turn.\n\nHowling Wood: a model must pass a Leadership test to enter any forest section.\n\nAcid Ponds: a model entering a lake must at once pass a Toughness test at -1 or go out of action. It tests again every turn it stays in the pond, with a further -1 each turn, and is out of action at once if its Toughness ever reaches 0.",
+   "umbrella": "Territories"
+  },
+  {
+   "title": "Other territories",
+   "text": "Some scenarios are staged in fir woodland and plains, some on the Steppes and some in the Mountains of Mourn, as the scenario states. The plains hold forests, grassy hills, streams and small farming settlements; the Steppes are wide and bare with meandering streams; the Mountains of Mourn are marked by cliffs, rocks, rivers, strange vegetation and trade routes. No special rules apply to a scenario staged in the Steppes or the Mountains of Mourn.",
+   "umbrella": "Territories"
+  },
+  {
+   "title": "Bitter cold",
+   "text": "The Northern Wastes lie under deep snow. Beastmen, Norse, Marauders of Chaos and monsters encountered at random in the Northern Wastes are immune to all of the following except the ice field.\n\nDeep snow: a model without Winter Furs treats snow-covered ground as difficult terrain.\n\nWintery chill: a model without Winter Furs suffers -1 Leadership and -1 Initiative, and Initiative never falls below 1. An Undead warband is immune unless the member is not himself Undead, so necromancers, ghouls and dregs still suffer.\n\nIce field: lakes and rivers are frozen and can be crossed as difficult ground. A model that runs across frozen water must pass an Initiative test or slip and be knocked down; ignore this during heavy snowfall. Each model standing on frozen water at the beginning of its turn tests whether the ice holds: on a 1 on a D6, or a 1 or 2 for a large model, the ice breaks and it falls in. Add 1 to that roll for every model within 2 inches on the ice, or 2 for a large model.\n\nAt the beginning of its turn a model in the water must pass a Strength test to get out. Failing, it suffers -1 Strength for the rest of the game, and goes out of action if its Strength reaches 0. A model within 1 inch may help drag it out by passing a Strength test. Undead do not feel the cold and lose no Strength. A model that fell through the ice and got out again counts as soaked with water, so a Rain Coat gives it no benefit.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Blizzard",
+   "text": "Bad sight: every model's sight is cut to 10 inches. The maximum range of a missile weapon, a blunderbuss excepted, is 10 inches, and no model may charge an enemy more than 10 inches away. Long range modifiers still apply. The Eagle Eyes skill cannot extend sight in a blizzard.\n\nNothing can be set on fire during a blizzard.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Gale",
+   "text": "Not all cats land on their feet: every attempt to leap a gap or make a jump attack is at -1 Initiative, and so is every climb. Jumping down suffers no modifier.\n\nBlown out: roll a D6 when a warrior fires a missile weapon that does not use blackpowder. 1-3, he is at -1 Ballistic Skill. 4-6, he gets +D6 inches of range on that shot; roll for each missile fired.\n\nBlaze spreading: fire from burning trees or buildings can jump to other features. See the fire rules.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Hailstorm",
+   "text": "Hail normally lasts for the opening D3+1 game turns.\n\nFreezing hail: a model not under cover is at -1 to hit in combat and -1 Ballistic Skill. Spellcasters and prayer users make all Difficulty tests at -1.\n\nSkull sized hail: each player rolls a D6 at the beginning of his turn. On a 6 the hailstones grow dangerous until his next turn: every model not in cover takes a Strength 1 hit, and the modifiers above become -2 instead of -1.\n\nAfter a hailstorm nothing can be set on fire at -2, which lasts for the rest of the battle.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Tempest",
+   "text": "The following refer to the swamp and water rules of the Empire in Flames supplement.\n\nSwamps: a swamp hole's sinking area grows by 1 inch in every direction, so a model standing 1 inch from one must test.\n\nMuddy soil: a model running or charging up a hill must pass an Initiative test or move at half speed. Running or charging down a hill, a failed Initiative test rolls it D6 inches down the hill, and it is then knocked down on a 4 or more.\n\nRoaring rivers: no model may swim with or against the current, not even an aquatic one. Crossing a shallow river, a model takes an Initiative test every turn or is knocked down, and a non-aquatic model is swept 6 inches with the current. A model that fails the test in a deep river is swept 6 inches with the flow and has D3+1 rounds to swim ashore, taking an Initiative test every turn or being swept another 6 inches. Passing in time, it ends its turn at the nearest bank and may leave the river the following turn; failing, it is taken out of action.\n\nSoaked with water: a model that fell in water is soaked, and a Rain Coat will not protect it. Without a Rain Coat it must score 4 or more on a D6 to use blackpowder weapons, explosives, fire arrows, fire balls or fire bombs. A torch is useless for the rest of the battle; a lantern works as normal.\n\nQuenches the fire: while it rains nothing can be set on fire except by lightning. Models, buildings and forests already alight are put out at once, but a building that burned once may not be entered for the rest of the battle. After a tempest nothing can be set on fire at -2, which lasts for the rest of the battle.\n\nRoll 3D6 at the beginning of each turn on the thunder and lightning chart.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Fog",
+   "text": "Roll a D6 to see what kind of fog veils the battlefield.\n\n1 Haze: the maximum range of all missile weapons is 18 inches, following the bad sight rule under blizzard.\n2-5 Thick mist: sight is 12 inches, and every model is at -1 BS.\n6 Pea soup: every model is at -2 BS and sight is 2D6 inches. A model that cannot see a friendly model becomes despondent and suffers the penalties for being all alone, which calls for an immediate Leadership test.",
+   "umbrella": "Weather"
+  },
+  {
+   "title": "Setting warriors on fire",
+   "text": "The chance of catching fire differs by what caused it, 5 or more with a brazier iron, 4 or more with fire arrows, but the effect is always the same.\n\nA warrior on fire rolls a D6 in the recovery phase and needs 4 or more to put himself out. Otherwise he takes a Strength 4 hit and can do nothing but move that turn. An ally in base contact may try to put him out, needing 4 or more.",
+   "umbrella": "Fire"
+  },
+  {
+   "title": "Setting buildings on fire",
+   "text": "Only equipment whose rules say so can set a building or forest alight; everything else sets only models on fire. Torches, brazier irons and fire arrows can.\n\nA model in base contact with a building may set it alight with a brazier iron or torch if it neither shoots nor fights that turn. Fire arrows are shot at a building in the shooting phase. A torch or brazier iron may also be thrown up to 6 inches to light a building, but the item is then lost.\n\nThe D6 needed to start the fire is 4 or more for a wooden building and 6 for a stone one. A torch or fire arrows add 1; a fire bomb, brazier iron or other item adds nothing. After a tempest or hailstorm, or during a blizzard, apply -2: during a tempest or blizzard nothing can be set on fire at all, and the -2 applies once one of them has set in and lasts for the rest of the battle. A model inside the building, setting fire to the furniture, starts the fire automatically.\n\nOnce a building is alight roll a D6 on the burning house chart at the start of each player's turn, adding 1 for each turn the fire has burned.",
+   "umbrella": "Fire",
+   "chart": {
+    "dice": "D6",
+    "note": "Add 1 to the roll for each turn the fire has been burning.",
+    "rows": [
+     {
+      "result": "1",
+      "name": "Gone out",
+      "text": "The fire sputters out of its own accord. Make no further rolls on this chart."
+     },
+     {
+      "result": "2-5",
+      "name": "Rising flames",
+      "text": "Any model within 2 inches and inside the building must take a Toughness test, and on a failure suffers D3 Strength 2 hits with no armour save from smoke and minor burns. Anyone wishing to enter the building must pass a Leadership test."
+     },
+     {
+      "result": "6",
+      "name": "Raging inferno",
+      "text": "The building is totally ablaze. No model may enter it, and anyone within 2 inches and inside takes D3 Strength 3 hits. A model wishing to get out must pass an Initiative test or stay trapped."
+     },
+     {
+      "result": "7+",
+      "name": "Collapse",
+      "text": "The building collapses. Any model inside and not stunned must pass an Initiative test to escape, with -1 to its Initiative if it is knocked down. A model that fails is crushed and taken out of action. The building now counts as impassable terrain."
+     }
+    ],
+    "description": "Rolled on a D6 at the start of each player's turn once a building has been lit."
+   }
+  },
+  {
+   "title": "Setting forests on fire",
+   "text": "A forest follows the same rules as a building, and anything that can set a building alight can set a forest alight. The D6 needed is 2 or more for rotting trees and 4 or more for normal forest, with the same modifiers as a building.\n\nAny model within 2 inches of a burning forest section suffers D3 Strength 3 hits with no armour saves allowed.",
+   "umbrella": "Fire"
+  },
+  {
+   "title": "Monsters and other non-player models",
+   "text": "Positioning: non-player models are placed within 6 inches of a randomly determined board edge and stay within 2 inches of another member of their group at all times. They are placed, and stay unless their own rules say otherwise, at ground level in the open. If one player caused them to appear, by rolling a random encounter for instance, he places them, but they may not be placed within 12 inches of any warband model.\n\nAlignment: unless the scenario says otherwise, roll a D6 once for each group.\n1 Passive: the model stays where it is until a warband attacks and hits it, and is hostile from then on.\n2-5 Hostile: the model is hostile and moves as described under the monster turn.\n6 Allies: if the model is of the same race as a member of one of the warbands, Hired Swords included, it serves that warband for this battle, so Gors may ally with a Beastmen warband. If it could join more than one warband, determine which at random. Otherwise it is hostile.\n\nMonster turn: every creature not under a player's control has a turn of its own. Unless a separate monster turn is already in use, it falls just before the next turn of the player in whose turn the non-player models appeared, so after every player has had one more turn. If the monsters belong to the scenario, the monster turn comes after the last player's turn. Monsters are not a warband of their own and take no rout tests.",
+   "umbrella": ""
+  }
+ ],
+ "charts": [
+  {
+   "title": "Perilous phenomenon",
+   "description": "Rolled when a D6 at the start of a player's turn comes up 1. Only one event happens per battle.",
+   "dice": "D66",
+   "note": "If the event needs a forest or a swamp and the table holds none, roll again.",
+   "umbrella": "",
+   "rows": [
     {
-      "title": "Campaign points",
-      "text": "Every warband tracks Campaign Points. Mark a box for every Campaign Point the warband gets, as you would mark experience. Whenever the warband reaches a thick-bordered box, read its plot's achievement chart to see what it has gained. The marked boxes are at 5, 10, 15, 20, 25, 35 and 40; there is no step at 30.",
-      "umbrella": ""
+     "result": "11-15",
+     "name": "Is it some kind of a monster?",
+     "text": "Someone or something draws near. Roll on the monster encounter chart for the region to see what the warbands run into, and place the models as the bestiary describes. They always attack the nearest model not generated by the encounter. If that model is already in close combat, they attack both participants, dividing their attacks evenly among opposing models where they can."
     },
     {
-      "title": "Choosing a plot",
-      "text": "Each warband picks one plot at the beginning of the campaign, from those its warband type may follow. Every player may always see what every other player has picked. It does not matter which warbands take part and no player need fight for the side of good: the campaign works with every warband pursuing evil, or every one upholding law and order.",
-      "umbrella": ""
+     "result": "16",
+     "name": "Desertion",
+     "text": "One randomly determined non-animal henchman from each warband must pass an immediate Leadership test or be removed from the roster."
     },
     {
-      "title": "Changing plot",
-      "text": "A warband may switch to another plot it is allowed to follow between battles. It loses D6 Campaign Points for doing so.",
-      "umbrella": ""
+     "result": "21",
+     "name": "Earthquake",
+     "text": "Roll a D3 for how many turns the earthquake lasts. While it shakes, all movement is halved, all Initiative tests are at -2 and all shooting and close combat rolls to hit are at -1."
     },
     {
-      "title": "Campaign points once lost",
-      "text": "Losing Campaign Points never takes back an achievement the warband has already reached. Lost points must still be earned again before the warband can reach its next achievement.",
-      "umbrella": ""
+     "result": "22",
+     "name": "Scandalmonger",
+     "text": "An informant sells a chart showing the Chaos Dragon's lair for D3x25 gold crowns. If paid, roll a D6: on 1-2 the information is lies and useless; on 3 or more the warband may from now on choose to play the Chaos Dragon Hunt scenario. If that scenario has already been played, ignore this event and roll again."
     },
     {
-      "title": "Winning the campaign",
-      "text": "A warband wins as soon as it completes its plot. A plot is complete when every box on its Campaign Point track is filled and whatever else its 40-point achievement asks for has been done.",
-      "umbrella": ""
+     "result": "23",
+     "name": "Greedy Find",
+     "text": "One of the warbands' henchmen finds a precious gem in a monument. Determine which warband makes the find, then pick the henchman at random. On a successful Leadership test the gem goes to the leader and 2D6+10 gold crowns go to the stash. On a failed test the henchman pockets it and is struck from the roster before the next battle."
     },
     {
-      "title": "Starting over",
-      "text": "A player who disbands his warband loses its progress and achievements along with its warriors. He picks a plot for the new warband as if the campaign were beginning. To make up the lost time, the new warband starts with Campaign Points equal to the next lowest amount among the other warbands in the campaign, less D3. The book's own worked example takes the lowest of them instead: the others hold 12, 8 and 9 Campaign Points, a D3 scores 2, and the new warband starts with 8 - 2 = 6.",
-      "umbrella": ""
+     "result": "24",
+     "name": "Swamp Flies",
+     "text": "Every model standing in a swamp section is at -1 to hit in close combat and -1 to hit at range. These modifiers do not stack with skills or mutations based on flies."
     },
     {
-      "title": "Mounts",
-      "text": "A warband is not restricted to one horse. Every mounted warrior has the Large Target special rule, and every mount raises the warband rating by 20 points.",
-      "umbrella": ""
+     "result": "25",
+     "name": "Butchered Bodies",
+     "text": "Mutilated corpses are found. Every model in a randomly determined swamp section that is not immune to fear must pass an all alone test or flee the section at full speed towards the closest board edge; it may come back once it rallies. Any model wishing to enter the section must test too, and ends its turn in front of the swamp if it fails. Mark the section."
     },
     {
-      "title": "Get in the ring",
-      "text": "On the Heroes' Serious Injuries chart, result 65 is Get in the Ring instead of Sold to the Pits. Left for dead, the warrior is picked up by a passing horde of Chaos, given the mark by one of their seers and made to fight a Warrior of Chaos in the barbarian ring. Roll to see which side charges and fight the battle as normal. If the warrior loses, roll to see whether he is dead or injured, which is a D66 roll of 11-35; if he is not dead he is thrown out of the ring without his armour and weapons and rejoins his warband. If he wins he gains the mutation Blackblood, 2 Experience and 1 Campaign Point, and slips away to rejoin his warband with all his weapons and equipment.",
-      "umbrella": ""
+     "result": "26",
+     "name": "Maddened Sow",
+     "text": "A model standing in a forest section, 8 inches from another model, is attacked by a wild sow. Use the boar rules from the bestiary; its rage makes it immune to fear, and it counts as charging. If an animal or a ghoul kills the boar, it spends D3 turns feeding on the corpse."
     },
     {
-      "title": "Chaos artefacts",
-      "text": "There are four Chaos Artefacts: Ghartok's Skull, the Dragon Scale Armour, the Broadsword of Damnation and the Liber Chaotica. A Norse, Marauder, Possessed, Carnival of Chaos or Beastman warband always gives one to its leader, as the only warrior worthy of it. Any model carrying one who is not a Marauder, Beastman, Norseman, Mutant, Dark Elf, Undead or Chaos Dwarf Hero is subject to stupidity, and counts as having A Thousand Voices permanently cast on him, which lowers his Leadership by 4 and cannot be dispelled. A Chaos Artefact may never be left in the warband's stored equipment: a Hero must carry it, the leader in a Chaotic warband. The only exception is a Tilean Merchant Caravan, which may keep it in a Trade Wagon. Chaos Artefacts cannot be destroyed. If the model carrying one goes out of action, place a marker; any model may pick it up by moving into contact with the marker. If nobody takes it, the model that went out of action keeps it, and if he dies of his Serious Injuries it passes to the warband leader; if the leader dies after the battle, in the exploration phase, it passes to the new leader. If an artefact is ever lost with no owner to be found, the next warband to find a Lesser Artefact finds that Chaos Artefact instead.",
-      "umbrella": ""
-    }
-  ],
-  "battle_rules": [
-    {
-      "title": "The Northern Wastes",
-      "text": "Some scenarios are set in the Northern Wastes, which the scenario always states. The territory is frozen wasteland and forests of darkness and ice, with open woodlands of rotting trees further north.\n\nBitter Cold applies here.\n\nMagical Boon: the winds of magic are strong. A spellcaster, though not a prayer user, gets +1 when rolling for Difficulty. The bonus does not apply on a natural 2.\n\nWinds of Magic: whenever a spellcaster rolls an unmodified 2 for Difficulty he rolls at once on the miscasting chart, and the spell always fails. A roll of 2 may not be re-rolled by any means, a Familiar, a Rabbit's Foot or the Mind Focus skill included.",
-      "umbrella": "Territories"
-    },
-    {
-      "title": "The Cathayan borderlands",
-      "text": "Most scenarios are set in the borderlands, and a scenario that names no territory is played here. The land is blackened forest and wide marsh, with houses on stakes, lake dwellings and ruined temples on firmer ground.\n\nDead Branches: the forest floor is littered with dead branches. A model may not hide in a forest section if it moved that turn.\n\nHowling Wood: a model must pass a Leadership test to enter any forest section.\n\nAcid Ponds: a model entering a lake must at once pass a Toughness test at -1 or go out of action. It tests again every turn it stays in the pond, with a further -1 each turn, and is out of action at once if its Toughness ever reaches 0.",
-      "umbrella": "Territories"
-    },
-    {
-      "title": "Other territories",
-      "text": "Some scenarios are staged in fir woodland and plains, some on the Steppes and some in the Mountains of Mourn, as the scenario states. The plains hold forests, grassy hills, streams and small farming settlements; the Steppes are wide and bare with meandering streams; the Mountains of Mourn are marked by cliffs, rocks, rivers, strange vegetation and trade routes. No special rules apply to a scenario staged in the Steppes or the Mountains of Mourn.",
-      "umbrella": "Territories"
-    },
-    {
-      "title": "Bitter cold",
-      "text": "The Northern Wastes lie under deep snow. Beastmen, Norse, Marauders of Chaos and monsters encountered at random in the Northern Wastes are immune to all of the following except the ice field.\n\nDeep snow: a model without Winter Furs treats snow-covered ground as difficult terrain.\n\nWintery chill: a model without Winter Furs suffers -1 Leadership and -1 Initiative, and Initiative never falls below 1. An Undead warband is immune unless the member is not himself Undead, so necromancers, ghouls and dregs still suffer.\n\nIce field: lakes and rivers are frozen and can be crossed as difficult ground. A model that runs across frozen water must pass an Initiative test or slip and be knocked down; ignore this during heavy snowfall. Each model standing on frozen water at the beginning of its turn tests whether the ice holds: on a 1 on a D6, or a 1 or 2 for a large model, the ice breaks and it falls in. Add 1 to that roll for every model within 2 inches on the ice, or 2 for a large model.\n\nAt the beginning of its turn a model in the water must pass a Strength test to get out. Failing, it suffers -1 Strength for the rest of the game, and goes out of action if its Strength reaches 0. A model within 1 inch may help drag it out by passing a Strength test. Undead do not feel the cold and lose no Strength. A model that fell through the ice and got out again counts as soaked with water, so a Rain Coat gives it no benefit.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Blizzard",
-      "text": "Bad sight: every model's sight is cut to 10 inches. The maximum range of a missile weapon, a blunderbuss excepted, is 10 inches, and no model may charge an enemy more than 10 inches away. Long range modifiers still apply. The Eagle Eyes skill cannot extend sight in a blizzard.\n\nNothing can be set on fire during a blizzard.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Gale",
-      "text": "Not all cats land on their feet: every attempt to leap a gap or make a jump attack is at -1 Initiative, and so is every climb. Jumping down suffers no modifier.\n\nBlown out: roll a D6 when a warrior fires a missile weapon that does not use blackpowder. 1-3, he is at -1 Ballistic Skill. 4-6, he gets +D6 inches of range on that shot; roll for each missile fired.\n\nBlaze spreading: fire from burning trees or buildings can jump to other features. See the fire rules.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Hailstorm",
-      "text": "Hail normally lasts for the opening D3+1 game turns.\n\nFreezing hail: a model not under cover is at -1 to hit in combat and -1 Ballistic Skill. Spellcasters and prayer users make all Difficulty tests at -1.\n\nSkull sized hail: each player rolls a D6 at the beginning of his turn. On a 6 the hailstones grow dangerous until his next turn: every model not in cover takes a Strength 1 hit, and the modifiers above become -2 instead of -1.\n\nAfter a hailstorm nothing can be set on fire at -2, which lasts for the rest of the battle.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Tempest",
-      "text": "The following refer to the swamp and water rules of the Empire in Flames supplement.\n\nSwamps: a swamp hole's sinking area grows by 1 inch in every direction, so a model standing 1 inch from one must test.\n\nMuddy soil: a model running or charging up a hill must pass an Initiative test or move at half speed. Running or charging down a hill, a failed Initiative test rolls it D6 inches down the hill, and it is then knocked down on a 4 or more.\n\nRoaring rivers: no model may swim with or against the current, not even an aquatic one. Crossing a shallow river, a model takes an Initiative test every turn or is knocked down, and a non-aquatic model is swept 6 inches with the current. A model that fails the test in a deep river is swept 6 inches with the flow and has D3+1 rounds to swim ashore, taking an Initiative test every turn or being swept another 6 inches. Passing in time, it ends its turn at the nearest bank and may leave the river the following turn; failing, it is taken out of action.\n\nSoaked with water: a model that fell in water is soaked, and a Rain Coat will not protect it. Without a Rain Coat it must score 4 or more on a D6 to use blackpowder weapons, explosives, fire arrows, fire balls or fire bombs. A torch is useless for the rest of the battle; a lantern works as normal.\n\nQuenches the fire: while it rains nothing can be set on fire except by lightning. Models, buildings and forests already alight are put out at once, but a building that burned once may not be entered for the rest of the battle. After a tempest nothing can be set on fire at -2, which lasts for the rest of the battle.\n\nRoll 3D6 at the beginning of each turn on the thunder and lightning chart.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Fog",
-      "text": "Roll a D6 to see what kind of fog veils the battlefield.\n\n1 Haze: the maximum range of all missile weapons is 18 inches, following the bad sight rule under blizzard.\n2-5 Thick mist: sight is 12 inches, and every model is at -1 BS.\n6 Pea soup: every model is at -2 BS and sight is 2D6 inches. A model that cannot see a friendly model becomes despondent and suffers the penalties for being all alone, which calls for an immediate Leadership test.",
-      "umbrella": "Weather"
-    },
-    {
-      "title": "Setting warriors on fire",
-      "text": "The chance of catching fire differs by what caused it, 5 or more with a brazier iron, 4 or more with fire arrows, but the effect is always the same.\n\nA warrior on fire rolls a D6 in the recovery phase and needs 4 or more to put himself out. Otherwise he takes a Strength 4 hit and can do nothing but move that turn. An ally in base contact may try to put him out, needing 4 or more.",
-      "umbrella": "Fire"
-    },
-    {
-      "title": "Setting buildings on fire",
-      "text": "Only equipment whose rules say so can set a building or forest alight; everything else sets only models on fire. Torches, brazier irons and fire arrows can.\n\nA model in base contact with a building may set it alight with a brazier iron or torch if it neither shoots nor fights that turn. Fire arrows are shot at a building in the shooting phase. A torch or brazier iron may also be thrown up to 6 inches to light a building, but the item is then lost.\n\nThe D6 needed to start the fire is 4 or more for a wooden building and 6 for a stone one. A torch or fire arrows add 1; a fire bomb, brazier iron or other item adds nothing. After a tempest or hailstorm, or during a blizzard, apply -2: during a tempest or blizzard nothing can be set on fire at all, and the -2 applies once one of them has set in and lasts for the rest of the battle. A model inside the building, setting fire to the furniture, starts the fire automatically.\n\nOnce a building is alight roll a D6 on the burning house chart at the start of each player's turn, adding 1 for each turn the fire has burned.",
-      "umbrella": "Fire",
-      "chart": {
-        "dice": "D6",
-        "note": "Add 1 to the roll for each turn the fire has been burning.",
-        "rows": [
-          {
-            "result": "1",
-            "name": "Gone out",
-            "text": "The fire sputters out of its own accord. Make no further rolls on this chart."
-          },
-          {
-            "result": "2-5",
-            "name": "Rising flames",
-            "text": "Any model within 2 inches and inside the building must take a Toughness test, and on a failure suffers D3 Strength 2 hits with no armour save from smoke and minor burns. Anyone wishing to enter the building must pass a Leadership test."
-          },
-          {
-            "result": "6",
-            "name": "Raging inferno",
-            "text": "The building is totally ablaze. No model may enter it, and anyone within 2 inches and inside takes D3 Strength 3 hits. A model wishing to get out must pass an Initiative test or stay trapped."
-          },
-          {
-            "result": "7+",
-            "name": "Collapse",
-            "text": "The building collapses. Any model inside and not stunned must pass an Initiative test to escape, with -1 to its Initiative if it is knocked down. A model that fails is crushed and taken out of action. The building now counts as impassable terrain."
-          }
-        ],
-        "description": "Rolled on a D6 at the start of each player's turn once a building has been lit."
-      }
-    },
-    {
-      "title": "Setting forests on fire",
-      "text": "A forest follows the same rules as a building, and anything that can set a building alight can set a forest alight. The D6 needed is 2 or more for rotting trees and 4 or more for normal forest, with the same modifiers as a building.\n\nAny model within 2 inches of a burning forest section suffers D3 Strength 3 hits with no armour saves allowed.",
-      "umbrella": "Fire"
-    },
-    {
-      "title": "Perilous phenomenon",
-      "text": "At the start of each player's turn roll a D6. On a 1, roll a D66 on the perilous phenomenon chart. Once an event has happened no further happenings take place, so make no more rolls.\n\nSome happenings take place in a forest or a swamp. If the table holds no such terrain, roll again.",
-      "umbrella": ""
-    },
-    {
-      "title": "Monsters and other non-player models",
-      "text": "Positioning: non-player models are placed within 6 inches of a randomly determined board edge and stay within 2 inches of another member of their group at all times. They are placed, and stay unless their own rules say otherwise, at ground level in the open. If one player caused them to appear, by rolling a random encounter for instance, he places them, but they may not be placed within 12 inches of any warband model.\n\nAlignment: unless the scenario says otherwise, roll a D6 once for each group.\n1 Passive: the model stays where it is until a warband attacks and hits it, and is hostile from then on.\n2-5 Hostile: the model is hostile and moves as described under the monster turn.\n6 Allies: if the model is of the same race as a member of one of the warbands, Hired Swords included, it serves that warband for this battle, so Gors may ally with a Beastmen warband. If it could join more than one warband, determine which at random. Otherwise it is hostile.\n\nMonster turn: every creature not under a player's control has a turn of its own. Unless a separate monster turn is already in use, it falls just before the next turn of the player in whose turn the non-player models appeared, so after every player has had one more turn. If the monsters belong to the scenario, the monster turn comes after the last player's turn. Monsters are not a warband of their own and take no rout tests.",
-      "umbrella": ""
-    }
-  ],
-  "charts": [
-    {
-      "title": "Perilous phenomenon",
-      "description": "Rolled when a D6 at the start of a player's turn comes up 1. Only one event happens per battle.",
-      "dice": "D66",
-      "note": "If the event needs a forest or a swamp and the table holds none, roll again.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "11-15",
-          "name": "Is it some kind of a monster?",
-          "text": "Someone or something draws near. Roll on the monster encounter chart for the region to see what the warbands run into, and place the models as the bestiary describes. They always attack the nearest model not generated by the encounter. If that model is already in close combat, they attack both participants, dividing their attacks evenly among opposing models where they can."
-        },
-        {
-          "result": "16",
-          "name": "Desertion",
-          "text": "One randomly determined non-animal henchman from each warband must pass an immediate Leadership test or be removed from the roster."
-        },
-        {
-          "result": "21",
-          "name": "Earthquake",
-          "text": "Roll a D3 for how many turns the earthquake lasts. While it shakes, all movement is halved, all Initiative tests are at -2 and all shooting and close combat rolls to hit are at -1."
-        },
-        {
-          "result": "22",
-          "name": "Scandalmonger",
-          "text": "An informant sells a chart showing the Chaos Dragon's lair for D3x25 gold crowns. If paid, roll a D6: on 1-2 the information is lies and useless; on 3 or more the warband may from now on choose to play the Chaos Dragon Hunt scenario. If that scenario has already been played, ignore this event and roll again."
-        },
-        {
-          "result": "23",
-          "name": "Greedy Find",
-          "text": "One of the warbands' henchmen finds a precious gem in a monument. Determine which warband makes the find, then pick the henchman at random. On a successful Leadership test the gem goes to the leader and 2D6+10 gold crowns go to the stash. On a failed test the henchman pockets it and is struck from the roster before the next battle."
-        },
-        {
-          "result": "24",
-          "name": "Swamp Flies",
-          "text": "Every model standing in a swamp section is at -1 to hit in close combat and -1 to hit at range. These modifiers do not stack with skills or mutations based on flies."
-        },
-        {
-          "result": "25",
-          "name": "Butchered Bodies",
-          "text": "Mutilated corpses are found. Every model in a randomly determined swamp section that is not immune to fear must pass an all alone test or flee the section at full speed towards the closest board edge; it may come back once it rallies. Any model wishing to enter the section must test too, and ends its turn in front of the swamp if it fails. Mark the section."
-        },
-        {
-          "result": "26",
-          "name": "Maddened Sow",
-          "text": "A model standing in a forest section, 8 inches from another model, is attacked by a wild sow. Use the boar rules from the bestiary; its rage makes it immune to fear, and it counts as charging. If an animal or a ghoul kills the boar, it spends D3 turns feeding on the corpse."
-        },
-        {
-          "result": "31",
-          "name": "Curious Bloom",
-          "text": "A random hero standing within 2 inches of a forest section, not subject to frenzy or stupidity, neither knocked down nor stunned and not in close combat, rolls on the curious bloom chart."
-        },
-        {
-          "result": "32",
-          "name": "Mutated Trees",
-          "text": "Every model standing in a random forest section takes a single Strength 3 hit at once and another at the beginning of its recovery phase for as long as it stands in the section. Because they are shaken, models may ignore difficult terrain and move out of the section at normal speed."
-        },
-        {
-          "result": "33",
-          "name": "Old Well",
-          "text": "A random model, not a large one, takes a single Strength 3 hit falling into an old well, and finds the equipment of the man who broke his neck there before him. If it was not taken out of action by the fall, roll on the old well chart for what it finds.\n\nThe well is filled with ivy. The model may try to climb out at the beginning of its next turn by passing a single Initiative test. Failing, it stays another round; passing, it escapes and may move no further that turn, though it may use magic. A player may leave a model in the well if he likes: it cannot be attacked or affected by any spell or missile, and can do nothing in the well but climb."
-        },
-        {
-          "result": "34",
-          "name": "Bog Octopus",
-          "text": "The model standing closest to the largest swamp or water feature is attacked by a bog octopus. Re-roll this result if there is no such scenery. If the victim fails a Strength test it is dragged under, counts as drowned and is taken out of action, and the player rolls for injuries at the end of the game."
-        },
-        {
-          "result": "35",
-          "name": "Hot Hail",
-          "text": "A hailstorm lasting D3 rounds. See the hailstorm rules."
-        },
-        {
-          "result": "36",
-          "name": "Sling Trap",
-          "text": "One randomly determined model standing in a forest section, rolling again for a mounted model, is pulled up a tree but unties itself. Unless it has the Acrobat skill it is automatically knocked down, even if a rule would prevent it. An animal cannot untie itself, counts as taken out of action and survives after the battle only on a 4 or more rather than a 3 or more, because the hunter who set the trap finds it first."
-        },
-        {
-          "result": "41",
-          "name": "Contamination",
-          "text": "A diseased wolf pounces on a randomly determined model. See Wolf in the bestiary.\n\nContagion: a wounded model must at once test against its Toughness unless it is immune to poison. Failing, it counts as infected with Manticore Spoor and rolls a D6 at the beginning of each of its turns: on a 1 it loses a wound, and on a 6 the poison ends and it tests no more."
-        },
-        {
-          "result": "42-43",
-          "name": "Belandysh comes",
-          "text": "Belandysh, the Condemned Champion of Tchar, enters the battlefield. Use a scatter dice for a random point at one side to place him, and the rules for non-player models in the bestiary. If any model already holds the Broadsword of Damnation, roll again on this chart."
-        },
-        {
-          "result": "44",
-          "name": "Storm",
-          "text": "For the next D3 turns apply gale and tempest. Roll a D6 as well: on 4 or more apply thunder and lightning too. In a scenario set in the Northern Wastes, blizzard replaces tempest."
-        },
-        {
-          "result": "45",
-          "name": "Ooops",
-          "text": "A random model not in close combat is knocked down if it fails an Initiative test. It may then make a Leadership test to recognise the obstacle as a healing herb: passing, add one healing herb to the warband's stash for a henchman, or to his equipment for a hero."
-        },
-        {
-          "result": "46",
-          "name": "Lava Tunnels",
-          "text": "For the rest of the battle each player rolls a D6 at the beginning of his turn. On a 1 the earth splits beneath one of his models at random and sprays it with lava: it must pass an Initiative test or take a Strength 4 hit, and if wounded it is set on fire on a further D6 roll of 4 or more."
-        },
-        {
-          "result": "51",
-          "name": "Blaze",
-          "text": "One piece of terrain chosen at random bursts into flames. Any model inside takes a Strength 3 hit unless it moves outside the same turn, and any model within 2 inches of its edges takes a Strength 2 hit from the smoke and heat unless it moves further away. For the rest of the game the terrain piece causes fear, and anyone wishing to enter it must first pass a test as though charging an enemy that causes fear."
-        },
-        {
-          "result": "52",
-          "name": "Fountain of Blood",
-          "text": "For the rest of the game, whenever a model is taken out of action in close combat, the model that did it must take a Strength test or be knocked down by a torrent of blood pouring from the ground. Others in the combat are not affected."
-        },
-        {
-          "result": "53",
-          "name": "Screaming Trees",
-          "text": "One randomly determined piece of terrain starts to shriek. Any warband member within 8 inches takes a Strength 1 hit with no armour saves and is at -1 on all rolls to hit, in close combat and shooting, while the screaming lasts. No spells or prayers may be cast within that radius. Roll a D3 for how many turns it lasts."
-        },
-        {
-          "result": "54",
-          "name": "Daemonic Steed",
-          "text": "A wild daemonic horse is loose. At the end of each turn it moves 8 inches in a random direction. A hero who can move adjacent to it and passes both a Strength and a Leadership test breaks the horse and claims it for his own."
-        },
-        {
-          "result": "55",
-          "name": "Shard of Wyrdstone",
-          "text": "A large chunk of wyrdstone falls to the ground in the centre of the field. Any warband member who begins his turn within 4 inches of the shard rolls 2D6: on a 2 he is turned into a Spawn of Chaos, removed from the roster and moved at random; on a 12 he permanently gains a random mutation. A warband member who can reach the wyrdstone may spend a turn chipping D3 shards from it. Because it is so volatile, no warband member stays long enough to make more than one roll."
-        },
-        {
-          "result": "56",
-          "name": "The Old Crone",
-          "text": "Determine at random which terrain feature the hag inhabits. For 3D6 gold crowns she works a miracle or a malediction, once per turn. If a hero pays, roll a D6 for which she chooses.\n\n1 Cursed: the approaching model is cursed instead, and permanently loses 1 from a randomly determined characteristic.\n2-3 Hex: she lays the same malady on a hero chosen from another warband.\n4 or more Miracle: she lifts any curse, heals any lost wounds, cures any mutation or removes a serious injury from a hero of your choice."
-        },
-        {
-          "result": "61",
-          "name": "Plane of Chaos",
-          "text": "D3 random terrain pieces are removed. Any warband member on such a piece must pass an Initiative test or be swallowed up with it, which counts as being taken out of action."
-        },
-        {
-          "result": "62",
-          "name": "Runaway Wagon",
-          "text": "A blazing caravan wagon appears from a random table edge. The horses are frantic and run in random directions at the end of each turn. Any warband can take the wagon by boarding it with a warrior, and it takes at least two warband members a full turn to put the fire out.\n\nAt the end of the game, whoever controls the wagon rolls for each of the following if the fire was put out, the different chances standing for the merchandise catching fire: 5 or more, D3 Cathayan silk cloaks; 5 or more, a Tome of Magic; 4 or more, D3 longbows and D3 quivers of hunting arrows; 3 or more, D3 swords; and the wagon itself automatically. A human warband also keeps any surviving draft horses and may use them for the wagon or as riding horses."
-        },
-        {
-          "result": "63",
-          "name": "War of the Gods",
-          "text": "Roll a D6 twice, ignoring 5-6 and duplicates, for which gods are involved: 1 Khorne, 2 Slaanesh, 3 Nurgle, 4 Tzeentch. Roll 2D6 for each warband leader affiliated with those gods. On 3 or more he gains the following until the end of the game, as well as hatred of the opposing god: Khorne +1 Strength, Nurgle +1 Toughness, Tzeentch +1 Leadership, Slaanesh +1 Attack. On a 2 he mutates and becomes a Spawn of Chaos under his player's control permanently; if the warband already includes a Spawn it is abandoned after the battle, otherwise it may be kept. Norse, Beastmen and Possessed may pick a god beforehand."
-        },
-        {
-          "result": "64",
-          "name": "Blessings of Father Nurgle",
-          "text": "Nurglings swarm the battlefield dropping presents at their victims' feet. Each hero in a warband may open one present, rolling on the blessings of Father Nurgle chart."
-        },
-        {
-          "result": "65",
-          "name": "Suffocating Heat",
-          "text": "Every model wearing light or heavy armour, Ithilmar, Gromril or Cathayan plate included, suffers -1 Movement and -1 Leadership. Undead and other models immune to psychology are unaffected. The heat lasts D6 turns."
-        },
-        {
-          "result": "66",
-          "name": "A time when man became beast and beast became man",
-          "text": "Roll 2D6 for every warrior on the table, not counting animals or large and gigantic models. On a 2 or a 12 he turns into a Gor and loses any ranged weapons he carried. His profile stays as it is, except that his Movement becomes 5 and his maximum stats become a Gor's; anything above that is lowered at once. Roll a D6 for every animal on the table: on 1-2 it becomes a Warhound of Chaos. Undead never transform.\n\nA transformed warband member keeps serving a Chaotic warband; otherwise he counts as a non-player model for the rest of the game. After the battle every hero gets one attempt to recover, passing a Leadership test. Failing, he stays a Gor and either leaves the warband or stays if it is Chaotic. Passing, he keeps his humanity but is tainted for good: roll a D6.\n\n1 Stupidity: the warrior suffers from stupidity.\n2-3 Resilient: he resists the effects.\n4 Cloven hoofs: +1 Movement.\n5 Hideous: he causes fear.\n6 Daemon soul: a daemon lives in him, giving a 4 or better save against spells and prayers.\n\nA member of the Witch Hunters, Sisters of Sigmar or a similar fanatical warband is abandoned at once, if not burnt. Any other result may be kept secret by the marked warrior, and he may stay."
-        }
-      ]
-    },
-    {
-      "title": "Weather",
-      "description": "Rolled once before the battle. The result lasts the whole battle. A scenario set in the Northern Wastes reads result 8-9 differently from one in the Cathayan borderlands.",
-      "dice": "2D6",
-      "note": "Each result has its own rules, held as a battle rule of the same name.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2-4",
-          "name": "Blizzard",
-          "text": "See the blizzard rules."
-        },
-        {
-          "result": "5-6",
-          "name": "Gale",
-          "text": "See the gale rules."
-        },
-        {
-          "result": "7",
-          "name": "Normal weather conditions",
-          "text": ""
-        },
-        {
-          "result": "8-9",
-          "name": "Hailstorm or Tempest",
-          "text": "Hailstorm in the Northern Wastes, tempest in the Cathayan borderlands."
-        },
-        {
-          "result": "10-12",
-          "name": "Fog",
-          "text": "See the fog rules."
-        }
-      ]
-    },
-    {
-      "title": "Territory",
-      "description": "Rolled by a scenario that does not fix its own territory, to see where the battle is fought. The territory's own special rules then apply.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2-3",
-          "name": "Northern Wastes",
-          "text": ""
-        },
-        {
-          "result": "4-6",
-          "name": "The Steppes",
-          "text": ""
-        },
-        {
-          "result": "7",
-          "name": "Your choice",
-          "text": "The player may choose the territory: the Northern Wastes, the Steppes, the Mountains of Mourn or the Cathayan borderlands."
-        },
-        {
-          "result": "8-10",
-          "name": "Mountains of Mourn",
-          "text": ""
-        },
-        {
-          "result": "11-12",
-          "name": "Cathayan borderlands",
-          "text": ""
-        }
-      ]
-    },
-    {
-      "title": "Thunder and lightning",
-      "description": "Rolled at the beginning of each turn during a tempest.",
-      "dice": "3D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "1-11",
-          "name": "Nothing happens",
-          "text": ""
-        },
-        {
-          "result": "12-15",
-          "name": "Thunder",
-          "text": "The roar unnerves animals. A ridden mount that is not battle-trained must pass a Leadership test or be unable to move this turn. Any other animal that fails a Leadership test, always taken on the animal's own Leadership and never a leader's, cannot move or charge, strikes last in close combat and needs a 6 to hit before any modifiers."
-        },
-        {
-          "result": "16-17",
-          "name": "Lightning",
-          "text": "A random forest section or building is set on fire."
-        },
-        {
-          "result": "18",
-          "name": "It must be fate",
-          "text": "Determine a random warrior wearing a suit of armour, which does not count lamellar armour, toughened leathers, a helmet or a shield, who is not inside a building or cave; ruins do not count. He is struck by lightning and taken out of action at once. Any model within 2 inches is knocked down and takes a Strength 4 hit with no armour saves. This happens only once in a battle; if it is rolled again, treat the result as lightning."
-        }
-      ]
-    },
-    {
-      "title": "Miscasting",
-      "description": "Rolled in the Northern Wastes whenever a spellcaster rolls an unmodified 2 for Difficulty. The spell always fails.",
-      "dice": "2D6",
-      "note": "A roll of 2 for Difficulty may not be re-rolled by any means to avoid this chart.",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Aaarrgh",
-          "text": "The powers of Chaos take the wizard over and he mutates into a Spawn of Chaos. Replace the model with a Chaos Spawn and remove the wizard from the roster."
-        },
-        {
-          "result": "3",
-          "name": "Bleeeuurgh",
-          "text": "The wizard is now stupid. Roll a D6 after the battle: on 2 or more the effect ends, otherwise it is permanent."
-        },
-        {
-          "result": "4",
-          "name": "Dampening",
-          "text": "The wizard cannot cast any spells for the rest of this battle."
-        },
-        {
-          "result": "5-6",
-          "name": "Uh-oh",
-          "text": "The spell is cast successfully, on the wizard himself. Any further decisions the spell calls for are made by his controller's opponent."
-        },
-        {
-          "result": "7",
-          "name": "Failed casting",
-          "text": "Beyond the spell failing there are no further consequences."
-        },
-        {
-          "result": "8-9",
-          "name": "Explosion",
-          "text": "The wizard is thrown D6 inches in a random direction and lands knocked down."
-        },
-        {
-          "result": "10-11",
-          "name": "What were the words?",
-          "text": "The wizard cannot cast a spell in his next shooting phase. Missile weapons may be used as normal."
-        },
-        {
-          "result": "12",
-          "name": "Tchar's blessing",
-          "text": "The uncontrollable powers of Chaos mutate the wizard, and then the transmutation ends. Choose a free mutation for him from those available to the Cult of the Possessed."
-        }
-      ]
-    },
-    {
-      "title": "Monsters of the Northern Wastes",
-      "description": "Rolled for a monster encounter in the Northern Wastes, from a random happening, an exploration result or anything else that calls for one.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Daemon Prince",
-          "text": ""
-        },
-        {
-          "result": "3-4",
-          "name": "Servants of Chaos",
-          "text": "D3 Servants of Chaos. Roll a D6: 1-2 Possessed, 3 Horror, 4 Daemonette, 5 Plague Bearer, 6 Bloodletter."
-        },
-        {
-          "result": "5-6",
-          "name": "Ice Bears",
-          "text": "D3 Ice Bears."
-        },
-        {
-          "result": "7",
-          "name": "Chaos warband",
-          "text": "1 Warrior of Chaos and 2D3 Chaos Marauders."
-        },
-        {
-          "result": "8-9",
-          "name": "Ymirs",
-          "text": "D3+1 Ymirs."
-        },
-        {
-          "result": "10-11",
-          "name": "Norse Shaman",
-          "text": "The Hired Sword."
-        },
-        {
-          "result": "12",
-          "name": "Chaos Spawn",
-          "text": ""
-        }
-      ]
-    },
-    {
-      "title": "Monsters of the Steppes",
-      "description": "Rolled for a monster encounter on the Steppes.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Chaos Ogre",
-          "text": ""
-        },
-        {
-          "result": "3-4",
-          "name": "Chaos Centaurs",
-          "text": "D3 Chaos Centaurs, the Hired Sword."
-        },
-        {
-          "result": "5-6",
-          "name": "Beastmen",
-          "text": "D3 Gors and D3 Ungors."
-        },
-        {
-          "result": "7",
-          "name": "Hobgoblin Scouts",
-          "text": "D3 Hobgoblin Scouts, the Hired Sword."
-        },
-        {
-          "result": "8-9",
-          "name": "Chaos Marauders",
-          "text": "2D3 Chaos Marauders."
-        },
-        {
-          "result": "10-11",
-          "name": "Troll",
-          "text": "Roll a D6: 1-3 Troll, 4-6 Chaos Troll."
-        },
-        {
-          "result": "12",
-          "name": "Hydra",
-          "text": ""
-        }
-      ]
-    },
-    {
-      "title": "Monsters of the Mountains of Mourn",
-      "description": "Rolled for a monster encounter in the Mountains of Mourn.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Giant",
-          "text": ""
-        },
-        {
-          "result": "3-4",
-          "name": "Ogres",
-          "text": "D3 Ogres."
-        },
-        {
-          "result": "5-6",
-          "name": "Greenskins",
-          "text": "D3 Orcs and D3 Goblins."
-        },
-        {
-          "result": "7",
-          "name": "Hobgoblin Scouts",
-          "text": "D3 Hobgoblin Scouts, the Hired Sword."
-        },
-        {
-          "result": "8-9",
-          "name": "Sabretusks",
-          "text": "D3 Sabretusks."
-        },
-        {
-          "result": "10-11",
-          "name": "Rhinox",
-          "text": ""
-        },
-        {
-          "result": "12",
-          "name": "Dragon Ogre",
-          "text": ""
-        }
-      ]
-    },
-    {
-      "title": "Monsters of the Cathayan borderlands",
-      "description": "Rolled for a monster encounter in the Cathayan borderlands.",
-      "dice": "2D6",
-      "note": "",
-      "umbrella": "",
-      "rows": [
-        {
-          "result": "2",
-          "name": "Pyromaniac",
-          "text": "The Hired Sword."
-        },
-        {
-          "result": "3-4",
-          "name": "Terracotta Soldiers",
-          "text": "D3+1 Terracotta Soldiers."
-        },
-        {
-          "result": "5-6",
-          "name": "Bears",
-          "text": "D3 Bears."
-        },
-        {
-          "result": "7",
-          "name": "Wild Boars",
-          "text": "D3 Wild Boars."
-        },
-        {
-          "result": "8-9",
-          "name": "Chaos Marauders",
-          "text": "D3+1 Chaos Marauders."
-        },
-        {
-          "result": "10-11",
-          "name": "Monkey Warriors",
-          "text": "D3+1 Monkey Warriors."
-        },
-        {
-          "result": "12",
-          "name": "Temple Dog",
-          "text": ""
-        }
-      ]
-    },
-    {
+     "result": "31",
+     "name": "Curious Bloom",
+     "text": "A random hero standing within 2 inches of a forest section, not subject to frenzy or stupidity, neither knocked down nor stunned and not in close combat, rolls on the curious bloom chart.",
+     "chart": {
       "title": "Curious bloom",
       "description": "Rolled by a hero who catches sight of unusual vegetation, from the Curious Bloom happening.",
       "dice": "D6",
       "note": "",
-      "umbrella": "",
       "rows": [
-        {
-          "result": "1",
-          "name": "Haunted Oak",
-          "text": "Place a man-eating oak in base contact with the model."
-        },
-        {
-          "result": "2",
-          "name": "Flesh Vines",
-          "text": "Place a carnivorous plant in base contact with the model."
-        },
-        {
-          "result": "3",
-          "name": "Poisonous Fruit",
-          "text": "Leadership test, or roll a D6: 1 knocked down, 2-5 stunned, 6 out of action."
-        },
-        {
-          "result": "4",
-          "name": "Strange Plants",
-          "text": "Leadership test if not immune to psychology, or roll a D6. A model that passes may choose to roll anyway. 1 stunned, 2 knocked down, 3-5 nothing happens, 6 gains one healing herb."
-        },
-        {
-          "result": "5",
-          "name": "Spider Spittle",
-          "text": "The hero finds small animal carcasses bearing D3 doses of spider spittle."
-        },
-        {
-          "result": "6",
-          "name": "Bed of Fungus",
-          "text": "The hero finds D3-1 portions of Mad Cap Mushrooms."
-        }
+       {
+        "result": "1",
+        "name": "Haunted Oak",
+        "text": "Place a man-eating oak in base contact with the model."
+       },
+       {
+        "result": "2",
+        "name": "Flesh Vines",
+        "text": "Place a carnivorous plant in base contact with the model."
+       },
+       {
+        "result": "3",
+        "name": "Poisonous Fruit",
+        "text": "Leadership test, or roll a D6: 1 knocked down, 2-5 stunned, 6 out of action."
+       },
+       {
+        "result": "4",
+        "name": "Strange Plants",
+        "text": "Leadership test if not immune to psychology, or roll a D6. A model that passes may choose to roll anyway. 1 stunned, 2 knocked down, 3-5 nothing happens, 6 gains one healing herb."
+       },
+       {
+        "result": "5",
+        "name": "Spider Spittle",
+        "text": "The hero finds small animal carcasses bearing D3 doses of spider spittle."
+       },
+       {
+        "result": "6",
+        "name": "Bed of Fungus",
+        "text": "The hero finds D3-1 portions of Mad Cap Mushrooms."
+       }
       ]
+     }
     },
     {
+     "result": "32",
+     "name": "Mutated Trees",
+     "text": "Every model standing in a random forest section takes a single Strength 3 hit at once and another at the beginning of its recovery phase for as long as it stands in the section. Because they are shaken, models may ignore difficult terrain and move out of the section at normal speed."
+    },
+    {
+     "result": "33",
+     "name": "Old Well",
+     "text": "A random model, not a large one, takes a single Strength 3 hit falling into an old well, and finds the equipment of the man who broke his neck there before him. If it was not taken out of action by the fall, roll on the old well chart for what it finds.\n\nThe well is filled with ivy. The model may try to climb out at the beginning of its next turn by passing a single Initiative test. Failing, it stays another round; passing, it escapes and may move no further that turn, though it may use magic. A player may leave a model in the well if he likes: it cannot be attacked or affected by any spell or missile, and can do nothing in the well but climb.",
+     "chart": {
       "title": "Old well",
       "description": "Rolled for what a model finds down the old well, from the Old Well happening, if the fall did not take it out of action.",
       "dice": "D6",
       "note": "",
-      "umbrella": "",
       "rows": [
-        {
-          "result": "1",
-          "name": "A rusty sword",
-          "text": "Worth nothing."
-        },
-        {
-          "result": "2",
-          "name": "Two daggers",
-          "text": ""
-        },
-        {
-          "result": "3",
-          "name": "A wallet",
-          "text": "It holds 10 gc."
-        },
-        {
-          "result": "4",
-          "name": "A sword and a shield",
-          "text": ""
-        },
-        {
-          "result": "5",
-          "name": "A long bow",
-          "text": ""
-        },
-        {
-          "result": "6",
-          "name": "Light armour",
-          "text": ""
-        }
+       {
+        "result": "1",
+        "name": "A rusty sword",
+        "text": "Worth nothing."
+       },
+       {
+        "result": "2",
+        "name": "Two daggers",
+        "text": ""
+       },
+       {
+        "result": "3",
+        "name": "A wallet",
+        "text": "It holds 10 gc."
+       },
+       {
+        "result": "4",
+        "name": "A sword and a shield",
+        "text": ""
+       },
+       {
+        "result": "5",
+        "name": "A long bow",
+        "text": ""
+       },
+       {
+        "result": "6",
+        "name": "Light armour",
+        "text": ""
+       }
       ]
+     }
     },
     {
+     "result": "34",
+     "name": "Bog Octopus",
+     "text": "The model standing closest to the largest swamp or water feature is attacked by a bog octopus. Re-roll this result if there is no such scenery. If the victim fails a Strength test it is dragged under, counts as drowned and is taken out of action, and the player rolls for injuries at the end of the game."
+    },
+    {
+     "result": "35",
+     "name": "Hot Hail",
+     "text": "A hailstorm lasting D3 rounds. See the hailstorm rules."
+    },
+    {
+     "result": "36",
+     "name": "Sling Trap",
+     "text": "One randomly determined model standing in a forest section, rolling again for a mounted model, is pulled up a tree but unties itself. Unless it has the Acrobat skill it is automatically knocked down, even if a rule would prevent it. An animal cannot untie itself, counts as taken out of action and survives after the battle only on a 4 or more rather than a 3 or more, because the hunter who set the trap finds it first."
+    },
+    {
+     "result": "41",
+     "name": "Contamination",
+     "text": "A diseased wolf pounces on a randomly determined model. See Wolf in the bestiary.\n\nContagion: a wounded model must at once test against its Toughness unless it is immune to poison. Failing, it counts as infected with Manticore Spoor and rolls a D6 at the beginning of each of its turns: on a 1 it loses a wound, and on a 6 the poison ends and it tests no more."
+    },
+    {
+     "result": "42-43",
+     "name": "Belandysh comes",
+     "text": "Belandysh, the Condemned Champion of Tchar, enters the battlefield. Use a scatter dice for a random point at one side to place him, and the rules for non-player models in the bestiary. If any model already holds the Broadsword of Damnation, roll again on this chart."
+    },
+    {
+     "result": "44",
+     "name": "Storm",
+     "text": "For the next D3 turns apply gale and tempest. Roll a D6 as well: on 4 or more apply thunder and lightning too. In a scenario set in the Northern Wastes, blizzard replaces tempest."
+    },
+    {
+     "result": "45",
+     "name": "Ooops",
+     "text": "A random model not in close combat is knocked down if it fails an Initiative test. It may then make a Leadership test to recognise the obstacle as a healing herb: passing, add one healing herb to the warband's stash for a henchman, or to his equipment for a hero."
+    },
+    {
+     "result": "46",
+     "name": "Lava Tunnels",
+     "text": "For the rest of the battle each player rolls a D6 at the beginning of his turn. On a 1 the earth splits beneath one of his models at random and sprays it with lava: it must pass an Initiative test or take a Strength 4 hit, and if wounded it is set on fire on a further D6 roll of 4 or more."
+    },
+    {
+     "result": "51",
+     "name": "Blaze",
+     "text": "One piece of terrain chosen at random bursts into flames. Any model inside takes a Strength 3 hit unless it moves outside the same turn, and any model within 2 inches of its edges takes a Strength 2 hit from the smoke and heat unless it moves further away. For the rest of the game the terrain piece causes fear, and anyone wishing to enter it must first pass a test as though charging an enemy that causes fear."
+    },
+    {
+     "result": "52",
+     "name": "Fountain of Blood",
+     "text": "For the rest of the game, whenever a model is taken out of action in close combat, the model that did it must take a Strength test or be knocked down by a torrent of blood pouring from the ground. Others in the combat are not affected."
+    },
+    {
+     "result": "53",
+     "name": "Screaming Trees",
+     "text": "One randomly determined piece of terrain starts to shriek. Any warband member within 8 inches takes a Strength 1 hit with no armour saves and is at -1 on all rolls to hit, in close combat and shooting, while the screaming lasts. No spells or prayers may be cast within that radius. Roll a D3 for how many turns it lasts."
+    },
+    {
+     "result": "54",
+     "name": "Daemonic Steed",
+     "text": "A wild daemonic horse is loose. At the end of each turn it moves 8 inches in a random direction. A hero who can move adjacent to it and passes both a Strength and a Leadership test breaks the horse and claims it for his own."
+    },
+    {
+     "result": "55",
+     "name": "Shard of Wyrdstone",
+     "text": "A large chunk of wyrdstone falls to the ground in the centre of the field. Any warband member who begins his turn within 4 inches of the shard rolls 2D6: on a 2 he is turned into a Spawn of Chaos, removed from the roster and moved at random; on a 12 he permanently gains a random mutation. A warband member who can reach the wyrdstone may spend a turn chipping D3 shards from it. Because it is so volatile, no warband member stays long enough to make more than one roll."
+    },
+    {
+     "result": "56",
+     "name": "The Old Crone",
+     "text": "Determine at random which terrain feature the hag inhabits. For 3D6 gold crowns she works a miracle or a malediction, once per turn. If a hero pays, roll a D6 for which she chooses.\n\n1 Cursed: the approaching model is cursed instead, and permanently loses 1 from a randomly determined characteristic.\n2-3 Hex: she lays the same malady on a hero chosen from another warband.\n4 or more Miracle: she lifts any curse, heals any lost wounds, cures any mutation or removes a serious injury from a hero of your choice."
+    },
+    {
+     "result": "61",
+     "name": "Plane of Chaos",
+     "text": "D3 random terrain pieces are removed. Any warband member on such a piece must pass an Initiative test or be swallowed up with it, which counts as being taken out of action."
+    },
+    {
+     "result": "62",
+     "name": "Runaway Wagon",
+     "text": "A blazing caravan wagon appears from a random table edge. The horses are frantic and run in random directions at the end of each turn. Any warband can take the wagon by boarding it with a warrior, and it takes at least two warband members a full turn to put the fire out.\n\nAt the end of the game, whoever controls the wagon rolls for each of the following if the fire was put out, the different chances standing for the merchandise catching fire: 5 or more, D3 Cathayan silk cloaks; 5 or more, a Tome of Magic; 4 or more, D3 longbows and D3 quivers of hunting arrows; 3 or more, D3 swords; and the wagon itself automatically. A human warband also keeps any surviving draft horses and may use them for the wagon or as riding horses."
+    },
+    {
+     "result": "63",
+     "name": "War of the Gods",
+     "text": "Roll a D6 twice, ignoring 5-6 and duplicates, for which gods are involved: 1 Khorne, 2 Slaanesh, 3 Nurgle, 4 Tzeentch. Roll 2D6 for each warband leader affiliated with those gods. On 3 or more he gains the following until the end of the game, as well as hatred of the opposing god: Khorne +1 Strength, Nurgle +1 Toughness, Tzeentch +1 Leadership, Slaanesh +1 Attack. On a 2 he mutates and becomes a Spawn of Chaos under his player's control permanently; if the warband already includes a Spawn it is abandoned after the battle, otherwise it may be kept. Norse, Beastmen and Possessed may pick a god beforehand."
+    },
+    {
+     "result": "64",
+     "name": "Blessings of Father Nurgle",
+     "text": "Nurglings swarm the battlefield dropping presents at their victims' feet. Each hero in a warband may open one present, rolling on the blessings of Father Nurgle chart.",
+     "chart": {
       "title": "Blessings of Father Nurgle",
       "description": "Rolled by each hero who opens a nurgling's present, from the Blessings of Father Nurgle happening.",
       "dice": "D6",
       "note": "",
-      "umbrella": "",
       "rows": [
-        {
-          "result": "1",
-          "name": "Sickness",
-          "text": "-1 to all characteristics except Wounds for the rest of the game."
-        },
-        {
-          "result": "2",
-          "name": "Fatigue",
-          "text": "-1 Movement, and he may not run, though he may still charge, for the rest of the game."
-        },
-        {
-          "result": "3",
-          "name": "Sweets",
-          "text": "Nothing but candy."
-        },
-        {
-          "result": "4",
-          "name": "Treats",
-          "text": "D3 pieces of treasure."
-        },
-        {
-          "result": "5",
-          "name": "Tricks",
-          "text": "The warrior permanently gains a random mutation."
-        },
-        {
-          "result": "6",
-          "name": "Blessing",
-          "text": "The Fly Lord has noticed this hero. Choose one of the Blessings of Nurgle for him."
-        }
+       {
+        "result": "1",
+        "name": "Sickness",
+        "text": "-1 to all characteristics except Wounds for the rest of the game."
+       },
+       {
+        "result": "2",
+        "name": "Fatigue",
+        "text": "-1 Movement, and he may not run, though he may still charge, for the rest of the game."
+       },
+       {
+        "result": "3",
+        "name": "Sweets",
+        "text": "Nothing but candy."
+       },
+       {
+        "result": "4",
+        "name": "Treats",
+        "text": "D3 pieces of treasure."
+       },
+       {
+        "result": "5",
+        "name": "Tricks",
+        "text": "The warrior permanently gains a random mutation."
+       },
+       {
+        "result": "6",
+        "name": "Blessing",
+        "text": "The Fly Lord has noticed this hero. Choose one of the Blessings of Nurgle for him."
+       }
       ]
+     }
+    },
+    {
+     "result": "65",
+     "name": "Suffocating Heat",
+     "text": "Every model wearing light or heavy armour, Ithilmar, Gromril or Cathayan plate included, suffers -1 Movement and -1 Leadership. Undead and other models immune to psychology are unaffected. The heat lasts D6 turns."
+    },
+    {
+     "result": "66",
+     "name": "A time when man became beast and beast became man",
+     "text": "Roll 2D6 for every warrior on the table, not counting animals or large and gigantic models. On a 2 or a 12 he turns into a Gor and loses any ranged weapons he carried. His profile stays as it is, except that his Movement becomes 5 and his maximum stats become a Gor's; anything above that is lowered at once. Roll a D6 for every animal on the table: on 1-2 it becomes a Warhound of Chaos. Undead never transform.\n\nA transformed warband member keeps serving a Chaotic warband; otherwise he counts as a non-player model for the rest of the game. After the battle every hero gets one attempt to recover, passing a Leadership test. Failing, he stays a Gor and either leaves the warband or stays if it is Chaotic. Passing, he keeps his humanity but is tainted for good: roll a D6.\n\n1 Stupidity: the warrior suffers from stupidity.\n2-3 Resilient: he resists the effects.\n4 Cloven hoofs: +1 Movement.\n5 Hideous: he causes fear.\n6 Daemon soul: a daemon lives in him, giving a 4 or better save against spells and prayers.\n\nA member of the Witch Hunters, Sisters of Sigmar or a similar fanatical warband is abandoned at once, if not burnt. Any other result may be kept secret by the marked warrior, and he may stay."
     }
-  ]
+   ]
+  },
+  {
+   "title": "Weather",
+   "description": "Rolled once before the battle. The result lasts the whole battle. A scenario set in the Northern Wastes reads result 8-9 differently from one in the Cathayan borderlands.",
+   "dice": "2D6",
+   "note": "Each result has its own rules, held as a battle rule of the same name.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2-4",
+     "name": "Blizzard",
+     "text": "See the blizzard rules."
+    },
+    {
+     "result": "5-6",
+     "name": "Gale",
+     "text": "See the gale rules."
+    },
+    {
+     "result": "7",
+     "name": "Normal weather conditions",
+     "text": ""
+    },
+    {
+     "result": "8-9",
+     "name": "Hailstorm or Tempest",
+     "text": "Hailstorm in the Northern Wastes, tempest in the Cathayan borderlands."
+    },
+    {
+     "result": "10-12",
+     "name": "Fog",
+     "text": "See the fog rules."
+    }
+   ]
+  },
+  {
+   "title": "Territory",
+   "description": "Rolled by a scenario that does not fix its own territory, to see where the battle is fought. The territory's own special rules then apply.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2-3",
+     "name": "Northern Wastes",
+     "text": ""
+    },
+    {
+     "result": "4-6",
+     "name": "The Steppes",
+     "text": ""
+    },
+    {
+     "result": "7",
+     "name": "Your choice",
+     "text": "The player may choose the territory: the Northern Wastes, the Steppes, the Mountains of Mourn or the Cathayan borderlands."
+    },
+    {
+     "result": "8-10",
+     "name": "Mountains of Mourn",
+     "text": ""
+    },
+    {
+     "result": "11-12",
+     "name": "Cathayan borderlands",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Thunder and lightning",
+   "description": "Rolled at the beginning of each turn during a tempest.",
+   "dice": "3D6",
+   "note": "",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "1-11",
+     "name": "Nothing happens",
+     "text": ""
+    },
+    {
+     "result": "12-15",
+     "name": "Thunder",
+     "text": "The roar unnerves animals. A ridden mount that is not battle-trained must pass a Leadership test or be unable to move this turn. Any other animal that fails a Leadership test, always taken on the animal's own Leadership and never a leader's, cannot move or charge, strikes last in close combat and needs a 6 to hit before any modifiers."
+    },
+    {
+     "result": "16-17",
+     "name": "Lightning",
+     "text": "A random forest section or building is set on fire."
+    },
+    {
+     "result": "18",
+     "name": "It must be fate",
+     "text": "Determine a random warrior wearing a suit of armour, which does not count lamellar armour, toughened leathers, a helmet or a shield, who is not inside a building or cave; ruins do not count. He is struck by lightning and taken out of action at once. Any model within 2 inches is knocked down and takes a Strength 4 hit with no armour saves. This happens only once in a battle; if it is rolled again, treat the result as lightning."
+    }
+   ]
+  },
+  {
+   "title": "Miscasting",
+   "description": "Rolled in the Northern Wastes whenever a spellcaster rolls an unmodified 2 for Difficulty. The spell always fails.",
+   "dice": "2D6",
+   "note": "A roll of 2 for Difficulty may not be re-rolled by any means to avoid this chart.",
+   "umbrella": "",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Aaarrgh",
+     "text": "The powers of Chaos take the wizard over and he mutates into a Spawn of Chaos. Replace the model with a Chaos Spawn and remove the wizard from the roster."
+    },
+    {
+     "result": "3",
+     "name": "Bleeeuurgh",
+     "text": "The wizard is now stupid. Roll a D6 after the battle: on 2 or more the effect ends, otherwise it is permanent."
+    },
+    {
+     "result": "4",
+     "name": "Dampening",
+     "text": "The wizard cannot cast any spells for the rest of this battle."
+    },
+    {
+     "result": "5-6",
+     "name": "Uh-oh",
+     "text": "The spell is cast successfully, on the wizard himself. Any further decisions the spell calls for are made by his controller's opponent."
+    },
+    {
+     "result": "7",
+     "name": "Failed casting",
+     "text": "Beyond the spell failing there are no further consequences."
+    },
+    {
+     "result": "8-9",
+     "name": "Explosion",
+     "text": "The wizard is thrown D6 inches in a random direction and lands knocked down."
+    },
+    {
+     "result": "10-11",
+     "name": "What were the words?",
+     "text": "The wizard cannot cast a spell in his next shooting phase. Missile weapons may be used as normal."
+    },
+    {
+     "result": "12",
+     "name": "Tchar's blessing",
+     "text": "The uncontrollable powers of Chaos mutate the wizard, and then the transmutation ends. Choose a free mutation for him from those available to the Cult of the Possessed."
+    }
+   ]
+  },
+  {
+   "title": "Monsters of the Northern Wastes",
+   "description": "Rolled for a monster encounter in the Northern Wastes, from a random happening, an exploration result or anything else that calls for one.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Monster encounters",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Daemon Prince",
+     "text": ""
+    },
+    {
+     "result": "3-4",
+     "name": "Servants of Chaos",
+     "text": "D3 Servants of Chaos. Roll a D6: 1-2 Possessed, 3 Horror, 4 Daemonette, 5 Plague Bearer, 6 Bloodletter."
+    },
+    {
+     "result": "5-6",
+     "name": "Ice Bears",
+     "text": "D3 Ice Bears."
+    },
+    {
+     "result": "7",
+     "name": "Chaos warband",
+     "text": "1 Warrior of Chaos and 2D3 Chaos Marauders."
+    },
+    {
+     "result": "8-9",
+     "name": "Ymirs",
+     "text": "D3+1 Ymirs."
+    },
+    {
+     "result": "10-11",
+     "name": "Norse Shaman",
+     "text": "The Hired Sword."
+    },
+    {
+     "result": "12",
+     "name": "Chaos Spawn",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Monsters of the Steppes",
+   "description": "Rolled for a monster encounter on the Steppes.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Monster encounters",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Chaos Ogre",
+     "text": ""
+    },
+    {
+     "result": "3-4",
+     "name": "Chaos Centaurs",
+     "text": "D3 Chaos Centaurs, the Hired Sword."
+    },
+    {
+     "result": "5-6",
+     "name": "Beastmen",
+     "text": "D3 Gors and D3 Ungors."
+    },
+    {
+     "result": "7",
+     "name": "Hobgoblin Scouts",
+     "text": "D3 Hobgoblin Scouts, the Hired Sword."
+    },
+    {
+     "result": "8-9",
+     "name": "Chaos Marauders",
+     "text": "2D3 Chaos Marauders."
+    },
+    {
+     "result": "10-11",
+     "name": "Troll",
+     "text": "Roll a D6: 1-3 Troll, 4-6 Chaos Troll."
+    },
+    {
+     "result": "12",
+     "name": "Hydra",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Monsters of the Mountains of Mourn",
+   "description": "Rolled for a monster encounter in the Mountains of Mourn.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Monster encounters",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Giant",
+     "text": ""
+    },
+    {
+     "result": "3-4",
+     "name": "Ogres",
+     "text": "D3 Ogres."
+    },
+    {
+     "result": "5-6",
+     "name": "Greenskins",
+     "text": "D3 Orcs and D3 Goblins."
+    },
+    {
+     "result": "7",
+     "name": "Hobgoblin Scouts",
+     "text": "D3 Hobgoblin Scouts, the Hired Sword."
+    },
+    {
+     "result": "8-9",
+     "name": "Sabretusks",
+     "text": "D3 Sabretusks."
+    },
+    {
+     "result": "10-11",
+     "name": "Rhinox",
+     "text": ""
+    },
+    {
+     "result": "12",
+     "name": "Dragon Ogre",
+     "text": ""
+    }
+   ]
+  },
+  {
+   "title": "Monsters of the Cathayan borderlands",
+   "description": "Rolled for a monster encounter in the Cathayan borderlands.",
+   "dice": "2D6",
+   "note": "",
+   "umbrella": "Monster encounters",
+   "rows": [
+    {
+     "result": "2",
+     "name": "Pyromaniac",
+     "text": "The Hired Sword."
+    },
+    {
+     "result": "3-4",
+     "name": "Terracotta Soldiers",
+     "text": "D3+1 Terracotta Soldiers."
+    },
+    {
+     "result": "5-6",
+     "name": "Bears",
+     "text": "D3 Bears."
+    },
+    {
+     "result": "7",
+     "name": "Wild Boars",
+     "text": "D3 Wild Boars."
+    },
+    {
+     "result": "8-9",
+     "name": "Chaos Marauders",
+     "text": "D3+1 Chaos Marauders."
+    },
+    {
+     "result": "10-11",
+     "name": "Monkey Warriors",
+     "text": "D3+1 Monkey Warriors."
+    },
+    {
+     "result": "12",
+     "name": "Temple Dog",
+     "text": ""
+    }
+   ]
+  }
+ ]
 }
